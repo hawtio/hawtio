@@ -39,6 +39,12 @@
                     <li ng-class="navClass('subscribers')"
                         ng-show="hasDomainAndProperties('org.apache.activemq')">
                         <a ng-href="#/subscribers{{hash}}"><i class="icon-picture"></i> Diagram</a></li>
+                    <li ng-class="navClass('subscribers')"
+                        ng-show="hasDomainAndLastPath('org.apache.activemq', 'Queue')">
+                        <a ng-href="#/createQueue{{hash}}"><i class="icon-plus"></i> Create Queue</a></li>
+                    <li ng-class="navClass('subscribers')"
+                        ng-show="hasDomainAndLastPath('org.apache.activemq', 'Topic')">
+                        <a ng-href="#/createTopic{{hash}}"><i class="icon-plus"></i> Create Topic</a></li>
                     <li ng-class="navClass('routes')"
                         ng-show="hasDomainAndProperties('org.apache.camel', {type: 'context'})">
                         <a ng-href="#/routes{{hash}}"><i class="icon-picture"></i> Routes</a></li>

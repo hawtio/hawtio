@@ -81,6 +81,28 @@ function QueueController($scope, workspace) {
         }
     };
 }
+function CreateDestinationController($scope, workspace) {
+    function operationSuccess() {
+        $scope.destinationName = "";
+        $scope.$apply();
+    }
+    $scope.createDestination = function (name, isQueue) {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var folderNames = selection.folderNames;
+        if(selection && jolokia && folderNames && folderNames.length > 1) {
+            var mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+            console.log("Creating queue " + isQueue + " of name: " + name + " on mbean");
+            var operation;
+            if(isQueue) {
+                operation = "addQueue(java.lang.String)";
+            } else {
+                operation = "addTopic(java.lang.String)";
+            }
+            jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+        }
+    };
+}
 function SubscriberGraphController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.nodes = [];
@@ -266,6 +288,12 @@ angular.module('FuseIDE', [
     }).when('/subscribers', {
         templateUrl: 'partials/subscribers.html',
         controller: SubscriberGraphController
+    }).when('/createQueue', {
+        templateUrl: 'partials/createQueue.html',
+        controller: CreateDestinationController
+    }).when('/createTopic', {
+        templateUrl: 'partials/createTopic.html',
+        controller: CreateDestinationController
     }).when('/debug', {
         templateUrl: 'partials/debug.html',
         controller: DetailController
@@ -470,6 +498,22 @@ function NavBarController($scope, $location, workspace) {
             } else {
             }
         } else {
+        }
+        return false;
+    };
+    $scope.hasDomainAndLastPath = function (objectName, lastName) {
+        var workspace = $scope.workspace;
+        if(workspace) {
+            var node = workspace.selection;
+            if(node) {
+                if(objectName === node.domain) {
+                    var folders = node.folderNames;
+                    if(folders) {
+                        var last = folders.last();
+                        return last === lastName;
+                    }
+                }
+            }
         }
         return false;
     };

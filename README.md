@@ -45,9 +45,10 @@ For those interested in contributing, here is a low down of the various open sou
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking
 * [AngularJS](http://angularjs.org/) is the web framework for performing real time 2 way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
 * [d3](http://d3js.org/) is the visualisation library used to do the force layout graphs (for example the diagram view for ActiveMQ)
-* [cubism](http://square.github.com/cubism/) implements the real time charts
+* [cubism](http://square.github.com/cubism/) implements the real time horizon charts
 * [dagre](https://github.com/cpettitt/dagre) for graphviz style layouts of d3 diagrams (e.g. the Camel diagram view).
 * [DataTables](http://datatables.net/) for sorted/filtered tables
 * [DynaTree](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) for tree widget
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS
+* [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
 

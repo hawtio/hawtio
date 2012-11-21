@@ -24,6 +24,8 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/sendMessage', {templateUrl: 'partials/sendMessage.html', controller: QueueController}).
                   when('/routes', {templateUrl: 'partials/routes.html', controller: CamelController}).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).
+                  when('/createQueue', {templateUrl: 'partials/createQueue.html', controller: CreateDestinationController}).
+                  when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: CreateDestinationController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/about', {templateUrl: 'partials/about.html', controller: DetailController}).
                   otherwise({redirectTo: '/attributes'});
@@ -116,7 +118,7 @@ class Workspace {
   public selection = [];
   dummyStorage = {};
 
-  constructor(url: string) {
+  constructor(url:string) {
     var rate = this.getUpdateRate();
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
@@ -161,10 +163,10 @@ class Folder {
   }
 
   isFolder = true;
-  key: string = null;
+  key:string = null;
   children = [];
   folderNames = [];
-  domain: string = null;
+  domain:string = null;
   map = {};
 
   get(key:string):Folder {
@@ -186,7 +188,7 @@ function NavBarController($scope, $location, workspace) {
   $scope.workspace = workspace;
 
   // when we change the view/selection lets update the hash so links have the latest stuff
-  $scope.$on('$routeChangeSuccess', function(){
+  $scope.$on('$routeChangeSuccess', function () {
     var hash = $location.search();
     // TODO there must be a nice function somewhere to do this in a nicer way!
     // NOTE we are not encoding anything
@@ -243,7 +245,24 @@ function NavBarController($scope, $location, workspace) {
       // console.log("no workspace for hasMBean " + objectName);
     }
     return false
-  }
+  };
+
+  $scope.hasDomainAndLastPath = (objectName, lastName) => {
+    var workspace = $scope.workspace;
+    if (workspace) {
+      var node = workspace.selection;
+      if (node) {
+        if (objectName === node.domain) {
+          var folders = node.folderNames;
+          if (folders) {
+            var last = folders.last();
+            return last === lastName;
+          }
+        }
+      }
+    }
+    return false;
+  };
 }
 
 function PreferencesController($scope, workspace) {

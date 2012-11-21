@@ -65,6 +65,31 @@ function QueueController($scope, workspace) {
   };
 }
 
+function CreateDestinationController($scope, workspace) {
+  function operationSuccess() {
+    $scope.destinationName = "";
+    $scope.$apply();
+  }
+
+  $scope.createDestination = (name, isQueue) => {
+    var jolokia = workspace.jolokia;
+    var selection = workspace.selection;
+    var folderNames = selection.folderNames;
+    if (selection && jolokia && folderNames && folderNames.length > 1) {
+      var mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+      console.log("Creating queue " + isQueue + " of name: " + name + " on mbean");
+      var operation;
+      if (isQueue) {
+        operation = "addQueue(java.lang.String)"
+      } else {
+        operation = "addTopic(java.lang.String)";
+      }
+      jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+    }
+  };
+}
+
+
 function SubscriberGraphController($scope, workspace) {
   $scope.workspace = workspace;
   $scope.nodes = [];
