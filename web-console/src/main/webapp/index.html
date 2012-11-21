@@ -30,23 +30,21 @@
                             Attributes</a></li>
                     <li ng-class="navClass('charts')">
                         <a ng-href="#/charts{{hash}}"><i class="icon-signal"></i> Charts</a></li>
-                    <li ng-class="navClass('browseQueue')"
-                        ng-show="hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'})">
+                    <li ng-class="navClass('browseQueue')" ng-show="isQueue()">
                         <a ng-href="#/browseQueue{{hash}}"><i class="icon-envelope"></i> Browse</a></li>
-                    <li ng-class="navClass('sendMessage')"
-                        ng-show="hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'})">
+                    <li ng-class="navClass('sendMessage')" ng-show="isQueue() || isTopic()">
                         <a ng-href="#/sendMessage{{hash}}"><i class="icon-pencil"></i> Send</a></li>
-                    <li ng-class="navClass('subscribers')"
-                        ng-show="hasDomainAndProperties('org.apache.activemq')">
+                    <li ng-class="navClass('subscribers')" ng-show="isActiveMQFolder()">
                         <a ng-href="#/subscribers{{hash}}"><i class="icon-picture"></i> Diagram</a></li>
-                    <li ng-class="navClass('subscribers')"
-                        ng-show="hasDomainAndLastPath('org.apache.activemq', 'Queue')">
+                    <li ng-class="navClass('createQueue')" ng-show="isQueuesFolder()">
                         <a ng-href="#/createQueue{{hash}}"><i class="icon-plus"></i> Create Queue</a></li>
-                    <li ng-class="navClass('subscribers')"
-                        ng-show="hasDomainAndLastPath('org.apache.activemq', 'Topic')">
+                    <li ng-class="navClass('createTopic')" ng-show="isTopicsFolder()">
                         <a ng-href="#/createTopic{{hash}}"><i class="icon-plus"></i> Create Topic</a></li>
-                    <li ng-class="navClass('routes')"
-                        ng-show="hasDomainAndProperties('org.apache.camel', {type: 'context'})">
+                    <li ng-class="navClass('deleteQueue')" ng-show="isQueue()">
+                        <a ng-href="#/deleteQueue{{hash}}"><i class="icon-remove"></i> Delete</a></li>
+                    <li ng-class="navClass('deleteTopic')" ng-show="isTopic()">
+                        <a ng-href="#/deleteTopic{{hash}}"><i class="icon-remove"></i> Delete</a></li>
+                    <li ng-class="navClass('routes')" ng-show="isCamelContext() || isRoutesFolder()">
                         <a ng-href="#/routes{{hash}}"><i class="icon-picture"></i> Routes</a></li>
                     <li ng-class="navClass('logs')">
                         <a ng-href="#/logs{{hash}}"><i class="icon-list-alt"></i> Logs</a></li>

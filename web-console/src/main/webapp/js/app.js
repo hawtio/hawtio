@@ -102,6 +102,28 @@ function CreateDestinationController($scope, workspace) {
             jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         }
     };
+    $scope.deleteDestination = function () {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var entries = selection.entries;
+        if(selection && jolokia && entries) {
+            var domain = selection.domain;
+            var brokerName = entries["BrokerName"];
+            var name = entries["Destination"];
+            var isQueue = "Topic" !== entries["Type"];
+            if(domain && brokerName) {
+                var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
+                console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
+                var operation;
+                if(isQueue) {
+                    operation = "removeQueue(java.lang.String)";
+                } else {
+                    operation = "removeTopic(java.lang.String)";
+                }
+                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+            }
+        }
+    };
 }
 function SubscriberGraphController($scope, workspace) {
     $scope.workspace = workspace;
@@ -293,6 +315,12 @@ angular.module('FuseIDE', [
         controller: CreateDestinationController
     }).when('/createTopic', {
         templateUrl: 'partials/createTopic.html',
+        controller: CreateDestinationController
+    }).when('/deleteQueue', {
+        templateUrl: 'partials/deleteQueue.html',
+        controller: CreateDestinationController
+    }).when('/deleteTopic', {
+        templateUrl: 'partials/deleteTopic.html',
         controller: CreateDestinationController
     }).when('/debug', {
         templateUrl: 'partials/debug.html',
@@ -516,6 +544,33 @@ function NavBarController($scope, $location, workspace) {
             }
         }
         return false;
+    };
+    $scope.isQueue = function () {
+        return $scope.hasDomainAndProperties('org.apache.activemq', {
+            Type: 'Queue'
+        });
+    };
+    $scope.isTopic = function () {
+        return $scope.hasDomainAndProperties('org.apache.activemq', {
+            Type: 'Topic'
+        });
+    };
+    $scope.isQueuesFolder = function () {
+        return $scope.hasDomainAndLastPath('org.apache.activemq', 'Queue');
+    };
+    $scope.isTopicsFolder = function () {
+        return $scope.hasDomainAndLastPath('org.apache.activemq', 'Topic');
+    };
+    $scope.isActiveMQFolder = function () {
+        return $scope.hasDomainAndProperties('org.apache.activemq');
+    };
+    $scope.isCamelContext = function () {
+        return $scope.hasDomainAndProperties('org.apache.camel', {
+            type: 'context'
+        });
+    };
+    $scope.isRoutesFolder = function () {
+        return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
     };
 }
 function PreferencesController($scope, workspace) {

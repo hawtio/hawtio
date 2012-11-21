@@ -87,6 +87,29 @@ function CreateDestinationController($scope, workspace) {
       jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
     }
   };
+
+  $scope.deleteDestination = () => {
+    var jolokia = workspace.jolokia;
+    var selection = workspace.selection;
+    var entries = selection.entries;
+    if (selection && jolokia && entries) {
+      var domain = selection.domain;
+      var brokerName = entries["BrokerName"];
+      var name = entries["Destination"];
+      var isQueue = "Topic" !== entries["Type"];
+      if (domain && brokerName) {
+        var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
+        console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
+        var operation;
+        if (isQueue) {
+          operation = "removeQueue(java.lang.String)"
+        } else {
+          operation = "removeTopic(java.lang.String)";
+        }
+        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+      }
+    }
+  };
 }
 
 

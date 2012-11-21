@@ -26,6 +26,8 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).
                   when('/createQueue', {templateUrl: 'partials/createQueue.html', controller: CreateDestinationController}).
                   when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: CreateDestinationController}).
+                  when('/deleteQueue', {templateUrl: 'partials/deleteQueue.html', controller: CreateDestinationController}).
+                  when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: CreateDestinationController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/about', {templateUrl: 'partials/about.html', controller: DetailController}).
                   otherwise({redirectTo: '/attributes'});
@@ -263,6 +265,36 @@ function NavBarController($scope, $location, workspace) {
     }
     return false;
   };
+
+  $scope.isQueue = () => {
+    return $scope.hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'});
+  };
+
+  $scope.isTopic = () => {
+    return $scope.hasDomainAndProperties('org.apache.activemq', {Type: 'Topic'});
+  };
+
+  $scope.isQueuesFolder = () => {
+    return $scope.hasDomainAndLastPath('org.apache.activemq', 'Queue')
+  };
+
+  $scope.isTopicsFolder = () => {
+    return $scope.hasDomainAndLastPath('org.apache.activemq', 'Topic')
+  };
+
+  $scope.isActiveMQFolder = () => {
+    return $scope.hasDomainAndProperties('org.apache.activemq');
+  };
+
+  $scope.isCamelContext = () => {
+    return $scope.hasDomainAndProperties('org.apache.camel', {type: 'context'});
+  };
+
+  $scope.isRoutesFolder = () => {
+    return $scope.hasDomainAndLastPath('org.apache.camel', 'routes')
+  };
+
+
 }
 
 function PreferencesController($scope, workspace) {
