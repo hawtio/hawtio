@@ -1,0 +1,22 @@
+<form class="form-search">
+    <input class="span12 search-query"  ng-model="query" placeholder="search logs">
+</form>
+
+<table class="table table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Timestamp</th>
+        <th>Level</th>
+        <th>Logger</th>
+        <th width="100%">Message</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="log in filterLogs(logs, query)" ng-class="logClass(log)">
+        <td>{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+        <td>{{log.level}}</td>
+        <td>{{log.logger}}</td>
+        <td>{{log.message}}</td>
+    </tr>
+    </tbody>
+</table>

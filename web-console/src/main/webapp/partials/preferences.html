@@ -1,0 +1,18 @@
+<div ng-controller="PreferencesController">
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="updateRate">Update Rate</label>
+        <div class="controls">
+            <select id="updateRate" ng-model="updateRate">
+                <option value="0">No refreshes</option>
+                <option value="1000">1 second</option>
+                <option value="2000">2 seconds</option>
+                <option value="5000">5 seconds</option>
+                <option value="10000">10 seconds</option>
+                <option value="30000">30 seconds</option>
+            </select>
+        </div>
+      </div>
+    </form>
+
+</div>
