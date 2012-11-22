@@ -25,7 +25,6 @@ function CamelController($scope, workspace) {
         var name = selection.entries["name"];
         if (typeName && name) {
           selectedRouteId = trimQuotes(name);
-          console.log("Selected route id " + selectedRouteId);
         }
       }
     }
@@ -92,13 +91,6 @@ function CamelController($scope, workspace) {
         }
       });
 
-      /*
-       //var layouter = new Graph.Layout.Spring(g);
-       var layouter = new Graph.Layout.Spring(g);
-       var renderer = new Graph.Renderer.Raphael('canvas', g, width, height);
-       layouter.layout();
-       renderer.draw();
-       */
       //d3ForceGraph(nodes, links, width, height);
       dagreLayoutGraph(nodes, links, width, height);
     }
