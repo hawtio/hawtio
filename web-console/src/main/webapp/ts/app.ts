@@ -102,7 +102,8 @@ class Folder {
     if (!answer) {
       answer = defaultValue;
       this.map[key] = answer;
-      this.children.push(answer)
+      this.children.push(answer);
+      this.children = this.children.sortBy("title");
     }
     return answer;
   }

@@ -385,6 +385,7 @@ var Folder = (function () {
             answer = defaultValue;
             this.map[key] = answer;
             this.children.push(answer);
+            this.children = this.children.sortBy("title");
         }
         return answer;
     };
