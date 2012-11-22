@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.fusesource</groupId>
     <artifactId>fuse-project</artifactId>
-    <version>7.1.0.fuse-036</version>
+    <version>7.1.0.fuse-038</version>
   </parent>
 
   <groupId>org.fusesource.console</groupId>
@@ -40,7 +40,7 @@
 <!--
       <fabric-version>99-master-SNAPSHOT</fabric-version>
 -->
-    <fabric-version>7.1.0.fuse-036</fabric-version>
+    <fabric-version>7.1.0.fuse-038</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
   </properties>
 
