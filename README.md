@@ -31,7 +31,7 @@ Then in the web-console directory you will need to install the grunt plugins req
     cd web/web-console
     npm install grunt-type
 
-### Building with GruntJS
+### Incremental compile with GruntJS
 
 Its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
 
@@ -42,7 +42,7 @@ Its a simple matter of running 'grunt' :) By default this then watches for chang
 For those interested in contributing, here is a low down of the various open source libraries used to build Fuse Console.
 
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. Its awesome and is currently the only server side component of Fuse Console.
-* [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking
+* [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript - especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
 * [AngularJS](http://angularjs.org/) is the web framework for performing real time 2 way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
 * [d3](http://d3js.org/) is the visualisation library used to do the force layout graphs (for example the diagram view for ActiveMQ)
 * [cubism](http://square.github.com/cubism/) implements the real time horizon charts
@@ -61,3 +61,11 @@ If you fancy contributing - and **we love contributions!** the following should 
 * other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/lib) and are [included in the index.html](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/ts directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/ts) which is then compiled into the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js)
 * to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
 * the controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX mbeans
+
+## Developer Tools
+
+The following are recommended if you want to contribute to the code
+
+* [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
+* [Apache Maven 3.0.3 or later](http://maven.apache.org/)
+* [gruntjs](http://gruntjs.com/) - see nearly the beginning of this document for details of how to install and use.
