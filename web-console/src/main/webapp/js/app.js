@@ -68,8 +68,10 @@ function QueueController($scope, workspace) {
     });
 }
 function CreateDestinationController($scope, workspace) {
+    $scope.workspace = workspace;
     function operationSuccess() {
         $scope.destinationName = "";
+        $scope.workspace.operationCounter += 1;
         $scope.$apply();
     }
     $scope.createDestination = function (name, isQueue) {
@@ -304,6 +306,9 @@ angular.module('FuseIDE', [
     }).when('/about', {
         templateUrl: 'partials/about.html',
         controller: DetailController
+    }).when('/help', {
+        templateUrl: 'partials/help.html',
+        controller: NavBarController
     }).otherwise({
         redirectTo: '/attributes'
     });
@@ -318,6 +323,7 @@ var Workspace = (function () {
         this.url = url;
         this.jolokia = null;
         this.updateRate = 0;
+        this.operationCounter = 0;
         this.selection = [];
         this.dummyStorage = {
         };
@@ -514,8 +520,13 @@ function PreferencesController($scope, $location, workspace) {
 function MBeansController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.tree = new Folder('MBeans');
+    $scope.counter = 0;
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
         setTimeout(updateSelectionFromURL, 50);
+    });
+    $scope.$watch('workspace.operationCounter', function () {
+        $scope.counter += 1;
+        loadTree();
     });
     $scope.select = function (node) {
         $scope.workspace.selection = node;
@@ -596,24 +607,30 @@ function MBeansController($scope, $location, workspace) {
             $scope.workspace.tree = tree;
         }
         $scope.$apply();
-        $("#jmxtree").dynatree({
+        var treeElement = $("#jmxtree");
+        treeElement.dynatree({
             onActivate: function (node) {
                 var data = node.data;
                 $scope.select(data);
             },
             persist: false,
             debugLevel: 0,
-            children: tree.children
+            children: $scope.workspace.tree.children
         });
+        if($scope.counter > 1) {
+            treeElement.dynatree("getTree").reload();
+        }
         updateSelectionFromURL();
     }
-    var jolokia = workspace.jolokia;
-    jolokia.request({
-        type: 'list'
-    }, onSuccess(populateTree, {
-        canonicalNaming: false,
-        maxDepth: 2
-    }));
+    function loadTree() {
+        var jolokia = workspace.jolokia;
+        jolokia.request({
+            type: 'list'
+        }, onSuccess(populateTree, {
+            canonicalNaming: false,
+            maxDepth: 2
+        }));
+    }
 }
 var Table = (function () {
     function Table() {
@@ -1060,8 +1077,10 @@ function getSelectionCamelContextMBean(workspace) {
     return null;
 }
 function EndpointController($scope, workspace) {
+    $scope.workspace = workspace;
     function operationSuccess() {
         $scope.endpointName = "";
+        $scope.workspace.operationCounter += 1;
         $scope.$apply();
     }
     $scope.createEndpoint = function (name) {

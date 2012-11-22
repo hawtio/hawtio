@@ -50,8 +50,11 @@ function QueueController($scope, workspace) {
 }
 
 function CreateDestinationController($scope, workspace) {
+  $scope.workspace = workspace;
+
   function operationSuccess() {
     $scope.destinationName = "";
+    $scope.workspace.operationCounter +=1;
     $scope.$apply();
   }
 

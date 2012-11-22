@@ -130,8 +130,11 @@ function getSelectionCamelContextMBean(workspace) {
 }
 
 function EndpointController($scope, workspace) {
+  $scope.workspace = workspace;
+
   function operationSuccess() {
     $scope.endpointName = "";
+    $scope.workspace.operationCounter +=1;
     $scope.$apply();
   }
 
@@ -161,7 +164,7 @@ function EndpointController($scope, workspace) {
       if (domain && brokerName) {
         var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
         console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
-        var operation = "removeEndpoint(java.lang.String)"
+        var operation = "removeEndpoint(java.lang.String)";
         jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
       }
     }

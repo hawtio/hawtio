@@ -16,6 +16,7 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: CreateDestinationController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/about', {templateUrl: 'partials/about.html', controller: DetailController}).
+                  when('/help', {templateUrl: 'partials/help.html', controller: NavBarController}).
                   otherwise({redirectTo: '/attributes'});
         }).
         factory('workspace',($rootScope, $location) => {
@@ -27,6 +28,7 @@ angular.module('FuseIDE', ['ngResource']).
 class Workspace {
   public jolokia = null;
   public updateRate = 0;
+  public operationCounter = 0;
   public selection = [];
   dummyStorage = {};
 
@@ -88,7 +90,7 @@ class Folder {
   /**
    * Navigates the given paths and returns the value there or null if no value could be found
    */
-  navigate(...paths: string[]) {
+          navigate(...paths:string[]) {
     var node = this;
     paths.forEach((path) => {
       if (node) {
@@ -97,6 +99,7 @@ class Folder {
     });
     return node;
   }
+
   getOrElse(key:string, defaultValue:any = new Folder(key)):Folder {
     var answer = this.map[key];
     if (!answer) {
@@ -214,7 +217,7 @@ function NavBarController($scope, $location, workspace) {
   };
 
   $scope.isEndpointsFolder = () => {
-    return $scope.hasDomainAndLastPath('org.apache.camel','endpoints');
+    return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
   };
 
   $scope.isEndpoint = () => {
@@ -244,10 +247,17 @@ function PreferencesController($scope, $location, workspace) {
 function MBeansController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.tree = new Folder('MBeans');
+  $scope.counter = 0;
 
   $scope.$on("$routeChangeSuccess", function (event, current, previous) {
     // lets do this asynchronously to avoid Error: $digest already in progress
     setTimeout(updateSelectionFromURL, 50);
+  });
+
+  $scope.$watch('workspace.operationCounter', function () {
+    $scope.counter += 1;
+    loadTree();
+    //setTimeout(loadTree, 1);
   });
 
   $scope.select = (node) => {
@@ -331,23 +341,31 @@ function MBeansController($scope, $location, workspace) {
     }
     $scope.$apply();
 
-    $("#jmxtree").dynatree({
+    var treeElement = $("#jmxtree");
+    treeElement.dynatree({
       onActivate: function (node) {
         var data = node.data;
         $scope.select(data);
       },
       persist: false,
       debugLevel: 0,
-      children: tree.children
+      children: $scope.workspace.tree.children
     });
+    if ($scope.counter > 1) {
+      //console.log("Reloading the tree as counter is " + $scope.counter);
+      treeElement.dynatree("getTree").reload();
+    }
     updateSelectionFromURL();
   }
 
-  var jolokia = workspace.jolokia;
-  jolokia.request(
-          {type: 'list'},
-          onSuccess(populateTree, {canonicalNaming: false, maxDepth: 2}));
+  function loadTree() {
+    var jolokia = workspace.jolokia;
+    jolokia.request(
+            {type: 'list'},
+            onSuccess(populateTree, {canonicalNaming: false, maxDepth: 2}));
+  }
 
+  //loadTree();
   // TODO auto-refresh the tree...
 }
 
