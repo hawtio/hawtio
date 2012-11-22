@@ -52,3 +52,12 @@ For those interested in contributing, here is a low down of the various open sou
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
 
+## Code walkthrough
+
+If you fancy contributing - and **we love contributions!** the following should give you an overview of how the code hangs together.
+
+* Fuse Console is a single page web appplication, from [this single page of HTML](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html)
+* we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/partials) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
+* other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/lib) and are [included in the index.html](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/ts directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/ts) which is then compiled into the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js)
+* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
+* the controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX mbeans
