@@ -123,7 +123,7 @@ function DestinationController($scope, $location, workspace) {
             }
         }
     };
-    $scope.destinationName = function () {
+    $scope.name = function () {
         var selection = workspace.selection;
         if(selection) {
             return selection.title;

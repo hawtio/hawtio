@@ -111,7 +111,7 @@ function DestinationController($scope, $location, workspace) {
     }
   };
 
-  $scope.destinationName = () => {
+  $scope.name = () => {
     var selection = workspace.selection;
     if (selection) {
       return selection.title;
