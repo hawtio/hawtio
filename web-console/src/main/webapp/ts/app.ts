@@ -216,6 +216,10 @@ function NavBarController($scope, $location, workspace) {
     return $scope.hasDomainAndProperties('org.apache.camel', {type: 'context'});
   };
 
+  $scope.isCamelFolder = () => {
+    return $scope.hasDomainAndProperties('org.apache.camel');
+  };
+
   $scope.isEndpointsFolder = () => {
     return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
   };

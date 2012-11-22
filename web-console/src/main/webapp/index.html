@@ -44,7 +44,7 @@
                         <a ng-href="#/deleteQueue{{hash}}"><i class="icon-remove"></i> Delete</a></li>
                     <li ng-class="navClass('deleteTopic')" ng-show="isTopic()">
                         <a ng-href="#/deleteTopic{{hash}}"><i class="icon-remove"></i> Delete</a></li>
-                    <li ng-class="navClass('routes')" ng-show="isCamelContext() || isRoutesFolder()">
+                    <li ng-class="navClass('routes')" ng-show="isCamelFolder()">
                         <a ng-href="#/routes{{hash}}"><i class="icon-picture"></i> Diagram</a></li>
                     <li ng-class="navClass('createEndpoint')" ng-show="isEndpointsFolder()">
                         <a ng-href="#/createEndpoint{{hash}}"><i class="icon-plus"></i> Create Endpoint</a></li>

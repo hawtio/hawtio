@@ -17,6 +17,18 @@ function CamelController($scope, workspace) {
     $scope.routes = data;
     var nodes = [];
     var links = [];
+    var selectedRouteId = null;
+    var selection = workspace.selection;
+    if (selection) {
+      if (selection && selection.entries) {
+        var typeName = selection.entries["type"];
+        var name = selection.entries["name"];
+        if (typeName && name) {
+          selectedRouteId = trimQuotes(name);
+          console.log("Selected route id " + selectedRouteId);
+        }
+      }
+    }
     if (data) {
       var doc = $.parseXML(data);
       var allRoutes = $(doc).find("route");
@@ -73,8 +85,11 @@ function CamelController($scope, workspace) {
       var routeDelta = width / allRoutes.length;
       var rowX = 0;
       allRoutes.each((idx, route) => {
-        addChildren(route, null, rowX, 0);
-        rowX += routeDelta;
+        var routeId = route.getAttribute("id");
+        if (!selectedRouteId || !routeId || selectedRouteId === routeId) {
+          addChildren(route, null, rowX, 0);
+          rowX += routeDelta;
+        }
       });
 
       /*
