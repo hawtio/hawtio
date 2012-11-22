@@ -33,8 +33,11 @@ function humanizeValue(value) {
 }
 
 function trimQuotes(text:string) {
-  if ((text.startsWith('"') || text.startsWith("'")) && (text.endsWith('"') || text.endsWith("'"))) {
-    return text.substring(1, text.length - 1);
+  while (text.endsWith('"') || text.endsWith("'")) {
+    text = text.substring(0, text.length - 1);
+  }
+  while (text.startsWith('"') || text.startsWith("'")) {
+    text = text.substring(1, text.length);
   }
   return text;
 }
