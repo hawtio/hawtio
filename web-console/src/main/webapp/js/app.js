@@ -876,7 +876,7 @@ function ChartController($scope, $location, workspace) {
             var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
             $scope.context = context;
             $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-            var listKey = encodeMBean(mbean);
+            var listKey = encodeMBeanPath(mbean);
             var meta = jolokia.list(listKey);
             if(meta) {
                 var attributes = meta.attr;
