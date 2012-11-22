@@ -95,6 +95,40 @@ function CamelController($scope, workspace) {
   };
 }
 
+/**
+ * Returns the selected camel context mbean for the given selection or null if it cannot be found
+ */
+function getSelectionCamelContextMBean(workspace) {
+  if (workspace) {
+    var selection = workspace.selection;
+    var tree = workspace.tree;
+    var folderNames = selection.folderNames;
+    var entries = selection.entries;
+    var domain;
+    var contextId;
+    if (tree && selection) {
+      if (folderNames && folderNames.length > 1) {
+        domain = folderNames[0];
+        contextId = folderNames[1];
+      } else if (entries) {
+        domain = selection.domain;
+        contextId = entries["context"];
+      }
+    }
+    if (domain && contextId) {
+      var result = tree.navigate(domain, contextId, "context");
+      if (result && result.children) {
+        var contextBean = result.children.first();
+        if (contextBean.title) {
+          var contextName = contextBean.title;
+          return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+        }
+      }
+    }
+  }
+  return null;
+}
+
 function EndpointController($scope, workspace) {
   function operationSuccess() {
     $scope.endpointName = "";
@@ -103,27 +137,14 @@ function EndpointController($scope, workspace) {
 
   $scope.createEndpoint = (name) => {
     var jolokia = workspace.jolokia;
-    var selection = workspace.selection;
-    var folderNames = selection.folderNames;
-    var tree = workspace.tree;
-    if (selection && jolokia && folderNames && folderNames.length > 1) {
-      var domain = folderNames[0];
-      var contextId = folderNames[1];
-      // lets find the context mbean from the tree
-      if (tree) {
-        var result = tree.navigate(domain, contextId, "context");
-        if (result && result.children) {
-          var contextBean = result.children.first();
-          if (contextBean.title) {
-            var contextName = contextBean.title;
-            var mbean = "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
-            console.log("Creating endpoint: " + name + " on mbean " + mbean);
-            var operation = "createEndpoint(java.lang.String)";
-            jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
-          } else {
-            console.log("Can't find the CamelContext name!");
-          }
-        }
+    if (jolokia) {
+      var mbean = getSelectionCamelContextMBean(workspace);
+      if (mbean) {
+        console.log("Creating endpoint: " + name + " on mbean " + mbean);
+        var operation = "createEndpoint(java.lang.String)";
+        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+      } else {
+        console.log("Can't find the CamelContext MBean!");
       }
     }
   };
@@ -147,3 +168,32 @@ function EndpointController($scope, workspace) {
   };
 }
 
+function SendMessageController($scope, workspace) {
+  $scope.workspace = workspace;
+
+  var sendWorked = () => {
+    console.log("Sent message!");
+  };
+
+  $scope.sendMessage = (body) => {
+    var selection = workspace.selection;
+    if (selection) {
+      var mbean = selection.objectName;
+      if (mbean) {
+        var jolokia = workspace.jolokia;
+        // if camel then use a different operation on the camel context mbean
+        if (selection.domain === "org.apache.camel") {
+          var uri = selection.title;
+          mbean = getSelectionCamelContextMBean(workspace);
+          if (mbean) {
+            jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
+          } else {
+            console.log("Could not find CamelContext MBean!");
+          }
+        } else {
+          jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
+        }
+      }
+    }
+  };
+}

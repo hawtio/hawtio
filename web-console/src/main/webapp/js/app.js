@@ -66,20 +66,6 @@ function QueueController($scope, workspace) {
             }
         }
     });
-    var sendWorked = function () {
-        console.log("Sent message!");
-    };
-    $scope.sendMessage = function (body) {
-        var selection = workspace.selection;
-        if(selection) {
-            var mbean = selection.objectName;
-            if(mbean) {
-                var jolokia = workspace.jolokia;
-                console.log("Sending message to destination " + mbean);
-                jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
-            }
-        }
-    };
 }
 function CreateDestinationController($scope, workspace) {
     function operationSuccess() {
@@ -290,7 +276,7 @@ angular.module('FuseIDE', [
         controller: QueueController
     }).when('/sendMessage', {
         templateUrl: 'partials/sendMessage.html',
-        controller: QueueController
+        controller: SendMessageController
     }).when('/routes', {
         templateUrl: 'partials/routes.html',
         controller: CamelController
@@ -502,6 +488,11 @@ function NavBarController($scope, $location, workspace) {
     };
     $scope.isEndpointsFolder = function () {
         return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
+    };
+    $scope.isEndpoint = function () {
+        return $scope.hasDomainAndProperties('org.apache.camel', {
+            type: 'endpoints'
+        });
     };
     $scope.isRoutesFolder = function () {
         return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
@@ -1030,6 +1021,38 @@ function CamelController($scope, workspace) {
         $scope.$apply();
     };
 }
+function getSelectionCamelContextMBean(workspace) {
+    if(workspace) {
+        var selection = workspace.selection;
+        var tree = workspace.tree;
+        var folderNames = selection.folderNames;
+        var entries = selection.entries;
+        var domain;
+        var contextId;
+        if(tree && selection) {
+            if(folderNames && folderNames.length > 1) {
+                domain = folderNames[0];
+                contextId = folderNames[1];
+            } else {
+                if(entries) {
+                    domain = selection.domain;
+                    contextId = entries["context"];
+                }
+            }
+        }
+        if(domain && contextId) {
+            var result = tree.navigate(domain, contextId, "context");
+            if(result && result.children) {
+                var contextBean = result.children.first();
+                if(contextBean.title) {
+                    var contextName = contextBean.title;
+                    return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+                }
+            }
+        }
+    }
+    return null;
+}
 function EndpointController($scope, workspace) {
     function operationSuccess() {
         $scope.endpointName = "";
@@ -1037,26 +1060,14 @@ function EndpointController($scope, workspace) {
     }
     $scope.createEndpoint = function (name) {
         var jolokia = workspace.jolokia;
-        var selection = workspace.selection;
-        var folderNames = selection.folderNames;
-        var tree = workspace.tree;
-        if(selection && jolokia && folderNames && folderNames.length > 1) {
-            var domain = folderNames[0];
-            var contextId = folderNames[1];
-            if(tree) {
-                var result = tree.navigate(domain, contextId, "context");
-                if(result && result.children) {
-                    var contextBean = result.children.first();
-                    if(contextBean.title) {
-                        var contextName = contextBean.title;
-                        var mbean = "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
-                        console.log("Creating endpoint: " + name + " on mbean " + mbean);
-                        var operation = "createEndpoint(java.lang.String)";
-                        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
-                    } else {
-                        console.log("Can't find the CamelContext name!");
-                    }
-                }
+        if(jolokia) {
+            var mbean = getSelectionCamelContextMBean(workspace);
+            if(mbean) {
+                console.log("Creating endpoint: " + name + " on mbean " + mbean);
+                var operation = "createEndpoint(java.lang.String)";
+                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+            } else {
+                console.log("Can't find the CamelContext MBean!");
             }
         }
     };
@@ -1074,6 +1085,32 @@ function EndpointController($scope, workspace) {
                 console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
                 var operation = "removeEndpoint(java.lang.String)";
                 jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+            }
+        }
+    };
+}
+function SendMessageController($scope, workspace) {
+    $scope.workspace = workspace;
+    var sendWorked = function () {
+        console.log("Sent message!");
+    };
+    $scope.sendMessage = function (body) {
+        var selection = workspace.selection;
+        if(selection) {
+            var mbean = selection.objectName;
+            if(mbean) {
+                var jolokia = workspace.jolokia;
+                if(selection.domain === "org.apache.camel") {
+                    var uri = selection.title;
+                    mbean = getSelectionCamelContextMBean(workspace);
+                    if(mbean) {
+                        jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
+                    } else {
+                        console.log("Could not find CamelContext MBean!");
+                    }
+                } else {
+                    jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
+                }
             }
         }
     };

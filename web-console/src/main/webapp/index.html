@@ -32,7 +32,7 @@
                         <a ng-href="#/charts{{hash}}"><i class="icon-signal"></i> Charts</a></li>
                     <li ng-class="navClass('browseQueue')" ng-show="isQueue()">
                         <a ng-href="#/browseQueue{{hash}}"><i class="icon-envelope"></i> Browse</a></li>
-                    <li ng-class="navClass('sendMessage')" ng-show="isQueue() || isTopic()">
+                    <li ng-class="navClass('sendMessage')" ng-show="isQueue() || isTopic() || isEndpoint()">
                         <a ng-href="#/sendMessage{{hash}}"><i class="icon-pencil"></i> Send</a></li>
                     <li ng-class="navClass('subscribers')" ng-show="isActiveMQFolder()">
                         <a ng-href="#/subscribers{{hash}}"><i class="icon-picture"></i> Diagram</a></li>

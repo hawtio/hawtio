@@ -47,22 +47,6 @@ function QueueController($scope, workspace) {
       }
     }
   });
-
-  var sendWorked = () => {
-    console.log("Sent message!");
-  };
-
-  $scope.sendMessage = (body) => {
-    var selection = workspace.selection;
-    if (selection) {
-      var mbean = selection.objectName;
-      if (mbean) {
-        var jolokia = workspace.jolokia;
-        console.log("Sending message to destination " + mbean);
-        jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
-      }
-    }
-  };
 }
 
 function CreateDestinationController($scope, workspace) {

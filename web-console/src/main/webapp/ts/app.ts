@@ -6,7 +6,7 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/charts', {templateUrl: 'partials/charts.html', controller: ChartController}).
                   when('/logs', {templateUrl: 'partials/logs.html', controller: LogController}).
                   when('/browseQueue', {templateUrl: 'partials/browseQueue.html', controller: QueueController}).
-                  when('/sendMessage', {templateUrl: 'partials/sendMessage.html', controller: QueueController}).
+                  when('/sendMessage', {templateUrl: 'partials/sendMessage.html', controller: SendMessageController}).
                   when('/routes', {templateUrl: 'partials/routes.html', controller: CamelController}).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).
                   when('/createEndpoint', {templateUrl: 'partials/createEndpoint.html', controller: EndpointController}).
@@ -214,6 +214,10 @@ function NavBarController($scope, $location, workspace) {
 
   $scope.isEndpointsFolder = () => {
     return $scope.hasDomainAndLastPath('org.apache.camel','endpoints');
+  };
+
+  $scope.isEndpoint = () => {
+    return $scope.hasDomainAndProperties('org.apache.camel', {type: 'endpoints'});
   };
 
   $scope.isRoutesFolder = () => {
@@ -695,3 +699,5 @@ function ChartController($scope, $location, workspace) {
     }
   });
 }
+
+
