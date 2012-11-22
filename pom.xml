@@ -45,17 +45,6 @@
   </properties>
 
   <repositories>
-      <repository>
-        <id>release-proxy.fusesource.org</id>
-        <name>FuseSource Release Proxy Repository</name>
-        <url>http://repo.fusesource.com/nexus/content/groups/m2-release-proxy</url>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
     <repository>
       <id>release.fusesource.org</id>
       <name>FuseSource Release Repository</name>
@@ -80,17 +69,6 @@
     </repository>
   </repositories>
   <pluginRepositories>
-    <pluginRepository>
-      <id>release-proxy.fusesource.org</id>
-      <name>FuseSource Release Proxy Repository</name>
-      <url>http://repo.fusesource.com/nexus/content/groups/m2-release-proxy</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
     <pluginRepository>
       <id>release.fusesource.org</id>
       <name>FuseSource Release Repository</name>
