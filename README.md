@@ -1,6 +1,6 @@
-# Fuse Web Console
+# Fuse Console
 
-The Fuse Web Console provides a web based console for working with [Fuse](http://fuse.fusesource.org/)
+A web based console for working with [Fuse](http://fuse.fusesource.org/).
 
 ## Trying out the console from Maven
 
