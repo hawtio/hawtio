@@ -271,19 +271,6 @@ function SubscriberGraphController($scope, workspace) {
         }
     });
 }
-function humanizeValue(value) {
-    if(value) {
-        var text = value.toString();
-        return trimQuotes(text.underscore().humanize());
-    }
-    return value;
-}
-function trimQuotes(text) {
-    if((text.startsWith('"') || text.startsWith("'")) && (text.endsWith('"') || text.endsWith("'"))) {
-        return text.substring(1, text.length - 1);
-    }
-    return text;
-}
 angular.module('FuseIDE', [
     'ngResource'
 ]).config(function ($routeProvider) {
@@ -310,6 +297,9 @@ angular.module('FuseIDE', [
     }).when('/subscribers', {
         templateUrl: 'partials/subscribers.html',
         controller: SubscriberGraphController
+    }).when('/createEndpoint', {
+        templateUrl: 'partials/createEndpoint.html',
+        controller: EndpointController
     }).when('/createQueue', {
         templateUrl: 'partials/createQueue.html',
         controller: CreateDestinationController
@@ -337,78 +327,6 @@ angular.module('FuseIDE', [
 }).filter('humanize', function () {
     return humanizeValue;
 });
-var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
-var ignoreDetailsOnBigFolders = [
-    [
-        [
-            'java.lang'
-        ], 
-        [
-            'MemoryPool', 
-            'GarbageCollector'
-        ]
-    ]
-];
-function ignoreFolderDetails(node) {
-    return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
-}
-function folderMatchesPatterns(node, patterns) {
-    if(node) {
-        var folderNames = node.folderNames;
-        if(folderNames) {
-            return patterns.any(function (ignorePaths) {
-                for(var i = 0; i < ignorePaths.length; i++) {
-                    var folderName = folderNames[i];
-                    var ignorePath = ignorePaths[i];
-                    if(!folderName) {
-                        return false;
-                    }
-                    var idx = ignorePath.indexOf(folderName);
-                    if(idx < 0) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-    }
-    return false;
-}
-function scopeStoreJolokiaHandle($scope, jolokia, jolokiaHandle) {
-    if(jolokiaHandle) {
-        $scope.$on('$destroy', function () {
-            closeHandle($scope, jolokia);
-        });
-        $scope.jolokiaHandle = jolokiaHandle;
-    }
-}
-function closeHandle($scope, jolokia) {
-    var jolokiaHandle = $scope.jolokiaHandle;
-    if(jolokiaHandle) {
-        jolokia.unregister(jolokiaHandle);
-        $scope.jolokiaHandle = null;
-    }
-}
-function onSuccess(fn, options) {
-    if (typeof options === "undefined") { options = {
-    }; }
-    options['ignoreErrors'] = true;
-    options['mimeType'] = 'application/json';
-    options['success'] = fn;
-    if(!options['error']) {
-        options['error'] = function (response) {
-            console.log("Jolokia request failed: " + response.error);
-        };
-    }
-    return options;
-}
-function supportsLocalStorage() {
-    try  {
-        return 'localStorage' in window && window['localStorage'] !== null;
-    } catch (e) {
-        return false;
-    }
-}
 var Workspace = (function () {
     function Workspace(url) {
         this.jolokia = null;
@@ -460,6 +378,19 @@ var Folder = (function () {
     }
     Folder.prototype.get = function (key) {
         return this.map[key];
+    };
+    Folder.prototype.navigate = function () {
+        var paths = [];
+        for (var _i = 0; _i < (arguments.length - 0); _i++) {
+            paths[_i] = arguments[_i + 0];
+        }
+        var node = this;
+        paths.forEach(function (path) {
+            if(node) {
+                node = node.get(path);
+            }
+        });
+        return node;
     };
     Folder.prototype.getOrElse = function (key, defaultValue) {
         if (typeof defaultValue === "undefined") { defaultValue = new Folder(key); }
@@ -568,6 +499,9 @@ function NavBarController($scope, $location, workspace) {
         return $scope.hasDomainAndProperties('org.apache.camel', {
             type: 'context'
         });
+    };
+    $scope.isEndpointsFolder = function () {
+        return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
     };
     $scope.isRoutesFolder = function () {
         return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
@@ -926,28 +860,6 @@ function LogController($scope, $location, workspace) {
     });
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
-var numberTypeNames = {
-    'byte': true,
-    'short': true,
-    'integer': true,
-    'long': true,
-    'float': true,
-    'double': true,
-    'java.lang.Byte': true,
-    'java.lang.Short': true,
-    'java.lang.Integer': true,
-    'java.lang.Long': true,
-    'java.lang.Float': true,
-    'java.lang.Double': true
-};
-function isNumberTypeName(typeName) {
-    if(typeName) {
-        var text = typeName.toString().toLowerCase();
-        var flag = numberTypeNames[text];
-        return flag;
-    }
-    return false;
-}
 function ChartController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.metrics = [];
@@ -970,7 +882,7 @@ function ChartController($scope, $location, workspace) {
             var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
             $scope.context = context;
             $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-            var listKey = mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
+            var listKey = encodeMBean(mbean);
             var meta = jolokia.list(listKey);
             if(meta) {
                 var attributes = meta.attr;
@@ -1113,6 +1025,54 @@ function CamelController($scope, workspace) {
             dagreLayoutGraph(nodes, links, width, height);
         }
         $scope.$apply();
+    };
+}
+function EndpointController($scope, workspace) {
+    function operationSuccess() {
+        $scope.endpointName = "";
+        $scope.$apply();
+    }
+    $scope.createEndpoint = function (name) {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var folderNames = selection.folderNames;
+        var tree = workspace.tree;
+        if(selection && jolokia && folderNames && folderNames.length > 1) {
+            var domain = folderNames[0];
+            var contextId = folderNames[1];
+            if(tree) {
+                var result = tree.navigate(domain, contextId, "context");
+                if(result && result.children) {
+                    var contextBean = result.children.first();
+                    if(contextBean.title) {
+                        var contextName = contextBean.title;
+                        var mbean = "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+                        console.log("Creating endpoint: " + name + " on mbean " + mbean);
+                        var operation = "createEndpoint(java.lang.String)";
+                        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+                    } else {
+                        console.log("Can't find the CamelContext name!");
+                    }
+                }
+            }
+        }
+    };
+    $scope.deleteEndpoint = function () {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var entries = selection.entries;
+        if(selection && jolokia && entries) {
+            var domain = selection.domain;
+            var brokerName = entries["BrokerName"];
+            var name = entries["Destination"];
+            var isQueue = "Topic" !== entries["Type"];
+            if(domain && brokerName) {
+                var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
+                console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
+                var operation = "removeEndpoint(java.lang.String)";
+                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+            }
+        }
     };
 }
 function d3ForceGraph(scope, nodes, links, canvasSelector) {
@@ -1292,4 +1252,117 @@ function dagreLayoutGraph(nodes, links, width, height) {
     });
     nodes.call(nodeDrag);
     edges.call(edgeDrag);
+}
+var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
+var ignoreDetailsOnBigFolders = [
+    [
+        [
+            'java.lang'
+        ], 
+        [
+            'MemoryPool', 
+            'GarbageCollector'
+        ]
+    ]
+];
+var numberTypeNames = {
+    'byte': true,
+    'short': true,
+    'integer': true,
+    'long': true,
+    'float': true,
+    'double': true,
+    'java.lang.Byte': true,
+    'java.lang.Short': true,
+    'java.lang.Integer': true,
+    'java.lang.Long': true,
+    'java.lang.Float': true,
+    'java.lang.Double': true
+};
+function humanizeValue(value) {
+    if(value) {
+        var text = value.toString();
+        return trimQuotes(text.underscore().humanize());
+    }
+    return value;
+}
+function trimQuotes(text) {
+    if((text.startsWith('"') || text.startsWith("'")) && (text.endsWith('"') || text.endsWith("'"))) {
+        return text.substring(1, text.length - 1);
+    }
+    return text;
+}
+function ignoreFolderDetails(node) {
+    return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
+}
+function folderMatchesPatterns(node, patterns) {
+    if(node) {
+        var folderNames = node.folderNames;
+        if(folderNames) {
+            return patterns.any(function (ignorePaths) {
+                for(var i = 0; i < ignorePaths.length; i++) {
+                    var folderName = folderNames[i];
+                    var ignorePath = ignorePaths[i];
+                    if(!folderName) {
+                        return false;
+                    }
+                    var idx = ignorePath.indexOf(folderName);
+                    if(idx < 0) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+    }
+    return false;
+}
+function scopeStoreJolokiaHandle($scope, jolokia, jolokiaHandle) {
+    if(jolokiaHandle) {
+        $scope.$on('$destroy', function () {
+            closeHandle($scope, jolokia);
+        });
+        $scope.jolokiaHandle = jolokiaHandle;
+    }
+}
+function closeHandle($scope, jolokia) {
+    var jolokiaHandle = $scope.jolokiaHandle;
+    if(jolokiaHandle) {
+        jolokia.unregister(jolokiaHandle);
+        $scope.jolokiaHandle = null;
+    }
+}
+function onSuccess(fn, options) {
+    if (typeof options === "undefined") { options = {
+    }; }
+    options['ignoreErrors'] = true;
+    options['mimeType'] = 'application/json';
+    options['success'] = fn;
+    if(!options['error']) {
+        options['error'] = function (response) {
+            console.log("Jolokia request failed: " + response.error);
+        };
+    }
+    return options;
+}
+function supportsLocalStorage() {
+    try  {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
+}
+function isNumberTypeName(typeName) {
+    if(typeName) {
+        var text = typeName.toString().toLowerCase();
+        var flag = numberTypeNames[text];
+        return flag;
+    }
+    return false;
+}
+function encodeMBeanPath(mbean) {
+    return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
+}
+function encodeMBean(mbean) {
+    return mbean.replace(/\//g, '!/').escapeURL();
 }

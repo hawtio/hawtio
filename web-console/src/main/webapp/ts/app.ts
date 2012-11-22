@@ -1,18 +1,3 @@
-function humanizeValue(value) {
-  if (value) {
-    var text = value.toString();
-    return trimQuotes(text.underscore().humanize());
-  }
-  return value;
-}
-
-function trimQuotes(text:string) {
-  if ((text.startsWith('"') || text.startsWith("'")) && (text.endsWith('"') || text.endsWith("'"))) {
-    return text.substring(1, text.length - 1);
-  }
-  return text;
-}
-
 angular.module('FuseIDE', ['ngResource']).
         config(($routeProvider) => {
           $routeProvider.
@@ -24,6 +9,7 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/sendMessage', {templateUrl: 'partials/sendMessage.html', controller: QueueController}).
                   when('/routes', {templateUrl: 'partials/routes.html', controller: CamelController}).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).
+                  when('/createEndpoint', {templateUrl: 'partials/createEndpoint.html', controller: EndpointController}).
                   when('/createQueue', {templateUrl: 'partials/createQueue.html', controller: CreateDestinationController}).
                   when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: CreateDestinationController}).
                   when('/deleteQueue', {templateUrl: 'partials/deleteQueue.html', controller: CreateDestinationController}).
@@ -37,82 +23,6 @@ angular.module('FuseIDE', ['ngResource']).
           return new Workspace(url);
         }).
         filter('humanize', () => humanizeValue);
-
-var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
-
-// the paths into the mbean tree which we should ignore doing a folder view
-// due to the huge size involved!
-var ignoreDetailsOnBigFolders = [
-  [
-    ['java.lang'],
-    ['MemoryPool', 'GarbageCollector']
-  ]
-];
-
-function ignoreFolderDetails(node) {
-  return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
-}
-
-function folderMatchesPatterns(node, patterns) {
-  if (node) {
-    var folderNames = node.folderNames;
-    if (folderNames) {
-      return patterns.any((ignorePaths) => {
-        for (var i = 0; i < ignorePaths.length; i++) {
-          var folderName = folderNames[i];
-          var ignorePath = ignorePaths[i];
-          if (!folderName) return false;
-          var idx = ignorePath.indexOf(folderName);
-          if (idx < 0) {
-            return false;
-          }
-        }
-        return true;
-      });
-    }
-  }
-  return false;
-}
-
-function scopeStoreJolokiaHandle($scope, jolokia, jolokiaHandle) {
-  // TODO do we even need to store the jolokiaHandle in the scope?
-  if (jolokiaHandle) {
-    $scope.$on('$destroy', function () {
-      closeHandle($scope, jolokia)
-    });
-    $scope.jolokiaHandle = jolokiaHandle;
-  }
-}
-
-function closeHandle($scope, jolokia) {
-  var jolokiaHandle = $scope.jolokiaHandle
-  if (jolokiaHandle) {
-    //console.log('Closing the handle ' + jolokiaHandle);
-    jolokia.unregister(jolokiaHandle);
-    $scope.jolokiaHandle = null;
-  }
-}
-
-function onSuccess(fn, options = {}) {
-  options['ignoreErrors'] = true;
-  options['mimeType'] = 'application/json';
-  options['success'] = fn;
-  if (!options['error']) {
-    options['error'] = function (response) {
-      //alert("Jolokia request failed: " + response.error);
-      console.log("Jolokia request failed: " + response.error);
-    };
-  }
-  return options;
-}
-
-function supportsLocalStorage() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
-}
 
 class Workspace {
   public jolokia = null;
@@ -175,6 +85,18 @@ class Folder {
     return this.map[key];
   }
 
+  /**
+   * Navigates the given paths and returns the value there or null if no value could be found
+   */
+  navigate(...paths: string[]) {
+    var node = this;
+    paths.forEach((path) => {
+      if (node) {
+        node = node.get(path);
+      }
+    });
+    return node;
+  }
   getOrElse(key:string, defaultValue:any = new Folder(key)):Folder {
     var answer = this.map[key];
     if (!answer) {
@@ -288,6 +210,10 @@ function NavBarController($scope, $location, workspace) {
 
   $scope.isCamelContext = () => {
     return $scope.hasDomainAndProperties('org.apache.camel', {type: 'context'});
+  };
+
+  $scope.isEndpointsFolder = () => {
+    return $scope.hasDomainAndLastPath('org.apache.camel','endpoints');
   };
 
   $scope.isRoutesFolder = () => {
@@ -643,29 +569,6 @@ function LogController($scope, $location, workspace) {
   scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
 
-var numberTypeNames = {
-  'byte': true,
-  'short': true,
-  'integer': true,
-  'long': true,
-  'float': true,
-  'double': true,
-  'java.lang.Byte': true,
-  'java.lang.Short': true,
-  'java.lang.Integer': true,
-  'java.lang.Long': true,
-  'java.lang.Float': true,
-  'java.lang.Double': true
-}
-function isNumberTypeName(typeName):bool {
-  if (typeName) {
-    var text = typeName.toString().toLowerCase();
-    var flag = numberTypeNames[text];
-    return flag;
-  }
-  return false;
-}
-
 function ChartController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.metrics = [];
@@ -732,7 +635,7 @@ function ChartController($scope, $location, workspace) {
       // lets get the attributes for this mbean
 
       // we need to escape the mbean path for list
-      var listKey = mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
+      var listKey = encodeMBean(mbean);
       //console.log("Looking up mbeankey: " + listKey);
       var meta = jolokia.list(listKey);
       if (meta) {
