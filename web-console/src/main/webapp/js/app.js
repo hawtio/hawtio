@@ -67,10 +67,21 @@ function QueueController($scope, workspace) {
         }
     });
 }
-function CreateDestinationController($scope, workspace) {
+function DestinationController($scope, $location, workspace) {
     $scope.workspace = workspace;
     function operationSuccess() {
         $scope.destinationName = "";
+        $scope.workspace.operationCounter += 1;
+        $scope.$apply();
+    }
+    function deleteSuccess() {
+        if(workspace.selection) {
+            var parent = workspace.selection.parent;
+            if(parent) {
+                $scope.workspace.selection = parent;
+                updateSelectionNode($location, parent);
+            }
+        }
         $scope.workspace.operationCounter += 1;
         $scope.$apply();
     }
@@ -108,7 +119,7 @@ function CreateDestinationController($scope, workspace) {
                 } else {
                     operation = "removeTopic(java.lang.String)";
                 }
-                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+                jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
             }
         }
     };
@@ -290,16 +301,16 @@ angular.module('FuseIDE', [
         controller: EndpointController
     }).when('/createQueue', {
         templateUrl: 'partials/createQueue.html',
-        controller: CreateDestinationController
+        controller: DestinationController
     }).when('/createTopic', {
         templateUrl: 'partials/createTopic.html',
-        controller: CreateDestinationController
+        controller: DestinationController
     }).when('/deleteQueue', {
         templateUrl: 'partials/deleteQueue.html',
-        controller: CreateDestinationController
+        controller: DestinationController
     }).when('/deleteTopic', {
         templateUrl: 'partials/deleteTopic.html',
-        controller: CreateDestinationController
+        controller: DestinationController
     }).when('/debug', {
         templateUrl: 'partials/debug.html',
         controller: DetailController
@@ -520,6 +531,18 @@ function PreferencesController($scope, $location, workspace) {
         window.open("#/attributes?url=" + encodeURIComponent(url));
     };
 }
+function updateSelectionNode($location, node) {
+    var key = null;
+    if(node) {
+        key = node['key'];
+    }
+    var q = {
+    };
+    if(key) {
+        q['nid'] = key;
+    }
+    $location.search(q);
+}
 function MBeansController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.tree = new Folder('MBeans');
@@ -533,16 +556,7 @@ function MBeansController($scope, $location, workspace) {
     });
     $scope.select = function (node) {
         $scope.workspace.selection = node;
-        var key = null;
-        if(node) {
-            key = node['key'];
-        }
-        var q = {
-        };
-        if(key) {
-            q['nid'] = key;
-        }
-        $location.search(q);
+        updateSelectionNode($location, node);
         $scope.$apply();
     };
     function updateSelectionFromURL() {
@@ -600,6 +614,7 @@ function MBeansController($scope, $location, workspace) {
                     path: path,
                     paths: paths,
                     objectName: domain + ":" + path,
+                    parent: folder,
                     entries: entries
                 };
                 folder.getOrElse(lastPath, mbeanInfo);
@@ -976,7 +991,6 @@ function CamelController($scope, workspace) {
                 var name = selection.entries["name"];
                 if(typeName && name) {
                     selectedRouteId = trimQuotes(name);
-                    console.log("Selected route id " + selectedRouteId);
                 }
             }
         }

@@ -10,10 +10,10 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/routes', {templateUrl: 'partials/routes.html', controller: CamelController}).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).
                   when('/createEndpoint', {templateUrl: 'partials/createEndpoint.html', controller: EndpointController}).
-                  when('/createQueue', {templateUrl: 'partials/createQueue.html', controller: CreateDestinationController}).
-                  when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: CreateDestinationController}).
-                  when('/deleteQueue', {templateUrl: 'partials/deleteQueue.html', controller: CreateDestinationController}).
-                  when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: CreateDestinationController}).
+                  when('/createQueue', {templateUrl: 'partials/createQueue.html', controller: DestinationController}).
+                  when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: DestinationController}).
+                  when('/deleteQueue', {templateUrl: 'partials/deleteQueue.html', controller: DestinationController}).
+                  when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: DestinationController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/about', {templateUrl: 'partials/about.html', controller: DetailController}).
                   when('/help', {templateUrl: 'partials/help.html', controller: NavBarController}).
@@ -248,6 +248,17 @@ function PreferencesController($scope, $location, workspace) {
   }
 }
 
+function updateSelectionNode($location, node) {
+  var key = null;
+  if (node) {
+    key = node['key'];
+  }
+  var q = {};
+  if (key) {
+    q['nid'] = key
+  }
+  $location.search(q);
+}
 function MBeansController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.tree = new Folder('MBeans');
@@ -266,15 +277,7 @@ function MBeansController($scope, $location, workspace) {
 
   $scope.select = (node) => {
     $scope.workspace.selection = node;
-    var key = null;
-    if (node) {
-      key = node['key'];
-    }
-    var q = {};
-    if (key) {
-      q['nid'] = key
-    }
-    $location.search(q);
+    updateSelectionNode($location, node);
     $scope.$apply();
   };
 
@@ -332,6 +335,7 @@ function MBeansController($scope, $location, workspace) {
           path: path,
           paths: paths,
           objectName: domain + ":" + path,
+          parent: folder,
           entries: entries
         };
         folder.getOrElse(lastPath, mbeanInfo);

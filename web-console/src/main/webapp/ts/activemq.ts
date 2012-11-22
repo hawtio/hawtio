@@ -49,11 +49,24 @@ function QueueController($scope, workspace) {
   });
 }
 
-function CreateDestinationController($scope, workspace) {
+function DestinationController($scope, $location, workspace) {
   $scope.workspace = workspace;
 
   function operationSuccess() {
     $scope.destinationName = "";
+    $scope.workspace.operationCounter +=1;
+    $scope.$apply();
+  }
+
+  function deleteSuccess() {
+    // lets set the selection to the parent
+    if (workspace.selection) {
+      var parent = workspace.selection.parent;
+      if (parent) {
+        $scope.workspace.selection = parent;
+        updateSelectionNode($location, parent);
+      }
+    }
     $scope.workspace.operationCounter +=1;
     $scope.$apply();
   }
@@ -93,7 +106,7 @@ function CreateDestinationController($scope, workspace) {
         } else {
           operation = "removeTopic(java.lang.String)";
         }
-        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+        jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
       }
     }
   };
