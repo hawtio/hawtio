@@ -30,7 +30,7 @@ class Workspace {
   public selection = [];
   dummyStorage = {};
 
-  constructor(url:string) {
+  constructor(public url:string) {
     var rate = this.getUpdateRate();
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
@@ -224,17 +224,21 @@ function NavBarController($scope, $location, workspace) {
   $scope.isRoutesFolder = () => {
     return $scope.hasDomainAndLastPath('org.apache.camel', 'routes')
   };
-
-
 }
 
-function PreferencesController($scope, workspace) {
+function PreferencesController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.updateRate = workspace.getUpdateRate();
 
   $scope.$watch('updateRate', () => {
     $scope.workspace.setUpdateRate($scope.updateRate);
   });
+
+  $scope.gotoServer = (url) => {
+    console.log("going to server: " + url);
+    //window.location = "#/attributes?url=" + url;
+    window.open("#/attributes?url=" + encodeURIComponent(url));
+  }
 }
 
 function MBeansController($scope, $location, workspace) {
@@ -700,5 +704,7 @@ function ChartController($scope, $location, workspace) {
     }
   });
 }
+
+
 
 

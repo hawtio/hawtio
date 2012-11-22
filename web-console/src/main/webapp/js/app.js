@@ -315,6 +315,7 @@ angular.module('FuseIDE', [
 });
 var Workspace = (function () {
     function Workspace(url) {
+        this.url = url;
         this.jolokia = null;
         this.updateRate = 0;
         this.selection = [];
@@ -499,12 +500,16 @@ function NavBarController($scope, $location, workspace) {
         return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
     };
 }
-function PreferencesController($scope, workspace) {
+function PreferencesController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.updateRate = workspace.getUpdateRate();
     $scope.$watch('updateRate', function () {
         $scope.workspace.setUpdateRate($scope.updateRate);
     });
+    $scope.gotoServer = function (url) {
+        console.log("going to server: " + url);
+        window.open("#/attributes?url=" + encodeURIComponent(url));
+    };
 }
 function MBeansController($scope, $location, workspace) {
     $scope.workspace = workspace;

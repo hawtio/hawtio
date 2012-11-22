@@ -1,18 +1,35 @@
 <div ng-controller="PreferencesController">
-    <form class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="updateRate">Update Rate</label>
-        <div class="controls">
-            <select id="updateRate" ng-model="updateRate">
-                <option value="0">No refreshes</option>
-                <option value="1000">1 second</option>
-                <option value="2000">2 seconds</option>
-                <option value="5000">5 seconds</option>
-                <option value="10000">10 seconds</option>
-                <option value="30000">30 seconds</option>
-            </select>
-        </div>
-      </div>
-    </form>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="updateRate" title="How frequently the data is updated in the browser">Update Rate</label>
 
+      <div class="controls">
+        <select id="updateRate" ng-model="updateRate">
+          <option value="0">No refreshes</option>
+          <option value="1000">1 second</option>
+          <option value="2000">2 seconds</option>
+          <option value="5000">5 seconds</option>
+          <option value="10000">10 seconds</option>
+          <option value="30000">30 seconds</option>
+        </select>
+      </div>
+    </div>
+  </form>
+<!--
+  <form class="form-horizontal" autocomplete="on" action="#/attributes" method="get">
+-->
+  <form class="form-horizontal" autocomplete="on">
+    <div class="control-group">
+      <label class="control-label" for="url">Go to server</label>
+
+      <div class="controls">
+<!--
+        <input id="url" name="url" type="text" placeholder="URL of JVM process to manage"/>
+        <input type="submit" value="Go To Server" class="btn">
+-->
+        <input id="url" name="url" type="text" placeholder="http://host:port/jolokia" ng-model="url"/>
+        <input type="submit" value="Go To Server" class="btn" ng-disabled="!url" ng-click="gotoServer(url)" title="Opens a new browser window connecting to the given JVM process via its Jolokia servlet URL">
+      </div>
+    </div>
+  </form>
 </div>
