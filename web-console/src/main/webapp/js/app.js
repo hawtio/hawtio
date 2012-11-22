@@ -537,7 +537,10 @@ function MBeansController($scope, $location, workspace) {
     function updateSelectionFromURL() {
         var key = $location.search()['nid'];
         if(key) {
-            $("#jmxtree").dynatree("getTree").activateKey(key);
+            var node = $("#jmxtree").dynatree("getTree").activateKey(key);
+            if(node) {
+                node.expand(true);
+            }
         }
     }
     function populateTree(response) {
