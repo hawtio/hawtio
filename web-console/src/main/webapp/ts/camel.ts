@@ -3,16 +3,12 @@ function CamelController($scope, workspace) {
   $scope.routes = [];
 
   $scope.$watch('workspace.selection', function () {
-    // TODO could we refactor the get mbean thingy??
-    var selection = workspace.selection;
-    if (selection) {
-      var mbean = selection.objectName;
-      if (mbean) {
-        var jolokia = workspace.jolokia;
-        jolokia.request(
-                {type: 'exec', mbean: mbean, operation: 'dumpRoutesAsXml()'},
-                onSuccess(populateTable));
-      }
+    var mbean = getSelectionCamelContextMBean(workspace);
+    if (mbean) {
+      var jolokia = workspace.jolokia;
+      jolokia.request(
+              {type: 'exec', mbean: mbean, operation: 'dumpRoutesAsXml()'},
+              onSuccess(populateTable));
     }
   });
 
@@ -134,7 +130,7 @@ function EndpointController($scope, workspace) {
 
   function operationSuccess() {
     $scope.endpointName = "";
-    $scope.workspace.operationCounter +=1;
+    $scope.workspace.operationCounter += 1;
     $scope.$apply();
   }
 

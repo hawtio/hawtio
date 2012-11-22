@@ -950,17 +950,14 @@ function CamelController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
     $scope.$watch('workspace.selection', function () {
-        var selection = workspace.selection;
-        if(selection) {
-            var mbean = selection.objectName;
-            if(mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({
-                    type: 'exec',
-                    mbean: mbean,
-                    operation: 'dumpRoutesAsXml()'
-                }, onSuccess(populateTable));
-            }
+        var mbean = getSelectionCamelContextMBean(workspace);
+        if(mbean) {
+            var jolokia = workspace.jolokia;
+            jolokia.request({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'dumpRoutesAsXml()'
+            }, onSuccess(populateTable));
         }
     });
     var populateTable = function (response) {
