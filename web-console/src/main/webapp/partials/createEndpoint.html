@@ -3,6 +3,6 @@
         <input class="span12" type="text" size="255" ng-model="endpointName" placeholder="Endpoint URI"/>
     </div>
     <div class="control-group">
-        <button type="submit" class="btn" ng-click="createEndpoint(endpointName)">Create Endpoint</button>
+        <button type="submit" class="btn" ng-click="createEndpoint(endpointName)" ng-disabled="!endpointName">Create Endpoint</button>
     </div>
 </form>

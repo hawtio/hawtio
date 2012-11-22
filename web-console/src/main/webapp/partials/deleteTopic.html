@@ -1,8 +1,13 @@
 <form class="form-horizontal">
     <div class="control-group">
-        <p>You are about to delete this topic.</p>
+        <div class="alert">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <strong>Warning!</strong> You are about to delete this topic.
+          <br/>
+          This operation cannot be undone!
+        </div>
     </div>
     <div class="control-group">
-        <button type="submit" class="btn" ng-click="deleteDestination()">Delete Topic</button>
+        <button type="submit" class="btn btn-warning" ng-click="deleteDestination()">Delete Topic</button>
     </div>
 </form>

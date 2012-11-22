@@ -3,6 +3,6 @@
         <input class="span12" type="text" size="255" ng-model="destinationName" placeholder="Queue name"/>
     </div>
     <div class="control-group">
-        <button type="submit" class="btn" ng-click="createDestination(destinationName, true)">Create Queue</button>
+        <button type="submit" class="btn" ng-click="createDestination(destinationName, true)" ng-disabled="!destinationName">Create Queue</button>
     </div>
 </form>
