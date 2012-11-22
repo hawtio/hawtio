@@ -123,6 +123,13 @@ function DestinationController($scope, $location, workspace) {
             }
         }
     };
+    $scope.destinationName = function () {
+        var selection = workspace.selection;
+        if(selection) {
+            return selection.title;
+        }
+        return null;
+    };
 }
 function SubscriberGraphController($scope, workspace) {
     $scope.workspace = workspace;
