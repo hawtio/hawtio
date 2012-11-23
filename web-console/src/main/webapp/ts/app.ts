@@ -1,4 +1,4 @@
-angular.module('FuseIDE', ['ngResource']).
+angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         config(($routeProvider) => {
           $routeProvider.
                   when('/preferences', {templateUrl: 'partials/preferences.html'}).
@@ -16,7 +16,10 @@ angular.module('FuseIDE', ['ngResource']).
                   when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: DestinationController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/about', {templateUrl: 'partials/about.html', controller: DetailController}).
-                  when('/help', {templateUrl: 'partials/help.html', controller: NavBarController}).
+                  when('/help', {
+                    redirectTo: '/help/overview'
+                  }).
+                  when('/help/:tabName', {templateUrl: 'partials/help.html', controller: NavBarController}).
                   otherwise({redirectTo: '/attributes'});
         }).
         factory('workspace',($rootScope, $location) => {
@@ -231,6 +234,18 @@ function NavBarController($scope, $location, workspace) {
   $scope.isRoutesFolder = () => {
     return $scope.hasDomainAndLastPath('org.apache.camel', 'routes')
   };
+}
+
+function HelpController($scope, $routeParams, $location) {
+    // Each time controller is recreated, check tab in url
+    $scope.currentTab = $routeParams.tabName;
+
+    // When we click on a tab, the directive changes currentTab
+    $scope.$watch('currentTab', function(name, oldName) {
+      if (name !== oldName) {
+        $location.path('help/'+name);
+      }
+    });
 }
 
 function PreferencesController($scope, $location, workspace) {
@@ -673,7 +688,7 @@ function ChartController($scope, $location, workspace) {
       // lets get the attributes for this mbean
 
       // we need to escape the mbean path for list
-      var listKey = encodeMBean(mbean);
+      var listKey = encodeMBeanPath(mbean);
       //console.log("Looking up mbeankey: " + listKey);
       var meta = jolokia.list(listKey);
       if (meta) {

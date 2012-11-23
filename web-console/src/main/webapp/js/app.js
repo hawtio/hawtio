@@ -278,6 +278,7 @@ function SubscriberGraphController($scope, workspace) {
     });
 }
 angular.module('FuseIDE', [
+    'bootstrap', 
     'ngResource'
 ]).config(function ($routeProvider) {
     $routeProvider.when('/preferences', {
@@ -325,6 +326,8 @@ angular.module('FuseIDE', [
         templateUrl: 'partials/about.html',
         controller: DetailController
     }).when('/help', {
+        redirectTo: '/help/overview'
+    }).when('/help/:tabName', {
         templateUrl: 'partials/help.html',
         controller: NavBarController
     }).otherwise({
@@ -526,6 +529,14 @@ function NavBarController($scope, $location, workspace) {
     $scope.isRoutesFolder = function () {
         return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
     };
+}
+function HelpController($scope, $routeParams, $location) {
+    $scope.currentTab = $routeParams.tabName;
+    $scope.$watch('currentTab', function (name, oldName) {
+        if(name !== oldName) {
+            $location.path('help/' + name);
+        }
+    });
 }
 function PreferencesController($scope, $location, workspace) {
     $scope.workspace = workspace;
@@ -924,7 +935,7 @@ function ChartController($scope, $location, workspace) {
             var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
             $scope.context = context;
             $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-            var listKey = encodeMBean(mbean);
+            var listKey = encodeMBeanPath(mbean);
             var meta = jolokia.list(listKey);
             if(meta) {
                 var attributes = meta.attr;

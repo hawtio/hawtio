@@ -1,17 +1,65 @@
-<p>The Fuse Console helps you work with <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://camel.apache.org/">Camel</a> and <a href="http://karaf.apache.org/">Karaf</a>. The following gives you some hints on how to use Fuse Console</p>
+<section ng-controller="HelpController" xmlns="http://www.w3.org/1999/html">
+  <div class="tabbable" ng-model='currentTab'>
+    <div class="tab-pane well" title="Overview" value="overview">
+      <p><strong>Fuse Console</strong> helps you look inside any JVM along with having plugins for working with
+        <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a
+              href="http://camel.apache.org/">Camel</a> and <a href="http://karaf.apache.org/">Karaf</a>.
+      </p>
 
-<h2>ActiveMQ</h2>
+      <p>Click on the tree on the left of the window to browse the various services which are running in this JVM.</p>
 
-<p>Click on the <b>org.apache.activemq</b> node in the tree which then exposes the brokers running in a JVM (if there is one)</p>
+      <p>As you select different folders and MBeans you will notice the list of tabs at the top left of the screen
+        update to reflect the available features.</p>
 
-<p>Within the <b>org.apache.activemq</b> node you can click on the <b>Queue</b> node to see the queues and <b>Topic</b> to see the topics. From either of these nodes you should see a <b>Create Queue</b> or <b>Create Topic</b> tab to be able to create new destinations.</p>
+      <p>For more technology focussed help, please select the next tabs.</p>
+    </div>
 
-<p>Once you have selected a destination you should be able to <b>Send</b> to it, <b>Browse</b> a queue or view the <b>Attributes</b> or <b>Charts</b></p>
+    <div class="tab-pane well" title="ActiveMQ" value="activemq">
+      <p>Click on the <a ng-href="/#help/activemq?nid=root_org.apache.activemq">org.apache.activemq</a> node in the tree
+        which then exposes the brokers running in a JVM (if
+        there is one)</p>
 
-<h2>Camel</h2>
+      <p>Within the <a ng-href="/#help/activemq?nid=root_org.apache.activemq">org.apache.activemq</a> node you can click
+        on the <b>Queue</b> node to see the queues and <b>Topic</b>
+        to see the topics. From either of these nodes you should see a <b>Create Queue</b> or <b>Create Topic</b> tab to
+        be able to create new destinations.</p>
 
-<p>Click on the <b>org.apache.camel</b> node in the tree which then exposes any Camel Context running in a JVM (if there is one)</p>
+      <p>Once you have selected a destination you should be able to <b>Send</b> to it, <b>Browse</b> a queue or view the
+        <b>Attributes</b> or <b>Charts</b></p>
 
-<p>The various child nodes of <b>org.apache.camel</b> lets you view the <b>Attributes</b> or <b>Charts</b> of the various JMX MBeans</p>
+      <p>You can also see a graphical view of all producers, destinations and consumers for all queues (or if you select
+        a Topic folder then topics) using the <b>Diagram</b> tab. Selecting a single queue or topic shows just all the
+        producers and consumers on that destination. This diagram makes it easy to spot if producers are sending
+        messages when there are no consumers, or that consumers are on the wrong destination etc.</p>
+    </div>
 
-<p>Selecting the <b>context</b> instance (within the <b>context folder</b> lets you view the <b>Diagram</b> of the running routes</p>
+    <div class="tab-pane well" title="Camel" value="camel">
+      <p>Click on the <a ng-href="/#help/camel?nid=root_org.apache.camel">org.apache.camel</a> node in the tree which
+        then exposes any Camel Context running in a JVM (if
+        there is one)</p>
+
+      <p>The various child nodes of <a ng-href="/#help/camel?nid=root_org.apache.camel">org.apache.camel</a> lets you
+        view the <b>Attributes</b> or <b>Charts</b> of the
+        various JMX MBeans</p>
+
+      <p>You can use the <b>Diagram</b> tab to view a graphical representation of the running routes. If you select a
+        single route instance then the diagram just shows that route only.</p>
+    </div>
+
+    <div class="tab-pane well" title="JVM" value="jvm">
+      <p>Click on the <a ng-href="/#help/jvm?nid=root_java.lang">java.lang</a> node in the tree to view numerous JVM
+        level metrics
+        such as <a ng-href="/#help/jvm?nid=root_java.lang_OperatingSystem">OperatingSystem</a>.
+      </p>
+
+      <p>The various child nodes of <a ng-href="/#help/jvm?nid=root_java.lang">java.lang</a> lets you view the <b>Attributes</b>
+        or <b>Charts</b> of the various JMX MBeans.
+      </p>
+
+      <p>
+        Click on the <a href="/#logs">Logs</a> tab to be able to view and search the JVM's logging files (for slf4l and log4j).
+      </p>
+    </div>
+  </div>
+</section>
+
