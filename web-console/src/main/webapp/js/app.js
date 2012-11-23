@@ -339,88 +339,11 @@ angular.module('FuseIDE', [
 }).filter('humanize', function () {
     return humanizeValue;
 });
-var Workspace = (function () {
-    function Workspace(url) {
-        this.url = url;
-        this.jolokia = null;
-        this.updateRate = 0;
-        this.operationCounter = 0;
-        this.selection = [];
-        this.dummyStorage = {
-        };
-        var rate = this.getUpdateRate();
-        this.jolokia = new Jolokia(url);
-        console.log("Jolokia URL is " + url);
-        this.setUpdateRate(rate);
-    }
-    Workspace.prototype.getLocalStorage = function (key) {
-        if(supportsLocalStorage()) {
-            return localStorage[key];
-        }
-        return this.dummyStorage[key];
-    };
-    Workspace.prototype.setLocalStorage = function (key, value) {
-        if(supportsLocalStorage()) {
-            localStorage[key] = value;
-        } else {
-            this.dummyStorage[key] = value;
-        }
-    };
-    Workspace.prototype.getUpdateRate = function () {
-        return this.getLocalStorage('updateRate') || 5000;
-    };
-    Workspace.prototype.setUpdateRate = function (value) {
-        this.jolokia.stop();
-        this.setLocalStorage('updateRate', value);
-        if(value > 0) {
-            this.jolokia.start(value);
-        }
-        console.log("Set update rate to: " + value);
-    };
-    return Workspace;
-})();
-var Folder = (function () {
-    function Folder(title) {
-        this.title = title;
-        this.isFolder = true;
-        this.key = null;
-        this.children = [];
-        this.folderNames = [];
-        this.domain = null;
-        this.map = {
-        };
-    }
-    Folder.prototype.get = function (key) {
-        return this.map[key];
-    };
-    Folder.prototype.navigate = function () {
-        var paths = [];
-        for (var _i = 0; _i < (arguments.length - 0); _i++) {
-            paths[_i] = arguments[_i + 0];
-        }
-        var node = this;
-        paths.forEach(function (path) {
-            if(node) {
-                node = node.get(path);
-            }
-        });
-        return node;
-    };
-    Folder.prototype.getOrElse = function (key, defaultValue) {
-        if (typeof defaultValue === "undefined") { defaultValue = new Folder(key); }
-        var answer = this.map[key];
-        if(!answer) {
-            answer = defaultValue;
-            this.map[key] = answer;
-            this.children.push(answer);
-            this.children = this.children.sortBy("title");
-        }
-        return answer;
-    };
-    return Folder;
-})();
 function NavBarController($scope, $location, workspace) {
     $scope.workspace = workspace;
+    $scope.validSelection = function (uri) {
+        return workspace.validSelection(uri);
+    };
     $scope.$on('$routeChangeSuccess', function () {
         var hash = $location.search();
         var text = "";
@@ -442,92 +365,6 @@ function NavBarController($scope, $location, workspace) {
     $scope.navClass = function (page) {
         var currentRoute = $location.path().substring(1) || 'home';
         return page === currentRoute ? 'active' : '';
-    };
-    $scope.hasDomainAndProperties = function (objectName, properties) {
-        var workspace = $scope.workspace;
-        if(workspace) {
-            var tree = workspace.tree;
-            var node = workspace.selection;
-            if(tree && node) {
-                var folder = tree.get(objectName);
-                if(folder) {
-                    if(objectName !== node.domain) {
-                        return false;
-                    }
-                    if(properties) {
-                        var entries = node.entries;
-                        if(!entries) {
-                            return false;
-                        }
-                        for(var key in properties) {
-                            var value = properties[key];
-                            if(!value || entries[key] !== value) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                } else {
-                }
-            } else {
-            }
-        } else {
-        }
-        return false;
-    };
-    $scope.hasDomainAndLastPath = function (objectName, lastName) {
-        var workspace = $scope.workspace;
-        if(workspace) {
-            var node = workspace.selection;
-            if(node) {
-                if(objectName === node.domain) {
-                    var folders = node.folderNames;
-                    if(folders) {
-                        var last = folders.last();
-                        return last === lastName;
-                    }
-                }
-            }
-        }
-        return false;
-    };
-    $scope.isQueue = function () {
-        return $scope.hasDomainAndProperties('org.apache.activemq', {
-            Type: 'Queue'
-        });
-    };
-    $scope.isTopic = function () {
-        return $scope.hasDomainAndProperties('org.apache.activemq', {
-            Type: 'Topic'
-        });
-    };
-    $scope.isQueuesFolder = function () {
-        return $scope.hasDomainAndLastPath('org.apache.activemq', 'Queue');
-    };
-    $scope.isTopicsFolder = function () {
-        return $scope.hasDomainAndLastPath('org.apache.activemq', 'Topic');
-    };
-    $scope.isActiveMQFolder = function () {
-        return $scope.hasDomainAndProperties('org.apache.activemq');
-    };
-    $scope.isCamelContext = function () {
-        return $scope.hasDomainAndProperties('org.apache.camel', {
-            type: 'context'
-        });
-    };
-    $scope.isCamelFolder = function () {
-        return $scope.hasDomainAndProperties('org.apache.camel');
-    };
-    $scope.isEndpointsFolder = function () {
-        return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
-    };
-    $scope.isEndpoint = function () {
-        return $scope.hasDomainAndProperties('org.apache.camel', {
-            type: 'endpoints'
-        });
-    };
-    $scope.isRoutesFolder = function () {
-        return $scope.hasDomainAndLastPath('org.apache.camel', 'routes');
     };
 }
 function HelpController($scope, $routeParams, $location) {
@@ -739,7 +576,10 @@ function DetailController($scope, $routeParams, workspace, $rootScope) {
     $scope.$watch('workspace.selection', function () {
         var node = $scope.workspace.selection;
         closeHandle($scope, $scope.workspace.jolokia);
-        var mbean = node.objectName;
+        var mbean = null;
+        if(node) {
+            mbean = node.objectName;
+        }
         var query = null;
         var jolokia = workspace.jolokia;
         var updateValues = function (response) {
@@ -755,49 +595,51 @@ function DetailController($scope, $routeParams, workspace, $rootScope) {
         if(mbean) {
             query = asQuery(mbean);
         } else {
-            var children = node.children;
-            if(children) {
-                var childNodes = children.map(function (child) {
-                    return child.objectName;
-                });
-                var mbeans = childNodes.filter(function (mbean) {
-                    return mbean;
-                });
-                if(mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
-                    query = mbeans.map(function (mbean) {
-                        return asQuery(mbean);
+            if(node) {
+                var children = node.children;
+                if(children) {
+                    var childNodes = children.map(function (child) {
+                        return child.objectName;
                     });
-                    if(query.length === 1) {
-                        query = query[0];
-                    } else {
-                        if(query.length === 0) {
-                            query = null;
+                    var mbeans = childNodes.filter(function (mbean) {
+                        return mbean;
+                    });
+                    if(mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
+                        query = mbeans.map(function (mbean) {
+                            return asQuery(mbean);
+                        });
+                        if(query.length === 1) {
+                            query = query[0];
                         } else {
-                            $scope.attributes = new Table();
-                            updateValues = function (response) {
-                                var attributes = response.value;
-                                if(attributes) {
-                                    tidyAttributes(attributes);
-                                    var mbean = attributes['ObjectName'];
-                                    var request = response.request;
-                                    if(!mbean && request) {
-                                        mbean = request['mbean'];
-                                    }
-                                    if(mbean) {
-                                        var table = $scope.attributes;
-                                        if(!(table instanceof Table)) {
-                                            table = new Table();
-                                            $scope.attributes = table;
+                            if(query.length === 0) {
+                                query = null;
+                            } else {
+                                $scope.attributes = new Table();
+                                updateValues = function (response) {
+                                    var attributes = response.value;
+                                    if(attributes) {
+                                        tidyAttributes(attributes);
+                                        var mbean = attributes['ObjectName'];
+                                        var request = response.request;
+                                        if(!mbean && request) {
+                                            mbean = request['mbean'];
                                         }
-                                        table.setRow(mbean, attributes);
-                                        $scope.$apply();
+                                        if(mbean) {
+                                            var table = $scope.attributes;
+                                            if(!(table instanceof Table)) {
+                                                table = new Table();
+                                                $scope.attributes = table;
+                                            }
+                                            table.setRow(mbean, attributes);
+                                            $scope.$apply();
+                                        } else {
+                                            console.log("no ObjectName in attributes " + Object.keys(attributes));
+                                        }
                                     } else {
-                                        console.log("no ObjectName in attributes " + Object.keys(attributes));
+                                        console.log("Failed to get a response! " + JSON.stringify(response));
                                     }
-                                } else {
-                                    console.log("Failed to get a response! " + JSON.stringify(response));
-                                }
-                            };
+                                };
+                            }
                         }
                     }
                 }
@@ -1481,3 +1323,206 @@ function encodeMBeanPath(mbean) {
 function encodeMBean(mbean) {
     return mbean.replace(/\//g, '!/').escapeURL();
 }
+var Workspace = (function () {
+    function Workspace(url) {
+        this.url = url;
+        var _this = this;
+        this.jolokia = null;
+        this.updateRate = 0;
+        this.operationCounter = 0;
+        this.selection = null;
+        this.tree = null;
+        this.dummyStorage = {
+        };
+        this.uriValidations = null;
+        var rate = this.getUpdateRate();
+        this.jolokia = new Jolokia(url);
+        console.log("Jolokia URL is " + url);
+        this.setUpdateRate(rate);
+        this.uriValidations = {
+            'browseQueue': function () {
+                return _this.isQueue();
+            },
+            'sendMessage': function () {
+                return _this.isQueue() || _this.isTopic() || _this.isEndpoint();
+            },
+            'subscribers': function () {
+                return _this.isActiveMQFolder();
+            },
+            'createQueue': function () {
+                return _this.isQueuesFolder();
+            },
+            'createTopic': function () {
+                return _this.isTopicsFolder();
+            },
+            'deleteQueue': function () {
+                return _this.isQueue();
+            },
+            'deleteTopic': function () {
+                return _this.isTopic();
+            },
+            'routes': function () {
+                return _this.isCamelFolder();
+            },
+            'createEndpoint': function () {
+                return _this.isEndpointsFolder();
+            }
+        };
+    }
+    Workspace.prototype.getLocalStorage = function (key) {
+        if(supportsLocalStorage()) {
+            return localStorage[key];
+        }
+        return this.dummyStorage[key];
+    };
+    Workspace.prototype.setLocalStorage = function (key, value) {
+        if(supportsLocalStorage()) {
+            localStorage[key] = value;
+        } else {
+            this.dummyStorage[key] = value;
+        }
+    };
+    Workspace.prototype.getUpdateRate = function () {
+        return this.getLocalStorage('updateRate') || 5000;
+    };
+    Workspace.prototype.setUpdateRate = function (value) {
+        this.jolokia.stop();
+        this.setLocalStorage('updateRate', value);
+        if(value > 0) {
+            this.jolokia.start(value);
+        }
+        console.log("Set update rate to: " + value);
+    };
+    Workspace.prototype.validSelection = function (uri) {
+        var value = this.uriValidations[uri];
+        if(value) {
+            if(angular.isFunction(value)) {
+                return value();
+            }
+        }
+        return true;
+    };
+    Workspace.prototype.hasDomainAndProperties = function (objectName, properties) {
+        if (typeof properties === "undefined") { properties = null; }
+        var workspace = this;
+        var tree = workspace.tree;
+        var node = workspace.selection;
+        if(tree && node) {
+            var folder = tree.get(objectName);
+            if(folder) {
+                if(objectName !== node.domain) {
+                    return false;
+                }
+                if(properties) {
+                    var entries = node.entries;
+                    if(!entries) {
+                        return false;
+                    }
+                    for(var key in properties) {
+                        var value = properties[key];
+                        if(!value || entries[key] !== value) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            } else {
+            }
+        } else {
+        }
+        return false;
+    };
+    Workspace.prototype.hasDomainAndLastPath = function (objectName, lastName) {
+        var workspace = this;
+        var node = workspace.selection;
+        if(node) {
+            if(objectName === node.domain) {
+                var folders = node.folderNames;
+                if(folders) {
+                    var last = folders.last();
+                    return last === lastName;
+                }
+            }
+        }
+        return false;
+    };
+    Workspace.prototype.isQueue = function () {
+        return this.hasDomainAndProperties('org.apache.activemq', {
+            Type: 'Queue'
+        });
+    };
+    Workspace.prototype.isTopic = function () {
+        return this.hasDomainAndProperties('org.apache.activemq', {
+            Type: 'Topic'
+        });
+    };
+    Workspace.prototype.isQueuesFolder = function () {
+        return this.hasDomainAndLastPath('org.apache.activemq', 'Queue');
+    };
+    Workspace.prototype.isTopicsFolder = function () {
+        return this.hasDomainAndLastPath('org.apache.activemq', 'Topic');
+    };
+    Workspace.prototype.isActiveMQFolder = function () {
+        return this.hasDomainAndProperties('org.apache.activemq');
+    };
+    Workspace.prototype.isCamelContext = function () {
+        return this.hasDomainAndProperties('org.apache.camel', {
+            type: 'context'
+        });
+    };
+    Workspace.prototype.isCamelFolder = function () {
+        return this.hasDomainAndProperties('org.apache.camel');
+    };
+    Workspace.prototype.isEndpointsFolder = function () {
+        return this.hasDomainAndLastPath('org.apache.camel', 'endpoints');
+    };
+    Workspace.prototype.isEndpoint = function () {
+        return this.hasDomainAndProperties('org.apache.camel', {
+            type: 'endpoints'
+        });
+    };
+    Workspace.prototype.isRoutesFolder = function () {
+        return this.hasDomainAndLastPath('org.apache.camel', 'routes');
+    };
+    return Workspace;
+})();
+var Folder = (function () {
+    function Folder(title) {
+        this.title = title;
+        this.isFolder = true;
+        this.key = null;
+        this.children = [];
+        this.folderNames = [];
+        this.domain = null;
+        this.map = {
+        };
+    }
+    Folder.prototype.get = function (key) {
+        return this.map[key];
+    };
+    Folder.prototype.navigate = function () {
+        var paths = [];
+        for (var _i = 0; _i < (arguments.length - 0); _i++) {
+            paths[_i] = arguments[_i + 0];
+        }
+        var node = this;
+        paths.forEach(function (path) {
+            if(node) {
+                node = node.get(path);
+            }
+        });
+        return node;
+    };
+    Folder.prototype.getOrElse = function (key, defaultValue) {
+        if (typeof defaultValue === "undefined") { defaultValue = new Folder(key); }
+        var answer = this.map[key];
+        if(!answer) {
+            answer = defaultValue;
+            this.map[key] = answer;
+            this.children.push(answer);
+            this.children = this.children.sortBy("title");
+        }
+        return answer;
+    };
+    return Folder;
+})();

@@ -28,95 +28,10 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         }).
         filter('humanize', () => humanizeValue);
 
-class Workspace {
-  public jolokia = null;
-  public updateRate = 0;
-  public operationCounter = 0;
-  public selection = [];
-  dummyStorage = {};
-
-  constructor(public url:string) {
-    var rate = this.getUpdateRate();
-    this.jolokia = new Jolokia(url);
-    console.log("Jolokia URL is " + url);
-    this.setUpdateRate(rate);
-  }
-
-
-  getLocalStorage(key:string) {
-    if (supportsLocalStorage()) {
-      return localStorage[key];
-    }
-    return this.dummyStorage[key];
-  }
-
-  setLocalStorage(key:string, value:any) {
-    if (supportsLocalStorage()) {
-      localStorage[key] = value;
-    } else {
-      this.dummyStorage[key] = value;
-    }
-  }
-
-  getUpdateRate() {
-    return this.getLocalStorage('updateRate') || 5000;
-  }
-
-  /**
-   * sets the update rate
-   */
-          setUpdateRate(value) {
-    this.jolokia.stop();
-    this.setLocalStorage('updateRate', value)
-    if (value > 0) {
-      this.jolokia.start(value);
-    }
-    console.log("Set update rate to: " + value);
-  }
-}
-
-class Folder {
-  constructor(public title:string) {
-  }
-
-  isFolder = true;
-  key:string = null;
-  children = [];
-  folderNames = [];
-  domain:string = null;
-  map = {};
-
-  get(key:string):Folder {
-    return this.map[key];
-  }
-
-  /**
-   * Navigates the given paths and returns the value there or null if no value could be found
-   */
-          navigate(...paths:string[]) {
-    var node = this;
-    paths.forEach((path) => {
-      if (node) {
-        node = node.get(path);
-      }
-    });
-    return node;
-  }
-
-  getOrElse(key:string, defaultValue:any = new Folder(key)):Folder {
-    var answer = this.map[key];
-    if (!answer) {
-      answer = defaultValue;
-      this.map[key] = answer;
-      this.children.push(answer);
-      this.children = this.children.sortBy("title");
-    }
-    return answer;
-  }
-}
-
 function NavBarController($scope, $location, workspace) {
   $scope.workspace = workspace;
+
+  $scope.validSelection = (uri) => workspace.validSelection(uri);
 
   // when we change the view/selection lets update the hash so links have the latest stuff
   $scope.$on('$routeChangeSuccess', function () {
@@ -143,96 +58,6 @@ function NavBarController($scope, $location, workspace) {
   $scope.navClass = (page) => {
     var currentRoute = $location.path().substring(1) || 'home';
     return page === currentRoute ? 'active' : '';
-  };
-
-  // only display stuff if we have an mbean with the given properties
-  $scope.hasDomainAndProperties = (objectName, properties) => {
-    var workspace = $scope.workspace;
-    if (workspace) {
-      var tree = workspace.tree;
-      var node = workspace.selection;
-      if (tree && node) {
-        var folder = tree.get(objectName);
-        if (folder) {
-          if (objectName !== node.domain) return false;
-          if (properties) {
-            var entries = node.entries;
-            if (!entries) return false;
-            for (var key in properties) {
-              var value = properties[key];
-              if (!value || entries[key] !== value) {
-                return false;
-              }
-            }
-          }
-          return true
-        } else {
-          // console.log("no hasMBean for " + objectName + " in tree " + tree);
-        }
-      } else {
-        // console.log("workspace has no tree! returning false for hasMBean " + objectName);
-      }
-    } else {
-      // console.log("no workspace for hasMBean " + objectName);
-    }
-    return false
-  };
-
-  $scope.hasDomainAndLastPath = (objectName, lastName) => {
-    var workspace = $scope.workspace;
-    if (workspace) {
-      var node = workspace.selection;
-      if (node) {
-        if (objectName === node.domain) {
-          var folders = node.folderNames;
-          if (folders) {
-            var last = folders.last();
-            return last === lastName;
-          }
-        }
-      }
-    }
-    return false;
-  };
-
-  $scope.isQueue = () => {
-    return $scope.hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'});
-  };
-
-  $scope.isTopic = () => {
-    return $scope.hasDomainAndProperties('org.apache.activemq', {Type: 'Topic'});
-  };
-
-  $scope.isQueuesFolder = () => {
-    return $scope.hasDomainAndLastPath('org.apache.activemq', 'Queue')
-  };
-
-  $scope.isTopicsFolder = () => {
-    return $scope.hasDomainAndLastPath('org.apache.activemq', 'Topic')
-  };
-
-  $scope.isActiveMQFolder = () => {
-    return $scope.hasDomainAndProperties('org.apache.activemq');
-  };
-
-  $scope.isCamelContext = () => {
-    return $scope.hasDomainAndProperties('org.apache.camel', {type: 'context'});
-  };
-
-  $scope.isCamelFolder = () => {
-    return $scope.hasDomainAndProperties('org.apache.camel');
-  };
-
-  $scope.isEndpointsFolder = () => {
-    return $scope.hasDomainAndLastPath('org.apache.camel', 'endpoints');
-  };
-
-  $scope.isEndpoint = () => {
-    return $scope.hasDomainAndProperties('org.apache.camel', {type: 'endpoints'});
-  };
-
-  $scope.isRoutesFolder = () => {
-    return $scope.hasDomainAndLastPath('org.apache.camel', 'routes')
   };
 }
 
@@ -454,7 +279,10 @@ function DetailController($scope, $routeParams, workspace, $rootScope) {
   $scope.$watch('workspace.selection', function () {
     var node = $scope.workspace.selection;
     closeHandle($scope, $scope.workspace.jolokia);
-    var mbean = node.objectName;
+    var mbean = null;
+    if (node) {
+      mbean = node.objectName;
+    }
     var query = null;
     var jolokia = workspace.jolokia;
     var updateValues:any = function (response) {
@@ -469,7 +297,7 @@ function DetailController($scope, $routeParams, workspace, $rootScope) {
     };
     if (mbean) {
       query = asQuery(mbean)
-    } else {
+    } else if (node) {
       // lets query each child's details
       var children = node.children;
       if (children) {
