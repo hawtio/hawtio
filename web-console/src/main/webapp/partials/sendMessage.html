@@ -1,9 +1,21 @@
 <form class="form-horizontal">
   <div class="control-group">
-      <button type="submit" class="btn" ng-click="sendMessage(message)">Send Message</button>
+    <button type="submit" class="btn btn-info pull-left" ng-click="sendMessage(message)">Send Message</button>
+
+    <div class="pull-right">
+      <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">message format</label>
+
+      <div class="controls">
+        <select ng-model="sourceFormat" id="sourceFormat">
+          <option value="javascript" selected>JavaScript</option>
+          <option value="properties">Properties</option>
+          <option value="xml">XML</option>
+          <option value="yaml">YAML</option>
+        </select>
+      </div>
+    </div>
   </div>
   <div class="control-group">
-      <textarea class="span12" rows="40" ng-model="message" placeholder="Text message body">
-      </textarea>
+    <textarea id="messageBody" class="span12" rows="40" ng-model="message" placeholder="Text message body"></textarea>
   </div>
 </form>

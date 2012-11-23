@@ -1019,9 +1019,27 @@ function EndpointController($scope, $location, workspace) {
     };
 }
 function SendMessageController($scope, $location, workspace) {
+    var languageFormatPreference = "defaultLanguageFormat";
     $scope.workspace = workspace;
+    $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
+    var textArea = $("#messageBody").first()[0];
+    if(textArea) {
+        $scope.codeMirror = CodeMirror.fromTextArea(textArea);
+    }
     $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid($location);
+    });
+    $scope.$watch('sourceFormat', function () {
+        var format = $scope.sourceFormat;
+        var workspace = $scope.workspace;
+        console.log("source format is now: " + format);
+        if(format && workspace) {
+            workspace.setLocalStorage(languageFormatPreference, format);
+        }
+        var editor = $scope.codeMirror;
+        if(editor) {
+            editor.setOption("mode", format);
+        }
     });
     var sendWorked = function () {
         console.log("Sent message!");
@@ -1423,7 +1441,7 @@ var Workspace = (function () {
     Workspace.prototype.moveIfViewInvalid = function ($location) {
         var uri = $location.path().substring(1);
         console.log("URI is now " + uri);
-        if(!this.validSelection(uri)) {
+        if(!this.validSelection(uri) && this.selection) {
             console.log("tab no longer valid so changing!");
             $location.path("attributes");
         }

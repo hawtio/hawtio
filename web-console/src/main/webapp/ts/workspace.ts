@@ -80,7 +80,7 @@ class Workspace {
   public moveIfViewInvalid($location) {
     var uri = $location.path().substring(1);
     console.log("URI is now " + uri);
-    if (!this.validSelection(uri)) {
+    if (!this.validSelection(uri) && this.selection) {
       console.log("tab no longer valid so changing!");
       $location.path("attributes");
     }

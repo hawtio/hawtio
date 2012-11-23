@@ -141,3 +141,11 @@ html, body {
   .axis.top, .axis.bottom { padding: 0; }
 }
 */
+
+/** Code formatting */
+.CodeMirror {
+  border: 1px solid #eee;
+}
+td {
+  padding-right: 20px;
+}
