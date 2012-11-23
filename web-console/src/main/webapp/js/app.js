@@ -340,7 +340,7 @@ angular.module('FuseIDE', [
         templateUrl: 'partials/help.html',
         controller: NavBarController
     }).otherwise({
-        redirectTo: '/attributes'
+        redirectTo: '/help/overview'
     });
 }).factory('workspace', function ($rootScope, $location) {
     var url = $location.search()['url'] || "/jolokia";
@@ -373,7 +373,7 @@ function NavBarController($scope, $location, workspace) {
     });
     $scope.navClass = function (page) {
         var currentRoute = $location.path().substring(1) || 'home';
-        return page === currentRoute ? 'active' : '';
+        return currentRoute.startsWith(page) ? 'active' : '';
     };
 }
 function HelpController($scope, $routeParams, $location) {

@@ -20,7 +20,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
                     redirectTo: '/help/overview'
                   }).
                   when('/help/:tabName', {templateUrl: 'partials/help.html', controller: NavBarController}).
-                  otherwise({redirectTo: '/attributes'});
+                  otherwise({redirectTo: '/help/overview'});
         }).
         factory('workspace',($rootScope, $location) => {
           var url = $location.search()['url'] || "/jolokia";
@@ -57,7 +57,7 @@ function NavBarController($scope, $location, workspace) {
 
   $scope.navClass = (page) => {
     var currentRoute = $location.path().substring(1) || 'home';
-    return page === currentRoute ? 'active' : '';
+    return currentRoute.startsWith(page) ? 'active' : '';
   };
 }
 
