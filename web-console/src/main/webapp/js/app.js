@@ -69,12 +69,16 @@ function QueueController($scope, $location, workspace) {
                 var textAreas = $(detailsRow).find("textarea.messageDetail");
                 var textArea = textAreas[0];
                 if(textArea) {
-                    CodeMirror.fromTextArea(textArea, {
+                    var editor = CodeMirror.fromTextArea(textArea, {
                         mode: $scope.format,
                         tabSize: 2,
                         lineNumbers: true,
                         readOnly: true
                     });
+                    var autoFormat = true;
+                    if(autoFormat) {
+                        autoFormatEditor(editor);
+                    }
                 }
             } else {
                 element.removeClass('icon-minus');
@@ -1072,6 +1076,17 @@ function SendMessageController($scope, $location, workspace) {
     var textArea = $("#messageBody").first()[0];
     if(textArea) {
         $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
+            tabSize: 2,
+            lineNumbers: true,
+            wordWrap: true,
+            extraKeys: {
+                "'>'": function (cm) {
+                    cm.closeTag(cm, '>');
+                },
+                "'/'": function (cm) {
+                    cm.closeTag(cm, '/');
+                }
+            },
             matchBrackets: true
         });
     }
@@ -1091,6 +1106,9 @@ function SendMessageController($scope, $location, workspace) {
     });
     var sendWorked = function () {
         console.log("Sent message!");
+    };
+    $scope.autoFormat = function () {
+        autoFormatEditor($scope.codeMirror);
     };
     $scope.sendMessage = function (body) {
         var editor = $scope.codeMirror;
@@ -1411,6 +1429,21 @@ function encodeMBeanPath(mbean) {
 }
 function encodeMBean(mbean) {
     return mbean.replace(/\//g, '!/').escapeURL();
+}
+function autoFormatEditor(editor) {
+    if(editor) {
+        var totalLines = editor.lineCount();
+        var start = {
+            line: 0,
+            ch: 0
+        };
+        var end = {
+            line: totalLines - 1,
+            ch: editor.getLine(totalLines - 1).length
+        };
+        editor.autoFormatRange(start, end);
+        editor.setSelection(start, start);
+    }
 }
 var Workspace = (function () {
     function Workspace(url) {

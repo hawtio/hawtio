@@ -188,6 +188,18 @@ function SendMessageController($scope, $location, workspace) {
   var textArea = $("#messageBody").first()[0];
   if (textArea) {
     $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
+      // TODO make these editable preferences!
+      tabSize: 2,
+      lineNumbers: true,
+      wordWrap: true,
+      extraKeys: {
+        "'>'": function (cm) {
+          cm.closeTag(cm, '>');
+        },
+        "'/'": function (cm) {
+          cm.closeTag(cm, '/');
+        }
+      },
       matchBrackets: true
     });
   }
@@ -210,6 +222,10 @@ function SendMessageController($scope, $location, workspace) {
 
   var sendWorked = () => {
     console.log("Sent message!");
+  };
+
+  $scope.autoFormat = () => {
+    autoFormatEditor($scope.codeMirror);
   };
 
   $scope.sendMessage = (body) => {

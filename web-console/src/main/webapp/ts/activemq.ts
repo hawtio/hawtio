@@ -59,13 +59,23 @@ function QueueController($scope, $location, workspace) {
         var textAreas = $(detailsRow).find("textarea.messageDetail");
         var textArea = textAreas[0];
         if (textArea) {
-          CodeMirror.fromTextArea(textArea, {
+          var editor = CodeMirror.fromTextArea(textArea, {
             mode: $scope.format,
             // TODO make these editable preferences!
             tabSize: 2,
             lineNumbers: true,
             readOnly: true
           });
+          // TODO make this editable preference!
+          var autoFormat = true;
+          if (autoFormat) {
+            autoFormatEditor(editor);
+/*
+            CodeMirror.commands["selectAll"](editor);
+            var range = { from: editor.getCursor(true), to: editor.getCursor(false) };
+            editor.autoFormatRange(range.from, range.to);
+*/
+          }
         }
       } else {
         element.removeClass('icon-minus');

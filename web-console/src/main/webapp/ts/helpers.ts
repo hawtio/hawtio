@@ -124,3 +124,17 @@ function encodeMBeanPath(mbean) {
 function encodeMBean(mbean) {
   return mbean.replace(/\//g, '!/').escapeURL();
 }
+
+/**
+ * Auto formats the CodeMirror editor content to pretty print
+ */
+function autoFormatEditor(editor: any) {
+  if (editor) {
+    var totalLines = editor.lineCount();
+   	//var totalChars = editor.getValue().length;
+     var start = {line: 0, ch: 0};
+     var end = {line: totalLines - 1, ch: editor.getLine(totalLines - 1).length};
+     editor.autoFormatRange(start, end);
+     editor.setSelection(start, start);
+  }
+}
