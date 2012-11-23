@@ -1,8 +1,10 @@
-function CamelController($scope, workspace) {
+function CamelController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.routes = [];
 
   $scope.$watch('workspace.selection', function () {
+    if (workspace.moveIfViewInvalid($location)) return;
+
     var mbean = getSelectionCamelContextMBean(workspace);
     if (mbean) {
       var jolokia = workspace.jolokia;
@@ -132,8 +134,12 @@ function getSelectionCamelContextMBean(workspace) {
   return null;
 }
 
-function EndpointController($scope, workspace) {
+function EndpointController($scope, $location, workspace) {
   $scope.workspace = workspace;
+
+  $scope.$watch('workspace.selection', function () {
+    workspace.moveIfViewInvalid($location);
+  });
 
   function operationSuccess() {
     $scope.endpointName = "";
@@ -174,8 +180,12 @@ function EndpointController($scope, workspace) {
   };
 }
 
-function SendMessageController($scope, workspace) {
+function SendMessageController($scope, $location, workspace) {
   $scope.workspace = workspace;
+
+  $scope.$watch('workspace.selection', function () {
+    workspace.moveIfViewInvalid($location);
+  });
 
   var sendWorked = () => {
     console.log("Sent message!");

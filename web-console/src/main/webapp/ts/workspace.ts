@@ -67,7 +67,7 @@ class Workspace {
   /**
    * Returns true if the path is valid for the current selection
    */
-  validSelection(uri: string) {
+          public validSelection(uri: string) {
     var value = this.uriValidations[uri];
     if (value) {
       if (angular.isFunction(value)) {
@@ -76,7 +76,16 @@ class Workspace {
     }
     return true;
   }
-  
+
+  public moveIfViewInvalid($location) {
+    var uri = $location.path().substring(1);
+    console.log("URI is now " + uri);
+    if (!this.validSelection(uri)) {
+      console.log("tab no longer valid so changing!");
+      $location.path("attributes");
+    }
+    return false;
+  }
     // only display stuff if we have an mbean with the given properties
   public hasDomainAndProperties(objectName, properties = null) {
     var workspace = this;

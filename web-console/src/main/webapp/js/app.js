@@ -1,4 +1,4 @@
-function QueueController($scope, workspace) {
+function QueueController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.messages = [];
     var populateTable = function (response) {
@@ -53,6 +53,9 @@ function QueueController($scope, workspace) {
         });
     };
     $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid($location)) {
+            return;
+        }
         var selection = workspace.selection;
         if(selection) {
             var mbean = selection.objectName;
@@ -69,6 +72,9 @@ function QueueController($scope, workspace) {
 }
 function DestinationController($scope, $location, workspace) {
     $scope.workspace = workspace;
+    $scope.$watch('workspace.selection', function () {
+        workspace.moveIfViewInvalid($location);
+    });
     function operationSuccess() {
         $scope.destinationName = "";
         $scope.workspace.operationCounter += 1;
@@ -131,7 +137,7 @@ function DestinationController($scope, $location, workspace) {
         return null;
     };
 }
-function SubscriberGraphController($scope, workspace) {
+function SubscriberGraphController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.nodes = [];
     $scope.links = [];
@@ -239,6 +245,9 @@ function SubscriberGraphController($scope, workspace) {
         $scope.$apply();
     };
     $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid($location)) {
+            return;
+        }
         var isQueue = true;
         var jolokia = $scope.workspace.jolokia;
         if(jolokia) {
@@ -824,10 +833,13 @@ function ChartController($scope, $location, workspace) {
         }
     });
 }
-function CamelController($scope, workspace) {
+function CamelController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
     $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid($location)) {
+            return;
+        }
         var mbean = getSelectionCamelContextMBean(workspace);
         if(mbean) {
             var jolokia = workspace.jolokia;
@@ -965,8 +977,11 @@ function getSelectionCamelContextMBean(workspace) {
     }
     return null;
 }
-function EndpointController($scope, workspace) {
+function EndpointController($scope, $location, workspace) {
     $scope.workspace = workspace;
+    $scope.$watch('workspace.selection', function () {
+        workspace.moveIfViewInvalid($location);
+    });
     function operationSuccess() {
         $scope.endpointName = "";
         $scope.workspace.operationCounter += 1;
@@ -1003,8 +1018,11 @@ function EndpointController($scope, workspace) {
         }
     };
 }
-function SendMessageController($scope, workspace) {
+function SendMessageController($scope, $location, workspace) {
     $scope.workspace = workspace;
+    $scope.$watch('workspace.selection', function () {
+        workspace.moveIfViewInvalid($location);
+    });
     var sendWorked = function () {
         console.log("Sent message!");
     };
@@ -1401,6 +1419,15 @@ var Workspace = (function () {
             }
         }
         return true;
+    };
+    Workspace.prototype.moveIfViewInvalid = function ($location) {
+        var uri = $location.path().substring(1);
+        console.log("URI is now " + uri);
+        if(!this.validSelection(uri)) {
+            console.log("tab no longer valid so changing!");
+            $location.path("attributes");
+        }
+        return false;
     };
     Workspace.prototype.hasDomainAndProperties = function (objectName, properties) {
         if (typeof properties === "undefined") { properties = null; }
