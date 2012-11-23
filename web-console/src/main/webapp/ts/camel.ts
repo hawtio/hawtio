@@ -187,7 +187,9 @@ function SendMessageController($scope, $location, workspace) {
 
   var textArea = $("#messageBody").first()[0];
   if (textArea) {
-    $scope.codeMirror = CodeMirror.fromTextArea(textArea);
+    $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
+      matchBrackets: true
+    });
   }
 
   $scope.$watch('workspace.selection', function () {
@@ -211,6 +213,11 @@ function SendMessageController($scope, $location, workspace) {
   };
 
   $scope.sendMessage = (body) => {
+    var editor = $scope.codeMirror;
+    if (editor && !body) {
+        body = editor.getValue();
+    }
+    console.log("sending body: " + body);
     var selection = workspace.selection;
     if (selection) {
       var mbean = selection.objectName;

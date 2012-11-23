@@ -1,23 +1,24 @@
 function QueueController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.messages = [];
+    $scope.openMessages = [];
     var populateTable = function (response) {
         var data = response.value;
         $scope.messages = data;
         $scope.$apply();
-        $('#grid').dataTable({
+        $scope.dataTable = $('#grid').dataTable({
             bPaginate: false,
             sDom: 'Rlfrtip',
             bDestroy: true,
             aaData: data,
             aoColumns: [
                 {
-                    "mDataProp": "JMSMessageID"
+                    "mDataProp": null,
+                    "sClass": "control center",
+                    "sDefaultContent": '<i class="icon-plus"></i>'
                 }, 
                 {
-                    "sDefaultContent": "",
-                    "mData": null,
-                    "mDataProp": "Text"
+                    "mDataProp": "JMSMessageID"
                 }, 
                 {
                     "mDataProp": "JMSCorrelationID"
@@ -51,6 +52,55 @@ function QueueController($scope, $location, workspace) {
                 }
             ]
         });
+        $('#grid td.control').click(function () {
+            console.log("clicking node!!!");
+            var openMessages = $scope.openMessages;
+            var dataTable = $scope.dataTable;
+            var parentRow = this.parentNode;
+            var i = $.inArray(parentRow, openMessages);
+            var element = $('i', this);
+            if(i === -1) {
+                element.removeClass('icon-plus');
+                element.addClass('icon-minus');
+                var dataDiv = $scope.formatMessageDetails(dataTable, parentRow);
+                var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+                $('div.innerDetails', detailsRow).slideDown();
+                openMessages.push(parentRow);
+                var textAreas = $(detailsRow).find("textarea.messageDetail");
+                var textArea = textAreas[0];
+                if(textArea) {
+                    CodeMirror.fromTextArea(textArea, {
+                        mode: $scope.format,
+                        tabSize: 2,
+                        lineNumbers: true,
+                        readOnly: true
+                    });
+                }
+            } else {
+                element.removeClass('icon-minus');
+                element.addClass('icon-plus');
+                dataTable.fnClose(parentRow);
+                openMessages.splice(i, 1);
+            }
+        });
+    };
+    $scope.formatMessageDetails = function (dataTable, parentRow) {
+        var oData = dataTable.fnGetData(parentRow);
+        var body = oData["Text"] || "";
+        $scope.format = {
+            name: "javascript",
+            json: true
+        };
+        var trimmed = body.trimLeft().trimRight();
+        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+            $scope.format = "xml";
+        }
+        var rows = 1;
+        body.each(/\n/, function () {
+            return rows++;
+        });
+        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
+        return answer;
     };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid($location)) {
@@ -330,9 +380,6 @@ angular.module('FuseIDE', [
         controller: DestinationController
     }).when('/debug', {
         templateUrl: 'partials/debug.html',
-        controller: DetailController
-    }).when('/about', {
-        templateUrl: 'partials/about.html',
         controller: DetailController
     }).when('/help', {
         redirectTo: '/help/overview'
@@ -1024,7 +1071,9 @@ function SendMessageController($scope, $location, workspace) {
     $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
     var textArea = $("#messageBody").first()[0];
     if(textArea) {
-        $scope.codeMirror = CodeMirror.fromTextArea(textArea);
+        $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
+            matchBrackets: true
+        });
     }
     $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid($location);
@@ -1044,6 +1093,11 @@ function SendMessageController($scope, $location, workspace) {
         console.log("Sent message!");
     };
     $scope.sendMessage = function (body) {
+        var editor = $scope.codeMirror;
+        if(editor && !body) {
+            body = editor.getValue();
+        }
+        console.log("sending body: " + body);
         var selection = workspace.selection;
         if(selection) {
             var mbean = selection.objectName;

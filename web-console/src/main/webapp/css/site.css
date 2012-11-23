@@ -149,3 +149,6 @@ html, body {
 td {
   padding-right: 20px;
 }
+.CodeMirror-scroll {
+    height: auto;
+}

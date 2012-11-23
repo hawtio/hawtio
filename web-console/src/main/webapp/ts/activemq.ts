@@ -1,24 +1,32 @@
 function QueueController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
+  $scope.openMessages = [];
 
   var populateTable = function (response) {
     var data = response.value;
     $scope.messages = data;
     $scope.$apply();
 
-    $('#grid').dataTable({
+    $scope.dataTable = $('#grid').dataTable({
       bPaginate: false,
       sDom: 'Rlfrtip',
       bDestroy: true,
       aaData: data,
       aoColumns: [
-        { "mDataProp": "JMSMessageID" },
         {
-          "sDefaultContent": "",
-          "mData": null,
-          "mDataProp": "Text"
+          "mDataProp": null,
+          "sClass": "control center",
+          "sDefaultContent": '<i class="icon-plus"></i>'
         },
+        { "mDataProp": "JMSMessageID" },
+        /*
+         {
+         "sDefaultContent": "",
+         "mData": null,
+         "mDataProp": "Text"
+         },
+         */
         { "mDataProp": "JMSCorrelationID" },
         { "mDataProp": "JMSTimestamp" },
         { "mDataProp": "JMSDeliveryMode" },
@@ -31,7 +39,64 @@ function QueueController($scope, $location, workspace) {
         { "mDataProp": "JMSDestination" }
       ]
     });
+
+
+    $('#grid td.control').click(function () {
+      console.log("clicking node!!!");
+      var openMessages = $scope.openMessages;
+      var dataTable = $scope.dataTable;
+      var parentRow = this.parentNode;
+      var i = $.inArray(parentRow, openMessages);
+
+      var element = $('i', this);
+      if (i === -1) {
+        element.removeClass('icon-plus');
+        element.addClass('icon-minus');
+        var dataDiv = $scope.formatMessageDetails(dataTable, parentRow);
+        var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+        $('div.innerDetails', detailsRow).slideDown();
+        openMessages.push(parentRow);
+        var textAreas = $(detailsRow).find("textarea.messageDetail");
+        var textArea = textAreas[0];
+        if (textArea) {
+          CodeMirror.fromTextArea(textArea, {
+            mode: $scope.format,
+            // TODO make these editable preferences!
+            tabSize: 2,
+            lineNumbers: true,
+            readOnly: true
+          });
+        }
+      } else {
+        element.removeClass('icon-minus');
+        element.addClass('icon-plus');
+        dataTable.fnClose(parentRow);
+        openMessages.splice(i, 1);
+      }
+    });
   };
+
+  $scope.formatMessageDetails = (dataTable, parentRow) => {
+    var oData = dataTable.fnGetData(parentRow);
+    var body = oData["Text"] || "";
+
+    // lets guess the payload format
+    $scope.format = {name: "javascript", json: true};
+    var trimmed = body.trimLeft().trimRight();
+    if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+      $scope.format = "xml";
+    }
+
+    var rows = 1;
+    body.each(/\n/, () => rows++);
+    var answer = '<div class="innerDetails span12" title="Message payload">' +
+            '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
+            body +
+            '</textarea>' +
+            '</div>';
+    return answer;
+  };
+
 
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid($location)) return;
@@ -60,7 +125,7 @@ function DestinationController($scope, $location, workspace) {
 
   function operationSuccess() {
     $scope.destinationName = "";
-    $scope.workspace.operationCounter +=1;
+    $scope.workspace.operationCounter += 1;
     $scope.$apply();
   }
 
@@ -73,7 +138,7 @@ function DestinationController($scope, $location, workspace) {
         updateSelectionNode($location, parent);
       }
     }
-    $scope.workspace.operationCounter +=1;
+    $scope.workspace.operationCounter += 1;
     $scope.$apply();
   }
 
