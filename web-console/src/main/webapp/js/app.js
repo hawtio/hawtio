@@ -1032,7 +1032,6 @@ function SendMessageController($scope, $location, workspace) {
     $scope.$watch('sourceFormat', function () {
         var format = $scope.sourceFormat;
         var workspace = $scope.workspace;
-        console.log("source format is now: " + format);
         if(format && workspace) {
             workspace.setLocalStorage(languageFormatPreference, format);
         }
