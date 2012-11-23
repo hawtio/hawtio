@@ -42,7 +42,6 @@ function QueueController($scope, $location, workspace) {
 
 
     $('#grid td.control').click(function () {
-      console.log("clicking node!!!");
       var openMessages = $scope.openMessages;
       var dataTable = $scope.dataTable;
       var parentRow = this.parentNode;
@@ -59,22 +58,14 @@ function QueueController($scope, $location, workspace) {
         var textAreas = $(detailsRow).find("textarea.messageDetail");
         var textArea = textAreas[0];
         if (textArea) {
-          var editor = CodeMirror.fromTextArea(textArea, {
-            mode: $scope.format,
-            // TODO make these editable preferences!
-            tabSize: 2,
-            lineNumbers: true,
+          var editorSettings = createEditorSettings(workspace, $scope.format, {
             readOnly: true
           });
+          var editor = CodeMirror.fromTextArea(textArea, editorSettings);
           // TODO make this editable preference!
           var autoFormat = true;
           if (autoFormat) {
             autoFormatEditor(editor);
-/*
-            CodeMirror.commands["selectAll"](editor);
-            var range = { from: editor.getCursor(true), to: editor.getCursor(false) };
-            editor.autoFormatRange(range.from, range.to);
-*/
           }
         }
       } else {
@@ -91,7 +82,7 @@ function QueueController($scope, $location, workspace) {
     var body = oData["Text"] || "";
 
     // lets guess the payload format
-    $scope.format = {name: "javascript", json: true};
+    $scope.format = "javascript";
     var trimmed = body.trimLeft().trimRight();
     if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
       $scope.format = "xml";

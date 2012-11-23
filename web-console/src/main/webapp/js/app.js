@@ -53,7 +53,6 @@ function QueueController($scope, $location, workspace) {
             ]
         });
         $('#grid td.control').click(function () {
-            console.log("clicking node!!!");
             var openMessages = $scope.openMessages;
             var dataTable = $scope.dataTable;
             var parentRow = this.parentNode;
@@ -69,12 +68,10 @@ function QueueController($scope, $location, workspace) {
                 var textAreas = $(detailsRow).find("textarea.messageDetail");
                 var textArea = textAreas[0];
                 if(textArea) {
-                    var editor = CodeMirror.fromTextArea(textArea, {
-                        mode: $scope.format,
-                        tabSize: 2,
-                        lineNumbers: true,
+                    var editorSettings = createEditorSettings(workspace, $scope.format, {
                         readOnly: true
                     });
+                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
                     var autoFormat = true;
                     if(autoFormat) {
                         autoFormatEditor(editor);
@@ -91,10 +88,7 @@ function QueueController($scope, $location, workspace) {
     $scope.formatMessageDetails = function (dataTable, parentRow) {
         var oData = dataTable.fnGetData(parentRow);
         var body = oData["Text"] || "";
-        $scope.format = {
-            name: "javascript",
-            json: true
-        };
+        $scope.format = "javascript";
         var trimmed = body.trimLeft().trimRight();
         if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
             $scope.format = "xml";
@@ -1075,20 +1069,8 @@ function SendMessageController($scope, $location, workspace) {
     $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
     var textArea = $("#messageBody").first()[0];
     if(textArea) {
-        $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
-            tabSize: 2,
-            lineNumbers: true,
-            wordWrap: true,
-            extraKeys: {
-                "'>'": function (cm) {
-                    cm.closeTag(cm, '>');
-                },
-                "'/'": function (cm) {
-                    cm.closeTag(cm, '/');
-                }
-            },
-            matchBrackets: true
-        });
+        var editorSettings = createEditorSettings(workspace, $scope.format);
+        $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
     }
     $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid($location);
@@ -1444,6 +1426,53 @@ function autoFormatEditor(editor) {
         editor.autoFormatRange(start, end);
         editor.setSelection(start, start);
     }
+}
+function createEditorSettings(workspace, mode, options) {
+    if (typeof options === "undefined") { options = {
+    }; }
+    var modeValue = mode;
+    var readOnly = options.readOnly;
+    if(mode) {
+        if(mode === "javascript") {
+            modeValue = {
+                name: "javascript",
+                json: true
+            };
+            var foldFunc = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
+            options.onGutterClick = foldFunc;
+            options.extraKeys = {
+                "Ctrl-Q": function (cm) {
+                    foldFunc(cm, cm.getCursor().line);
+                }
+            };
+        } else {
+            if(mode === "xml" || mode.startsWith("html")) {
+                var foldFuncXml = CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder);
+                options.onGutterClick = foldFuncXml;
+                options.extraKeys = {
+                    "Ctrl-Q": function (cm) {
+                        foldFuncXml(cm, cm.getCursor().line);
+                    }
+                };
+            }
+        }
+    }
+    options.mode = modeValue;
+    options.tabSize = 2;
+    options.lineNumbers = true;
+    options.wordWrap = true;
+    if(!readOnly) {
+        options.extraKeys = {
+            "'>'": function (cm) {
+                cm.closeTag(cm, '>');
+            },
+            "'/'": function (cm) {
+                cm.closeTag(cm, '/');
+            }
+        };
+        options.matchBrackets = true;
+    }
+    return options;
 }
 var Workspace = (function () {
     function Workspace(url) {

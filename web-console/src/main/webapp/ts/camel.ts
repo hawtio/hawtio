@@ -187,21 +187,8 @@ function SendMessageController($scope, $location, workspace) {
 
   var textArea = $("#messageBody").first()[0];
   if (textArea) {
-    $scope.codeMirror = CodeMirror.fromTextArea(textArea, {
-      // TODO make these editable preferences!
-      tabSize: 2,
-      lineNumbers: true,
-      wordWrap: true,
-      extraKeys: {
-        "'>'": function (cm) {
-          cm.closeTag(cm, '>');
-        },
-        "'/'": function (cm) {
-          cm.closeTag(cm, '/');
-        }
-      },
-      matchBrackets: true
-    });
+    var editorSettings = createEditorSettings(workspace, $scope.format);
+    $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
   }
 
   $scope.$watch('workspace.selection', function () {
