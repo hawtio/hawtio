@@ -52,6 +52,23 @@ For those interested in contributing, here is a low down of the various open sou
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
 
+### Developer References
+
+If you are interested in working on the code the following references and articles have been really useful so far:
+
+* [angularjs API](http://docs.angularjs.org/api/)
+* [bootstrap API](http://twitter.github.com/bootstrap/base-css.html)
+* [cubism API](https://github.com/square/cubism/wiki/API-Reference)
+* [d3 API](https://github.com/mbostock/d3/wiki/API-Reference)
+* [datatables API](http://www.datatables.net/api)
+* [javascript API](http://www.w3schools.com/jsref/default.asp)
+* [sugarjs API](http://sugarjs.com/api/Array/sortBy)
+
+### Developer Articles and Forums
+
+* [AngularJS tips and tricks](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED)
+* [AngularJS questions on stackoverflow](http://stackoverflow.com/questions/tagged/angularjs)
+
 ## Code walkthrough
 
 If you fancy contributing - and **we love contributions!** the following should give you an overview of how the code hangs together.
