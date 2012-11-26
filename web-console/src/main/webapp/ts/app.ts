@@ -5,7 +5,8 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
                   when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
                   when('/charts', {templateUrl: 'partials/charts.html', controller: ChartController}).
                   when('/logs', {templateUrl: 'partials/logs.html', controller: LogController}).
-                  when('/browseQueue', {templateUrl: 'partials/browseQueue.html', controller: QueueController}).
+                  when('/browseQueue', {templateUrl: 'partials/browseQueue.html', controller: BrowseQueueController}).
+                  when('/browseEndpoint', {templateUrl: 'partials/browseEndpoint.html', controller: BrowseEndpointController}).
                   when('/sendMessage', {templateUrl: 'partials/sendMessage.html', controller: SendMessageController}).
                   when('/routes', {templateUrl: 'partials/routes.html', controller: CamelController}).
                   when('/subscribers', {templateUrl: 'partials/subscribers.html', controller: SubscriberGraphController}).

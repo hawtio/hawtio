@@ -20,6 +20,7 @@ class Workspace {
     this.setUpdateRate(rate);
     this.uriValidations = {
       'browseQueue': () => this.isQueue(),
+      'browseEndpoint': () => this.isEndpoint(),
       'sendMessage': () => this.isQueue() || this.isTopic() || this.isEndpoint(),
       'subscribers': () => this.isActiveMQFolder(),
       'createQueue': () => this.isQueuesFolder(),

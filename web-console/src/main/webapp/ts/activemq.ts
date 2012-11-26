@@ -1,103 +1,36 @@
-function QueueController($scope, $location, workspace) {
+function BrowseQueueController($scope, $location, workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
   $scope.openMessages = [];
+  $scope.dataTableColumns = [
+    {
+      "mDataProp": null,
+      "sClass": "control center",
+      "sDefaultContent": '<i class="icon-plus"></i>'
+    },
+    { "mDataProp": "JMSMessageID" },
+    /*
+     {
+     "sDefaultContent": "",
+     "mData": null,
+     "mDataProp": "Text"
+     },
+     */
+    { "mDataProp": "JMSCorrelationID" },
+    { "mDataProp": "JMSTimestamp" },
+    { "mDataProp": "JMSDeliveryMode" },
+    { "mDataProp": "JMSReplyTo" },
+    { "mDataProp": "JMSRedelivered" },
+    { "mDataProp": "JMSPriority" },
+    { "mDataProp": "JMSXGroupSeq" },
+    { "mDataProp": "JMSExpiration" },
+    { "mDataProp": "JMSType" },
+    { "mDataProp": "JMSDestination" }
+  ];
 
   var populateTable = function (response) {
-    var data = response.value;
-    $scope.messages = data;
-    $scope.$apply();
-
-    $scope.dataTable = $('#grid').dataTable({
-      bPaginate: false,
-      sDom: 'Rlfrtip',
-      bDestroy: true,
-      aaData: data,
-      aoColumns: [
-        {
-          "mDataProp": null,
-          "sClass": "control center",
-          "sDefaultContent": '<i class="icon-plus"></i>'
-        },
-        { "mDataProp": "JMSMessageID" },
-        /*
-         {
-         "sDefaultContent": "",
-         "mData": null,
-         "mDataProp": "Text"
-         },
-         */
-        { "mDataProp": "JMSCorrelationID" },
-        { "mDataProp": "JMSTimestamp" },
-        { "mDataProp": "JMSDeliveryMode" },
-        { "mDataProp": "JMSReplyTo" },
-        { "mDataProp": "JMSRedelivered" },
-        { "mDataProp": "JMSPriority" },
-        { "mDataProp": "JMSXGroupSeq" },
-        { "mDataProp": "JMSExpiration" },
-        { "mDataProp": "JMSType" },
-        { "mDataProp": "JMSDestination" }
-      ]
-    });
-
-
-    $('#grid td.control').click(function () {
-      var openMessages = $scope.openMessages;
-      var dataTable = $scope.dataTable;
-      var parentRow = this.parentNode;
-      var i = $.inArray(parentRow, openMessages);
-
-      var element = $('i', this);
-      if (i === -1) {
-        element.removeClass('icon-plus');
-        element.addClass('icon-minus');
-        var dataDiv = $scope.formatMessageDetails(dataTable, parentRow);
-        var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-        $('div.innerDetails', detailsRow).slideDown();
-        openMessages.push(parentRow);
-        var textAreas = $(detailsRow).find("textarea.messageDetail");
-        var textArea = textAreas[0];
-        if (textArea) {
-          var editorSettings = createEditorSettings(workspace, $scope.format, {
-            readOnly: true
-          });
-          var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-          // TODO make this editable preference!
-          var autoFormat = true;
-          if (autoFormat) {
-            autoFormatEditor(editor);
-          }
-        }
-      } else {
-        element.removeClass('icon-minus');
-        element.addClass('icon-plus');
-        dataTable.fnClose(parentRow);
-        openMessages.splice(i, 1);
-      }
-    });
+    populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, response.value);
   };
-
-  $scope.formatMessageDetails = (dataTable, parentRow) => {
-    var oData = dataTable.fnGetData(parentRow);
-    var body = oData["Text"] || "";
-
-    // lets guess the payload format
-    $scope.format = "javascript";
-    var trimmed = body.trimLeft().trimRight();
-    if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-      $scope.format = "xml";
-    }
-
-    var rows = 1;
-    body.each(/\n/, () => rows++);
-    var answer = '<div class="innerDetails span12" title="Message payload">' +
-            '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
-            body +
-            '</textarea>' +
-            '</div>';
-    return answer;
-  };
-
 
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid($location)) return;

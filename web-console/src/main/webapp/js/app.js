@@ -1,104 +1,49 @@
-function QueueController($scope, $location, workspace) {
+function BrowseQueueController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.messages = [];
     $scope.openMessages = [];
-    var populateTable = function (response) {
-        var data = response.value;
-        $scope.messages = data;
-        $scope.$apply();
-        $scope.dataTable = $('#grid').dataTable({
-            bPaginate: false,
-            sDom: 'Rlfrtip',
-            bDestroy: true,
-            aaData: data,
-            aoColumns: [
-                {
-                    "mDataProp": null,
-                    "sClass": "control center",
-                    "sDefaultContent": '<i class="icon-plus"></i>'
-                }, 
-                {
-                    "mDataProp": "JMSMessageID"
-                }, 
-                {
-                    "mDataProp": "JMSCorrelationID"
-                }, 
-                {
-                    "mDataProp": "JMSTimestamp"
-                }, 
-                {
-                    "mDataProp": "JMSDeliveryMode"
-                }, 
-                {
-                    "mDataProp": "JMSReplyTo"
-                }, 
-                {
-                    "mDataProp": "JMSRedelivered"
-                }, 
-                {
-                    "mDataProp": "JMSPriority"
-                }, 
-                {
-                    "mDataProp": "JMSXGroupSeq"
-                }, 
-                {
-                    "mDataProp": "JMSExpiration"
-                }, 
-                {
-                    "mDataProp": "JMSType"
-                }, 
-                {
-                    "mDataProp": "JMSDestination"
-                }
-            ]
-        });
-        $('#grid td.control').click(function () {
-            var openMessages = $scope.openMessages;
-            var dataTable = $scope.dataTable;
-            var parentRow = this.parentNode;
-            var i = $.inArray(parentRow, openMessages);
-            var element = $('i', this);
-            if(i === -1) {
-                element.removeClass('icon-plus');
-                element.addClass('icon-minus');
-                var dataDiv = $scope.formatMessageDetails(dataTable, parentRow);
-                var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-                $('div.innerDetails', detailsRow).slideDown();
-                openMessages.push(parentRow);
-                var textAreas = $(detailsRow).find("textarea.messageDetail");
-                var textArea = textAreas[0];
-                if(textArea) {
-                    var editorSettings = createEditorSettings(workspace, $scope.format, {
-                        readOnly: true
-                    });
-                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-                    var autoFormat = true;
-                    if(autoFormat) {
-                        autoFormatEditor(editor);
-                    }
-                }
-            } else {
-                element.removeClass('icon-minus');
-                element.addClass('icon-plus');
-                dataTable.fnClose(parentRow);
-                openMessages.splice(i, 1);
-            }
-        });
-    };
-    $scope.formatMessageDetails = function (dataTable, parentRow) {
-        var oData = dataTable.fnGetData(parentRow);
-        var body = oData["Text"] || "";
-        $scope.format = "javascript";
-        var trimmed = body.trimLeft().trimRight();
-        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-            $scope.format = "xml";
+    $scope.dataTableColumns = [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }, 
+        {
+            "mDataProp": "JMSMessageID"
+        }, 
+        {
+            "mDataProp": "JMSCorrelationID"
+        }, 
+        {
+            "mDataProp": "JMSTimestamp"
+        }, 
+        {
+            "mDataProp": "JMSDeliveryMode"
+        }, 
+        {
+            "mDataProp": "JMSReplyTo"
+        }, 
+        {
+            "mDataProp": "JMSRedelivered"
+        }, 
+        {
+            "mDataProp": "JMSPriority"
+        }, 
+        {
+            "mDataProp": "JMSXGroupSeq"
+        }, 
+        {
+            "mDataProp": "JMSExpiration"
+        }, 
+        {
+            "mDataProp": "JMSType"
+        }, 
+        {
+            "mDataProp": "JMSDestination"
         }
-        var rows = 1;
-        body.each(/\n/, function () {
-            return rows++;
-        });
-        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
-        return answer;
+    ];
+    var populateTable = function (response) {
+        populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, response.value);
     };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid($location)) {
@@ -351,7 +296,10 @@ angular.module('FuseIDE', [
         controller: LogController
     }).when('/browseQueue', {
         templateUrl: 'partials/browseQueue.html',
-        controller: QueueController
+        controller: BrowseQueueController
+    }).when('/browseEndpoint', {
+        templateUrl: 'partials/browseEndpoint.html',
+        controller: BrowseEndpointController
     }).when('/sendMessage', {
         templateUrl: 'partials/sendMessage.html',
         controller: SendMessageController
@@ -878,6 +826,79 @@ function ChartController($scope, $location, workspace) {
         }
     });
 }
+function populateBrowseMessageTable($scope, workspace, dataTableColumns, data) {
+    if(!data) {
+        $scope.messages = [];
+    } else {
+        $scope.messages = data;
+        var formatMessageDetails = function (dataTable, parentRow) {
+            var oData = dataTable.fnGetData(parentRow);
+            var body = oData["Text"];
+            if(!body) {
+                var bodyValue = oData["body"];
+                if(angular.isObject(bodyValue)) {
+                    body = bodyValue["text"];
+                } else {
+                    body = bodyValue;
+                }
+            }
+            if(!body) {
+                body = "";
+            }
+            $scope.format = "javascript";
+            var trimmed = body.trimLeft().trimRight();
+            if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+                $scope.format = "xml";
+            }
+            var rows = 1;
+            body.each(/\n/, function () {
+                return rows++;
+            });
+            var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
+            return answer;
+        };
+        $scope.dataTable = $('#grid').dataTable({
+            bPaginate: false,
+            sDom: 'Rlfrtip',
+            bDestroy: true,
+            aaData: data,
+            aoColumns: dataTableColumns
+        });
+        $('#grid td.control').click(function () {
+            var openMessages = $scope.openMessages;
+            var dataTable = $scope.dataTable;
+            var parentRow = this.parentNode;
+            var i = $.inArray(parentRow, openMessages);
+            var element = $('i', this);
+            if(i === -1) {
+                element.removeClass('icon-plus');
+                element.addClass('icon-minus');
+                var dataDiv = formatMessageDetails(dataTable, parentRow);
+                var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+                $('div.innerDetails', detailsRow).slideDown();
+                openMessages.push(parentRow);
+                var textAreas = $(detailsRow).find("textarea.messageDetail");
+                var textArea = textAreas[0];
+                if(textArea) {
+                    var editorSettings = createEditorSettings(workspace, $scope.format, {
+                        readOnly: true
+                    });
+                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
+                    var autoFormat = true;
+                    if(autoFormat) {
+                        autoFormatEditor(editor);
+                    }
+                }
+            } else {
+                element.removeClass('icon-minus');
+                element.addClass('icon-plus');
+                dataTable.fnClose(parentRow);
+                openMessages.splice(i, 1);
+            }
+        });
+    }
+    $scope.$apply();
+}
 function CamelController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
@@ -1117,6 +1138,76 @@ function SendMessageController($scope, $location, workspace) {
             }
         }
     };
+}
+function BrowseEndpointController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.messages = [];
+    $scope.openMessages = [];
+    $scope.dataTableColumns = [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }, 
+        {
+            "mDataProp": "headers.breadcrumbId"
+        }
+    ];
+    var populateTable = function (response) {
+        var data = [];
+        if(angular.isString(response)) {
+            var doc = $.parseXML(response);
+            var allMessages = $(doc).find("message");
+            allMessages.each(function (idx, message) {
+                var messageData = {
+                    headers: {
+                    },
+                    headerTypes: {
+                    }
+                };
+                var headers = $(message).find("header");
+                headers.each(function (idx, header) {
+                    var key = header.getAttribute("key");
+                    var typeName = header.getAttribute("type");
+                    var value = header.textContent;
+                    if(key) {
+                        if(value) {
+                            messageData.headers[key] = value;
+                        }
+                        if(typeName) {
+                            messageData.headerTypes[key] = typeName;
+                        }
+                        console.log("Header " + key + " type " + typeName + " = " + value);
+                    }
+                });
+                var body = $(message).children("body")[0];
+                if(body) {
+                    var bodyText = body.textContent;
+                    var bodyType = body.getAttribute("type");
+                    console.log("Got body type: " + bodyType + " text: " + bodyText);
+                    messageData["body"] = bodyText;
+                    messageData["bodyType"] = bodyType;
+                }
+                console.log("body element: " + body);
+                data.push(messageData);
+            });
+        }
+        populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, data);
+    };
+    $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid($location)) {
+            return;
+        }
+        var selection = workspace.selection;
+        if(selection) {
+            var mbean = selection.objectName;
+            if(mbean) {
+                var jolokia = workspace.jolokia;
+                var options = onSuccess(populateTable);
+                jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
+            }
+        }
+    });
 }
 function d3ForceGraph(scope, nodes, links, canvasSelector) {
     if (typeof canvasSelector === "undefined") { canvasSelector = "#canvas"; }
@@ -1493,6 +1584,9 @@ var Workspace = (function () {
         this.uriValidations = {
             'browseQueue': function () {
                 return _this.isQueue();
+            },
+            'browseEndpoint': function () {
+                return _this.isEndpoint();
             },
             'sendMessage': function () {
                 return _this.isQueue() || _this.isTopic() || _this.isEndpoint();

@@ -218,7 +218,7 @@ function SendMessageController($scope, $location, workspace) {
   $scope.sendMessage = (body) => {
     var editor = $scope.codeMirror;
     if (editor && !body) {
-        body = editor.getValue();
+      body = editor.getValue();
     }
     console.log("sending body: " + body);
     var selection = workspace.selection;
@@ -241,4 +241,70 @@ function SendMessageController($scope, $location, workspace) {
       }
     }
   };
+}
+
+function BrowseEndpointController($scope, $location, workspace) {
+  $scope.workspace = workspace;
+  $scope.messages = [];
+  $scope.openMessages = [];
+  $scope.dataTableColumns = [
+    {
+      "mDataProp": null,
+      "sClass": "control center",
+      "sDefaultContent": '<i class="icon-plus"></i>'
+    },
+    { "mDataProp": "headers.breadcrumbId" }
+  ];
+
+  var populateTable = function (response) {
+    var data = [];
+    if (angular.isString(response)) {
+      // lets parse the XML DOM here...
+      var doc = $.parseXML(response);
+      var allMessages = $(doc).find("message");
+
+      allMessages.each((idx, message) => {
+        var messageData = {
+          headers: {},
+          headerTypes: {}
+        };
+        var headers = $(message).find("header");
+        headers.each((idx, header) => {
+          var key = header.getAttribute("key");
+          var typeName = header.getAttribute("type");
+          var value = header.textContent;
+          if (key) {
+            if (value) messageData.headers[key] = value;
+            if (typeName) messageData.headerTypes[key] = typeName;
+            console.log("Header " + key + " type " + typeName + " = " + value);
+          }
+        });
+        var body = $(message).children("body")[0];
+        if (body) {
+          var bodyText = body.textContent;
+          var bodyType = body.getAttribute("type");
+          console.log("Got body type: " + bodyType + " text: " + bodyText);
+          messageData["body"] = bodyText;
+          messageData["bodyType"] = bodyType;
+        }
+        console.log("body element: " + body);
+        data.push(messageData);
+      });
+    }
+    populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, data);
+  };
+
+  $scope.$watch('workspace.selection', function () {
+    if (workspace.moveIfViewInvalid($location)) return;
+
+    var selection = workspace.selection;
+    if (selection) {
+      var mbean = selection.objectName;
+      if (mbean) {
+        var jolokia = workspace.jolokia;
+        var options = onSuccess(populateTable);
+        jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
+      }
+    }
+  });
 }
