@@ -393,8 +393,7 @@ function updateSelectionNode($location, node) {
     if(node) {
         key = node['key'];
     }
-    var q = {
-    };
+    var q = $location.search();
     if(key) {
         q['nid'] = key;
     }
