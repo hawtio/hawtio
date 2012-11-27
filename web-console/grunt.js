@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 
   // Project configuration.
 
-  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/ts/*.ts'];
+  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/js/*.ts'];
   grunt.initConfig({
     test:{
       files:['src/test/js/**/*.js']
