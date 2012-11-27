@@ -8,6 +8,8 @@ import org.eclipse.jetty.webapp.*
 import org.mortbay.jetty.plugin.JettyWebAppContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.support.ClassPathXmlApplicationContext
+import org.eclipse.jetty.jmx.MBeanContainer
+import java.lang.management.ManagementFactory
 
 /**
 * Returns true if the file exists
@@ -82,6 +84,11 @@ fun main(args: Array<String>): Unit {
 
         val server = Server(port)
         server.setHandler(context)
+
+        // enable JMX
+        var mbeanContainer = MBeanContainer(ManagementFactory.getPlatformMBeanServer())
+        server.getContainer()?.addEventListener(mbeanContainer);
+        server.addBean(mbeanContainer)
 
         if (args.size == 0 || args[0] != "nospring") {
             // now lets startup a spring application context
