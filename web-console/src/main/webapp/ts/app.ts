@@ -24,7 +24,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         }).
         factory('workspace',($rootScope, $location) => {
           var url = $location.search()['url'] || "/jolokia";
-          return new Workspace(url);
+          return new Workspace(url, $location);
         }).
         filter('humanize', () => humanizeValue);
 

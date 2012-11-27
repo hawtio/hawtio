@@ -337,7 +337,7 @@ angular.module('FuseIDE', [
     });
 }).factory('workspace', function ($rootScope, $location) {
     var url = $location.search()['url'] || "/jolokia";
-    return new Workspace(url);
+    return new Workspace(url, $location);
 }).filter('humanize', function () {
     return humanizeValue;
 });
@@ -1565,8 +1565,9 @@ function createEditorSettings(workspace, mode, options) {
     return options;
 }
 var Workspace = (function () {
-    function Workspace(url) {
+    function Workspace(url, $location) {
         this.url = url;
+        this.$location = $location;
         var _this = this;
         this.jolokia = null;
         this.updateRate = 0;
