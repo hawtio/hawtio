@@ -29,7 +29,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         filter('humanize', () => humanizeValue);
 
 
-function NavBarController($scope, $location, workspace: Workspace) {
+function NavBarController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
 
   $scope.validSelection = (uri) => workspace.validSelection(uri);
@@ -63,18 +63,18 @@ function NavBarController($scope, $location, workspace: Workspace) {
 }
 
 function HelpController($scope, $routeParams, $location) {
-    // Each time controller is recreated, check tab in url
-    $scope.currentTab = $routeParams.tabName;
+  // Each time controller is recreated, check tab in url
+  $scope.currentTab = $routeParams.tabName;
 
-    // When we click on a tab, the directive changes currentTab
-    $scope.$watch('currentTab', function(name, oldName) {
-      if (name !== oldName) {
-        $location.path('help/'+name);
-      }
-    });
+  // When we click on a tab, the directive changes currentTab
+  $scope.$watch('currentTab', function (name, oldName) {
+    if (name !== oldName) {
+      $location.path('help/' + name);
+    }
+  });
 }
 
-function PreferencesController($scope, workspace: Workspace) {
+function PreferencesController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.updateRate = workspace.getUpdateRate();
 
@@ -101,7 +101,7 @@ function updateSelectionNode($location, node) {
   $location.search(q);
 }
 
-function MBeansController($scope, $location, workspace: Workspace) {
+function MBeansController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.tree = new Folder('MBeans');
   $scope.counter = 0;
@@ -246,7 +246,7 @@ class Table {
   }
 }
 
-function DetailController($scope, $routeParams, workspace: Workspace, $rootScope) {
+function DetailController($scope, $routeParams, workspace:Workspace, $rootScope) {
   $scope.routeParams = $routeParams;
   $scope.workspace = workspace;
 
@@ -369,7 +369,7 @@ function DetailController($scope, $routeParams, workspace: Workspace, $rootScope
   });
 }
 
-function LogController($scope, $location, workspace: Workspace) {
+function LogController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   //$scope.logs = {};
   $scope.logs = [];
@@ -452,7 +452,7 @@ function LogController($scope, $location, workspace: Workspace) {
   scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
 
-function ChartController($scope, $location, workspace: Workspace) {
+function ChartController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.metrics = [];
 

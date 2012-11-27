@@ -11,13 +11,13 @@ class Workspace {
   public jolokia = null;
   public updateRate = 0;
   public operationCounter = 0;
-  public selection: Selection = null;
+  public selection:Selection = null;
   public tree = null;
   dummyStorage = {};
   uriValidations = null;
 
-  constructor(public url: string, public $location: any) {
-  //constructor(public url: string, public $location: angular.ILocationService) {
+  constructor(public url:string, public $location:any) {
+    //constructor(public url: string, public $location: angular.ILocationService) {
     var rate = this.getUpdateRate();
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
@@ -60,7 +60,7 @@ class Workspace {
   /**
    * sets the update rate
    */
-          setUpdateRate(value) {
+  public setUpdateRate(value) {
     this.jolokia.stop();
     this.setLocalStorage('updateRate', value)
     if (value > 0) {
@@ -72,7 +72,7 @@ class Workspace {
   /**
    * Returns true if the path is valid for the current selection
    */
-          public validSelection(uri: string) {
+  public validSelection(uri:string) {
     var value = this.uriValidations[uri];
     if (value) {
       if (angular.isFunction(value)) {
@@ -91,47 +91,48 @@ class Workspace {
     }
     return false;
   }
-    // only display stuff if we have an mbean with the given properties
+
+  // only display stuff if we have an mbean with the given properties
   public hasDomainAndProperties(objectName, properties = null) {
     var workspace = this;
-      var tree = workspace.tree;
-      var node = workspace.selection;
-      if (tree && node) {
-        var folder = tree.get(objectName);
-        if (folder) {
-          if (objectName !== node.domain) return false;
-          if (properties) {
-            var entries = node.entries;
-            if (!entries) return false;
-            for (var key in properties) {
-              var value = properties[key];
-              if (!value || entries[key] !== value) {
-                return false;
-              }
+    var tree = workspace.tree;
+    var node = workspace.selection;
+    if (tree && node) {
+      var folder = tree.get(objectName);
+      if (folder) {
+        if (objectName !== node.domain) return false;
+        if (properties) {
+          var entries = node.entries;
+          if (!entries) return false;
+          for (var key in properties) {
+            var value = properties[key];
+            if (!value || entries[key] !== value) {
+              return false;
             }
           }
-          return true
-        } else {
-          // console.log("no hasMBean for " + objectName + " in tree " + tree);
         }
+        return true
       } else {
-        // console.log("workspace has no tree! returning false for hasMBean " + objectName);
+        // console.log("no hasMBean for " + objectName + " in tree " + tree);
       }
+    } else {
+      // console.log("workspace has no tree! returning false for hasMBean " + objectName);
+    }
     return false;
   }
 
   public hasDomainAndLastPath(objectName, lastName) {
     var workspace = this;
-      var node = workspace.selection;
-      if (node) {
-        if (objectName === node.domain) {
-          var folders = node.folderNames;
-          if (folders) {
-            var last = folders.last();
-            return last === lastName;
-          }
+    var node = workspace.selection;
+    if (node) {
+      if (objectName === node.domain) {
+        var folders = node.folderNames;
+        if (folders) {
+          var last = folders.last();
+          return last === lastName;
         }
       }
+    }
     return false;
   }
 
@@ -194,7 +195,7 @@ class Folder {
   /**
    * Navigates the given paths and returns the value there or null if no value could be found
    */
-          navigate(...paths:string[]) {
+  public navigate(...paths:string[]) {
     var node = this;
     paths.forEach((path) => {
       if (node) {

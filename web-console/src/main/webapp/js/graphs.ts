@@ -189,19 +189,19 @@ function dagreLayoutGraph(nodes, links, width, height) {
   // Append rectangles to the nodes. We do this before laying out the text
   // because we want the text above the rectangle.
   var rects = nodes.append("rect").
-          // rounded corners
+    // rounded corners
           attr("rx", "5").attr("ry", "5").
-          // lets add shadow
+    // lets add shadow
           attr("filter", "url(#drop-shadow)");
 
   nodes.append("image")
-            .attr("xlink:href", function (d) {
-              return d.imageUrl;
-            })
-            .attr("x", -12)
-            .attr("y", -20)
-            .attr("height", 24)
-            .attr("width", 24);
+          .attr("xlink:href", function (d) {
+            return d.imageUrl;
+          })
+          .attr("x", -12)
+          .attr("y", -20)
+          .attr("height", 24)
+          .attr("width", 24);
 
   // Append text
   var labels = nodes

@@ -50,7 +50,7 @@ function BrowseQueueController($scope, workspace:Workspace) {
   });
 }
 
-function DestinationController($scope, $location, workspace: Workspace) {
+function DestinationController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
 
   $scope.$watch('workspace.selection', function () {
