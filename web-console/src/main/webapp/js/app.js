@@ -1,4 +1,4 @@
-function BrowseQueueController($scope, $location, workspace) {
+function BrowseQueueController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.messages = [];
     $scope.openMessages = [];
@@ -46,7 +46,7 @@ function BrowseQueueController($scope, $location, workspace) {
         populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, response.value);
     };
     $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid($location)) {
+        if(workspace.moveIfViewInvalid()) {
             return;
         }
         var selection = workspace.selection;
@@ -66,7 +66,7 @@ function BrowseQueueController($scope, $location, workspace) {
 function DestinationController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid($location);
+        workspace.moveIfViewInvalid();
     });
     function operationSuccess() {
         $scope.destinationName = "";
@@ -130,7 +130,7 @@ function DestinationController($scope, $location, workspace) {
         return null;
     };
 }
-function SubscriberGraphController($scope, $location, workspace) {
+function SubscriberGraphController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.nodes = [];
     $scope.links = [];
@@ -238,7 +238,7 @@ function SubscriberGraphController($scope, $location, workspace) {
         $scope.$apply();
     };
     $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid($location)) {
+        if(workspace.moveIfViewInvalid()) {
             return;
         }
         var isQueue = true;
@@ -377,7 +377,7 @@ function HelpController($scope, $routeParams, $location) {
         }
     });
 }
-function PreferencesController($scope, $location, workspace) {
+function PreferencesController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.updateRate = workspace.getUpdateRate();
     $scope.$watch('updateRate', function () {
@@ -898,11 +898,11 @@ function populateBrowseMessageTable($scope, workspace, dataTableColumns, data) {
     }
     $scope.$apply();
 }
-function CamelController($scope, $location, workspace) {
+function CamelController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
     $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid($location)) {
+        if(workspace.moveIfViewInvalid()) {
             return;
         }
         var mbean = getSelectionCamelContextMBean(workspace);
@@ -1042,10 +1042,10 @@ function getSelectionCamelContextMBean(workspace) {
     }
     return null;
 }
-function EndpointController($scope, $location, workspace) {
+function EndpointController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid($location);
+        workspace.moveIfViewInvalid();
     });
     function operationSuccess() {
         $scope.endpointName = "";
@@ -1083,7 +1083,7 @@ function EndpointController($scope, $location, workspace) {
         }
     };
 }
-function SendMessageController($scope, $location, workspace) {
+function SendMessageController($scope, workspace) {
     var languageFormatPreference = "defaultLanguageFormat";
     $scope.workspace = workspace;
     $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
@@ -1093,7 +1093,7 @@ function SendMessageController($scope, $location, workspace) {
         $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
     }
     $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid($location);
+        workspace.moveIfViewInvalid();
     });
     $scope.$watch('sourceFormat', function () {
         var format = $scope.sourceFormat;
@@ -1138,7 +1138,7 @@ function SendMessageController($scope, $location, workspace) {
         }
     };
 }
-function BrowseEndpointController($scope, $location, workspace) {
+function BrowseEndpointController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.messages = [];
     $scope.openMessages = [];
@@ -1194,7 +1194,7 @@ function BrowseEndpointController($scope, $location, workspace) {
         populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, data);
     };
     $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid($location)) {
+        if(workspace.moveIfViewInvalid()) {
             return;
         }
         var selection = workspace.selection;
@@ -1647,12 +1647,12 @@ var Workspace = (function () {
         }
         return true;
     };
-    Workspace.prototype.moveIfViewInvalid = function ($location) {
-        var uri = $location.path().substring(1);
+    Workspace.prototype.moveIfViewInvalid = function () {
+        var uri = this.$location.path().substring(1);
         console.log("URI is now " + uri);
         if(!this.validSelection(uri) && this.selection) {
             console.log("tab no longer valid so changing!");
-            $location.path("attributes");
+            this.$location.path("attributes");
         }
         return false;
     };

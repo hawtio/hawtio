@@ -1,4 +1,4 @@
-function BrowseQueueController($scope, $location, workspace: Workspace) {
+function BrowseQueueController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
   $scope.openMessages = [];
@@ -33,7 +33,7 @@ function BrowseQueueController($scope, $location, workspace: Workspace) {
   };
 
   $scope.$watch('workspace.selection', function () {
-    if (workspace.moveIfViewInvalid($location)) return;
+    if (workspace.moveIfViewInvalid()) return;
 
     // TODO could we refactor the get mbean thingy??
     var selection = workspace.selection;
@@ -54,7 +54,7 @@ function DestinationController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
 
   $scope.$watch('workspace.selection', function () {
-    workspace.moveIfViewInvalid($location);
+    workspace.moveIfViewInvalid();
   });
 
   function operationSuccess() {
@@ -126,7 +126,7 @@ function DestinationController($scope, $location, workspace: Workspace) {
 }
 
 
-function SubscriberGraphController($scope, $location, workspace: Workspace) {
+function SubscriberGraphController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.nodes = [];
   $scope.links = [];
@@ -229,7 +229,7 @@ function SubscriberGraphController($scope, $location, workspace: Workspace) {
   };
 
   $scope.$watch('workspace.selection', function () {
-    if (workspace.moveIfViewInvalid($location)) return;
+    if (workspace.moveIfViewInvalid()) return;
 
     var isQueue = true;
     var jolokia = $scope.workspace.jolokia;

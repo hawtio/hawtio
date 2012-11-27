@@ -1,9 +1,9 @@
-function CamelController($scope, $location, workspace: Workspace) {
+function CamelController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.routes = [];
 
   $scope.$watch('workspace.selection', function () {
-    if (workspace.moveIfViewInvalid($location)) return;
+    if (workspace.moveIfViewInvalid()) return;
 
     var mbean = getSelectionCamelContextMBean(workspace);
     if (mbean) {
@@ -134,11 +134,11 @@ function getSelectionCamelContextMBean(workspace) {
   return null;
 }
 
-function EndpointController($scope, $location, workspace: Workspace) {
+function EndpointController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
 
   $scope.$watch('workspace.selection', function () {
-    workspace.moveIfViewInvalid($location);
+    workspace.moveIfViewInvalid();
   });
 
   function operationSuccess() {
@@ -180,7 +180,7 @@ function EndpointController($scope, $location, workspace: Workspace) {
   };
 }
 
-function SendMessageController($scope, $location, workspace: Workspace) {
+function SendMessageController($scope, workspace:Workspace) {
   var languageFormatPreference = "defaultLanguageFormat";
   $scope.workspace = workspace;
   $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
@@ -192,7 +192,7 @@ function SendMessageController($scope, $location, workspace: Workspace) {
   }
 
   $scope.$watch('workspace.selection', function () {
-    workspace.moveIfViewInvalid($location);
+    workspace.moveIfViewInvalid();
   });
 
   $scope.$watch('sourceFormat', function () {
@@ -243,7 +243,7 @@ function SendMessageController($scope, $location, workspace: Workspace) {
   };
 }
 
-function BrowseEndpointController($scope, $location, workspace: Workspace) {
+function BrowseEndpointController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
   $scope.openMessages = [];
@@ -295,7 +295,7 @@ function BrowseEndpointController($scope, $location, workspace: Workspace) {
   };
 
   $scope.$watch('workspace.selection', function () {
-    if (workspace.moveIfViewInvalid($location)) return;
+    if (workspace.moveIfViewInvalid()) return;
 
     var selection = workspace.selection;
     if (selection) {

@@ -82,12 +82,12 @@ class Workspace {
     return true;
   }
 
-  public moveIfViewInvalid($location) {
-    var uri = $location.path().substring(1);
+  public moveIfViewInvalid() {
+    var uri = this.$location.path().substring(1);
     console.log("URI is now " + uri);
     if (!this.validSelection(uri) && this.selection) {
       console.log("tab no longer valid so changing!");
-      $location.path("attributes");
+      this.$location.path("attributes");
     }
     return false;
   }
