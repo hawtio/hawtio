@@ -86,3 +86,5 @@ The following are recommended if you want to contribute to the code
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
 * [Apache Maven 3.0.3 or later](http://maven.apache.org/)
 * [gruntjs](http://gruntjs.com/) - see nearly the beginning of this document for details of how to install and use.
+
+If using IDEA we recommend selecting File menu -> Project Structure -> web-console -> select src/main/webapp/js and then click "Excluded" which helps remove the generated app.js from being included in the available completions when navigating around the code with alt/apple-click on function names.

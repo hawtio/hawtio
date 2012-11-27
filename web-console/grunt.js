@@ -37,6 +37,7 @@ module.exports = function (grunt) {
         }
       },
       options:{
+        sourcemap: true,
         module:'amd',
         style:'eqeqeq;bitwise'
       }

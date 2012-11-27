@@ -13,7 +13,8 @@ class Workspace {
   dummyStorage = {};
   uriValidations = null;
 
-  constructor(public url: string, public $location: ILocationService) {
+  constructor(public url: string, public $location: any) {
+  //constructor(public url: string, public $location: angular.ILocationService) {
     var rate = this.getUpdateRate();
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
