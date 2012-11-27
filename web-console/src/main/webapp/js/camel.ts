@@ -1,4 +1,4 @@
-function CamelController($scope, $location, workspace) {
+function CamelController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
   $scope.routes = [];
 
@@ -134,7 +134,7 @@ function getSelectionCamelContextMBean(workspace) {
   return null;
 }
 
-function EndpointController($scope, $location, workspace) {
+function EndpointController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
 
   $scope.$watch('workspace.selection', function () {
@@ -180,7 +180,7 @@ function EndpointController($scope, $location, workspace) {
   };
 }
 
-function SendMessageController($scope, $location, workspace) {
+function SendMessageController($scope, $location, workspace: Workspace) {
   var languageFormatPreference = "defaultLanguageFormat";
   $scope.workspace = workspace;
   $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
@@ -243,7 +243,7 @@ function SendMessageController($scope, $location, workspace) {
   };
 }
 
-function BrowseEndpointController($scope, $location, workspace) {
+function BrowseEndpointController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
   $scope.openMessages = [];

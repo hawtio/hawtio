@@ -1,4 +1,4 @@
-function BrowseQueueController($scope, $location, workspace) {
+function BrowseQueueController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
   $scope.messages = [];
   $scope.openMessages = [];
@@ -50,7 +50,7 @@ function BrowseQueueController($scope, $location, workspace) {
   });
 }
 
-function DestinationController($scope, $location, workspace) {
+function DestinationController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
 
   $scope.$watch('workspace.selection', function () {
@@ -126,7 +126,7 @@ function DestinationController($scope, $location, workspace) {
 }
 
 
-function SubscriberGraphController($scope, $location, workspace) {
+function SubscriberGraphController($scope, $location, workspace: Workspace) {
   $scope.workspace = workspace;
   $scope.nodes = [];
   $scope.links = [];

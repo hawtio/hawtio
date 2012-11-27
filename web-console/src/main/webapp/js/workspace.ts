@@ -1,7 +1,10 @@
 interface Selection {
+  title: string;
+  objectName?: string;
   domain?: string;
   entries?: any;
   folderNames?: string[];
+  parent?: Selection;
 }
 
 class Workspace {

@@ -1,4 +1,4 @@
-function populateBrowseMessageTable($scope, workspace, dataTableColumns, data) {
+function populateBrowseMessageTable($scope, workspace: Workspace, dataTableColumns, data) {
   if (!data) {
     $scope.messages = [];
   } else {
