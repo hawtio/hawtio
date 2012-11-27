@@ -92,3 +92,29 @@ We recommend you enable [Source Maps](https://docs.google.com/document/d/1U1RGAe
 To help IDEA navigate to functions in your source & to avoid noise; you may want to ignore some files in IDEA. Go to Settings/Preferences -> File Types -> Ignore files then add these patterns to the end; which will let IDEA ignore the generated JS file, the source map files and the minified JS files when navigating around code.
 
     app.js;*.js.map;*.min.js;
+
+## How the tabs work
+
+The UI updates in real time based on selections in the JMX tree; so tabs become visible or hide based on the selection.
+
+The nav bar shows/hides based on the *validSelection()* function calls in the [index.html in the ng-show attributes](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html#L39). See the [angularjs ng-show documentation for more detail](http://docs.angularjs.org/api/ng.directive:ngShow).
+
+The validSelection("someUriPath") function calls on *$scope* calls the same [validSelection on the Workspace class](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L75) which uses this underlying [map of uri path -> validation functions](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L25)
+
+### How to add a new tab
+
+The following gives you an overview of how to add a new kind of tab:
+
+* add the new URI path to [app.ts in the angularjs route definition](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.ts#L4)
+
+    when("/myURI", {templateUrl: 'partials/myNewThing.html', controller: MyNewController}).
+
+* if the tab only applies to certain selections, add an entry to the [uriValidations map of uri paths to validation functions](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L25)
+
+    "myURI": () => this.isMyKindOfThing()
+
+* add an entry to the [index.html nav bar](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html#L39) so the new tab appears
+
+* create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/partials)).
+
+* create your new controller, MyNewController.ts in the [js directory](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/)
