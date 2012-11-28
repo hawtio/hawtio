@@ -1169,6 +1169,8 @@ function ChartController($scope, $location, workspace) {
         var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
         $scope.context = context;
         $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+        var search = $location.search();
+        var attributeNames = toSearchArgumentArray(search["att"]);
         if(mbean) {
             var listKey = encodeMBeanPath(mbean);
             var meta = jolokia.list(listKey);
@@ -1179,7 +1181,7 @@ function ChartController($scope, $location, workspace) {
                         var value = attributes[key];
                         if(value) {
                             var typeName = value['type'];
-                            if(isNumberTypeName(typeName)) {
+                            if(isNumberTypeName(typeName) && (!attributeNames.length || attributeNames.indexOf(key) >= 0)) {
                                 var metric = $scope.jolokiaContext.metric({
                                     type: 'read',
                                     mbean: mbean,
@@ -1194,8 +1196,6 @@ function ChartController($scope, $location, workspace) {
                 }
             }
         } else {
-            var search = $location.search();
-            var attributeNames = toSearchArgumentArray(search["att"]);
             var elementNames = toSearchArgumentArray(search["el"]);
             if(attributeNames && attributeNames.length && elementNames && elementNames.length) {
                 var mbeans = {
@@ -1278,6 +1278,11 @@ function ChartEditController($scope, $location, workspace) {
         var node = $scope.workspace.selection;
         if(node && jolokia) {
             var children = node.children;
+            if(!children) {
+                children = [
+                    node
+                ];
+            }
             if(children) {
                 children.forEach(function (mbeanNode) {
                     var mbean = mbeanNode.objectName;
@@ -1314,9 +1319,14 @@ function ChartEditController($scope, $location, workspace) {
                                         $scope.selectedMBeans = Object.keys($scope.mbeans);
                                     }
                                     if($scope.selectedAttributes.length < 1) {
-                                        $scope.selectedAttributes = [
-                                            Object.keys($scope.metrics).sort().first()
-                                        ];
+                                        var attrKeys = Object.keys($scope.metrics).sort();
+                                        if($scope.selectedMBeans.length > 1) {
+                                            $scope.selectedAttributes = [
+                                                attrKeys.first()
+                                            ];
+                                        } else {
+                                            $scope.selectedAttributes = attrKeys;
+                                        }
                                     }
                                     $("#attributes").attr("size", Object.size($scope.metrics));
                                     $("#mbeans").attr("size", Object.size($scope.mbeans));

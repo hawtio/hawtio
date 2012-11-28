@@ -60,6 +60,8 @@ function ChartController($scope, $location, workspace:Workspace) {
 
     $scope.context = context;
     $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+    var search = $location.search();
+    var attributeNames = toSearchArgumentArray(search["att"]);
 
     if (mbean) {
       // TODO make generic as we can cache them; they rarely ever change
@@ -76,7 +78,7 @@ function ChartController($scope, $location, workspace:Workspace) {
             var value = attributes[key];
             if (value) {
               var typeName = value['type'];
-              if (isNumberTypeName(typeName)) {
+              if (isNumberTypeName(typeName) && (!attributeNames.length || attributeNames.indexOf(key) >= 0)) {
                 var metric = $scope.jolokiaContext.metric({
                   type: 'read',
                   mbean: mbean,
@@ -92,8 +94,6 @@ function ChartController($scope, $location, workspace:Workspace) {
       }
     } else {
       // lets try pull out the attributes and elements from the URI and use those to chart
-      var search = $location.search();
-      var attributeNames = toSearchArgumentArray(search["att"]);
       var elementNames = toSearchArgumentArray(search["el"]);
       if (attributeNames && attributeNames.length && elementNames && elementNames.length) {
 
@@ -200,6 +200,9 @@ function ChartEditController($scope, $location, workspace:Workspace) {
     if (node && jolokia) {
       // lets iterate through all the children
       var children = node.children;
+      if (!children) {
+        children = [node];
+      }
       if (children) {
         children.forEach((mbeanNode) => {
           var mbean = mbeanNode.objectName;
@@ -243,7 +246,12 @@ function ChartEditController($scope, $location, workspace:Workspace) {
                     $scope.selectedMBeans = Object.keys($scope.mbeans);
                   }
                   if ($scope.selectedAttributes.length < 1) {
-                    $scope.selectedAttributes = [Object.keys($scope.metrics).sort().first()];
+                    var attrKeys = Object.keys($scope.metrics).sort();
+                    if ($scope.selectedMBeans.length > 1) {
+                      $scope.selectedAttributes = [attrKeys.first()];
+                    } else {
+                      $scope.selectedAttributes = attrKeys;
+                    }
                   }
 
                   // lets update the sizes using jquery as it seems AngularJS doesn't support it
