@@ -84,6 +84,8 @@ If you fancy contributing - and **we love contributions!** the following should 
 The following are recommended if you want to contribute to the code
 
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
+* [AngularJS plugin for Chrome](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk) which is handy for visualising scopes and performance testing etc.
+* [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
 * [Apache Maven 3.0.3 or later](http://maven.apache.org/)
 * [gruntjs](http://gruntjs.com/) - see nearly the beginning of this document for details of how to install and use.
 
@@ -94,6 +96,17 @@ To help IDEA navigate to functions in your source & to avoid noise; you may want
     *.min.js;*-min.js
 
 Then select the generated [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js) in the Project explorer, right click and select _Mark as Plain Text_ so that it is ignored as being JavaScript source. This hint came from [this forum thread](http://devnet.jetbrains.net/message/5472690#5472690), hopefully there will be a nicer way to do all this one day!
+
+### Handy AngularJS debugging tip
+
+* open the JavaScript console and select the _Console_ tab so you can type expressions into the shell.
+* select part of the DOM of the scope you want to investigate
+* right click and select _Inspect Element_
+* now in the console type the following
+
+    s = angular.element($0).scope()
+
+You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL etc.
 
 ## How the tabs work
 
