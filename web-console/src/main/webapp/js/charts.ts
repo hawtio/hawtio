@@ -115,15 +115,15 @@ function ChartController($scope, $location, workspace:Workspace) {
             var attributeTitle = humanizeValue(key);
             // for now lets always be verbose
             var title = name + ": " + attributeTitle;
-/*
-            if (attributeNames.length > 1) {
-              if (Object.size(mbeans) === 1) {
-                title = attributeTitle;
-              } else {
-                title = name + " / " + attributeTitle;
-              }
-            }
-*/
+            /*
+             if (attributeNames.length > 1) {
+             if (Object.size(mbeans) === 1) {
+             title = attributeTitle;
+             } else {
+             title = name + " / " + attributeTitle;
+             }
+             }
+             */
             var metric = $scope.jolokiaContext.metric({
               type: 'read',
               mbean: mbean,
@@ -179,11 +179,43 @@ function ChartEditController($scope, $location, workspace:Workspace) {
   $scope.metrics = {};
   $scope.mbeans = {};
 
-  $scope.createChart = () => {
+  // TODO move this function to $routeScope
+  $scope.size = (value) => {
+    if (angular.isObject(value)) {
+      return Object.size(value);
+    } else if (angular.isArray(value)) {
+      return value.length;
+    } else return 1;
+  };
+
+  $scope.canViewChart = () => {
+    return $scope.selectedAttributes.length && $scope.selectedMBeans.length &&
+            $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
+  };
+
+  $scope.showAttributes = () => {
+    return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
+  };
+
+  $scope.showElements = () => {
+    return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
+  };
+
+  $scope.viewChart = () => {
     // lets add the attributes and mbeans into the URL so we can navigate back to the charts view
     var search = $location.search();
-    search["att"] = $scope.selectedAttributes;
-    search["el"] = $scope.selectedMBeans;
+    // if we have selected all attributes, then lets just remove the attribute
+    if ($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
+      delete search["att"];
+    } else {
+      search["att"] = $scope.selectedAttributes;
+    }
+    // if we are on an mbean with no children lets discard an unnecessary parameter
+    if ($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
+      delete search["el"];
+    } else {
+      search["el"] = $scope.selectedMBeans;
+    }
     $location.search(search);
     $location.path("charts");
   };
@@ -235,10 +267,18 @@ function ChartEditController($scope, $location, workspace:Workspace) {
                   var attributeNames = toSearchArgumentArray(search["att"]);
                   var elementNames = toSearchArgumentArray(search["el"]);
                   if (attributeNames && attributeNames.length) {
-                    $scope.selectedAttributes = attributeNames;
+                    attributeNames.forEach((name) => {
+                      if ($scope.metrics[name]) {
+                        $scope.selectedAttributes.push(name);
+                      }
+                    });
                   }
                   if (elementNames && elementNames.length) {
-                    $scope.selectedMBeans = elementNames;
+                    elementNames.forEach((name) => {
+                      if ($scope.mbeans[name]) {
+                        $scope.selectedMBeans.push(name);
+                      }
+                    });
                   }
 
                   // default selections if there are none

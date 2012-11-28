@@ -1258,10 +1258,38 @@ function ChartEditController($scope, $location, workspace) {
     };
     $scope.mbeans = {
     };
-    $scope.createChart = function () {
+    $scope.size = function (value) {
+        if(angular.isObject(value)) {
+            return Object.size(value);
+        } else {
+            if(angular.isArray(value)) {
+                return value.length;
+            } else {
+                return 1;
+            }
+        }
+    };
+    $scope.canViewChart = function () {
+        return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
+    };
+    $scope.showAttributes = function () {
+        return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
+    };
+    $scope.showElements = function () {
+        return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
+    };
+    $scope.viewChart = function () {
         var search = $location.search();
-        search["att"] = $scope.selectedAttributes;
-        search["el"] = $scope.selectedMBeans;
+        if($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
+            delete search["att"];
+        } else {
+            search["att"] = $scope.selectedAttributes;
+        }
+        if($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
+            delete search["el"];
+        } else {
+            search["el"] = $scope.selectedMBeans;
+        }
         $location.search(search);
         $location.path("charts");
     };
@@ -1310,10 +1338,18 @@ function ChartEditController($scope, $location, workspace) {
                                     var attributeNames = toSearchArgumentArray(search["att"]);
                                     var elementNames = toSearchArgumentArray(search["el"]);
                                     if(attributeNames && attributeNames.length) {
-                                        $scope.selectedAttributes = attributeNames;
+                                        attributeNames.forEach(function (name) {
+                                            if($scope.metrics[name]) {
+                                                $scope.selectedAttributes.push(name);
+                                            }
+                                        });
                                     }
                                     if(elementNames && elementNames.length) {
-                                        $scope.selectedMBeans = elementNames;
+                                        elementNames.forEach(function (name) {
+                                            if($scope.mbeans[name]) {
+                                                $scope.selectedMBeans.push(name);
+                                            }
+                                        });
                                     }
                                     if($scope.selectedMBeans.length < 1) {
                                         $scope.selectedMBeans = Object.keys($scope.mbeans);
