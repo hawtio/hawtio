@@ -179,7 +179,8 @@ function MBeansController($scope, $location, workspace:Workspace) {
           paths: paths,
           objectName: domain + ":" + path,
           parent: folder,
-          entries: entries
+          entries: entries,
+          get: (key: string) => null
         };
         folder.getOrElse(lastPath, mbeanInfo);
       }

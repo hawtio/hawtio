@@ -42,6 +42,20 @@ function trimQuotes(text:string) {
   return text;
 }
 
+/**
+ * Converts the given value to an array of query arguments.
+ *
+ * If the value is null an empty array is returned.
+ * If the value is a non empty string then the string is split by commas
+ */
+function toSearchArgumentArray(value): string[] {
+  if (value) {
+    if (angular.isArray(value)) return value;
+    if (angular.isString(value)) return value.split(',');
+  }
+  return [];
+}
+
 function ignoreFolderDetails(node) {
   return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
 }

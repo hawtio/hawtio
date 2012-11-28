@@ -474,7 +474,10 @@ function MBeansController($scope, $location, workspace) {
                     paths: paths,
                     objectName: domain + ":" + path,
                     parent: folder,
-                    entries: entries
+                    entries: entries,
+                    get: function (key) {
+                        return null;
+                    }
                 };
                 folder.getOrElse(lastPath, mbeanInfo);
             }
@@ -1159,11 +1162,11 @@ function ChartController($scope, $location, workspace) {
         var node = $scope.workspace.selection;
         var mbean = node.objectName;
         $scope.metrics = [];
+        var jolokia = $scope.workspace.jolokia;
+        var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
+        $scope.context = context;
+        $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
         if(mbean) {
-            var jolokia = $scope.workspace.jolokia;
-            var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
-            $scope.context = context;
-            $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
             var listKey = encodeMBeanPath(mbean);
             var meta = jolokia.list(listKey);
             if(meta) {
@@ -1186,6 +1189,37 @@ function ChartController($scope, $location, workspace) {
                         }
                     }
                 }
+            }
+        } else {
+            var search = $location.search();
+            var attributeNames = toSearchArgumentArray(search["att"]);
+            var elementNames = toSearchArgumentArray(search["el"]);
+            if(attributeNames && attributeNames.length && elementNames && elementNames.length) {
+                var mbeans = {
+                };
+                elementNames.forEach(function (elementName) {
+                    var child = node.get(elementName);
+                    if(child) {
+                        var mbean = child.objectName;
+                        if(mbean) {
+                            mbeans[elementName] = mbean;
+                        }
+                    }
+                });
+                attributeNames.forEach(function (key) {
+                    angular.forEach(mbeans, function (mbean, name) {
+                        var attributeTitle = humanizeValue(key);
+                        var title = name + ": " + attributeTitle;
+                        var metric = $scope.jolokiaContext.metric({
+                            type: 'read',
+                            mbean: mbean,
+                            attribute: key
+                        }, title);
+                        if(metric) {
+                            $scope.metrics.push(metric);
+                        }
+                    });
+                });
             }
         }
         if($scope.metrics.length > 0) {
@@ -1213,7 +1247,7 @@ function ChartController($scope, $location, workspace) {
         }
     });
 }
-function ChartSelectController($scope, workspace) {
+function ChartSelectController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.selectedAttributes = [];
     $scope.selectedMBeans = [];
@@ -1221,20 +1255,12 @@ function ChartSelectController($scope, workspace) {
     };
     $scope.mbeans = {
     };
-    $scope.metricsSize = 20;
-    $scope.hasAttributeAndMBeanSelected = function () {
-        return $scope.selectedAttributes.length && $scope.selectedMBeans.length;
-    };
-    $scope.size = function (value) {
-        console.log("Calling size on " + value);
-        if(angular.isObject(value)) {
-            return Object.size(value);
-        } else {
-            if(angular.isArray(value)) {
-                return value.length;
-            }
-        }
-        return value;
+    $scope.createChart = function () {
+        var search = $location.search();
+        search["att"] = $scope.selectedAttributes;
+        search["el"] = $scope.selectedMBeans;
+        $location.search(search);
+        $location.path("charts");
     };
     $scope.$watch('workspace.selection', function () {
         $scope.selectedAttributes = [];
@@ -1255,7 +1281,7 @@ function ChartSelectController($scope, workspace) {
                     var name = mbeanNode.title;
                     if(name && mbean) {
                         mbeanCounter++;
-                        $scope.mbeans[name] = mbean;
+                        $scope.mbeans[name] = name;
                         var listKey = encodeMBeanPath(mbean);
                         jolokia.list(listKey, onSuccess(function (meta) {
                             var attributes = meta.attr;
@@ -1266,16 +1292,16 @@ function ChartSelectController($scope, workspace) {
                                         var typeName = value['type'];
                                         if(isNumberTypeName(typeName)) {
                                             if(!$scope.metrics[key]) {
-                                                $scope.metrics[key] = {
-                                                    type: 'read',
-                                                    mbean: mbean,
-                                                    attribute: key
-                                                };
+                                                $scope.metrics[key] = key;
                                             }
                                         }
                                     }
                                 }
                                 if(++resultCounter >= mbeanCounter) {
+                                    $scope.selectedMBeans = Object.keys($scope.mbeans);
+                                    $scope.selectedAttributes = [
+                                        Object.keys($scope.metrics).sort().first()
+                                    ];
                                     $("#attributes").attr("size", Object.size($scope.metrics));
                                     $("#mbeans").attr("size", Object.size($scope.mbeans));
                                     $scope.$apply();
@@ -1507,6 +1533,17 @@ function trimQuotes(text) {
         text = text.substring(1, text.length);
     }
     return text;
+}
+function toSearchArgumentArray(value) {
+    if(value) {
+        if(angular.isArray(value)) {
+            return value;
+        }
+        if(angular.isString(value)) {
+            return value.split(',');
+        }
+    }
+    return [];
 }
 function ignoreFolderDetails(node) {
     return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);

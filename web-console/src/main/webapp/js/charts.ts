@@ -49,17 +49,18 @@ function ChartController($scope, $location, workspace:Workspace) {
     var node = $scope.workspace.selection;
     var mbean = node.objectName;
     $scope.metrics = [];
+
+    var jolokia = $scope.workspace.jolokia;
+    var context = cubism.context()
+            .serverDelay(0)
+            .clientDelay(0)
+            .step(1000)
+            .size(width);
+
+    $scope.context = context;
+    $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+
     if (mbean) {
-      var jolokia = $scope.workspace.jolokia;
-      var context = cubism.context()
-              .serverDelay(0)
-              .clientDelay(0)
-              .step(1000)
-              .size(width);
-
-      $scope.context = context;
-      $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-
       // TODO make generic as we can cache them; they rarely ever change
       // lets get the attributes for this mbean
 
@@ -87,6 +88,52 @@ function ChartController($scope, $location, workspace:Workspace) {
             }
           }
         }
+      }
+    } else {
+      // lets try pull out the attributes and elements from the URI and use those to chart
+      var search = $location.search();
+      //console.log("Got search: " + JSON.stringify(search));
+      var attributeNames = toSearchArgumentArray(search["att"]);
+      var elementNames = toSearchArgumentArray(search["el"]);
+      if (attributeNames && attributeNames.length && elementNames && elementNames.length) {
+
+        // first lets map the element names to mbean names to keep the URI small
+        var mbeans = {};
+        elementNames.forEach((elementName) => {
+          var child = node.get(elementName);
+          if (child) {
+            var mbean = child.objectName;
+            if (mbean) {
+              mbeans[elementName] = mbean;
+            }
+          }
+        });
+
+        // lets create the metrics
+        attributeNames.forEach((key) => {
+          angular.forEach(mbeans, (mbean, name) => {
+            var attributeTitle = humanizeValue(key);
+            // for now lets always be verbose
+            var title = name + ": " + attributeTitle;
+/*
+            if (attributeNames.length > 1) {
+              if (Object.size(mbeans) === 1) {
+                title = attributeTitle;
+              } else {
+                title = name + " / " + attributeTitle;
+              }
+            }
+*/
+            var metric = $scope.jolokiaContext.metric({
+              type: 'read',
+              mbean: mbean,
+              attribute: key
+            }, title);
+            if (metric) {
+              $scope.metrics.push(metric);
+            }
+          });
+        });
       }
     }
 
@@ -125,27 +172,20 @@ function ChartController($scope, $location, workspace:Workspace) {
   });
 }
 
-function ChartSelectController($scope, workspace:Workspace) {
+function ChartSelectController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.selectedAttributes = [];
   $scope.selectedMBeans = [];
   $scope.metrics = {};
   $scope.mbeans = {};
-  $scope.metricsSize = 20;
 
-  $scope.hasAttributeAndMBeanSelected = () => {
-    return $scope.selectedAttributes.length && $scope.selectedMBeans.length;
-  };
-
-  // TODO move to $rootScope?
-  $scope.size = (value) => {
-    console.log("Calling size on " + value);
-    if (angular.isObject(value)) {
-      return Object.size(value);
-    } else if (angular.isArray(value)) {
-      return value.length;
-    }
-    return value;
+  $scope.createChart = () => {
+    // lets add the attributes and mbeans into the URL so we can navigate back to the charts view
+    var search = $location.search();
+    search["att"] = $scope.selectedAttributes;
+    search["el"] = $scope.selectedMBeans;
+    $location.search(search);
+    $location.path("charts");
   };
 
   $scope.$watch('workspace.selection', function () {
@@ -166,7 +206,7 @@ function ChartSelectController($scope, workspace:Workspace) {
           var name = mbeanNode.title;
           if (name && mbean) {
             mbeanCounter++;
-            $scope.mbeans[name] = mbean;
+            $scope.mbeans[name] = name;
             // we need to escape the mbean path for list
             var listKey = encodeMBeanPath(mbean);
             jolokia.list(listKey, onSuccess((meta) => {
@@ -179,17 +219,28 @@ function ChartSelectController($scope, workspace:Workspace) {
                     if (isNumberTypeName(typeName)) {
                       if (!$scope.metrics[key]) {
                         //console.log("Number attribute " + key + " for " + mbean);
-                        $scope.metrics[key] = {
-                          type: 'read',
-                                mbean: mbean,
-                                attribute: key
-                        };
+                        $scope.metrics[key] = key;
                       }
                     }
                   }
                 }
                 if (++resultCounter >= mbeanCounter) {
                   // TODO do we need to sort just in case?
+
+                  // lets select the default things if we have nothing in the URI...
+
+                  // TODO look in the URI first...
+                  $scope.selectedMBeans = Object.keys($scope.mbeans);
+
+                  // select the first item
+                  $scope.selectedAttributes = [Object.keys($scope.metrics).sort().first()];
+/*
+                  angular.forEach($scope.metrics, (name, key) => {
+                    if (!$scope.selectedAttributes.length) {
+                      $scope.selectedAttributes = [key];
+                    }
+                  });
+*/
 
                   // lets update the sizes using jquery as it seems AngularJS doesn't support it
                   $("#attributes").attr("size", Object.size($scope.metrics));

@@ -6,6 +6,8 @@ interface NodeSelection {
   folderNames?: string[];
   children?:NodeSelection[];
   parent?: NodeSelection;
+
+  get(key: string): NodeSelection;
 }
 
 class Workspace {
@@ -189,7 +191,7 @@ class Folder implements NodeSelection {
   domain:string = null;
   map = {};
 
-  get(key:string):Folder {
+  get(key:string):NodeSelection {
     return this.map[key];
   }
 
@@ -197,7 +199,7 @@ class Folder implements NodeSelection {
    * Navigates the given paths and returns the value there or null if no value could be found
    */
   public navigate(...paths:string[]) {
-    var node = this;
+    var node: NodeSelection = this;
     paths.forEach((path) => {
       if (node) {
         node = node.get(path);
