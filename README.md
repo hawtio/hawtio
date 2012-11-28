@@ -14,13 +14,32 @@ That should run a little sample web application with some ActiveMQ and Camel ins
 
 A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs aavailable changes dynamically based onthe content.
 
+## Working on the source the code
+
+We love contributions! If you want to hack on the source code here's now to build it...
+
+You'll need to install [TypeScript](http://typescriptlang.org/) first...
+
+### Installing typescript
+
+To install [TypeScript](http://typescriptlang.org/) you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
+
+Then you should be able to run:
+
+    npm install -g typescript
+
+### Building with TypeScript
+
+There is a handy shell script [compileTS](https://github.com/fusesource/fuse-console/blob/master/web-console/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js)
+
+    cd web-console
+    ./compileTS
+
+By default this then generates the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js) and it then watches for changes to the source files and auto-recompiles on the fly.
+
 ## Building with GruntJS
 
-When developing the console, the most RAD tool for building the client side is [gruntjs](http://gruntjs.com/). We use it to automatically compile the [*.ts TypeScript files](http://typescriptlang.org/) [source code](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/js) for the web console into JavaScript for RAD development.
-
-### Installing GruntJS
-
-To build the code with gruntjs you will need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
+Another build option is [gruntjs](http://gruntjs.com/). Again to build the code with gruntjs you will need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
 
 Then to install grunt:
 

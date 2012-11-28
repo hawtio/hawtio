@@ -29,7 +29,6 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         }).
         filter('humanize', () => humanizeValue);
 
-
 function NavBarController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
 
