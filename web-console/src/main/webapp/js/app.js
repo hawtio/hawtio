@@ -1301,10 +1301,23 @@ function ChartEditController($scope, $location, workspace) {
                                     }
                                 }
                                 if(++resultCounter >= mbeanCounter) {
-                                    $scope.selectedMBeans = Object.keys($scope.mbeans);
-                                    $scope.selectedAttributes = [
-                                        Object.keys($scope.metrics).sort().first()
-                                    ];
+                                    var search = $location.search();
+                                    var attributeNames = toSearchArgumentArray(search["att"]);
+                                    var elementNames = toSearchArgumentArray(search["el"]);
+                                    if(attributeNames && attributeNames.length) {
+                                        $scope.selectedAttributes = attributeNames;
+                                    }
+                                    if(elementNames && elementNames.length) {
+                                        $scope.selectedMBeans = elementNames;
+                                    }
+                                    if($scope.selectedMBeans.length < 1) {
+                                        $scope.selectedMBeans = Object.keys($scope.mbeans);
+                                    }
+                                    if($scope.selectedAttributes.length < 1) {
+                                        $scope.selectedAttributes = [
+                                            Object.keys($scope.metrics).sort().first()
+                                        ];
+                                    }
                                     $("#attributes").attr("size", Object.size($scope.metrics));
                                     $("#mbeans").attr("size", Object.size($scope.mbeans));
                                     $scope.$apply();

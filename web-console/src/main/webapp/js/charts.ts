@@ -93,7 +93,6 @@ function ChartController($scope, $location, workspace:Workspace) {
     } else {
       // lets try pull out the attributes and elements from the URI and use those to chart
       var search = $location.search();
-      //console.log("Got search: " + JSON.stringify(search));
       var attributeNames = toSearchArgumentArray(search["att"]);
       var elementNames = toSearchArgumentArray(search["el"]);
       if (attributeNames && attributeNames.length && elementNames && elementNames.length) {
@@ -228,20 +227,24 @@ function ChartEditController($scope, $location, workspace:Workspace) {
                 if (++resultCounter >= mbeanCounter) {
                   // TODO do we need to sort just in case?
 
-                  // lets select the default things if we have nothing in the URI...
+                  // lets look in the search URI to default the selections
+                  var search = $location.search();
+                  var attributeNames = toSearchArgumentArray(search["att"]);
+                  var elementNames = toSearchArgumentArray(search["el"]);
+                  if (attributeNames && attributeNames.length) {
+                    $scope.selectedAttributes = attributeNames;
+                  }
+                  if (elementNames && elementNames.length) {
+                    $scope.selectedMBeans = elementNames;
+                  }
 
-                  // TODO look in the URI first...
-                  $scope.selectedMBeans = Object.keys($scope.mbeans);
-
-                  // select the first item
-                  $scope.selectedAttributes = [Object.keys($scope.metrics).sort().first()];
-/*
-                  angular.forEach($scope.metrics, (name, key) => {
-                    if (!$scope.selectedAttributes.length) {
-                      $scope.selectedAttributes = [key];
-                    }
-                  });
-*/
+                  // default selections if there are none
+                  if ($scope.selectedMBeans.length < 1) {
+                    $scope.selectedMBeans = Object.keys($scope.mbeans);
+                  }
+                  if ($scope.selectedAttributes.length < 1) {
+                    $scope.selectedAttributes = [Object.keys($scope.metrics).sort().first()];
+                  }
 
                   // lets update the sizes using jquery as it seems AngularJS doesn't support it
                   $("#attributes").attr("size", Object.size($scope.metrics));
