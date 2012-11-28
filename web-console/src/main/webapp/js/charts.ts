@@ -47,6 +47,7 @@ function ChartController($scope, $location, workspace:Workspace) {
      */
 
     var node = $scope.workspace.selection;
+    if (!node) return;
     var mbean = node.objectName;
     $scope.metrics = [];
 
@@ -167,12 +168,12 @@ function ChartController($scope, $location, workspace:Workspace) {
       });
     } else {
       // lets forward to the chart selection UI
-      $location.path("chartSelect");
+      $location.path("chartEdit");
     }
   });
 }
 
-function ChartSelectController($scope, $location, workspace:Workspace) {
+function ChartEditController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.selectedAttributes = [];
   $scope.selectedMBeans = [];

@@ -26,6 +26,7 @@ class Workspace {
     console.log("Jolokia URL is " + url);
     this.setUpdateRate(rate);
     this.uriValidations = {
+      'chartEdit': () => $location.path() === "/charts",
       'browseQueue': () => this.isQueue(),
       'browseEndpoint': () => this.isEndpoint(),
       'sendMessage': () => this.isQueue() || this.isTopic() || this.isEndpoint(),

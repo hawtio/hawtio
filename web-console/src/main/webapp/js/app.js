@@ -291,9 +291,9 @@ angular.module('FuseIDE', [
     }).when('/charts', {
         templateUrl: 'partials/charts.html',
         controller: ChartController
-    }).when('/chartSelect', {
-        templateUrl: 'partials/chartSelect.html',
-        controller: ChartSelectController
+    }).when('/chartEdit', {
+        templateUrl: 'partials/chartEdit.html',
+        controller: ChartEditController
     }).when('/logs', {
         templateUrl: 'partials/logs.html',
         controller: LogController
@@ -1160,6 +1160,9 @@ function ChartController($scope, $location, workspace) {
         }
         charts.children().remove();
         var node = $scope.workspace.selection;
+        if(!node) {
+            return;
+        }
         var mbean = node.objectName;
         $scope.metrics = [];
         var jolokia = $scope.workspace.jolokia;
@@ -1243,11 +1246,11 @@ function ChartController($scope, $location, workspace) {
                 });
             });
         } else {
-            $location.path("chartSelect");
+            $location.path("chartEdit");
         }
     });
 }
-function ChartSelectController($scope, $location, workspace) {
+function ChartEditController($scope, $location, workspace) {
     $scope.workspace = workspace;
     $scope.selectedAttributes = [];
     $scope.selectedMBeans = [];
@@ -1699,6 +1702,9 @@ var Workspace = (function () {
         console.log("Jolokia URL is " + url);
         this.setUpdateRate(rate);
         this.uriValidations = {
+            'chartEdit': function () {
+                return $location.path() === "/charts";
+            },
             'browseQueue': function () {
                 return _this.isQueue();
             },
