@@ -108,6 +108,7 @@ Then select the generated [webapp/js/app.js file](https://github.com/fusesource/
 
 You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL etc.
 
+
 ## How the tabs work
 
 The UI updates in real time based on selections in the JMX tree; so tabs become visible or hide based on the selection.
