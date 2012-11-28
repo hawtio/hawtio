@@ -1,0 +1,27 @@
+<form>
+  <div class="control-group">
+    <input type="submit" class="btn" value="Create Chart" ng-disabled="!hasAttributeAndMBeanSelected()"/>
+  </div>
+  <div class="control-group">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Attributes</th>
+        <th>Elements</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <select id="attributes" size="20" multiple ng-multiple="true" ng-model="selectedAttributes"
+                  ng-options="name | humanize for (name, metric) in metrics"></select>
+        </td>
+        <td>
+          <select id="mbeans" size="20" multiple ng-multiple="true" ng-model="selectedMBeans"
+                  ng-options="name for (name, mbean) in mbeans"></select>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</form>

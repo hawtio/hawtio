@@ -291,6 +291,9 @@ angular.module('FuseIDE', [
     }).when('/charts', {
         templateUrl: 'partials/charts.html',
         controller: ChartController
+    }).when('/chartSelect', {
+        templateUrl: 'partials/chartSelect.html',
+        controller: ChartSelectController
     }).when('/logs', {
         templateUrl: 'partials/logs.html',
         controller: LogController
@@ -1205,6 +1208,83 @@ function ChartController($scope, $location, workspace) {
                     ]).attr("class", "horizon").call(context.horizon());
                 });
             });
+        } else {
+            $location.path("chartSelect");
+        }
+    });
+}
+function ChartSelectController($scope, workspace) {
+    $scope.workspace = workspace;
+    $scope.selectedAttributes = [];
+    $scope.selectedMBeans = [];
+    $scope.metrics = {
+    };
+    $scope.mbeans = {
+    };
+    $scope.metricsSize = 20;
+    $scope.hasAttributeAndMBeanSelected = function () {
+        return $scope.selectedAttributes.length && $scope.selectedMBeans.length;
+    };
+    $scope.size = function (value) {
+        console.log("Calling size on " + value);
+        if(angular.isObject(value)) {
+            return Object.size(value);
+        } else {
+            if(angular.isArray(value)) {
+                return value.length;
+            }
+        }
+        return value;
+    };
+    $scope.$watch('workspace.selection', function () {
+        $scope.selectedAttributes = [];
+        $scope.selectedMBeans = [];
+        $scope.metrics = {
+        };
+        $scope.mbeans = {
+        };
+        var mbeanCounter = 0;
+        var resultCounter = 0;
+        var jolokia = $scope.workspace.jolokia;
+        var node = $scope.workspace.selection;
+        if(node && jolokia) {
+            var children = node.children;
+            if(children) {
+                children.forEach(function (mbeanNode) {
+                    var mbean = mbeanNode.objectName;
+                    var name = mbeanNode.title;
+                    if(name && mbean) {
+                        mbeanCounter++;
+                        $scope.mbeans[name] = mbean;
+                        var listKey = encodeMBeanPath(mbean);
+                        jolokia.list(listKey, onSuccess(function (meta) {
+                            var attributes = meta.attr;
+                            if(attributes) {
+                                for(var key in attributes) {
+                                    var value = attributes[key];
+                                    if(value) {
+                                        var typeName = value['type'];
+                                        if(isNumberTypeName(typeName)) {
+                                            if(!$scope.metrics[key]) {
+                                                $scope.metrics[key] = {
+                                                    type: 'read',
+                                                    mbean: mbean,
+                                                    attribute: key
+                                                };
+                                            }
+                                        }
+                                    }
+                                }
+                                if(++resultCounter >= mbeanCounter) {
+                                    $("#attributes").attr("size", Object.size($scope.metrics));
+                                    $("#mbeans").attr("size", Object.size($scope.mbeans));
+                                    $scope.$apply();
+                                }
+                            }
+                        }));
+                    }
+                });
+            }
         }
     });
 }

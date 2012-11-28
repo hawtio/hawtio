@@ -4,6 +4,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
                   when('/preferences', {templateUrl: 'partials/preferences.html'}).
                   when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
                   when('/charts', {templateUrl: 'partials/charts.html', controller: ChartController}).
+                  when('/chartSelect', {templateUrl: 'partials/chartSelect.html', controller: ChartSelectController}).
                   when('/logs', {templateUrl: 'partials/logs.html', controller: LogController}).
                   when('/browseQueue', {templateUrl: 'partials/browseQueue.html', controller: BrowseQueueController}).
                   when('/browseEndpoint', {templateUrl: 'partials/browseEndpoint.html', controller: BrowseEndpointController}).
@@ -170,7 +171,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
           folder.key = rootId + separator + folderNames.join(separator);
           folderNames = folderNames.clone();
         });
-        var mbeanInfo = {
+        var mbeanInfo: NodeSelection = {
           key: rootId + separator + folderNames.join(separator) + separator + lastPath,
           title: trimQuotes(lastPath),
           domain: domain,

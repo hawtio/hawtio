@@ -118,8 +118,89 @@ function ChartController($scope, $location, workspace:Workspace) {
           //.call(context.horizon().extent([-10, 10]));
         });
       });
+    } else {
+      // lets forward to the chart selection UI
+      $location.path("chartSelect");
     }
   });
 }
 
+function ChartSelectController($scope, workspace:Workspace) {
+  $scope.workspace = workspace;
+  $scope.selectedAttributes = [];
+  $scope.selectedMBeans = [];
+  $scope.metrics = {};
+  $scope.mbeans = {};
+  $scope.metricsSize = 20;
 
+  $scope.hasAttributeAndMBeanSelected = () => {
+    return $scope.selectedAttributes.length && $scope.selectedMBeans.length;
+  };
+
+  // TODO move to $rootScope?
+  $scope.size = (value) => {
+    console.log("Calling size on " + value);
+    if (angular.isObject(value)) {
+      return Object.size(value);
+    } else if (angular.isArray(value)) {
+      return value.length;
+    }
+    return value;
+  };
+
+  $scope.$watch('workspace.selection', function () {
+    $scope.selectedAttributes = [];
+    $scope.selectedMBeans = [];
+    $scope.metrics = {};
+    $scope.mbeans = {};
+    var mbeanCounter = 0;
+    var resultCounter = 0;
+    var jolokia = $scope.workspace.jolokia;
+    var node = $scope.workspace.selection;
+    if (node && jolokia) {
+      // lets iterate through all the children
+      var children = node.children;
+      if (children) {
+        children.forEach((mbeanNode) => {
+          var mbean = mbeanNode.objectName;
+          var name = mbeanNode.title;
+          if (name && mbean) {
+            mbeanCounter++;
+            $scope.mbeans[name] = mbean;
+            // we need to escape the mbean path for list
+            var listKey = encodeMBeanPath(mbean);
+            jolokia.list(listKey, onSuccess((meta) => {
+              var attributes = meta.attr;
+              if (attributes) {
+                for (var key in attributes) {
+                  var value = attributes[key];
+                  if (value) {
+                    var typeName = value['type'];
+                    if (isNumberTypeName(typeName)) {
+                      if (!$scope.metrics[key]) {
+                        //console.log("Number attribute " + key + " for " + mbean);
+                        $scope.metrics[key] = {
+                          type: 'read',
+                                mbean: mbean,
+                                attribute: key
+                        };
+                      }
+                    }
+                  }
+                }
+                if (++resultCounter >= mbeanCounter) {
+                  // TODO do we need to sort just in case?
+
+                  // lets update the sizes using jquery as it seems AngularJS doesn't support it
+                  $("#attributes").attr("size", Object.size($scope.metrics));
+                  $("#mbeans").attr("size", Object.size($scope.mbeans));
+                  $scope.$apply();
+                }
+              }
+            }));
+          }
+        });
+      }
+    }
+  });
+}

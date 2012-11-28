@@ -1,17 +1,18 @@
-interface Selection {
+interface NodeSelection {
   title: string;
   objectName?: string;
   domain?: string;
   entries?: any;
   folderNames?: string[];
-  parent?: Selection;
+  children?:NodeSelection[];
+  parent?: NodeSelection;
 }
 
 class Workspace {
   public jolokia = null;
   public updateRate = 0;
   public operationCounter = 0;
-  public selection:Selection = null;
+  public selection:NodeSelection = null;
   public tree = null;
   dummyStorage = {};
   uriValidations = null;
@@ -177,14 +178,14 @@ class Workspace {
   }
 }
 
-class Folder {
+class Folder implements NodeSelection {
   constructor(public title:string) {
   }
 
   isFolder = true;
   key:string = null;
-  children = [];
-  folderNames = [];
+  children:NodeSelection[] = [];
+  folderNames:string[] = [];
   domain:string = null;
   map = {};
 
@@ -205,7 +206,7 @@ class Folder {
     return node;
   }
 
-  getOrElse(key:string, defaultValue:any = new Folder(key)):Folder {
+  getOrElse(key:string, defaultValue:NodeSelection = new Folder(key)):Folder {
     var answer = this.map[key];
     if (!answer) {
       answer = defaultValue;
