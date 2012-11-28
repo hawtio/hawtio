@@ -89,9 +89,11 @@ The following are recommended if you want to contribute to the code
 
 We recommend you enable [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1) in your browser (e.g. in Chrome) for easier debugging by clicking on the bottom right Settings icon in *JavaScript Console* and [enabling Source Maps support such as in this video](http://www.youtube.com/watch?v=-xJl22Kvgjg)
 
-To help IDEA navigate to functions in your source & to avoid noise; you may want to ignore some files in IDEA. Go to Settings/Preferences -> File Types -> Ignore files then add these patterns to the end; which will let IDEA ignore the generated JS file, the source map files and the minified JS files when navigating around code.
+To help IDEA navigate to functions in your source & to avoid noise; you may want to ignore some JavaScript files in IDEA so that they are not included in the navigation. Go to Settings/Preferences -> File Types -> Ignore files then add these patterns to the end; which will let IDEA ignore the minified verisons of the libraries
 
-    app.js;*.js.map;*.min.js;
+    *.min.js;*-min.js
+
+Then select the generated [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js) in the Project explorer, right click and select _Mark as Plain Text_ so that it is ignored as being JavaScript source. This hint came from [this forum thread](http://devnet.jetbrains.net/message/5472690#5472690), hopefully there will be a nicer way to do all this one day!
 
 ## How the tabs work
 
