@@ -756,75 +756,6 @@ function LogController($scope, $location, workspace) {
     });
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
-function ChartController($scope, $location, workspace) {
-    $scope.workspace = workspace;
-    $scope.metrics = [];
-    $scope.$watch('workspace.selection', function () {
-        var width = 594;
-        var charts = $("#charts");
-        if(charts) {
-            width = charts.width();
-        }
-        if($scope.context) {
-            $scope.context.stop();
-            $scope.context = null;
-        }
-        charts.children().remove();
-        var node = $scope.workspace.selection;
-        var mbean = node.objectName;
-        $scope.metrics = [];
-        if(mbean) {
-            var jolokia = $scope.workspace.jolokia;
-            var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
-            $scope.context = context;
-            $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-            var listKey = encodeMBeanPath(mbean);
-            var meta = jolokia.list(listKey);
-            if(meta) {
-                var attributes = meta.attr;
-                if(attributes) {
-                    for(var key in attributes) {
-                        var value = attributes[key];
-                        if(value) {
-                            var typeName = value['type'];
-                            if(isNumberTypeName(typeName)) {
-                                var metric = $scope.jolokiaContext.metric({
-                                    type: 'read',
-                                    mbean: mbean,
-                                    attribute: key
-                                }, humanizeValue(key));
-                                if(metric) {
-                                    $scope.metrics.push(metric);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if($scope.metrics.length > 0) {
-            d3.select("#charts").selectAll(".axis").data([
-                "top", 
-                "bottom"
-            ]).enter().append("div").attr("class", function (d) {
-                return d + " axis";
-            }).each(function (d) {
-                d3.select(this).call(context.axis().ticks(12).orient(d));
-            });
-            d3.select("#charts").append("div").attr("class", "rule").call(context.rule());
-            context.on("focus", function (i) {
-                d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
-            });
-            $scope.metrics.forEach(function (metric) {
-                d3.select("#charts").call(function (div) {
-                    div.append("div").data([
-                        metric
-                    ]).attr("class", "horizon").call(context.horizon());
-                });
-            });
-        }
-    });
-}
 function populateBrowseMessageTable($scope, workspace, dataTableColumns, data) {
     if(!data) {
         $scope.messages = [];
@@ -1205,6 +1136,75 @@ function BrowseEndpointController($scope, workspace) {
                 var options = onSuccess(populateTable);
                 jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
             }
+        }
+    });
+}
+function ChartController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.metrics = [];
+    $scope.$watch('workspace.selection', function () {
+        var width = 594;
+        var charts = $("#charts");
+        if(charts) {
+            width = charts.width();
+        }
+        if($scope.context) {
+            $scope.context.stop();
+            $scope.context = null;
+        }
+        charts.children().remove();
+        var node = $scope.workspace.selection;
+        var mbean = node.objectName;
+        $scope.metrics = [];
+        if(mbean) {
+            var jolokia = $scope.workspace.jolokia;
+            var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
+            $scope.context = context;
+            $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+            var listKey = encodeMBeanPath(mbean);
+            var meta = jolokia.list(listKey);
+            if(meta) {
+                var attributes = meta.attr;
+                if(attributes) {
+                    for(var key in attributes) {
+                        var value = attributes[key];
+                        if(value) {
+                            var typeName = value['type'];
+                            if(isNumberTypeName(typeName)) {
+                                var metric = $scope.jolokiaContext.metric({
+                                    type: 'read',
+                                    mbean: mbean,
+                                    attribute: key
+                                }, humanizeValue(key));
+                                if(metric) {
+                                    $scope.metrics.push(metric);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if($scope.metrics.length > 0) {
+            d3.select("#charts").selectAll(".axis").data([
+                "top", 
+                "bottom"
+            ]).enter().append("div").attr("class", function (d) {
+                return d + " axis";
+            }).each(function (d) {
+                d3.select(this).call(context.axis().ticks(12).orient(d));
+            });
+            d3.select("#charts").append("div").attr("class", "rule").call(context.rule());
+            context.on("focus", function (i) {
+                d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+            });
+            $scope.metrics.forEach(function (metric) {
+                d3.select("#charts").call(function (div) {
+                    div.append("div").data([
+                        metric
+                    ]).attr("class", "horizon").call(context.horizon());
+                });
+            });
         }
     });
 }
