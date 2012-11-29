@@ -1,4 +1,4 @@
-function BundleController($scope, workspace:Workspace) {
+function BundleController($scope, workspace:Workspace, $templateCache, $compile) {
   $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
@@ -9,6 +9,16 @@ function BundleController($scope, workspace:Workspace) {
   ], {
     ignoreColumns: ["Headers", "RegisteredServices", "ExportedPackages", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse", "ImportedPackages"]
   });
+
+  // customise the expansion
+  $scope.widget.populateDetailDiv = (row, elm) => {
+    $scope.row = row;
+    var html = $templateCache.get('bodyTemplate');
+    if (html) {
+      elm.html(html);
+      $compile(elm.contents())($scope);
+    }
+  };
 
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;

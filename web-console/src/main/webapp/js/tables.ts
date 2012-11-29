@@ -5,6 +5,7 @@ class TableWidget {
   private openMessages = [];
 
   constructor(public scope, public workspace:Workspace, public dataTableColumns, public config:TableWidgetConfig = {}) {
+    // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
     angular.forEach(config.ignoreColumns, (name) => {
       this.ignoreColumnHash[name] = true;
     });
@@ -22,7 +23,9 @@ class TableWidget {
 
       var formatMessageDetails = (dataTable, parentRow) => {
         var oData = dataTable.fnGetData(parentRow);
-        return this.generateDetailHtml(oData);
+        var div = $('<div class="innerDetails span12">');
+        this.populateDetailDiv(oData, div);
+        return div;
       };
 
       var array = data;
@@ -85,11 +88,12 @@ class TableWidget {
 
       var widget = this;
 
+      // add a handler for the expand/collapse column
       $('#grid td.control').click(function () {
         var dataTable = $scope.dataTable;
         var parentRow = this.parentNode;
-        var i = $.inArray(parentRow, openMessages);
         var openMessages = widget.openMessages;
+        var i = $.inArray(parentRow, openMessages);
 
         var element = $('i', this);
         if (i === -1) {
@@ -124,7 +128,7 @@ class TableWidget {
     $scope.$apply();
   }
 
-  generateDetailHtml(oData) {
+  populateDetailDiv(oData, div) {
     var body = oData["Text"];
     if (!body) {
       var bodyValue = oData["body"];
@@ -144,12 +148,10 @@ class TableWidget {
     }
     var rows = 1;
     body.each(/\n/, () => rows++);
-    var answer = '<div class="innerDetails span12" title="Message payload">' +
-            '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
+    div.attr("title", "Message payload");
+    div.html('<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
             body +
-            '</textarea>' +
-            '</div>';
-    return answer;
+            '</textarea>');
   }
 }
 

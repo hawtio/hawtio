@@ -1689,7 +1689,7 @@ function createEditorSettings(workspace, mode, options) {
     }
     return options;
 }
-function BundleController($scope, workspace) {
+function BundleController($scope, workspace, $templateCache, $compile) {
     $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
@@ -1711,6 +1711,14 @@ function BundleController($scope, workspace) {
             "ImportedPackages"
         ]
     });
+    $scope.widget.populateDetailDiv = function (row, elm) {
+        $scope.row = row;
+        var html = $templateCache.get('bodyTemplate');
+        if(html) {
+            elm.html(html);
+            $compile(elm.contents())($scope);
+        }
+    };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
             return;
@@ -1775,7 +1783,9 @@ var TableWidget = (function () {
             $scope.messages = data;
             var formatMessageDetails = function (dataTable, parentRow) {
                 var oData = dataTable.fnGetData(parentRow);
-                return _this.generateDetailHtml(oData);
+                var div = $('<div class="innerDetails span12">');
+                _this.populateDetailDiv(oData, div);
+                return div;
             };
             var array = data;
             if(angular.isArray(data)) {
@@ -1836,8 +1846,8 @@ var TableWidget = (function () {
             $('#grid td.control').click(function () {
                 var dataTable = $scope.dataTable;
                 var parentRow = this.parentNode;
-                var i = $.inArray(parentRow, openMessages);
                 var openMessages = widget.openMessages;
+                var i = $.inArray(parentRow, openMessages);
                 var element = $('i', this);
                 if(i === -1) {
                     element.removeClass('icon-plus');
@@ -1869,7 +1879,7 @@ var TableWidget = (function () {
         }
         $scope.$apply();
     };
-    TableWidget.prototype.generateDetailHtml = function (oData) {
+    TableWidget.prototype.populateDetailDiv = function (oData, div) {
         var body = oData["Text"];
         if(!body) {
             var bodyValue = oData["body"];
@@ -1891,8 +1901,8 @@ var TableWidget = (function () {
         body.each(/\n/, function () {
             return rows++;
         });
-        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
-        return answer;
+        div.attr("title", "Message payload");
+        div.html('<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>');
     };
     return TableWidget;
 })();
