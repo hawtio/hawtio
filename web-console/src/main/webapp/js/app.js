@@ -778,154 +778,6 @@ function LogController($scope, $location, workspace) {
     });
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
-var TableWidget = (function () {
-    function TableWidget(scope, workspace, dataTableColumns, config) {
-        if (typeof config === "undefined") { config = {
-        }; }
-        this.scope = scope;
-        this.workspace = workspace;
-        this.dataTableColumns = dataTableColumns;
-        this.config = config;
-        var _this = this;
-        this.ignoreColumnHash = {
-        };
-        this.flattenColumnHash = {
-        };
-        angular.forEach(config.ignoreColumns, function (name) {
-            _this.ignoreColumnHash[name] = true;
-        });
-        angular.forEach(config.flattenColumns, function (name) {
-            _this.flattenColumnHash[name] = true;
-        });
-    }
-    TableWidget.prototype.populateTable = function (data) {
-        var _this = this;
-        var $scope = this.scope;
-        if(!data) {
-            $scope.messages = [];
-        } else {
-            $scope.messages = data;
-            var formatMessageDetails = function (dataTable, parentRow) {
-                var oData = dataTable.fnGetData(parentRow);
-                return _this.generateDetailHtml(oData);
-            };
-            var array = data;
-            if(angular.isArray(data)) {
-            } else {
-                if(angular.isObject(data)) {
-                    array = [];
-                    angular.forEach(data, function (object) {
-                        return array.push(object);
-                    });
-                }
-            }
-            var tableElement = $('#grid');
-            var tableTr = $(tableElement).find("tr");
-            var ths = $(tableTr).find("th");
-            var columns = this.dataTableColumns.slice();
-            var addColumn = function (key, title) {
-                columns.push({
-                    mDataProp: key
-                });
-                if(tableTr) {
-                    $("<th>" + title + "</th>").appendTo(tableTr);
-                }
-            };
-            var checkForNewColumn = function (value, key, prefix) {
-                var found = _this.ignoreColumnHash[key] || columns.any({
-                    mDataProp: key
-                });
-                if(!found) {
-                    if(_this.flattenColumnHash[key]) {
-                        if(angular.isObject(value)) {
-                            var childPrefix = prefix + key + ".";
-                            angular.forEach(value, function (value, key) {
-                                return checkForNewColumn(value, key, childPrefix);
-                            });
-                        }
-                    } else {
-                        addColumn(prefix + key, humanizeValue(key));
-                    }
-                }
-            };
-            if(!this.config.disableAddColumns && angular.isArray(array) && array.length > 0) {
-                var first = array[0];
-                if(angular.isObject(first)) {
-                    angular.forEach(first, function (value, key) {
-                        return checkForNewColumn(value, key, "");
-                    });
-                }
-            }
-            var config = {
-                bPaginate: false,
-                sDom: 'Rlfrtip',
-                bDestroy: true,
-                aaData: array,
-                aoColumns: columns
-            };
-            $scope.dataTable = tableElement.dataTable(config);
-            $('#grid td.control').click(function () {
-                var openMessages = $scope.openMessages;
-                var dataTable = $scope.dataTable;
-                var parentRow = this.parentNode;
-                var i = $.inArray(parentRow, openMessages);
-                var element = $('i', this);
-                if(i === -1) {
-                    element.removeClass('icon-plus');
-                    element.addClass('icon-minus');
-                    var dataDiv = formatMessageDetails(dataTable, parentRow);
-                    var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-                    $('div.innerDetails', detailsRow).slideDown();
-                    openMessages.push(parentRow);
-                    var textAreas = $(detailsRow).find("textarea.messageDetail");
-                    var textArea = textAreas[0];
-                    if(textArea) {
-                        var editorSettings = createEditorSettings(this.workspace, $scope.format, {
-                            readOnly: true
-                        });
-                        var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-                        var autoFormat = true;
-                        if(autoFormat) {
-                            autoFormatEditor(editor);
-                        }
-                    }
-                } else {
-                    element.removeClass('icon-minus');
-                    element.addClass('icon-plus');
-                    dataTable.fnClose(parentRow);
-                    openMessages.splice(i, 1);
-                }
-            });
-        }
-        $scope.$apply();
-    };
-    TableWidget.prototype.generateDetailHtml = function (oData) {
-        var body = oData["Text"];
-        if(!body) {
-            var bodyValue = oData["body"];
-            if(angular.isObject(bodyValue)) {
-                body = bodyValue["text"];
-            } else {
-                body = bodyValue;
-            }
-        }
-        if(!body) {
-            body = "";
-        }
-        this.scope.format = "javascript";
-        var trimmed = body.trimLeft().trimRight();
-        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-            this.scope.format = "xml";
-        }
-        var rows = 1;
-        body.each(/\n/, function () {
-            return rows++;
-        });
-        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
-        return answer;
-    };
-    return TableWidget;
-})();
 function CamelController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
@@ -1893,6 +1745,157 @@ function getSelectionBundleMBean(workspace) {
     }
     return null;
 }
+var TableWidget = (function () {
+    function TableWidget(scope, workspace, dataTableColumns, config) {
+        if (typeof config === "undefined") { config = {
+        }; }
+        this.scope = scope;
+        this.workspace = workspace;
+        this.dataTableColumns = dataTableColumns;
+        this.config = config;
+        var _this = this;
+        this.ignoreColumnHash = {
+        };
+        this.flattenColumnHash = {
+        };
+        this.openMessages = [];
+        angular.forEach(config.ignoreColumns, function (name) {
+            _this.ignoreColumnHash[name] = true;
+        });
+        angular.forEach(config.flattenColumns, function (name) {
+            _this.flattenColumnHash[name] = true;
+        });
+    }
+    TableWidget.prototype.populateTable = function (data) {
+        var _this = this;
+        var $scope = this.scope;
+        if(!data) {
+            $scope.messages = [];
+        } else {
+            $scope.messages = data;
+            var formatMessageDetails = function (dataTable, parentRow) {
+                var oData = dataTable.fnGetData(parentRow);
+                return _this.generateDetailHtml(oData);
+            };
+            var array = data;
+            if(angular.isArray(data)) {
+            } else {
+                if(angular.isObject(data)) {
+                    array = [];
+                    angular.forEach(data, function (object) {
+                        return array.push(object);
+                    });
+                }
+            }
+            var tableElement = $('#grid');
+            var tableTr = $(tableElement).find("tr");
+            var ths = $(tableTr).find("th");
+            var columns = this.dataTableColumns.slice();
+            var addColumn = function (key, title) {
+                columns.push({
+                    mDataProp: key
+                });
+                if(tableTr) {
+                    $("<th>" + title + "</th>").appendTo(tableTr);
+                }
+            };
+            var checkForNewColumn = function (value, key, prefix) {
+                var found = _this.ignoreColumnHash[key] || columns.any({
+                    mDataProp: key
+                });
+                if(!found) {
+                    if(_this.flattenColumnHash[key]) {
+                        if(angular.isObject(value)) {
+                            var childPrefix = prefix + key + ".";
+                            angular.forEach(value, function (value, key) {
+                                return checkForNewColumn(value, key, childPrefix);
+                            });
+                        }
+                    } else {
+                        addColumn(prefix + key, humanizeValue(key));
+                    }
+                }
+            };
+            if(!this.config.disableAddColumns && angular.isArray(array) && array.length > 0) {
+                var first = array[0];
+                if(angular.isObject(first)) {
+                    angular.forEach(first, function (value, key) {
+                        return checkForNewColumn(value, key, "");
+                    });
+                }
+            }
+            var config = {
+                bPaginate: false,
+                sDom: 'Rlfrtip',
+                bDestroy: true,
+                aaData: array,
+                aoColumns: columns
+            };
+            $scope.dataTable = tableElement.dataTable(config);
+            var widget = this;
+            $('#grid td.control').click(function () {
+                var dataTable = $scope.dataTable;
+                var parentRow = this.parentNode;
+                var i = $.inArray(parentRow, openMessages);
+                var openMessages = widget.openMessages;
+                var element = $('i', this);
+                if(i === -1) {
+                    element.removeClass('icon-plus');
+                    element.addClass('icon-minus');
+                    var dataDiv = formatMessageDetails(dataTable, parentRow);
+                    var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+                    $('div.innerDetails', detailsRow).slideDown();
+                    openMessages.push(parentRow);
+                    var textAreas = $(detailsRow).find("textarea.messageDetail");
+                    var textArea = textAreas[0];
+                    if(textArea) {
+                        var format = widget.bodyFormat;
+                        var editorSettings = createEditorSettings(this.workspace, format, {
+                            readOnly: true
+                        });
+                        var editor = CodeMirror.fromTextArea(textArea, editorSettings);
+                        var autoFormat = true;
+                        if(autoFormat) {
+                            autoFormatEditor(editor);
+                        }
+                    }
+                } else {
+                    element.removeClass('icon-minus');
+                    element.addClass('icon-plus');
+                    dataTable.fnClose(parentRow);
+                    openMessages.splice(i, 1);
+                }
+            });
+        }
+        $scope.$apply();
+    };
+    TableWidget.prototype.generateDetailHtml = function (oData) {
+        var body = oData["Text"];
+        if(!body) {
+            var bodyValue = oData["body"];
+            if(angular.isObject(bodyValue)) {
+                body = bodyValue["text"];
+            } else {
+                body = bodyValue;
+            }
+        }
+        if(!body) {
+            body = "";
+        }
+        this.bodyFormat = "javascript";
+        var trimmed = body.trimLeft().trimRight();
+        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+            this.bodyFormat = "xml";
+        }
+        var rows = 1;
+        body.each(/\n/, function () {
+            return rows++;
+        });
+        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
+        return answer;
+    };
+    return TableWidget;
+})();
 var Workspace = (function () {
     function Workspace(url, $location) {
         this.url = url;

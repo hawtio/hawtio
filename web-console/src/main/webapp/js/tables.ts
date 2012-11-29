@@ -1,6 +1,8 @@
 class TableWidget {
   private ignoreColumnHash = {};
   private flattenColumnHash = {};
+  private bodyFormat: string;
+  private openMessages = [];
 
   constructor(public scope, public workspace:Workspace, public dataTableColumns, public config:TableWidgetConfig = {}) {
     angular.forEach(config.ignoreColumns, (name) => {
@@ -81,11 +83,13 @@ class TableWidget {
       };
       $scope.dataTable = tableElement.dataTable(config);
 
+      var widget = this;
+
       $('#grid td.control').click(function () {
-        var openMessages = $scope.openMessages;
         var dataTable = $scope.dataTable;
         var parentRow = this.parentNode;
         var i = $.inArray(parentRow, openMessages);
+        var openMessages = widget.openMessages;
 
         var element = $('i', this);
         if (i === -1) {
@@ -98,7 +102,8 @@ class TableWidget {
           var textAreas = $(detailsRow).find("textarea.messageDetail");
           var textArea = textAreas[0];
           if (textArea) {
-            var editorSettings = createEditorSettings(this.workspace, $scope.format, {
+            var format = widget.bodyFormat;
+            var editorSettings = createEditorSettings(this.workspace, format, {
               readOnly: true
             });
             var editor = CodeMirror.fromTextArea(textArea, editorSettings);
@@ -132,10 +137,10 @@ class TableWidget {
     if (!body) body = "";
 
     // lets guess the payload format
-    this.scope.format = "javascript";
+    this.bodyFormat = "javascript";
     var trimmed = body.trimLeft().trimRight();
     if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-      this.scope.format = "xml";
+      this.bodyFormat = "xml";
     }
     var rows = 1;
     body.each(/\n/, () => rows++);
