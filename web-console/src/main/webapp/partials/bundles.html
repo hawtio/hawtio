@@ -1,5 +1,31 @@
 <script type="text/ng-template" id="bodyTemplate">
-    <p>This comes from the template - yay!!!</p>
+  <table>
+    <tr>
+      <th>Exported Packages</th>
+      <th>Imported Packages</th>
+      <th>Headers</th>
+    </tr>
+    <tr>
+      <td>
+        <ul>
+          <li ng-repeat="name in row.ExportedPackages">{{name}}</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li ng-repeat="name in row.ImportedPackages">{{name}}</li>
+        </ul>
+      </td>
+      <td>
+        <table>
+          <tr ng-repeat="(key, value) in row.Headers">
+            <td>{{key}}</td>
+            <td>{{value.Value}}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </script>
 
 <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-striped table-bordered table-hover"

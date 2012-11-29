@@ -7,16 +7,18 @@ function BundleController($scope, workspace:Workspace, $templateCache, $compile)
     },
     { "mDataProp": "Identifier" }
   ], {
-    ignoreColumns: ["Headers", "RegisteredServices", "ExportedPackages", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse", "ImportedPackages"]
+    ignoreColumns: ["Headers", "ExportedPackages", "ImportedPackages", "RegisteredServices", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse"]
   });
+
+  var html = $templateCache.get('bodyTemplate');
 
   // customise the expansion
   $scope.widget.populateDetailDiv = (row, elm) => {
     $scope.row = row;
-    var html = $templateCache.get('bodyTemplate');
     if (html) {
       elm.html(html);
-      $compile(elm.contents())($scope);
+      var results = $compile(elm.contents())($scope);
+      console.log("Got results " + results);
     }
   };
 
@@ -57,4 +59,8 @@ function getSelectionBundleMBean(workspace:Workspace) {
     }
   }
   return null;
+}
+
+function DummyController($scope) {
+  console.log("Dummy controller created with scope row " + $scope.row);
 }

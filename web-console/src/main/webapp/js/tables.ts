@@ -123,6 +123,8 @@ class TableWidget {
           dataTable.fnClose(parentRow);
           openMessages.splice(i, 1);
         }
+        // lets let angular render any new detail templates
+        $scope.$apply();
       });
     }
     $scope.$apply();

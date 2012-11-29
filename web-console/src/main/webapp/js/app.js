@@ -1702,21 +1702,22 @@ function BundleController($scope, workspace, $templateCache, $compile) {
     ], {
         ignoreColumns: [
             "Headers", 
-            "RegisteredServices", 
             "ExportedPackages", 
+            "ImportedPackages", 
+            "RegisteredServices", 
             "RequiringBundles", 
             "RequiredBundles", 
             "Fragments", 
-            "ServicesInUse", 
-            "ImportedPackages"
+            "ServicesInUse"
         ]
     });
+    var html = $templateCache.get('bodyTemplate');
     $scope.widget.populateDetailDiv = function (row, elm) {
         $scope.row = row;
-        var html = $templateCache.get('bodyTemplate');
         if(html) {
             elm.html(html);
-            $compile(elm.contents())($scope);
+            var results = $compile(elm.contents())($scope);
+            console.log("Got results " + results);
         }
     };
     $scope.$watch('workspace.selection', function () {
@@ -1752,6 +1753,9 @@ function getSelectionBundleMBean(workspace) {
         }
     }
     return null;
+}
+function DummyController($scope) {
+    console.log("Dummy controller created with scope row " + $scope.row);
 }
 var TableWidget = (function () {
     function TableWidget(scope, workspace, dataTableColumns, config) {
@@ -1875,6 +1879,7 @@ var TableWidget = (function () {
                     dataTable.fnClose(parentRow);
                     openMessages.splice(i, 1);
                 }
+                $scope.$apply();
             });
         }
         $scope.$apply();
