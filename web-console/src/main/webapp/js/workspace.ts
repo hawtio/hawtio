@@ -36,7 +36,8 @@ class Workspace {
       'deleteQueue': () => this.isQueue(),
       'deleteTopic': () => this.isTopic(),
       'routes': () => this.isCamelFolder(),
-      'createEndpoint': () => this.isEndpointsFolder()
+      'createEndpoint': () => this.isEndpointsFolder(),
+      'bundles': () => this.isOsgiFolder()
     };
 
   }
@@ -178,6 +179,10 @@ class Workspace {
 
   isRoutesFolder() {
     return this.hasDomainAndLastPath('org.apache.camel', 'routes')
+  }
+
+  isOsgiFolder() {
+    return this.hasDomainAndProperties('osgi.core');
   }
 }
 

@@ -1,8 +1,5 @@
 function BrowseQueueController($scope, workspace) {
-    $scope.workspace = workspace;
-    $scope.messages = [];
-    $scope.openMessages = [];
-    $scope.dataTableColumns = [
+    $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
             "sClass": "control center",
@@ -41,9 +38,25 @@ function BrowseQueueController($scope, workspace) {
         {
             "mDataProp": "JMSDestination"
         }
-    ];
+    ], {
+        ignoreColumns: [
+            "PropertiesText", 
+            "BodyPreview", 
+            "Text"
+        ],
+        flattenColumns: [
+            "BooleanProperties", 
+            "ByteProperties", 
+            "ShortProperties", 
+            "IntProperties", 
+            "LongProperties", 
+            "FloatProperties", 
+            "DoubleProperties", 
+            "StringProperties"
+        ]
+    });
     var populateTable = function (response) {
-        populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, response.value);
+        $scope.widget.populateTable(response.value);
     };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
@@ -327,6 +340,9 @@ angular.module('FuseIDE', [
     }).when('/deleteTopic', {
         templateUrl: 'partials/deleteTopic.html',
         controller: DestinationController
+    }).when('/bundles', {
+        templateUrl: 'partials/bundles.html',
+        controller: BundleController
     }).when('/debug', {
         templateUrl: 'partials/debug.html',
         controller: DetailController
@@ -762,79 +778,154 @@ function LogController($scope, $location, workspace) {
     });
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
-function populateBrowseMessageTable($scope, workspace, dataTableColumns, data) {
-    if(!data) {
-        $scope.messages = [];
-    } else {
-        $scope.messages = data;
-        var formatMessageDetails = function (dataTable, parentRow) {
-            var oData = dataTable.fnGetData(parentRow);
-            var body = oData["Text"];
-            if(!body) {
-                var bodyValue = oData["body"];
-                if(angular.isObject(bodyValue)) {
-                    body = bodyValue["text"];
-                } else {
-                    body = bodyValue;
-                }
-            }
-            if(!body) {
-                body = "";
-            }
-            $scope.format = "javascript";
-            var trimmed = body.trimLeft().trimRight();
-            if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-                $scope.format = "xml";
-            }
-            var rows = 1;
-            body.each(/\n/, function () {
-                return rows++;
-            });
-            var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
-            return answer;
+var TableWidget = (function () {
+    function TableWidget(scope, workspace, dataTableColumns, config) {
+        if (typeof config === "undefined") { config = {
+        }; }
+        this.scope = scope;
+        this.workspace = workspace;
+        this.dataTableColumns = dataTableColumns;
+        this.config = config;
+        var _this = this;
+        this.ignoreColumnHash = {
         };
-        $scope.dataTable = $('#grid').dataTable({
-            bPaginate: false,
-            sDom: 'Rlfrtip',
-            bDestroy: true,
-            aaData: data,
-            aoColumns: dataTableColumns
+        this.flattenColumnHash = {
+        };
+        angular.forEach(config.ignoreColumns, function (name) {
+            _this.ignoreColumnHash[name] = true;
         });
-        $('#grid td.control').click(function () {
-            var openMessages = $scope.openMessages;
-            var dataTable = $scope.dataTable;
-            var parentRow = this.parentNode;
-            var i = $.inArray(parentRow, openMessages);
-            var element = $('i', this);
-            if(i === -1) {
-                element.removeClass('icon-plus');
-                element.addClass('icon-minus');
-                var dataDiv = formatMessageDetails(dataTable, parentRow);
-                var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-                $('div.innerDetails', detailsRow).slideDown();
-                openMessages.push(parentRow);
-                var textAreas = $(detailsRow).find("textarea.messageDetail");
-                var textArea = textAreas[0];
-                if(textArea) {
-                    var editorSettings = createEditorSettings(workspace, $scope.format, {
-                        readOnly: true
-                    });
-                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-                    var autoFormat = true;
-                    if(autoFormat) {
-                        autoFormatEditor(editor);
-                    }
-                }
-            } else {
-                element.removeClass('icon-minus');
-                element.addClass('icon-plus');
-                dataTable.fnClose(parentRow);
-                openMessages.splice(i, 1);
-            }
+        angular.forEach(config.flattenColumns, function (name) {
+            _this.flattenColumnHash[name] = true;
         });
     }
-    $scope.$apply();
-}
+    TableWidget.prototype.populateTable = function (data) {
+        var _this = this;
+        var $scope = this.scope;
+        if(!data) {
+            $scope.messages = [];
+        } else {
+            $scope.messages = data;
+            var formatMessageDetails = function (dataTable, parentRow) {
+                var oData = dataTable.fnGetData(parentRow);
+                return _this.generateDetailHtml(oData);
+            };
+            var array = data;
+            if(angular.isArray(data)) {
+            } else {
+                if(angular.isObject(data)) {
+                    array = [];
+                    angular.forEach(data, function (object) {
+                        return array.push(object);
+                    });
+                }
+            }
+            var tableElement = $('#grid');
+            var tableTr = $(tableElement).find("tr");
+            var ths = $(tableTr).find("th");
+            var columns = this.dataTableColumns.slice();
+            var addColumn = function (key, title) {
+                columns.push({
+                    mDataProp: key
+                });
+                if(tableTr) {
+                    $("<th>" + title + "</th>").appendTo(tableTr);
+                }
+            };
+            var checkForNewColumn = function (value, key, prefix) {
+                var found = _this.ignoreColumnHash[key] || columns.any({
+                    mDataProp: key
+                });
+                if(!found) {
+                    if(_this.flattenColumnHash[key]) {
+                        if(angular.isObject(value)) {
+                            var childPrefix = prefix + key + ".";
+                            angular.forEach(value, function (value, key) {
+                                return checkForNewColumn(value, key, childPrefix);
+                            });
+                        }
+                    } else {
+                        addColumn(prefix + key, humanizeValue(key));
+                    }
+                }
+            };
+            if(!this.config.disableAddColumns && angular.isArray(array) && array.length > 0) {
+                var first = array[0];
+                if(angular.isObject(first)) {
+                    angular.forEach(first, function (value, key) {
+                        return checkForNewColumn(value, key, "");
+                    });
+                }
+            }
+            var config = {
+                bPaginate: false,
+                sDom: 'Rlfrtip',
+                bDestroy: true,
+                aaData: array,
+                aoColumns: columns
+            };
+            $scope.dataTable = tableElement.dataTable(config);
+            $('#grid td.control').click(function () {
+                var openMessages = $scope.openMessages;
+                var dataTable = $scope.dataTable;
+                var parentRow = this.parentNode;
+                var i = $.inArray(parentRow, openMessages);
+                var element = $('i', this);
+                if(i === -1) {
+                    element.removeClass('icon-plus');
+                    element.addClass('icon-minus');
+                    var dataDiv = formatMessageDetails(dataTable, parentRow);
+                    var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+                    $('div.innerDetails', detailsRow).slideDown();
+                    openMessages.push(parentRow);
+                    var textAreas = $(detailsRow).find("textarea.messageDetail");
+                    var textArea = textAreas[0];
+                    if(textArea) {
+                        var editorSettings = createEditorSettings(this.workspace, $scope.format, {
+                            readOnly: true
+                        });
+                        var editor = CodeMirror.fromTextArea(textArea, editorSettings);
+                        var autoFormat = true;
+                        if(autoFormat) {
+                            autoFormatEditor(editor);
+                        }
+                    }
+                } else {
+                    element.removeClass('icon-minus');
+                    element.addClass('icon-plus');
+                    dataTable.fnClose(parentRow);
+                    openMessages.splice(i, 1);
+                }
+            });
+        }
+        $scope.$apply();
+    };
+    TableWidget.prototype.generateDetailHtml = function (oData) {
+        var body = oData["Text"];
+        if(!body) {
+            var bodyValue = oData["body"];
+            if(angular.isObject(bodyValue)) {
+                body = bodyValue["text"];
+            } else {
+                body = bodyValue;
+            }
+        }
+        if(!body) {
+            body = "";
+        }
+        this.scope.format = "javascript";
+        var trimmed = body.trimLeft().trimRight();
+        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+            this.scope.format = "xml";
+        }
+        var rows = 1;
+        body.each(/\n/, function () {
+            return rows++;
+        });
+        var answer = '<div class="innerDetails span12" title="Message payload">' + '<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' + body + '</textarea>' + '</div>';
+        return answer;
+    };
+    return TableWidget;
+})();
 function CamelController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.routes = [];
@@ -1077,18 +1168,21 @@ function SendMessageController($scope, workspace) {
 }
 function BrowseEndpointController($scope, workspace) {
     $scope.workspace = workspace;
-    $scope.messages = [];
-    $scope.openMessages = [];
-    $scope.dataTableColumns = [
+    $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
             "sClass": "control center",
             "sDefaultContent": '<i class="icon-plus"></i>'
-        }, 
-        {
-            "mDataProp": "headers.breadcrumbId"
         }
-    ];
+    ], {
+        ignoreColumns: [
+            "headerTypes", 
+            "body"
+        ],
+        flattenColumns: [
+            "headers"
+        ]
+    });
     var populateTable = function (response) {
         var data = [];
         if(angular.isString(response)) {
@@ -1128,7 +1222,7 @@ function BrowseEndpointController($scope, workspace) {
                 data.push(messageData);
             });
         }
-        populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, data);
+        $scope.widget.populateTable(data);
     };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
@@ -1743,6 +1837,62 @@ function createEditorSettings(workspace, mode, options) {
     }
     return options;
 }
+function BundleController($scope, workspace) {
+    $scope.widget = new TableWidget($scope, workspace, [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }, 
+        {
+            "mDataProp": "Identifier"
+        }
+    ], {
+        ignoreColumns: [
+            "Headers", 
+            "RegisteredServices", 
+            "ExportedPackages", 
+            "RequiringBundles", 
+            "RequiredBundles", 
+            "Fragments", 
+            "ServicesInUse", 
+            "ImportedPackages"
+        ]
+    });
+    $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid()) {
+            return;
+        }
+        var mbean = getSelectionBundleMBean(workspace);
+        if(mbean) {
+            var jolokia = workspace.jolokia;
+            jolokia.request({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'listBundles()'
+            }, onSuccess(populateTable));
+        }
+    });
+    var populateTable = function (response) {
+        $scope.widget.populateTable(response.value);
+        $scope.$apply();
+    };
+}
+function getSelectionBundleMBean(workspace) {
+    if(workspace) {
+        var folder = workspace.tree.navigate("osgi.core", "bundleState");
+        if(folder) {
+            var children = folder.children;
+            if(children) {
+                var node = children[0];
+                if(node) {
+                    return node.objectName;
+                }
+            }
+        }
+    }
+    return null;
+}
 var Workspace = (function () {
     function Workspace(url, $location) {
         this.url = url;
@@ -1793,6 +1943,9 @@ var Workspace = (function () {
             },
             'createEndpoint': function () {
                 return _this.isEndpointsFolder();
+            },
+            'bundles': function () {
+                return _this.isOsgiFolder();
             }
         };
     }
@@ -1919,6 +2072,9 @@ var Workspace = (function () {
     };
     Workspace.prototype.isRoutesFolder = function () {
         return this.hasDomainAndLastPath('org.apache.camel', 'routes');
+    };
+    Workspace.prototype.isOsgiFolder = function () {
+        return this.hasDomainAndProperties('osgi.core');
     };
     return Workspace;
 })();

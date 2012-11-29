@@ -1,8 +1,5 @@
 function BrowseQueueController($scope, workspace:Workspace) {
-  $scope.workspace = workspace;
-  $scope.messages = [];
-  $scope.openMessages = [];
-  $scope.dataTableColumns = [
+  $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
       "sClass": "control center",
@@ -26,10 +23,13 @@ function BrowseQueueController($scope, workspace:Workspace) {
     { "mDataProp": "JMSExpiration" },
     { "mDataProp": "JMSType" },
     { "mDataProp": "JMSDestination" }
-  ];
+  ], {
+    ignoreColumns: ["PropertiesText", "BodyPreview", "Text"],
+    flattenColumns: ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties", "DoubleProperties", "StringProperties"]
+  });
 
   var populateTable = function (response) {
-    populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, response.value);
+    $scope.widget.populateTable(response.value);
   };
 
   $scope.$watch('workspace.selection', function () {

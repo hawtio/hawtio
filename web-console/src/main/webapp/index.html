@@ -58,6 +58,8 @@
             <a ng-href="#/deleteQueue{{hash}}" title="Delete this queue"><i class="icon-remove"></i> Delete</a></li>
           <li ng-class="navClass('deleteTopic')" ng-show="validSelection('deleteTopic')">
             <a ng-href="#/deleteTopic{{hash}}" title="Delete this topic"><i class="icon-remove"></i> Delete</a></li>
+          <li ng-class="navClass('bundles')" ng-show="validSelection('bundles')">
+            <a ng-href="#/bundles{{hash}}" title="View the available bundles in this OSGi container"><i class="icon-list"></i> Bundles</a></li>
           <li ng-class="navClass('logs')">
             <a ng-href="#/logs{{hash}}" title="View the logs in this process"><i class="icon-list-alt"></i> Log</a></li>
         </ul>

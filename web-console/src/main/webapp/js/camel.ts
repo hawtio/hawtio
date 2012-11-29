@@ -245,16 +245,16 @@ function SendMessageController($scope, workspace:Workspace) {
 
 function BrowseEndpointController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
-  $scope.messages = [];
-  $scope.openMessages = [];
-  $scope.dataTableColumns = [
+  $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
       "sClass": "control center",
       "sDefaultContent": '<i class="icon-plus"></i>'
-    },
-    { "mDataProp": "headers.breadcrumbId" }
-  ];
+    }
+  ], {
+    ignoreColumns: ["headerTypes", "body"],
+    flattenColumns: ["headers"]
+  });
 
   var populateTable = function (response) {
     var data = [];
@@ -291,7 +291,7 @@ function BrowseEndpointController($scope, workspace:Workspace) {
         data.push(messageData);
       });
     }
-    populateBrowseMessageTable($scope, workspace, $scope.dataTableColumns, data);
+    $scope.widget.populateTable(data);
   };
 
   $scope.$watch('workspace.selection', function () {

@@ -16,6 +16,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
                   when('/createTopic', {templateUrl: 'partials/createTopic.html', controller: DestinationController}).
                   when('/deleteQueue', {templateUrl: 'partials/deleteQueue.html', controller: DestinationController}).
                   when('/deleteTopic', {templateUrl: 'partials/deleteTopic.html', controller: DestinationController}).
+                  when('/bundles', {templateUrl: 'partials/bundles.html', controller: BundleController}).
                   when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
                   when('/help', {
                     redirectTo: '/help/overview'
