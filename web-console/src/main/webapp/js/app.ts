@@ -2,6 +2,7 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
         config(($routeProvider) => {
           $routeProvider.
                   when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
+                  when('/operations', {templateUrl: 'partials/operations.html', controller: OperationsController}).
                   when('/charts', {templateUrl: 'partials/charts.html', controller: ChartController}).
                   when('/chartEdit', {templateUrl: 'partials/chartEdit.html', controller: ChartEditController}).
                   when('/preferences', {templateUrl: 'partials/preferences.html'}).
@@ -302,6 +303,50 @@ class Table {
       }
     });
   }
+}
+
+function OperationsController($scope, $routeParams, workspace:Workspace, $rootScope) {
+  $scope.routeParams = $routeParams;
+  $scope.workspace = workspace;
+
+  $scope.operation_names = (value) => {
+    var rc = [];
+    for (var item in value) {
+      rc.push("" + item);
+    }
+    return rc;
+  };
+
+  var asQuery = (node) => {
+    return {
+      type: "LIST",
+      method: "post",
+      path: node.domain + "/" + node.path,
+      ignoreErrors: true
+    };
+  };
+
+  $scope.$watch('workspace.selection', function() {
+    var node = $scope.workspace.selection;
+
+    if (!node) {
+      return;
+    }
+
+    var query = asQuery(node);
+    var jolokia = workspace.jolokia;
+
+    var update_values = (response) => {
+      $scope.operations = response.value.op
+        $scope.$apply()
+    };
+    console.log("mbean name : " + node.objectName);
+    console.log("mbean domain : " + node.domain);
+    console.log("mbean path : " + node.path);
+    console.log("Trying : " + query.path);
+    jolokia.request(query, onSuccess(update_values));
+
+  });
 }
 
 function DetailController($scope, $routeParams, workspace:Workspace, $rootScope) {
