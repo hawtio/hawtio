@@ -19,5 +19,5 @@ The MBean should then have these methods
 
 Each health status object should include the following properties...
 
-* kind = the unique code of the kind of warning/error/issue. We can then use this unique kind ID to generate useful UI tooling & descriptions
+* code = the unique code of the kind of warning/error/issue. We can then use this unique kind ID to generate useful UI tooling & descriptions. Ideally the code should be fully qualified in the same way as Java classes, such as org.apache.activemq.destination.NoConsumer
 * resource = the JMX ObjectName of the thing causing the issue
