@@ -292,13 +292,17 @@ function SubscriberGraphController($scope, workspace) {
         }
     });
 }
+function BrokerStatusController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.$watch('workspace.selection', function () {
+        workspace.moveIfViewInvalid();
+    });
+}
 angular.module('FuseIDE', [
     'bootstrap', 
     'ngResource'
 ]).config(function ($routeProvider) {
-    $routeProvider.when('/preferences', {
-        templateUrl: 'partials/preferences.html'
-    }).when('/attributes', {
+    $routeProvider.when('/attributes', {
         templateUrl: 'partials/attributes.html',
         controller: DetailController
     }).when('/charts', {
@@ -307,50 +311,55 @@ angular.module('FuseIDE', [
     }).when('/chartEdit', {
         templateUrl: 'partials/chartEdit.html',
         controller: ChartEditController
+    }).when('/preferences', {
+        templateUrl: 'partials/preferences.html'
     }).when('/logs', {
         templateUrl: 'partials/logs.html',
         controller: LogController
-    }).when('/browseQueue', {
-        templateUrl: 'partials/browseQueue.html',
-        controller: BrowseQueueController
-    }).when('/browseEndpoint', {
-        templateUrl: 'partials/browseEndpoint.html',
-        controller: BrowseEndpointController
-    }).when('/sendMessage', {
-        templateUrl: 'partials/sendMessage.html',
-        controller: SendMessageController
-    }).when('/routes', {
-        templateUrl: 'partials/routes.html',
-        controller: CamelController
-    }).when('/subscribers', {
-        templateUrl: 'partials/subscribers.html',
-        controller: SubscriberGraphController
-    }).when('/createEndpoint', {
-        templateUrl: 'partials/createEndpoint.html',
-        controller: EndpointController
-    }).when('/createQueue', {
-        templateUrl: 'partials/createQueue.html',
-        controller: DestinationController
-    }).when('/createTopic', {
-        templateUrl: 'partials/createTopic.html',
-        controller: DestinationController
-    }).when('/deleteQueue', {
-        templateUrl: 'partials/deleteQueue.html',
-        controller: DestinationController
-    }).when('/deleteTopic', {
-        templateUrl: 'partials/deleteTopic.html',
-        controller: DestinationController
-    }).when('/bundles', {
-        templateUrl: 'partials/bundles.html',
-        controller: BundleController
-    }).when('/debug', {
-        templateUrl: 'partials/debug.html',
-        controller: DetailController
     }).when('/help', {
         redirectTo: '/help/overview'
     }).when('/help/:tabName', {
         templateUrl: 'partials/help.html',
         controller: NavBarController
+    }).when('/debug', {
+        templateUrl: 'partials/debug.html',
+        controller: DetailController
+    }).when('/browseQueue', {
+        templateUrl: 'partials/activemq/browseQueue.html',
+        controller: BrowseQueueController
+    }).when('/subscribers', {
+        templateUrl: 'partials/activemq/subscribers.html',
+        controller: SubscriberGraphController
+    }).when('/createQueue', {
+        templateUrl: 'partials/activemq/createQueue.html',
+        controller: DestinationController
+    }).when('/createTopic', {
+        templateUrl: 'partials/activemq/createTopic.html',
+        controller: DestinationController
+    }).when('/deleteQueue', {
+        templateUrl: 'partials/activemq/deleteQueue.html',
+        controller: DestinationController
+    }).when('/deleteTopic', {
+        templateUrl: 'partials/activemq/deleteTopic.html',
+        controller: DestinationController
+    }).when('/activemq/status', {
+        templateUrl: 'partials/activemq/status.html',
+        controller: BrokerStatusController
+    }).when('/browseEndpoint', {
+        templateUrl: 'partials/camel/browseEndpoint.html',
+        controller: BrowseEndpointController
+    }).when('/sendMessage', {
+        templateUrl: 'partials/camel/sendMessage.html',
+        controller: SendMessageController
+    }).when('/routes', {
+        templateUrl: 'partials/camel/routes.html',
+        controller: CamelController
+    }).when('/createEndpoint', {
+        templateUrl: 'partials/camel/createEndpoint.html',
+        controller: EndpointController
+    }).when('/bundles', {
+        templateUrl: 'partials/osgi/bundles.html',
+        controller: BundleController
     }).otherwise({
         redirectTo: '/help/overview'
     });
