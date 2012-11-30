@@ -27,6 +27,9 @@ class Workspace {
     this.setUpdateRate(rate);
     this.uriValidations = {
       'chartEdit': () => $location.path() === "/charts",
+
+      // activemq
+      'activemq/status': () => this.isActiveMQFolder(),
       'browseQueue': () => this.isQueue(),
       'browseEndpoint': () => this.isEndpoint(),
       'sendMessage': () => this.isQueue() || this.isTopic() || this.isEndpoint(),
@@ -35,8 +38,12 @@ class Workspace {
       'createTopic': () => this.isTopicsFolder(),
       'deleteQueue': () => this.isQueue(),
       'deleteTopic': () => this.isTopic(),
+
+      // camel
       'routes': () => this.isCamelFolder(),
       'createEndpoint': () => this.isEndpointsFolder(),
+
+      // osgi
       'bundles': () => this.isOsgiFolder()
     };
 
@@ -89,10 +96,12 @@ class Workspace {
 
   public moveIfViewInvalid() {
     var uri = this.$location.path().substring(1);
-    console.log("URI is now " + uri);
     if (!this.validSelection(uri) && this.selection) {
-      console.log("tab no longer valid so changing!");
-      this.$location.path("attributes");
+      var defaultPath = "attributes";
+      if (this.isActiveMQFolder()) {
+        defaultPath = "activemq/status";
+      }
+      this.$location.path(defaultPath);
     }
     return false;
   }

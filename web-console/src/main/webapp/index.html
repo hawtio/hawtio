@@ -31,6 +31,9 @@
 
       <div class="nav-collapse">
         <ul class="nav">
+          <li ng-class="navClass('activemq/status')" ng-show="validSelection('activemq/status')">
+            <a ng-href="#/activemq/status{{hash}}" title="View the Broker status"><i class="icon-eye-open"></i>
+              Status</a></li>
           <li ng-class="navClass('attributes')">
             <a ng-href="#/attributes{{hash}}" title="View the attribute values on your selection"><i class="icon-home"></i>
               Attributes</a></li>

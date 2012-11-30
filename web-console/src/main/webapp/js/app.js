@@ -292,11 +292,61 @@ function SubscriberGraphController($scope, workspace) {
         }
     });
 }
-function BrokerStatusController($scope, $location, workspace) {
-    $scope.workspace = workspace;
+function BrokerStatusController($scope, workspace) {
+    $scope.widget = new TableWidget($scope, workspace, [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }
+    ]);
     $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid();
+        if(workspace.moveIfViewInvalid()) {
+            return;
+        }
+        var mbean = getStatusMBean(workspace);
+        if(mbean) {
+            var jolokia = workspace.jolokia;
+            jolokia.request({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'statusList()'
+            }, onSuccess(populateTable));
+        }
     });
+    var populateTable = function (response) {
+        $scope.widget.populateTable(response.value);
+        $scope.$apply();
+    };
+}
+function getStatusMBean(workspace) {
+    var broker = null;
+    if(workspace) {
+        var selection = workspace.selection;
+        if(selection) {
+            var folderNames = selection.folderNames;
+            if(folderNames && folderNames.length > 1) {
+                broker = folderNames[1];
+            } else {
+                var entries = selection.entries;
+                if(!entries) {
+                    selection = selection.parent;
+                    if(selection) {
+                        entries = selection.entries;
+                    }
+                }
+                if(entries) {
+                    broker = entries["BrokerName"];
+                }
+            }
+        }
+    }
+    console.log("Found broker " + broker);
+    if(broker) {
+        return "org.apache.activemq:BrokerName=" + broker + ",Type=Status";
+    } else {
+        return null;
+    }
 }
 angular.module('FuseIDE', [
     'bootstrap', 
@@ -1767,9 +1817,6 @@ function getSelectionBundleMBean(workspace) {
     }
     return null;
 }
-function DummyController($scope) {
-    console.log("Dummy controller created with scope row " + $scope.row);
-}
 var TableWidget = (function () {
     function TableWidget(scope, workspace, dataTableColumns, config) {
         if (typeof config === "undefined") { config = {
@@ -1945,6 +1992,9 @@ var Workspace = (function () {
             'chartEdit': function () {
                 return $location.path() === "/charts";
             },
+            'activemq/status': function () {
+                return _this.isActiveMQFolder();
+            },
             'browseQueue': function () {
                 return _this.isQueue();
             },
@@ -2015,10 +2065,12 @@ var Workspace = (function () {
     };
     Workspace.prototype.moveIfViewInvalid = function () {
         var uri = this.$location.path().substring(1);
-        console.log("URI is now " + uri);
         if(!this.validSelection(uri) && this.selection) {
-            console.log("tab no longer valid so changing!");
-            this.$location.path("attributes");
+            var defaultPath = "attributes";
+            if(this.isActiveMQFolder()) {
+                defaultPath = "activemq/status";
+            }
+            this.$location.path(defaultPath);
         }
         return false;
     };

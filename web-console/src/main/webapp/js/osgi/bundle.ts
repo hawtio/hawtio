@@ -60,7 +60,3 @@ function getSelectionBundleMBean(workspace:Workspace) {
   }
   return null;
 }
-
-function DummyController($scope) {
-  console.log("Dummy controller created with scope row " + $scope.row);
-}
