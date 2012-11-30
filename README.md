@@ -153,15 +153,3 @@ The following gives you an overview of how to add a new kind of tab:
 * create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/partials)).
 
 * create your new controller, MyNewController.ts in the [js directory](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/)
-
-## Happy MBeans
-
-Fuse Console looks for happy mbeans which are mbeans that provide a happy status for a component or service.
-
-Some tips on writing a happy mbean...
-
-* use Type=Status in the ObjectName
-* have a method statusList() which returns a List of status events - you can have status() return the official JMX Tabular/composite data if you like. Jolokia prefers to get nice JSON from a list of beans though.
-* the status beans should have these properties
-  * kind = the unique code of the kind of warning/error/issue. We can then use this unique kind ID to generate useful UI tooling & descriptions
-  * resource = the JMX ObjectName of the thing causing the issue
