@@ -370,6 +370,12 @@
 
   <profiles>
     <profile>
+      <id>amq-snapshot</id>
+      <properties>
+        <activemq-version>5.8-SNAPSHOT</activemq-version>
+      </properties>
+    </profile>
+    <profile>
       <id>tomcat</id>
       <dependencies>
         <dependency>
