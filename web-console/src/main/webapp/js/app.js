@@ -413,9 +413,25 @@ angular.module('FuseIDE', [
     }).otherwise({
         redirectTo: '/help/overview'
     });
-}).factory('workspace', function ($rootScope, $location) {
+}).factory('workspace', function ($rootScope, $routeParams, $location) {
     var url = $location.search()['url'] || "/jolokia";
-    return new Workspace(url, $location);
+    var workspace = new Workspace(url, $location);
+    $rootScope.lineCount = lineCount;
+    $rootScope.detectTextFormat = detectTextFormat;
+    $rootScope.params = $routeParams;
+    $rootScope.is = function (type, value) {
+        return angular['is' + type](value);
+    };
+    $rootScope.empty = function (value) {
+        return $.isEmptyObject(value);
+    };
+    $rootScope.log = function (variable) {
+        console.log(variable);
+    };
+    $rootScope.alert = function (text) {
+        alert(text);
+    };
+    return workspace;
 }).filter('humanize', function () {
     return humanizeValue;
 });
@@ -1589,12 +1605,33 @@ var numberTypeNames = {
     'java.lang.Float': true,
     'java.lang.Double': true
 };
+function lineCount(value) {
+    var rows = 0;
+    if(value) {
+        rows = 1;
+        value.toString().each(/\n/, function () {
+            return rows++;
+        });
+    }
+    return rows;
+}
 function humanizeValue(value) {
     if(value) {
         var text = value.toString();
         return trimQuotes(text.underscore().humanize());
     }
     return value;
+}
+function detectTextFormat(value) {
+    var answer = "text";
+    if(value) {
+        answer = "javascript";
+        var trimmed = value.toString().trimLeft().trimRight();
+        if(trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+            answer = "xml";
+        }
+    }
+    return answer;
 }
 function trimQuotes(text) {
     while(text.endsWith('"') || text.endsWith("'")) {

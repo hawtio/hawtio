@@ -24,12 +24,36 @@ var numberTypeNames = {
   'java.lang.Double': true
 };
 
+/**
+ * Returns the number of lines in the given text
+ */
+function lineCount(value) {
+  var rows = 0;
+  if (value) {
+    rows = 1;
+    value.toString().each(/\n/, () => rows++);
+  }
+  return rows;
+}
+
 function humanizeValue(value) {
   if (value) {
     var text = value.toString();
     return trimQuotes(text.underscore().humanize());
   }
   return value;
+}
+
+function detectTextFormat(value) {
+  var answer = "text";
+  if (value) {
+    answer = "javascript";
+    var trimmed = value.toString().trimLeft().trimRight();
+    if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+      answer = "xml";
+    }
+  }
+  return answer;
 }
 
 function trimQuotes(text:string) {
