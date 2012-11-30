@@ -1752,7 +1752,8 @@ function createEditorSettings(workspace, mode, options) {
     }
     return options;
 }
-function BundleController($scope, workspace, $templateCache, $compile) {
+function BundleController($scope, $filter, workspace, $templateCache, $compile) {
+    var dateFilter = $filter('date');
     $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
@@ -1761,6 +1762,43 @@ function BundleController($scope, workspace, $templateCache, $compile) {
         }, 
         {
             "mDataProp": "Identifier"
+        }, 
+        {
+            "mDataProp": "SymbolicName"
+        }, 
+        {
+            "mDataProp": "State",
+            "mRender": function (data, type, row) {
+                var img = "yellow-dot.png";
+                if(data) {
+                    var lower = data.toString().toLowerCase();
+                    if(lower) {
+                        if(lower.startsWith("a")) {
+                            img = "green-dot.png";
+                        } else {
+                            if(lower.startsWith("inst")) {
+                                img = "gray-dot.png";
+                            } else {
+                                if(lower.startsWith("res")) {
+                                    img = "yellow-dot.png";
+                                } else {
+                                    img = "red-dot.png";
+                                }
+                            }
+                        }
+                    }
+                }
+                return "<img src='img/dots/" + img + "' title='" + data + "'/>";
+            }
+        }, 
+        {
+            "mDataProp": "Version"
+        }, 
+        {
+            "mDataProp": "LastModified",
+            "mRender": function (data, type, row) {
+                return dateFilter(data, "short");
+            }
         }
     ], {
         ignoreColumns: [

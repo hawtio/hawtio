@@ -1,14 +1,45 @@
-function BundleController($scope, workspace:Workspace, $templateCache, $compile) {
+function BundleController($scope, $filter, workspace:Workspace, $templateCache, $compile) {
+  var dateFilter = $filter('date');
+
   $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
       "sClass": "control center",
       "sDefaultContent": '<i class="icon-plus"></i>'
     },
-    { "mDataProp": "Identifier" }
+    { "mDataProp": "Identifier" },
+    { "mDataProp": "SymbolicName" },
+    { "mDataProp": "State",
+      "mRender": function (data, type, row) {
+        // TODO use CSS icons ideally
+        var img = "yellow-dot.png";
+        if (data) {
+          var lower = data.toString().toLowerCase();
+          if (lower) {
+            if (lower.startsWith("a")) {
+              img = "green-dot.png";
+            } else if (lower.startsWith("inst")) {
+              img = "gray-dot.png";
+            } else if (lower.startsWith("res")) {
+              img = "yellow-dot.png";
+            } else {
+              img = "red-dot.png";
+            }
+          }
+        }
+        return "<img src='img/dots/" + img + "' title='" + data + "'/>";
+      }
+    },
+    { "mDataProp": "Version" },
+    { "mDataProp": "LastModified",
+      "mRender": function (data, type, row) {
+        return dateFilter(data, "short");
+      }
+    }
   ], {
     ignoreColumns: ["Headers", "ExportedPackages", "ImportedPackages", "RegisteredServices", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse"]
   });
+
 
   var html = $templateCache.get('bodyTemplate');
 
