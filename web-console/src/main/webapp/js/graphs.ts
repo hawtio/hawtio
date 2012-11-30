@@ -10,7 +10,11 @@ function d3ForceGraph(scope, nodes, links, canvasSelector = "#canvas") {
   var height = canvasDiv.height();
   if (height < 300) {
     //console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
-    height = $(document).height() - canvasDiv.offset()['top'] - 5;
+    var offset = canvasDiv.offset();
+    height = $(document).height() - 5;
+    if (offset) {
+      height -= offset['top'];
+    }
   }
   //console.log("Using width " + width + " and height " + height);
 
