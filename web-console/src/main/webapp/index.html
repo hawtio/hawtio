@@ -46,12 +46,12 @@
             <a ng-href="#/chartEdit{{hash}}" title="Edit the chart configuration"><i class="icon-cog"></i> Edit</a></li>
           <li ng-class="navClass('routes')" ng-show="validSelection('routes')">
             <a ng-href="#/routes{{hash}}" title="View a diagram of the Camel routes"><i class="icon-picture"></i> Diagram</a></li>
+          <li ng-class="navClass('subscribers')" ng-show="validSelection('subscribers')">
+            <a ng-href="#/subscribers{{hash}}" title="View a diagram of the producers, destinations and consumers"><i class="icon-picture"></i> Diagram</a></li>
           <li ng-class="navClass('browseQueue')" ng-show="validSelection('browseQueue')">
             <a ng-href="#/browseQueue{{hash}}" title="Browse the messages on the queue"><i class="icon-envelope"></i> Browse</a></li>
           <li ng-class="navClass('browseEndpoint')" ng-show="validSelection('browseEndpoint')">
             <a ng-href="#/browseEndpoint{{hash}}" title="Browse the messages on the endpoint"><i class="icon-envelope"></i> Browse</a></li>
-          <li ng-class="navClass('subscribers')" ng-show="validSelection('subscribers')">
-            <a ng-href="#/subscribers{{hash}}" title="View a diagram of the producers, destinations and consumers"><i class="icon-picture"></i> Diagram</a></li>
           <li ng-class="navClass('sendMessage')" ng-show="validSelection('sendMessage')">
             <a ng-href="#/sendMessage{{hash}}" title="Send a message to this endpoint"><i class="icon-pencil"></i> Send</a></li>
           <li ng-class="navClass('createEndpoint')" ng-show="validSelection('createEndpoint')">

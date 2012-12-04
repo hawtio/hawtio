@@ -1,5 +1,5 @@
-angular.module('FuseIDE', ['bootstrap', 'ngResource']).
-        config(($routeProvider) => {
+var myApp = angular.module('FuseIDE', ['bootstrap', 'ngResource']);
+myApp.config(($routeProvider) => {
           $routeProvider.
                   when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
                   when('/operations', {templateUrl: 'partials/operations.html', controller: OperationsController}).

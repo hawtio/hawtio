@@ -349,10 +349,11 @@ function getStatusMBean(workspace) {
         return null;
     }
 }
-angular.module('FuseIDE', [
+var myApp = angular.module('FuseIDE', [
     'bootstrap', 
     'ngResource'
-]).config(function ($routeProvider) {
+]);
+myApp.config(function ($routeProvider) {
     $routeProvider.when('/attributes', {
         templateUrl: 'partials/attributes.html',
         controller: DetailController
@@ -1401,25 +1402,30 @@ function ChartEditController($scope, $location, workspace) {
 }
 function EditorController($scope, workspace) {
     $scope.$watch('row', function () {
-        var textAreas = $("textarea.messageDetail");
-        var textArea = textAreas[0];
-        if(textArea) {
-            $(textArea).change(function () {
-                console.log("Text area changed!!!");
-                var text = textArea.textContent;
-                var format = detectTextFormat(text);
-                console.log("Format is: " + format);
-                console.log("Found the text area which contains: " + text);
-                var editorSettings = createEditorSettings(workspace, format, {
-                    readOnly: true
-                });
-                var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-                var autoFormat = true;
-                if(autoFormat) {
-                    autoFormatEditor(editor);
+        setTimeout(function () {
+            var textAreas = null;
+            if($scope.templateDiv) {
+                textAreas = $($scope.templateDiv).find("textarea.messageDetail");
+            } else {
+                textAreas = $("textarea.messageDetail");
+            }
+            var textArea = textAreas[0];
+            if(textArea) {
+                if(!$(textArea).data("codeMirrorEditor")) {
+                    $(textArea).data("codeMirrorEditor", "true");
+                    var text = $(textArea).val();
+                    var format = detectTextFormat(text);
+                    var editorSettings = createEditorSettings(workspace, format, {
+                        readOnly: true
+                    });
+                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
+                    var autoFormat = true;
+                    if(autoFormat) {
+                        autoFormatEditor(editor);
+                    }
                 }
-            });
-        }
+            }
+        }, 0);
     });
 }
 function d3ForceGraph(scope, nodes, links, canvasSelector) {
@@ -2030,6 +2036,7 @@ var TableWidget = (function () {
     };
     TableWidget.prototype.populateDetailDiv = function (row, div) {
         this.scope.row = row;
+        this.scope.templateDiv = div;
         var template = this.detailTemplate;
         if(template) {
             div.html(template);

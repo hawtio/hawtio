@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="bodyTemplate">
   <div ng-controller="EditorController">
-    <textarea readonly class="messageDetail" class="input-xlarge" rows="{{lineCount(row.Text)}}"
+    <textarea readonly class="messageDetail" codeMirror="true" class="input-xlarge" rows="{{lineCount(row.Text)}}"
               ng-model="row.Text"></textarea>
   </div>
 </script>

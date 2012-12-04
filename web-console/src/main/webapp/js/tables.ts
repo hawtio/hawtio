@@ -126,6 +126,7 @@ class TableWidget {
   populateDetailDiv(row, div) {
     // customise the expansion
     this.scope.row = row;
+    this.scope.templateDiv = div;
     var template = this.detailTemplate;
     if (template) {
       div.html(template);
