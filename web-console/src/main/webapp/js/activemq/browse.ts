@@ -24,6 +24,7 @@ function BrowseQueueController($scope, workspace:Workspace) {
     { "mDataProp": "JMSType" },
     { "mDataProp": "JMSDestination" }
   ], {
+    rowDetailTemplateId: 'bodyTemplate',
     ignoreColumns: ["PropertiesText", "BodyPreview", "Text"],
     flattenColumns: ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties", "DoubleProperties", "StringProperties"]
   });

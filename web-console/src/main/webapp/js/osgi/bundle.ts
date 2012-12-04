@@ -37,10 +37,11 @@ function BundleController($scope, $filter, workspace:Workspace, $templateCache, 
       }
     }
   ], {
+    rowDetailTemplateId: 'bodyTemplate',
     ignoreColumns: ["Headers", "ExportedPackages", "ImportedPackages", "RegisteredServices", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse"]
   });
 
-
+/*
   var html = $templateCache.get('bodyTemplate');
 
   // customise the expansion
@@ -52,6 +53,7 @@ function BundleController($scope, $filter, workspace:Workspace, $templateCache, 
       console.log("Got results " + results);
     }
   };
+*/
 
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;

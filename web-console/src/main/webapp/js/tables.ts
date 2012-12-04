@@ -1,7 +1,9 @@
 class TableWidget {
   private ignoreColumnHash = {};
   private flattenColumnHash = {};
-  private bodyFormat: string;
+  private bodyFormat:string;
+  private detailTemplate:string = null;
+  private detailRow:string;
   private openMessages = [];
 
   constructor(public scope, public workspace:Workspace, public dataTableColumns, public config:TableWidgetConfig = {}) {
@@ -12,6 +14,11 @@ class TableWidget {
     angular.forEach(config.flattenColumns, (name) => {
       this.flattenColumnHash[name] = true;
     });
+
+    var templateId = config.rowDetailTemplateId;
+    if (templateId) {
+      this.detailTemplate = workspace.$templateCache.get(templateId);
+    }
   }
 
   public populateTable(data) {
@@ -103,20 +110,6 @@ class TableWidget {
           var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
           $('div.innerDetails', detailsRow).slideDown();
           openMessages.push(parentRow);
-          var textAreas = $(detailsRow).find("textarea.messageDetail");
-          var textArea = textAreas[0];
-          if (textArea) {
-            var format = widget.bodyFormat;
-            var editorSettings = createEditorSettings(this.workspace, format, {
-              readOnly: true
-            });
-            var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-            // TODO make this editable preference!
-            var autoFormat = true;
-            if (autoFormat) {
-              autoFormatEditor(editor);
-            }
-          }
         } else {
           element.removeClass('icon-minus');
           element.addClass('icon-plus');
@@ -130,30 +123,40 @@ class TableWidget {
     $scope.$apply();
   }
 
-  populateDetailDiv(oData, div) {
-    var body = oData["Text"];
-    if (!body) {
-      var bodyValue = oData["body"];
-      if (angular.isObject(bodyValue)) {
-        body = bodyValue["text"];
-      } else {
-        body = bodyValue;
-      }
+  populateDetailDiv(row, div) {
+    // customise the expansion
+    this.scope.row = row;
+    var template = this.detailTemplate;
+    if (template) {
+      div.html(template);
+      var results = this.workspace.$compile(div.contents())(this.scope);
     }
-    if (!body) body = "";
 
-    // lets guess the payload format
-    this.bodyFormat = "javascript";
-    var trimmed = body.trimLeft().trimRight();
-    if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-      this.bodyFormat = "xml";
-    }
-    var rows = 1;
-    body.each(/\n/, () => rows++);
-    div.attr("title", "Message payload");
-    div.html('<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
-            body +
-            '</textarea>');
+    /*
+     var body = oData["Text"];
+     if (!body) {
+     var bodyValue = oData["body"];
+     if (angular.isObject(bodyValue)) {
+     body = bodyValue["text"];
+     } else {
+     body = bodyValue;
+     }
+     }
+     if (!body) body = "";
+
+     // lets guess the payload format
+     this.bodyFormat = "javascript";
+     var trimmed = body.trimLeft().trimRight();
+     if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+     this.bodyFormat = "xml";
+     }
+     var rows = 1;
+     body.each(/\n/, () => rows++);
+     div.attr("title", "Message payload");
+     div.html('<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
+     body +
+     '</textarea>');
+     */
   }
 }
 
@@ -161,4 +164,5 @@ interface TableWidgetConfig {
   ignoreColumns?:string[];
   flattenColumns?:string[];
   disableAddColumns?:Boolean;
+  rowDetailTemplateId?:string;
 }

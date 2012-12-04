@@ -33,9 +33,9 @@ angular.module('FuseIDE', ['bootstrap', 'ngResource']).
 
                   otherwise({redirectTo: '/help/overview'});
         }).
-        factory('workspace',($rootScope, $routeParams, $location) => {
+        factory('workspace',($rootScope, $routeParams, $location, $compile, $templateCache) => {
           var url = $location.search()['url'] || "/jolokia";
-          var workspace =  new Workspace(url, $location);
+          var workspace =  new Workspace(url, $location, $compile, $templateCache);
 
           /**
            * Count the number of lines in the given text

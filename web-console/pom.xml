@@ -214,14 +214,17 @@
       <name>jetbrains-release</name>
       <url>http://repository.jetbrains.com/releases</url>
     </repository>
+<!--
     <repository>
       <snapshots/>
       <id>jetbrains-snapshots</id>
       <name>jetbrains-snapshots</name>
       <url>http://repository.jetbrains.com/snapshots</url>
     </repository>
+-->
 
-    <!-- for jolokia snapshots until 1.0.6 is released -->
+    <!-- for jolokia snapshots -->
+<!--
     <repository>
       <id>labs-consol-snapshot</id>
       <name>ConSol* Labs Repository (Snapshots)</name>
@@ -233,6 +236,7 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+-->
 
     <!-- TODO until perfectus 7.1-027 -->
     <repository>

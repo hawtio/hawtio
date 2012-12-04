@@ -7,6 +7,7 @@ function BrowseEndpointController($scope, workspace:Workspace) {
       "sDefaultContent": '<i class="icon-plus"></i>'
     }
   ], {
+    rowDetailTemplateId: 'bodyTemplate',
     ignoreColumns: ["headerTypes", "body"],
     flattenColumns: ["headers"]
   });
