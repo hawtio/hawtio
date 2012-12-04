@@ -317,11 +317,19 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
     return rc;
   };
 
+  $scope.sanitize = (value) => {
+    for (var item in value) {
+      value["" + item].name = "" + item;
+      value["" + item].humanReadable = humanizeValue("" + item);
+    }
+    return value;
+  }
+
   var asQuery = (node) => {
     return {
       type: "LIST",
       method: "post",
-      path: node.domain + "/" + node.path,
+      path: encodeMBeanPath(node),
       ignoreErrors: true
     };
   };
@@ -333,12 +341,12 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
       return;
     }
 
-    var query = asQuery(node);
+    var query = asQuery(node.objectName);
     var jolokia = workspace.jolokia;
 
     var update_values = (response) => {
-      $scope.operations = response.value.op
-        $scope.$apply()
+      $scope.operations = $scope.sanitize(response.value.op);
+      $scope.$apply()
     };
     console.log("mbean name : " + node.objectName);
     console.log("mbean domain : " + node.domain);
