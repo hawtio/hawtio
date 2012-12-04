@@ -1,3 +1,25 @@
-<ol>
-  <li title="{{item.desc}}" ng-repeat="item in operations">{{item.humanReadable}}</li>
-</ol>
+<ul class="unstyled">
+  <li ng-repeat="item in operations">
+    <div ng-controller="OperationController">
+      <div title="{{desc}}" class="expandable">
+        {{title}}
+        <form class="form-horizontal hidden">
+          <fieldset>
+            <div class="control-group" ng-repeat="arg in args">
+              <label class="control-label" for="{{arg.name}}">{{arg.name}}: </label>
+                <div class="controls">
+                  <input id="{{arg.name}}" type="text" ng-model="value">
+                  <span class="help-block">type: {{arg.type}}</span>
+                </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <button class="btn cancel">Cancel</button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </li>
+</ul>

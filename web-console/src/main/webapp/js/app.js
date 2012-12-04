@@ -287,16 +287,33 @@ var Table = (function () {
     };
     return Table;
 })();
+myApp.directive('expandable', function () {
+    return {
+        restrict: 'C',
+        replace: false,
+        link: function (scope, element, attrs) {
+            var title = $(element);
+            var form = title.find('form');
+            var button = title.find('.cancel');
+            button.bind('click', function () {
+                form.addClass('hidden');
+                return false;
+            });
+            title.bind('click', function () {
+                form.removeClass('hidden');
+                return false;
+            });
+        }
+    };
+});
+function OperationController($scope, $routeParams, workspace) {
+    $scope.title = $scope.item.humanReadable;
+    $scope.desc = $scope.item.desc;
+    $scope.args = $scope.item.args;
+}
 function OperationsController($scope, $routeParams, workspace, $rootScope) {
     $scope.routeParams = $routeParams;
     $scope.workspace = workspace;
-    $scope.operation_names = function (value) {
-        var rc = [];
-        for(var item in value) {
-            rc.push("" + item);
-        }
-        return rc;
-    };
     $scope.sanitize = function (value) {
         for(var item in value) {
             value["" + item].name = "" + item;
@@ -323,10 +340,6 @@ function OperationsController($scope, $routeParams, workspace, $rootScope) {
             $scope.operations = $scope.sanitize(response.value.op);
             $scope.$apply();
         };
-        console.log("mbean name : " + node.objectName);
-        console.log("mbean domain : " + node.domain);
-        console.log("mbean path : " + node.path);
-        console.log("Trying : " + query.path);
         jolokia.request(query, onSuccess(update_values));
     });
 }

@@ -305,17 +305,41 @@ class Table {
   }
 }
 
+myApp.directive('expandable', function() {
+  return {
+    restrict: 'C',
+    replace: false,
+    link: function(scope, element, attrs) {
+      var title = $(element);
+
+      var form = title.find('form');
+      var button = title.find('.cancel');
+
+      button.bind('click', function() {
+        form.addClass('hidden');
+        return false;
+      });
+
+      title.bind('click', function() {
+        form.removeClass('hidden');
+        return false;
+      });
+
+    }
+  }
+
+});
+
+function OperationController($scope, $routeParams, workspace:Workspace) {
+  $scope.title = $scope.item.humanReadable;
+  $scope.desc = $scope.item.desc;
+  $scope.args = $scope.item.args;
+
+}
+
 function OperationsController($scope, $routeParams, workspace:Workspace, $rootScope) {
   $scope.routeParams = $routeParams;
   $scope.workspace = workspace;
-
-  $scope.operation_names = (value) => {
-    var rc = [];
-    for (var item in value) {
-      rc.push("" + item);
-    }
-    return rc;
-  };
 
   $scope.sanitize = (value) => {
     for (var item in value) {
@@ -323,7 +347,7 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
       value["" + item].humanReadable = humanizeValue("" + item);
     }
     return value;
-  }
+  };
 
   var asQuery = (node) => {
     return {
@@ -348,10 +372,6 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
       $scope.operations = $scope.sanitize(response.value.op);
       $scope.$apply()
     };
-    console.log("mbean name : " + node.objectName);
-    console.log("mbean domain : " + node.domain);
-    console.log("mbean path : " + node.path);
-    console.log("Trying : " + query.path);
     jolokia.request(query, onSuccess(update_values));
 
   });
