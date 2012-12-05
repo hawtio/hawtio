@@ -315,11 +315,13 @@ myApp.directive('expandable', function() {
       var title = expandable.find('.title');
       var hidden = expandable.find('.hidden');
       var button = expandable.find('.cancel');
+      var icon = expandable.find('i');
 
       button.bind('click', function() {
         hidden.addClass('hidden');
         expandable.addClass('closed');
         expandable.removeClass('opened');
+        icon.attr('class', 'icon-caret-right');
         return false;
       });
 
@@ -327,6 +329,11 @@ myApp.directive('expandable', function() {
         hidden.toggleClass('hidden');
         expandable.toggleClass('opened');
         expandable.toggleClass('closed');
+        if (expandable.hasClass('opened')) {
+          icon.attr('class', 'icon-caret-down');
+        } else {
+          icon.attr('class', 'icon-caret-right');
+        }
         return false;
       });
 
@@ -339,7 +346,6 @@ function OperationController($scope, $routeParams, workspace:Workspace) {
   $scope.title = $scope.item.humanReadable;
   $scope.desc = $scope.item.desc;
   $scope.args = $scope.item.args;
-
 }
 
 function OperationsController($scope, $routeParams, workspace:Workspace, $rootScope) {
