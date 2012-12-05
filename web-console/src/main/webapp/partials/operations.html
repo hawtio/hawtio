@@ -1,9 +1,11 @@
 <ul class="unstyled">
   <li ng-repeat="item in operations">
-    <div ng-controller="OperationController">
-      <div title="{{desc}}" class="expandable">
+    <div class="expandable closed" ng-controller="OperationController">
+      <div title="{{desc}}" class="title">
         {{title}}
-        <form class="form-horizontal hidden">
+      </div>
+      <div class="hidden">
+        <form class="form-horizontal">
           <fieldset>
             <div class="control-group" ng-repeat="arg in args">
               <label class="control-label" for="{{arg.name}}">{{arg.name}}: </label>

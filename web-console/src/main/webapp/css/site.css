@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'icons';
+    src: url('../fonts/IcoMoon.eot?#') format('eot'),
+    url('../fonts/IcoMoon.woff') format('woff'),
+    url('../fonts/IcoMoon.ttf') format('truetype');
+}
+
 .property-name {
     white-space: nowrap;
 }
@@ -147,4 +154,20 @@ td {
 /** Table details view */
 div.innerDetails {
     display: none;
+}
+
+.expandable {
+    padding: 3px;
+}
+
+.expandable.opened > .title:before {
+    content: '- ';
+}
+
+.expandable.closed > .title:before {
+    content: '+ ';
+}
+
+.expandable > .title {
+    cursor: pointer;
 }

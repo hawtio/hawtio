@@ -310,18 +310,23 @@ myApp.directive('expandable', function() {
     restrict: 'C',
     replace: false,
     link: function(scope, element, attrs) {
-      var title = $(element);
+      var expandable = $(element);
 
-      var form = title.find('form');
-      var button = title.find('.cancel');
+      var title = expandable.find('.title');
+      var hidden = expandable.find('.hidden');
+      var button = expandable.find('.cancel');
 
       button.bind('click', function() {
-        form.addClass('hidden');
+        hidden.addClass('hidden');
+        expandable.addClass('closed');
+        expandable.removeClass('opened');
         return false;
       });
 
       title.bind('click', function() {
-        form.removeClass('hidden');
+        hidden.toggleClass('hidden');
+        expandable.toggleClass('opened');
+        expandable.toggleClass('closed');
         return false;
       });
 
