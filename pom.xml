@@ -37,11 +37,21 @@
 
   <properties>
     <forge-project-id>console</forge-project-id>
-<!--
-      <fabric-version>99-master-SNAPSHOT</fabric-version>
--->
+
+    <atmosphere-version>1.0.0.beta5</atmosphere-version>
+    <!--
+    <camel-version>2.11-SNAPSHOT</camel-version>
+    -->
+    <!--
+          <fabric-version>99-master-SNAPSHOT</fabric-version>
+    -->
     <fabric-version>7.1.0.fuse-044</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
+    <insight-log4j-version>${fabric-version}</insight-log4j-version>
+    <jackson-2-version>2.1.0</jackson-2-version>
+    <jetty8-version>8.1.3.v20120416</jetty8-version>
+    <jolokia-version>1.0.6</jolokia-version>
+    <kotlin-version>0.4.68</kotlin-version>
   </properties>
 
   <repositories>
@@ -65,6 +75,50 @@
       </snapshots>
       <releases>
         <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jetbrains-release</id>
+      <name>jetbrains-release</name>
+      <url>http://repository.jetbrains.com/releases</url>
+    </repository>
+    <!--
+        <repository>
+          <snapshots/>
+          <id>jetbrains-snapshots</id>
+          <name>jetbrains-snapshots</name>
+          <url>http://repository.jetbrains.com/snapshots</url>
+        </repository>
+    -->
+
+    <!-- for jolokia snapshots -->
+    <!--
+        <repository>
+          <id>labs-consol-snapshot</id>
+          <name>ConSol* Labs Repository (Snapshots)</name>
+          <url>http://labs.consol.de/maven/snapshots-repository</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+    -->
+
+    <!-- TODO until perfectus 7.1-027 -->
+    <repository>
+      <id>fusesource-snapshots</id>
+      <name>fusesource-snapshots</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
       </releases>
     </repository>
   </repositories>
@@ -91,13 +145,40 @@
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jetbrains-repo</id>
+      <name>jetbrains-repo</name>
+      <url>http://repository.jetbrains.com/repo</url>
+    </pluginRepository>
+    <!--
+        <pluginRepository>
+          <snapshots/>
+          <id>jetbrains-repo-snapshots</id>
+          <name>jetbrains-repo-snapshots</name>
+          <url>http://repository.jetbrains.com/snapshots</url>
+        </pluginRepository>
+    -->
   </pluginRepositories>
 
   <modules>
     <module>web-console</module>
+    <module>sample</module>
   </modules>
 
   <build>
     <defaultGoal>install</defaultGoal>
   </build>
+
+
+  <profiles>
+    <profile>
+      <id>amq-snapshot</id>
+      <properties>
+        <activemq-version>5.8-SNAPSHOT</activemq-version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

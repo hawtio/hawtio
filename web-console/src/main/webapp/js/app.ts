@@ -34,7 +34,13 @@ myApp.config(($routeProvider) => {
                   otherwise({redirectTo: '/help/overview'});
         }).
         factory('workspace',($rootScope, $routeParams, $location, $compile, $templateCache) => {
-          var url = $location.search()['url'] || "/jolokia";
+          var prefix = window.location.pathname || "";
+          if (prefix) {
+            var idx = prefix.lastIndexOf("/");
+            prefix = prefix.substring(0, idx);
+          }
+          console.log("prefix is " + prefix);
+          var url = $location.search()['url'] || prefix + "/jolokia";
           var workspace =  new Workspace(url, $location, $compile, $templateCache);
 
           /**
