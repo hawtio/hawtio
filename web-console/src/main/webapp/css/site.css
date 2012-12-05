@@ -156,3 +156,8 @@ div.innerDetails {
 .expandable > .title {
     cursor: pointer;
 }
+
+.inline-block {
+    display: inline-block;
+    padding-bottom: 1px;
+}

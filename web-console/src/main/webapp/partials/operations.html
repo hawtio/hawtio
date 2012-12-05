@@ -2,21 +2,23 @@
   <li ng-repeat="item in operations">
     <div class="expandable closed" ng-controller="OperationController">
       <div title="{{desc}}" class="title">
-        <i class="icon-caret-right"></i> {{title}}
+        <i class="icon-caret-right expandable-indicator"></i> {{title}}
       </div>
-      <div class="hidden">
+      <div class="well hidden">
         <form class="form-horizontal">
           <fieldset>
             <div class="control-group" ng-repeat="arg in args">
-              <label class="control-label" for="{{arg.name}}">{{arg.name}}: </label>
-                <div class="controls">
-                  <input id="{{arg.name}}" type="text" ng-model="value">
-                  <span class="help-block">type: {{arg.type}}</span>
+              <label class="control-label">{{arg.name}} ({{arg.type}}): </label>
+                <div class="controls" ng-switch on="arg.formType">
+                  <input ng-switch-when="text" type='text' ng-model="arg.value">
+                  <input ng-switch-when="number" type='number' ng-model="arg.value">
+                  <!-- <span class="help-block">type: {{arg.type}}</span> -->
                 </div>
             </div>
             <div class="control-group">
               <div class="controls">
-                <button class="btn cancel">Cancel</button>
+                <button class="btn cancel"><i class="icon-remove"></i>Cancel</button>
+                <button class="btn btn-success execute" ng-click="execute(args)"><i class="icon-ok"></i>Execute</button>
               </div>
             </div>
           </fieldset>

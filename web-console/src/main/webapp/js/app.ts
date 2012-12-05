@@ -315,24 +315,26 @@ myApp.directive('expandable', function() {
       var title = expandable.find('.title');
       var hidden = expandable.find('.hidden');
       var button = expandable.find('.cancel');
-      var icon = expandable.find('i');
+      var icon = expandable.find('.expandable-indicator');
 
       button.bind('click', function() {
         hidden.addClass('hidden');
+        hidden.removeClass('inline-block');
         expandable.addClass('closed');
         expandable.removeClass('opened');
-        icon.attr('class', 'icon-caret-right');
+        icon.attr('class', 'icon-caret-right expandable-indicator');
         return false;
       });
 
       title.bind('click', function() {
         hidden.toggleClass('hidden');
+        hidden.toggleClass('inline-block');
         expandable.toggleClass('opened');
         expandable.toggleClass('closed');
         if (expandable.hasClass('opened')) {
-          icon.attr('class', 'icon-caret-down');
+          icon.attr('class', 'icon-caret-down expandable-indicator');
         } else {
-          icon.attr('class', 'icon-caret-right');
+          icon.attr('class', 'icon-caret-right expandable-indicator');
         }
         return false;
       });
@@ -345,7 +347,69 @@ myApp.directive('expandable', function() {
 function OperationController($scope, $routeParams, workspace:Workspace) {
   $scope.title = $scope.item.humanReadable;
   $scope.desc = $scope.item.desc;
-  $scope.args = $scope.item.args;
+  $scope.routeParams = $routeParams;
+  $scope.workspace = workspace;
+
+  var sanitize = (args) => {
+    if (args) {
+      args.forEach( function (arg) {
+        switch (arg.type) {
+          case "int":
+          case "long":
+            arg.formType = "number";
+            break;
+          default:
+            arg.formType = "text";
+        }
+      });
+    }
+
+    return args;
+  };
+
+  $scope.args = sanitize($scope.item.args);
+
+  var asQuery = (node) => {
+    if (node) {
+      return {
+        type: "EXEC",
+        method: "post",
+        mbean: encodeMBean(node),
+        operation: $scope.item.name,
+        arguments: []
+      };
+    }
+  };
+
+  $scope.execute = (args) => {
+    var node = $scope.workspace.selection;
+
+    if (!node) {
+      return;
+    }
+
+    var objectName = node.objectName;
+
+    if (!objectName) {
+      return;
+    }
+
+    var query = asQuery(objectName);
+    var jolokia = workspace.jolokia;
+
+    if ($scope.item.args) {
+      $scope.item.args.forEach( function (arg) {
+        query.arguments.push(arg.value);
+      });
+    }
+
+    var get_response = (response) => {
+      console.log("Got : " + response);
+    };
+
+    jolokia.request(query, onSuccess(get_response));
+  };
+
 }
 
 function OperationsController($scope, $routeParams, workspace:Workspace, $rootScope) {
@@ -376,7 +440,13 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
       return;
     }
 
-    var query = asQuery(node.objectName);
+    var objectName = node.objectName;
+
+    if (!objectName) {
+      return;
+    }
+
+    var query = asQuery(objectName);
     var jolokia = workspace.jolokia;
 
     var update_values = (response) => {
