@@ -996,7 +996,7 @@ function CamelController($scope, workspace) {
             if(selection && selection.entries) {
                 var typeName = selection.entries["type"];
                 var name = selection.entries["name"];
-                if(typeName && name) {
+                if("routes" === typeName && name) {
                     selectedRouteId = trimQuotes(name);
                 }
             }
@@ -1044,7 +1044,7 @@ function CamelController($scope, workspace) {
                             imageName = "generic";
                         }
                     }
-                    var imageUrl = "/img/camel/" + imageName + "24.png";
+                    var imageUrl = url("/img/camel/" + imageName + "24.png");
                     nodes.push({
                         "name": name,
                         "label": name,
