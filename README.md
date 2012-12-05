@@ -8,7 +8,7 @@ From a git clone you should be able to run the sample web console as follows:
 
     cd web-console
     mvn test-compile exec:java
-    open http://localhost:8080/
+    open http://localhost:8080/sample/
 
 That should run a little sample web application with some ActiveMQ and Camel inside to interact with.
 
