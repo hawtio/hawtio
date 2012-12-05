@@ -262,8 +262,9 @@
         <configuration>
           <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
           <scanIntervalSeconds>1</scanIntervalSeconds>
+          <useTestScope>true</useTestScope>
           <webAppConfig>
-            <contextPath>/</contextPath>
+            <contextPath>/sample</contextPath>
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

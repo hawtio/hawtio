@@ -9,6 +9,8 @@ var ignoreDetailsOnBigFolders = [
   ]
 ];
 
+var _urlPrefix: string = null;
+
 var numberTypeNames = {
   'byte': true,
   'short': true,
@@ -34,6 +36,25 @@ function lineCount(value) {
     value.toString().each(/\n/, () => rows++);
   }
   return rows;
+}
+
+function url(path: string) {
+  if (path) {
+    if (path.startsWith("/")) {
+      if (_urlPrefix === null) {
+        _urlPrefix = window.location.pathname || "";
+        if (_urlPrefix) {
+          var idx = _urlPrefix.lastIndexOf("/");
+          if (idx >= 0) {
+            _urlPrefix = _urlPrefix.substring(0, idx);
+          }
+        }
+        console.log("URI prefix is " + _urlPrefix);
+      }
+      return _urlPrefix + path;
+    }
+  }
+  return path;
 }
 
 function humanizeValue(value) {

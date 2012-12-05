@@ -188,18 +188,18 @@ function SubscriberGraphController($scope, workspace) {
                         if(isQueue) {
                             id = getOrCreate($scope.queues, destinationName, {
                                 label: destinationName,
-                                imageUrl: "/img/activemq/queue.png"
+                                imageUrl: url("/img/activemq/queue.png")
                             });
                         } else {
                             id = getOrCreate($scope.topics, destinationName, {
                                 label: destinationName,
-                                imageUrl: "/img/activemq/topic.png"
+                                imageUrl: url("/img/activemq/topic.png")
                             });
                         }
                         if(!subscriptionId) {
                             var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
                             subscription["label"] = subscriptionKey;
-                            subscription["imageUrl"] = "/img/activemq/listener.gif";
+                            subscription["imageUrl"] = url("/img/activemq/listener.gif");
                             subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
                         }
                         $scope.links.push({
@@ -419,14 +419,8 @@ myApp.config(function ($routeProvider) {
         redirectTo: '/help/overview'
     });
 }).factory('workspace', function ($rootScope, $routeParams, $location, $compile, $templateCache) {
-    var prefix = window.location.pathname || "";
-    if(prefix) {
-        var idx = prefix.lastIndexOf("/");
-        prefix = prefix.substring(0, idx);
-    }
-    console.log("prefix is " + prefix);
-    var url = $location.search()['url'] || prefix + "/jolokia";
-    var workspace = new Workspace(url, $location, $compile, $templateCache);
+    var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+    var workspace = new Workspace(jolokiaUrl, $location, $compile, $templateCache);
     $rootScope.lineCount = lineCount;
     $rootScope.detectTextFormat = detectTextFormat;
     $rootScope.params = $routeParams;
@@ -1667,6 +1661,7 @@ var ignoreDetailsOnBigFolders = [
         ]
     ]
 ];
+var _urlPrefix = null;
 var numberTypeNames = {
     'byte': true,
     'short': true,
@@ -1690,6 +1685,24 @@ function lineCount(value) {
         });
     }
     return rows;
+}
+function url(path) {
+    if(path) {
+        if(path.startsWith("/")) {
+            if(_urlPrefix === null) {
+                _urlPrefix = window.location.pathname || "";
+                if(_urlPrefix) {
+                    var idx = _urlPrefix.lastIndexOf("/");
+                    if(idx >= 0) {
+                        _urlPrefix = _urlPrefix.substring(0, idx);
+                    }
+                }
+                console.log("URI prefix is " + _urlPrefix);
+            }
+            return _urlPrefix + path;
+        }
+    }
+    return path;
 }
 function humanizeValue(value) {
     if(value) {

@@ -40,17 +40,17 @@ function SubscriberGraphController($scope, workspace:Workspace) {
           if (isQueue === $scope.isQueue && matchesSelection(destinationName)) {
             if (isQueue) {
               id = getOrCreate($scope.queues, destinationName, {
-                label: destinationName, imageUrl: "/img/activemq/queue.png" });
+                label: destinationName, imageUrl: url("/img/activemq/queue.png") });
             } else {
               id = getOrCreate($scope.topics, destinationName, {
-                label: destinationName, imageUrl: "/img/activemq/topic.png" });
+                label: destinationName, imageUrl: url("/img/activemq/topic.png") });
             }
 
             // lets lazily register the subscription
             if (!subscriptionId) {
               var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
               subscription["label"] = subscriptionKey;
-              subscription["imageUrl"] = "/img/activemq/listener.gif";
+              subscription["imageUrl"] = url("/img/activemq/listener.gif");
               subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
             }
 
