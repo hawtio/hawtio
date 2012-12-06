@@ -47,7 +47,7 @@ Then to install grunt:
 
 Then in the web-console directory you will need to install the grunt plugins required
 
-    cd web/web-console
+    cd web-console
     npm install grunt-type
 
 ### Incremental compile with GruntJS
