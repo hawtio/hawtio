@@ -708,6 +708,9 @@ function OperationController($scope, $routeParams, workspace) {
         var jolokia = workspace.jolokia;
         var get_response = function (response) {
             console.log("Got : " + response);
+            $scope.operationResult = response;
+            $scope.workspace.operationCounter += 1;
+            $scope.$apply();
         };
         var args = [
             objectName, 

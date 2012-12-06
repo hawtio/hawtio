@@ -386,6 +386,13 @@ function OperationController($scope, $routeParams, workspace:Workspace) {
 
     var get_response = (response) => {
       console.log("Got : " + response);
+
+      // TODO we should render this in the template...
+      $scope.operationResult = response;
+
+      // now lets notify the UI to update the tree etc
+      $scope.workspace.operationCounter += 1;
+      $scope.$apply();
     };
 
     var args = [objectName, $scope.item.name];
