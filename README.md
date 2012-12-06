@@ -18,10 +18,10 @@ If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the ha
 
 ## More help
 
-We love [contributions](CONTRIBUTING.md)!
+We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)!
 
-* [how to contribute](CONTRIBUTING.md)
-* [how to build the code](BUILDING.md)
-* [how to get started working on the code](DEVELOPERS.md)
+* [how to contribute](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)
+* [how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
+* [how to get started working on the code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
 
 Its hawt, but stay cool! :)

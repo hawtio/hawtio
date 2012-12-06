@@ -1,6 +1,6 @@
 ## Working on the source the code
 
-We love [contributions](CONTRIBUTING.md)! You may also want to know [how to develop it](DEVELOPERS.md)
+We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)! You may also want to know [how to develop it](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
 
 You'll need to install [TypeScript](http://typescriptlang.org/) first...
 
