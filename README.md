@@ -1,6 +1,6 @@
 # hawt.io
 
-**hawt.io** is web based management console for working with JMX and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
+**hawt.io** is web based management console for working with JMX, OSGi and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 
 ## Trying out the console from Maven
 
