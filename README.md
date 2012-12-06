@@ -24,5 +24,7 @@ We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTIN
 * [how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
 * [how to get started working on the code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
 * [hawt.io mailing list](https://groups.google.com/d/forum/hawtio)
+* [#hawtio IRC chat room on freenode.net](http://webchat.freenode.net/?channels=hawtio&uio=d4)
+* [follow @hawtio on twitter](https://twitter.com/hawtio)
 
 Its hawt, but stay cool! :)
