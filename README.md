@@ -23,5 +23,6 @@ We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTIN
 * [how to contribute](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)
 * [how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
 * [how to get started working on the code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
+* [hawt.io mailing list](https://groups.google.com/d/forum/hawtio)
 
 Its hawt, but stay cool! :)

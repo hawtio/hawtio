@@ -24,3 +24,5 @@ Here's some notes to help you get started:
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
 * [Here is how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
 * [More information for developers in terms of hawt.io technologies, tools and code walkthroughs](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
+* [hawt.io mailing list](https://groups.google.com/d/forum/hawtio)
+
