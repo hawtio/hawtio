@@ -1,12 +1,12 @@
-# Fuse Console
+# hawt.io
 
-A web based console for working with [Fuse](http://fuse.fusesource.org/).
+**hawt.io** is web based management console for working with JMX and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 
 ## Trying out the console from Maven
 
 From a git clone you should be able to run the sample web console as follows:
 
-    cd web-console
+    cd hawtio
     mvn test-compile exec:java
     open http://localhost:8080/sample/
 
@@ -30,12 +30,12 @@ Then you should be able to run:
 
 ### Building with TypeScript
 
-There is a handy shell script [compileTS](https://github.com/fusesource/fuse-console/blob/master/web-console/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js)
+There is a handy shell script [compileTS](https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js)
 
-    cd web-console
+    cd hawtio
     ./compileTS
 
-By default this then generates the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js) and it then watches for changes to the source files and auto-recompiles on the fly.
+By default this then generates the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js) and it then watches for changes to the source files and auto-recompiles on the fly.
 
 ## Building with GruntJS
 
@@ -45,9 +45,9 @@ Then to install grunt:
 
     npm install -g grunt
 
-Then in the web-console directory you will need to install the grunt plugins required
+Then in the hawtio directory you will need to install the grunt plugins required
 
-    cd web-console
+    cd hawtio
     npm install grunt-type
 
 ### Incremental compile with GruntJS
@@ -92,10 +92,10 @@ If you are interested in working on the code the following references and articl
 
 If you fancy contributing - and **we love contributions!** the following should give you an overview of how the code hangs together.
 
-* Fuse Console is a single page web appplication, from [this single page of HTML](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html)
-* we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/partials) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
-* other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/lib) and are [included in the index.html](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/js directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/js) which is then compiled into the [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js)
-* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
+* Fuse Console is a single page web appplication, from [this single page of HTML](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/index.html)
+* we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/partials) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
+* other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/lib) and are [included in the index.html](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/js directory](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js) which is then compiled into the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js)
+* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
 * the controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX mbeans
 
 ## Developer Tools
@@ -115,7 +115,7 @@ To help IDEA navigate to functions in your source & to avoid noise; you may want
 
     *.min.js;*-min.js
 
-Then select the generated [webapp/js/app.js file](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.js) in the Project explorer, right click and select _Mark as Plain Text_ so that it is ignored as being JavaScript source. This hint came from [this forum thread](http://devnet.jetbrains.net/message/5472690#5472690), hopefully there will be a nicer way to do all this one day!
+Then select the generated [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js) in the Project explorer, right click and select _Mark as Plain Text_ so that it is ignored as being JavaScript source. This hint came from [this forum thread](http://devnet.jetbrains.net/message/5472690#5472690), hopefully there will be a nicer way to do all this one day!
 
 ### Handy AngularJS debugging tip
 
@@ -133,24 +133,24 @@ You have now defined a variable called _s_ which contains all the values in the 
 
 The UI updates in real time based on selections in the JMX tree; so tabs become visible or hide based on the selection.
 
-The nav bar shows/hides based on the *validSelection()* function calls in the [index.html in the ng-show attributes](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html#L39). See the [angularjs ng-show documentation for more detail](http://docs.angularjs.org/api/ng.directive:ngShow).
+The nav bar shows/hides based on the *validSelection()* function calls in the [index.html in the ng-show attributes](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/index.html#L39). See the [angularjs ng-show documentation for more detail](http://docs.angularjs.org/api/ng.directive:ngShow).
 
-The validSelection("someUriPath") function calls on *$scope* calls the same [validSelection on the Workspace class](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L75) which uses this underlying [map of uri path -> validation functions](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L25)
+The validSelection("someUriPath") function calls on *$scope* calls the same [validSelection on the Workspace class](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/workspace.ts#L75) which uses this underlying [map of uri path -> validation functions](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/workspace.ts#L25)
 
 ### How to add a new tab
 
 The following gives you an overview of how to add a new kind of tab:
 
-* add the new URI path to [app.ts in the angularjs route definition](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/app.ts#L4)
+* add the new URI path to [app.ts in the angularjs route definition](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.ts#L4)
 
     when("/myURI", {templateUrl: 'partials/myNewThing.html', controller: MyNewController}).
 
-* if the tab only applies to certain selections, add an entry to the [uriValidations map of uri paths to validation functions](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/workspace.ts#L25)
+* if the tab only applies to certain selections, add an entry to the [uriValidations map of uri paths to validation functions](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/workspace.ts#L25)
 
     "myURI": () => this.isMyKindOfThing()
 
-* add an entry to the [index.html nav bar](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/index.html#L39) so the new tab appears
+* add an entry to the [index.html nav bar](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/index.html#L39) so the new tab appears
 
-* create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/fusesource/fuse-console/tree/master/web-console/src/main/webapp/partials)).
+* create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/partials)).
 
-* create your new controller, MyNewController.ts in the [js directory](https://github.com/fusesource/fuse-console/blob/master/web-console/src/main/webapp/js/)
+* create your new controller, MyNewController.ts in the [js directory](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/)

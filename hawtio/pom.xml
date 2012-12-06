@@ -8,10 +8,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>web-console</artifactId>
+  <artifactId>hawtio</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>Fuse Web Console :: Console</description>
+  <description>hawt.io :: hawtio</description>
 
   <dependencies>
     <dependency>

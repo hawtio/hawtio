@@ -22,8 +22,9 @@
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
   <version>7.1.0-SNAPSHOT</version>
-  <name>Fuse Console</name>
-  <url>http://fuse.fusesource.org/</url>
+  <name>project</name>
+  <description>hawt.io :: project</description>
+  <url>http://hawt.io/</url>
 
   <organization>
     <name>FuseSource</name>
@@ -36,7 +37,7 @@
   </prerequisites>
 
   <properties>
-    <forge-project-id>console</forge-project-id>
+    <forge-project-id>hawtio</forge-project-id>
 
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
     <!--
@@ -164,7 +165,7 @@
   </pluginRepositories>
 
   <modules>
-    <module>web-console</module>
+    <module>hawtio</module>
     <module>sample</module>
   </modules>
 
