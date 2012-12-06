@@ -40,3 +40,6 @@ Its a simple matter of running 'grunt' :) By default this then watches for chang
 
     grunt
 
+## How to get started hacking the code
+
+Check out the [hawt.io technologies, tools and code walkthroughs](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
