@@ -106,7 +106,8 @@ The following are recommended if you want to contribute to the code
 * [AngularJS plugin for Chrome](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk) which is handy for visualising scopes and performance testing etc.
 * [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
 * [Apache Maven 3.0.3 or later](http://maven.apache.org/)
-* [gruntjs](http://gruntjs.com/) - see nearly the beginning of this document for details of how to install and use.
+* [gruntjs](http://gruntjs.com/) a build tool for JavaScript. See nearly the beginning of this document for details of how to install and use.
+* [Dash.app](http://kapeli.com/) is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery etc.
 
 We recommend you enable [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1) in your browser (e.g. in Chrome) for easier debugging by clicking on the bottom right Settings icon in *JavaScript Console* and [enabling Source Maps support such as in this video](http://www.youtube.com/watch?v=-xJl22Kvgjg)
 
