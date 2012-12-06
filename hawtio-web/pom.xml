@@ -8,10 +8,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio</artifactId>
+  <artifactId>hawtio-web</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: hawtio</description>
+  <description>hawt.io :: hawtio-web</description>
 
   <dependencies>
     <dependency>

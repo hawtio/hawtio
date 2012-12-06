@@ -7,7 +7,7 @@
 From a git clone you should be able to run the sample web console as follows:
 
     git clone git@github.com:hawtio/hawtio.git
-    cd hawtio/hawtio
+    cd hawtio/hawtio-web
     mvn test-compile exec:java
     open http://localhost:8080/sample/
 
