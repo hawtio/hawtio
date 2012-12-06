@@ -16,7 +16,7 @@ A good MBean for real time values and charts is java.lang/OperatingSystem or try
 
 If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the hawtio.war to your container
 
-## More help
+## Want to hack on some code?
 
 We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)!
 
