@@ -369,18 +369,6 @@ function OperationController($scope, $routeParams, workspace:Workspace) {
 
   $scope.args = sanitize($scope.item.args);
 
-  var asQuery = (node) => {
-    if (node) {
-      return {
-        type: "EXEC",
-        method: "post",
-        mbean: encodeMBean(node),
-        operation: $scope.item.name,
-        arguments: []
-      };
-    }
-  };
-
   $scope.execute = (args) => {
     var node = $scope.workspace.selection;
 
@@ -394,20 +382,22 @@ function OperationController($scope, $routeParams, workspace:Workspace) {
       return;
     }
 
-    var query = asQuery(objectName);
     var jolokia = workspace.jolokia;
-
-    if ($scope.item.args) {
-      $scope.item.args.forEach( function (arg) {
-        query.arguments.push(arg.value);
-      });
-    }
 
     var get_response = (response) => {
       console.log("Got : " + response);
     };
 
-    jolokia.request(query, onSuccess(get_response));
+    var args = [objectName, $scope.item.name];
+    if ($scope.item.args) {
+      $scope.item.args.forEach( function (arg) {
+        args.push(arg.value);
+      });
+    }
+    args.push(onSuccess(get_response));
+
+    var fn = jolokia.execute;
+    fn.apply(jolokia, args);
   };
 
 }
