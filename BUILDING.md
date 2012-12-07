@@ -1,6 +1,6 @@
-## Working on the source the code
+We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)! You may also want to know [how to hack on the hawt.io code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
 
-We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)! You may also want to know [how to develop it](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
+## Building with TypeScript
 
 You'll need to install [TypeScript](http://typescriptlang.org/) first...
 
@@ -12,7 +12,7 @@ Then you should be able to run:
 
     npm install -g typescript
 
-### Building with TypeScript
+### Incremental compile with TypeScript
 
 There is a handy shell script [compileTS](https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js)
 

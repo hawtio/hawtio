@@ -1,10 +1,8 @@
-# hawt.io
+**hawt.io** is a lightweight web based management console for working with JMX, OSGi and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/).
 
-**hawt.io** is web based management console for working with JMX, OSGi and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
+## Get started
 
-## Trying out the console from Maven
-
-From a git clone you should be able to run the sample web console as follows:
+From a git clone you should be able to run the a sample hawt.io console as follows:
 
     git clone git@github.com:hawtio/hawtio.git
     cd hawtio/hawtio-web

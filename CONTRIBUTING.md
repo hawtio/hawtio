@@ -1,6 +1,4 @@
-# How to contribute
-
-We love contributions! We really need your help to make hawt.io even more hawt!
+We love contributions! We really need your help to make <a href="http://hawt.io/">hawt.io</a> even more hawt!
 
 Here's some notes to help you get started:
 

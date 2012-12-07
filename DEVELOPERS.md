@@ -1,5 +1,3 @@
-# Developer help
-
 We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md). This page is intented to help you get started hacking on the code, it contains various information on technology and tools together with code walkthroughs.
 
 Welcome and enjoy! Its hawt, but stay cool! :)

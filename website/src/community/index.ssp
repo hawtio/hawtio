@@ -1,0 +1,62 @@
+  <div id="content-header">
+    <div class="container">
+      <h1>Community</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div id="content">
+  <div id="intro">
+<p>Welcome to the hawt.io community! We <a href="../contributing/index.html">love contributions</a>!</p> 
+
+<p>Please dive in wherever takes your fancy! Its hawt but stay cool!</p>
+</div>
+
+<div id="section">
+<h2 class="icon github"><img src="../images/octocat_social.png"/> Issue Tracker</h2>
+<!--
+<div class="screenshot"><img src="/images/screenshot-hawtio-jira.png" alt="" /></div>
+-->
+<p>The project tracks bugs, feature-requests, and other issues through the github issue-tracking system.</p>
+<p><a href="${project_issue_url}">hawt.io issue tracker</a> | <a href="http://tinyurl.com/hawtio-starter-issues">Starter issues</a></p>
+<p>To file issues or requests with JIRA, you must have a JBoss Community account (don&#8217;t worry, <a href="https://community.jboss.org/login.jspa">registering</a> is easy).
+</p>
+</div>
+
+<!--
+<div id="section">
+<h2 class="icon forum">Forums and Wiki</h2>
+<div class="screenshot"><img src="/images/screenshot-hawtio-forums.png" alt="" /></div>
+<p>You&#8217;ll find two discussion forums in the <a href="http://community.jboss.org/en/hawtio">hawt.io space</a> on the JBoss Community site.</p>
+<dl>
+	<dt><a href="http://community.jboss.org/en/hawtio?view=discussions">User discussions</a></dt>
+	<dd>The top-level space hosts discussions for developers using hawt.io in their project.</dd>
+	<dt><a href="http://community.jboss.org/en/hawtio/dev?view=discussions">Development discussions</a></dt>
+	<dd>The development sub-space is reserved for discussions about contributing to hawt.io.</dd>
+</dl>
+<p>These spaces also host community-edited information about hawt.io, under the Articles tab. The information that goes here is anything you want to share about the project that doesn&#8217;t fit somewhere else, or you want to share quickly. It may be tips, guides or even full articles.</p>
+</div>
+-->
+
+<div id="section">
+<h2 class="icon chat">Chat (IRC)</h2>
+<!--
+<div class="screenshot">
+	<img src="/images/screenshot-hawtio-irc.png" alt="" />
+</div>
+-->
+<p>We invite you to join us in the <b>#hawtio</b> channel on <b>irc.freenode.net</b> to chat about hawt.io</p>
+<!--
+<p>This channel is logged to <a href="http://transcripts.jboss.org/channel/irc.freenode.org/%23hawtio/">transcripts.jboss.org</a> by JBossBot. The JBossBot is also present to expand issue numbers from the issue tracker.</p>
+-->
+</div>
+
+<div id="section">
+<h2 class="h2"><img src="../images/octocat_social.png"/> Source Repository</h2>
+<!--
+<div class="screenshot"><img src="/images/screenshot-hawtio-github.png" alt="" /></div>
+-->
+<p>All the hawt.io source code is managed using the distributed version system <a href="http://git-scm.com">git</a> and hosted at <a href="http://github.com/hawtio/hawtio">hawtio/hawtio</a> at github.com.</p>
+<p>Both git and github are awesome for collaboration! To make improvements or bug fixes to the hawt.io project, simply fork the project, commit your changes and send a pull request.</p>
+</div>
+</div>
+  </div>
