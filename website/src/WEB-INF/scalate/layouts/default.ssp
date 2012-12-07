@@ -47,8 +47,10 @@
             <div class="g-plusone" data-annotation="none"></div>
           </div>
           <a class="brand" href="/">
-            <span class="logo"></span>
-            <span class="name">hawt.io</span>
+							<span class="name">
+	            	<img src="/images/logo.png" />
+								hawt.io
+							</span>
           </a>
           <nav class="nav-collapse" role="navigation">
             <ul class="nav">
