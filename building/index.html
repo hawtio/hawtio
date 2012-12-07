@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>hawt builds</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="An innovative testing platform for the Java Virtual Machine (JVM). Open source. Highly extensible." name="description" />
+		<!--
+    <link href="/blog/atom.xml" rel="alternate" title="hawt.io blog Atom feed" type="application/atom+xml" />
+    -->
+    <link href="/stylesheets/screen.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
+    <![endif]-->
+    <link href="/favicon.ico" rel="shortcut icon" />
+  </head>
+  <body class="home">
+    <header class="navbar navbar-fixed-top" id="banner" role="banner">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <div class="g-plusone-slot">
+            <div class="g-plusone" data-annotation="none"></div>
+          </div>
+          <a class="brand" href="/">
+            <span class="logo"></span>
+            <span class="name">hawt.io</span>
+          </a>
+          <nav class="nav-collapse" role="navigation">
+            <ul class="nav">
+              <li><a href="/community/index.html">Community</a></li>
+              <li><a href="/contributing/index.html">Contributing</a></li>
+              <li><a href="/building/index.html">Building</a></li>
+              <li><a href="/developers/index.html">Developers</a></li>
+							<li><a href="https://github.com/hawtio/hawtio">Source Code</a></li>
+							<!--
+              <li><a href="/blog/">Blog</a></li>
+							-->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div id="main">
+		  <div id="content-header">
+  <div class="container">
+    <h1>Working on the code</h1>
+  </div>
+</div>
+
+<p>  <div class="container">
+    <div id="content"></p>
+
+<p>We love <a href="https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md">contributions</a>! You may also want to know <a href="https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md">how to hack on the hawt.io code</a></p>
+
+<h2 id = "Building_with_TypeScript">Building with TypeScript</h2>
+
+<p>You'll need to install <a href="http://typescriptlang.org/">TypeScript</a> first&hellip;</p>
+
+<h3 id = "Installing_typescript">Installing typescript</h3>
+
+<p>To install <a href="http://typescriptlang.org/">TypeScript</a> you first need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a></p>
+
+<p>Then you should be able to run:</p>
+
+<pre><code>npm install -g typescript</code></pre>
+
+<h3 id = "Incremental_compile_with_TypeScript">Incremental compile with TypeScript</h3>
+
+<p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
+
+<pre><code>cd hawtio
+./compileTS</code></pre>
+
+<p>By default this then generates the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a> and it then watches for changes to the source files and auto-recompiles on the fly.</p>
+
+<h2 id = "Building_with_GruntJS">Building with GruntJS</h2>
+
+<p>Another build option is <a href="http://gruntjs.com/">gruntjs</a>. Again to build the code with gruntjs you will need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a></p>
+
+<p>Then to install grunt:</p>
+
+<pre><code>npm install -g grunt</code></pre>
+
+<p>Then in the hawtio directory you will need to install the grunt plugins required</p>
+
+<pre><code>cd hawtio
+npm install grunt-type</code></pre>
+
+<h3 id = "Incremental_compile_with_GruntJS">Incremental compile with GruntJS</h3>
+
+<p>Its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
+
+<pre><code>grunt</code></pre>
+
+<h2 id = "How_to_get_started_hacking_the_code">How to get started hacking the code</h2>
+
+<p>Check out the <a href="https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md">hawt.io technologies, tools and code walkthroughs</a></p>
+
+<p></div>
+  </div></p>
+    </div>
+    <footer>
+      <div class="container">
+        <div class="project">
+          <img src="/images/footer-logo.png" />
+          <p class="bottom">
+            &#169;
+            Copyright 2012 Red Hat, Inc.
+            <br />
+            <i class="icon-fire"></i>
+            Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
+            <br />
+            <i class="icon-share-alt"></i>
+            Website and docs licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+            <br />
+            Code released under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License, v2.0</a>.
+          </p>
+        </div>
+        <div class="footer-nav">
+          <h4>Learn</h4>
+          <ul>
+            <li>
+              <a href="/index.html">Get Started</a>
+            </li>
+            <li>
+              <a href="/developers/index.html">Developers</a>
+            </li>
+            <li>
+              <a href="/building/index.html">Building</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-nav">
+          <h4>Get Involved</h4>
+          <ul>
+						<!--
+            <li>
+              <a href="http://community.jboss.org/en/hawtio?view=discussions">Forums</a>
+            </li>
+						-->
+            <li>
+							<a href="/contributing/index.html">Contributing</a>
+            </li>
+            <li>
+							<a href="/community/index.html">Community</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio/issues?state=open">Issue Tracker</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio">Source Code</a>
+            </li>
+						<!--
+            <li>
+              <a href="/community/contributors">Contributors</a>
+            </li>
+						-->
+          </ul>
+        </div>
+        <div class="sponser">
+          <div class="follow-us">
+            <h4>Stay Informed</h4>
+            <ul>
+							<!--
+              <li>
+                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawt.io on Google+" /></a>
+              </li>
+							-->
+              <li>
+                <a href="https://twitter.com/#!/search/%23hawtio"><img alt="Twitter" src="/images/social/twitter-16.png" title="Browse the #hawtio hashtag on Twitter" /></a>
+              </li>
+							<!--
+              <li>
+                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawt.io group on LinkedIn" /></a>
+              </li>
+              <li>
+                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawt.io channel on Vimeo" /></a>
+              </li>
+							-->
+            </ul>
+          </div>
+          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawt.io">visitor stats</a>.</p>
+          <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
+          <p>hawt.io is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+          <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
+        </div>
+        <a class="visible-desktop" href="#" id="toTop">Top</a>
+      </div>
+    </footer>
+    <script>
+      $(function() {
+        $('html').addClass('ready');
+        prettify();
+        activateFooterGravity();
+        activateTooltips();
+        activateToTopControl();
+      });
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.2/bootstrap.min.js"></script>
+    <script src="/javascripts/prettify.js"></script>
+    <script src="/javascripts/site.js"></script>
+    <script>
+      (function() {
+        var po = document.createElement('script'); po.async = true; po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-36899203-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+  </body>
+</html>
