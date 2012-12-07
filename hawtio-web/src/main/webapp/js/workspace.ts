@@ -197,6 +197,7 @@ class Workspace {
 
 class Folder implements NodeSelection {
   constructor(public title:string) {
+    this.addClass = escapeDots(title);
   }
 
   isFolder = true;
@@ -205,6 +206,7 @@ class Folder implements NodeSelection {
   folderNames:string[] = [];
   domain:string = null;
   map = {};
+  addClass = null;
 
   get(key:string):NodeSelection {
     return this.map[key];

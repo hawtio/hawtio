@@ -79,3 +79,57 @@ span.dynatree-icon:before {
     content: "\f013";
 }
 
+/* org.apache.camel */
+span.org-apache-camel span.dynatree-icon:before {
+    content: url("../img/camel/camel.png");
+}
+
+span.org-apache-camel a.dynatree-title:before {
+    content: "Camel - ";
+}
+
+ul.dynatree-container li ul li ul li span[class*="_context_"] span.dynatree-icon:before {
+    content: url("../img/camel/camel_context_icon.png");
+}
+
+/* Camel File Consumer */
+span[class*="_FileConsumer"] span.dynatree-icon:before {
+    content: "\f0c5";
+}
+
+
+/* org.apache.activemq */
+span.org-apache-activemq span.dynatree-icon:before {
+    content: url("../img/activemq/message_broker.png");
+}
+
+span.org-apache-activemq a.dynatree-title {
+
+}
+
+span.org-apache-activemq a.dynatree-title:before {
+    content: "Fuse MQ Broker - ";
+}
+
+/* Broker mbean */
+span[class*="_Broker"] span.dynatree-icon:before {
+    content: url("../img/activemq/message_broker.png");
+}
+
+/* Connection mbean */
+span[class*="_Connection"] span.dynatree-icon:before {
+
+}
+
+/* Queue mbean */
+span[class*="_Queue_"] span.dynatree-icon:before {
+    content: url("../img/activemq/queue.png");
+}
+
+/* Topic mbean */
+span[class*="_Topic_"] span.dynatree-icon:before {
+    content: url("../img/activemq/topic.png");
+}
+
+
+

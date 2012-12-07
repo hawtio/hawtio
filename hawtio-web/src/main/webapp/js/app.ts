@@ -228,8 +228,9 @@ function MBeansController($scope, $location, workspace:Workspace) {
           folder.key = rootId + separator + folderNames.join(separator);
           folderNames = folderNames.clone();
         });
+        var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
         var mbeanInfo: NodeSelection = {
-          key: rootId + separator + folderNames.join(separator) + separator + lastPath,
+          key: key,
           title: trimQuotes(lastPath),
           domain: domain,
           path: path,
@@ -237,6 +238,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
           objectName: domain + ":" + path,
           parent: folder,
           entries: entries,
+          addClass: escapeDots(key),
           get: (key: string) => null
         };
         folder.getOrElse(lastPath, mbeanInfo);
@@ -322,7 +324,7 @@ myApp.directive('expandable', function() {
         hidden.removeClass('inline-block');
         expandable.addClass('closed');
         expandable.removeClass('opened');
-        icon.attr('class', 'icon-caret-right expandable-indicator');
+        icon.attr('class', 'icon-chevron-right expandable-indicator');
         return false;
       });
 
@@ -332,9 +334,9 @@ myApp.directive('expandable', function() {
         expandable.toggleClass('opened');
         expandable.toggleClass('closed');
         if (expandable.hasClass('opened')) {
-          icon.attr('class', 'icon-caret-down expandable-indicator');
+          icon.attr('class', 'icon-chevron-down expandable-indicator');
         } else {
-          icon.attr('class', 'icon-caret-right expandable-indicator');
+          icon.attr('class', 'icon-chevron-right expandable-indicator');
         }
         return false;
       });

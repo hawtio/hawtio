@@ -157,6 +157,10 @@ div.innerDetails {
     cursor: pointer;
 }
 
+.expandable .title i {
+    color: #666;
+}
+
 .inline-block {
     display: inline-block;
     padding-bottom: 1px;

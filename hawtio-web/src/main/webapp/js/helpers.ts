@@ -240,3 +240,7 @@ function createEditorSettings(workspace, mode:string, options:any = {}) {
   }
   return options;
 }
+
+function escapeDots(text:string) {
+  return text.replace(/\./g, '-');
+}
