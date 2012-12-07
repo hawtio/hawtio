@@ -1,0 +1,77 @@
+
+@font-face {
+    font-family: "FontAwesome";
+    src: url('../font/fontawesome-webfont.eot');
+    src: url('../font/fontawesome-webfont.eot?#iefix') format('eot'), url('../font/fontawesome-webfont.woff') format('woff'), url('../font/fontawesome-webfont.ttf') format('truetype'), url('../font/fontawesome-webfont.svg#FontAwesome') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+span.dynatree-empty,
+span.dynatree-vline,
+span.dynatree-connector,
+span.dynatree-expander,
+span.dynatree-icon,
+span.dynatree-checkbox,
+span.dynatree-radio,
+span.dynatree-drag-helper-img,
+#dynatree-drop-marker
+{
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    background-image: none;
+    vertical-align: middle;
+}
+
+/* Dynatree expander */
+span.dynatree-expander:before
+{
+    margin-top: 1px;
+    background-position: 0 0;
+    cursor: pointer;
+    content: "\f054";
+}
+
+span.dynatree-expander:before:hover
+{
+    background-position: 0 0;
+    content: "\f054";
+}
+
+.dynatree-exp-e span.dynatree-expander:before,  /* Expanded, not delayed, not last sibling */
+.dynatree-exp-ed span.dynatree-expander:before,  /* Expanded, delayed, not last sibling */
+.dynatree-exp-el span.dynatree-expander:before,  /* Expanded, not delayed, last sibling */
+.dynatree-exp-edl span.dynatree-expander:before  /* Expanded, delayed, last sibling */
+{
+    background-position: 0 0;
+    content: "\f078";
+}
+.dynatree-exp-e span.dynatree-expander:before:hover,  /* Expanded, not delayed, not last sibling */
+.dynatree-exp-ed span.dynatree-expander:before:hover,  /* Expanded, delayed, not last sibling */
+.dynatree-exp-el span.dynatree-expander:before:hover,  /* Expanded, not delayed, last sibling */
+.dynatree-exp-edl span.dynatree-expander:before:hover  /* Expanded, delayed, last sibling */
+{
+    background-position: 0 0;
+    content: "\f0da";
+}
+
+/* closed folder */
+.dynatree-ico-cf span.dynatree-icon:before {
+    background-position: 0 0;
+    content: "\f07b";
+}
+
+/* open folder */
+.dynatree-ico-ef span.dynatree-icon:before {
+    background-position: 0 0;
+    content: "\f07c";
+}
+
+span.dynatree-icon:before {
+    background-position: 0px 0px;
+    content: "\f013";
+}
+
