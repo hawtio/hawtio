@@ -26,6 +26,10 @@ span.dynatree-drag-helper-img,
     vertical-align: middle;
 }
 
+.dynatree-expander {
+    color: #888888
+}
+
 /* Dynatree expander */
 span.dynatree-expander:before
 {
