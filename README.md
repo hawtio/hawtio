@@ -17,13 +17,11 @@ If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the ha
 
 ## Want to hack on some code?
 
-We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)!
+We love [contributions](http://hawt.io/contributing/index.html)!
 
-* [how to contribute](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)
-* [how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
-* [how to get started working on the code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
-* [hawt.io mailing list](https://groups.google.com/d/forum/hawtio)
-* [#hawtio IRC chat room on freenode.net](http://webchat.freenode.net/?channels=hawtio&uio=d4)
-* [follow @hawtio on twitter](https://twitter.com/hawtio)
+* [how to contribute](http://hawt.io/contributing/index.html)
+* [how to build the code](http://hawt.io/building/index.html)
+* [how to get started working on the code](http://hawt.io/developers/index.html)
+* [join the hawt.io community](http://hawt.io/community/index.html)
 
 Its hawt, but stay cool! :)

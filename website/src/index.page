@@ -1,5 +1,5 @@
 ---
-title: hawt contributors
+title: "hawt.io - manage your server stuff and stay cool!"
 --- pipeline:ssp,markdown
   <div class="container">
     <div id="content">

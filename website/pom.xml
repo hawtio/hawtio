@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-	  <groupId>org.fusesource.console</groupId>
-	  <artifactId>project</artifactId>
+    <groupId>org.fusesource.console</groupId>
+    <artifactId>project</artifactId>
     <version>7.1.0-SNAPSHOT</version>
   </parent>
 
@@ -19,13 +20,13 @@
 
   <dependencies>
 
-<!--
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>org.fusesource.scalate</groupId>
@@ -34,31 +35,31 @@
     </dependency>
 
 
-<!--
-    <dependency>
-      <groupId>org.fusesource.scalate</groupId>
-      <artifactId>scalate-wikitext</artifactId>
-      <version>${scalate-version}</version>
-    </dependency>
+    <!--
+        <dependency>
+          <groupId>org.fusesource.scalate</groupId>
+          <artifactId>scalate-wikitext</artifactId>
+          <version>${scalate-version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.fusesource.scalate</groupId>
-      <artifactId>scalate-jruby</artifactId>
-      <version>${scalate-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.fusesource.scalate</groupId>
-      <artifactId>scalate-page</artifactId>
-      <version>${scalate-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.fusesource.scalamd</groupId>
-      <artifactId>scalamd</artifactId>
-      <version>${scalamd-version}</version>
-    </dependency>
--->
+        <dependency>
+          <groupId>org.fusesource.scalate</groupId>
+          <artifactId>scalate-jruby</artifactId>
+          <version>${scalate-version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.fusesource.scalate</groupId>
+          <artifactId>scalate-page</artifactId>
+          <version>${scalate-version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.fusesource.scalamd</groupId>
+          <artifactId>scalamd</artifactId>
+          <version>${scalamd-version}</version>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -118,9 +119,10 @@
         <configuration>
           <warSourceDirectory>${basedir}/src</warSourceDirectory>
 <!--
-          <remoteServerId>website.fusesource.org</remoteServerId>
-	          <remoteServerUrl>dav:http://fusesource.com/forge/dav/${forge-project-id}</remoteServerUrl>
+          <targetDirectory>${project.build.directory}/site</targetDirectory>
 -->
+          <remoteServerId>github-project-site</remoteServerId>
+          <remoteServerUrl>gitsite:git@github.com/hawtio/hawtio.git</remoteServerUrl>
         </configuration>
         <executions>
           <execution>
@@ -130,7 +132,6 @@
             </goals>
             <phase>package</phase>
           </execution>
-<!--
           <execution>
             <id>deploy</id>
             <goals>
@@ -138,7 +139,6 @@
             </goals>
             <phase>deploy</phase>
           </execution>
--->
         </executions>
       </plugin>
 
@@ -178,7 +178,42 @@
         </configuration>
       </plugin>
     </plugins>
+
+
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-provider-gitexe</artifactId>
+        <version>1.6</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-manager-plexus</artifactId>
+        <version>1.6</version>
+      </extension>
+      <extension>
+        <groupId>com.github.stephenc.wagon</groupId>
+        <artifactId>wagon-gitsite</artifactId>
+        <version>0.4.1</version>
+      </extension>
+    </extensions>
   </build>
+
+  <distributionManagement>
+    <!--
+    To deploy this add this to your ~/.m2/settings.xml
+
+   <server>
+       <id>github-project-site</id>
+       <username>git</username>
+   </server>
+    -->
+
+    <site>
+      <id>github-project-site</id>
+      <url>gitsite:git@github.com/hawtio/hawtio.git</url>
+    </site>
+  </distributionManagement>
 
   <reporting>
     <plugins>
@@ -199,5 +234,6 @@
       </plugin>
     </plugins>
   </reporting>
+
 </project>
 

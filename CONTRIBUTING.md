@@ -20,9 +20,7 @@ Here's some notes to help you get started:
 
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [Here is how to build the code](https://github.com/hawtio/hawtio/blob/master/BUILDING.md)
-* [More information for developers in terms of hawt.io technologies, tools and code walkthroughs](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
-* [hawt.io mailing list](https://groups.google.com/d/forum/hawtio)
-* [#hawtio IRC chat room on freenode.net](http://webchat.freenode.net/?channels=hawtio&uio=d4)
-* [follow @hawtio on twitter](https://twitter.com/hawtio)
+* [Here is how to build the code](http://hawt.io/building/index.html)
+* [More information for developers in terms of hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
+* [join the hawt.io community](http://hawt.io/community/index.html)
 

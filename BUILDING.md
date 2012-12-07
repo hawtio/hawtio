@@ -1,4 +1,4 @@
-We love [contributions](https://github.com/hawtio/hawtio/blob/master/CONTRIBUTING.md)! You may also want to know [how to hack on the hawt.io code](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
+We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawt.io code](http://hawt.io/developers/index.html)
 
 ## Building with TypeScript
 
@@ -42,4 +42,4 @@ Its a simple matter of running 'grunt' :) By default this then watches for chang
 
 ## How to get started hacking the code
 
-Check out the [hawt.io technologies, tools and code walkthroughs](https://github.com/hawtio/hawtio/blob/master/DEVELOPERS.md)
+Check out the [hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
