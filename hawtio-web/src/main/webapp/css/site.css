@@ -157,11 +157,29 @@ div.innerDetails {
     cursor: pointer;
 }
 
-.expandable .title i {
+i.expandable-indicator {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
     color: #666;
 }
 
-.inline-block {
+.expandable.opened i.expandable-indicator:before {
+    content: "\f078";
+}
+
+.expandable.closed i.expandable-indicator:before {
+    content: "\f054";
+}
+
+.expandable.opened .expandable-body {
     display: inline-block;
     padding-bottom: 1px;
+    margin-bottom: 3px;
+}
+
+.expandable.closed .expandable-body {
+    display: none;
 }

@@ -2,9 +2,9 @@
   <li ng-repeat="item in operations">
     <div class="expandable closed" ng-controller="OperationController">
       <div title="{{desc}}" class="title">
-        <i class="icon-chevron-right expandable-indicator"></i> {{title}}
+        <i class="expandable-indicator"></i> {{title}}
       </div>
-      <div class="well hidden">
+      <div class="expandable-body well">
         <form class="form-horizontal">
           <fieldset>
             <div class="control-group" ng-repeat="arg in args">

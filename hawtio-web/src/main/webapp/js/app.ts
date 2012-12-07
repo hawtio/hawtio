@@ -315,29 +315,17 @@ myApp.directive('expandable', function() {
       var expandable = $(element);
 
       var title = expandable.find('.title');
-      var hidden = expandable.find('.hidden');
       var button = expandable.find('.cancel');
-      var icon = expandable.find('.expandable-indicator');
 
       button.bind('click', function() {
-        hidden.addClass('hidden');
-        hidden.removeClass('inline-block');
         expandable.addClass('closed');
         expandable.removeClass('opened');
-        icon.attr('class', 'icon-chevron-right expandable-indicator');
         return false;
       });
 
       title.bind('click', function() {
-        hidden.toggleClass('hidden');
-        hidden.toggleClass('inline-block');
         expandable.toggleClass('opened');
         expandable.toggleClass('closed');
-        if (expandable.hasClass('opened')) {
-          icon.attr('class', 'icon-chevron-down expandable-indicator');
-        } else {
-          icon.attr('class', 'icon-chevron-right expandable-indicator');
-        }
         return false;
       });
 
