@@ -13,24 +13,53 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+<!--
+  <parent>
     <groupId>org.fusesource</groupId>
     <artifactId>fuse-project</artifactId>
     <version>7.1.0.fuse-044</version>
   </parent>
+-->
 
-  <groupId>org.fusesource.console</groupId>
+  <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>7.1.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>project</name>
   <description>hawt.io :: project</description>
   <url>http://hawt.io/</url>
 
-  <organization>
-    <name>FuseSource</name>
-    <url>http://fusesource.com</url>
-  </organization>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
+  <scm>
+    <connection>scm:git:git@github.com:hawtio/hawtio.git</connection>
+    <developerConnection>scm:git:git@github.com:hawtio/hawtio.git</developerConnection>
+    <url>git@github.com:hawtio/hawtio.git</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>oss-sonatype-staging</id>
+      <name>Sonatype Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>oss-sonatype-snapshots</id>
+      <name>OSS Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <prerequisites>
     <maven>3.0.2</maven>
@@ -39,20 +68,21 @@
   <properties>
     <forge-project-id>hawtio</forge-project-id>
 
+    <activemq-version>5.7.0.fuse-71-044</activemq-version>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
-    <!--
-    <camel-version>2.11-SNAPSHOT</camel-version>
-    -->
     <!--
           <fabric-version>99-master-SNAPSHOT</fabric-version>
     -->
+    <camel-version>2.10.0.fuse-71-044</camel-version>
     <fabric-version>7.1.0.fuse-044</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
-    <insight-log4j-version>${fabric-version}</insight-log4j-version>
     <jackson-2-version>2.1.0</jackson-2-version>
     <jetty8-version>8.1.3.v20120416</jetty8-version>
     <jolokia-version>1.0.6</jolokia-version>
+    <junit-version>4.10</junit-version>
     <kotlin-version>0.4.68</kotlin-version>
+    <spring-version>3.0.7.RELEASE</spring-version>
+    <xbean-version>3.12</xbean-version>
   </properties>
 
   <repositories>
@@ -86,43 +116,8 @@
       <name>jetbrains-release</name>
       <url>http://repository.jetbrains.com/releases</url>
     </repository>
-    <!--
-        <repository>
-          <snapshots/>
-          <id>jetbrains-snapshots</id>
-          <name>jetbrains-snapshots</name>
-          <url>http://repository.jetbrains.com/snapshots</url>
-        </repository>
-    -->
-
-    <!-- for jolokia snapshots -->
-    <!--
-        <repository>
-          <id>labs-consol-snapshot</id>
-          <name>ConSol* Labs Repository (Snapshots)</name>
-          <url>http://labs.consol.de/maven/snapshots-repository</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
-    -->
-
-    <!-- TODO until perfectus 7.1-027 -->
-    <repository>
-      <id>fusesource-snapshots</id>
-      <name>fusesource-snapshots</name>
-      <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
   </repositories>
+
   <pluginRepositories>
     <pluginRepository>
       <id>release.fusesource.org</id>
@@ -154,14 +149,6 @@
       <name>jetbrains-repo</name>
       <url>http://repository.jetbrains.com/repo</url>
     </pluginRepository>
-    <!--
-        <pluginRepository>
-          <snapshots/>
-          <id>jetbrains-repo-snapshots</id>
-          <name>jetbrains-repo-snapshots</name>
-          <url>http://repository.jetbrains.com/snapshots</url>
-        </pluginRepository>
-    -->
   </pluginRepositories>
 
   <modules>
@@ -210,10 +197,25 @@
 
   <profiles>
     <profile>
-      <id>amq-snapshot</id>
+      <id>snapshot</id>
       <properties>
         <activemq-version>5.8-SNAPSHOT</activemq-version>
+        <camel-version>2.11-SNAPSHOT</camel-version>
       </properties>
+
+      <repositories>
+        <repository>
+          <id>fusesource-snapshots</id>
+          <name>fusesource-snapshots</name>
+          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+      </repositories>
     </profile>
   </profiles>
 </project>
