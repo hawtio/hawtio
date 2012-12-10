@@ -76,17 +76,17 @@ function SubscriberGraphController($scope, workspace:Workspace) {
           if (isQueue === $scope.isQueue && matchesSelection(destinationName)) {
             if (isQueue) {
               id = getOrCreate($scope.queues, destinationName, {
-                label: destinationName, imageUrl: "/img/activemq/queue.png" });
+                label: destinationName, imageUrl: url("/img/activemq/queue.png") });
             } else {
               id = getOrCreate($scope.topics, destinationName, {
-                label: destinationName, imageUrl: "/img/activemq/topic.png" });
+                label: destinationName, imageUrl: url("/img/activemq/topic.png") });
             }
 
             // lets lazily register the producer
             if (!producerId) {
               var producerKey = producer["ProducerId"];
               producer["label"] = producerKey;
-              producer["imageUrl"] = "/img/activemq/sender.gif";
+              producer["imageUrl"] = url("/img/activemq/sender.gif");
               producerId = getOrCreate($scope.producers, producerKey, producer);
             }
 
