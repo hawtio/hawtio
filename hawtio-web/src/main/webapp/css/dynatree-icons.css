@@ -108,7 +108,7 @@ span.org-apache-activemq a.dynatree-title {
 }
 
 span.org-apache-activemq a.dynatree-title:before {
-    content: "Fuse MQ Broker - ";
+    content: "ActiveMQ - ";
 }
 
 /* Broker mbean */
