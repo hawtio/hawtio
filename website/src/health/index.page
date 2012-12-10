@@ -1,0 +1,15 @@
+---
+title: join the hawt community!
+--- pipeline:ssp,markdown
+  <div id="content-header">
+    <div class="container">
+      <h1>Health MBeans</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div id="content">
+
+${loadText(new FileInputStream("../doc/HealthMBeans.md"))}
+
+</div>
+  </div>
