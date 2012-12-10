@@ -1,3 +1,354 @@
+function BrowseQueueController($scope, workspace) {
+    $scope.widget = new TableWidget($scope, workspace, [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }, 
+        {
+            "mDataProp": "JMSMessageID"
+        }, 
+        {
+            "mDataProp": "JMSCorrelationID"
+        }, 
+        {
+            "mDataProp": "JMSTimestamp"
+        }, 
+        {
+            "mDataProp": "JMSDeliveryMode"
+        }, 
+        {
+            "mDataProp": "JMSReplyTo"
+        }, 
+        {
+            "mDataProp": "JMSRedelivered"
+        }, 
+        {
+            "mDataProp": "JMSPriority"
+        }, 
+        {
+            "mDataProp": "JMSXGroupSeq"
+        }, 
+        {
+            "mDataProp": "JMSExpiration"
+        }, 
+        {
+            "mDataProp": "JMSType"
+        }, 
+        {
+            "mDataProp": "JMSDestination"
+        }
+    ], {
+        rowDetailTemplateId: 'bodyTemplate',
+        ignoreColumns: [
+            "PropertiesText", 
+            "BodyPreview", 
+            "Text"
+        ],
+        flattenColumns: [
+            "BooleanProperties", 
+            "ByteProperties", 
+            "ShortProperties", 
+            "IntProperties", 
+            "LongProperties", 
+            "FloatProperties", 
+            "DoubleProperties", 
+            "StringProperties"
+        ]
+    });
+    var populateTable = function (response) {
+        $scope.widget.populateTable(response.value);
+    };
+    $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid()) {
+            return;
+        }
+        var selection = workspace.selection;
+        if(selection) {
+            var mbean = selection.objectName;
+            if(mbean) {
+                var jolokia = workspace.jolokia;
+                jolokia.request({
+                    type: 'exec',
+                    mbean: mbean,
+                    operation: 'browse()'
+                }, onSuccess(populateTable));
+            }
+        }
+    });
+}
+function DestinationController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.$watch('workspace.selection', function () {
+        workspace.moveIfViewInvalid();
+    });
+    function operationSuccess() {
+        $scope.destinationName = "";
+        $scope.workspace.operationCounter += 1;
+        $scope.$apply();
+    }
+    function deleteSuccess() {
+        if(workspace.selection) {
+            var parent = workspace.selection.parent;
+            if(parent) {
+                $scope.workspace.selection = parent;
+                updateSelectionNode($location, parent);
+            }
+        }
+        $scope.workspace.operationCounter += 1;
+        $scope.$apply();
+    }
+    $scope.createDestination = function (name, isQueue) {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var folderNames = selection.folderNames;
+        if(selection && jolokia && folderNames && folderNames.length > 1) {
+            var mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+            console.log("Creating queue " + isQueue + " of name: " + name + " on mbean");
+            var operation;
+            if(isQueue) {
+                operation = "addQueue(java.lang.String)";
+            } else {
+                operation = "addTopic(java.lang.String)";
+            }
+            jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+        }
+    };
+    $scope.deleteDestination = function () {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var entries = selection.entries;
+        if(selection && jolokia && entries) {
+            var domain = selection.domain;
+            var brokerName = entries["BrokerName"];
+            var name = entries["Destination"];
+            var isQueue = "Topic" !== entries["Type"];
+            if(domain && brokerName) {
+                var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
+                console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
+                var operation;
+                if(isQueue) {
+                    operation = "removeQueue(java.lang.String)";
+                } else {
+                    operation = "removeTopic(java.lang.String)";
+                }
+                jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
+            }
+        }
+    };
+    $scope.name = function () {
+        var selection = workspace.selection;
+        if(selection) {
+            return selection.title;
+        }
+        return null;
+    };
+}
+function SubscriberGraphController($scope, workspace) {
+    $scope.workspace = workspace;
+    $scope.nodes = [];
+    $scope.links = [];
+    $scope.queues = {
+    };
+    $scope.topics = {
+    };
+    $scope.subscriptions = {
+    };
+    $scope.producers = {
+    };
+    function matchesSelection(destinationName) {
+        var selectionDetinationName = $scope.selectionDetinationName;
+        return !selectionDetinationName || destinationName === selectionDetinationName;
+    }
+    function getOrCreate(container, key, defaultObject) {
+        var value = container[key];
+        var id;
+        if(!value) {
+            container[key] = defaultObject;
+            id = $scope.nodes.length;
+            defaultObject["id"] = id;
+            $scope.nodes.push(defaultObject);
+        } else {
+            id = value["id"];
+        }
+        return id;
+    }
+    var populateSubscribers = function (response) {
+        var data = response.value;
+        for(var key in data) {
+            var subscription = data[key];
+            var destinationNameText = subscription["DestinationName"];
+            if(destinationNameText) {
+                var subscriptionId = null;
+                var destinationNames = destinationNameText.split(",");
+                destinationNames.forEach(function (destinationName) {
+                    var id = null;
+                    var isQueue = !subscription["DestinationTopic"];
+                    if(isQueue === $scope.isQueue && matchesSelection(destinationName)) {
+                        if(isQueue) {
+                            id = getOrCreate($scope.queues, destinationName, {
+                                label: destinationName,
+                                imageUrl: url("/img/activemq/queue.png")
+                            });
+                        } else {
+                            id = getOrCreate($scope.topics, destinationName, {
+                                label: destinationName,
+                                imageUrl: url("/img/activemq/topic.png")
+                            });
+                        }
+                        if(!subscriptionId) {
+                            var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
+                            subscription["label"] = subscriptionKey;
+                            subscription["imageUrl"] = url("/img/activemq/listener.gif");
+                            subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
+                        }
+                        $scope.links.push({
+                            source: id,
+                            target: subscriptionId
+                        });
+                    }
+                });
+            }
+        }
+    };
+    var populateProducers = function (response) {
+        var data = response.value;
+        for(var key in data) {
+            var producer = data[key];
+            var destinationNameText = producer["DestinationName"];
+            if(destinationNameText) {
+                var producerId = null;
+                var destinationNames = destinationNameText.split(",");
+                destinationNames.forEach(function (destinationName) {
+                    var id = null;
+                    var isQueue = producer["DestinationQueue"];
+                    if(isQueue === $scope.isQueue && matchesSelection(destinationName)) {
+                        if(isQueue) {
+                            id = getOrCreate($scope.queues, destinationName, {
+                                label: destinationName,
+                                imageUrl: "/img/activemq/queue.png"
+                            });
+                        } else {
+                            id = getOrCreate($scope.topics, destinationName, {
+                                label: destinationName,
+                                imageUrl: "/img/activemq/topic.png"
+                            });
+                        }
+                        if(!producerId) {
+                            var producerKey = producer["ProducerId"];
+                            producer["label"] = producerKey;
+                            producer["imageUrl"] = "/img/activemq/sender.gif";
+                            producerId = getOrCreate($scope.producers, producerKey, producer);
+                        }
+                        $scope.links.push({
+                            source: producerId,
+                            target: id
+                        });
+                    }
+                });
+            }
+        }
+        d3ForceGraph($scope, $scope.nodes, $scope.links);
+        $scope.$apply();
+    };
+    $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid()) {
+            return;
+        }
+        var isQueue = true;
+        var jolokia = $scope.workspace.jolokia;
+        if(jolokia) {
+            var selection = $scope.workspace.selection;
+            $scope.selectionDetinationName = null;
+            if(selection) {
+                if(selection.entries) {
+                    $scope.selectionDetinationName = selection.entries["Destination"];
+                    isQueue = selection.entries["Type"] !== "Topic";
+                } else {
+                    if(selection.folderNames) {
+                        isQueue = selection.folderNames.last() !== "Topic";
+                    }
+                }
+            }
+            $scope.isQueue = isQueue;
+            var typeName;
+            if(isQueue) {
+                typeName = "Queue";
+            } else {
+                typeName = "Topic";
+            }
+            jolokia.request([
+                {
+                    type: 'read',
+                    mbean: "org.apache.activemq:Type=Subscription,destinationType=" + typeName + ",*"
+                }, 
+                {
+                    type: 'read',
+                    mbean: "org.apache.activemq:Type=Producer,*"
+                }
+            ], onSuccess([
+                populateSubscribers, 
+                populateProducers
+            ]));
+        }
+    });
+}
+function BrokerStatusController($scope, workspace) {
+    $scope.widget = new TableWidget($scope, workspace, [
+        {
+            "mDataProp": null,
+            "sClass": "control center",
+            "sDefaultContent": '<i class="icon-plus"></i>'
+        }
+    ]);
+    $scope.$watch('workspace.selection', function () {
+        if(workspace.moveIfViewInvalid()) {
+            return;
+        }
+        var mbean = getStatusMBean(workspace);
+        if(mbean) {
+            var jolokia = workspace.jolokia;
+            jolokia.request({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'statusList()'
+            }, onSuccess(populateTable));
+        }
+    });
+    var populateTable = function (response) {
+        $scope.widget.populateTable(response.value);
+        $scope.$apply();
+    };
+}
+function getStatusMBean(workspace) {
+    var broker = null;
+    if(workspace) {
+        var selection = workspace.selection;
+        if(selection) {
+            var folderNames = selection.folderNames;
+            if(folderNames && folderNames.length > 1) {
+                broker = folderNames[1];
+            } else {
+                var entries = selection.entries;
+                if(!entries) {
+                    selection = selection.parent;
+                    if(selection) {
+                        entries = selection.entries;
+                    }
+                }
+                if(entries) {
+                    broker = entries["BrokerName"];
+                }
+            }
+        }
+    }
+    console.log("Found broker " + broker);
+    if(broker) {
+        return "org.apache.activemq:BrokerName=" + broker + ",Type=Status";
+    } else {
+        return null;
+    }
+}
 var myApp = angular.module('FuseIDE', [
     'bootstrap', 
     'ngResource'
@@ -621,66 +972,64 @@ function LogController($scope, $location, workspace) {
     });
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 }
-function BrowseQueueController($scope, workspace) {
+function BrowseEndpointController($scope, workspace) {
+    $scope.workspace = workspace;
     $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
             "sClass": "control center",
             "sDefaultContent": '<i class="icon-plus"></i>'
-        }, 
-        {
-            "mDataProp": "JMSMessageID"
-        }, 
-        {
-            "mDataProp": "JMSCorrelationID"
-        }, 
-        {
-            "mDataProp": "JMSTimestamp"
-        }, 
-        {
-            "mDataProp": "JMSDeliveryMode"
-        }, 
-        {
-            "mDataProp": "JMSReplyTo"
-        }, 
-        {
-            "mDataProp": "JMSRedelivered"
-        }, 
-        {
-            "mDataProp": "JMSPriority"
-        }, 
-        {
-            "mDataProp": "JMSXGroupSeq"
-        }, 
-        {
-            "mDataProp": "JMSExpiration"
-        }, 
-        {
-            "mDataProp": "JMSType"
-        }, 
-        {
-            "mDataProp": "JMSDestination"
         }
     ], {
         rowDetailTemplateId: 'bodyTemplate',
         ignoreColumns: [
-            "PropertiesText", 
-            "BodyPreview", 
-            "Text"
+            "headerTypes", 
+            "body"
         ],
         flattenColumns: [
-            "BooleanProperties", 
-            "ByteProperties", 
-            "ShortProperties", 
-            "IntProperties", 
-            "LongProperties", 
-            "FloatProperties", 
-            "DoubleProperties", 
-            "StringProperties"
+            "headers"
         ]
     });
     var populateTable = function (response) {
-        $scope.widget.populateTable(response.value);
+        var data = [];
+        if(angular.isString(response)) {
+            var doc = $.parseXML(response);
+            var allMessages = $(doc).find("message");
+            allMessages.each(function (idx, message) {
+                var messageData = {
+                    headers: {
+                    },
+                    headerTypes: {
+                    }
+                };
+                var headers = $(message).find("header");
+                headers.each(function (idx, header) {
+                    var key = header.getAttribute("key");
+                    var typeName = header.getAttribute("type");
+                    var value = header.textContent;
+                    if(key) {
+                        if(value) {
+                            messageData.headers[key] = value;
+                        }
+                        if(typeName) {
+                            messageData.headerTypes[key] = typeName;
+                        }
+                        console.log("Header " + key + " type " + typeName + " = " + value);
+                    }
+                });
+                var body = $(message).children("body")[0];
+                if(body) {
+                    var bodyText = body.textContent;
+                    var bodyType = body.getAttribute("type");
+                    console.log("Got body type: " + bodyType + " text: " + bodyText);
+                    messageData["body"] = bodyText;
+                    messageData["bodyType"] = bodyType;
+                }
+                console.log("body element: " + body);
+                data.push(messageData);
+            });
+        }
+        $scope.widget.populateTable(data);
     };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
@@ -691,109 +1040,180 @@ function BrowseQueueController($scope, workspace) {
             var mbean = selection.objectName;
             if(mbean) {
                 var jolokia = workspace.jolokia;
-                jolokia.request({
-                    type: 'exec',
-                    mbean: mbean,
-                    operation: 'browse()'
-                }, onSuccess(populateTable));
+                var options = onSuccess(populateTable);
+                jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
             }
         }
     });
 }
-function BrokerStatusController($scope, workspace) {
-    $scope.widget = new TableWidget($scope, workspace, [
-        {
-            "mDataProp": null,
-            "sClass": "control center",
-            "sDefaultContent": '<i class="icon-plus"></i>'
-        }
-    ]);
+function CamelController($scope, workspace) {
+    $scope.workspace = workspace;
+    $scope.routes = [];
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
             return;
         }
-        var mbean = getStatusMBean(workspace);
+        var mbean = getSelectionCamelContextMBean(workspace);
         if(mbean) {
             var jolokia = workspace.jolokia;
             jolokia.request({
                 type: 'exec',
                 mbean: mbean,
-                operation: 'statusList()'
+                operation: 'dumpRoutesAsXml()'
             }, onSuccess(populateTable));
         }
     });
     var populateTable = function (response) {
-        $scope.widget.populateTable(response.value);
+        var data = response.value;
+        $scope.routes = data;
+        var nodes = [];
+        var links = [];
+        var selectedRouteId = null;
+        var selection = workspace.selection;
+        if(selection) {
+            if(selection && selection.entries) {
+                var typeName = selection.entries["type"];
+                var name = selection.entries["name"];
+                if("routes" === typeName && name) {
+                    selectedRouteId = trimQuotes(name);
+                }
+            }
+        }
+        if(data) {
+            var doc = $.parseXML(data);
+            var allRoutes = $(doc).find("route");
+            var canvasDiv = $('#canvas');
+            var width = canvasDiv.width();
+            var height = canvasDiv.height();
+            if(height < 300) {
+                console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
+                height = $(document).height() - canvasDiv.offset()['top'] - 5;
+            }
+            console.log("Using width " + width + " and height " + height);
+            var delta = 150;
+            function addChildren(parent, parentId, parentX, parentY) {
+                var x = parentX;
+                var y = parentY + delta;
+                $(parent).children().each(function (idx, route) {
+                    var id = nodes.length;
+                    if(route.nodeName === "from" && !parentId) {
+                        parentId = id;
+                    }
+                    var name = route.nodeName;
+                    var uri = route.getAttribute("uri");
+                    if(uri) {
+                        name += " " + uri;
+                    }
+                    var imageName = route.nodeName;
+                    var endpointNames = [
+                        "from", 
+                        "to", 
+                        "route"
+                    ];
+                    var genericNames = [
+                        "xpath", 
+                        "when", 
+                        "otherwise"
+                    ];
+                    if(endpointNames.indexOf(imageName) >= 0) {
+                        imageName = "endpoint";
+                    } else {
+                        if(genericNames.indexOf(imageName) >= 0) {
+                            imageName = "generic";
+                        }
+                    }
+                    var imageUrl = url("/img/camel/" + imageName + "24.png");
+                    nodes.push({
+                        "name": name,
+                        "label": name,
+                        "group": 1,
+                        "id": id,
+                        "x": x,
+                        "y:": y,
+                        "imageUrl": imageUrl
+                    });
+                    if(parentId !== null && parentId !== id) {
+                        console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
+                        links.push({
+                            "source": parentId,
+                            "target": id,
+                            "value": 1
+                        });
+                    }
+                    addChildren(route, id, x, y);
+                    x += delta;
+                });
+            }
+            var routeDelta = width / allRoutes.length;
+            var rowX = 0;
+            allRoutes.each(function (idx, route) {
+                var routeId = route.getAttribute("id");
+                if(!selectedRouteId || !routeId || selectedRouteId === routeId) {
+                    addChildren(route, null, rowX, 0);
+                    rowX += routeDelta;
+                }
+            });
+            dagreLayoutGraph(nodes, links, width, height);
+        }
         $scope.$apply();
     };
 }
-function getStatusMBean(workspace) {
-    var broker = null;
+function getSelectionCamelContextMBean(workspace) {
     if(workspace) {
         var selection = workspace.selection;
-        if(selection) {
-            var folderNames = selection.folderNames;
+        var tree = workspace.tree;
+        var folderNames = selection.folderNames;
+        var entries = selection.entries;
+        var domain;
+        var contextId;
+        if(tree && selection) {
             if(folderNames && folderNames.length > 1) {
-                broker = folderNames[1];
+                domain = folderNames[0];
+                contextId = folderNames[1];
             } else {
-                var entries = selection.entries;
-                if(!entries) {
-                    selection = selection.parent;
-                    if(selection) {
-                        entries = selection.entries;
-                    }
-                }
                 if(entries) {
-                    broker = entries["BrokerName"];
+                    domain = selection.domain;
+                    contextId = entries["context"];
+                }
+            }
+        }
+        if(domain && contextId) {
+            var result = tree.navigate(domain, contextId, "context");
+            if(result && result.children) {
+                var contextBean = result.children.first();
+                if(contextBean.title) {
+                    var contextName = contextBean.title;
+                    return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
                 }
             }
         }
     }
-    console.log("Found broker " + broker);
-    if(broker) {
-        return "org.apache.activemq:BrokerName=" + broker + ",Type=Status";
-    } else {
-        return null;
-    }
+    return null;
 }
-function DestinationController($scope, $location, workspace) {
+function EndpointController($scope, workspace) {
     $scope.workspace = workspace;
     $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid();
     });
     function operationSuccess() {
-        $scope.destinationName = "";
+        $scope.endpointName = "";
         $scope.workspace.operationCounter += 1;
         $scope.$apply();
     }
-    function deleteSuccess() {
-        if(workspace.selection) {
-            var parent = workspace.selection.parent;
-            if(parent) {
-                $scope.workspace.selection = parent;
-                updateSelectionNode($location, parent);
-            }
-        }
-        $scope.workspace.operationCounter += 1;
-        $scope.$apply();
-    }
-    $scope.createDestination = function (name, isQueue) {
+    $scope.createEndpoint = function (name) {
         var jolokia = workspace.jolokia;
-        var selection = workspace.selection;
-        var folderNames = selection.folderNames;
-        if(selection && jolokia && folderNames && folderNames.length > 1) {
-            var mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-            console.log("Creating queue " + isQueue + " of name: " + name + " on mbean");
-            var operation;
-            if(isQueue) {
-                operation = "addQueue(java.lang.String)";
+        if(jolokia) {
+            var mbean = getSelectionCamelContextMBean(workspace);
+            if(mbean) {
+                console.log("Creating endpoint: " + name + " on mbean " + mbean);
+                var operation = "createEndpoint(java.lang.String)";
+                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
             } else {
-                operation = "addTopic(java.lang.String)";
+                console.log("Can't find the CamelContext MBean!");
             }
-            jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         }
     };
-    $scope.deleteDestination = function () {
+    $scope.deleteEndpoint = function () {
         var jolokia = workspace.jolokia;
         var selection = workspace.selection;
         var entries = selection.entries;
@@ -805,397 +1225,507 @@ function DestinationController($scope, $location, workspace) {
             if(domain && brokerName) {
                 var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
                 console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
-                var operation;
-                if(isQueue) {
-                    operation = "removeQueue(java.lang.String)";
-                } else {
-                    operation = "removeTopic(java.lang.String)";
-                }
-                jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
+                var operation = "removeEndpoint(java.lang.String)";
+                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
             }
         }
-    };
-    $scope.name = function () {
-        var selection = workspace.selection;
-        if(selection) {
-            return selection.title;
-        }
-        return null;
     };
 }
-function SubscriberGraphController($scope, workspace) {
+function SendMessageController($scope, workspace) {
+    var languageFormatPreference = "defaultLanguageFormat";
     $scope.workspace = workspace;
-    $scope.nodes = [];
-    $scope.links = [];
-    $scope.queues = {
-    };
-    $scope.topics = {
-    };
-    $scope.subscriptions = {
-    };
-    $scope.producers = {
-    };
-    function matchesSelection(destinationName) {
-        var selectionDetinationName = $scope.selectionDetinationName;
-        return !selectionDetinationName || destinationName === selectionDetinationName;
+    $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
+    var textArea = $("#messageBody").first()[0];
+    if(textArea) {
+        var editorSettings = createEditorSettings(workspace, $scope.format);
+        $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
     }
-    function getOrCreate(container, key, defaultObject) {
-        var value = container[key];
-        var id;
-        if(!value) {
-            container[key] = defaultObject;
-            id = $scope.nodes.length;
-            defaultObject["id"] = id;
-            $scope.nodes.push(defaultObject);
-        } else {
-            id = value["id"];
-        }
-        return id;
-    }
-    var populateSubscribers = function (response) {
-        var data = response.value;
-        for(var key in data) {
-            var subscription = data[key];
-            var destinationNameText = subscription["DestinationName"];
-            if(destinationNameText) {
-                var subscriptionId = null;
-                var destinationNames = destinationNameText.split(",");
-                destinationNames.forEach(function (destinationName) {
-                    var id = null;
-                    var isQueue = !subscription["DestinationTopic"];
-                    if(isQueue === $scope.isQueue && matchesSelection(destinationName)) {
-                        if(isQueue) {
-                            id = getOrCreate($scope.queues, destinationName, {
-                                label: destinationName,
-                                imageUrl: url("/img/activemq/queue.png")
-                            });
-                        } else {
-                            id = getOrCreate($scope.topics, destinationName, {
-                                label: destinationName,
-                                imageUrl: url("/img/activemq/topic.png")
-                            });
-                        }
-                        if(!subscriptionId) {
-                            var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
-                            subscription["label"] = subscriptionKey;
-                            subscription["imageUrl"] = url("/img/activemq/listener.gif");
-                            subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
-                        }
-                        $scope.links.push({
-                            source: id,
-                            target: subscriptionId
-                        });
-                    }
-                });
-            }
-        }
-    };
-    var populateProducers = function (response) {
-        var data = response.value;
-        for(var key in data) {
-            var producer = data[key];
-            var destinationNameText = producer["DestinationName"];
-            if(destinationNameText) {
-                var producerId = null;
-                var destinationNames = destinationNameText.split(",");
-                destinationNames.forEach(function (destinationName) {
-                    var id = null;
-                    var isQueue = producer["DestinationQueue"];
-                    if(isQueue === $scope.isQueue && matchesSelection(destinationName)) {
-                        if(isQueue) {
-                            id = getOrCreate($scope.queues, destinationName, {
-                                label: destinationName,
-                                imageUrl: "/img/activemq/queue.png"
-                            });
-                        } else {
-                            id = getOrCreate($scope.topics, destinationName, {
-                                label: destinationName,
-                                imageUrl: "/img/activemq/topic.png"
-                            });
-                        }
-                        if(!producerId) {
-                            var producerKey = producer["ProducerId"];
-                            producer["label"] = producerKey;
-                            producer["imageUrl"] = "/img/activemq/sender.gif";
-                            producerId = getOrCreate($scope.producers, producerKey, producer);
-                        }
-                        $scope.links.push({
-                            source: producerId,
-                            target: id
-                        });
-                    }
-                });
-            }
-        }
-        d3ForceGraph($scope, $scope.nodes, $scope.links);
-        $scope.$apply();
-    };
     $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid()) {
-            return;
+        workspace.moveIfViewInvalid();
+    });
+    $scope.$watch('sourceFormat', function () {
+        var format = $scope.sourceFormat;
+        var workspace = $scope.workspace;
+        if(format && workspace) {
+            workspace.setLocalStorage(languageFormatPreference, format);
         }
-        var isQueue = true;
-        var jolokia = $scope.workspace.jolokia;
-        if(jolokia) {
-            var selection = $scope.workspace.selection;
-            $scope.selectionDetinationName = null;
-            if(selection) {
-                if(selection.entries) {
-                    $scope.selectionDetinationName = selection.entries["Destination"];
-                    isQueue = selection.entries["Type"] !== "Topic";
-                } else {
-                    if(selection.folderNames) {
-                        isQueue = selection.folderNames.last() !== "Topic";
-                    }
-                }
-            }
-            $scope.isQueue = isQueue;
-            var typeName;
-            if(isQueue) {
-                typeName = "Queue";
-            } else {
-                typeName = "Topic";
-            }
-            jolokia.request([
-                {
-                    type: 'read',
-                    mbean: "org.apache.activemq:Type=Subscription,destinationType=" + typeName + ",*"
-                }, 
-                {
-                    type: 'read',
-                    mbean: "org.apache.activemq:Type=Producer,*"
-                }
-            ], onSuccess([
-                populateSubscribers, 
-                populateProducers
-            ]));
+        var editor = $scope.codeMirror;
+        if(editor) {
+            editor.setOption("mode", format);
         }
     });
-}
-var TableWidget = (function () {
-    function TableWidget(scope, workspace, dataTableColumns, config) {
-        if (typeof config === "undefined") { config = {
-        }; }
-        this.scope = scope;
-        this.workspace = workspace;
-        this.dataTableColumns = dataTableColumns;
-        this.config = config;
-        var _this = this;
-        this.ignoreColumnHash = {
-        };
-        this.flattenColumnHash = {
-        };
-        this.detailTemplate = null;
-        this.openMessages = [];
-        angular.forEach(config.ignoreColumns, function (name) {
-            _this.ignoreColumnHash[name] = true;
-        });
-        angular.forEach(config.flattenColumns, function (name) {
-            _this.flattenColumnHash[name] = true;
-        });
-        var templateId = config.rowDetailTemplateId;
-        if(templateId) {
-            this.detailTemplate = workspace.$templateCache.get(templateId);
+    var sendWorked = function () {
+        console.log("Sent message!");
+    };
+    $scope.autoFormat = function () {
+        autoFormatEditor($scope.codeMirror);
+    };
+    $scope.sendMessage = function (body) {
+        var editor = $scope.codeMirror;
+        if(editor && !body) {
+            body = editor.getValue();
         }
-    }
-    TableWidget.prototype.populateTable = function (data) {
-        var _this = this;
-        var $scope = this.scope;
-        if(!data) {
-            $scope.messages = [];
-        } else {
-            $scope.messages = data;
-            var formatMessageDetails = function (dataTable, parentRow) {
-                var oData = dataTable.fnGetData(parentRow);
-                var div = $('<div class="innerDetails span12">');
-                _this.populateDetailDiv(oData, div);
-                return div;
-            };
-            var array = data;
-            if(angular.isArray(data)) {
-            } else {
-                if(angular.isObject(data)) {
-                    array = [];
-                    angular.forEach(data, function (object) {
-                        return array.push(object);
-                    });
-                }
-            }
-            var tableElement = $('#grid');
-            var tableTr = $(tableElement).find("tr");
-            var ths = $(tableTr).find("th");
-            var columns = this.dataTableColumns.slice();
-            var addColumn = function (key, title) {
-                columns.push({
-                    mDataProp: key
-                });
-                if(tableTr) {
-                    $("<th>" + title + "</th>").appendTo(tableTr);
-                }
-            };
-            var checkForNewColumn = function (value, key, prefix) {
-                var found = _this.ignoreColumnHash[key] || columns.any({
-                    mDataProp: key
-                });
-                if(!found) {
-                    if(_this.flattenColumnHash[key]) {
-                        if(angular.isObject(value)) {
-                            var childPrefix = prefix + key + ".";
-                            angular.forEach(value, function (value, key) {
-                                return checkForNewColumn(value, key, childPrefix);
-                            });
-                        }
+        console.log("sending body: " + body);
+        var selection = workspace.selection;
+        if(selection) {
+            var mbean = selection.objectName;
+            if(mbean) {
+                var jolokia = workspace.jolokia;
+                if(selection.domain === "org.apache.camel") {
+                    var uri = selection.title;
+                    mbean = getSelectionCamelContextMBean(workspace);
+                    if(mbean) {
+                        jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
                     } else {
-                        addColumn(prefix + key, humanizeValue(key));
+                        console.log("Could not find CamelContext MBean!");
                     }
-                }
-            };
-            if(!this.config.disableAddColumns && angular.isArray(array) && array.length > 0) {
-                var first = array[0];
-                if(angular.isObject(first)) {
-                    angular.forEach(first, function (value, key) {
-                        return checkForNewColumn(value, key, "");
-                    });
+                } else {
+                    jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
                 }
             }
-            var config = {
-                bPaginate: false,
-                sDom: 'Rlfrtip',
-                bDestroy: true,
-                aaData: array,
-                aoColumns: columns
-            };
-            $scope.dataTable = tableElement.dataTable(config);
-            var widget = this;
-            $('#grid td.control').click(function () {
-                var dataTable = $scope.dataTable;
-                var parentRow = this.parentNode;
-                var openMessages = widget.openMessages;
-                var i = $.inArray(parentRow, openMessages);
-                var element = $('i', this);
-                if(i === -1) {
-                    element.removeClass('icon-plus');
-                    element.addClass('icon-minus');
-                    var dataDiv = formatMessageDetails(dataTable, parentRow);
-                    var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-                    $('div.innerDetails', detailsRow).slideDown();
-                    openMessages.push(parentRow);
-                } else {
-                    element.removeClass('icon-minus');
-                    element.addClass('icon-plus');
-                    dataTable.fnClose(parentRow);
-                    openMessages.splice(i, 1);
-                }
-                $scope.$apply();
-            });
-        }
-        $scope.$apply();
-    };
-    TableWidget.prototype.populateDetailDiv = function (row, div) {
-        this.scope.row = row;
-        this.scope.templateDiv = div;
-        var template = this.detailTemplate;
-        if(template) {
-            div.html(template);
-            var results = this.workspace.$compile(div.contents())(this.scope);
         }
     };
-    return TableWidget;
-})();
-function BundleController($scope, $filter, workspace, $templateCache, $compile) {
-    var dateFilter = $filter('date');
-    $scope.widget = new TableWidget($scope, workspace, [
-        {
-            "mDataProp": null,
-            "sClass": "control center",
-            "sDefaultContent": '<i class="icon-plus"></i>'
-        }, 
-        {
-            "mDataProp": "Identifier"
-        }, 
-        {
-            "mDataProp": "SymbolicName"
-        }, 
-        {
-            "mDataProp": "State",
-            "mRender": function (data, type, row) {
-                var img = "yellow-dot.png";
-                if(data) {
-                    var lower = data.toString().toLowerCase();
-                    if(lower) {
-                        if(lower.startsWith("a")) {
-                            img = "green-dot.png";
-                        } else {
-                            if(lower.startsWith("inst")) {
-                                img = "gray-dot.png";
-                            } else {
-                                if(lower.startsWith("res")) {
-                                    img = "yellow-dot.png";
-                                } else {
-                                    img = "red-dot.png";
+}
+function ChartController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.metrics = [];
+    $scope.$watch('workspace.selection', function () {
+        var width = 594;
+        var charts = $("#charts");
+        if(charts) {
+            width = charts.width();
+        }
+        if($scope.context) {
+            $scope.context.stop();
+            $scope.context = null;
+        }
+        charts.children().remove();
+        var node = $scope.workspace.selection;
+        if(!node) {
+            return;
+        }
+        var mbean = node.objectName;
+        $scope.metrics = [];
+        var jolokia = $scope.workspace.jolokia;
+        var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
+        $scope.context = context;
+        $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+        var search = $location.search();
+        var attributeNames = toSearchArgumentArray(search["att"]);
+        if(mbean) {
+            var listKey = encodeMBeanPath(mbean);
+            var meta = jolokia.list(listKey);
+            if(meta) {
+                var attributes = meta.attr;
+                if(attributes) {
+                    for(var key in attributes) {
+                        var value = attributes[key];
+                        if(value) {
+                            var typeName = value['type'];
+                            if(isNumberTypeName(typeName) && (!attributeNames.length || attributeNames.indexOf(key) >= 0)) {
+                                var metric = $scope.jolokiaContext.metric({
+                                    type: 'read',
+                                    mbean: mbean,
+                                    attribute: key
+                                }, humanizeValue(key));
+                                if(metric) {
+                                    $scope.metrics.push(metric);
                                 }
                             }
                         }
                     }
                 }
-                return "<img src='img/dots/" + img + "' title='" + data + "'/>";
             }
-        }, 
-        {
-            "mDataProp": "Version"
-        }, 
-        {
-            "mDataProp": "LastModified",
-            "mRender": function (data, type, row) {
-                return dateFilter(data, "short");
+        } else {
+            var elementNames = toSearchArgumentArray(search["el"]);
+            if(attributeNames && attributeNames.length && elementNames && elementNames.length) {
+                var mbeans = {
+                };
+                elementNames.forEach(function (elementName) {
+                    var child = node.get(elementName);
+                    if(child) {
+                        var mbean = child.objectName;
+                        if(mbean) {
+                            mbeans[elementName] = mbean;
+                        }
+                    }
+                });
+                attributeNames.forEach(function (key) {
+                    angular.forEach(mbeans, function (mbean, name) {
+                        var attributeTitle = humanizeValue(key);
+                        var title = name + ": " + attributeTitle;
+                        var metric = $scope.jolokiaContext.metric({
+                            type: 'read',
+                            mbean: mbean,
+                            attribute: key
+                        }, title);
+                        if(metric) {
+                            $scope.metrics.push(metric);
+                        }
+                    });
+                });
             }
         }
-    ], {
-        rowDetailTemplateId: 'bodyTemplate',
-        ignoreColumns: [
-            "Headers", 
-            "ExportedPackages", 
-            "ImportedPackages", 
-            "RegisteredServices", 
-            "RequiringBundles", 
-            "RequiredBundles", 
-            "Fragments", 
-            "ServicesInUse"
-        ]
-    });
-    $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid()) {
-            return;
-        }
-        var mbean = getSelectionBundleMBean(workspace);
-        if(mbean) {
-            var jolokia = workspace.jolokia;
-            jolokia.request({
-                type: 'exec',
-                mbean: mbean,
-                operation: 'listBundles()'
-            }, onSuccess(populateTable));
+        if($scope.metrics.length > 0) {
+            d3.select("#charts").selectAll(".axis").data([
+                "top", 
+                "bottom"
+            ]).enter().append("div").attr("class", function (d) {
+                return d + " axis";
+            }).each(function (d) {
+                d3.select(this).call(context.axis().ticks(12).orient(d));
+            });
+            d3.select("#charts").append("div").attr("class", "rule").call(context.rule());
+            context.on("focus", function (i) {
+                d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+            });
+            $scope.metrics.forEach(function (metric) {
+                d3.select("#charts").call(function (div) {
+                    div.append("div").data([
+                        metric
+                    ]).attr("class", "horizon").call(context.horizon());
+                });
+            });
+        } else {
+            $location.path("chartEdit");
         }
     });
-    var populateTable = function (response) {
-        $scope.widget.populateTable(response.value);
-        $scope.$apply();
-    };
 }
-function getSelectionBundleMBean(workspace) {
-    if(workspace) {
-        var folder = workspace.tree.navigate("osgi.core", "bundleState");
-        if(folder) {
-            var children = folder.children;
+function ChartEditController($scope, $location, workspace) {
+    $scope.workspace = workspace;
+    $scope.selectedAttributes = [];
+    $scope.selectedMBeans = [];
+    $scope.metrics = {
+    };
+    $scope.mbeans = {
+    };
+    $scope.size = function (value) {
+        if(angular.isObject(value)) {
+            return Object.size(value);
+        } else {
+            if(angular.isArray(value)) {
+                return value.length;
+            } else {
+                return 1;
+            }
+        }
+    };
+    $scope.canViewChart = function () {
+        return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
+    };
+    $scope.showAttributes = function () {
+        return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
+    };
+    $scope.showElements = function () {
+        return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
+    };
+    $scope.viewChart = function () {
+        var search = $location.search();
+        if($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
+            delete search["att"];
+        } else {
+            search["att"] = $scope.selectedAttributes;
+        }
+        if($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
+            delete search["el"];
+        } else {
+            search["el"] = $scope.selectedMBeans;
+        }
+        $location.search(search);
+        $location.path("charts");
+    };
+    $scope.$watch('workspace.selection', function () {
+        $scope.selectedAttributes = [];
+        $scope.selectedMBeans = [];
+        $scope.metrics = {
+        };
+        $scope.mbeans = {
+        };
+        var mbeanCounter = 0;
+        var resultCounter = 0;
+        var jolokia = $scope.workspace.jolokia;
+        var node = $scope.workspace.selection;
+        if(node && jolokia) {
+            var children = node.children;
+            if(!children) {
+                children = [
+                    node
+                ];
+            }
             if(children) {
-                var node = children[0];
-                if(node) {
-                    return node.objectName;
+                children.forEach(function (mbeanNode) {
+                    var mbean = mbeanNode.objectName;
+                    var name = mbeanNode.title;
+                    if(name && mbean) {
+                        mbeanCounter++;
+                        $scope.mbeans[name] = name;
+                        var listKey = encodeMBeanPath(mbean);
+                        jolokia.list(listKey, onSuccess(function (meta) {
+                            var attributes = meta.attr;
+                            if(attributes) {
+                                for(var key in attributes) {
+                                    var value = attributes[key];
+                                    if(value) {
+                                        var typeName = value['type'];
+                                        if(isNumberTypeName(typeName)) {
+                                            if(!$scope.metrics[key]) {
+                                                $scope.metrics[key] = key;
+                                            }
+                                        }
+                                    }
+                                }
+                                if(++resultCounter >= mbeanCounter) {
+                                    var search = $location.search();
+                                    var attributeNames = toSearchArgumentArray(search["att"]);
+                                    var elementNames = toSearchArgumentArray(search["el"]);
+                                    if(attributeNames && attributeNames.length) {
+                                        attributeNames.forEach(function (name) {
+                                            if($scope.metrics[name]) {
+                                                $scope.selectedAttributes.push(name);
+                                            }
+                                        });
+                                    }
+                                    if(elementNames && elementNames.length) {
+                                        elementNames.forEach(function (name) {
+                                            if($scope.mbeans[name]) {
+                                                $scope.selectedMBeans.push(name);
+                                            }
+                                        });
+                                    }
+                                    if($scope.selectedMBeans.length < 1) {
+                                        $scope.selectedMBeans = Object.keys($scope.mbeans);
+                                    }
+                                    if($scope.selectedAttributes.length < 1) {
+                                        var attrKeys = Object.keys($scope.metrics).sort();
+                                        if($scope.selectedMBeans.length > 1) {
+                                            $scope.selectedAttributes = [
+                                                attrKeys.first()
+                                            ];
+                                        } else {
+                                            $scope.selectedAttributes = attrKeys;
+                                        }
+                                    }
+                                    $("#attributes").attr("size", Object.size($scope.metrics));
+                                    $("#mbeans").attr("size", Object.size($scope.mbeans));
+                                    $scope.$apply();
+                                }
+                            }
+                        }));
+                    }
+                });
+            }
+        }
+    });
+}
+function EditorController($scope, workspace) {
+    $scope.$watch('row', function () {
+        setTimeout(function () {
+            var textAreas = null;
+            if($scope.templateDiv) {
+                textAreas = $($scope.templateDiv).find("textarea.messageDetail");
+            } else {
+                textAreas = $("textarea.messageDetail");
+            }
+            var textArea = textAreas[0];
+            if(textArea) {
+                if(!$(textArea).data("codeMirrorEditor")) {
+                    $(textArea).data("codeMirrorEditor", "true");
+                    var text = $(textArea).val();
+                    var format = detectTextFormat(text);
+                    var editorSettings = createEditorSettings(workspace, format, {
+                        readOnly: true
+                    });
+                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
+                    var autoFormat = true;
+                    if(autoFormat) {
+                        autoFormatEditor(editor);
+                    }
                 }
             }
+        }, 0);
+    });
+}
+function d3ForceGraph(scope, nodes, links, canvasSelector) {
+    if (typeof canvasSelector === "undefined") { canvasSelector = "#canvas"; }
+    if(scope.graphForce) {
+        scope.graphForce.stop();
+    }
+    var canvasDiv = $(canvasSelector);
+    canvasDiv.children("svg").remove();
+    var width = canvasDiv.width();
+    var height = canvasDiv.height();
+    if(height < 300) {
+        var offset = canvasDiv.offset();
+        height = $(document).height() - 5;
+        if(offset) {
+            height -= offset['top'];
         }
     }
-    return null;
+    var svg = d3.select(canvasSelector).append("svg").attr("width", width).attr("height", height);
+    var force = d3.layout.force().distance(100).charge(-120 * 10).linkDistance(50).size([
+        width, 
+        height
+    ]);
+    scope.graphForce = force;
+    svg.append("svg:defs").selectAll("marker").data([
+        "from"
+    ]).enter().append("svg:marker").attr("id", String).attr("viewBox", "0 -5 10 10").attr("refX", 25).attr("refY", -1.5).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("svg:path").attr("d", "M0,-5L10,0L0,5");
+    force.nodes(nodes).links(links).start();
+    var link = svg.selectAll(".link").data(links).enter().append("line").attr("class", "link");
+    link.attr("class", "link from");
+    link.attr("marker-end", "url(#from)");
+    var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
+    node.append("image").attr("xlink:href", function (d) {
+        return d.imageUrl;
+    }).attr("x", -15).attr("y", -15).attr("width", 30).attr("height", 30);
+    node.append("text").attr("dx", 20).attr("dy", ".35em").text(function (d) {
+        return d.label;
+    });
+    force.on("tick", function () {
+        link.attr("x1", function (d) {
+            return d.source.x;
+        }).attr("y1", function (d) {
+            return d.source.y;
+        }).attr("x2", function (d) {
+            return d.target.x;
+        }).attr("y2", function (d) {
+            return d.target.y;
+        });
+        node.attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+    });
+}
+function dagreLayoutGraph(nodes, links, width, height) {
+    var nodePadding = 10;
+    var stateKeys = {
+    };
+    var transitions = [];
+    nodes.forEach(function (node) {
+        var idx = node.id;
+        if(idx === undefined) {
+            console.log("No node found for node " + JSON.stringify(node));
+        } else {
+            if(node.edges === undefined) {
+                node.edges = [];
+            }
+            if(!node.label) {
+                node.label = "node " + idx;
+            }
+            stateKeys[idx] = node;
+        }
+    });
+    var states = d3.values(stateKeys);
+    links.forEach(function (d) {
+        var source = stateKeys[d.source];
+        var target = stateKeys[d.target];
+        if(source === undefined || target === undefined) {
+            console.log("Bad link!  " + source + " target " + target + " for " + d);
+        } else {
+            var edge = {
+                source: source,
+                target: target
+            };
+            transitions.push(edge);
+            source.edges.push(edge);
+            target.edges.push(edge);
+        }
+    });
+    function spline(e) {
+        var points = e.dagre.points.slice(0);
+        var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
+        var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
+        points.unshift(source);
+        points.push(target);
+        return d3.svg.line().x(function (d) {
+            return d.x;
+        }).y(function (d) {
+            return d.y;
+        }).interpolate("linear")(points);
+    }
+    function translateEdge(e, dx, dy) {
+        e.dagre.points.forEach(function (p) {
+            p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
+            p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
+        });
+    }
+    var svg = d3.select("svg");
+    $("svg").children("g").remove();
+    var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
+    var nodes = svgGroup.selectAll("g .node").data(states).enter().append("g").attr("class", "node").attr("id", function (d) {
+        return "node-" + d.label;
+    });
+    var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge").attr("marker-end", "url(#arrowhead)");
+    var rects = nodes.append("rect").attr("rx", "5").attr("ry", "5").attr("filter", "url(#drop-shadow)");
+    nodes.append("image").attr("xlink:href", function (d) {
+        return d.imageUrl;
+    }).attr("x", -12).attr("y", -20).attr("height", 24).attr("width", 24);
+    var labels = nodes.append("text").attr("text-anchor", "middle").attr("x", 0);
+    labels.append("tspan").attr("x", 0).attr("dy", 28).text(function (d) {
+        return d.label;
+    });
+    var labelPadding = 12;
+    labels.each(function (d) {
+        var bbox = this.getBBox();
+        d.bbox = bbox;
+        d.width = bbox.width + 2 * nodePadding;
+        d.height = bbox.height + 2 * nodePadding + labelPadding;
+    });
+    rects.attr("x", function (d) {
+        return -(d.bbox.width / 2 + nodePadding);
+    }).attr("y", function (d) {
+        return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
+    }).attr("width", function (d) {
+        return d.width;
+    }).attr("height", function (d) {
+        return d.height;
+    });
+    labels.attr("x", function (d) {
+        return -d.bbox.width / 2;
+    }).attr("y", function (d) {
+        return -d.bbox.height / 2;
+    });
+    dagre.layout().nodeSep(50).edgeSep(10).rankSep(50).nodes(states).edges(transitions).debugLevel(1).run();
+    nodes.attr("transform", function (d) {
+        return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
+    });
+    edges.attr('id', function (e) {
+        return e.dagre.id;
+    }).attr("d", function (e) {
+        return spline(e);
+    });
+    var svgBBox = svg.node().getBBox();
+    svg.attr("width", svgBBox.width + 10);
+    svg.attr("height", svgBBox.height + 10);
+    var nodeDrag = d3.behavior.drag().origin(function (d) {
+        return d.pos ? {
+            x: d.pos.x,
+            y: d.pos.y
+        } : {
+            x: d.dagre.x,
+            y: d.dagre.y
+        };
+    }).on('drag', function (d, i) {
+        var prevX = d.dagre.x;
+        var prevY = d.dagre.y;
+
+        d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
+        d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
+        d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
+        var dx = d.dagre.x - prevX;
+        var dy = d.dagre.y - prevY;
+
+        d.edges.forEach(function (e) {
+            translateEdge(e, dx, dy);
+            d3.select('#' + e.dagre.id).attr('d', spline(e));
+        });
+    });
+    var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
+        translateEdge(d, d3.event.dx, d3.event.dy);
+        d3.select(this).attr('d', spline(d));
+    });
+    nodes.call(nodeDrag);
+    edges.call(edgeDrag);
 }
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 var ignoreDetailsOnBigFolders = [
@@ -1429,757 +1959,231 @@ function createEditorSettings(workspace, mode, options) {
 function escapeDots(text) {
     return text.replace(/\./g, '-');
 }
-function d3ForceGraph(scope, nodes, links, canvasSelector) {
-    if (typeof canvasSelector === "undefined") { canvasSelector = "#canvas"; }
-    if(scope.graphForce) {
-        scope.graphForce.stop();
-    }
-    var canvasDiv = $(canvasSelector);
-    canvasDiv.children("svg").remove();
-    var width = canvasDiv.width();
-    var height = canvasDiv.height();
-    if(height < 300) {
-        var offset = canvasDiv.offset();
-        height = $(document).height() - 5;
-        if(offset) {
-            height -= offset['top'];
-        }
-    }
-    var svg = d3.select(canvasSelector).append("svg").attr("width", width).attr("height", height);
-    var force = d3.layout.force().distance(100).charge(-120 * 10).linkDistance(50).size([
-        width, 
-        height
-    ]);
-    scope.graphForce = force;
-    svg.append("svg:defs").selectAll("marker").data([
-        "from"
-    ]).enter().append("svg:marker").attr("id", String).attr("viewBox", "0 -5 10 10").attr("refX", 25).attr("refY", -1.5).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("svg:path").attr("d", "M0,-5L10,0L0,5");
-    force.nodes(nodes).links(links).start();
-    var link = svg.selectAll(".link").data(links).enter().append("line").attr("class", "link");
-    link.attr("class", "link from");
-    link.attr("marker-end", "url(#from)");
-    var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
-    node.append("image").attr("xlink:href", function (d) {
-        return d.imageUrl;
-    }).attr("x", -15).attr("y", -15).attr("width", 30).attr("height", 30);
-    node.append("text").attr("dx", 20).attr("dy", ".35em").text(function (d) {
-        return d.label;
-    });
-    force.on("tick", function () {
-        link.attr("x1", function (d) {
-            return d.source.x;
-        }).attr("y1", function (d) {
-            return d.source.y;
-        }).attr("x2", function (d) {
-            return d.target.x;
-        }).attr("y2", function (d) {
-            return d.target.y;
-        });
-        node.attr("transform", function (d) {
-            return "translate(" + d.x + "," + d.y + ")";
-        });
-    });
-}
-function dagreLayoutGraph(nodes, links, width, height) {
-    var nodePadding = 10;
-    var stateKeys = {
-    };
-    var transitions = [];
-    nodes.forEach(function (node) {
-        var idx = node.id;
-        if(idx === undefined) {
-            console.log("No node found for node " + JSON.stringify(node));
-        } else {
-            if(node.edges === undefined) {
-                node.edges = [];
-            }
-            if(!node.label) {
-                node.label = "node " + idx;
-            }
-            stateKeys[idx] = node;
-        }
-    });
-    var states = d3.values(stateKeys);
-    links.forEach(function (d) {
-        var source = stateKeys[d.source];
-        var target = stateKeys[d.target];
-        if(source === undefined || target === undefined) {
-            console.log("Bad link!  " + source + " target " + target + " for " + d);
-        } else {
-            var edge = {
-                source: source,
-                target: target
-            };
-            transitions.push(edge);
-            source.edges.push(edge);
-            target.edges.push(edge);
-        }
-    });
-    function spline(e) {
-        var points = e.dagre.points.slice(0);
-        var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
-        var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
-        points.unshift(source);
-        points.push(target);
-        return d3.svg.line().x(function (d) {
-            return d.x;
-        }).y(function (d) {
-            return d.y;
-        }).interpolate("linear")(points);
-    }
-    function translateEdge(e, dx, dy) {
-        e.dagre.points.forEach(function (p) {
-            p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
-            p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
-        });
-    }
-    var svg = d3.select("svg");
-    $("svg").children("g").remove();
-    var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
-    var nodes = svgGroup.selectAll("g .node").data(states).enter().append("g").attr("class", "node").attr("id", function (d) {
-        return "node-" + d.label;
-    });
-    var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge").attr("marker-end", "url(#arrowhead)");
-    var rects = nodes.append("rect").attr("rx", "5").attr("ry", "5").attr("filter", "url(#drop-shadow)");
-    nodes.append("image").attr("xlink:href", function (d) {
-        return d.imageUrl;
-    }).attr("x", -12).attr("y", -20).attr("height", 24).attr("width", 24);
-    var labels = nodes.append("text").attr("text-anchor", "middle").attr("x", 0);
-    labels.append("tspan").attr("x", 0).attr("dy", 28).text(function (d) {
-        return d.label;
-    });
-    var labelPadding = 12;
-    labels.each(function (d) {
-        var bbox = this.getBBox();
-        d.bbox = bbox;
-        d.width = bbox.width + 2 * nodePadding;
-        d.height = bbox.height + 2 * nodePadding + labelPadding;
-    });
-    rects.attr("x", function (d) {
-        return -(d.bbox.width / 2 + nodePadding);
-    }).attr("y", function (d) {
-        return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
-    }).attr("width", function (d) {
-        return d.width;
-    }).attr("height", function (d) {
-        return d.height;
-    });
-    labels.attr("x", function (d) {
-        return -d.bbox.width / 2;
-    }).attr("y", function (d) {
-        return -d.bbox.height / 2;
-    });
-    dagre.layout().nodeSep(50).edgeSep(10).rankSep(50).nodes(states).edges(transitions).debugLevel(1).run();
-    nodes.attr("transform", function (d) {
-        return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
-    });
-    edges.attr('id', function (e) {
-        return e.dagre.id;
-    }).attr("d", function (e) {
-        return spline(e);
-    });
-    var svgBBox = svg.node().getBBox();
-    svg.attr("width", svgBBox.width + 10);
-    svg.attr("height", svgBBox.height + 10);
-    var nodeDrag = d3.behavior.drag().origin(function (d) {
-        return d.pos ? {
-            x: d.pos.x,
-            y: d.pos.y
-        } : {
-            x: d.dagre.x,
-            y: d.dagre.y
-        };
-    }).on('drag', function (d, i) {
-        var prevX = d.dagre.x, prevY = d.dagre.y;
-        d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
-        d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
-        d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
-        var dx = d.dagre.x - prevX, dy = d.dagre.y - prevY;
-        d.edges.forEach(function (e) {
-            translateEdge(e, dx, dy);
-            d3.select('#' + e.dagre.id).attr('d', spline(e));
-        });
-    });
-    var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
-        translateEdge(d, d3.event.dx, d3.event.dy);
-        d3.select(this).attr('d', spline(d));
-    });
-    nodes.call(nodeDrag);
-    edges.call(edgeDrag);
-}
-function EditorController($scope, workspace) {
-    $scope.$watch('row', function () {
-        setTimeout(function () {
-            var textAreas = null;
-            if($scope.templateDiv) {
-                textAreas = $($scope.templateDiv).find("textarea.messageDetail");
-            } else {
-                textAreas = $("textarea.messageDetail");
-            }
-            var textArea = textAreas[0];
-            if(textArea) {
-                if(!$(textArea).data("codeMirrorEditor")) {
-                    $(textArea).data("codeMirrorEditor", "true");
-                    var text = $(textArea).val();
-                    var format = detectTextFormat(text);
-                    var editorSettings = createEditorSettings(workspace, format, {
-                        readOnly: true
-                    });
-                    var editor = CodeMirror.fromTextArea(textArea, editorSettings);
-                    var autoFormat = true;
-                    if(autoFormat) {
-                        autoFormatEditor(editor);
-                    }
-                }
-            }
-        }, 0);
-    });
-}
-function BrowseEndpointController($scope, workspace) {
-    $scope.workspace = workspace;
+function BundleController($scope, $filter, workspace, $templateCache, $compile) {
+    var dateFilter = $filter('date');
     $scope.widget = new TableWidget($scope, workspace, [
         {
             "mDataProp": null,
             "sClass": "control center",
             "sDefaultContent": '<i class="icon-plus"></i>'
+        }, 
+        {
+            "mDataProp": "Identifier"
+        }, 
+        {
+            "mDataProp": "SymbolicName"
+        }, 
+        {
+            "mDataProp": "State",
+            "mRender": function (data, type, row) {
+                var img = "yellow-dot.png";
+                if(data) {
+                    var lower = data.toString().toLowerCase();
+                    if(lower) {
+                        if(lower.startsWith("a")) {
+                            img = "green-dot.png";
+                        } else {
+                            if(lower.startsWith("inst")) {
+                                img = "gray-dot.png";
+                            } else {
+                                if(lower.startsWith("res")) {
+                                    img = "yellow-dot.png";
+                                } else {
+                                    img = "red-dot.png";
+                                }
+                            }
+                        }
+                    }
+                }
+                return "<img src='img/dots/" + img + "' title='" + data + "'/>";
+            }
+        }, 
+        {
+            "mDataProp": "Version"
+        }, 
+        {
+            "mDataProp": "LastModified",
+            "mRender": function (data, type, row) {
+                return dateFilter(data, "short");
+            }
         }
     ], {
         rowDetailTemplateId: 'bodyTemplate',
         ignoreColumns: [
-            "headerTypes", 
-            "body"
-        ],
-        flattenColumns: [
-            "headers"
+            "Headers", 
+            "ExportedPackages", 
+            "ImportedPackages", 
+            "RegisteredServices", 
+            "RequiringBundles", 
+            "RequiredBundles", 
+            "Fragments", 
+            "ServicesInUse"
         ]
     });
-    var populateTable = function (response) {
-        var data = [];
-        if(angular.isString(response)) {
-            var doc = $.parseXML(response);
-            var allMessages = $(doc).find("message");
-            allMessages.each(function (idx, message) {
-                var messageData = {
-                    headers: {
-                    },
-                    headerTypes: {
-                    }
-                };
-                var headers = $(message).find("header");
-                headers.each(function (idx, header) {
-                    var key = header.getAttribute("key");
-                    var typeName = header.getAttribute("type");
-                    var value = header.textContent;
-                    if(key) {
-                        if(value) {
-                            messageData.headers[key] = value;
-                        }
-                        if(typeName) {
-                            messageData.headerTypes[key] = typeName;
-                        }
-                        console.log("Header " + key + " type " + typeName + " = " + value);
-                    }
-                });
-                var body = $(message).children("body")[0];
-                if(body) {
-                    var bodyText = body.textContent;
-                    var bodyType = body.getAttribute("type");
-                    console.log("Got body type: " + bodyType + " text: " + bodyText);
-                    messageData["body"] = bodyText;
-                    messageData["bodyType"] = bodyType;
-                }
-                console.log("body element: " + body);
-                data.push(messageData);
-            });
-        }
-        $scope.widget.populateTable(data);
-    };
     $scope.$watch('workspace.selection', function () {
         if(workspace.moveIfViewInvalid()) {
             return;
         }
-        var selection = workspace.selection;
-        if(selection) {
-            var mbean = selection.objectName;
-            if(mbean) {
-                var jolokia = workspace.jolokia;
-                var options = onSuccess(populateTable);
-                jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
-            }
-        }
-    });
-}
-function EndpointController($scope, workspace) {
-    $scope.workspace = workspace;
-    $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid();
-    });
-    function operationSuccess() {
-        $scope.endpointName = "";
-        $scope.workspace.operationCounter += 1;
-        $scope.$apply();
-    }
-    $scope.createEndpoint = function (name) {
-        var jolokia = workspace.jolokia;
-        if(jolokia) {
-            var mbean = getSelectionCamelContextMBean(workspace);
-            if(mbean) {
-                console.log("Creating endpoint: " + name + " on mbean " + mbean);
-                var operation = "createEndpoint(java.lang.String)";
-                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
-            } else {
-                console.log("Can't find the CamelContext MBean!");
-            }
-        }
-    };
-    $scope.deleteEndpoint = function () {
-        var jolokia = workspace.jolokia;
-        var selection = workspace.selection;
-        var entries = selection.entries;
-        if(selection && jolokia && entries) {
-            var domain = selection.domain;
-            var brokerName = entries["BrokerName"];
-            var name = entries["Destination"];
-            var isQueue = "Topic" !== entries["Type"];
-            if(domain && brokerName) {
-                var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
-                console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
-                var operation = "removeEndpoint(java.lang.String)";
-                jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
-            }
-        }
-    };
-}
-function SendMessageController($scope, workspace) {
-    var languageFormatPreference = "defaultLanguageFormat";
-    $scope.workspace = workspace;
-    $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
-    var textArea = $("#messageBody").first()[0];
-    if(textArea) {
-        var editorSettings = createEditorSettings(workspace, $scope.format);
-        $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
-    }
-    $scope.$watch('workspace.selection', function () {
-        workspace.moveIfViewInvalid();
-    });
-    $scope.$watch('sourceFormat', function () {
-        var format = $scope.sourceFormat;
-        var workspace = $scope.workspace;
-        if(format && workspace) {
-            workspace.setLocalStorage(languageFormatPreference, format);
-        }
-        var editor = $scope.codeMirror;
-        if(editor) {
-            editor.setOption("mode", format);
-        }
-    });
-    var sendWorked = function () {
-        console.log("Sent message!");
-    };
-    $scope.autoFormat = function () {
-        autoFormatEditor($scope.codeMirror);
-    };
-    $scope.sendMessage = function (body) {
-        var editor = $scope.codeMirror;
-        if(editor && !body) {
-            body = editor.getValue();
-        }
-        console.log("sending body: " + body);
-        var selection = workspace.selection;
-        if(selection) {
-            var mbean = selection.objectName;
-            if(mbean) {
-                var jolokia = workspace.jolokia;
-                if(selection.domain === "org.apache.camel") {
-                    var uri = selection.title;
-                    mbean = getSelectionCamelContextMBean(workspace);
-                    if(mbean) {
-                        jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
-                    } else {
-                        console.log("Could not find CamelContext MBean!");
-                    }
-                } else {
-                    jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
-                }
-            }
-        }
-    };
-}
-function CamelController($scope, workspace) {
-    $scope.workspace = workspace;
-    $scope.routes = [];
-    $scope.$watch('workspace.selection', function () {
-        if(workspace.moveIfViewInvalid()) {
-            return;
-        }
-        var mbean = getSelectionCamelContextMBean(workspace);
+        var mbean = getSelectionBundleMBean(workspace);
         if(mbean) {
             var jolokia = workspace.jolokia;
             jolokia.request({
                 type: 'exec',
                 mbean: mbean,
-                operation: 'dumpRoutesAsXml()'
+                operation: 'listBundles()'
             }, onSuccess(populateTable));
         }
     });
     var populateTable = function (response) {
-        var data = response.value;
-        $scope.routes = data;
-        var nodes = [];
-        var links = [];
-        var selectedRouteId = null;
-        var selection = workspace.selection;
-        if(selection) {
-            if(selection && selection.entries) {
-                var typeName = selection.entries["type"];
-                var name = selection.entries["name"];
-                if("routes" === typeName && name) {
-                    selectedRouteId = trimQuotes(name);
-                }
-            }
-        }
-        if(data) {
-            var doc = $.parseXML(data);
-            var allRoutes = $(doc).find("route");
-            var canvasDiv = $('#canvas');
-            var width = canvasDiv.width();
-            var height = canvasDiv.height();
-            if(height < 300) {
-                console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
-                height = $(document).height() - canvasDiv.offset()['top'] - 5;
-            }
-            console.log("Using width " + width + " and height " + height);
-            var delta = 150;
-            function addChildren(parent, parentId, parentX, parentY) {
-                var x = parentX;
-                var y = parentY + delta;
-                $(parent).children().each(function (idx, route) {
-                    var id = nodes.length;
-                    if(route.nodeName === "from" && !parentId) {
-                        parentId = id;
-                    }
-                    var name = route.nodeName;
-                    var uri = route.getAttribute("uri");
-                    if(uri) {
-                        name += " " + uri;
-                    }
-                    var imageName = route.nodeName;
-                    var endpointNames = [
-                        "from", 
-                        "to", 
-                        "route"
-                    ];
-                    var genericNames = [
-                        "xpath", 
-                        "when", 
-                        "otherwise"
-                    ];
-                    if(endpointNames.indexOf(imageName) >= 0) {
-                        imageName = "endpoint";
-                    } else {
-                        if(genericNames.indexOf(imageName) >= 0) {
-                            imageName = "generic";
-                        }
-                    }
-                    var imageUrl = url("/img/camel/" + imageName + "24.png");
-                    nodes.push({
-                        "name": name,
-                        "label": name,
-                        "group": 1,
-                        "id": id,
-                        "x": x,
-                        "y:": y,
-                        "imageUrl": imageUrl
-                    });
-                    if(parentId !== null && parentId !== id) {
-                        console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
-                        links.push({
-                            "source": parentId,
-                            "target": id,
-                            "value": 1
-                        });
-                    }
-                    addChildren(route, id, x, y);
-                    x += delta;
-                });
-            }
-            var routeDelta = width / allRoutes.length;
-            var rowX = 0;
-            allRoutes.each(function (idx, route) {
-                var routeId = route.getAttribute("id");
-                if(!selectedRouteId || !routeId || selectedRouteId === routeId) {
-                    addChildren(route, null, rowX, 0);
-                    rowX += routeDelta;
-                }
-            });
-            dagreLayoutGraph(nodes, links, width, height);
-        }
+        $scope.widget.populateTable(response.value);
         $scope.$apply();
     };
 }
-function getSelectionCamelContextMBean(workspace) {
+function getSelectionBundleMBean(workspace) {
     if(workspace) {
-        var selection = workspace.selection;
-        var tree = workspace.tree;
-        var folderNames = selection.folderNames;
-        var entries = selection.entries;
-        var domain;
-        var contextId;
-        if(tree && selection) {
-            if(folderNames && folderNames.length > 1) {
-                domain = folderNames[0];
-                contextId = folderNames[1];
-            } else {
-                if(entries) {
-                    domain = selection.domain;
-                    contextId = entries["context"];
-                }
-            }
-        }
-        if(domain && contextId) {
-            var result = tree.navigate(domain, contextId, "context");
-            if(result && result.children) {
-                var contextBean = result.children.first();
-                if(contextBean.title) {
-                    var contextName = contextBean.title;
-                    return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+        var folder = workspace.tree.navigate("osgi.core", "bundleState");
+        if(folder) {
+            var children = folder.children;
+            if(children) {
+                var node = children[0];
+                if(node) {
+                    return node.objectName;
                 }
             }
         }
     }
     return null;
 }
-function ChartController($scope, $location, workspace) {
-    $scope.workspace = workspace;
-    $scope.metrics = [];
-    $scope.$watch('workspace.selection', function () {
-        var width = 594;
-        var charts = $("#charts");
-        if(charts) {
-            width = charts.width();
+var TableWidget = (function () {
+    function TableWidget(scope, workspace, dataTableColumns, config) {
+        if (typeof config === "undefined") { config = {
+        }; }
+        this.scope = scope;
+        this.workspace = workspace;
+        this.dataTableColumns = dataTableColumns;
+        this.config = config;
+        var _this = this;
+        this.ignoreColumnHash = {
+        };
+        this.flattenColumnHash = {
+        };
+        this.detailTemplate = null;
+        this.openMessages = [];
+        angular.forEach(config.ignoreColumns, function (name) {
+            _this.ignoreColumnHash[name] = true;
+        });
+        angular.forEach(config.flattenColumns, function (name) {
+            _this.flattenColumnHash[name] = true;
+        });
+        var templateId = config.rowDetailTemplateId;
+        if(templateId) {
+            this.detailTemplate = workspace.$templateCache.get(templateId);
         }
-        if($scope.context) {
-            $scope.context.stop();
-            $scope.context = null;
-        }
-        charts.children().remove();
-        var node = $scope.workspace.selection;
-        if(!node) {
-            return;
-        }
-        var mbean = node.objectName;
-        $scope.metrics = [];
-        var jolokia = $scope.workspace.jolokia;
-        var context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size(width);
-        $scope.context = context;
-        $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
-        var search = $location.search();
-        var attributeNames = toSearchArgumentArray(search["att"]);
-        if(mbean) {
-            var listKey = encodeMBeanPath(mbean);
-            var meta = jolokia.list(listKey);
-            if(meta) {
-                var attributes = meta.attr;
-                if(attributes) {
-                    for(var key in attributes) {
-                        var value = attributes[key];
-                        if(value) {
-                            var typeName = value['type'];
-                            if(isNumberTypeName(typeName) && (!attributeNames.length || attributeNames.indexOf(key) >= 0)) {
-                                var metric = $scope.jolokiaContext.metric({
-                                    type: 'read',
-                                    mbean: mbean,
-                                    attribute: key
-                                }, humanizeValue(key));
-                                if(metric) {
-                                    $scope.metrics.push(metric);
-                                }
-                            }
-                        }
-                    }
+    }
+    TableWidget.prototype.populateTable = function (data) {
+        var _this = this;
+        var $scope = this.scope;
+        if(!data) {
+            $scope.messages = [];
+        } else {
+            $scope.messages = data;
+            var formatMessageDetails = function (dataTable, parentRow) {
+                var oData = dataTable.fnGetData(parentRow);
+                var div = $('<div class="innerDetails span12">');
+                _this.populateDetailDiv(oData, div);
+                return div;
+            };
+            var array = data;
+            if(angular.isArray(data)) {
+            } else {
+                if(angular.isObject(data)) {
+                    array = [];
+                    angular.forEach(data, function (object) {
+                        return array.push(object);
+                    });
                 }
             }
-        } else {
-            var elementNames = toSearchArgumentArray(search["el"]);
-            if(attributeNames && attributeNames.length && elementNames && elementNames.length) {
-                var mbeans = {
-                };
-                elementNames.forEach(function (elementName) {
-                    var child = node.get(elementName);
-                    if(child) {
-                        var mbean = child.objectName;
-                        if(mbean) {
-                            mbeans[elementName] = mbean;
-                        }
-                    }
+            var tableElement = $('#grid');
+            var tableTr = $(tableElement).find("tr");
+            var ths = $(tableTr).find("th");
+            var columns = this.dataTableColumns.slice();
+            var addColumn = function (key, title) {
+                columns.push({
+                    mDataProp: key
                 });
-                attributeNames.forEach(function (key) {
-                    angular.forEach(mbeans, function (mbean, name) {
-                        var attributeTitle = humanizeValue(key);
-                        var title = name + ": " + attributeTitle;
-                        var metric = $scope.jolokiaContext.metric({
-                            type: 'read',
-                            mbean: mbean,
-                            attribute: key
-                        }, title);
-                        if(metric) {
-                            $scope.metrics.push(metric);
+                if(tableTr) {
+                    $("<th>" + title + "</th>").appendTo(tableTr);
+                }
+            };
+            var checkForNewColumn = function (value, key, prefix) {
+                var found = _this.ignoreColumnHash[key] || columns.any({
+                    mDataProp: key
+                });
+                if(!found) {
+                    if(_this.flattenColumnHash[key]) {
+                        if(angular.isObject(value)) {
+                            var childPrefix = prefix + key + ".";
+                            angular.forEach(value, function (value, key) {
+                                return checkForNewColumn(value, key, childPrefix);
+                            });
                         }
+                    } else {
+                        addColumn(prefix + key, humanizeValue(key));
+                    }
+                }
+            };
+            if(!this.config.disableAddColumns && angular.isArray(array) && array.length > 0) {
+                var first = array[0];
+                if(angular.isObject(first)) {
+                    angular.forEach(first, function (value, key) {
+                        return checkForNewColumn(value, key, "");
                     });
-                });
+                }
             }
-        }
-        if($scope.metrics.length > 0) {
-            d3.select("#charts").selectAll(".axis").data([
-                "top", 
-                "bottom"
-            ]).enter().append("div").attr("class", function (d) {
-                return d + " axis";
-            }).each(function (d) {
-                d3.select(this).call(context.axis().ticks(12).orient(d));
+            var config = {
+                bPaginate: false,
+                sDom: 'Rlfrtip',
+                bDestroy: true,
+                aaData: array,
+                aoColumns: columns
+            };
+            $scope.dataTable = tableElement.dataTable(config);
+            var widget = this;
+            $('#grid td.control').click(function () {
+                var dataTable = $scope.dataTable;
+                var parentRow = this.parentNode;
+                var openMessages = widget.openMessages;
+                var i = $.inArray(parentRow, openMessages);
+                var element = $('i', this);
+                if(i === -1) {
+                    element.removeClass('icon-plus');
+                    element.addClass('icon-minus');
+                    var dataDiv = formatMessageDetails(dataTable, parentRow);
+                    var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
+                    $('div.innerDetails', detailsRow).slideDown();
+                    openMessages.push(parentRow);
+                } else {
+                    element.removeClass('icon-minus');
+                    element.addClass('icon-plus');
+                    dataTable.fnClose(parentRow);
+                    openMessages.splice(i, 1);
+                }
+                $scope.$apply();
             });
-            d3.select("#charts").append("div").attr("class", "rule").call(context.rule());
-            context.on("focus", function (i) {
-                d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
-            });
-            $scope.metrics.forEach(function (metric) {
-                d3.select("#charts").call(function (div) {
-                    div.append("div").data([
-                        metric
-                    ]).attr("class", "horizon").call(context.horizon());
-                });
-            });
-        } else {
-            $location.path("chartEdit");
         }
-    });
-}
-function ChartEditController($scope, $location, workspace) {
-    $scope.workspace = workspace;
-    $scope.selectedAttributes = [];
-    $scope.selectedMBeans = [];
-    $scope.metrics = {
+        $scope.$apply();
     };
-    $scope.mbeans = {
-    };
-    $scope.size = function (value) {
-        if(angular.isObject(value)) {
-            return Object.size(value);
-        } else {
-            if(angular.isArray(value)) {
-                return value.length;
-            } else {
-                return 1;
-            }
+    TableWidget.prototype.populateDetailDiv = function (row, div) {
+        this.scope.row = row;
+        this.scope.templateDiv = div;
+        var template = this.detailTemplate;
+        if(template) {
+            div.html(template);
+            var results = this.workspace.$compile(div.contents())(this.scope);
         }
     };
-    $scope.canViewChart = function () {
-        return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
-    };
-    $scope.showAttributes = function () {
-        return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
-    };
-    $scope.showElements = function () {
-        return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
-    };
-    $scope.viewChart = function () {
-        var search = $location.search();
-        if($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
-            delete search["att"];
-        } else {
-            search["att"] = $scope.selectedAttributes;
-        }
-        if($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
-            delete search["el"];
-        } else {
-            search["el"] = $scope.selectedMBeans;
-        }
-        $location.search(search);
-        $location.path("charts");
-    };
-    $scope.$watch('workspace.selection', function () {
-        $scope.selectedAttributes = [];
-        $scope.selectedMBeans = [];
-        $scope.metrics = {
-        };
-        $scope.mbeans = {
-        };
-        var mbeanCounter = 0;
-        var resultCounter = 0;
-        var jolokia = $scope.workspace.jolokia;
-        var node = $scope.workspace.selection;
-        if(node && jolokia) {
-            var children = node.children;
-            if(!children) {
-                children = [
-                    node
-                ];
-            }
-            if(children) {
-                children.forEach(function (mbeanNode) {
-                    var mbean = mbeanNode.objectName;
-                    var name = mbeanNode.title;
-                    if(name && mbean) {
-                        mbeanCounter++;
-                        $scope.mbeans[name] = name;
-                        var listKey = encodeMBeanPath(mbean);
-                        jolokia.list(listKey, onSuccess(function (meta) {
-                            var attributes = meta.attr;
-                            if(attributes) {
-                                for(var key in attributes) {
-                                    var value = attributes[key];
-                                    if(value) {
-                                        var typeName = value['type'];
-                                        if(isNumberTypeName(typeName)) {
-                                            if(!$scope.metrics[key]) {
-                                                $scope.metrics[key] = key;
-                                            }
-                                        }
-                                    }
-                                }
-                                if(++resultCounter >= mbeanCounter) {
-                                    var search = $location.search();
-                                    var attributeNames = toSearchArgumentArray(search["att"]);
-                                    var elementNames = toSearchArgumentArray(search["el"]);
-                                    if(attributeNames && attributeNames.length) {
-                                        attributeNames.forEach(function (name) {
-                                            if($scope.metrics[name]) {
-                                                $scope.selectedAttributes.push(name);
-                                            }
-                                        });
-                                    }
-                                    if(elementNames && elementNames.length) {
-                                        elementNames.forEach(function (name) {
-                                            if($scope.mbeans[name]) {
-                                                $scope.selectedMBeans.push(name);
-                                            }
-                                        });
-                                    }
-                                    if($scope.selectedMBeans.length < 1) {
-                                        $scope.selectedMBeans = Object.keys($scope.mbeans);
-                                    }
-                                    if($scope.selectedAttributes.length < 1) {
-                                        var attrKeys = Object.keys($scope.metrics).sort();
-                                        if($scope.selectedMBeans.length > 1) {
-                                            $scope.selectedAttributes = [
-                                                attrKeys.first()
-                                            ];
-                                        } else {
-                                            $scope.selectedAttributes = attrKeys;
-                                        }
-                                    }
-                                    $("#attributes").attr("size", Object.size($scope.metrics));
-                                    $("#mbeans").attr("size", Object.size($scope.mbeans));
-                                    $scope.$apply();
-                                }
-                            }
-                        }));
-                    }
-                });
-            }
-        }
-    });
-}
+    return TableWidget;
+})();
 var Workspace = (function () {
     function Workspace(url, $location, $compile, $templateCache) {
         this.url = url;
