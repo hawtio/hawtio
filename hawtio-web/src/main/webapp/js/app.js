@@ -349,7 +349,7 @@ function getStatusMBean(workspace) {
         return null;
     }
 }
-var myApp = angular.module('FuseIDE', [
+var myApp = angular.module('hawt.io', [
     'bootstrap', 
     'ngResource'
 ]);

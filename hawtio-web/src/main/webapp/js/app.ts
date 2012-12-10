@@ -1,4 +1,4 @@
-var myApp = angular.module('FuseIDE', ['bootstrap', 'ngResource']);
+var myApp = angular.module('hawt.io', ['bootstrap', 'ngResource']);
 myApp.config(($routeProvider) => {
           $routeProvider.
                   when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
