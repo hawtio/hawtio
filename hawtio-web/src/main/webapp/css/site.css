@@ -191,3 +191,11 @@ i.expandable-indicator {
 .expandable.closed .expandable-body {
     display: none;
 }
+
+/** tree tweaks */
+span.dynatree-expander {
+    color: #728271;
+}
+span.dynatree-icon {
+    color: #B55242;
+}
