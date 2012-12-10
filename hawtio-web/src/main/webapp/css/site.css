@@ -2,6 +2,10 @@
   margin-top: 64px;
 }
 
+.navbar .brand {
+  font-size: 18px;
+}
+
 .property-name {
     white-space: nowrap;
 }
