@@ -4,7 +4,7 @@ Welcome and enjoy! Its hawt, but stay cool! :)
 
 ## hawtio technology overview
 
-For those interested in [contributing](http://hawt.io/contributing/index.html), here is a low down of the various open source libraries used to build hawt.io.
+For those interested in [contributing](http://hawt.io/contributing/index.html), here is a list of the various open source libraries used to build hawt.io.
 
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. Its awesome and is currently the only server side component of hawt.io.
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript - especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
