@@ -311,7 +311,7 @@ function BrokerStatusController($scope, workspace) {
             jolokia.request({
                 type: 'exec',
                 mbean: mbean,
-                operation: 'statusList()'
+                operation: 'healthList()'
             }, onSuccess(populateTable));
         }
     });
@@ -344,7 +344,7 @@ function getStatusMBean(workspace) {
     }
     console.log("Found broker " + broker);
     if(broker) {
-        return "org.apache.activemq:BrokerName=" + broker + ",Type=Status";
+        return "org.apache.activemq:BrokerName=" + broker + ",Type=Health";
     } else {
         return null;
     }
