@@ -13,6 +13,13 @@
   <name>${project.artifactId}</name>
   <description>hawt.io :: hawtio-web</description>
 
+  <properties>
+    <webapp-outdir>${basedir}/target/hawtio-web-${project.version}</webapp-outdir>
+    <context>/sample</context>
+    <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
+  </properties>
+
+
   <dependencies>
     <dependency>
       <groupId>org.jolokia</groupId>
@@ -199,6 +206,89 @@
     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>typescript-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>grunt</executable>
+              <arguments>
+                <argument>copy</argument>
+                <argument>type</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <manifestLocation>${webapp-outdir}/META-INF</manifestLocation>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${context}</Webapp-Context>
+            <Web-ContextPath>${context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
+          <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <directory>src/main/resources</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+
 			<!--
       <plugin>
         <groupId>com.ppedregal.typescript</groupId>
@@ -303,6 +393,36 @@
   </build>
 
   <profiles>
+
+    <profile>
+      <id>watch</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>typescript-watch</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>grunt</executable>
+                  <arguments>
+                    <argument>watch</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
     <profile>
       <id>tomcat</id>
       <dependencies>
@@ -330,6 +450,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>jbossweb</id>
       <dependencies>

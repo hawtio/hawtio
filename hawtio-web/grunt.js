@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-type');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+
   /*
    grunt.loadNpmTasks('grunt-typescript');
    */
@@ -8,29 +10,21 @@ module.exports = function (grunt) {
   // Project configuration.
 
   var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/js/**/*.ts'];
+  var resourceFiles = [
+      'src/main/webapp/img/**',
+      'src/main/webapp/css/**',
+      'src/main/webapp/partials/**',
+      'src/main/webapp/lib/**',
+      'src/main/webapp/font/**'
+  ];
   grunt.initConfig({
     test:{
       files:['src/test/js/**/*.js']
     },
-    /*
-     typescript: {
-     base: {
-     src: ['src/main/d.ts*/
-    /*.ts',
-     'src/main/webapp/ts*/
-    /*.ts'],
-     dest: 'src/main/webapp/app.js',
-     options: {
-     module: 'amd',
-     target: 'ES5'
-     }
-     }
-     },
-     */
     type:{
       compile:{
         files:{
-          'src/main/webapp/js/app.js':appFiles
+          'target/hawtio-web-1.0-SNAPSHOT/js/app.js':appFiles
         },
         options:{
           target:'ES5'
@@ -42,16 +36,23 @@ module.exports = function (grunt) {
         style:'eqeqeq;bitwise'
       }
     },
+    copy:{
+        dist: {
+            files: {
+                "target/hawtio-web-1.0-SNAPSHOT/": "src/main/webapp/**"
+            }
+        }
+    },
     watch: {
       app: {
-        files: appFiles,
-        tasks: 'type'
+        files: "src/main/webapp/**",
+        tasks: 'copy type'
       }
     }
   });
 
 
   // Default task.
-  grunt.registerTask('default', 'type watch');
+  grunt.registerTask('default', 'copy type watch');
 
 };
