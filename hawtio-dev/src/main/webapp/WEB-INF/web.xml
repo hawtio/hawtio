@@ -2,8 +2,7 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee">
 
   <description>hawt.io</description>
-
-  <display-name>hawt.io</display-name>
+  <display-name>hawt.io dev web app</display-name>
 
   <filter>
     <filter-name>CORSFilter</filter-name>
@@ -25,6 +24,16 @@
   <servlet-mapping>
     <servlet-name>jolokia-agent</servlet-name>
     <url-pattern>/jolokia/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>dev-servlet</servlet-name>
+    <servlet-class>hawt.io.web.DevServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>dev-servlet</servlet-name>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
   <welcome-file-list>

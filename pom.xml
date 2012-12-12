@@ -171,6 +171,7 @@
 
   <modules>
     <module>hawtio-web</module>
+    <module>hawtio-dev</module>
     <module>sample</module>
   </modules>
 
