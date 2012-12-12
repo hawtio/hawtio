@@ -1,37 +1,37 @@
 var myApp = angular.module('hawt.io', ['bootstrap', 'ngResource']);
 myApp.config(($routeProvider) => {
           $routeProvider.
-                  when('/attributes', {templateUrl: 'partials/attributes.html', controller: DetailController}).
-                  when('/operations', {templateUrl: 'partials/operations.html', controller: OperationsController}).
-                  when('/charts', {templateUrl: 'partials/charts.html', controller: ChartController}).
-                  when('/chartEdit', {templateUrl: 'partials/chartEdit.html', controller: ChartEditController}).
-                  when('/preferences', {templateUrl: 'partials/preferences.html'}).
-                  when('/logs', {templateUrl: 'partials/logs.html', controller: LogController}).
+                  when('/attributes', {templateUrl: 'app/core/html/attributes.html', controller: DetailController}).
+                  when('/operations', {templateUrl: 'app/core/html/operations.html', controller: OperationsController}).
+                  when('/charts', {templateUrl: 'app/core/html/charts.html', controller: ChartController}).
+                  when('/chartEdit', {templateUrl: 'app/core/html/chartEdit.html', controller: ChartEditController}).
+                  when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
+                  when('/logs', {templateUrl: 'app/core/html/logs.html', controller: LogController}).
                   when('/help', {
                     redirectTo: '/help/overview'
                   }).
-                  when('/help/:tabName', {templateUrl: 'partials/help.html', controller: NavBarController}).
-                  when('/debug', {templateUrl: 'partials/debug.html', controller: DetailController}).
+                  when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: NavBarController}).
+                  when('/debug', {templateUrl: 'app/core/html/debug.html', controller: DetailController}).
 
                   // activemq
-                  when('/browseQueue', {templateUrl: 'partials/activemq/browseQueue.html', controller: BrowseQueueController}).
-                  when('/subscribers', {templateUrl: 'partials/activemq/subscribers.html', controller: SubscriberGraphController}).
-                  when('/createQueue', {templateUrl: 'partials/activemq/createQueue.html', controller: DestinationController}).
-                  when('/createTopic', {templateUrl: 'partials/activemq/createTopic.html', controller: DestinationController}).
-                  when('/deleteQueue', {templateUrl: 'partials/activemq/deleteQueue.html', controller: DestinationController}).
-                  when('/deleteTopic', {templateUrl: 'partials/activemq/deleteTopic.html', controller: DestinationController}).
+                  when('/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html', controller: BrowseQueueController}).
+                  when('/subscribers', {templateUrl: 'app/activemq/html/subscribers.html', controller: SubscriberGraphController}).
+                  when('/createQueue', {templateUrl: 'app/activemq/html/createQueue.html', controller: DestinationController}).
+                  when('/createTopic', {templateUrl: 'app/activemq/html/createTopic.html', controller: DestinationController}).
+                  when('/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html', controller: DestinationController}).
+                  when('/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController}).
 
                   // health
-                  when('/status', {templateUrl: 'partials/activemq/status.html', controller: BrokerStatusController}).
+                  when('/status', {templateUrl: 'app/activemq/html/status.html', controller: BrokerStatusController}).
 
                   // camel
-                  when('/browseEndpoint', {templateUrl: 'partials/camel/browseEndpoint.html', controller: BrowseEndpointController}).
-                  when('/sendMessage', {templateUrl: 'partials/camel/sendMessage.html', controller: SendMessageController}).
-                  when('/routes', {templateUrl: 'partials/camel/routes.html', controller: CamelController}).
-                  when('/createEndpoint', {templateUrl: 'partials/camel/createEndpoint.html', controller: EndpointController}).
+                  when('/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html', controller: BrowseEndpointController}).
+                  when('/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
+                  when('/routes', {templateUrl: 'app/camel/html/routes.html', controller: CamelController}).
+                  when('/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
 
                   // osgi
-                  when('/bundles', {templateUrl: 'partials/osgi/bundles.html', controller: BundleController}).
+                  when('/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: BundleController}).
 
                   otherwise({redirectTo: '/help/overview'});
         }).

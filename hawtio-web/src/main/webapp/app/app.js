@@ -188,18 +188,18 @@ function SubscriberGraphController($scope, workspace) {
                         if(isQueue) {
                             id = getOrCreate($scope.queues, destinationName, {
                                 label: destinationName,
-                                imageUrl: url("/img/activemq/queue.png")
+                                imageUrl: url("/app/activemq/img/queue.png")
                             });
                         } else {
                             id = getOrCreate($scope.topics, destinationName, {
                                 label: destinationName,
-                                imageUrl: url("/img/activemq/topic.png")
+                                imageUrl: url("/app/activemq/img/topic.png")
                             });
                         }
                         if(!subscriptionId) {
                             var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
                             subscription["label"] = subscriptionKey;
-                            subscription["imageUrl"] = url("/img/activemq/listener.gif");
+                            subscription["imageUrl"] = url("/app/activemq/img/listener.gif");
                             subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
                         }
                         $scope.links.push({
@@ -226,18 +226,18 @@ function SubscriberGraphController($scope, workspace) {
                         if(isQueue) {
                             id = getOrCreate($scope.queues, destinationName, {
                                 label: destinationName,
-                                imageUrl: url("/img/activemq/queue.png")
+                                imageUrl: url("/app/activemq/img/queue.png")
                             });
                         } else {
                             id = getOrCreate($scope.topics, destinationName, {
                                 label: destinationName,
-                                imageUrl: url("/img/activemq/topic.png")
+                                imageUrl: url("/app/activemq/img/topic.png")
                             });
                         }
                         if(!producerId) {
                             var producerKey = producer["ProducerId"];
                             producer["label"] = producerKey;
-                            producer["imageUrl"] = url("/img/activemq/sender.gif");
+                            producer["imageUrl"] = url("/app/activemq/img/sender.gif");
                             producerId = getOrCreate($scope.producers, producerKey, producer);
                         }
                         $scope.links.push({
@@ -1136,7 +1136,7 @@ function CamelController($scope, workspace) {
                             imageName = "generic";
                         }
                     }
-                    var imageUrl = url("/img/camel/" + imageName + "24.png");
+                    var imageUrl = url("/app/camel/img/" + imageName + "24.png");
                     nodes.push({
                         "name": name,
                         "label": name,

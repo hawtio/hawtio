@@ -40,15 +40,11 @@ fun main(args: Array<String>): Unit {
         Log.setLog(Slf4jLog("jetty"));
         val port = Integer.parseInt(System.getProperty("jettyPort", "8080"))
         val contextPath = System.getProperty("context", "/sample")
-        var path = "src/main/webapp"
-        if (!directoryExists(path)) {
-            path = "website/$path"
-            require(directoryExists(path), "No webapp path could be found for $path")
-        }
+        var path = System.getProperty("webapp-outdir", "src/main/webapp")
         val webXml = path + "/WEB-INF/web.xml"
         require(fileExists(webXml), "No web.xml could be found for $webXml")
 
-        println("Connect via http://localhost:$port$contextPath using web app path: $path")
+        println("Connect via http://localhost:$port$contextPath using web app source path: $path")
 
         /** Returns true if we should scan this lib for annotations */
         fun isScannedWebInfLib(path: String): Boolean {

@@ -454,6 +454,10 @@
               <key>context</key>
               <value>${context}</value>
             </systemProperty>
+            <systemProperty>
+              <key>webapp-outdir</key>
+              <value>${webapp-outdir}</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>

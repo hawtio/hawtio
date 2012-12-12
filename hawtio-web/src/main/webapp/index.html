@@ -58,9 +58,6 @@
               <ul class="dropdown-menu">
                 <li ng-class="navClass('chartEdit')" ng-show="validSelection('chartEdit')">
                   <a ng-href="#/chartEdit{{hash}}" title="Edit the chart configuration"><i class="icon-cog"></i> Chart</a></li>
-                <li ng-class="navClass('operations')">
-                  <a ng-href="#/operations{{hash}}" title="Execute operations on your selection"><i class="icon-leaf"></i>
-                    Operations</a></li>
                 <li ng-class="navClass('sendMessage')" ng-show="validSelection('sendMessage')">
                   <a ng-href="#/sendMessage{{hash}}" title="Send a message to this endpoint"><i class="icon-pencil"></i> Send</a></li>
                 <li ng-class="navClass('createEndpoint')" ng-show="validSelection('createEndpoint')">
@@ -73,6 +70,9 @@
                   <a ng-href="#/deleteQueue{{hash}}" title="Delete this queue"><i class="icon-remove"></i> Delete</a></li>
                 <li ng-class="navClass('deleteTopic')" ng-show="validSelection('deleteTopic')">
                   <a ng-href="#/deleteTopic{{hash}}" title="Delete this topic"><i class="icon-remove"></i> Delete</a></li>
+                <li ng-class="navClass('operations')">
+                  <a ng-href="#/operations{{hash}}" title="Execute operations on your selection"><i class="icon-leaf"></i>
+                    Operations</a></li>
               </ul>
           </li>
 
@@ -164,6 +164,6 @@
 <!-- helper libraries -->
 <script type="text/javascript" src="lib/sugar-1.3.6-custom.js"></script>
 
-<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="app/app.js"></script>
 </body>
 </html>

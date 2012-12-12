@@ -40,17 +40,17 @@ function SubscriberGraphController($scope, workspace:Workspace) {
           if (isQueue === $scope.isQueue && matchesSelection(destinationName)) {
             if (isQueue) {
               id = getOrCreate($scope.queues, destinationName, {
-                label: destinationName, imageUrl: url("/img/activemq/queue.png") });
+                label: destinationName, imageUrl: url("/app/activemq/img/queue.png") });
             } else {
               id = getOrCreate($scope.topics, destinationName, {
-                label: destinationName, imageUrl: url("/img/activemq/topic.png") });
+                label: destinationName, imageUrl: url("/app/activemq/img/topic.png") });
             }
 
             // lets lazily register the subscription
             if (!subscriptionId) {
               var subscriptionKey = subscription["ConnectionId"] + ":" + subscription["SubcriptionId"];
               subscription["label"] = subscriptionKey;
-              subscription["imageUrl"] = url("/img/activemq/listener.gif");
+              subscription["imageUrl"] = url("/app/activemq/img/listener.gif");
               subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, subscription);
             }
 
@@ -76,17 +76,17 @@ function SubscriberGraphController($scope, workspace:Workspace) {
           if (isQueue === $scope.isQueue && matchesSelection(destinationName)) {
             if (isQueue) {
               id = getOrCreate($scope.queues, destinationName, {
-                label: destinationName, imageUrl: url("/img/activemq/queue.png") });
+                label: destinationName, imageUrl: url("/app/activemq/img/queue.png") });
             } else {
               id = getOrCreate($scope.topics, destinationName, {
-                label: destinationName, imageUrl: url("/img/activemq/topic.png") });
+                label: destinationName, imageUrl: url("/app/activemq/img/topic.png") });
             }
 
             // lets lazily register the producer
             if (!producerId) {
               var producerKey = producer["ProducerId"];
               producer["label"] = producerKey;
-              producer["imageUrl"] = url("/img/activemq/sender.gif");
+              producer["imageUrl"] = url("/app/activemq/img/sender.gif");
               producerId = getOrCreate($scope.producers, producerKey, producer);
             }
 

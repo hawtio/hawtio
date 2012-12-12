@@ -13,7 +13,7 @@ module.exports = function (grunt) {
   if (!port) {
     port = 8181;
   }
-  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/js/**/*.ts'];
+  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/app/**/*.ts'];
   grunt.initConfig({
     test:{
       files:['src/test/js/**/*.js']
@@ -21,7 +21,7 @@ module.exports = function (grunt) {
     type:{
       compile:{
         files:{
-          "<%= grunt.option('webapp_outdir') %>/js/app.js":appFiles
+          "<%= grunt.option('webapp_outdir') %>/app/app.js":appFiles
         },
         options:{
           target:'ES5'

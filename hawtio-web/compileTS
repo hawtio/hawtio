@@ -4,4 +4,4 @@ echo
 #
 # TODO does not seem to like the --sourcemap command line option here! :(
 #
-tsc --watch --out src/main/webapp/js/app.js src/main/d.ts/* src/main/webapp/js/*.ts src/main/webapp/js/*/*.ts
+tsc --watch --out src/main/webapp/js/app.js src/main/d.ts/* src/main/webapp/app/*/js/*.ts

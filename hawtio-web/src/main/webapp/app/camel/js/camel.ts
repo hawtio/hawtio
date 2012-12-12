@@ -71,7 +71,7 @@ function CamelController($scope, workspace:Workspace) {
             // TODO have better mapping here generated from existing image names!
             imageName = "generic";
           }
-          var imageUrl = url("/img/camel/" + imageName + "24.png");
+          var imageUrl = url("/app/camel/img/" + imageName + "24.png");
           //console.log("Image URL is " + imageUrl);
           nodes.push({ "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl });
           if (parentId !== null && parentId !== id) {
