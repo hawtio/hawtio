@@ -11,13 +11,6 @@ module.exports = function (grunt) {
   // Project configuration.
 
   var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/js/**/*.ts'];
-  var resourceFiles = [
-      'src/main/webapp/img/**',
-      'src/main/webapp/css/**',
-      'src/main/webapp/partials/**',
-      'src/main/webapp/lib/**',
-      'src/main/webapp/font/**'
-  ];
   grunt.initConfig({
     test:{
       files:['src/test/js/**/*.js']
@@ -25,7 +18,7 @@ module.exports = function (grunt) {
     type:{
       compile:{
         files:{
-          'target/hawtio-web-1.0-SNAPSHOT/js/app.js':appFiles
+          "<%= grunt.option('webapp_outdir') %>/js/app.js":appFiles
         },
         options:{
           target:'ES5'
@@ -40,7 +33,7 @@ module.exports = function (grunt) {
     copy:{
         dist: {
             files: {
-                "target/hawtio-web-1.0-SNAPSHOT/": "src/main/webapp/**"
+              "<%= grunt.option('webapp_outdir') %>/": "src/main/webapp/**"
             }
         }
     },

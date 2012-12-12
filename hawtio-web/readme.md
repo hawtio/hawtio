@@ -50,6 +50,3 @@ http://localhost:35729/sample
 
 and make sure the LiveReload extension is enabled.  Then whenver you make a change the browser
 is updated automatically.
-
-
-TODO - have to take out the hard-coded path in grunt.js to the output directory so it's picked up from the build.

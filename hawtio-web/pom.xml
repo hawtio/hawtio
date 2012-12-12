@@ -14,7 +14,8 @@
   <description>hawt.io :: hawtio-web</description>
 
   <properties>
-    <webapp-outdir>${basedir}/target/hawtio-web-${project.version}</webapp-outdir>
+    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
+    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
     <context>/sample</context>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <osgi-version>4.3.0</osgi-version>
@@ -247,6 +248,8 @@
               <arguments>
                 <argument>copy</argument>
                 <argument>type</argument>
+                <argument>--webapp_outdir</argument>
+                <argument>${webapp-outdir}</argument>
               </arguments>
             </configuration>
           </execution>
@@ -439,6 +442,8 @@
                   <arguments>
                     <argument>reload</argument>
                     <argument>watch</argument>
+                    <argument>--webapp_outdir</argument>
+                    <argument>${webapp-outdir}</argument>
                   </arguments>
                 </configuration>
               </execution>
