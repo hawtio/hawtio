@@ -66,7 +66,7 @@
   </prerequisites>
 
   <properties>
-    <jettyPort>8181</jettyPort>
+    <jettyPort>8080</jettyPort>
     <context>/hawtio</context>
 
     <!-- versions -->

@@ -275,6 +275,8 @@
                 <argument>type</argument>
                 <argument>--webapp_outdir</argument>
                 <argument>${webapp-outdir}</argument>
+                <argument>--webapp_port</argument>
+                <argument>${jettyPort}</argument>
               </arguments>
             </configuration>
           </execution>
@@ -481,6 +483,8 @@
                     <argument>watch</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
+                    <argument>--webapp_port</argument>
+                    <argument>${jettyPort}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -580,6 +584,7 @@
 
     <profile>
       <id>fabric</id>
+
       <properties>
         <fabricUrl>localhost:2181</fabricUrl>
       </properties>

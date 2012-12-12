@@ -9,7 +9,10 @@ module.exports = function (grunt) {
    */
 
   // Project configuration.
-
+  var port = grunt.option('webapp_port');
+  if (!port) {
+    port = 8181;
+  }
   var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/js/**/*.ts'];
   grunt.initConfig({
     test:{
@@ -42,7 +45,7 @@ module.exports = function (grunt) {
       liveReload: {},
       proxy: {
         host: 'localhost',
-        port: 8181
+        port: port
       }
     },
     watch: {
