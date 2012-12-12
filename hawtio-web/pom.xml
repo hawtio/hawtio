@@ -437,6 +437,7 @@
                 <configuration>
                   <executable>grunt</executable>
                   <arguments>
+                    <argument>reload</argument>
                     <argument>watch</argument>
                   </arguments>
                 </configuration>

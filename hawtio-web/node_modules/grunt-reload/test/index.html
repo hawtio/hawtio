@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Grunt Reload Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Reload Test</h2>
+<p>
+    <input type="button" id="trigger" value="Trigger Update">
+</p>
+<!--<iframe src="trigger.html" width="500" height="200"></iframe>-->
+<script type="text/javascript">
+
+    (function() {
+
+        var l = window.location, url = 'ws://' + l.host;
+        var socket = new WebSocket(url);
+
+        var button = document.getElementById('trigger');
+
+        button.addEventListener('click', function(e) {
+            socket.send('trigger');
+        }, false);
+
+        socket.onmessage = function (msg) {
+            console.log(msg.data);
+        };
+    }());
+
+</script>
+</body>
+</html>

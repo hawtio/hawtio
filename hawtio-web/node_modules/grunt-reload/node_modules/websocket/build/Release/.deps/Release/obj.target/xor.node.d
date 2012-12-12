@@ -1,0 +1,1 @@
+cmd_Release/obj.target/xor.node := flock ./Release/linker.lock g++ -shared -pthread -rdynamic -m64  -Wl,-soname=xor.node -o Release/obj.target/xor.node -Wl,--start-group Release/obj.target/xor/src/xor.o -Wl,--end-group 

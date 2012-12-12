@@ -2,6 +2,7 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-type');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-reload');
 
   /*
    grunt.loadNpmTasks('grunt-typescript');
@@ -43,16 +44,24 @@ module.exports = function (grunt) {
             }
         }
     },
+    reload: {
+      port: 35729,
+      liveReload: {},
+      proxy: {
+        host: 'localhost',
+        port: 8181
+      }
+    },
     watch: {
       app: {
         files: "src/main/webapp/**",
-        tasks: 'copy type'
+        tasks: 'copy type reload'
       }
     }
   });
 
 
   // Default task.
-  grunt.registerTask('default', 'copy type watch');
+  grunt.registerTask('default', 'copy type reload watch');
 
 };
