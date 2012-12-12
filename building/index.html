@@ -60,8 +60,6 @@
 
 <p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>! You may also want to know <a href="http://hawt.io/developers/index.html">how to hack on the hawt.io code</a></p>
 
-<h2 id = "Building_with_TypeScript">Building with TypeScript</h2>
-
 <p>You'll need to install <a href="http://typescriptlang.org/">TypeScript</a> first&hellip;</p>
 
 <h3 id = "Installing_typescript">Installing typescript</h3>
@@ -72,6 +70,24 @@
 
 <pre><code>npm install -g typescript</code></pre>
 
+<h2 id = "Using_LiveReload">Using LiveReload</h2>
+
+<p>The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
+
+<p>Here's how to do it:</p>
+
+<ul>
+<li><p>install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p></li>
+<li><p>incrementally build the project</p>
+
+<p>cd hawtio-web
+mvn -Pwatch</p></li>
+<li><p>then run the web application inside Fuse Fabric or on port 8181 via</p>
+
+<p>cd hawtio-web
+mvn test-compile exec:java</p></li>
+</ul>
+
 <h3 id = "Incremental_compile_with_TypeScript">Incremental compile with TypeScript</h3>
 
 <p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
@@ -81,7 +97,7 @@
 
 <p>By default this then generates the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a> and it then watches for changes to the source files and auto-recompiles on the fly.</p>
 
-<h2 id = "Building_with_GruntJS">Building with GruntJS</h2>
+<h3 id = "Building_with_GruntJS">Building with GruntJS</h3>
 
 <p>Another build option is <a href="http://gruntjs.com/">gruntjs</a>. Again to build the code with gruntjs you will need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a></p>
 
@@ -94,9 +110,7 @@
 <pre><code>cd hawtio
 npm install grunt-type</code></pre>
 
-<h3 id = "Incremental_compile_with_GruntJS">Incremental compile with GruntJS</h3>
-
-<p>Its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
+<p>Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
 
 <pre><code>grunt</code></pre>
 
