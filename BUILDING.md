@@ -20,10 +20,12 @@ Here's how to do it:
 
 * incrementally build the project
 
+
     cd hawtio-web
     mvn -Pwatch
 
 * then run the web application inside Fuse Fabric or on port 8181 via
+
 
     cd hawtio-web
     mvn test-compile exec:java
