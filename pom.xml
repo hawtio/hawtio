@@ -82,6 +82,7 @@
     <jolokia-version>1.0.6</jolokia-version>
     <junit-version>4.10</junit-version>
     <kotlin-version>0.4.68</kotlin-version>
+    <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <scalate-version>1.5.3</scalate-version>
@@ -232,6 +233,7 @@
       <properties>
         <activemq-version>5.8-SNAPSHOT</activemq-version>
         <camel-version>2.11-SNAPSHOT</camel-version>
+        <fabric-version>99-master-SNAPSHOT</fabric-version>
       </properties>
 
       <repositories>

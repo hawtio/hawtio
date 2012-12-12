@@ -1,6 +1,8 @@
 package org.fusesource.webide.sample
 
 import java.io.File
+import java.lang.management.ManagementFactory
+import org.eclipse.jetty.jmx.MBeanContainer
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.util.log.Log
 import org.eclipse.jetty.util.log.Slf4jLog
@@ -8,8 +10,8 @@ import org.eclipse.jetty.webapp.*
 import org.mortbay.jetty.plugin.JettyWebAppContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import org.eclipse.jetty.jmx.MBeanContainer
-import java.lang.management.ManagementFactory
+import org.fusesource.fabric.service.FabricServiceImpl
+import org.fusesource.fabric.zookeeper.spring.ZKClientFactoryBean
 
 /**
 * Returns true if the file exists
@@ -103,6 +105,21 @@ fun main(args: Array<String>): Unit {
 
             LOG.warn("Don't run with scissors!")
             LOG.error("Someone somewhere is not using Fuse! :)")
+        }
+
+        // lets connect to fabric
+        val fabricUrl = System.getProperty("fabricUrl", "")
+        val fabricPassword = System.getProperty("fabricPassword", "admin")
+
+        if (fabricUrl != null && fabricUrl.length() > 0) {
+            LOG.info("Connecting to Fuse Fabric at $fabricUrl")
+            var factory = ZKClientFactoryBean()
+            factory.setPassword(fabricPassword)
+            factory.setConnectString(fabricUrl)
+            var zooKeeper = factory.getObject()
+            var impl = FabricServiceImpl()
+            impl.setZooKeeper(zooKeeper)
+            impl.init()
         }
         LOG.info("starting jetty")
         server.start()

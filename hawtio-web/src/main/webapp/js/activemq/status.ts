@@ -34,6 +34,13 @@ function getStatusMBean(workspace:Workspace) {
   if (workspace) {
     var selection = workspace.selection;
     if (selection) {
+      var domain = selection.domain;
+      if (domain) {
+        var mbean = workspace.domainToHealth[domain]
+        if (mbean) {
+          return mbean;
+        }
+      }
       var folderNames = selection.folderNames;
       if (folderNames && folderNames.length > 1) {
         broker = folderNames[1];

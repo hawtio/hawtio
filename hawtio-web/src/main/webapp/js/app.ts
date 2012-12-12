@@ -20,7 +20,9 @@ myApp.config(($routeProvider) => {
                   when('/createTopic', {templateUrl: 'partials/activemq/createTopic.html', controller: DestinationController}).
                   when('/deleteQueue', {templateUrl: 'partials/activemq/deleteQueue.html', controller: DestinationController}).
                   when('/deleteTopic', {templateUrl: 'partials/activemq/deleteTopic.html', controller: DestinationController}).
-                  when('/activemq/status', {templateUrl: 'partials/activemq/status.html', controller: BrokerStatusController}).
+
+                  // health
+                  when('/status', {templateUrl: 'partials/activemq/status.html', controller: BrokerStatusController}).
 
                   // camel
                   when('/browseEndpoint', {templateUrl: 'partials/camel/browseEndpoint.html', controller: BrowseEndpointController}).
@@ -35,6 +37,7 @@ myApp.config(($routeProvider) => {
         }).
         factory('workspace',($rootScope, $routeParams, $location, $compile, $templateCache) => {
           var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+          $.support.cors = true;
           var workspace =  new Workspace(jolokiaUrl, $location, $compile, $templateCache);
 
           /**
@@ -229,18 +232,24 @@ function MBeansController($scope, $location, workspace:Workspace) {
           folderNames = folderNames.clone();
         });
         var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
+        var typeName = entries["Type"] || entries["type"];
+        var objectName = domain + ":" + path;
         var mbeanInfo: NodeSelection = {
           key: key,
           title: trimQuotes(lastPath),
           domain: domain,
           path: path,
           paths: paths,
-          objectName: domain + ":" + path,
+          objectName: objectName,
           parent: folder,
           entries: entries,
+          typeName: typeName,
           addClass: escapeDots(key),
           get: (key: string) => null
         };
+        if (typeName === "Health") {
+          workspace.domainToHealth[domain] = objectName;
+        }
         folder.getOrElse(lastPath, mbeanInfo);
       }
     }

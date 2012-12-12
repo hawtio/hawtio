@@ -16,6 +16,7 @@ class Workspace {
   public operationCounter = 0;
   public selection:NodeSelection = null;
   public tree = null;
+  public domainToHealth = {};
   dummyStorage = {};
   uriValidations = null;
 
@@ -28,8 +29,11 @@ class Workspace {
     this.uriValidations = {
       'chartEdit': () => $location.path() === "/charts",
 
+      // health check
+      // TODO replace with attempt to find one or more mbeans...
+      'status': () => this.isActiveMQFolder() || this.isFabricFolder(),
+
       // activemq
-      'activemq/status': () => this.isActiveMQFolder(),
       'browseQueue': () => this.isQueue(),
       'browseEndpoint': () => this.isEndpoint(),
       'sendMessage': () => this.isQueue() || this.isTopic() || this.isEndpoint(),
@@ -168,6 +172,10 @@ class Workspace {
 
   isActiveMQFolder() {
     return this.hasDomainAndProperties('org.apache.activemq');
+  }
+
+  isFabricFolder() {
+    return this.hasDomainAndProperties('org.fusesource.fabric');
   }
 
   isCamelContext() {
