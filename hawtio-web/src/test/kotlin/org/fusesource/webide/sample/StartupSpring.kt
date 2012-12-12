@@ -11,8 +11,8 @@ class StartupSpring: ServletContainerInitializer {
         println("============ Starting up the spring XML")
         if (ctx != null) {
             val appContext = ClassPathXmlApplicationContext("applicationContext.xml")
-            appContext.setClassLoader(ctx.getClassLoader())
-            appContext.start()
+            //appContext.setClassLoader(ctx.getClassLoader())
+            //appContext.start()
         }
     }
 }

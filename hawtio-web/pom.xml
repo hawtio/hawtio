@@ -17,10 +17,35 @@
     <webapp-outdir>${basedir}/target/hawtio-web-${project.version}</webapp-outdir>
     <context>/sample</context>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
+    <osgi-version>4.3.0</osgi-version>
+    <servlet-api-version>2.5</servlet-api-version>
+    <log4j-version>1.2.16</log4j-version>
   </properties>
 
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-core</artifactId>
