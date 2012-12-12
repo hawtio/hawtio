@@ -39,9 +39,9 @@ If you are interested in working on the code the following references and articl
 If you fancy contributing - and [we love contributions!](http://hawt.io/contributing/index.html) the following should give you an overview of how the code hangs together.
 
 * hawt.io is a single page web appplication, from [this single page of HTML](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html)
-* we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/partials) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
-* other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/lib) and are [included in the index.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/app directory](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/app) which is then compiled into the [webapp/app/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js)
-* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
+* we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core/html) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
+* other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/lib) and are [included in the index.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [webapp/app directory](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app) which is then compiled into the [webapp/app/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js)
+* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
 * the controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX mbeans
 
 ## Developer Tools
@@ -97,6 +97,6 @@ The following gives you an overview of how to add a new kind of tab:
 
 * add an entry to the [index.html nav bar](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html#L39) so the new tab appears
 
-* create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/partials)).
+* create your new partial HTML view (myNewThing.html in the [partials directory](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/partials)).
 
 * create your new controller, MyNewController.ts in the [js directory](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/)
