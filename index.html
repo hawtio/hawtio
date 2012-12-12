@@ -61,13 +61,13 @@
 <pre><code>git clone git@github.com:hawtio/hawtio.git
 cd hawtio/hawtio-web
 mvn test-compile exec:java
-open http://localhost:8181/hawtio/</code></pre>
+open http://localhost:8080/hawtio/</code></pre>
 
 <p>That should run a little sample web application with some ActiveMQ and Camel inside to interact with.</p>
 
 <p>To specify a different port to run on, just override the <strong>jettyPort</strong> property</p>
 
-<pre><code>mvn test-compile exec:java -DjettyPort=8080</code></pre>
+<pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
 
 <p>A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs aavailable changes dynamically based onthe content.</p>
 
