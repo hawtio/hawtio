@@ -16,11 +16,6 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <context>/sample</context>
-    <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
-    <osgi-version>4.3.0</osgi-version>
-    <servlet-api-version>2.5</servlet-api-version>
-    <log4j-version>1.2.16</log4j-version>
   </properties>
 
 
@@ -412,11 +407,11 @@
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <useTestScope>true</useTestScope>
           <webAppConfig>
-            <contextPath>/sample</contextPath>
+            <contextPath>${context}</contextPath>
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>8080</port>
+              <port>${jettyPort}</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
@@ -447,6 +442,14 @@
             <systemProperty>
               <key>fabricUrl</key>
               <value>${fabricUrl}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>jettyPort</key>
+              <value>${jettyPort}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>context</key>
+              <value>${context}</value>
             </systemProperty>
           </systemProperties>
         </configuration>

@@ -38,8 +38,8 @@ fun main(args: Array<String>): Unit {
     try {
         System.setProperty("org.eclipse.jetty.util.log.class", javaClass<Slf4jLog>().getName());
         Log.setLog(Slf4jLog("jetty"));
-        val port = 8080
-        val contextPath = "/sample"
+        val port = Integer.parseInt(System.getProperty("jettyPort", "8080"))
+        val contextPath = System.getProperty("context", "/sample")
         var path = "src/main/webapp"
         if (!directoryExists(path)) {
             path = "website/$path"

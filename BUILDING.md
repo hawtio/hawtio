@@ -26,7 +26,7 @@ Here's how to do it:
 * then run the web application inside Fuse Fabric or on port 8181 via
 
     cd hawtio-web
-    mvn test-compile exec:java -DjettyPort=8181
+    mvn test-compile exec:java
 
 
 ### Incremental compile with TypeScript

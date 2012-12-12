@@ -103,7 +103,7 @@
           <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <webAppConfig>
-            <contextPath>/sample</contextPath>
+            <contextPath>${context}</contextPath>
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
