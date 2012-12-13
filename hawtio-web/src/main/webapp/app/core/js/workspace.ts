@@ -16,7 +16,7 @@ class Workspace {
   public operationCounter = 0;
   public selection:NodeSelection = null;
   public tree = null;
-  public domainToHealth = {};
+  public mbeanTypesToDomain = {};
   dummyStorage = {};
   uriValidations = null;
 
@@ -30,8 +30,7 @@ class Workspace {
       'chartEdit': () => $location.path() === "/charts",
 
       // health check
-      // TODO replace with attempt to find one or more mbeans...
-      'status': () => this.isActiveMQFolder() || this.isFabricFolder(),
+      'health': () => getHealthMBeans(this) !== null,
 
       // activemq
       'browseQueue': () => this.isQueue(),

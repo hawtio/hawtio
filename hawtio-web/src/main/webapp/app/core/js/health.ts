@@ -7,19 +7,63 @@ function HealthController($scope, workspace:Workspace) {
     }
   ]);
 
+  $scope.results = [];
+
+  function asHealthQuery(meanInfo) {
+    // TODO we may use custom operations for different mbeans...
+    return {type: 'exec', mbean: meanInfo.objectName, operation: 'healthList()'};
+  }
+
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;
 
-    var mbean = getStatusMBean(workspace);
-    if (mbean) {
+    var objects = getHealthMBeans(workspace);
+    if (objects) {
       var jolokia = workspace.jolokia;
-      jolokia.request(
-              {type: 'exec', mbean: mbean, operation: 'healthList()'},
-              onSuccess(populateTable));
+      if (angular.isArray(objects)) {
+        var args = [];
+        var onSuccessArray = [];
+        function callback(response) {
+          var value = response.value;
+          if (value) {
+            // TODO this smells like a standard function :)
+            if (angular.isArray(value)) {
+              $scope.results = $scope.results.concat(value);
+            } else {
+              $scope.results.push(value);
+            }
+          } else {
+            // TODO empty values should add a row!!!
+          }
+        }
+
+        angular.forEach(objects, (mbean) => {
+          args.push(asHealthQuery(mbean));
+          onSuccessArray.push(callback);
+        });
+        // update the last result callback to update the UI
+        onSuccessArray[onSuccessArray.length - 1] = (response) => {
+          callback(response);
+          $scope.widget.populateTable($scope.results);
+          $scope.$apply();
+        };
+        $scope.results = [];
+        jolokia.request(args, onSuccess(onSuccessArray));
+/*
+        args.push(onSuccess(onSuccessArray));
+        var fn = jolokia.request;
+        fn.apply(jolokia, args);
+*/
+      } else {
+        jolokia.request(
+                asHealthQuery(objects),
+                onSuccess(populateTable));
+      }
     }
   });
 
   var populateTable = function (response) {
+    // TODO empty values should add a row!!!
     $scope.widget.populateTable(response.value);
     $scope.$apply();
   };
@@ -29,37 +73,31 @@ function HealthController($scope, workspace:Workspace) {
 /**
  * Returns the bundle MBean
  */
-function getStatusMBean(workspace:Workspace) {
+function getHealthMBeans(workspace:Workspace) {
   var broker = null;
   if (workspace) {
+    var healthMap = workspace.mbeanTypesToDomain["Health"] || {};
     var selection = workspace.selection;
     if (selection) {
       var domain = selection.domain;
       if (domain) {
-        var mbean = workspace.domainToHealth[domain];
+        var mbean = healthMap[domain];
         if (mbean) {
           return mbean;
         }
       }
-      var folderNames = selection.folderNames;
-      if (folderNames && folderNames.length > 1) {
-        broker = folderNames[1];
-      } else {
-        var entries = selection.entries;
-        if (!entries) {
-          selection = selection.parent;
-          if (selection) entries = selection.entries;
-        }
-        if (entries) {
-          broker = entries["BrokerName"];
-        }
-      }
     }
-  }
-  console.log("Found broker " + broker);
-  if (broker) {
-    return "org.apache.activemq:BrokerName=" + broker + ",Type=Health";
-  } else {
-    return null;
+    if (healthMap) {
+      // lets append all the mbeans together from all the domains
+      var answer = [];
+      angular.forEach(healthMap, (value) => {
+        if (angular.isArray(value)) {
+          answer = answer.concat(value);
+        } else {
+          answer.push(value)
+        }
+      });
+      return answer;
+    } else return null;
   }
 }
