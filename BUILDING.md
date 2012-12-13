@@ -16,20 +16,19 @@ The incremental build and LiveReload support allows you to edit the code and for
 
 Here's how to do it:
 
-* install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
+install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
-* incrementally build the project
-
+incrementally build the project
 
     cd hawtio-web
     mvn -Pwatch
 
-* then run the web application inside Fuse Fabric or on port 8181 via
-
+run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources)
 
     cd hawtio-web
     mvn test-compile exec:java
 
+Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)
 
 ### Incremental compile with TypeScript
 
