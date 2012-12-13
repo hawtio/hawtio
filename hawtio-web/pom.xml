@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-	  <groupId>io.hawt</groupId>
-	  <artifactId>project</artifactId>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
@@ -21,14 +21,14 @@
 
   <dependencies>
 
-<!--
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
-      <scope>provided</scope>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+          <version>${osgi-version}</version>
+          <scope>provided</scope>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -68,6 +68,12 @@
       <artifactId>jetty-webapp</artifactId>
       <version>${jetty8-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -86,6 +92,12 @@
       <artifactId>jetty-maven-plugin</artifactId>
       <version>${jetty8-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- for some sample stuff to browse -->
@@ -175,14 +187,14 @@
       <version>${linkedin-zookeeper-version}</version>
       <scope>test</scope>
       <exclusions>
-          <exclusion>
-              <groupId>com.sun.jdmk</groupId>
-              <artifactId>jmxtools</artifactId>
-          </exclusion>
-          <exclusion>
-              <groupId>com.sun.jmx</groupId>
-              <artifactId>jmxri</artifactId>
-          </exclusion>
+        <exclusion>
+          <groupId>com.sun.jdmk</groupId>
+          <artifactId>jmxtools</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jmx</groupId>
+          <artifactId>jmxri</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -246,7 +258,6 @@
         </dependency>
         -->
   </dependencies>
-
 
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
@@ -340,7 +351,7 @@
       </plugin>
 
 
-			<!--
+      <!--
       <plugin>
         <groupId>com.ppedregal.typescript</groupId>
         <artifactId>typescript-maven-plugin</artifactId>
@@ -351,7 +362,7 @@
           <targetDirectory>src/main/webapp/js</targetDirectory>
         </configuration>
       </plugin>
-			-->
+      -->
       <!--
             <plugin>
               <artifactId>maven-clean-plugin</artifactId>
@@ -378,15 +389,15 @@
           </annotationPaths>
         </configuration>
         <executions>
-<!--
-          <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
--->
+          <!--
+                    <execution>
+                      <id>compile</id>
+                      <phase>compile</phase>
+                      <goals>
+                        <goal>compile</goal>
+                      </goals>
+                    </execution>
+          -->
           <execution>
             <id>test-compile</id>
             <phase>test-compile</phase>
@@ -424,9 +435,9 @@
             <goals>
               <goal>java</goal>
             </goals>
-<!--
-            <phase>test-compile</phase>
--->
+            <!--
+                        <phase>test-compile</phase>
+            -->
           </execution>
         </executions>
         <configuration>
@@ -550,37 +561,37 @@
         </plugins>
       </build>
     </profile>
-		<profile>
-			<id>icons</id>
-			<build>
-				<plugins>
-					
-	      <plugin>
-	        <artifactId>maven-antrun-plugin</artifactId>
-	        <version>1.6</version>
-	        <executions>
-	          <execution>
-	            <phase>generate-sources</phase>
-	            <configuration>
-	              <target>
-	                <!-- copy the images from the eclipse plugin -->
-	                <copy todir="${basedir}/src/main/webapp/img/camel" overwrite="true">
-	                  <fileset dir="${basedir}/../../../fuseide/plugins/org.fusesource.ide.camel.model/icons">
-	                    <include name="*24.png"/>
-	                    <include name="*15.png"/>
-	                  </fileset>
-	                </copy>
-	              </target>
-	            </configuration>
-	            <goals>
-	              <goal>run</goal>
-	            </goals>
-	          </execution>
-	        </executions>
-	      </plugin>
-			</plugins>
-			</build>
-		</profile>
+    <profile>
+      <id>icons</id>
+      <build>
+        <plugins>
+
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <target>
+                    <!-- copy the images from the eclipse plugin -->
+                    <copy todir="${basedir}/src/main/webapp/img/camel" overwrite="true">
+                      <fileset dir="${basedir}/../../../fuseide/plugins/org.fusesource.ide.camel.model/icons">
+                        <include name="*24.png"/>
+                        <include name="*15.png"/>
+                      </fileset>
+                    </copy>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <profile>
       <id>fabric</id>

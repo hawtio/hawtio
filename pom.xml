@@ -134,6 +134,31 @@
       <name>jetbrains-release</name>
       <url>http://repository.jetbrains.com/releases</url>
     </repository>
+
+
+    <!-- TODO lets add the snapshot repos for now until we move to build 046 -->
+    <repository>
+      <id>fusesource.m2-snapshot</id>
+      <name>FuseSource Community Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>fusesource.nexus.m2-snapshot</id>
+      <name>FuseSource Community Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <pluginRepositories>
