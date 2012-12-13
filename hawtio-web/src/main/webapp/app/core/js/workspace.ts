@@ -30,7 +30,7 @@ class Workspace {
       'chartEdit': () => $location.path() === "/charts",
 
       // health check
-      'health': () => getHealthMBeans(this) !== null,
+      'health': () => this.hasHealthMBeans(),
 
       // activemq
       'browseQueue': () => this.isQueue(),
@@ -149,6 +149,15 @@ class Workspace {
           return last === lastName;
         }
       }
+    }
+    return false;
+  }
+
+  hasHealthMBeans() {
+    var beans = getHealthMBeans(this);
+    if (beans) {
+      if (angular.isArray(beans)) return beans.length > 1;
+      return true;
     }
     return false;
   }
