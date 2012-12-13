@@ -4,7 +4,7 @@ You'll need to install [TypeScript](http://typescriptlang.org/) first...
 
 ### Installing typescript
 
-To install [TypeScript](http://typescriptlang.org/) you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
+To install [TypeScript](http://typescriptlang.org/) you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
 
 Then you should be able to run:
 
