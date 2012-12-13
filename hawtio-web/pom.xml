@@ -368,7 +368,7 @@
         <version>${kotlin-version}</version>
         <configuration>
           <annotationPaths>
-            <annotationPath>${basedir}/src/main/resources</annotationPath>
+            <annotationPath>${basedir}/src/test/resources</annotationPath>
           </annotationPaths>
         </configuration>
         <executions>
