@@ -1,4 +1,4 @@
-function BrokerStatusController($scope, workspace:Workspace) {
+function HealthController($scope, workspace:Workspace) {
   $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
@@ -36,7 +36,7 @@ function getStatusMBean(workspace:Workspace) {
     if (selection) {
       var domain = selection.domain;
       if (domain) {
-        var mbean = workspace.domainToHealth[domain]
+        var mbean = workspace.domainToHealth[domain];
         if (mbean) {
           return mbean;
         }

@@ -1,7 +1,7 @@
 var myApp = angular.module('hawt.io', ['bootstrap', 'ngResource']);
 myApp.config(($routeProvider) => {
           $routeProvider.
-                  when('/attributes', {templateUrl: 'app/core/html/attributes.html', controller: DetailController}).
+                  when('/attributes', {templateUrl: 'app/core/html/attributes.html', controller: AttributesController}).
                   when('/operations', {templateUrl: 'app/core/html/operations.html', controller: OperationsController}).
                   when('/charts', {templateUrl: 'app/core/html/charts.html', controller: ChartController}).
                   when('/chartEdit', {templateUrl: 'app/core/html/chartEdit.html', controller: ChartEditController}).
@@ -11,7 +11,10 @@ myApp.config(($routeProvider) => {
                     redirectTo: '/help/overview'
                   }).
                   when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: NavBarController}).
-                  when('/debug', {templateUrl: 'app/core/html/debug.html', controller: DetailController}).
+                  when('/debug', {templateUrl: 'app/core/html/debug.html', controller: AttributesController}).
+
+                  // health
+                  when('/health', {templateUrl: 'app/core/html/health.html', controller: HealthController}).
 
                   // activemq
                   when('/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html', controller: BrowseQueueController}).
@@ -20,9 +23,6 @@ myApp.config(($routeProvider) => {
                   when('/createTopic', {templateUrl: 'app/activemq/html/createTopic.html', controller: DestinationController}).
                   when('/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html', controller: DestinationController}).
                   when('/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController}).
-
-                  // health
-                  when('/status', {templateUrl: 'app/activemq/html/status.html', controller: BrokerStatusController}).
 
                   // camel
                   when('/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html', controller: BrowseEndpointController}).
@@ -289,32 +289,6 @@ function MBeansController($scope, $location, workspace:Workspace) {
   // TODO auto-refresh the tree...
 }
 
-class Table {
-  public columns = {};
-  public rows = {};
-
-  public values(row, columns) {
-    var answer = [];
-    if (columns) {
-      for (name in columns) {
-        //console.log("Looking up: " + name + " on row ");
-        answer.push(row[name]);
-      }
-    }
-    return answer;
-  }
-
-  public setRow(key, data) {
-    this.rows[key] = data;
-    Object.keys(data).forEach((key) => {
-      // could store type info...
-      var columns = this.columns;
-      if (!columns[key]) {
-        columns[key] = {name: key};
-      }
-    });
-  }
-}
 
 myApp.directive('expandable', function() {
   return {
@@ -343,321 +317,6 @@ myApp.directive('expandable', function() {
 
 });
 
-function OperationController($scope, $routeParams, workspace:Workspace) {
-  $scope.title = $scope.item.humanReadable;
-  $scope.desc = $scope.item.desc;
-  $scope.routeParams = $routeParams;
-  $scope.workspace = workspace;
 
-  var sanitize = (args) => {
-    if (args) {
-      args.forEach( function (arg) {
-        switch (arg.type) {
-          case "int":
-          case "long":
-            arg.formType = "number";
-            break;
-          default:
-            arg.formType = "text";
-        }
-      });
-    }
-
-    return args;
-  };
-
-  $scope.args = sanitize($scope.item.args);
-
-  $scope.execute = (args) => {
-    var node = $scope.workspace.selection;
-
-    if (!node) {
-      return;
-    }
-
-    var objectName = node.objectName;
-
-    if (!objectName) {
-      return;
-    }
-
-    var jolokia = workspace.jolokia;
-
-    var get_response = (response) => {
-      console.log("Got : " + response);
-
-      // TODO we should render this in the template...
-      $scope.operationResult = response;
-
-      // now lets notify the UI to update the tree etc
-      $scope.workspace.operationCounter += 1;
-      $scope.$apply();
-    };
-
-    var args = [objectName, $scope.item.name];
-    if ($scope.item.args) {
-      $scope.item.args.forEach( function (arg) {
-        args.push(arg.value);
-      });
-    }
-    args.push(onSuccess(get_response));
-
-    var fn = jolokia.execute;
-    fn.apply(jolokia, args);
-  };
-
-}
-
-function OperationsController($scope, $routeParams, workspace:Workspace, $rootScope) {
-  $scope.routeParams = $routeParams;
-  $scope.workspace = workspace;
-
-  $scope.sanitize = (value) => {
-    for (var item in value) {
-      value["" + item].name = "" + item;
-      value["" + item].humanReadable = humanizeValue("" + item);
-    }
-    return value;
-  };
-
-  var asQuery = (node) => {
-    return {
-      type: "LIST",
-      method: "post",
-      path: encodeMBeanPath(node),
-      ignoreErrors: true
-    };
-  };
-
-  $scope.$watch('workspace.selection', function() {
-    var node = $scope.workspace.selection;
-
-    if (!node) {
-      return;
-    }
-
-    var objectName = node.objectName;
-
-    if (!objectName) {
-      return;
-    }
-
-    var query = asQuery(objectName);
-    var jolokia = workspace.jolokia;
-
-    var update_values = (response) => {
-      $scope.operations = $scope.sanitize(response.value.op);
-      $scope.$apply()
-    };
-    jolokia.request(query, onSuccess(update_values));
-
-  });
-}
-
-function DetailController($scope, $routeParams, workspace:Workspace, $rootScope) {
-  $scope.routeParams = $routeParams;
-  $scope.workspace = workspace;
-
-  $scope.isTable = (value) => {
-    return value instanceof Table;
-  };
-
-  $scope.getAttributes = (value) => {
-    if (angular.isArray(value) && angular.isObject(value[0])) return value;
-    if (angular.isObject(value) && !angular.isArray(value)) return [value];
-    return null;
-  };
-
-  $scope.rowValues = (row, col) => {
-    return [row[col]];
-  };
-
-  var asQuery = (mbeanName) => {
-    return { type: "READ", mbean: mbeanName, ignoreErrors: true};
-  };
-
-  var tidyAttributes = (attributes) => {
-    var objectName = attributes['ObjectName'];
-    if (objectName) {
-      var name = objectName['objectName'];
-      if (name) {
-        attributes['ObjectName'] = name;
-      }
-    }
-  };
-
-  $scope.$watch('workspace.selection', function () {
-    var node = $scope.workspace.selection;
-    closeHandle($scope, $scope.workspace.jolokia);
-    var mbean = null;
-    if (node) {
-      mbean = node.objectName;
-    }
-    var query = null;
-    var jolokia = workspace.jolokia;
-    var updateValues:any = function (response) {
-      var attributes = response.value;
-      if (attributes) {
-        tidyAttributes(attributes);
-        $scope.attributes = attributes;
-        $scope.$apply();
-      } else {
-        console.log("Failed to get a response! " + response);
-      }
-    };
-    if (mbean) {
-      query = asQuery(mbean)
-    } else if (node) {
-      // lets query each child's details
-      var children = node.children;
-      if (children) {
-        var childNodes = children.map((child) => child.objectName);
-        var mbeans = childNodes.filter((mbean) => mbean);
-        //console.log("Found mbeans: " + mbeans + " child nodes " + childNodes.length + " child mbeans " + mbeans.length);
-
-        // lets filter out the collections of collections; so only have collections of mbeans
-        if (mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
-          query = mbeans.map((mbean) => asQuery(mbean));
-          if (query.length === 1) {
-            query = query[0];
-          } else if (query.length === 0) {
-            query = null;
-          } else {
-            // now lets create an update function for each row which are all invoked async
-            $scope.attributes = new Table();
-            updateValues = function (response) {
-              var attributes = response.value;
-              if (attributes) {
-                tidyAttributes(attributes);
-                var mbean = attributes['ObjectName'];
-                var request = response.request;
-                if (!mbean && request) {
-                  mbean = request['mbean'];
-                }
-                if (mbean) {
-                  var table = $scope.attributes;
-                  if (!(table instanceof Table)) {
-                    table = new Table();
-                    $scope.attributes = table;
-                  }
-                  table.setRow(mbean, attributes);
-                  $scope.$apply();
-                } else {
-                  console.log("no ObjectName in attributes " + Object.keys(attributes));
-                }
-              } else {
-                console.log("Failed to get a response! " + JSON.stringify(response));
-              }
-            };
-          }
-        }
-      }
-    }
-    if (query) {
-      // lets get the values immediately
-      jolokia.request(query, onSuccess(updateValues));
-      var callback = onSuccess(updateValues,
-              {
-                error: (response) => {
-                  updateValues(response);
-                }
-              });
-
-      // listen for updates
-      if (angular.isArray(query)) {
-        if (query.length >= 1) {
-          var args = [callback].concat(query);
-          var fn = jolokia.register;
-          scopeStoreJolokiaHandle($scope, jolokia, fn.apply(jolokia, args));
-        }
-      } else {
-        scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, query));
-      }
-    }
-  });
-}
-
-function LogController($scope, $location, workspace:Workspace) {
-  $scope.workspace = workspace;
-  //$scope.logs = {};
-  $scope.logs = [];
-  $scope.toTime = 0;
-  $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
-
-  $scope.filterLogs = function (logs, query) {
-    var filtered = [];
-    var queryRegExp = null;
-    if (query) {
-      queryRegExp = RegExp(query.escapeRegExp(), 'i'); //'i' -> case insensitive
-    }
-    angular.forEach(logs, function (log) {
-      if (!query || Object.values(log).any((value) => value && value.toString().has(queryRegExp))) {
-        filtered.push(log);
-      }
-    });
-    return filtered;
-  };
-
-  $scope.logClass = (log) => {
-    var level = log['level'];
-    if (level) {
-      var lower = level.toLowerCase();
-      if (lower.startsWith("warn")) {
-        return "warning"
-      } else if (lower.startsWith("err")) {
-        return "error";
-      } else if (lower.startsWith("debug")) {
-        return "info";
-      }
-    }
-    return "";
-  };
-
-  var updateValues = function (response) {
-    var logs = response.events;
-    var toTime = response.toTimestamp;
-    if (toTime) {
-      $scope.toTime = toTime;
-      $scope.queryJSON.arguments = [toTime];
-    }
-    if (logs) {
-      var seq = 0;
-      for (var idx in logs) {
-        var log = logs[idx];
-        if (log) {
-          if (!$scope.logs.any((item) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
-            $scope.logs.push(log);
-          }
-        }
-      }
-      //console.log("Got results " + logs.length + " last seq: " + seq);
-      $scope.$apply();
-    } else {
-      console.log("Failed to get a response! " + response);
-    }
-  };
-
-  var jolokia = workspace.jolokia;
-  jolokia.execute(logQueryMBean, "allLogResults", onSuccess(updateValues));
-
-  // listen for updates adding the since
-  var asyncUpdateValues = function (response) {
-    var value = response.value;
-    if (value) {
-      updateValues(value);
-    } else {
-      console.log("Failed to get a response! " + response);
-    }
-  };
-
-  var callback = onSuccess(asyncUpdateValues,
-          {
-            error: (response) => {
-              asyncUpdateValues(response);
-            }
-          });
-
-  scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
-}
 
 
