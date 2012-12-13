@@ -20,11 +20,19 @@
   <cm:property-placeholder id="placeholder" persistent-id="hawt.io.web" update-strategy="reload">
     <cm:default-properties>
       <cm:property name="content_directory" value="" />
+      <cm:property name="proxy_host" value="localhost" />
+      <cm:property name="proxy_port" value="8181"/>
+      <cm:property name="proxy_path" value=""/>
+      <cm:property name="max_file_upload_size" value="5242880"/>
     </cm:default-properties>
   </cm:property-placeholder>
 
   <bean id="hawtio-web-config" class="io.hawt.web.dev.Config">
     <property name="contentDirectory" value="${content_directory}"/>
+    <property name="proxyHost" value="${proxy_host}"/>
+    <property name="proxyPort" value="${proxy_port}"/>
+    <property name="proxyPath" value="${proxy_path}"/>
+    <property name="maxFileUploadSize" value="${max_file_upload_size}"/>
   </bean>
 
 </blueprint>

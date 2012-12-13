@@ -14,6 +14,31 @@
   <description>hawt.io :: DevServlet version for embedding inside OSGi while serving from local files</description>
 
   <dependencies>
+
+    <dependency>
+      <groupId>javax.portlet</groupId>
+      <artifactId>portlet-api</artifactId>
+      <version>2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.2</version>
+    </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -81,6 +106,8 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1.1</version>
         <configuration>
+          <dependentWarExcludes>WEB-INF/web.xml,WEB-INF/lib/*,META-INF/*,OSGI-INF/*</dependentWarExcludes>
+          <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
           <overlays>
             <overlay>
               <groupId>io.hawt</groupId>

@@ -12,6 +12,10 @@ public class Config {
     static private final Logger LOG = Logger.getLogger(Config.class);
 
     private String contentDirectory = null;
+    private String proxyHost = "localhost";
+    private String proxyPath = "";
+    private int proxyPort = 8181;
+    private int maxFileUploadSize = 5 * 1024 * 1024;
 
     public Config() {
         _instance = this;
@@ -31,4 +35,35 @@ public class Config {
         return _instance;
     }
 
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public int getMaxFileUploadSize() {
+        return maxFileUploadSize;
+    }
+
+    public void setMaxFileUploadSize(int maxFileUploadSize) {
+        this.maxFileUploadSize = maxFileUploadSize;
+    }
+
+    public String getProxyPath() {
+        return proxyPath;
+    }
+
+    public void setProxyPath(String proxyPath) {
+        this.proxyPath = proxyPath;
+    }
 }
