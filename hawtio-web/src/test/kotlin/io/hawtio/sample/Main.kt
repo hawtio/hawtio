@@ -1,4 +1,4 @@
-package org.fusesource.webide.sample
+package io.hawt.sample
 
 import java.io.File
 import java.lang.management.ManagementFactory

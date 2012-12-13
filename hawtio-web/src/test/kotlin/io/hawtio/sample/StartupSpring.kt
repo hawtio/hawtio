@@ -1,4 +1,4 @@
-package org.fusesource.webide.sample
+package io.hawt.sample
 
 import javax.servlet.ServletContainerInitializer
 import javax.servlet.ServletContext
