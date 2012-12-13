@@ -1,4 +1,4 @@
-package hawt.io.web;
+package io.hawt.web.dev;
 
 /**
  * @author Stan Lewis

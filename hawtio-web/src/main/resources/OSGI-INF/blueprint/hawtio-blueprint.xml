@@ -23,7 +23,7 @@
     </cm:default-properties>
   </cm:property-placeholder>
 
-  <bean id="hawtio-web-config" class="hawt.io.web.Config">
+  <bean id="hawtio-web-config" class="io.hawt.web.dev.Config">
     <property name="contentDirectory" value="${content_directory}"/>
   </bean>
 

@@ -1,4 +1,4 @@
-package hawt.io.web;
+package io.hawt.web.dev;
 
 import org.apache.log4j.Logger;
 

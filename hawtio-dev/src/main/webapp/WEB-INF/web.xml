@@ -28,7 +28,7 @@
 
   <servlet>
     <servlet-name>dev-servlet</servlet-name>
-    <servlet-class>hawt.io.web.DevServlet</servlet-class>
+    <servlet-class>io.hawt.web.dev.DevServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
