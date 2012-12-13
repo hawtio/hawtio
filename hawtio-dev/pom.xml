@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <artifactId>servlet-api</artifactId>
       <version>${servlet-api-version}</version>
       <scope>provided</scope>
     </dependency>
@@ -33,11 +33,80 @@
       <artifactId>hawtio-web</artifactId>
       <version>${project.version}</version>
       <type>war</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <manifestLocation>${webapp-outdir}/META-INF</manifestLocation>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${context}</Webapp-Context>
+            <Web-ContextPath>${context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>io.hawt</groupId>
+              <artifactId>hawtio-web</artifactId>
+            </overlay>
+          </overlays>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
+          <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <directory>src/main/resources</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>

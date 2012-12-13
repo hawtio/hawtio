@@ -69,6 +69,9 @@
     <jettyPort>8080</jettyPort>
     <context>/hawtio</context>
 
+    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
+    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+
     <!-- versions -->
     <activemq-version>5.7.0.fuse-71-044</activemq-version>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
@@ -96,7 +99,7 @@
     <osgi-version>4.3.0</osgi-version>
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <scalate-version>1.5.3</scalate-version>
-    <servlet-api-version>3.0.1</servlet-api-version>
+    <servlet-api-version>2.5</servlet-api-version>
     <slf4j-version>1.6.1</slf4j-version>
     <spring-version>3.0.7.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
