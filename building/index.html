@@ -76,17 +76,19 @@
 
 <p>Here's how to do it:</p>
 
-<ul>
-<li><p>install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p></li>
-<li><p>incrementally build the project</p>
+<p>install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
 
-<p>cd hawtio-web
-mvn -Pwatch</p></li>
-<li><p>then run the web application inside Fuse Fabric or on port 8181 via</p>
+<p>incrementally build the project</p>
 
-<p>cd hawtio-web
-mvn test-compile exec:java</p></li>
-</ul>
+<pre><code>cd hawtio-web
+mvn -Pwatch</code></pre>
+
+<p>run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources)</p>
+
+<pre><code>cd hawtio-web
+mvn test-compile exec:java</code></pre>
+
+<p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)</p>
 
 <h3 id = "Incremental_compile_with_TypeScript">Incremental compile with TypeScript</h3>
 
