@@ -49,6 +49,7 @@ If you fancy contributing - and [we love contributions!](http://hawt.io/contribu
 The following are recommended if you want to contribute to the code
 
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
+* [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
 * [AngularJS plugin for Chrome](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk) which is handy for visualising scopes and performance testing etc.
 * [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
 * [Apache Maven 3.0.3 or later](http://maven.apache.org/)
