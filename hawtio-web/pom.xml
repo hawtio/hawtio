@@ -21,12 +21,14 @@
 
   <dependencies>
 
+<!--
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>${osgi-version}</version>
       <scope>provided</scope>
     </dependency>
+-->
 
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -46,13 +48,6 @@
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-core</artifactId>
       <version>${jolokia-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- testing -->
