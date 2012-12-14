@@ -5,7 +5,15 @@ function SendMessageController($scope, workspace:Workspace) {
 
   var textArea = $("#messageBody").first()[0];
   if (textArea) {
-    var editorSettings = createEditorSettings(workspace, $scope.format);
+    var options:any = {};
+    options.onChange = function(cm) {
+      if (cm.getValue() == "") {
+        $("#sendButton").attr("disabled", "disabled");
+      } else {
+        $("#sendButton").removeAttr("disabled");
+      }
+    };
+    var editorSettings = createEditorSettings(workspace, $scope.format, options);
     $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
   }
 
@@ -27,6 +35,8 @@ function SendMessageController($scope, workspace:Workspace) {
 
   var sendWorked = () => {
     console.log("Sent message!");
+    $("#sendButton").attr("disabled", "disabled");
+    $scope.codeMirror.setValue("");
   };
 
   $scope.autoFormat = () => {
