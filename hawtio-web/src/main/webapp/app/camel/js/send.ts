@@ -7,7 +7,7 @@ function SendMessageController($scope, workspace:Workspace) {
   if (textArea) {
     var options:any = {};
     options.onChange = function(cm) {
-      if (cm.getValue() == "") {
+      if (cm.getValue() = "") {
         $("#sendButton").attr("disabled", "disabled");
       } else {
         $("#sendButton").removeAttr("disabled");
