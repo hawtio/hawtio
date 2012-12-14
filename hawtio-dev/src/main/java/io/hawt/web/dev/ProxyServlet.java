@@ -12,6 +12,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletConfig;
@@ -361,13 +362,20 @@ public class ProxyServlet extends HttpServlet {
 		if(!this.getProxyPath().equalsIgnoreCase("")){
 			stringProxyURL += this.getProxyPath();
 		}
+
+        try {
 		// Handle the path given to the servlet
-		stringProxyURL += httpServletRequest.getPathInfo();
+		stringProxyURL += URIUtil.encodePath(httpServletRequest.getPathInfo());
 		// Handle the query string
 		if(httpServletRequest.getQueryString() != null) {
-			stringProxyURL += "?" + httpServletRequest.getQueryString();
+			stringProxyURL += "?" + URIUtil.encodeQuery(httpServletRequest.getQueryString());
 		}
+
+        LOG.debug("Proxying " + httpServletRequest.getRequestURL() + " to " + stringProxyURL);
 		return stringProxyURL;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
     
     private String getProxyHostAndPort() {
