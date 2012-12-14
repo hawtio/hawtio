@@ -244,3 +244,8 @@ function createEditorSettings(workspace, mode:string, options:any = {}) {
 function escapeDots(text:string) {
   return text.replace(/\./g, '-');
 }
+
+function notification (type:string, message:string) {
+    $("#alert-area").append($("<div class='alert alert-" + type + " fade in' data-alert><button type='button' class='close' data-dismiss='alert'>×</button>" + message + "</div>"));
+    $(".alert").delay(2000).fadeOut("slow", function () { $(this).remove(); });
+}
