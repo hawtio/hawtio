@@ -255,3 +255,23 @@ function notification (type:string, message:string) {
     $("#alert-area").append($("<div class='alert alert-" + type + " fade in' data-alert><button type='button' class='close' data-dismiss='alert'>×</button>" + message + "</div>"));
     $(".alert").delay(2000).fadeOut("slow", function () { $(this).remove(); });
 }
+
+
+/**
+ * Returns the CSS class for a log level based on if its info, warn, error etc.
+ *
+ * @return {string}
+ */
+function logLevelClass(level:string) {
+  if (level) {
+    var first = level[0];
+    if (first === 'w' || first === "W") {
+      return "warning"
+    } else if (first === 'e' || first === "E") {
+      return "error";
+    } else if (first === 'd' || first === "d") {
+      return "info";
+    }
+  }
+  return "";
+}

@@ -20,18 +20,7 @@ function LogController($scope, $location, workspace:Workspace) {
   };
 
   $scope.logClass = (log) => {
-    var level = log['level'];
-    if (level) {
-      var lower = level.toLowerCase();
-      if (lower.startsWith("warn")) {
-        return "warning"
-      } else if (lower.startsWith("err")) {
-        return "error";
-      } else if (lower.startsWith("debug")) {
-        return "info";
-      }
-    }
-    return "";
+    return logLevelClass(log['level']);
   };
 
   var updateValues = function (response) {

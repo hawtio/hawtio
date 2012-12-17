@@ -3,9 +3,31 @@ function HealthController($scope, workspace:Workspace) {
     {
       "mDataProp": null,
       "sClass": "control center",
+      "mData": null,
       "sDefaultContent": '<i class="icon-plus"></i>'
+/*
+    }, {
+      "mDataProp": "level",
+      "sDefaultContent": "",
+      "mData": null
+*/
+    }, {
+      "mDataProp": "message",
+      "sDefaultContent": "",
+      "mData": null
     }
-  ]);
+  ], {
+      rowDetailTemplateId: 'bodyTemplate',
+      disableAddColumns: true
+    });
+
+  $scope.widget.dataTableConfig["fnRowCallback"] = (nRow, aData, iDisplayIndex, iDisplayIndexFull) => {
+    var level = aData["level"];
+    var style = logLevelClass(level);
+    if (style) {
+      $(nRow).addClass(style);
+    }
+  };
 
   $scope.results = [];
 

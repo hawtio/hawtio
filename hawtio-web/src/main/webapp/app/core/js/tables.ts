@@ -6,6 +6,13 @@ class TableWidget {
   private detailRow:string;
   private openMessages = [];
 
+  public dataTableConfig = {
+    bPaginate: false,
+    sDom: 'Rlfrtip',
+    bDestroy: true
+  };
+
+
   constructor(public scope, public workspace:Workspace, public dataTableColumns, public config:TableWidgetConfig = {}) {
     // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
     angular.forEach(config.ignoreColumns, (name) => {
@@ -86,14 +93,9 @@ class TableWidget {
         }
       }
 
-      var config = {
-        bPaginate: false,
-        sDom: 'Rlfrtip',
-        bDestroy: true,
-        aaData: array,
-        aoColumns: columns
-      };
-      $scope.dataTable = tableElement.dataTable(config);
+      this.dataTableConfig["aaData"] = array;
+      this.dataTableConfig["aoColumns"] = columns;
+      $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
 
       var widget = this;
 
