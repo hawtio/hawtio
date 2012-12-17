@@ -1,5 +1,6 @@
 function EndpointController($scope, workspace:Workspace) {
   $scope.workspace = workspace;
+  $scope.message = "";
 
   $scope.$watch('workspace.selection', function () {
     workspace.moveIfViewInvalid();
@@ -9,6 +10,7 @@ function EndpointController($scope, workspace:Workspace) {
     $scope.endpointName = "";
     $scope.workspace.operationCounter += 1;
     $scope.$apply();
+    notification("success", $scope.message);
   }
 
   $scope.createEndpoint = (name) => {
@@ -16,11 +18,11 @@ function EndpointController($scope, workspace:Workspace) {
     if (jolokia) {
       var mbean = getSelectionCamelContextMBean(workspace);
       if (mbean) {
-        console.log("Creating endpoint: " + name + " on mbean " + mbean);
+        $scope.message = "Creating endpoint " + name;
         var operation = "createEndpoint(java.lang.String)";
         jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
       } else {
-        console.log("Can't find the CamelContext MBean!");
+        notification("error", "Could not find the CamelContext MBean!");
       }
     }
   };
@@ -36,7 +38,7 @@ function EndpointController($scope, workspace:Workspace) {
       var isQueue = "Topic" !== entries["Type"];
       if (domain && brokerName) {
         var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
-        console.log("Deleting queue " + isQueue + " of name: " + name + " on mbean");
+        $scope.message = "Deleting " + (isQueue ? "queue" :  "topic") + " " + name;
         var operation = "removeEndpoint(java.lang.String)";
         jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
       }
