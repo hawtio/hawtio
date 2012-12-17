@@ -1,4 +1,4 @@
-function EndpointController($scope, workspace:Workspace) {
+function EndpointController($scope, $location, workspace:Workspace) {
   $scope.workspace = workspace;
   $scope.message = "";
 
