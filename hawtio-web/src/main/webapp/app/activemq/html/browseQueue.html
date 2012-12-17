@@ -1,4 +1,21 @@
 <script type="text/ng-template" id="bodyTemplate">
+  <div class="expandable closed">
+    <div title="Headers" class="title">
+      <i class="expandable-indicator"></i> Headers
+    </div>
+    <div class="expandable-body well">
+      <table class="table table-striped">
+          <tbody>
+          <tr ng-repeat="(key, value) in headers(row)">
+            <td class="property-name">{{key}}</td>
+            <td class="property-value">{{value}}</td>
+          </tr>
+          </tbody>
+      </table>
+
+    </div>
+  </div>
+
   <div ng-controller="EditorController">
     <textarea readonly class="messageDetail" codeMirror="true" class="input-xlarge" rows="{{lineCount(row.Text)}}"
               ng-model="row.Text"></textarea>

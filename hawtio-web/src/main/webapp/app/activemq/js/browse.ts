@@ -1,4 +1,8 @@
 function BrowseQueueController($scope, workspace:Workspace) {
+  var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
+  var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
+    "DoubleProperties", "StringProperties"];
+
   $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
@@ -25,8 +29,8 @@ function BrowseQueueController($scope, workspace:Workspace) {
     { "mDataProp": "JMSDestination" }
   ], {
     rowDetailTemplateId: 'bodyTemplate',
-    ignoreColumns: ["PropertiesText", "BodyPreview", "Text"],
-    flattenColumns: ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties", "DoubleProperties", "StringProperties"]
+    ignoreColumns: ignoreColumns,
+    flattenColumns: flattenColumns
   });
 
   var populateTable = function (response) {
@@ -49,4 +53,18 @@ function BrowseQueueController($scope, workspace:Workspace) {
       }
     }
   });
+
+  $scope.headers = (row) => {
+    var answer = {};
+    angular.forEach(row, (value, key) => {
+      if (!ignoreColumns.any(key) && key !== "0") {
+        if (flattenColumns.any(key)) {
+          angular.forEach(value, (v2, k2) => answer[k2] = v2);
+        } else {
+          answer[key] = value;
+        }
+      }
+    });
+    return answer;
+  };
 }
