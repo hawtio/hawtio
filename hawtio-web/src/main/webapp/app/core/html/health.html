@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="bodyTemplate">
-  <table class="table table-striped table-hover">
+  <table class="table table-striped">
       <tbody>
       <tr ng-repeat="(key, value) in row" ng-show="key != '0'">
         <td class="property-name">{{key | humanize}}</td>
@@ -9,7 +9,7 @@
   </table>
 </script>
 
-<table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-striped table-bordered table-hover"
+<table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
        id="grid">
   <thead>
   <tr>
