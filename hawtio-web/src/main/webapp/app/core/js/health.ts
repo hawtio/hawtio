@@ -82,6 +82,14 @@ function HealthController($scope, workspace:Workspace) {
     return {type: 'exec', mbean: meanInfo.objectName, operation: 'healthList()'};
   }
 
+  function createOKStatus(object) {
+    return {
+      healthId: object.domain + ".status",
+      level: "INFO",
+      message: object.title + " is OK"
+    };
+  }
+
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;
 
@@ -92,40 +100,47 @@ function HealthController($scope, workspace:Workspace) {
         var args = [];
         var onSuccessArray = [];
 
-        function callback(response) {
+        function callback(response, object) {
           var value = response.value;
           if (value) {
             // TODO this smells like a standard function :)
             if (angular.isArray(value)) {
-              angular.forEach(value, (item) => {
-                $scope.results.push(item);
-              });
+              if (value.length > 0) {
+                angular.forEach(value, (item) => {
+                  $scope.results.push(item);
+                });
+              } else {
+                $scope.results.push(createOKStatus(object));
+              }
             } else {
               $scope.results.push(value);
             }
           } else {
-            // TODO empty values should add a row!!!
+            $scope.results.push(createOKStatus(object));
           }
         }
 
         angular.forEach(objects, (mbean) => {
           args.push(asHealthQuery(mbean));
-          onSuccessArray.push(callback);
+          onSuccessArray.push((response) => callback(response, mbean));
         });
         // update the last result callback to update the UI
         onSuccessArray[onSuccessArray.length - 1] = (response) => {
-          callback(response);
+          callback(response, objects.last);
           $scope.widget.populateTable(defaultValues($scope.results));
           $scope.$apply();
         };
         $scope.results = [];
         jolokia.request(args, onSuccess(onSuccessArray));
-        /*
-         args.push(onSuccess(onSuccessArray));
-         var fn = jolokia.request;
-         fn.apply(jolokia, args);
-         */
       } else {
+        function populateTable(response) {
+          var values = response.value;
+          if (!values || values.length === 0) {
+            values = [createOKStatus(objects)];
+          }
+          $scope.widget.populateTable(defaultValues(values));
+          $scope.$apply();
+        }
         jolokia.request(
                 asHealthQuery(objects),
                 onSuccess(populateTable));
@@ -133,11 +148,6 @@ function HealthController($scope, workspace:Workspace) {
     }
   });
 
-  var populateTable = function (response) {
-    // TODO empty values should add a row!!!
-    $scope.widget.populateTable(defaultValues(response.value));
-    $scope.$apply();
-  };
 }
 
 
