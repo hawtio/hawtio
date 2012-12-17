@@ -17,27 +17,6 @@ function HealthController($scope, workspace:Workspace) {
       "sDefaultContent": "",
       "mData": null
     },
-/*
-    {
-      "mRender": (data, type, row) => {
-        if (row) {
-          var id = row["healthId"];
-          if (id) {
-            var idx = id.lastIndexOf('.');
-            if (idx > 0) {
-              var answer = id.substring(0, idx);
-              var alias = _healthDomains[answer];
-              if (alias) {
-                return alias;
-              }
-              return answer;
-            }
-          }
-        }
-        return "";
-      }
-    },
-*/
     {
       "mDataProp": "domain",
       "sDefaultContent": "",
@@ -70,28 +49,30 @@ function HealthController($scope, workspace:Workspace) {
   /**
    * Default the values that are missing in the returned JSON
    */
-  function defaultValues(aData) {
-    var domain = aData["domain"];
-    if (!domain) {
-      var id = aData["healthId"];
-      if (id) {
-        var idx = id.lastIndexOf('.');
-        if (idx > 0) {
-          domain = id.substring(0, idx);
-          var alias = _healthDomains[domain];
-          if (alias) {
-            domain = alias;
-          }
-          var kind = aData["kind"];
-          if (!kind) {
-            kind = humanizeValue(id.substring(idx + 1));
-            aData["kind"] = kind;
+  function defaultValues(values) {
+    angular.forEach(values, (aData) => {
+      var domain = aData["domain"];
+      if (!domain) {
+        var id = aData["healthId"];
+        if (id) {
+          var idx = id.lastIndexOf('.');
+          if (idx > 0) {
+            domain = id.substring(0, idx);
+            var alias = _healthDomains[domain];
+            if (alias) {
+              domain = alias;
+            }
+            var kind = aData["kind"];
+            if (!kind) {
+              kind = humanizeValue(id.substring(idx + 1));
+              aData["kind"] = kind;
+            }
           }
         }
+        aData["domain"] = domain;
       }
-      aData["domain"] = domain;
-    }
-    return aData;
+    });
+    return values;
   }
 
   $scope.results = [];
@@ -117,10 +98,10 @@ function HealthController($scope, workspace:Workspace) {
             // TODO this smells like a standard function :)
             if (angular.isArray(value)) {
               angular.forEach(value, (item) => {
-                $scope.results.push(defaultValues(item));
+                $scope.results.push(item);
               });
             } else {
-              $scope.results.push(defaultValues(value));
+              $scope.results.push(value);
             }
           } else {
             // TODO empty values should add a row!!!
@@ -134,7 +115,7 @@ function HealthController($scope, workspace:Workspace) {
         // update the last result callback to update the UI
         onSuccessArray[onSuccessArray.length - 1] = (response) => {
           callback(response);
-          $scope.widget.populateTable($scope.results);
+          $scope.widget.populateTable(defaultValues($scope.results));
           $scope.$apply();
         };
         $scope.results = [];
@@ -154,7 +135,7 @@ function HealthController($scope, workspace:Workspace) {
 
   var populateTable = function (response) {
     // TODO empty values should add a row!!!
-    $scope.widget.populateTable(response.value);
+    $scope.widget.populateTable(defaultValues(response.value));
     $scope.$apply();
   };
 }
