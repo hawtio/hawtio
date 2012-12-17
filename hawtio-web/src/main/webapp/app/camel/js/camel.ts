@@ -41,7 +41,7 @@ function CamelController($scope, workspace:Workspace) {
         console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
         height = $(document).height() - canvasDiv.offset()['top'] - 5;
       }
-      console.log("Using width " + width + " and height " + height);
+      //console.log("Using width " + width + " and height " + height);
 
       var delta = 150;
 
@@ -75,7 +75,7 @@ function CamelController($scope, workspace:Workspace) {
           //console.log("Image URL is " + imageUrl);
           nodes.push({ "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl });
           if (parentId !== null && parentId !== id) {
-            console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
+            //console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
             links.push({"source": parentId, "target": id, "value": 1});
           }
           addChildren(route, id, x, y);

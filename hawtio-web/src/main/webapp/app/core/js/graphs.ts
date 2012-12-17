@@ -198,7 +198,8 @@ function dagreLayoutGraph(nodes, links, width, height) {
     // lets add shadow
           attr("filter", "url(#drop-shadow)");
 
-  nodes.append("image")
+
+  var images = nodes.append("image")
           .attr("xlink:href", function (d) {
             return d.imageUrl;
           })
@@ -206,6 +207,16 @@ function dagreLayoutGraph(nodes, links, width, height) {
           .attr("y", -20)
           .attr("height", 24)
           .attr("width", 24);
+
+  var counters = nodes
+          .append("text")
+          .attr("text-anchor", "end")
+          .attr("class", "counter")
+          .attr("x", 0)
+          .attr("dy", 0)
+          .text(function (d) {
+            return d.counter || "0";
+          });
 
   // Append text
   var labels = nodes
@@ -223,13 +234,22 @@ function dagreLayoutGraph(nodes, links, width, height) {
 
   var labelPadding = 12;
 
-  // We need width and height for layout.
   labels.each(function (d) {
     var bbox = this.getBBox();
     d.bbox = bbox;
     d.width = bbox.width + 2 * nodePadding;
     d.height = bbox.height + 2 * nodePadding + labelPadding;
   });
+
+  // We need width and height for layout.
+  /*
+   images.each(function (d) {
+   var bbox = this.parentNode.getBBox();
+   //d.bbox = bbox;
+   d.x = -(bbox.width - 24) / 2;
+   console.log("now has X " + d.x);
+   });
+   */
 
   rects
           .attr("x", function (d) {
@@ -245,6 +265,11 @@ function dagreLayoutGraph(nodes, links, width, height) {
             return d.height;
           });
 
+  images
+          .attr("x", function (d) {
+            return -(d.bbox.width) / 2;
+          });
+
   labels
           .attr("x", function (d) {
             return -d.bbox.width / 2;
@@ -252,6 +277,11 @@ function dagreLayoutGraph(nodes, links, width, height) {
           .attr("y", function (d) {
             return -d.bbox.height / 2;
           });
+
+  counters.attr("x", function (d) {
+    var w = d.bbox.width;
+    return w / 2;
+  });
 
   // Create the layout and get the graph
   dagre.layout()
