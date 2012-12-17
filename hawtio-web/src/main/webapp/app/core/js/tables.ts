@@ -51,6 +51,8 @@ class TableWidget {
 
       var addColumn = (key, title) => {
         columns.push({
+          "sDefaultContent": "",
+          "mData": null,
           mDataProp: key
         });
 
