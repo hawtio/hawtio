@@ -20,6 +20,7 @@ function DestinationController($scope, $location, workspace:Workspace) {
       if (parent) {
         $scope.workspace.selection = parent;
         updateSelectionNode($location, parent);
+        $location.path("/attributes");
       }
     }
     $scope.workspace.operationCounter += 1;
