@@ -9,7 +9,7 @@ title: join the hawt community!
   <div class="container">
     <div id="content">
 
-${loadText(new FileInputStream("../doc/HealthMBeans.md"))}
+${unescape(loadText(new FileInputStream("../doc/HealthMBeans.md")))}
 
 </div>
   </div>

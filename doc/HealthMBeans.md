@@ -19,7 +19,7 @@ The MBean should then have these methods
 
 Each health status object should include the following properties if possible...
 
-<table>
+<table class="table">
   <tr>
     <th>Property</th>
     <th>Description</th>
