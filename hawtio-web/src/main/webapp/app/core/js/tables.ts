@@ -1,9 +1,7 @@
 class TableWidget {
   private ignoreColumnHash = {};
   private flattenColumnHash = {};
-  private bodyFormat:string;
   private detailTemplate:string = null;
-  private detailRow:string;
   private openMessages = [];
 
   public dataTableConfig = {
@@ -13,7 +11,7 @@ class TableWidget {
   };
 
 
-  constructor(public scope, public workspace:Workspace, public dataTableColumns, public config:TableWidgetConfig = {}) {
+  constructor(public scope, public workspace:Workspace, public dataTableColumns: DataTableConfig[], public config:TableWidgetConfig = {}) {
     // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
     angular.forEach(config.ignoreColumns, (name) => {
       this.ignoreColumnHash[name] = true;
@@ -54,7 +52,11 @@ class TableWidget {
       var ths = $(tableTr).find("th");
 
       // lets add new columns based on the data...
-      var columns = this.dataTableColumns.slice();
+      // TODO wont compile in TypeScript!
+      //var columns = this.dataTableColumns.slice();
+      var columns: DataTableConfig[] = [];
+      angular.forEach(this.dataTableColumns, (value) => columns.push(value));
+      //var columns = this.dataTableColumns.slice();
 
       var addColumn = (key, title) => {
         columns.push({
@@ -71,7 +73,10 @@ class TableWidget {
 
       var checkForNewColumn = (value, key, prefix) => {
         // lets check if we have a column data for it (if its not ignored)
-        var found = this.ignoreColumnHash[key] || columns.any({mDataProp: key});
+        //var keyName: string = key.toString();
+        //var config: Object = {mDataProp: key};
+        var found = this.ignoreColumnHash[key] || columns.any((k, v) => "mDataProp" === k && v === key);
+        //var found = this.ignoreColumnHash[key] || columns.any(config);
         if (!found) {
           // lets check if its a flatten column
           if (this.flattenColumnHash[key]) {
@@ -163,6 +168,15 @@ class TableWidget {
      '</textarea>');
      */
   }
+}
+
+interface DataTableConfig {
+  mData?:string;
+  mDataProp?:string;
+  sClass?:string;
+  sDefaultContent?:string;
+  sWidth?:string;
+  mRender?:(any) => any;
 }
 
 interface TableWidgetConfig {

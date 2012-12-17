@@ -1,3 +1,9 @@
+var _healthDomains = {
+  "org.apache.activemq": "ActiveMQ",
+  "org.apache.camel": "Camel",
+  "org.fusesource.fabric": "Fabric"
+};
+
 function HealthController($scope, workspace:Workspace) {
   $scope.widget = new TableWidget($scope, workspace, [
     {
@@ -5,21 +11,53 @@ function HealthController($scope, workspace:Workspace) {
       "sClass": "control center",
       "mData": null,
       "sDefaultContent": '<i class="icon-plus"></i>'
-/*
-    }, {
+    },
+    {
       "mDataProp": "level",
       "sDefaultContent": "",
       "mData": null
+    },
+/*
+    {
+      "mRender": (data, type, row) => {
+        if (row) {
+          var id = row["healthId"];
+          if (id) {
+            var idx = id.lastIndexOf('.');
+            if (idx > 0) {
+              var answer = id.substring(0, idx);
+              var alias = _healthDomains[answer];
+              if (alias) {
+                return alias;
+              }
+              return answer;
+            }
+          }
+        }
+        return "";
+      }
+    },
 */
-    }, {
-      "mDataProp": "message",
+    {
+      "mDataProp": "domain",
       "sDefaultContent": "",
       "mData": null
+    },
+    {
+      "mDataProp": "kind",
+      "sDefaultContent": "",
+      "mData": null
+    },
+    {
+      "mDataProp": "message",
+      "sDefaultContent": "",
+      "mData": null,
+      "sWidth": "60%"
     }
   ], {
-      rowDetailTemplateId: 'bodyTemplate',
-      disableAddColumns: true
-    });
+    rowDetailTemplateId: 'bodyTemplate',
+    disableAddColumns: true
+  });
 
   $scope.widget.dataTableConfig["fnRowCallback"] = (nRow, aData, iDisplayIndex, iDisplayIndexFull) => {
     var level = aData["level"];
@@ -28,6 +66,33 @@ function HealthController($scope, workspace:Workspace) {
       $(nRow).addClass(style);
     }
   };
+
+  /**
+   * Default the values that are missing in the returned JSON
+   */
+  function defaultValues(aData) {
+    var domain = aData["domain"];
+    if (!domain) {
+      var id = aData["healthId"];
+      if (id) {
+        var idx = id.lastIndexOf('.');
+        if (idx > 0) {
+          domain = id.substring(0, idx);
+          var alias = _healthDomains[domain];
+          if (alias) {
+            domain = alias;
+          }
+          var kind = aData["kind"];
+          if (!kind) {
+            kind = humanizeValue(id.substring(idx + 1));
+            aData["kind"] = kind;
+          }
+        }
+      }
+      aData["domain"] = domain;
+    }
+    return aData;
+  }
 
   $scope.results = [];
 
@@ -45,14 +110,17 @@ function HealthController($scope, workspace:Workspace) {
       if (angular.isArray(objects)) {
         var args = [];
         var onSuccessArray = [];
+
         function callback(response) {
           var value = response.value;
           if (value) {
             // TODO this smells like a standard function :)
             if (angular.isArray(value)) {
-              $scope.results = $scope.results.concat(value);
+              angular.forEach(value, (item) => {
+                $scope.results.push(defaultValues(item));
+              });
             } else {
-              $scope.results.push(value);
+              $scope.results.push(defaultValues(value));
             }
           } else {
             // TODO empty values should add a row!!!
@@ -71,11 +139,11 @@ function HealthController($scope, workspace:Workspace) {
         };
         $scope.results = [];
         jolokia.request(args, onSuccess(onSuccessArray));
-/*
-        args.push(onSuccess(onSuccessArray));
-        var fn = jolokia.request;
-        fn.apply(jolokia, args);
-*/
+        /*
+         args.push(onSuccess(onSuccessArray));
+         var fn = jolokia.request;
+         fn.apply(jolokia, args);
+         */
       } else {
         jolokia.request(
                 asHealthQuery(objects),
