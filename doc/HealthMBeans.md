@@ -19,6 +19,42 @@ The MBean should then have these methods
 
 Each health status object should include the following properties if possible...
 
-* code = the unique code of the kind of warning/error/issue. We can then use this unique kind ID to generate useful UI tooling & descriptions. Ideally the code should be fully qualified in the same way as Java classes, such as org.apache.activemq.destination.NoConsumer
-* resource = the JMX ObjectName of the thing causing the issue. If its hard to do, just include plenty of other properties to describe the resource/component that caused the issue
-* severity = the severity level such as INFO, WARN, ERROR, CRITICAL to give some indication of how serious the problem is. INFO means its OK and healthy.
+<table>
+  <tr>
+    <th>Property</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>healthId</td>
+    <td>
+      The unique ID of the kind of health check performed. We can then use this unique kind ID to generate useful UI tooling & descriptions.
+      Ideally the code should be fully qualified in the same way as Java classes, such as org.apache.activemq.noConsumer
+    </td>
+  </tr>
+  <tr>
+    <td>
+     level
+    </td>
+    <td>
+      The severity level such as INFO, WARN, ERROR, CRITICAL to give some indication of how serious the problem is.
+      INFO means its OK and healthy.
+    </td>
+  </tr>
+  <tr>
+    <td>
+     message
+    </td>
+    <td>
+      A textual description of the health check status.
+    </td>
+  </tr>
+  <tr>
+    <td>
+    resource
+    </td>
+    <td>
+      The JMX ObjectName of the thing causing the issue.
+      If its hard to do, just include plenty of other properties to describe the resource/component that caused the issue
+    </td>
+  </tr>
+</table>
