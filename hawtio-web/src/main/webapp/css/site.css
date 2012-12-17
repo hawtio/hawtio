@@ -199,3 +199,8 @@ span.dynatree-expander {
 span.dynatree-icon {
     color: #B55242;
 }
+
+/** table hover and nested divs */
+.table-hover tbody tr:hover td.details {
+  background-color: #ffffff;
+}
