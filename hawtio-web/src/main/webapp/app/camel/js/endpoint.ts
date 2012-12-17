@@ -13,6 +13,21 @@ function EndpointController($scope, workspace:Workspace) {
     notification("success", $scope.message);
   }
 
+  function deleteSuccess() {
+    // lets set the selection to the parent
+    if (workspace.selection) {
+      var parent = workspace.selection.parent;
+      if (parent) {
+        $scope.workspace.selection = parent;
+        updateSelectionNode($location, parent);
+        $location.path("/attributes");
+      }
+    }
+    $scope.workspace.operationCounter += 1;
+    $scope.$apply();
+    notification("success", $scope.message);
+  }
+
   $scope.createEndpoint = (name) => {
     var jolokia = workspace.jolokia;
     if (jolokia) {
@@ -40,7 +55,7 @@ function EndpointController($scope, workspace:Workspace) {
         var mbean = "" + domain + ":BrokerName=" + brokerName + ",Type=Broker";
         $scope.message = "Deleting " + (isQueue ? "queue" :  "topic") + " " + name;
         var operation = "removeEndpoint(java.lang.String)";
-        jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+        jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
       }
     }
   };
