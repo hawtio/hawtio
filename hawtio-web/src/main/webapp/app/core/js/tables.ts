@@ -133,7 +133,8 @@ class TableWidget {
   }
 
   populateDetailDiv(row, div) {
-    // customise the expansion
+    // lets remove the silly "0" property that gets shoved in there due to the expand/collapse row
+    delete row["0"];
     this.scope.row = row;
     this.scope.templateDiv = div;
     var template = this.detailTemplate;

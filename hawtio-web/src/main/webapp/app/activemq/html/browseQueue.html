@@ -4,15 +4,20 @@
       <i class="expandable-indicator"></i> Headers
     </div>
     <div class="expandable-body well">
-      <table class="table table-striped">
-          <tbody>
-          <tr ng-repeat="(key, value) in headers(row)">
-            <td class="property-name">{{key}}</td>
-            <td class="property-value">{{value}}</td>
-          </tr>
-          </tbody>
+      <table class="table table-condensed table-striped">
+        <thead>
+        <tr>
+          <th>Header</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="(key, value) in headers(row)">
+          <td class="property-name">{{key}}</td>
+          <td class="property-value">{{value}}</td>
+        </tr>
+        </tbody>
       </table>
-
     </div>
   </div>
 

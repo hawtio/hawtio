@@ -57,7 +57,7 @@ function BrowseQueueController($scope, workspace:Workspace) {
   $scope.headers = (row) => {
     var answer = {};
     angular.forEach(row, (value, key) => {
-      if (!ignoreColumns.any(key) && key !== "0") {
+      if (!ignoreColumns.any(key)) {
         if (flattenColumns.any(key)) {
           angular.forEach(value, (v2, k2) => answer[k2] = v2);
         } else {

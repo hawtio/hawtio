@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="bodyTemplate">
   <table class="table table-striped">
       <tbody>
-      <tr ng-repeat="(key, value) in row" ng-show="key != '0'">
+      <tr ng-repeat="(key, value) in row">
         <td class="property-name">{{key | humanize}}</td>
         <td class="property-value">{{value}}</td>
       </tr>
