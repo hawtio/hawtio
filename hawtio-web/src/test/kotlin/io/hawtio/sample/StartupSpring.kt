@@ -1,5 +1,6 @@
 package io.hawt.sample
 
+/*
 import javax.servlet.ServletContainerInitializer
 import javax.servlet.ServletContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
@@ -16,3 +17,4 @@ class StartupSpring: ServletContainerInitializer {
         }
     }
 }
+*/
