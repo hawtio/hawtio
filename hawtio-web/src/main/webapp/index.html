@@ -61,6 +61,9 @@
               <li ng-class="navClass('browseEndpoint')" ng-show="validSelection('browseEndpoint')">
                 <a ng-href="#/browseEndpoint{{hash}}" title="Browse the messages on the endpoint"><i
                         class="icon-envelope"></i> Browse</a></li>
+              <li ng-class="navClass('traceRoute')" ng-show="validSelection('traceRoute')">
+                <a ng-href="#/traceRoute{{hash}}" title="Trace the messages flowing through the Camel route"><i
+                        class="icon-envelope"></i> Trace</a></li>
             </ul>
           </li>
 
@@ -116,18 +119,6 @@
             <li ng-class="navClass('help')">
               <a ng-href="#/help{{hash}}" title="Read the help about how to use this console" data-placement="bottom">
                 <i class="icon-question-sign"></i> Help</a></li>
-            <!--
-                                    <li class="dropdown"><a ng-href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b
-                                            class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li class="dropdown-submenu">
-                                            <li><a ng-href="#/preferences{{hash}}"><i class="icon-cog"></i> Preferences</a></li>
-                                            <li><a ng-href="/help/support{{hash}}"><i class="icon-envelope"></i> Contact Support</a></li>
-                                            <li class="divider"></li>
-                                            <li><a ng-href="/auth/logout{{hash}}"><i class="icon-off"></i> Logout</a></li>
-                                        </ul>
-                                    </li>
-            -->
           </ul>
         </div>
       </div>

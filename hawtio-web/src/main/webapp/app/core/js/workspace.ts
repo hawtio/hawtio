@@ -45,6 +45,7 @@ class Workspace {
       // camel
       'routes': () => this.isCamelFolder(),
       'createEndpoint': () => this.isEndpointsFolder(),
+      'traceRoute': () => this.isRoute(),
 
       // osgi
       'bundles': () => this.isOsgiFolder()
@@ -82,6 +83,17 @@ class Workspace {
       this.jolokia.start(value);
     }
     console.log("Set update rate to: " + value);
+  }
+
+  /**
+   * Returns the selected mbean name if there is one
+   */
+  public getSelectedMBeanName(): string {
+    var selection = this.selection;
+    if (selection) {
+      return selection.objectName;
+    }
+    return null;
   }
 
   /**
@@ -204,6 +216,10 @@ class Workspace {
 
   isRoutesFolder() {
     return this.hasDomainAndLastPath('org.apache.camel', 'routes')
+  }
+
+  isRoute() {
+    return this.hasDomainAndProperties('org.apache.camel', {type: 'routes'});
   }
 
   isOsgiFolder() {

@@ -29,6 +29,7 @@ myApp.config(($routeProvider) => {
                   when('/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
                   when('/routes', {templateUrl: 'app/camel/html/routes.html', controller: CamelController}).
                   when('/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
+                  when('/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController}).
 
                   // osgi
                   when('/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: BundleController}).

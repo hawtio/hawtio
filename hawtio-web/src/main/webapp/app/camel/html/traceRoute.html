@@ -1,0 +1,17 @@
+<div>
+  <div class="span12 well" ng-hide="tracing">
+    <form>
+      <p>Tracing allows you to send messages to a route and then step through and see the messages flow through a route
+        to aid debugging and to help diagnose issues.</p>
+
+      <p>Once you start tracing, you can send messages to the input endpoints, then come back to this page and see the flow of messages through your route.</p>
+
+      <button class="btn btn-info" type="submit" ng-click="startTracing()">Start Tracing</button>
+    </form>
+  </div>
+  <div ng-show="tracing">
+    <form>
+      <button class="btn btn-info" type="submit" ng-click="stopTracing()">Stop Tracing</button>
+    </form>
+  </div>
+</div>
