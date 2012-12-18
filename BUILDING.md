@@ -30,6 +30,11 @@ run the web application (or deploy it inside your container using the hawtio-dev
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)
 
+To specify a different port to run on, just override the **jettyPort** property
+
+    mvn test-compile exec:java -DjettyPort=8181
+
+
 ### Incremental compile with TypeScript
 
 There is a handy shell script [compileTS](https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js)
