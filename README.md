@@ -11,7 +11,7 @@ From a git clone you should be able to run the a sample hawt.io console as follo
 
 That should run a little sample web application with some ActiveMQ and Camel inside to interact with.
 
-A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs aavailable changes dynamically based onthe content.
+A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.
 
 If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the **hawtio-web.war** to your container
 
