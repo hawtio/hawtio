@@ -54,7 +54,7 @@ Then to install grunt:
 
 Then in the hawtio directory you will need to install the grunt plugins required
 
-    cd hawtio
+    cd hawtio-web
     npm install grunt-type
 
 Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
