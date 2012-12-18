@@ -18,15 +18,17 @@ Here's how to do it:
 
 install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
-incrementally build the project
-
-    cd hawtio-web
-    mvn -Pwatch
-
 run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources)
 
     cd hawtio-web
     mvn test-compile exec:java
+
+then incrementally build the project using a separate shell:
+
+    cd hawtio-web
+    mvn -Pwatch
+
+Enable Live Reload in your browser (so open http://localhost:8080/hawtio/ then click on the Live Reload icon to the right of the location bar).
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)
 
