@@ -189,6 +189,14 @@ myApp.directive('expandable', function() {
 
 });
 
+// enable bootstrap tooltips
+$(document).ready(function () {
+  $("a[title]").tooltip({
+    'selector': '',
+    delay: { show: 1000, hide: 100 }
+  });
+});
+
 
 
 
