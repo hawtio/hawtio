@@ -125,7 +125,12 @@ function CamelController($scope, workspace:Workspace) {
             if (meanProcessingTime) {
               tooltip = "mean processing time " + meanProcessingTime + " (ms)";
             }
-            node["counter"] = completed;
+            var total = 0 + parseInt(completed);
+            var failed = stat.getAttribute("exchangesFailed");
+            if (failed) {
+              total += parseInt(failed);
+            }
+            node["counter"] = total;
             node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats
