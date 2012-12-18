@@ -58,3 +58,10 @@ Each health status object should include the following properties if possible...
     </td>
   </tr>
 </table>
+
+### Examples
+
+To show you how to implement a HealthMBean here are a few examples.
+
+* [AciveMQ Health MBean](https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52)
+* [Fuse Fabric Health MBean](https://github.com/fusesource/fuse/blob/master/fabric/fabric-core/src/main/scala/org/fusesource/fabric/service/HealthCheck.java#L83)
