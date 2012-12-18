@@ -5,11 +5,11 @@ function CamelController($scope, workspace:Workspace) {
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;
 
-    var mbean = getSelectionCamelContextMBean(workspace);
-    if (mbean) {
+    $scope.mbean = getSelectionCamelContextMBean(workspace);
+    if ($scope.mbean) {
       var jolokia = workspace.jolokia;
       jolokia.request(
-              {type: 'exec', mbean: mbean, operation: 'dumpRoutesAsXml()'},
+              {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},
               onSuccess(populateTable));
     }
   });
@@ -17,6 +17,7 @@ function CamelController($scope, workspace:Workspace) {
   var populateTable = function (response) {
     var data = response.value;
     $scope.routes = data;
+    $scope.nodes = {};
     var nodes = [];
     var links = [];
     var selectedRouteId = null;
@@ -73,7 +74,12 @@ function CamelController($scope, workspace:Workspace) {
           }
           var imageUrl = url("/app/camel/img/" + imageName + "24.png");
           //console.log("Image URL is " + imageUrl);
-          nodes.push({ "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl });
+          var cid = route.getAttribute("id");
+          var node = { "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid };
+          if (cid) {
+            $scope.nodes[cid] = node;
+          }
+          nodes.push(node);
           if (parentId !== null && parentId !== id) {
             //console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
             links.push({"source": parentId, "target": id, "value": 1});
@@ -94,10 +100,38 @@ function CamelController($scope, workspace:Workspace) {
       });
 
       //d3ForceGraph(nodes, links, width, height);
-      dagreLayoutGraph(nodes, links, width, height);
+      $scope.graphData = dagreLayoutGraph(nodes, links, width, height);
+
+      var jolokia = workspace.jolokia;
+      var query = {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesStatsAsXml', arguments: [true, true]};
+      scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(statsCallback, query));
     }
     $scope.$apply();
   };
+
+  function statsCallback(response) {
+    var data = response.value;
+    if (data) {
+      var doc = $.parseXML(data);
+      var allStats = $(doc).find("processorStat");
+      allStats.each((idx, stat) => {
+        var id = stat.getAttribute("id");
+        var completed = stat.getAttribute("exchangesCompleted");
+        if (id && completed) {
+          var node = $scope.nodes[id];
+          if (node) {
+            node["counter"] = completed;
+          } else {
+            // we are probably not showing the route for these stats
+            //console.log("Warning, could not find " + id);
+          }
+        }
+      });
+
+      // now lets try update the graph
+      dagreUpdateGraphData($scope.graphData);
+    }
+  }
 }
 
 /**

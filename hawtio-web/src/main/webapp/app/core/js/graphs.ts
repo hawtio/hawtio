@@ -214,9 +214,7 @@ function dagreLayoutGraph(nodes, links, width, height) {
           .attr("class", "counter")
           .attr("x", 0)
           .attr("dy", 0)
-          .text(function (d) {
-            return d.counter || "0";
-          });
+          .text(_counterFunction);
 
   // Append text
   var labels = nodes
@@ -345,4 +343,14 @@ function dagreLayoutGraph(nodes, links, width, height) {
   nodes.call(nodeDrag);
   edges.call(edgeDrag);
 
+  return states;
+}
+
+function dagreUpdateGraphData(data) {
+  var svg = d3.select("svg");
+  svg.selectAll("text.counter").text(_counterFunction);
+}
+
+function _counterFunction(d) {
+  return d.counter || "";
 }
