@@ -117,10 +117,16 @@ function CamelController($scope, workspace:Workspace) {
       allStats.each((idx, stat) => {
         var id = stat.getAttribute("id");
         var completed = stat.getAttribute("exchangesCompleted");
+        var tooltip = "";
         if (id && completed) {
           var node = $scope.nodes[id];
           if (node) {
+            var meanProcessingTime = stat.getAttribute("meanProcessingTime");
+            if (meanProcessingTime) {
+              tooltip = "mean processing time " + meanProcessingTime + " (ms)";
+            }
             node["counter"] = completed;
+            node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats
             //console.log("Warning, could not find " + id);

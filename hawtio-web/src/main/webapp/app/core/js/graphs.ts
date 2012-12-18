@@ -182,6 +182,11 @@ function dagreLayoutGraph(nodes, links, width, height) {
             return "node-" + d.label
           });
 
+  // lets add a tooltip
+  nodes.append("title").text(function (d) {
+    return d.tooltip || "";
+  });
+
   var edges = svgGroup
           .selectAll("path .edge")
           .data(transitions)
@@ -238,16 +243,6 @@ function dagreLayoutGraph(nodes, links, width, height) {
     d.width = bbox.width + 2 * nodePadding;
     d.height = bbox.height + 2 * nodePadding + labelPadding;
   });
-
-  // We need width and height for layout.
-  /*
-   images.each(function (d) {
-   var bbox = this.parentNode.getBBox();
-   //d.bbox = bbox;
-   d.x = -(bbox.width - 24) / 2;
-   console.log("now has X " + d.x);
-   });
-   */
 
   rects
           .attr("x", function (d) {
@@ -349,6 +344,20 @@ function dagreLayoutGraph(nodes, links, width, height) {
 function dagreUpdateGraphData(data) {
   var svg = d3.select("svg");
   svg.selectAll("text.counter").text(_counterFunction);
+
+  // add tooltip
+  svg.selectAll("g .node title").text(function (d) {
+    return d.tooltip || "";
+  });
+  /*
+  TODO can we reuse twitter bootstrap on an svg title?
+          .each(function (d) {
+            $(d).tooltip({
+              'placement': "bottom"
+            });
+          });
+
+   */
 }
 
 function _counterFunction(d) {
