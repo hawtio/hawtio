@@ -32,9 +32,6 @@ class TableWidget {
   public addData(newData) {
     var dataTable = this.scope.dataTable;
     dataTable.fnAddData(newData);
-
-    // add a handler for the expand/collapse column
-    //$('#grid td.control').click(this.createClickHandler());
   }
 
 
