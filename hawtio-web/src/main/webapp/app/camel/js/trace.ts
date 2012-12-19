@@ -65,6 +65,7 @@ function TraceRouteController($scope, workspace:Workspace) {
 
 
   var populateRouteMessages = function (response) {
+    var first = $scope.data.length === 0;
     var xml = response.value;
     if (angular.isString(xml)) {
       // lets parse the XML DOM here...
@@ -98,8 +99,15 @@ function TraceRouteController($scope, workspace:Workspace) {
           messageData["toNode"] = toNode;
         }
         $scope.data.push(messageData);
+        if (first) {
+          console.log("Loading first item");
+          $scope.widget.populateTable($scope.data);
+          first = false;
+        } else {
+          console.log("Loading another row!");
+          $scope.widget.addData(messageData);
+        }
       });
     }
-    $scope.widget.populateTable($scope.data);
   };
 }

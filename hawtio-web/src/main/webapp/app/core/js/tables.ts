@@ -11,7 +11,7 @@ class TableWidget {
   };
 
 
-  constructor(public scope, public workspace:Workspace, public dataTableColumns: DataTableConfig[], public config:TableWidgetConfig = {}) {
+  constructor(public scope, public workspace:Workspace, public dataTableColumns:DataTableConfig[], public config:TableWidgetConfig = {}) {
     // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
     angular.forEach(config.ignoreColumns, (name) => {
       this.ignoreColumnHash[name] = true;
@@ -26,6 +26,21 @@ class TableWidget {
     }
   }
 
+  /**
+   * Adds new data to the table
+   */
+  public addData(newData) {
+    var dataTable = this.scope.dataTable;
+    dataTable.fnAddData(newData);
+
+    // add a handler for the expand/collapse column
+    //$('#grid td.control').click(this.createClickHandler());
+  }
+
+
+  /**
+   * Populates the table with the given data
+   */
   public populateTable(data) {
     var $scope = this.scope;
     if (!data) {
@@ -54,7 +69,7 @@ class TableWidget {
       // lets add new columns based on the data...
       // TODO wont compile in TypeScript!
       //var columns = this.dataTableColumns.slice();
-      var columns: DataTableConfig[] = [];
+      var columns:DataTableConfig[] = [];
       angular.forEach(this.dataTableColumns, (value) => columns.push(value));
       //var columns = this.dataTableColumns.slice();
 
@@ -104,8 +119,8 @@ class TableWidget {
 
       var widget = this;
 
-      // add a handler for the expand/collapse column
-      $('#grid td.control').click(function () {
+      // add a handler for the expand/collapse column for all rows (and future rows)
+      $(document).on("click", "#grid td.control", function () {
         var dataTable = $scope.dataTable;
         var parentRow = this.parentNode;
         var openMessages = widget.openMessages;
