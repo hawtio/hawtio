@@ -138,36 +138,17 @@ class TableWidget {
     this.scope.row = row;
     this.scope.templateDiv = div;
     var template = this.detailTemplate;
+    if (!template) {
+      var templateId = this.config.rowDetailTemplateId;
+      if (templateId) {
+        this.detailTemplate = this.workspace.$templateCache.get(templateId);
+        template = this.detailTemplate;
+      }
+    }
     if (template) {
       div.html(template);
-      var results = this.workspace.$compile(div.contents())(this.scope);
+      this.workspace.$compile(div.contents())(this.scope);
     }
-
-    /*
-     var body = oData["Text"];
-     if (!body) {
-     var bodyValue = oData["body"];
-     if (angular.isObject(bodyValue)) {
-     body = bodyValue["text"];
-     } else {
-     body = bodyValue;
-     }
-     }
-     if (!body) body = "";
-
-     // lets guess the payload format
-     this.bodyFormat = "javascript";
-     var trimmed = body.trimLeft().trimRight();
-     if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-     this.bodyFormat = "xml";
-     }
-     var rows = 1;
-     body.each(/\n/, () => rows++);
-     div.attr("title", "Message payload");
-     div.html('<textarea readonly class="messageDetail" class="input-xlarge" rows="' + rows + '">' +
-     body +
-     '</textarea>');
-     */
   }
 }
 
