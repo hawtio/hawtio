@@ -32,18 +32,15 @@ function BrowseEndpointController($scope, workspace:Workspace) {
           if (key) {
             if (value) messageData.headers[key] = value;
             if (typeName) messageData.headerTypes[key] = typeName;
-            console.log("Header " + key + " type " + typeName + " = " + value);
           }
         });
         var body = $(message).children("body")[0];
         if (body) {
           var bodyText = body.textContent;
           var bodyType = body.getAttribute("type");
-          console.log("Got body type: " + bodyType + " text: " + bodyText);
           messageData["body"] = bodyText;
           messageData["bodyType"] = bodyType;
         }
-        console.log("body element: " + body);
         data.push(messageData);
       });
     }
@@ -53,14 +50,11 @@ function BrowseEndpointController($scope, workspace:Workspace) {
   $scope.$watch('workspace.selection', function () {
     if (workspace.moveIfViewInvalid()) return;
 
-    var selection = workspace.selection;
-    if (selection) {
-      var mbean = selection.objectName;
-      if (mbean) {
-        var jolokia = workspace.jolokia;
-        var options = onSuccess(populateTable);
-        jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
-      }
+    var mbean = getSelectionBundleMBean(workspace);
+    if (mbean) {
+      var jolokia = workspace.jolokia;
+      var options = onSuccess(populateTable);
+      jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
     }
   });
 }

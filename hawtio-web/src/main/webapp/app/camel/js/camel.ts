@@ -145,33 +145,62 @@ function CamelController($scope, workspace:Workspace) {
   }
 }
 
+function getContextId(workspace) {
+  var selection = workspace.selection;
+  var tree = workspace.tree;
+  var folderNames = selection.folderNames;
+  var entries = selection.entries;
+  var contextId;
+  if (tree && selection) {
+    if (folderNames && folderNames.length > 1) {
+      contextId = folderNames[1];
+    } else if (entries) {
+      contextId = entries["context"];
+    }
+  }
+  return contextId;
+}
+
 /**
  * Returns the selected camel context mbean for the given selection or null if it cannot be found
  */
 function getSelectionCamelContextMBean(workspace) {
   if (workspace) {
+    var contextId = getContextId(workspace);
     var selection = workspace.selection;
     var tree = workspace.tree;
-    var folderNames = selection.folderNames;
-    var entries = selection.entries;
-    var domain;
-    var contextId;
     if (tree && selection) {
-      if (folderNames && folderNames.length > 1) {
-        domain = folderNames[0];
-        contextId = folderNames[1];
-      } else if (entries) {
-        domain = selection.domain;
-        contextId = entries["context"];
+      var domain = selection.domain;
+      if (domain && contextId) {
+        var result = tree.navigate(domain, contextId, "context");
+        if (result && result.children) {
+          var contextBean = result.children.first();
+          if (contextBean.title) {
+            var contextName = contextBean.title;
+            return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+          }
+        }
       }
     }
-    if (domain && contextId) {
-      var result = tree.navigate(domain, contextId, "context");
-      if (result && result.children) {
-        var contextBean = result.children.first();
-        if (contextBean.title) {
-          var contextName = contextBean.title;
-          return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+  }
+  return null;
+}
+
+/**
+ * Returns the selected camel trace mbean for the given selection or null if it cannot be found
+ */
+function getSelectionCamelTraceMBean(workspace) {
+  if (workspace) {
+    var contextId = getContextId(workspace);
+    var selection = workspace.selection;
+    var tree = workspace.tree;
+    if (tree && selection) {
+      var domain = selection.domain;
+      if (domain && contextId) {
+        var result = tree.navigate(domain, contextId, "fabric");
+        if (result && result.children) {
+          var mbean = result.children.first();
+          return mbean.objectName;
         }
       }
     }
