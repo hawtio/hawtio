@@ -158,7 +158,6 @@ class TableWidget {
         var selected = dataTable.fnGetData(row);
         var selectHandler = widget.config.selectHandler;
         if (selected && selectHandler) {
-          console.log("Selecting node: " + selected);
           selectHandler(selected);
         }
       });

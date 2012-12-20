@@ -43,7 +43,7 @@ function LogController($scope, $location, workspace:Workspace) {
       //console.log("Got results " + logs.length + " last seq: " + seq);
       $scope.$apply();
     } else {
-      console.log("Failed to get a response! " + response);
+      notification("error", "Failed to get a response! " + response);
     }
   };
 
@@ -56,7 +56,7 @@ function LogController($scope, $location, workspace:Workspace) {
     if (value) {
       updateValues(value);
     } else {
-      console.log("Failed to get a response! " + response);
+      notification("error", "Failed to get a response! " + response);
     }
   };
 

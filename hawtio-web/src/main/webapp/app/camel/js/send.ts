@@ -34,7 +34,6 @@ function SendMessageController($scope, workspace:Workspace) {
   });
 
   var sendWorked = () => {
-    console.log("Sent message!");
     $("#sendButton").attr("disabled", "disabled");
     $scope.codeMirror.setValue("");
     notification("success", "Message sent!");
@@ -49,7 +48,6 @@ function SendMessageController($scope, workspace:Workspace) {
     if (editor && !body) {
       body = editor.getValue();
     }
-    console.log("sending body: " + body);
     var selection = workspace.selection;
     if (selection) {
       var mbean = selection.objectName;
@@ -62,7 +60,7 @@ function SendMessageController($scope, workspace:Workspace) {
           if (mbean) {
             jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
           } else {
-            console.log("Could not find CamelContext MBean!");
+            notification("error", "Could not find CamelContext MBean!");
           }
         } else {
           jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
