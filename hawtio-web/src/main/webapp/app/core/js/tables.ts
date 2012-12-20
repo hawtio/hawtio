@@ -40,6 +40,8 @@ class TableWidget {
    */
   public populateTable(data) {
     var $scope = this.scope;
+
+
     if (!data) {
       $scope.messages = [];
     } else {
@@ -127,7 +129,7 @@ class TableWidget {
       var widget = this;
 
       // add a handler for the expand/collapse column for all rows (and future rows)
-      $(document).on("click", "#grid td.control", function () {
+      var expandCollapseNode = function () {
         var dataTable = $scope.dataTable;
         var parentRow = this.parentNode;
         var openMessages = widget.openMessages;
@@ -149,6 +151,12 @@ class TableWidget {
         }
         // lets let angular render any new detail templates
         $scope.$apply();
+      };
+
+      $(document).on("click", "#grid td.control", expandCollapseNode);
+
+      keys.event.action( null, null, function(node) {
+        expandCollapseNode.call(node);
       });
 
       keys.event.focus( null, null, function(node) {
