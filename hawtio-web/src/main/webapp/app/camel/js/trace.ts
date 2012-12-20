@@ -46,10 +46,10 @@ function TraceRouteController($scope, workspace:Workspace) {
   }
 
   function setTracing(flag:Boolean) {
-    var mbean = workspace.getSelectedMBeanName();
+    var mbean = getSelectionCamelTraceMBean(workspace);
     if (mbean) {
       var options = onSuccess(tracingChanged);
-      jolokia.execute(mbean, 'setTracing', flag, options);
+      jolokia.execute(mbean, 'setEnabled', flag, options);
     }
   }
 
@@ -67,12 +67,12 @@ function TraceRouteController($scope, workspace:Workspace) {
     // clear any previous polls
     closeHandle($scope, jolokia);
 
-    var mbean = workspace.getSelectedMBeanName();
+    var mbean = getSelectionCamelTraceMBean(workspace);
     if (mbean) {
-      $scope.tracing = jolokia.execute(mbean, 'getTracing');
+      $scope.tracing = jolokia.execute(mbean, 'isEnabled');
 
       if ($scope.tracing) {
-        var traceMBean = getSelectionCamelTraceMBean(workspace);
+        var traceMBean = mbean;
         if (traceMBean) {
           var query = {type: 'exec', mbean: traceMBean, operation: 'dumpAllTracedMessagesAsXml'};
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteMessages, query));
@@ -84,6 +84,7 @@ function TraceRouteController($scope, workspace:Workspace) {
         $scope.graphView = null;
         $scope.tableView = null;
       }
+      console.log("Tracing is now " + $scope.tracing);
     }
   }
 
