@@ -49,6 +49,7 @@ function CamelController($scope, workspace:Workspace) {
       function addChildren(parent, parentId, parentX, parentY) {
         var x = parentX;
         var y = parentY + delta;
+        var rid = parent.getAttribute("id");
         $(parent).children().each((idx, route) => {
           var id = nodes.length;
           // from acts as a parent even though its a previous sibling :)
@@ -75,13 +76,17 @@ function CamelController($scope, workspace:Workspace) {
           var imageUrl = url("/app/camel/img/" + imageName + "24.png");
           //console.log("Image URL is " + imageUrl);
           var cid = route.getAttribute("id");
-          var node = { "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid };
+          var node = { "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid};
+          if (rid) {
+            node["rid"] = rid;
+          }
           if (cid) {
             $scope.nodes[cid] = node;
           }
+          // only use the route id on the first from node
+          rid = null;
           nodes.push(node);
           if (parentId !== null && parentId !== id) {
-            //console.log(parent.nodeName + "(" + parentId + " @" + parentX + "," + parentY + ")" + " -> " + route.nodeName + "(" + id + " @" + x + "," + y + ")");
             links.push({"source": parentId, "target": id, "value": 1});
           }
           addChildren(route, id, x, y);

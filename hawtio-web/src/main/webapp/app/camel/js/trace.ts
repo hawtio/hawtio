@@ -14,12 +14,8 @@ function TraceRouteController($scope, workspace:Workspace) {
         // lets clear the selected node first
         nodes.attr("class", "node");
 
-        nodes.filter(function(item) {
-          if (item) {
-            var id = item["cid"];
-            return id && toNode === id;
-          }
-          return false;
+        nodes.filter(function (item) {
+          return item && (toNode === item["cid"] || toNode === item["rid"]);
         }).attr("class", "node selected");
       }
     }
