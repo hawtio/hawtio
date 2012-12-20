@@ -7,6 +7,8 @@
       <p>Once you start tracing, you can send messages to the input endpoints, then come back to this page and see the
         flow of messages through your route.</p>
 
+      <p>As you click on the message table, you can see which node in the flow it came through; moving the selection up and down in the message table lets you see the flow of the message through the diagram.</p>
+
       <button class="btn btn-info" type="submit" ng-click="startTracing()">Start Tracing</button>
     </form>
   </div>
@@ -15,9 +17,9 @@
       <button class="btn btn-info pull-right" type="submit" ng-click="stopTracing()">Stop Tracing</button>
     </form>
 
-    <div ng-include src="'app/camel/html/routes.html'">
+    <div ng-include src="graphView">
     </div>
-    <div ng-include src="'app/camel/html/browseEndpoint.html'">
+    <div ng-include src="tableView">
     </div>
   </div>
 </div>

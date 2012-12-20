@@ -1,6 +1,8 @@
 function TraceRouteController($scope, workspace:Workspace) {
   $scope.tracing = false;
   $scope.data = [];
+  $scope.graphView = null;
+  $scope.tableView = null;
 
   $scope.selectHandler = (selected) => {
     if (selected) {
@@ -75,8 +77,12 @@ function TraceRouteController($scope, workspace:Workspace) {
           var query = {type: 'exec', mbean: traceMBean, operation: 'dumpAllTracedMessagesAsXml'};
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteMessages, query));
         }
+        $scope.graphView = "app/camel/html/routes.html";
+        $scope.tableView = "app/camel/html/browseEndpoint.html";
       } else {
         $scope.data = [];
+        $scope.graphView = null;
+        $scope.tableView = null;
       }
     }
   }
