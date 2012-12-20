@@ -204,3 +204,16 @@ span.dynatree-icon {
 .table-hover tbody tr:hover td.details {
   background-color: #ffffff;
 }
+
+/** row selection */
+tr.row_selected td {
+    background-color: #d9edf7;
+}
+.table-hover tbody tr.row_selected:hover td {
+    background-color: #d9edf7;
+}
+
+.table-striped tbody tr.row_selected:nth-child(odd) td,
+.table-striped tbody tr.row_selected:nth-child(odd) th {
+    background-color: #d9edf7;
+}
