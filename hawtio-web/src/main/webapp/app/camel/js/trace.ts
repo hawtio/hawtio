@@ -6,7 +6,19 @@ function TraceRouteController($scope, workspace:Workspace) {
     if (selected) {
       var toNode = selected["toNode"];
       if (toNode) {
-        console.log("Selected node id: " + toNode);
+        // lets highlight the node in the diagram
+        var nodes = d3.select("svg").selectAll("g .node");
+
+        // lets clear the selected node first
+        nodes.attr("class", "node");
+
+        nodes.filter(function(item) {
+          if (item) {
+            var id = item["cid"];
+            return id && toNode === id;
+          }
+          return false;
+        }).attr("class", "node selected");
       }
     }
   };
@@ -55,7 +67,7 @@ function TraceRouteController($scope, workspace:Workspace) {
 
     var mbean = workspace.getSelectedMBeanName();
     if (mbean) {
-      $scope.tracing = jolokia.execute(mbean, 'getTracing()');
+      $scope.tracing = jolokia.execute(mbean, 'getTracing');
 
       if ($scope.tracing) {
         var traceMBean = getSelectionCamelTraceMBean(workspace);
