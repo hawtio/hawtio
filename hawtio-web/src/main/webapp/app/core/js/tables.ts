@@ -112,15 +112,17 @@ class TableWidget {
 
       this.dataTableConfig["aaData"] = array;
       this.dataTableConfig["aoColumns"] = columns;
+
       $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
 
       var keys = new KeyTable({
         "table": tableElement[0],
-/*
-        "datatable": tableElement.dataTable()
-*/
         "datatable": $scope.dataTable
       });
+
+      // lets try focus on the table
+      keys.fnSetPosition(0, 0);
+      $(tableElement).focus();
 
       var widget = this;
 
