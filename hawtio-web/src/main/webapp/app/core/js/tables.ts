@@ -140,6 +140,23 @@ class TableWidget {
         // lets let angular render any new detail templates
         $scope.$apply();
       });
+
+      $(document).on("click", "#grid tr", function () {
+        if ($(this).hasClass('row_selected')) {
+          $(this).removeClass('row_selected');
+        }
+        else {
+          var dataTable = $scope.dataTable;
+          dataTable.$('tr.row_selected').removeClass('row_selected');
+          $(this).addClass('row_selected');
+
+          var selected = dataTable.fnGetData(this);
+          var selectHandler = widget.config.selectHandler;
+          if (selected && selectHandler) {
+            selectHandler(selected);
+          }
+        }
+      });
     }
     $scope.$apply();
   }
@@ -178,4 +195,5 @@ interface TableWidgetConfig {
   flattenColumns?:string[];
   disableAddColumns?:Boolean;
   rowDetailTemplateId?:string;
+  selectHandler?: (any) => any;
 }

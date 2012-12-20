@@ -1,6 +1,16 @@
 function TraceRouteController($scope, workspace:Workspace) {
   $scope.tracing = false;
   $scope.data = [];
+
+  $scope.selectHandler = (selected) => {
+    if (selected) {
+      var toNode = selected["toNode"];
+      if (toNode) {
+        console.log("Selected node id: " + toNode);
+      }
+    }
+  };
+
   $scope.widget = new TableWidget($scope, workspace, [
     {
       "mDataProp": null,
@@ -10,7 +20,8 @@ function TraceRouteController($scope, workspace:Workspace) {
   ], {
     rowDetailTemplateId: 'bodyTemplate',
     ignoreColumns: ["headerTypes", "body"],
-    flattenColumns: ["headers"]
+    flattenColumns: ["headers"],
+    selectHandler: $scope.selectHandler
   });
 
   var jolokia = workspace.jolokia;
@@ -27,6 +38,7 @@ function TraceRouteController($scope, workspace:Workspace) {
       jolokia.execute(mbean, 'setTracing', flag, options);
     }
   }
+
 
   $scope.startTracing = () => {
     setTracing(true);
