@@ -114,6 +114,14 @@ class TableWidget {
       this.dataTableConfig["aoColumns"] = columns;
       $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
 
+      var keys = new KeyTable({
+        "table": tableElement[0],
+/*
+        "datatable": tableElement.dataTable()
+*/
+        "datatable": $scope.dataTable
+      });
+
       var widget = this;
 
       // add a handler for the expand/collapse column for all rows (and future rows)
@@ -141,16 +149,30 @@ class TableWidget {
         $scope.$apply();
       });
 
-      $(document).on("click", "#grid tr", function () {
-        if ($(this).hasClass('row_selected')) {
-          $(this).removeClass('row_selected');
+      keys.event.focus( null, null, function(node) {
+        var dataTable = $scope.dataTable;
+        var row = node;
+        if (node.nodeName.toLowerCase() === "td") {
+          row = $(node).parents("tr")[0];
         }
-        else {
-          var dataTable = $scope.dataTable;
-          dataTable.$('tr.row_selected').removeClass('row_selected');
-          $(this).addClass('row_selected');
+        var selected = dataTable.fnGetData(row);
+        var selectHandler = widget.config.selectHandler;
+        if (selected && selectHandler) {
+          console.log("Selecting node: " + selected);
+          selectHandler(selected);
+        }
+      });
 
-          var selected = dataTable.fnGetData(this);
+      $(document).on("click", "#grid td", function () {
+        if ($(this).hasClass('selected')) {
+          $(this).removeClass('focus selected');
+        } else {
+          //dataTable.$('td.focus').removeClass('focus');
+          $(this).addClass('focus selected');
+
+          var dataTable = $scope.dataTable;
+          var row = $(this).parents("tr")[0];
+          var selected = dataTable.fnGetData(row);
           var selectHandler = widget.config.selectHandler;
           if (selected && selectHandler) {
             selectHandler(selected);

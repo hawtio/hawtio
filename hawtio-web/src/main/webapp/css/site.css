@@ -213,7 +213,17 @@ tr.row_selected td {
     background-color: #d9edf7;
 }
 
-.table-striped tbody tr.row_selected:nth-child(odd) td,
-.table-striped tbody tr.row_selected:nth-child(odd) th {
+.table-striped tbody tr.row_selected:nth-child(odd) td {
+    background-color: #d9edf7;
+}
+
+tr td.focus {
+    background-color: #d9edf7;
+}
+.table-hover tbody tr:hover td.focus {
+    background-color: #d9edf7;
+}
+
+.table-striped tbody tr:nth-child(odd) td.focus {
     background-color: #d9edf7;
 }
