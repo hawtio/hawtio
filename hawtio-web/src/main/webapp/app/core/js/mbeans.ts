@@ -15,8 +15,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
   });
 
   $scope.select = (node) => {
-    $scope.workspace.selection = node;
-    updateSelectionNode($location, node);
+    $scope.workspace.updateSelectionNode(node);
     $scope.$apply();
   };
 

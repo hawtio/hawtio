@@ -3,6 +3,8 @@ function ChartController($scope, $location, workspace:Workspace) {
   $scope.metrics = [];
 
   $scope.$watch('workspace.selection', function () {
+    if (workspace.moveIfViewInvalid()) return;
+
     var width = 594;
     var charts = $("#charts");
     if (charts) {
@@ -221,6 +223,8 @@ function ChartEditController($scope, $location, workspace:Workspace) {
   };
 
   $scope.$watch('workspace.selection', function () {
+    if (workspace.moveIfViewInvalid()) return;
+
     $scope.selectedAttributes = [];
     $scope.selectedMBeans = [];
     $scope.metrics = {};

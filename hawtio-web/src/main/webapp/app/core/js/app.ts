@@ -151,18 +151,6 @@ function PreferencesController($scope, workspace:Workspace) {
   }
 }
 
-function updateSelectionNode($location, node) {
-  var key = null;
-  if (node) {
-    key = node['key'];
-  }
-  var q = $location.search();
-  if (key) {
-    q['nid'] = key
-  }
-  $location.search(q);
-}
-
 myApp.directive('expandable', function() {
   return {
     restrict: 'C',
