@@ -176,10 +176,10 @@ class TableWidget {
         if ($(this).hasClass('selected')) {
           $(this).removeClass('focus selected');
         } else {
-          //dataTable.$('td.focus').removeClass('focus');
+          var dataTable = $scope.dataTable;
+          dataTable.$('td.selected').removeClass('focus selected');
           $(this).addClass('focus selected');
 
-          var dataTable = $scope.dataTable;
           var row = $(this).parents("tr")[0];
           var selected = dataTable.fnGetData(row);
           var selectHandler = widget.config.selectHandler;
