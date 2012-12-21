@@ -155,7 +155,7 @@ class TableWidget {
 
       $(document).on("click", "#grid td.control", expandCollapseNode);
 
-      keys.event.action( null, null, function(node) {
+      keys.event.action( 0, null, function(node) {
         expandCollapseNode.call(node);
       });
 
