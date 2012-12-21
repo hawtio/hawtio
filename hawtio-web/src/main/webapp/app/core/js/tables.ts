@@ -11,7 +11,7 @@ class TableWidget {
   };
 
 
-  constructor(public scope, public workspace:Workspace, public dataTableColumns:DataTableConfig[], public config:TableWidgetConfig = {}) {
+  constructor(public scope, public workspace:Workspace, public dataTableColumns:TableColumnConfig[], public config:TableWidgetConfig = {}) {
     // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
     angular.forEach(config.ignoreColumns, (name) => {
       this.ignoreColumnHash[name] = true;
@@ -68,7 +68,7 @@ class TableWidget {
       // lets add new columns based on the data...
       // TODO wont compile in TypeScript!
       //var columns = this.dataTableColumns.slice();
-      var columns:DataTableConfig[] = [];
+      var columns:TableColumnConfig[] = [];
       angular.forEach(this.dataTableColumns, (value) => columns.push(value));
       //var columns = this.dataTableColumns.slice();
 
@@ -177,7 +177,9 @@ class TableWidget {
           $(this).removeClass('focus selected');
         } else {
           var dataTable = $scope.dataTable;
-          dataTable.$('td.selected').removeClass('focus selected');
+          if (!widget.config.multiSelect) {
+            dataTable.$('td.selected').removeClass('focus selected');
+          }
           $(this).addClass('focus selected');
 
           var row = $(this).parents("tr")[0];
@@ -212,7 +214,7 @@ class TableWidget {
   }
 }
 
-interface DataTableConfig {
+interface TableColumnConfig {
   mData?:string;
   mDataProp?:string;
   sClass?:string;
@@ -227,4 +229,5 @@ interface TableWidgetConfig {
   disableAddColumns?:Boolean;
   rowDetailTemplateId?:string;
   selectHandler?: (any) => any;
+  multiSelect?:Boolean;
 }
