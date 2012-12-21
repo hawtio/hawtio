@@ -15,8 +15,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
   });
 
   $scope.select = (node) => {
-    $scope.workspace.selection = node;
-    updateSelectionNode($location, node);
+    $scope.workspace.updateSelectionNode(node);
     $scope.$apply();
   };
 
@@ -70,7 +69,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
         var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
         var typeName = entries["Type"] || entries["type"];
         var objectName = domain + ":" + path;
-        var mbeanInfo: NodeSelection = {
+        var mbeanInfo:NodeSelection = {
           key: key,
           title: trimQuotes(lastPath),
           domain: domain,
@@ -81,7 +80,7 @@ function MBeansController($scope, $location, workspace:Workspace) {
           entries: entries,
           typeName: typeName,
           addClass: escapeDots(key),
-          get: (key: string) => null
+          get: (key:string) => null
         };
         if (typeName) {
           var map = workspace.mbeanTypesToDomain[typeName];
@@ -119,6 +118,33 @@ function MBeansController($scope, $location, workspace:Workspace) {
       onActivate: function (node) {
         var data = node.data;
         $scope.select(data);
+      },
+      onClick: function (node, event) {
+        if (event["metaKey"]) {
+          event.preventDefault();
+          var url = $location.absUrl();
+          if (node && node.data) {
+            var key = node.data["key"];
+            if (key) {
+              var hash = $location.search();
+              hash["nid"] = key;
+
+              // TODO this could maybe be a generic helper function?
+              // lets trim after the ?
+              var idx = url.indexOf('?');
+              if (idx <= 0) {
+                url += "?";
+              } else {
+                url = url.substring(0, idx + 1);
+              }
+              url += $.param(hash);
+            }
+          }
+          window.open(url, '_blank');
+          window.focus();
+          return false;
+        }
+        return true;
       },
       persist: false,
       debugLevel: 0,

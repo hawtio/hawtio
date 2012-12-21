@@ -1,13 +1,15 @@
 interface NodeSelection {
   title: string;
+  typeName?: string;
   objectName?: string;
   domain?: string;
   entries?: any;
   folderNames?: string[];
   children?:NodeSelection[];
   parent?: NodeSelection;
+  isFolder?:Boolean;
 
-  get(key: string): NodeSelection;
+  get(key:string): NodeSelection;
 }
 
 class Workspace {
@@ -88,7 +90,7 @@ class Workspace {
   /**
    * Returns the selected mbean name if there is one
    */
-  public getSelectedMBeanName(): string {
+  public getSelectedMBeanName():string {
     var selection = this.selection;
     if (selection) {
       return selection.objectName;
@@ -109,17 +111,70 @@ class Workspace {
     return true;
   }
 
+  /**
+   * Returns the view configuration key for the kind of selection
+   * for example based on the domain and the node type
+   */
+  public selectionViewConfigKey() {
+    var key = null;
+    var selection = this.selection;
+    if (selection) {
+      // lets make a unique string for the kind of select
+      key = "view/" + selection.domain;
+      var typeName = selection.typeName;
+      if (typeName) {
+        key += "/" + typeName;
+      }
+      if (selection.isFolder) {
+        key += "/folder";
+      }
+    }
+    return key;
+  }
+
   public moveIfViewInvalid() {
     var uri = this.$location.path().substring(1);
-    if (!this.validSelection(uri) && this.selection) {
-      var defaultPath = "attributes";
-      if (this.isActiveMQFolder()) {
-        defaultPath = "activemq/status";
+    if (this.selection) {
+      var key = this.selectionViewConfigKey();
+      if (this.validSelection(uri)) {
+        // lets remember the previous selection
+        this.setLocalStorage(key, uri);
+      } else {
+        // lets look up the previous preferred value for this type
+        var defaultPath = this.getLocalStorage(key);
+        if (!defaultPath) {
+          defaultPath = "attributes";
+          if (this.isActiveMQFolder()) {
+            defaultPath = "activemq/status";
+          }
+        }
+        this.$location.path(defaultPath);
       }
-      this.$location.path(defaultPath);
     }
     return false;
   }
+
+  public updateSelectionNode(node) {
+    this.selection = node;
+    var key = null;
+    if (node) {
+      key = node['key'];
+    }
+    var $location = this.$location;
+    var q = $location.search();
+    if (key) {
+      q['nid'] = key
+    }
+    $location.search(q);
+    var key = this.selectionViewConfigKey();
+    if (key) {
+      var defaultPath = this.getLocalStorage(key);
+      if (defaultPath) {
+        this.$location.path(defaultPath);
+      }
+    }
+  }
+
 
   // only display stuff if we have an mbean with the given properties
   public hasDomainAndProperties(objectName, properties = null) {
@@ -248,7 +303,7 @@ class Folder implements NodeSelection {
    * Navigates the given paths and returns the value there or null if no value could be found
    */
   public navigate(...paths:string[]) {
-    var node: NodeSelection = this;
+    var node:NodeSelection = this;
     paths.forEach((path) => {
       if (node) {
         node = node.get(path);

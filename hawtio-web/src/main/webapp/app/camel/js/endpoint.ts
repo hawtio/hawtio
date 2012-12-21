@@ -18,9 +18,7 @@ function EndpointController($scope, $location, workspace:Workspace) {
     if (workspace.selection) {
       var parent = workspace.selection.parent;
       if (parent) {
-        $scope.workspace.selection = parent;
-        updateSelectionNode($location, parent);
-        $location.path("/attributes");
+        $scope.workspace.updateSelectionNode(parent);
       }
     }
     $scope.workspace.operationCounter += 1;

@@ -32,6 +32,8 @@ function AttributesController($scope, $routeParams, workspace:Workspace, $rootSc
   };
 
   $scope.$watch('workspace.selection', function () {
+    if (workspace.moveIfViewInvalid()) return;
+
     var node = $scope.workspace.selection;
     closeHandle($scope, $scope.workspace.jolokia);
     var mbean = null;

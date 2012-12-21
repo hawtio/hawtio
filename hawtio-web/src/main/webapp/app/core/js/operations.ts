@@ -85,14 +85,14 @@ function OperationsController($scope, $routeParams, workspace:Workspace, $rootSc
   };
 
   $scope.$watch('workspace.selection', function() {
-    var node = $scope.workspace.selection;
+    if (workspace.moveIfViewInvalid()) return;
 
+    var node = $scope.workspace.selection;
     if (!node) {
       return;
     }
 
     var objectName = node.objectName;
-
     if (!objectName) {
       return;
     }
