@@ -206,17 +206,6 @@ span.dynatree-icon {
 }
 
 /** row selection */
-tr.row_selected td {
-    background-color: #d9edf7;
-}
-.table-hover tbody tr.row_selected:hover td {
-    background-color: #d9edf7;
-}
-
-.table-striped tbody tr.row_selected:nth-child(odd) td {
-    background-color: #d9edf7;
-}
-
 tr td.focus {
     background-color: #d9edf7;
 }
