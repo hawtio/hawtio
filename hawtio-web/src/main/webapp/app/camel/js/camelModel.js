@@ -478,5 +478,87 @@ var _apacheCamelModel = {
       "icon":     "wireTap24.png",
 
     },
+	},
+	"languages": {
+    "constant": {
+      "name": "Constant",
+      "description": "Constant expression"
+    },
+    "el": {
+      "name": "EL",
+      "description": "Unified expression language from JSP / JSTL / JSF"
+    },
+    "header": {
+      "name": "Header",
+      "description": "Header value"
+    },
+    "javaScript": {
+      "name": "JavaScript",
+      "description": "JavaScript expression"
+    },
+    "jxpath": {
+      "name": "JXPath",
+      "description": "JXPath expression"
+    },
+    "method": {
+      "name": "Method",
+      "description": "Method call expression"
+    },
+    "mvel": {
+      "name": "MVEL",
+      "description": "MVEL expression"
+    },
+    "ognl": {
+      "name": "OGNL",
+      "description": "OGNL expression"
+    },
+    "groovy": {
+      "name": "Groovy",
+      "description": "Groovy expression"
+    },
+    "property": {
+      "name": "Property",
+      "description": "Property value"
+    },
+    "python": {
+      "name": "Python",
+      "description": "Python expression"
+    },
+    "php": {
+      "name": "PHP",
+      "description": "PHP expression"
+    },
+    "ref": {
+      "name": "Ref",
+      "description": "Reference to a bean expression"
+    },
+    "ruby": {
+      "name": "Ruby",
+      "description": "Ruby expression"
+    },
+    "simple": {
+      "name": "Simple",
+      "description": "Simple expression language from Camel"
+    },
+    "spel": {
+      "name": "Spring EL",
+      "description": "Spring expression language"
+    },
+    "sql": {
+      "name": "SQL",
+      "description": "SQL expression"
+    },
+    "tokenize": {
+      "name": "Tokenizer",
+      "description": "Tokenizing expression"
+    },
+    "xpath": {
+      "name": "XPath",
+      "description": "XPath expression"
+    },
+    "xquery": {
+      "name": "XQuery",
+      "description": "XQuery expression"
+    },
 	}
 };

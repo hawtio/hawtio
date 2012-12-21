@@ -46,7 +46,7 @@ function CamelController($scope, workspace:Workspace) {
 
       var delta = 150;
 
-      function addChildren(parent, parentId, parentX, parentY) {
+      function addChildren(parent, parentId, parentX, parentY, parentNode = null) {
         var x = parentX;
         var y = parentY + delta;
         var rid = parent.getAttribute("id");
@@ -58,6 +58,7 @@ function CamelController($scope, workspace:Workspace) {
           }
           var nodeId = route.nodeName;
           var nodeSettings = _apacheCamelModel.nodes[nodeId];
+          var node = null;
           if (nodeSettings) {
             var imageName = nodeSettings["icon"];
             if (!imageName) {
@@ -73,7 +74,7 @@ function CamelController($scope, workspace:Workspace) {
 
             //console.log("Image URL is " + imageUrl);
             var cid = route.getAttribute("id");
-            var node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
+            node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
             if (rid) {
               node["rid"] = rid;
             }
@@ -87,10 +88,21 @@ function CamelController($scope, workspace:Workspace) {
               links.push({"source": parentId, "target": id, "value": 1});
             }
           } else {
-            // ignoring unknown node
-            // should we add it as a property for xpath stuff?
+            // ignore non EIP nodes, though we should add expressions...
+            var langSettings = _apacheCamelModel.languages[nodeId];
+            if (langSettings && parentNode) {
+              // lets add the language kind
+              var name = langSettings["name"] || nodeId;
+              var text = route.textContent;
+              if (text) {
+                parentNode["tooltip"] = parentNode["label"] + " " + name + " " + text;
+                parentNode["label"] = text;
+              } else {
+                parentNode["label"] = parentNode["label"] + " " + name;
+              }
+            }
           }
-          addChildren(route, id, x, y);
+          addChildren(route, id, x, y, node);
           x += delta;
         });
       }
