@@ -6,6 +6,7 @@ function SubscriberGraphController($scope, workspace:Workspace) {
   $scope.topics = {};
   $scope.subscriptions = {};
   $scope.producers = {};
+  $scope.networks = {};
 
   function matchesSelection(destinationName) {
     var selectionDetinationName = $scope.selectionDetinationName;
@@ -96,8 +97,22 @@ function SubscriberGraphController($scope, workspace:Workspace) {
         });
       }
     }
-    d3ForceGraph($scope, $scope.nodes, $scope.links);
-    $scope.$apply();
+  };
+
+  var populateNetworks = function (response) {
+      var data = response.value;
+      for (var key in data) {
+          var bridge = data[key];
+          var localId = getOrCreate($scope.networks, bridge["LocalBrokerName"], {
+            label: bridge["LocalBrokerName"], imageUrl: url("/app/activemq/img/message_broker.png") });
+          var remoteId = getOrCreate($scope.networks, bridge["RemoteBrokerName"], {
+            label: bridge["RemoteBrokerName"], imageUrl: url("/app/activemq/img/message_broker.png") });
+
+          $scope.links.push({ source: localId, target: remoteId });
+      }
+
+      d3ForceGraph($scope, $scope.nodes, $scope.links);
+      $scope.$apply();
   };
 
   $scope.$watch('workspace.selection', function () {
@@ -128,8 +143,10 @@ function SubscriberGraphController($scope, workspace:Workspace) {
         {type: 'read',
           mbean: "org.apache.activemq:Type=Subscription,destinationType=" + typeName + ",*" },
         {type: 'read',
-          mbean: "org.apache.activemq:Type=Producer,*"}
-      ], onSuccess([populateSubscribers, populateProducers]));
+          mbean: "org.apache.activemq:Type=Producer,*"},
+          {type: 'read',
+            mbean: "org.apache.activemq:Type=NetworkBridge,*"},
+      ], onSuccess([populateSubscribers, populateProducers, populateNetworks]));
     }
   });
 }
