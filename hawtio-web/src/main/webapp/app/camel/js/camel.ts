@@ -56,38 +56,39 @@ function CamelController($scope, workspace:Workspace) {
           if (route.nodeName === "from" && !parentId) {
             parentId = id;
           }
-          var name = route.nodeName;
-          var uri = route.getAttribute("uri");
-          if (uri) {
-            name += " " + uri;
-          }
-          var imageName = route.nodeName;
+          var nodeId = route.nodeName;
+          var nodeSettings = _apacheCamelModel.nodes[nodeId];
+          if (nodeSettings) {
+            var imageName = nodeSettings["icon"];
+            if (!imageName) {
+              imageName = "generic24.png";
+            }
+            var label = nodeSettings["title"] || nodeId;
+            var uri = route.getAttribute("uri");
+            if (uri) {
+              label += " " + uri;
+            }
+            var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || name;
+            var imageUrl = url("/app/camel/img/" + imageName);
 
-          var endpointNames = ["from", "to", "route"];
-          var genericNames = ["xpath", "when", "otherwise"];
-
-          //if (imageName === "from" || imageName === "to" || imageName === "route") {
-          if (endpointNames.indexOf(imageName) >= 0) {
-            imageName = "endpoint";
-          } else if (genericNames.indexOf(imageName) >= 0) {
-            // TODO have better mapping here generated from existing image names!
-            imageName = "generic";
-          }
-          var imageUrl = url("/app/camel/img/" + imageName + "24.png");
-          //console.log("Image URL is " + imageUrl);
-          var cid = route.getAttribute("id");
-          var node = { "name": name, "label": name, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid};
-          if (rid) {
-            node["rid"] = rid;
-          }
-          if (cid) {
-            $scope.nodes[cid] = node;
-          }
-          // only use the route id on the first from node
-          rid = null;
-          nodes.push(node);
-          if (parentId !== null && parentId !== id) {
-            links.push({"source": parentId, "target": id, "value": 1});
+            //console.log("Image URL is " + imageUrl);
+            var cid = route.getAttribute("id");
+            var node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
+            if (rid) {
+              node["rid"] = rid;
+            }
+            if (cid) {
+              $scope.nodes[cid] = node;
+            }
+            // only use the route id on the first from node
+            rid = null;
+            nodes.push(node);
+            if (parentId !== null && parentId !== id) {
+              links.push({"source": parentId, "target": id, "value": 1});
+            }
+          } else {
+            // ignoring unknown node
+            // should we add it as a property for xpath stuff?
           }
           addChildren(route, id, x, y);
           x += delta;
@@ -152,15 +153,17 @@ function CamelController($scope, workspace:Workspace) {
 
 function getContextId(workspace) {
   var selection = workspace.selection;
-  var tree = workspace.tree;
-  var folderNames = selection.folderNames;
-  var entries = selection.entries;
-  var contextId;
-  if (tree && selection) {
-    if (folderNames && folderNames.length > 1) {
-      contextId = folderNames[1];
-    } else if (entries) {
-      contextId = entries["context"];
+  if (selection) {
+    var tree = workspace.tree;
+    var folderNames = selection.folderNames;
+    var entries = selection.entries;
+    var contextId;
+    if (tree) {
+      if (folderNames && folderNames.length > 1) {
+        contextId = folderNames[1];
+      } else if (entries) {
+        contextId = entries["context"];
+      }
     }
   }
   return contextId;
