@@ -51,8 +51,9 @@ public class CORSFilter implements Filter {
                     if (headers != null) {
                         resp.addHeader("Access-Control-Allow-Header", headers);
                     }
+                    resp.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
                 }
-                resp.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
+                resp.addHeader("Access-Control-Allow-Origin", "*");
             }
         }
         chain.doFilter(request, response);
