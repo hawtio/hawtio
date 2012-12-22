@@ -65,15 +65,16 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <activemq-version>5.7.0.fuse-71-047</activemq-version>
+    <perfectus-build>047</perfectus-build>
+    <activemq-version>5.7.0.fuse-71-${perfectus-build}</activemq-version>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
-    <camel-version>2.10.0.fuse-71-047</camel-version>
+    <camel-version>2.10.0.fuse-71-${perfectus-build}</camel-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
 <!--
     <fabric-version>99-master-SNAPSHOT</fabric-version>
 -->
-    <fabric-version>7.1.0.fuse-047</fabric-version>
+    <fabric-version>7.1.0.fuse-${perfectus-build}</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
     <jackson-2-version>2.1.0</jackson-2-version>
 
