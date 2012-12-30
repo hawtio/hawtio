@@ -21,7 +21,11 @@
 </style>
 
 <!--  navbar-inverse -->
-<div class="navbar navbar-fixed-top" ng-controller="NavBarController">
+<div class="navbar navbar-fixed-top" ng-controller="Core.NavBarController">
+  <div>
+    <div>Hash :: {{hash}}</div>
+  </div>
+
   <div class="navbar-inner" ng-cloak class="ng-cloak">
     <div class="container">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -34,6 +38,8 @@
         hawt.io
       </a>
 
+
+
       <div class="nav-collapse">
         <ul class="nav">
           <li class="dropdown">
@@ -41,27 +47,28 @@
                title="Views available on the current selection" data-placement="bottom">
               <i class="icon-th"></i> View</a>
             <ul class="dropdown-menu">
-              <li ng-class="navClass('attributes')">
+
+              <li ng-class="{active : isCurrentRoute('attributes')}">
                 <a ng-href="#/attributes{{hash}}" title="View the attribute values on your selection"><i
                         class="icon-list"></i>
                   Attributes</a></li>
-              <li ng-class="navClass('charts')">
+              <li ng-class="{active : isCurrentRoute('charts')}">
                 <a ng-href="#/charts{{hash}}" title="View a chart of the metrics on your selection"><i
                         class="icon-bar-chart"></i> Chart</a></li>
-              <li ng-class="navClass('routes')" ng-show="validSelection('routes')">
+              <li ng-class="{active : isCurrentRoute('routes')}" ng-show="validSelection('routes')">
                 <a ng-href="#/routes{{hash}}" title="View a diagram of the Camel routes"><i class="icon-picture"></i>
                   Diagram</a></li>
-              <li ng-class="navClass('subscribers')" ng-show="validSelection('subscribers')">
+              <li ng-class="{active : isCurrentRoute('subscribers')}" ng-show="validSelection('subscribers')">
                 <a ng-href="#/subscribers{{hash}}"
                    title="View a diagram of the producers, destinations and consumers"><i class="icon-picture"></i>
                   Diagram</a></li>
-              <li ng-class="navClass('browseQueue')" ng-show="validSelection('browseQueue')">
+              <li ng-class="{active : isCurrentRoute('browseQueue')}" ng-show="validSelection('browseQueue')">
                 <a ng-href="#/browseQueue{{hash}}" title="Browse the messages on the queue"><i
                         class="icon-envelope"></i> Browse</a></li>
-              <li ng-class="navClass('browseEndpoint')" ng-show="validSelection('browseEndpoint')">
+              <li ng-class="{active : isCurrentRoute('browseEndpoint')}" ng-show="validSelection('browseEndpoint')">
                 <a ng-href="#/browseEndpoint{{hash}}" title="Browse the messages on the endpoint"><i
                         class="icon-envelope"></i> Browse</a></li>
-              <li ng-class="navClass('traceRoute')" ng-show="validSelection('traceRoute')">
+              <li ng-class="{active : isCurrentRoute('traceRoute')}" ng-show="validSelection('traceRoute')">
                 <a ng-href="#/traceRoute{{hash}}" title="Trace the messages flowing through the Camel route"><i
                         class="icon-envelope"></i> Trace</a></li>
             </ul>
@@ -72,51 +79,51 @@
                title="Edit the current selection" data-placement="bottom">
               <i class="icon-edit"></i> Edit</a>
             <ul class="dropdown-menu">
-              <li ng-class="navClass('chartEdit')" ng-show="validSelection('chartEdit')">
+              <li ng-class="{active : isCurrentRoute('chartEdit')}" ng-show="validSelection('chartEdit')">
                 <a ng-href="#/chartEdit{{hash}}" title="Edit the chart configuration">
                   <i class="icon-cog"></i> Chart</a></li>
-              <li ng-class="navClass('sendMessage')" ng-show="validSelection('sendMessage')">
+              <li ng-class="{active : isCurrentRoute('sendMessage')}" ng-show="validSelection('sendMessage')">
                 <a ng-href="#/sendMessage{{hash}}" title="Send a message to this endpoint">
                   <i class="icon-pencil"></i> Send</a></li>
-              <li ng-class="navClass('createEndpoint')" ng-show="validSelection('createEndpoint')">
+              <li ng-class="{active : isCurrentRoute('createEndpoint')}" ng-show="validSelection('createEndpoint')">
                 <a ng-href="#/createEndpoint{{hash}}" title="Create a new endpoint">
                   <i class="icon-plus"></i> Create Endpoint</a></li>
-              <li ng-class="navClass('createQueue')" ng-show="validSelection('createQueue')">
+              <li ng-class="{active : isCurrentRoute('createQueue')}" ng-show="validSelection('createQueue')">
                 <a ng-href="#/createQueue{{hash}}" title="Create a new queue">
                   <i class="icon-plus"></i> Create Queue</a></li>
-              <li ng-class="navClass('createTopic')" ng-show="validSelection('createTopic')">
+              <li ng-class="{active : isCurrentRoute('createTopic')}" ng-show="validSelection('createTopic')">
                 <a ng-href="#/createTopic{{hash}}" title="Create a new topic">
                   <i class="icon-plus"></i> Create Topic</a></li>
-              <li ng-class="navClass('deleteQueue')" ng-show="validSelection('deleteQueue')">
+              <li ng-class="{active : isCurrentRoute('deleteQueue')}" ng-show="validSelection('deleteQueue')">
                 <a ng-href="#/deleteQueue{{hash}}" title="Delete this queue">
                   <i class="icon-remove"></i> Delete</a></li>
-              <li ng-class="navClass('deleteTopic')" ng-show="validSelection('deleteTopic')">
+              <li ng-class="{active : isCurrentRoute('deleteTopic')}" ng-show="validSelection('deleteTopic')">
                 <a ng-href="#/deleteTopic{{hash}}" title="Delete this topic">
                   <i class="icon-remove"></i> Delete</a></li>
-              <li ng-class="navClass('operations')">
+              <li ng-class="{active : isCurrentRoute('operations')}">
                 <a ng-href="#/operations{{hash}}" title="Execute operations on your selection">
                   <i class="icon-leaf"></i> Operations</a></li>
             </ul>
           </li>
 
-          <li ng-class="navClass('health')" ng-show="validSelection('health')">
+          <li ng-class="{active : isCurrentRoute('health')}" ng-show="validSelection('health')">
             <a ng-href="#/health{{hash}}" title="View the health of either all of a selected subset of the systems"
                data-placement="bottom">
               <i class="icon-eye-open"></i> Health</a></li>
-          <li ng-class="navClass('bundles')" ng-show="validSelection('bundles')">
+          <li ng-class="{active : isCurrentRoute('bundles')}" ng-show="validSelection('bundles')">
             <a ng-href="#/bundles{{hash}}" title="View the available bundles in this OSGi container"
                data-placement="bottom">
               <i class="icon-list"></i> Bundles</a></li>
-          <li ng-class="navClass('logs')">
+          <li ng-class="{active : isCurrentRoute('logs')}">
             <a ng-href="#/logs{{hash}}" title="View the logs in this process" data-placement="bottom">
               <i class="icon-list-alt"></i> Log</a></li>
         </ul>
         <div class="pull-right">
           <ul class="nav pull-right">
-            <li ng-class="navClass('preferences')">
+            <li ng-class="{active : isCurrentRoute('preferences')}">
               <a ng-href="#/preferences{{hash}}" title="Edit your preferences" data-placement="bottom">
                 <i class="icon-cog"></i> Preferences</a></li>
-            <li ng-class="navClass('help')">
+            <li ng-class="{active : isCurrentRoute('help')}">
               <a ng-href="#/help{{hash}}" title="Read the help about how to use this console" data-placement="bottom">
                 <i class="icon-question-sign"></i> Help</a></li>
           </ul>
@@ -128,7 +135,7 @@
 
 <div id="main" class="container-fluid">
   <div class="row-fluid">
-    <div class="span3" ng-controller="MBeansController">
+    <div class="span3" ng-controller="Core.MBeansController">
       <div id="jmxtree"></div>
     </div>
     <div id="properties" class="span9" ng-view></div>

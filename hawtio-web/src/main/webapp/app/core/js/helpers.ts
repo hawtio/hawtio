@@ -57,7 +57,7 @@ function url(path: string) {
   return path;
 }
 
-function humanizeValue(value) {
+function humanizeValue(value : any) {
   if (value) {
     var text = value.toString();
     return trimQuotes(text.underscore().humanize());

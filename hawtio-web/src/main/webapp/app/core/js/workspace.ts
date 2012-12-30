@@ -25,6 +25,7 @@ class Workspace {
   constructor(public url:string, public $location:any, public $compile, public $templateCache) {
     //constructor(public url: string, public $location: angular.ILocationService) {
     var rate = this.getUpdateRate();
+      // TODO SHould be a service
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
     this.setUpdateRate(rate);
@@ -55,7 +56,7 @@ class Workspace {
 
   }
 
-
+  // TODO Should be a service
   getLocalStorage(key:string) {
     if (supportsLocalStorage()) {
       return localStorage[key];
@@ -63,6 +64,7 @@ class Workspace {
     return this.dummyStorage[key];
   }
 
+    // TODO Should be a service
   setLocalStorage(key:string, value:any) {
     if (supportsLocalStorage()) {
       localStorage[key] = value;
@@ -71,6 +73,7 @@ class Workspace {
     }
   }
 
+  // TODO Should be a service
   getUpdateRate() {
     return this.getLocalStorage('updateRate') || 5000;
   }
@@ -221,7 +224,7 @@ class Workspace {
   }
 
   hasHealthMBeans() {
-    var beans = getHealthMBeans(this);
+    var beans = Core.getHealthMBeans(this);
     if (beans) {
       if (angular.isArray(beans)) return beans.length > 1;
       return true;
