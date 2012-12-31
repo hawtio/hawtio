@@ -251,6 +251,8 @@ function escapeDots(text:string) {
  * @param type which is usually "success" or "error" and matches css alert-* css styles
  * @param message the text to display
  */
+// TODO Support vargs  as it would be nice to support notification("error", "Failed to get a response! '", response)
+// TODO And to handle string substitutions accordingly too
 function notification (type:string, message:string) {
     $("#alert-area").append($("<div class='alert alert-" + type + " fade in' data-alert><button type='button' class='close' data-dismiss='alert'>×</button>" + message + "</div>"));
     $(".alert").delay(2000).fadeOut("slow", function () { $(this).remove(); });

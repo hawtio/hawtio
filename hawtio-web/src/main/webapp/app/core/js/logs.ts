@@ -1,24 +1,30 @@
 module Core {
-    export function LogController($scope, $location, workspace:Workspace) {
+    export interface ILog {
+        // TODO What is the point of seq?
+        seq: string;
+        message: string;
+        timestamp: string;
+        logger: string;
+        level: string;
+    }
+
+    export interface ILogControllerScope extends IMyAppScope {
+        workspace: Workspace;
+        logs : ILog[];
+        toTime: number;
+        queryJSON: any;
+        logLevelQuery: string;
+        logClass: (log: string) => string;
+    }
+
+    export function LogController($scope : ILogControllerScope, $location, workspace:Workspace) {
       $scope.workspace = workspace;
       //$scope.logs = {};
       $scope.logs = [];
       $scope.toTime = 0;
       $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
-
-      $scope.filterLogs = function (logs, query) {
-        var filtered = [];
-        var queryRegExp = null;
-        if (query) {
-          queryRegExp = RegExp(query.escapeRegExp(), 'i'); //'i' -> case insensitive
-        }
-        angular.forEach(logs, function (log) {
-          if (!query || Object.values(log).any((value) => value && value.toString().has(queryRegExp))) {
-            filtered.push(log);
-          }
-        });
-        return filtered;
-      };
+      // The default logging level to show, empty string => show all
+      $scope.logLevelQuery = "";
 
       $scope.logClass = (log) => {
         return logLevelClass(log['level']);
@@ -33,18 +39,19 @@ module Core {
         }
         if (logs) {
           var seq = 0;
-          for (var idx in logs) {
-            var log = logs[idx];
+          logs.forEach((log : ILog) => {
             if (log) {
-              if (!$scope.logs.any((item) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
-                $scope.logs.push(log);
+             // TODO Why do we compare 'item.seq === log.message' ?
+             if (!$scope.logs.any((key, item : ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
+               $scope.logs.push(log);
               }
-            }
-          }
+             }
+          });
+
           //console.log("Got results " + logs.length + " last seq: " + seq);
-          $scope.$apply();
+          $scope.$apply("");
         } else {
-          notification("error", "Failed to get a response! " + response);
+            notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
         }
       };
 
@@ -57,7 +64,7 @@ module Core {
         if (value) {
           updateValues(value);
         } else {
-          notification("error", "Failed to get a response! " + response);
+          notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
         }
       };
 

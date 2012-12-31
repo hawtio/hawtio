@@ -1,10 +1,10 @@
-interface IMyAppScope extends ng.IRootScopeService {
+interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
     lineCount: (value: any) => number;
     detectTextFormat: (value: any) => string;
     params: ng.IRouteParamsService;
     is: (type:any, value:any) => bool;
     empty: (value:any) => bool;
-    log: (variable) => void;
+    log: (variable:string) => void;
     alert: (text:string) => void;
 }
 

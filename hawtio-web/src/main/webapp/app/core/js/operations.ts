@@ -4,7 +4,7 @@ module Core {
         type : string;
     }
 
-    export interface IOperationControllerScope extends ng.IScope {
+    export interface IOperationControllerScope extends IMyAppScope {
         item : IOperation;
         title : string;
         desc : string;
@@ -90,7 +90,7 @@ module Core {
         [key : string] : any;
     }
 
-    export interface IOperationsControllerScope extends ng.IScope {
+    export interface IOperationsControllerScope extends IMyAppScope {
         routeParams : ng.IRouteParamsService;
         workspace : Workspace;
         sanitize : (value : IOperation) => IOperation;
