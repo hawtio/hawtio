@@ -29,7 +29,7 @@ var numberTypeNames = {
 /**
  * Returns the number of lines in the given text
  */
-function lineCount(value) {
+function lineCount(value): number {
   var rows = 0;
   if (value) {
     rows = 1;
@@ -38,7 +38,7 @@ function lineCount(value) {
   return rows;
 }
 
-function url(path: string) {
+function url(path: string): string {
   if (path) {
     if (path.startsWith("/")) {
       if (_urlPrefix === null) {
@@ -57,7 +57,7 @@ function url(path: string) {
   return path;
 }
 
-function humanizeValue(value : any) {
+function humanizeValue(value:any):string {
   if (value) {
     var text = value.toString();
     return trimQuotes(text.underscore().humanize());
@@ -65,7 +65,7 @@ function humanizeValue(value : any) {
   return value;
 }
 
-function detectTextFormat(value) {
+function detectTextFormat(value: any):string {
   var answer = "text";
   if (value) {
     answer = "javascript";

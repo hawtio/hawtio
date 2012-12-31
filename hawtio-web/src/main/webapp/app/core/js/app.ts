@@ -1,3 +1,13 @@
+interface IMyAppScope extends ng.IRootScopeService {
+    lineCount: (value: any) => number;
+    detectTextFormat: (value: any) => string;
+    params: ng.IRouteParamsService;
+    is: (type:any, value:any) => bool;
+    empty: (value:any) => bool;
+    log: (variable) => void;
+    alert: (text:string) => void;
+}
+
 var myApp = angular.module('hawt.io', ['bootstrap', 'ngResource']);
 myApp.config(($routeProvider) => {
           $routeProvider.
@@ -36,10 +46,10 @@ myApp.config(($routeProvider) => {
 
                   otherwise({redirectTo: '/help/overview'});
         }).
-        factory('workspace',($rootScope, $routeParams, $location, $compile, $templateCache) => {
+        factory('workspace',($rootScope : IMyAppScope, $routeParams:ng.IRouteParamsService, $location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage : WindowLocalStorage) => {
           var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           $.support.cors = true;
-          var workspace =  new Workspace(jolokiaUrl, $location, $compile, $templateCache);
+          var workspace =  new Workspace(jolokiaUrl, $location, $compile, $templateCache, localStorage);
 
           /**
            * Count the number of lines in the given text
@@ -62,7 +72,7 @@ myApp.config(($routeProvider) => {
            * @param type {string} the name of the check (casing sensitive)
            * @param value {string} value to check
            */
-          $rootScope.is = function(type, value) {
+          $rootScope.is = function(type: any, value: any): bool {
           	return angular['is'+type](value);
           };
 
@@ -72,7 +82,7 @@ myApp.config(($routeProvider) => {
            * @param value	{mixed} Value to be tested
            * @return boolean
            */
-          $rootScope.empty = function(value) {
+          $rootScope.empty = function(value:any): bool {
           	return $.isEmptyObject(value);
           };
 
@@ -81,15 +91,23 @@ myApp.config(($routeProvider) => {
            *
            * Allows you to execute debug functions from the view
            */
-          $rootScope.log = function(variable) {
+          // TODO Doesn't support vargs like it should
+          $rootScope.log = function(variable:any): void{
           	console.log(variable);
           };
-          $rootScope.alert = function(text) {
+          $rootScope.alert = function(text:string) {
           	alert(text);
           };
           return workspace;
         }).
-        filter('humanize', () => humanizeValue);
+        filter('humanize', () => humanizeValue).
+        service("localStorage", function() {
+            // TODO Create correct implementation of windowLocalStorage
+            var storage : WindowLocalStorage = window.localStorage || <any> (function() {
+                return {};
+            })();
+            return storage;
+        });
 
 module Core {
     export interface INavBarController extends ng.IScope{

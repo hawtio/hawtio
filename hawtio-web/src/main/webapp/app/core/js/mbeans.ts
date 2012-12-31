@@ -9,13 +9,14 @@ module Core {
         setTimeout(updateSelectionFromURL, 50);
       });
 
+      // TODO Why not use $scope.$on and $rootScope.$broadCast
       $scope.$watch('workspace.operationCounter', function () {
         $scope.counter += 1;
         loadTree();
         //setTimeout(loadTree, 1);
       });
 
-      $scope.select = (node) => {
+      $scope.select = (node : DynaTreeNode) => {
         $scope.workspace.updateSelectionNode(node);
         $scope.$apply();
       };
@@ -83,6 +84,7 @@ module Core {
               addClass: escapeDots(key),
               get: (key:string) => null
             };
+
             if (typeName) {
               var map = workspace.mbeanTypesToDomain[typeName];
               if (!map) {
@@ -116,11 +118,14 @@ module Core {
 
         var treeElement = $("#jmxtree");
         treeElement.dynatree({
-          onActivate: function (node) {
+         /**
+          * The event handler called when a different node in the tree is selected
+          */
+          onActivate: function (node : DynaTreeNode) {
             var data = node.data;
             $scope.select(data);
           },
-          onClick: function (node, event) {
+          onClick: function (node : DynaTreeNode, event : Event) {
             if (event["metaKey"]) {
               event.preventDefault();
               var url = $location.absUrl();
