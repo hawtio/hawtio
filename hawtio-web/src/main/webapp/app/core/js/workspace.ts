@@ -1,3 +1,4 @@
+// TODO Why create an interface NodeSelection when we have the DynaTreeNode interface?
 interface NodeSelection {
   title: string;
   typeName?: string;
@@ -19,15 +20,16 @@ class Workspace {
   public selection:NodeSelection = null;
   public tree = null;
   public mbeanTypesToDomain = {};
-  dummyStorage = {};
   uriValidations = null;
 
-  constructor(public url:string, public $location:any, public $compile, public $templateCache) {
+  constructor(public url:string, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
     //constructor(public url: string, public $location: angular.ILocationService) {
     var rate = this.getUpdateRate();
+      // TODO Should be a service
     this.jolokia = new Jolokia(url);
     console.log("Jolokia URL is " + url);
     this.setUpdateRate(rate);
+    // TODO Is there a way to remove this logic from here?
     this.uriValidations = {
       'chartEdit': () => $location.path() === "/charts",
 
@@ -55,23 +57,16 @@ class Workspace {
 
   }
 
-
   getLocalStorage(key:string) {
-    if (supportsLocalStorage()) {
-      return localStorage[key];
-    }
-    return this.dummyStorage[key];
+    return this.localStorage[key];
   }
 
   setLocalStorage(key:string, value:any) {
-    if (supportsLocalStorage()) {
-      localStorage[key] = value;
-    } else {
-      this.dummyStorage[key] = value;
-    }
+    this.localStorage[key] = value;
   }
 
-  getUpdateRate() {
+  // TODO localStorage[key] returns a string, but we can also return a number...
+  getUpdateRate()  {
     return this.getLocalStorage('updateRate') || 5000;
   }
 
@@ -115,7 +110,7 @@ class Workspace {
    * Returns the view configuration key for the kind of selection
    * for example based on the domain and the node type
    */
-  public selectionViewConfigKey() {
+  public selectionViewConfigKey() : string {
     var key = null;
     var selection = this.selection;
     if (selection) {
@@ -155,7 +150,7 @@ class Workspace {
   }
 
   public updateSelectionNode(node) {
-    this.selection = node;
+    this.selection = <NodeSelection> node;
     var key = null;
     if (node) {
       key = node['key'];
@@ -221,7 +216,7 @@ class Workspace {
   }
 
   hasHealthMBeans() {
-    var beans = getHealthMBeans(this);
+    var beans = Core.getHealthMBeans(this);
     if (beans) {
       if (angular.isArray(beans)) return beans.length > 1;
       return true;
