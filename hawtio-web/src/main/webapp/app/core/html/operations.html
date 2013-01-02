@@ -1,6 +1,6 @@
 <ul class="unstyled">
   <li ng-repeat="item in operations">
-    <div class="expandable closed" ng-controller="OperationController">
+    <div class="expandable closed" ng-controller="Core.OperationController">
       <div title="{{desc}}" class="title">
         <i class="expandable-indicator"></i> {{title}}
       </div>
@@ -8,6 +8,7 @@
         <form class="form-horizontal">
           <fieldset>
             <div class="control-group" ng-repeat="arg in args">
+              <!-- Todo Add form validation -->
               <label class="control-label">{{arg.name}} ({{arg.type}}): </label>
                 <div class="controls" ng-switch on="arg.formType">
                   <input ng-switch-when="text" type='text' ng-model="arg.value">

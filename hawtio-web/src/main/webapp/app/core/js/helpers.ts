@@ -29,7 +29,7 @@ var numberTypeNames = {
 /**
  * Returns the number of lines in the given text
  */
-function lineCount(value) {
+function lineCount(value): number {
   var rows = 0;
   if (value) {
     rows = 1;
@@ -38,7 +38,7 @@ function lineCount(value) {
   return rows;
 }
 
-function url(path: string) {
+function url(path: string): string {
   if (path) {
     if (path.startsWith("/")) {
       if (_urlPrefix === null) {
@@ -57,7 +57,7 @@ function url(path: string) {
   return path;
 }
 
-function humanizeValue(value) {
+function humanizeValue(value:any):string {
   if (value) {
     var text = value.toString();
     return trimQuotes(text.underscore().humanize());
@@ -65,7 +65,7 @@ function humanizeValue(value) {
   return value;
 }
 
-function detectTextFormat(value) {
+function detectTextFormat(value: any):string {
   var answer = "text";
   if (value) {
     answer = "javascript";
@@ -251,6 +251,8 @@ function escapeDots(text:string) {
  * @param type which is usually "success" or "error" and matches css alert-* css styles
  * @param message the text to display
  */
+// TODO Support vargs  as it would be nice to support notification("error", "Failed to get a response! '", response)
+// TODO And to handle string substitutions accordingly too
 function notification (type:string, message:string) {
     $("#alert-area").append($("<div class='alert alert-" + type + " fade in' data-alert><button type='button' class='close' data-dismiss='alert'>×</button>" + message + "</div>"));
     $(".alert").delay(2000).fadeOut("slow", function () { $(this).remove(); });
