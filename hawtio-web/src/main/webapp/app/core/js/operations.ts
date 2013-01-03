@@ -94,7 +94,7 @@ module Core {
         routeParams : ng.IRouteParamsService;
         workspace : Workspace;
         sanitize : (value : IOperation) => IOperation;
-        operations : IOperation[];
+        operations : IOperation;
     }
 
     export function OperationsController($scope : IOperationsControllerScope, $routeParams : ng.IRouteParamsService, workspace:Workspace) {
@@ -138,8 +138,9 @@ module Core {
         var jolokia = workspace.jolokia;
 
         var update_values = (response) => {
-          $scope.operations = sanitize(<IOperation> response.value.op);
-          $scope.$apply()
+          var ops: IOperation = response.value.op;
+          $scope.operations = sanitize(ops);
+          $scope.$apply();
         };
         jolokia.request(query, onSuccess(update_values));
 

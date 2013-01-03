@@ -151,6 +151,7 @@ module ng {
     ///////////////////////////////////////////////////////////////////////////
     interface IScope {
         // Documentation says exp is optional, but actual implementaton counts on it
+        $apply(): any;
         $apply(exp: string): any;
         $apply(exp: (scope: IScope) => any): any;
         
