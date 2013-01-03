@@ -1,11 +1,8 @@
 <form class="form-horizontal">
   <div class="control-group">
-    <label class="control-label" for="logSearch" title="The exact logging level to see messages of">Search</label>
+      <input id="logSearch" class="span10 search-query" ng-model="query" placeholder="search logs">
 
-    <div class="controls">
-      <input id="logSearch" class="span8 search-query" ng-model="query" placeholder="search logs">
-
-      <select class="pull-right" ng-model="logLevelQuery" id="logLevelQuery">
+      <select class="span2" ng-model="logLevelQuery" id="logLevelQuery">
         <option value="" selected="selected">Logging Level</option>
         <option value="FATAL">FATAL</option>
         <option value="ERROR">ERROR</option>
@@ -13,7 +10,6 @@
         <option value="INFO">INFO</option>
         <option value="DEBUG">DEBUG</option>
       </select>
-    </div>
   </div>
 </form>
 
