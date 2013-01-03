@@ -52,7 +52,7 @@ module Camel {
       $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;
 
-        var mbean = getSelectionBundleMBean(workspace);
+        var mbean = workspace.getSelectedMBeanName();
         if (mbean) {
           var jolokia = workspace.jolokia;
           var options = onSuccess(populateTable);
