@@ -20,8 +20,8 @@ title: join the hawt community!
 <div class="screenshot"><img src="/images/screenshot-hawtio-jira.png" alt="" /></div>
 -->
 <p>The project tracks bugs, feature-requests, and other issues through the github issue-tracking system.</p>
-<p><a href="${project_issue_url}">hawt.io issue tracker</a> | <a href="http://tinyurl.com/hawtio-starter-issues">Starter issues</a></p>
-<p>To file issues or requests with JIRA, you must have a JBoss Community account (don&#8217;t worry, <a href="https://community.jboss.org/login.jspa">registering</a> is easy).
+<p><a href="${project_issue_url}">hawt.io issue tracker</a></p>
+<p>To file new issues or comment on existing issues you need to register for a <a href="http://github.com/">github account</a> which is quick and easy!
 </p>
 </div>
 
