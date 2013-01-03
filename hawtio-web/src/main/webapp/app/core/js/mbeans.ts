@@ -9,7 +9,8 @@ module Core {
         setTimeout(updateSelectionFromURL, 50);
       });
 
-      // TODO Why not use $scope.$on and $rootScope.$broadCast
+      // we could use $scope.$on and $rootScope.$broadCast here but it seems watching
+      // an expression may be a little more efficient and use less event broadcasting around controllers
       $scope.$watch('workspace.operationCounter', function () {
         $scope.counter += 1;
         loadTree();
