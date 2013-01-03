@@ -1,49 +1,46 @@
 <form class="form-horizontal">
-    <div class="control-group">
-        <label class="control-label" for="logLevelQuery" title="The exact logging level to see messages of">Search</label>
+  <div class="control-group">
+    <label class="control-label" for="logSearch" title="The exact logging level to see messages of">Search</label>
 
-        <div class="controls">
-            <input class="span12 search-query"  ng-model="query" placeholder="search logs">
-        </div>
+    <div class="controls">
+      <input id="logSearch" class="span8 search-query" ng-model="query" placeholder="search logs">
+
+      <select class="pull-right" ng-model="logLevelQuery" id="logLevelQuery">
+        <option value="" selected="selected">Logging Level</option>
+        <option value="FATAL">FATAL</option>
+        <option value="ERROR">ERROR</option>
+        <option value="WARNING">WARNING</option>
+        <option value="INFO">INFO</option>
+        <option value="DEBUG">DEBUG</option>
+      </select>
     </div>
-
-    <div class="control-group">
-        <label class="control-label" for="logLevelQuery" title="The exact logging level to see messages of">Logging Level</label>
-
-        <div class="controls">
-            <select ng-model="logLevelQuery" id="logLevelQuery">
-                <option value="" selected="selected">Logging Level</option>
-                <option value="FATAL">FATAL</option>
-                <option value="ERROR">ERROR</option>
-                <option value="WARNING">WARNING</option>
-                <option value="INFO">INFO</option>
-                <option value="DEBUG">DEBUG</option>
-            </select>
-        </div>
-    </div>
+  </div>
 </form>
 
 <div ng-show="filteredLogs.length > 0">
-    There are '{{filteredLogs.length}}' logs matching your required criteria
-    <table class="table table-condensed table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Timestamp</th>
-            <th>Level</th>
-            <th>Logger</th>
-            <th width="100%">Message</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="log in filteredLogs = (logs | filter:query | filter:{level: logLevelQuery})" ng-class="logClass(log)">
-            <td>{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-            <td>{{log.level}}</td>
-            <td>{{log.logger}}</td>
-            <td>{{log.message}}</td>
-        </tr>
-        </tbody>
-    </table>
+  <table class="table table-condensed table-striped table-hover" title="">
+<!--
+    <caption>There are '{{filteredLogs.length}}' logs matching your required criteria</caption>
+-->
+    <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Level</th>
+      <th>Logger</th>
+      <th width="100%">Message</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="log in filteredLogs = (logs | filter:query | filter:{level: logLevelQuery})"
+        ng-class="logClass(log)">
+      <td>{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+      <td>{{log.level}}</td>
+      <td>{{log.logger}}</td>
+      <td>{{log.message}}</td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 <div ng-show="filteredLogs.length == 0">
-    There are no logs matching your required criteria
+  There are no logs matching your required criteria
 </div>
