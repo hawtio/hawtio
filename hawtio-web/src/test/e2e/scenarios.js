@@ -22,6 +22,9 @@ describe('home page', function() {
 
 describe('create queue, send message and browse it', function() {
 
+  var timeout = 2;
+  var bigTimeout = 5;
+
   console.log("========= About to log some stuff!!!");
 
   beforeEach(function() {
@@ -32,7 +35,7 @@ describe('create queue, send message and browse it', function() {
   it('should let us create a new queue', function() {
     console.log("Starting!!!");
 
-    sleep(2);
+    sleep(timeout);
 
     var queueName = "new.thing2";
     input("destinationName").enter(queueName);
@@ -41,22 +44,43 @@ describe('create queue, send message and browse it', function() {
 
     element("button.btn", "Create Queue").click();
 
-
-    sleep(2);
+    sleep(timeout);
 
     console.log("Now trying to browse...");
 
-    // now lets browse the queue
-    browser().navigateTo('#/browseQueue?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
 
-    sleep(2);
+    // send a message
+
+    // TODO is there a better way to do this to avoid reloading index.html?
+    browser().navigateTo('../../index.html');
+    browser().navigateTo('#/sendMessage?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
+    sleep(timeout);
+
+    element(".CodeMirror-lines pre:last-of-type").text("<hello>world!</hello>");
+    element(".CodeMirror-lines pre:last-of-type").click();
+
+    // TODO how do we get the button to enable itself? angularjs hasn't spotted we've just entered the value!
+    sleep(10);
+    sleep(timeout);
+
+    console.log("Attempt to send to the destination");
+
+    element("#sendButton", "Send Message").click();
+
+
+    // now lets browse the queue
+
+    // TODO is there a better way to do this to avoid reloading index.html?
+    browser().navigateTo('../../index.html');
+    browser().navigateTo('#/browseQueue?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
+    sleep(bigTimeout);
 
     var values = element("table#grid tbody tr");
     console.log("Found elements " + values);
     console.log("Found element count " + values.count());
 
     // lets assert that we have some messages!
-    //expect(element("tr", "Number of messages on queue " + queueName).count()).toBeGreaterThan(0);
-    expect(element("tr").count()).toBeGreaterThan(0);
+    expect(element("table#grid tbody tr td.dataTables_empty", "Message table should not be empty for queue " + queueName).count()).toEqual(0);
+    expect(element("table#grid tbody tr", "Number of messages on queue " + queueName).count()).toBeGreaterThan(0);
   });
 });
