@@ -63,6 +63,21 @@ Then to incrementally compile the project its a simple matter of running 'grunt'
 
     grunt
 
+## Running the end to end integration tests
+
+Install [testacular](http://vojtajina.github.com/testacular/):
+
+    npm -g install testacular
+
+In a shell in hawtio-web directory run:
+
+    mvn test-compile exec:java
+
+In another in the same directory run the following:
+
+    testacular start src/test/config/e2e-config.js
+
+
 ## How to get started hacking the code
 
 Check out the [hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
