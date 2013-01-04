@@ -23,4 +23,11 @@ public interface Plugin {
 
   public String getName();
 
+  public String getContext();
+
+  public String getDomain();
+
+  public String[] getScripts();
+
+
 }

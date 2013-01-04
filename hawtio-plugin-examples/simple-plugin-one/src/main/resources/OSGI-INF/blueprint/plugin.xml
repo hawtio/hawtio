@@ -18,7 +18,10 @@
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0">
 
   <bean id="plugin" class="io.hawt.web.plugin.SimplePlugin">
-    <property name="name" value="simple_plugin"/>
+    <property name="name" value="${plugin-name}"/>
+    <property name="context" value="${plugin-context}"/>
+    <property name="domain" value="${plugin-domain}"/>
+    <property name="scripts" value="${plugin-scripts}"/>
   </bean>
 
   <service ref="plugin" interface="io.hawt.web.plugin.Plugin"/>

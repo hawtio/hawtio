@@ -31,4 +31,16 @@ public class Plugin implements PluginMBean {
     return self.getName();
   }
 
+  public String getContext() {
+    return self.getContext();
+  }
+
+  public String getDomain() {
+    return self.getDomain();
+  }
+
+  public String[] getScripts() {
+    return self.getScripts();
+  }
+
 }

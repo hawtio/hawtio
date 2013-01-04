@@ -14,14 +14,21 @@
   <description>hawt.io :: Simple plugin</description>
 
   <properties>
-    <context>/hawtio/simple-plugin</context>
+    <!-- filtered plugin properties -->
+    <plugin-context>/hawtio/simple-plugin</plugin-context>
+    <plugin-name>${project.artifactId}</plugin-name>
+    <plugin-domain></plugin-domain>
+    <plugin-scripts>app/app.js</plugin-scripts>
+
     <fuse.osgi.import>
       io.hawt.web.plugin,
       *;resolution:=optional
     </fuse.osgi.import>
+    <!--
     <fuse.osgi.export>
       io.hawt.web.plugin
     </fuse.osgi.export>
+    -->
   </properties>
 
   <dependencies>
@@ -36,6 +43,16 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+     </resource>
+    </resources>
+
     <plugins>
 
       <plugin>
@@ -84,8 +101,8 @@
             <supportedProjectType>war</supportedProjectType>
           </supportedProjectTypes>
           <instructions>
-            <Webapp-Context>${context}</Webapp-Context>
-            <Web-ContextPath>${context}</Web-ContextPath>
+            <Webapp-Context>${plugin-context}</Webapp-Context>
+            <Web-ContextPath>${plugin-context}</Web-ContextPath>
 
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
             <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
@@ -97,6 +114,7 @@
             <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Implementation-Title>HawtIO</Implementation-Title>
