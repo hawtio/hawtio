@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+	  <groupId>io.hawt</groupId>
+	  <artifactId>project</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-plugin-registry</artifactId>
+  <packaging>bundle</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawt.io :: Plugin Registry Backend</description>
+
+  <properties>
+    <context>/hawtio/plugin_registry</context>
+
+    <fuse.osgi.export>
+      io.hawt.web.plugin
+    </fuse.osgi.export>
+    <fuse.osgi.import>
+      io.hawt.web.plugin,
+      javax.management,
+      *;resolution:=optional
+    </fuse.osgi.import>
+    <fuse.osgi.private.pkg>
+      io.hawt.web.plugin.internal
+    </fuse.osgi.private.pkg>
+
+    <slf4j-version>1.6.1</slf4j-version>
+    <maven-bundle-plugin-version>2.3.4</maven-bundle-plugin-version>
+
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+            <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
+            <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
+
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+
+          </instructions>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
