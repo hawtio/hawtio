@@ -122,6 +122,20 @@ npm install grunt-type</code></pre>
 
 <pre><code>grunt</code></pre>
 
+<h2 id = "Running_the_end_to_end_integration_tests">Running the end to end integration tests</h2>
+
+<p>Install <a href="http://vojtajina.github.com/testacular/">testacular</a>:</p>
+
+<pre><code>npm -g install testacular</code></pre>
+
+<p>In a shell in hawtio-web directory run:</p>
+
+<pre><code>mvn test-compile exec:java</code></pre>
+
+<p>In another in the same directory run the following:</p>
+
+<pre><code>testacular start src/test/config/e2e-config.js</code></pre>
+
 <h2 id = "How_to_get_started_hacking_the_code">How to get started hacking the code</h2>
 
 <p>Check out the <a href="http://hawt.io/developers/index.html">hawt.io technologies, tools and code walkthroughs</a></p>
