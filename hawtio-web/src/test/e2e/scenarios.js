@@ -28,8 +28,7 @@ describe('create queue, send message and browse it', function() {
   console.log("========= About to log some stuff!!!");
 
   beforeEach(function() {
-    browser().navigateTo('../../index.html');
-    browser().navigateTo('#/createQueue?nid=root_org.apache.activemq_broker1_Queue');
+    browser().navigateTo('/hawtio/#/createQueue?nid=root_org.apache.activemq_broker1_Queue');
   });
 
   it('should let us create a new queue', function() {
@@ -37,7 +36,7 @@ describe('create queue, send message and browse it', function() {
 
     sleep(timeout);
 
-    var queueName = "new.thing2";
+    var queueName = "new.thing4";
     input("destinationName").enter(queueName);
 
     console.log("Attempt to create a new queue");
@@ -51,15 +50,20 @@ describe('create queue, send message and browse it', function() {
 
     // send a message
 
-    // TODO is there a better way to do this to avoid reloading index.html?
-    browser().navigateTo('../../index.html');
-    browser().navigateTo('#/sendMessage?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
+    browser().navigateTo('/hawtio/#/sendMessage?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
     sleep(timeout);
 
-    element(".CodeMirror-lines pre:last-of-type").text("<hello>world!</hello>");
-    element(".CodeMirror-lines pre:last-of-type").click();
+    var messageBody = "<hello>world!</hello>";
 
-    // TODO how do we get the button to enable itself? angularjs hasn't spotted we've just entered the value!
+    // TODO how do we enter text into  the button to enable itself? angularjs hasn't spotted we've just entered the value!
+    element(".CodeMirror-lines pre:last-of-type").text(messageBody);
+    input("message").enter(messageBody);
+/*
+    element(".CodeMirror-lines pre:last-of-type").click();
+    element("textarea#messageBody").val(messageBody);
+*/
+
+
     sleep(10);
     sleep(timeout);
 
@@ -70,9 +74,7 @@ describe('create queue, send message and browse it', function() {
 
     // now lets browse the queue
 
-    // TODO is there a better way to do this to avoid reloading index.html?
-    browser().navigateTo('../../index.html');
-    browser().navigateTo('#/browseQueue?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
+    browser().navigateTo('/hawtio/#/browseQueue?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
     sleep(bigTimeout);
 
     var values = element("table#grid tbody tr");

@@ -14,7 +14,7 @@ logLevel = LOG_INFO;
 browsers = ['Chrome'];
 
 proxies = {
-  '/': 'http://localhost:8080/hawtio/'
+  '/': 'http://localhost:8080/'
 };
 
 junitReporter = {
