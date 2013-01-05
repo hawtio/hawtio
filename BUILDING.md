@@ -1,14 +1,27 @@
 We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawt.io code](http://hawt.io/developers/index.html)
 
-You'll need to install [TypeScript](http://typescriptlang.org/) first...
+You'll need to install the [hawt.io](http://hawt.io/) dependencies first...
 
-### Installing typescript
+### Installing local dependencies
 
-To install [TypeScript](http://typescriptlang.org/) you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
+To install all of the required local dependencies you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
 
 Then you should be able to run:
 
+    cd hawtio-web
+    npm install
+
+### Installing global dependencies
+
+In order to make use of [TypeScript](http://typescriptlang.org/) you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell
+
+You can do this by running:
+
     npm install -g typescript
+
+Note, if you are using Ubuntu then you may need to use the sudo command:
+
+    sudo npm install -g typescript
 
 ## Using LiveReload
 
