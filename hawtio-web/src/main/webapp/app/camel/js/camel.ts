@@ -41,7 +41,14 @@ module Camel {
           var height = canvasDiv.height();
           if (height < 300) {
             console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
-            height = $(document).height() - canvasDiv.offset()['top'] - 5;
+            var offset = canvasDiv.offset();
+            height = $(document).height() - 5;
+            if (offset) {
+              var top = offset['top'];
+              if (top) {
+                height -= top;
+              }
+            }
           }
           //console.log("Using width " + width + " and height " + height);
 
