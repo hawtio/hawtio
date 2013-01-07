@@ -82,16 +82,9 @@ Install [testacular](http://vojtajina.github.com/testacular/):
 
     npm -g install testacular
 
-To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell etc) you need 0.5.x or later. I installed it via these commands:
+To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell etc) you need 0.5.x or later use this command:
 
-    curl http://registry.npmjs.org/testacular/-/testacular-0.5.7.tgz | tar -xv && mv package testacular
-
-    # create symlinks (optional)
-    cd testacular
-    sudo ln -s $PWD/bin/testacular /usr/local/bin/testacular
-
-    # install dependencies
-    sudo npm install .
+    npm install -g testacular@"~0.5.7"
 
 
 ### Running tests with testacular
