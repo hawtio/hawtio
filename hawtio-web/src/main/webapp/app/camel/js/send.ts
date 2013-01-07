@@ -7,13 +7,6 @@ module Camel {
       var textArea = $("#messageBody").first()[0];
       if (textArea) {
         var options:any = {};
-        options.onChange = function(cm) {
-          if (cm.getValue() === "") {
-            $("#sendButton").attr("disabled", "disabled");
-          } else {
-            $("#sendButton").removeAttr("disabled");
-          }
-        };
         var editorSettings = createEditorSettings(workspace, $scope.format, options);
         $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
       }
