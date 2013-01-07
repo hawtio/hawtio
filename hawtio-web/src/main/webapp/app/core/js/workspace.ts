@@ -17,7 +17,7 @@ class Workspace {
   public jolokia = null;
   public updateRate = 0;
   public operationCounter = 0;
-  public selection:NodeSelection = null;
+  public selection:NodeSelection;
   public tree = null;
   public mbeanTypesToDomain = {};
   uriValidations = null;
@@ -134,6 +134,7 @@ class Workspace {
       if (this.validSelection(uri)) {
         // lets remember the previous selection
         this.setLocalStorage(key, uri);
+        return false;
       } else {
         // lets look up the previous preferred value for this type
         var defaultPath = this.getLocalStorage(key);
@@ -144,12 +145,15 @@ class Workspace {
           }
         }
         this.$location.path(defaultPath);
+        return true;
       }
+    } else {
+      return false;
     }
-    return false;
   }
 
   public updateSelectionNode(node) {
+    var originalSelection = this.selection;
     this.selection = <NodeSelection> node;
     var key = null;
     if (node) {
@@ -161,11 +165,17 @@ class Workspace {
       q['nid'] = key
     }
     $location.search(q);
-    var key = this.selectionViewConfigKey();
-    if (key) {
-      var defaultPath = this.getLocalStorage(key);
-      if (defaultPath) {
-        this.$location.path(defaultPath);
+
+    // if we have updated the selection (rather than just loaded a page)
+    // lets use the previous preferred view - otherwise we may be loading
+    // a page from a bookmark so lets not change the view :)
+    if (originalSelection) {
+      key = this.selectionViewConfigKey();
+      if (key) {
+        var defaultPath = this.getLocalStorage(key);
+        if (defaultPath) {
+          this.$location.path(defaultPath);
+        }
       }
     }
   }
