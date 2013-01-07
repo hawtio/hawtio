@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible",
     "keywords": [
+      "application", "java", "management", "tool", "angularjs", "typescript"
     ],
     "private": true,
     "author": "hawt.io team",
