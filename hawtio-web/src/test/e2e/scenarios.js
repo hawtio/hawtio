@@ -2,11 +2,10 @@
 
 /* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
 
-/*
 describe('home page', function() {
 
   beforeEach(function() {
-    browser().navigateTo('../../index.html');
+    browser().navigateTo('/hawtio/');
   });
 
   it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
@@ -17,35 +16,30 @@ describe('home page', function() {
   });
 
 });
-*/
-
 
 describe('create queue, send message and browse it', function() {
-
-  var timeout = 2;
-  var bigTimeout = 5;
-
-  console.log("========= About to log some stuff!!!");
+  var timeout = 1;
+  var bigTimeout = 2;
 
   beforeEach(function() {
     browser().navigateTo('/hawtio/#/createQueue?nid=root_org.apache.activemq_broker1_Queue');
   });
 
   it('should let us create a new queue', function() {
-    console.log("Starting!!!");
-
     sleep(timeout);
 
-    var queueName = "new.thing4";
+    var d = new Date();
+    var queueName = "test." + d.toUTCString().replace(/\,| GMT/g, "").replace(/ |:/g, ".");
+
     input("destinationName").enter(queueName);
 
-    console.log("Attempt to create a new queue");
+    console.log("Attempt to create a new queue: " + queueName);
 
     element("button.btn", "Create Queue").click();
 
     sleep(timeout);
 
-    console.log("Now trying to browse...");
+    console.log("Now trying to browse: " + queueName);
 
 
     // send a message
@@ -53,35 +47,45 @@ describe('create queue, send message and browse it', function() {
     browser().navigateTo('/hawtio/#/sendMessage?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
     sleep(timeout);
 
-    var messageBody = "<hello>world!</hello>";
+    var messageBody = "<hello>the time is " + d + "</hello>";
 
     // TODO how do we enter text into  the button to enable itself? angularjs hasn't spotted we've just entered the value!
-    element(".CodeMirror-lines pre:last-of-type").text(messageBody);
-    input("message").enter(messageBody);
+    //preElement.text(messageBody);
+    element(".CodeMirror-lines pre:last-of-type").query(function(selectedElements, done){
+        selectedElements.text(messageBody);
+        selectedElements.val(messageBody);
+        sleep(1);
+        selectedElements.trigger('change');
+        done();
+    });
 /*
+    input("message").enter(messageBody);
     element(".CodeMirror-lines pre:last-of-type").click();
     element("textarea#messageBody").val(messageBody);
 */
+/*
+    var viewElement = angular.element(element("#properties"));
+    if (viewElement) {
+      console.log("Found view element");
+      var scope = viewElement.scope();
+      if (scope) {
+        scope.$apply();
+      }
+    }
+*/
 
-
-    sleep(10);
     sleep(timeout);
 
-    console.log("Attempt to send to the destination");
-
     element("#sendButton", "Send Message").click();
+    sleep(timeout);
 
+    console.log("Clicked send button!");
 
     // now lets browse the queue
-
     browser().navigateTo('/hawtio/#/browseQueue?nid=root_org.apache.activemq_broker1_Queue_' + queueName);
     sleep(bigTimeout);
 
-    var values = element("table#grid tbody tr");
-    console.log("Found elements " + values);
-    console.log("Found element count " + values.count());
-
-    // lets assert that we have some messages!
+    // lets check we have some messages
     expect(element("table#grid tbody tr td.dataTables_empty", "Message table should not be empty for queue " + queueName).count()).toEqual(0);
     expect(element("table#grid tbody tr", "Number of messages on queue " + queueName).count()).toBeGreaterThan(0);
   });

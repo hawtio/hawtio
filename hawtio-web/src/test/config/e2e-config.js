@@ -17,7 +17,9 @@ proxies = {
   '/': 'http://localhost:8080/'
 };
 
+reporters = ['dots', 'progress', 'junit'];
+
 junitReporter = {
-  outputFile: 'target/test_out/e2e.xml',
+  outputFile: 'target/test-out-e2e.xml',
   suite: 'e2e'
 };
