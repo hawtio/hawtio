@@ -25,9 +25,12 @@ module Core {
       function updateSelectionFromURL() {
         var key = $location.search()['nid'];
         if (key) {
-          var node = $("#jmxtree").dynatree("getTree").activateKey(key);
-          if (node) {
-            node.expand(true);
+          var dtree = $("#jmxtree").dynatree("getTree");
+          if (dtree) {
+            var node = dtree.activateKey(key);
+            if (node) {
+              node.expand(true);
+            }
           }
         }
       }
