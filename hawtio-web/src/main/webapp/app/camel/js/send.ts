@@ -28,7 +28,6 @@ module Camel {
       });
 
       var sendWorked = () => {
-        $("#sendButton").attr("disabled", "disabled");
         $scope.codeMirror.setValue("");
         notification("success", "Message sent!");
       };
