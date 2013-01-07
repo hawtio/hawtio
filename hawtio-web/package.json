@@ -1,11 +1,11 @@
 {
     "name": "hawtio",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible",
     "keywords": [
     ],
     "private": true,
-    "author": "...",
+    "author": "hawt.io team",
     "contributors": [
     ],
     "repository": {
@@ -17,8 +17,8 @@
     },
     "licenses": [
         {
-            "type": "Apache?",
-            "url": "..."
+            "type": "Apache 2.0 License",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
         }
     ],
     "preferGlobal": false,
