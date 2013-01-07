@@ -92,7 +92,7 @@ public class PluginRegistry implements PluginRegistryMBean, io.hawt.web.plugin.P
   }
 
   private ObjectName getObjectName(Plugin plugin) throws MalformedObjectNameException {
-    return new ObjectName("hawtio:type=" + plugin.getName());
+    return new ObjectName("hawtio:type=plugin,name=" + plugin.getName());
   }
 
   /*
