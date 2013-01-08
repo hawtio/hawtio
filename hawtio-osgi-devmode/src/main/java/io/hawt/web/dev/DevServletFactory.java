@@ -38,19 +38,20 @@ public class DevServletFactory {
   private String welcomeFiles = null;
 
   public DevServletFactory() {
-
+    LOG.info("DevServletFactory " + this + " instantiated");
   }
 
   public void init() {
-
+    LOG.info("DevServletFactory " + this + " initialized");
   }
 
   public void destroy() {
-      try {
-        webContainer.unregisterServlet(servlet);
-      } catch (Exception e) {
-        // ignored
-      }
+    LOG.info("DevServletFactory " + this + " destroyed");
+    try {
+      webContainer.unregisterServlet(servlet);
+    } catch (Exception e) {
+      // ignored
+    }
   }
 
   public String getContext() {
@@ -65,7 +66,7 @@ public class DevServletFactory {
       LOG.info("registration succeeded");
     } catch (Exception retry) {
       try {
-        LOG.info("Servlet probably already registered, re-registering");
+        LOG.info("servlet probably already registered, re-registering");
         webContainer.unregisterServlet(servlet);
         webContainer.registerServlet(servlet, new String[]{context}, null, httpContext);
       } catch (Exception e) {

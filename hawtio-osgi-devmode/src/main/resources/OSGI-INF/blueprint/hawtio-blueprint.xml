@@ -30,7 +30,7 @@
       class="io.hawt.web.dev.DevServletFactory"
       init-method="init"
       destroy-method="destroy">
-      <cm:managed-properties persistent-id="" update-strategy="container-managed"/>
+      <cm:managed-properties persistent-id=""/>
       <property name="webContainer" ref="webContainer"/>
     </cm:managed-component>
 

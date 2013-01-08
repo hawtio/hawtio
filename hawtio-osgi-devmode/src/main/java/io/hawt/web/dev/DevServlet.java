@@ -70,13 +70,14 @@ public class DevServlet extends HttpServlet {
           return;
         }
 
-        LOG.info("Serving file: " + file.getAbsolutePath() + " of type " + type);
         in = new FileInputStream(file);
 
-        type = getServletContext().getMimeType(requested);
+        type = getServletContext().getMimeType(file.getAbsolutePath());
         if (type == null) {
             type = "application/octet-stream";
         }
+
+        LOG.info("Serving file: " + file.getAbsolutePath() + " of type " + type);
 
         resp.reset();
         resp.setBufferSize(DEFAULT_BUFFER_SIZE);
