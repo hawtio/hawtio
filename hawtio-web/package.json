@@ -8,6 +8,10 @@
     "private": true,
     "author": "hawt.io team",
     "contributors": [
+      {
+        "name": "hawt.io team",
+        "web": "https://github.com/hawtio/hawtio/graphs/contributors"
+      }
     ],
     "repository": {
         "type": "git",
