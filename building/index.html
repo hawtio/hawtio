@@ -71,6 +71,8 @@
 <pre><code>cd hawtio-web
 npm install</code></pre>
 
+<p>If this fails it could be you need a newer <a href="https://npmjs.org/">npm</a> installation.</p>
+
 <h3 id = "Installing_global_dependencies">Installing global dependencies</h3>
 
 <p>In order to make use of <a href="http://typescriptlang.org/">TypeScript</a> you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell</p>
@@ -122,16 +124,7 @@ mvn -Pwatch</code></pre>
 
 <p>Another build option is <a href="http://gruntjs.com/">gruntjs</a>. Again to build the code with gruntjs you will need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a></p>
 
-<p>Then to install grunt:</p>
-
-<pre><code>npm install -g grunt</code></pre>
-
-<p>Then in the hawtio directory you will need to install the grunt plugins required</p>
-
-<pre><code>cd hawtio-web
-npm install grunt-type
-npm install grunt-reload
-npm install grunt-contrib-copy</code></pre>
+<p>Make sure you install the local and global dependencies (see above).</p>
 
 <p>Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
 
