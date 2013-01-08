@@ -101,7 +101,7 @@ mvn test-compile exec:java</code></pre>
 <pre><code>cd hawtio-web
 mvn -Pwatch</code></pre>
 
-<p>Enable Live Reload in your browser (so open http://localhost:8080/hawtio/ then click on the Live Reload icon to the right of the location bar).</p>
+<p>Enable Live Reload in your browser (so open [http://localhost:8080/hawtio/] then click on the Live Reload icon to the right of the location bar).</p>
 
 <p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)</p>
 
@@ -129,7 +129,9 @@ mvn -Pwatch</code></pre>
 <p>Then in the hawtio directory you will need to install the grunt plugins required</p>
 
 <pre><code>cd hawtio-web
-npm install grunt-type</code></pre>
+npm install grunt-type
+npm install grunt-reload
+npm install grunt-contrib-copy</code></pre>
 
 <p>Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
 
@@ -141,16 +143,9 @@ npm install grunt-type</code></pre>
 
 <pre><code>npm -g install testacular</code></pre>
 
-<p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell etc) you need 0.5.x or later. I installed it via these commands:</p>
+<p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell etc) you need 0.5.x or later use this command:</p>
 
-<pre><code>curl http://registry.npmjs.org/testacular/-/testacular-0.5.7.tgz | tar -xv &amp;&amp; mv package testacular
-
-# create symlinks (optional)
-cd testacular
-sudo ln -s $PWD/bin/testacular /usr/local/bin/testacular
-
-# install dependencies
-sudo npm install .</code></pre>
+<pre><code>npm install -g testacular@&quot;~0.5.7&quot;</code></pre>
 
 <h3 id = "Running_tests_with_testacular">Running tests with testacular</h3>
 
