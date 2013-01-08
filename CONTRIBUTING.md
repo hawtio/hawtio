@@ -1,5 +1,7 @@
 We love contributions! We really need your help to make [hawt.io](http://hawt.io/) even more hawt!
 
+Many thanks to all of our [existing contributors](https://github.com/hawtio/hawtio/graphs/contributors)! But we're greedy, we want more!
+
 Here's some notes to help you get started:
 
 ## Getting Started
