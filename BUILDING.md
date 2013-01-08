@@ -41,7 +41,7 @@ then incrementally build the project using a separate shell:
     cd hawtio-web
     mvn -Pwatch
 
-Enable Live Reload in your browser (so open http://localhost:8080/hawtio/ then click on the Live Reload icon to the right of the location bar).
+Enable Live Reload in your browser (so open [http://localhost:8080/hawtio/] then click on the Live Reload icon to the right of the location bar).
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)
 
@@ -71,6 +71,8 @@ Then in the hawtio directory you will need to install the grunt plugins required
 
     cd hawtio-web
     npm install grunt-type
+    npm install grunt-reload
+    npm install grunt-contrib-copy
 
 Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
 
