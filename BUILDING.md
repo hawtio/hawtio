@@ -11,6 +11,8 @@ Then you should be able to run:
     cd hawtio-web
     npm install
 
+If this fails it could be you need a newer [npm](https://npmjs.org/) installation.
+
 ### Installing global dependencies
 
 In order to make use of [TypeScript](http://typescriptlang.org/) you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell
@@ -63,16 +65,7 @@ By default this then generates the [webapp/js/app.js file](https://github.com/ha
 
 Another build option is [gruntjs](http://gruntjs.com/). Again to build the code with gruntjs you will need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
 
-Then to install grunt:
-
-    npm install -g grunt
-
-Then in the hawtio directory you will need to install the grunt plugins required
-
-    cd hawtio-web
-    npm install grunt-type
-    npm install grunt-reload
-    npm install grunt-contrib-copy
+Make sure you install the local and global dependencies (see above).
 
 Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
 
