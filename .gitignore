@@ -13,3 +13,4 @@ runtime-EclipseApplication-m2eclipse
 ./fuseenterprise
 .idea
 tags
+node_modules
