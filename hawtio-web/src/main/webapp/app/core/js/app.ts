@@ -129,19 +129,6 @@ module Core {
 
       // when we change the view/selection lets update the hash so links have the latest stuff
       $scope.$on('$routeChangeSuccess', function () {
-/*
-        var hash = $location.search();
-
-        // TODO there must be a nice function somewhere to do this in a nicer way!
-        // NOTE we are not encoding anything
-        var keyValuePairs : string[] = [];
-        angular.forEach(hash, function(value, key) {
-            keyValuePairs.push(key + "=" + value);
-        });
-        var text = "?" + keyValuePairs.join("&");
-
-        $scope.hash = encodeURI(text);
-*/
         $scope.hash = workspace.hash();
       });
 
