@@ -12,9 +12,22 @@ module Fabric {
         "sDefaultContent": '<i class="icon-plus"></i>'
       },
       {
-      "mDataProp": "id",
-      "sDefaultContent": "",
-      "mData": null
+        "mDataProp": "id",
+        "mRender": function (data, type, row) {
+        var id = row['id'] || "";
+        var title = "container " + id + " ";
+        var img = "red-dot.png";
+        if (row['managed'] === false) {
+          img = "spacer.gif";
+        } else if (!row['alive']) {
+          img = "gray-dot.png";
+        } else if (row['provisionPending']) {
+          img = "pending.gif";
+        } else if (row['provisionStatus'] === 'success') {
+          img = "green-dot.png";
+        }
+        return "<img src='img/dots/" + img + "' title='" + title + "'/> " + id;
+      }
       },
       {
       "mDataProp": "profileIds",
