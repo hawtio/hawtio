@@ -268,9 +268,9 @@
       <properties>
         <activemq-version>5.8-SNAPSHOT</activemq-version>
 <!--
+-->
         <camel-version>2.11-SNAPSHOT</camel-version>
         <fabric-version>99-master-SNAPSHOT</fabric-version>
--->
       </properties>
 
       <repositories>
