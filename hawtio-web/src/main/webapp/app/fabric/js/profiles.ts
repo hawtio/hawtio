@@ -1,6 +1,21 @@
 module Fabric {
+  export function profileLinks(workspace, values) {
+    var answer = "";
+    angular.forEach(values, function(value, key) {
+      var prefix = "";
+      if (answer.length > 0) {
+        prefix = " ";
+      }
+      answer += prefix + "<a href='#/fabric/profile/" + value + workspace.hash() + "'>" + value + "</a>";
+    });
+    return answer;
+  }
+
   export function ProfilesController($scope, workspace:Workspace) {
     $scope.results = [];
+
+    // TODO load this from the version model!!!
+    $scope.versionId = "1.0";
 
     $scope.widget = new TableWidget($scope, workspace, [
       {
@@ -15,7 +30,7 @@ module Fabric {
       "mData": null
       },
       {
-      "mDataProp": "parentIds",
+      "mDataProp": "parentLinks",
       "sDefaultContent": "",
       "mData": null
       }
@@ -28,34 +43,13 @@ module Fabric {
      * Default the values that are missing in the returned JSON
      */
     function defaultValues(values) {
-      /*
-       angular.forEach(values, (aData) => {
-       var domain = aData["domain"];
-       if (!domain) {
-       var id = aData["healthId"];
-       if (id) {
-       var idx = id.lastIndexOf('.');
-       if (idx > 0) {
-       domain = id.substring(0, idx);
-       var alias = _healthDomains[domain];
-       if (alias) {
-       domain = alias;
-       }
-       var kind = aData["kind"];
-       if (!kind) {
-       kind = humanizeValue(id.substring(idx + 1));
-       aData["kind"] = kind;
-       }
-       }
-       }
-       aData["domain"] = domain;
-       }
+       angular.forEach(values, (row) => {
+        row["parentLinks"] = profileLinks(workspace, row["parentIds"]);
        });
-       */
       return values;
     }
 
-    $scope.$watch('workspace.selection', function () {
+    $scope.$watch('versionId', function () {
       if (workspace.moveIfViewInvalid()) return;
 
       function populateTable(response) {
@@ -65,11 +59,10 @@ module Fabric {
       }
 
       var jolokia = workspace.jolokia;
-      // TODO pick the version ID from the list of available ones
-      // defaulting to the current one!
-      var versionId = "1.0";
       jolokia.request(
-              {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String)', arguments: [versionId]},
+              {type: 'exec', mbean: managerMBean,
+                operation: 'getProfiles(java.lang.String)',
+                arguments: [$scope.versionId]},
               onSuccess(populateTable));
     });
   }

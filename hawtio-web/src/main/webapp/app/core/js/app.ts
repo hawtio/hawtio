@@ -129,6 +129,7 @@ module Core {
 
       // when we change the view/selection lets update the hash so links have the latest stuff
       $scope.$on('$routeChangeSuccess', function () {
+/*
         var hash = $location.search();
 
         // TODO there must be a nice function somewhere to do this in a nicer way!
@@ -140,6 +141,8 @@ module Core {
         var text = "?" + keyValuePairs.join("&");
 
         $scope.hash = encodeURI(text);
+*/
+        $scope.hash = workspace.hash();
       });
 
       $scope.isCurrentRoute = (page) => {

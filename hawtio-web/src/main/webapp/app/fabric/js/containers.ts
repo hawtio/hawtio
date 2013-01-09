@@ -30,7 +30,7 @@ module Fabric {
       }
       },
       {
-      "mDataProp": "profileIds",
+      "mDataProp": "profileLinks",
       "sDefaultContent": "",
       "mData": null
       },
@@ -58,30 +58,9 @@ module Fabric {
      * Default the values that are missing in the returned JSON
      */
     function defaultValues(values) {
-      /*
-       angular.forEach(values, (aData) => {
-       var domain = aData["domain"];
-       if (!domain) {
-       var id = aData["healthId"];
-       if (id) {
-       var idx = id.lastIndexOf('.');
-       if (idx > 0) {
-       domain = id.substring(0, idx);
-       var alias = _healthDomains[domain];
-       if (alias) {
-       domain = alias;
-       }
-       var kind = aData["kind"];
-       if (!kind) {
-       kind = humanizeValue(id.substring(idx + 1));
-       aData["kind"] = kind;
-       }
-       }
-       }
-       aData["domain"] = domain;
-       }
-       });
-       */
+      angular.forEach(values, (row) => {
+       row["profileLinks"] = profileLinks(workspace, row["profileIds"]);
+      });
       return values;
     }
 

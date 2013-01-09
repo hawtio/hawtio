@@ -75,6 +75,23 @@ class Workspace {
   }
 
   /**
+   * Returns the hash query argument to append to URL links
+   */
+  hash() {
+    var hash = this.$location.search();
+
+    // TODO there must be a nice function somewhere to do this in a nicer way!
+    // NOTE we are not encoding anything
+    var keyValuePairs : string[] = [];
+    angular.forEach(hash, function(value, key) {
+        keyValuePairs.push(key + "=" + value);
+    });
+    var text = "?" + keyValuePairs.join("&");
+
+    return encodeURI(text);
+  }
+
+  /**
    * sets the update rate
    */
   public setUpdateRate(value) {
