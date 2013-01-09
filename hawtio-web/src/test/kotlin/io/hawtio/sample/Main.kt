@@ -84,7 +84,8 @@ fun main(args: Array<String>): Unit {
         server.setHandler(context)
 
         // enable JMX
-        var mbeanContainer = MBeanContainer(ManagementFactory.getPlatformMBeanServer())
+        val mbeanServer = ManagementFactory.getPlatformMBeanServer()
+        var mbeanContainer = MBeanContainer(mbeanServer)
         server.getContainer()?.addEventListener(mbeanContainer);
         server.addBean(mbeanContainer)
 
@@ -114,6 +115,7 @@ fun main(args: Array<String>): Unit {
             factory.setConnectString(fabricUrl)
             var zooKeeper = factory.getObject()
             var impl = FabricServiceImpl()
+            impl.setMbeanServer(mbeanServer)
             impl.setZooKeeper(zooKeeper)
             impl.init()
         }
