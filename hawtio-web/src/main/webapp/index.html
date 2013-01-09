@@ -104,6 +104,13 @@
             <a ng-href="#/health{{hash}}" title="View the health of either all of a selected subset of the systems"
                data-placement="bottom">
               <i class="icon-eye-open"></i> Health</a></li>
+
+
+          <li ng-class="{active : isCurrentRoute('fabric/containers')}" ng-show="validSelection('fabric/containers')">
+            <a ng-href="#/fabric/containers{{hash}}" title="View the Fabric containers"
+               data-placement="bottom">
+              <i class="icon-eye-open"></i> Containers</a></li>
+
           <li ng-class="{active : isCurrentRoute('bundles')}" ng-show="validSelection('bundles')">
             <a ng-href="#/bundles{{hash}}" title="View the available bundles in this OSGi container"
                data-placement="bottom">

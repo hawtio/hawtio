@@ -51,6 +51,9 @@ class Workspace {
       'createEndpoint': () => this.isEndpointsFolder(),
       'traceRoute': () => this.isRoute(),
 
+      // fabric
+      '/fabric/containers': () => this.hasFabricMBean(),
+
       // osgi
       'bundles': () => this.isOsgiFolder()
     };
@@ -182,14 +185,14 @@ class Workspace {
 
 
   // only display stuff if we have an mbean with the given properties
-  public hasDomainAndProperties(objectName, properties = null) {
+  public hasDomainAndProperties(domainName, properties = null) {
     var workspace = this;
     var tree = workspace.tree;
     var node = workspace.selection;
     if (tree && node) {
-      var folder = tree.get(objectName);
+      var folder = tree.get(domainName);
       if (folder) {
-        if (objectName !== node.domain) return false;
+        if (domainName !== node.domain) return false;
         if (properties) {
           var entries = node.entries;
           if (!entries) return false;
@@ -232,6 +235,10 @@ class Workspace {
       return true;
     }
     return false;
+  }
+
+  hasFabricMBean() {
+    return this.hasDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'});
   }
 
   isQueue() {

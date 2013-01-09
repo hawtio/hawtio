@@ -41,6 +41,9 @@ myApp.config(($routeProvider) => {
                   when('/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: Camel.EndpointController}).
                   when('/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: Camel.TraceRouteController}).
 
+                  // fabric
+                  when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html', controller: Fabric.ContainersController}).
+
                   // osgi
                   when('/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: Osgi.BundleController}).
 
