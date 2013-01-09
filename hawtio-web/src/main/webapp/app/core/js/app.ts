@@ -43,6 +43,7 @@ myApp.config(($routeProvider) => {
 
                   // fabric
                   when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html', controller: Fabric.ContainersController}).
+                  when('/fabric/profiles', {templateUrl: 'app/fabric/html/profiles.html', controller: Fabric.ProfilesController}).
 
                   // osgi
                   when('/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: Osgi.BundleController}).

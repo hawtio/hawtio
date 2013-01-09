@@ -53,6 +53,7 @@ class Workspace {
 
       // fabric
       '/fabric/containers': () => this.hasFabricMBean(),
+      '/fabric/profiles': () => this.hasFabricMBean(),
 
       // osgi
       'bundles': () => this.isOsgiFolder()

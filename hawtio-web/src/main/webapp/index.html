@@ -106,8 +106,12 @@
               <i class="icon-eye-open"></i> Health</a></li>
 
 
+          <li ng-class="{active : isCurrentRoute('fabric/profiles')}" ng-show="validSelection('fabric/profiles')">
+            <a ng-href="#/fabric/profiles{{hash}}" title="View the Profiles in the Fuse Fabric"
+               data-placement="bottom">
+              <i class="icon-eye-open"></i> Profiles</a></li>
           <li ng-class="{active : isCurrentRoute('fabric/containers')}" ng-show="validSelection('fabric/containers')">
-            <a ng-href="#/fabric/containers{{hash}}" title="View the Fabric containers"
+            <a ng-href="#/fabric/containers{{hash}}" title="View the Containers in the Fuse Fabric"
                data-placement="bottom">
               <i class="icon-eye-open"></i> Containers</a></li>
 
