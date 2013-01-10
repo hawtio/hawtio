@@ -12,19 +12,19 @@
   <!-- This creates an embedded ActiveMQ Broker -->
   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" useJmx="true" persistent="false">
     <networkConnectors>
-      <networkConnector uri="static:(tcp://localhost:61617)"/>
+      <networkConnector uri="static:(tcp://localhost:31317)"/>
     </networkConnectors>
     <transportConnectors>
-      <transportConnector uri="tcp://localhost:61616"/>
+      <transportConnector uri="tcp://localhost:31316"/>
     </transportConnectors>
   </broker>
 
   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker2" useJmx="true" persistent="false">
     <networkConnectors>
-      <networkConnector uri="static:(tcp://localhost:61616)"/>
+      <networkConnector uri="static:(tcp://localhost:31316)"/>
     </networkConnectors>
     <transportConnectors>
-      <transportConnector uri="tcp://localhost:61617"/>
+      <transportConnector uri="tcp://localhost:31317"/>
     </transportConnectors>
   </broker>
 
@@ -32,7 +32,7 @@
        See http://camel.apache.org/activemq.html for more information.
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="failover:tcp://localhost:61616"/>
+    <property name="brokerURL" value="failover:tcp://localhost:31316"/>
   </bean>
 
   <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
