@@ -13,9 +13,7 @@ module Fabric {
 
   export function ProfilesController($scope, workspace:Workspace) {
     $scope.results = [];
-
-    // TODO load this from the version model!!!
-    $scope.versionId = "1.0";
+    $scope.versions = [];
 
     $scope.widget = new TableWidget($scope, workspace, [
       {
@@ -49,21 +47,51 @@ module Fabric {
       return values;
     }
 
-    $scope.$watch('versionId', function () {
+    function populateTable(response) {
+      var values = response.value;
+      $scope.widget.populateTable(defaultValues(values));
+      $scope.$apply();
+    }
+
+    function populateVersions(response) {
+      $scope.versions = response.value;
+      if (!$scope.versions.isEmpty()) {
+        if ($scope.version) {
+          // lets re-select the version object based on the last selection
+          $scope.version = $scope.versions.find({ id: $scope.loadedVersionId });
+        }
+        else {
+          // lets default the version
+          $scope.version = $scope.versions.find({ defaultVersion: true}) || $scope.versions[0];
+        }
+      }
+      $scope.$apply();
+    }
+
+    $scope.$watch('version', function () {
       if (workspace.moveIfViewInvalid()) return;
 
-      function populateTable(response) {
-        var values = response.value;
-        $scope.widget.populateTable(defaultValues(values));
-        $scope.$apply();
+      var jolokia = workspace.jolokia;
+      var versionId = null;
+      if ($scope.version) {
+        versionId = $scope.version.id;
+      }
+      if (!versionId) {
+        versionId = "1.0";
       }
 
-      var jolokia = workspace.jolokia;
-      jolokia.request(
-              {type: 'exec', mbean: managerMBean,
-                operation: 'getProfiles(java.lang.String)',
-                arguments: [$scope.versionId]},
-              onSuccess(populateTable));
+      if (versionId !== $scope.loadedVersionId) {
+        $scope.loadedVersionId = versionId;
+
+        jolokia.request(
+                [
+                  {type: 'exec', mbean: managerMBean, operation: 'versions'},
+                  {type: 'exec', mbean: managerMBean,
+                    operation: 'getProfiles(java.lang.String)',
+                    arguments: [versionId]}
+                ],
+                onSuccess([populateVersions, populateTable]));
+      }
     });
   }
 }
