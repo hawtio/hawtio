@@ -8,53 +8,38 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>simple-plugin-one</artifactId>
+  <artifactId>plugin-loader-frontend</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Simple plugini one</description>
+  <description>hawt.io :: hawtio plugin loader frontend</description>
 
   <properties>
-    <!-- filtered plugin properties -->
-    <plugin-context>/hawtio/simple-plugin</plugin-context>
-    <plugin-name>${project.artifactId}</plugin-name>
-    <plugin-domain></plugin-domain>
-    <plugin-scripts>app/js/app.js</plugin-scripts>
-
-    <fuse.osgi.import>
-      io.hawt.web.plugin,
-      *;resolution:=optional
-    </fuse.osgi.import>
-    <!--
-    <fuse.osgi.export>
-      io.hawt.web.plugin
-    </fuse.osgi.export>
-    -->
+    <context>plugin-loader</context>
+    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
+    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
   </properties>
 
   <dependencies>
 
     <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-plugin-registry</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j-version}</version>
       <scope>provided</scope>
     </dependency>
 
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-     </resource>
-    </resources>
 
     <plugins>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -101,20 +86,14 @@
             <supportedProjectType>war</supportedProjectType>
           </supportedProjectTypes>
           <instructions>
-            <Webapp-Context>${plugin-context}</Webapp-Context>
-            <Web-ContextPath>${plugin-context}</Web-ContextPath>
+            <Webapp-Context>${context}</Webapp-Context>
+            <Web-ContextPath>${context}</Web-ContextPath>
 
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
             <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
 
-            <Export-Package>${fuse.osgi.export}</Export-Package>
-            <Import-Package>${fuse.osgi.import}</Import-Package>
-            <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
-            <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
-
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Implementation-Title>HawtIO</Implementation-Title>
@@ -149,4 +128,42 @@
 
     </plugins>
   </build>
+
+  <profiles>
+
+    <profile>
+      <id>watch</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>typescript-watch</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>grunt</executable>
+                  <arguments>
+                    <argument>reload</argument>
+                    <argument>watch</argument>
+                    <argument>--webapp_outdir</argument>
+                    <argument>${webapp-outdir}</argument>
+                    <argument>--webapp_port</argument>
+                    <argument>${jettyPort}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
+  </profiles>
 </project>

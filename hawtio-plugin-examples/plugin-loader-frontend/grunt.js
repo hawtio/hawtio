@@ -21,7 +21,7 @@ module.exports = function (grunt) {
     type:{
       compile:{
         files:{
-          "<%= grunt.option('webapp_outdir') %>/app/js/app.js":appFiles
+          "<%= grunt.option('webapp_outdir') %>/app/app.js":appFiles
         },
         options:{
           target:'ES5'
