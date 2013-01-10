@@ -195,6 +195,7 @@
     <module>hawtio-web</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-registry</module>
+    <module>hawtio-plugin-examples</module>
     <module>sample</module>
   </modules>
 
