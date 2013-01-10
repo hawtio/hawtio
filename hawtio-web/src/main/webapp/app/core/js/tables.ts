@@ -4,6 +4,8 @@ class TableWidget {
   private detailTemplate:string = null;
   private openMessages = [];
 
+  public sortColumns: any[][] = null;
+
   public dataTableConfig = {
     bPaginate: false,
     sDom: 'Rlfrtip',
@@ -40,7 +42,6 @@ class TableWidget {
    */
   public populateTable(data) {
     var $scope = this.scope;
-
 
     if (!data) {
       $scope.messages = [];
@@ -112,8 +113,19 @@ class TableWidget {
         }
       }
 
+      // lets default to column 1 sorting if there's no property on column 1 for expansion
+      if (columns.length > 1) {
+        var col0 = columns[0];
+        if (!this.sortColumns && !col0["mDataProp"] && !col0["mData"]) {
+          var sortOrder: any[][] = [[1, "asc"]];
+          this.sortColumns = sortOrder;
+        }
+      }
       this.dataTableConfig["aaData"] = array;
       this.dataTableConfig["aoColumns"] = columns;
+      if (this.sortColumns) {
+        this.dataTableConfig["aaSorting"] = this.sortColumns;
+      }
 
       $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
 
