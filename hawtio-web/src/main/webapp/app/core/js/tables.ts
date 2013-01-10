@@ -239,7 +239,7 @@ interface TableColumnConfig {
   sClass?:string;
   sDefaultContent?:string;
   sWidth?:string;
-  mRender?:(any) => any;
+  mRender?:(...args:any[]) => any;
 }
 
 interface TableWidgetConfig {
