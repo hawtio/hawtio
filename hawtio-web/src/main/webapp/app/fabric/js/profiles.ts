@@ -28,6 +28,14 @@ module Fabric {
       "mData": null
       },
       {
+        "mDataProp": "containerCount",
+        "mRender": function (data, type, row) {
+          if (data) {
+            return data;
+          } else return "";
+        }
+      },
+      {
       "mDataProp": "parentLinks",
       "sDefaultContent": "",
       "mData": null
