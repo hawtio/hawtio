@@ -56,10 +56,12 @@ http://localhost:8181/plugin-loader/index.html
 
 You should see two links, simple_plugin_two and simple_plugin, each link takes you to a partial managed by a controller in that respective plugin.  The "back" link is provided by the main module to both plugins via the "home" constant.  If you do an osgi:list you'll see the 4 relevant bundles:
 
+```
 [ 353] [Active     ] [            ] [   60] hawt.io :: hawtio plugin loader frontend (1.0.0.SNAPSHOT)
 [ 354] [Active     ] [Created     ] [   60] hawt.io :: Plugin Registry Backend (1.0.0.SNAPSHOT)
 [ 355] [Active     ] [Created     ] [   60] hawt.io :: Simple plugin two (1.0.0.SNAPSHOT)
 [ 356] [Active     ] [Created     ] [   60] hawt.io :: Simple plugini one (1.0.0.SNAPSHOT)
+```
 
 If you stop either Simple plugin bundle and refresh your browser, you'll see the link associated with that plugin disappear.  Restart the bundle and it'll reappear.
 
