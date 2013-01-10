@@ -88,6 +88,14 @@ span.org-apache-camel a.dynatree-title:before {
     content: "Camel - ";
 }
 
+span.org-fusesource-fabric a.dynatree-title:before {
+    content: "Fuse Fabric - ";
+}
+
+span.org-fusesource-insight a.dynatree-title:before {
+    content: "Logs - ";
+}
+
 ul.dynatree-container li ul li ul li span[class*="_context_"] span.dynatree-icon:before {
     content: url("../app/camel/img/camel_context_icon.png");
 }
