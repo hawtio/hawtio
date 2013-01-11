@@ -59,7 +59,7 @@ module Fabric {
      */
     function defaultValues(values) {
       angular.forEach(values, (row) => {
-       row["profileLinks"] = profileLinks(workspace, row["profileIds"]);
+       row["profileLinks"] = profileLinks(workspace, row["versionId"], row["profileIds"]);
       });
       return values;
     }

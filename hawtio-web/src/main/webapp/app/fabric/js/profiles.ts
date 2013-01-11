@@ -1,5 +1,5 @@
 module Fabric {
-  export function profileLinks(workspace, values) {
+  export function profileLinks(workspace, versionId, values) {
     var answer = "";
     var collection = values;
     if (!angular.isArray(values)) {
@@ -10,10 +10,21 @@ module Fabric {
       if (answer.length > 0) {
         prefix = " ";
       }
-      answer += prefix + "<a href='#/fabric/profile/" + value + workspace.hash() + "'>" + value + "</a>";
+      answer += prefix + "<a href='" + url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
     });
     return answer;
   }
+
+  /**
+   * Default the values that are missing in the returned JSON
+   */
+  export function defaultProfileValues(workspace, versionId, values) {
+     angular.forEach(values, (row) => {
+      row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
+     });
+    return values;
+  }
+
 
   export function ProfilesController($scope, workspace:Workspace) {
     $scope.results = [];
@@ -49,19 +60,10 @@ module Fabric {
       disableAddColumns: true
     });
 
-    /**
-     * Default the values that are missing in the returned JSON
-     */
-    function defaultValues(values) {
-       angular.forEach(values, (row) => {
-        row["parentLinks"] = profileLinks(workspace, row["parentIds"]);
-       });
-      return values;
-    }
 
     function populateTable(response) {
       var values = response.value;
-      $scope.widget.populateTable(defaultValues(values));
+      $scope.widget.populateTable(defaultProfileValues(workspace, $scope.versionId, values));
       $scope.$apply();
     }
 
@@ -70,7 +72,7 @@ module Fabric {
       if (!$scope.versions.isEmpty()) {
         if ($scope.version) {
           // lets re-select the version object based on the last selection
-          $scope.version = $scope.versions.find({ id: $scope.loadedVersionId });
+          $scope.version = $scope.versions.find({ id: $scope.versionId });
         }
         else {
           // lets default the version
@@ -92,8 +94,8 @@ module Fabric {
         versionId = "1.0";
       }
 
-      if (versionId !== $scope.loadedVersionId) {
-        $scope.loadedVersionId = versionId;
+      if (versionId !== $scope.versionId) {
+        $scope.versionId = versionId;
 
         jolokia.request(
                 [
