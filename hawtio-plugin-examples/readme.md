@@ -48,11 +48,13 @@ Another thing to note since both of these plugins are using the typescript compi
 
 Okay, so at the moment you've gotta do "npm install" in plugin-loader-frontend, simple-plugin-one and simple-plugin-two (sucks).  Then build ../hawtio-plugin-registry and do an "mvn clean install" here in hawtio-plugin-examples to build all 3 modules.  The file "hawtio-plugin-registry.zip" is a profile export that installs all of the bundles.  So use the fabric distro and do:
 
+```
 fabric:create -p fmc
+```
 
 Then log into FMC, go to the "Profiles" tab and import the hawtio-plugin-registry.zip file.  The plugin loader frontend web application will be at:
 
-http://localhost:8181/plugin-loader/index.html
+* [http://localhost:8181/plugin-loader/index.html](http://localhost:8181/plugin-loader/index.html) 
 
 You should see two links, simple_plugin_two and simple_plugin, each link takes you to a partial managed by a controller in that respective plugin.  The "back" link is provided by the main module to both plugins via the "home" constant.  If you do an osgi:list you'll see the 4 relevant bundles:
 
