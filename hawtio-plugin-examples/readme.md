@@ -29,7 +29,7 @@ So the blueprint xml is just filtered by maven to use these values.
 
 The other part of the plugin is the frontend javascript code.  A plugin can just be an angular.js module, and you can declare that module has dependencies on other angular modules such as main, or other plugins even.
 
-```
+```javascript
 angular.module('simple_plugin', ['main'])
   .config(function($routeProvider) {
     $routeProvider.
@@ -38,7 +38,7 @@ angular.module('simple_plugin', ['main'])
 
 angular still handles the dependencies as all plugins are passed to the angular bootstrap method.  One thing to note is that you have to tell our plugin loader what the module name is:
 
-```
+```javascript
 $.plugin_loader.addModule('simple_plugin');
 ```
 
