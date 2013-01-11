@@ -26,4 +26,6 @@ module Fabric {
             });
 
           });
+
+  hawtioPluginLoader.addModule('fabric');
 }

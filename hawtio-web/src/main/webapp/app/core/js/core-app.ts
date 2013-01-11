@@ -1,3 +1,10 @@
+
+// bootstrap plugin loader
+var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'] || "/jolokia";
+
+hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
+hawtioPluginLoader.addUrl('/hawtio/test.json');
+
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   lineCount: (value:any) => number;
   detectTextFormat: (value:any) => string;
@@ -9,6 +16,9 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
 }
 
 var myApp = angular.module('hawtioCore', ['bootstrap', 'ngResource']);
+
+hawtioPluginLoader.addModule('hawtioCore');
+
 myApp.config(($routeProvider) => {
   $routeProvider.
           when('/attributes', {templateUrl: 'app/core/html/attributes.html', controller: Core.AttributesController}).
@@ -158,6 +168,53 @@ $(function () {
 });
 
 
-// TODO can we make this more dynamic to make the plugins completely self contained?
-// think we probably need some registration mechanism then an async angular.bootstrap?
-angular.module("hawt.io", ["hawtioCore", "camel", "activemq", "osgi", "fabric"]);
+// TODO -- this is just here so the simple plugin examples
+// work and don't break the app :-/
+// ---------------------------------------------------------
+var main = angular.module('main', []);
+
+main.config(function($routeProvider) {
+  $routeProvider.when('/plugins', {
+      templateUrl: 'html/plugins.html',
+      controller: PluginController
+    })
+    .otherwise({ redirectTo: '/plugins' });
+
+    //$locationProvider.html5Mode(true);
+});
+
+main.factory('jolokia', function($location:ng.ILocationService) {
+  var url = $location.search()['url'] || "/jolokia";
+  // console.log("Jolokia URL is " + url);
+  return new Jolokia(url);
+});
+
+// service for plugins to register links
+main.factory('links', function() {
+  var answer = [];
+  return answer;
+});
+
+// constant for plugin to link back to main page
+main.constant('home', '#/hawtio');
+
+main.run( function () {
+    // console.log("main app running");
+});
+
+var PluginController = function($scope, $route, links) {
+  $scope.routes = JSON.stringify($route.routes, null, 4);
+  $scope.links = links;
+}
+
+hawtioPluginLoader.addModule('main');
+// ---------------------------------------------------------
+
+$(document).ready(function() {
+
+      hawtioPluginLoader.loadPlugins(function() {
+        angular.bootstrap($(document), hawtioPluginLoader.getModules());
+      });
+});
+
+

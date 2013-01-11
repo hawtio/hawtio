@@ -11,7 +11,7 @@
   <artifactId>simple-plugin-one</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Simple plugini one</description>
+  <description>hawt.io :: Simple plugin one</description>
 
   <properties>
     <!-- filtered plugin properties -->

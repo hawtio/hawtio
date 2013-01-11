@@ -8,4 +8,6 @@ module Osgi {
             var map = workspace.uriValidations;
             map['bundles'] = () => workspace.isOsgiFolder();
           });
+
+  hawtioPluginLoader.addModule('osgi');
 }

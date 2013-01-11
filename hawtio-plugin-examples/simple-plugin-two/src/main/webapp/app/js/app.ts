@@ -11,7 +11,7 @@ angular.module('simple_plugin_two', ['main'])
     links.push("/simple_plugin_two");
   });
 
-$.plugin_loader.addModule('simple_plugin_two');
+hawtioPluginLoader.addModule('simple_plugin_two');
 
 var OtherSimpleController = function($scope, home) {
   $scope.hello = "Hello world from #2!";

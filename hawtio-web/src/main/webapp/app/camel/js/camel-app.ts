@@ -16,4 +16,6 @@ module Camel {
             map['createEndpoint'] = () => workspace.isEndpointsFolder();
             map['traceRoute'] = () => workspace.isRoute();
           });
+
+  hawtioPluginLoader.addModule('camel');
 }

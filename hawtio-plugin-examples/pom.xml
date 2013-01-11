@@ -24,7 +24,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>plugin-loader-frontend</module>
     <module>simple-plugin-one</module>
     <module>simple-plugin-two</module>
   </modules>

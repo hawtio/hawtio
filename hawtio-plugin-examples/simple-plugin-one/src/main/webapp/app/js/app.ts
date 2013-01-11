@@ -11,7 +11,7 @@ angular.module('simple_plugin', ['main'])
     links.push("/simple_plugin");
   });
 
-$.plugin_loader.addModule('simple_plugin');
+hawtioPluginLoader.addModule('simple_plugin');
 
 var SimpleController = function($scope, home) {
   $scope.hello = "Hello world!";

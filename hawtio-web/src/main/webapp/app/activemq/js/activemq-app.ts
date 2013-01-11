@@ -33,4 +33,6 @@ module ActiveMQ {
                         }
                       });
                     });
+
+  hawtioPluginLoader.addModule('activemq');
 }
