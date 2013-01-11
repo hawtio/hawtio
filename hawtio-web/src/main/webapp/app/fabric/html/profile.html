@@ -32,10 +32,10 @@
     </div>
     <div class="span8 profile-attributes">
       <div style="padding-top: 9px;">
-        <fieldset class="toggle"><input id="locked" name="locked" type="checkbox"><label for="locked"
+        <fieldset class="toggle"><input id="locked" name="locked" type="checkbox" ng-model="row.locked"><label for="locked"
                                                                                          onclick="">Locked:</label><span
                 class="toggle-button"></span></fieldset>
-        <fieldset class="toggle"><input id="abstract" name="abstract" type="checkbox"><label for="abstract" onclick="">Abstract:</label><span
+        <fieldset class="toggle"><input id="abstract" name="abstract" type="checkbox"  ng-model="row.abstractProfile"><label for="abstract" onclick="">Abstract:</label><span
                 class="toggle-button"></span></fieldset>
       </div>
     </div>
@@ -63,7 +63,7 @@
             <div>System Properties ({{row.systemProperties.length}})</div>
           </a></li>
           <li class=""><a>
-            <div>Config Files ({{row.configFiles.length}})</div>
+            <div>Config Files ({{row.fileConfigurationCount}})</div>
           </a></li>
         </ul>
         <div class="tab-body">
