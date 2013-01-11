@@ -1,5 +1,5 @@
 <div id="profileDetails" class="container-fluid">
-  <div class="row-fluid">
+
     <div class="span16">
       <div class="block left"><a href="#" class="set-parents btn">Change Parents</a></div>
       <!--
@@ -40,135 +40,47 @@
       </div>
     </div>
   </div>
-  <div class="row-fluid">
-    <div class="span16">
-      <div id="tabs">
-        <ul class="tabs">
-          <li class="active"><a>
-            <div>Features ({{row.features.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>FABs ({{row.fabs.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>Bundles ({{row.bundles.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>Repositories ({{row.repositories.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>Config Properties ({{row.configProperties.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>System Properties ({{row.systemProperties.length}})</div>
-          </a></li>
-          <li class=""><a>
-            <div>Config Files ({{row.fileConfigurationCount}})</div>
-          </a></li>
-        </ul>
-        <div class="tab-body">
-          <div><h3>Installed Features</h3>
 
-            <div class="edit-list">
-              <ul>
-                <li>
-                  <div style="margin-left: 3px" class="block right hovered"><a href="#" class="delete"><img
-                          src="img/x-16.png"></a></div>
-                  <div class="val">
-                    <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png"
-                                                                                   data-original-title="Edit"></a></div>
-                    hawtio
-                  </div>
-                </li>
-                <li>
-                  <div style="margin-left: 3px" class="block right hovered"><a href="#" class="delete"><img
-                          src="img/x-16.png"></a></div>
-                  <div class="val">
-                    <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png"
-                                                                                   data-original-title="Edit"></a></div>
-                    war
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <h3>Available Features</h3>Repository:
-            <select name="selected-repo" class="xxlarge">
-              <option value="mvn:org.apache.karaf.assemblies.features/enterprise/2.3.0.fuse-71-047/xml/features">
-                mvn:org.apache.karaf.assemblies.features/enterprise/2.3.0.fuse-71-047/xml/features
-              </option>
-              <option value="mvn:org.fusesource.fabric/fuse-fabric/99-master-SNAPSHOT/xml/features">
-                mvn:org.fusesource.fabric/fuse-fabric/99-master-SNAPSHOT/xml/features
-              </option>
-              <option value="mvn:org.apache.karaf.assemblies.features/standard/2.3.0.fuse-71-047/xml/features">
-                mvn:org.apache.karaf.assemblies.features/standard/2.3.0.fuse-71-047/xml/features
-              </option>
-            </select>
+  <div class="tabbable" ng-model="currentTab">
 
-            <div class="feature-list">
-              <div>
-                <div class="feature-detail"></div>
-                <h5>Repository Name: karaf-enterprise-2.3.0.fuse-71-047</h5><h6>Features</h6>
-                <table class="zebra-striped">
-                  <thead>
-                  <tr>
-                    <td style="border-top: none"><strong>Name</strong></td>
-                    <td style="border-top: none"><strong>Version</strong></td>
-                    <td style="border-top: none"><strong>Description</strong></td>
-                    <td style="border-top: none"></td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr id="transaction" class="feature">
-                    <td>transaction</td>
-                    <td>1.0.1.fuse-71-047</td>
-                    <td>OSGi Transaction Manager</td>
-                    <td>
-                      <div class="block right"><a id="viewtransaction" href="#" class="view-feature"
-                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
-                        <a id="addtransaction" href="#" class="add-feature" data-original-title="Add Feature"><img
-                                src="img/plus-16.png"></a></div>
-                    </td>
-                  </tr>
-                  <tr id="jpa" class="feature">
-                    <td>jpa</td>
-                    <td>1.0.0</td>
-                    <td>OSGi Persistence Container</td>
-                    <td>
-                      <div class="block right"><a id="viewjpa" href="#" class="view-feature"
-                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
-                        <a id="addjpa" href="#" class="add-feature" data-original-title="Add Feature"><img
-                                src="img/plus-16.png"></a></div>
-                    </td>
-                  </tr>
-                  <tr id="jndi" class="feature">
-                    <td>jndi</td>
-                    <td>1.0.0</td>
-                    <td>OSGi Service Registry JNDI access</td>
-                    <td>
-                      <div class="block right"><a id="viewjndi" href="#" class="view-feature"
-                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
-                        <a id="addjndi" href="#" class="add-feature" data-original-title="Add Feature"><img
-                                src="img/plus-16.png"></a></div>
-                    </td>
-                  </tr>
-                  <tr id="application-without-isolation" class="feature">
-                    <td>application-without-isolation</td>
-                    <td>1.0.0</td>
-                    <td>Provide EBA archive support</td>
-                    <td>
-                      <div class="block right"><a id="viewapplication-without-isolation" href="#" class="view-feature"
-                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
-                        <a id="addapplication-without-isolation" href="#" class="add-feature"
-                           data-original-title="Add Feature"><img src="img/plus-16.png"></a></div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="tab-pane" title="Features ({{row.features.length}})" value="features">
+      <span ng-show="row.features.length == 0">No configured Features</span>
+      <ul ng-show="row.features.length > 0">
+        <li ng-repeat="feature in row.features">{{feature}}</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane" title="FABS ({{row.fabs.length}})" value="fabs">
+      <span ng-show="row.fabs.length == 0">No configured Fuse Application Bundles </span>
+      <ul ng-show="row.fabs.length > 0">
+        <li ng-repeat="fab in row.fab">{{fab}}</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane" title="Bundles ({{row.bundles.length}})" value="bundles">
+      <span ng-show="row.bundles.length == 0">No configured OSGi bundles </span>
+      <ul ng-show="row.bundles.length > 0">
+        <li ng-repeat="bundle in row.bundle">{{bundle}}</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane" title="Repositories ({{row.repositories.length}})" value="repositories">
+      <span ng-show="row.repositories.length == 0">No configured Feature Repositories</span>
+      <ul ng-show="row.repositories.length > 0">
+        <li ng-repeat="repositories in row.repositories">{{repositories}}</li>
+      </ul>
+    </div>
+
+    <div class="tab-pane" title="Config Properties ({{row.configProperties.length}})" value="configProperties">
+
+    </div>
+
+    <div class="tab-pane" title="System Properties ({{row.systemProperties.length}})" value="systemProperties">
+
+    </div>
+
+    <div class="tab-pane" title="Configurations ({{row.fileConfigurationCount}})" value="configurations">
+
     </div>
   </div>
-</div>
+
