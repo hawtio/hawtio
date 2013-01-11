@@ -326,7 +326,11 @@
         <configuration>
           <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
           <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
-          <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
+          <packagingExcludes>
+            **/classes/OSGI-INF/**,
+            **/*.ts,
+            */debug/**
+          </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
             <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
