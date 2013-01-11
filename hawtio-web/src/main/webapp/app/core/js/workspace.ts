@@ -13,6 +13,14 @@ interface NodeSelection {
   get(key:string): NodeSelection;
 }
 
+interface MenuItem {
+  content: string;
+  isValid: () => any;
+  href: () => any;
+  ngClick: () => any;
+  title?: string;
+}
+
 class Workspace {
   public jolokia = null;
   public updateRate = 0;
@@ -20,6 +28,8 @@ class Workspace {
   public selection:NodeSelection;
   public tree = null;
   public mbeanTypesToDomain = {};
+  public topLevelTabs = [];
+
   uriValidations = null;
 
   constructor(public url:string, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {

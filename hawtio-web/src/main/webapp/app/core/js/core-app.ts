@@ -106,44 +106,6 @@ module Core {
     return _modules;
   }
 
-  export interface INavBarController extends ng.IScope{
-    workspace : Workspace;
-    hash : string;
-    validSelection : (uri:string) => bool;
-    isCurrentRoute : (string) => bool;
-  }
-
-  export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
-    // TODO why do we keep binding the workspace to the scope?
-    $scope.workspace = workspace;
-
-    $scope.validSelection = (uri) => workspace.validSelection(uri);
-
-    // when we change the view/selection lets update the hash so links have the latest stuff
-    $scope.$on('$routeChangeSuccess', function () {
-      $scope.hash = workspace.hash();
-    });
-
-    $scope.isCurrentRoute = (page) => {
-      // TODO Why is 'home' used? It doesn't appear anywhere
-      var currentRoute = $location.path().substring(1) || 'home';
-      var isCurrentRoute = currentRoute.startsWith(page);
-      return isCurrentRoute;
-    };
-  }
-
-  export function HelpController($scope, $routeParams, $location) {
-    // Each time controller is recreated, check tab in url
-    $scope.currentTab = $routeParams.tabName;
-
-    // When we click on a tab, the directive changes currentTab
-    $scope.$watch('currentTab', function (name, oldName) {
-      if (name !== oldName) {
-        $location.path('help/' + name);
-      }
-    });
-  }
-
   export function PreferencesController($scope, workspace:Workspace) {
     $scope.workspace = workspace;
     $scope.updateRate = workspace.getUpdateRate();

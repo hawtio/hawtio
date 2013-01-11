@@ -34,8 +34,21 @@
         hawt.io
       </a>
 
+
       <div class="nav-collapse">
         <ul class="nav">
+
+<!-- TODO attempt at a new nav bar...
+          <li ng-repeat="nav in workspace.topLevelTabs" ng-class="{active : nav.isVisible()}">
+            <a ng-href="{{nav.href()}}" title="{{nav.title}}"
+               data-placement="bottom">{{nav.content}}</a></li>
+-->
+<!--
+            <a ng-click="{{openTab(nav)}}" title="{{nav.title}}"
+               data-placement="bottom">{{nav.content}}</a></li>
+-->
+
+
           <li class="dropdown">
             <a ng-href="#" class="dropdown-toggle" data-toggle="dropdown"
                title="Views available on the current selection" data-placement="bottom">
@@ -123,6 +136,8 @@
             <a ng-href="#/logs{{hash}}" title="View the logs in this process" data-placement="bottom">
               <i class="icon-list-alt"></i> Log</a></li>
         </ul>
+
+
         <div class="pull-right">
           <ul class="nav pull-right">
             <li ng-class="{active : isCurrentRoute('preferences')}">

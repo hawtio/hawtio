@@ -8,7 +8,7 @@ module ActiveMQ {
                     when('/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html', controller: DestinationController}).
                     when('/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController})
           }).
-                    run((workspace: Workspace) => {
+                    run(($location: ng.ILocationService, workspace: Workspace) => {
                       // now lets register the nav bar stuff!
                       var map = workspace.uriValidations;
                       map['browseQueue'] = () => workspace.isQueue();
@@ -19,5 +19,18 @@ module ActiveMQ {
                       map['createTopic'] = () => workspace.isTopicsFolder();
                       map['deleteQueue'] = () => workspace.isQueue();
                       map['deleteTopic'] = () => workspace.isTopic();
+
+                      workspace.topLevelTabs.push( {
+                        content: "Messaging",
+                        title: "Manage your message brokers",
+                        isValid: () => workspace.hasDomainAndProperties("org.apache.activemq"),
+                        href: () => url("#/attributes?nid=root_org.apache.activemq"),
+                        ngClick: () => {
+                          console.log("clicking the Messaging tab");
+                          var q = $location.search();
+                          q['nid'] = "root_org.apache.activemq";
+                          $location.search(q);
+                        }
+                      });
                     });
 }
