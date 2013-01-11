@@ -34,29 +34,7 @@ class Workspace {
       'chartEdit': () => $location.path() === "/charts",
 
       // health check
-      'health': () => this.hasHealthMBeans(),
-
-      // activemq
-      'browseQueue': () => this.isQueue(),
-      'browseEndpoint': () => this.isEndpoint(),
-      'sendMessage': () => this.isQueue() || this.isTopic() || this.isEndpoint(),
-      'subscribers': () => this.isActiveMQFolder(),
-      'createQueue': () => this.isQueuesFolder(),
-      'createTopic': () => this.isTopicsFolder(),
-      'deleteQueue': () => this.isQueue(),
-      'deleteTopic': () => this.isTopic(),
-
-      // camel
-      'routes': () => this.isCamelFolder(),
-      'createEndpoint': () => this.isEndpointsFolder(),
-      'traceRoute': () => this.isRoute(),
-
-      // fabric
-      '/fabric/containers': () => this.hasFabricMBean(),
-      '/fabric/profiles': () => this.hasFabricMBean(),
-
-      // osgi
-      'bundles': () => this.isOsgiFolder()
+      'health': () => this.hasHealthMBeans()
     };
 
   }

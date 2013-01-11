@@ -7,5 +7,17 @@ module ActiveMQ {
                     when('/createTopic', {templateUrl: 'app/activemq/html/createTopic.html', controller: DestinationController}).
                     when('/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html', controller: DestinationController}).
                     when('/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController})
-          });
+          }).
+                    run((workspace: Workspace) => {
+                      // now lets register the nav bar stuff!
+                      var map = workspace.uriValidations;
+                      map['browseQueue'] = () => workspace.isQueue();
+                      map['browseEndpoint'] = () => workspace.isEndpoint();
+                      map['sendMessage'] = () => workspace.isQueue() || workspace.isTopic() || workspace.isEndpoint();
+                      map['subscribers'] = () => workspace.isActiveMQFolder();
+                      map['createQueue'] = () => workspace.isQueuesFolder();
+                      map['createTopic'] = () => workspace.isTopicsFolder();
+                      map['deleteQueue'] = () => workspace.isQueue();
+                      map['deleteTopic'] = () => workspace.isTopic();
+                    });
 }
