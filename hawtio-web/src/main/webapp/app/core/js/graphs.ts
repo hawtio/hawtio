@@ -303,9 +303,14 @@ module Core {
               });
 
       // Resize the SVG element
-      var svgBBox = svg.node().getBBox();
-      svg.attr("width", svgBBox.width + 10);
-      svg.attr("height", svgBBox.height + 10);
+      var svgNode = svg.node();
+      if (svgNode) {
+        var svgBBox = svgNode.getBBox();
+        if (svgBBox) {
+          svg.attr("width", svgBBox.width + 10);
+          svg.attr("height", svgBBox.height + 10);
+        }
+      }
 
       // Drag handlers
       var nodeDrag = d3.behavior.drag()
