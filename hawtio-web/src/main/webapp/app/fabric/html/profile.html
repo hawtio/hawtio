@@ -1,0 +1,174 @@
+<div id="profileDetails" class="container-fluid">  
+  <div class="row-fluid">
+    <div class="span16">
+      <div class="block left"><a href="#" class="set-parents btn">Change Parents</a></div>
+      <!--
+      <div class="block right"><a href="/rest/versions/1.0/profiles/hawtio/export/hawtio.zip" class="download btn">Export</a>
+      -->
+
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span8">
+      <div class="detailsBlock parent-block">
+        <div>
+          <table class="overviewSection">
+            <tbody>
+            <tr>
+              <td><strong>Parent Profiles:</strong></td>
+              <td class="big">
+                <ul class="simple">
+                  <li ng-repeat="p in row.parentIds">
+                    <a href="#/fabric/profile/{{p}}{{hash}}">{{p}}</a>
+                    </li>
+                </ul>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="span8 profile-attributes">
+      <div style="padding-top: 9px;">
+        <fieldset class="toggle"><input id="locked" name="locked" type="checkbox"><label for="locked"
+                                                                                         onclick="">Locked:</label><span
+                class="toggle-button"></span></fieldset>
+        <fieldset class="toggle"><input id="abstract" name="abstract" type="checkbox"><label for="abstract" onclick="">Abstract:</label><span
+                class="toggle-button"></span></fieldset>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span16">
+      <div id="tabs">
+        <ul class="tabs">
+          <li class="active"><a>
+            <div>Features (2)</div>
+          </a></li>
+          <li class=""><a>
+            <div>FABs (0)</div>
+          </a></li>
+          <li class=""><a>
+            <div>Bundles (0)</div>
+          </a></li>
+          <li class=""><a>
+            <div>Repositories (3)</div>
+          </a></li>
+          <li class=""><a>
+            <div>Config Properties (0)</div>
+          </a></li>
+          <li class=""><a>
+            <div>System Properties (0)</div>
+          </a></li>
+          <li class=""><a>
+            <div>Config Files (1)</div>
+          </a></li>
+        </ul>
+        <div class="tab-body">
+          <div><h3>Installed Features</h3>
+
+            <div class="edit-list">
+              <ul>
+                <li>
+                  <div style="margin-left: 3px" class="block right hovered"><a href="#" class="delete"><img
+                          src="img/x-16.png"></a></div>
+                  <div class="val">
+                    <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png"
+                                                                                   data-original-title="Edit"></a></div>
+                    hawtio
+                  </div>
+                </li>
+                <li>
+                  <div style="margin-left: 3px" class="block right hovered"><a href="#" class="delete"><img
+                          src="img/x-16.png"></a></div>
+                  <div class="val">
+                    <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png"
+                                                                                   data-original-title="Edit"></a></div>
+                    war
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <h3>Available Features</h3>Repository:
+            <select name="selected-repo" class="xxlarge">
+              <option value="mvn:org.apache.karaf.assemblies.features/enterprise/2.3.0.fuse-71-047/xml/features">
+                mvn:org.apache.karaf.assemblies.features/enterprise/2.3.0.fuse-71-047/xml/features
+              </option>
+              <option value="mvn:org.fusesource.fabric/fuse-fabric/99-master-SNAPSHOT/xml/features">
+                mvn:org.fusesource.fabric/fuse-fabric/99-master-SNAPSHOT/xml/features
+              </option>
+              <option value="mvn:org.apache.karaf.assemblies.features/standard/2.3.0.fuse-71-047/xml/features">
+                mvn:org.apache.karaf.assemblies.features/standard/2.3.0.fuse-71-047/xml/features
+              </option>
+            </select>
+
+            <div class="feature-list">
+              <div>
+                <div class="feature-detail"></div>
+                <h5>Repository Name: karaf-enterprise-2.3.0.fuse-71-047</h5><h6>Features</h6>
+                <table class="zebra-striped">
+                  <thead>
+                  <tr>
+                    <td style="border-top: none"><strong>Name</strong></td>
+                    <td style="border-top: none"><strong>Version</strong></td>
+                    <td style="border-top: none"><strong>Description</strong></td>
+                    <td style="border-top: none"></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr id="transaction" class="feature">
+                    <td>transaction</td>
+                    <td>1.0.1.fuse-71-047</td>
+                    <td>OSGi Transaction Manager</td>
+                    <td>
+                      <div class="block right"><a id="viewtransaction" href="#" class="view-feature"
+                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
+                        <a id="addtransaction" href="#" class="add-feature" data-original-title="Add Feature"><img
+                                src="img/plus-16.png"></a></div>
+                    </td>
+                  </tr>
+                  <tr id="jpa" class="feature">
+                    <td>jpa</td>
+                    <td>1.0.0</td>
+                    <td>OSGi Persistence Container</td>
+                    <td>
+                      <div class="block right"><a id="viewjpa" href="#" class="view-feature"
+                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
+                        <a id="addjpa" href="#" class="add-feature" data-original-title="Add Feature"><img
+                                src="img/plus-16.png"></a></div>
+                    </td>
+                  </tr>
+                  <tr id="jndi" class="feature">
+                    <td>jndi</td>
+                    <td>1.0.0</td>
+                    <td>OSGi Service Registry JNDI access</td>
+                    <td>
+                      <div class="block right"><a id="viewjndi" href="#" class="view-feature"
+                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
+                        <a id="addjndi" href="#" class="add-feature" data-original-title="Add Feature"><img
+                                src="img/plus-16.png"></a></div>
+                    </td>
+                  </tr>
+                  <tr id="application-without-isolation" class="feature">
+                    <td>application-without-isolation</td>
+                    <td>1.0.0</td>
+                    <td>Provide EBA archive support</td>
+                    <td>
+                      <div class="block right"><a id="viewapplication-without-isolation" href="#" class="view-feature"
+                                                  data-original-title="View Feature"><img src="img/search-16.png"></a>&nbsp;
+                        <a id="addapplication-without-isolation" href="#" class="add-feature"
+                           data-original-title="Add Feature"><img src="img/plus-16.png"></a></div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

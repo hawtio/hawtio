@@ -1,7 +1,11 @@
 module Fabric {
   export function profileLinks(workspace, values) {
     var answer = "";
-    angular.forEach(values, function(value, key) {
+    var collection = values;
+    if (!angular.isArray(values)) {
+      collection = [values];
+    }
+    angular.forEach(collection, function(value, key) {
       var prefix = "";
       if (answer.length > 0) {
         prefix = " ";
