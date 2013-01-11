@@ -36,8 +36,6 @@
 
     var plugins = {};
 
-    console.log(hawtioPluginLoader.urls);
-
     var regex = new RegExp(/^jolokia:/);
 
     $.each(hawtioPluginLoader.urls, function(index, url) {

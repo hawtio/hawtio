@@ -177,8 +177,7 @@ main.config(function($routeProvider) {
   $routeProvider.when('/plugins', {
       templateUrl: 'html/plugins.html',
       controller: PluginController
-    })
-    .otherwise({ redirectTo: '/plugins' });
+    });
 
     //$locationProvider.html5Mode(true);
 });
