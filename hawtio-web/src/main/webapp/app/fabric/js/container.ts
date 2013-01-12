@@ -13,7 +13,7 @@ module Fabric {
 
     function populateTable(response) {
       $scope.row = response.value;
-      Fabric.defaultContainerValues(workspace, [$scope.row]);
+      Fabric.defaultContainerValues(workspace, $scope, [$scope.row]);
       $scope.$apply();
     }
  }
