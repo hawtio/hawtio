@@ -1,48 +1,5 @@
 module Fabric {
-  export var managerMBean = "org.fusesource.fabric:type=Fabric";
-
-  /**
-   * Default the values that are missing in the returned JSON
-   */
-  export function defaultContainerValues(workspace:Workspace, $scope, values) {
-    var map = {};
-    angular.forEach(values, (row) => {
-      var profileIds = row["profileIds"];
-      if (profileIds) {
-        angular.forEach(profileIds, (profileId) => {
-          var containers = map[profileId];
-          if (!containers) {
-            containers = [];
-            map[profileId] = containers;
-          }
-          containers.push(row);
-        });
-      }
-      $scope.profileMap = map;
-      row["link"] = containerLinks(workspace, row["id"]);
-      row["profileLinks"] = profileLinks(workspace, row["versionId"], profileIds);
-
-      var id = row['id'] || "";
-      var title = "container " + id + " ";
-      var img = "red-dot.png";
-      if (row['managed'] === false) {
-        img = "spacer.gif";
-      } else if (!row['alive']) {
-        img = "gray-dot.png";
-      } else if (row['provisionPending']) {
-        img = "pending.gif";
-      } else if (row['provisionStatus'] === 'success') {
-        img = "green-dot.png";
-      }
-      img = "img/dots/" + img;
-      row["statusImageHref"] = img;
-      row["link"] = "<img src='" + img + "' title='" + title + "'/> " + (row["link"] || id);
-    });
-    return values;
-  }
-
-
-  export function ContainersController($scope, workspace:Workspace) {
+  export function ContainersController($scope, workspace:Workspace, $location:ng.ILocationService) {
     $scope.results = [];
 
     $scope.widget = new TableWidget($scope, workspace, [
@@ -88,6 +45,16 @@ module Fabric {
       angular.forEach($scope.profileMap, (value, key) => answer.push(key));
       return answer;
     };
+
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets update the profileId from the URL if its available
+      var key = $location.search()['pid'];
+      if (key && key !== $scope.profileId) {
+        $scope.profileId = key;
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateTableContents, 50);
+      }
+    });
 
     function updateTableContents() {
       var data = $scope.containers;

@@ -1,48 +1,4 @@
 module Fabric {
-  export function toCollection(values) {
-    var collection = values;
-    if (!angular.isArray(values)) {
-      collection = [values];
-    }
-    return collection;
-  }
-
-  export function containerLinks(workspace, values) {
-    var answer = "";
-    angular.forEach(toCollection(values), function(value, key) {
-      var prefix = "";
-      if (answer.length > 0) {
-        prefix = " ";
-      }
-      answer += prefix + "<a href='" + url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
-    });
-    return answer;
-  }
-
-  export function profileLinks(workspace, versionId, values) {
-    var answer = "";
-    angular.forEach(toCollection(values), function(value, key) {
-      var prefix = "";
-      if (answer.length > 0) {
-        prefix = " ";
-      }
-      answer += prefix + "<a href='" + url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
-    });
-    return answer;
-  }
-
-  /**
-   * Default the values that are missing in the returned JSON
-   */
-  export function defaultProfileValues(workspace, versionId, values) {
-     angular.forEach(values, (row) => {
-      row["link"] = profileLinks(workspace, versionId, row["id"]);
-      row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
-     });
-    return values;
-  }
-
-
   export function ProfilesController($scope, workspace:Workspace) {
     $scope.results = [];
     $scope.versions = [];
