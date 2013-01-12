@@ -20,6 +20,7 @@ module Fabric {
    */
   export function defaultProfileValues(workspace, versionId, values) {
      angular.forEach(values, (row) => {
+      row["link"] = profileLinks(workspace, versionId, row["id"]);
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
      });
     return values;
@@ -38,7 +39,7 @@ module Fabric {
         "sDefaultContent": '<i class="icon-plus"></i>'
       },
       {
-      "mDataProp": "id",
+      "mDataProp": "link",
       "sDefaultContent": "",
       "mData": null
       },
