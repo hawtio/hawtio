@@ -1,3 +1,18 @@
-<h1>{{row.id}}</h1>
+<table>
+  <tr>
+    <td>
+      <h2>{{row.id}}</h2>
+    </td>
+    <td>
+      <a class="pull-right" href="{{row.containersHref}}">
+        <ng-pluralize count="row.containerCount"
+                      when="{'0': 'No containers running',
+                             'one': '1 container is running',
+                             'other': '{} containers are running'}">
+        </ng-pluralize>
+      </a>
+    </td>
+  </tr>
+</table>
 
 <div ng-include src="'app/fabric/html/profile-details.html'"></div>

@@ -16,7 +16,7 @@ module Fabric {
       "mData": null
       },
       {
-        "mDataProp": "containersLink",
+        "mDataProp": "containersCountLink",
         "mRender": function (data, type, row) {
           if (data) {
             return data;

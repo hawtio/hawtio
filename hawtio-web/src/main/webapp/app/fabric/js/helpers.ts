@@ -84,10 +84,12 @@ module Fabric {
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
       var containerCount = row["containerCount"];
       var containersLink = "" + containerCount;
+      var containersHref = url("#/fabric/containers?pid=" + id);
       if (containerCount) {
-        containersLink = "<a href='" + url("#/fabric/containers?pid=" + id) + "'>" + containerCount + "</a>"
+        containersLink = "<a href='" + containersHref + "'>" + containerCount + "</a>"
       }
-      row["containersLink"] = containersLink;
+      row["containersCountLink"] = containersLink;
+      row["containersHref"] = containersHref;
     });
     return values;
   }
