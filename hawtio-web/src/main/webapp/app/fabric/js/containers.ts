@@ -8,6 +8,22 @@ module Fabric {
     angular.forEach(values, (row) => {
      row["link"] = containerLinks(workspace, row["id"]);
      row["profileLinks"] = profileLinks(workspace, row["versionId"], row["profileIds"]);
+
+      var id = row['id'] || "";
+      var title = "container " + id + " ";
+      var img = "red-dot.png";
+      if (row['managed'] === false) {
+        img = "spacer.gif";
+      } else if (!row['alive']) {
+        img = "gray-dot.png";
+      } else if (row['provisionPending']) {
+        img = "pending.gif";
+      } else if (row['provisionStatus'] === 'success') {
+        img = "green-dot.png";
+      }
+      img = "img/dots/" + img;
+      row["statusImageHref"] =img;
+      row["link"] = "<img src='" + img + "' title='" + title + "'/> " + (row["link"] || id);
     });
     return values;
   }
@@ -24,22 +40,9 @@ module Fabric {
         "sDefaultContent": '<i class="icon-plus"></i>'
       },
       {
-        "mDataProp": "id",
-        "mRender": function (data, type, row) {
-        var id = row['id'] || "";
-        var title = "container " + id + " ";
-        var img = "red-dot.png";
-        if (row['managed'] === false) {
-          img = "spacer.gif";
-        } else if (!row['alive']) {
-          img = "gray-dot.png";
-        } else if (row['provisionPending']) {
-          img = "pending.gif";
-        } else if (row['provisionStatus'] === 'success') {
-          img = "green-dot.png";
-        }
-        return "<img src='img/dots/" + img + "' title='" + title + "'/> " + (row["link"] || id);
-      }
+        "mDataProp": "link",
+        "sDefaultContent": "",
+        "mData": null
       },
       {
       "mDataProp": "profileLinks",
