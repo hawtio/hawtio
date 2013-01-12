@@ -1,6 +1,18 @@
 module Fabric {
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
 
+  /**
+   * Default the values that are missing in the returned JSON
+   */
+  export function defaultContainerValues(workspace:Workspace, values) {
+    angular.forEach(values, (row) => {
+     row["link"] = containerLinks(workspace, row["id"]);
+     row["profileLinks"] = profileLinks(workspace, row["versionId"], row["profileIds"]);
+    });
+    return values;
+  }
+
+
   export function ContainersController($scope, workspace:Workspace) {
     $scope.results = [];
 
@@ -26,7 +38,7 @@ module Fabric {
         } else if (row['provisionStatus'] === 'success') {
           img = "green-dot.png";
         }
-        return "<img src='img/dots/" + img + "' title='" + title + "'/> " + id;
+        return "<img src='img/dots/" + img + "' title='" + title + "'/> " + (row["link"] || id);
       }
       },
       {
@@ -54,22 +66,12 @@ module Fabric {
       disableAddColumns: true
     });
 
-    /**
-     * Default the values that are missing in the returned JSON
-     */
-    function defaultValues(values) {
-      angular.forEach(values, (row) => {
-       row["profileLinks"] = profileLinks(workspace, row["versionId"], row["profileIds"]);
-      });
-      return values;
-    }
-
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
 
       function populateTable(response) {
         var values = response.value;
-        $scope.widget.populateTable(defaultValues(values));
+        $scope.widget.populateTable(defaultContainerValues(workspace, values));
         $scope.$apply();
       }
 

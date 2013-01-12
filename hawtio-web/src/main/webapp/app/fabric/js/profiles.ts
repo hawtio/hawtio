@@ -1,11 +1,27 @@
 module Fabric {
-  export function profileLinks(workspace, versionId, values) {
-    var answer = "";
+  export function toCollection(values) {
     var collection = values;
     if (!angular.isArray(values)) {
       collection = [values];
     }
-    angular.forEach(collection, function(value, key) {
+    return collection;
+  }
+
+  export function containerLinks(workspace, values) {
+    var answer = "";
+    angular.forEach(toCollection(values), function(value, key) {
+      var prefix = "";
+      if (answer.length > 0) {
+        prefix = " ";
+      }
+      answer += prefix + "<a href='" + url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
+    });
+    return answer;
+  }
+
+  export function profileLinks(workspace, versionId, values) {
+    var answer = "";
+    angular.forEach(toCollection(values), function(value, key) {
       var prefix = "";
       if (answer.length > 0) {
         prefix = " ";
