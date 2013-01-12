@@ -52,7 +52,7 @@ module Fabric {
 
   export function containerLinks(workspace, values) {
     var answer = "";
-    angular.forEach(toCollection(values), function(value, key) {
+    angular.forEach(toCollection(values), function (value, key) {
       var prefix = "";
       if (answer.length > 0) {
         prefix = " ";
@@ -64,7 +64,7 @@ module Fabric {
 
   export function profileLinks(workspace, versionId, values) {
     var answer = "";
-    angular.forEach(toCollection(values), function(value, key) {
+    angular.forEach(toCollection(values), function (value, key) {
       var prefix = "";
       if (answer.length > 0) {
         prefix = " ";
@@ -78,10 +78,17 @@ module Fabric {
    * Default the values that are missing in the returned JSON
    */
   export function defaultProfileValues(workspace, versionId, values) {
-     angular.forEach(values, (row) => {
-      row["link"] = profileLinks(workspace, versionId, row["id"]);
+    angular.forEach(values, (row) => {
+      var id = row["id"];
+      row["link"] = profileLinks(workspace, versionId, id);
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
-     });
+      var containerCount = row["containerCount"];
+      var containersLink = "" + containerCount;
+      if (containerCount) {
+        containersLink = "<a href='" + url("#/fabric/containers?pid=" + id) + "'>" + containerCount + "</a>"
+      }
+      row["containersLink"] = containersLink;
+    });
     return values;
   }
 }
