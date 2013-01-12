@@ -1,0 +1,86 @@
+<div>
+  <table class="overviewSection">
+    <tr>
+      <td><strong>Type:</strong></td>
+      <td class="less-big">{{row.type}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Profiles:</strong></td>
+      <td>
+        <div class="edit-list agents-page">
+          <ul class="profiles">
+            <li ng-repeat="profile in row.profileIds"><a href="#" class="delete"><img src="img/x-16.png" data-original-title="Remove"></a>
+              <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: middle"><strong>Service URLs:</strong></td>
+      <td><a href="#" class="ssh btn">SSH</a><a href="#" class="jmx btn">JMX</a></td>
+    </tr>
+    <tr>
+      <td><strong>Location:</strong></td>
+      <td class="ep location">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Local IP:</strong></td>
+      <td class="ep local_ip">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+        {{row.localIp}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Local Hostname:</strong></td>
+      <td class="ep local_hostname">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+        {{row.localHostName}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Public IP:</strong></td>
+      <td class="ep public_ip">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+        {{row.publicIp}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Public Hostname:</strong></td>
+      <td class="ep public_hostname">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Manual IP:</strong></td>
+      <td class="ep manual_ip">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+        {{manualIp}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Resolver:</strong></td>
+      <td class="resolver">
+        <div class="block right hovered"><a href="#" class="edit"><img src="img/edit-16.png" data-original-title="Edit"></a>
+        </div>
+        {{row.resolver}}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Provision Status:</strong></td>
+      <td class="wrap">Success
+      </td>
+      {{row.provisionStatus}}
+    </tr>
+    </tbody>
+  </table>
+</div>
