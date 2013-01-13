@@ -1,5 +1,5 @@
 module Fabric {
-  export function ContainersController($scope, workspace:Workspace, $location:ng.ILocationService) {
+  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace) {
     $scope.results = [];
 
     $scope.widget = new TableWidget($scope, workspace, [
@@ -20,7 +20,7 @@ module Fabric {
         "mData": null
       },
       {
-        "mDataProp": "versionId",
+        "mDataProp": "versionLink",
         "sDefaultContent": "",
         "mData": null
       },

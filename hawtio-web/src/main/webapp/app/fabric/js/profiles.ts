@@ -1,5 +1,5 @@
 module Fabric {
-  export function ProfilesController($scope, workspace:Workspace) {
+  export function ProfilesController($scope, $location:ng.ILocationService, workspace:Workspace) {
     $scope.results = [];
     $scope.versions = [];
 
@@ -11,9 +11,9 @@ module Fabric {
         "sDefaultContent": '<i class="icon-plus"></i>'
       },
       {
-      "mDataProp": "link",
-      "sDefaultContent": "",
-      "mData": null
+        "mDataProp": "link",
+        "sDefaultContent": "",
+        "mData": null
       },
       {
         "mDataProp": "containersCountLink",
@@ -24,9 +24,9 @@ module Fabric {
         }
       },
       {
-      "mDataProp": "parentLinks",
-      "sDefaultContent": "",
-      "mData": null
+        "mDataProp": "parentLinks",
+        "sDefaultContent": "",
+        "mData": null
       }
     ], {
       rowDetailTemplateId: 'bodyTemplate',
@@ -55,10 +55,31 @@ module Fabric {
       $scope.$apply();
     }
 
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets update the profileId from the URL if its available
+      var key = $location.search()['vid'];
+      if (key && key !== $scope.versionId) {
+        $scope.versionId = key;
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateTableContents, 50);
+      }
+    });
+
+    function updateTableContents() {
+      var jolokia = workspace.jolokia;
+      jolokia.request(
+              [
+                {type: 'exec', mbean: managerMBean, operation: 'versions'},
+                {type: 'exec', mbean: managerMBean,
+                  operation: 'getProfiles(java.lang.String)',
+                  arguments: [$scope.versionId]}
+              ],
+              onSuccess([populateVersions, populateTable]));
+    }
+
     $scope.$watch('version', function () {
       if (workspace.moveIfViewInvalid()) return;
 
-      var jolokia = workspace.jolokia;
       var versionId = null;
       if ($scope.version) {
         versionId = $scope.version.id;
@@ -70,14 +91,8 @@ module Fabric {
       if (versionId !== $scope.versionId) {
         $scope.versionId = versionId;
 
-        jolokia.request(
-                [
-                  {type: 'exec', mbean: managerMBean, operation: 'versions'},
-                  {type: 'exec', mbean: managerMBean,
-                    operation: 'getProfiles(java.lang.String)',
-                    arguments: [versionId]}
-                ],
-                onSuccess([populateVersions, populateTable]));
+
+        updateTableContents();
       }
     });
   }

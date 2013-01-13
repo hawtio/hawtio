@@ -22,6 +22,13 @@ module Fabric {
       row["link"] = containerLinks(workspace, row["id"]);
       row["profileLinks"] = profileLinks(workspace, row["versionId"], profileIds);
 
+
+      var versionId = row["versionId"];
+      var versionHref = url("#/fabric/profiles?vid=" + versionId);
+      var versionLink =  "<a href='" + versionHref + "'>" + versionId + "</a>"
+      row["versionHref"] = versionHref;
+      row["versionLink"] = versionLink;
+
       var id = row['id'] || "";
       var title = "container " + id + " ";
       var img = "red-dot.png";
