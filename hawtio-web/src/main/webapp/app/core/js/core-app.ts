@@ -32,11 +32,19 @@ myApp.config(($routeProvider) => {
           when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController}).
 
           otherwise({redirectTo: '/help/overview'});
-}).
-        factory('workspace',($rootScope:IMyAppScope, $routeParams:ng.IRouteParamsService, $location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage) => {
-          var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+});
+
+myApp.factory('jolokia', ($location:ng.ILocationService) => {
+    var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+    console.log("Jolokia URL is " + url);
+    var jolokia = new Jolokia(jolokiaUrl);
+    return jolokia;
+  });
+
+myApp.factory('workspace',($rootScope:IMyAppScope, $routeParams:ng.IRouteParamsService, $location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia) => {
           $.support.cors = true;
-          var workspace = new Workspace(jolokiaUrl, $location, $compile, $templateCache, localStorage);
+
+          var workspace = new Workspace(jolokia, $location, $compile, $templateCache, localStorage);
 
           /**
            * Count the number of lines in the given text
@@ -86,8 +94,9 @@ myApp.config(($routeProvider) => {
             alert(text);
           };
           return workspace;
-        }).
-        filter('humanize',() => humanizeValue).
+        });
+
+myApp.filter('humanize',() => humanizeValue).
         service("localStorage", function () {
           // TODO Create correct implementation of windowLocalStorage
           var storage:WindowLocalStorage = window.localStorage || <any> (function () {
