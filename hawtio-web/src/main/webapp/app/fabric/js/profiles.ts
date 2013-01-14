@@ -41,9 +41,10 @@ module Fabric {
     }
 
     function populateVersions(response) {
+      console.log("Populating versions where current version is " + $scope.versionId + " with version " + JSON.stringify($scope.version));
       $scope.versions = response.value;
       if (!$scope.versions.isEmpty()) {
-        if ($scope.version) {
+        if ($scope.versionId) {
           // lets re-select the version object based on the last selection
           $scope.version = $scope.versions.find({ id: $scope.versionId });
         }
@@ -51,15 +52,17 @@ module Fabric {
           // lets default the version
           $scope.version = $scope.versions.find({ defaultVersion: true}) || $scope.versions[0];
         }
+        console.log("Now the version is " + JSON.stringify($scope.version));
       }
       $scope.$apply();
     }
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets update the profileId from the URL if its available
-      var key = $location.search()['vid'];
+      var key = $location.search()['v'];
       if (key && key !== $scope.versionId) {
         $scope.versionId = key;
+        console.log("Using versionid " + $scope.versionId);
         // lets do this asynchronously to avoid Error: $digest already in progress
         setTimeout(updateTableContents, 50);
       }
@@ -67,6 +70,7 @@ module Fabric {
 
     function updateTableContents() {
       var jolokia = workspace.jolokia;
+      console.log("Requesting profiles for version " + $scope.versionId);
       jolokia.request(
               [
                 {type: 'exec', mbean: managerMBean, operation: 'versions'},
@@ -80,7 +84,7 @@ module Fabric {
     $scope.$watch('version', function () {
       if (workspace.moveIfViewInvalid()) return;
 
-      var versionId = null;
+      var versionId = $scope.versionId;
       if ($scope.version) {
         versionId = $scope.version.id;
       }
@@ -90,8 +94,9 @@ module Fabric {
 
       if (versionId !== $scope.versionId) {
         $scope.versionId = versionId;
-
-
+        var q = $location.search();
+        q['v'] = versionId;
+        $location.search(q);
         updateTableContents();
       }
     });

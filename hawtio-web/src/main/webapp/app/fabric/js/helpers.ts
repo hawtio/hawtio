@@ -24,7 +24,7 @@ module Fabric {
 
 
       var versionId = row["versionId"];
-      var versionHref = url("#/fabric/profiles?vid=" + versionId);
+      var versionHref = url("#/fabric/profiles?v=" + versionId);
       var versionLink =  "<a href='" + versionHref + "'>" + versionId + "</a>"
       row["versionHref"] = versionHref;
       row["versionLink"] = versionLink;
@@ -91,7 +91,7 @@ module Fabric {
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
       var containerCount = row["containerCount"];
       var containersLink = "" + containerCount;
-      var containersHref = url("#/fabric/containers?pid=" + id);
+      var containersHref = url("#/fabric/containers?p=" + id);
       if (containerCount) {
         containersLink = "<a href='" + containersHref + "'>" + containerCount + "</a>"
       }

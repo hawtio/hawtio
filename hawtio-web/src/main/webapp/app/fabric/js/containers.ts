@@ -48,7 +48,7 @@ module Fabric {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets update the profileId from the URL if its available
-      var key = $location.search()['pid'];
+      var key = $location.search()['p'];
       if (key && key !== $scope.profileId) {
         $scope.profileId = key;
         // lets do this asynchronously to avoid Error: $digest already in progress
@@ -65,6 +65,13 @@ module Fabric {
     }
 
     $scope.$watch('profileId', function () {
+      if ($scope.profileId) {
+        var q = $location.search();
+        if ($scope.profileId !== q['p']) {
+          q['p'] = $scope.profileId;
+          $location.search(q);
+        }
+      }
       // lets async update the table contents outside of the digest
       setTimeout(updateTableContents, 50);
     });
