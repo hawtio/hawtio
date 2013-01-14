@@ -34,10 +34,13 @@ module Fabric {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets update the profileId from the URL if its available
+      var ao = $location.search()['ao'];
+      if (ao) {
+        $scope.activeOnly = true;
+      }
       var key = $location.search()['v'];
       if (key && key !== $scope.versionId) {
         $scope.versionId = key;
-        console.log("Using versionid " + $scope.versionId);
         // lets do this asynchronously to avoid Error: $digest already in progress
         setTimeout(updateTableContents, 50);
       }
@@ -64,6 +67,14 @@ module Fabric {
     });
 
     $scope.$watch('activeOnly', function () {
+      var q = $location.search();
+      if ($scope.activeOnly) {
+        q['ao'] = "t";
+      } else {
+        delete q['ao'];
+      }
+      $location.search(q);
+
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(filterTable, 50);
     });
@@ -79,7 +90,7 @@ module Fabric {
      */
     function filterTable() {
       $scope.profiles = $scope.allProfiles;
-      if ($scope.activeOnly) {
+      if ($scope.activeOnly && $scope.profiles) {
         $scope.profiles = $scope.profiles.filter((p) => p["containerCount"] > 0);
       }
       // populate calls $scope.$apply()
@@ -87,7 +98,6 @@ module Fabric {
     }
 
     function populateVersions(response) {
-      console.log("Populating versions where current version is " + $scope.versionId + " with version " + JSON.stringify($scope.version));
       $scope.versions = response.value;
       if (!$scope.versions.isEmpty()) {
         if ($scope.versionId) {
@@ -98,9 +108,7 @@ module Fabric {
           // lets default the version
           $scope.version = $scope.versions.find({ defaultVersion: true}) || $scope.versions[0];
         }
-        console.log("Now the version is " + JSON.stringify($scope.version));
       }
-      //$scope.$apply();
     }
 
     function updateTableContents() {
