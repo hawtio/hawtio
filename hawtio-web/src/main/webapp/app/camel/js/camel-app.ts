@@ -26,7 +26,7 @@ module Camel {
             workspace.subLevelTabs.push( {
               content: '<i class="icon-envelope"></i> Browse',
               title: "Browse the messages on the endpoint",
-              isValid: () => workspace.isEndpointFolder(),
+              isValid: () => workspace.isEndpoint(),
               href: () => "#/browseEndpoint"
             });
             workspace.subLevelTabs.push( {
@@ -38,7 +38,7 @@ module Camel {
             workspace.subLevelTabs.push( {
               content: '<i class="icon-pencil"></i> Send',
               title: "Send a message to this endpoint",
-              isValid: () => workspace.isEndpointFolder(),
+              isValid: () => workspace.isEndpoint(),
               href: () => "#/sendMessage"
             });
             workspace.subLevelTabs.push( {

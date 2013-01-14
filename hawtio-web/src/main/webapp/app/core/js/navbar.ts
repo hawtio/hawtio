@@ -8,6 +8,8 @@ module Core {
 
     topLevelTabs: () => MenuItem[];
     subLevelTabs: () => MenuItem[];
+
+    isValid: (MenuItem) => bool;
   }
 
   export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
@@ -19,6 +21,8 @@ module Core {
     $scope.subLevelTabs = () => $scope.workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
+
+    $scope.isValid = (nav) => nav.isValid();
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
