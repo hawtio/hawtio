@@ -1,17 +1,17 @@
 module Core {
 
-  export function PreferencesController($scope, workspace:Workspace) {
-    $scope.workspace = workspace;
-    $scope.updateRate = workspace.getUpdateRate();
+  export function PreferencesController($scope, workspace:Workspace, localStorage) {
+
+    $scope.updateRate = localStorage['updateRate'];
+    $scope.url = localStorage['url'];
 
     $scope.$watch('updateRate', () => {
-      $scope.workspace.setUpdateRate($scope.updateRate);
+      $scope.$emit('UpdateRate', $scope.updateRate);
     });
 
     $scope.gotoServer = (url) => {
       console.log("going to server: " + url);
-      //window.location = "#/attributes?url=" + url;
-      window.open("#/attributes?url=" + encodeURIComponent(url));
+      window.open("#/?url=" + encodeURIComponent(url));
     }
   }
 }

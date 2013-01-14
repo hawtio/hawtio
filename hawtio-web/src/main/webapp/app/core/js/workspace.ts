@@ -32,10 +32,7 @@ class Workspace {
   uriValidations = null;
 
   constructor(public jolokia, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
-    //constructor(public url: string, public $location: angular.ILocationService) {
-    var rate = this.getUpdateRate();
 
-    this.setUpdateRate(rate);
     // TODO Is there a way to remove this logic from here?
     this.uriValidations = {
       'chartEdit': () => $location.path() === "/charts"
@@ -49,11 +46,6 @@ class Workspace {
 
   setLocalStorage(key:string, value:any) {
     this.localStorage[key] = value;
-  }
-
-  // TODO localStorage[key] returns a string, but we can also return a number...
-  getUpdateRate()  {
-    return this.getLocalStorage('updateRate') || 5000;
   }
 
   /**
@@ -71,18 +63,6 @@ class Workspace {
     var text = "?" + keyValuePairs.join("&");
 
     return encodeURI(text);
-  }
-
-  /**
-   * sets the update rate
-   */
-  public setUpdateRate(value) {
-    this.jolokia.stop();
-    this.setLocalStorage('updateRate', value)
-    if (value > 0) {
-      this.jolokia.start(value);
-    }
-    console.log("Set update rate to: " + value);
   }
 
   /**
@@ -263,6 +243,7 @@ class Workspace {
   }
 
   isQueue() {
+
     return this.hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'});
   }
 

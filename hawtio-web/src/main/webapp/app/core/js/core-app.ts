@@ -34,13 +34,6 @@ myApp.config(($routeProvider) => {
           otherwise({redirectTo: '/help/overview'});
 });
 
-myApp.factory('jolokia', ($location:ng.ILocationService) => {
-    var jolokiaUrl = $location.search()['url'] || url("/jolokia");
-    console.log("Jolokia URL is " + jolokiaUrl);
-    var jolokia = new Jolokia(jolokiaUrl);
-    return jolokia;
-  });
-
 myApp.service('localStorage', function () {
       // TODO Create correct implementation of windowLocalStorage
       var storage:WindowLocalStorage = window.localStorage || <any> (function () {
@@ -48,6 +41,15 @@ myApp.service('localStorage', function () {
       })();
       return storage;
     });
+
+myApp.factory('jolokia', ($location:ng.ILocationService, localStorage) => {
+    var storedUrl = localStorage['url']
+    var jolokiaUrl = $location.search()['url'] || storedUrl || url("/jolokia");
+    console.log("Jolokia URL is " + jolokiaUrl);
+    var jolokia = new Jolokia(jolokiaUrl);
+    localStorage['url'] = jolokiaUrl;
+    return jolokia;
+  });
 
 myApp.factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia) => {
       return new Workspace(jolokia, $location, $compile, $templateCache, localStorage);
@@ -57,7 +59,7 @@ myApp.factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileSe
 myApp.filter('humanize', () => humanizeValue)
 
 
-myApp.run(($rootScope, $routeParams) => {
+myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage) => {
 
         $.support.cors = true;
 
@@ -95,6 +97,22 @@ myApp.run(($rootScope, $routeParams) => {
         $rootScope.empty = function (value:any):bool {
           return $.isEmptyObject(value);
         };
+
+        /**
+         * Initialize jolokia polling and add handler to change poll
+         * frequency
+         */
+        localStorage['updateRate'] = localStorage['updateRate'] || 5000;
+
+        $rootScope.$on('UpdateRate', (event, rate) => {
+          jolokia.stop();
+          if (rate > 0) {
+            jolokia.start(rate);
+          }
+          console.log("Set update rate to: " + rate);
+        });
+
+        $rootScope.$emit('UpdateRate', localStorage['updateRate']);
 
         /**
          * Debugging Tools
