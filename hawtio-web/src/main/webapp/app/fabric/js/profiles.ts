@@ -113,7 +113,7 @@ module Fabric {
 
     function updateTableContents() {
       var jolokia = workspace.jolokia;
-      console.log("Requesting profiles for version " + $scope.versionId);
+      //console.log("Requesting profiles for version " + $scope.versionId);
       jolokia.request(
               [
                 {type: 'exec', mbean: managerMBean, operation: 'versions'},
