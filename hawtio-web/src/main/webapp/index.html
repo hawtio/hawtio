@@ -41,38 +41,6 @@
           <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isLocation(nav.href())}" ng-show="nav.isValid()">
             <a ng-href="{{nav.href()}}" title="{{nav.title}}"
                data-placement="bottom">{{nav.content}}</a></li>
-
-
-          <!--
-              <li ng-class="{active : isCurrentRoute('operations')}">
-                <a ng-href="#/operations{{hash}}" title="Execute operations on your selection">
-                  <i class="icon-leaf"></i> Operations</a></li>
-            </ul>
-          </li>
-
-          <li ng-class="{active : isCurrentRoute('health')}" ng-show="validSelection('health')">
-            <a ng-href="#/health{{hash}}" title="View the health of either all of a selected subset of the systems"
-               data-placement="bottom">
-              <i class="icon-eye-open"></i> Health</a></li>
-
-
-          <li ng-class="{active : isCurrentRoute('fabric/profiles')}" ng-show="validSelection('fabric/profiles')">
-            <a ng-href="#/fabric/profiles{{hash}}" title="View the Profiles in the Fuse Fabric"
-               data-placement="bottom">
-              <i class="icon-eye-open"></i> Profiles</a></li>
-          <li ng-class="{active : isCurrentRoute('fabric/containers')}" ng-show="validSelection('fabric/containers')">
-            <a ng-href="#/fabric/containers{{hash}}" title="View the Containers in the Fuse Fabric"
-               data-placement="bottom">
-              <i class="icon-eye-open"></i> Containers</a></li>
-
-          <li ng-class="{active : isCurrentRoute('bundles')}" ng-show="validSelection('bundles')">
-            <a ng-href="#/bundles{{hash}}" title="View the available bundles in this OSGi container"
-               data-placement="bottom">
-              <i class="icon-list"></i> Bundles</a></li>
-          <li ng-class="{active : isCurrentRoute('logs')}">
-            <a ng-href="#/logs{{hash}}" title="View the logs in this process" data-placement="bottom">
-              <i class="icon-list-alt"></i> Log</a></li>
--->
         </ul>
 
 

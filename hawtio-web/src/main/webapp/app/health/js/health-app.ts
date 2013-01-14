@@ -7,7 +7,7 @@ module Health {
           run(($location: ng.ILocationService, workspace:Workspace) => {
             // now lets register the nav bar stuff!
             var map = workspace.uriValidations;
-            map['logs'] = () => workspace.isOsgiFolder();
+            map['health'] = () => Health.hasHealthMBeans(workspace);
 
 
             workspace.topLevelTabs.push( {
@@ -16,12 +16,16 @@ module Health {
 
               // TODO move this mbean helper to this plugin?
               isValid: () => Health.hasHealthMBeans(workspace),
-              href: () => url("#/health"),
-              viewPartial: Core.layoutFull,
-              ngClick: () => {
-                $location.path(url("#/health"));
-              }
+              href: () => url("#/health")
             });
+
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-eye-open"></i> Health',
+              title: "View the health of either all of a selected subset of the systems",
+              isValid: () => Health.hasHealthMBeans(workspace),
+              href: () => "#/health"
+            });
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

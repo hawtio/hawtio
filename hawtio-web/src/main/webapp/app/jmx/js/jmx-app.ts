@@ -36,6 +36,13 @@ module Jmx {
               isValid: () => true,
               href: () => "#/chartEdit"
             });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-leaf"></i> Operations',
+              title: "Execute operations on your selection",
+              isValid: () => true,
+              href: () => "#/operations"
+            });
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

@@ -12,12 +12,15 @@ module Log {
             workspace.topLevelTabs.push( {
               content: "Logs",
               title: "View and search the logs of this container",
-              isValid: () => workspace.hasDomainAndProperties('org.fusesource.fabric', {type: 'LogQuery'}),
-              href: () => url("#/logs"),
-              viewPartial: Core.layoutFull,
-              ngClick: () => {
-                $location.path(url("#/logs"));
-              }
+              isValid: () => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
+              href: () => url("#/logs")
+            });
+
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-list-alt"></i> Log',
+              title: "View the logs in this process",
+              isValid: () => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
+              href: () => "#/bundles"
             });
           });
 
