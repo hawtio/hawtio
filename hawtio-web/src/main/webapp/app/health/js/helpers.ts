@@ -8,7 +8,7 @@ module Health {
   export function hasHealthMBeans(workspace:Workspace) {
     var beans = getHealthMBeans(workspace);
     if (beans) {
-      if (angular.isArray(beans)) return beans.length > 1;
+      if (angular.isArray(beans)) return beans.length >= 1;
       return true;
     }
     return false;
