@@ -21,7 +21,6 @@ interface MenuItem {
 }
 
 class Workspace {
-  public jolokia = null;
   public updateRate = 0;
   public operationCounter = 0;
   public selection:NodeSelection;
@@ -32,12 +31,10 @@ class Workspace {
 
   uriValidations = null;
 
-  constructor(public url:string, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
+  constructor(public jolokia, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
     //constructor(public url: string, public $location: angular.ILocationService) {
     var rate = this.getUpdateRate();
-      // TODO Should be a service
-    this.jolokia = new Jolokia(url);
-    console.log("Jolokia URL is " + url);
+
     this.setUpdateRate(rate);
     // TODO Is there a way to remove this logic from here?
     this.uriValidations = {

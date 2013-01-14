@@ -36,7 +36,7 @@ myApp.config(($routeProvider) => {
 
 myApp.factory('jolokia', ($location:ng.ILocationService) => {
     var jolokiaUrl = $location.search()['url'] || url("/jolokia");
-    console.log("Jolokia URL is " + url);
+    console.log("Jolokia URL is " + jolokiaUrl);
     var jolokia = new Jolokia(jolokiaUrl);
     return jolokia;
   });
@@ -154,12 +154,6 @@ main.config(function($routeProvider) {
     });
 
     //$locationProvider.html5Mode(true);
-});
-
-main.factory('jolokia', function($location:ng.ILocationService) {
-  var url = $location.search()['url'] || "/jolokia";
-  // console.log("Jolokia URL is " + url);
-  return new Jolokia(url);
 });
 
 // service for plugins to register links
