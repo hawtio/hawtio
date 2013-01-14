@@ -1,4 +1,4 @@
-module Core {
+module Log {
     export interface ILog {
         // TODO What is the point of seq?
         seq: string;
