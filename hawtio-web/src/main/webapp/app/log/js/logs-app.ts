@@ -12,7 +12,7 @@ module Log {
             workspace.topLevelTabs.push( {
               content: "Logs",
               title: "View and search the logs of this container",
-              isValid: () => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
+              isValid: () => workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
               href: () => url("#/logs")
             });
 

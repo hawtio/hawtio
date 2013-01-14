@@ -183,6 +183,36 @@ class Workspace {
     }
   }
 
+  private matchesProperties(entries, properties) {
+    if (!entries) return false;
+    for (var key in properties) {
+      var value = properties[key];
+      if (!value || entries[key] !== value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public treeContainsDomainAndProperties(domainName, properties = null) {
+    var workspace = this;
+    var tree = workspace.tree;
+    if (tree) {
+      var folder = tree.get(domainName);
+      if (folder) {
+        if (properties) {
+          var children = folder.children || [];
+          return children.some((node) => this.matchesProperties(node.entries, properties));
+        }
+        return true;
+      } else {
+        // console.log("no hasMBean for " + objectName + " in tree " + tree);
+      }
+    } else {
+      // console.log("workspace has no tree! returning false for hasMBean " + objectName);
+    }
+    return false;
+  }
 
   // only display stuff if we have an mbean with the given properties
   public hasDomainAndProperties(domainName, properties = null) {
