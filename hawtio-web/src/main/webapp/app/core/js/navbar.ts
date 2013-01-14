@@ -4,12 +4,16 @@ module Core {
     hash : string;
     validSelection : (uri:string) => bool;
     isCurrentRoute : (string) => bool;
+    isLocation : (string) => bool;
     openTab : (any) => any;
+    subLevelTabs: () => MenuItem[];
   }
 
   export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
     // TODO why do we keep binding the workspace to the scope?
     $scope.workspace = workspace;
+
+    $scope.subLevelTabs = () => workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
@@ -18,10 +22,9 @@ module Core {
       $scope.hash = workspace.hash();
     });
 
-    $scope.openTab = (tab) => {
-      console.log("About to open tab: " + tab.content);
-      tab.ngClick();
-      console.log("done clicking tab: " + tab.content);
+    $scope.isLocation = (href) => {
+      var path = $location.path();
+      return path.startsWith(href);
     };
 
     $scope.isCurrentRoute = (page) => {

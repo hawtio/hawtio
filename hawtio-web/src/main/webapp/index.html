@@ -38,30 +38,12 @@
       <div class="nav-collapse">
         <ul class="nav">
 
-<!-- TODO attempt at a new nav bar...
-          <li ng-repeat="nav in workspace.topLevelTabs" ng-class="{active : nav.isVisible()}">
+          <li ng-repeat="nav in workspace.topLevelTabs" ng-class="{active : isLocation(nav.href())}" ng-show="nav.isValid()">
             <a ng-href="{{nav.href()}}" title="{{nav.title}}"
                data-placement="bottom">{{nav.content}}</a></li>
--->
-<!--
-            <a ng-click="{{openTab(nav)}}" title="{{nav.title}}"
-               data-placement="bottom">{{nav.content}}</a></li>
--->
 
 
-          <li class="dropdown">
-            <a ng-href="#" class="dropdown-toggle" data-toggle="dropdown"
-               title="Views available on the current selection" data-placement="bottom">
-              <i class="icon-th"></i> View</a>
-            <ul class="dropdown-menu">
-
-              <li ng-class="{active : isCurrentRoute('attributes')}">
-                <a ng-href="#/attributes{{hash}}" title="View the attribute values on your selection"><i
-                        class="icon-list"></i>
-                  Attributes</a></li>
-              <li ng-class="{active : isCurrentRoute('charts')}">
-                <a ng-href="#/charts{{hash}}" title="View a chart of the metrics on your selection"><i
-                        class="icon-bar-chart"></i> Chart</a></li>
+          <!--
               <li ng-class="{active : isCurrentRoute('routes')}" ng-show="validSelection('routes')">
                 <a ng-href="#/routes{{hash}}" title="View a diagram of the Camel routes"><i class="icon-picture"></i>
                   Diagram</a></li>
@@ -135,6 +117,7 @@
           <li ng-class="{active : isCurrentRoute('logs')}">
             <a ng-href="#/logs{{hash}}" title="View the logs in this process" data-placement="bottom">
               <i class="icon-list-alt"></i> Log</a></li>
+-->
         </ul>
 
 
@@ -153,19 +136,8 @@
   </div>
 </div>
 
-<div id="main" class="container-fluid">
-  <div class="row-fluid">
-    <div class="span3" ng-controller="Core.MBeansController">
-      <div id="jmxtree"></div>
-    </div>
-    <div id="properties" class="span9" ng-view></div>
-    <div id="alert-area" class="span9"></div>
-    <!--
-            <div class="span8 scrollable">
-                <div id="properties" class="scrollable" ng-view></div>
-            </div>
-    -->
-  </div>
+<div id="main" class="container-fluid" ng-controller="Core.ViewController">
+  <div ng-include src="viewPartial"></div>
 </div>
 
 <!-- charts and jolokia for jmx -->

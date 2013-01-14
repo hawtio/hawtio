@@ -24,13 +24,7 @@ module ActiveMQ {
                         content: "Messaging",
                         title: "Manage your message brokers",
                         isValid: () => workspace.hasDomainAndProperties("org.apache.activemq"),
-                        href: () => url("#/attributes?nid=root_org.apache.activemq"),
-                        ngClick: () => {
-                          console.log("clicking the Messaging tab");
-                          var q = $location.search();
-                          q['nid'] = "root_org.apache.activemq";
-                          $location.search(q);
-                        }
+                        href: () => url("#/attributes?nid=root_org.apache.activemq")
                       });
                     });
 

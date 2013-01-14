@@ -26,15 +26,11 @@ myApp.config(($routeProvider) => {
           when('/charts', {templateUrl: 'app/core/html/charts.html', controller: Core.Charts.ChartController}).
           when('/chartEdit', {templateUrl: 'app/core/html/chartEdit.html', controller: Core.Charts.ChartEditController}).
           when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
-          when('/logs', {templateUrl: 'app/core/html/logs.html', controller: Core.LogController}).
           when('/help', {
             redirectTo: '/help/overview'
           }).
           when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController}).
-          when('/debug', {templateUrl: 'app/core/html/debug.html', controller: Core.AttributesController}).
 
-    // health
-          when('/health', {templateUrl: 'app/core/html/health.html', controller: Core.HealthController}).
           otherwise({redirectTo: '/help/overview'});
 }).
         factory('workspace',($rootScope:IMyAppScope, $routeParams:ng.IRouteParamsService, $location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage) => {
@@ -100,37 +96,6 @@ myApp.config(($routeProvider) => {
           return storage;
         });
 
-
-module Core {
-
-  var _modules;
-
-  export function addModuleName(moduleName) {
-    modules().push(moduleName);
-  }
-
-  export function modules() {
-    if (!_modules) {
-      _modules = ['hawtioCore'];
-    }
-    return _modules;
-  }
-
-  export function PreferencesController($scope, workspace:Workspace) {
-    $scope.workspace = workspace;
-    $scope.updateRate = workspace.getUpdateRate();
-
-    $scope.$watch('updateRate', () => {
-      $scope.workspace.setUpdateRate($scope.updateRate);
-    });
-
-    $scope.gotoServer = (url) => {
-      console.log("going to server: " + url);
-      //window.location = "#/attributes?url=" + url;
-      window.open("#/attributes?url=" + encodeURIComponent(url));
-    }
-  }
-}
 
 myApp.directive('expandable', function () {
   return {

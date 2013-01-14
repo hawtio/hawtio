@@ -15,10 +15,9 @@ interface NodeSelection {
 
 interface MenuItem {
   content: string;
+  title?: string;
   isValid: () => any;
   href: () => any;
-  ngClick: () => any;
-  title?: string;
 }
 
 class Workspace {
@@ -29,6 +28,7 @@ class Workspace {
   public tree = null;
   public mbeanTypesToDomain = {};
   public topLevelTabs = [];
+  public subLevelTabs = [];
 
   uriValidations = null;
 
@@ -41,10 +41,7 @@ class Workspace {
     this.setUpdateRate(rate);
     // TODO Is there a way to remove this logic from here?
     this.uriValidations = {
-      'chartEdit': () => $location.path() === "/charts",
-
-      // health check
-      'health': () => this.hasHealthMBeans()
+      'chartEdit': () => $location.path() === "/charts"
     };
 
   }
@@ -230,15 +227,6 @@ class Workspace {
           return last === lastName;
         }
       }
-    }
-    return false;
-  }
-
-  hasHealthMBeans() {
-    var beans = Core.getHealthMBeans(this);
-    if (beans) {
-      if (angular.isArray(beans)) return beans.length > 1;
-      return true;
     }
     return false;
   }

@@ -17,13 +17,8 @@ module Fabric {
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
-              isValid: workspace.hasFabricMBean,
-              href: () => url("#/fabric/containers?nid=root_org.fusesource.fabric"),
-              ngClick: () => {
-                var q = $location.search();
-                q['nid'] = "root_org.fusesource.fabric";
-                $location.search(q);
-              }
+              isValid: () => workspace.hasFabricMBean(),
+              href: () => url("#/fabric/containers")
             });
 
           });

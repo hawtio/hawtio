@@ -1,0 +1,22 @@
+<div class="row-fluid">
+  <div class="span3" ng-controller="Core.MBeansController">
+    <div id="jmxtree"></div>
+  </div>
+  <div class="span9" ng-controller="Core.NavBarController">
+    <ul class="nav nav-tabs">
+      <!-- ng-class="{active : nav.isVisible()} -->
+      <li ng-repeat="nav in subLevelTabs()">
+        <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
+           data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
+    </ul>
+    <div id="properties" ng-view></div>
+  </div>
+  <div id="alert-area" class="span9"></div>
+  <!--
+          <div class="span8 scrollable">
+              <div id="properties" class="scrollable" ng-view></div>
+          </div>
+  -->
+</div>
+
+
