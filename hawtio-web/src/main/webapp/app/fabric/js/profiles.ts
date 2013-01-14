@@ -1,6 +1,5 @@
 module Fabric {
   export function ProfilesController($scope, $location:ng.ILocationService, workspace:Workspace) {
-    $scope.results = [];
     $scope.versions = [];
 
     $scope.widget = new TableWidget($scope, workspace, [
@@ -33,30 +32,6 @@ module Fabric {
       disableAddColumns: true
     });
 
-
-    function populateTable(response) {
-      var values = response.value;
-      $scope.widget.populateTable(defaultProfileValues(workspace, $scope.versionId, values));
-      $scope.$apply();
-    }
-
-    function populateVersions(response) {
-      console.log("Populating versions where current version is " + $scope.versionId + " with version " + JSON.stringify($scope.version));
-      $scope.versions = response.value;
-      if (!$scope.versions.isEmpty()) {
-        if ($scope.versionId) {
-          // lets re-select the version object based on the last selection
-          $scope.version = $scope.versions.find({ id: $scope.versionId });
-        }
-        else {
-          // lets default the version
-          $scope.version = $scope.versions.find({ defaultVersion: true}) || $scope.versions[0];
-        }
-        console.log("Now the version is " + JSON.stringify($scope.version));
-      }
-      $scope.$apply();
-    }
-
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets update the profileId from the URL if its available
       var key = $location.search()['v'];
@@ -67,19 +42,6 @@ module Fabric {
         setTimeout(updateTableContents, 50);
       }
     });
-
-    function updateTableContents() {
-      var jolokia = workspace.jolokia;
-      console.log("Requesting profiles for version " + $scope.versionId);
-      jolokia.request(
-              [
-                {type: 'exec', mbean: managerMBean, operation: 'versions'},
-                {type: 'exec', mbean: managerMBean,
-                  operation: 'getProfiles(java.lang.String)',
-                  arguments: [$scope.versionId]}
-              ],
-              onSuccess([populateVersions, populateTable]));
-    }
 
     $scope.$watch('version', function () {
       if (workspace.moveIfViewInvalid()) return;
@@ -100,5 +62,58 @@ module Fabric {
         updateTableContents();
       }
     });
+
+    $scope.$watch('activeOnly', function () {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(filterTable, 50);
+    });
+
+    function populateTable(response) {
+      var values = response.value;
+      $scope.allProfiles = defaultProfileValues(workspace, $scope.versionId, values);
+      filterTable();
+    }
+
+    /**
+     * After we have loaded all the profiles lets apply any specific filters
+     */
+    function filterTable() {
+      $scope.profiles = $scope.allProfiles;
+      if ($scope.activeOnly) {
+        $scope.profiles = $scope.profiles.filter((p) => p["containerCount"] > 0);
+      }
+      // populate calls $scope.$apply()
+      $scope.widget.populateTable($scope.profiles);
+    }
+
+    function populateVersions(response) {
+      console.log("Populating versions where current version is " + $scope.versionId + " with version " + JSON.stringify($scope.version));
+      $scope.versions = response.value;
+      if (!$scope.versions.isEmpty()) {
+        if ($scope.versionId) {
+          // lets re-select the version object based on the last selection
+          $scope.version = $scope.versions.find({ id: $scope.versionId });
+        }
+        else {
+          // lets default the version
+          $scope.version = $scope.versions.find({ defaultVersion: true}) || $scope.versions[0];
+        }
+        console.log("Now the version is " + JSON.stringify($scope.version));
+      }
+      //$scope.$apply();
+    }
+
+    function updateTableContents() {
+      var jolokia = workspace.jolokia;
+      console.log("Requesting profiles for version " + $scope.versionId);
+      jolokia.request(
+              [
+                {type: 'exec', mbean: managerMBean, operation: 'versions'},
+                {type: 'exec', mbean: managerMBean,
+                  operation: 'getProfiles(java.lang.String)',
+                  arguments: [$scope.versionId]}
+              ],
+              onSuccess([populateVersions, populateTable]));
+    }
   }
 }
