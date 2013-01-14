@@ -41,69 +41,76 @@ myApp.factory('jolokia', ($location:ng.ILocationService) => {
     return jolokia;
   });
 
-myApp.factory('workspace',($rootScope:IMyAppScope, $routeParams:ng.IRouteParamsService, $location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia) => {
-          $.support.cors = true;
+myApp.service('localStorage', function () {
+      // TODO Create correct implementation of windowLocalStorage
+      var storage:WindowLocalStorage = window.localStorage || <any> (function () {
+        return {};
+      })();
+      return storage;
+    });
 
-          var workspace = new Workspace(jolokia, $location, $compile, $templateCache, localStorage);
+myApp.factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia) => {
+      return new Workspace(jolokia, $location, $compile, $templateCache, localStorage);
+    });
 
-          /**
-           * Count the number of lines in the given text
-           */
-          $rootScope.lineCount = lineCount;
 
-          /**
-           * Detect the text format such as javascript or xml
-           */
-          $rootScope.detectTextFormat = detectTextFormat;
+myApp.filter('humanize', () => humanizeValue)
 
-          /**
-           * Easy access to route params
-           */
-          $rootScope.params = $routeParams;
 
-          /**
-           * Wrapper for angular.isArray, isObject, etc checks for use in the view
-           *
-           * @param type {string} the name of the check (casing sensitive)
-           * @param value {string} value to check
-           */
-          $rootScope.is = function (type:any, value:any):bool {
-            return angular['is' + type](value);
-          };
+myApp.run(($rootScope, $routeParams) => {
 
-          /**
-           * Wrapper for $.isEmptyObject()
-           *
-           * @param value  {mixed} Value to be tested
-           * @return boolean
-           */
-          $rootScope.empty = function (value:any):bool {
-            return $.isEmptyObject(value);
-          };
+        $.support.cors = true;
 
-          /**
-           * Debugging Tools
-           *
-           * Allows you to execute debug functions from the view
-           */
-            // TODO Doesn't support vargs like it should
-          $rootScope.log = function (variable:any):void {
-            console.log(variable);
-          };
-          $rootScope.alert = function (text:string) {
-            alert(text);
-          };
-          return workspace;
-        });
+        /**
+         * Count the number of lines in the given text
+         */
+        $rootScope.lineCount = lineCount;
 
-myApp.filter('humanize',() => humanizeValue).
-        service("localStorage", function () {
-          // TODO Create correct implementation of windowLocalStorage
-          var storage:WindowLocalStorage = window.localStorage || <any> (function () {
-            return {};
-          })();
-          return storage;
-        });
+        /**
+         * Detect the text format such as javascript or xml
+         */
+        $rootScope.detectTextFormat = detectTextFormat;
+
+        /**
+         * Easy access to route params
+         */
+        $rootScope.params = $routeParams;
+
+        /**
+         * Wrapper for angular.isArray, isObject, etc checks for use in the view
+         *
+         * @param type {string} the name of the check (casing sensitive)
+         * @param value {string} value to check
+         */
+        $rootScope.is = function (type:any, value:any):bool {
+          return angular['is' + type](value);
+        };
+
+        /**
+         * Wrapper for $.isEmptyObject()
+         *
+         * @param value  {mixed} Value to be tested
+         * @return boolean
+         */
+        $rootScope.empty = function (value:any):bool {
+          return $.isEmptyObject(value);
+        };
+
+        /**
+         * Debugging Tools
+         *
+         * Allows you to execute debug functions from the view
+         */
+          // TODO Doesn't support vargs like it should
+        $rootScope.log = function (variable:any):void {
+          console.log(variable);
+        };
+        $rootScope.alert = function (text:string) {
+          alert(text);
+        };
+
+    });
+
 
 
 myApp.directive('expandable', function () {
