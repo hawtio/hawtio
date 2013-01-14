@@ -15,6 +15,15 @@ module Camel {
             map['routes'] = () => workspace.isCamelFolder();
             map['createEndpoint'] = () => workspace.isEndpointsFolder();
             map['traceRoute'] = () => workspace.isRoute();
+
+            // add sub level tabs
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-picture"></i> Diagram',
+              title: "View a diagram of the Camel routes",
+              isValid: () => workspace.isCamelFolder(),
+              href: () => "#/routes"
+            });
+
           });
 
   hawtioPluginLoader.addModule('camel');

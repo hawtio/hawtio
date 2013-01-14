@@ -22,19 +22,14 @@ module Jmx {
               content: '<i class="icon-list"></i> Attributes',
               title: "View the attribute values on your selection",
               isValid: () => true,
-              href: () => url("#/attributes")
+              href: () => "#/attributes"
             });
-
             workspace.subLevelTabs.push( {
               content: '<i class="icon-bar-chart"></i> Chart',
               title: "View a chart of the metrics on your selection",
               isValid: () => true,
-              href: () => url("#/charts")
+              href: () => "#/charts"
             });
-
-
-            console.log("Loaded sub level tabs for jmx!");
-
           });
 
   hawtioPluginLoader.addModule(pluginName);
