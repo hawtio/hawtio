@@ -23,6 +23,30 @@ module Camel {
               isValid: () => workspace.isCamelFolder(),
               href: () => "#/routes"
             });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-envelope"></i> Browse',
+              title: "Browse the messages on the endpoint",
+              isValid: () => workspace.isEndpointFolder(),
+              href: () => "#/browseEndpoint"
+            });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-envelope"></i> Trace',
+              title: "Trace the messages flowing through the Camel route",
+              isValid: () => workspace.isRoute(),
+              href: () => "#/traceRoute"
+            });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-pencil"></i> Send',
+              title: "Send a message to this endpoint",
+              isValid: () => workspace.isEndpointFolder(),
+              href: () => "#/sendMessage"
+            });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-plus"></i> Create Endpoint',
+              title: "Create a new endpoint",
+              isValid: () => workspace.isEndpointsFolder(),
+              href: () => "#/createEndpoint"
+            });
 
           });
 

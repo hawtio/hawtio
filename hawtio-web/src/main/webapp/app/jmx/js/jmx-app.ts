@@ -30,6 +30,12 @@ module Jmx {
               isValid: () => true,
               href: () => "#/charts"
             });
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-cog"></i> Edit Chart',
+              title: "Edit the chart configuration",
+              isValid: () => true,
+              href: () => "#/chartEdit"
+            });
           });
 
   hawtioPluginLoader.addModule(pluginName);
