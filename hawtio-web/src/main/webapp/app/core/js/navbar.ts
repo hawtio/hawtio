@@ -5,7 +5,8 @@ module Core {
     validSelection : (uri:string) => bool;
     isCurrentRoute : (string) => bool;
     isLocation : (string) => bool;
-    openTab : (any) => any;
+
+    topLevelTabs: () => MenuItem[];
     subLevelTabs: () => MenuItem[];
   }
 
@@ -13,7 +14,9 @@ module Core {
     // TODO why do we keep binding the workspace to the scope?
     $scope.workspace = workspace;
 
-    $scope.subLevelTabs = () => workspace.subLevelTabs;
+    $scope.topLevelTabs = () => $scope.workspace.topLevelTabs;
+
+    $scope.subLevelTabs = () => $scope.workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 

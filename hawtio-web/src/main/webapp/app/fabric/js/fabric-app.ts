@@ -17,7 +17,7 @@ module Fabric {
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
-              isValid: () => workspace.hasFabricMBean(),
+              isValid: () => workspace.hasDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'}),
               href: () => url("#/fabric/containers")
             });
 
