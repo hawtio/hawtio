@@ -38,7 +38,7 @@
       <div class="nav-collapse">
         <ul class="nav">
 
-          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav.href())}" ng-show="nav.isValid()">
+          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="nav.isValid()">
             <a ng-href="{{nav.href()}}" title="{{nav.title}}"
                data-placement="bottom">{{nav.content}}</a></li>
         </ul>

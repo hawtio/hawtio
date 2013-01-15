@@ -28,8 +28,14 @@ module Core {
       $scope.hash = workspace.hash();
     });
 
-    $scope.isActive = (href) => {
-      return workspace.isLinkActive(href);
+    $scope.isActive = (nav) => {
+      if (angular.isString(nav))
+        return workspace.isLinkActive(nav);
+      var fn = nav.isActive;
+      if (fn) {
+        return fn();
+      }
+      return workspace.isLinkActive(nav.href());
     };
   }
 }

@@ -18,7 +18,8 @@ module Fabric {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
               isValid: () => workspace.treeContainsDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'}),
-              href: () => url("#/fabric/containers")
+              href: () => url("#/fabric/containers"),
+              isActive: () => workspace.isLinkActive("fabric")
             });
 
           });

@@ -14,7 +14,8 @@ module Jmx {
               content: "JMX",
               title: "View the JMX MBeans in this process",
               isValid: () => true,
-              href: () => url("#/attributes")
+              href: () => url("#/attributes"),
+              isActive: () => workspace.isLinkActive("jmx")
             });
 
 

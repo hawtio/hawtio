@@ -17,6 +17,7 @@ interface MenuItem {
   content: string;
   title?: string;
   isValid: () => any;
+  isActive?: () => bool;
   href: () => any;
 }
 
@@ -82,11 +83,15 @@ class Workspace {
       if (link.startsWith("/")) {
         link = link.substring(1);
       }
-      // path has no query argument which the href may have so lets check the link starts with the pathName
+      // strip any query arguments
+      var idx = link.indexOf('?');
+      if (idx >= 0) {
+        link = link.substring(0, idx);
+      }
       if (!pathName.length) {
         return link === pathName;
       } else {
-        return link.startsWith(pathName);
+        return pathName.startsWith(link);
       }
   }
 
