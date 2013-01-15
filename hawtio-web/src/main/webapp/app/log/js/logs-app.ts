@@ -20,7 +20,7 @@ module Log {
               content: '<i class="icon-list-alt"></i> Log',
               title: "View the logs in this process",
               isValid: () => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
-              href: () => "#/bundles"
+              href: () => "#/logs"
             });
           });
 
