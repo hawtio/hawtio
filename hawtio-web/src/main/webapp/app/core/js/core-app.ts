@@ -1,8 +1,8 @@
 
 // bootstrap plugin loader
-var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'] || "/jolokia";
+var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'] || "/hawtio/jolokia";
 
-console.log("hawtioPluginLoader parsed jolokiaUrl: " + jolokiaUrl);
+// console.log("hawtioPluginLoader parsed jolokiaUrl: " + jolokiaUrl);
 hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
 hawtioPluginLoader.addUrl('/hawtio/test.json');
 
@@ -40,11 +40,7 @@ myApp.service('localStorage', function () {
     });
 
 myApp.factory('jolokia', ($location:ng.ILocationService, localStorage) => {
-    // TODO disabled local storage for now as things got borked when trying to get back to local URL
-    // - having a named URL might be better which we expose in the route. e.g. /machine/foo/.... which then maps to using URI for foo or something
-    //var storedUrl = localStorage['url']
-    var storedUrl = null;
-    var jolokiaUrl = $location.search()['url'] || storedUrl || url("/jolokia");
+    var jolokiaUrl = $location.search()['url'] || url("/jolokia");
     console.log("Jolokia URL is " + jolokiaUrl);
     var jolokia = new Jolokia(jolokiaUrl);
     localStorage['url'] = jolokiaUrl;
