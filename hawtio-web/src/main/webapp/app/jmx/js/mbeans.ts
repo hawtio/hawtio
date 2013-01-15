@@ -54,6 +54,7 @@ module Jmx {
     function populateTree(response) {
       var rootId = 'root';
       var separator = '_';
+      workspace.mbeanTypesToDomain = {};
       var tree = new Folder('MBeans');
       tree.key = rootId;
       var domains = response.value;

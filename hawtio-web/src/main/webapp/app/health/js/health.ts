@@ -92,11 +92,16 @@ module Health {
         var objects = getHealthMBeans(workspace);
         if (objects) {
           var jolokia = workspace.jolokia;
+          $scope.firstResult = true;
           if (angular.isArray(objects)) {
             var args = [];
             var onSuccessArray = [];
 
             function callback(response, object) {
+              if ($scope.firstResult) {
+                $scope.results = [];
+                $scope.firstResult = false;
+              }
               var value = response.value;
               if (value) {
                 // TODO this smells like a standard function :)
@@ -126,7 +131,6 @@ module Health {
               $scope.widget.populateTable(defaultValues($scope.results));
               $scope.$apply();
             };
-            $scope.results = [];
             jolokia.request(args, onSuccess(onSuccessArray));
           } else {
             function populateTable(response) {
@@ -134,7 +138,8 @@ module Health {
               if (!values || values.length === 0) {
                 values = [createOKStatus(objects)];
               }
-              $scope.widget.populateTable(defaultValues(values));
+              var data = defaultValues(values);
+              $scope.widget.populateTable(data);
               $scope.$apply();
             }
             jolokia.request(
