@@ -25,8 +25,9 @@ module ActiveMQ {
                       workspace.topLevelTabs.push( {
                         content: "Messaging",
                         title: "Manage your message brokers",
-                        isValid: () => workspace.hasDomainAndProperties("org.apache.activemq"),
-                        href: () => url("#/jmx/attributes?nid=root_org.apache.activemq")
+                        isValid: () => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
+                        href: () => url("#/jmx/attributes?nid=root_org.apache.activemq"),
+                        isActive: () => workspace.isLinkActive("activemq")
                       });
 
                       // add sub level tabs
@@ -37,16 +38,16 @@ module ActiveMQ {
                         href: () => "#/browseQueue"
                       });
                       workspace.subLevelTabs.push( {
-                        content: '<i class="icon-picture"></i> Diagram',
-                        title: "View a diagram of the producers, destinations and consumers",
-                        isValid: () => workspace.isActiveMQFolder(),
-                        href: () => "#/subscribers"
-                      });
-                      workspace.subLevelTabs.push( {
                         content: '<i class="icon-pencil"></i> Send',
                         title: "Send a message to this destination",
                         isValid: () => workspace.isQueue() || workspace.isTopic(),
                         href: () => "#/sendMessage"
+                      });
+                      workspace.subLevelTabs.push( {
+                        content: '<i class="icon-picture"></i> Diagram',
+                        title: "View a diagram of the producers, destinations and consumers",
+                        isValid: () => workspace.isActiveMQFolder(),
+                        href: () => "#/subscribers"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Queue',
