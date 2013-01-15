@@ -9,6 +9,7 @@ module Core {
     subLevelTabs: () => MenuItem[];
 
     isValid: (MenuItem) => bool;
+    link: (MenuItem) => string;
   }
 
   export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
@@ -27,6 +28,20 @@ module Core {
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
     });
+
+    $scope.link = (nav) => {
+      var href = nav.href();
+      var hash = workspace.hash();
+      if (hash !== "?") {
+        if (href.indexOf("?") >= 0) {
+          hash = "&" + hash.substring(1);
+          // TODO we need to override any values in the href
+          // to avoid the hash overloading them!
+        }
+        href += hash;
+      }
+      return href;
+    };
 
     $scope.isActive = (nav) => {
       if (angular.isString(nav))
