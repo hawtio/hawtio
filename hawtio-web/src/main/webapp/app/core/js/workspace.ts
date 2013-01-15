@@ -76,11 +76,11 @@ class Workspace {
         // lets trim the leading slash
       var pathName = (this.$location.path() || '/').substring(1);
       var link = href;
-      if (href.startsWith("#")) {
-        link = href.substring(1);
+      if (link.startsWith("#")) {
+        link = link.substring(1);
       }
-      if (href.startsWith("/")) {
-        link = href.substring(1);
+      if (link.startsWith("/")) {
+        link = link.substring(1);
       }
       // path has no query argument which the href may have so lets check the link starts with the pathName
       return link.startsWith(pathName);
