@@ -66,6 +66,27 @@ class Workspace {
   }
 
   /**
+   * Returns true if the given link is active. The link can omit the leading # or / if necessary.
+   * The query parameters of the URL are ignored in the comparison.
+   *
+   * @param href
+   * @return true if the given link is active
+   */
+  isLinkActive(href: string) {
+        // lets trim the leading slash
+      var pathName = (this.$location.path() || '/').substring(1);
+      var link = href;
+      if (href.startsWith("#")) {
+        link = href.substring(1);
+      }
+      if (href.startsWith("/")) {
+        link = href.substring(1);
+      }
+      // path has no query argument which the href may have so lets check the link starts with the pathName
+      return link.startsWith(pathName);
+  }
+
+  /**
    * Returns the selected mbean name if there is one
    */
   public getSelectedMBeanName():string {

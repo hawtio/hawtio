@@ -29,12 +29,7 @@ module Core {
     });
 
     $scope.isActive = (href) => {
-      var pathName = $location.path().substring(1) || '';
-      var link = href;
-      if (href.startsWith("#/")) {
-        link = href.substring(2);
-      }
-      return pathName.startsWith(link);
+      return workspace.isLinkActive(href);
     };
   }
 }
