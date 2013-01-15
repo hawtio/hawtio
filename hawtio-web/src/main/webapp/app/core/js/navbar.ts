@@ -3,8 +3,7 @@ module Core {
     workspace : Workspace;
     hash : string;
     validSelection : (uri:string) => bool;
-    isCurrentRoute : (string) => bool;
-    isLocation : (string) => bool;
+    isActive : (string) => bool;
 
     topLevelTabs: () => MenuItem[];
     subLevelTabs: () => MenuItem[];
@@ -29,20 +28,13 @@ module Core {
       $scope.hash = workspace.hash();
     });
 
-    $scope.isLocation = (href) => {
+    $scope.isActive = (href) => {
       var pathName = $location.path().substring(1) || '';
       var link = href;
       if (href.startsWith("#/")) {
         link = href.substring(2);
       }
       return pathName.startsWith(link);
-    };
-
-    $scope.isCurrentRoute = (page) => {
-      // TODO Why is 'home' used? It doesn't appear anywhere
-      var currentRoute = $location.path().substring(1) || 'home';
-      var isCurrentRoute = currentRoute.startsWith(page);
-      return isCurrentRoute;
     };
   }
 }

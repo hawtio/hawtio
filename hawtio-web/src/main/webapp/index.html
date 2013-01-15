@@ -38,7 +38,7 @@
       <div class="nav-collapse">
         <ul class="nav">
 
-          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isLocation(nav.href())}" ng-show="nav.isValid()">
+          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav.href())}" ng-show="nav.isValid()">
             <a ng-href="{{nav.href()}}" title="{{nav.title}}"
                data-placement="bottom">{{nav.content}}</a></li>
         </ul>
@@ -46,10 +46,10 @@
 
         <div class="pull-right">
           <ul class="nav pull-right">
-            <li ng-class="{active : isCurrentRoute('preferences')}">
+            <li ng-class="{active : isActive('#/preferences')}">
               <a ng-href="#/preferences{{hash}}" title="Edit your preferences" data-placement="bottom">
                 <i class="icon-cog"></i> Preferences</a></li>
-            <li ng-class="{active : isCurrentRoute('help')}">
+            <li ng-class="{active : isActive('#/help')}">
               <a ng-href="#/help{{hash}}" title="Read the help about how to use this console" data-placement="bottom">
                 <i class="icon-question-sign"></i> Help</a></li>
           </ul>
