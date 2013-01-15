@@ -39,7 +39,7 @@ module Osgi {
                 }
             }
         ], {
-            rowDetailTemplateId: 'bodyTemplate',
+            rowDetailTemplateId: 'osgiBundleTemplate',
             ignoreColumns: ["Headers", "ExportedPackages", "ImportedPackages", "RegisteredServices", "RequiringBundles", "RequiredBundles", "Fragments", "ServicesInUse"]
         });
 
@@ -47,7 +47,7 @@ module Osgi {
 
 
     /*
-      var html = $templateCache.get('bodyTemplate');
+      var html = $templateCache.get('osgiBundleTemplate');
 
       // customise the expansion
       $scope.widget.populateDetailDiv = (row, elm) => {

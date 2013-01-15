@@ -30,7 +30,7 @@ module Health {
           "sWidth": "60%"
         }
       ], {
-        rowDetailTemplateId: 'bodyTemplate',
+        rowDetailTemplateId: 'healthEventTemplate',
         disableAddColumns: true
       });
 
