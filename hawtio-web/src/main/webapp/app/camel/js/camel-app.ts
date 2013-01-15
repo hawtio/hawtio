@@ -32,7 +32,7 @@ module Camel {
             workspace.subLevelTabs.push( {
               content: '<i class="icon-envelope"></i> Trace',
               title: "Trace the messages flowing through the Camel route",
-              isValid: () => workspace.isRoute(),
+              isValid: () => workspace.isRoute() && Camel.getSelectionCamelTraceMBean(workspace),
               href: () => "#/traceRoute"
             });
             workspace.subLevelTabs.push( {
