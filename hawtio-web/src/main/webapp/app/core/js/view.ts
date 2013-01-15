@@ -20,7 +20,6 @@ module Core {
           $scope.viewPartial = layoutFull;
         }
       }
-      console.log("path " + path + " and now view is " + $scope.viewPartial);
     }
   }
 }
