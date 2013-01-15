@@ -28,7 +28,7 @@ module Fabric {
         "mData": null
       }
     ], {
-      rowDetailTemplateId: 'bodyTemplate',
+      rowDetailTemplateId: 'fabricProfileTemplate',
       disableAddColumns: true
     });
 

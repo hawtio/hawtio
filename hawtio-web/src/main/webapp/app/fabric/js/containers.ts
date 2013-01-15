@@ -35,7 +35,7 @@ module Fabric {
         "mData": null
       }
     ], {
-      rowDetailTemplateId: 'bodyTemplate',
+      rowDetailTemplateId: 'fabricContainerTemplate',
       disableAddColumns: true
     });
 
