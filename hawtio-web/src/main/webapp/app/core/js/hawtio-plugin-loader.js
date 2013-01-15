@@ -41,9 +41,12 @@
     $.each(hawtioPluginLoader.urls, function(index, url) {
 
       if (regex.test(url)) {
-        var parts = url.slice(url.indexOf(':') + 1);
-        var url = parts.slice(0, url.indexOf(':') + 1);
-        var attribute = parts.slice(parts.indexOf(':') + 1);
+        var parts = url.split(':');
+        parts = parts.reverse();
+        parts.pop();
+
+        var url = parts.pop();
+        var attribute = parts.reverse().join(':');
         var jolokia = new Jolokia(url);
 
         try { 

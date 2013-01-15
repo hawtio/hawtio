@@ -2,7 +2,6 @@
 // bootstrap plugin loader
 var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'] || "/hawtio/jolokia";
 
-// console.log("hawtioPluginLoader parsed jolokiaUrl: " + jolokiaUrl);
 hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
 hawtioPluginLoader.addUrl('/hawtio/test.json');
 
@@ -41,7 +40,7 @@ myApp.service('localStorage', function () {
 
 myApp.factory('jolokia', ($location:ng.ILocationService, localStorage) => {
     var jolokiaUrl = $location.search()['url'] || url("/jolokia");
-    console.log("Jolokia URL is " + jolokiaUrl);
+    // console.log("Jolokia URL is " + jolokiaUrl);
     var jolokia = new Jolokia(jolokiaUrl);
     localStorage['url'] = jolokiaUrl;
     return jolokia;
