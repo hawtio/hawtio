@@ -154,6 +154,51 @@ mvn -Pwatch</code></pre>
 
 <p>Check out the <a href="http://hawt.io/developers/index.html">hawt.io technologies, tools and code walkthroughs</a></p>
 
+<h2 id = "Trying_hawtio_with_Fuse_Fabric">Trying hawtio with Fuse Fabric</h2>
+
+<p>As of writing hawt.io depends on the latest snapshot of <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a>. To try out hawt.io with it try these steps:</p>
+
+<ul>
+<li>grab the latest <a href="http://fuse.fusesource.org/source.html">Fuse Fabric source code</a> and do a build in the fabric directory&hellip;</li>
+</ul>
+
+<p>```
+git clone git://github.com/fusesource/fuse.git
+cd fuse
+cd fabric
+mvn -Dtest=false -DfailIfNoTests=false clean install
+```</p>
+
+<ul>
+<li>now create a fuse fabric instance</li>
+</ul>
+
+<p>```
+cd fuse-fabric\target
+tar xf fuse-fabric-99-master-SNAPSHOT.tar.gz
+cd fuse-fabric-99-master-SNAPSHOT
+bin/fusefabric
+```</p>
+
+<ul>
+<li>when the fabric starts up run the command</li>
+</ul>
+
+<p>```
+fabric:create
+```</p>
+
+<ul>
+<li>to properly test things out you might wanna create a new version and maybe some child containers.</li>
+</ul>
+
+<h3 id = "Running_hawtio_with_Fuse_Fabric_in_development_mode">Running hawtio with Fuse Fabric in development mode</h3>
+
+<p>```
+cd hawtio-web
+mvn test-compile exec:java -Psnapshot,fabric
+```</p>
+
 <p></div>
   </div></p>
     </div>
