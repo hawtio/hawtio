@@ -1,4 +1,4 @@
-module Core {
+module Jmx {
     export interface IArg {
         name : string;
         type : string;
@@ -81,9 +81,6 @@ module Core {
       };
 
     }
-}
-
-module Core {
 
     export interface IOperation {
         [key : string] : { name : string; humanReadable : string; args : string; };

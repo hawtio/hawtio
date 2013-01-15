@@ -1,4 +1,4 @@
-module Core {
+module Jmx {
   export function MBeansController($scope, $location, workspace:Workspace) {
     $scope.workspace = workspace;
     $scope.tree = new Folder('MBeans');

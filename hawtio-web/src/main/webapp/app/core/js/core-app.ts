@@ -22,10 +22,6 @@ hawtioPluginLoader.addModule('hawtioCore');
 
 myApp.config(($routeProvider) => {
   $routeProvider.
-          when('/attributes', {templateUrl: 'app/core/html/attributes.html', controller: Core.AttributesController}).
-          when('/operations', {templateUrl: 'app/core/html/operations.html', controller: Core.OperationsController}).
-          when('/charts', {templateUrl: 'app/core/html/charts.html', controller: Core.Charts.ChartController}).
-          when('/chartEdit', {templateUrl: 'app/core/html/chartEdit.html', controller: Core.Charts.ChartEditController}).
           when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
           when('/help', {
             redirectTo: '/help/overview'

@@ -1,4 +1,4 @@
-module Core {
+module Jmx {
 
     export function AttributesController($scope, $routeParams, workspace:Workspace, $rootScope) {
       $scope.routeParams = $routeParams;

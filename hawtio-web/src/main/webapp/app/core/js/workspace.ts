@@ -152,7 +152,7 @@ class Workspace {
         // lets look up the previous preferred value for this type
         var defaultPath = this.getLocalStorage(key);
         if (!defaultPath) {
-          defaultPath = "attributes";
+          defaultPath = "jmx/attributes";
           if (this.isActiveMQFolder()) {
             defaultPath = "activemq/status";
           }

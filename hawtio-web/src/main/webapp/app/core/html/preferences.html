@@ -15,18 +15,12 @@
       </div>
     </div>
   </form>
-<!--
-  <form class="form-horizontal" autocomplete="on" action="#/attributes" method="get">
--->
+
   <form class="form-horizontal" autocomplete="on">
     <div class="control-group">
       <label class="control-label" for="url">Go to server</label>
 
       <div class="controls">
-<!--
-        <input id="url" name="url" type="text" placeholder="URL of JVM process to manage"/>
-        <input type="submit" value="Go To Server" class="btn">
--->
         <input id="url" name="url" type="text" placeholder="http://host:port/jolokia" ng-model="url"/>
         <input type="submit" value="Go To Server" class="btn" ng-disabled="!url" ng-click="gotoServer(url)" title="Opens a new browser window connecting to the given JVM process via its Jolokia servlet URL">
       </div>
