@@ -16,6 +16,8 @@ module Core {
         // TODO this should be inside the plugins!
         if (path.startsWith("/fabric")) {
           $scope.viewPartial = "app/fabric/html/layoutFabric.html";
+        } else if (path.startsWith("/osgi")) {
+          $scope.viewPartial = "app/osgi/html/layoutOsgi.html";
         } else if (path.startsWith("/log") || path.startsWith("/health") || path.startsWith("/help") || path.startsWith("/preferences")) {
           $scope.viewPartial = layoutFull;
         }

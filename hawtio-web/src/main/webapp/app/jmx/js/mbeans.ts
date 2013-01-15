@@ -130,7 +130,11 @@ module Jmx {
             }
           }
           if (folder) {
-            folder.getOrElse(lastPath, mbeanInfo);
+            try {
+              folder.getOrElse(lastPath, mbeanInfo);
+            } catch (e) {
+              console.log("Failed to find value " + lastPath + " on folder " + folder);
+            }
           } else {
             console.log("No folder found for lastPath: " + lastPath);
           }
