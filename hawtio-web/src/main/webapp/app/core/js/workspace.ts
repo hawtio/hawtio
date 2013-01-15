@@ -72,7 +72,7 @@ class Workspace {
    * @param href
    * @return true if the given link is active
    */
-  isLinkActive(href: string) {
+  isLinkActive(href: string): bool {
         // lets trim the leading slash
       var pathName = (this.$location.path() || '/').substring(1);
       var link = href;
@@ -83,7 +83,11 @@ class Workspace {
         link = link.substring(1);
       }
       // path has no query argument which the href may have so lets check the link starts with the pathName
-      return link.startsWith(pathName);
+      if (!pathName.length) {
+        return link === pathName;
+      } else {
+        return link.startsWith(pathName);
+      }
   }
 
   /**
