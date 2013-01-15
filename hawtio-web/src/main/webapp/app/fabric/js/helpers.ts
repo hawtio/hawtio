@@ -89,9 +89,9 @@ module Fabric {
       var id = row["id"];
       row["link"] = profileLinks(workspace, versionId, id);
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
-      var containerCount = row["containerCount"];
-      var containersLink = "" + containerCount;
       var containersHref = url("#/fabric/containers?p=" + id);
+      var containerCount = row["containerCount"];
+      var containersLink = "";
       if (containerCount) {
         containersLink = "<a href='" + containersHref + "'>" + containerCount + "</a>"
       }
