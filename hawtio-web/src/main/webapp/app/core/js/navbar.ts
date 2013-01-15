@@ -30,8 +30,12 @@ module Core {
     });
 
     $scope.isLocation = (href) => {
-      var path = $location.path();
-      return path.startsWith(href);
+      var pathName = $location.path().substring(1) || '';
+      var link = href;
+      if (href.startsWith("#/")) {
+        link = href.substring(2);
+      }
+      return pathName.startsWith(link);
     };
 
     $scope.isCurrentRoute = (page) => {

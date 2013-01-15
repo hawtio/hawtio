@@ -4,10 +4,7 @@
   </div>
   <div class="span9" ng-controller="Core.NavBarController">
     <ul class="nav nav-tabs">
-      <!-- TODO show active based on the ng-view
-      ng-class="{active : nav.isVisible()}
-      -->
-      <li ng-repeat="nav in subLevelTabs()" ng-show="isValid(nav)">
+      <li ng-repeat="nav in subLevelTabs()" ng-show="isValid(nav)" ng-class="{active : isLocation(nav.href())}">
         <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
            data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
     </ul>

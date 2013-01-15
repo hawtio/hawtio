@@ -19,12 +19,14 @@ module Health {
               href: () => url("#/health")
             });
 
+/*
             workspace.subLevelTabs.push( {
               content: '<i class="icon-eye-open"></i> Health',
               title: "View the health of either all of a selected subset of the systems",
               isValid: () => Health.hasHealthMBeans(workspace),
               href: () => "#/health"
             });
+*/
 
           });
 
