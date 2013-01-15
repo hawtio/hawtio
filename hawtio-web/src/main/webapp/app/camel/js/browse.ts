@@ -9,7 +9,7 @@ module Camel {
           "sDefaultContent": '<i class="icon-plus"></i>'
         }
       ], {
-        rowDetailTemplateId: 'bodyTemplate',
+        rowDetailTemplateId: 'camelMessageTemplate',
         ignoreColumns: ["headerTypes", "body"],
         flattenColumns: ["headers"]
       });

@@ -29,7 +29,7 @@ module ActiveMQ {
         { "mDataProp": "JMSType" },
         { "mDataProp": "JMSDestination" }
       ], {
-        rowDetailTemplateId: 'bodyTemplate',
+        rowDetailTemplateId: 'activemqMessageTemplate',
         ignoreColumns: ignoreColumns,
         flattenColumns: flattenColumns
       });
