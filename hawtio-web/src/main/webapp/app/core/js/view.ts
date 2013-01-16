@@ -2,7 +2,8 @@ module Core {
   export var layoutTree = "app/core/html/layoutTree.html";
   export var layoutFull = "app/core/html/layoutFull.html";
 
-  export function ViewController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function ViewController($scope, $route, $location:ng.ILocationService, workspace:Workspace) {
+
     findViewPartial();
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
