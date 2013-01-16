@@ -1,13 +1,14 @@
 module Core {
-    // TODO Export as a service
-    export function d3ForceGraph(scope, nodes, links, canvasSelector = "#canvas") {
-      // lets remove the old graph first
-      if (scope.graphForce) {
-        scope.graphForce.stop();
-      }
-      var canvasDiv = $(canvasSelector);
-      canvasDiv.children("svg").remove();
+  // TODO Export as a service
+  export function d3ForceGraph(scope, nodes, links, canvasSelector = "#canvas") {
+    // lets remove the old graph first
+    if (scope.graphForce) {
+      scope.graphForce.stop();
+    }
+    var canvasDiv = $(canvasSelector);
+    canvasDiv.children("svg").remove();
 
+    if (nodes.length) {
       var width = canvasDiv.width();
       var height = canvasDiv.height();
       if (height < 300) {
@@ -111,266 +112,267 @@ module Core {
         });
       });
     }
+  }
 
-    // TODO Export as a service
-    export function dagreLayoutGraph(nodes, links, width, height) {
-      var nodePadding = 10;
-      var stateKeys = {};
-      var transitions = [];
-      nodes.forEach((node) => {
-        var idx = node.id;
-        if (idx === undefined) {
-          console.log("No node found for node " + JSON.stringify(node));
-        } else {
-          if (node.edges === undefined) node.edges = [];
-          if (!node.label) node.label = "node " + idx;
-          stateKeys[idx] = node;
-        }
-      });
-      var states = d3.values(stateKeys);
-      links.forEach(function (d) {
-        var source = stateKeys[d.source];
-        var target = stateKeys[d.target];
-        if (source === undefined || target === undefined) {
-          console.log("Bad link!  " + source + " target " + target + " for " + d);
-        } else {
-          var edge = { source: source, target: target };
-          transitions.push(edge);
-          source.edges.push(edge);
-          target.edges.push(edge);
-          // TODO should we add the edge to the target?
-        }
-      });
-
-      function spline(e) {
-        var points = e.dagre.points.slice(0);
-        var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
-        var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
-        points.unshift(source);
-        points.push(target);
-        return d3.svg.line()
-                .x(function (d) {
-                  return d.x;
-                })
-                .y(function (d) {
-                  return d.y;
-                })
-                .interpolate("linear")
-                (points);
+  // TODO Export as a service
+  export function dagreLayoutGraph(nodes, links, width, height) {
+    var nodePadding = 10;
+    var stateKeys = {};
+    var transitions = [];
+    nodes.forEach((node) => {
+      var idx = node.id;
+      if (idx === undefined) {
+        console.log("No node found for node " + JSON.stringify(node));
+      } else {
+        if (node.edges === undefined) node.edges = [];
+        if (!node.label) node.label = "node " + idx;
+        stateKeys[idx] = node;
       }
-
-      // Translates all points in the edge using `dx` and `dy`.
-      function translateEdge(e, dx, dy) {
-        e.dagre.points.forEach(function (p) {
-          p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
-          p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
-        });
+    });
+    var states = d3.values(stateKeys);
+    links.forEach(function (d) {
+      var source = stateKeys[d.source];
+      var target = stateKeys[d.target];
+      if (source === undefined || target === undefined) {
+        console.log("Bad link!  " + source + " target " + target + " for " + d);
+      } else {
+        var edge = { source: source, target: target };
+        transitions.push(edge);
+        source.edges.push(edge);
+        target.edges.push(edge);
+        // TODO should we add the edge to the target?
       }
+    });
 
-      // Now start laying things out
-      var svg = d3.select("svg");
-      // lets remove all the old g elements
-      $("svg").children("g").remove();
-
-      var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
-
-      // `nodes` is center positioned for easy layout later
-      var nodes = svgGroup
-              .selectAll("g .node")
-              .data(states)
-              .enter()
-              .append("g")
-              .attr("class", "node")
-              .attr("id", function (d) {
-                return "node-" + d.label
-              });
-
-      // lets add a tooltip
-      nodes.append("title").text(function (d) {
-        return d.tooltip || "";
-      });
-
-      var edges = svgGroup
-              .selectAll("path .edge")
-              .data(transitions)
-              .enter()
-              .append("path")
-              .attr("class", "edge")
-              .attr("marker-end", "url(#arrowhead)");
-
-      // Append rectangles to the nodes. We do this before laying out the text
-      // because we want the text above the rectangle.
-      var rects = nodes.append("rect").
-        // rounded corners
-              attr("rx", "5").attr("ry", "5").
-        // lets add shadow
-              attr("filter", "url(#drop-shadow)");
-
-
-      var images = nodes.append("image")
-              .attr("xlink:href", function (d) {
-                return d.imageUrl;
+    function spline(e) {
+      var points = e.dagre.points.slice(0);
+      var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
+      var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
+      points.unshift(source);
+      points.push(target);
+      return d3.svg.line()
+              .x(function (d) {
+                return d.x;
               })
-              .attr("x", -12)
-              .attr("y", -20)
-              .attr("height", 24)
-              .attr("width", 24);
-
-      var counters = nodes
-              .append("text")
-              .attr("text-anchor", "end")
-              .attr("class", "counter")
-              .attr("x", 0)
-              .attr("dy", 0)
-              .text(_counterFunction);
-
-      // Append text
-      var labels = nodes
-              .append("text")
-              .attr("text-anchor", "middle")
-              .attr("x", 0);
-
-      labels
-              .append("tspan")
-              .attr("x", 0)
-              .attr("dy", 28)
-              .text(function (d) {
-                return d.label;
-              });
-
-      var labelPadding = 12;
-
-      labels.each(function (d) {
-        var bbox = this.getBBox();
-        d.bbox = bbox;
-        d.width = bbox.width + 2 * nodePadding;
-        d.height = bbox.height + 2 * nodePadding + labelPadding;
-      });
-
-      rects
-              .attr("x", function (d) {
-                return -(d.bbox.width / 2 + nodePadding);
+              .y(function (d) {
+                return d.y;
               })
-              .attr("y", function (d) {
-                return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
-              })
-              .attr("width", function (d) {
-                return d.width;
-              })
-              .attr("height", function (d) {
-                return d.height;
-              });
-
-      images
-              .attr("x", function (d) {
-                return -(d.bbox.width) / 2;
-              });
-
-      labels
-              .attr("x", function (d) {
-                return -d.bbox.width / 2;
-              })
-              .attr("y", function (d) {
-                return -d.bbox.height / 2;
-              });
-
-      counters.attr("x", function (d) {
-        var w = d.bbox.width;
-        return w / 2;
-      });
-
-      // Create the layout and get the graph
-      dagre.layout()
-              .nodeSep(50)
-              .edgeSep(10)
-              .rankSep(50)
-              .nodes(states)
-              .edges(transitions)
-              .debugLevel(1)
-              .run();
-
-      nodes.attr("transform", function (d) {
-        return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
-      });
-
-      edges
-        // Set the id. of the SVG element to have access to it later
-              .attr('id', function (e) {
-                return e.dagre.id;
-              })
-              .attr("d", function (e) {
-                return spline(e);
-              });
-
-      // Resize the SVG element
-      var svgNode = svg.node();
-      if (svgNode) {
-        var svgBBox = svgNode.getBBox();
-        if (svgBBox) {
-          svg.attr("width", svgBBox.width + 10);
-          svg.attr("height", svgBBox.height + 10);
-        }
-      }
-
-      // Drag handlers
-      var nodeDrag = d3.behavior.drag()
-        // Set the right origin (based on the Dagre layout or the current position)
-              .origin(function (d) {
-                return d.pos ? {x: d.pos.x, y: d.pos.y} : {x: d.dagre.x, y: d.dagre.y};
-              })
-              .on('drag', function (d, i) {
-                var prevX = d.dagre.x,
-                        prevY = d.dagre.y;
-
-                // The node must be inside the SVG area
-                d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
-                d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
-                d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
-
-                var dx = d.dagre.x - prevX,
-                        dy = d.dagre.y - prevY;
-
-                // Edges position (inside SVG area)
-                d.edges.forEach(function (e) {
-                  translateEdge(e, dx, dy);
-                  d3.select('#' + e.dagre.id).attr('d', spline(e));
-                });
-              });
-
-      var edgeDrag = d3.behavior.drag()
-              .on('drag', function (d, i) {
-                translateEdge(d, d3.event.dx, d3.event.dy);
-                d3.select(this).attr('d', spline(d));
-              });
-
-      nodes.call(nodeDrag);
-      edges.call(edgeDrag);
-
-      return states;
+              .interpolate("linear")
+              (points);
     }
 
-    // TODO Export as a service
-    export function dagreUpdateGraphData(data) {
-      var svg = d3.select("svg");
-      svg.selectAll("text.counter").text(_counterFunction);
-
-      // add tooltip
-      svg.selectAll("g .node title").text(function (d) {
-        return d.tooltip || "";
+    // Translates all points in the edge using `dx` and `dy`.
+    function translateEdge(e, dx, dy) {
+      e.dagre.points.forEach(function (p) {
+        p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
+        p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
       });
-      /*
-      TODO can we reuse twitter bootstrap on an svg title?
-              .each(function (d) {
-                $(d).tooltip({
-                  'placement': "bottom"
-                });
+    }
+
+    // Now start laying things out
+    var svg = d3.select("svg");
+    // lets remove all the old g elements
+    $("svg").children("g").remove();
+
+    var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
+
+    // `nodes` is center positioned for easy layout later
+    var nodes = svgGroup
+            .selectAll("g .node")
+            .data(states)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .attr("id", function (d) {
+              return "node-" + d.label
+            });
+
+    // lets add a tooltip
+    nodes.append("title").text(function (d) {
+      return d.tooltip || "";
+    });
+
+    var edges = svgGroup
+            .selectAll("path .edge")
+            .data(transitions)
+            .enter()
+            .append("path")
+            .attr("class", "edge")
+            .attr("marker-end", "url(#arrowhead)");
+
+    // Append rectangles to the nodes. We do this before laying out the text
+    // because we want the text above the rectangle.
+    var rects = nodes.append("rect").
+      // rounded corners
+            attr("rx", "5").attr("ry", "5").
+      // lets add shadow
+            attr("filter", "url(#drop-shadow)");
+
+
+    var images = nodes.append("image")
+            .attr("xlink:href", function (d) {
+              return d.imageUrl;
+            })
+            .attr("x", -12)
+            .attr("y", -20)
+            .attr("height", 24)
+            .attr("width", 24);
+
+    var counters = nodes
+            .append("text")
+            .attr("text-anchor", "end")
+            .attr("class", "counter")
+            .attr("x", 0)
+            .attr("dy", 0)
+            .text(_counterFunction);
+
+    // Append text
+    var labels = nodes
+            .append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", 0);
+
+    labels
+            .append("tspan")
+            .attr("x", 0)
+            .attr("dy", 28)
+            .text(function (d) {
+              return d.label;
+            });
+
+    var labelPadding = 12;
+
+    labels.each(function (d) {
+      var bbox = this.getBBox();
+      d.bbox = bbox;
+      d.width = bbox.width + 2 * nodePadding;
+      d.height = bbox.height + 2 * nodePadding + labelPadding;
+    });
+
+    rects
+            .attr("x", function (d) {
+              return -(d.bbox.width / 2 + nodePadding);
+            })
+            .attr("y", function (d) {
+              return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
+            })
+            .attr("width", function (d) {
+              return d.width;
+            })
+            .attr("height", function (d) {
+              return d.height;
+            });
+
+    images
+            .attr("x", function (d) {
+              return -(d.bbox.width) / 2;
+            });
+
+    labels
+            .attr("x", function (d) {
+              return -d.bbox.width / 2;
+            })
+            .attr("y", function (d) {
+              return -d.bbox.height / 2;
+            });
+
+    counters.attr("x", function (d) {
+      var w = d.bbox.width;
+      return w / 2;
+    });
+
+    // Create the layout and get the graph
+    dagre.layout()
+            .nodeSep(50)
+            .edgeSep(10)
+            .rankSep(50)
+            .nodes(states)
+            .edges(transitions)
+            .debugLevel(1)
+            .run();
+
+    nodes.attr("transform", function (d) {
+      return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
+    });
+
+    edges
+      // Set the id. of the SVG element to have access to it later
+            .attr('id', function (e) {
+              return e.dagre.id;
+            })
+            .attr("d", function (e) {
+              return spline(e);
+            });
+
+    // Resize the SVG element
+    var svgNode = svg.node();
+    if (svgNode) {
+      var svgBBox = svgNode.getBBox();
+      if (svgBBox) {
+        svg.attr("width", svgBBox.width + 10);
+        svg.attr("height", svgBBox.height + 10);
+      }
+    }
+
+    // Drag handlers
+    var nodeDrag = d3.behavior.drag()
+      // Set the right origin (based on the Dagre layout or the current position)
+            .origin(function (d) {
+              return d.pos ? {x: d.pos.x, y: d.pos.y} : {x: d.dagre.x, y: d.dagre.y};
+            })
+            .on('drag', function (d, i) {
+              var prevX = d.dagre.x,
+                      prevY = d.dagre.y;
+
+              // The node must be inside the SVG area
+              d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
+              d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
+              d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
+
+              var dx = d.dagre.x - prevX,
+                      dy = d.dagre.y - prevY;
+
+              // Edges position (inside SVG area)
+              d.edges.forEach(function (e) {
+                translateEdge(e, dx, dy);
+                d3.select('#' + e.dagre.id).attr('d', spline(e));
               });
+            });
 
-       */
-    }
+    var edgeDrag = d3.behavior.drag()
+            .on('drag', function (d, i) {
+              translateEdge(d, d3.event.dx, d3.event.dy);
+              d3.select(this).attr('d', spline(d));
+            });
 
-    function _counterFunction(d) {
-        return d.counter || "";
-    }
+    nodes.call(nodeDrag);
+    edges.call(edgeDrag);
+
+    return states;
+  }
+
+  // TODO Export as a service
+  export function dagreUpdateGraphData(data) {
+    var svg = d3.select("svg");
+    svg.selectAll("text.counter").text(_counterFunction);
+
+    // add tooltip
+    svg.selectAll("g .node title").text(function (d) {
+      return d.tooltip || "";
+    });
+    /*
+     TODO can we reuse twitter bootstrap on an svg title?
+     .each(function (d) {
+     $(d).tooltip({
+     'placement': "bottom"
+     });
+     });
+
+     */
+  }
+
+  function _counterFunction(d) {
+    return d.counter || "";
+  }
 
 }
