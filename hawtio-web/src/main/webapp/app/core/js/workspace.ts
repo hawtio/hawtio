@@ -52,14 +52,14 @@ class Workspace {
   /**
    * Returns the hash query argument to append to URL links
    */
-  hash() {
+          hash() {
     var hash = this.$location.search();
 
     // TODO there must be a nice function somewhere to do this in a nicer way!
     // NOTE we are not encoding anything
-    var keyValuePairs : string[] = [];
-    angular.forEach(hash, function(value, key) {
-        keyValuePairs.push(key + "=" + value);
+    var keyValuePairs:string[] = [];
+    angular.forEach(hash, function (value, key) {
+      keyValuePairs.push(key + "=" + value);
     });
     var text = "?" + keyValuePairs.join("&");
 
@@ -73,34 +73,34 @@ class Workspace {
    * @param href
    * @return true if the given link is active
    */
-  isLinkActive(href: string): bool {
-        // lets trim the leading slash
-      var pathName = (this.$location.path() || '/').substring(1);
-      var link = href;
-      if (link.startsWith("#")) {
-        link = link.substring(1);
-      }
-      if (link.startsWith("/")) {
-        link = link.substring(1);
-      }
-      // strip any query arguments
-      var idx = link.indexOf('?');
-      if (idx >= 0) {
-        link = link.substring(0, idx);
-      }
-      if (!pathName.length) {
-        return link === pathName;
-      } else {
-        return pathName.startsWith(link);
-      }
+          isLinkActive(href:string):bool {
+    // lets trim the leading slash
+    var pathName = (this.$location.path() || '/').substring(1);
+    var link = href;
+    if (link.startsWith("#")) {
+      link = link.substring(1);
+    }
+    if (link.startsWith("/")) {
+      link = link.substring(1);
+    }
+    // strip any query arguments
+    var idx = link.indexOf('?');
+    if (idx >= 0) {
+      link = link.substring(0, idx);
+    }
+    if (!pathName.length) {
+      return link === pathName;
+    } else {
+      return pathName.startsWith(link);
+    }
   }
 
   /**
    * Returns true if the tab query parameter is active or the URL starts with the given path
    */
-  isTopTabActive(path: string): bool {
+  public isTopTabActive(path:string):bool {
     var tab = this.$location.search()['tab'];
-    if (tab) {
+    if (angular.isString(tab)) {
       return tab.startsWith(path);
     }
     return this.isLinkActive(path);
@@ -134,7 +134,7 @@ class Workspace {
    * Returns the view configuration key for the kind of selection
    * for example based on the domain and the node type
    */
-  public selectionViewConfigKey() : string {
+  public selectionViewConfigKey():string {
     var key = null;
     var selection = this.selection;
     if (selection) {
@@ -237,15 +237,10 @@ class Workspace {
 
   // only display stuff if we have an mbean with the given properties
   public hasDomainAndProperties(domainName, properties = null) {
-    var workspace = this;
-    var tree = workspace.tree;
-    var node = workspace.selection;
-    if (tree && node) {
-      var folder = tree.get(domainName);
+    function matches(folder) {
       if (folder) {
-        if (domainName !== node.domain) return false;
         if (properties) {
-          var entries = node.entries;
+          var entries = folder.entries;
           if (!entries) return false;
           for (var key in properties) {
             var value = properties[key];
@@ -254,12 +249,21 @@ class Workspace {
             }
           }
         }
-        return true
-      } else {
-        // console.log("no hasMBean for " + objectName + " in tree " + tree);
+        return true;
       }
-    } else {
-      // console.log("workspace has no tree! returning false for hasMBean " + objectName);
+      return false;
+    }
+
+    var workspace = this;
+    var tree = workspace.tree;
+    var node = workspace.selection;
+    if (node) {
+      if (matches(node)) return true;
+      if (tree) {
+        var folder = tree.get(domainName);
+        return matches(folder);
+      }
+      return false;
     }
     return false;
   }
@@ -347,8 +351,9 @@ class Folder implements NodeSelection {
   children:NodeSelection[] = [];
   folderNames:string[] = [];
   domain:string = null;
-  objectName: string = null;
+  objectName:string = null;
   map = {};
+  entries = {};
   addClass = null;
 
 

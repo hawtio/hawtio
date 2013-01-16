@@ -35,6 +35,7 @@ module Camel {
                   folder.addClass = "camel-context";
                   folder.domain = domainName;
                   folder.objectName = contextNode.objectName;
+                  folder.entries = contextNode.entries;
                   if (routesNode) {
                     var routesFolder = new Folder("Routes");
                     routesFolder.addClass = "camel-route-folder";
