@@ -253,11 +253,14 @@ class Workspace {
     var tree = workspace.tree;
     var node = workspace.selection;
     if (node) {
-      if (matches(node)) return true;
+      if (matches(node) && node.domain === domainName) return true;
+/*
+      we shouldn't match on if the tree contains a match here...
       if (tree) {
         var folder = tree.get(domainName);
         return matches(folder);
       }
+*/
       return false;
     }
     return false;
