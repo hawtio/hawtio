@@ -347,8 +347,10 @@ class Folder implements NodeSelection {
   children:NodeSelection[] = [];
   folderNames:string[] = [];
   domain:string = null;
+  objectName: string = null;
   map = {};
   addClass = null;
+
 
   get(key:string):NodeSelection {
     return this.map[key];

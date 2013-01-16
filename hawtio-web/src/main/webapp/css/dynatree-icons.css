@@ -84,6 +84,22 @@ span.org-apache-camel span.dynatree-icon:before {
     content: url("../app/camel/img/camel.png");
 }
 
+span.camel-context span.dynatree-icon:before {
+    content: url("../app/camel/img/camel.png");
+}
+span.camel-endpoint span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_node.png");
+}
+span.camel-endpoint-folder span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_folder.png");
+}
+span.camel-route span.dynatree-icon:before {
+    content: url("../app/camel/img/camel_route.png");
+}
+span.camel-route-folder span.dynatree-icon:before {
+    content: url("../app/camel/img/camel_route_folder.png");
+}
+
 span.org-apache-camel a.dynatree-title:before {
     content: "Camel - ";
 }

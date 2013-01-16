@@ -3,9 +3,17 @@ module Camel {
       $scope.workspace = workspace;
       $scope.routes = [];
 
+      $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateRoutes, 50);
+      });
+
       $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;
+        updateRoutes();
+      });
 
+      function updateRoutes() {
         $scope.mbean = getSelectionCamelContextMBean(workspace);
         if ($scope.mbean) {
           var jolokia = workspace.jolokia;
@@ -13,7 +21,7 @@ module Camel {
                   {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},
                   onSuccess(populateTable));
         }
-      });
+      }
 
       var populateTable = function (response) {
         var data = response.value;
