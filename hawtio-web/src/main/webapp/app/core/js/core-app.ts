@@ -27,7 +27,7 @@ myApp.config(($routeProvider) => {
           }).
           when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController}).
 
-          otherwise({redirectTo: '/help/overview'});
+          otherwise({redirectTo: '/jmx/help/overview'});
 });
 
 myApp.service('localStorage', function () {

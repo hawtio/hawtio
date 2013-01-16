@@ -5,7 +5,8 @@ module Jmx {
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html', controller: AttributesController}).
             when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html', controller: OperationsController}).
             when('/jmx/charts', {templateUrl: 'app/jmx/html/charts.html', controller: ChartController}).
-            when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController})
+            when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController}).
+            when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
           run(($location: ng.ILocationService, workspace:Workspace) => {
             // now lets register the nav bar stuff!
