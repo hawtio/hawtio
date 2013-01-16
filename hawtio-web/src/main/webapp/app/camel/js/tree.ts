@@ -10,9 +10,6 @@ module Camel {
     $scope.$watch('workspace.tree', function () {
       if (workspace.moveIfViewInvalid()) return;
 
-      // lets update the camel tree...
-
-      console.log("Updating the camel tree");
       var children = [];
 
       // lets pull out each context
@@ -53,7 +50,6 @@ module Camel {
                   var jmxNode = new Folder("Services");
 
                   // lets add all the entries which are not one context/routes/endpoints
-
                   angular.forEach(entries, (jmxChild, name) => {
                     if (name !== "context" && name !== "routes" && name !== "endpoints") {
                       jmxNode.children.push(jmxChild);
@@ -72,7 +68,23 @@ module Camel {
 
         var treeElement = $("#cameltree");
         Jmx.enableTree($scope, $location, workspace, treeElement, children);
+/*
 
+        // lets select the first node if we have no selection
+        var key = $location.search()['nid'];
+        var node = children[0];
+        if (!key && node) {
+          key = node['key'];
+          if (key) {
+            var q = $location.search();
+            q['nid'] = key;
+            $location.search(q);
+          }
+        }
+        if (!key) {
+          updateSelectionFromURL();
+        }
+*/
         updateSelectionFromURL();
       }
     });
