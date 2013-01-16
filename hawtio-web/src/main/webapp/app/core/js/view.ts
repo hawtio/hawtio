@@ -16,6 +16,9 @@ module Core {
         if (path.startsWith("integration")) {
           //$scope.viewPartial = "app/camel/html/layoutCamel.html";
           return "app/camel/html/layoutCamelTree.html";
+        } else if (path.startsWith("messaging")) {
+          //$scope.viewPartial = "app/camel/html/layoutCamel.html";
+          return "app/activemq/html/layoutActiveMQTree.html";
         } else if (path.startsWith("fabric")) {
           return "app/fabric/html/layoutFabric.html";
         } else if (path.startsWith("osgiTab")) {

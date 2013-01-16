@@ -27,8 +27,8 @@ module ActiveMQ {
                         content: "Messaging",
                         title: "Manage your message brokers",
                         isValid: () => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
-                        href: () => url("#/jmx/attributes?nid=root_org.apache.activemq"),
-                        isActive: () => workspace.isLinkActive("activemq")
+                        href: () => url("#/jmx/attributes?tab=messaging"),
+                        isActive: () => workspace.isTopTabActive("messaging")
                       });
 
                       // add sub level tabs
