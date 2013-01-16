@@ -75,6 +75,13 @@ Then select the generated [webapp/app/app.js file](https://github.com/hawtio/haw
 
 You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL etc.
 
+### Local Storage
+
+hawtio uses local storage to store preferences and preferred views for different kinds of MBean type and so forth.
+
+You can view the current Local Storage in the Chrome developer tools console in the Resources / Local Storage tab.
+
+If you ever want to clear it out in Chrome on OS X you'll find this located at **~/Library/Application Support/Google/Chrome/Default/Local Storage**
 
 ## How the tabs work
 
