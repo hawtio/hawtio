@@ -1,3 +1,5 @@
+// TODO move more of this stuff into modules!!!
+
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
 // the paths into the mbean tree which we should ignore doing a folder view
@@ -276,4 +278,15 @@ function logLevelClass(level:string) {
     }
   }
   return "";
+}
+
+module Core {
+  export function hashToString(hash) {
+    var keyValuePairs:string[] = [];
+    angular.forEach(hash, function (value, key) {
+      keyValuePairs.push(key + "=" + value);
+    });
+    var params = keyValuePairs.join("&");
+    return encodeURI(params);
+  }
 }

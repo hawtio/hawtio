@@ -32,14 +32,13 @@ module Core {
 
     $scope.link = (nav) => {
       var href = nav.href();
-      var hash = workspace.hash();
-      if (hash !== "?") {
-        if (href.indexOf("?") >= 0) {
-          hash = "&" + hash.substring(1);
-          // TODO we need to override any values in the href
-          // to avoid the hash overloading them!
-        }
-        href += hash;
+      var hashMap = angular.copy($location.search());
+      // lets remove any top level nav bar related hash searches
+      delete hashMap['tab'];
+      var hash = Core.hashToString(hashMap);
+      if (hash) {
+        var prefix = (href.indexOf("?") >= 0) ? "&" : "?";
+        href += prefix + hash;
       }
       return href;
     };

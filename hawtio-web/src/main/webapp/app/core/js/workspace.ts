@@ -52,18 +52,13 @@ class Workspace {
   /**
    * Returns the hash query argument to append to URL links
    */
-          hash() {
+  public hash() {
     var hash = this.$location.search();
-
-    // TODO there must be a nice function somewhere to do this in a nicer way!
-    // NOTE we are not encoding anything
-    var keyValuePairs:string[] = [];
-    angular.forEach(hash, function (value, key) {
-      keyValuePairs.push(key + "=" + value);
-    });
-    var text = "?" + keyValuePairs.join("&");
-
-    return encodeURI(text);
+    var params = Core.hashToString(hash);
+    if (params) {
+      return "?" + params;
+    }
+    return "";
   }
 
   /**
@@ -73,7 +68,7 @@ class Workspace {
    * @param href
    * @return true if the given link is active
    */
-          isLinkActive(href:string):bool {
+  public isLinkActive(href:string):bool {
     // lets trim the leading slash
     var pathName = (this.$location.path() || '/').substring(1);
     var link = href;

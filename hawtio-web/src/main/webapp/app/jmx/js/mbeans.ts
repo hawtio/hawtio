@@ -186,7 +186,8 @@ module Jmx {
           treeElement.dynatree("getTree").reload();
         }
       }
-      updateSelectionFromURL();
+      // TODO should this be async?
+      //updateSelectionFromURL();
     }
 
     function loadTree() {

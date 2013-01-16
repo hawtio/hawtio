@@ -10,7 +10,6 @@ module Core {
     });
 
     function findViewPartial() {
-      
         // TODO this should be inside the plugins!
       function customView(path) {
         if (path.startsWith("integration")) {
@@ -28,10 +27,12 @@ module Core {
       }
 
       var answer = null;
-
-      var tab = $location.search()['tab'];
+      var hash = $location.search();
+      var tab = hash['tab'];
       if (angular.isString(tab)) {
         answer = customView(tab);
+      } else {
+        console.log("tab is not a string but is " + JSON.stringify(tab) + " for hash " + JSON.stringify(hash));
       }
       if (!answer) {
         var path = $location.path();
