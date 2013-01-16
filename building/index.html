@@ -159,45 +159,28 @@ mvn -Pwatch</code></pre>
 <p>As of writing hawt.io depends on the latest snapshot of <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a>. To try out hawt.io with it try these steps:</p>
 
 <ul>
-<li>grab the latest <a href="http://fuse.fusesource.org/source.html">Fuse Fabric source code</a> and do a build in the fabric directory&hellip;</li>
-</ul>
+<li><p>grab the latest <a href="http://fuse.fusesource.org/source.html">Fuse Fabric source code</a> and do a build in the fabric directory&hellip;</p>
 
-<p>```
-git clone git://github.com/fusesource/fuse.git
+<p>git clone git://github.com/fusesource/fuse.git
 cd fuse
 cd fabric
-mvn -Dtest=false -DfailIfNoTests=false clean install
-```</p>
+mvn -Dtest=false -DfailIfNoTests=false clean install</p></li>
+<li><p>now create a fuse fabric instance</p>
 
-<ul>
-<li>now create a fuse fabric instance</li>
-</ul>
-
-<p>```
-cd fuse-fabric\target
+<p>cd fuse-fabric\target
 tar xf fuse-fabric-99-master-SNAPSHOT.tar.gz
 cd fuse-fabric-99-master-SNAPSHOT
-bin/fusefabric
-```</p>
+bin/fusefabric</p></li>
+<li><p>when the fabric starts up run the command</p>
 
-<ul>
-<li>when the fabric starts up run the command</li>
-</ul>
-
-<p>```
-fabric:create
-```</p>
-
-<ul>
-<li>to properly test things out you might wanna create a new version and maybe some child containers.</li>
+<p>fabric:create</p></li>
+<li><p>to properly test things out you might wanna create a new version and maybe some child containers.</p></li>
 </ul>
 
 <h3 id = "Running_hawtio_with_Fuse_Fabric_in_development_mode">Running hawtio with Fuse Fabric in development mode</h3>
 
-<p>```
-cd hawtio-web
-mvn test-compile exec:java -Psnapshot,fabric
-```</p>
+<pre><code>cd hawtio-web
+mvn test-compile exec:java -Psnapshot,fabric</code></pre>
 
 <p></div>
   </div></p>
