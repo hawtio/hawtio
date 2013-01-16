@@ -13,7 +13,7 @@
   <link rel='stylesheet' href='css/codemirror.css' type='text/css'>
   <link rel='stylesheet' href='css/site.css' type='text/css'>
 </head>
-<body>
+<body  ng-controller="Core.NavBarController">
 <style>
   .ng-cloak {
     display: none;
@@ -21,7 +21,7 @@
 </style>
 
 <!--  navbar-inverse -->
-<div class="navbar navbar-fixed-top" ng-controller="Core.NavBarController">
+<div class="navbar navbar-fixed-top" ng-show="!fullScreen()">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
     <div class="container">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">

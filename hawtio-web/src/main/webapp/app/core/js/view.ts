@@ -20,7 +20,7 @@ module Core {
           return "app/fabric/html/layoutFabric.html";
         } else if (path.startsWith("osgi")) {
           return "app/osgi/html/layoutOsgi.html";
-        } else if (path.startsWith("log") || path.startsWith("health") || path.startsWith("help") || path.startsWith("preferences")) {
+        } else if (path.startsWith("fullscreen") || path.startsWith("notree") || path.startsWith("log") || path.startsWith("health") || path.startsWith("help") || path.startsWith("preferences")) {
           return  layoutFull;
         } else {
           return null;
@@ -30,7 +30,7 @@ module Core {
       var answer = null;
 
       var tab = $location.search()['tab'];
-      if (tab) {
+      if (angular.isString(tab)) {
         answer = customView(tab);
       }
       if (!answer) {

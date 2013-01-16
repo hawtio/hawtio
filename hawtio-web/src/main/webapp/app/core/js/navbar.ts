@@ -10,6 +10,7 @@ module Core {
 
     isValid: (MenuItem) => bool;
     link: (MenuItem) => string;
+    fullScreen: () => bool;
   }
 
   export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
@@ -52,5 +53,13 @@ module Core {
       }
       return workspace.isLinkActive(nav.href());
     };
+
+    $scope.fullScreen = () => {
+      var tab = $location.search()['tab'];
+      if (tab) {
+        return tab === "fullscreen";
+      }
+      return false;
+    }
   }
 }
