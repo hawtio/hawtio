@@ -1,5 +1,6 @@
+
 module Jmx {
-  export function MBeansController($scope, $location, workspace:Workspace) {
+  export function MBeansController($scope, $location: ng.ILocationService, workspace: Workspace) {
     $scope.workspace = workspace;
     $scope.tree = new Folder('MBeans');
     $scope.counter = 0;
@@ -23,21 +24,7 @@ module Jmx {
     };
 
     function updateSelectionFromURL() {
-      var key = $location.search()['nid'];
-      if (key) {
-        var dtree = $("#jmxtree").dynatree("getTree");
-        if (dtree) {
-          var node = null;
-          try {
-            node = dtree.activateKey(key);
-          } catch (e) {
-            // tree not visible we suspect!
-          }
-          if (node) {
-            node.expand(true);
-          }
-        }
-      }
+      updateTreeSelectionFromURL($location, $("#jmxtree"));
     }
 
     function folderGetOrElse(folder, value) {
@@ -150,6 +137,8 @@ module Jmx {
       console.log("Loaded tree!");
 
       var treeElement = $("#jmxtree");
+
+      // TODO move this code to use Jmx.enableTree()....
       if (treeElement.length) {
         treeElement.dynatree({
           /**
@@ -190,6 +179,8 @@ module Jmx {
           debugLevel: 0,
           children: $scope.workspace.tree.children
         });
+      }
+      if (treeElement.length) {
         if ($scope.counter > 1) {
           //console.log("Reloading the tree as counter is " + $scope.counter);
           treeElement.dynatree("getTree").reload();

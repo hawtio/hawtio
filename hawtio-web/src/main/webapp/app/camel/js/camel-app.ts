@@ -7,7 +7,10 @@ module Camel {
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
-                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController});
+                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
+
+
+
 
   }).
           run((workspace: Workspace) => {
@@ -16,6 +19,16 @@ module Camel {
             map['camel/routes'] = () => workspace.isCamelFolder();
             map['camel/createEndpoint'] = () => workspace.isEndpointsFolder();
             map['camel/traceRoute'] = () => workspace.isRoute();
+
+            workspace.topLevelTabs.push( {
+              content: "Integration",
+              title: "Manage your Apache Camel integration patterns",
+              isValid: () => workspace.treeContainsDomainAndProperties('org.apache.camel'),
+              // TODO
+              //href: () => url("#/integration/routes"),
+              href: () => url("#/jmx/attributes?tab=integration"),
+              isActive: () => workspace.isTopTabActive("integration")
+            });
 
             // add sub level tabs
             workspace.subLevelTabs.push( {

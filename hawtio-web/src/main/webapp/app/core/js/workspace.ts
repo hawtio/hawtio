@@ -96,6 +96,17 @@ class Workspace {
   }
 
   /**
+   * Returns true if the tab query parameter is active or the URL starts with the given path
+   */
+  isTopTabActive(path: string): bool {
+    var tab = this.$location.search()['tab'];
+    if (tab) {
+      return tab.startsWith(path);
+    }
+    return this.isLinkActive(path);
+  }
+
+  /**
    * Returns the selected mbean name if there is one
    */
   public getSelectedMBeanName():string {
