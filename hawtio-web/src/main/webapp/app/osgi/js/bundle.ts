@@ -63,7 +63,7 @@ module Osgi {
     }
 
     function updateTableContents() {
-      console.log("Loading the bundles");
+      //console.log("Loading the bundles");
       var mbean = getSelectionBundleMBean(workspace);
       if (mbean) {
         var jolokia = workspace.jolokia;
