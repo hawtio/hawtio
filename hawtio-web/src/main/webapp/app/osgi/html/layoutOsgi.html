@@ -1,10 +1,10 @@
 <div ng-controller="Jmx.MBeansController"></div>
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController">
   <li ng-class='{active : isActive("#/osgi/bundles")}'>
-    <a href="#/osgi/bundles">Bundles</a>
+    <a href="#/osgi/bundles{{hash}}">Bundles</a>
   </li>
     <li ng-class='{active : isActive("#/osgi/services")}'>
-        <a href="#/osgi/services">Services</a>
+        <a href="#/osgi/services{{hash}}">Services</a>
     </li>
 </ul>
 <div class="row-fluid">

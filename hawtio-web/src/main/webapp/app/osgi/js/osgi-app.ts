@@ -9,7 +9,8 @@ module Osgi {
           run((workspace:Workspace) => {
             // now lets register the nav bar stuff!
             var map = workspace.uriValidations;
-            map['osgi/bundles'] = () => true;
+            map['osgi/bundles'] = () => workspace.treeContainsDomainAndProperties("osgi.core");
+            map['osgi/services'] = () => workspace.treeContainsDomainAndProperties("osgi.core");
 
             workspace.topLevelTabs.push( {
               content: "OSGi",
