@@ -1,7 +1,16 @@
-**hawt.io** is a lightweight web based management console for working with JMX, OSGi and open source projects like [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/).
+**hawt.io** is a modular HTML5 web console for managing Java stuff.
 
 
-![screenshot](https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/camelRoute.png)
+<ul class="thumbnails">
+  <li class="span10">
+    <div class="thumbnail">
+     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/camelRoute.png" alt="screenshot">
+    </div>
+  </li>
+</ul>
+
+**hawt.io** is modular and has plugins for things like JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/). You can dynamically extend hawt.io with your own plugs or automaticaly discover plugins inside the JVM.
+
 
 ## Get started
 

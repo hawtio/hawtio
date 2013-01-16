@@ -4,7 +4,7 @@ title: "hawt.io - manage your server stuff and stay cool!"
   <div class="container">
     <div id="content">
 
-${loadText(new FileInputStream("../README.md"))}
+${unescape(loadText(new FileInputStream("../README.md")))}
 
 </div>
   </div>
