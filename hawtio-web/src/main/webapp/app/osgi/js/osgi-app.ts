@@ -13,12 +13,9 @@ module Osgi {
               content: "OSGi",
               title: "Visualise and manage the bundles and services in this OSGi container",
               isValid: () => workspace.treeContainsDomainAndProperties("osgi.core"),
-              href: () => url("#/osgi/bundles"),
-              isActive: () => workspace.isLinkActive("osgi")
+              href: () => url("#/osgi/bundles?tab=osgiTab"),
+              isActive: () => workspace.isTopTabActive("osgiTab")
             });
-/*
-            we have a top level OSGi tab; lets not confuse things just yet with a nested OSGi tab too in the JMX view
-            as it gets confusing as the OSGi tab can be used without a JMX selection
 
             workspace.subLevelTabs.push( {
               content: '<i class="icon-list"></i> Bundles',
@@ -26,7 +23,6 @@ module Osgi {
               isValid: () => workspace.isOsgiFolder(),
               href: () => "#/osgi/bundles"
             });
-*/
           });
 
   hawtioPluginLoader.addModule(pluginName);

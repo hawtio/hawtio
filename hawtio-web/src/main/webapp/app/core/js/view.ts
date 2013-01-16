@@ -17,7 +17,7 @@ module Core {
           return "app/camel/html/layoutCamelTree.html";
         } else if (path.startsWith("fabric")) {
           return "app/fabric/html/layoutFabric.html";
-        } else if (path.startsWith("osgi")) {
+        } else if (path.startsWith("osgiTab")) {
           return "app/osgi/html/layoutOsgi.html";
         } else if (path.startsWith("fullscreen") || path.startsWith("notree") || path.startsWith("log") || path.startsWith("health") || path.startsWith("help") || path.startsWith("preferences")) {
           return  layoutFull;
