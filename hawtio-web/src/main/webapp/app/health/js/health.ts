@@ -42,53 +42,19 @@ module Health {
         }
       };
 
-      /**
-       * Default the values that are missing in the returned JSON
-       */
-      function defaultValues(values) {
-        angular.forEach(values, (aData) => {
-          var domain = aData["domain"];
-          if (!domain) {
-            var id = aData["healthId"];
-            if (id) {
-              var idx = id.lastIndexOf('.');
-              if (idx > 0) {
-                domain = id.substring(0, idx);
-                var alias = Health.healthDomains[domain];
-                if (alias) {
-                  domain = alias;
-                }
-                var kind = aData["kind"];
-                if (!kind) {
-                  kind = humanizeValue(id.substring(idx + 1));
-                  aData["kind"] = kind;
-                }
-              }
-            }
-            aData["domain"] = domain;
-          }
-        });
-        return values;
-      }
-
       $scope.results = [];
 
-      function asHealthQuery(meanInfo) {
-        // TODO we may use custom operations for different mbeans...
-        return {type: 'exec', mbean: meanInfo.objectName, operation: 'healthList()'};
-      }
-
-      function createOKStatus(object) {
-        return {
-          healthId: object.domain + ".status",
-          level: "INFO",
-          message: object.title + " is OK"
-        };
-      }
+      $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateTableContents, 50);
+      });
 
       $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;
+        updateTableContents();
+      });
 
+      function updateTableContents() {
         var objects = getHealthMBeans(workspace);
         if (objects) {
           var jolokia = workspace.jolokia;
@@ -147,7 +113,50 @@ module Health {
                     onSuccess(populateTable));
           }
         }
-      });
+      }
+
+      /**
+       * Default the values that are missing in the returned JSON
+       */
+      function defaultValues(values) {
+        angular.forEach(values, (aData) => {
+          var domain = aData["domain"];
+          if (!domain) {
+            var id = aData["healthId"];
+            if (id) {
+              var idx = id.lastIndexOf('.');
+              if (idx > 0) {
+                domain = id.substring(0, idx);
+                var alias = Health.healthDomains[domain];
+                if (alias) {
+                  domain = alias;
+                }
+                var kind = aData["kind"];
+                if (!kind) {
+                  kind = humanizeValue(id.substring(idx + 1));
+                  aData["kind"] = kind;
+                }
+              }
+            }
+            aData["domain"] = domain;
+          }
+        });
+        return values;
+      }
+
+
+      function asHealthQuery(meanInfo: any) {
+        // TODO we may use custom operations for different mbeans...
+        return {type: 'exec', mbean: meanInfo.objectName, operation: 'healthList()'};
+      }
+
+      function createOKStatus(object) {
+        return {
+          healthId: object.domain + ".status",
+          level: "INFO",
+          message: object.title + " is OK"
+        };
+      }
 
     }
 
