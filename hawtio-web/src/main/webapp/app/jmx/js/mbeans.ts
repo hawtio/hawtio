@@ -137,49 +137,8 @@ module Jmx {
       console.log("Loaded tree!");
 
       var treeElement = $("#jmxtree");
+      enableTree($scope, $location, workspace, treeElement, $scope.workspace.tree.children);
 
-      // TODO move this code to use Jmx.enableTree()....
-      if (treeElement.length) {
-        treeElement.dynatree({
-          /**
-           * The event handler called when a different node in the tree is selected
-           */
-          onActivate: function (node:DynaTreeNode) {
-            var data = node.data;
-            $scope.select(data);
-          },
-          onClick: function (node:DynaTreeNode, event:Event) {
-            if (event["metaKey"]) {
-              event.preventDefault();
-              var url = $location.absUrl();
-              if (node && node.data) {
-                var key = node.data["key"];
-                if (key) {
-                  var hash = $location.search();
-                  hash["nid"] = key;
-
-                  // TODO this could maybe be a generic helper function?
-                  // lets trim after the ?
-                  var idx = url.indexOf('?');
-                  if (idx <= 0) {
-                    url += "?";
-                  } else {
-                    url = url.substring(0, idx + 1);
-                  }
-                  url += $.param(hash);
-                }
-              }
-              window.open(url, '_blank');
-              window.focus();
-              return false;
-            }
-            return true;
-          },
-          persist: false,
-          debugLevel: 0,
-          children: $scope.workspace.tree.children
-        });
-      }
       if (treeElement.length) {
         if ($scope.counter > 1) {
           //console.log("Reloading the tree as counter is " + $scope.counter);
