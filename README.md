@@ -1,4 +1,4 @@
-**hawt.io** is a modular HTML5 web console for managing Java stuff.
+**hawt.io** is a modular HTML5 web console for managing Java stuff
 
 
 <ul class="thumbnails">
