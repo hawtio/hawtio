@@ -14,9 +14,10 @@ module Jmx {
     }
 
     // IOperationControllerScope
-    export function OperationController($scope, workspace:Workspace, $document) {
+    export function OperationController($scope, workspace:Workspace, jolokia, $document) {
       $scope.title = $scope.item.humanReadable;
       $scope.desc = $scope.item.desc;
+      $scope.operationResult = "";
 
       var sanitize = (args) => {
         if (args) {
@@ -37,8 +38,42 @@ module Jmx {
 
       $scope.args = sanitize($scope.item.args);
 
-      $scope.execute = (args) => {
-        var node = $scope.workspace.selection;
+      $scope.dump = (data) => {
+        console.log(data);
+      }
+
+      $scope.reset = () => {
+
+        if ($scope.item.args) {
+          $scope.item.args.forEach( function (arg) {
+            arg.value = "";
+          });
+        }
+
+        $scope.operationResult = '';
+      }
+
+      $scope.resultIsArray = () => {
+        return angular.isArray($scope.operationResult);
+      }
+
+      $scope.resultIsString = () => {
+        return angular.isString($scope.operationResult);
+      }
+
+      $scope.typeOf = (data) => {
+        if (angular.isArray(data)) {
+          return "array";
+        } else if (angular.isObject(data)) {
+          return "object";
+        } else {
+          return "string";
+        }
+      }
+
+      $scope.execute = () => {
+
+        var node = workspace.selection;
 
         if (!node) {
           return;
@@ -50,21 +85,19 @@ module Jmx {
           return;
         }
 
-        var jolokia = workspace.jolokia;
-
         var get_response = (response) => {
 
-          // TODO - for now, really want to replace contents of form with operation result.
+          $scope.operationStatus = "success";
+
           if (response === null || 'null' === response) {
-            notification('success', "Operation succeeded!");
+            $scope.operationResult = "Operation Succeeded!";
           } else {
-            notification('success', "Operation succeeded with result: " + JSON.stringify(response));
+            $scope.operationResult = response;
           }
 
           $scope.$apply();
         };
 
-        // TODO Needs a different name, javascript vars don't work like this
         var args = [objectName, $scope.item.name];
         if ($scope.item.args) {
           $scope.item.args.forEach( function (arg) {
@@ -72,15 +105,14 @@ module Jmx {
           });
         }
 
-        // TODO - for now, really want to replace contents of form with operation result.
         args.push(onSuccess(get_response, {
           error: function (response) {
-            notification('error', 'Operation failed: ' + response.error);
+            $scope.operationStatus = "error";
+            var error = response.error;
+            $scope.operationResult = error;
           }
         }));
 
-        // TODO Use angular apply
-          // angular.bind(jolokia, jolokia.execute, args)();
         var fn = jolokia.execute;
         fn.apply(jolokia, args);
       };
@@ -123,7 +155,6 @@ module Jmx {
       $scope.$watch('workspace.selection', function() {
         if (workspace.moveIfViewInvalid()) return;
 
-        // TODO Why do we bind the workspace to the $scope if we have access to it from closures? Is it to share state across controllers maybe?
         var node = workspace.selection;
         if (!node) {
           return;
@@ -141,7 +172,12 @@ module Jmx {
           $scope.operations = sanitize(ops);
           $scope.$apply();
         };
-        workspace.jolokia.request(query, onSuccess(update_values));
+
+        workspace.jolokia.request(query, onSuccess(update_values, {
+          error: function(response) {
+            notification('error', 'Failed to query available operations: ' + response.error);
+          }
+        }));
 
       });
     }

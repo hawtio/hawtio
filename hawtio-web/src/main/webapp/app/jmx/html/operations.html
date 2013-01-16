@@ -1,3 +1,30 @@
+<script type="text/ng-template" id="array_item.html">
+  <div ng-switch on="typeOf(data)">
+    <ol ng-switch-when="array">
+      <li ng-repeat="data in data" ng-include="'array_item.html'"></li>
+    </ol>
+    <ul ng-switch-when="object">
+      <li ng-repeat="(key, value) in data" ng-include="'object_item.html'"></li>
+    </ul>
+    <span ng-switch-default>{{data}}</span>
+  </div>
+</script>
+
+<script type="text/ng-template" id="object_item.html">
+  <div>
+    <span>{{key}}: </span>
+    <div ng-switch on="typeOf(value)">
+      <ol ng-switch-when="array">
+        <li ng-repeat="data in value" ng-include="'array_item.html'"></li>
+      </ol>
+      <ul ng-switch-when="object">
+        <li ng-repeat="(key, value) in value" ng-include="'object_item.html'"></li>
+      </ul>
+      <span ng-switch-default>{{value}}</span>
+    </div>
+  </div>
+</script>
+
 <ul class="unstyled">
   <li ng-repeat="item in operations">
     <div class="expandable closed" ng-controller="Jmx.OperationController">
@@ -5,7 +32,33 @@
         <i class="expandable-indicator"></i> {{title}}
       </div>
       <div class="expandable-body well">
-        <form class="form-horizontal">
+
+        <form class="form-horizontal" ng-show="operationResult!=''">
+          <fieldset>
+            <div class="alert alert-{{operationStatus}}">
+              <div class="control-group">
+
+                <div ng-switch on="typeOf(operationResult)">
+                  <ol ng-switch-when="array">
+                    <li ng-repeat="data in operationResult" ng-include="'array_item.html'"></li>
+                  </ol>
+                  <ul ng-switch-when="object">
+                    <li ng-repeat="(key, value) in operationResult" ng-include="'object_item.html'"></li>
+                  </ul>
+                  <span ng-switch-default>{{operationResult}}</span>
+                </div>
+
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <button class="btn" ng-click="reset()"><i class="icon-ok"></i>Reset</button>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <form id="opForm" class="form-horizontal" ng-show="operationResult==''">
           <fieldset>
             <div class="control-group" ng-repeat="arg in args">
               <!-- Todo Add form validation -->
@@ -19,7 +72,7 @@
             <div class="control-group">
               <div class="controls">
                 <button class="btn cancel"><i class="icon-remove"></i>Cancel</button>
-                <button class="btn btn-success execute" ng-click="execute(args)"><i class="icon-ok"></i>Execute</button>
+                <button class="btn btn-success execute" ng-click="execute()"><i class="icon-ok"></i>Execute</button>
               </div>
             </div>
           </fieldset>
