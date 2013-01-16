@@ -1,8 +1,5 @@
 module Osgi {
 
-    export var bundleStateMBean = "osgi.core:type=bundleState,version=1.5";
-
-
     export function defaultBundleValues(workspace:Workspace, $scope, values) {
         angular.forEach(values, (row) => {
             row["IdentifierLink"] = bundleLinks(workspace, row["Identifier"]);
@@ -59,11 +56,61 @@ module Osgi {
         var answer = "";
         angular.forEach(values, (row) => {
             var id = row["Identifier"];
-            if (bundleId ===  id.toString()) {
+            if (bundleId === id.toString()) {
                 answer = row;
                 return answer;
             }
         });
         return answer;
+    }
+
+    export function getSelectionBundleMBean(workspace:Workspace):string {
+        if (workspace) {
+            // lets navigate to the tree item based on paths
+            var folder = workspace.tree.navigate("osgi.core", "bundleState");
+            if (folder) {
+                var children = folder.children;
+                if (children) {
+                    var node = children[0];
+                    if (node) {
+                        return node.objectName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    export function getSelectionFrameworkMBean(workspace:Workspace):string {
+        if (workspace) {
+            // lets navigate to the tree item based on paths
+            var folder = workspace.tree.navigate("osgi.core", "framework");
+            if (folder) {
+                var children = folder.children;
+                if (children) {
+                    var node = children[0];
+                    if (node) {
+                        return node.objectName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    export function getSelectionServiceMBean(workspace:Workspace):string {
+        if (workspace) {
+            // lets navigate to the tree item based on paths
+            var folder = workspace.tree.navigate("osgi.core", "serviceState");
+            if (folder) {
+                var children = folder.children;
+                if (children) {
+                    var node = children[0];
+                    if (node) {
+                        return node.objectName;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

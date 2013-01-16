@@ -37,27 +37,5 @@ module Osgi {
             $scope.$apply();
         };
     }
+};
 
-}
-;
-
-// TODO This should be a service
-/**
- * Returns the bundle MBean
- */
-function getSelectionServiceMBean(workspace:Workspace):string {
-    if (workspace) {
-        // lets navigate to the tree item based on paths
-        var folder = workspace.tree.navigate("osgi.core", "serviceState");
-        if (folder) {
-            var children = folder.children;
-            if (children) {
-                var node = children[0];
-                if (node) {
-                    return node.objectName;
-                }
-            }
-        }
-    }
-    return null;
-}
