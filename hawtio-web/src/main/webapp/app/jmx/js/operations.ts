@@ -14,11 +14,9 @@ module Jmx {
     }
 
     // IOperationControllerScope
-    export function OperationController($scope, $routeParams : ng.IRouteParamsService, workspace:Workspace) {
+    export function OperationController($scope, workspace:Workspace, $document) {
       $scope.title = $scope.item.humanReadable;
       $scope.desc = $scope.item.desc;
-      $scope.routeParams = $routeParams;
-      $scope.workspace = workspace;
 
       var sanitize = (args) => {
         if (args) {
@@ -55,13 +53,14 @@ module Jmx {
         var jolokia = workspace.jolokia;
 
         var get_response = (response) => {
-          console.log("Got : " + response);
 
-          // TODO we should render this in the template...
-          $scope.operationResult = response;
+          // TODO - for now, really want to replace contents of form with operation result.
+          if (response === null || 'null' === response) {
+            notification('success', "Operation succeeded!");
+          } else {
+            notification('success', "Operation succeeded with result: " + JSON.stringify(response));
+          }
 
-          // now lets notify the UI to update the tree etc
-          $scope.workspace.operationCounter += 1;
           $scope.$apply();
         };
 
@@ -72,7 +71,13 @@ module Jmx {
             args.push(arg.value);
           });
         }
-        args.push(onSuccess(get_response));
+
+        // TODO - for now, really want to replace contents of form with operation result.
+        args.push(onSuccess(get_response, {
+          error: function (response) {
+            notification('error', 'Operation failed: ' + response.error);
+          }
+        }));
 
         // TODO Use angular apply
           // angular.bind(jolokia, jolokia.execute, args)();
@@ -95,8 +100,6 @@ module Jmx {
     }
 
     export function OperationsController($scope : IOperationsControllerScope, $routeParams : ng.IRouteParamsService, workspace:Workspace) {
-      $scope.routeParams = $routeParams;
-      $scope.workspace = workspace;
 
       var sanitize = (value : IOperation) => {
         for (var item in value) {
@@ -121,7 +124,7 @@ module Jmx {
         if (workspace.moveIfViewInvalid()) return;
 
         // TODO Why do we bind the workspace to the $scope if we have access to it from closures? Is it to share state across controllers maybe?
-        var node = $scope.workspace.selection;
+        var node = workspace.selection;
         if (!node) {
           return;
         }
@@ -132,14 +135,13 @@ module Jmx {
         }
 
         var query = asQuery(objectName);
-        var jolokia = workspace.jolokia;
 
         var update_values = (response) => {
           var ops: IOperation = response.value.op;
           $scope.operations = sanitize(ops);
           $scope.$apply();
         };
-        jolokia.request(query, onSuccess(update_values));
+        workspace.jolokia.request(query, onSuccess(update_values));
 
       });
     }

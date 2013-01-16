@@ -1,5 +1,3 @@
-// TODO move more of this stuff into modules!!!
-
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
 // the paths into the mbean tree which we should ignore doing a folder view
@@ -257,7 +255,7 @@ function escapeDots(text:string) {
 // TODO And to handle string substitutions accordingly too
 function notification (type:string, message:string) {
     $("#alert-area").append($("<div class='alert alert-" + type + " fade in' data-alert><button type='button' class='close' data-dismiss='alert'>×</button>" + message + "</div>"));
-    $(".alert").delay(2000).fadeOut("slow", function () { $(this).remove(); });
+    $(".alert").delay(5000).fadeOut("slow", function () { $(this).remove(); });
 }
 
 
