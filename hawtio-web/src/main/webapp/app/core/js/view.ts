@@ -31,8 +31,6 @@ module Core {
       var tab = hash['tab'];
       if (angular.isString(tab)) {
         answer = customView(tab);
-      } else {
-        console.log("tab is not a string but is " + JSON.stringify(tab) + " for hash " + JSON.stringify(hash));
       }
       if (!answer) {
         var path = $location.path();
@@ -48,7 +46,7 @@ module Core {
       }
       $scope.viewPartial = answer;
 
-      console.log("Using view partial: " + answer);
+      //console.log("Using view partial: " + answer);
       return answer;
     }
   }
