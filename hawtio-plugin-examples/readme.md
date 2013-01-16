@@ -1,16 +1,46 @@
 # hawtio plugin loader
 
-So ../hawtio-plugin-registry is the backend service that is a simple blueprint reference listener that registers and unregisters services implementing the Plugin interface into JMX.  This allows the registry to be easily advertised via jolokia using the URL:
+So `../hawtio-plugin-registry` is the backend service that is a simple blueprint reference listener that registers and unregisters services implementing the Plugin interface into JMX.  This allows the registry to be easily advertised via jolokia using the URL:
 
-http://host:port/jolokia/read/hawtio:type=plugin,name=*
+    http://host:port/jolokia/read/hawtio:type=plugin,name=*
 
-the return value is a list of plugin objects, each object (at the moment) has a name, the context under which the plugin is available, what JMX domain the plugin could handle (up for debate) and an array of scripts that should be loaded.
+The return value is a list of plugin objects, each object (at the moment) has a name, the context under which the plugin is available, what JMX domain the plugin could handle (up for debate) and an array of scripts that should be loaded.
 
-The plugin-loader-frontend module would be the main webapp here and so controls the main entry point into the application, and most importantly is responsible for bootstrapping angular.  It also contains a jquery plugin that queries the backend plugin registry and downloads and runs all of the plugin scripts, calling on the angular bootstrap process at the right time.
+Example :
+```javascript
+{
+   "timestamp":1358365918,
+   "status":200,
+   "request":{
+      "mbean":"hawtio:name=*,type=plugin",
+      "type":"read"
+   },
+   "value":{
+      "hawtio:name=simple-plugin-two,type=plugin":{
+         "Name":"simple-plugin-two",
+         "Context":"\/hawtio\/simple-plugin-two",
+         "Domain":"",
+         "Scripts":[
+            "app\/js\/app.js"
+         ]
+      },
+      "hawtio:name=simple-plugin-one,type=plugin":{
+         "Name":"simple-plugin-one",
+         "Context":"\/hawtio\/simple-plugin",
+         "Domain":"",
+         "Scripts":[
+            "app\/js\/app.js"
+         ]
+      }
+   }
+}
+```
+
+These plugins will be automatically loaded by the main hawt.io application, which controls both the main entry point of plugins into the application and for bootstrapping angular. The main hawt.io application contains a jquery plugin that queries the backend plugin registry and downloads and runs all of the plugin scripts, calling on the angular bootstrap process at the right time.
 
 ## So, wtf is going on?
 
-The index.html of plugin-loader-frontend brings in all the stuff in lib/, along with our plugin loader jquery plugin (guess I didn't really need to make this a jquery plugin persay, but there it is).  The app declares the "main" angular module, specifies a couple services and a constant that can be used by plugins to link back to the main page.
+The hawt.io application contains a plugin loader jquery plugin (guess I didn't really need to make this a jquery plugin persay, but there it is).  The app declares the "main" angular module, specifies a couple services and a constant that can be used by plugins to link back to the main page.
 
 In the document.ready() function we call plugin_loader.loadPlugins and pass a callback to be executed after all available plugins are loaded.  In this callback we add our main module, then pass the whole list of modules to angular.bootstrap, letting angular take over loading our application.
 
@@ -42,31 +72,30 @@ angular still handles the dependencies as all plugins are passed to the angular 
 $.plugin_loader.addModule('simple_plugin');
 ```
 
-Another thing to note since both of these plugins are using the typescript compiler you can add interfaces for existing libraries in src/main/d.ts, most importantly you'd want the interface for the plugin loader, which you'll find in src/main.d.ts/jquery-plugin-loader.d.ts in the plugin-loader-frontend module.
+Another thing to note since both of these plugins are using the typescript compiler you can add interfaces for existing libraries in `src/main/d.ts`, most importantly you'd want the interface for the plugin loader, which you'll find in [https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/core/js/hawtio-plugin-loader.d.ts](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/d.ts/hawtio-plugin-loader.ts)
 
 ## Building...
 
-Okay, so at the moment you've gotta do "npm install" in plugin-loader-frontend, simple-plugin-one and simple-plugin-two (sucks).  Then build ../hawtio-plugin-registry and do an "mvn clean install" here in hawtio-plugin-examples to build all 3 modules.  The file "hawtio-plugin-registry.zip" is a profile export that installs all of the bundles.  So use the fabric distro and do:
+Okay, so at the moment you've gotta do "npm install" in simple-plugin-one and simple-plugin-two (sucks).  Then build ../hawtio-plugin-registry and do an "mvn clean install" here in hawtio-plugin-examples to build all 3 modules.  The file "hawtio-plugin-registry.zip" is a profile export that installs all of the bundles.  So use the fabric distro and do:
 
 ```
 fabric:create -p fmc
 ```
 
-Then log into FMC, go to the "Profiles" tab and import the hawtio-plugin-registry.zip file.  The plugin loader frontend web application will be at:
-
-* [http://localhost:8181/plugin-loader/index.html](http://localhost:8181/plugin-loader/index.html) 
+Then log into FMC, go to the "Profiles" tab and import the hawtio-plugin-registry.zip file.
 
 You should see two links, simple_plugin_two and simple_plugin, each link takes you to a partial managed by a controller in that respective plugin.  The "back" link is provided by the main module to both plugins via the "home" constant.  If you do an osgi:list you'll see the 4 relevant bundles:
 
 ```
-[ 353] [Active     ] [            ] [   60] hawt.io :: hawtio plugin loader frontend (1.0.0.SNAPSHOT)
-[ 354] [Active     ] [Created     ] [   60] hawt.io :: Plugin Registry Backend (1.0.0.SNAPSHOT)
-[ 355] [Active     ] [Created     ] [   60] hawt.io :: Simple plugin two (1.0.0.SNAPSHOT)
-[ 356] [Active     ] [Created     ] [   60] hawt.io :: Simple plugini one (1.0.0.SNAPSHOT)
+[ 147] [Active     ] [Created     ] [   60] hawt.io :: Plugin Registry Backend (1.0.0.SNAPSHOT)
+[ 148] [Active     ] [Created     ] [   60] hawt.io :: Simple plugin two (1.0.0.SNAPSHOT)
+[ 149] [Active     ] [Created     ] [   60] hawt.io :: Simple plugin one (1.0.0.SNAPSHOT)
 ```
 
-If you stop either Simple plugin bundle and refresh your browser, you'll see the link associated with that plugin disappear.  Restart the bundle and it'll reappear.
+The plugins will be available to visit in the hawt.io location at
 
+* [http://localhost:8181/hawtio/index.html#/simple_plugin](http://localhost:8181/hawtio/index.html#/simple_plugin)
+* [http://localhost:8181/hawtio/index.html#/simple_plugin_two](http://localhost:8181/hawtio/index.html#/simple_plugin_two)
 
-
+If you stop either Simple plugin bundle and refresh your browser, you'll not be able to visit the URL and you will be redirected to the help page.  Restart the bundle and it'll reappear.
 

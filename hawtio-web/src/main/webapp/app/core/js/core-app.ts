@@ -197,8 +197,7 @@ var PluginController = function($scope, $route, links) {
 hawtioPluginLoader.addModule('main');
 // ---------------------------------------------------------
 
-$(document).ready(function() {
-
+$(function() {
       hawtioPluginLoader.loadPlugins(function() {
         angular.bootstrap($(document), hawtioPluginLoader.getModules());
       });
