@@ -1,0 +1,113 @@
+<div>
+    <table class="overviewSection">
+        <tr>
+            <td><strong>Identifier:</strong></td>
+            <td class="less-big">{{row.Identifier}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Symbolic Name:</strong></td>
+            <td class="less-big">{{row.SymbolicName}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Version:</strong></td>
+            <td class="less-big">{{row.Version}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Location:</strong></td>
+            <td class="less-big">{{row.Location}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>State:</strong></td>
+            <td class="wrap">
+                <img src="{{row.stateImageHref}}">{{row.State}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Last Modified:</strong></td>
+            <td class="less-big">{{row.Version}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Fragmenet:</strong></td>
+            <td class="less-big">{{row.Fragment}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Hosts:</strong></td>
+            <td class="less-big">{{row.Hosts}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionImportedPackages">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionImportedPackages"
+                               href="#collapseImportedPackages">
+                                Imported Packages
+                            </a>
+                        </div>
+                        <div id="collapseImportedPackages" class="accordion-body collapse out">
+                            <ul class="accordion-inner">
+                                <li ng-repeat="package in row.ImportedPackages">{{package}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionExportedPackages">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionExportedPackages"
+                               href="#collapseExportedPackages">
+                                Exported Packages
+                            </a>
+                        </div>
+                        <div id="collapseExportedPackages" class="accordion-body collapse out">
+                            <ul class="accordion-inner">
+                                <li ng-repeat="package in row.ExportedPackages">{{package}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionHeaders">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionHeaders"
+                               href="#collapsHeaders">
+                                Headers
+                            </a>
+                        </div>
+                        <div id="collapsHeaders" class="accordion-body collapse out">
+                            <table class="accordion-inner">
+                                <tr ng-repeat="(key, value) in row.Headers">
+                                    <td>{{key}}</td>
+                                    <td>{{value.Value}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

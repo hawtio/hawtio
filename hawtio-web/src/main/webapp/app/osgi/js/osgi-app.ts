@@ -2,7 +2,9 @@ module Osgi {
   var pluginName = 'osgi';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
-            when('/osgi/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: BundleController})
+            when('/osgi/bundles', {templateUrl: 'app/osgi/html/bundles.html', controller: BundlesController}).
+            when('/osgi/bundle/:bundleId', {templateUrl: 'app/osgi/html/bundle.html', controller: BundleController}).
+            when('/osgi/services', {templateUrl: 'app/osgi/html/services.html', controller: ServiceController})
   }).
           run((workspace:Workspace) => {
             // now lets register the nav bar stuff!
@@ -23,6 +25,15 @@ module Osgi {
               isValid: () => workspace.isOsgiFolder(),
               href: () => "#/osgi/bundles"
             });
+
+
+              workspace.subLevelTabs.push({
+                  content: '<i class="icon-list"></i> Services',
+                  title: "View the available services in this OSGi container",
+                  isValid: () => workspace.isOsgiFolder(),
+                  href: () => "#/osgi/services"
+              });
+
           });
 
   hawtioPluginLoader.addModule(pluginName);
