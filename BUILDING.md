@@ -103,33 +103,26 @@ As of writing hawt.io depends on the latest snapshot of [Fuse Fabric](http://fus
 
 * grab the latest [Fuse Fabric source code](http://fuse.fusesource.org/source.html) and do a build in the fabric directory...
 
-```
-git clone git://github.com/fusesource/fuse.git
-cd fuse
-cd fabric
-mvn -Dtest=false -DfailIfNoTests=false clean install
-```
+    git clone git://github.com/fusesource/fuse.git
+    cd fuse
+    cd fabric
+    mvn -Dtest=false -DfailIfNoTests=false clean install
 
 * now create a fuse fabric instance
 
-```
-cd fuse-fabric\target
-tar xf fuse-fabric-99-master-SNAPSHOT.tar.gz
-cd fuse-fabric-99-master-SNAPSHOT
-bin/fusefabric
-```
+    cd fuse-fabric\target
+    tar xf fuse-fabric-99-master-SNAPSHOT.tar.gz
+    cd fuse-fabric-99-master-SNAPSHOT
+    bin/fusefabric
 
 * when the fabric starts up run the command
 
-```
-fabric:create
-```
+    fabric:create
 
 * to properly test things out you might wanna create a new version and maybe some child containers.
 
 ### Running hawtio with Fuse Fabric in development mode
 
-```
-cd hawtio-web
-mvn test-compile exec:java -Psnapshot,fabric
-```
+    cd hawtio-web
+    mvn test-compile exec:java -Psnapshot,fabric
+
