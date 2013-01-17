@@ -60,12 +60,18 @@ module Jmx {
           folderNames = folderNames.clone();
           var items = path.split(',');
           var paths = [];
+          var typeName = null;
           items.forEach(item => {
             var kv = item.split('=');
             var key = kv[0];
             var value = kv[1] || key;
             entries[key] = value;
-            paths.push(value);
+            if (key.toLowerCase() === "type") {
+              typeName = value;
+              paths.splice(0, 0, value);
+            } else {
+              paths.push(value);
+            }
           });
 
           var lastPath = paths.pop();
@@ -80,7 +86,6 @@ module Jmx {
             }
           });
           var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
-          var typeName = entries["Type"] || entries["type"];
           var objectName = domain + ":" + path;
           var mbeanInfo:NodeSelection = {
             key: key,
