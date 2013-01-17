@@ -92,7 +92,11 @@ module Jmx {
           if (response === null || 'null' === response) {
             $scope.operationResult = "Operation Succeeded!";
           } else {
-            $scope.operationResult = response;
+            if (typeof response === 'number' || typeof response === 'boolean') {
+              $scope.operationResult = "" + response;
+            } else {
+              $scope.operationResult = response;
+            }
           }
 
           $scope.$apply();
