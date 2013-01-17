@@ -1,8 +1,20 @@
 module Fabric {
 
-  export function ContainerController($scope, workspace:Workspace, $routeParams) {
+  export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
     var containerId = $routeParams.containerId || "root";
-    var jolokia = workspace.jolokia;
+
+    $scope.getType = () => {
+      if ($scope.row) {
+        if ($scope.row.ensembleServer) {
+          return "Fabric Server";
+        } else if ($scope.row.managed) {
+          return "Managed Container";
+        } else {
+          return "Unmanaged Container";
+        }
+      }
+      return "";
+    }
 
     jolokia.request(
             {type: 'exec', mbean: managerMBean,

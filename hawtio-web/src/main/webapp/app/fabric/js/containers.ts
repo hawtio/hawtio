@@ -1,5 +1,5 @@
 module Fabric {
-  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
     $scope.results = [];
 
     $scope.widget = new TableWidget($scope, workspace, [
@@ -86,7 +86,6 @@ module Fabric {
         $scope.$apply();
       }
 
-      var jolokia = workspace.jolokia;
       jolokia.request(
               {type: 'exec', mbean: managerMBean, operation: 'containers'},
               onSuccess(populateTable));
