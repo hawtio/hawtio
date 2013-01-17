@@ -227,3 +227,8 @@ ul.inline > li, ol.inline > li {
     padding-right: 2px;
     padding-left: 2px;
 }
+
+.tab {
+    display: block;
+    margin-left: 1em;
+}
