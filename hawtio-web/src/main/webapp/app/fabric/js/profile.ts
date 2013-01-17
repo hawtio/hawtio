@@ -1,9 +1,24 @@
 module Fabric {
 
-  export function ProfileController($scope, workspace:Workspace, $routeParams) {
+  export function ProfileController($scope, workspace:Workspace, $routeParams, jolokia) {
     var versionId = $routeParams.versionId || "1.0";
     var profileId = $routeParams.profileId || "default";
-    var jolokia = workspace.jolokia;
+
+    $scope.configurationCount = () => {
+      var answer = 0;
+      if ($scope.row) {
+        answer = Object.keys($scope.row.configurations).length;
+      }
+      return answer;
+    }
+
+    $scope.configurationKeys = () => {
+      var answer = []
+      if ($scope.row) {
+        answer = Object.keys($scope.row.configurations);
+      }
+      return answer;
+    }
 
     jolokia.request(
             {type: 'exec', mbean: managerMBean,

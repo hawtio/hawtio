@@ -1,86 +1,85 @@
-<div id="profileDetails" class="container-fluid">
-
-    <div class="span16">
-      <div class="block left"><a href="#" class="set-parents btn">Change Parents</a></div>
-      <!--
-      <div class="block right"><a href="/rest/versions/1.0/profiles/hawtio/export/hawtio.zip" class="download btn">Export</a>
-      -->
-
-      </div>
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span8">
-      <div class="detailsBlock parent-block">
-        <div>
-          <table class="overviewSection">
-            <tbody>
-            <tr>
-              <td><strong>Parent Profiles:</strong></td>
-              <td class="big">
-                <ul class="simple">
-                  <li ng-repeat="p in row.parentIds">
-                    <a href="#/fabric/profile/{{versionId}}/{{p}}{{hash}}">{{p}}</a>
-                    </li>
-                </ul>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="span8 profile-attributes">
-      <div style="padding-top: 9px;">
-        <fieldset class="toggle"><input id="locked" name="locked" type="checkbox" ng-model="row.locked"><label for="locked"
-                                                                                         onclick="">Locked:</label><span
-                class="toggle-button"></span></fieldset>
-        <fieldset class="toggle"><input id="abstract" name="abstract" type="checkbox"  ng-model="row.abstractProfile"><label for="abstract" onclick="">Abstract:</label><span
-                class="toggle-button"></span></fieldset>
-      </div>
-    </div>
-  </div>
-
-  <div class="tabbable" ng-model="currentTab">
-
-    <div class="tab-pane" title="Features ({{row.features.length}})" value="features">
-      <span ng-show="row.features.length == 0">No configured Features</span>
-      <ul ng-show="row.features.length > 0">
-        <li ng-repeat="feature in row.features">{{feature}}</li>
+<div class="span2">
+  <ul class="unstyled">
+    <li>
+      <strong>Abstract:</strong> {{row.abstractProfile}}
+    </li>
+    <li>
+      <strong>Locked:</strong> {{row.locked}}
+    </li>
+  </ul>
+  <dl ng-show="row.parentIds.length > 0">
+    <dt>Parents:</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="profile in row.parentIds">
+          <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
+        </li>
       </ul>
-    </div>
-
-    <div class="tab-pane" title="FABS ({{row.fabs.length}})" value="fabs">
-      <span ng-show="row.fabs.length == 0">No configured Fuse Application Bundles </span>
-      <ul ng-show="row.fabs.length > 0">
-        <li ng-repeat="fab in row.fab">{{fab}}</li>
+    </dd>
+  </dl>
+  <dl ng-show="row.childIds.length > 0">
+    <dt>Children:</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="profile in row.childIds">
+          <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
+        </li>
       </ul>
-    </div>
-
-    <div class="tab-pane" title="Bundles ({{row.bundles.length}})" value="bundles">
-      <span ng-show="row.bundles.length == 0">No configured OSGi bundles </span>
-      <ul ng-show="row.bundles.length > 0">
-        <li ng-repeat="bundle in row.bundle">{{bundle}}</li>
+    </dd>
+  </dl>
+</div>
+<div class="span4">
+  <dl>
+    <dt>Features ({{row.features.length}}):</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="feature in row.features">
+          {{feature}}
+        </li>
       </ul>
-    </div>
-
-    <div class="tab-pane" title="Repositories ({{row.repositories.length}})" value="repositories">
-      <span ng-show="row.repositories.length == 0">No configured Feature Repositories</span>
-      <ul ng-show="row.repositories.length > 0">
-        <li ng-repeat="repositories in row.repositories">{{repositories}}</li>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Fuse Application Bundles ({{row.fabs.length}}):</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="fab in row.fabs">
+          {{fab}}
+        </li>
       </ul>
-    </div>
-
-    <div class="tab-pane" title="Config Properties ({{row.configProperties.length}})" value="configProperties">
-
-    </div>
-
-    <div class="tab-pane" title="System Properties ({{row.systemProperties.length}})" value="systemProperties">
-
-    </div>
-
-    <div class="tab-pane" title="Configurations ({{row.fileConfigurationCount}})" value="configurations">
-
-    </div>
-  </div>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Bundles ({{row.bundles.length}}):</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="bundle in row.bundles">
+          {{bundle}}
+        </li>
+      </ul>
+    </dd>
+  </dl>
+</div>
+<div class="span4">
+  <dl>
+    <dt>Feature Repositories ({{row.repositories.length}}):</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="repository in row.repositories">
+          {{repository}}
+        </li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Configuration Files ({{configurationCount()}}):</dt>
+    <dd>
+      <ul class="unstyled">
+        <li ng-repeat="configuration in configurationKeys()">
+          {{configuration}}
+        </li>
+      </ul>
+    </dd>
+  </dl>
+</div>
 
