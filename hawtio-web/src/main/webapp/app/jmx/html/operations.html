@@ -3,24 +3,24 @@
     <ol ng-switch-when="array">
       <li ng-repeat="data in data" ng-include="'array_item.html'"></li>
     </ol>
-    <ul ng-switch-when="object">
+    <ul class="unstyled" ng-switch-when="object">
       <li ng-repeat="(key, value) in data" ng-include="'object_item.html'"></li>
     </ul>
-    <span ng-switch-default>{{data}}</span>
+    <p style="display: inline;" ng-switch-default>{{data}}</p>
   </div>
 </script>
 
 <script type="text/ng-template" id="object_item.html">
   <div>
-    <span>{{key}}: </span>
-    <div ng-switch on="typeOf(value)">
+    <strong>{{key}}:</strong>
+    <div style="display: inline;" ng-switch on="typeOf(value)">
       <ol ng-switch-when="array">
         <li ng-repeat="data in value" ng-include="'array_item.html'"></li>
       </ol>
-      <ul ng-switch-when="object">
+      <ul class="unstyled" ng-switch-when="object">
         <li ng-repeat="(key, value) in value" ng-include="'object_item.html'"></li>
       </ul>
-      <span ng-switch-default>{{value}}</span>
+      <p style="display: inline;" ng-switch-default>{{value}}</p>
     </div>
   </div>
 </script>
@@ -42,7 +42,7 @@
                   <ol ng-switch-when="array">
                     <li ng-repeat="data in operationResult" ng-include="'array_item.html'"></li>
                   </ol>
-                  <ul ng-switch-when="object">
+                  <ul class="unstyled" ng-switch-when="object">
                     <li ng-repeat="(key, value) in operationResult" ng-include="'object_item.html'"></li>
                   </ul>
                   <span ng-switch-default>{{operationResult}}</span>
