@@ -216,3 +216,14 @@ tr td.focus {
 .table-striped tbody tr:nth-child(odd) td.focus {
     background-color: #d9edf7;
 }
+
+ul.inline, ol.inline {
+    margin-left: 0;
+    list-style: none;
+}
+
+ul.inline > li, ol.inline > li {
+    display: inline-block;
+    padding-right: 2px;
+    padding-left: 2px;
+}

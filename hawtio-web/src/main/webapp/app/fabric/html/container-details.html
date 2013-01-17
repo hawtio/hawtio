@@ -1,4 +1,3 @@
-{{log(row)}}
 <div class="span3">
     <dl class="dl-horizontal">
       <dt>Server Type:</dt>
@@ -33,6 +32,17 @@
         <ul class="unstyled">
           <li ng-repeat="child in row.childrenIds">
             <a href="#/fabric/container/{{child}}{{hash}}">{{child}}</a>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+    <dl class="dl-horizontal" ng-show="row.services.length > 0">
+      <dt>Services:</dt>
+      <dd>
+        <ul class="inline">
+          <li ng-repeat="service in row.services" ng-switch="service.type">
+            <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+            <img ng-switch-when="img" src="{{service.src}}" title="{{service.title}}">
           </li>
         </ul>
       </dd>
