@@ -85,7 +85,8 @@ module Camel {
           updateSelectionFromURL();
         }
 */
-        updateSelectionFromURL();
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateSelectionFromURL, 50);
       }
     });
 
