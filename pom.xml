@@ -67,6 +67,7 @@
     <!-- versions -->
     <perfectus-build>047</perfectus-build>
     <activemq-version>5.7.0.fuse-71-${perfectus-build}</activemq-version>
+    <activemq-leveldb-artifactid>activemq-leveldb</activemq-leveldb-artifactid>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
     <camel-version>2.10.0.fuse-71-${perfectus-build}</camel-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
@@ -268,6 +269,7 @@
       <id>snapshot</id>
       <properties>
         <activemq-version>5.8-SNAPSHOT</activemq-version>
+        <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
 <!--
         <camel-version>2.11-SNAPSHOT</camel-version>
 -->
