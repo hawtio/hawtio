@@ -46,6 +46,7 @@ module Jmx {
       tree.key = rootId;
       var domains = response.value;
       for (var domain in domains) {
+        var domainClass = escapeDots(domain);
         var mbeans = domains[domain];
         for (var path in mbeans) {
           var entries = {};
@@ -66,27 +67,51 @@ module Jmx {
             var key = kv[0];
             var value = kv[1] || key;
             entries[key] = value;
+            var moveToFront = false;
             if (key.toLowerCase() === "type") {
               typeName = value;
+              // if the type name value already exists in the root node
+              // of the domain then lets move this property around too
+              if (folder.map[value]) {
+                moveToFront = true;
+              }
+            }
+            if (moveToFront) {
               paths.splice(0, 0, value);
             } else {
               paths.push(value);
             }
           });
 
+          function configureFolder(folder: Folder, name: string) {
+            folder.domain = domain;
+            folder.key = rootId + separator + folderNames.join(separator);
+            folder.folderNames = folderNames.clone();
+            var classes = escapeDots(folder.key);
+            var kindName = folderNames.last() || typeName;
+            if (folder.parent && folder.parent.title === typeName) {
+              kindName = typeName;
+            } else if (kindName === name) {
+              kindName += "_Folder";
+            }
+            if (kindName) {
+              classes += " " + domainClass + separator + kindName;
+            }
+            folder.addClass = classes;
+            return folder;
+          }
+
           var lastPath = paths.pop();
           paths.forEach(value => {
             folder = folderGetOrElse(folder, value);
             if (folder) {
-              folder.domain = domain;
               folderNames.push(value);
-              folder.folderNames = folderNames;
-              folder.key = rootId + separator + folderNames.join(separator);
-              folderNames = folderNames.clone();
+              configureFolder(folder, value);
             }
           });
           var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
           var objectName = domain + ":" + path;
+/*
           var mbeanInfo:NodeSelection = {
             key: key,
             title: trimQuotes(lastPath),
@@ -100,32 +125,40 @@ module Jmx {
             addClass: escapeDots(key),
             get: (key:string) => null
           };
+*/
 
-          if (typeName) {
-            var map = workspace.mbeanTypesToDomain[typeName];
-            if (!map) {
-              map = {};
-              workspace.mbeanTypesToDomain[typeName] = map;
-            }
-            var value = map[domain];
-            if (!value) {
-              map[domain] = mbeanInfo;
-            } else {
-              var array = null;
-              if (angular.isArray(value)) {
-                array = value;
-              } else {
-                array = [value];
-                map[domain] = array;
-              }
-              array.push(mbeanInfo);
-            }
-          }
           if (folder) {
-            try {
-              folder.getOrElse(lastPath, mbeanInfo);
-            } catch (e) {
-              console.log("Failed to find value " + lastPath + " on folder " + folder);
+            folder = folderGetOrElse(folder, lastPath);
+            if (folder) {
+              // lets add the various data into the folder
+              configureFolder(folder, lastPath);
+              folder.entries = entries;
+              folder.key = key;
+              folder.title = trimQuotes(lastPath);
+              folder.objectName = objectName;
+              folder.typeName = typeName;
+
+              var mbeanInfo = folder;
+              if (typeName) {
+                var map = workspace.mbeanTypesToDomain[typeName];
+                if (!map) {
+                  map = {};
+                  workspace.mbeanTypesToDomain[typeName] = map;
+                }
+                var value = map[domain];
+                if (!value) {
+                  map[domain] = mbeanInfo;
+                } else {
+                  var array = null;
+                  if (angular.isArray(value)) {
+                    array = value;
+                  } else {
+                    array = [value];
+                    map[domain] = array;
+                  }
+                  array.push(mbeanInfo);
+                }
+              }
             }
           } else {
             console.log("No folder found for lastPath: " + lastPath);

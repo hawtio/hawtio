@@ -8,7 +8,7 @@ interface NodeSelection {
   folderNames?: string[];
   children?:NodeSelection[];
   parent?: NodeSelection;
-  isFolder?:Boolean;
+  isFolder?: () => bool;
 
   get(key:string): NodeSelection;
 }
@@ -139,7 +139,7 @@ class Workspace {
       if (typeName) {
         key += "/" + typeName;
       }
-      if (selection.isFolder) {
+      if (selection.isFolder()) {
         key += "/folder";
       }
     }
@@ -159,9 +159,14 @@ class Workspace {
         var defaultPath = this.getLocalStorage(key);
         if (!defaultPath) {
           defaultPath = "jmx/attributes";
+
+          /*
+          TODO should we have plugin specific defaults based on the folder??
+
           if (this.isActiveMQFolder()) {
             defaultPath = "activemq/status";
           }
+          */
         }
         this.$location.path(defaultPath);
         return true;
@@ -230,80 +235,60 @@ class Workspace {
     return false;
   }
 
-  // only display stuff if we have an mbean with the given properties
-  public hasDomainAndProperties(domainName, properties = null) {
-    function matches(folder) {
-      if (folder) {
-        if (properties) {
-          var entries = folder.entries;
-          if (!entries) return false;
-          for (var key in properties) {
-            var value = properties[key];
-            if (!value || entries[key] !== value) {
-              return false;
-            }
+  private matches(folder, properties, propertiesCount) {
+    if (folder) {
+      var entries = folder.entries;
+      if (properties) {
+        if (!entries) return false;
+        for (var key in properties) {
+          var value = properties[key];
+          if (!value || entries[key] !== value) {
+            return false;
           }
         }
-        return true;
       }
-      return false;
-    }
-
-    var workspace = this;
-    var tree = workspace.tree;
-    var node = workspace.selection;
-    if (node) {
-      if (matches(node) && node.domain === domainName) return true;
-/*
-      we shouldn't match on if the tree contains a match here...
-      if (tree) {
-        var folder = tree.get(domainName);
-        return matches(folder);
+      if (propertiesCount) {
+        return entries && Object.keys(entries).length === propertiesCount;
       }
-*/
-      return false;
+      return true;
     }
     return false;
   }
 
-  public hasDomainAndLastPath(objectName, lastName) {
-    var workspace = this;
-    var node = workspace.selection;
+  // only display stuff if we have an mbean with the given properties
+  public hasDomainAndProperties(domainName, properties = null, propertiesCount = null) {
+    var node = this.selection;
+    if (node) {
+      return this.matches(node, properties, propertiesCount) && node.domain === domainName;
+    }
+    return false;
+  }
+
+
+  public selectionHasDomainAndLastFolderName(objectName: string, lastName: string) {
+    var node = this.selection;
     if (node) {
       if (objectName === node.domain) {
         var folders = node.folderNames;
         if (folders) {
           var last = folders.last();
-          return last === lastName;
+          return last === lastName && node.isFolder() && !node.objectName;
         }
       }
+    }
+    return false;
+  }
+
+  public selectionHasDomainAndType(objectName: string, typeName: string) {
+    var node = this.selection;
+    if (node) {
+      return objectName === node.domain && typeName === node.typeName;
     }
     return false;
   }
 
   hasFabricMBean() {
     return this.hasDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'});
-  }
-
-  isQueue() {
-
-    return this.hasDomainAndProperties('org.apache.activemq', {Type: 'Queue'});
-  }
-
-  isTopic() {
-    return this.hasDomainAndProperties('org.apache.activemq', {Type: 'Topic'});
-  }
-
-  isQueuesFolder() {
-    return this.hasDomainAndLastPath('org.apache.activemq', 'Queue')
-  }
-
-  isTopicsFolder() {
-    return this.hasDomainAndLastPath('org.apache.activemq', 'Topic')
-  }
-
-  isActiveMQFolder() {
-    return this.hasDomainAndProperties('org.apache.activemq');
   }
 
   isFabricFolder() {
@@ -319,7 +304,7 @@ class Workspace {
   }
 
   isEndpointsFolder() {
-    return this.hasDomainAndLastPath('org.apache.camel', 'endpoints');
+    return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
   }
 
   isEndpoint() {
@@ -327,7 +312,7 @@ class Workspace {
   }
 
   isRoutesFolder() {
-    return this.hasDomainAndLastPath('org.apache.camel', 'routes')
+    return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'routes')
   }
 
   isRoute() {
@@ -344,7 +329,6 @@ class Folder implements NodeSelection {
     this.addClass = escapeDots(title);
   }
 
-  isFolder = true;
   key:string = null;
   children:NodeSelection[] = [];
   folderNames:string[] = [];
@@ -353,12 +337,16 @@ class Folder implements NodeSelection {
   map = {};
   entries = {};
   addClass = null;
+  parent: Folder = null;
 
 
   get(key:string):NodeSelection {
     return this.map[key];
   }
 
+  isFolder() {
+    return this.children.length > 0;
+  }
   /**
    * Navigates the given paths and returns the value there or null if no value could be found
    */
@@ -378,6 +366,7 @@ class Folder implements NodeSelection {
       answer = defaultValue;
       this.map[key] = answer;
       this.children.push(answer);
+      answer.parent = this;
       this.children = this.children.sortBy("title");
     }
     return answer;

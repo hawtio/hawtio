@@ -31,8 +31,12 @@ module ActiveMQ {
         var jolokia = workspace.jolokia;
         var selection = workspace.selection;
         var folderNames = selection.folderNames;
-        if (selection && jolokia && folderNames && folderNames.length > 1) {
-          var mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+        //if (selection && jolokia && folderNames && folderNames.length > 1) {
+        if (selection && selection.parent && jolokia && folderNames && folderNames.length > 1) {
+          var mbean = selection.parent.objectName;
+          if (!mbean) {
+            mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+          }
           var operation;
           if (isQueue) {
             operation = "addQueue(java.lang.String)"
@@ -41,7 +45,11 @@ module ActiveMQ {
             operation = "addTopic(java.lang.String)";
             $scope.message = "Created topic " + name;
           }
-          jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+          if (mbean) {
+            jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
+          } else {
+            notification("error", "Could not find the Broker MBean!");
+          }
         }
       };
 

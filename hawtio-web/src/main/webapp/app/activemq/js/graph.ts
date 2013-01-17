@@ -132,7 +132,15 @@ module ActiveMQ {
           $scope.selectionDetinationName = null;
           var typeName = null;
           if (selection) {
-            if (!selection.isFolder) {
+            typeName = selection.typeName;
+            if (typeName) {
+              isQueue = typeName === "Queue";
+              isTopic = typeName === "Topic";
+            }
+            $scope.selectionDetinationName = selection.entries["Destination"];
+
+            /*
+            if (!selection.isFolder()) {
               $scope.selectionDetinationName = selection.entries["Destination"];
               //var typeName = selection.entries["Type"];
               typeName = selection.typeName;
@@ -142,6 +150,7 @@ module ActiveMQ {
               isQueue = selection.folderNames.last() === "Queue";
               isTopic = selection.folderNames.last() === "Topic";
             }
+            */
           }
           $scope.isQueue = isQueue;
           $scope.isTopic = isTopic;

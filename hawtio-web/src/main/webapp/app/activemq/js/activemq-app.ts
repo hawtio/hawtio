@@ -1,5 +1,6 @@
 module ActiveMQ {
   var pluginName = 'activemq';
+  var jmxDomain = 'org.apache.activemq';
 
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'camel']).config(($routeProvider) => {
             $routeProvider.
@@ -14,14 +15,13 @@ module ActiveMQ {
                     run(($location: ng.ILocationService, workspace: Workspace) => {
                       // now lets register the nav bar stuff!
                       var map = workspace.uriValidations;
-                      map['activemq/browseQueue'] = () => workspace.isQueue();
-                      map['activemq/browseEndpoint'] = () => workspace.isEndpoint();
-                      //map['activemq/sendMessage'] = () => workspace.isQueue() || workspace.isTopic() || workspace.isEndpoint();
-                      map['activemq/subscribers'] = () => workspace.isActiveMQFolder();
-                      map['activemq/createQueue'] = () => workspace.isQueuesFolder();
-                      map['activemq/createTopic'] = () => workspace.isTopicsFolder();
-                      map['activemq/deleteQueue'] = () => workspace.isQueue();
-                      map['activemq/deleteTopic'] = () => workspace.isTopic();
+                      map['activemq/browseQueue'] = () => isQueue(workspace);
+                      map['activemq/sendMessage'] = () => isQueue(workspace) || isTopic(workspace);
+                      map['activemq/subscribers'] = () => isActiveMQFolder(workspace);
+                      map['activemq/createQueue'] = () => isQueuesFolder(workspace);
+                      map['activemq/createTopic'] = () => isTopicsFolder(workspace);
+                      map['activemq/deleteQueue'] = () => isQueue(workspace);
+                      map['activemq/deleteTopic'] = () => isTopic(workspace);
 
                       workspace.topLevelTabs.push( {
                         content: "Messaging",
@@ -35,46 +35,68 @@ module ActiveMQ {
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-envelope"></i> Browse',
                         title: "Browse the messages on the queue",
-                        isValid: () => workspace.isQueue(),
+                        isValid: () => isQueue(workspace),
                         href: () => "#/activemq/browseQueue"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-pencil"></i> Send',
                         title: "Send a message to this destination",
-                        isValid: () => workspace.isQueue() || workspace.isTopic(),
+                        isValid: () => isQueue(workspace) || isTopic(workspace),
                         href: () => "#/activemq/sendMessage"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-picture"></i> Diagram',
                         title: "View a diagram of the producers, destinations and consumers",
-                        isValid: () => workspace.isActiveMQFolder(),
+                        isValid: () => isActiveMQFolder(workspace),
                         href: () => "#/activemq/subscribers"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Queue',
                         title: "Create a new queue",
-                        isValid: () => workspace.isQueuesFolder(),
+                        isValid: () => isQueuesFolder(workspace),
                         href: () => "#/activemq/createQueue"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Topic',
                         title: "Create a new topic",
-                        isValid: () => workspace.isTopicsFolder(),
+                        isValid: () => isTopicsFolder(workspace),
                         href: () => "#/activemq/createTopic"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-remove"></i> Delete Topic',
                         title: "Delete this topic",
-                        isValid: () => workspace.isTopic(),
+                        isValid: () => isTopic(workspace),
                         href: () => "#/activemq/deleteTopic"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-remove"></i> Delete Queue',
                         title: "Delete this queue",
-                        isValid: () => workspace.isQueue(),
+                        isValid: () => isQueue(workspace),
                         href: () => "#/activemq/deleteQueue"
                       });
                     });
 
   hawtioPluginLoader.addModule(pluginName);
+
+  export function isQueue(workspace:Workspace) {
+    //return workspace.selectionHasDomainAndType(jmxDomain, 'Queue');
+    return workspace.hasDomainAndProperties(jmxDomain, {'destinationType': 'Queue'}, 4) || workspace.selectionHasDomainAndType(jmxDomain, 'Queue');
+  }
+
+  export function isTopic(workspace:Workspace) {
+    //return workspace.selectionHasDomainAndType(jmxDomain, 'Topic');
+    return workspace.hasDomainAndProperties(jmxDomain, {'destinationType': 'Topic'}, 4) || workspace.selectionHasDomainAndType(jmxDomain, 'Topic');
+  }
+
+  export function isQueuesFolder(workspace:Workspace) {
+    return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Queue');
+  }
+
+  export function isTopicsFolder(workspace:Workspace) {
+    return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Topic');
+  }
+
+  export function isActiveMQFolder(workspace:Workspace) {
+    return workspace.hasDomainAndProperties(jmxDomain);
+  }
 }
