@@ -111,8 +111,19 @@ span.org-fusesource-insight a.dynatree-title:before {
     content: "Logs - ";
 }
 
+/* Camel context */
 ul.dynatree-container li ul li ul li span[class*="_context_"] span.dynatree-icon:before {
     content: url("../app/camel/img/camel_context_icon.png");
+}
+
+/* Camel endpoints folder */
+span.org-apache-camel_endpoints_Folder span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_folder.png");
+}
+
+/* Camel endpoints */
+span.org-apache-camel_endpoints span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_node.png");
 }
 
 /* Camel File Consumer */
@@ -158,9 +169,16 @@ span.org-apache-activemq_NC span.dynatree-icon:before {
 span.org-apache-activemq_Queue span.dynatree-icon:before {
     content: url("../app/activemq/img/queue.png");
 }
+span.org-apache-activemq_Queue_Folder span.dynatree-icon:before {
+    content: url("../app/activemq/img/queue_folder.png");
+}
 
+/* Topic mbean */
 span.org-apache-activemq_Topic span.dynatree-icon:before {
     content: url("../app/activemq/img/topic.png");
+}
+span.org-apache-activemq_Topic_Folder span.dynatree-icon:before {
+    content: url("../app/activemq/img/topic_folder.png");
 }
 
 
