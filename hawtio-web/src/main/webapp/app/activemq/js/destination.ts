@@ -30,6 +30,9 @@ module ActiveMQ {
     function getBrokerMBean(jolokia) {
       var mbean = null;
       var selection = workspace.selection;
+      if (selection && isBroker(workspace) && selection.objectName) {
+        return selection.objectName;
+      }
       var folderNames = selection.folderNames;
       //if (selection && jolokia && folderNames && folderNames.length > 1) {
       var parent = selection ? selection.parent : null;

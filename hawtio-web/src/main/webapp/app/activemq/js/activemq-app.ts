@@ -18,8 +18,8 @@ module ActiveMQ {
                       map['activemq/browseQueue'] = () => isQueue(workspace);
                       map['activemq/sendMessage'] = () => isQueue(workspace) || isTopic(workspace);
                       map['activemq/subscribers'] = () => isActiveMQFolder(workspace);
-                      map['activemq/createQueue'] = () => isQueuesFolder(workspace);
-                      map['activemq/createTopic'] = () => isTopicsFolder(workspace);
+                      map['activemq/createQueue'] = () => isQueuesFolder(workspace) || isBroker(workspace);
+                      map['activemq/createTopic'] = () => isTopicsFolder(workspace) || isBroker(workspace);
                       map['activemq/deleteQueue'] = () => isQueue(workspace);
                       map['activemq/deleteTopic'] = () => isTopic(workspace);
 
@@ -53,13 +53,13 @@ module ActiveMQ {
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Queue',
                         title: "Create a new queue",
-                        isValid: () => isQueuesFolder(workspace),
+                        isValid: () => isQueuesFolder(workspace) || isBroker(workspace),
                         href: () => "#/activemq/createQueue"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Topic',
                         title: "Create a new topic",
-                        isValid: () => isTopicsFolder(workspace),
+                        isValid: () => isTopicsFolder(workspace) || isBroker(workspace),
                         href: () => "#/activemq/createTopic"
                       });
                       workspace.subLevelTabs.push( {
@@ -94,6 +94,14 @@ module ActiveMQ {
 
   export function isTopicsFolder(workspace:Workspace) {
     return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Topic');
+  }
+
+  export function isBroker(workspace:Workspace) {
+    if (workspace.selectionHasDomainAndType(jmxDomain, 'Broker')) {
+      var parent = workspace.selection.parent;
+      return !(parent && parent.ancestorHasType('Broker'));
+    }
+    return false;
   }
 
   export function isActiveMQFolder(workspace:Workspace) {
