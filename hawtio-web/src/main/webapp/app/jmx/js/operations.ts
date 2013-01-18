@@ -135,7 +135,7 @@ module Jmx {
         operations : IOperation;
     }
 
-    export function OperationsController($scope : IOperationsControllerScope, $routeParams : ng.IRouteParamsService, workspace:Workspace) {
+    export function OperationsController($scope : IOperationsControllerScope, $routeParams : ng.IRouteParamsService, workspace:Workspace, jolokia) {
 
       var sanitize = (value : IOperation) => {
         for (var item in value) {
@@ -173,11 +173,27 @@ module Jmx {
 
         var update_values = (response) => {
           var ops: IOperation = response.value.op;
-          $scope.operations = sanitize(ops);
+
+          var answer = {};
+
+          var getArgs = function (args) {
+            return "(" + args.map(function(arg) {return arg.type}).join() + ")";
+          }
+
+          angular.forEach(ops, function(value, key) {
+            if (angular.isArray(value)) {
+              angular.forEach(value, function(value, index) {
+                answer[key + getArgs(value.args)] = value;
+              });
+            } else {
+              answer[key + getArgs(value.args)] = value;
+            }
+          });
+          $scope.operations = sanitize(answer);
           $scope.$apply();
         };
 
-        workspace.jolokia.request(query, onSuccess(update_values, {
+        jolokia.request(query, onSuccess(update_values, {
           error: function(response) {
             notification('error', 'Failed to query available operations: ' + response.error);
           }
