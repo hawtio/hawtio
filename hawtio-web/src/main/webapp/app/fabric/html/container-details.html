@@ -1,121 +1,145 @@
-<div class="span3">
+<div class="row-fluid">
+  <div class="control-group">
+    <div class="controls">
+      <div style="display: inline;" ng-switch="row.alive">
+        <button class="btn" ng-switch-when="true" ng-click="stop()">Stop</button>
+        <button class="btn" ng-switch-default ng-click="start()">Start</button>
+      </div>
+      <button class="btn" ng-click="delete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span3">
+      <dl class="dl-horizontal">
+        <dt>Server Status:</dt>
+        <dd>
+          <div ng-switch="row.alive">
+            <p style="display: inline;" ng-switch-when="true">Running</p>
+            <p style="display: inline;" ng-switch-default>Not Running</p>
+          </div>
+        </dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Server Type:</dt>
+        <dd>{{row.type}}</dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Type:</dt>
+        <dd>{{getType()}}</dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Provision Status:</dt>
+        <dd>{{row.provisionStatus}}</dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Root Container:</dt>
+        <dd ng-show="row.root">yes</dd>
+        <dd ng-hide="row.root">no</dd>
+      </dl>
+      <dl class="dl-horizontal" ng-show="row.parentId">
+        <dt>Parent:</dt>
+        <dd>
+          <a href="#/fabric/container/{{row.parentId}}{{hash}}">{{row.parentId}}</a>
+        </dd>
+      </dl>
+      <dl class="dl-horizontal" ng-show="row.childrenIds.length > 0">
+        <dt>Children:</dt>
+        <dd>
+          <ul class="unstyled">
+            <li ng-repeat="child in row.childrenIds">
+              <a href="#/fabric/container/{{child}}{{hash}}">{{child}}</a>
+            </li>
+          </ul>
+        </dd>
+      </dl>
+      <dl class="dl-horizontal" ng-show="services.length > 0">
+        <dt>Services:</dt>
+        <dd>
+          <ul class="inline">
+            <li ng-repeat="service in services" ng-switch="service.type">
+              <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+              <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+            </li>
+          </ul>
+        </dd>
+      </dl>
+  </div>
+
+  <div class="span4">
     <dl class="dl-horizontal">
-      <dt>Server Status:</dt>
-      <dd>
-        <div ng-switch="row.alive">
-          <p style="display: inline;" ng-switch-when="true">Running</p>
-          <p style="display: inline;" ng-switch-default>Not Running</p>
-        </div>
-      </dd>
+      <dt>Version:</dt>
+      <dd>{{row.versionId}}</dd>
     </dl>
     <dl class="dl-horizontal">
-      <dt>Server Type:</dt>
-      <dd>{{row.type}}</dd>
-    </dl>
-    <dl class="dl-horizontal">
-      <dt>Type:</dt>
-      <dd>{{getType()}}</dd>
-    </dl>
-    <dl class="dl-horizontal">
-      <dt>Provision Status:</dt>
-      <dd>{{row.provisionStatus}}</dd>
-    </dl>
-    <dl class="dl-horizontal">
-      <dt>Service URLs:</dt>
-      <dd><a href="#" class="ssh btn">SSH</a><a href="#" class="jmx btn">JMX</a><dd>
-    </dl>
-    <dl class="dl-horizontal">
-      <dt>Root Container:</dt>
-      <dd ng-show="row.root">yes</dd>
-      <dd ng-hide="row.root">no</dd>
-    </dl>
-    <dl class="dl-horizontal" ng-show="row.parentId">
-      <dt>Parent:</dt>
-      <dd>
-        <a href="#/fabric/container/{{row.parentId}}{{hash}}">{{row.parentId}}</a>
-      </dd>
-    </dl>
-    <dl class="dl-horizontal" ng-show="row.childrenIds.length > 0">
-      <dt>Children:</dt>
+      <dt>Profiles:</dt>
       <dd>
         <ul class="unstyled">
-          <li ng-repeat="child in row.childrenIds">
-            <a href="#/fabric/container/{{child}}{{hash}}">{{child}}</a>
+          <li ng-repeat="profile in row.profileIds">
+            <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
           </li>
         </ul>
       </dd>
     </dl>
-    <dl class="dl-horizontal" ng-show="services.length > 0">
-      <dt>Services:</dt>
+  </div>
+
+  <div class="span3">
+    <dl class="dl-horizontal">
+      <dt>Location:</dt>
       <dd>
-        <ul class="inline">
-          <li ng-repeat="service in services" ng-switch="service.type">
-            <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
-            <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
-          </li>
+        {{row.location}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Local IP:</dt>
+      <dd>
+        {{row.localIp}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Local Hostname:</dt>
+      <dd>
+        {{row.localHostName}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Public IP:</dt>
+      <dd>
+        {{row.publicIp}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Public Hostname:</dt>
+      <dd>
+        {{row.publicHostname}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Manual IP:</dt>
+      <dd>
+        {{row.manualIp}}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>Resolver:</dt>
+      <dd>
+        {{row.resolver}}
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span8">
+    <dl>
+      <dt>URLs:</dt>
+      <dd>
+        <ul>
+          <li ng-show="row.sshUrl"><strong>SSH: </strong>{{row.sshUrl}}</li>
+          <li ng-show="row.jmxUrl"><strong>JMX: </strong>{{row.jmxUrl}}</li>
         </ul>
       </dd>
     </dl>
-</div>
-
-<div class="span4">
-  <dl class="dl-horizontal">
-    <dt>Version:</dt>
-    <dd>{{row.versionId}}</dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Profiles:</dt>
-    <dd>
-      <ul class="unstyled">
-        <li ng-repeat="profile in row.profileIds">
-          <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
-        </li>
-      </ul>
-    </dd>
-  </dl>
-</div>
-
-<div class="span3">
-  <dl class="dl-horizontal">
-    <dt>Location:</dt>
-    <dd>
-      {{row.location}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Local IP:</dt>
-    <dd>
-      {{row.localIp}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Local Hostname:</dt>
-    <dd>
-      {{row.localHostName}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Public IP:</dt>
-    <dd>
-      {{row.publicIp}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Public Hostname:</dt>
-    <dd>
-      {{row.publicHostname}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Manual IP:</dt>
-    <dd>
-      {{row.manualIp}}
-    </dd>
-  </dl>
-  <dl class="dl-horizontal">
-    <dt>Resolver:</dt>
-    <dd>
-      {{row.resolver}}
-    </dd>
-  </dl>
+  </div>
 </div>

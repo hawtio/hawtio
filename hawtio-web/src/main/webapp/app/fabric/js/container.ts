@@ -4,6 +4,42 @@ module Fabric {
     $scope.containerId = $routeParams.containerId || "root";
     $scope.handle = null;
 
+    $scope.stop = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'stopContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            console.log("Stopped!");
+          }));
+    }
+
+    $scope.delete = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'destroyContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            console.log("Deleted!");
+          }));
+    }
+
+    $scope.start = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'startContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            console.log("Started!");
+          }));
+    }
+
     $scope.getType = () => {
       if ($scope.row) {
         if ($scope.row.ensembleServer) {
