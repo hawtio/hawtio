@@ -175,14 +175,8 @@ module Jmx {
       console.log("Loaded tree!");
 
       var treeElement = $("#jmxtree");
-      enableTree($scope, $location, workspace, treeElement, $scope.workspace.tree.children);
+      enableTree($scope, $location, workspace, treeElement, $scope.workspace.tree.children, treeElement.length && $scope.counter > 1);
 
-      if (treeElement.length) {
-        if ($scope.counter > 1) {
-          //console.log("Reloading the tree as counter is " + $scope.counter);
-          treeElement.dynatree("getTree").reload();
-        }
-      }
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
     }

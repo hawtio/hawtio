@@ -8,6 +8,8 @@ module ActiveMQ {
     });
 
     $scope.$watch('workspace.tree', function () {
+      console.log("workspace tree has changed, lets reload!!");
+
       if (workspace.moveIfViewInvalid()) return;
 
       var children = [];
@@ -19,7 +21,7 @@ module ActiveMQ {
           children = folder.children;
         }
         var treeElement = $("#activemqtree");
-        Jmx.enableTree($scope, $location, workspace, treeElement, children);
+        Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
 /*
 
         // lets select the first node if we have no selection

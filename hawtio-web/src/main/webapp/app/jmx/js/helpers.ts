@@ -18,7 +18,7 @@ module Jmx {
     }
   }
 
-  export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children) {
+  export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children, redraw = false) {
     //$scope.workspace = workspace;
 
     if (treeElement.length) {
@@ -64,6 +64,10 @@ module Jmx {
         //children: $scope.workspace.tree.children
         children: children
       });
+
+      if (redraw) {
+        treeElement.dynatree("getTree").reload();
+      }
     }
   }
 }
