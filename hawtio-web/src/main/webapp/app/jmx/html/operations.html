@@ -68,13 +68,14 @@
 
         <form id="opForm" class="form-horizontal" ng-show="operationResult==''">
           <fieldset>
+            <legend>{{desc}}</legend>
             <div class="control-group" ng-repeat="arg in args">
               <!-- Todo Add form validation -->
-              <label class="control-label">{{arg.name}} ({{arg.type}}): </label>
+              <label class="control-label">{{arg.name}}: </label>
                 <div class="controls" ng-switch on="arg.formType">
                   <input ng-switch-when="text" type='text' ng-model="arg.value">
                   <input ng-switch-when="number" type='number' ng-model="arg.value">
-                  <!-- <span class="help-block">type: {{arg.type}}</span> -->
+                  <span class="help-block">type: {{arg.type}}</span>
                 </div>
             </div>
             <div class="control-group">
