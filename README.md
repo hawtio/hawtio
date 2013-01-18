@@ -1,4 +1,4 @@
-**hawtio** is a [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing Java stuff
+**hawtio** is a lightweight [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing Java stuff
 
 <ul class="thumbnails">
   <li class="span10">
@@ -12,7 +12,9 @@
 
 You can dynamically [extend hawt.io with your own plugins](http://hawt.io/developers/plugins.html) or automaticaly [discover plugins](http://hawt.io/developers/plugins.html) inside the JVM
 
-**hawtio** also has support for [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their status so that the console understands how your Java stuff is behaving; to help you stay cool :)
+Other than the static HTML/CSS/JS/images, the only server side dependency is the excellent [Jolokia library](http://jolokia.org) which is small footprint (around 300Kb) and available as a [JVM agent](http://jolokia.org/agent/jvm.html), or is embedded as a servlet inside the hawtio-web.war or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
+
+**hawtio** also supports [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their status so that the console understands how your Java stuff is behaving
 
 
 ## Get started
