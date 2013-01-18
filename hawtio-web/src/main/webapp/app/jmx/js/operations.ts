@@ -94,6 +94,10 @@ module Jmx {
           } else {
             if (typeof response === 'number' || typeof response === 'boolean') {
               $scope.operationResult = "" + response;
+            } else if (angular.isArray(response) && response.length === 0) {
+              $scope.operationResult = "Operation succeeded and returned an empty array";
+            } else if (angular.isObject(response) && Object.keys(response).length === 0) {
+              $scope.operationResult = "Operation succeeded and returned an empty object";
             } else {
               $scope.operationResult = response;
             }
