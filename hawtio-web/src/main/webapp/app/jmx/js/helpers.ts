@@ -15,9 +15,9 @@ module Jmx {
       if (node) {
         node.expand(true);
       } else {
-        if (!dtree.getActiveNode()) {
+        if (!treeElement.dynatree("getActiveNode")) {
           // lets expand the first node
-          var root = dtree.getRoot();
+          var root = treeElement.dynatree("getRoot");
           var children = root ? root.getChildren() : null;
           if (children && children.length) {
             var first = children[0];
