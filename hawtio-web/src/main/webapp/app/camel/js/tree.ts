@@ -91,7 +91,7 @@ module Camel {
     });
 
     function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#cameltree"));
+      Jmx.updateTreeSelectionFromURL($location, $("#cameltree"), true);
     }
   }
 }

@@ -58,7 +58,7 @@ module ActiveMQ {
     });
 
     function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"));
+      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"), true);
     }
   }
 }

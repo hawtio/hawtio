@@ -1,18 +1,31 @@
 module Jmx {
 
-  export function updateTreeSelectionFromURL($location, treeElement) {
-    var key = $location.search()['nid'];
-    if (key) {
-      var dtree = treeElement.dynatree("getTree");
-      if (dtree) {
-        var node = null;
+  export function updateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
+    var dtree = treeElement.dynatree("getTree");
+    if (dtree) {
+      var node = null;
+      var key = $location.search()['nid'];
+      if (key) {
         try {
           node = dtree.activateKey(key);
         } catch (e) {
           // tree not visible we suspect!
         }
-        if (node) {
-          node.expand(true);
+      }
+      if (node) {
+        node.expand(true);
+      } else {
+        if (!dtree.getActiveNode()) {
+          // lets expand the first node
+          var root = dtree.getRoot();
+          var children = root ? root.getChildren() : null;
+          if (children && children.length) {
+            var first = children[0];
+            first.expand(true);
+            if (activateIfNoneSelected) {
+              first.activate();
+            }
+          }
         }
       }
     }
