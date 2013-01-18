@@ -1,7 +1,8 @@
 module Fabric {
 
   export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
-    var containerId = $routeParams.containerId || "root";
+    $scope.containerId = $routeParams.containerId || "root";
+    $scope.handle = null;
 
     $scope.getType = () => {
       if ($scope.row) {
@@ -14,10 +15,6 @@ module Fabric {
         }
       }
       return "";
-    }
-
-    $scope.hasServices = () => {
-      $scope.getServices().length > 0;
     }
 
     $scope.getServices = () => {
@@ -72,18 +69,37 @@ module Fabric {
       return answer;
     }
 
+    $scope.$on('$routeChangeStart', function(event) {
+      if (angular.isDefined($scope.handle)) {
+        jolokia.unregister($scope.handle);
+        $scope.handle = null;
+      }
+    });
+
+    $scope.handle = jolokia.register(
+      onSuccess(populateTable),
+      {
+        type: 'exec', mbean: managerMBean,
+        operation: 'getContainer(java.lang.String)',
+        arguments: [$scope.containerId]
+      }
+    );
+
     jolokia.request(
-            {type: 'exec', mbean: managerMBean,
-              operation: 'getContainer(java.lang.String)',
-              arguments: [containerId]},
-            onSuccess(populateTable));
+      {
+        type: 'exec', mbean: managerMBean,
+        operation: 'getContainer(java.lang.String)',
+        arguments: [$scope.containerId]
+      },
+      onSuccess(populateTable));
 
 
     function populateTable(response) {
-      $scope.row = response.value;
-      $scope.row.services = $scope.getServices();
-      Fabric.defaultContainerValues(workspace, $scope, [$scope.row]);
-      $scope.$apply();
+      if (!Object.equal($scope.row, response.value)) {
+        $scope.row = response.value;
+        $scope.services = $scope.getServices();
+        $scope.$apply();
+      }
     }
  }
 }

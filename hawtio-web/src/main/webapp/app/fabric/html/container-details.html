@@ -1,5 +1,14 @@
 <div class="span3">
     <dl class="dl-horizontal">
+      <dt>Server Status:</dt>
+      <dd>
+        <div ng-switch="row.alive">
+          <p style="display: inline;" ng-switch-when="true">Running</p>
+          <p style="display: inline;" ng-switch-default>Not Running</p>
+        </div>
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
       <dt>Server Type:</dt>
       <dd>{{row.type}}</dd>
     </dl>
@@ -36,13 +45,13 @@
         </ul>
       </dd>
     </dl>
-    <dl class="dl-horizontal" ng-show="row.services.length > 0">
+    <dl class="dl-horizontal" ng-show="services.length > 0">
       <dt>Services:</dt>
       <dd>
         <ul class="inline">
-          <li ng-repeat="service in row.services" ng-switch="service.type">
+          <li ng-repeat="service in services" ng-switch="service.type">
             <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
-            <img ng-switch-when="img" src="{{service.src}}" title="{{service.title}}">
+            <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
           </li>
         </ul>
       </dd>
