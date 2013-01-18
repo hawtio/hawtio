@@ -160,6 +160,12 @@
             <resourceBase>${basedir}/src</resourceBase>
             <unpackOverlays>false</unpackOverlays>
           </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${jettyPort}</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
           <webAppSourceDirectory>${basedir}/src</webAppSourceDirectory>
           <systemProperties>
             <systemProperty>
