@@ -1,4 +1,3 @@
-
 @font-face {
     font-family: "FontAwesome";
     src: url('../font/fontawesome-webfont.eot');
@@ -128,7 +127,6 @@ span.org-apache-activemq span.dynatree-icon:before {
 }
 
 span.org-apache-activemq a.dynatree-title {
-
 }
 
 span.org-apache-activemq a.dynatree-title:before {
@@ -140,18 +138,28 @@ span[class*="_Broker"] span.dynatree-icon:before {
     content: url("../app/activemq/img/message_broker.png");
 }
 
-/* Connection mbean */
-span[class*="_Connection"] span.dynatree-icon:before {
+span.org-apache-activemq_Broker span.dynatree-icon:before {
+    content: url("../app/activemq/img/message_broker.png");
+}
 
+/* Connection mbean */
+span.org-apache-activemq_Connection span.dynatree-icon:before {
+}
+
+/* Client mbean */
+span.org-apache-activemq_clientId span.dynatree-icon:before {
+}
+
+/* network connector mbean */
+span.org-apache-activemq_NC span.dynatree-icon:before {
 }
 
 /* Queue mbean */
-span[class*="_Queue_"] span.dynatree-icon:before {
+span.org-apache-activemq_Queue span.dynatree-icon:before {
     content: url("../app/activemq/img/queue.png");
 }
 
-/* Topic mbean */
-span[class*="_Topic_"] span.dynatree-icon:before {
+span.org-apache-activemq_Topic span.dynatree-icon:before {
     content: url("../app/activemq/img/topic.png");
 }
 

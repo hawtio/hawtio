@@ -87,15 +87,28 @@ module Jmx {
             folder.domain = domain;
             folder.key = rootId + separator + folderNames.join(separator);
             folder.folderNames = folderNames.clone();
-            var classes = escapeDots(folder.key);
-            var kindName = folderNames.last() || typeName;
-            if (folder.parent && folder.parent.title === typeName) {
-              kindName = typeName;
-            } else if (kindName === name) {
-              kindName += "_Folder";
-            }
-            if (kindName) {
-              classes += " " + domainClass + separator + kindName;
+            //var classes = escapeDots(folder.key);
+            var classes = "";
+            var entries = folder.entries;
+            var entryKeys = Object.keys(entries).filter((n) => n.toLowerCase().indexOf("type") >= 0);
+            if (entryKeys.length) {
+              angular.forEach(entryKeys, (entryKey) => {
+                var entryValue = entries[entryKey];
+                if (!folder.ancestorHasEntry(entryKey, entryValue)) {
+                  classes += " " + domainClass + separator + entryValue;
+                }
+              });
+            } else {
+              var kindName = folderNames.last();
+              /*if (folder.parent && folder.parent.title === typeName) {
+                kindName = typeName;
+              } else */
+              if (kindName === name) {
+                kindName += "_Folder";
+              }
+              if (kindName) {
+                classes += " " + domainClass + separator + kindName;
+              }
             }
             folder.addClass = classes;
             return folder;
@@ -131,8 +144,8 @@ module Jmx {
             folder = folderGetOrElse(folder, lastPath);
             if (folder) {
               // lets add the various data into the folder
-              configureFolder(folder, lastPath);
               folder.entries = entries;
+              configureFolder(folder, lastPath);
               folder.key = key;
               folder.title = trimQuotes(lastPath);
               folder.objectName = objectName;

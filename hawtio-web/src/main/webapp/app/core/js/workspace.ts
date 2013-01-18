@@ -360,7 +360,33 @@ class Folder implements NodeSelection {
     return node;
   }
 
-  getOrElse(key:string, defaultValue:NodeSelection = new Folder(key)):Folder {
+  public hasEntry(key:string, value) {
+    var entries = this.entries;
+    if (entries) {
+      var actual = entries[key];
+      return actual && value === actual;
+    }
+    return false;
+  }
+
+  public parentHasEntry(key:string, value) {
+    if (this.parent) {
+      return this.parent.hasEntry(key, value);
+    }
+    return false;
+  }
+
+  public ancestorHasEntry(key:string, value) {
+    var parent = this.parent;
+    while (parent) {
+      if (parent.hasEntry(key, value))
+        return true;
+      parent = parent.parent;
+    }
+    return false;
+  }
+
+  public getOrElse(key:string, defaultValue:NodeSelection = new Folder(key)):Folder {
     var answer = this.map[key];
     if (!answer) {
       answer = defaultValue;
