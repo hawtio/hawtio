@@ -6,6 +6,19 @@ Welcome and enjoy! Its hawt, but stay cool! :)
 
 For those interested in [contributing](http://hawt.io/contributing/index.html), here is a list of the various open source libraries used to build hawt.io.
 
+### Architecture
+
+**hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins.html) based on the capability of the server.
+
+You may want to check out:
+
+* [hawtio plugins](http://hawt.io/developers/plugins.html)
+* [Health MBeans](http://hawt.io/health/)
+
+### Tools and Libraries
+
+We use the following excellent tools and libraries:
+
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. Its awesome and is currently the only server side component of hawt.io.
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript - especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
 * [AngularJS](http://angularjs.org/) is the web framework for performing real time 2 way binding of HTML to the model of the UI using simple declarative attributes in the HTML.

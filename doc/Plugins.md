@@ -28,6 +28,8 @@ The plugin then needs to expose a hawtio plugin MBean instance which describes h
 
 So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE).
 
+To see how this works check out the [plugin examples and detailed description](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/readme.md)
+
 ### Using a registery
 
 We've not fully implemented this yet - but we can have a simple JSON registry inside the hawtio application which maps known MBean object names to external plugins; so we can auto-install plugins using trusted JSON repositories of plugins.

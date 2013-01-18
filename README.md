@@ -1,5 +1,4 @@
-**hawt.io** is a modular HTML5 web console for managing Java stuff
-
+**hawtio** is a [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing Java stuff
 
 <ul class="thumbnails">
   <li class="span10">
@@ -9,12 +8,16 @@
   </li>
 </ul>
 
-**hawt.io** is modular and has plugins for things like JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/). You can dynamically extend hawt.io with your own plugs or automaticaly discover plugins inside the JVM.
+**hawtio** has [plugins](http://hawt.io/developers/plugins.html) for JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
+
+You can dynamically [extend hawt.io with your own plugins](http://hawt.io/developers/plugins.html) or automaticaly [discover plugins](http://hawt.io/developers/plugins.html) inside the JVM
+
+**hawtio** also has support for [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their status so that the console understands how your Java stuff is behaving; to help you stay cool :)
 
 
 ## Get started
 
-From a git clone you should be able to run the a sample hawt.io console as follows:
+From a git clone you should be able to run the a sample hawtio console as follows:
 
     git clone git@github.com:hawtio/hawtio.git
     cd hawtio/sample

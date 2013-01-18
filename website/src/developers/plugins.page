@@ -1,9 +1,11 @@
 ---
-title: join the hawt community!
+title: hawtio plugins
 --- pipeline:ssp,markdown
   <div id="content-header">
     <div class="container">
-${unescape(loadText(new FileInputStream("../doc/HealthMBeans.md")))}
+
+${loadText(new FileInputStream("../doc/Plugins.md"))}
 
 </div>
   </div>
+
