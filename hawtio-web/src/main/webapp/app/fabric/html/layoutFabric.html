@@ -1,10 +1,10 @@
 <div ng-controller="Jmx.MBeansController"></div>
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController">
   <li ng-class='{active : isActive("#/fabric/container")}'>
-    <a href="#/fabric/containers">Containers</a>
+    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>
   <li ng-class='{active : isActive("#/fabric/profile")}'>
-    <a href="#/fabric/profiles">Profiles</a>
+    <a ng-href="#/fabric/profiles{{hash}}">Profiles</a>
   </li>
 </ul>
 <div class="row-fluid">
