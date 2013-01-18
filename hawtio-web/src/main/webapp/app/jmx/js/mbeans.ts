@@ -183,8 +183,8 @@ module Jmx {
           treeElement.dynatree("getTree").reload();
         }
       }
-      // TODO should this be async?
-      //updateSelectionFromURL();
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(updateSelectionFromURL, 50);
     }
 
     function loadTree() {
