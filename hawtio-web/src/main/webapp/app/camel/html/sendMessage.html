@@ -18,7 +18,10 @@
       </div>
     </div>
   </div>
-  <div class="control-group">
-    <textarea id="messageBody" name="messageBody" class="input-xlarge span12 scrollable" rows="1000" ng-model="message" placeholder="Text message body"></textarea>
+  <div class="control-group" ng-controller="Core.EditorController">
+      Current theme to use :: {{codeMirrorOptions.theme}}.  Model contents {{codeMirrorModel}}.
+
+      <textarea ui-codemirror="codeMirrorOptions" ng-model="codeMirrorModel" placeholder="Message"></textarea>
+
   </div>
 </form>

@@ -1,7 +1,11 @@
 module Core {
     // TODO would be nice to use a directive instead; but couldn't get it working :(
     export function EditorController($scope, workspace:Workspace) {
-      $scope.$watch('row', () => {
+        $scope.codeMirrorOptions = {
+            theme: 'monokai'
+        };
+
+      /*$scope.$watch('row', () => {
         setTimeout(() => {
           var textAreas = null;
           // TODO is there a better way to find the textarea?
@@ -28,6 +32,6 @@ module Core {
             }
           }
         }, 0);
-      });
+      });*/
     }
 }

@@ -141,7 +141,9 @@ html, body {
 }
 */
 
-/** Code formatting */
+/** TODO Uncomment when CodeMirror is working again */
+/** Code formatting *//*
+
 .CodeMirror {
   border: 1px solid #eee;
 }
@@ -151,6 +153,7 @@ td {
 .CodeMirror-scroll {
     height: auto;
 }
+*/
 
 /** Table details view */
 div.innerDetails {

@@ -15,7 +15,7 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   alert: (text:string) => void;
 }
 
-var myApp = angular.module('hawtioCore', ['bootstrap', 'ngResource']);
+var myApp = angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']);
 
 hawtioPluginLoader.addModule('hawtioCore');
 
