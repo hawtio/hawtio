@@ -1,0 +1,20 @@
+<div>
+    <table class="overviewSection">
+        <tr>
+            <td><strong>Pid:</strong></td>
+            <td class="less-big">{{pid}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Configuration:</strong></td>
+            <td class="less-big">
+                <table>
+                    <tr ng-repeat="(Key, Value) in row">
+                        <td><strong>{{Key}}</strong></td>
+                        <td>{{Value.Value}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

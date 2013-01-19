@@ -307,5 +307,9 @@ class Workspace {
   isOsgiFolder() {
     return this.hasDomainAndProperties('osgi.core');
   }
+
+    isOsgiCompendiumFolder() {
+        return this.hasDomainAndProperties('osgi.compendium');
+    }
 }
 
