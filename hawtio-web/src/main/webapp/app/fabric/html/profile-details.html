@@ -72,10 +72,10 @@
     </dd>
   </dl>
   <dl>
-    <dt>Configuration Files ({{configurationCount()}}):</dt>
+    <dt>Configuration Files ({{row.configurations.length}}):</dt>
     <dd>
       <ul class="unstyled">
-        <li ng-repeat="configuration in configurationKeys()">
+        <li ng-repeat="configuration in row.configurations">
           {{configuration}}
         </li>
       </ul>
