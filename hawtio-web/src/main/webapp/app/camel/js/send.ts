@@ -3,18 +3,18 @@ module Camel {
       var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
       var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
       $scope.message = "Enter your message to send.";
-      $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
       // TODO Remove this if possible
       $scope.codeMirror = undefined;
       var options = {
         mode: sourceFormat,
-         // Quick hack to get the codeMirror instance.
-          onChange: function(codeMirror) {
-            if(!$scope.codeMirror) {
-              $scope.codeMirror = codeMirror;
-            }
+        // Quick hack to get the codeMirror instance.
+        onChange: function(codeMirror) {
+          if(!$scope.codeMirror) {
+            $scope.codeMirror = codeMirror;
           }
+        }
       };
+      $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
       // TODO Find out what this does
       $scope.$watch('workspace.selection', function () {
