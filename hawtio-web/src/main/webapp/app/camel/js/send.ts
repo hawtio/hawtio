@@ -1,10 +1,20 @@
 module Camel {
     export function SendMessageController($scope, workspace:Workspace) {
       var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
-      $scope.sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
+      var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
       $scope.message = "Enter your message to send.";
-      var options = {};
-      $scope.codeMirrorOptions = createEditorSettings(workspace, $scope.sourceFormat, options);
+      $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+      // TODO Remove this if possible
+      $scope.codeMirror = undefined;
+      var options = {
+        mode: sourceFormat,
+         // Quick hack to get the codeMirror instance.
+          onChange: function(codeMirror) {
+            if(!$scope.codeMirror) {
+              $scope.codeMirror = codeMirror;
+            }
+          }
+      };
 
       // TODO Find out what this does
       $scope.$watch('workspace.selection', function () {
@@ -22,9 +32,8 @@ module Camel {
         notification("success", "Message sent!");
       };
 
-      // TODO Re-add this when working
       $scope.autoFormat = () => {
-        autoFormatEditor($scope.codeMirror);
+        CodeEditor.autoFormatEditor($scope.codeMirror);
       };
 
       $scope.sendMessage = () => {

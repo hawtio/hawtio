@@ -7,7 +7,6 @@ hawtioPluginLoader.addUrl('/hawtio/test.json');
 
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   lineCount: (value:any) => number;
-  detectTextFormat: (value:any) => string;
   params: ng.IRouteParamsService;
   is: (type:any, value:any) => bool;
   empty: (value:any) => bool;
@@ -62,11 +61,6 @@ myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage) => {
          * Count the number of lines in the given text
          */
         $rootScope.lineCount = lineCount;
-
-        /**
-         * Detect the text format such as javascript or xml
-         */
-        $rootScope.detectTextFormat = detectTextFormat;
 
         /**
          * Easy access to route params
