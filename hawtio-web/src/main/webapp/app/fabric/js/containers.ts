@@ -1,43 +1,34 @@
 module Fabric {
-  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
-    $scope.results = [];
 
-    $scope.widget = new TableWidget($scope, workspace, [
-      {
-        "mDataProp": null,
-        "sClass": "control center",
-        "mData": null,
-        "sDefaultContent": '<i class="icon-plus"></i>'
-      },
-      {
-        "mDataProp": "link",
-        "sDefaultContent": "",
-        "mData": null
-      },
-      {
-        "mDataProp": "profileLinks",
-        "sDefaultContent": "",
-        "mData": null
-      },
-      {
-        "mDataProp": "versionLink",
-        "sDefaultContent": "",
-        "mData": null
-      },
-      {
-        "mDataProp": "localHostName",
-        "sDefaultContent": "",
-        "mData": null
-      },
-      {
-        "mDataProp": "type",
-        "sDefaultContent": "",
-        "mData": null
+  export function ContainerRow($scope, workspace:Workspace, jolokia) {
+
+  Core.register(jolokia, $scope, {
+      type: 'exec', mbean: managerMBean,
+      operation: 'getContainer(java.lang.String)',
+      arguments: [$scope.row.id]
+    }, onSuccess(render));
+    
+    function render(response) {
+      if (!Object.equal($scope.row, response.value)) {
+        $scope.row = response.value
+        $scope.$apply();
       }
-    ], {
-      rowDetailTemplateId: 'fabricContainerTemplate',
-      disableAddColumns: true
-    });
+    }
+  }
+
+
+  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+    $scope.profileId = '';
+    
+    $scope.foo = (row) => {
+      if (!angular.isDefined($scope.profileId) || $scope.profileId === '') {
+        return true;
+      }
+      if (row.profileIds.find($scope.profileId)) {
+        return true;
+      }
+      return false;      
+    }
 
     $scope.profileIds = () => {
       // TODO this should be a generic function?
@@ -51,29 +42,7 @@ module Fabric {
       var key = $location.search()['p'];
       if (key && key !== $scope.profileId) {
         $scope.profileId = key;
-        // lets do this asynchronously to avoid Error: $digest already in progress
-        setTimeout(updateTableContents, 50);
       }
-    });
-
-    function updateTableContents() {
-      var data = $scope.containers;
-      if ($scope.profileId) {
-        data = $scope.profileMap[$scope.profileId];
-      }
-      $scope.widget.populateTable(data);
-    }
-
-    $scope.$watch('profileId', function () {
-      if ($scope.profileId) {
-        var q = $location.search();
-        if ($scope.profileId !== q['p']) {
-          q['p'] = $scope.profileId;
-          $location.search(q);
-        }
-      }
-      // lets async update the table contents outside of the digest
-      setTimeout(updateTableContents, 50);
     });
 
     $scope.$watch('workspace.selection', function () {
@@ -82,7 +51,6 @@ module Fabric {
       function populateTable(response) {
         var values = response.value;
         $scope.containers = defaultContainerValues(workspace, $scope, values);
-        updateTableContents();
         $scope.$apply();
       }
 

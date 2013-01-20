@@ -1,3 +1,4 @@
+
 <script type="text/ng-template" id="fabricContainerTemplate">
   <div ng-include src="'app/fabric/html/container-details.html'"></div>
 </script>
@@ -11,6 +12,7 @@
     </td>
   </tr>
 </table>
+{{log(containers)}}
 
 <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
        id="grid">
@@ -23,6 +25,24 @@
     <th>Local Host</th>
     <th>Type</th>
   </tr>
+  <tr ng-repeat="row in containers" ng-controller="Fabric.ContainerRow" ng-init="row=row" ng-show="foo(row)">
+    <td>
+    </td>
+    <td>
+      <a href="#/fabric/container/{{row.id}}">{{row.id}}</a>        
+    </td>
+    <td>
+        <ul class="unstyled">
+            <li ng-repeat="profile in row.profileIds">
+              <a href="#/fabric/profile/{{row.versionId}}/{{profile}}">{{profile}}</a>              
+            </li>
+        </ul>
+    </td>
+    <td>{{row.versionId}}</td>
+    <td>{{row.ip}}</td>
+    <td>{{row.type}}</td>
+  </tr>
+  
   </thead>
   <tbody>
 </table>

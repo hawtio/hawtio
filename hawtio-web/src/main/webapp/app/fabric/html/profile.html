@@ -4,7 +4,7 @@
       <h2>{{row.id}}</h2>
     </td>
     <td>
-      <a class="pull-right" href="{{row.containersHref}}">
+      <a class="pull-right" href="#/fabric/containers?p={{row.id}}">
         <ng-pluralize count="row.containerCount"
                       when="{'0': 'No containers running',
                              'one': '1 container is running',
