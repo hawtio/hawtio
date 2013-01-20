@@ -1,10 +1,6 @@
 module Core {
     // TODO would be nice to use a directive instead; but couldn't get it working :(
     export function EditorController($scope, workspace:Workspace) {
-        $scope.codeMirrorOptions = {
-            theme: 'monokai'
-        };
-
       /*$scope.$watch('row', () => {
         setTimeout(() => {
           var textAreas = null;
