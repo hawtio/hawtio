@@ -1,6 +1,6 @@
 module Osgi {
 
-    export function BundleController($scope,$location, workspace:Workspace, $routeParams) {
+    export function BundleController($scope,$location, workspace:Workspace, $routeParams, jolokia) {
         $scope.bundleId = $routeParams.bundleId;
 
         updateTableContents();
@@ -18,7 +18,6 @@ module Osgi {
             //console.log("Loading the bundles");
             var mbean = getSelectionBundleMBean(workspace);
             if (mbean) {
-                var jolokia = workspace.jolokia;
                 jolokia.request(
                         {type: 'exec', mbean: mbean, operation: 'listBundles()'},
                         onSuccess(populateTable));
