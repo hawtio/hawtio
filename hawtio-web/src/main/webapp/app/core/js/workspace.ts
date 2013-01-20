@@ -17,7 +17,11 @@ class Workspace {
 
   uriValidations = null;
 
-  constructor(public jolokia, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
+  constructor(public jolokia, 
+              public $location:ng.ILocationService, 
+              public $compile:ng.ICompileService, 
+              public $templateCache:ng.ITemplateCacheService, 
+              public localStorage:WindowLocalStorage) {
 
     // TODO Is there a way to remove this logic from here?
     this.uriValidations = {

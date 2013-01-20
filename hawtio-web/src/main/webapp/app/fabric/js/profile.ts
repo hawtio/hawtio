@@ -1,23 +1,24 @@
 module Fabric {
 
   export function ProfileController($scope, workspace:Workspace, $routeParams, jolokia) {
-    var versionId = $routeParams.versionId || "1.0";
-    var profileId = $routeParams.profileId || "default";
-
-    jolokia.request(
-            {type: 'exec', mbean: managerMBean,
-              operation: 'getProfiles(java.lang.String)',
-              arguments: [versionId]},
-            onSuccess(populateTable));
-
-
-    function populateTable(response) {
-      var values = response.value;
-      $scope.profiles = Fabric.defaultProfileValues(workspace, versionId, values);
-
-      // now find the row based on the selection ui
-      $scope.row = $scope.profiles.find({id: profileId});
-      $scope.$apply();
+    $scope.versionId = $routeParams.versionId;
+    $scope.profileId = $routeParams.profileId;
+    
+    if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
+      
+      Core.register(jolokia, $scope, 'handle', {
+        type: 'exec', mbean: managerMBean,
+        operation: 'getProfile(java.lang.String,java.lang.String)',
+        arguments: [$scope.versionId, $scope.profileId]
+      }, onSuccess(render));
+      
     }
- }
+    
+    function render(response) {
+      if (!Object.equal($scope.row, response.value)) {
+        $scope.row = response.value
+        $scope.$apply();
+      }
+    }
+  }
 }

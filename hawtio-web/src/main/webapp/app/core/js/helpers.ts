@@ -292,6 +292,7 @@ if (!Object.keys) {
 }
 
 module Core {
+  
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
     angular.forEach(hash, function (value, key) {
@@ -300,4 +301,18 @@ module Core {
     var params = keyValuePairs.join("&");
     return encodeURI(params);
   }
+  
+  // Register a 
+  export function register(jolokia, scope, handle, arguments, callback) {
+      scope.$on('$routeChangeStart', function(event) {
+        if (angular.isDefined(scope[handle])) {
+          jolokia.unregister(scope[handle]);
+          delete scope[handle];
+        }
+      });
+      scope[handle] = jolokia.register(callback, arguments);
+      jolokia.request(arguments, callback);
+  }
+  
+  
 }

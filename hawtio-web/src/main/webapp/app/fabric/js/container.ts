@@ -1,8 +1,17 @@
 module Fabric {
 
   export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
-    $scope.containerId = $routeParams.containerId || "root";
-    $scope.handle = null;
+    $scope.containerId = $routeParams.containerId;
+    
+    if (angular.isDefined($scope.containerId)) {
+      
+      Core.register(jolokia, $scope, 'handle', {
+          type: 'exec', mbean: managerMBean,
+          operation: 'getContainer(java.lang.String)',
+          arguments: [$scope.containerId]
+      }, onSuccess(render));
+      
+    }
 
     $scope.stop = () => {
       jolokia.request(
@@ -12,6 +21,7 @@ module Fabric {
             arguments: [$scope.containerId]
           },
           onSuccess(function() {
+            // TODO show a notification
             console.log("Stopped!");
           }));
     }
@@ -24,6 +34,7 @@ module Fabric {
             arguments: [$scope.containerId]
           },
           onSuccess(function() {
+            // TODO show a notification
             console.log("Deleted!");
           }));
     }
@@ -36,6 +47,7 @@ module Fabric {
             arguments: [$scope.containerId]
           },
           onSuccess(function() {
+            // TODO show a notification
             console.log("Started!");
           }));
     }
@@ -105,32 +117,7 @@ module Fabric {
       return answer;
     }
 
-    $scope.$on('$routeChangeStart', function(event) {
-      if (angular.isDefined($scope.handle)) {
-        jolokia.unregister($scope.handle);
-        $scope.handle = null;
-      }
-    });
-
-    $scope.handle = jolokia.register(
-      onSuccess(populateTable),
-      {
-        type: 'exec', mbean: managerMBean,
-        operation: 'getContainer(java.lang.String)',
-        arguments: [$scope.containerId]
-      }
-    );
-
-    jolokia.request(
-      {
-        type: 'exec', mbean: managerMBean,
-        operation: 'getContainer(java.lang.String)',
-        arguments: [$scope.containerId]
-      },
-      onSuccess(populateTable));
-
-
-    function populateTable(response) {
+    function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
         $scope.services = $scope.getServices();

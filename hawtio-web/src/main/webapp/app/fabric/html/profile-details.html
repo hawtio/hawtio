@@ -76,7 +76,14 @@
     <dd>
       <ul class="unstyled">
         <li ng-repeat="configuration in row.configurations">
-          {{configuration}}
+            <div class="expandable closed">
+              <div class="title">
+                <i class="expandable-indicator"></i> {{configuration}}
+              </div>
+              <div class="expandable-body">
+              </div>
+            </div>
+        
         </li>
       </ul>
     </dd>
