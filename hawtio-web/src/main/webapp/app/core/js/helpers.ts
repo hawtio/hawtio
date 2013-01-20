@@ -302,16 +302,24 @@ module Core {
     return encodeURI(params);
   }
   
-  // Register a 
-  export function register(jolokia, scope, handle, arguments, callback) {
-      scope.$on('$routeChangeStart', function(event) {
-        if (angular.isDefined(scope[handle])) {
-          jolokia.unregister(scope[handle]);
-          delete scope[handle];
-        }
-      });
-      scope[handle] = jolokia.register(callback, arguments);
-      jolokia.request(arguments, callback);
+  /*
+   * Register a JMX operation to poll for changes
+   */
+  export function register(jolokia, scope, arguments, callback) {
+    
+    if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+      scope.$jhandle = [];
+    }
+    scope.$on('$routeChangeStart', function(event) {
+      if (angular.isDefined(scope.$jhandle)) {
+        scope.$jhandle.forEach(function(handle) {
+          jolokia.unregister(handle);
+        });
+        delete scope.$jhandle;
+      }
+    });
+    scope.$jhandle.push(jolokia.register(callback, arguments));
+    jolokia.request(arguments, callback);
   }
   
   

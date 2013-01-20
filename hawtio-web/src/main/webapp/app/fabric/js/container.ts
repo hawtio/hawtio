@@ -5,7 +5,7 @@ module Fabric {
     
     if (angular.isDefined($scope.containerId)) {
       
-      Core.register(jolokia, $scope, 'handle', {
+      Core.register(jolokia, $scope, {
           type: 'exec', mbean: managerMBean,
           operation: 'getContainer(java.lang.String)',
           arguments: [$scope.containerId]
