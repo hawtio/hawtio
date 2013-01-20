@@ -310,7 +310,7 @@ module Core {
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
       scope.$jhandle = [];
     }
-    scope.$on('$routeChangeStart', function(event) {
+    scope.$on('$destroy', function(event) {
       if (angular.isDefined(scope.$jhandle)) {
         scope.$jhandle.forEach(function(handle) {
           jolokia.unregister(handle);
