@@ -2,7 +2,7 @@ module Fabric {
 
   export function ContainerRow($scope, workspace:Workspace, jolokia) {
 
-  Core.register(jolokia, $scope, {
+    Core.register(jolokia, $scope, {
       type: 'exec', mbean: managerMBean,
       operation: 'getContainer(java.lang.String)',
       arguments: [$scope.row.id]
