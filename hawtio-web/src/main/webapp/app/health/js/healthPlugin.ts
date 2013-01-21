@@ -16,7 +16,7 @@ module Health {
 
               // TODO move this mbean helper to this plugin?
               isValid: () => Health.hasHealthMBeans(workspace),
-              href: () => url("#/health")
+              href: () => "#/health"
             });
 
 /*

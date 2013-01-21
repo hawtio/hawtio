@@ -20,7 +20,7 @@ module Camel {
               content: "Integration",
               title: "Manage your Apache Camel integration patterns",
               isValid: () => workspace.treeContainsDomainAndProperties('org.apache.camel'),
-              href: () => url("#/jmx/attributes?tab=integration"),
+              href: () => "#/jmx/attributes?tab=integration",
               isActive: () => workspace.isTopTabActive("integration")
             });
 

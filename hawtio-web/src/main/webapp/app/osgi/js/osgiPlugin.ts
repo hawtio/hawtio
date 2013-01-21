@@ -22,7 +22,7 @@ module Osgi {
               content: "OSGi",
               title: "Visualise and manage the bundles and services in this OSGi container",
               isValid: () => workspace.treeContainsDomainAndProperties("osgi.core"),
-              href: () => url("#/osgi/bundles?tab=osgiTab"),
+              href: () => "#/osgi/bundles?tab=osgiTab",
               isActive: () => workspace.isTopTabActive("osgiTab")
             });
 

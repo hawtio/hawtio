@@ -106,6 +106,32 @@ class Workspace {
    * Returns true if the path is valid for the current selection
    */
   public validSelection(uri:string) {
+    var filter = (t) => {
+      var fn = t.href;
+      if (fn) {
+        var href = fn();
+        if (href) {
+          if (href.startsWith("#/")) {
+            href = href.substring(2);
+          }
+          return href === uri;
+        }
+      }
+      return false;
+    };
+    var tab = this.subLevelTabs.find(filter);
+    if (!tab) {
+      tab = this.topLevelTabs.find(filter);
+    }
+    if (tab) {
+      //console.log("Found tab " + JSON.stringify(tab));
+      var validFn = tab.isValid;
+      return !validFn || validFn();
+    } else {
+      console.log("Could not find tab for " + uri);
+      return false;
+    }
+/*
     var value = this.uriValidations[uri];
     if (value) {
       if (angular.isFunction(value)) {
@@ -113,6 +139,7 @@ class Workspace {
       }
     }
     return true;
+*/
   }
 
   /**
@@ -145,19 +172,23 @@ class Workspace {
         this.setLocalStorage(key, uri);
         return false;
       } else {
+        console.log("the uri '" + uri + "' is not valid for this selection");
         // lets look up the previous preferred value for this type
         var defaultPath = this.getLocalStorage(key);
-        if (!defaultPath) {
-          defaultPath = "jmx/attributes";
-
-          /*
-          TODO should we have plugin specific defaults based on the folder??
-
-          if (this.isActiveMQFolder()) {
-            defaultPath = "activemq/status";
-          }
-          */
+        if (!defaultPath || !this.validSelection(defaultPath)) {
+          // lets find the first path we can find which is valid
+          defaultPath = null;
+          angular.forEach(this.subLevelTabs, (tab) => {
+            var fn = tab.isValid;
+            if (!defaultPath && tab.href && fn && fn()) {
+              defaultPath = tab.href();
+            }
+          });
         }
+        if (!defaultPath) {
+          defaultPath = "#/jmx/help";
+        }
+        console.log("moving the URL to be " + defaultPath);
         this.$location.path(defaultPath);
         return true;
       }
