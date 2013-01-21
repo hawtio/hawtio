@@ -17,9 +17,8 @@ module Health {
   /**
    * Returns the bundle MBean
    */
-// TODO Make into a service
+  // TODO Make into a service
   export function getHealthMBeans(workspace:Workspace) {
-    var broker = null;
     if (workspace) {
       var healthMap = workspace.mbeanTypesToDomain["Health"] || {};
       var selection = workspace.selection;
