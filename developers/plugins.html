@@ -108,13 +108,13 @@
 
 <h3 id = "Example_plugin">Example plugin</h3>
 
-<p>If you want so see some example code; here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts">log plugin</a> designed to work with an mbean which queries the log statements from slf4j/log4j etc.</p>
+<p>If you want so see some example code; here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts">log plugin</a> designed to work with an mbean which queries the log statements from slf4j/log4j etc.</p>
 
 <ul>
-<li>We can <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L5">map single page URIs templates</a> to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.</li>
+<li>We can <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5">map single page URIs templates</a> to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.</li>
 <li>These AnguarJS modules can be added and removed at runtime inside the same single page application without requiring a reload.</li>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L12">here's where we register a top level nav bar item</a> for this new log tab.</li>
-<li>here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L19">sub tab in the jmx plugin</a> which is only visible if you select a node in the JMX tree</li>
+<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">here's where we register a top level nav bar item</a> for this new log tab.</li>
+<li>here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">sub tab in the jmx plugin</a> which is only visible if you select a node in the JMX tree</li>
 </ul>
 
 <p>Thanks to the dependency injection of <a href="http://angularjs.org/">AngularJS</a> different plugins can expose services and perform various kinds of integration and wiring together.</p>
