@@ -24,14 +24,11 @@ module Osgi {
         });
 
 
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            /*
-             updateTableContents();
-             */
-
+/*        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             // lets do this asynchronously to avoid Error: $digest already in progress
             setTimeout(updateTableContents, 50);
         });
+*/
 
         $scope.$watch('workspace.selection', function () {
             if (workspace.moveIfViewInvalid()) return;

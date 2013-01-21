@@ -1,6 +1,18 @@
 <div>
     <table class="overviewSection">
         <tr>
+            <td></td>
+            <td class="less-big">
+                <div class="btn-group">
+                    <button ng-click="stopBundle(bundleId)" class="icon-pause" title="stop"></button>
+                    <button ng-click="startBundle(bundleId)" class="icon-play" title="start"></button>
+                    <button ng-click="updateBundle(bundleId)" class="icon-upload-alt" title="update"></button>
+                    <button ng-click="refreshBundle(bundleId)" class="icon-refresh" title="refresh"></button>
+                    <button ng-click="uninstallBundle(bundleId)" class="icon-eject" title="uninstall"></button>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td><strong>Identifier:</strong></td>
             <td class="less-big">{{row.Identifier}}
             </td>
@@ -39,18 +51,6 @@
         <tr>
             <td><strong>Hosts:</strong></td>
             <td class="less-big">{{row.Hosts}}
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td class="less-big">
-                <div class="btn-group">
-                    <button ng-click="stopBundle(bundleId)" class="btn">Stop</button>
-                    <button ng-click="startBundle(bundleId)" class="btn">Start</button>
-                    <button ng-click="updateBundle(bundleId)" class="btn">Update</button>
-                    <button ng-click="refreshBundle(bundleId)" class="btn">Refresh</button>
-                    <button ng-click="uninstallBundle(bundleId)" class="btn">Uninstall</button>
-                </div>
             </td>
         </tr>
         <tr>
