@@ -19,7 +19,7 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 ## Get started
 
-If you are running Tomcat or JBoss you could just deploy the [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) to your container
+If you are running Tomcat, Jetty or JBoss you could just deploy the [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) to your container
 
 If you are using a developer snapshot of Fuse ESB you can run:
 
