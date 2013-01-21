@@ -10,11 +10,6 @@ module Camel {
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
           }).
           run((workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['camel/routes'] = () => workspace.isCamelFolder();
-            map['camel/createEndpoint'] = () => workspace.isEndpointsFolder();
-            map['camel/traceRoute'] = () => workspace.isRoute();
 
             workspace.topLevelTabs.push({
               content: "Integration",

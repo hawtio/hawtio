@@ -5,10 +5,6 @@ module Health {
             when('/health', {templateUrl: 'app/health/html/health.html', controller: HealthController})
   }).
           run(($location: ng.ILocationService, workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['health'] = () => Health.hasHealthMBeans(workspace);
-
 
             workspace.topLevelTabs.push( {
               content: "Health",

@@ -9,10 +9,6 @@ module Jmx {
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
           run(($location: ng.ILocationService, workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['logs'] = () => workspace.isOsgiFolder();
-
 
             workspace.topLevelTabs.push( {
               content: "JMX",

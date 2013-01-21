@@ -11,12 +11,6 @@ module Osgi {
             when('/osgi/pid/:pid', {templateUrl: 'app/osgi/html/pid.html', controller: PidController})
   }).
           run((workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['osgi/bundles'] = () => workspace.treeContainsDomainAndProperties("osgi.core");
-            map['osgi/packages'] = () => workspace.treeContainsDomainAndProperties("osgi.core");
-            map['osgi/services'] = () => workspace.treeContainsDomainAndProperties("osgi.core");
-            map['osgi/configurations'] = () => workspace.treeContainsDomainAndProperties("osgi.compendium");
 
             workspace.topLevelTabs.push( {
               content: "OSGi",

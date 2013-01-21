@@ -13,15 +13,6 @@ module ActiveMQ {
                     when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: Camel.SendMessageController})
           }).
                     run(($location: ng.ILocationService, workspace: Workspace) => {
-                      // now lets register the nav bar stuff!
-                      var map = workspace.uriValidations;
-                      map['activemq/browseQueue'] = () => isQueue(workspace);
-                      map['activemq/sendMessage'] = () => isQueue(workspace) || isTopic(workspace);
-                      map['activemq/subscribers'] = () => isActiveMQFolder(workspace);
-                      map['activemq/createQueue'] = () => isQueuesFolder(workspace) || isBroker(workspace);
-                      map['activemq/createTopic'] = () => isTopicsFolder(workspace) || isBroker(workspace);
-                      map['activemq/deleteQueue'] = () => isQueue(workspace);
-                      map['activemq/deleteTopic'] = () => isTopic(workspace);
 
                       workspace.topLevelTabs.push( {
                         content: "Messaging",
