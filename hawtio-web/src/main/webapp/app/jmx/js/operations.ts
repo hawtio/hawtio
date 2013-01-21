@@ -18,6 +18,7 @@ module Jmx {
       $scope.title = $scope.item.humanReadable;
       $scope.desc = $scope.item.desc;
       $scope.operationResult = "";
+      $scope.executeIcon = "icon-ok";
 
       var sanitize = (args) => {
         if (args) {
@@ -42,15 +43,17 @@ module Jmx {
         console.log(data);
       }
 
-      $scope.reset = () => {
+      $scope.ok = () => {
+        $scope.operationResult = '';
+      }
 
+      $scope.reset = () => {
         if ($scope.item.args) {
           $scope.item.args.forEach( function (arg) {
             arg.value = "";
           });
         }
-
-        $scope.operationResult = '';
+        $scope.ok();
       }
 
       $scope.resultIsArray = () => {
@@ -86,7 +89,7 @@ module Jmx {
         }
 
         var get_response = (response) => {
-
+          $scope.executeIcon = "icon-ok";
           $scope.operationStatus = "success";
 
           if (response === null || 'null' === response) {
@@ -115,12 +118,14 @@ module Jmx {
 
         args.push(onSuccess(get_response, {
           error: function (response) {
+            $scope.executeIcon = "icon-ok";
             $scope.operationStatus = "error";
             var error = response.error;
             $scope.operationResult = error;
           }
         }));
 
+        $scope.executeIcon = "icon-spinner icon-spin";
         var fn = jolokia.execute;
         fn.apply(jolokia, args);
       };
