@@ -39,35 +39,52 @@ module CodeEditor {
         var mode = options.mode;
         var modeValue:any = mode;
         var readOnly = options.readOnly;
+        options.extraKeys = options.extraKeys || {};
 
         if (mode) {
             if (mode === "javascript") {
                 modeValue = {name: "javascript", json: true};
-                var foldFunc = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
-                options.onGutterClick = foldFunc;
-                options.extraKeys = {"Ctrl-Q": function (cm) {
-                    foldFunc(cm, cm.getCursor().line);
-                }};
-            } else if (mode === "xml" || mode.startsWith("html")) {
-                var foldFuncXml = CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder);
-                options.onGutterClick = foldFuncXml;
-                options.extraKeys = {"Ctrl-Q": function (cm) {
-                    foldFuncXml(cm, cm.getCursor().line);
-                }};
+            } else {
+                modeValue = {name: mode};
             }
         }
         options.mode = modeValue;
 
+        // Handle Code folding folding
+        (function(options) {
+            var javascriptFolding = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
+            var xmlFolding = CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder);
+
+            // Mode logic inside foldFunction to allow for dynamic changing of the mode.
+            // So don't have to listen to the options model and deal with re-attaching events etc...
+            var foldFunction = function(codeMirror : CodeMirrorEditor, line: number) {
+                var mode = codeMirror.getOption("mode");
+                var modeName = mode["name"];
+                if(!mode || !modeName) return;
+                if(modeName === 'javascript') {
+                    javascriptFolding(codeMirror, line);
+                } else if (modeName === "xml" || modeName.startsWith("html")) {
+                    xmlFolding(codeMirror, line);
+                };
+            };
+
+            options.onGutterClick = foldFunction;
+            options.extraKeys = angular.extend(options.extraKeys, {
+                "Ctrl-Q": function (codeMirror) {
+                    foldFunction(codeMirror, codeMirror.getCursor().line);
+                }
+            });
+        })(options);
 
         if (!readOnly) {
-            options.extraKeys = {
-                "'>'": function (cm) {
-                    cm.closeTag(cm, '>');
+            options.extraKeys = angular.extend(options.extraKeys, {
+                "'>'": function (codeMirror) {
+                    codeMirror.closeTag(codeMirror, '>');
                 },
-                "'/'": function (cm) {
-                    cm.closeTag(cm, '/');
+                "'/'": function (codeMirror) {
+                    codeMirror.closeTag(codeMirror, '/');
                 }
-            };
+            });
             options.matchBrackets = true;
         }
 

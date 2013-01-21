@@ -265,8 +265,10 @@ angular.module('ui.directives').directive('uiCodemirror', ['ui.config', '$timeou
 							codeMirror.off(eventName, oldOptions[key]);
 						}
 						codeMirror.on(eventName, value);
-					} else {
-					
+					} else if(key === 'extraKeys') {
+                        // TODO May need to be configurable
+                        codeMirror.addKeyMap(value);
+                    } else {
 						codeMirror.setOption(key, value);
 					}
 				});
