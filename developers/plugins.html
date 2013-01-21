@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
-    <link href="/blog/atom.xml" rel="alternate" title="hawt.io blog Atom feed" type="application/atom+xml" />
+    <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
     -->
     <link href="/stylesheets/screen.css" rel="stylesheet" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -30,7 +30,7 @@
           <a class="brand" href="/">
 							<span class="name">
 	            	<img src="/images/logo.png" />
-								hawt.io
+								hawtio
 							</span>
           </a>
           <nav class="nav-collapse" role="navigation">
@@ -56,13 +56,13 @@
 
 <p><strong>hawtio</strong> is highly modular, so that it can discover exactly what services are inside a JVM and dyanmically update the console to provide an interface to them.</p>
 
-<p>Currently hawtio uses JMX to discover which MBeans are prsent and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.</p>
+<p>Currently hawtio uses JMX to discover which MBeans are present and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.</p>
 
-<p>So you can deploy the standard <strong>hawtio-web.war</strong>; then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.</p>
+<p>So you can deploy the standard <a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">hawtio-web.war</a>; then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.</p>
 
 <p>Relying on JMX for discovery doesn't mean though that plugins can only interact with JMX; they can do anything at all that a browser can. e.g. a plugin could use REST to discover UI capabilities and other plugins.</p>
 
-<p>In terms of the plugin mechanism itself; we've tried to keep this as technology agnostic as possible; a plugin is just some combination of JS / HTML / CSS / markup / images and other content loaded in a browser.</p>
+<p>A hawtio plugin is anything that will run inside a browser. We've tried to keep hawtio plugins as technology agnostic as possible; so a plugin is just some combination of JS / HTML / CSS / markup / images and other content that can be loaded in a browser.</p>
 
 <h2 id = "Adding_your_own_plugins">Adding your own plugins</h2>
 
@@ -186,7 +186,7 @@
             <ul>
 							<!--
               <li>
-                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawt.io on Google+" /></a>
+                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
               </li>
 							-->
               <li>
@@ -194,17 +194,17 @@
               </li>
 							<!--
               <li>
-                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawt.io group on LinkedIn" /></a>
+                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
               </li>
               <li>
-                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawt.io channel on Vimeo" /></a>
+                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
               </li>
 							-->
             </ul>
           </div>
-          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawt.io">visitor stats</a>.</p>
+          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
           <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
-          <p>hawt.io is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+          <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
           <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
         </div>
         <a class="visible-desktop" href="#" id="toTop">Top</a>

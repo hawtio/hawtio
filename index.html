@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawt.io - manage your server stuff and stay cool!</title>
+    <title>hawtio - manage your server stuff and stay cool!</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
-    <link href="/blog/atom.xml" rel="alternate" title="hawt.io blog Atom feed" type="application/atom+xml" />
+    <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
     -->
     <link href="/stylesheets/screen.css" rel="stylesheet" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -30,7 +30,7 @@
           <a class="brand" href="/">
 							<span class="name">
 	            	<img src="/images/logo.png" />
-								hawt.io
+								hawtio
 							</span>
           </a>
           <nav class="nav-collapse" role="navigation">
@@ -52,7 +52,7 @@
 		  <p><div class="container">
     <div id="content"></p>
 
-<p><strong>hawtio</strong> is a lightweight <a href="http://hawt.io/developers/plugins.html">modular</a> HTML5 web console for managing Java stuff</p>
+<p><strong>hawtio</strong> is a lightweight and <a href="http://hawt.io/developers/plugins.html">modular</a> HTML5 web console for managing your Java stuff. Its a <em>hawt</em> console to help you stay cool!</p>
 
 <ul class="thumbnails">
   <li class="span10">
@@ -66,13 +66,19 @@
 
 <p>You can dynamically <a href="http://hawt.io/developers/plugins.html">extend hawt.io with your own plugins</a> or automaticaly <a href="http://hawt.io/developers/plugins.html">discover plugins</a> inside the JVM</p>
 
-<p>Other than the static HTML/CSS/JS/images, the only server side dependency is the excellent <a href="http://jolokia.org">Jolokia library</a> which is small footprint (around 300Kb) and available as a <a href="http://jolokia.org/agent/jvm.html">JVM agent</a>, or is embedded as a servlet inside the hawtio-web.war or can be deployed as <a href="http://jolokia.org/agent/osgi.html">an OSGi bundle</a>.</p>
+<p>The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent <a href="http://jolokia.org">Jolokia library</a> which has small footprint (around 300Kb) and is available as a <a href="http://jolokia.org/agent/jvm.html">JVM agent</a>, or comes embedded as a servlet inside the <strong>hawtio-web.war</strong> or can be deployed as <a href="http://jolokia.org/agent/osgi.html">an OSGi bundle</a>.</p>
 
-<p><strong>hawtio</strong> also supports <a href="http://hawt.io/health/">Health MBeans</a> to make it easy for your Java services to expose their status so that the console understands how your Java stuff is behaving</p>
+<p><strong>hawtio</strong> also supports <a href="http://hawt.io/health/">Health MBeans</a> to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving</p>
 
 <h2 id = "Get_started">Get started</h2>
 
-<p>From a git clone you should be able to run the a sample hawtio console as follows:</p>
+<p>If you are running Tomcat or JBoss you could just deploy the <a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">hawtio-web.war</a> to your container</p>
+
+<p>If you are using a developer snapshot of Fuse ESB you can run:</p>
+
+<pre><code>features:install hawtio</code></pre>
+
+<p>Or from a git clone you should be able to run the a sample hawtio console as follows:</p>
 
 <pre><code>git clone git@github.com:hawtio/hawtio.git
 cd hawtio/sample
@@ -82,8 +88,6 @@ open http://localhost:8080/hawtio/</code></pre>
 <p>That should run a little sample web application with some ActiveMQ and Camel inside to interact with.</p>
 
 <p>A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.</p>
-
-<p>If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the <strong>hawtio-web.war</strong> to your container</p>
 
 <h2 id = "Want_to_hack_on_some_code_">Want to hack on some code?</h2>
 
@@ -96,7 +100,7 @@ open http://localhost:8080/hawtio/</code></pre>
 <li><a href="http://hawt.io/community/index.html">join the hawt.io community</a></li>
 </ul>
 
-<p>Its hawt, but stay cool! :)</p>
+<p>Its a hawt console to help you can stay cool!</p>
 
 <p></div>
   </div></p>
@@ -165,7 +169,7 @@ open http://localhost:8080/hawtio/</code></pre>
             <ul>
 							<!--
               <li>
-                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawt.io on Google+" /></a>
+                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
               </li>
 							-->
               <li>
@@ -173,17 +177,17 @@ open http://localhost:8080/hawtio/</code></pre>
               </li>
 							<!--
               <li>
-                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawt.io group on LinkedIn" /></a>
+                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
               </li>
               <li>
-                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawt.io channel on Vimeo" /></a>
+                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
               </li>
 							-->
             </ul>
           </div>
-          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawt.io">visitor stats</a>.</p>
+          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
           <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
-          <p>hawt.io is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+          <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
           <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
         </div>
         <a class="visible-desktop" href="#" id="toTop">Top</a>
