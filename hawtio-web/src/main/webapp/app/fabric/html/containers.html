@@ -18,16 +18,19 @@
   <thead>
     <tr>
       <th></th>
+      <th>Status</th>
       <th>Container ID</th>
       <th>Profiles</th>
       <th>Version</th>
       <th>Local Host</th>
-      <th>Type</th>
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="row in containers" ng-controller="Fabric.ContainerRow" ng-init="row=row" ng-show="foo(row)">
+    <tr ng-repeat="containerId in containers" ng-controller="Fabric.ContainerRow" ng-init="containerId=containerId" ng-show="show(containerId)">
       <td>
+      </td>
+      <td>
+        <i class="icon-2x {{statusIcon()}}"></i>
       </td>
       <td>
         <a href="#/fabric/container/{{row.id}}">{{row.id}}</a>        
@@ -41,7 +44,6 @@
       </td>
       <td>{{row.versionId}}</td>
       <td>{{row.ip}}</td>
-      <td>{{row.type}}</td>
     </tr>
   
   </tbody>

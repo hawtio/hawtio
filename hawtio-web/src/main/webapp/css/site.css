@@ -240,3 +240,12 @@ ul.inline > li, ol.inline > li {
     /* TODO REMOVE ASAP and use a floating layout instead */
     height: 600px;
 }
+
+.red {
+  color: #ff0000;
+}
+
+.green {
+  color: #00ff00;
+}
+
