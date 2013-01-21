@@ -189,6 +189,9 @@ class Workspace {
           defaultPath = "#/jmx/help";
         }
         console.log("moving the URL to be " + defaultPath);
+        if (defaultPath.startsWith("#")) {
+          defaultPath = defaultPath.substring(1);
+        }
         this.$location.path(defaultPath);
         return true;
       }
