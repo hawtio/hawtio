@@ -55,11 +55,11 @@ In terms of JS code, we're using JavaScript modules to keep things separated, so
 
 ### Example plugin
 
-If you want so see some example code; here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts) designed to work with an mbean which queries the log statements from slf4j/log4j etc.
+If you want so see some example code; here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts) designed to work with an mbean which queries the log statements from slf4j/log4j etc.
 
-* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
+* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
 * These AnguarJS modules can be added and removed at runtime inside the same single page application without requiring a reload.
-* [here's where we register a top level nav bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L12) for this new log tab.
-* here's a [sub tab in the jmx plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L19) which is only visible if you select a node in the JMX tree
+* [here's where we register a top level nav bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) for this new log tab.
+* here's a [sub tab in the jmx plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19) which is only visible if you select a node in the JMX tree
 
 Thanks to the dependency injection of [AngularJS](http://angularjs.org/) different plugins can expose services and perform various kinds of integration and wiring together.
