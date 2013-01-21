@@ -30,6 +30,28 @@ module Osgi {
     }
 
 
+    export function defaultPackageValues(workspace:Workspace, $scope, values) {
+        var packages = [];
+        angular.forEach(values, (row) => {
+            angular.forEach(row, (version) => {
+                angular.forEach(version, (packageEntry) => {
+                    var name = packageEntry["Name"];
+                    var version = packageEntry["Version"];
+                    if (!name.startsWith("#")) {
+                        packageEntry["VersionLink"] = "<a href='" + url("#/osgi/package/" + name +"/"+ version + workspace.hash()) + "'>" + version + "</a>";
+                        packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
+                        packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
+                        packageEntry["ExportingBundleLinks"] = bundleLinks(workspace, row["ExportingBundles"]);
+                        packages.push(packageEntry);
+                    }
+
+                });
+            });
+        });
+        return packages;
+    }
+
+
     export function defaultConfigurationValues(workspace:Workspace, $scope, values) {
         var array = [];
         angular.forEach(values, (row) => {
@@ -128,6 +150,23 @@ module Osgi {
         if (workspace) {
             // lets navigate to the tree item based on paths
             var folder = workspace.tree.navigate("osgi.core", "serviceState");
+            if (folder) {
+                var children = folder.children;
+                if (children) {
+                    var node = children[0];
+                    if (node) {
+                        return node.objectName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    export function getSelectionPackageMBean(workspace:Workspace):string {
+        if (workspace) {
+            // lets navigate to the tree item based on paths
+            var folder = workspace.tree.navigate("osgi.core", "packageState");
             if (folder) {
                 var children = folder.children;
                 if (children) {
