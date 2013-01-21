@@ -237,6 +237,6 @@ ul.inline > li, ol.inline > li {
 .gridStyle {
     border: 1px solid rgb(212,212,212);
 
-    // TODO REMOVE ASAP and use a floating layout instead
+    /* TODO REMOVE ASAP and use a floating layout instead */
     height: 600px;
 }
