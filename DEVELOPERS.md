@@ -41,6 +41,7 @@ If you are interested in working on the code the following references and articl
 * [datatables API](http://www.datatables.net/api)
 * [javascript API](http://www.w3schools.com/jsref/default.asp)
 * [sugarjs API](http://sugarjs.com/api/Array/sortBy)
+* [icons from Font Awesome](http://fortawesome.github.com/Font-Awesome/)
 
 ### Developer Articles and Forums
 
