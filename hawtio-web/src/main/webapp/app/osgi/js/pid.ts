@@ -11,7 +11,7 @@ module Osgi {
         };
 
         function updateTableContents() {
-            var mbean = getSelectionConfigAdmineMBean(workspace);
+            var mbean = getSelectionConfigAdminMBean(workspace);
             if (mbean) {
                 var jolokia = workspace.jolokia;
                 jolokia.request(

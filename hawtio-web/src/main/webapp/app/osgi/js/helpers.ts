@@ -141,7 +141,7 @@ module Osgi {
         return null;
     }
 
-    export function getSelectionConfigAdmineMBean(workspace:Workspace):string {
+    export function getSelectionConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             // lets navigate to the tree item based on paths
             var folder = workspace.tree.navigate("osgi.compendium", "cm");
