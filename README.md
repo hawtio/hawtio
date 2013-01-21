@@ -1,4 +1,4 @@
-**hawtio** is a lightweight [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing Java stuff
+**hawtio** is a lightweight and [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing your Java stuff. Its a _hawt_ console to help you stay cool!
 
 <ul class="thumbnails">
   <li class="span10">
@@ -12,14 +12,20 @@
 
 You can dynamically [extend hawt.io with your own plugins](http://hawt.io/developers/plugins.html) or automaticaly [discover plugins](http://hawt.io/developers/plugins.html) inside the JVM
 
-Other than the static HTML/CSS/JS/images, the only server side dependency is the excellent [Jolokia library](http://jolokia.org) which is small footprint (around 300Kb) and available as a [JVM agent](http://jolokia.org/agent/jvm.html), or is embedded as a servlet inside the hawtio-web.war or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
+The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300Kb) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the **hawtio-web.war** or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
 
-**hawtio** also supports [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their status so that the console understands how your Java stuff is behaving
+**hawtio** also supports [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving
 
 
 ## Get started
 
-From a git clone you should be able to run the a sample hawtio console as follows:
+If you are running Tomcat or JBoss you could just deploy the [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) to your container
+
+If you are using a developer snapshot of Fuse ESB you can run:
+
+    features:install hawtio
+
+Or from a git clone you should be able to run the a sample hawtio console as follows:
 
     git clone git@github.com:hawtio/hawtio.git
     cd hawtio/sample
@@ -30,8 +36,6 @@ That should run a little sample web application with some ActiveMQ and Camel ins
 
 A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.
 
-If you are running Tomcat, Karaf, Fuse ESB or JBoss you could just deploy the **hawtio-web.war** to your container
-
 ## Want to hack on some code?
 
 We love [contributions](http://hawt.io/contributing/index.html)!
@@ -41,4 +45,4 @@ We love [contributions](http://hawt.io/contributing/index.html)!
 * [how to get started working on the code](http://hawt.io/developers/index.html)
 * [join the hawt.io community](http://hawt.io/community/index.html)
 
-Its hawt, but stay cool! :)
+Its a hawt console to help you can stay cool!
