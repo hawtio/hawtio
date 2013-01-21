@@ -6,11 +6,11 @@ This document outlines a Health check MBean convention that if folks adopt its t
 
 ## Health MBean Convention
 
-Create at least one MBean and register it with a JMX ObjectName including **Type=Health**.
+Create at least one MBean and register it with a JMX ObjectName including **service=Health**.
 
 For example an ObjectName could be
 
-    org.apache.activemq:BrokerName=localhost,Type=Health
+    org.apache.activemq:Type=Broker,BrokerName=localhost,service=Health
 
 The MBean should then have these methods
 

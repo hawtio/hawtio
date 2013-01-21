@@ -12,6 +12,7 @@ class Workspace {
   public selection:NodeSelection;
   public tree = null;
   public mbeanTypesToDomain = {};
+  public mbeanServicesToDomain = {};
   public topLevelTabs = [];
   public subLevelTabs = [];
 

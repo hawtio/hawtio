@@ -20,7 +20,7 @@ module Health {
   // TODO Make into a service
   export function getHealthMBeans(workspace:Workspace) {
     if (workspace) {
-      var healthMap = workspace.mbeanTypesToDomain["Health"] || {};
+      var healthMap = workspace.mbeanServicesToDomain["Health"] || {};
       var selection = workspace.selection;
       if (selection) {
         var domain = selection.domain;
