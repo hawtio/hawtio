@@ -13,6 +13,7 @@ class Workspace {
   public tree = null;
   public mbeanTypesToDomain = {};
   public mbeanServicesToDomain = {};
+  public attributeColumnDefs = {};
   public topLevelTabs = [];
   public subLevelTabs = [];
 
@@ -147,15 +148,24 @@ class Workspace {
    * for example based on the domain and the node type
    */
   public selectionViewConfigKey():string {
+    return this.selectionConfigKey("view/");
+  }
+
+  /**
+   * Returns a configuration key for a node which is usually of the form
+   * domain/typeName or for folders with no type, domain/name/folder
+   */
+  public selectionConfigKey(prefix: string = ""):string {
     var key = null;
     var selection = this.selection;
     if (selection) {
       // lets make a unique string for the kind of select
-      key = "view/" + selection.domain;
+      key = prefix + selection.domain;
       var typeName = selection.typeName;
-      if (typeName) {
-        key += "/" + typeName;
+      if (!typeName) {
+        typeName = selection.title;
       }
+      key += "/" + typeName;
       if (selection.isFolder()) {
         key += "/folder";
       }

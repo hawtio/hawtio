@@ -305,22 +305,35 @@ module Core {
   /*
    * Register a JMX operation to poll for changes
    */
-  export function register(jolokia, scope, arguments, callback) {
-    
+  export function register(jolokia, scope, arguments: any, callback) {
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
       scope.$jhandle = [];
     }
-    scope.$on('$destroy', function(event) {
+    scope.$on('$destroy', function (event) {
       if (angular.isDefined(scope.$jhandle)) {
-        scope.$jhandle.forEach(function(handle) {
+        scope.$jhandle.forEach(function (handle) {
           jolokia.unregister(handle);
         });
         delete scope.$jhandle;
       }
     });
-    scope.$jhandle.push(jolokia.register(callback, arguments));
-    jolokia.request(arguments, callback);
+    if (angular.isArray(arguments)) {
+      if (arguments.length >= 1) {
+        // TODO can't get this to compile in typescript :)
+        //var args = [callback].concat(arguments);
+        var args = [callback];
+        angular.forEach(arguments, (value) => args.push(value));
+        //var args = [callback];
+        //args.push(arguments);
+        var registerFn = jolokia.register;
+        var handle = registerFn.apply(jolokia, args);
+        scope.$jhandle.push(handle);
+        jolokia.request(arguments, callback);
+      }
+    } else {
+      var handle = jolokia.register(callback, arguments);
+      scope.$jhandle.push(handle);
+      jolokia.request(arguments, callback);
+    }
   }
-  
-  
 }
