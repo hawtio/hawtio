@@ -72,10 +72,6 @@ module Jmx {
       }
     }
 
-    function includePropertyValue(key: string, value) {
-      return !angular.isObject(value);
-    }
-
     function render(response) {
       var data = response.value;
       var mbeanIndex = $scope.mbeanIndex;
@@ -144,6 +140,10 @@ module Jmx {
         $scope.gridData = data;
         $scope.$apply();
       }
+    }
+
+    function includePropertyValue(key: string, value) {
+      return !angular.isObject(value);
     }
   }
 
