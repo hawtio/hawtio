@@ -249,3 +249,11 @@ ul.inline > li, ol.inline > li {
   color: #00ff00;
 }
 
+.icon1point5x {
+  font-size: 1.5em;
+}
+
+.centered {
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -1,5 +1,98 @@
 module Fabric {
 
+
+  export function ContainersController($scope, workspace, jolokia) {
+    
+    $scope.search = "";
+    $scope.containers = [];
+    
+    $scope.options = {
+      data: 'containers',
+      showFilter: false,
+      filterOptions: {
+        filterText: 'search'
+      },
+      columnDefs: [
+        { 
+          field: 'alive',
+          displayName: 'Status',
+          cellTemplate: '<i style="margin: auto" class="icon1point5x {{statusIcon(row.entity)}}"></i>',
+          width: 56,
+          minWidth: 56,
+          maxWidth: 56
+        },
+        {
+          field: 'id',
+          displayName: 'Name'
+        },
+        /*
+        {
+          field: 'alive',
+          displayName: 'Running'
+        },
+        */
+        { 
+          field: 'profileIds',
+          displayName: 'Profiles',
+          visible: false
+        },
+
+        {
+          field: 'ip',
+          displayName: 'Hostname',
+        }
+        /*
+        {
+          field: 'provisionStatus',
+          displayName: "Status"
+        }
+        */
+        
+        
+      ]
+    }
+  
+    Core.register(jolokia, $scope, {
+      type: 'exec', mbean: managerMBean,
+      operation: 'containers()',
+      arguments: []
+    }, onSuccess(render));
+    
+    function render(response) {
+      $scope.containers = response.value;
+      $scope.$apply();
+    }
+    
+    $scope.statusIcon = (row) => {
+      console.log(row);
+      if (row) {
+        if (row.alive) {
+          switch(row.provisionResult) {
+            case 'success': 
+              return "icon-thumbs-up";
+            case 'downloading':
+              return "icon-download-alt";
+            case 'installing':
+              return "icon-hdd";
+            case 'analyzing':
+            case 'finalizing':
+              return "icon-refresh icon-spin";
+            case 'resolving':
+              return "icon-sitemap";
+            case 'error':
+              return "red icon-warning-sign";
+          }
+        } else {
+          return "icon-off";
+        }
+      }
+      return "icon-refresh icon-spin";
+    }
+    
+
+  }
+
+/*
   export function ContainerRow($scope, workspace:Workspace, jolokia) {
     
     $scope.selected = false;
@@ -218,7 +311,8 @@ module Fabric {
         $scope.containers = response.value;
         $scope.$apply();
       }
-    }
-    
+    }    
   }
+  */
+  
 }
