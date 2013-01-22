@@ -16,39 +16,31 @@ module Fabric {
         { 
           field: 'alive',
           displayName: 'Status',
-          cellTemplate: '<i style="margin: auto" class="icon1point5x {{statusIcon(row.entity)}}"></i>',
+          cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{statusIcon(row.entity)}}"></i></div>',
           width: 56,
           minWidth: 56,
           maxWidth: 56
         },
         {
           field: 'id',
-          displayName: 'Name'
+          displayName: 'Name',
+          width: 80,
+          minWidth: 80
         },
-        /*
         {
-          field: 'alive',
-          displayName: 'Running'
+          field: 'manualIp',
+          displayName: 'Services',
+          cellTemplate: '<div class="ngCellText"><ul class="unstyled inline"><li ng-repeat="service in getServices(row.entity)" ng-switch="service.type"><i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i><img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}"></li></ul>'
         },
-        */
         { 
           field: 'profileIds',
           displayName: 'Profiles',
           visible: false
         },
-
         {
           field: 'ip',
           displayName: 'Hostname',
         }
-        /*
-        {
-          field: 'provisionStatus',
-          displayName: "Status"
-        }
-        */
-        
-        
       ]
     }
   
@@ -61,6 +53,10 @@ module Fabric {
     function render(response) {
       $scope.containers = response.value;
       $scope.$apply();
+    }
+    
+    $scope.getServices = (row) => {
+      return getServiceList(row);
     }
     
     $scope.statusIcon = (row) => {
