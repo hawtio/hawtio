@@ -3,7 +3,9 @@ module Jmx {
   export function AttributesController($scope, workspace:Workspace, jolokia) {
     $scope.filterText = "";
     $scope.columnDefs = [];
+    $scope.selectedItems = [];
     $scope.gridOptions = {
+      selectedItems: $scope.selectedItems,
       showFilter: false,
       filterOptions: {
         filterText: "searchText"
@@ -86,6 +88,7 @@ module Jmx {
           }
           if (idx === 0) {
             // this is to force the table to repaint
+            $scope.selectedIndices = $scope.selectedItems.map((item) => $scope.gridData.indexOf(item));
             $scope.gridData = [];
 
             if (!$scope.columnDefs.length) {
@@ -121,6 +124,10 @@ module Jmx {
           var count = $scope.mbeanCount;
           if (!count || idx + 1 >= count) {
             // only cause a refresh on the last row
+            var newSelections = $scope.selectedIndices.map((idx) => $scope.gridData[idx]).filter((row) => row);
+            $scope.selectedItems.splice(0, $scope.selectedItems.length);
+            $scope.selectedItems.push.apply($scope.selectedItems, newSelections);
+            //console.log("Would have selected " + JSON.stringify($scope.selectedItems));
             $scope.$apply();
           }
           // if the last row, then fire an event
