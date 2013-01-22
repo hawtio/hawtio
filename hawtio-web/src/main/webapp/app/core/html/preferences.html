@@ -1,3 +1,4 @@
+<!-- TODO Should we split this page into partials, and just just allow plugins to register their configurable preferences to this page? -->
 <div ng-controller="Core.PreferencesController">
   <form class="form-horizontal">
     <div class="control-group">
@@ -26,4 +27,34 @@
       </div>
     </div>
   </form>
+</div>
+
+<!-- TODO Split into its file and include as a partial -->
+<div ng-controller="CodeEditor.PreferencesController">
+    <strong>Code Editor</strong>
+    <form class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="theme" title="The default theme to be used by the code editor">Theme</label>
+
+            <div class="controls">
+                <select id="theme" ng-model="preferences.theme">
+                    <option value="default">Default</option>
+                    <option value="monokai">Monokai</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="tabSIze">Tab Size</label>
+
+            <div class="controls">
+                <input type="text" id="tabSize" name="tabSize" ng-model="preferences.tabSize"/>
+            </div>
+        </div>
+    </form>
+
+    <textarea ui-codemirror="preferences" ng-model="codeMirrorModel"></textarea>
+
 </div>

@@ -21,8 +21,9 @@ module Camel {
         workspace.moveIfViewInvalid();
       });
 
-      /** save the sourceFormat in preferences for later */
-      // TODO Use ng-selected="changeSourceFormat()" - It seemed to fire multiple times though?
+      /** save the sourceFormat in preferences for later
+       * Note, this would be controller specific preferences and not the global, overriding, preferences */
+      // TODO Use ng-selected="changeSourceFormat()" - Although it seemed to fire multiple times..
       $scope.$watch('codeMirrorOptions.mode', function(newValue, oldValue) {
         workspace.setLocalStorage(LANGUAGE_FORMAT_PREFERENCE, newValue)
       });

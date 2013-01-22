@@ -1,9 +1,25 @@
 module CodeEditor {
     // TODO Wire up to $rootScope, or to a controller potentially
     var GlobalCodeMirrorOptions = {
+        theme: "default",
         tabSize: 2,
         lineNumbers: true,
         wordWrap: true
+    }
+
+    export function PreferencesController($scope, workspace:Workspace, localStorage) {
+        $scope.preferences = GlobalCodeMirrorOptions;
+        // Should we the ability to select from some example messages to help set preferences?
+        $scope.codeMirrorModel = "";
+
+        /**
+         * If any of the preferences change, make sure to save them automatically
+         */
+        // TODO Is this bad UX? Should we require an explicit 'save' ? (So users can 'cancel' the settings they worked on)
+        $scope.$watch("preferences", function(newValue, oldValue) {
+            // ...
+            // TODO Need a global 'config' service for saving config state for us (If there isn't one already)
+        });
     }
 
     export function detectTextFormat(value: any):string {
