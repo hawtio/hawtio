@@ -4,10 +4,10 @@ module Core {
       // TODO Do we have to deal with Async data loading?
       var options = {
           readOnly: true,
-          format: CodeEditor.detectTextFormat($scope.row.Text)
+          mode: {
+            name: CodeEditor.detectTextFormat($scope.row.Text)
+          }
       };
       $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-
-      // TODO autoFormat + editable preference
     }
 }

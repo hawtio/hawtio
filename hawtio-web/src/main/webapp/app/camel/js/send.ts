@@ -6,7 +6,9 @@ module Camel {
       // TODO Remove this if possible
       $scope.codeMirror = undefined;
       var options = {
-        mode: sourceFormat,
+        mode: {
+            name: sourceFormat
+        },
         // Quick hack to get the codeMirror instance.
         onChange: function(codeMirror) {
           if(!$scope.codeMirror) {
@@ -24,7 +26,7 @@ module Camel {
       /** save the sourceFormat in preferences for later
        * Note, this would be controller specific preferences and not the global, overriding, preferences */
       // TODO Use ng-selected="changeSourceFormat()" - Although it seemed to fire multiple times..
-      $scope.$watch('codeMirrorOptions.mode', function(newValue, oldValue) {
+      $scope.$watch('codeMirrorOptions.mode.name', function(newValue, oldValue) {
         workspace.setLocalStorage(LANGUAGE_FORMAT_PREFERENCE, newValue)
       });
 

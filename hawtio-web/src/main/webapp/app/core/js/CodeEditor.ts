@@ -1,21 +1,23 @@
 module CodeEditor {
-    // TODO Wire up to $rootScope, or to a controller potentially
+    // TODO Wire up to a global config manager service
     var GlobalCodeMirrorOptions = {
         theme: "default",
-        tabSize: 2,
+        tabSize: 4,
         lineNumbers: true,
-        wordWrap: true
+        indentWithTabs: true,
+        lineWrapping: true
+        // TODO Add autoformat option (Not explicitly a code mirror option)
     }
 
     export function PreferencesController($scope, workspace:Workspace, localStorage) {
         $scope.preferences = GlobalCodeMirrorOptions;
-        // Should we the ability to select from some example messages to help set preferences?
-        $scope.codeMirrorModel = "";
+        // TODO Should we the ability to select from some example messages to help set preferences?
+        // $scope.codeMirrorModel = "...";
 
         /**
          * If any of the preferences change, make sure to save them automatically
          */
-        // TODO Is this bad UX? Should we require an explicit 'save' ? (So users can 'cancel' the settings they worked on)
+        // TODO Is this bad UX? Should we require an explicit 'save' ? So that users can 'cancel' the settings they worked on?
         $scope.$watch("preferences", function(newValue, oldValue) {
             // ...
             // TODO Need a global 'config' service for saving config state for us (If there isn't one already)
@@ -52,19 +54,23 @@ module CodeEditor {
      * Used to configures the default editor settings (Per Editor Instance)
      */
     export function createEditorSettings(options:any = {}) {
-        var mode = options.mode;
-        var modeValue:any = mode;
-        var readOnly = options.readOnly;
         options.extraKeys = options.extraKeys || {};
 
-        if (mode) {
-            if (mode === "javascript") {
-                modeValue = {name: "javascript", json: true};
-            } else {
-                modeValue = {name: mode};
+        // Handle Mode
+        (function(mode) {
+            mode = mode || {name: "text"};
+
+            if(typeof mode !== "object") {
+                mode = {name: mode};
             }
-        }
-        options.mode = modeValue;
+
+            var modeName = mode.name;
+            if(modeName === "javascript") {
+                angular.extend(mode, {
+                    "json": true
+                })
+            }
+        })(options.mode);
 
         // Handle Code folding folding
         (function(options) {
@@ -92,6 +98,7 @@ module CodeEditor {
             });
         })(options);
 
+        var readOnly = options.readOnly;
         if (!readOnly) {
             options.extraKeys = angular.extend(options.extraKeys, {
                 "'>'": function (codeMirror) {
