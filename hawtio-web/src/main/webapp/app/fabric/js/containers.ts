@@ -1,6 +1,87 @@
 module Fabric {
 
   export function ContainerRow($scope, workspace:Workspace, jolokia) {
+    
+    $scope.selected = false;
+    $scope.row = {};
+    
+    $scope.isMe = (ids) => {
+      if (ids.find( function(s) { return s === $scope.containerId; })) {
+        return true;
+      }
+      return false;      
+    }
+    
+    $scope.$on('stop-container', function(event, args) {
+      if ($scope.isMe(args.selected)) {
+        $scope.stop();
+      }
+    });
+
+    $scope.$on('start-container', function(event, args) {
+      if ($scope.isMe(args.selected)) {
+        $scope.start();
+      }
+    });
+
+    $scope.$on('delete-container', function(event, args) {
+      if ($scope.isMe(args.selected)) {
+        $scope.delete();
+      }
+    });
+
+    $scope.$watch('selected', function(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
+      $scope.$emit('container-selected', {id: $scope.containerId, selected: $scope.selected});
+    });
+
+    $scope.$watch('$parent.all', function(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
+      $scope.selected = newValue;
+    });
+
+    $scope.stop = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'stopContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            // TODO show a notification
+            console.log("Stopped!");
+          }));
+    }
+
+    $scope.delete = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'destroyContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            // TODO show a notification
+            console.log("Deleted!");
+          }));
+    }
+
+    $scope.start = () => {
+      jolokia.request(
+          {
+            type: 'exec', mbean: managerMBean,
+            operation: 'startContainer(java.lang.String)',
+            arguments: [$scope.containerId]
+          },
+          onSuccess(function() {
+            // TODO show a notification
+            console.log("Started!");
+          }));
+    }
 
     $scope.statusIcon = () => {
       if ($scope.row) {
@@ -40,20 +121,21 @@ module Fabric {
         }
       }));
     }
-    
+        
     function render(response) {
       if (!Object.equal($scope.row, response.value)) { 
         $scope.row = response.value
-        $scope.$parent.setProfilesFor($scope.row);
+        $scope.$emit('container-updated', {id: $scope.row.id, profiles: $scope.row.profileIds});
         $scope.$apply();
       }
-    }
-    
+    }    
   }
 
 
-  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia, $document) {
     $scope.profileId = '';
+    $scope.all = false;
+    $scope.selected = {};
     
     $scope.profileMap = {};
 
@@ -64,10 +146,46 @@ module Fabric {
       });
       return answer;
     }
+
+    $scope.$on('container-updated', function(event, args) {
+      $scope.profileMap[args.id] = args.profiles;      
+    });
     
-    $scope.setProfilesFor = function (row) {
-      $scope.profileMap[row.id] = row.profileIds;
+    $scope.getSelected = function() {
+      var answer = [];
+      angular.forEach($scope.selected, function(value, key) {
+        if (value) {
+          answer.push(key);
+        }
+      });
+      return answer;
     }
+    
+    $scope.start = () => {
+      var selected = $scope.getSelected();
+      $scope.$broadcast('start-container', { selected: selected });
+    }
+
+    $scope.delete = () => {
+      var selected = $scope.getSelected();
+      $scope.$broadcast('delete-container', { selected: selected });
+    }
+
+    $scope.stop = () => {
+      var selected = $scope.getSelected();
+      $scope.$broadcast('stop-container', { selected: selected });
+    }
+
+    $scope.$on('container-selected', function (event, args) {
+      $scope.selected[args.id] = args.selected;
+      var anySelected = false;
+      angular.forEach($scope.selected, function(value, key) {
+        if (value) {
+          anySelected = true;
+        }
+      });
+      $scope.anySelected = anySelected;
+    });
 
     $scope.show = (row) => {
       if (!angular.isDefined($scope.profileId) || $scope.profileId === '') {
