@@ -14,42 +14,18 @@ module Fabric {
     }
 
     $scope.stop = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'stopContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Stopped!");
-          }));
+      // TODO proper notifications
+      stopContainer(jolokia, $scope.containerId, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});
     }
 
     $scope.delete = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'destroyContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Deleted!");
-          }));
+      // TODO proper notifications
+      destroyContainer(jolokia, $scope.containerId, function() {console.log("Deleted!")}, function() {console.log("Failed to delete!")});
     }
 
     $scope.start = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'startContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Started!");
-          }));
+      // TODO proper notifications
+      startContainer(jolokia, $scope.containerId, function() {console.log("Started!")}, function() {console.log("Failed to start!")});
     }
 
     $scope.getType = () => {

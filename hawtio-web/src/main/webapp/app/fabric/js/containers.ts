@@ -4,45 +4,83 @@ module Fabric {
   export function ContainersController($scope, workspace, jolokia) {
     
     $scope.search = "";
+    
+    $scope.profile = "";
+    $scope.version = "";
+    
+    // caches last jolokia result
+    $scope.result = [];
+    
+    // rows in container table
     $scope.containers = [];
     
-    $scope.options = {
+    $scope.profiles = [];
+    $scope.versions = [];
+    
+    // selected containers
+    $scope.selectedContainers = [];
+
+    $scope.afterContainerSelectionChange = (rowItem, event) => {
+      console.log($scope);
+      $scope.selectedProfiles = [];
+      var tmp = [];
+      angular.forEach($scope.selectedContainers, function(value, key) {
+        value.profileIds.forEach(function(profile) {
+          $scope.profiles.forEach(function(p) {
+            if (p.id === profile) {
+              p.__ng_selected__ = true;
+            }
+          })
+        });
+      });
+    }
+    
+    $scope.containerOptions = {
       data: 'containers',
       showFilter: false,
       filterOptions: {
         filterText: 'search'
       },
+      afterSelectionChange: $scope.afterContainerSelectionChange,
+      selectedItems: $scope.selectedContainers,
+      rowHeight: 41,
+      selectWithCheckboxOnly: true,
       columnDefs: [
         { 
-          field: 'alive',
+          field: 'status',
           displayName: 'Status',
-          cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{statusIcon(row.entity)}}"></i></div>',
+          cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{row.getProperty(col.field)}}"></i></div>',
           width: 56,
           minWidth: 56,
-          maxWidth: 56
+          maxWidth: 56,
+          resizable: false
         },
         {
-          field: 'id',
+          field: 'name',
           displayName: 'Name',
-          width: 80,
-          minWidth: 80
+          cellTemplate: '<div class="ngCellText"><a href="#/fabric/container/{{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
         },
         {
-          field: 'manualIp',
+          field: 'version',
+          displayName: 'Version',
+          cellTemplate: '<div class="ngCellText"><a href="#/fabric/profiles?v={{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
+        },
+        {
+          field: 'services',
           displayName: 'Services',
-          cellTemplate: '<div class="ngCellText"><ul class="unstyled inline"><li ng-repeat="service in getServices(row.entity)" ng-switch="service.type"><i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i><img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}"></li></ul>'
-        },
-        { 
-          field: 'profileIds',
-          displayName: 'Profiles',
-          visible: false
+          cellTemplate: '<div class="ngCellText"><ul class="unstyled inline"><li ng-repeat="service in row.getProperty(col.field)" ng-switch="service.type"><i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i><img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}"></li></ul>'
         },
         {
-          field: 'ip',
-          displayName: 'Hostname',
+          field: 'actions',
+          displayName: 'Actions',
+          cellTemplate: '<div class="ngCellText"><div class="btn-group" ng-switch="row.entity.alive"><button class="btn" title="Start Container" ng-switch-when="false" ng-click="startContainer(row.entity.name)"><i class="icon-play"></i></button><button class="btn" title="Stop Container" ng-switch-default ng-click="stopContainer(row.entity.name)"><i class="icon-stop"></i></button><button class="btn" title="Destroy Container" ng-click="deleteContainer(row.entity.name)"><i class="icon-remove"></i></button></div></div>',
+          width: 85,
+          sortable: false,
+          groupable: false,
+          resizable: false
         }
       ]
-    }
+    };
   
     Core.register(jolokia, $scope, {
       type: 'exec', mbean: managerMBean,
@@ -51,16 +89,89 @@ module Fabric {
     }, onSuccess(render));
     
     function render(response) {
-      $scope.containers = response.value;
-      $scope.$apply();
+      if (!Object.equal($scope.result, response.value)) {
+
+        $scope.result = response.value;
+        
+        $scope.containers = [];
+        $scope.profiles = [{
+          id: ""
+        }];
+        
+        $scope.versions = [{
+          id: ""
+        }];
+        
+        var tmp_profiles = [];
+        var tmp_versions = [];
+        
+        $scope.result.forEach(function (container) {
+          
+          var services = getServiceList(container);
+          
+          tmp_profiles = tmp_profiles.union(container.profileIds);
+          tmp_versions = tmp_versions.union([container.versionId]);
+          
+          $scope.containers.push({
+            name: container.id,
+            alive: container.alive,
+            version: container.versionId,
+            status: $scope.statusIcon(container),
+            services: services,
+            profileIds: container.profileIds
+          });
+        });
+        
+        tmp_profiles.forEach(function(profile) {
+          $scope.profiles.push({
+            id: profile
+          });
+        });
+        
+        tmp_versions.forEach(function(version) {
+          $scope.versions.push({
+            id: version
+          })
+        });
+        
+        $scope.$apply();
+      }
     }
     
-    $scope.getServices = (row) => {
-      return getServiceList(row);
+    $scope.stopContainer = (name) => {
+      // TODO proper notifications
+      stopContainer(jolokia, name, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});      
+    }
+    
+    $scope.stop = () => {
+      $scope.selected.forEach(function (container) {
+        $scope.stopContainer(container.name);
+      });
+    }
+    
+    $scope.deleteContainer = (name) => {
+      // TODO proper notifications
+      destroyContainer(jolokia, name, function() {console.log("Deleted!")}, function() {console.log("Failed to delete!")});
+    }
+
+    $scope.delete = () => {
+      $scope.selected.forEach(function (container) {
+        $scope.deleteContainer(container.name);
+      });
+    }
+    
+    $scope.startContainer = (name) => {
+      // TODO proper notifications
+      startContainer(jolokia, name, function() {console.log("Started!")}, function() {console.log("Failed to start!")});
+    }
+
+    $scope.start = () => {
+      $scope.selected.forEach(function (container) {
+        $scope.startContainer(container.name);
+      });
     }
     
     $scope.statusIcon = (row) => {
-      console.log(row);
       if (row) {
         if (row.alive) {
           switch(row.provisionResult) {
@@ -84,231 +195,5 @@ module Fabric {
       }
       return "icon-refresh icon-spin";
     }
-    
-
   }
-
-/*
-  export function ContainerRow($scope, workspace:Workspace, jolokia) {
-    
-    $scope.selected = false;
-    $scope.row = {};
-    
-    $scope.isMe = (ids) => {
-      if (ids.find( function(s) { return s === $scope.containerId; })) {
-        return true;
-      }
-      return false;      
-    }
-    
-    $scope.$on('stop-container', function(event, args) {
-      if ($scope.isMe(args.selected)) {
-        $scope.stop();
-      }
-    });
-
-    $scope.$on('start-container', function(event, args) {
-      if ($scope.isMe(args.selected)) {
-        $scope.start();
-      }
-    });
-
-    $scope.$on('delete-container', function(event, args) {
-      if ($scope.isMe(args.selected)) {
-        $scope.delete();
-      }
-    });
-
-    $scope.$watch('selected', function(newValue, oldValue) {
-      if (newValue === oldValue) {
-        return;
-      }
-      $scope.$emit('container-selected', {id: $scope.containerId, selected: $scope.selected});
-    });
-
-    $scope.$watch('$parent.all', function(newValue, oldValue) {
-      if (newValue === oldValue) {
-        return;
-      }
-      $scope.selected = newValue;
-    });
-
-    $scope.stop = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'stopContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Stopped!");
-          }));
-    }
-
-    $scope.delete = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'destroyContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Deleted!");
-          }));
-    }
-
-    $scope.start = () => {
-      jolokia.request(
-          {
-            type: 'exec', mbean: managerMBean,
-            operation: 'startContainer(java.lang.String)',
-            arguments: [$scope.containerId]
-          },
-          onSuccess(function() {
-            // TODO show a notification
-            console.log("Started!");
-          }));
-    }
-
-    $scope.statusIcon = () => {
-      if ($scope.row) {
-        if ($scope.row.alive) {
-          switch($scope.row.provisionResult) {
-            case 'success': 
-              return "icon-thumbs-up";
-            case 'downloading':
-              return "icon-download-alt";
-            case 'installing':
-              return "icon-hdd";
-            case 'analyzing':
-            case 'finalizing':
-              return "icon-refresh icon-spin";
-            case 'resolving':
-              return "icon-sitemap";
-            case 'error':
-              return "red icon-warning-sign";
-          }
-        } else {
-          return "icon-off";
-        }
-      }
-      return "icon-refresh icon-spin";
-    }
-
-    if (angular.isDefined($scope.containerId)) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: managerMBean,
-        operation: 'getContainer(java.lang.String)',
-        arguments: [$scope.containerId]
-      }, onSuccess(render, {
-        error: function(response) => {
-          // most likely the container has been deleted
-          $scope.$destroy();
-          $scope.$apply();
-        }
-      }));
-    }
-        
-    function render(response) {
-      if (!Object.equal($scope.row, response.value)) { 
-        $scope.row = response.value
-        $scope.$emit('container-updated', {id: $scope.row.id, profiles: $scope.row.profileIds});
-        $scope.$apply();
-      }
-    }    
-  }
-
-
-  export function ContainersController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia, $document) {
-    $scope.profileId = '';
-    $scope.all = false;
-    $scope.selected = {};
-    
-    $scope.profileMap = {};
-
-    $scope.profileIds = () => {
-      var answer = [""];
-      angular.forEach($scope.profileMap, (value, key) => {
-        answer = answer.union(value)
-      });
-      return answer;
-    }
-
-    $scope.$on('container-updated', function(event, args) {
-      $scope.profileMap[args.id] = args.profiles;      
-    });
-    
-    $scope.getSelected = function() {
-      var answer = [];
-      angular.forEach($scope.selected, function(value, key) {
-        if (value) {
-          answer.push(key);
-        }
-      });
-      return answer;
-    }
-    
-    $scope.start = () => {
-      var selected = $scope.getSelected();
-      $scope.$broadcast('start-container', { selected: selected });
-    }
-
-    $scope.delete = () => {
-      var selected = $scope.getSelected();
-      $scope.$broadcast('delete-container', { selected: selected });
-    }
-
-    $scope.stop = () => {
-      var selected = $scope.getSelected();
-      $scope.$broadcast('stop-container', { selected: selected });
-    }
-
-    $scope.$on('container-selected', function (event, args) {
-      $scope.selected[args.id] = args.selected;
-      var anySelected = false;
-      angular.forEach($scope.selected, function(value, key) {
-        if (value) {
-          anySelected = true;
-        }
-      });
-      $scope.anySelected = anySelected;
-    });
-
-    $scope.show = (row) => {
-      if (!angular.isDefined($scope.profileId) || $scope.profileId === '') {
-        return true;
-      }
-
-      if (angular.isDefined($scope.profileMap[row].find( function (id) { return $scope.profileId === id })) ) {
-        return true;
-      }
-
-      return false;      
-    }
-
-    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-      // lets update the profileId from the URL if its available
-      var key = $location.search()['p'];
-      if (key && key !== $scope.profileId) {
-        $scope.profileId = key;
-      }
-    });
-
-    Core.register(jolokia, $scope, {
-      type: 'exec', mbean: managerMBean,
-      operation: 'containerIds()',
-      arguments: []
-    }, onSuccess(render));
-    
-    function render(response) {
-      if (!Object.equal($scope.containers, response.value)) {
-        $scope.containers = response.value;
-        $scope.$apply();
-      }
-    }    
-  }
-  */
-  
 }
