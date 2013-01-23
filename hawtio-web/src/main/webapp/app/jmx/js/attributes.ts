@@ -1,4 +1,3 @@
-
 module Jmx {
 
   export var propertiesColumnDefs = [
@@ -29,6 +28,32 @@ module Jmx {
       if (workspace.moveIfViewInvalid()) return;
       updateTableContents();
     });
+
+    function operationComplete() {
+      console.log("Completed operation!");
+      updateTableContents();
+    }
+
+    /**
+     * Returns the toolBar template HTML to use for the current selection
+     */
+    $scope.toolBarTemplate = () => {
+      // lets lookup the list of helpers by domain
+      return Jmx.getAttributeToolBar(workspace.selection);
+    };
+
+    $scope.invokeSelectedMBeans = (operationName) => {
+      var queries = [];
+      angular.forEach($scope.selectedItems || [], (item) => {
+        var mbean = item["_id"];
+        if (mbean) {
+          queries.push({type: "exec", operation: operationName, mbean: mbean});
+        }
+      });
+      if (queries.length) {
+        jolokia.request(queries, onSuccess(operationComplete));
+      }
+    };
 
     function updateTableContents() {
       $scope.gridData = [];
@@ -83,6 +108,8 @@ module Jmx {
       if (mbeanIndex) {
         var mbean = response.request.mbean;
         if (mbean) {
+          // lets store the mbean in the row for later
+          data["_id"] = mbean;
           var idx = mbeanIndex[mbean];
           if (!angular.isDefined(idx)) {
             idx = $scope.mbeanRowCounter;
@@ -156,7 +183,7 @@ module Jmx {
     }
 
     function includePropertyValue(key: string, value) {
-      return !angular.isObject(value);
+      return !angular.isObject(value) && !key.startsWith("_");
     }
   }
 

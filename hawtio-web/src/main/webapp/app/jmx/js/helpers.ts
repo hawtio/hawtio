@@ -1,5 +1,43 @@
 module Jmx {
 
+  var attributesToolBars = {};
+
+  /**
+   * Registers a toolbar template for the given plugin name, jmxDomain.
+   *
+   * @param pluginName used so that we can later on remove this function when the plugin is removed
+   * @param jmxDomain the JMX domain to avoid having to evaluate too many functions on each selection
+   * @param fn the function used to decide which attributes tool bar should be used for the given select
+   */
+  export function addAttributeToolBar(pluginName: string, jmxDomain: string, fn: (NodeSelection) => string) {
+    var array = attributesToolBars[jmxDomain];
+    if (!array) {
+      array = [];
+      attributesToolBars[jmxDomain] = array;
+    }
+    array.push(fn);
+  }
+
+  /**
+   * Try find a custom toolbar HTML template for the given selection or returns the default value
+   */
+  export function getAttributeToolBar(node: NodeSelection, defaultValue: string = "app/jmx/html/attributesToolBar.html") {
+    var answer = null;
+    var jmxDomain = (node) ? node.domain : null;
+    if (jmxDomain) {
+      var array = attributesToolBars[jmxDomain];
+      if (array) {
+        for (var idx in array) {
+          var fn = array[idx];
+          answer = fn(node);
+          if (answer) break;
+        }
+      }
+    }
+    return (answer) ? answer : defaultValue;
+  }
+
+
   export function updateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
     var dtree = treeElement.dynatree("getTree");
     if (dtree) {

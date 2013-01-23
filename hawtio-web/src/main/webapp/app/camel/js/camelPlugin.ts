@@ -13,6 +13,17 @@ module Camel {
           }).
           run((workspace:Workspace) => {
 
+            Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
+              var folderNames = selection.folderNames;
+              if (folderNames && selection.domain === jmxDomain) {
+                var last = folderNames.last();
+                if ("routes" === last) {
+                  return "app/camel/html/attributesToolBarRoutes.html";
+                }
+              }
+              return null;
+            });
+
             // register default attribute views
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/consumers/folder"] = [
