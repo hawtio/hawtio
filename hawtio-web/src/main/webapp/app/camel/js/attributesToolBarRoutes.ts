@@ -1,8 +1,15 @@
 module Camel {
+
   export function AttributesToolBarRoutesController($scope, workspace:Workspace, jolokia) {
 
     $scope.start = () => {
-      $scope.invokeSelectedMBeans("start()");
+      $scope.invokeSelectedMBeans((item) => {
+        return isState(item, "suspend") ? "resume()" :"start()";
+      });
+    };
+
+    $scope.pause = () => {
+      $scope.invokeSelectedMBeans("suspend()");
     };
 
     $scope.stop = () => {
@@ -12,7 +19,6 @@ module Camel {
     $scope.delete = () => {
       $scope.invokeSelectedMBeans("remove()", () => {
         // force a reload of the tree
-        console.log("About to force reload of the tree");
         $scope.workspace.operationCounter += 1;
         $scope.$apply();
       });
@@ -20,9 +26,7 @@ module Camel {
 
     $scope.selectionsState = (state) => {
       var selected = $scope.selectedItems || [];
-      return selected.length && selected.every((s) => {
-        return (s.State || "").toLowerCase().startsWith(state);
-      });
+      return selected.length && selected.every((s) => isState(s, state));
     }
   }
 }

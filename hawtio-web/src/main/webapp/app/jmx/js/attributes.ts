@@ -46,7 +46,12 @@ module Jmx {
       angular.forEach($scope.selectedItems || [], (item) => {
         var mbean = item["_id"];
         if (mbean) {
-          queries.push({type: "exec", operation: operationName, mbean: mbean});
+          var opName = operationName;
+          if (angular.isFunction(operationName)) {
+            opName = operationName(item);
+          }
+          //console.log("Invoking operation " + opName + " on " + mbean);
+          queries.push({type: "exec", operation: opName, mbean: mbean});
         }
       });
       if (queries.length) {
