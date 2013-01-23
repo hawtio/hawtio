@@ -33,12 +33,17 @@ module Camel {
                   folder.domain = domainName;
                   folder.objectName = contextNode.objectName;
                   folder.entries = contextNode.entries;
+                  folder.typeName = contextNode.typeName;
+                  folder.key = contextNode.key;
                   if (routesNode) {
                     var routesFolder = new Folder("Routes");
                     routesFolder.addClass = "camel-route-folder";
                     routesFolder.children = routesNode.children;
                     angular.forEach(routesFolder.children, (n) => n.addClass = "camel-route");
                     folder.children.push(routesFolder);
+                    routesFolder.typeName = "routes";
+                    routesFolder.key = routesNode.key;
+                    routesFolder.domain = routesNode.domain;
                   }
                   if (endpointsNode) {
                     var endpointsFolder = new Folder("Endpoints");
@@ -46,6 +51,9 @@ module Camel {
                     endpointsFolder.children = endpointsNode.children;
                     angular.forEach(endpointsFolder.children, (n) => n.addClass = "camel-endpoint");
                     folder.children.push(endpointsFolder);
+                    endpointsFolder.typeName = "endpoints";
+                    endpointsFolder.key = endpointsNode.key;
+                    endpointsFolder.domain = endpointsNode.domain;
                   }
                   var jmxNode = new Folder("Services");
 

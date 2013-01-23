@@ -2,6 +2,9 @@ module Camel {
   var pluginName = 'camel';
   var jmxDomain = 'org.apache.camel';
 
+  var routeToolBar = "app/camel/html/attributeToolBarRoutes.html";
+  var contextToolBar = "app/camel/html/attributeToolBarContext.html";
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
@@ -14,14 +17,17 @@ module Camel {
           run((workspace:Workspace) => {
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
+              // TODO there should be a nicer way to do this!
+              var typeName = selection.typeName;
+              if (typeName) {
+                if (typeName.startsWith("context")) return contextToolBar;
+                if (typeName.startsWith("route")) return routeToolBar;
+              }
               var folderNames = selection.folderNames;
               if (folderNames && selection.domain === jmxDomain) {
                 var last = folderNames.last();
-                if ("routes" === last) {
-                  return "app/camel/html/attributeToolBarRoutes.html";
-                } else if ("context" === last) {
-                  return "app/camel/html/attributeToolBarContext.html";
-                }
+                if ("routes" === last)  return routeToolBar;
+                if ("context" === last)  return contextToolBar;
               }
               return null;
             });
