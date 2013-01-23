@@ -1,14 +1,5 @@
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
-// the paths into the mbean tree which we should ignore doing a folder view
-// due to the huge size involved!
-var ignoreDetailsOnBigFolders = [
-  [
-    ['java.lang'],
-    ['MemoryPool', 'GarbageCollector']
-  ]
-];
-
 var _urlPrefix: string = null;
 
 var numberTypeNames = {
@@ -99,10 +90,6 @@ function toSearchArgumentArray(value): string[] {
     if (angular.isString(value)) return value.split(',');
   }
   return [];
-}
-
-function ignoreFolderDetails(node) {
-  return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
 }
 
 function folderMatchesPatterns(node, patterns) {

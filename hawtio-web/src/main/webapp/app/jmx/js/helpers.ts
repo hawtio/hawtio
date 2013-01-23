@@ -31,6 +31,19 @@ module Jmx {
     }
   }
 
+  export function getUniqueTypeNames(children) {
+    var typeNameMap = {};
+    angular.forEach(children, (mbean) => {
+      var typeName = mbean.typeName;
+      if (typeName) {
+        typeNameMap[typeName] = mbean;
+      }
+    });
+    // only query if all the typenames are the same
+    var typeNames = Object.keys(typeNameMap);
+    return typeNames;
+  }
+
   export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children, redraw = false) {
     //$scope.workspace = workspace;
 

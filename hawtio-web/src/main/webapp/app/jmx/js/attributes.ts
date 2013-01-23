@@ -1,7 +1,8 @@
+
 module Jmx {
 
   export var propertiesColumnDefs = [
-            {field: 'name', displayName: 'Property' /*, width: "20%"*/},
+    {field: 'name', displayName: 'Property' /*, width: "20%"*/},
             {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
           ];
 
@@ -45,25 +46,25 @@ module Jmx {
         if (children) {
           var childNodes = children.map((child) => child.objectName);
           var mbeans = childNodes.filter((mbean) => mbean);
+          if (mbeans) {
+            var typeNames = Jmx.getUniqueTypeNames(children);
+            if (typeNames.length <= 1) {
+              var query = mbeans.map((mbean) => {
+                return { type: "READ", mbean: mbean, ignoreErrors: true};
+              });
+              if (query.length === 1) {
+                request = query[0];
+              } else if (query.length > 1) {
+                request = query;
 
-          // lets filter out the collections of collections; so only have collections of mbeans
-          //if (mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
-
-          // TODO filter out collections which have different kinds of mbeans?
-          if (mbeans && !ignoreFolderDetails(node)) {
-            var query = mbeans.map((mbean) => {
-              return { type: "READ", mbean: mbean, ignoreErrors: true};
-            });
-            if (query.length === 1) {
-              request = query[0];
-            } else if (query.length > 1) {
-              request = query;
-
-              // deal with multiple results
-              $scope.mbeanIndex = {};
-              $scope.mbeanRowCounter = 0;
-              $scope.mbeanCount = mbeans.length;
-              $scope.columnDefs = [];
+                // deal with multiple results
+                $scope.mbeanIndex = {};
+                $scope.mbeanRowCounter = 0;
+                $scope.mbeanCount = mbeans.length;
+                $scope.columnDefs = [];
+              }
+            } else {
+              console.log("Too many type names " + typeNames);
             }
           }
         }

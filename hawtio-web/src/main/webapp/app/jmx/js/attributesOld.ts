@@ -63,8 +63,9 @@ module Jmx {
             var mbeans = childNodes.filter((mbean) => mbean);
             //console.log("Found mbeans: " + mbeans + " child nodes " + childNodes.length + " child mbeans " + mbeans.length);
 
-            // lets filter out the collections of collections; so only have collections of mbeans
-            if (mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
+            // lets filter out folders with different kind of typed children
+            var typeNames = Jmx.getUniqueTypeNames(children);
+            if (mbeans && typeNames.length <= 1) {
               query = mbeans.map((mbean) => asQuery(mbean));
               if (query.length === 1) {
                 query = query[0];
