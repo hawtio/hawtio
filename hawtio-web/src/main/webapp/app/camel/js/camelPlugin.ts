@@ -1,5 +1,7 @@
 module Camel {
   var pluginName = 'camel';
+  var jmxDomain = 'org.apache.camel';
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
@@ -11,10 +13,40 @@ module Camel {
           }).
           run((workspace:Workspace) => {
 
+            // register default attribute views
+            var attributes = workspace.attributeColumnDefs;
+            attributes[jmxDomain + "/consumers/folder"] = [
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
+              {field: 'EndpointUri', displayName: 'Endpoint URI'},
+              {field: 'State', displayName: 'State'},
+              {field: 'Suspended', displayName: 'Suspended'},
+              {field: 'InflightExchanges', displayName: 'Inflight #'}
+            ];
+            attributes[jmxDomain + "/processors/folder"] = [
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
+              {field: 'ProcessorId', displayName: 'Processor'},
+              {field: 'State', displayName: 'State'},
+              {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time'},
+              {field: 'MinProcessingTime', displayName: 'Min Time'},
+              {field: 'MaxProcessingTime', displayName: 'Max Time'}
+            ];
+            attributes[jmxDomain + "/routes/folder"] = [
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
+              {field: 'State', displayName: 'State'},
+              {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'}
+            ];
             workspace.topLevelTabs.push({
               content: "Integration",
               title: "Manage your Apache Camel integration patterns",
-              isValid: () => workspace.treeContainsDomainAndProperties('org.apache.camel'),
+              isValid: () => workspace.treeContainsDomainAndProperties(jmxDomain),
               href: () => "#/jmx/attributes?tab=integration",
               isActive: () => workspace.isTopTabActive("integration")
             });
