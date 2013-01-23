@@ -3,10 +3,8 @@ module Fabric {
 
   export function ContainersController($scope, workspace, jolokia) {
     
-    $scope.search = "";
-    
-    $scope.profile = "";
-    $scope.version = "";
+    $scope.profile = empty();
+    $scope.version = empty();
     
     // caches last jolokia result
     $scope.result = [];
@@ -20,28 +18,71 @@ module Fabric {
     // selected containers
     $scope.selectedContainers = [];
 
-    $scope.afterContainerSelectionChange = (rowItem, event) => {
-      console.log($scope);
-      $scope.selectedProfiles = [];
-      var tmp = [];
-      angular.forEach($scope.selectedContainers, function(value, key) {
-        value.profileIds.forEach(function(profile) {
-          $scope.profiles.forEach(function(p) {
-            if (p.id === profile) {
-              p.__ng_selected__ = true;
-            }
-          })
+
+    var SearchProvider = function(scope) {
+      var self = this;
+      self.scope = scope;
+      
+      self.init = function(childScope, grid) {
+        
+        self.grid = grid;
+        self.childScope = childScope;
+        
+        grid.searchProvider = self;
+
+        self.scope.$watch('profile', function(newValue, oldValue) {
+          if (newValue === oldValue) {
+            return;
+          }
+          if (newValue.id === oldValue.id) {
+            return;
+          }
+          self.evalFilter();
         });
-      });
+        
+        self.scope.$watch('version', function(newValue, oldValue) {
+          if (newValue === oldValue) {
+            return;
+          }
+          if (newValue.id === oldValue.id) {
+            return;
+          }
+          self.scope.profiles = activeProfilesForVersion(self.scope.version.id, self.scope.containers);
+          self.scope.profile = setSelect(self.scope.profile, self.scope.profiles);
+          self.evalFilter();
+        });
+        
+      };
+      
+      self.evalFilter = function() {
+
+        var byVersion = self.grid.sortedData;
+        if (self.scope.version.id !== "" ) {
+          byVersion = self.grid.sortedData.findAll(function(item) { return item.version === self.scope.version.id });
+        }
+
+        var byProfile = byVersion;
+        
+        if (self.scope.profile.id !== "" ) {
+          byProfile = byVersion.findAll(function(item) { return item.profileIds.findIndex(function(id) { return id === self.scope.profile.id }) !== -1 });
+        }
+        
+        self.grid.filteredData = byProfile;
+        self.grid.rowFactory.filteredDataChanged();
+      };
+      
     }
     
+    var searchProvider = new SearchProvider($scope);
+    
     $scope.containerOptions = {
+      plugins: [searchProvider],
       data: 'containers',
       showFilter: false,
+      showColumnMenu: false,
       filterOptions: {
-        filterText: 'search'
+        useExternalFilter: true
       },
-      afterSelectionChange: $scope.afterContainerSelectionChange,
       selectedItems: $scope.selectedContainers,
       rowHeight: 41,
       selectWithCheckboxOnly: true,
@@ -88,29 +129,54 @@ module Fabric {
       arguments: []
     }, onSuccess(render));
     
+    function empty() {
+      return [{id: ""}];
+    }
+    
+    function activeProfilesForVersion(version, containers) {
+      if (version === "") {
+        return activeProfiles(containers);
+      }
+      var answer = empty();
+      containers.findAll(function(container) { return container.version === version }).forEach(function(container) {
+        answer = answer.union(container.profileIds.map(function(id) { return {id: id}; }));
+      });
+      return answer;
+    }
+    
+    function activeProfiles(containers) {
+      var answer = empty();
+      containers.forEach(function (container) { answer = answer.union(container.profileIds.map( function(id) { return { id: id }}))});
+      return answer;
+    }
+    
+    function setSelect(selection, group) {
+      if (!angular.isDefined(selection)) {
+        return group[0];
+      }
+      var answer = group.findIndex( function(item) { return item.id === selection.id } );
+      if (answer !== -1) {
+        return group[answer];
+      } else {
+        return group[0];
+      }
+    }
+    
     function render(response) {
       if (!Object.equal($scope.result, response.value)) {
 
         $scope.result = response.value;
         
         $scope.containers = [];
-        $scope.profiles = [{
-          id: ""
-        }];
-        
-        $scope.versions = [{
-          id: ""
-        }];
-        
-        var tmp_profiles = [];
-        var tmp_versions = [];
+        $scope.profiles = empty();
+        $scope.versions = empty();
         
         $scope.result.forEach(function (container) {
           
           var services = getServiceList(container);
           
-          tmp_profiles = tmp_profiles.union(container.profileIds);
-          tmp_versions = tmp_versions.union([container.versionId]);
+          $scope.profiles = $scope.profiles.union(container.profileIds.map(function(id) { return {id: id}; }));
+          $scope.versions = $scope.versions.union([{ id: container.versionId }]);
           
           $scope.containers.push({
             name: container.id,
@@ -122,18 +188,9 @@ module Fabric {
           });
         });
         
-        tmp_profiles.forEach(function(profile) {
-          $scope.profiles.push({
-            id: profile
-          });
-        });
-        
-        tmp_versions.forEach(function(version) {
-          $scope.versions.push({
-            id: version
-          })
-        });
-        
+        $scope.profile = setSelect($scope.profile, $scope.profiles);
+        $scope.version = setSelect($scope.version, $scope.versions);        
+  
         $scope.$apply();
       }
     }
@@ -144,7 +201,7 @@ module Fabric {
     }
     
     $scope.stop = () => {
-      $scope.selected.forEach(function (container) {
+      $scope.selectedContainers.forEach(function (container) {
         $scope.stopContainer(container.name);
       });
     }
@@ -155,7 +212,7 @@ module Fabric {
     }
 
     $scope.delete = () => {
-      $scope.selected.forEach(function (container) {
+      $scope.selectedContainers.forEach(function (container) {
         $scope.deleteContainer(container.name);
       });
     }
@@ -166,7 +223,7 @@ module Fabric {
     }
 
     $scope.start = () => {
-      $scope.selected.forEach(function (container) {
+      $scope.selectedContainers.forEach(function (container) {
         $scope.startContainer(container.name);
       });
     }
