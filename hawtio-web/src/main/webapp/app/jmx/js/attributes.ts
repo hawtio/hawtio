@@ -6,7 +6,7 @@ module Jmx {
           ];
 
   export function AttributesController($scope, workspace:Workspace, jolokia) {
-    $scope.filterText = "";
+    $scope.searchText = "";
     $scope.columnDefs = [];
     $scope.selectedItems = [];
     $scope.selectCheckBox = true;
@@ -208,8 +208,10 @@ module Jmx {
     function setSelectable(flag) {
       // TODO is there a way to update ng-grid to hide the selection checkbox
       // if we decide we don't want it?
+/*
       $scope.gridOptions.displaySelectionCheckbox = flag;
       $scope.gridOptions.canSelectRows = flag;
+*/
     }
 
     function includePropertyValue(key: string, value) {
