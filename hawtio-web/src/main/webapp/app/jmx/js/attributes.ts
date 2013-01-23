@@ -198,7 +198,6 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        console.log("Selectable items size " + $scope.selectedItems.length);
         setSelectable(false);
 
         $scope.$apply();
