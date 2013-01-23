@@ -9,6 +9,7 @@ module Jmx {
     $scope.filterText = "";
     $scope.columnDefs = [];
     $scope.selectedItems = [];
+    $scope.selectCheckBox = true;
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       showFilter: false,
@@ -76,8 +77,10 @@ module Jmx {
       if (mbean) {
         request = { type: 'read', mbean: mbean };
         $scope.columnDefs = propertiesColumnDefs;
+        setSelectable(false);
       } else if (node) {
         $scope.columnDefs = null;
+        setSelectable(true);
         // lets query each child's details
         var children = node.children;
         if (children) {
@@ -119,11 +122,15 @@ module Jmx {
     function render(response) {
       var data = response.value;
       var mbeanIndex = $scope.mbeanIndex;
-      if (mbeanIndex) {
-        var mbean = response.request.mbean;
-        if (mbean) {
+      var mbean = response.request.mbean;
+      if (mbean) {
           // lets store the mbean in the row for later
           data["_id"] = mbean;
+      }
+      if (mbeanIndex) {
+        setSelectable(true);
+        if (mbean) {
+
           var idx = mbeanIndex[mbean];
           if (!angular.isDefined(idx)) {
             idx = $scope.mbeanRowCounter;
@@ -179,9 +186,7 @@ module Jmx {
           console.log("No mbean name in request " + JSON.stringify(response.request));
         }
       } else {
-        if (!$scope.columnDefs || !$scope.columnDefs.length) {
-          $scope.columnDefs = propertiesColumnDefs;
-        }
+        $scope.columnDefs = propertiesColumnDefs;
         if (angular.isObject(data)) {
           var properties = [];
           angular.forEach(data, (value, key) => {
@@ -189,11 +194,22 @@ module Jmx {
               properties.push({name: humanizeValue(key), value: value});
             }
           });
+          $scope.selectedItems = [data];
           data = properties;
         }
         $scope.gridData = data;
+        console.log("Selectable items size " + $scope.selectedItems.length);
+        setSelectable(false);
+
         $scope.$apply();
       }
+    }
+
+    function setSelectable(flag) {
+      // TODO is there a way to update ng-grid to hide the selection checkbox
+      // if we decide we don't want it?
+      $scope.gridOptions.displaySelectionCheckbox = flag;
+      $scope.gridOptions.canSelectRows = flag;
     }
 
     function includePropertyValue(key: string, value) {

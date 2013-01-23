@@ -1,6 +1,6 @@
 module Camel {
 
-  export function AttributesToolBarRoutesController($scope, workspace:Workspace, jolokia) {
+  export function AttributesToolBarController($scope, workspace:Workspace, jolokia) {
 
     $scope.start = () => {
       $scope.invokeSelectedMBeans((item) => {
@@ -27,11 +27,11 @@ module Camel {
     $scope.anySelectionHasState = (state) => {
       var selected = $scope.selectedItems || [];
       return selected.length && selected.any((s) => isState(s, state));
-    }
+    };
 
     $scope.everySelectionHasState = (state) => {
       var selected = $scope.selectedItems || [];
       return selected.length && selected.every((s) => isState(s, state));
-    }
+    };
   }
 }

@@ -19,6 +19,8 @@ module Camel {
                 var last = folderNames.last();
                 if ("routes" === last) {
                   return "app/camel/html/attributesToolBarRoutes.html";
+                } else if ("context" === last) {
+                  return "app/camel/html/attributesToolBarContext.html";
                 }
               }
               return null;
