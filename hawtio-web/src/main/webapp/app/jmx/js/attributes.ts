@@ -1,5 +1,10 @@
 module Jmx {
 
+  export var propertiesColumnDefs = [
+            {field: 'name', displayName: 'Property' /*, width: "20%"*/},
+            {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
+          ];
+
   export function AttributesController($scope, workspace:Workspace, jolokia) {
     $scope.filterText = "";
     $scope.columnDefs = [];
@@ -33,10 +38,7 @@ module Jmx {
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
-        $scope.columnDefs = [
-          {field: 'name', displayName: 'Property' /*, width: "20%"*/},
-          {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
-        ];
+        $scope.columnDefs = propertiesColumnDefs;
       } else if (node) {
         // lets query each child's details
         var children = node.children;
@@ -135,6 +137,9 @@ module Jmx {
           console.log("No mbean name in request " + JSON.stringify(response.request));
         }
       } else {
+        if (!$scope.columnDefs || !$scope.columnDefs.length) {
+          $scope.columnDefs = propertiesColumnDefs;
+        }
         if (angular.isObject(data)) {
           var properties = [];
           angular.forEach(data, (value, key) => {
