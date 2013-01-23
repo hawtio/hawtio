@@ -10,7 +10,12 @@ module Camel {
     };
 
     $scope.delete = () => {
-      console.log("Deleting the selected routes!");
+      $scope.invokeSelectedMBeans("remove()", () => {
+        // force a reload of the tree
+        console.log("About to force reload of the tree");
+        $scope.workspace.operationCounter += 1;
+        $scope.$apply();
+      });
     };
 
     $scope.selectionsState = (state) => {

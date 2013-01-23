@@ -30,7 +30,6 @@ module Jmx {
     });
 
     function operationComplete() {
-      console.log("Completed operation!");
       updateTableContents();
     }
 
@@ -42,7 +41,7 @@ module Jmx {
       return Jmx.getAttributeToolBar(workspace.selection);
     };
 
-    $scope.invokeSelectedMBeans = (operationName) => {
+    $scope.invokeSelectedMBeans = (operationName, completeFunction: () => any = null) => {
       var queries = [];
       angular.forEach($scope.selectedItems || [], (item) => {
         var mbean = item["_id"];
@@ -51,7 +50,14 @@ module Jmx {
         }
       });
       if (queries.length) {
-        jolokia.request(queries, onSuccess(operationComplete));
+        var callback = () => {
+          if (completeFunction) {
+            completeFunction();
+          } else {
+            operationComplete();
+          }
+        };
+        jolokia.request(queries, onSuccess(callback));
       }
     };
 
@@ -66,6 +72,7 @@ module Jmx {
         request = { type: 'read', mbean: mbean };
         $scope.columnDefs = propertiesColumnDefs;
       } else if (node) {
+        $scope.columnDefs = null;
         // lets query each child's details
         var children = node.children;
         if (children) {
@@ -98,6 +105,8 @@ module Jmx {
       var callback = onSuccess(render);
       if (request) {
         $scope.request = request;
+        // lets clear any previous queries
+        Core.unregister(jolokia, $scope);
         Core.register(jolokia, $scope, request, callback);
       }
     }

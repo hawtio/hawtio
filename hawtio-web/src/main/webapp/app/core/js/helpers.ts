@@ -278,8 +278,9 @@ if (!Object.keys) {
   };
 }
 
+
 module Core {
-  
+
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
     angular.forEach(hash, function (value, key) {
@@ -297,12 +298,7 @@ module Core {
       scope.$jhandle = [];
     }
     scope.$on('$destroy', function (event) {
-      if (angular.isDefined(scope.$jhandle)) {
-        scope.$jhandle.forEach(function (handle) {
-          jolokia.unregister(handle);
-        });
-        delete scope.$jhandle;
-      }
+      unregister(jolokia, scope);
     });
     if (angular.isArray(arguments)) {
       if (arguments.length >= 1) {
@@ -321,6 +317,15 @@ module Core {
       var handle = jolokia.register(callback, arguments);
       scope.$jhandle.push(handle);
       jolokia.request(arguments, callback);
+    }
+  }
+
+  export function unregister(jolokia, scope) {
+    if (angular.isDefined(scope.$jhandle)) {
+      scope.$jhandle.forEach(function (handle) {
+        jolokia.unregister(handle);
+      });
+      delete scope.$jhandle;
     }
   }
 }
