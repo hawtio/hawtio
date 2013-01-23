@@ -18,9 +18,9 @@ module Camel {
               if (folderNames && selection.domain === jmxDomain) {
                 var last = folderNames.last();
                 if ("routes" === last) {
-                  return "app/camel/html/attributesToolBarRoutes.html";
+                  return "app/camel/html/attributeToolBarRoutes.html";
                 } else if ("context" === last) {
-                  return "app/camel/html/attributesToolBarContext.html";
+                  return "app/camel/html/attributeToolBarContext.html";
                 }
               }
               return null;

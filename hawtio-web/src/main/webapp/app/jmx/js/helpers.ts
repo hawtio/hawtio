@@ -21,7 +21,7 @@ module Jmx {
   /**
    * Try find a custom toolbar HTML template for the given selection or returns the default value
    */
-  export function getAttributeToolBar(node: NodeSelection, defaultValue: string = "app/jmx/html/attributesToolBar.html") {
+  export function getAttributeToolBar(node: NodeSelection, defaultValue: string = "app/jmx/html/attributeToolBar.html") {
     var answer = null;
     var jmxDomain = (node) ? node.domain : null;
     if (jmxDomain) {
