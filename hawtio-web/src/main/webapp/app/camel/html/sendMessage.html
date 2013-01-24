@@ -1,12 +1,12 @@
 <form class="form-horizontal">
   <div class="control-group">
-    <button id="sendButton" type="submit" class="btn btn-info pull-left" ng-click="sendMessage(message)">Send Message</button>
+    <button id="sendButton" type="submit" class="btn btn-info pull-left" ng-click="sendMessage()">Send Message</button>
 
     <div class="pull-right">
       <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">message format</label>
 
       <div class="controls">
-        <select ng-model="sourceFormat" id="sourceFormat">
+        <select ng-model="codeMirrorOptions.mode.name" id="sourceFormat">
           <option value="javascript">JSON</option>
           <option value="text">Plain Text</option>
           <option value="properties">Properties</option>
@@ -19,6 +19,6 @@
     </div>
   </div>
   <div class="control-group">
-    <textarea id="messageBody" name="messageBody" class="input-xlarge span12 scrollable" rows="1000" ng-model="message" placeholder="Text message body"></textarea>
+      <textarea ui-codemirror="codeMirrorOptions" ng-model="message">/textarea>
   </div>
 </form>

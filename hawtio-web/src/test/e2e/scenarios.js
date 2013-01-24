@@ -21,6 +21,29 @@ describe('home page', function() {
 });
 */
 
+describe('Using the Code Editor', function() {
+
+    // I couldn't get tests to run correctly...
+    describe('Remembering Preferences', function() {
+        beforeEach(function() {
+            browser().navigateTo('/hawtio/#/activemq/sendMessage?tab=messaging&nid=root_org.apache.activemq_broker1_Queue_browse.me');
+        });
+
+        it('should remember the mode preferences', function() {
+           // Select XML from list
+            select('codeMirrorOptions.mode').option('xml');
+
+            // Refresh the page
+            browser().reload();
+
+            // Expect it to be still be XML
+            expect(input('codeMirrorOptions.mode').val()).toEqual("XML");
+        });
+
+    })
+});
+
+// Commented out be cause I couldn't find out how to ignore tests in jasmine -.-
 describe('create queue, send message and browse it', function() {
   var timeout = 1;
   var bigTimeout = 2;
@@ -62,12 +85,11 @@ describe('create queue, send message and browse it', function() {
         selectedElements.trigger('change');
         done();
     });
-/*
     input("message").enter(messageBody);
     element(".CodeMirror-lines pre:last-of-type").click();
     element("textarea#messageBody").val(messageBody);
-*/
-/*
+
+
     var viewElement = angular.element(element("#properties"));
     if (viewElement) {
       console.log("Found view element");
@@ -76,7 +98,6 @@ describe('create queue, send message and browse it', function() {
         scope.$apply();
       }
     }
-*/
 
     sleep(timeout);
 
