@@ -2,10 +2,15 @@ module Jmx {
 
   export var propertiesColumnDefs = [
     {field: 'name', displayName: 'Property' /*, width: "20%"*/},
-            {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
-          ];
+    {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
+  ];
 
-  export function AttributesController($scope, workspace:Workspace, jolokia) {
+  export var foldersColumnDefs = [{
+      displayName: 'Name',
+      cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
+    }];
+
+  export function AttributesController($scope, $location, workspace:Workspace, jolokia) {
     $scope.searchText = "";
     $scope.columnDefs = [];
     $scope.selectedItems = [];
@@ -67,6 +72,31 @@ module Jmx {
       }
     };
 
+    $scope.folderHref = (row) => {
+      var key = row.getProperty("key");
+/*
+      var href = $location.search("nid", key).toString();
+*/
+      if (key) {
+        return "#" + $location.path() + "?nid=" + key;
+      } else {
+        return "";
+      }
+    };
+
+    $scope.folderIconClass = (row) => {
+      // TODO lets ignore the classes property for now
+      // as we don't have an easy way to know if there is an icon defined for an icon or not
+      // and we want to make sure there always is an icon shown
+/*
+      var classes = (row.getProperty("addClass") || "").trim();
+      if (classes) {
+        return classes;
+      }
+*/
+      return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
+    };
+
     function updateTableContents() {
       $scope.gridData = [];
       $scope.mbeanIndex = null;
@@ -116,6 +146,9 @@ module Jmx {
         // lets clear any previous queries
         Core.unregister(jolokia, $scope);
         Core.register(jolokia, $scope, request, callback);
+      } else if (node) {
+        $scope.columnDefs = foldersColumnDefs;
+        $scope.gridData = node.children;
       }
     }
 
