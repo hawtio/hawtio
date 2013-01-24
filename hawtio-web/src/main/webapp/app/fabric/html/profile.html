@@ -1,18 +1,21 @@
-<table>
-  <tr>
-    <td>
-      <h2>{{row.id}}</h2>
-    </td>
-    <td>
-      <a class="pull-right" href="#/fabric/containers?p={{row.id}}">
-        <ng-pluralize count="row.containerCount"
-                      when="{'0': 'No containers running',
-                             'one': '1 container is running',
-                             'other': '{} containers are running'}">
-        </ng-pluralize>
-      </a>
-    </td>
-  </tr>
-</table>
 
-<div ng-include src="'app/fabric/html/profile-details.html'"></div>
+<div class="row-fluid">
+  <div class="pull-left">
+    <h2 style="display: inline;">Version: <a ng-href="#/fabric/profiles?pv={{versionId}}">{{versionId}}</a> / Profile: {{row.id}}</h2>
+    &nbsp;
+    <a href="#/fabric/containers?cv={{versionId}}&cp={{row.id}}">
+      <ng-pluralize count="row.containerCount"
+                    when="{'0': 'No containers running',
+                           'one': '1 container is running',
+                           'other': '{} containers are running'}">
+      </ng-pluralize>
+    </a>
+  </div>
+  <div class="pull-right">
+    
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div ng-include src="'app/fabric/html/profile-details.html'"></div>
+</div>

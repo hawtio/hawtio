@@ -107,12 +107,12 @@ module Fabric {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="#/fabric/container/{{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a href="#/fabric/container/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
         },
         {
           field: 'version',
           displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a href="#/fabric/profiles?v={{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a href="#/fabric/profiles?pv={{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
         },
         {
           field: 'services',
