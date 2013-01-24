@@ -1,5 +1,5 @@
 module Core {
-  // TODO Export as a service
+
   export function d3ForceGraph(scope, nodes, links, canvasSelector = "#canvas") {
     // lets remove the old graph first
     if (scope.graphForce) {

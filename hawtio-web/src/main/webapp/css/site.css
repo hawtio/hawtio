@@ -141,15 +141,14 @@ html, body {
 }
 */
 
+/** TODO Write our own 'hawtio' codemirror style, so we can change this in preferences dynamically! :) */
 /** Code formatting */
+
 .CodeMirror {
   border: 1px solid #eee;
 }
 td {
   padding-right: 20px;
-}
-.CodeMirror-scroll {
-    height: auto;
 }
 
 /** Table details view */

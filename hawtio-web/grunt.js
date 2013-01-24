@@ -13,7 +13,7 @@ module.exports = function (grunt) {
   if (!port) {
     port = 8181;
   }
-  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/app/**/*.ts'];
+  var appFiles = ['src/main/d.ts/**/*.ts', 'src/main/webapp/app/**/*.ts'];
   grunt.initConfig({
     test:{
       files:['src/test/js/**/*.js']

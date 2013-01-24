@@ -22,8 +22,7 @@
   </div>
 
   <div ng-controller="Core.EditorController">
-    <textarea readonly class="messageDetail" codeMirror="true" class="input-xlarge" rows="{{lineCount(row.Text)}}"
-              ng-model="row.Text"></textarea>
+      <textarea ui-codemirror="codeMirrorOptions" class="messageDetail" ng-model="row.Text" class="input-xlarge" rows="{{lineCount(row.Text)}}"></textarea>
   </div>
 </script>
 

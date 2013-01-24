@@ -1,46 +1,46 @@
 module Camel {
     export function SendMessageController($scope, workspace:Workspace) {
-      var languageFormatPreference = "defaultLanguageFormat";
-      $scope.workspace = workspace;
-      $scope.sourceFormat = workspace.getLocalStorage(languageFormatPreference) || "javascript";
+      var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
+      var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
+      $scope.message = "Enter your message to send.";
+      // TODO Remove this if possible
+      $scope.codeMirror = undefined;
+      var options = {
+        mode: {
+            name: sourceFormat
+        },
+        // Quick hack to get the codeMirror instance.
+        onChange: function(codeMirror) {
+          if(!$scope.codeMirror) {
+            $scope.codeMirror = codeMirror;
+          }
+        }
+      };
+      $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
-      var textArea = $("#messageBody").first()[0];
-      if (textArea) {
-        var options:any = {};
-        var editorSettings = createEditorSettings(workspace, $scope.format, options);
-        $scope.codeMirror = CodeMirror.fromTextArea(textArea, editorSettings);
-      }
-
+      // TODO Find out what this does
       $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid();
       });
 
-      $scope.$watch('sourceFormat', function () {
-        var format = $scope.sourceFormat;
-        var workspace = $scope.workspace;
-        if (format && workspace) {
-          workspace.setLocalStorage(languageFormatPreference, format);
-        }
-        var editor = $scope.codeMirror;
-        if (editor) {
-          editor.setOption("mode", format);
-        }
+      /** save the sourceFormat in preferences for later
+       * Note, this would be controller specific preferences and not the global, overriding, preferences */
+      // TODO Use ng-selected="changeSourceFormat()" - Although it seemed to fire multiple times..
+      $scope.$watch('codeMirrorOptions.mode.name', function(newValue, oldValue) {
+        workspace.setLocalStorage(LANGUAGE_FORMAT_PREFERENCE, newValue)
       });
 
       var sendWorked = () => {
-        $scope.codeMirror.setValue("");
+        $scope.message = "";
         notification("success", "Message sent!");
       };
 
       $scope.autoFormat = () => {
-        autoFormatEditor($scope.codeMirror);
+        CodeEditor.autoFormatEditor($scope.codeMirror);
       };
 
-      $scope.sendMessage = (body) => {
-        var editor = $scope.codeMirror;
-        if (editor && !body) {
-          body = editor.getValue();
-        }
+      $scope.sendMessage = () => {
+        var body = $scope.message;
         var selection = workspace.selection;
         if (selection) {
           var mbean = selection.objectName;
