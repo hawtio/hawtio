@@ -60,9 +60,11 @@ class Workspace {
    */
   public isLinkActive(href:string):bool {
     // lets trim the leading slash
-    var pathName = (this.$location.path() || '/').substring(1);
+    var pathName = Core.trimLeading((this.$location.path() || '/'), "#");
+    pathName = Core.trimLeading(pathName, "/");
+
     var link = Core.trimLeading(href, "#");
-    link = Core.trimLeading(href, "/");
+    link = Core.trimLeading(link, "/");
     // strip any query arguments
     var idx = link.indexOf('?');
     if (idx >= 0) {
