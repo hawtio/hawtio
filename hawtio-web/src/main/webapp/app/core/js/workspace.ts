@@ -12,12 +12,18 @@ class Workspace {
   public selection:NodeSelection;
   public tree = null;
   public mbeanTypesToDomain = {};
+  public mbeanServicesToDomain = {};
+  public attributeColumnDefs = {};
   public topLevelTabs = [];
   public subLevelTabs = [];
 
   uriValidations = null;
 
-  constructor(public jolokia, public $location:ng.ILocationService, public $compile:ng.ICompileService, public $templateCache:ng.ITemplateCacheService, public localStorage:WindowLocalStorage) {
+  constructor(public jolokia, 
+              public $location:ng.ILocationService, 
+              public $compile:ng.ICompileService, 
+              public $templateCache:ng.ITemplateCacheService, 
+              public localStorage:WindowLocalStorage) {
 
     // TODO Is there a way to remove this logic from here?
     this.uriValidations = {
@@ -101,6 +107,32 @@ class Workspace {
    * Returns true if the path is valid for the current selection
    */
   public validSelection(uri:string) {
+    var filter = (t) => {
+      var fn = t.href;
+      if (fn) {
+        var href = fn();
+        if (href) {
+          if (href.startsWith("#/")) {
+            href = href.substring(2);
+          }
+          return href === uri;
+        }
+      }
+      return false;
+    };
+    var tab = this.subLevelTabs.find(filter);
+    if (!tab) {
+      tab = this.topLevelTabs.find(filter);
+    }
+    if (tab) {
+      //console.log("Found tab " + JSON.stringify(tab));
+      var validFn = tab.isValid;
+      return !validFn || validFn();
+    } else {
+      console.log("Could not find tab for " + uri);
+      return false;
+    }
+/*
     var value = this.uriValidations[uri];
     if (value) {
       if (angular.isFunction(value)) {
@@ -108,6 +140,7 @@ class Workspace {
       }
     }
     return true;
+*/
   }
 
   /**
@@ -115,15 +148,24 @@ class Workspace {
    * for example based on the domain and the node type
    */
   public selectionViewConfigKey():string {
+    return this.selectionConfigKey("view/");
+  }
+
+  /**
+   * Returns a configuration key for a node which is usually of the form
+   * domain/typeName or for folders with no type, domain/name/folder
+   */
+  public selectionConfigKey(prefix: string = ""):string {
     var key = null;
     var selection = this.selection;
     if (selection) {
       // lets make a unique string for the kind of select
-      key = "view/" + selection.domain;
+      key = prefix + selection.domain;
       var typeName = selection.typeName;
-      if (typeName) {
-        key += "/" + typeName;
+      if (!typeName) {
+        typeName = selection.title;
       }
+      key += "/" + typeName;
       if (selection.isFolder()) {
         key += "/folder";
       }
@@ -140,18 +182,25 @@ class Workspace {
         this.setLocalStorage(key, uri);
         return false;
       } else {
+        console.log("the uri '" + uri + "' is not valid for this selection");
         // lets look up the previous preferred value for this type
         var defaultPath = this.getLocalStorage(key);
+        if (!defaultPath || !this.validSelection(defaultPath)) {
+          // lets find the first path we can find which is valid
+          defaultPath = null;
+          angular.forEach(this.subLevelTabs, (tab) => {
+            var fn = tab.isValid;
+            if (!defaultPath && tab.href && fn && fn()) {
+              defaultPath = tab.href();
+            }
+          });
+        }
         if (!defaultPath) {
-          defaultPath = "jmx/attributes";
-
-          /*
-          TODO should we have plugin specific defaults based on the folder??
-
-          if (this.isActiveMQFolder()) {
-            defaultPath = "activemq/status";
-          }
-          */
+          defaultPath = "#/jmx/help";
+        }
+        console.log("moving the URL to be " + defaultPath);
+        if (defaultPath.startsWith("#")) {
+          defaultPath = defaultPath.substring(1);
         }
         this.$location.path(defaultPath);
         return true;
@@ -307,5 +356,9 @@ class Workspace {
   isOsgiFolder() {
     return this.hasDomainAndProperties('osgi.core');
   }
+
+    isOsgiCompendiumFolder() {
+        return this.hasDomainAndProperties('osgi.compendium');
+    }
 }
 

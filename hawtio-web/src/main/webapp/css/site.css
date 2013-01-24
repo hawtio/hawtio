@@ -196,7 +196,7 @@ span.dynatree-expander {
     color: #728271;
 }
 span.dynatree-icon {
-    color: #B55242;
+    color: #EECA7C;
 }
 
 /** table hover and nested divs */
@@ -230,4 +230,29 @@ ul.inline > li, ol.inline > li {
 .tab {
     display: block;
     margin-left: 1em;
+}
+
+/*style.css*/
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+
+    /* TODO REMOVE ASAP and use a floating layout instead */
+    height: 600px;
+}
+
+.red {
+  color: #ff0000;
+}
+
+.green {
+  color: #00ff00;
+}
+
+.icon1point5x {
+  font-size: 1.5em;
+}
+
+.centered {
+  margin-left: auto;
+  margin-right: auto;
 }

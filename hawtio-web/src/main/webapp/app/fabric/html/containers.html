@@ -1,28 +1,36 @@
-<script type="text/ng-template" id="fabricContainerTemplate">
-  <div ng-include src="'app/fabric/html/container-details.html'"></div>
-</script>
+<div class="row-fluid">
+  <div class="pull-left">
+    <form class="form-inline">
+      <fieldset>
+        <div class="btn-group">
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+        </div>
+        &nbsp;
+        <label for="versions">Versions: </label>
+        <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+        &nbsp;
+        <label for="profiles">Profiles: </label>
+        <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
+      </fieldset>
+    </form>
+  </div>
+    
+  <div class="pull-right">
+    <!--
+  
+    <form class="form-inline">
+      <fieldset>
+        <label for="search" title="Filter Table">Search: </label>
+        <input id="search" type="text" ng-model="search">
+      </fieldset>
+    </form>
+    
+    -->
+  </div>
+</div>
 
-<table class="pull-left controls">
-  <tr>
-    <td>
-      <label class="pull-left" for="profile" title="Fabric Version to view the profiles">Profile: &nbsp;
-        <select id="profile" ng-model="profileId" ng-options="p for p in profileIds()" aria-controls="grid"></select>
-      </label>
-    </td>
-  </tr>
-</table>
-
-<table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
-       id="grid">
-  <thead>
-  <tr>
-    <th></th>
-    <th>Container ID</th>
-    <th>Profiles</th>
-    <th>Version</th>
-    <th>Local Host</th>
-    <th>Type</th>
-  </tr>
-  </thead>
-  <tbody>
-</table>
+<div class="row-fluid">
+  <div class="gridStyle" ng-grid="containerOptions"></div>
+</div>

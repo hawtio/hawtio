@@ -1,154 +1,221 @@
 module Jmx {
 
-    export function AttributesController($scope, $routeParams, workspace:Workspace, $rootScope) {
-      $scope.routeParams = $routeParams;
-      $scope.workspace = workspace;
+  export var propertiesColumnDefs = [
+    {field: 'name', displayName: 'Property' /*, width: "20%"*/},
+            {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
+          ];
 
-      $scope.isTable = (value) => {
-        return value instanceof Table;
-      };
+  export function AttributesController($scope, workspace:Workspace, jolokia) {
+    $scope.searchText = "";
+    $scope.columnDefs = [];
+    $scope.selectedItems = [];
+    $scope.selectCheckBox = true;
+    $scope.gridOptions = {
+      selectedItems: $scope.selectedItems,
+      showFilter: false,
+      filterOptions: {
+        filterText: "searchText"
+      },
+      data: 'gridData',
+      columnDefs: 'columnDefs'
+    };
 
-      $scope.getAttributes = (value) => {
-        if (angular.isArray(value) && angular.isObject(value[0])) return value;
-        if (angular.isObject(value) && !angular.isArray(value)) return [value];
-        return null;
-      };
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(updateTableContents, 50);
+    });
 
-      $scope.rowValues = (row, col) => {
-        return [row[col]];
-      };
+    $scope.$watch('workspace.selection', function () {
+      if (workspace.moveIfViewInvalid()) return;
+      updateTableContents();
+    });
 
-      var asQuery = (mbeanName) => {
-        return { type: "READ", mbean: mbeanName, ignoreErrors: true};
-      };
+    function operationComplete() {
+      updateTableContents();
+    }
 
-      var tidyAttributes = (attributes) => {
-        var objectName = attributes['ObjectName'];
-        if (objectName) {
-          var name = objectName['objectName'];
-          if (name) {
-            attributes['ObjectName'] = name;
-          }
-        }
-      };
+    /**
+     * Returns the toolBar template HTML to use for the current selection
+     */
+    $scope.toolBarTemplate = () => {
+      // lets lookup the list of helpers by domain
+      return Jmx.getAttributeToolBar(workspace.selection);
+    };
 
-      $scope.$watch('workspace.selection', function () {
-        if (workspace.moveIfViewInvalid()) return;
-
-        var node = $scope.workspace.selection;
-        closeHandle($scope, $scope.workspace.jolokia);
-        var mbean = null;
-        if (node) {
-          mbean = node.objectName;
-        }
-        var query = null;
-        var jolokia = workspace.jolokia;
-        var updateValues:any = function (response) {
-          var attributes = response.value;
-          if (attributes) {
-            tidyAttributes(attributes);
-            $scope.attributes = attributes;
-            $scope.$apply();
-          } else {
-            console.log("Failed to get a response! " + response);
-          }
-        };
+    $scope.invokeSelectedMBeans = (operationName, completeFunction: () => any = null) => {
+      var queries = [];
+      angular.forEach($scope.selectedItems || [], (item) => {
+        var mbean = item["_id"];
         if (mbean) {
-          query = asQuery(mbean)
-        } else if (node) {
-          // lets query each child's details
-          var children = node.children;
-          if (children) {
-            var childNodes = children.map((child) => child.objectName);
-            var mbeans = childNodes.filter((mbean) => mbean);
-            //console.log("Found mbeans: " + mbeans + " child nodes " + childNodes.length + " child mbeans " + mbeans.length);
-
-            // lets filter out the collections of collections; so only have collections of mbeans
-            if (mbeans && childNodes.length === mbeans.length && !ignoreFolderDetails(node)) {
-              query = mbeans.map((mbean) => asQuery(mbean));
-              if (query.length === 1) {
-                query = query[0];
-              } else if (query.length === 0) {
-                query = null;
-              } else {
-                // now lets create an update function for each row which are all invoked async
-                $scope.attributes = new Table();
-                updateValues = function (response) {
-                  var attributes = response.value;
-                  if (attributes) {
-                    tidyAttributes(attributes);
-                    var mbean = attributes['ObjectName'];
-                    var request = response.request;
-                    if (!mbean && request) {
-                      mbean = request['mbean'];
-                    }
-                    if (mbean) {
-                      var table = $scope.attributes;
-                      if (!($scope.isTable(table))) {
-                        table = new Table();
-                        $scope.attributes = table;
-                      }
-                      table.setRow(mbean, attributes);
-                      $scope.$apply();
-                    } else {
-                      console.log("no ObjectName in attributes " + Object.keys(attributes));
-                    }
-                  } else {
-                    console.log("Failed to get a response! " + JSON.stringify(response));
-                  }
-                };
-              }
-            }
+          var opName = operationName;
+          if (angular.isFunction(operationName)) {
+            opName = operationName(item);
           }
-        }
-        if (query) {
-          // lets get the values immediately
-          jolokia.request(query, onSuccess(updateValues));
-          var callback = onSuccess(updateValues,
-                  {
-                    error: (response) => {
-                      updateValues(response);
-                    }
-                  });
-
-          // listen for updates
-          if (angular.isArray(query)) {
-            if (query.length >= 1) {
-              var args = [callback].concat(query);
-              var fn = jolokia.register;
-              scopeStoreJolokiaHandle($scope, jolokia, fn.apply(jolokia, args));
-            }
-          } else {
-            scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, query));
-          }
+          //console.log("Invoking operation " + opName + " on " + mbean);
+          queries.push({type: "exec", operation: opName, mbean: mbean});
         }
       });
-    }
-}
+      if (queries.length) {
+        var callback = () => {
+          if (completeFunction) {
+            completeFunction();
+          } else {
+            operationComplete();
+          }
+        };
+        jolokia.request(queries, onSuccess(callback));
+      }
+    };
 
-class Table {
-  public columns = {};
-  public rows = {};
+    function updateTableContents() {
+      $scope.gridData = [];
+      $scope.mbeanIndex = null;
+      var mbean = workspace.getSelectedMBeanName();
+      var request = null;
+      var node = workspace.selection;
 
-  public values(row, columns) {
-    var answer = [];
-    if (columns) {
-      for (name in columns) {
-        //console.log("Looking up: " + name + " on row ");
-        answer.push(row[name]);
+      if (mbean) {
+        request = { type: 'read', mbean: mbean };
+        $scope.columnDefs = propertiesColumnDefs;
+        setSelectable(false);
+      } else if (node) {
+        $scope.columnDefs = null;
+        setSelectable(true);
+        // lets query each child's details
+        var children = node.children;
+        if (children) {
+          var childNodes = children.map((child) => child.objectName);
+          var mbeans = childNodes.filter((mbean) => mbean);
+          if (mbeans) {
+            var typeNames = Jmx.getUniqueTypeNames(children);
+            if (typeNames.length <= 1) {
+              var query = mbeans.map((mbean) => {
+                return { type: "READ", mbean: mbean, ignoreErrors: true};
+              });
+              if (query.length === 1) {
+                request = query[0];
+              } else if (query.length > 1) {
+                request = query;
+
+                // deal with multiple results
+                $scope.mbeanIndex = {};
+                $scope.mbeanRowCounter = 0;
+                $scope.mbeanCount = mbeans.length;
+                $scope.columnDefs = [];
+              }
+            } else {
+              console.log("Too many type names " + typeNames);
+            }
+          }
+        }
+      }
+      //var callback = onSuccess(render, { error: render });
+      var callback = onSuccess(render);
+      if (request) {
+        $scope.request = request;
+        // lets clear any previous queries
+        Core.unregister(jolokia, $scope);
+        Core.register(jolokia, $scope, request, callback);
       }
     }
-    return answer;
+
+    function render(response) {
+      var data = response.value;
+      var mbeanIndex = $scope.mbeanIndex;
+      var mbean = response.request.mbean;
+      if (mbean) {
+          // lets store the mbean in the row for later
+          data["_id"] = mbean;
+      }
+      if (mbeanIndex) {
+        setSelectable(true);
+        if (mbean) {
+
+          var idx = mbeanIndex[mbean];
+          if (!angular.isDefined(idx)) {
+            idx = $scope.mbeanRowCounter;
+            mbeanIndex[mbean] = idx;
+            $scope.mbeanRowCounter += 1;
+          }
+          if (idx === 0) {
+            // this is to force the table to repaint
+            $scope.selectedIndices = $scope.selectedItems.map((item) => $scope.gridData.indexOf(item));
+            $scope.gridData = [];
+
+            if (!$scope.columnDefs.length) {
+              // lets update the column definitions based on any configured defaults
+              var key = workspace.selectionConfigKey();
+              var defaultDefs = workspace.attributeColumnDefs[key] || [];
+              var defaultSize = defaultDefs.length;
+              var map = {};
+              angular.forEach(defaultDefs, (value, key) => {
+                var field = value.field;
+                if (field) {
+                  map[field] = value
+                }
+              });
+
+              angular.forEach(data, (value, key) => {
+                if (includePropertyValue(key, value)) {
+                  if (!map[key]) {
+                    defaultDefs.push({
+                      field: key,
+                      displayName: humanizeValue(key),
+                      visible: defaultSize === 0
+                    });
+                  }
+                }
+              });
+              $scope.columnDefs = defaultDefs;
+            }
+          }
+          // assume 1 row of data per mbean
+          $scope.gridData[idx] = data;
+
+          var count = $scope.mbeanCount;
+          if (!count || idx + 1 >= count) {
+            // only cause a refresh on the last row
+            var newSelections = $scope.selectedIndices.map((idx) => $scope.gridData[idx]).filter((row) => row);
+            $scope.selectedItems.splice(0, $scope.selectedItems.length);
+            $scope.selectedItems.push.apply($scope.selectedItems, newSelections);
+            //console.log("Would have selected " + JSON.stringify($scope.selectedItems));
+            $scope.$apply();
+          }
+          // if the last row, then fire an event
+        } else {
+          console.log("No mbean name in request " + JSON.stringify(response.request));
+        }
+      } else {
+        $scope.columnDefs = propertiesColumnDefs;
+        if (angular.isObject(data)) {
+          var properties = [];
+          angular.forEach(data, (value, key) => {
+            if (includePropertyValue(key, value)) {
+              properties.push({name: humanizeValue(key), value: value});
+            }
+          });
+          $scope.selectedItems = [data];
+          data = properties;
+        }
+        $scope.gridData = data;
+        setSelectable(false);
+
+        $scope.$apply();
+      }
+    }
+
+    function setSelectable(flag) {
+      // TODO is there a way to update ng-grid to hide the selection checkbox
+      // if we decide we don't want it?
+/*
+      $scope.gridOptions.displaySelectionCheckbox = flag;
+      $scope.gridOptions.canSelectRows = flag;
+*/
+    }
+
+    function includePropertyValue(key: string, value) {
+      return !angular.isObject(value) && !key.startsWith("_");
+    }
   }
 
-  public setRow(key, data) {
-    this.rows[key] = data;
-    Object.keys(data).forEach((key) => {
-      // could store type info...
-      var columns = this.columns;
-      if (!columns[key]) {
-        columns[key] = {name: key};
-      }
-    });
-  }
 }

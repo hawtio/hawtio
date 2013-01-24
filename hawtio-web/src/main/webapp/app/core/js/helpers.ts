@@ -1,14 +1,5 @@
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
-// the paths into the mbean tree which we should ignore doing a folder view
-// due to the huge size involved!
-var ignoreDetailsOnBigFolders = [
-  [
-    ['java.lang'],
-    ['MemoryPool', 'GarbageCollector']
-  ]
-];
-
 var _urlPrefix: string = null;
 
 var numberTypeNames = {
@@ -87,10 +78,6 @@ function toSearchArgumentArray(value): string[] {
     if (angular.isString(value)) return value.split(',');
   }
   return [];
-}
-
-function ignoreFolderDetails(node) {
-  return folderMatchesPatterns(node, ignoreDetailsOnBigFolders);
 }
 
 function folderMatchesPatterns(node, patterns) {
@@ -222,7 +209,9 @@ if (!Object.keys) {
   };
 }
 
+
 module Core {
+
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
     angular.forEach(hash, function (value, key) {
@@ -230,5 +219,44 @@ module Core {
     });
     var params = keyValuePairs.join("&");
     return encodeURI(params);
+  }
+  
+  /*
+   * Register a JMX operation to poll for changes
+   */
+  export function register(jolokia, scope, arguments: any, callback) {
+    if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+      scope.$jhandle = [];
+    }
+    scope.$on('$destroy', function (event) {
+      unregister(jolokia, scope);
+    });
+    if (angular.isArray(arguments)) {
+      if (arguments.length >= 1) {
+        // TODO can't get this to compile in typescript :)
+        //var args = [callback].concat(arguments);
+        var args = [callback];
+        angular.forEach(arguments, (value) => args.push(value));
+        //var args = [callback];
+        //args.push(arguments);
+        var registerFn = jolokia.register;
+        var handle = registerFn.apply(jolokia, args);
+        scope.$jhandle.push(handle);
+        jolokia.request(arguments, callback);
+      }
+    } else {
+      var handle = jolokia.register(callback, arguments);
+      scope.$jhandle.push(handle);
+      jolokia.request(arguments, callback);
+    }
+  }
+
+  export function unregister(jolokia, scope) {
+    if (angular.isDefined(scope.$jhandle)) {
+      scope.$jhandle.forEach(function (handle) {
+        jolokia.unregister(handle);
+      });
+      delete scope.$jhandle;
+    }
   }
 }

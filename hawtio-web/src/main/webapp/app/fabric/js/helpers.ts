@@ -1,6 +1,91 @@
 module Fabric {
+  
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
+  
+  
+  export function stopContainer(jolokia, id, success, error) {
+    jolokia.request(
+      {
+        type: 'exec', mbean: managerMBean,
+        operation: 'stopContainer(java.lang.String)',
+        arguments: [id]
+      },
+      onSuccess(success, { error: error }));
+  }
 
+  export function destroyContainer(jolokia, id, success, error) {
+    jolokia.request(
+      {
+        type: 'exec', mbean: managerMBean,
+        operation: 'destroyContainer(java.lang.String)',
+        arguments: [id]
+      },
+      onSuccess(success, { error: error }));
+  }
+
+  export function startContainer(jolokia, id, success, error) {
+    jolokia.request(
+      {
+        type: 'exec', mbean: managerMBean,
+        operation: 'startContainer(java.lang.String)',
+        arguments: [id]
+      },
+      onSuccess(success, { error: error }));
+  }
+  
+  
+  export function getServiceList(container) {
+    var answer = [];
+    if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains)) {
+
+      container.jmxDomains.forEach((domain) => {
+        if (domain === "org.apache.activemq") {
+          answer.push({
+            title: "Apache ActiveMQ",
+            type: "img",
+            src: "app/fabric/img/message_broker.png"
+          });
+        }
+        if (domain === "org.apache.camel") {
+          answer.push({
+            title: "Apache Camel",
+            type: "img",
+            src: "app/fabric/img/camel.png"
+          });
+        }
+        if (domain === "org.fusesource.fabric") {
+          answer.push({
+            title: "Fuse Fabric",
+            type: "img",
+            src: "app/fabric/img/fabric.png"
+          });
+        }
+        if (domain === "hawtio") {
+          answer.push({
+            title: "hawtio",
+            type: "img",
+            src: "app/fabric/img/hawtio.png"
+          });
+        }
+        if (domain === "org.apache.karaf") {
+          answer.push({
+            title: "Apache Karaf",
+            type: "icon",
+            src: "icon-beaker"
+          })
+        }
+        if (domain === "org.apache.zookeeper") {
+          answer.push({
+            title: "Apache Zookeeper",
+            type: "icon",
+            src: "icon-group"
+          })
+        }
+      });
+    }
+    return answer;
+  }
+  
   /**
    * Default the values that are missing in the returned JSON
    */

@@ -42,6 +42,7 @@ module Jmx {
       var rootId = 'root';
       var separator = '_';
       workspace.mbeanTypesToDomain = {};
+      workspace.mbeanServicesToDomain = {};
       var tree = new Folder('MBeans');
       tree.key = rootId;
       var domains = response.value;
@@ -62,19 +63,24 @@ module Jmx {
           var items = path.split(',');
           var paths = [];
           var typeName = null;
+          var serviceName = null;
           items.forEach(item => {
             var kv = item.split('=');
             var key = kv[0];
             var value = kv[1] || key;
             entries[key] = value;
             var moveToFront = false;
-            if (key.toLowerCase() === "type") {
+            var lowerKey = key.toLowerCase();
+            if (lowerKey === "type") {
               typeName = value;
               // if the type name value already exists in the root node
               // of the domain then lets move this property around too
               if (folder.map[value]) {
                 moveToFront = true;
               }
+            }
+            if (lowerKey === "service") {
+              serviceName = value;
             }
             if (moveToFront) {
               paths.splice(0, 0, value);
@@ -151,16 +157,16 @@ module Jmx {
               folder.objectName = objectName;
               folder.typeName = typeName;
 
-              var mbeanInfo = folder;
-              if (typeName) {
-                var map = workspace.mbeanTypesToDomain[typeName];
+
+              function addFolderByDomain(owner, typeName) {
+                var map = owner[typeName];
                 if (!map) {
                   map = {};
-                  workspace.mbeanTypesToDomain[typeName] = map;
+                  owner[typeName] = map;
                 }
                 var value = map[domain];
                 if (!value) {
-                  map[domain] = mbeanInfo;
+                  map[domain] = folder;
                 } else {
                   var array = null;
                   if (angular.isArray(value)) {
@@ -169,8 +175,15 @@ module Jmx {
                     array = [value];
                     map[domain] = array;
                   }
-                  array.push(mbeanInfo);
+                  array.push(folder);
                 }
+              }
+              
+              if (serviceName) {
+                addFolderByDomain(workspace.mbeanServicesToDomain, serviceName);
+              }
+              if (typeName) {
+                addFolderByDomain(workspace.mbeanTypesToDomain, typeName);
               }
             }
           } else {

@@ -5,15 +5,12 @@ module Log {
             when('/logs', {templateUrl: 'app/log/html/logs.html', controller: LogController})
   }).
           run(($location: ng.ILocationService, workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['logs'] = () => workspace.isOsgiFolder();
 
             workspace.topLevelTabs.push( {
               content: "Logs",
               title: "View and search the logs of this container",
               isValid: () => workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
-              href: () => url("#/logs")
+              href: () => "#/logs"
             });
 
             workspace.subLevelTabs.push( {

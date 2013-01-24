@@ -18,6 +18,10 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-web</artifactId>
       <version>${project.version}</version>
+      <!--
+        NOTE this WAR dependency type which enables this WAR to
+        inherit all the plugins and content from the core hawtio-web WAR
+      -->
       <type>war</type>
     </dependency>
 

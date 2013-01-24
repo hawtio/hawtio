@@ -141,10 +141,8 @@ myApp.directive('expandable', function () {
         expandable.toggleClass('closed');
         return false;
       });
-
     }
   }
-
 });
 
 // enable bootstrap tooltips

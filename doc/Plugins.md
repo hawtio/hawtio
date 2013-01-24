@@ -2,13 +2,13 @@
 
 **hawtio** is highly modular, so that it can discover exactly what services are inside a JVM and dyanmically update the console to provide an interface to them.
 
-Currently hawtio uses JMX to discover which MBeans are prsent and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.
+Currently hawtio uses JMX to discover which MBeans are present and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.
 
-So you can deploy the standard **hawtio-web.war**; then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
+So you can deploy the standard [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/); then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
 
 Relying on JMX for discovery doesn't mean though that plugins can only interact with JMX; they can do anything at all that a browser can. e.g. a plugin could use REST to discover UI capabilities and other plugins.
 
-In terms of the plugin mechanism itself; we've tried to keep this as technology agnostic as possible; a plugin is just some combination of JS / HTML / CSS / markup / images and other content loaded in a browser.
+A hawtio plugin is anything that will run inside a browser. We've tried to keep hawtio plugins as technology agnostic as possible; so a plugin is just some combination of JS / HTML / CSS / markup / images and other content that can be loaded in a browser.
 
 ## Adding your own plugins
 
@@ -55,11 +55,11 @@ In terms of JS code, we're using JavaScript modules to keep things separated, so
 
 ### Example plugin
 
-If you want so see some example code; here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts) designed to work with an mbean which queries the log statements from slf4j/log4j etc.
+If you want so see some example code; here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts) designed to work with an mbean which queries the log statements from slf4j/log4j etc.
 
-* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
+* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
 * These AnguarJS modules can be added and removed at runtime inside the same single page application without requiring a reload.
-* [here's where we register a top level nav bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L12) for this new log tab.
-* here's a [sub tab in the jmx plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs-app.ts#L19) which is only visible if you select a node in the JMX tree
+* [here's where we register a top level nav bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) for this new log tab.
+* here's a [sub tab in the jmx plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19) which is only visible if you select a node in the JMX tree
 
 Thanks to the dependency injection of [AngularJS](http://angularjs.org/) different plugins can expose services and perform various kinds of integration and wiring together.

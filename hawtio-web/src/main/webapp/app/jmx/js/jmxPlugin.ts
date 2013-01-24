@@ -1,6 +1,6 @@
 module Jmx {
   var pluginName = 'jmx';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html', controller: AttributesController}).
             when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html', controller: OperationsController}).
@@ -9,16 +9,12 @@ module Jmx {
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
           run(($location: ng.ILocationService, workspace:Workspace) => {
-            // now lets register the nav bar stuff!
-            var map = workspace.uriValidations;
-            map['logs'] = () => workspace.isOsgiFolder();
-
 
             workspace.topLevelTabs.push( {
               content: "JMX",
               title: "View the JMX MBeans in this process",
               isValid: () => true,
-              href: () => url("#/jmx/attributes"),
+              href: () => "#/jmx/attributes",
               isActive: () => workspace.isTopTabActive("jmx")
             });
 

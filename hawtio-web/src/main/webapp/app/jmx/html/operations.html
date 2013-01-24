@@ -59,7 +59,7 @@
               </div>
               <div class="control-group">
                 <div class="controls">
-                  <button class="btn" ng-click="reset()"><i class="icon-ok"></i>Reset</button>
+                  <button class="btn" ng-click="ok()"><i class="icon-ok"></i> Ok</button>
                 </div>
               </div>
             </div>
@@ -80,8 +80,9 @@
             </div>
             <div class="control-group">
               <div class="controls">
-                <button class="btn cancel"><i class="icon-remove"></i>Cancel</button>
-                <button class="btn btn-success execute" ng-click="execute()"><i class="icon-ok"></i>Execute</button>
+                <button class="btn cancel"><i class="icon-remove"></i> Cancel</button>
+                <button class="btn" ng-click="reset()" ng-show="args"><i class="icon-undo"></i> Reset</button>
+                <button class="btn btn-success execute" ng-click="execute()"><i class="{{executeIcon}}"></i> Execute</button>
               </div>
             </div>
           </fieldset>
