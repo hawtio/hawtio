@@ -6,6 +6,7 @@ module Core {
     $scope.url = localStorage['url'];
 
     $scope.$watch('updateRate', () => {
+      localStorage['updateRate'] = $scope.updateRate;
       $scope.$emit('UpdateRate', $scope.updateRate);
     });
 

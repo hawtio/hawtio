@@ -91,7 +91,11 @@ myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage) => {
          * Initialize jolokia polling and add handler to change poll
          * frequency
          */
-        localStorage['updateRate'] = localStorage['updateRate'] || 5000;
+        // only reset the update rate if its not defined
+        var updateRate = localStorage['updateRate'];
+        if (angular.isUndefined(updateRate)) {
+          localStorage['updateRate'] = 5000;
+        }
 
         $rootScope.$on('UpdateRate', (event, rate) => {
           jolokia.stop();
