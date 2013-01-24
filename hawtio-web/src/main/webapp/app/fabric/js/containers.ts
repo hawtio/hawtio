@@ -1,10 +1,21 @@
 module Fabric {
 
 
-  export function ContainersController($scope, workspace, jolokia) {
+  export function ContainersController($scope, $location, workspace, jolokia) {
     
     $scope.profile = empty();
     $scope.version = empty();
+    
+    var key = $location.search()['cv'];
+    if (key) {
+      $scope.version = { id: key };
+    }
+    
+    key = $location.search()['cp'];
+    if (key) {
+      $scope.profile = { id: key };
+    }
+    
     
     // caches last jolokia result
     $scope.result = [];
@@ -19,39 +30,36 @@ module Fabric {
     $scope.selectedContainers = [];
 
 
-    var SearchProvider = function(scope) {
+    var SearchProvider = function(scope, location) {
       var self = this;
       self.scope = scope;
-      
-      self.init = function(childScope, grid) {
+      self.location = location;
+
+      self.callback = function(newValue, oldValue) {
+        if (newValue === oldValue) {
+          return;
+        }
+        if (newValue.id === oldValue.id) {
+          return;
+        }
+        self.scope.profiles = activeProfilesForVersion(self.scope.version.id, self.scope.containers);
+        self.scope.profile = setSelect(self.scope.profile, self.scope.profiles);
         
+        var q = location.search();
+        q['cv'] = self.scope.version.id;
+        q['cp'] = self.scope.profile.id;
+        location.search(q);
+        
+        self.evalFilter();
+      };
+      
+      self.scope.$watch('version', self.callback);
+      self.scope.$watch('profile', self.callback);
+
+      self.init = function(childScope, grid) {
         self.grid = grid;
         self.childScope = childScope;
-        
         grid.searchProvider = self;
-
-        self.scope.$watch('profile', function(newValue, oldValue) {
-          if (newValue === oldValue) {
-            return;
-          }
-          if (newValue.id === oldValue.id) {
-            return;
-          }
-          self.evalFilter();
-        });
-        
-        self.scope.$watch('version', function(newValue, oldValue) {
-          if (newValue === oldValue) {
-            return;
-          }
-          if (newValue.id === oldValue.id) {
-            return;
-          }
-          self.scope.profiles = activeProfilesForVersion(self.scope.version.id, self.scope.containers);
-          self.scope.profile = setSelect(self.scope.profile, self.scope.profiles);
-          self.evalFilter();
-        });
-        
       };
       
       self.evalFilter = function() {
@@ -73,7 +81,7 @@ module Fabric {
       
     }
     
-    var searchProvider = new SearchProvider($scope);
+    var searchProvider = new SearchProvider($scope, $location);
     
     $scope.containerOptions = {
       plugins: [searchProvider],
@@ -187,10 +195,11 @@ module Fabric {
             profileIds: container.profileIds
           });
         });
-        
-        $scope.profile = setSelect($scope.profile, $scope.profiles);
+
         $scope.version = setSelect($scope.version, $scope.versions);        
-  
+        $scope.profiles = activeProfilesForVersion($scope.version.id, $scope.containers);
+        $scope.profile = setSelect($scope.profile, $scope.profiles);
+
         $scope.$apply();
       }
     }
