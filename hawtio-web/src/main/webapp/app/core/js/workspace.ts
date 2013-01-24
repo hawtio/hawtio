@@ -7,7 +7,6 @@ interface MenuItem {
 }
 
 class Workspace {
-  public updateRate = 0;
   public operationCounter = 0;
   public selection:NodeSelection;
   public tree = null;
