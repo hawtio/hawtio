@@ -14,6 +14,7 @@ module Camel {
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
           }).
+          filter('camelIconClass', () => iconClass).
           run((workspace:Workspace) => {
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
@@ -32,36 +33,66 @@ module Camel {
               return null;
             });
 
+
+
             // register default attribute views
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | camelIconClass}}"></i></div>';
+            var stateColumn = {field: 'State', displayName: 'State',
+              cellTemplate: stateTemplate,
+              width: 56,
+              minWidth: 56,
+              maxWidth: 56,
+              resizable: false
+            };
+
             var attributes = workspace.attributeColumnDefs;
+            attributes[jmxDomain + "/components/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'ComponentName', displayName: 'Name'}
+            ];
             attributes[jmxDomain + "/consumers/folder"] = [
+              stateColumn,
               {field: 'CamelId', displayName: 'Context'},
               {field: 'RouteId', displayName: 'Route'},
               {field: 'EndpointUri', displayName: 'Endpoint URI'},
-              {field: 'State', displayName: 'State'},
-              {field: 'Suspended', displayName: 'Suspended'},
+              {field: 'Suspended', displayName: 'Suspended', resizable: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'}
             ];
             attributes[jmxDomain + "/processors/folder"] = [
+              stateColumn,
               {field: 'CamelId', displayName: 'Context'},
               {field: 'RouteId', displayName: 'Route'},
               {field: 'ProcessorId', displayName: 'Processor'},
-              {field: 'State', displayName: 'State'},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
               {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
               {field: 'TotalProcessingTime', displayName: 'Total Time'},
               {field: 'MinProcessingTime', displayName: 'Min Time'},
               {field: 'MaxProcessingTime', displayName: 'Max Time'}
             ];
-            attributes[jmxDomain + "/routes/folder"] = [
+            attributes[jmxDomain + "/services/folder"] = [
+              stateColumn,
               {field: 'CamelId', displayName: 'Context'},
               {field: 'RouteId', displayName: 'Route'},
-              {field: 'State', displayName: 'State'},
+              {field: 'Suspended', displayName: 'Suspended', resizable: false},
+              {field: 'SupportsSuspended', displayName: 'Can Suspend', resizable: false}
+            ];
+            attributes[jmxDomain + "/endpoints/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'EndpointUri', displayName: 'Endpoint URI', width: "***"},
+              {field: 'Singleton', displayName: 'Singleton', resizable: false }
+            ];
+            attributes[jmxDomain + "/routes/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
               {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
               {field: 'TotalProcessingTime', displayName: 'Total Time'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'}
             ];
+
             workspace.topLevelTabs.push({
               content: "Integration",
               title: "Manage your Apache Camel integration patterns",

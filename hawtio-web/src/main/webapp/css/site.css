@@ -241,11 +241,17 @@ ul.inline > li, ol.inline > li {
 }
 
 .red {
+/*
   color: #ff0000;
+*/
+    color: red;
 }
 
 .green {
+/*
   color: #00ff00;
+*/
+    color: green;
 }
 
 .icon1point5x {
