@@ -1,18 +1,24 @@
 <div class="row-fluid">
   <div class="pull-left">
-    <form class="form-inline">
+    <form class="form-inline no-bottom-margin">
       <fieldset>
-        <div class="btn-group">
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+        <div class="control-group inline-block">
+          <div class="btn-group">
+            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
+            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
+            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+          </div>
         </div>
         &nbsp;
-        <label for="versions">Versions: </label>
-        <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+        <div class="control-group inline-block">
+          <label for="versions">Versions: </label>
+          <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+        </div>
         &nbsp;
-        <label for="profiles">Profiles: </label>
-        <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
+        <div class="control-group inline-block">
+          <label for="profiles">Profiles: </label>
+          <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
+        </div>
       </fieldset>
     </form>
   </div>

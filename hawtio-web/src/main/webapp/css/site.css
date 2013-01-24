@@ -262,3 +262,15 @@ ul.inline > li, ol.inline > li {
   margin-left: auto;
   margin-right: auto;
 }
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.no-bottom-margin {
+  margin-bottom: 0em;
+}

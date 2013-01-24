@@ -92,7 +92,7 @@ module Fabric {
         useExternalFilter: true
       },
       selectedItems: $scope.selectedContainers,
-      rowHeight: 41,
+      rowHeight: 32,
       selectWithCheckboxOnly: true,
       columnDefs: [
         { 
@@ -100,33 +100,32 @@ module Fabric {
           displayName: 'Status',
           cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{row.getProperty(col.field)}}"></i></div>',
           width: 56,
-          minWidth: 56,
-          maxWidth: 56,
           resizable: false
         },
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="#/fabric/container/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a href="#/fabric/container/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+          width: 200
         },
         {
           field: 'version',
           displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a href="#/fabric/profiles?pv={{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText pagination-centered"><a href="#/fabric/profiles?pv={{row.getProperty(col.field)}}">{{row.getProperty(col.field)}}</a></div>',
+          width: 70
         },
         {
           field: 'services',
           displayName: 'Services',
-          cellTemplate: '<div class="ngCellText"><ul class="unstyled inline"><li ng-repeat="service in row.getProperty(col.field)" ng-switch="service.type"><i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i><img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}"></li></ul>'
+          cellTemplate: '<div class="ngCellText"><ul class="unstyled inline"><li ng-repeat="service in row.getProperty(col.field)" ng-switch="service.type"><i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i><img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}"></li></ul>',
+          width: 200
         },
         {
-          field: 'actions',
-          displayName: 'Actions',
-          cellTemplate: '<div class="ngCellText"><div class="btn-group" ng-switch="row.entity.alive"><button class="btn" title="Start Container" ng-switch-when="false" ng-click="startContainer(row.entity.name)"><i class="icon-play"></i></button><button class="btn" title="Stop Container" ng-switch-default ng-click="stopContainer(row.entity.name)"><i class="icon-stop"></i></button><button class="btn" title="Destroy Container" ng-click="deleteContainer(row.entity.name)"><i class="icon-remove"></i></button></div></div>',
-          width: 85,
-          sortable: false,
-          groupable: false,
-          resizable: false
+          field: 'profileIds',
+          displayName: 'Profiles',
+          cellTemplate: '<div style="whitespace: wrap;" class="ngCellText"><ul class="inline unstyled"><li ng-repeat="profile in row.getProperty(col.field)"><a ng-href="#/fabric/profile/{{row.entity.version}}/{{profile}}">{{profile}}</a></li></div>',
+          width: 900
+          
         }
       ]
     };

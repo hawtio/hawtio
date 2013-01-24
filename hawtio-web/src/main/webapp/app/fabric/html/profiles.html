@@ -1,42 +1,26 @@
-<!--
-<script type="text/ng-template" id="fabricProfileTemplate">
-  <div ng-include src="'app/fabric/html/profile-details.html'"></div>
-</script>
-
-<table class="pull-left controls">
-  <tr>
-    <td>
-      <label for="profileVersion" title="Fabric Version to view the profiles">Version:
-        <select id="profileVersion" ng-model="version" ng-options="v.id for v in versions" aria-controls="grid"></select>
-      </label>
-    </td>
-    <td>
-      <label for="activeOnly" title="Fabric Version to view the profiles">Active only:
-        <input id="activeOnly" name="activeOnly" type="checkbox" ng-model="activeOnly">
-      </label>
-    </td>
-  </tr>
-</table>
-
--->
-
 <div class="row-fluid">
   <div class="pull-left">
-    <form class="form-inline">
+    <form class="form-inline no-bottom-margin">
       <fieldset>
-        <!--
-        <div class="btn-group">
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
-          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+        <div class="control-group inline-block">
+          <label for="versions">Versions: </label>
+          <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
         </div>
         &nbsp;
-        -->
-        <label for="versions">Versions: </label>
-        <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
-        &nbsp;
-        <label for="activeOnly" title="Only show profiles that have been applied to a container">Active only: </label>
-        <input type="checkbox" id="activeOnly" name="activeOnly" ng-model="activeOnly">
+        <div class="control-group inline-block">
+          <label for="activeOnly" title="Only show profiles that have been applied to a container">Active only: </label>
+          <input type="checkbox" id="activeOnly" name="activeOnly" ng-model="activeOnly">
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div class="pull-right">
+    <form class="form-inline no-bottom-margin">
+      <fieldset>
+        <div class="control-group inline-block">
+          <label>Filter: </label>
+          <input class="search-query" type="text">
+        </div>
       </fieldset>
     </form>
   </div>
