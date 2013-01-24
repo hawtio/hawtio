@@ -5,12 +5,16 @@
 /**
  * lib/codemirror/util/foldcode.js definitions
  */
+ 
+ // move these definitions up into ../codemirror.d.ts for now so code compiles again
+ /*
 declare var CodeMirror: {
     tagRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
     braceRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
     indentRangeFinder: (codeMirror: CodeMirrorEditor, line: number) => number;
     newFoldFunction: (rangeFinder?:any, markText?:any, hideEnd?:any) => (codeMirror, line) => void;
 }
+*/
 
 /**
  * lib/codemirror/util/formatting.js definitions

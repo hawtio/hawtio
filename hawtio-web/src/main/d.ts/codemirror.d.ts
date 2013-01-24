@@ -217,4 +217,13 @@ declare var CodeMirror: {
     defineMIME(mime: string, mode: string);
     connect(target: EventTarget, event: String, func: Function);
     commands: any;
+    
+    tagRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
+    braceRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
+    indentRangeFinder: (codeMirror: CodeMirrorEditor, line: number) => number;
+    newFoldFunction: (rangeFinder?:any, markText?:any, hideEnd?:any) => (codeMirror, line) => void;
+    
 }
+
+
+
