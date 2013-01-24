@@ -31,7 +31,13 @@ module Core {
     });
 
     $scope.link = (nav) => {
-      return createHref($location, nav.href(), ['tab']);
+      var href;
+      if (angular.isString(nav)) {
+        href = nav;
+      }else {
+        href = nav.href();
+      }
+      return createHref($location, href, ['tab']);
     };
 
     $scope.isActive = (nav) => {
