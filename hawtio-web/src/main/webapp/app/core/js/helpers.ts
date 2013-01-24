@@ -236,6 +236,18 @@ module Core {
   }
 
   /**
+   * Trims the leading prefix from a string if its present
+   */
+  export function trimLeading(text:string, prefix:string) {
+    if (text && prefix) {
+      if (text.startsWith(prefix)) {
+        return text.substring(prefix.length);
+      }
+    }
+    return text;
+  }
+
+  /**
    * Turns the given search hash into a URI style query string
    */
   export function hashToString(hash) {
