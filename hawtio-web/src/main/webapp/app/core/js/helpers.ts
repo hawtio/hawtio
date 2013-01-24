@@ -212,6 +212,32 @@ if (!Object.keys) {
 
 module Core {
 
+  /**
+   * Creates a link by appending the current $localtion.search() hash to the given href link,
+   * removing any required parameters from the link
+   *
+   * @param $location
+   * @param href the link to have any $location.search() hash parameters appended
+   * @param removeParams any parameters to be removed from the $location.search()
+   * @return the link with any $location.search() parameters added
+   */
+  export function createHref($location, href, removeParams) {
+    var hashMap = angular.copy($location.search());
+    // lets remove any top level nav bar related hash searches
+    if (removeParams) {
+      angular.forEach(removeParams, (param) =>  delete hashMap[param]);
+    }
+    var hash = Core.hashToString(hashMap);
+    if (hash) {
+      var prefix = (href.indexOf("?") >= 0) ? "&" : "?";
+      href += prefix + hash;
+    }
+    return href;
+  }
+
+  /**
+   * Turns the given search hash into a URI style query string
+   */
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
     angular.forEach(hash, function (value, key) {
@@ -259,4 +285,5 @@ module Core {
       delete scope.$jhandle;
     }
   }
+
 }

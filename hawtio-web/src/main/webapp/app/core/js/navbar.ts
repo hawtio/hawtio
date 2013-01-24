@@ -31,16 +31,7 @@ module Core {
     });
 
     $scope.link = (nav) => {
-      var href = nav.href();
-      var hashMap = angular.copy($location.search());
-      // lets remove any top level nav bar related hash searches
-      delete hashMap['tab'];
-      var hash = Core.hashToString(hashMap);
-      if (hash) {
-        var prefix = (href.indexOf("?") >= 0) ? "&" : "?";
-        href += prefix + hash;
-      }
-      return href;
+      return createHref($location, nav.href(), ['tab']);
     };
 
     $scope.isActive = (nav) => {

@@ -74,11 +74,8 @@ module Jmx {
 
     $scope.folderHref = (row) => {
       var key = row.getProperty("key");
-/*
-      var href = $location.search("nid", key).toString();
-*/
       if (key) {
-        return "#" + $location.path() + "?nid=" + key;
+        return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
       } else {
         return "";
       }
