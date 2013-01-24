@@ -56,7 +56,7 @@ If you fancy contributing - and [we love contributions!](http://hawt.io/contribu
 * hawt.io is a single page web appplication, from [this single page of HTML](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html)
 * we use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core/html) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
 * other than the JavaScript libraries listed above which live in [webapp/lib](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/lib) and are [included in the index.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html), we then implement [AngularJS](http://angularjs.org/) controllers using [TypeScript](http://typescriptlang.org/). All the typescript source is in the [in files in webapp/app/pluginName/js/ directory](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app) which is then compiled into the [webapp/app/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js)
-* to be able to compile with TypeScript we need to use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
+* to be able to compile with TypeScript static type checking we use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts) to define the optionally statically typed APIs for the various APIs we use
 * the controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX mbeans
 
 ## Developer Tools
@@ -81,10 +81,10 @@ Then select the generated [webapp/app/app.js file](https://github.com/hawtio/haw
 
 ### Handy AngularJS debugging tip
 
-* open the JavaScript console and select the _Console_ tab so you can type expressions into the shell.
-* select part of the DOM of the scope you want to investigate
-* right click and select _Inspect Element_
-* now in the console type the following
+Open the JavaScript console and select the _Console_ tab so you can type expressions into the shell.
+Select part of the DOM of the scope you want to investigate
+Right click and select _Inspect Element_
+In the console type the following
 
     s = angular.element($0).scope()
 
@@ -100,26 +100,12 @@ If you ever want to clear it out in Chrome on OS X you'll find this located at *
 
 ## How the tabs work
 
-The UI updates in real time based on selections in the JMX tree; so tabs become visible or hide based on the selection.
+The UI updates in real time based on the contents of the JVM, the [plugins](plugins.html) and the UI selections. So tabs become visible or disappear.
 
-The nav bar shows/hides based on the *validSelection()* function calls in the [index.html in the ng-show attributes](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html#L39). See the [angularjs ng-show documentation for more detail](http://docs.angularjs.org/api/ng.directive:ngShow).
+[Plugins](plugins.html) can register new top level tabs by adding to the [topLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9) on the workspace (which can be dependency injected into yourplugin via [AngularJS Dependency Injection](http://docs.angularjs.org/guide/di)).
 
-The validSelection("someUriPath") function calls on *$scope* calls the same [validSelection on the Workspace class](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/core/js/workspace.ts#L91) which uses this underlying [map of uri path -> validation functions](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/core/js/workspace.ts#L25)
+The [isValid()](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) function is then used to specify when this top level tab should be visible.
 
-### How to add a new tab
+Then for sub tabs, such as when browsing JMX you can register [subLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16) which are then visible if the [right kind of MBean is selected](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19)
 
-The following gives you an overview of how to add a new kind of tab:
-
-* add the new URI path to [app.ts in the angularjs route definition](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/core/js/app.ts#L4)
-
-    when("/myURI", {templateUrl: 'partials/myNewThing.html', controller: MyNewController}).
-
-* if the tab only applies to certain selections, add an entry to the [uriValidations map of uri paths to validation functions](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/core/js/workspace.ts#L25)
-
-    "myURI": () => this.isMyKindOfThing()
-
-* add an entry to the [index.html nav bar](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html#L39) so the new tab appears
-
-* create your new partial HTML view (myNewThing.html in the [webapp/app/$myplugin/html directory](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/)).
-
-* create your new controller, MyNewController.ts in the [webapp/app/$myplugin/js directory](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/)
+For more detail check out the [plugin documentation](plugins.html).
