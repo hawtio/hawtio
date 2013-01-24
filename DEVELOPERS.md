@@ -25,7 +25,8 @@ We use the following excellent tools and libraries:
 * [d3](http://d3js.org/) is the visualisation library used to do the force layout graphs (for example the diagram view for ActiveMQ)
 * [cubism](http://square.github.com/cubism/) implements the real time horizon charts
 * [dagre](https://github.com/cpettitt/dagre) for graphviz style layouts of d3 diagrams (e.g. the Camel diagram view).
-* [DataTables](http://datatables.net/) for sorted/filtered tables
+* [ng-grid](http://angular-ui.github.com/ng-grid/) an AngualrJS based table/grid component for sorting/filtering/resizing tables
+* [DataTables](http://datatables.net/) for sorted/filtered tables (though we are migrating to ng-grid as its a bit more natural for AngularJS)
 * [DynaTree](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) for tree widget
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
@@ -38,6 +39,7 @@ If you are interested in working on the code the following references and articl
 * [bootstrap API](http://twitter.github.com/bootstrap/base-css.html)
 * [cubism API](https://github.com/square/cubism/wiki/API-Reference)
 * [d3 API](https://github.com/mbostock/d3/wiki/API-Reference)
+* [ng-grid API](http://angular-ui.github.com/ng-grid/#/api)
 * [datatables API](http://www.datatables.net/api)
 * [javascript API](http://www.w3schools.com/jsref/default.asp)
 * [sugarjs API](http://sugarjs.com/api/Array/sortBy)
@@ -47,6 +49,7 @@ If you are interested in working on the code the following references and articl
 
 * [AngularJS plugins](http://ngmodules.org/)
 * [AngularJS tips and tricks](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED)
+* [more AngularJS magic to supercharge yoru webapp](http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#)
 * [AngularJS questions on stackoverflow](http://stackoverflow.com/questions/tagged/angularjs)
 
 ## Code walkthrough
