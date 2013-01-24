@@ -274,3 +274,8 @@ ul.inline > li, ol.inline > li {
 .no-bottom-margin {
   margin-bottom: 0em;
 }
+
+li.attr-column {
+  width: 1em;
+}
+
