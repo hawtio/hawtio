@@ -55,7 +55,7 @@ module Camel {
                     endpointsFolder.key = endpointsNode.key;
                     endpointsFolder.domain = endpointsNode.domain;
                   }
-                  var jmxNode = new Folder("Services");
+                  var jmxNode = new Folder("MBeans");
 
                   // lets add all the entries which are not one context/routes/endpoints
                   angular.forEach(entries, (jmxChild, name) => {
@@ -65,6 +65,7 @@ module Camel {
                   });
 
                   if (jmxNode.children.length > 0) {
+                    jmxNode.sortChildren(false);
                     folder.children.push(jmxNode);
                   }
                   children.push(folder);
