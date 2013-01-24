@@ -101,4 +101,15 @@ class Folder implements NodeSelection {
     }
     return answer;
   }
+
+  public sortChildren(recursive: bool) {
+    var children = this.children;
+    if (children) {
+      this.children = children.sortBy("title");
+      if (recursive) {
+        angular.forEach(children, (child) => child.sortChildren(recursive));
+      }
+    }
+  }
+
 }

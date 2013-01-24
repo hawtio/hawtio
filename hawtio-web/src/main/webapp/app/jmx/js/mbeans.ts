@@ -40,7 +40,7 @@ module Jmx {
 
     function populateTree(response) {
       var rootId = 'root';
-      var separator = '_';
+      var separator = '-';
       workspace.mbeanTypesToDomain = {};
       workspace.mbeanServicesToDomain = {};
       var tree = new Folder('MBeans');
@@ -110,7 +110,7 @@ module Jmx {
                 kindName = typeName;
               } else */
               if (kindName === name) {
-                kindName += "_Folder";
+                kindName += "-folder";
               }
               if (kindName) {
                 classes += " " + domainClass + separator + kindName;
@@ -130,21 +130,6 @@ module Jmx {
           });
           var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
           var objectName = domain + ":" + path;
-/*
-          var mbeanInfo:NodeSelection = {
-            key: key,
-            title: trimQuotes(lastPath),
-            domain: domain,
-            path: path,
-            paths: paths,
-            objectName: objectName,
-            parent: folder,
-            entries: entries,
-            typeName: typeName,
-            addClass: escapeDots(key),
-            get: (key:string) => null
-          };
-*/
 
           if (folder) {
             folder = folderGetOrElse(folder, lastPath);
@@ -191,6 +176,9 @@ module Jmx {
           }
         }
       }
+
+      tree.sortChildren(true);
+
       // TODO we should do a merge across...
       // so we only insert or delete things!
       $scope.tree = tree;

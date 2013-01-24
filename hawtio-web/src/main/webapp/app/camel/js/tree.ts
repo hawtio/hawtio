@@ -29,7 +29,7 @@ module Camel {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
                   var folder = new Folder(contextNode.title);
-                  folder.addClass = "camel-context";
+                  folder.addClass = "org-apache-camel-context";
                   folder.domain = domainName;
                   folder.objectName = contextNode.objectName;
                   folder.entries = contextNode.entries;
@@ -37,9 +37,9 @@ module Camel {
                   folder.key = contextNode.key;
                   if (routesNode) {
                     var routesFolder = new Folder("Routes");
-                    routesFolder.addClass = "camel-route-folder";
+                    routesFolder.addClass = "org-apache-camel-routes-folder";
                     routesFolder.children = routesNode.children;
-                    angular.forEach(routesFolder.children, (n) => n.addClass = "camel-route");
+                    angular.forEach(routesFolder.children, (n) => n.addClass = "org-apache-camel-routes");
                     folder.children.push(routesFolder);
                     routesFolder.typeName = "routes";
                     routesFolder.key = routesNode.key;
@@ -47,9 +47,9 @@ module Camel {
                   }
                   if (endpointsNode) {
                     var endpointsFolder = new Folder("Endpoints");
-                    endpointsFolder.addClass = "camel-endpoint-folder";
+                    endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
                     endpointsFolder.children = endpointsNode.children;
-                    angular.forEach(endpointsFolder.children, (n) => n.addClass = "camel-endpoint");
+                    angular.forEach(endpointsFolder.children, (n) => n.addClass = "org-apache-camel-endpoints");
                     folder.children.push(endpointsFolder);
                     endpointsFolder.typeName = "endpoints";
                     endpointsFolder.key = endpointsNode.key;
