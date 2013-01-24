@@ -1,3 +1,4 @@
+<!--
 <script type="text/ng-template" id="fabricProfileTemplate">
   <div ng-include src="'app/fabric/html/profile-details.html'"></div>
 </script>
@@ -17,15 +18,32 @@
   </tr>
 </table>
 
-<table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
-       id="grid">
-  <thead>
-  <tr>
-    <th></th>
-    <th>Profile ID</th>
-    <th>Containers</th>
-    <th>Parents</th>
-  </tr>
-  </thead>
-  <tbody>
-</table>
+-->
+
+<div class="row-fluid">
+  <div class="pull-left">
+    <form class="form-inline">
+      <fieldset>
+        <!--
+        <div class="btn-group">
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
+          <button ng-disabled="selectedContainers.length <= 1" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+        </div>
+        &nbsp;
+        -->
+        <label for="versions">Versions: </label>
+        <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+        &nbsp;
+        <label for="activeOnly" title="Only show profiles that have been applied to a container">Active only: </label>
+        <input type="checkbox" id="activeOnly" name="activeOnly" ng-model="activeOnly">
+      </fieldset>
+    </form>
+  </div>
+</div>
+    
+
+
+<div class="row-fluid">
+  <div class="gridStyle" ng-grid="gridOptions"></div>
+</div>

@@ -158,18 +158,6 @@ module Fabric {
       return answer;
     }
     
-    function setSelect(selection, group) {
-      if (!angular.isDefined(selection)) {
-        return group[0];
-      }
-      var answer = group.findIndex( function(item) { return item.id === selection.id } );
-      if (answer !== -1) {
-        return group[answer];
-      } else {
-        return group[0];
-      }
-    }
-    
     function render(response) {
       if (!Object.equal($scope.result, response.value)) {
 

@@ -1,7 +1,20 @@
 module Fabric {
   
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
-  
+
+  export function setSelect(selection, group) {
+    if (!angular.isDefined(selection)) {
+      return group[0];
+    }
+    var answer = group.findIndex( function(item) { return item.id === selection.id } );
+    if (answer !== -1) {
+      return group[answer];
+    } else {
+      return group[0];
+    }
+  }
+
+
   
   export function stopContainer(jolokia, id, success, error) {
     jolokia.request(
