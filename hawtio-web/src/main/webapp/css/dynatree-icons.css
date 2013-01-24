@@ -78,27 +78,6 @@ span.dynatree-icon:before {
     content: "\f013";
 }
 
-/* org.apache.camel */
-span.org-apache-camel span.dynatree-icon:before {
-    content: url("../app/camel/img/camel.png");
-}
-
-span.camel-context span.dynatree-icon:before {
-    content: url("../app/camel/img/camel.png");
-}
-span.camel-endpoint span.dynatree-icon:before {
-    content: url("../app/camel/img/endpoint_node.png");
-}
-span.camel-endpoint-folder span.dynatree-icon:before {
-    content: url("../app/camel/img/endpoint_folder.png");
-}
-span.camel-route span.dynatree-icon:before {
-    content: url("../app/camel/img/camel_route.png");
-}
-span.camel-route-folder span.dynatree-icon:before {
-    content: url("../app/camel/img/camel_route_folder.png");
-}
-
 span.org-apache-camel a.dynatree-title:before {
     content: "Camel - ";
 }
@@ -111,18 +90,43 @@ span.org-fusesource-insight a.dynatree-title:before {
     content: "Logs - ";
 }
 
+
+/* org.apache.camel */
+span.org-apache-camel span.dynatree-icon:before {
+    content: url("../app/camel/img/camel.png");
+}
+
+span.org-apache-camel-context-folder span.dynatree-icon:before {
+    content: url("../app/camel/img/camel.png");
+}
+span.org-apache-camel-context span.dynatree-icon:before {
+    content: url("../app/camel/img/camel_context_icon.png");
+}
+span.org-apache-camel-endpoints span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_node.png");
+}
+span.org-apache-camel-endpoints-folder span.dynatree-icon:before {
+    content: url("../app/camel/img/endpoint_folder.png");
+}
+span.org-apache-camel-routes span.dynatree-icon:before {
+    content: url("../app/camel/img/camel_route.png");
+}
+span.org-apache-camel-routes-folder span.dynatree-icon:before {
+    content: url("../app/camel/img/camel_route_folder.png");
+}
+
 /* Camel context */
 ul.dynatree-container li ul li ul li span[class*="_context_"] span.dynatree-icon:before {
     content: url("../app/camel/img/camel_context_icon.png");
 }
 
 /* Camel endpoints folder */
-i.org-apache-camel_endpoints_Folder, span.org-apache-camel_endpoints_Folder span.dynatree-icon:before {
+i.org-apache-camel-endpoints-folder, span.org-apache-camel-endpoints-folder span.dynatree-icon:before {
     content: url("../app/camel/img/endpoint_folder.png");
 }
 
 /* Camel endpoints */
-i.org-apache-camel_endpoints, span.org-apache-camel_endpoints span.dynatree-icon:before {
+i.org-apache-camel-endpoints, span.org-apache-camel-endpoints span.dynatree-icon:before {
     content: url("../app/camel/img/endpoint_node.png");
 }
 
@@ -149,35 +153,35 @@ span[class*="_Broker"] span.dynatree-icon:before {
     content: url("../app/activemq/img/message_broker.png");
 }
 
-span.org-apache-activemq_Broker span.dynatree-icon:before {
+span.org-apache-activemq-Broker span.dynatree-icon:before {
     content: url("../app/activemq/img/message_broker.png");
 }
 
 /* Connection mbean */
-span.org-apache-activemq_Connection span.dynatree-icon:before {
+span.org-apache-activemq-Connection span.dynatree-icon:before {
 }
 
 /* Client mbean */
-span.org-apache-activemq_clientId span.dynatree-icon:before {
+span.org-apache-activemq-clientId span.dynatree-icon:before {
 }
 
 /* network connector mbean */
-span.org-apache-activemq_NC span.dynatree-icon:before {
+span.org-apache-activemq-NC span.dynatree-icon:before {
 }
 
 /* Queue mbean */
-i.org-apache-activemq_Queue, span.org-apache-activemq_Queue span.dynatree-icon:before {
+i.org-apache-activemq-Queue, span.org-apache-activemq-Queue span.dynatree-icon:before {
     content: url("../app/activemq/img/queue.png");
 }
-i.org-apache-activemq_Queue_Folder, span.org-apache-activemq_Queue_Folder span.dynatree-icon:before {
+i.org-apache-activemq-Queue-folder, span.org-apache-activemq-Queue-folder span.dynatree-icon:before {
     content: url("../app/activemq/img/queue_folder.png");
 }
 
 /* Topic mbean */
-i.org-apache-activemq_Topic, span.org-apache-activemq_Topic span.dynatree-icon:before {
+i.org-apache-activemq-Topic, span.org-apache-activemq-Topic span.dynatree-icon:before {
     content: url("../app/activemq/img/topic.png");
 }
-i.org-apache-activemq_Topic_Folder, span.org-apache-activemq_Topic_Folder span.dynatree-icon:before {
+i.org-apache-activemq-Topic-folder, span.org-apache-activemq-Topic-folder span.dynatree-icon:before {
     content: url("../app/activemq/img/topic_folder.png");
 }
 
