@@ -14,7 +14,6 @@
   <description>hawt.io :: DevServlet Managed Service Factory</description>
 
   <properties>
-    <maven-bundle-plugin-version>2.3.4</maven-bundle-plugin-version>
     <ops4j-pax-web-version>1.1.9</ops4j-pax-web-version>
 
     <fuse.osgi.export>

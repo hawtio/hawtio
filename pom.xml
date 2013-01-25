@@ -91,7 +91,8 @@
     <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
     <log4j-version>1.2.16</log4j-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
-    <osgi-version>4.3.0</osgi-version>
+    <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
+    <osgi-version>4.3.1</osgi-version>
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <scalate-version>1.5.3</scalate-version>
     <servlet-api-version>2.5</servlet-api-version>

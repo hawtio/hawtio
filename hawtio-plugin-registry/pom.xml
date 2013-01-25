@@ -29,7 +29,6 @@
     </fuse.osgi.private.pkg>
 
     <slf4j-version>1.6.1</slf4j-version>
-    <maven-bundle-plugin-version>2.3.4</maven-bundle-plugin-version>
 
   </properties>
 
