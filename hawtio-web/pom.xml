@@ -435,9 +435,6 @@
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
-        <!--
-        <artifactId>tomcat6-maven-plugin</artifactId>
-        -->
         <version>2.0</version>
         <configuration>
           <port>9090</port>
@@ -448,6 +445,24 @@
           <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
         </configuration>
       </plugin>
+
+<!--
+      TODO for tomcat6 support we need to remove the CORSFilter servlet filter
+
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat6-maven-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <port>9090</port>
+          <path>/hawtio</path>
+          <systemProperties>
+          </systemProperties>
+          <useTestClasspath>false</useTestClasspath>
+          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+        </configuration>
+      </plugin>
+-->
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
