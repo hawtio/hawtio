@@ -21,6 +21,8 @@ module Core {
           return "app/activemq/html/layoutActiveMQTree.html";
         } else if (path.startsWith("tomcat")) {
           return "app/tomcat/html/layoutTomcatTree.html";
+        } else if (path.startsWith("jetty")) {
+          return "app/jetty/html/layoutJettyTree.html";
         } else if (path.startsWith("fabric")) {
           return "app/fabric/html/layoutFabric.html";
         } else if (path.startsWith("osgiTab")) {
