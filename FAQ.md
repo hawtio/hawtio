@@ -23,12 +23,14 @@ Questions on writing or using the available plugins
 
 ### What plugins are available?
 
-You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app) we have plugins for
+You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app). So far we have plugins for:
 
 * [Apache ActiveMQ](http://activemq.apache.org/)
 * [Apache Camel](http://camel.apache.org/)
+* [Apache Tomcat](http://tomcat.apache.org/)
 * [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 * [Health MBeans](http://hawt.io/health/)
+* [Jetty](http://www.eclipse.org/jetty/)
 * JMX
 * Logging
 * OSGi
