@@ -1,10 +1,12 @@
 // Lets use a NodeSelection interface so we can expose things like the objectName and the MBean's entries
 interface NodeSelection {
   title: string;
+  key?:string;
   typeName?: string;
   objectName?: string;
   domain?: string;
   entries?: any;
+
   folderNames?: string[];
   children?:NodeSelection[];
   parent?: NodeSelection;

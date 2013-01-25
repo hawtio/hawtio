@@ -103,10 +103,14 @@ module Jmx {
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
-        $scope.columnDefs = propertiesColumnDefs;
+        if (node.key !== $scope.lastKey) {
+          $scope.columnDefs = propertiesColumnDefs;
+        }
         setSelectable(false);
       } else if (node) {
-        $scope.columnDefs = null;
+        if (node.key !== $scope.lastKey) {
+          $scope.columnDefs = [];
+        }
         setSelectable(true);
         // lets query each child's details
         var children = node.children;
@@ -128,7 +132,7 @@ module Jmx {
                 $scope.mbeanIndex = {};
                 $scope.mbeanRowCounter = 0;
                 $scope.mbeanCount = mbeans.length;
-                $scope.columnDefs = [];
+                //$scope.columnDefs = [];
               }
             } else {
               console.log("Too many type names " + typeNames);
@@ -144,8 +148,13 @@ module Jmx {
         Core.unregister(jolokia, $scope);
         Core.register(jolokia, $scope, request, callback);
       } else if (node) {
-        $scope.columnDefs = foldersColumnDefs;
+        if (node.key !== $scope.lastKey) {
+          $scope.columnDefs = foldersColumnDefs;
+        }
         $scope.gridData = node.children;
+      }
+      if (node) {
+        $scope.lastKey = node.key;
       }
     }
 
