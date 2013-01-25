@@ -41,6 +41,7 @@ A good MBean for real time values and charts is java.lang/OperatingSystem or try
 
 We love [contributions](http://hawt.io/contributing/index.html)!
 
+* [hawtio FAQ](http://hawt.io/faq/index.html)
 * [how to contribute](http://hawt.io/contributing/index.html)
 * [how to build the code](http://hawt.io/building/index.html)
 * [how to get started working on the code](http://hawt.io/developers/index.html)

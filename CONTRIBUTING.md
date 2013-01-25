@@ -20,8 +20,9 @@ Here's some notes to help you get started:
 
 # Additional Resources
 
+* [hawtio FAQ](http://hawt.io/faq/index.html)
 * [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
+* [GitHub create pull request documentation](hhttps://help.github.com/articles/creating-a-pull-request)
 * [Here is how to build the code](http://hawt.io/building/index.html)
 * [More information for developers in terms of hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
 * [join the hawt.io community](http://hawt.io/community/index.html)
