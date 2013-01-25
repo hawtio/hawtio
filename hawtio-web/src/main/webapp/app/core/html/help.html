@@ -1,30 +1,27 @@
 <section ng-controller="Core.HelpController" xmlns="http://www.w3.org/1999/html">
   <div class="tabbable" ng-model='currentTab'>
     <div class="tab-pane well" title="Overview" value="overview">
-      <p><strong>hawtio</strong> helps you look inside any JVM via JMX along with having plugins for working with
+      <p><a href="http://hawt.io/">hawtio</a> helps you look inside any JVM via JMX along with having plugins for working with
         <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a
               href="http://camel.apache.org/">Camel</a>, <a href="http://karaf.apache.org/">Karaf</a>,
         OSGi and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a>.
       </p>
 
-      <p>Click on the tree on the left of the window to browse the various services which are running in this JVM.</p>
+      <p>Click on the navigation bar at the top of this screen to switch between the various plugins available</p>
 
-      <p>As you select different folders and MBeans you will notice the list of tabs at the top left of the screen
-        update to reflect the available features.</p>
+      <p>As you select different items in trees and tabs you will notice the list of available tabs on the top right of the screen changes.</p>
 
-      <p>You can connect to a different JVM via its Jolokia URL via the <a href="/#preferences">Preferences</a> tab</p>
+      <p>You can connect to a different JVM via its Jolokia URL via the <a href="#/preferences">Preferences</a> tab</p>
 
       <p>For more help please select the next tabs above.</p>
     </div>
 
     <div class="tab-pane well" title="ActiveMQ" value="activemq">
-      <p>Click on the <a ng-href="/#help/activemq?nid=root_org.apache.activemq">org.apache.activemq</a> node in the tree
-        which then exposes the brokers running in a JVM (if
-        there is one)</p>
+      <p>Click <a ng-href="#/jmx/attributes?tab=messaging">Messaging</a> in the top navigation bar
+        to see the ActiveMQ specific plugin. (The Messaging tab won't appear if there is no broker in this JVM).</p>
 
-      <p>Within the <a ng-href="/#help/activemq?nid=root_org.apache.activemq">org.apache.activemq</a> node you can click
-        on the <b>Queue</b> node to see the queues and <b>Topic</b>
-        to see the topics. From either of these nodes you should see a <b>Create Queue</b> or <b>Create Topic</b> tab to
+      <p>You can then click on the <b>Queue</b> node to see the queues and <b>Topic</b>
+        to see the topics. From either of these nodes you should see a <b>Create Queue</b> or <b>Create Topic</b> tabs to
         be able to create new destinations.</p>
 
       <p>Once you have selected a destination you should be able to <b>Send</b> to it, <b>Browse</b> a queue or view the
@@ -37,30 +34,27 @@
     </div>
 
     <div class="tab-pane well" title="Camel" value="camel">
-      <p>Click on the <a ng-href="/#help/camel?nid=root_org.apache.camel">org.apache.camel</a> node in the tree which
-        then exposes any Camel Context running in a JVM (if
-        there is one)</p>
+      <p>Click <a ng-href="#/jmx/attributes?tab=integration">Integration</a> in the top navigation bar
+        to view all the running Camel Contexts in the current JVM. (The selection will not appear on the navigation bar if there is no Camel running).</p>
 
-      <p>The various child nodes of <a ng-href="/#help/camel?nid=root_org.apache.camel">org.apache.camel</a> lets you
-        view the <b>Attributes</b> or <b>Charts</b> of the
-        various JMX MBeans</p>
+      <p>If you select a CamelContext, Route or Endpoint you can then view the <b>Attributes</b> or <b>Charts</b> of the
+        various underlying MBeans.</p>
 
-      <p>You can use the <b>Diagram</b> tab to view a graphical representation of the running routes. If you select a
-        single route instance then the diagram just shows that route only.</p>
+      <p>You can use the <b>Diagram</b> tab to view a graphical representation of the running routes along with real time runtime metrics.
+        If you select a single route instance then the diagram just shows that route only.</p>
+
+      <p>If you select a <b>Route</b> you can then use the <b>Trace</b> tab to perform diagnstic tracing of routes; to see every version of each message
+      as it flows around a route.</p>
     </div>
 
     <div class="tab-pane well" title="JVM" value="jvm">
-      <p>Click on the <a ng-href="/#help/jvm?nid=root_java.lang">java.lang</a> node in the tree to view numerous JVM
-        level metrics
-        such as <a ng-href="/#help/jvm?nid=root_java.lang_OperatingSystem">OperatingSystem</a>.
-      </p>
+      <p>Click <a ng-href="#/jmx/attributes">JMX</a> in the top navigation bar to view the various MBeans available.</p>
 
-      <p>The various child nodes of <a ng-href="/#help/jvm?nid=root_java.lang">java.lang</a> lets you view the <b>Attributes</b>
-        or <b>Charts</b> of the various JMX MBeans.
+      <p>Once you select an MBean in the JMX tree you should then see various tabs on the right of the tree such as <b>Attributes</b>, <b>Charts</b> or <b>Operations</b>
       </p>
 
       <p>
-        Click on the <a href="/#logs">Logs</a> tab to be able to view and search the JVM's logging files (for slf4l and log4j).
+        Click on the <a href="#/logs">Logs</a> tab to be able to view and search the JVM's logging files (for slf4l and log4j).
       </p>
     </div>
   </div>
