@@ -54,6 +54,7 @@
           </a>
           <nav class="nav-collapse" role="navigation">
             <ul class="nav">
+              <li><a href="/faq/index.html">FAQ</a></li>
               <li><a href="/community/index.html">Community</a></li>
               <li><a href="/contributing/index.html">Contributing</a></li>
               <li><a href="/building/index.html">Building</a></li>
