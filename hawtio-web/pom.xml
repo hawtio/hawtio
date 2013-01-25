@@ -440,15 +440,12 @@
         -->
         <version>2.0</version>
         <configuration>
-          <!-- http port -->
           <port>9090</port>
           <path>/hawtio</path>
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <extraResources>
-            <extraResource>${project.build.directory}/${project.name}-${project.version}</extraResource>
-          </extraResources>
+          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
         </configuration>
       </plugin>
 
