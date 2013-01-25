@@ -15,28 +15,16 @@ module Tomcat {
       var children = [];
       var tree = workspace.tree;
       if (tree) {
-        var domainName = "Tomcat";
-        var folder = tree.get(domainName);
+        var folder = tree.get("Tomcat");
+        if (!folder) {
+          folder = tree.get("Catalina");
+        }
         if (folder) {
           children = folder.children;
         }
-/*
-        if (children.length) {
-          var firstChild = children[0];
-          // the children could be AMQ 5.7 style broker name folder with the actual MBean in the children
-          // along with folders for the Queues etc...
-          if (!firstChild.typeName && firstChild.children.length < 4) {
-            // lets avoid the top level folder
-            var answer = [];
-            angular.forEach(children, (child) => {
-              answer = answer.concat(child.children);
-            });
-            children = answer;
-          }
-*/
-        }
-        var treeElement = $("#tomcatTree");
-        Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
+      }
+      var treeElement = $("#tomcatTree");
+      Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
 
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
