@@ -279,3 +279,13 @@ li.attr-column {
   width: 1em;
 }
 
+
+.editor-autoresize .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+
+.editor-autoresize .CodeMirror .CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}

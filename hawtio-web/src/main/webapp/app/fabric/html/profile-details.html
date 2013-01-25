@@ -76,14 +76,7 @@
     <dd>
       <ul class="unstyled">
         <li ng-repeat="configuration in row.configurations">
-            <div class="expandable closed">
-              <div class="title">
-                <i class="expandable-indicator"></i> {{configuration}}
-              </div>
-              <div class="expandable-body">
-              </div>
-            </div>
-        
+          <a href="#/fabric/profile/{{versionId}}/{{profileId}}/{{configuration}}">{{configuration}}</a>
         </li>
       </ul>
     </dd>
