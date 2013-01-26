@@ -30,6 +30,7 @@ You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/mas
 * [Apache Tomcat](http://tomcat.apache.org/)
 * [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 * [Health MBeans](http://hawt.io/health/)
+* [JBoss](http://www.jboss.org/jbossas)
 * [Jetty](http://www.eclipse.org/jetty/)
 * JMX
 * Logging
