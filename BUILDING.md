@@ -24,6 +24,12 @@ You can do this by running:
 Note, if you are using Ubuntu then you may need to use the sudo command:
 
     sudo npm install -g typescript@0.8.1
+    
+[Hawt.io](http://hawt.io/) also makes use of [gruntjs](http://gruntjs.com/) for building. This is mentioned in more detail [here](http://hawt.io/building/index.html#Building_with_GruntJS)
+
+You can install this by running
+
+    npm install -g grunt@0.3.17
 
 ## Using LiveReload
 
