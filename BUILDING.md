@@ -19,11 +19,11 @@ In order to make use of [TypeScript](http://typescriptlang.org/) you will need t
 
 You can do this by running:
 
-    npm install -g typescript
+    npm install -g typescript@0.8.1
 
 Note, if you are using Ubuntu then you may need to use the sudo command:
 
-    sudo npm install -g typescript
+    sudo npm install -g typescript@0.8.1
 
 ## Using LiveReload
 
