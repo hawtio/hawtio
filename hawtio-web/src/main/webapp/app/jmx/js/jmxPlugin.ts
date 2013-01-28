@@ -8,7 +8,9 @@ module Jmx {
             when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController}).
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
+
+            viewRegistry['jmx'] = layoutTree;
 
             workspace.topLevelTabs.push( {
               content: "JMX",

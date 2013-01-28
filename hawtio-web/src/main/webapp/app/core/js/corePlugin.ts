@@ -52,7 +52,7 @@ myApp.factory('workspace', ($location:ng.ILocationService, $compile:ng.ICompileS
 myApp.filter('humanize', () => humanizeValue)
 
 
-myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage) => {
+myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull) => {
 
   $.support.cors = true;
 
@@ -118,6 +118,11 @@ myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage) => {
   $rootScope.alert = function (text:string) {
     alert(text);
   };
+
+  viewRegistry['fullscreen'] = layoutFull;
+  viewRegistry['notree'] = layoutFull;
+  viewRegistry['help'] = layoutFull;
+  viewRegistry['preferences'] = layoutFull;
 
 });
 

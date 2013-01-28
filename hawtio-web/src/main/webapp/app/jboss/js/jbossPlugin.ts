@@ -3,7 +3,9 @@ module JBoss {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
       // TODO custom tomcat views go here...
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['jboss'] = "app/jboss/html/layoutJBossTree.html";
 
             workspace.topLevelTabs.push( {
               content: "JBoss",

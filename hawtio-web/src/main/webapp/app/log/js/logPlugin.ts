@@ -4,7 +4,10 @@ module Log {
     $routeProvider.
             when('/logs', {templateUrl: 'app/log/html/logs.html', controller: LogController})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+
+            viewRegistry['log'] = layoutFull;
+
 
             workspace.topLevelTabs.push( {
               content: "Logs",
