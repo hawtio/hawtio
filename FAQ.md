@@ -27,6 +27,7 @@ You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/mas
 
 * [Apache ActiveMQ](http://activemq.apache.org/)
 * [Apache Camel](http://camel.apache.org/)
+* [Apache OpenEJB](http://openejb.apache.org/)
 * [Apache Tomcat](http://tomcat.apache.org/)
 * [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 * [Health MBeans](http://hawt.io/health/)
