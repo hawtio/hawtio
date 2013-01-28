@@ -5,7 +5,9 @@ module Dashboard {
     $routeProvider.
       when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html', controller: DashboardController});
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['dashboard'] = 'app/dashboard/html/layoutDashboard.html';
 
             workspace.topLevelTabs.push( {
               content: "Dashboard",
