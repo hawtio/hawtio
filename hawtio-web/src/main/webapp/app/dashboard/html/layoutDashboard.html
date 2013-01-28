@@ -1,0 +1,11 @@
+<div ng-controller="Jmx.MBeansController"></div>
+<ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
+  <li ng-repeat="dash in dashboards" ng-class='{active : isActive(dash)}'>
+    <a ng-href="#/dashboard/{{dash.id}}{{hash}}">{{dash.title}}</a>
+  </li>
+</ul>
+<div class="row-fluid">
+  <div ng-view></div>
+</div>
+
+

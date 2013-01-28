@@ -19,6 +19,8 @@ module Core {
         } else if (path.startsWith("messaging")) {
           //$scope.viewPartial = "app/camel/html/layoutCamel.html";
           return "app/activemq/html/layoutActiveMQTree.html";
+        } else if (path.startsWith("dashboard")) {
+          return "app/dashboard/html/layoutDashboard.html";
         } else if (path.startsWith("tomcat")) {
           return "app/tomcat/html/layoutTomcatTree.html";
         } else if (path.startsWith("jetty")) {
