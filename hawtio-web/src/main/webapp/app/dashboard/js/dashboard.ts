@@ -8,8 +8,10 @@ module Dashboard {
     });
 
     $scope.widgets = [
+/*
       { id: "w1", title: "First Widget", row: 1, col: 1, content: "<h1>Some content!</h1>"},
       { id: "w2", title: "Second Widget", row: 1, col: 2, content: "<h1>Moar content!</h1>"}
+*/
     ];
 
     $scope.sizex = (widget) => {

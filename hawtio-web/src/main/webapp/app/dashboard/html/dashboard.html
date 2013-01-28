@@ -6,5 +6,23 @@
 
 <div class="gridster">
   <ul id="widgets">
+    <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+      <!-- Just numbers -->
+      <div ng-controller="Jmx.AttributeController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
+        <div>{{attribute}}</div>
+        <dl class="dl-horizontal" ng-repeat="(key, value) in data">
+          <dt>{{key}}</dt>
+          <dd>{{value}}</dd>
+        </dl>
+      </div>
+
+    </li>
+
+    <!-- Chart -->
+    <li data-row="2" data-col="2" data-sizex="1" data-sizey="1">
+      <div ng-controller="Jmx.AttributeChartController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
+        <div id="{{attribute}}"></div>
+      </div>
+    </li>
   </ul>
 </div>
