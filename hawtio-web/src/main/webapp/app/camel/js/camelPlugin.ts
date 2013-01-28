@@ -9,9 +9,10 @@ module Camel {
           config(($routeProvider) => {
             $routeProvider.
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html', controller: BrowseEndpointController}).
-                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
-                    when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
+                    when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
+                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
+                    when('/camel/source', {templateUrl: 'app/camel/html/source.html', controller: SourceController}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
           }).
           filter('camelIconClass', () => iconClass).
@@ -107,6 +108,12 @@ module Camel {
               title: "View a diagram of the Camel routes",
               isValid: () => workspace.isCamelFolder(),
               href: () => "#/camel/routes"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class=" icon-file-alt"></i> Source',
+              title: "View the source of the Camel routes",
+              isValid: () => workspace.isCamelFolder(),
+              href: () => "#/camel/source"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-envelope"></i> Browse',

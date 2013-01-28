@@ -26,4 +26,19 @@ module Camel {
     }
     return "red icon-stop";
   }
+
+  export function getSelectedRouteId(workspace: Workspace) {
+    var selectedRouteId = null;
+    var selection = workspace.selection;
+    if (selection) {
+      if (selection && selection.entries) {
+        var typeName = selection.entries["type"];
+        var name = selection.entries["name"];
+        if ("routes" === typeName && name) {
+          selectedRouteId = trimQuotes(name);
+        }
+      }
+    }
+    return selectedRouteId;
+  }
 }

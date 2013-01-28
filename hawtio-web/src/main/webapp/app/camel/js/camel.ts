@@ -1,5 +1,6 @@
+
 module Camel {
-    export function CamelController($scope, workspace:Workspace) {
+  export function CamelController($scope, workspace:Workspace) {
       $scope.workspace = workspace;
       $scope.routes = [];
 
@@ -29,17 +30,7 @@ module Camel {
         $scope.nodes = {};
         var nodes = [];
         var links = [];
-        var selectedRouteId = null;
-        var selection = workspace.selection;
-        if (selection) {
-          if (selection && selection.entries) {
-            var typeName = selection.entries["type"];
-            var name = selection.entries["name"];
-            if ("routes" === typeName && name) {
-              selectedRouteId = trimQuotes(name);
-            }
-          }
-        }
+        var selectedRouteId = getSelectedRouteId(workspace);
         if (data) {
           var doc = $.parseXML(data);
           var allRoutes = $(doc).find("route");
