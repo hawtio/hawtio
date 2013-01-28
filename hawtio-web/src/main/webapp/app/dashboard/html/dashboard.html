@@ -5,7 +5,19 @@
         <li data-row="1" data-col="1" data-sizex="4" data-sizey="3">
           <iframe src="http://localhost:8080/hawtio/#/jmx/charts?tab=fullscreen&nid=root-java.lang-OperatingSystem&att=FreePhysicalMemorySize,FreeSwapSpaceSize,ProcessCpuLoad,SystemCpuLoad" width="500" height="300"></iframe>
         </li>
-        <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">whatever!</li>
+
+        <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+
+          <div ng-controller="Jmx.AttributeController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
+            <div>{{attribute}}</div>
+            <dl class="dl-horizontal" ng-repeat="(key, value) in data">
+              <dt>{{key}}</dt>
+              <dd>{{value}}</dd>
+            </dl>
+          </div>
+
+        </li>
+
         <li data-row="3" data-col="1" data-sizex="1" data-sizey="1">oh!</li>
 
         <li data-row="1" data-col="2" data-sizex="2" data-sizey="1">something</li>
