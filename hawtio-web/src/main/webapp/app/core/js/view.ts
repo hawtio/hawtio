@@ -23,6 +23,8 @@ module Core {
           return "app/tomcat/html/layoutTomcatTree.html";
         } else if (path.startsWith("jetty")) {
           return "app/jetty/html/layoutJettyTree.html";
+        } else if (path.startsWith("openejb")) {
+          return "app/openejb/html/layoutOpenEJBTree.html";
         } else if (path.startsWith("jboss")) {
           return "app/jboss/html/layoutJBossTree.html";
         } else if (path.startsWith("fabric")) {
