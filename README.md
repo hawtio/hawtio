@@ -33,7 +33,7 @@ Or if you are using a vanilla [Apache Karaf](http://karaf.apache.org/) container
 Then in the Karaf / Fuse ESB console try:
 
     features:install war
-    install mvn:io.hawt/hawtio-web/1.0-SNAPSHOT/war
+    install mvn:io.hawt/hawtio-osgi/1.0-SNAPSHOT/war
 
 Then open [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/)
 

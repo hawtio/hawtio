@@ -289,6 +289,13 @@
         </executions>
       </plugin>
 
+      <!--
+      Lets generate the OSGi metadata in this project
+      as its easier on the maven side of things
+      but we won't use it in hawtio-web.war as this tends to break JBoss WAR deployment.
+
+      So we keep it in ${basedir}/osgi so that the hawtio-osgi project can reuse it.
+      -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -303,7 +310,7 @@
           </execution>
         </executions>
         <configuration>
-          <manifestLocation>${webapp-outdir}/META-INF</manifestLocation>
+          <manifestLocation>${basedir}/target/osgi/META-INF</manifestLocation>
           <supportedProjectTypes>
             <supportedProjectType>jar</supportedProjectType>
             <supportedProjectType>bundle</supportedProjectType>
@@ -320,7 +327,7 @@
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Title>hawtio osgi</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
           </instructions>
         </configuration>
@@ -339,9 +346,11 @@
             */debug/**
           </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+<!--
           <archive>
             <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+-->
           <webResources>
             <resource>
               <filtering>true</filtering>
