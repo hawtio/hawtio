@@ -446,9 +446,6 @@
         </configuration>
       </plugin>
 
-<!--
-      TODO for tomcat6 support we need to remove the CORSFilter servlet filter
-
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat6-maven-plugin</artifactId>
@@ -462,7 +459,6 @@
           <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
         </configuration>
       </plugin>
--->
 
       <plugin>
         <groupId>org.jboss.as.plugins</groupId>
