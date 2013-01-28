@@ -1,58 +1,10 @@
 <h1>Dashboard {{id}}</h1>
 
-<div class="gridster">
-    <ul>
-      <!--
-        <li data-row="1" data-col="1" data-sizex="4" data-sizey="3">
-          <iframe src="http://localhost:8080/hawtio/#/jmx/charts?tab=fullscreen&nid=root-java.lang-OperatingSystem&att=FreePhysicalMemorySize,FreeSwapSpaceSize,ProcessCpuLoad,SystemCpuLoad" width="500" height="300"></iframe>
-        </li>
-        -->
-
-        <!-- Just numbers -->
-        <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
-
-          <div ng-controller="Jmx.AttributeController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
-            <div>{{attribute}}</div>
-            <dl class="dl-horizontal" ng-repeat="(key, value) in data">
-              <dt>{{key}}</dt>
-              <dd>{{value}}</dd>
-            </dl>
-          </div>
-
-        </li>
-
-        <!-- Chart -->
-        <li data-row="3" data-col="1" data-sizex="1" data-sizey="1">
-
-          <div ng-controller="Jmx.AttributeChartController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
-            <div id="{{attribute}}"></div>
-          </div>
-
-
-        </li>
-
-        <li data-row="1" data-col="2" data-sizex="2" data-sizey="1">something</li>
-        <li data-row="2" data-col="2" data-sizex="2" data-sizey="2"></li>
-
-        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
-        <li data-row="2" data-col="4" data-sizex="2" data-sizey="1"></li>
-        <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"></li>
-
-        <li data-row="1" data-col="5" data-sizex="1" data-sizey="1"></li>
-        <li data-row="3" data-col="5" data-sizex="1" data-sizey="1"></li>
-
-        <li data-row="1" data-col="6" data-sizex="1" data-sizey="1"></li>
-        <li data-row="2" data-col="6" data-sizex="1" data-sizey="2"></li>
-    </ul>
-</div>
-
-<script type="text/javascript">
-  $(function(){
-
-      $(".gridster ul").gridster({
-          widget_margins: [10, 10],
-          widget_base_dimensions: [140, 140]
-      });
-
-  });
+<script type="text/ng-template" id="widgetTemplate">
+  {{widget.title}}
 </script>
+
+<div class="gridster">
+  <ul id="widgets">
+  </ul>
+</div>
