@@ -57,6 +57,14 @@ To specify a different port to run on, just override the **jettyPort** property
 
     mvn test-compile exec:java -DjettyPort=8181
 
+### Trying different containers
+
+The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
+
+    mvn tomcat7:run
+    mvn tomcat6:run
+    mvn jboss-as:run
+    mvn jetty:run
 
 ### Incremental compile with TypeScript
 
