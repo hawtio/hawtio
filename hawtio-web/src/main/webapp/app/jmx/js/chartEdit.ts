@@ -61,7 +61,7 @@ module Jmx {
       if (node && jolokia) {
         // lets iterate through all the children
         var children = node.children;
-        if (!children) {
+        if (!children || !children.length) {
           children = [node];
         }
         if (children) {
