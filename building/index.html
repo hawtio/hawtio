@@ -118,6 +118,15 @@ mvn -Pwatch</code></pre>
 
 <pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
 
+<h3 id = "Trying_different_containers">Trying different containers</h3>
+
+<p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>
+
+<pre><code>mvn tomcat7:run
+mvn tomcat6:run
+mvn jboss-as:run
+mvn jetty:run</code></pre>
+
 <h3 id = "Incremental_compile_with_TypeScript">Incremental compile with TypeScript</h3>
 
 <p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
