@@ -7,7 +7,9 @@ module Fabric {
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html', controller: ProfileController}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html', controller: PIDController});
   }).
-          run(($location: ng.ILocationService, workspace: Workspace) => {
+          run(($location: ng.ILocationService, workspace: Workspace, viewRegistry) => {
+
+            viewRegistry['fabric'] = "app/fabric/html/layoutFabric.html";
 
             workspace.topLevelTabs.push( {
               content: "Fabric",

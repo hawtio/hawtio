@@ -3,7 +3,9 @@ module Jetty {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
       // TODO custom tomcat views go here...
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['jetty'] = "app/jetty/html/layoutJettyTree.html";
 
             workspace.topLevelTabs.push( {
               content: "Jetty",

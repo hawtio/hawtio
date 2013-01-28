@@ -4,7 +4,9 @@ module Health {
     $routeProvider.
             when('/health', {templateUrl: 'app/health/html/health.html', controller: HealthController})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+
+            viewRegistry['health'] = layoutFull;
 
             workspace.topLevelTabs.push( {
               content: "Health",

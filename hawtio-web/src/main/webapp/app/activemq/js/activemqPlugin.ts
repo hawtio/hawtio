@@ -12,7 +12,9 @@ module ActiveMQ {
                     when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController}).
                     when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: Camel.SendMessageController})
           }).
-                    run(($location: ng.ILocationService, workspace: Workspace) => {
+                    run(($location: ng.ILocationService, workspace: Workspace, viewRegistry) => {
+
+                      viewRegistry['messaging'] = 'app/activemq/html/layoutActiveMQTree.html';
 
                       // register default attribute views
                       var attributes = workspace.attributeColumnDefs;

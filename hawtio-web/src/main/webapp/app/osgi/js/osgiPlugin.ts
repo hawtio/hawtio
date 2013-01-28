@@ -10,7 +10,9 @@ module Osgi {
             when('/osgi/configurations', {templateUrl: 'app/osgi/html/configurations.html', controller: ConfigurationsController}).
             when('/osgi/pid/:pid', {templateUrl: 'app/osgi/html/pid.html', controller: PidController})
   }).
-          run((workspace:Workspace) => {
+          run((workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
 
             workspace.topLevelTabs.push( {
               content: "OSGi",

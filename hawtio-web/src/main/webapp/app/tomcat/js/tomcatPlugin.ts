@@ -3,7 +3,9 @@ module Tomcat {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
       // TODO custom tomcat views go here...
   }).
-          run(($location: ng.ILocationService, workspace:Workspace) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTree.html";
 
             workspace.topLevelTabs.push( {
               content: "Tomcat",

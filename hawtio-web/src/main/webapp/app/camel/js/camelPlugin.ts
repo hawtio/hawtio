@@ -16,7 +16,9 @@ module Camel {
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
           }).
           filter('camelIconClass', () => iconClass).
-          run((workspace:Workspace) => {
+          run((workspace:Workspace, viewRegistry) => {
+
+            viewRegistry['integration'] = 'app/camel/html/layoutCamelTree.html';
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
               // TODO there should be a nicer way to do this!

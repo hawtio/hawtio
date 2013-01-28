@@ -1,8 +1,16 @@
 module Core {
-  export var layoutTree = "app/core/html/layoutTree.html";
-  export var layoutFull = "app/core/html/layoutFull.html";
 
-  export function ViewController($scope, $route, $location:ng.ILocationService, workspace:Workspace) {
+  myApp.constant('layoutTree', 'app/core/html/layoutTree.html');
+  myApp.constant('layoutFull', 'app/core/html/layoutFull.html');
+
+  myApp.factory('viewRegistry', function () {
+    return {};
+  });
+
+  // NOTE - $route is brought in here to ensure the factory for that service
+  // has been called, otherwise the ng-include directive doesn't show the partial
+  // after a refresh until you click a top-level link.
+  export function ViewController($scope, $route, $location:ng.ILocationService, layoutTree, layoutFull, viewRegistry) {
 
     findViewPartial();
 
@@ -10,41 +18,27 @@ module Core {
       findViewPartial();
     });
 
-    function findViewPartial() {
-        // TODO this should be inside the plugins!
-      function customView(path) {
-        if (path.startsWith("integration")) {
-          //$scope.viewPartial = "app/camel/html/layoutCamel.html";
-          return "app/camel/html/layoutCamelTree.html";
-        } else if (path.startsWith("messaging")) {
-          //$scope.viewPartial = "app/camel/html/layoutCamel.html";
-          return "app/activemq/html/layoutActiveMQTree.html";
-        } else if (path.startsWith("dashboard")) {
-          return "app/dashboard/html/layoutDashboard.html";
-        } else if (path.startsWith("tomcat")) {
-          return "app/tomcat/html/layoutTomcatTree.html";
-        } else if (path.startsWith("jetty")) {
-          return "app/jetty/html/layoutJettyTree.html";
-        } else if (path.startsWith("openejb")) {
-          return "app/openejb/html/layoutOpenEJBTree.html";
-        } else if (path.startsWith("jboss")) {
-          return "app/jboss/html/layoutJBossTree.html";
-        } else if (path.startsWith("fabric")) {
-          return "app/fabric/html/layoutFabric.html";
-        } else if (path.startsWith("osgiTab")) {
-          return "app/osgi/html/layoutOsgi.html";
-        } else if (path.startsWith("fullscreen") || path.startsWith("notree") || path.startsWith("log") || path.startsWith("health") || path.startsWith("help") || path.startsWith("preferences")) {
-          return  layoutFull;
-        } else {
-          return null;
+    function searchRegistry(path) {
+      var answer = undefined;
+
+      Object.extended(viewRegistry).keys(function(key, value) {
+        if (path.startsWith(key)) {
+          answer = value;
         }
-      }
+      });
+
+      //console.log("Searching for: " + path + " returning: ", answer);
+
+      return answer;
+    }
+
+    function findViewPartial() {
 
       var answer = null;
       var hash = $location.search();
       var tab = hash['tab'];
       if (angular.isString(tab)) {
-        answer = customView(tab);
+        answer = searchRegistry(tab);
       }
       if (!answer) {
         var path = $location.path();
@@ -52,7 +46,7 @@ module Core {
           if (path.startsWith("")) {
             path = path.substring(1);
           }
-          answer = customView(path);
+          answer = searchRegistry(path);
         }
       }
       if (!answer) {
