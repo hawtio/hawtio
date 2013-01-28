@@ -49,7 +49,7 @@ If you are interested in working on the code the following references and articl
 
 * [AngularJS plugins](http://ngmodules.org/)
 * [AngularJS tips and tricks](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED)
-* [more AngularJS magic to supercharge yoru webapp](http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#)
+* [more AngularJS magic to supercharge your webapp](http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#)
 * [AngularJS questions on stackoverflow](http://stackoverflow.com/questions/tagged/angularjs)
 
 ## Code walkthrough
