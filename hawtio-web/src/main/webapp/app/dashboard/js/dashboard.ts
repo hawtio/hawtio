@@ -1,5 +1,5 @@
 module Dashboard {
-  export function DashboardController($scope, $routeParams, $injector, $route, $templateCache, workspace:Workspace, jolokia) {
+  export function DashboardController($scope, $location, $routeParams, $injector, $route, $templateCache, workspace:Workspace, jolokia) {
     $scope.id = $routeParams["dashboardId"];
     $scope.route = $route;
     $scope.injector = $injector;
@@ -10,10 +10,16 @@ module Dashboard {
     });
 
     $scope.widgets = [
-/*
-      { id: "w1", title: "First Widget", row: 1, col: 1, content: "<h1>Some content!</h1>"},
-      { id: "w2", title: "Second Widget", row: 1, col: 2, content: "<h1>Moar content!</h1>"}
-*/
+      { id: "w2", title: "Cheese Widget", row: 1, col: 1,
+        path: "jmx/cheese",
+        include: "app/jmx/html/cheese.html",
+        search: {}, hash: ""},
+      { id: "w1", title: "Attributes", row: 1, col: 2,
+        path: "jmx/attributes",
+        include: "app/jmx/html/attributes.html",
+        search: {nid: "root-java.lang-OperatingSystem"},
+        hash: ""
+      }
     ];
 
     $scope.sizex = (widget) => {
@@ -31,6 +37,23 @@ module Dashboard {
       angular.forEach($scope.widgets, (widget) => {
         var childScope = $scope.$new(false);
         childScope.widget = widget;
+        var path = widget.path;
+        var search = widget.search;
+        var hash = widget.hash;
+        var location = new RectangleLocation($location, path, search, hash);
+
+        workspace.$location = location;
+        // now we need to update the selection from the location search()
+        var key = location.search()['nid'];
+        if (key && workspace.tree) {
+          // lets find the node for this key...
+          workspace.selection = workspace.keyToNodeMap[key];
+          console.log("Selected node " + workspace.selection);
+        }
+
+        childScope["$location"] = location;
+        childScope["$routeParams"] = {x: "123", y: "Cheese!"};
+
         var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + $scope.sizex(widget) + '" data-sizey="' + $scope.sizey(widget) + '">');
         div.html(template);
         workspace.$compile(div.contents())(childScope);

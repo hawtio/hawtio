@@ -15,20 +15,13 @@ class Workspace {
   public attributeColumnDefs = {};
   public topLevelTabs = [];
   public subLevelTabs = [];
+  public keyToNodeMap = {};
 
-  uriValidations = null;
-
-  constructor(public jolokia, 
-              public $location:ng.ILocationService, 
+  constructor(public jolokia,
+              public $location,
               public $compile:ng.ICompileService, 
               public $templateCache:ng.ITemplateCacheService, 
               public localStorage:WindowLocalStorage) {
-
-    // TODO Is there a way to remove this logic from here?
-    this.uriValidations = {
-      'chartEdit': () => $location.path() === "/charts"
-    };
-
   }
 
   getLocalStorage(key:string) {
@@ -170,7 +163,7 @@ class Workspace {
   }
 
   public moveIfViewInvalid() {
-    var uri = this.$location.path().substring(1);
+    var uri = Core.trimLeading(this.$location.path(), "/");
     if (this.selection) {
       var key = this.selectionViewConfigKey();
       if (this.validSelection(uri)) {

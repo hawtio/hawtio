@@ -2,12 +2,24 @@ module Jmx {
   var pluginName = 'jmx';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
-            when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html', controller: AttributesController}).
+            when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
             when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html', controller: OperationsController}).
             when('/jmx/charts', {templateUrl: 'app/jmx/html/charts.html', controller: ChartController}).
+            when('/jmx/cheese', {templateUrl: 'app/jmx/html/cheese.html'}).
             when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController}).
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
+          provider('location', function() {
+
+              this.$get = function(workspace, $location) {
+                console.log("=========== location decorator called with workspace " + workspace + " and $location " + $location);
+                if (workspace) {
+                  var custom = workspace["$location"];
+                  if (custom) return custom;
+                }
+                return $location;
+              };
+          }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
 
             viewRegistry['jmx'] = layoutTree;

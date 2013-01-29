@@ -10,7 +10,7 @@ module Jmx {
       cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
     }];
 
-  export function AttributesController($scope, $location, workspace:Workspace, jolokia) {
+  export function AttributesController($scope, location, workspace:Workspace, jolokia) {
     $scope.searchText = "";
     $scope.columnDefs = [];
     $scope.selectedItems = [];
@@ -75,7 +75,7 @@ module Jmx {
     $scope.folderHref = (row) => {
       var key = row.getProperty("key");
       if (key) {
-        return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
+        return Core.createHref(location, "#" + location.path() + "?nid=" + key, ["nid"]);
       } else {
         return "";
       }

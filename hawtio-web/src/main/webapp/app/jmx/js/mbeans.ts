@@ -43,6 +43,7 @@ module Jmx {
       var separator = '-';
       workspace.mbeanTypesToDomain = {};
       workspace.mbeanServicesToDomain = {};
+      workspace.keyToNodeMap = {};
       var tree = new Folder('MBeans');
       tree.key = rootId;
       var domains = response.value;
@@ -92,6 +93,9 @@ module Jmx {
           function configureFolder(folder: Folder, name: string) {
             folder.domain = domain;
             folder.key = rootId + separator + folderNames.join(separator);
+            if (folder.key) {
+              workspace.keyToNodeMap[folder.key] = folder;
+            }
             folder.folderNames = folderNames.clone();
             //var classes = escapeDots(folder.key);
             var classes = "";
@@ -138,6 +142,7 @@ module Jmx {
               folder.entries = entries;
               configureFolder(folder, lastPath);
               folder.key = key;
+              workspace.keyToNodeMap[folder.key] = folder;
               folder.title = trimQuotes(lastPath);
               folder.objectName = objectName;
               folder.typeName = typeName;
