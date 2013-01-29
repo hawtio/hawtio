@@ -4,7 +4,8 @@ module Dashboard {
           config(($routeProvider) => {
 
             $routeProvider.
-                    when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html', controller: DashboardController});
+                    when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html', controller: DashboardController}).
+                    when('/dashboards/edit', {templateUrl: 'app/dashboard/html/editDashboards.html', controller: EditDashboardsController});
 
           }).
           value('ui.config', {
@@ -27,6 +28,7 @@ module Dashboard {
               href: () => "#/dashboard/foo?tab=dashboard",
               isActive: () => workspace.isTopTabActive("dashboard")
             });
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

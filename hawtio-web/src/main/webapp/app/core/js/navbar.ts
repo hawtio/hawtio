@@ -32,6 +32,11 @@ module Core {
       return createHref($location, href, ['tab']);
     };
 
+    $scope.addToDashboardLink = () => {
+      var href = "#" + $location.path() + workspace.hash();
+      return "#/dashboards/edit?url=" + encodeURIComponent(href);
+    };
+
     $scope.isActive = (nav) => {
       if (angular.isString(nav))
         return workspace.isLinkActive(nav);

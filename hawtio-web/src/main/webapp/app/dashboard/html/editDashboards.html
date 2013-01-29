@@ -1,0 +1,16 @@
+<div class="row-fluid">
+  <div class="span4">
+    <div class="control-group">
+      <button class="btn" ng-hide="!url" ng-disabled="!selectedItems.length" ng-click="add()"><i class="icon-add"></i> Add view to dashboard</button>
+    </div>
+  </div>
+  <div class="span8">
+    <div class="control-group">
+      <input class="span12 search-query" ng-model="searchText" placeholder="search">
+    </div>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="gridStyle" ng-grid="gridOptions"></div>
+</div>
