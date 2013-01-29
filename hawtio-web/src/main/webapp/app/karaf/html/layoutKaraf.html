@@ -1,0 +1,11 @@
+<div ng-controller="Jmx.MBeansController"></div>
+<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+    <li ng-class='{active : isActive("#/karaf/features")}'>
+        <a ng-href="#/karaf/features{{hash}}">Features</a>
+    </li>
+</ul>
+<div class="row-fluid">
+    <div ng-view></div>
+</div>
+
+

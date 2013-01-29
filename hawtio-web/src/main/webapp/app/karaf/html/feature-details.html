@@ -1,0 +1,130 @@
+<div>
+    <table class="overviewSection">
+        <tr>
+            <td></td>
+            <td class="less-big">
+                <div class="btn-group">
+                    <button ng-click="uninstallFeature(name,version)" class="icon-pause" title="uninstall"></button>
+                    <button ng-click="installFeature(name,version)" class="icon-play" title="install"></button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Name:</strong></td>
+            <td class="less-big">{{row.Name}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Version:</strong></td>
+            <td class="less-big">{{row.Version}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Repository:</strong></td>
+            <td class="less-big">{{row.Repository}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>State:</strong></td>
+            <td class="wrap">
+                <div ng-switch="row.Installed">
+                    <p style="display: inline;" ng-switch-when="true">Installed</p>
+
+                    <p style="display: inline;" ng-switch-default>Not Installed</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionFeatures">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionFeatures"
+                               href="#collapseFeatures">
+                                Features
+                            </a>
+                        </div>
+                        <div id="collapseFeatures" class="accordion-body collapse out">
+                            <ul class="accordion-inner">
+                                <li ng-repeat="feature in row.Dependencies">
+                                    <a href='#/karaf/feature/{{feature.Name}}/{{feature.Version}}{{hash}}'>{{feature.Name}}
+                                        {{feature.Version}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionBundles">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionBundles"
+                               href="#collapseBundles">
+                                Bundles
+                            </a>
+                        </div>
+                        <div id="collapseBundles" class="accordion-body collapse out">
+                            <ul class="accordion-inner">
+                                <li ng-repeat="bundle in row.Bundles">{{bundle}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionConfigurations">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionConfigurations"
+                               href="#collapsConfigurations">
+                                Configurations
+                            </a>
+                        </div>
+                        <div id="collapsConfigurations" class="accordion-body collapse out">
+                            <table class="accordion-inner">
+                                <tr ng-repeat="(pid) in row.Configurations">
+                                    <td>{{pid}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+                <div class="accordion" id="accordionConfigurationFiles">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionConfigurationFiles"
+                               href="#collapsConfigurationFiles">
+                                Configuration Files
+                            </a>
+                        </div>
+                        <div id="collapsConfigurationFiles" class="accordion-body collapse out">
+                            <table class="accordion-inner">
+                                <tr ng-repeat="file in row.Files">
+                                    <td>{{file.Files}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

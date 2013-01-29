@@ -352,6 +352,9 @@ class Workspace {
   isOsgiFolder() {
     return this.hasDomainAndProperties('osgi.core');
   }
+  isKarafFolder() {
+        return this.hasDomainAndProperties('org.apache.karaf');
+  }
 
     isOsgiCompendiumFolder() {
         return this.hasDomainAndProperties('osgi.compendium');
