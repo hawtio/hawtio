@@ -1,0 +1,5 @@
+<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+  <li ng-repeat="nav in subLevelTabs()" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
+    <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
+       data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
+</ul>

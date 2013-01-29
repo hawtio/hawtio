@@ -2,12 +2,8 @@
   <div class="span3" ng-controller="Jmx.MBeansController">
     <div id="activemqtree" ng-controller="ActiveMQ.TreeController"></div>
   </div>
-  <div class="span9" ng-controller="Core.NavBarController">
-    <ul class="nav nav-tabs">
-      <li ng-repeat="nav in subLevelTabs()" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
-        <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
-           data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
-    </ul>
+  <div class="span9">
+    <ng-include src="'app/jmx/html/subLevelTabs.html'"></ng-include>
     <div id="properties" ng-view></div>
   </div>
   <div id="alert-area" class="span9"></div>
