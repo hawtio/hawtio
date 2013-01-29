@@ -1,8 +1,19 @@
 module Dashboard {
   export function EditDashboardsController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
-    $scope.url = decodeURIComponent($routeParams["url"]);
+    var url = $routeParams["url"];
+    if (url) {
+      $scope.url = decodeURIComponent(url);
+    }
     $scope.searchText = "";
     $scope.selectedItems = [];
+
+    $scope.hasUrl = () => {
+      return ($scope.url) ? true : false;
+    };
+
+    $scope.hasSelection = () => {
+      return !$scope.selectedItems.length;
+    };
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -19,6 +30,10 @@ module Dashboard {
       setTimeout(updateTable, 50);
     });
 
+    $scope.$watch('workspace.selection', function () {
+      setTimeout(updateTable, 50);
+    });
+
     $scope.goBack = () => {
       var href = $scope.url;
       if (href) {
@@ -30,13 +45,37 @@ module Dashboard {
       }
     };
 
-    $scope.$watch('workspace.selection', function () {
-      setTimeout(updateTable, 50);
-    });
-
-    $scope.add = () => {
+    $scope.addViewToDashboard = () => {
       angular.forEach($scope.selectedItems, (selectedItem) => {
         console.log("Adding url " + $scope.url + " to dashboard: " + JSON.stringify(selectedItem));
+      });
+    };
+
+    function addDashboard(newDash) {
+        // TODO how to really add??
+
+      $scope.dashboards.push(newDash);
+      $scope.selectedItems.push(newDash);
+    }
+
+    $scope.create = () => {
+      var counter = $scope.dashboards.length + 1;
+      var id = "dash" + (counter);
+      var newDash = {id: id, title: "Untitled" + counter, group: "Personal", widgets: []};
+
+      // TODO how to really add??
+      addDashboard(newDash);
+    };
+
+    $scope.duplicate = () => {
+      angular.forEach($scope.selectedItems, (item, idx) => {
+        // lets unselect this item
+        $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
+        var counter = $scope.dashboards.length + 1;
+        var id = "dash" + (counter);
+        var widgets = item.widgets || [];
+        var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };
+        addDashboard(newDash);
       });
     };
 

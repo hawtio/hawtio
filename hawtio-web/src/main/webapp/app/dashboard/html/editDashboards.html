@@ -1,15 +1,36 @@
 <div class="row-fluid">
-  <div class="span4">
-    <div class="control-group">
-      <button class="btn" ng-hide="!url" ng-click="goBack()"
-              title="Go back to the previous view"><i class="icon-backward"></i> Back
-      </button>
-      <button class="btn" ng-hide="!url" ng-disabled="!selectedItems.length" ng-click="add()"
-              title="Adds the current view to the selected dashboard(s)"><i class="icon-add"></i> Add View
-      </button>
+  <div class="span6">
+    <div class="control-group" ng-switch on="hasUrl()">
+      <div ng-switch-when="true">
+        <button class="btn" ng-click="goBack()"
+                title="Go back to the previous view" data-placement="bottom">
+          <i class="icon-backward"></i> Back
+        </button>
+        <button class="btn" ng-disabled="hasSelection()" ng-click="addViewToDashboard()"
+                title="Adds the current view to the selected dashboard(s)" data-placement="bottom">
+          <i class="icon-dashboard"></i> Add View To Dashboard
+        </button>
+        <button class="btn" ng-click="create()"
+                title="Create a new empty dashboard" data-placement="bottom">
+          <i class="icon-plus"></i> Create
+        </button>
+      </div>
+      <div ng-switch-default>
+        <button class="btn" ng-click="create()"
+                title="Create a new empty dashboard" data-placement="bottom">
+          <i class="icon-plus"></i> Create
+        </button>
+        <button class="btn" ng-disabled="hasSelection()" ng-click="duplicate()"
+                title="Create a copy of the selected dashboard(s)" data-placement="bottom">
+          <i class="icon-copy"></i> Duplicate
+        </button>
+        <button class="btn" ng-disabled="hasSelection()" ng-click="delete()"><i
+                class="icon-remove"></i> Delete
+        </button>
+      </div>
     </div>
   </div>
-  <div class="span8">
+  <div class="span6">
     <div class="control-group">
       <input type="text" class="span12 search-query" ng-model="searchText" placeholder="search">
     </div>

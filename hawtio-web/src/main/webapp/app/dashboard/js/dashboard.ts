@@ -1,6 +1,8 @@
 module Dashboard {
-  export function DashboardController($scope, $routeParams, $templateCache, workspace:Workspace, jolokia) {
+  export function DashboardController($scope, $routeParams, $injector, $route, $templateCache, workspace:Workspace, jolokia) {
     $scope.id = $routeParams["dashboardId"];
+    $scope.route = $route;
+    $scope.injector = $injector;
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
