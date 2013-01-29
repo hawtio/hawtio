@@ -2,4 +2,15 @@
   <li ng-repeat="nav in subLevelTabs()" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
     <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
        data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
+
+  <li class="pull-right">
+    <a ng-href="{{fullScreenLink()}}" title="Show this view in full screen" data-placement="bottom">
+      <i class="icon-fullscreen"></i></a></li>
+  <li class="pull-right">
+    <a ng-href="{{link('#/help')}}" title="Add this view to a dashboard" data-placement="bottom">
+      <i class="icon-share"></i></a></li>
+
+<!--
+-->
 </ul>
+

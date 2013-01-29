@@ -1,19 +1,6 @@
 module Core {
-  export interface INavBarController extends ng.IScope{
-    workspace : Workspace;
-    hash : string;
-    validSelection : (uri:string) => bool;
-    isActive : (string) => bool;
 
-    topLevelTabs: () => MenuItem[];
-    subLevelTabs: () => MenuItem[];
-
-    isValid: (MenuItem) => bool;
-    link: (MenuItem) => string;
-    fullScreen: () => bool;
-  }
-
-  export function NavBarController($scope:INavBarController, $location:ng.ILocationService, workspace:Workspace) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace) {
     // TODO why do we keep binding the workspace to the scope?
     $scope.workspace = workspace;
 
@@ -37,6 +24,11 @@ module Core {
       }else {
         href = nav.href();
       }
+      return createHref($location, href, ['tab']);
+    };
+
+    $scope.fullScreenLink = () => {
+      var href = "#" + $location.path() + "?tab=notree";
       return createHref($location, href, ['tab']);
     };
 
