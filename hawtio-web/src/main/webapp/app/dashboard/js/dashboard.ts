@@ -36,6 +36,7 @@ module Dashboard {
       var template = $templateCache.get("widgetTemplate");
       angular.forEach($scope.widgets, (widget) => {
         var childScope = $scope.$new(false);
+        Jmx.locationScope(childScope);
         childScope.widget = widget;
         var path = widget.path;
         var search = widget.search;
@@ -60,6 +61,7 @@ module Dashboard {
         widgets.append(div);
       });
       $scope.$apply();
+      Jmx.locationScope(null);
 
       // TODO we can destroy all the child scopes now?
       widgets.gridster({

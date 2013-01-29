@@ -1,5 +1,12 @@
 module Jmx {
   var pluginName = 'jmx';
+
+  var _locationScope = null;
+
+  export function locationScope(scope) {
+    _locationScope = scope;
+  }
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
@@ -10,11 +17,11 @@ module Jmx {
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
           provider('location', function() {
-
               this.$get = function(workspace, $location) {
-                console.log("=========== location decorator called with workspace " + workspace + " and $location " + $location);
-                if (workspace) {
-                  var custom = workspace["$location"];
+                var scope = _locationScope;
+                console.log("=========== location decorator called with scope " + scope + " and $location " + $location);
+                if (scope) {
+                  var custom = scope["$location"];
                   if (custom) return custom;
                 }
                 return $location;
