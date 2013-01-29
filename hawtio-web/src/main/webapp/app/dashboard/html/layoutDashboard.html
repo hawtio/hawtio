@@ -3,6 +3,10 @@
   <li ng-repeat="dash in dashboards" ng-class='{active : isActive(dash)}'>
     <a ng-href="#/dashboard/{{dash.id}}{{hash}}">{{dash.title}}</a>
   </li>
+  <li class="pull-right">
+    <a ng-href="#/dashboards/edit{{hash}}" title="Edits the dashboards; letting you add, duplicate or remove dashboards"
+       data-placement="bottom">
+      <i class="icon-edit"></i> Edit</a></li>
 </ul>
 <div class="row-fluid">
   <div ng-view></div>

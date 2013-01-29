@@ -1,7 +1,12 @@
 <div class="row-fluid">
   <div class="span4">
     <div class="control-group">
-      <button class="btn" ng-hide="!url" ng-disabled="!selectedItems.length" ng-click="add()"><i class="icon-add"></i> Add view to dashboard</button>
+      <button class="btn" ng-hide="!url" ng-click="goBack()"
+              title="Go back to the previous view"><i class="icon-backward"></i> Back
+      </button>
+      <button class="btn" ng-hide="!url" ng-disabled="!selectedItems.length" ng-click="add()"
+              title="Adds the current view to the selected dashboard(s)"><i class="icon-add"></i> Add View
+      </button>
     </div>
   </div>
   <div class="span8">

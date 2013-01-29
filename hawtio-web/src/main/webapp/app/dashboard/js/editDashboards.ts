@@ -1,6 +1,6 @@
 module Dashboard {
-  export function EditDashboardsController($scope, $routeParams, $templateCache, workspace:Workspace, jolokia) {
-    $scope.url = $routeParams["url"];
+  export function EditDashboardsController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
+    $scope.url = decodeURIComponent($routeParams["url"]);
     $scope.searchText = "";
     $scope.selectedItems = [];
 
@@ -18,6 +18,17 @@ module Dashboard {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateTable, 50);
     });
+
+    $scope.goBack = () => {
+      var href = $scope.url;
+      if (href) {
+        if (href.startsWith("#")) {
+          href = href.substring(1);
+        }
+        console.log("Changing url to: " + url);
+        $location.url(href);
+      }
+    };
 
     $scope.$watch('workspace.selection', function () {
       setTimeout(updateTable, 50);
