@@ -1,12 +1,6 @@
 module Jmx {
   var pluginName = 'jmx';
 
-  var _locationScope = null;
-
-  export function locationScope(scope) {
-    _locationScope = scope;
-  }
-
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
@@ -16,17 +10,6 @@ module Jmx {
             when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController}).
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
   }).
-          provider('location', function() {
-              this.$get = function(workspace, $location) {
-                var scope = _locationScope;
-                console.log("=========== location decorator called with scope " + scope + " and $location " + $location);
-                if (scope) {
-                  var custom = scope["$location"];
-                  if (custom) return custom;
-                }
-                return $location;
-              };
-          }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
 
             viewRegistry['jmx'] = layoutTree;

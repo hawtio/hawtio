@@ -10,16 +10,16 @@ module Dashboard {
     });
 
     $scope.widgets = [
-      { id: "w2", title: "Cheese Widget", row: 1, col: 1,
-        path: "jmx/cheese",
-        include: "app/jmx/html/cheese.html",
-        search: {}, hash: ""},
       { id: "w1", title: "Attributes", row: 1, col: 2,
         path: "jmx/attributes",
         include: "app/jmx/html/attributes.html",
         search: {nid: "root-java.lang-OperatingSystem"},
         hash: ""
-      }
+      },
+      { id: "w2", title: "Cheese Widget", row: 1, col: 1,
+        path: "jmx/cheese",
+        include: "app/jmx/html/cheese.html",
+        search: {}, hash: ""}
     ];
 
     $scope.sizex = (widget) => {
@@ -35,25 +35,33 @@ module Dashboard {
       var widgets = $("#widgets");
       var template = $templateCache.get("widgetTemplate");
       angular.forEach($scope.widgets, (widget) => {
+        console.log("About to create a child scope...");
         var childScope = $scope.$new(false);
-        Jmx.locationScope(childScope);
         childScope.widget = widget;
         var path = widget.path;
         var search = widget.search;
         var hash = widget.hash;
         var location = new RectangleLocation($location, path, search, hash);
 
-        workspace.$location = location;
+        var childWorkspace = workspace.createChildWorkspace(location);
+        //var childWorkspace = workspace;
+        childWorkspace.$location = location;
+
         // now we need to update the selection from the location search()
         var key = location.search()['nid'];
         if (key && workspace.tree) {
           // lets find the node for this key...
-          workspace.selection = workspace.keyToNodeMap[key];
-          console.log("Selected node " + workspace.selection);
+          childWorkspace.selection = workspace.keyToNodeMap[key];
+          console.log("Selected node " + childWorkspace.selection);
         }
 
-        childScope["$location"] = location;
-        childScope["$routeParams"] = {x: "123", y: "Cheese!"};
+        var $$scopeInjections = {
+          workspace: childWorkspace,
+          location: location,
+          $location: location,
+          $routeParams: {x: "123", y: "Cheese!"}
+        };
+        childScope.$$scopeInjections = $$scopeInjections;
 
         var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + $scope.sizex(widget) + '" data-sizey="' + $scope.sizey(widget) + '">');
         div.html(template);
@@ -61,7 +69,6 @@ module Dashboard {
         widgets.append(div);
       });
       $scope.$apply();
-      Jmx.locationScope(null);
 
       // TODO we can destroy all the child scopes now?
       widgets.gridster({

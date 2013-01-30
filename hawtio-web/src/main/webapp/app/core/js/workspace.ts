@@ -24,6 +24,17 @@ class Workspace {
               public localStorage:WindowLocalStorage) {
   }
 
+  /**
+   * Creates a shallow copy child workspace with its own selection and location
+   */
+  public createChildWorkspace(location): Workspace {
+    var child = new Workspace(this.jolokia, this.$location, this.$compile, this.$templateCache, this.localStorage);
+    // lets copy across all the properties just in case
+    angular.forEach(this, (value, key) => child[key] = value);
+    child.$location = location;
+    return child;
+  }
+
   getLocalStorage(key:string) {
     return this.localStorage[key];
   }
