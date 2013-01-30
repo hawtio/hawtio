@@ -20,8 +20,6 @@ module Osgi {
 
 
         $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid()) return;
-
             var mbean = getSelectionServiceMBean(workspace);
             if (mbean) {
                 var jolokia = workspace.jolokia;
