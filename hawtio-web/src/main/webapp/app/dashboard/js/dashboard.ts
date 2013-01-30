@@ -11,12 +11,14 @@ module Dashboard {
 
     $scope.widgets = [
       { id: "w1", title: "Operating System", row: 1, col: 1,
+        sizey: 3,
         path: "jmx/attributes",
         include: "app/jmx/html/attributes.html",
         search: {nid: "root-java.lang-OperatingSystem"},
         hash: ""
       },
       { id: "w2", title: "Broker", row: 1, col: 2,
+        sizey: 3,
         path: "jmx/attributes",
         include: "app/jmx/html/attributes.html",
         search: {nid: "root-org.apache.activemq-broker1-Broker"},

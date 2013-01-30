@@ -1,9 +1,8 @@
 <h1>Dashboard {{id}}</h1>
 
 <script type="text/ng-template" id="widgetTemplate">
-  {{widget.title}} : {{widget.path}}
-
-  <ng-include src="widget.include"></ng-include>
+  <div class="widget-title">{{widget.title}} : {{widget.path}}</div>
+  <div class="widget-body" ng-include="widget.include"></div>
 </script>
 
 <div class="gridster">
