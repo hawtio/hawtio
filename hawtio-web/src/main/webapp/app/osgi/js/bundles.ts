@@ -31,7 +31,6 @@ module Osgi {
 */
 
         $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid()) return;
             updateTableContents();
         });
 

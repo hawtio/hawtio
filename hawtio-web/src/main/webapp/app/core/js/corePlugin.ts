@@ -44,8 +44,10 @@ myApp.factory('jolokia', ($location:ng.ILocationService, localStorage) => {
   return jolokia;
 });
 
-myApp.factory('workspace', ($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia) => {
-  return new Workspace(jolokia, $location, $compile, $templateCache, localStorage);
+myApp.factory('workspace', ($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
+  var answer = new Workspace(jolokia, $location, $compile, $templateCache, localStorage, $rootScope);
+  answer.loadTree();
+  return answer;
 });
 
 

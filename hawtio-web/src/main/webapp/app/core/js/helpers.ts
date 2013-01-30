@@ -266,9 +266,11 @@ module Core {
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
       scope.$jhandle = [];
     }
-    scope.$on('$destroy', function (event) {
-      unregister(jolokia, scope);
-    });
+    if (angular.isDefined(scope.$on)) {
+      scope.$on('$destroy', function (event) {
+        unregister(jolokia, scope);
+      });
+    }
     if (angular.isArray(arguments)) {
       if (arguments.length >= 1) {
         // TODO can't get this to compile in typescript :)
