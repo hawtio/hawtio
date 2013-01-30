@@ -72,7 +72,13 @@
                         </div>
                         <div id="collapseBundles" class="accordion-body collapse out">
                             <ul class="accordion-inner">
-                                <li ng-repeat="bundle in row.Bundles">{{bundle}}
+                                <li ng-repeat="bundle in row.BundleDetails">
+                                    <div ng-switch="bundle.Installed">
+                                        <p style="display: inline;" ng-switch-when="true">
+                                            <a href='#/osgi/bundle/{{bundle.Identifier}}{{hash}}'>{{bundle.Location}}</a></p>
+
+                                        <p style="display: inline;" ng-switch-default>{{bundle.Location}}</p>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
