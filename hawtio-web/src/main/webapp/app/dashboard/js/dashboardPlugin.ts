@@ -17,6 +17,9 @@ module Dashboard {
               }
             }
           }).
+          factory('dashboardRepository', function () {
+            return new DashboardRepository();
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 
             viewRegistry['dashboard'] = 'app/dashboard/html/layoutDashboard.html';

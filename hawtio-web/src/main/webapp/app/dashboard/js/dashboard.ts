@@ -1,5 +1,9 @@
 module Dashboard {
-  export function DashboardController($scope, $location, $routeParams, $injector, $route, $templateCache, workspace:Workspace, jolokia) {
+  export function DashboardController($scope, $location, $routeParams, $injector, $route,
+                                      $templateCache,
+                                      workspace:Workspace,
+                                      dashboardRepository: DashboardRepository,
+                                      jolokia) {
     $scope.id = $routeParams["dashboardId"];
     $scope.route = $route;
     $scope.injector = $injector;
@@ -9,29 +13,6 @@ module Dashboard {
       setTimeout(updateWidgets, 50);
     });
 
-    $scope.widgets = [
-      { id: "w1", title: "Operating System", row: 1, col: 1,
-        sizey: 3,
-        path: "jmx/attributes",
-        include: "app/jmx/html/attributes.html",
-        search: {nid: "root-java.lang-OperatingSystem"},
-        hash: ""
-      },
-      { id: "w2", title: "Broker", row: 1, col: 2,
-        sizey: 3,
-        path: "jmx/attributes",
-        include: "app/jmx/html/attributes.html",
-        search: {nid: "root-org.apache.activemq-broker1-Broker"},
-        hash: ""
-      }
-      /*,
-      { id: "w3", title: "Cheese Widget", row: 1, col: 1,
-        path: "jmx/cheese",
-        include: "app/jmx/html/cheese.html",
-        search: {}, hash: ""}
-        */
-    ];
-
     $scope.sizex = (widget) => {
       return widget['sizex'] || 1;
     };
@@ -40,12 +21,15 @@ module Dashboard {
       return widget['sizey'] || 1;
     };
 
-
     function updateWidgets() {
-      var widgets = $("#widgets");
+      dashboardRepository.getDashboard($scope.id, onDashboardLoad);
+    }
+
+    function onDashboardLoad(dashboard) {
+      var widgetElement = $("#widgets");
       var template = $templateCache.get("widgetTemplate");
-      angular.forEach($scope.widgets, (widget) => {
-        console.log("About to create a child scope...");
+      var widgets = ((dashboard) ? dashboard.widgets : null) || [];
+      angular.forEach(widgets, (widget) => {
         var childScope = $scope.$new(false);
         childScope.widget = widget;
         var path = widget.path;
@@ -76,15 +60,15 @@ module Dashboard {
         var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + $scope.sizex(widget) + '" data-sizey="' + $scope.sizey(widget) + '">');
         div.html(template);
         workspace.$compile(div.contents())(childScope);
-        widgets.append(div);
+        widgetElement.append(div);
+        $scope.$apply();
       });
-      $scope.$apply();
-
       // TODO we can destroy all the child scopes now?
-      widgets.gridster({
+      widgetElement.gridster({
         widget_margins: [10, 10],
         widget_base_dimensions: [400, 300]
       });
+      $scope.$apply();
     }
   }
 }

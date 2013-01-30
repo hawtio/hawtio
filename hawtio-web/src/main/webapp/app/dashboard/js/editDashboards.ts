@@ -1,5 +1,7 @@
 module Dashboard {
-  export function EditDashboardsController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
+  export function EditDashboardsController($scope, $routeParams,
+                                           $location, workspace:Workspace,
+                                           dashboardRepository: DashboardRepository, jolokia) {
     var url = $routeParams["url"];
     if (url) {
       $scope.url = decodeURIComponent(url);
@@ -27,11 +29,11 @@ module Dashboard {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateTable, 50);
+      setTimeout(updateData, 50);
     });
 
     $scope.$watch('workspace.selection', function () {
-      setTimeout(updateTable, 50);
+      setTimeout(updateData, 50);
     });
 
     $scope.goBack = () => {
@@ -86,19 +88,13 @@ module Dashboard {
       $scope.selectedItems.splice(0, $scope.selectedItems.length);
     };
 
-    function updateTable() {
-      // lets load the table of dashboards from some storage
-      $scope.dashboards = [
-        {id: "m1", title: "Monitor", group: "Personal"},
-        {id: "t1", title: "Threading", group: "Admin"},
-        {id: "c1", title: "Camel", group: "All"}
-      ];
-      dashboardLoaded();
+    function updateData() {
+      dashboardRepository.getDashboards(dashboardLoaded);
     }
 
-    function dashboardLoaded() {
+    function dashboardLoaded(dashboards) {
+      $scope.dashboards = dashboards;
       $scope.$apply();
     }
-
   }
 }
