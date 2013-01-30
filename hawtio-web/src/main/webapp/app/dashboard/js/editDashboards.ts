@@ -79,6 +79,13 @@ module Dashboard {
       });
     };
 
+    $scope.delete = () => {
+      angular.forEach($scope.selectedItems, (item) => {
+        $scope.dashboards.remove(item);
+      });
+      $scope.selectedItems.splice(0, $scope.selectedItems.length);
+    };
+
     function updateTable() {
       // lets load the table of dashboards from some storage
       $scope.dashboards = [
