@@ -2763,14 +2763,20 @@ function createInjector(modulesToLoad) {
       var args = [],
           $inject = annotate(fn),
           length, i,
-          key;
+          key,
+
+          // allow injection overrides to come the $scope.$$scopeInjections object
+          $scope = locals && locals.hasOwnProperty("$scope") ? locals["$scope"] : null,
+          $$scopeInjections = $scope ? $scope["$$scopeInjections"] : null;
 
       for(i = 0, length = $inject.length; i < length; i++) {
         key = $inject[i];
         args.push(
-          locals && locals.hasOwnProperty(key)
-          ? locals[key]
-          : getService(key, path)
+          ($$scopeInjections && $$scopeInjections.hasOwnProperty(key))
+            ? ($$scopeInjections[key])
+            : (locals && locals.hasOwnProperty(key)
+              ? locals[key]
+              : getService(key, path))
         );
       }
       if (!fn.$inject) {
