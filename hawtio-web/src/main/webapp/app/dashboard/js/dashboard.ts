@@ -10,16 +10,24 @@ module Dashboard {
     });
 
     $scope.widgets = [
-      { id: "w1", title: "Attributes", row: 1, col: 2,
+      { id: "w1", title: "Operating System", row: 1, col: 1,
         path: "jmx/attributes",
         include: "app/jmx/html/attributes.html",
         search: {nid: "root-java.lang-OperatingSystem"},
         hash: ""
       },
-      { id: "w2", title: "Cheese Widget", row: 1, col: 1,
+      { id: "w2", title: "Broker", row: 1, col: 2,
+        path: "jmx/attributes",
+        include: "app/jmx/html/attributes.html",
+        search: {nid: "root-org.apache.activemq-broker1-Broker"},
+        hash: ""
+      }
+      /*,
+      { id: "w3", title: "Cheese Widget", row: 1, col: 1,
         path: "jmx/cheese",
         include: "app/jmx/html/cheese.html",
         search: {}, hash: ""}
+        */
     ];
 
     $scope.sizex = (widget) => {
