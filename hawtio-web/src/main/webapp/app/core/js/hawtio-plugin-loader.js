@@ -10,12 +10,12 @@
   };
 
   hawtioPluginLoader.addModule = function(module) {
-    console.log("Adding module: " + module);
+    // console.log("Adding module: " + module);
     hawtioPluginLoader.modules.push(module);
   }
 
   hawtioPluginLoader.addUrl = function(url) {
-    console.log("Adding URL: " + url);
+    // console.log("Adding URL: " + url);
     hawtioPluginLoader.urls.push(url);
   }
 
@@ -53,7 +53,7 @@
           var data = jolokia.getAttribute(attribute, null);
           $.extend(plugins, data);
         } catch (Exception) {
-          console.error("Error fetching data: " + Exception);
+          // console.error("Error fetching data: " + Exception);
         }
 
       } else {
@@ -62,7 +62,7 @@
           var obj = $.parseJSON(data);
           $.extend(plugins, obj);
         } catch (Exception) {
-          console.error("Error fetching data: " + Exception);
+          // console.error("Error fetching data: " + Exception);
         }
       }
     });
@@ -90,7 +90,7 @@
             // Can maybe let other scripts run still.
             scriptLoaded();
             // TODO - something else
-            console.error("Failed to load " + script + " exception: " + exception);
+            // console.error("Failed to load " + script + " exception: " + exception);
           });
         });
       });
@@ -102,7 +102,6 @@
   };
 
   hawtioPluginLoader.debug = function() {
-    console.log("Hi!");
     console.log("urls and modules");
     console.log(hawtioPluginLoader.urls);
     console.log(hawtioPluginLoader.modules);
