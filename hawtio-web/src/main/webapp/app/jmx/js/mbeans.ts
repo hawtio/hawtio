@@ -19,7 +19,8 @@ module Jmx {
 
     $scope.populateTree = () => {
       var treeElement = $("#jmxtree");
-      enableTree($scope, $location, workspace, treeElement, workspace.tree.children, true);
+      $scope.tree = workspace.tree;
+      enableTree($scope, $location, workspace, treeElement, $scope.tree.children, true);
       setTimeout(updateSelectionFromURL, 50);
     }
 
