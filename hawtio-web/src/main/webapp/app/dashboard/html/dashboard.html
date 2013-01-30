@@ -1,31 +1,9 @@
-<h1>Dashboard {{id}}</h1>
-
 <script type="text/ng-template" id="widgetTemplate">
-  <div class="widget-title">{{widget.title}} : {{widget.path}}</div>
+  <div class="widget-title">{{widget.title}}</div>
   <div class="widget-body" ng-include="widget.include"></div>
 </script>
 
 <div class="gridster">
   <ul id="widgets">
-<!--
-    <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
-      &lt;!&ndash; Just numbers &ndash;&gt;
-      <div ng-controller="Jmx.AttributeController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
-        <div>{{attribute}}</div>
-        <dl class="dl-horizontal" ng-repeat="(key, value) in data">
-          <dt>{{key}}</dt>
-          <dd>{{value}}</dd>
-        </dl>
-      </div>
-
-    </li>
-
-    &lt;!&ndash; Chart &ndash;&gt;
-    <li data-row="2" data-col="2" data-sizex="1" data-sizey="1">
-      <div ng-controller="Jmx.AttributeChartController" ng-init="init('java.lang:type=Memory', 'HeapMemoryUsage')">
-        <div id="{{attribute}}"></div>
-      </div>
-    </li>
--->
   </ul>
 </div>
