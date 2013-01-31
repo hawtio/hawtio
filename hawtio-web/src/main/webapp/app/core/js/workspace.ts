@@ -47,7 +47,13 @@ class Workspace {
   }
 
   public loadTree() {
-    Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree), {canonicalNaming: false}));
+    // TODO - polling loses the canonicalNaming option, might need to roll our own
+    //        scheduler for updating the tree at some point.
+    //Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree), {canonicalNaming: false}));
+
+    this.jolokia.request({
+      type: 'list'
+    }, onSuccess(angular.bind(this, this.populateTree), {canonicalNaming: false}));
   }
 
   public folderGetOrElse(folder, value) {
@@ -59,61 +65,6 @@ class Workspace {
       }
     }
     return null;
-  }
-
-  public configureFolder(domainClass, separator, rootId, domain, folderNames, folder: Folder, name: string) {
-    folder.domain = domain;
-    folder.key = rootId + separator + folderNames.join(separator);
-    if (folder.key) {
-      this.keyToNodeMap[folder.key] = folder;
-    }
-    folder.folderNames = folderNames.clone();
-    //var classes = escapeDots(folder.key);
-    var classes = "";
-    var entries = folder.entries;
-    var entryKeys = Object.keys(entries).filter((n) => n.toLowerCase().indexOf("type") >= 0);
-    if (entryKeys.length) {
-      angular.forEach(entryKeys, (entryKey) => {
-        var entryValue = entries[entryKey];
-        if (!folder.ancestorHasEntry(entryKey, entryValue)) {
-          classes += " " + domainClass + separator + entryValue;
-        }
-      });
-    } else {
-      var kindName = folderNames.last();
-      /*if (folder.parent && folder.parent.title === typeName) {
-       kindName = typeName;
-       } else */
-      if (kindName === name) {
-        kindName += "-folder";
-      }
-      if (kindName) {
-        classes += " " + domainClass + separator + kindName;
-      }
-    }
-    folder.addClass = classes;
-    return folder;
-  }
-
-  public addFolderByDomain(folder, domain, owner, typeName) {
-    var map = owner[typeName];
-    if (!map) {
-      map = {};
-      owner[typeName] = map;
-    }
-    var value = map[domain];
-    if (!value) {
-      map[domain] = folder;
-    } else {
-      var array = null;
-      if (angular.isArray(value)) {
-        array = value;
-      } else {
-        array = [value];
-        map[domain] = array;
-      }
-      array.push(folder);
-    }
   }
 
   public populateTree(response) {
@@ -174,12 +125,46 @@ class Workspace {
           });
 
 
+        var configureFolder = function(folder: Folder, name: string) {
+            folder.domain = domain;
+            folder.key = rootId + separator + folderNames.join(separator);
+            if (folder.key) {
+              this.keyToNodeMap[folder.key] = folder;
+            }
+            folder.folderNames = folderNames.clone();
+            //var classes = escapeDots(folder.key);
+            var classes = "";
+            var entries = folder.entries;
+            var entryKeys = Object.keys(entries).filter((n) => n.toLowerCase().indexOf("type") >= 0);
+            if (entryKeys.length) {
+              angular.forEach(entryKeys, (entryKey) => {
+                var entryValue = entries[entryKey];
+                if (!folder.ancestorHasEntry(entryKey, entryValue)) {
+                  classes += " " + domainClass + separator + entryValue;
+                }
+              });
+            } else {
+              var kindName = folderNames.last();
+              /*if (folder.parent && folder.parent.title === typeName) {
+               kindName = typeName;
+               } else */
+              if (kindName === name) {
+                kindName += "-folder";
+              }
+              if (kindName) {
+                classes += " " + domainClass + separator + kindName;
+              }
+            }
+            folder.addClass = classes;
+            return folder;
+          }
+
           var lastPath = paths.pop();
           paths.forEach(value => {
             folder = this.folderGetOrElse(folder, value);
             if (folder) {
               folderNames.push(value);
-              this.configureFolder(domainClass, separator, rootId, domain, folderNames, folder, value);
+              angular.bind(this, configureFolder, folder, value)();
             }
           });
           var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
@@ -190,18 +175,43 @@ class Workspace {
             if (folder) {
               // lets add the various data into the folder
               folder.entries = entries;
-              this.configureFolder(domainClass, separator, rootId, domain, folderNames, folder, lastPath);
+
+              angular.bind(this, configureFolder, folder, lastPath)();
+
               folder.key = key;
               this.keyToNodeMap[folder.key] = folder;
               folder.title = trimQuotes(lastPath);
               folder.objectName = objectName;
               folder.typeName = typeName;
 
+              var addFolderByDomain = function(owner, typeName) {
+                  var map = owner[typeName];
+                  if (!map) {
+                    map = {};
+                    owner[typeName] = map;
+                  }
+                  var value = map[domain];
+                  if (!value) {
+                    map[domain] = folder;
+                  } else {
+                    var array = null;
+                    if (angular.isArray(value)) {
+                      array = value;
+                    } else {
+                      array = [value];
+                      map[domain] = array;
+                    }
+                    array.push(folder);
+                  }
+                }
+
+
+
               if (serviceName) {
-                this.addFolderByDomain(folder, domain, this.mbeanServicesToDomain, serviceName);
+                angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
               }
               if (typeName) {
-                this.addFolderByDomain(folder, domain, this.mbeanTypesToDomain, typeName);
+                angular.bind(this, addFolderByDomain, this.mbeanTypesToDomain, typeName)();
               }
             }
           } else {
