@@ -1,7 +1,8 @@
-<div ng-controller="Jmx.MBeansController"></div>
 <ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
   <li ng-repeat="dash in dashboards" ng-class='{active : isActive(dash)}'>
-    <a ng-href="#/dashboard/{{dash.id}}{{hash}}">{{dash.title}}</a>
+    <a ng-href="#/dashboard/{{dash.id}}{{hash}}">
+      <editable-property class="inline-block" ng-model="dash.title"></editable-property>
+    </a>
   </li>
   <li class="pull-right">
     <a ng-href="#/dashboards/edit{{hash}}" title="Edits the dashboards; letting you add, duplicate or remove dashboards"

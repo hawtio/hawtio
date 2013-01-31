@@ -154,6 +154,54 @@ myApp.directive('expandable', function () {
   }
 });
 
+myApp.constant('editablePropertyTemplate',
+    '<div ng-hide="editing">' +
+      '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
+    '</div>' +
+    '<div ng-show="editing">' +
+      '<form class="form-inline">' +
+        '<fieldset>' +
+          '<input type="text" value="{{text}}">' +
+          '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
+          '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
+        '</fieldset>' +
+       '</form>' +
+    '</div>');
+
+myApp.directive('editableProperty', ['$compile', 'editablePropertyTemplate', function($compile, editablePropertyTemplate) {
+  var editableProperty = {
+    restrict: 'E',
+    scope: true,
+    template: editablePropertyTemplate,
+    require: 'ngModel',
+    link: function (scope, element, attrs, ngModel) {
+
+      scope.editing = false;
+
+      ngModel.$render = function() {
+        scope.text = ngModel.$viewValue;
+      }
+
+      scope.doEdit = function() {
+        scope.editing = true;
+      }
+
+      scope.stopEdit = function() {
+        scope.editing = false;
+      }
+
+      scope.saveEdit = function() {
+        var value = $(element.find(":input[type=text]")[0]).val();
+        ngModel.$setViewValue(value);
+        ngModel.$render();
+        scope.editing = false;
+      }
+
+    }
+  }
+  return editableProperty;
+}]);
+
 // enable bootstrap tooltips
 $(function () {
   $("a[title]").tooltip({
