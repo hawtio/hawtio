@@ -26,6 +26,7 @@ module Dashboard {
     }
 
     function onDashboardLoad(dashboard) {
+      $scope.dashboard = dashboard;
       var widgetElement = $("#widgets");
       var template = $templateCache.get("widgetTemplate");
       var widgets = ((dashboard) ? dashboard.widgets : null) || [];
@@ -61,13 +62,38 @@ module Dashboard {
         div.html(template);
         workspace.$compile(div.contents())(childScope);
         widgetElement.append(div);
-        $scope.$apply();
+        //$scope.$apply();
       });
       // TODO we can destroy all the child scopes now?
       widgetElement.gridster({
         widget_margins: [10, 10],
-        widget_base_dimensions: [400, 300]
+        widget_base_dimensions: [400, 300],
+        draggable: {
+          stop: (event, ui) => {
+            updateLayoutConfiguration();
+          }
+        }
       });
+
+      function updateLayoutConfiguration() {
+        var gridster =widgetElement.gridster().data('gridster');
+        if (gridster) {
+          var data = gridster.serialize();
+          //console.log("got data: " + JSON.stringify(data));
+
+          var widgets = $scope.dashboard.widgets || [];
+          // lets assume the data is in the order of the widgets...
+          angular.forEach(data, (value, idx) => {
+            var widget = widgets[idx];
+            if (widget) {
+              // lets copy the values across
+              angular.forEach(value, (attr, key) => widget[key] = attr);
+            }
+          });
+
+          // TODO call the repository to update the dashboard JSON?
+        }
+      }
       $scope.$apply();
     }
   }
