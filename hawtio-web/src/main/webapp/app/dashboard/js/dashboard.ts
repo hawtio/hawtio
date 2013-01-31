@@ -13,6 +13,11 @@ module Dashboard {
       setTimeout(updateWidgets, 50);
     });
 
+    $scope.onWidgetRenamed = function(widget) {
+      // TODO - deal with renamed widget here
+      console.log("Widget renamed to : " + widget.title);
+    }
+
     $scope.sizex = (widget) => {
       return widget['sizex'] || 1;
     };

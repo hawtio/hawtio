@@ -342,3 +342,15 @@ li.attr-column {
 .widget-body {
   padding: 0px 2px 2px;
 }
+
+.ep > i {
+  cursor: pointer;
+}
+
+.ep form fieldset i {
+  cursor: pointer;
+}
+
+.ep form.no-bottom-margin {
+  margin-bottom: 2px;
+}

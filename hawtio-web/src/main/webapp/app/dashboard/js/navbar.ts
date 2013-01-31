@@ -1,31 +1,26 @@
 module Dashboard {
-  export function NavBarController($scope, workspace:Workspace,
-                                   dashboardRepository: DashboardRepository, jolokia) {
+  export function NavBarController($scope, $routeParams, $location, workspace:Workspace,
+                                   dashboardRepository: DashboardRepository) {
 
-    // TODO need to do this to get things to work if navigating from home page
-    // I'm guessing since its not using $routeProvider but we are using the
-    // ng-include layout approach?
-
-    // lets do this asynchronously to avoid Error: $digest already in progress
-    setTimeout(updateData, 50);
-
-    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateData, 50);
-    });
+    $scope.activeDashboard = $routeParams['dashboardId'];
+    $scope.dashboards = [];
 
     $scope.isActive = (dash) => {
       return workspace.isLinkActive("#/dashboard/" + dash.id);
     };
 
-    function updateData() {
-      dashboardRepository.getDashboards(dashboardLoaded);
-    }
-
     function dashboardLoaded(dashboards) {
       $scope.dashboards = dashboards;
-      console.log("Loaded dashboards " + $scope.dashboards.length);
-      $scope.$apply();
+      if (!angular.isDefined($scope.activeDashboard) && $scope.dashboards.length > 0) {
+        $location.path("/dashboard/" + $scope.dashboards[0].id);
+      }
     }
+
+    $scope.onTabRenamed = function(dash) {
+      // TODO - Persist title change here, dash is the updated model
+      console.log("Dashboard renamed to : " + dash.title);
+    }
+
+    dashboardRepository.getDashboards(dashboardLoaded);
   }
 }

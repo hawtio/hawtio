@@ -155,11 +155,11 @@ myApp.directive('expandable', function () {
 });
 
 myApp.constant('editablePropertyTemplate',
-    '<div ng-hide="editing">' +
+    '<div class="ep" ng-hide="editing">' +
       '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
     '</div>' +
-    '<div ng-show="editing">' +
-      '<form class="form-inline">' +
+    '<div class="ep" ng-show="editing">' +
+      '<form class="form-inline no-bottom-margin">' +
         '<fieldset>' +
           '<input type="text" value="{{text}}">' +
           '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
@@ -179,7 +179,7 @@ myApp.directive('editableProperty', ['$compile', 'editablePropertyTemplate', fun
       scope.editing = false;
 
       ngModel.$render = function() {
-        scope.text = ngModel.$viewValue;
+        scope.text = ngModel.$viewValue[attrs['property']];
       }
 
       scope.doEdit = function() {
@@ -192,9 +192,12 @@ myApp.directive('editableProperty', ['$compile', 'editablePropertyTemplate', fun
 
       scope.saveEdit = function() {
         var value = $(element.find(":input[type=text]")[0]).val();
-        ngModel.$setViewValue(value);
+        var obj = ngModel.$viewValue;
+        obj[attrs['property']] = value;
+        ngModel.$setViewValue(obj);
         ngModel.$render();
         scope.editing = false;
+        scope.$parent.$eval(attrs['onSave']);
       }
 
     }
