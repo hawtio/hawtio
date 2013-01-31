@@ -4190,6 +4190,16 @@ function $CompileProvider($provide) {
               $transclude: boundTranscludeFn
             };
 
+            // Lets allow a child scope to add additional local services
+            // which are used in preference to the global services in the cache
+            if (scope && scope.$$scopeInjections) {
+              forEach(scope.$$scopeInjections, function (value, key) {
+                if (!locals.hasOwnProperty(key)) {
+                  locals[key] = value;
+                }
+              });
+            }
+
             controller = directive.controller;
             if (controller == '@') {
               controller = attrs[directive.name];
