@@ -1,7 +1,5 @@
 module Dashboard {
-  export function EditDashboardsController($scope, $routeParams,
-                                           $location, workspace:Workspace,
-                                           dashboardRepository: DashboardRepository, jolokia) {
+  export function EditDashboardsController($scope, $routeParams, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
     var url = $routeParams["url"];
     if (url) {
       $scope.url = decodeURIComponent(url);
@@ -24,7 +22,18 @@ module Dashboard {
         filterText: "searchText"
       },
       data: 'dashboards',
-      selectWithCheckboxOnly: true
+      selectWithCheckboxOnly: true,
+      columnDefs: [
+        {
+          field: 'title',
+          displayName: 'Dashboard',
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/{{row.getProperty(' + "'id'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+        },
+        {
+          field: 'group',
+          displayName: 'Group'
+        }
+      ]
     };
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -54,7 +63,7 @@ module Dashboard {
     };
 
     function addDashboard(newDash) {
-        // TODO how to really add??
+      // TODO how to really add??
 
       $scope.dashboards.push(newDash);
       $scope.selectedItems.push(newDash);
