@@ -2,7 +2,7 @@ module Log {
   var pluginName = 'log';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
-            when('/logs', {templateUrl: 'app/log/html/logs.html', controller: LogController})
+            when('/logs', {templateUrl: 'app/log/html/logs.html'})
   }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 

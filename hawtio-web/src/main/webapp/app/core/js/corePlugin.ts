@@ -23,7 +23,7 @@ myApp.config(($routeProvider) => {
           when('/help', {
             redirectTo: '/help/overview'
           }).
-          when('/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController}).
+          when('/help/:tabName', {templateUrl: 'app/core/html/help.html'}).
 
           otherwise({redirectTo: '/help/overview'});
 });

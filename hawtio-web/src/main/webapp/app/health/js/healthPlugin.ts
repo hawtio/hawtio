@@ -2,7 +2,7 @@ module Health {
   var pluginName = 'health';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
-            when('/health', {templateUrl: 'app/health/html/health.html', controller: HealthController})
+            when('/health', {templateUrl: 'app/health/html/health.html'})
   }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 

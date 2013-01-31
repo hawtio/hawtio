@@ -4,11 +4,10 @@ module Jmx {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
-            when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html', controller: OperationsController}).
-            when('/jmx/charts', {templateUrl: 'app/jmx/html/charts.html', controller: ChartController}).
-            when('/jmx/cheese', {templateUrl: 'app/jmx/html/cheese.html'}).
-            when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html', controller: ChartEditController}).
-            when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html', controller: Core.NavBarController})
+            when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html'}).
+            when('/jmx/charts', {templateUrl: 'app/jmx/html/charts.html'}).
+            when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html'}).
+            when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html'})
   }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
 

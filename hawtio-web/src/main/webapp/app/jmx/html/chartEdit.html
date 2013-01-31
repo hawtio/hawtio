@@ -1,4 +1,4 @@
-<form>
+<form ng-controller="Jmx.ChartEditController">
   <div class="control-group" ng-show="canViewChart()">
     <input type="submit" class="btn" value="View Chart" ng-click="viewChart()"
            ng-disabled="!selectedAttributes.length && !selectedMBeans.length"/>

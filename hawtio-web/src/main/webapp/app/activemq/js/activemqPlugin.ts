@@ -4,13 +4,13 @@ module ActiveMQ {
 
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'camel']).config(($routeProvider) => {
             $routeProvider.
-                    when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html', controller: BrowseQueueController}).
-                    when('/activemq/subscribers', {templateUrl: 'app/activemq/html/subscribers.html', controller: SubscriberGraphController}).
-                    when('/activemq/createQueue', {templateUrl: 'app/activemq/html/createQueue.html', controller: DestinationController}).
-                    when('/activemq/createTopic', {templateUrl: 'app/activemq/html/createTopic.html', controller: DestinationController}).
-                    when('/activemq/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html', controller: DestinationController}).
-                    when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html', controller: DestinationController}).
-                    when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: Camel.SendMessageController})
+                    when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html'}).
+                    when('/activemq/subscribers', {templateUrl: 'app/activemq/html/subscribers.html'}).
+                    when('/activemq/createQueue', {templateUrl: 'app/activemq/html/createQueue.html'}).
+                    when('/activemq/createTopic', {templateUrl: 'app/activemq/html/createTopic.html'}).
+                    when('/activemq/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html'}).
+                    when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html'}).
+                    when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'})
           }).
                     run(($location: ng.ILocationService, workspace: Workspace, viewRegistry) => {
 

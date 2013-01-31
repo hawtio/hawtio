@@ -33,7 +33,7 @@
   </div>
 </script>
 
-<ul class="unstyled">
+<ul class="unstyled" ng-controller="Jmx.OperationsController">
   <li ng-repeat="item in operations">
     <div class="expandable closed" ng-controller="Jmx.OperationController">
       <div title="{{desc}}" class="title">

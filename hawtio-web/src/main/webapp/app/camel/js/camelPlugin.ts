@@ -8,12 +8,12 @@ module Camel {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html', controller: BrowseEndpointController}).
-                    when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html', controller: EndpointController}).
+                    when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
+                    when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
-                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', controller: SendMessageController}).
-                    when('/camel/source', {templateUrl: 'app/camel/html/source.html', controller: SourceController}).
-                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html', controller: TraceRouteController})
+                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
+                    when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
+                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'})
           }).
           filter('camelIconClass', () => iconClass).
           run((workspace:Workspace, viewRegistry) => {

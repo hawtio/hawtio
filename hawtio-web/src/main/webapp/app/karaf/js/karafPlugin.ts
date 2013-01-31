@@ -2,8 +2,8 @@ module Karaf {
   var pluginName = 'karaf';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
-            when('/karaf/features', {templateUrl: 'app/karaf/html/features.html', controller: FeaturesController}).
-            when('/karaf/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html', controller: FeatureController})
+            when('/karaf/features', {templateUrl: 'app/karaf/html/features.html'}).
+            when('/karaf/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html'})
   }).
       run((workspace:Workspace, viewRegistry) => {
 

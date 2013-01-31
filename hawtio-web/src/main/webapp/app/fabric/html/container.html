@@ -1,8 +1,9 @@
-
-<div class="row-fluid">
-  <div class="span4">
-    <h1>{{row.id}}</h1>
+<div ng-controller="Fabric.ContainerController">
+  <div class="row-fluid">
+    <div class="span4">
+      <h1>{{row.id}}</h1>
+    </div>
   </div>
-</div>
 
-<div ng-include src="'app/fabric/html/container-details.html'"></div>
+  <div ng-include src="'app/fabric/html/container-details.html'"></div>
+</div>
