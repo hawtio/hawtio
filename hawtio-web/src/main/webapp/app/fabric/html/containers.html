@@ -1,42 +1,44 @@
-<div class="row-fluid" ng-controller="Fabric.ContainersController">
-  <div class="pull-left">
-    <form class="form-inline no-bottom-margin">
-      <fieldset>
-        <div class="control-group inline-block">
-          <div class="btn-group">
-            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
-            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
-            <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+<div ng-controller="Fabric.ContainersController">
+  <div class="row-fluid">
+    <div class="pull-left">
+      <form class="form-inline no-bottom-margin">
+        <fieldset>
+          <div class="control-group inline-block">
+            <div class="btn-group">
+              <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="start()"><i class="icon-play"></i> Start</button>
+              <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="stop()"><i class="icon-stop"></i> Stop</button>
+              <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+            </div>
           </div>
-        </div>
-        &nbsp;
-        <div class="control-group inline-block">
-          <label for="versions">Versions: </label>
-          <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
-        </div>
-        &nbsp;
-        <div class="control-group inline-block">
-          <label for="profiles">Profiles: </label>
-          <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
-        </div>
-      </fieldset>
-    </form>
-  </div>
-    
-  <div class="pull-right">
-    <!--
-  
-    <form class="form-inline">
-      <fieldset>
-        <label for="search" title="Filter Table">Search: </label>
-        <input id="search" type="text" ng-model="search">
-      </fieldset>
-    </form>
-    
-    -->
-  </div>
-</div>
+          &nbsp;
+          <div class="control-group inline-block">
+            <label for="versions">Versions: </label>
+            <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+          </div>
+          &nbsp;
+          <div class="control-group inline-block">
+            <label for="profiles">Profiles: </label>
+            <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
+          </div>
+        </fieldset>
+      </form>
+    </div>
 
-<div class="row-fluid">
-  <div class="gridStyle" ng-grid="containerOptions"></div>
+    <div class="pull-right">
+      <!--
+
+      <form class="form-inline">
+        <fieldset>
+          <label for="search" title="Filter Table">Search: </label>
+          <input id="search" type="text" ng-model="search">
+        </fieldset>
+      </form>
+
+      -->
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="gridStyle" ng-grid="containerOptions"></div>
+  </div>
 </div>
