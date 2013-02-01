@@ -1,11 +1,9 @@
 module Dashboard {
-  export function EditDashboardsController($scope, $routeParams, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
-    var url = $routeParams["url"];
-    if (url) {
-      $scope.url = decodeURIComponent(url);
-    }
+  export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
     $scope.searchText = "";
     $scope.selectedItems = [];
+
+    updateData();
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
@@ -46,18 +44,54 @@ module Dashboard {
     });
 
     $scope.goBack = () => {
-      var href = $scope.url;
+      var href = Core.trimLeading($scope.url, "#");
       if (href) {
-        if (href.startsWith("#")) {
-          href = href.substring(1);
-        }
-        console.log("Changing url to: " + url);
+        console.log("Going back to url: " + href);
         $location.url(href);
       }
     };
 
     $scope.addViewToDashboard = () => {
       angular.forEach($scope.selectedItems, (selectedItem) => {
+        console.log("$route " + $route);
+        var text = $scope.url;
+        if (text) {
+          var idx = text.indexOf('?');
+          if (idx) {
+            text = text.substring(0, idx);
+          }
+          text = Core.trimLeading(text, "#");
+        }
+        // TODO capture the query arguments...
+        var search = {};
+        console.log("path is: " + text);
+        if ($route && $route.routes) {
+          var value = $route.routes[text];
+          if (value) {
+            /*
+             angular.forEach($route.routes, (value, key) => {
+             if (key === text) {
+             */
+            console.log("===== FOUND ROUTE: " + JSON.stringify(value));
+            var templateUrl = value["templateUrl"];
+            if (templateUrl) {
+              if (!selectedItem.widgets) {
+                selectedItem.widgets = [];
+              }
+              var nextNumber = selectedItem.widgets.length + 1;
+              var widget = {
+                id: "w" + nextNumber, title: "Untitled" + nextNumber, row: nextNumber, col: 1,
+                path: Core.trimLeading(text, "/"),
+                include: templateUrl,
+                search: search,
+                hash: ""
+              };
+              selectedItem.widgets.push(widget);
+            }
+          } else {
+            // TODO we need to be able to match URI templates...
+          }
+        }
         console.log("Adding url " + $scope.url + " to dashboard: " + JSON.stringify(selectedItem));
       });
     };
@@ -98,12 +132,18 @@ module Dashboard {
     };
 
     function updateData() {
+      var url = $routeParams["href"];
+      if (url) {
+        $scope.url = decodeURIComponent(url);
+      }
       dashboardRepository.getDashboards(dashboardLoaded);
     }
 
     function dashboardLoaded(dashboards) {
       $scope.dashboards = dashboards;
-      $scope.$apply();
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
     }
   }
 }

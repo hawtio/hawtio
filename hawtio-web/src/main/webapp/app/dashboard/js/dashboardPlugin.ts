@@ -4,8 +4,8 @@ module Dashboard {
           config(($routeProvider) => {
 
             $routeProvider.
-                    when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'}).
-                    when('/dashboards/edit', {templateUrl: 'app/dashboard/html/editDashboards.html'});
+                    when('/dashboards/edit', {templateUrl: 'app/dashboard/html/editDashboards.html'}).
+                    when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'});
 
           }).
           value('ui.config', {

@@ -34,7 +34,7 @@ module Core {
 
     $scope.addToDashboardLink = () => {
       var href = "#" + $location.path() + workspace.hash();
-      return "#/dashboards/edit?url=" + encodeURIComponent(href);
+      return "#/dashboards/edit?tab=dashboard&href=" + encodeURIComponent(href);
     };
 
     $scope.isActive = (nav) => {
