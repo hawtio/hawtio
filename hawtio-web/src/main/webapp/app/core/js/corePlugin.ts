@@ -155,7 +155,7 @@ myApp.directive('expandable', function () {
 });
 
 myApp.constant('editablePropertyTemplate',
-    '<div class="ep" ng-hide="editing">' +
+    '<div ng-mouseenter="showEdit()" ng-mouseleave="hideEdit()" class="ep" ng-hide="editing">' +
       '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
     '</div>' +
     '<div class="ep" ng-show="editing">' +
@@ -177,9 +177,18 @@ myApp.directive('editableProperty', ['$compile', 'editablePropertyTemplate', fun
     link: function (scope, element, attrs, ngModel) {
 
       scope.editing = false;
+      $(element.find(".icon-pencil")[0]).hide();
 
       ngModel.$render = function() {
         scope.text = ngModel.$viewValue[attrs['property']];
+      }
+
+      scope.showEdit = function() {
+        $(element.find(".icon-pencil")[0]).show();
+      }
+
+      scope.hideEdit = function() {
+        $(element.find(".icon-pencil")[0]).hide();
       }
 
       scope.doEdit = function() {
