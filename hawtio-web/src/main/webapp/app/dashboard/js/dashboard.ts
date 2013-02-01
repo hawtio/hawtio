@@ -4,30 +4,45 @@ module Dashboard {
                                       workspace:Workspace,
                                       dashboardRepository: DashboardRepository,
                                       jolokia) {
-    $scope.id = $routeParams["dashboardId"];
     $scope.route = $route;
     $scope.injector = $injector;
 
+    updateWidgets();
+
+/*
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      console.log("dashboard changed with $routeParams " + JSON.stringify($routeParams));
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateWidgets, 50);
     });
+*/
 
     $scope.onWidgetRenamed = function(widget) {
       // TODO - deal with renamed widget here
       console.log("Widget renamed to : " + widget.title);
-    }
-
-    $scope.sizex = (widget) => {
-      return widget['sizex'] || 1;
-    };
-
-    $scope.sizey = (widget) => {
-      return widget['sizey'] || 1;
     };
 
     function updateWidgets() {
-      dashboardRepository.getDashboard($scope.id, onDashboardLoad);
+      $scope.id = $routeParams["dashboardId"];
+      $scope.idx = $routeParams["dashboardIndex"];
+      if ($scope.id) {
+        dashboardRepository.getDashboard($scope.id, onDashboardLoad);
+      } else {
+        dashboardRepository.getDashboards((dashboards) => {
+          var idx = $scope.idx ? parseInt($scope.idx) : 0;
+          var id = null;
+          if (dashboards.length > 0) {
+            var dashboard = dashboards.length > idx ? dashboards[idx] : dashboard[0];
+            id = dashboard.id;
+          }
+          if (id) {
+            $location.path("/dashboard/id/" + id);
+          } else {
+            $location.path("/dashboard/edit?tab=dashboard");
+          }
+          //$scope.$apply();
+        });
+      }
     }
 
     function onDashboardLoad(dashboard) {
@@ -63,12 +78,21 @@ module Dashboard {
         };
         childScope.$$scopeInjections = $$scopeInjections;
 
-        var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + $scope.sizex(widget) + '" data-sizey="' + $scope.sizey(widget) + '">');
+        if (!widget.sizex) {
+          widget.sizex = 1;
+        }
+        if (!widget.sizey) {
+          widget.sizey = 1;
+        }
+        var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + widget.sizex + '" data-sizey="' + widget.sizey + '">');
         div.html(template);
         workspace.$compile(div.contents())(childScope);
         widgetElement.append(div);
-        //$scope.$apply();
+        if (!$scope.$$phase) {
+          $scope.$apply();
+        }
       });
+
       // TODO we can destroy all the child scopes now?
       widgetElement.gridster({
         widget_margins: [10, 10],
@@ -81,7 +105,7 @@ module Dashboard {
       });
 
       function updateLayoutConfiguration() {
-        var gridster =widgetElement.gridster().data('gridster');
+        var gridster = widgetElement.gridster().data('gridster');
         if (gridster) {
           var data = gridster.serialize();
           //console.log("got data: " + JSON.stringify(data));
@@ -99,7 +123,9 @@ module Dashboard {
           // TODO call the repository to update the dashboard JSON?
         }
       }
-      $scope.$apply();
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
     }
   }
 }

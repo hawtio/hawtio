@@ -4,8 +4,9 @@ module Dashboard {
           config(($routeProvider) => {
 
             $routeProvider.
-                    when('/dashboards/edit', {templateUrl: 'app/dashboard/html/editDashboards.html'}).
-                    when('/dashboard/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'});
+                    when('/dashboard/edit', {templateUrl: 'app/dashboard/html/editDashboards.html'}).
+                    when('/dashboard/idx/:dashboardIndex', {templateUrl: 'app/dashboard/html/dashboard.html'}).
+                    when('/dashboard/id/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'});
 
           }).
           value('ui.config', {
@@ -28,7 +29,7 @@ module Dashboard {
               content: "Dashboard",
               title: "View and edit your own custom dashboards",
               isValid: () => true,
-              href: () => "#/dashboards/edit?tab=dashboard",
+              href: () => "#/dashboard/idx/0?tab=dashboard",
               isActive: () => workspace.isTopTabActive("dashboard")
             });
 

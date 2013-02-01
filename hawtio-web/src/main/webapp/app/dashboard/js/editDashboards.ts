@@ -25,7 +25,7 @@ module Dashboard {
         {
           field: 'title',
           displayName: 'Dashboard',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/{{row.getProperty(' + "'id'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
         },
         {
           field: 'group',
