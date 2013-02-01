@@ -162,8 +162,8 @@ myApp.constant('editablePropertyTemplate',
       '<form class="form-inline no-bottom-margin">' +
         '<fieldset>' +
           '<input type="text" value="{{text}}">' +
-          '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
           '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
+          '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
         '</fieldset>' +
        '</form>' +
     '</div>');
