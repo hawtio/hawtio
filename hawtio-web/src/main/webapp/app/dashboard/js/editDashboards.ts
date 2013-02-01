@@ -46,25 +46,46 @@ module Dashboard {
     $scope.goBack = () => {
       var href = Core.trimLeading($scope.url, "#");
       if (href) {
-        console.log("Going back to url: " + href);
         $location.url(href);
       }
     };
 
     $scope.addViewToDashboard = () => {
+      var nextHref = null;
       angular.forEach($scope.selectedItems, (selectedItem) => {
-        console.log("$route " + $route);
+        // TODO this could be a helper function
         var text = $scope.url;
+        var query = null;
         if (text) {
           var idx = text.indexOf('?');
           if (idx) {
+            query = text.substring(idx + 1);
             text = text.substring(0, idx);
           }
           text = Core.trimLeading(text, "#");
         }
-        // TODO capture the query arguments...
         var search = {};
-        console.log("path is: " + text);
+        if (query) {
+          var expressions = query.split("&");
+          angular.forEach(expressions, (expression) => {
+            if (expression) {
+              var names = expression.split("=");
+              var key = names[0];
+              var value = names.length > 1 ? names[1] : null;
+              var old = search[key];
+              if (old) {
+                if (!angular.isArray(old)) {
+                  old = [old];
+                  search[key] = old;
+                }
+                old.push(value);
+              } else {
+                search[key] = value;
+              }
+            }
+          });
+        }
+        //console.log("path is: " + text + " the search is " + JSON.stringify(search));
         if ($route && $route.routes) {
           var value = $route.routes[text];
           if (value) {
@@ -72,7 +93,6 @@ module Dashboard {
              angular.forEach($route.routes, (value, key) => {
              if (key === text) {
              */
-            console.log("===== FOUND ROUTE: " + JSON.stringify(value));
             var templateUrl = value["templateUrl"];
             if (templateUrl) {
               if (!selectedItem.widgets) {
@@ -87,13 +107,23 @@ module Dashboard {
                 hash: ""
               };
               selectedItem.widgets.push(widget);
+
+              if (!nextHref && selectedItem.id) {
+                nextHref = "/dashboard/id/" + selectedItem.id
+              }
+
             }
           } else {
             // TODO we need to be able to match URI templates...
           }
         }
-        console.log("Adding url " + $scope.url + " to dashboard: " + JSON.stringify(selectedItem));
       });
+
+      if (nextHref) {
+        // remove any dodgy query
+        delete $location.search()["href"];
+        $location.path(nextHref);
+      }
     };
 
     function addDashboard(newDash) {
