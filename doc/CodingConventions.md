@@ -16,3 +16,5 @@ For a given entity or resource Foo consider using these URI templates
   * /foo/idx/:index the URI template of a single foo looking up by index. So /foo/idx/0 could redirect to /foo/id/abc to show the first in a collection
 
 Having the extra level of indirection between /foo and the id of a foo item; lets us have other ways to navigate the foo collection; by name/location/country or whatever.
+
+This avoids us having /foo and /foos top level paths & having to figure out a nice URI for plural of foo and makes it easier to group all foo URIs by path.startsWith("/foo")
