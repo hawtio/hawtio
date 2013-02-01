@@ -159,7 +159,7 @@ myApp.constant('editablePropertyTemplate',
       '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
     '</div>' +
     '<div class="ep" ng-show="editing">' +
-      '<form class="form-inline no-bottom-margin">' +
+      '<form class="form-inline no-bottom-margin" ng-submit="saveEdit()">' +
         '<fieldset>' +
           '<input type="text" value="{{text}}">' +
           '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
