@@ -334,6 +334,10 @@ li.attr-column {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', endColorstr='#b2b2b2',GradientType=0 );
 }
 
+.widget-title .row-fluid .pull-right > i {
+  cursor: pointer;
+}
+
 .widget-body {
   padding: 2px;
   overflow: auto;

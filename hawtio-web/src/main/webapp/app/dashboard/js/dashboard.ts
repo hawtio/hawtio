@@ -9,6 +9,10 @@ module Dashboard {
 
     updateWidgets();
 
+    $scope.removeWidget = function(widget) {
+      console.log("foo!");
+    }
+
 /*
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       console.log("dashboard changed with $routeParams " + JSON.stringify($routeParams));
