@@ -224,7 +224,7 @@ class Workspace {
       this.tree = tree;
 
       this.$rootScope.$broadcast('jmxTreeUpdated');
-
+      this.$rootScope.$apply();
     }
   }
 
