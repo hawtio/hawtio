@@ -1472,7 +1472,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         useExternalSorting: false,
         
         /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
-        i18n: 'en'
+        i18n: 'en',
+
+        /* Whether or not to resize the grid to fit the data */
+        fixedGridHeight: false
     },
         self = this;
 
@@ -2328,7 +2331,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             grid.sortedData = $scope.$eval(options.data) || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
-                            grid.refreshDomSizes();
+
                             if (grid.config.sortInfo) {
                                 if (!grid.config.sortInfo.column) {
                                     grid.config.sortInfo.column = $scope.columns.filter(function(c) {
@@ -2341,6 +2344,17 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
+
+                          if (!grid.fixedGridHeight) {
+                            grid.elementDims.rootMaxH = grid.$topPanel.height() + grid.calcMaxCanvasHeight() + grid.$footerPanel.height() + 24;
+                            grid.rootDim.outerHeight = grid.elementDims.rootMaxH;
+                            grid.rowFactory.renderedRange = new ng.Range(0, grid.filteredData.length);
+                            grid.rowFactory.filteredDataChanged();
+                          } else {
+                            grid.refreshDomSizes();
+                          }
+
+
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
                         $scope.$parent.$watch(options.data + '.length', function(a) {
