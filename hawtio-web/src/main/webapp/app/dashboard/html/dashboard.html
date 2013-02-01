@@ -1,6 +1,9 @@
 <script type="text/ng-template" id="widgetTemplate">
   <div class="widget-title">
     <editable-property ng-model="widget" property="title" on-save="onWidgetRenamed(widget)"></editable-property>
+    <div class="pull-right">
+      <button title="Removes this view from the dashboard" ng-click="removeWidget(widget)"><i class="icon-remove"></i> Delete</button>
+    </div>
   </div>
   <div class="widget-body" ng-include="widget.include"></div>
 </script>
