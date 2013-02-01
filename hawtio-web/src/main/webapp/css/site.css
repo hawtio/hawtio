@@ -267,6 +267,10 @@ ul.inline > li, ol.inline > li {
   margin-bottom: 0em;
 }
 
+.no-bottom-margin .control-group {
+  margin-bottom: 4px;
+}
+
 li.attr-column {
   width: 1em;
 }
@@ -290,9 +294,8 @@ li.attr-column {
 .gridster ul#widgets .gs_w {
   border: 1px solid #9a9a9a;
   border-radius: 5px;
-  padding: 0px 0px 5px;
   background: lightgrey;
-
+  padding: 0px;
 }
 
 .widget-title {
@@ -332,7 +335,9 @@ li.attr-column {
 }
 
 .widget-body {
-  padding: 0px 2px 2px;
+  padding: 2px;
+  overflow: auto;
+
 }
 
 .ep > i {
@@ -345,4 +350,25 @@ li.attr-column {
 
 .ep form.no-bottom-margin {
   margin-bottom: 2px;
+}
+
+.ngFooterPanel {
+  background: inherit;
+}
+
+.ngTotalSelectContainer {
+  margin: 0px;
+}
+
+.ngTopPanel {
+  background: inherit;
+}
+
+.ngGrid {
+  background: inherit;
+}
+
+.ngViewport {
+  margin-left: 0px;
+  margin-right: 0px;
 }

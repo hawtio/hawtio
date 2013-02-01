@@ -2289,7 +2289,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.viewportStyle = function() {
-        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
+        return { "width": (grid.rootDim.outerWidth - 1) + "px", "height": $scope.viewportDimHeight() + "px" };
     };
     $scope.footerStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
@@ -2346,7 +2346,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             }
 
                           if (!grid.fixedGridHeight) {
-                            grid.elementDims.rootMaxH = grid.$topPanel.height() + grid.calcMaxCanvasHeight() + grid.$footerPanel.height() + 24;
+                            grid.elementDims.rootMaxH = grid.$topPanel.height() + grid.calcMaxCanvasHeight() + grid.$footerPanel.height() + 18;
                             grid.rootDim.outerHeight = grid.elementDims.rootMaxH;
                             grid.rowFactory.renderedRange = new ng.Range(0, grid.filteredData.length);
                             grid.rowFactory.filteredDataChanged();
