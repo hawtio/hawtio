@@ -9,7 +9,11 @@
         </div>
     </div>
   </div>
-  <div class="widget-body" ng-include="widget.include"></div>
+  <div class="widget-body">
+    <div style="width: 398px; height: 590px; overflow: auto;">
+      <div ng-include="widget.include"></div>
+    </div>
+  </div>
 </script>
 
 <div class="gridster" ng-controller="Dashboard.DashboardController">
