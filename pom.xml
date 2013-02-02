@@ -93,6 +93,7 @@
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <osgi-version>4.3.1</osgi-version>
+    <!-- scalate is only used for generating website, its not a runtime dependency -->
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <scalate-version>1.5.3</scalate-version>
     <servlet-api-version>2.5</servlet-api-version>
@@ -134,8 +135,8 @@
       <url>http://repository.jetbrains.com/releases</url>
     </repository>
 
-
-    <!-- TODO lets add the snapshot repos for now until we move to build 046 -->
+    <!-- in case we need SNAPSHOT dependency on Fuse projects -->
+<!--
     <repository>
       <id>fusesource.m2-snapshot</id>
       <name>FuseSource Community Snapshot Repository</name>
@@ -158,6 +159,8 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+-->
+
   </repositories>
 
   <pluginRepositories>
