@@ -15,8 +15,34 @@ module Jmx {
     $scope.columnDefs = [];
     $scope.selectedItems = [];
     $scope.selectCheckBox = true;
+
+    var SelectToggle = function(scope) {
+      var self = this;
+      self.scope = scope;
+      self.init = function(childScope, grid) {
+        self.grid = grid;
+        self.childScope = childScope;
+      }
+
+      self.setSelect = function(flag) {
+        if (angular.isDefined(self.grid)) {
+          if (flag !== self.grid.config.canSelectRows && flag !== self.grid.config.selectWithCheckboxonly) {
+            self.scope.canSelectRows = true;
+            self.scope.displaySelectionCheckbox = true;
+            self.grid.config.canSelectRows = flag;
+            self.grid.config.displaySelectionCheckbox = flag;
+            self.grid.rowFactory.rowConfig.canSelectRows = flag;
+            self.grid.rowFactory.filteredDataChanged();
+          }
+        }
+      }
+    }
+
+    $scope.selectToggle = new SelectToggle($scope);
+
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
+      plugins: [$scope.selectToggle],
       showFilter: false,
       showColumnMenu: false,
       canSelectRows: false,
@@ -27,6 +53,7 @@ module Jmx {
       data: 'gridData',
       columnDefs: 'columnDefs'
     };
+
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -47,7 +74,16 @@ module Jmx {
      */
     $scope.toolBarTemplate = () => {
       // lets lookup the list of helpers by domain
-      return Jmx.getAttributeToolBar(workspace.selection);
+      var answer = Jmx.getAttributeToolBar(workspace.selection);
+
+      // TODO - maybe there's a better way to determine when to enable selections
+
+      if (answer.startsWith("app/camel")) {
+        $scope.selectToggle.setSelect(true);
+      } else {
+        $scope.selectToggle.setSelect(false);
+      }
+      return answer;
     };
 
     $scope.invokeSelectedMBeans = (operationName, completeFunction: () => any = null) => {
@@ -109,12 +145,10 @@ module Jmx {
         if (node.key !== $scope.lastKey) {
           $scope.columnDefs = propertiesColumnDefs;
         }
-        setSelectable(false);
       } else if (node) {
         if (node.key !== $scope.lastKey) {
           $scope.columnDefs = [];
         }
-        setSelectable(true);
         // lets query each child's details
         var children = node.children;
         if (children) {
@@ -170,7 +204,6 @@ module Jmx {
           data["_id"] = mbean;
       }
       if (mbeanIndex) {
-        setSelectable(true);
         if (mbean) {
 
           var idx = mbeanIndex[mbean];
@@ -240,19 +273,9 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        setSelectable(false);
 
         $scope.$apply();
       }
-    }
-
-    function setSelectable(flag) {
-      // TODO is there a way to update ng-grid to hide the selection checkbox
-      // if we decide we don't want it?
-/*
-      $scope.gridOptions.displaySelectionCheckbox = flag;
-      $scope.gridOptions.canSelectRows = flag;
-*/
     }
 
     function includePropertyValue(key: string, value) {
