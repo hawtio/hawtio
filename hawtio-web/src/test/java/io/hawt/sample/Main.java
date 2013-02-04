@@ -65,7 +65,6 @@ public class Main {
 
             Iterable<String> jarNames = Iterables.filter(classpaths, new Predicate<String>() {
                 public boolean apply(String path) {
-                    // TODO
                     return isScannedWebInfLib(path);
                 }
             });
@@ -114,7 +113,7 @@ public class Main {
             }
             server.addBean(mbeanContainer);
 
-            if (args.length == 0 || args[0] != "nospring") {
+            if (args.length == 0 || !args[0].equals("nospring")) {
                 // now lets startup a spring application context
                 LOG.info("starting spring application context");
                 ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");
