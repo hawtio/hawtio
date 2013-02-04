@@ -18,6 +18,9 @@ module Jmx {
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       showFilter: false,
+      showColumnMenu: false,
+      canSelectRows: false,
+      displaySelectionCheckbox: false,
       filterOptions: {
         filterText: "searchText"
       },
