@@ -292,9 +292,10 @@ li.attr-column {
 }
 
 .gridster ul#widgets .gs_w {
-  border: 1px solid #9a9a9a;
+  /*border: 1px solid #9a9a9a;
   border-radius: 5px;
   background: lightgrey;
+  */
   padding: 0px;
 }
 
