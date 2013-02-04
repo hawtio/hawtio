@@ -30,7 +30,7 @@
 
     <dependency>
       <groupId>org.fusesource.scalate</groupId>
-      <artifactId>scalate-page</artifactId>
+      <artifactId>scalate-page_2.10</artifactId>
       <version>${scalate-version}</version>
     </dependency>
 
@@ -87,8 +87,8 @@
       </plugin>
 
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <version>${scala-plugin-version}</version>
         <executions>
           <execution>
@@ -114,7 +114,7 @@
 
       <plugin>
         <groupId>org.fusesource.scalate</groupId>
-        <artifactId>maven-scalate-plugin</artifactId>
+        <artifactId>maven-scalate-plugin_2.10</artifactId>
         <version>${scalate-version}</version>
         <configuration>
           <warSourceDirectory>${basedir}/src</warSourceDirectory>
