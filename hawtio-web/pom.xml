@@ -33,6 +33,20 @@
       <version>${jolokia-version}</version>
     </dependency>
 
+    <!-- Git Library -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit-version}</version>
+    </dependency>
+
+    <!-- Git HTTP Servlet -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.http.server</artifactId>
+      <version>${jgit-version}</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
@@ -41,9 +55,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib</artifactId>
-      <version>${kotlin-version}</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>13.0.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -259,8 +273,6 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
     <plugins>
       <plugin>
@@ -346,11 +358,11 @@
             */debug/**
           </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-<!--
-          <archive>
-            <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
--->
+          <!--
+                    <archive>
+                      <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+          -->
           <webResources>
             <resource>
               <filtering>true</filtering>
@@ -392,34 +404,6 @@
               </configuration>
             </plugin>
       -->
-      <plugin>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-maven-plugin</artifactId>
-        <version>${kotlin-version}</version>
-        <configuration>
-          <annotationPaths>
-            <annotationPath>${basedir}/src/test/resources</annotationPath>
-          </annotationPaths>
-        </configuration>
-        <executions>
-          <!--
-                    <execution>
-                      <id>compile</id>
-                      <phase>compile</phase>
-                      <goals>
-                        <goal>compile</goal>
-                      </goals>
-                    </execution>
-          -->
-          <execution>
-            <id>test-compile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>test-compile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -490,7 +474,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>io.hawt.sample.namespace</mainClass>
+          <mainClass>io.hawt.sample.Main</mainClass>
           <classpathScope>test</classpathScope>
           <systemProperties>
             <systemProperty>

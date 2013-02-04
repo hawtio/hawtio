@@ -27,6 +27,33 @@
     <url-pattern>/jolokia/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>GitServlet</servlet-name>
+    <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
+    <init-param>
+      <param-name>base-path</param-name>
+      <param-value>/var/hawtio/git</param-value>
+<!--
+      <param-value>${contextFolder}/WEB-INF/data</param-value>
+-->
+<!--
+      <param-value>/var/srv/git</param-value>
+-->
+    </init-param>
+    <init-param>
+      <param-name>export-all</param-name>
+      <param-value>0</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
+
+  <listener>
+    <listener-class>io.hawt.git.GitContextListener</listener-class>
+  </listener>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
