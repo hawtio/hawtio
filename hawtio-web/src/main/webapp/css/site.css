@@ -409,3 +409,28 @@ li.attr-column {
   margin-left: 0px;
   margin-right: 0px;
 }
+
+#widgets li div div div div form fieldset div input {
+  display: none;
+}
+
+#widgets li div div div div div#attributesGrid div div div div.ngHeaderCell {
+  border: none;
+}
+
+#widgets li div div div div div#attributesGrid div div div div.ngCell {
+  border: none;
+}
+
+#widgets li div div div div div#attributesGrid div.ngTopPanel {
+  border: none;
+}
+
+#widgets li div div div div div#attributesGrid div.ngTopPanel div.ngGroupPanel {
+  border: none;
+}
+
+#widgets li div div div div div#attributesGrid div.ngFooterPanel {
+  border: none;
+}
+
