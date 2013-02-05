@@ -3,7 +3,7 @@ module Dashboard {
     $scope.searchText = "";
     $scope.selectedItems = [];
 
-    updateData();
+    //updateData();
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
@@ -16,6 +16,7 @@ module Dashboard {
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       showFilter: false,
+      showColumnMenu: false,
       filterOptions: {
         filterText: "searchText"
       },
@@ -34,13 +35,9 @@ module Dashboard {
       ]
     };
 
-    // Don't think this is needed...
-    /*$scope.$on("$routeChangeSuccess", function (event, current, previous) {
+    // Okay, now this is needed :-)
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateData, 50);
-    });
-    */
-    $scope.$watch('workspace.selection', function () {
       setTimeout(updateData, 50);
     });
 
