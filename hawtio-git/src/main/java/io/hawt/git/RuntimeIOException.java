@@ -17,32 +17,11 @@
  */
 package io.hawt.git;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
- * A {@link ServletContextListener} which initialises the {@link GitHelper} in the web app
+ * Thrown if some IO exception occurs
  */
-public class GitContextListener  implements ServletContextListener {
-    private GitHelper helper = new GitHelper();
-
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        try {
-            helper.init();
-        } catch (Exception e) {
-            throw createServletException(e);
-        }
-    }
-
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        try {
-            helper.destroy();
-        } catch (Exception e) {
-            throw createServletException(e);
-        }
-    }
-
-    protected RuntimeException createServletException(Exception e) {
-        return new RuntimeException(e);
+public class RuntimeIOException extends RuntimeException {
+    public RuntimeIOException(Exception e) {
+        super(e);
     }
 }

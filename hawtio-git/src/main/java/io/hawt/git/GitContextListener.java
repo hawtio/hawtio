@@ -17,32 +17,32 @@
  */
 package io.hawt.git;
 
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
-import static org.junit.Assert.assertTrue;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * Tests we create a configuration directory
+ * A {@link ServletContextListener} which initialises the {@link GitFacade} in the web app
  */
-public class GitHelperTest {
+public class GitContextListener  implements ServletContextListener {
+    private GitFacade helper = new GitFacade();
 
-    @Test
-    public void createsTempFileConfigDirectory() throws Exception {
-        GitHelper helper = new GitHelper();
-        helper.init();
-
-        assertConfigDirectoryExists(helper);
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        try {
+            helper.init();
+        } catch (Exception e) {
+            throw createServletException(e);
+        }
     }
 
-    protected File assertConfigDirectoryExists(GitHelper helper) throws IOException {
-        File confDir = helper.getConfigDirectory();
-        System.out.println("Config directory is " + confDir);
-        // lets assert the directory exists
-        assertTrue("Should have a configDirectory", confDir != null);
-        assertTrue("configDirectory should exist", confDir.exists());
-        return confDir;
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        try {
+            helper.destroy();
+        } catch (Exception e) {
+            throw createServletException(e);
+        }
+    }
+
+    protected RuntimeException createServletException(Exception e) {
+        return new RuntimeException(e);
     }
 }
