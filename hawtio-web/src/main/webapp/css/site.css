@@ -199,6 +199,11 @@ span.dynatree-icon {
     color: #EECA7C;
 }
 
+span:not(.dynatree-has-children) .dynatree-icon:before {
+  color: gray;
+  content: "\f013";  
+} 
+
 /** table hover and nested divs */
 .table-hover tbody tr:hover td.details {
   background-color: #ffffff;
