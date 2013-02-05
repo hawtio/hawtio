@@ -15,6 +15,15 @@
   <description>The hawt.io Website and Documentation</description>
 
   <properties>
+    <scala-version>2.9.0</scala-version>
+<!--
+    <scala-version>2.10.0</scala-version>
+-->
+    <scala-plugin-version>3.1.2</scala-plugin-version>
+    <scalate-version>1.5.3</scalate-version>
+<!--
+    <scalate-version>1.6.1</scalate-version>
+-->
     <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
   </properties>
 
@@ -30,7 +39,10 @@
 
     <dependency>
       <groupId>org.fusesource.scalate</groupId>
+      <artifactId>scalate-page</artifactId>
+<!--
       <artifactId>scalate-page_2.10</artifactId>
+-->
       <version>${scalate-version}</version>
     </dependency>
 
@@ -114,7 +126,10 @@
 
       <plugin>
         <groupId>org.fusesource.scalate</groupId>
+        <artifactId>maven-scalate-plugin</artifactId>
+<!--
         <artifactId>maven-scalate-plugin_2.10</artifactId>
+-->
         <version>${scalate-version}</version>
         <configuration>
           <warSourceDirectory>${basedir}/src</warSourceDirectory>
