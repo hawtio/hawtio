@@ -79,15 +79,10 @@
 
 <pre><code>features:install hawtio</code></pre>
 
-<p>Or if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a> container or release of <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> you can add this line to the <strong>etc/org.ops4j.pax.url.mvn.cfg</strong> file (this step is only until we release 1.0 of hawtio)</p>
-
-<pre><code>org.ops4j.pax.url.mvn.repositories= \
-     https://oss.sonatype.org/content/repositories/snapshots=sonatype.snapshot.repo \</code></pre>
-
-<p>Then in the Karaf / Fuse ESB console try:</p>
+<p>Or if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> the followwing should work:</p>
 
 <pre><code>features:install war
-install mvn:io.hawt/hawtio-osgi/1.0-SNAPSHOT/war</code></pre>
+install https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130205.084731-12.war</code></pre>
 
 <p>Then open <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a></p>
 
