@@ -1,6 +1,5 @@
 module Jmx {
-  export function ChartEditController($scope, $location, workspace:Workspace) {
-    $scope.workspace = workspace;
+  export function ChartEditController($scope, $location, workspace:Workspace, jolokia) {
     $scope.selectedAttributes = [];
     $scope.selectedMBeans = [];
     $scope.metrics = {};
@@ -47,8 +46,12 @@ module Jmx {
       $location.path("jmx/charts");
     };
 
-    $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+    $scope.$watch('workspace.selection', render);
+
+    function render(node, oldNode) {
+      if (!angular.isDefined(node)) {
+        return;
+      }
 
       $scope.selectedAttributes = [];
       $scope.selectedMBeans = [];
@@ -56,84 +59,81 @@ module Jmx {
       $scope.mbeans = {};
       var mbeanCounter = 0;
       var resultCounter = 0;
-      var jolokia = $scope.workspace.jolokia;
-      var node = $scope.workspace.selection;
-      if (node && jolokia) {
-        // lets iterate through all the children
-        var children = node.children;
-        if (!children || !children.length) {
-          children = [node];
-        }
-        if (children) {
-          children.forEach((mbeanNode) => {
-            var mbean = mbeanNode.objectName;
-            var name = mbeanNode.title;
-            if (name && mbean) {
-              mbeanCounter++;
-              $scope.mbeans[name] = name;
-              // we need to escape the mbean path for list
-              var listKey = encodeMBeanPath(mbean);
-              jolokia.list(listKey, onSuccess((meta) => {
-                var attributes = meta.attr;
-                if (attributes) {
-                  for (var key in attributes) {
-                    var value = attributes[key];
-                    if (value) {
-                      var typeName = value['type'];
-                      if (isNumberTypeName(typeName)) {
-                        if (!$scope.metrics[key]) {
-                          //console.log("Number attribute " + key + " for " + mbean);
-                          $scope.metrics[key] = key;
-                        }
+
+      // lets iterate through all the children
+      var children = node.children;
+      if (!children || !children.length) {
+        children = [node];
+      }
+      if (children) {
+        children.forEach((mbeanNode) => {
+          var mbean = mbeanNode.objectName;
+          var name = mbeanNode.title;
+          if (name && mbean) {
+            mbeanCounter++;
+            $scope.mbeans[name] = name;
+            // we need to escape the mbean path for list
+            var listKey = encodeMBeanPath(mbean);
+            jolokia.list(listKey, onSuccess((meta) => {
+              var attributes = meta.attr;
+              if (attributes) {
+                for (var key in attributes) {
+                  var value = attributes[key];
+                  if (value) {
+                    var typeName = value['type'];
+                    if (isNumberTypeName(typeName)) {
+                      if (!$scope.metrics[key]) {
+                        //console.log("Number attribute " + key + " for " + mbean);
+                        $scope.metrics[key] = key;
                       }
                     }
-                  }
-                  if (++resultCounter >= mbeanCounter) {
-                    // TODO do we need to sort just in case?
-
-                    // lets look in the search URI to default the selections
-                    var search = $location.search();
-                    var attributeNames = toSearchArgumentArray(search["att"]);
-                    var elementNames = toSearchArgumentArray(search["el"]);
-                    if (attributeNames && attributeNames.length) {
-                      attributeNames.forEach((name) => {
-                        if ($scope.metrics[name]) {
-                          $scope.selectedAttributes.push(name);
-                        }
-                      });
-                    }
-                    if (elementNames && elementNames.length) {
-                      elementNames.forEach((name) => {
-                        if ($scope.mbeans[name]) {
-                          $scope.selectedMBeans.push(name);
-                        }
-                      });
-                    }
-
-                    // default selections if there are none
-                    if ($scope.selectedMBeans.length < 1) {
-                      $scope.selectedMBeans = Object.keys($scope.mbeans);
-                    }
-                    if ($scope.selectedAttributes.length < 1) {
-                      var attrKeys = Object.keys($scope.metrics).sort();
-                      if ($scope.selectedMBeans.length > 1) {
-                        $scope.selectedAttributes = [attrKeys.first()];
-                      } else {
-                        $scope.selectedAttributes = attrKeys;
-                      }
-                    }
-
-                    // lets update the sizes using jquery as it seems AngularJS doesn't support it
-                    $("#attributes").attr("size", Object.size($scope.metrics));
-                    $("#mbeans").attr("size", Object.size($scope.mbeans));
-                    $scope.$apply();
                   }
                 }
-              }));
-            }
-          });
-        }
+                if (++resultCounter >= mbeanCounter) {
+                  // TODO do we need to sort just in case?
+
+                  // lets look in the search URI to default the selections
+                  var search = $location.search();
+                  var attributeNames = toSearchArgumentArray(search["att"]);
+                  var elementNames = toSearchArgumentArray(search["el"]);
+                  if (attributeNames && attributeNames.length) {
+                    attributeNames.forEach((name) => {
+                      if ($scope.metrics[name]) {
+                        $scope.selectedAttributes.push(name);
+                      }
+                    });
+                  }
+                  if (elementNames && elementNames.length) {
+                    elementNames.forEach((name) => {
+                      if ($scope.mbeans[name]) {
+                        $scope.selectedMBeans.push(name);
+                      }
+                    });
+                  }
+
+                  // default selections if there are none
+                  if ($scope.selectedMBeans.length < 1) {
+                    $scope.selectedMBeans = Object.keys($scope.mbeans);
+                  }
+                  if ($scope.selectedAttributes.length < 1) {
+                    var attrKeys = Object.keys($scope.metrics).sort();
+                    if ($scope.selectedMBeans.length > 1) {
+                      $scope.selectedAttributes = [attrKeys.first()];
+                    } else {
+                      $scope.selectedAttributes = attrKeys;
+                    }
+                  }
+
+                  // lets update the sizes using jquery as it seems AngularJS doesn't support it
+                  $("#attributes").attr("size", Object.size($scope.metrics));
+                  $("#mbeans").attr("size", Object.size($scope.mbeans));
+                  $scope.$apply();
+                }
+              }
+            }));
+          }
+        });
       }
-    });
+    }
   }
 }
