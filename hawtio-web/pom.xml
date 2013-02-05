@@ -37,7 +37,7 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-git</artifactId>
-      <version>${project-version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- testing -->
