@@ -2,8 +2,7 @@ module Dashboard {
   export function EditDashboardsController($scope, $routeParams, $http, $route, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
     $scope.searchText = "";
     $scope.selectedItems = [];
-
-    //updateData();
+    $scope.dashboards = [];
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
@@ -124,13 +123,6 @@ module Dashboard {
       }
     };
 
-    function addDashboard(newDash) {
-      // TODO how to really add??
-
-      $scope.dashboards.push(newDash);
-      $scope.selectedItems.push(newDash);
-    }
-
     $scope.create = () => {
       var counter = $scope.dashboards.length + 1;
       var id = "dash" + (counter);
@@ -216,12 +208,18 @@ module Dashboard {
         $scope.url = decodeURIComponent(url);
       }
       dashboardRepository.getDashboards(dashboardLoaded);
-      Core.$applyNowOrLater($scope);
     }
 
     function dashboardLoaded(dashboards) {
       $scope.dashboards = dashboards;
-      Core.$applyNowOrLater($scope);
+      Core.$apply($scope);
+    }
+
+    function addDashboard(newDash) {
+      // TODO how to really add??
+
+      $scope.dashboards.push(newDash);
+      $scope.selectedItems.push(newDash);
     }
   }
 }
