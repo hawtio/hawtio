@@ -99,6 +99,7 @@
     <spring-version>3.0.7.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
     <war-plugin-version>2.1.1</war-plugin-version>
+    <guava-version>13.0.1</guava-version>
   </properties>
 
   <repositories>
