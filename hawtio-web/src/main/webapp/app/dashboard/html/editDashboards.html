@@ -25,6 +25,10 @@
                   title="Create a copy of the selected dashboard(s)" data-placement="bottom">
             <i class="icon-copy"></i> Duplicate
           </button>
+          <button class="btn" ng-disabled="hasSelection()" ng-click="gist()"
+                  title="Creates a JSON gist of the selected dashboards so you can share with others" data-placement="bottom">
+            <i class="icon-github"></i> Share on Github
+          </button>
           <button class="btn" ng-disabled="hasSelection()" ng-click="delete()"><i
                   class="icon-remove"></i> Delete
           </button>
