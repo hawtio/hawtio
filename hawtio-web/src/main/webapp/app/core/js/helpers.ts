@@ -121,7 +121,6 @@ function closeHandle($scope, jolokia) {
 }
 
 function onSuccess(fn, options = {}) {
-  options['ignoreErrors'] = true;
   options['mimeType'] = 'application/json';
   options['success'] = fn;
   if (!options['error']) {

@@ -47,13 +47,7 @@ class Workspace {
   }
 
   public loadTree() {
-    // TODO - polling loses the canonicalNaming option, might need to roll our own
-    //        scheduler for updating the tree at some point.
-    //Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree), {canonicalNaming: false}));
-
-    this.jolokia.request({
-      type: 'list'
-    }, onSuccess(angular.bind(this, this.populateTree), {canonicalNaming: false}));
+    Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree)));
   }
 
   public folderGetOrElse(folder, value) {
