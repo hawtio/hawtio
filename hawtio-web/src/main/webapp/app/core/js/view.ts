@@ -1,12 +1,5 @@
 module Core {
 
-  myApp.constant('layoutTree', 'app/core/html/layoutTree.html');
-  myApp.constant('layoutFull', 'app/core/html/layoutFull.html');
-
-  myApp.factory('viewRegistry', function () {
-    return {};
-  });
-
   // NOTE - $route is brought in here to ensure the factory for that service
   // has been called, otherwise the ng-include directive doesn't show the partial
   // after a refresh until you click a top-level link.

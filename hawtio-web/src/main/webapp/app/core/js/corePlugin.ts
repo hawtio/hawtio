@@ -13,206 +13,201 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   alert: (text:string) => void;
 }
 
-var myApp = angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']);
-
 hawtioPluginLoader.addModule('hawtioCore');
 
-myApp.config(($routeProvider) => {
-  $routeProvider.
-          when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
-          when('/help', {
-            redirectTo: '/help/overview'
-          }).
-          when('/help/:tabName', {templateUrl: 'app/core/html/help.html'}).
+angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
+        config(($routeProvider) => {
+          $routeProvider.
+                  when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
+                  when('/help', {
+                    redirectTo: '/help/overview'
+                  }).
+                  when('/help/:tabName', {templateUrl: 'app/core/html/help.html'}).
 
-          otherwise({redirectTo: '/help/overview'});
-});
+                  otherwise({redirectTo: '/help/overview'});
+        }).
+        constant('layoutTree', 'app/core/html/layoutTree.html').
+        constant('layoutFull', 'app/core/html/layoutFull.html').
+        constant('editablePropertyTemplate',
+                '<div ng-mouseenter="showEdit()" ng-mouseleave="hideEdit()" class="ep" ng-hide="editing">' +
+                        '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
+                        '</div>' +
+                        '<div class="ep" ng-show="editing">' +
+                        '<form class="form-inline no-bottom-margin" ng-submit="saveEdit()">' +
+                        '<fieldset>' +
+                        '<input type="text" value="{{text}}">' +
+                        '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
+                        '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
+                        '</fieldset>' +
+                        '</form>' +
+                        '</div>').
 
-myApp.service('localStorage', function () {
-  // TODO Create correct implementation of windowLocalStorage
-  var storage:WindowLocalStorage = window.localStorage || <any> (function () {
-    return {};
-  })();
-  return storage;
-});
+        service('localStorage',function () {
+          // TODO Create correct implementation of windowLocalStorage
+          var storage:WindowLocalStorage = window.localStorage || <any> (function () {
+            return {};
+          })();
+          return storage;
+        }).
 
-myApp.factory('jolokia', ($location:ng.ILocationService, localStorage) => {
-  var jolokiaUrl = $location.search()['url'] || url("/jolokia");
-  // console.log("Jolokia URL is " + jolokiaUrl);
-  var jolokia = new Jolokia(jolokiaUrl);
-  localStorage['url'] = jolokiaUrl;
-  return jolokia;
-});
+        factory('viewRegistry',function () {
+          return {};
+        }).
+        factory('jolokia',($location:ng.ILocationService, localStorage) => {
+          var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+          // console.log("Jolokia URL is " + jolokiaUrl);
+          var jolokia = new Jolokia(jolokiaUrl);
+          localStorage['url'] = jolokiaUrl;
+          return jolokia;
+        }).
+        factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
+          var answer = new Workspace(jolokia, $location, $compile, $templateCache, localStorage, $rootScope);
+          answer.loadTree();
+          return answer;
+        }).
+        filter('humanize',() => humanizeValue).
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull) => {
 
-myApp.factory('workspace', ($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
-  var answer = new Workspace(jolokia, $location, $compile, $templateCache, localStorage, $rootScope);
-  answer.loadTree();
-  return answer;
-});
+          $.support.cors = true;
 
+          /**
+           * Count the number of lines in the given text
+           */
+          $rootScope.lineCount = lineCount;
 
-myApp.filter('humanize', () => humanizeValue)
+          /**
+           * Easy access to route params
+           */
+          $rootScope.params = $routeParams;
 
+          /**
+           * Wrapper for angular.isArray, isObject, etc checks for use in the view
+           *
+           * @param type {string} the name of the check (casing sensitive)
+           * @param value {string} value to check
+           */
+          $rootScope.is = function (type:any, value:any):bool {
+            return angular['is' + type](value);
+          };
 
-myApp.run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull) => {
+          /**
+           * Wrapper for $.isEmptyObject()
+           *
+           * @param value  {mixed} Value to be tested
+           * @return boolean
+           */
+          $rootScope.empty = function (value:any):bool {
+            return $.isEmptyObject(value);
+          };
 
-  $.support.cors = true;
+          /**
+           * Initialize jolokia polling and add handler to change poll
+           * frequency
+           */
+          // only reset the update rate if its not defined
+          var updateRate = localStorage['updateRate'];
+          if (angular.isUndefined(updateRate)) {
+            localStorage['updateRate'] = 5000;
+          }
 
-  /**
-   * Count the number of lines in the given text
-   */
-  $rootScope.lineCount = lineCount;
+          $rootScope.$on('UpdateRate', (event, rate) => {
+            jolokia.stop();
+            if (rate > 0) {
+              jolokia.start(rate);
+            }
+            console.log("Set update rate to: " + rate);
+          });
 
-  /**
-   * Easy access to route params
-   */
-  $rootScope.params = $routeParams;
+          $rootScope.$emit('UpdateRate', localStorage['updateRate']);
 
-  /**
-   * Wrapper for angular.isArray, isObject, etc checks for use in the view
-   *
-   * @param type {string} the name of the check (casing sensitive)
-   * @param value {string} value to check
-   */
-  $rootScope.is = function (type:any, value:any):bool {
-    return angular['is' + type](value);
-  };
+          /**
+           * Debugging Tools
+           *
+           * Allows you to execute debug functions from the view
+           */
+            // TODO Doesn't support vargs like it should
+          $rootScope.log = function (variable:any):void {
+            console.log(variable);
+          };
+          $rootScope.alert = function (text:string) {
+            alert(text);
+          };
 
-  /**
-   * Wrapper for $.isEmptyObject()
-   *
-   * @param value  {mixed} Value to be tested
-   * @return boolean
-   */
-  $rootScope.empty = function (value:any):bool {
-    return $.isEmptyObject(value);
-  };
+          viewRegistry['fullscreen'] = layoutFull;
+          viewRegistry['notree'] = layoutFull;
+          viewRegistry['help'] = layoutFull;
+          viewRegistry['preferences'] = layoutFull;
 
-  /**
-   * Initialize jolokia polling and add handler to change poll
-   * frequency
-   */
-  // only reset the update rate if its not defined
-  var updateRate = localStorage['updateRate'];
-  if (angular.isUndefined(updateRate)) {
-    localStorage['updateRate'] = 5000;
-  }
+        }).
+        directive('expandable',function () {
+          return {
+            restrict: 'C',
+            replace: false,
+            link: function (scope, element, attrs) {
+              var expandable = $(element);
 
-  $rootScope.$on('UpdateRate', (event, rate) => {
-    jolokia.stop();
-    if (rate > 0) {
-      jolokia.start(rate);
-    }
-    console.log("Set update rate to: " + rate);
-  });
+              var title = expandable.find('.title');
+              var button = expandable.find('.cancel');
 
-  $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+              button.bind('click', function () {
+                expandable.addClass('closed');
+                expandable.removeClass('opened');
+                return false;
+              });
 
-  /**
-   * Debugging Tools
-   *
-   * Allows you to execute debug functions from the view
-   */
-    // TODO Doesn't support vargs like it should
-  $rootScope.log = function (variable:any):void {
-    console.log(variable);
-  };
-  $rootScope.alert = function (text:string) {
-    alert(text);
-  };
+              title.bind('click', function () {
+                expandable.toggleClass('opened');
+                expandable.toggleClass('closed');
+                return false;
+              });
+            }
+          }
+        }).
+        directive('editableProperty', ['$compile', 'editablePropertyTemplate', function ($compile, editablePropertyTemplate) {
+          var editableProperty = {
+            restrict: 'E',
+            scope: true,
+            template: editablePropertyTemplate,
+            require: 'ngModel',
+            link: function (scope, element, attrs, ngModel) {
 
-  viewRegistry['fullscreen'] = layoutFull;
-  viewRegistry['notree'] = layoutFull;
-  viewRegistry['help'] = layoutFull;
-  viewRegistry['preferences'] = layoutFull;
+              scope.editing = false;
+              $(element.find(".icon-pencil")[0]).hide();
 
-});
+              ngModel.$render = function () {
+                scope.text = ngModel.$viewValue[attrs['property']];
+              };
 
+              scope.showEdit = function () {
+                $(element.find(".icon-pencil")[0]).show();
+              };
 
-myApp.directive('expandable', function () {
-  return {
-    restrict: 'C',
-    replace: false,
-    link: function (scope, element, attrs) {
-      var expandable = $(element);
+              scope.hideEdit = function () {
+                $(element.find(".icon-pencil")[0]).hide();
+              };
 
-      var title = expandable.find('.title');
-      var button = expandable.find('.cancel');
+              scope.doEdit = function () {
+                scope.editing = true;
+              };
 
-      button.bind('click', function () {
-        expandable.addClass('closed');
-        expandable.removeClass('opened');
-        return false;
-      });
+              scope.stopEdit = function () {
+                scope.editing = false;
+              };
 
-      title.bind('click', function () {
-        expandable.toggleClass('opened');
-        expandable.toggleClass('closed');
-        return false;
-      });
-    }
-  }
-});
+              scope.saveEdit = function () {
+                var value = $(element.find(":input[type=text]")[0]).val();
+                var obj = ngModel.$viewValue;
+                obj[attrs['property']] = value;
+                ngModel.$setViewValue(obj);
+                ngModel.$render();
+                scope.editing = false;
+                scope.$parent.$eval(attrs['onSave']);
+              }
 
-myApp.constant('editablePropertyTemplate',
-    '<div ng-mouseenter="showEdit()" ng-mouseleave="hideEdit()" class="ep" ng-hide="editing">' +
-      '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
-    '</div>' +
-    '<div class="ep" ng-show="editing">' +
-      '<form class="form-inline no-bottom-margin" ng-submit="saveEdit()">' +
-        '<fieldset>' +
-          '<input type="text" value="{{text}}">' +
-          '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
-          '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
-        '</fieldset>' +
-       '</form>' +
-    '</div>');
-
-myApp.directive('editableProperty', ['$compile', 'editablePropertyTemplate', function($compile, editablePropertyTemplate) {
-  var editableProperty = {
-    restrict: 'E',
-    scope: true,
-    template: editablePropertyTemplate,
-    require: 'ngModel',
-    link: function (scope, element, attrs, ngModel) {
-
-      scope.editing = false;
-      $(element.find(".icon-pencil")[0]).hide();
-
-      ngModel.$render = function() {
-        scope.text = ngModel.$viewValue[attrs['property']];
-      }
-
-      scope.showEdit = function() {
-        $(element.find(".icon-pencil")[0]).show();
-      }
-
-      scope.hideEdit = function() {
-        $(element.find(".icon-pencil")[0]).hide();
-      }
-
-      scope.doEdit = function() {
-        scope.editing = true;
-      }
-
-      scope.stopEdit = function() {
-        scope.editing = false;
-      }
-
-      scope.saveEdit = function() {
-        var value = $(element.find(":input[type=text]")[0]).val();
-        var obj = ngModel.$viewValue;
-        obj[attrs['property']] = value;
-        ngModel.$setViewValue(obj);
-        ngModel.$render();
-        scope.editing = false;
-        scope.$parent.$eval(attrs['onSave']);
-      }
-
-    }
-  }
-  return editableProperty;
-}]);
+            }
+          };
+          return editableProperty;
+        }]);
 
 // enable bootstrap tooltips
 $(function () {
@@ -226,34 +221,32 @@ $(function () {
 // TODO -- this is just here so the simple plugin examples
 // work and don't break the app :-/
 // ---------------------------------------------------------
-var main = angular.module('main', []);
+angular.module('main', []).
+        config(function ($routeProvider) {
+          $routeProvider.when('/plugins', {
+            templateUrl: 'html/plugins.html',
+            controller: PluginController
+          });
 
-main.config(function ($routeProvider) {
-  $routeProvider.when('/plugins', {
-    templateUrl: 'html/plugins.html',
-    controller: PluginController
-  });
+          //$locationProvider.html5Mode(true);
+        }).
 
-  //$locationProvider.html5Mode(true);
-});
+        // service for plugins to register links
+        factory('links',function () {
+          return [];
+        }).
 
-// service for plugins to register links
-main.factory('links', function () {
-  var answer = [];
-  return answer;
-});
+        // constant for plugin to link back to main page
+        constant('home', '#/hawtio').
 
-// constant for plugin to link back to main page
-main.constant('home', '#/hawtio');
-
-main.run(function () {
-  // console.log("main app running");
-});
+        run(function () {
+          // console.log("main app running");
+        });
 
 var PluginController = function ($scope, $route, links) {
   $scope.routes = JSON.stringify($route.routes, null, 4);
   $scope.links = links;
-}
+};
 
 hawtioPluginLoader.addModule('main');
 // ---------------------------------------------------------
