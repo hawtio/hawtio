@@ -74,32 +74,33 @@ html, body {
   background-image: -webkit-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -ms-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
   top: 0px;
-  padding: 0 0 24px 0;
+  padding: 0;
+  border-bottom: 1px solid #aaaaaa;
 }
 
 .axis.bottom {
+  border-top: 1px solid #aaaaaa;
   background-image: linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -o-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -moz-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -webkit-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -ms-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   position: absolute;
-  bottom: 0px;
-  padding: 24px 0 0 0;
+  bottom: 20px;
+  padding: 0;
 /*
   bottom: -54px;
 */
 }
 
 .horizon {
-  border-bottom: solid 1px #000;
+  border-bottom: solid 1px #eeeeee;
   overflow: hidden;
   position: relative;
 }
 
-.horizon {
-  border-top: solid 1px #000;
-  border-bottom: solid 1px #000;
+.horizon:last-child {
+  border-bottom: none;
 }
 
 .horizon + .horizon {
