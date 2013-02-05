@@ -17,13 +17,17 @@
   <properties>
     <scala-version>2.9.0</scala-version>
 <!--
+    TODO lets not use 2.10 scala yet as it seems the 1.6.1 distro of scalate borks the scalate plugin
+    Or at least I've not figured out yet how to run it! :)
+    Wonder if the maven-scalate-plugin_2.10 needs to be called maven-scalate-plugin?
+
     <scala-version>2.10.0</scala-version>
--->
     <scala-plugin-version>3.1.2</scala-plugin-version>
-    <scalate-version>1.5.3</scalate-version>
-<!--
     <scalate-version>1.6.1</scalate-version>
 -->
+    <scala-plugin-version>3.0.2</scala-plugin-version>
+    <scalate-version>1.5.3</scalate-version>
+
     <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
   </properties>
 
