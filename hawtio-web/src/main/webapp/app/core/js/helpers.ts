@@ -319,4 +319,21 @@ module Core {
     }
     return false;
   }
+
+  /**
+   * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
+   */
+  export function $applyNowOrLater($scope) {
+    if ($scope.$$phase) {
+      setTimeout(() => {
+        if (!$scope.$$phase) {
+          $scope.$apply();
+        } else {
+          console.log("Still in a digest!!");
+        }
+      }, 50);
+    } else {
+      $scope.$apply();
+    }
+  }
 }

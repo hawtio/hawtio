@@ -164,12 +164,23 @@ module Dashboard {
 
 
     $scope.gist = () => {
+      var cleanItems = [];
+      angular.forEach($scope.selectedItems, (item) => {
+        // lets ignore any items starting with $ or _ as they are UI stuff
+        var cleanItem = {};
+        angular.forEach(item, (value, key) => {
+          if (!angular.isString(key) || (!key.startsWith("$") && !key.startsWith("_"))) {
+            cleanItem[key] = value;
+          }
+        });
+        cleanItems.push(cleanItem);
+      });
       var data = {
         "description": "hawtio dashboards",
         "public": true,
         "files": {
           "dashboards.json": {
-            "content": JSON.stringify($scope.selectedItems)
+            "content": JSON.stringify(cleanItems, null, "  ")
           }
         }
       };
@@ -208,14 +219,12 @@ module Dashboard {
         $scope.url = decodeURIComponent(url);
       }
       dashboardRepository.getDashboards(dashboardLoaded);
-      $scope.$apply();
+      Core.$applyNowOrLater($scope);
     }
 
     function dashboardLoaded(dashboards) {
       $scope.dashboards = dashboards;
-      if (!$scope.$$phase) {
-        $scope.$apply();
-      }
+      Core.$applyNowOrLater($scope);
     }
   }
 }
