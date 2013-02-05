@@ -34,11 +34,12 @@ module Dashboard {
       ]
     };
 
-    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+    // Don't think this is needed...
+    /*$scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateData, 50);
     });
-
+    */
     $scope.$watch('workspace.selection', function () {
       setTimeout(updateData, 50);
     });
@@ -167,6 +168,7 @@ module Dashboard {
         $scope.url = decodeURIComponent(url);
       }
       dashboardRepository.getDashboards(dashboardLoaded);
+      $scope.$apply();
     }
 
     function dashboardLoaded(dashboards) {
