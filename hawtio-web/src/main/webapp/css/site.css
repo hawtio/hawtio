@@ -86,7 +86,7 @@ html, body {
   background-image: -webkit-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   background-image: -ms-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
   position: absolute;
-  bottom: 20px;
+  bottom: 23px;
   padding: 0;
 /*
   bottom: -54px;

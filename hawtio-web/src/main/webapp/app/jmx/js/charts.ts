@@ -1,68 +1,47 @@
 module Jmx {
-  export function ChartController($scope, $location, workspace:Workspace) {
-    $scope.workspace = workspace;
+  export function ChartController($scope, $location, workspace:Workspace, jolokia, localStorage) {
+
     $scope.metrics = [];
 
-    $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
-
-      var width = 594;
-      var charts = $("#charts");
-      if (charts) {
-        width = charts.width();
-      }
-      // lets stop any old context and remove its charts first
+    $scope.$on('$destroy', function () {
+      $scope.dereg();
       if ($scope.context) {
         $scope.context.stop();
         $scope.context = null;
       }
-      charts.children().remove();
+      $("#charts").children().remove();
+    });
 
-      // some sample metrics
-      /*  var metricMem = jolokia.metric({
-       type: 'read',
-       mbean: 'java.lang:type=Memory',
-       attribute: 'HeapMemoryUsage',
-       path: 'used'
-       }, "HeapMemory Usage");
+    $scope.dereg = $scope.$watch('workspace.selection', render);
 
-       var metricLoad = jolokia.metric({
-       type: 'read',
-       mbean: 'java.lang:type=OperatingSystem',
-       attribute: 'ProcessCpuTime'
-       }, "CPU Load");
+    function render(node, oldValue) {
+      if (!angular.isDefined(node)) {
+        return;
+      }
+      var width = 594;
+      var charts = $("#charts");
 
-       var memory = jolokia.metric(
-       function (resp1, resp2) {
-       return Number(resp1.value) / Number(resp2.value);
-       },
-       {type: "read", mbean: "java.lang:type=Memory", attribute: "HeapMemoryUsage", path: "used"},
-       {type: "read", mbean: "java.lang:type=Memory", attribute: "HeapMemoryUsage", path: "max"}, "Heap-Memory"
-       );
-       var gcCount = jolokia.metric(
-       {type: "read", mbean: "java.lang:name=PS MarkSweep,type=GarbageCollector", attribute: "CollectionCount"},
-       {delta: 1000, name: "GC Old"}
-       );
-       var gcCount2 = jolokia.metric(
-       {type: "read", mbean: "java.lang:name=PS Scavenge,type=GarbageCollector", attribute: "CollectionCount"},
-       {delta: 1000, name: "GC Young"}
-       );
-       */
+      if (charts) {
+        width = charts.width();
+      } else {
+        return;
+      }
 
-      var node = $scope.workspace.selection;
-      if (!node) return;
       var mbean = node.objectName;
       $scope.metrics = [];
 
-      var jolokia = $scope.workspace.jolokia;
+      var updateRate = localStorage['updateRate'];
+      if (!angular.isDefined(updateRate)) {
+        updateRate = 0
+      }
       var context = cubism.context()
-              .serverDelay(0)
-              .clientDelay(0)
-              .step(1000)
+              .serverDelay(updateRate)
+              .clientDelay(updateRate)
+              .step(updateRate)
               .size(width);
 
       $scope.context = context;
-      $scope.jolokiaContext = context.jolokia($scope.workspace.jolokia);
+      $scope.jolokiaContext = context.jolokia(jolokia);
       var search = $location.search();
       var attributeNames = toSearchArgumentArray(search["att"]);
 
@@ -118,15 +97,7 @@ module Jmx {
               var attributeTitle = humanizeValue(key);
               // for now lets always be verbose
               var title = name + ": " + attributeTitle;
-              /*
-               if (attributeNames.length > 1) {
-               if (Object.size(mbeans) === 1) {
-               title = attributeTitle;
-               } else {
-               title = name + " / " + attributeTitle;
-               }
-               }
-               */
+
               var metric = $scope.jolokiaContext.metric({
                 type: 'read',
                 mbean: mbean,
@@ -165,13 +136,11 @@ module Jmx {
                     .data([metric])
                     .attr("class", "horizon")
                     .call(context.horizon());
-            //.call(context.horizon().extent([-10, 10]));
           });
         });
-      } else {
-        // lets forward to the chart selection UI
-        $location.path("chartEdit");
+
       }
-    });
+    };
+
   }
 }
