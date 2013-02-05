@@ -304,8 +304,7 @@ li.attr-column {
 .widget-title {
   margin: 0;
 
-  border-radius: 5px;
-  border: 1px solid #dddddd;
+  border-radius: 5px 5px 0px 0px;
 
   padding-left: 5px;
   padding-right: 5px;
@@ -319,16 +318,24 @@ li.attr-column {
   -moz-transition: border .25s ease-in-out;
   -webkit-transition: border .25s ease-in-out;
 
-  background: #fefefe;
-  box-shadow: 0 8px 12px -6px darkgrey;
+  background-color: #ededed;
+  background-image: -moz-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f2f2f2), to(#e5e5e5));
+  background-image: -webkit-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -o-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: linear-gradient(to bottom, #f2f2f2, #e5e5e5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2f2f2', endColorstr='#ffe5e5e5', GradientType=0);
+  border-color: #e5e5e5 #e5e5e5 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #e5e5e5;
+
 }
 
 .widget-title:hover {
   cursor: move;
-  border-radius: 5px;
-  border: 1px solid #989898;
+  border-bottom-color: #dedede;
   background: #cecece;
-
 }
 
 .widget-title .row-fluid .pull-right > i {
@@ -419,5 +426,17 @@ li.attr-column {
 #widgets li div div div div div#attributesGrid div.ngFooterPanel {
   border: none;
   display: none;
+}
+
+.ngFooterPanel {
+  border-top: none;
+}
+
+.ngRow .ngCell:last-child {
+  border-right: none;
+}
+
+.ngRow:last-child {
+  border-bottom: none;
 }
 
