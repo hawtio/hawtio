@@ -56,7 +56,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
         factory('jolokia',($location:ng.ILocationService, localStorage) => {
           var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           // console.log("Jolokia URL is " + jolokiaUrl);
-          var jolokia = new Jolokia({url: jolokiaUrl, canonicalNaming: true, ignoreErrors: true, mimeType: 'application/json'});
+          var jolokia = new Jolokia({url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'});
           localStorage['url'] = jolokiaUrl;
           return jolokia;
         }).
