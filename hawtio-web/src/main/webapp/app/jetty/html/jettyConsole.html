@@ -17,7 +17,7 @@
         </div>
 
         <table style="margin-bottom: 20px">
-            <tr> <td style="font-style:italic">Startup Time</td> <td>{{startupTime}}</td> </tr>
+            <tr> <td style="font-style:italic">Startup Time</td> <td>{{startupTime | date:'EEEE, MMMM d, y : hh:mm:ss a'}}</td> </tr>
             <tr> <td style="font-style:italic">Version</td> <td>{{theServer.version}}</td> </tr>
         </table>
 
