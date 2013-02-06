@@ -44,7 +44,7 @@ module Jmx {
       selectedItems: $scope.selectedItems,
       plugins: [$scope.selectToggle],
       showFilter: false,
-      showColumnMenu: false,
+      //showColumnMenu: false,
       canSelectRows: false,
       displaySelectionCheckbox: false,
       filterOptions: {
