@@ -4,6 +4,8 @@ module Dashboard {
     $scope.selectedItems = [];
     $scope.dashboards = [];
 
+    console.log("========== created EditDashboardsController");
+
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
     };
@@ -203,16 +205,24 @@ module Dashboard {
 
 
     function updateData() {
+      console.log("==== updateData()");
       var url = $routeParams["href"];
       if (url) {
         $scope.url = decodeURIComponent(url);
       }
-      dashboardRepository.getDashboards(dashboardLoaded);
+      dashboardRepository.getDashboards((dashboards) => {
+        $scope.dashboards = dashboards;
+        Core.$apply($scope);
+        console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
+        $scope.$apply();
+      });
     }
 
     function dashboardLoaded(dashboards) {
       $scope.dashboards = dashboards;
       Core.$apply($scope);
+      console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
+      $scope.$apply();
     }
 
     function addDashboard(newDash) {
