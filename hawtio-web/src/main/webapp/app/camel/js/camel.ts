@@ -57,6 +57,7 @@ module Camel {
             var x = parentX;
             var y = parentY + delta;
             var rid = parent.getAttribute("id");
+            var siblingNodes = [];
             $(parent).children().each((idx, route) => {
               var id = nodes.length;
               // from acts as a parent even though its a previous sibling :)
@@ -92,7 +93,14 @@ module Camel {
                 rid = null;
                 nodes.push(node);
                 if (parentId !== null && parentId !== id) {
-                  links.push({"source": parentId, "target": id, "value": 1});
+                  if (siblingNodes.length === 0 || parent.nodeName === "choice") {
+                    links.push({"source": parentId, "target": id, "value": 1});
+                  } else {
+                    siblingNodes.forEach(function (nodeId) {
+                      links.push({"source": nodeId, "target": id, "value": 1});
+                    });
+                    siblingNodes.length = 0;
+                  }
                 }
               } else {
                 // ignore non EIP nodes, though we should add expressions...
@@ -109,9 +117,19 @@ module Camel {
                   }
                 }
               }
-              addChildren(route, id, x, y, node);
-              x += delta;
+              var siblings = addChildren(route, id, x, y, node);
+              if (parent.nodeName === "choice") {
+                siblingNodes = siblingNodes.concat(siblings);
+                x += delta;
+              } else if (nodeId === "choice") {
+                siblingNodes = siblings;
+                y += delta;
+              } else {
+                siblingNodes = [nodes.length - 1];
+                y += delta;
+              }
             });
+            return siblingNodes;
           }
 
           var routeDelta = width / allRoutes.length;
