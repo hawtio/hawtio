@@ -253,7 +253,10 @@ hawtioPluginLoader.addModule('main');
 
 $(function () {
   hawtioPluginLoader.loadPlugins(function () {
-    angular.bootstrap($(document), hawtioPluginLoader.getModules());
+    var doc = $(document);
+    angular.bootstrap(doc, hawtioPluginLoader.getModules());
+    $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");
+    $(document.documentElement).attr('ng-app', 'hawtioCore');
   });
 });
 
