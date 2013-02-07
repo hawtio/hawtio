@@ -1,6 +1,5 @@
 module ActiveMQ {
-    export function SubscriberGraphController($scope, workspace:Workspace) {
-      $scope.workspace = workspace;
+    export function SubscriberGraphController($scope, workspace:Workspace, jolokia) {
       $scope.nodes = [];
       $scope.links = [];
       $scope.queues = {};
@@ -126,13 +125,12 @@ module ActiveMQ {
         $scope.links = [];
         var isQueue = false;
         var isTopic = false;
-        var jolokia = $scope.workspace.jolokia;
         if (jolokia) {
-          var selection = $scope.workspace.selection;
+          var selection = workspace.selection;
           $scope.selectionDetinationName = null;
           var typeName = null;
           if (selection) {
-            typeName = selection.typeName;
+            typeName = selection.typeName || selection.title;
             if (typeName) {
               isQueue = typeName === "Queue";
               isTopic = typeName === "Topic";
