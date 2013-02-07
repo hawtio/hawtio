@@ -116,6 +116,13 @@ module Jmx {
             });
           });
         }
+        // if we've children and none of the query arguments matched any metrics
+        // lets redirect back to the edit view
+        if (node.children.length && !$scope.metrics.length) {
+          // lets forward to the chart selection UI if we have some children; they may have
+          // chartable attributes
+          $location.path("jmx/chartEdit");
+        }
       }
 
       if ($scope.metrics.length > 0) {
