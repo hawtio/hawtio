@@ -2,6 +2,7 @@ module Jmx {
   export function ChartController($scope, $location, workspace:Workspace, jolokia, localStorage) {
 
     $scope.metrics = [];
+    $scope.updateRate = parseInt(localStorage['updateRate']);
 
     $scope.$on('$destroy', function () {
       $scope.dereg();
@@ -12,10 +13,20 @@ module Jmx {
       $("#charts").children().remove();
     });
 
+    $scope.errorMessage = () => {
+      if ($scope.updateRate === 0) {
+        return "updateRate";
+      }
+
+      if ($scope.metrics.length === 0) {
+        return "metrics";
+      }
+    }
+
     $scope.dereg = $scope.$watch('workspace.selection', render);
 
     function render(node, oldValue) {
-      if (!angular.isDefined(node)) {
+      if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
         return;
       }
       var width = 594;
@@ -30,14 +41,10 @@ module Jmx {
       var mbean = node.objectName;
       $scope.metrics = [];
 
-      var updateRate = localStorage['updateRate'];
-      if (!angular.isDefined(updateRate)) {
-        updateRate = 0
-      }
       var context = cubism.context()
-              .serverDelay(updateRate)
-              .clientDelay(updateRate)
-              .step(updateRate)
+              .serverDelay($scope.updateRate)
+              .clientDelay($scope.updateRate)
+              .step($scope.updateRate)
               .size(width);
 
       $scope.context = context;
