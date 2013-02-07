@@ -3,9 +3,12 @@ module Dashboard {
                                       $templateCache,
                                       workspace:Workspace,
                                       dashboardRepository: DashboardRepository,
-                                      jolokia) {
+                                      $compile) {
     $scope.route = $route;
     $scope.injector = $injector;
+
+    $scope.gridX = 400;
+    $scope.gridY = 400;
 
     updateWidgets();
 
@@ -52,6 +55,19 @@ module Dashboard {
     function onDashboardLoad(dashboard) {
       $scope.dashboard = dashboard;
       var widgetElement = $("#widgets");
+
+      var gridster = widgetElement.gridster({
+        widget_margins: [10, 10],
+        widget_base_dimensions: [$scope.gridX, $scope.gridY],
+        draggable: {
+          stop: (event, ui) => {
+            updateLayoutConfiguration();
+          }
+        }
+      }).data('gridster');
+
+      var gridster_widgets = [];
+
       var template = $templateCache.get("widgetTemplate");
       var widgets = ((dashboard) ? dashboard.widgets : null) || [];
       angular.forEach(widgets, (widget) => {
@@ -88,25 +104,39 @@ module Dashboard {
         if (!widget.sizey) {
           widget.sizey = 1;
         }
-        var div = $('<li data-row="' + widget.row + '" data-col="' + widget.col + '" data-sizex="' + widget.sizex + '" data-sizey="' + widget.sizey + '">');
+        var div = $('<div></div>');
         div.html(template);
-        workspace.$compile(div.contents())(childScope);
-        widgetElement.append(div);
-        if (!$scope.$$phase) {
-          $scope.$apply();
-        }
+
+        var outerDiv = $('<li></li>')
+        outerDiv.html($compile(div.contents())(childScope));
+        var w = gridster.add_widget(outerDiv, widget.sizex, widget.sizey, widget.col, widget.row);
+        gridster_widgets.push(w);
+
+        childScope.$watch(function(scope) {
+          var area = w.find('.widget-area')[0];
+
+          var desired_width = Math.ceil(area.scrollWidth / $scope.gridX);
+          var desired_height = Math.ceil(area.scrollHeight / $scope.gridY);
+          var actual_width = parseInt(w.attr('data-sizex'));
+          var actual_height = parseInt(w.attr('data-sizey'));
+
+          if (actual_width !== desired_width || actual_height !== desired_height) {
+
+            // TODO - should save this back into the dashboard registry...
+            // console.log("Actual size: " + actual_width + " x " + actual_height);
+            // console.log("desired size: " + desired_width + " x " + desired_height);
+            gridster.resize_widget(w, desired_width, desired_height);
+            gridster.set_dom_grid_height();
+          }
+        });
+
       });
 
-      // TODO we can destroy all the child scopes now?
-      widgetElement.gridster({
-        widget_margins: [10, 10],
-        widget_base_dimensions: [400, 300],
-        draggable: {
-          stop: (event, ui) => {
-            updateLayoutConfiguration();
-          }
-        }
-      });
+
+
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
 
       function updateLayoutConfiguration() {
         var gridster = widgetElement.gridster().data('gridster');
@@ -127,9 +157,7 @@ module Dashboard {
           // TODO call the repository to update the dashboard JSON?
         }
       }
-      if (!$scope.$$phase) {
-        $scope.$apply();
-      }
+
     }
   }
 }

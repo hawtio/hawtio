@@ -1,16 +1,16 @@
 <script type="text/ng-template" id="widgetTemplate">
+  <div class="widget-area">
     <div class="widget-title">
       <div class="row-fluid">
         <div class="pull-left">
-        <editable-property ng-model="widget" property="title" on-save="onWidgetRenamed(widget)"></editable-property>
+          <editable-property ng-model="widget" property="title" on-save="onWidgetRenamed(widget)"></editable-property>
         </div>
         <div class="pull-right">
           <i class="icon-remove" title="Removes this view from the dashboard" ng-click="removeWidget(widget)"></i>
         </div>
+      </div>
     </div>
-  </div>
-  <div class="widget-body">
-    <div style="width: 398px; height: 590px; overflow: auto;">
+    <div class="widget-body">
       <div ng-include="widget.include"></div>
     </div>
   </div>

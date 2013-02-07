@@ -13,14 +13,16 @@ module Dashboard {
         id: "m1", title: "Monitor", group: "Personal",
         widgets: [
           { id: "w1", title: "Operating System", row: 1, col: 1,
-            sizey: 2,
+            sizex: 1,
+            sizey: 1,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-java.lang-OperatingSystem"},
             hash: ""
           },
           { id: "w2", title: "Broker", row: 1, col: 2,
-            sizey: 2,
+            sizex: 1,
+            sizey: 1,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-org.apache.activemq-broker1-Broker"},
@@ -32,7 +34,8 @@ module Dashboard {
         id: "t1", title: "Threading", group: "Admin",
         widgets: [
           { id: "w1", title: "Operating System", row: 1, col: 1,
-            sizey: 2,
+            sizex: 1,
+            sizey: 1,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-java.lang-OperatingSystem"},
