@@ -21,21 +21,30 @@ describe('home page', function() {
 });
 */
 
-/*
+/**
+ * TODO disabled as selector currently fails
+
 describe('Using the Code Editor', function() {
 
     // I couldn't get tests to run correctly...
     describe('Remembering Preferences', function() {
         beforeEach(function() {
-            browser().navigateTo('/hawtio/#/activemq/sendMessage?tab=messaging&nid=root_org.apache.activemq_broker1_Queue_browse.me');
+            browser().navigateTo('/hawtio/#/activemq/sendMessage?tab=messaging&nid=root_org.apache.activemq_broker1-Queue-browse.me');
         });
 
         it('should remember the mode preferences', function() {
-           // Select XML from list
+            // Select XML from list
+
+            // TODO this selector fails right now - not sure why?
+            // Wonder did it ever work? :)
             select('codeMirrorOptions.mode').option('xml');
+
+            sleep(5000);
 
             // Refresh the page
             browser().reload();
+
+            sleep(5000);
 
             // Expect it to be still be XML
             expect(input('codeMirrorOptions.mode').val()).toEqual("XML");
@@ -43,7 +52,7 @@ describe('Using the Code Editor', function() {
 
     })
 });
-*/
+ */
 
 // Commented out be cause I couldn't find out how to ignore tests in jasmine -.-
 describe('create queue, send message and browse it', function() {
