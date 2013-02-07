@@ -4,7 +4,11 @@ module Dashboard {
     $scope.selectedItems = [];
     $scope.dashboards = [];
 
-    console.log("========== created EditDashboardsController");
+    // TODO for case where we navigate to the add view
+    // for some reason the route update event isn't enough...
+    // and we need to do this async to avoid the size calculation being wrong
+    // bit of a hack - would love to remove! :)
+    setTimeout(updateData, 100);
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
@@ -214,7 +218,6 @@ module Dashboard {
         $scope.dashboards = dashboards;
         Core.$apply($scope);
         console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
-        $scope.$apply();
       });
     }
 
@@ -222,7 +225,6 @@ module Dashboard {
       $scope.dashboards = dashboards;
       Core.$apply($scope);
       console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
-      $scope.$apply();
     }
 
     function addDashboard(newDash) {
