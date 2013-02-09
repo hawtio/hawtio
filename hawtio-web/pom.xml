@@ -329,8 +329,8 @@
             <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
 
-            <!-- fix jgit imports -->
-            <Import-Package>!com.jcraft.jzlib,*</Import-Package>
+            <!-- fix jgit, and slf4j imports -->
+            <Import-Package>!com.jcraft.jzlib,!org.slf4j.*,*</Import-Package>
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
