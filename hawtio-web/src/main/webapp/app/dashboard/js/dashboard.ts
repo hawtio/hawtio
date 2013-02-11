@@ -10,11 +10,42 @@ module Dashboard {
     $scope.gridX = 400;
     $scope.gridY = 400;
 
+    $scope.widgetMap = {};
+
     updateWidgets();
 
     $scope.removeWidget = function(widget) {
-      console.log("foo!");
-    }
+      var gridster = $("#widgets").gridster().data('gridster');
+      var widgetElem = null;
+
+      // lets destroy the widgets's scope
+      var widgetData = $scope.widgetMap[widget.id];
+      if (widgetData) {
+        delete $scope.widgetMap[widget.id];
+        var scope = widgetData.scope;
+        widgetElem = widgetData.widget;
+        if (scope) {
+          scope.$destroy();
+        }
+      }
+      if (!widgetElem) {
+        // lets get the li parent element of the template
+        widgetElem = $("div").find("[data-widgetId='" + widget.id + "']").parent();
+      }
+      if (gridster && widgetElem) {
+        gridster.remove_widget(widgetElem);
+      }
+      // no need to remove it...
+      //widgetElem.remove();
+
+      // lets trash the JSON metadata
+      if ($scope.dashboard) {
+        var widgets = $scope.dashboard.widgets;
+        if (widgets) {
+          widgets.remove(widget);
+        }
+      }
+    };
 
 /*
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -66,7 +97,6 @@ module Dashboard {
         }
       }).data('gridster');
 
-      var gridster_widgets = [];
 
       var template = $templateCache.get("widgetTemplate");
       var widgets = ((dashboard) ? dashboard.widgets : null) || [];
@@ -110,7 +140,11 @@ module Dashboard {
         var outerDiv = $('<li></li>')
         outerDiv.html($compile(div.contents())(childScope));
         var w = gridster.add_widget(outerDiv, widget.sizex, widget.sizey, widget.col, widget.row);
-        gridster_widgets.push(w);
+
+        $scope.widgetMap[widget.id] = {
+          widget: w,
+          scope: childScope
+        };
 
         childScope.$watch(function(scope) {
           var area = w.find('.widget-area')[0];
