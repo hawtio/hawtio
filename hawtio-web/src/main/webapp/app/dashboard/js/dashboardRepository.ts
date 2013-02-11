@@ -45,6 +45,10 @@ module Dashboard {
       }
     ];
 
+    public addDashboards(array) {
+      this.dashboards = this.dashboards.concat(array);
+    }
+
     /**
      * Loads the dashboards then asynchronously calls the function with the data
      */

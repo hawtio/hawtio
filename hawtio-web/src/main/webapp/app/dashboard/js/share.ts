@@ -3,6 +3,13 @@ module Dashboard {
     var id = $routeParams["dashboardId"];
     dashboardRepository.getDashboard(id, onDashboardLoad);
 
+    var options = {
+      mode: {
+          name: "javascript"
+      }
+    };
+    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+
     function onDashboardLoad(dashboard) {
       $scope.dashboard = Dashboard.cleanDashboardData(dashboard);
 
