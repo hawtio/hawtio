@@ -51,9 +51,14 @@ public class GitFacadeTest {
     public void createFileAndListDirectory() throws Exception {
         assertConfigDirectoryExists(git);
 
-        git.write("master", "/ReadMe.md", "Initial commit", "jstrachan", "james.strachan@gmail.com", "Hello world!");
+        String branch = "master";
+        String readMeContent = "Hello world!";
+        String anotherContent = "Something else!";
+        String readMePath = "/ReadMe.md";
+        String anotherPath = "/Another.md";
 
-        git.write("master", "/Another.md", "Second commit", "jstrachan", "james.strachan@gmail.com", "Something else!");
+        git.write(branch, readMePath, "Initial commit", "jstrachan", "james.strachan@gmail.com", readMeContent);
+        git.write(branch, anotherPath, "Second commit", "jstrachan", "james.strachan@gmail.com", anotherContent);
 
         List<FileInfo> contents = git.contents("/");
         assertNotNull("No contents!", contents);
@@ -69,6 +74,15 @@ public class GitFacadeTest {
         assertNotNull("No status!", status);
         assertEquals("added size", 0, status.getAdded().size());
         assertEquals("untracked size", 0, status.getUntracked().size());
+
+        // now lets read the files...
+        String readMeActual = git.read(branch, readMePath);
+        assertEquals("content of " + readMePath, readMeContent, readMeActual);
+        String anotherActual = git.read(branch, anotherPath);
+        assertEquals("content of " + anotherPath, anotherContent, anotherActual);
+
+        System.out.println(readMePath + " = " + readMeActual);
+        System.out.println(anotherPath + " = " + anotherActual);
     }
 
     protected File assertConfigDirectoryExists(GitFacade helper) throws IOException {
