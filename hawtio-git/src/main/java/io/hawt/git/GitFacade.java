@@ -30,6 +30,8 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +45,8 @@ import java.util.concurrent.Callable;
  * from some central repo
  */
 public class GitFacade {
+    private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
+
     private File configDirectory;
     private Git git;
     private Object lock = new Object();
@@ -123,7 +127,7 @@ public class GitFacade {
                     configDirectory = new File(file, "config");
                     configDirectory.mkdirs();
                 }
-                System.out.println("hawtio using config directory: " + configDirectory);
+                LOG.info("hawtio using config directory: " + configDirectory);
             } catch (IOException e) {
                 throw new RuntimeIOException(e);
             }
