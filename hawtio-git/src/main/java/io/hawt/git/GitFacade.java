@@ -22,7 +22,6 @@ import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
@@ -33,10 +32,12 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -44,19 +45,33 @@ import java.util.concurrent.Callable;
  * A git bean to create a local git repo for configuration data which if configured will push/pull
  * from some central repo
  */
-public class GitFacade {
+public class GitFacade implements GitFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
 
     private File configDirectory;
     private Git git;
     private Object lock = new Object();
+    private ObjectName objectName;
+    private MBeanServer mBeanServer;
 
-    public void init() throws IOException, GitAPIException {
+    public void init() throws Exception {
         // lets check if we have a config directory if not lets create one...
         initialiseGitRepo();
+
+        // now lets expose the mbean...
+        if (objectName == null) {
+            objectName = new ObjectName("io.hawt.git:type=GitFacade");
+        }
+        if (mBeanServer == null) {
+            mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        }
+        mBeanServer.registerMBean(this, objectName);
     }
 
-    public void destroy() {
+    public void destroy() throws Exception {
+        if (objectName != null && mBeanServer != null) {
+            mBeanServer.unregisterMBean(objectName);
+        }
     }
 
     /**
