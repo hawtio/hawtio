@@ -159,15 +159,17 @@ module Dashboard {
 
 
     $scope.gist = () => {
+      if ($scope.selectedItems.length > 0) {
+        var id = $scope.selectedItems[0].id;
+        $location.path("/dashboard/id/" + id + "/share");
+      }
+    };
+
+    $scope.oldgist = () => {
       var cleanItems = [];
       angular.forEach($scope.selectedItems, (item) => {
         // lets ignore any items starting with $ or _ as they are UI stuff
-        var cleanItem = {};
-        angular.forEach(item, (value, key) => {
-          if (!angular.isString(key) || (!key.startsWith("$") && !key.startsWith("_"))) {
-            cleanItem[key] = value;
-          }
-        });
+        var cleanItem = Dashbord.cleanDashboardData(item);
         cleanItems.push(cleanItem);
       });
       var data = {
