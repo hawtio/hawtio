@@ -70,6 +70,7 @@ public class GitFacade {
 
     /**
      * Reads the file contents of the given path
+     *
      * @return
      */
     public String read(String branch, String path) throws IOException {
@@ -85,13 +86,9 @@ public class GitFacade {
                 File file = getFile(path);
                 IOHelper.write(file, contents);
 
-                //String filePattern = path;
                 String filePattern = path;
                 if (filePattern.startsWith("/")) filePattern = filePattern.substring(1);
-                // lets try avoid the tree being empty not cached
-                System.out.println("Using file pattern '" + filePattern + "'");
-                AddCommand add = git.add().setUpdate(true).
-                        addFilepattern(filePattern).addFilepattern("*").addFilepattern(".");
+                AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
                 add.call();
 
                 CommitCommand commit = git.commit().setAll(true).setAuthor(authorName, authorEmail).setMessage(commitMessage);
@@ -159,6 +156,15 @@ public class GitFacade {
     }
 
 
+    public Status status() {
+        try {
+            return git.status().call();
+        } catch (GitAPIException e) {
+            throw new RuntimeIOException(e);
+        }
+
+    }
+
     /**
      * Performs the given operations on a clean git repository
      */
@@ -166,13 +172,8 @@ public class GitFacade {
         // TODO synchronized!
 
         try {
-            Status status = git.status().call();
-
-            System.out.println("Status: " + status);
-
-
-        // TODO pull
-        // TODO stash
+            // TODO pull
+            // TODO stash
             return callable.call();
         } catch (Exception e) {
             throw new RuntimeIOException(e);

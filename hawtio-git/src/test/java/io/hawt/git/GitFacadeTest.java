@@ -17,6 +17,7 @@
  */
 package io.hawt.git;
 
+import org.eclipse.jgit.api.Status;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -51,13 +54,19 @@ public class GitFacadeTest {
         git.write("master", "/ReadMe.md", "Initial commit", "jstrachan", "james.strachan@gmail.com", "Hello world!");
 
         List<FileInfo> contents = git.contents("/");
-        assertNotNull(contents);
+        assertNotNull("No contents!", contents);
 
         assertTrue("Should have some files", contents.size() > 0);
 
         for (FileInfo content : contents) {
             System.out.println("have file " + content);
         }
+
+        // now lets assert that a git status has no pending files to add...
+        Status status = git.status();
+        assertNotNull("No status!", status);
+        assertEquals("added size", 0, status.getAdded().size());
+        assertEquals("untracked size", 0, status.getUntracked().size());
     }
 
     protected File assertConfigDirectoryExists(GitFacade helper) throws IOException {
