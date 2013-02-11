@@ -32,6 +32,20 @@ Or if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [Apache 
 
 Then open [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/)
 
+
+### Installing hawtio to [Apache Karaf](http://karaf.apache.org/)
+
+You can install public releases of hawtio using a vanilla  [Apache Karaf](http://karaf.apache.org/), [Apache ServiceMix](http://servicemix.apache.org/) container, using the following commands:
+
+    features:addurl mvn:io.hawt/hawtio-karaf/1.0.0/xml/features
+    features:install hawtio
+
+(substitute 1.0.0 with the public release of hawtio you want to use)
+Then open [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/)
+
+
+### Get started from a git clone
+
 Or from a git clone you should be able to run the a sample hawtio console as follows:
 
     git clone git@github.com:hawtio/hawtio.git
