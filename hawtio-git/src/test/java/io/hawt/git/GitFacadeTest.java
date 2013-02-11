@@ -45,12 +45,9 @@ public class GitFacadeTest {
     }
 
     @Test
-    public void createsTempFileConfigDirectory() throws Exception {
-        assertConfigDirectoryExists(git);
-    }
-
-    @Test
     public void createFileAndListDirectory() throws Exception {
+        assertConfigDirectoryExists(git);
+
         git.write("master", "/ReadMe.md", "Initial commit", "jstrachan", "james.strachan@gmail.com", "Hello world!");
 
         List<FileInfo> contents = git.contents("/");
