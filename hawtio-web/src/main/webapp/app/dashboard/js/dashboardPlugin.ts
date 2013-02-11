@@ -7,7 +7,8 @@ module Dashboard {
                     when('/dashboard/add', {templateUrl: 'app/dashboard/html/addToDashboard.html'}).
                     when('/dashboard/edit', {templateUrl: 'app/dashboard/html/editDashboards.html'}).
                     when('/dashboard/idx/:dashboardIndex', {templateUrl: 'app/dashboard/html/dashboard.html'}).
-                    when('/dashboard/id/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'});
+                    when('/dashboard/id/:dashboardId', {templateUrl: 'app/dashboard/html/dashboard.html'}).
+                    when('/dashboard/id/:dashboardId/share', {templateUrl: 'app/dashboard/html/share.html'});
 
           }).
           value('ui.config', {
