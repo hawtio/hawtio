@@ -18,16 +18,21 @@
 package io.hawt.git;
 
 import io.hawt.io.IOHelper;
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * A git bean to create a local git repo for configuration data which if configured will push/pull
@@ -68,9 +73,31 @@ public class GitFacade {
      * @return
      */
     public String read(String branch, String path) throws IOException {
-        File rootDir = getConfigDirectory();
-        File file = new File(rootDir, path);
+        File file = getFile(path);
         return IOHelper.readFully(file);
+    }
+
+
+    public void write(final String branch, final String path, final String commitMessage,
+                      final String authorName, final String authorEmail, final String contents) {
+        gitOperation(new Callable<RevCommit>() {
+            public RevCommit call() throws Exception {
+                File file = getFile(path);
+                IOHelper.write(file, contents);
+
+                //String filePattern = path;
+                String filePattern = path;
+                if (filePattern.startsWith("/")) filePattern = filePattern.substring(1);
+                // lets try avoid the tree being empty not cached
+                System.out.println("Using file pattern '" + filePattern + "'");
+                AddCommand add = git.add().setUpdate(true).
+                        addFilepattern(filePattern).addFilepattern("*").addFilepattern(".");
+                add.call();
+
+                CommitCommand commit = git.commit().setAll(true).setAuthor(authorName, authorEmail).setMessage(commitMessage);
+                return commit.call();
+            }
+        });
     }
 
     public void move(String branch, String oldPath, String newPath) {
@@ -121,4 +148,35 @@ public class GitFacade {
             git = new Git(repository);
         }
     }
+
+
+    /**
+     * Returns the file for the given path
+     */
+    public File getFile(String path) {
+        File rootDir = getConfigDirectory();
+        return new File(rootDir, path);
+    }
+
+
+    /**
+     * Performs the given operations on a clean git repository
+     */
+    protected <T> T gitOperation(Callable<T> callable) {
+        // TODO synchronized!
+
+        try {
+            Status status = git.status().call();
+
+            System.out.println("Status: " + status);
+
+
+        // TODO pull
+        // TODO stash
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeIOException(e);
+        }
+    }
+
 }

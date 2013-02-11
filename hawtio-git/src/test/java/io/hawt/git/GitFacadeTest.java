@@ -50,9 +50,13 @@ public class GitFacadeTest {
     }
 
     @Test
-    public void listDirectory() throws Exception {
+    public void createFileAndListDirectory() throws Exception {
+        git.write("master", "/ReadMe.md", "Initial commit", "jstrachan", "james.strachan@gmail.com", "Hello world!");
+
         List<FileInfo> contents = git.contents("/");
         assertNotNull(contents);
+
+        assertTrue("Should have some files", contents.size() > 0);
 
         for (FileInfo content : contents) {
             System.out.println("have file " + content);

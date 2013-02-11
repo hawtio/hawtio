@@ -24,7 +24,10 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * A collection of IO helpers
@@ -84,6 +87,44 @@ public class IOHelper {
                 }
             }
         }
+    }
+
+
+    /**
+     * Writes the text to the given file, overwriting the previous file if it existed.
+     */
+    public static void write(File file, String text) throws IOException {
+        write(file, text, false);
+    }
+
+    /**
+     * Writes the given text to the file; either in append mode or replace mode depending
+     * the append flag
+     */
+    public static void write(File file, String text, boolean append) throws IOException {
+        FileWriter writer = new FileWriter(file, append);
+        try {
+            writer.write(text);
+        } finally {
+            writer.close();
+        }
+    }
+
+    public static int copy(final Reader input, final Writer output) throws IOException {
+        return copy(input, output, BUFFER_SIZE);
+    }
+
+    public static int copy(final Reader input, final Writer output, int bufferSize) throws IOException {
+        final char[] buffer = new char[bufferSize];
+        int n = input.read(buffer);
+        int total = 0;
+        while (-1 != n) {
+            output.write(buffer, 0, n);
+            total += n;
+            n = input.read(buffer);
+        }
+        output.flush();
+        return total;
     }
 
 }
