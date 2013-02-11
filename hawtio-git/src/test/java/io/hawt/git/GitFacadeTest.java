@@ -53,6 +53,8 @@ public class GitFacadeTest {
 
         git.write("master", "/ReadMe.md", "Initial commit", "jstrachan", "james.strachan@gmail.com", "Hello world!");
 
+        git.write("master", "/Another.md", "Second commit", "jstrachan", "james.strachan@gmail.com", "Something else!");
+
         List<FileInfo> contents = git.contents("/");
         assertNotNull("No contents!", contents);
 

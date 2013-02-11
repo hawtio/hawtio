@@ -22,8 +22,11 @@ import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -31,6 +34,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -41,6 +45,7 @@ import java.util.concurrent.Callable;
 public class GitFacade {
     private File configDirectory;
     private Git git;
+    private Object lock = new Object();
 
     public void init() throws IOException, GitAPIException {
         // lets check if we have a config directory if not lets create one...
@@ -81,7 +86,8 @@ public class GitFacade {
 
     public void write(final String branch, final String path, final String commitMessage,
                       final String authorName, final String authorEmail, final String contents) {
-        gitOperation(new Callable<RevCommit>() {
+        final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
+        gitOperation(personIdent, new Callable<RevCommit>() {
             public RevCommit call() throws Exception {
                 File file = getFile(path);
                 IOHelper.write(file, contents);
@@ -91,7 +97,7 @@ public class GitFacade {
                 AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
                 add.call();
 
-                CommitCommand commit = git.commit().setAll(true).setAuthor(authorName, authorEmail).setMessage(commitMessage);
+                CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
                 return commit.call();
             }
         });
@@ -168,15 +174,27 @@ public class GitFacade {
     /**
      * Performs the given operations on a clean git repository
      */
-    protected <T> T gitOperation(Callable<T> callable) {
-        // TODO synchronized!
+    protected <T> T gitOperation(PersonIdent personIdent, Callable<T> callable) {
+        synchronized (lock) {
+            try {
+                // lets check if we have done a commit yet...
+                boolean hasHead = true;
+                try {
+                    git.log().all().call();
+                } catch (NoHeadException e) {
+                    hasHead = false;
+                }
 
-        try {
-            // TODO pull
-            // TODO stash
-            return callable.call();
-        } catch (Exception e) {
-            throw new RuntimeIOException(e);
+                // TODO pull if we have a remote repo
+
+                if (hasHead) {
+                    // lets stash any local changes just in case..
+                    git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
+                }
+                return callable.call();
+            } catch (Exception e) {
+                throw new RuntimeIOException(e);
+            }
         }
     }
 
