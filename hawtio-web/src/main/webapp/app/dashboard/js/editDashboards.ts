@@ -152,6 +152,8 @@ module Dashboard {
     };
 
     $scope.delete = () => {
+      dashboardRepository.deleteDashboards($scope.selectedItems, Dashboard.onOperationComplete);
+
       angular.forEach($scope.selectedItems, (item) => {
         $scope.dashboards.remove(item);
       });
@@ -227,7 +229,7 @@ module Dashboard {
     }
 
     function addDashboard(newDash) {
-      dashboardRepository.addDashboards([newDash], Dashboard.onAddDashboard);
+      dashboardRepository.addDashboards([newDash], Dashboard.onOperationComplete);
       $scope.dashboards.push(newDash);
       $scope.selectedItems.push(newDash);
     }

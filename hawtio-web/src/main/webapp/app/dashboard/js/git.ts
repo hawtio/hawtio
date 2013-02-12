@@ -19,6 +19,11 @@ module Dashboard {
      * Write the content of a file
      */
     write: (path: string, commitMessage: string, contents: string, fn) => void;
+
+    /**
+     * Removes a file if it exists
+     */
+    remove: (path: string, commitMessage: string, fn)  => void;
   }
 
   /**
@@ -44,6 +49,13 @@ module Dashboard {
       this.jolokia.execute(this.mbean, "write", this.branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
     }
 
-    // TODO move and remove...
+    public remove(path: string, commitMessage: string, fn) {
+      var authorName = Dashboard.getGitUserName();
+      var authorEmail = Dashboard.getGitUserEmail();
+
+      this.jolokia.execute(this.mbean, "remove", this.branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
+    }
+
+    // TODO move...
   }
 }

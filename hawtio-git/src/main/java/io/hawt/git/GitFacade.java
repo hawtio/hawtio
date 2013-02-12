@@ -112,8 +112,7 @@ public class GitFacade implements GitFacadeMXBean {
                 file.getParentFile().mkdirs();
                 IOHelper.write(file, contents);
 
-                String filePattern = path;
-                if (filePattern.startsWith("/")) filePattern = filePattern.substring(1);
+                String filePattern = getFilePattern(path);
                 AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
                 add.call();
 
@@ -123,12 +122,35 @@ public class GitFacade implements GitFacadeMXBean {
         });
     }
 
+    protected static String getFilePattern(String path) {
+        String filePattern = path;
+        if (filePattern.startsWith("/")) filePattern = filePattern.substring(1);
+        return filePattern;
+    }
+
     public void move(String branch, String oldPath, String newPath) {
         // TODO
     }
 
-    public void remove(String branch, String oldPath, String newPath) {
-        // TODO
+    public void remove(final String branch, final String path, final String commitMessage,
+                      final String authorName, final String authorEmail) {
+        final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
+        gitOperation(personIdent, new Callable<RevCommit>() {
+            public RevCommit call() throws Exception {
+                File file = getFile(path);
+
+                if (file.exists()) {
+                    file.delete();
+
+                    String filePattern = getFilePattern(path);
+                    git.rm().addFilepattern(filePattern).call();
+                    CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
+                    return commit.call();
+                } else {
+                    return null;
+                }
+            }
+        });
     }
 
     public File getConfigDirectory() {

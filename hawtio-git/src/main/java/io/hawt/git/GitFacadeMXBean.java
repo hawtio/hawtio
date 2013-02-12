@@ -31,7 +31,11 @@ public interface GitFacadeMXBean {
     void write(String branch, String path, String commitMessage,
                String authorName, String authorEmail, String contents);
 
-    void move(String branch, String oldPath, String newPath);
+    void remove(String branch, String path, String commitMessage,
+                String authorName, String authorEmail);
 
-    void remove(String branch, String oldPath, String newPath);
+
+    // TODO
+    // void move(String branch, String oldPath, String newPath);
+
 }

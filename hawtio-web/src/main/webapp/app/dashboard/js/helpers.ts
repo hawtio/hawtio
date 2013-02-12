@@ -37,7 +37,7 @@ module Dashboard {
     return getUserDashboardDirectory() + "/" + id + ".json";
   }
 
-  export function onAddDashboard(result) {
+  export function onOperationComplete(result) {
     console.log("Completed adding the dashboard with response " + JSON.stringify(result));
   }
 }

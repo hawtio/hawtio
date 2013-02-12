@@ -28,14 +28,20 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests we create a configuration directory
  */
 public class GitFacadeTest {
     GitFacade git = new GitFacade();
+    String branch = "master";
+    String authorName = "jstrachan";
+    String authorEmail = "james.strachan@gmail.com";
 
     @Before
     public void init() throws Exception {
@@ -51,18 +57,16 @@ public class GitFacadeTest {
     public void createFileAndListDirectory() throws Exception {
         assertConfigDirectoryExists(git);
 
-        String branch = "master";
         String readMeContent = "Hello world!";
         String anotherContent = "Something else!";
         String readMePath = "/ReadMe.md";
         String anotherPath = "/Another.md";
 
-        git.write(branch, readMePath, "Initial commit", "jstrachan", "james.strachan@gmail.com", readMeContent);
-        git.write(branch, anotherPath, "Second commit", "jstrachan", "james.strachan@gmail.com", anotherContent);
+        git.write(branch, readMePath, "Initial commit", authorName, authorEmail, readMeContent);
+        git.write(branch, anotherPath, "Second commit", authorName, authorEmail, anotherContent);
 
         List<FileInfo> contents = git.contents("/");
         assertNotNull("No contents!", contents);
-
         assertTrue("Should have some files", contents.size() > 0);
 
         for (FileInfo content : contents) {
@@ -83,6 +87,27 @@ public class GitFacadeTest {
 
         System.out.println(readMePath + " = " + readMeActual);
         System.out.println(anotherPath + " = " + anotherActual);
+
+
+        // now lets try remove one of the files we created
+        git.remove(branch, anotherPath, "Remove another thingy", authorName, authorEmail);
+
+        // now lets assert that we can't find the file...
+        contents = git.contents("/");
+        assertNotNull("No contents!", contents);
+        assertTrue("Should have some files", contents.size() > 0);
+        for (FileInfo content : contents) {
+            assertNotEquals("Should not still have the deleted file!", "Another.md", content.getName());
+        }
+
+        String shouldFail = null;
+        try {
+            shouldFail = git.read(branch, anotherPath);
+            fail("Should have thrown an exception!");
+        } catch (IOException e) {
+            // expected exception!
+        }
+        assertNull("Should not find any data", shouldFail);
     }
 
     protected File assertConfigDirectoryExists(GitFacade helper) throws IOException {

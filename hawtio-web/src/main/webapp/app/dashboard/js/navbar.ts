@@ -10,7 +10,7 @@ module Dashboard {
     };
 
     $scope.onTabRenamed = function(dash) {
-      dashboardRepository.addDashboards([dash], Dashboard.onAddDashboard);
+      dashboardRepository.addDashboards([dash], Dashboard.onOperationComplete);
     };
 
     // Lets asynchronously load the dashboards on startup...

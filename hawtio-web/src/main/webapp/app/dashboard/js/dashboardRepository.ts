@@ -1,7 +1,17 @@
+function getDashboardPath(dash) {
+// TODO assume a user dashboard for now
+  // ideally we'd look up the teams path based on the group
+
+  var id = dash.id || Dashboard.getUUID();
+  var path = Dashboard.getUserDashboardPath(id);
+  return path;
+}
 module Dashboard {
 
   export interface DashboardRepository {
     addDashboards: (array:any[], fn) => any;
+
+    deleteDashboards: (array:any[], fn) => any;
 
     //getDashboards: (fn: (dashboards: Dashboard[]) => any) => any;
     getDashboards: (fn) => any;
@@ -20,6 +30,10 @@ module Dashboard {
 
     public addDashboards(array:any[], fn) {
       this.getMBean().addDashboards(array, fn);
+    }
+
+    public deleteDashboards(array:any[], fn) {
+      this.getMBean().deleteDashboards(array, fn);
     }
 
     /**
@@ -92,8 +106,16 @@ module Dashboard {
       }
     ];
 
-    public addDashboards(array:any[]) {
+    public addDashboards(array:any[], fn) {
       this.dashboards = this.dashboards.concat(array);
+      fn(null);
+    }
+
+    public deleteDashboards(array:any[], fn) {
+      angular.forEach(array, (item) => {
+        this.dashboards.remove(item);
+      });
+      fn(null);
     }
 
     /**
@@ -119,17 +141,22 @@ module Dashboard {
 
     public addDashboards(array:Dashboard[], fn) {
       angular.forEach(array, (dash) => {
-
-        // TODO assume a user dashboard for now
-        // ideally we'd look up the teams path based on the group
-
-        var id = dash.id || Dashboard.getUUID();
-        var path = Dashboard.getUserDashboardPath(id);
+        var path = getDashboardPath(dash);
         var contents = JSON.stringify(dash, null, "  ");
-        var commitMessage = "Adding dashboard " + id;
+        var commitMessage = "Adding dashboard " + path;
         this.git.write(path, commitMessage, contents, fn);
       });
     }
+
+    public deleteDashboards(array:Dashboard[], fn) {
+      angular.forEach(array, (dash) => {
+        var path = getDashboardPath(dash);
+        var commitMessage = "Removing dashboard " + path;
+        this.git.remove(path, commitMessage, fn);
+      });
+    }
+
+
 
     public getDashboards(fn) {
       // TODO lets look in each team directory as well and combine the results...
