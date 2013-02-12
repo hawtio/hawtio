@@ -9,6 +9,13 @@ module Wiki {
       Core.$apply($scope);
     });
 
+    var options = {
+      mode: {
+        name: "markdown"
+      }
+    };
+    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+
     $scope.isValid = () => true;
 
     $scope.viewLink = () => {
@@ -27,7 +34,23 @@ module Wiki {
 
     $scope.save = () => {
       var commitMessage = $scope.commitMessage || "Updated page";
-      wikiRepository.putPage($scope.pageId, $scope.source, commitMessage, onComplete);
+      var contents = $scope.source;
+
+      // lets convert multiple lines into an array...
+      //contents = contents.split("\n");
+      if (angular.isArray(contents)) {
+        contents = contents.join("\n");
+      }
+      if (contents.indexOf('\n') >= 0) {
+        contents = contents.replace(/\n/g, '\\n');
+        // lets wrap in single quotes
+        //contents = "'" + contents + "'";
+        if (!contents.startsWith('"') && !contents.endsWith('"')) {
+          contents = '"' + contents + '"';
+        }
+      }
+      console.log("About to write contents '" + contents + "'");
+      wikiRepository.putPage($scope.pageId, contents, commitMessage, onComplete);
       goToView();
     };
 
