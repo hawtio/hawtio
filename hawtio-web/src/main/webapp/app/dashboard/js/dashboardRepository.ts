@@ -1,15 +1,7 @@
-function getDashboardPath(dash) {
-// TODO assume a user dashboard for now
-  // ideally we'd look up the teams path based on the group
-
-  var id = dash.id || Dashboard.getUUID();
-  var path = Dashboard.getUserDashboardPath(id);
-  return path;
-}
 module Dashboard {
 
   export interface DashboardRepository {
-    putDashboards: (array:any[], commitMessage: string, fn) => any;
+    putDashboards: (array:any[], commitMessage:string, fn) => any;
 
     deleteDashboards: (array:any[], fn) => any;
 
@@ -24,12 +16,11 @@ module Dashboard {
    * API to deal with the dashboards
    */
   export class DefaultDashboardRepository implements DashboardRepository {
-    constructor(public workspace:Workspace, public jolokia) {
-      // lets default to using local storage
+    constructor(public workspace:Workspace, public jolokia, public localStorage) {
     }
 
-    public putDashboards(array:any[], commitMessage: string, fn) {
-      this.getMBean().putDashboards(array,  commitMessage, fn);
+    public putDashboards(array:any[], commitMessage:string, fn) {
+      this.getMBean().putDashboards(array, commitMessage, fn);
     }
 
     public deleteDashboards(array:any[], fn) {
@@ -60,7 +51,7 @@ module Dashboard {
         var hawtioFolder = gitFacades["io.hawt.git"] || {};
         var mbean = hawtioFolder["objectName"];
         if (mbean) {
-          var git = new JolokiaGit(mbean, this.jolokia);
+          var git = new JolokiaGit(mbean, this.jolokia, this.localStorage);
           return new GitDashboardRepository(git);
         }
       }
@@ -106,7 +97,7 @@ module Dashboard {
       }
     ];
 
-    public putDashboards(array:any[], commitMessage: string, fn) {
+    public putDashboards(array:any[], commitMessage:string, fn) {
       this.dashboards = this.dashboards.concat(array);
       fn(null);
     }
@@ -139,9 +130,9 @@ module Dashboard {
     constructor(public git:Git) {
     }
 
-    public putDashboards(array:Dashboard[], commitMessage: string, fn) {
+    public putDashboards(array:Dashboard[], commitMessage:string, fn) {
       angular.forEach(array, (dash) => {
-        var path = getDashboardPath(dash);
+        var path = this.getDashboardPath(dash);
         var contents = JSON.stringify(dash, null, "  ");
         this.git.write(path, commitMessage, contents, fn);
       });
@@ -149,17 +140,25 @@ module Dashboard {
 
     public deleteDashboards(array:Dashboard[], fn) {
       angular.forEach(array, (dash) => {
-        var path = getDashboardPath(dash);
+        var path = this.getDashboardPath(dash);
         var commitMessage = "Removing dashboard " + path;
         this.git.remove(path, commitMessage, fn);
       });
     }
 
 
+    public getDashboardPath(dash) {
+      // TODO assume a user dashboard for now
+      // ideally we'd look up the teams path based on the group
+
+      var id = dash.id || Dashboard.getUUID();
+      var path = this.getUserDashboardPath(id);
+      return path;
+    }
 
     public getDashboards(fn) {
       // TODO lets look in each team directory as well and combine the results...
-      var path = getUserDashboardDirectory();
+      var path = this.getUserDashboardDirectory();
       var dashboards = [];
       this.git.contents(path, (files) => {
         // we now have all the files we need; lets read all their contents
@@ -188,7 +187,7 @@ module Dashboard {
     }
 
     public getDashboard(id:string, fn) {
-      var path = Dashboard.getUserDashboardPath(id);
+      var path = this.getUserDashboardPath(id);
       this.git.read(path, (content) => {
         var dashboard = null;
         if (content) {
@@ -200,6 +199,14 @@ module Dashboard {
         }
         fn(dashboard);
       });
+    }
+
+    public getUserDashboardDirectory() {
+      return "/dashboards/user/" + this.git.getUserName();
+    }
+
+    public getUserDashboardPath(id:String) {
+      return this.getUserDashboardDirectory() + "/" + id + ".json";
     }
   }
 }

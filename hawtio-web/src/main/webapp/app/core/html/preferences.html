@@ -27,6 +27,24 @@
       </div>
     </div>
   </form>
+
+  <strong>git</strong>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="gitUserName" title="The user name to be used when making changes to files with the source control system">User Name</label>
+
+      <div class="controls">
+        <input id="gitUserName" type="text" placeholder="username" ng-model="gitUserName"/>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="gitUserEmail" title="The email address to use when making changes to files with the source control system">Email address</label>
+
+      <div class="controls">
+        <input id="gitUserEmail" type="email" placeholder="email" ng-model="gitUserEmail"/>
+      </div>
+    </div>
+  </form>
 </div>
 
 <!-- TODO Split into its file and include as a partial -->
