@@ -440,3 +440,6 @@ li.attr-column {
   border-bottom: none;
 }
 
+.ngFooterTotalItems span:first-child {
+  margin-right: .5em;
+}
