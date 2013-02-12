@@ -203,66 +203,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <!--
-        <dependency>
-          <groupId>com.fasterxml.jackson.jaxrs</groupId>
-          <artifactId>jackson-jaxrs-json-provider</artifactId>
-          <version>${jackson-2-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.atmosphere</groupId>
-          <artifactId>atmosphere-jaxrs2</artifactId>
-          <version>${atmosphere-version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>com.sun.jersey</groupId>
-              <artifactId>jersey-core</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>com.sun.jersey</groupId>
-              <artifactId>jersey-server</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>com.sun.jersey</groupId>
-              <artifactId>jersey-servlet</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.atmosphere</groupId>
-          <artifactId>atmosphere-jquery</artifactId>
-          <version>${atmosphere-version}</version>
-          <type>war</type>
-        </dependency>
-
-        <dependency>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-server</artifactId>
-          <version>${jersey-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-servlet</artifactId>
-          <version>${jersey-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-core</artifactId>
-          <version>${jersey-version}</version>
-        </dependency>
-
-            <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-resource-beans</artifactId>
-              <version>${camel-version}</version>
-            </dependency>
-        <dependency>
-          <groupId>org.fusesource.ide</groupId>
-          <artifactId>zest</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        -->
   </dependencies>
 
   <build>
