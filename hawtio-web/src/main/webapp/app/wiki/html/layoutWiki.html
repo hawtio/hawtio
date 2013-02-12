@@ -1,0 +1,21 @@
+<ul class="nav nav-tabs" ng-controller="Wiki.NavBarController">
+  <li ng-class='{active : isActive("/wiki/page/index")}'>
+    <a ng-href="#/wiki/page/index{{hash}}">
+      Home
+    </a>
+  </li>
+  <li ng-class='{active : isActive("/wiki/tree")}'>
+    <a ng-href="#/wiki/tree/{{page.id}}{{hash}}">
+      Tree
+    </a>
+  </li>
+  <li class="pull-right">
+    <a ng-href="{{editLink()}}{{hash}}" title="Edit this page"
+       data-placement="bottom">
+      <i class="icon-edit"></i> Edit</a></li>
+</ul>
+<div class="row-fluid">
+  <div ng-view></div>
+</div>
+
+
