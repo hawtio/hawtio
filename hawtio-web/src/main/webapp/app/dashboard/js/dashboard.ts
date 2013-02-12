@@ -45,6 +45,8 @@ module Dashboard {
           widgets.remove(widget);
         }
       }
+
+      updateDashboardRepository();
     };
 
 /*
@@ -58,6 +60,7 @@ module Dashboard {
     $scope.onWidgetRenamed = function(widget) {
       // TODO - deal with renamed widget here
       console.log("Widget renamed to : " + widget.title);
+      updateDashboardRepository();
     };
 
     function updateWidgets() {
@@ -188,10 +191,16 @@ module Dashboard {
             }
           });
 
-          // TODO call the repository to update the dashboard JSON?
+          updateDashboardRepository();
         }
       }
 
+    }
+
+    function updateDashboardRepository() {
+      if ($scope.dashboard) {
+        dashboardRepository.addDashboards([$scope.dashboard], Dashboard.onOperationComplete);
+      }
     }
   }
 }

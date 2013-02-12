@@ -123,6 +123,9 @@ module Dashboard {
         }
       });
 
+      // now lets update the actual dashboard config
+      dashboardRepository.addDashboards($scope.selectedItems, Dashboard.onOperationComplete);
+
       if (nextHref) {
         // remove any dodgy query
         delete $location.search()["href"];
