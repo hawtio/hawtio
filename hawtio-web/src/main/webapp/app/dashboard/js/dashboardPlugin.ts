@@ -21,8 +21,8 @@ module Dashboard {
               }
             }
           }).
-          factory('dashboardRepository', function () {
-            return new DashboardRepository();
+          factory('dashboardRepository', function (workspace:Workspace, jolokia) {
+            return new DefaultDashboardRepository(workspace, jolokia);
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 

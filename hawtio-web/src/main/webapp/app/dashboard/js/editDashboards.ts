@@ -131,7 +131,7 @@ module Dashboard {
 
     $scope.create = () => {
       var counter = $scope.dashboards.length + 1;
-      var id = "dash" + (counter);
+      var id = Dashboard.getUUID();
       var newDash = {id: id, title: "Untitled" + counter, group: "Personal", widgets: []};
 
       // TODO how to really add??
@@ -143,7 +143,7 @@ module Dashboard {
         // lets unselect this item
         $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
         var counter = $scope.dashboards.length + 1;
-        var id = "dash" + (counter);
+        var id = Dashbaord.getUUID();
         var widgets = item.widgets || [];
         var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };
         addDashboard(newDash);
@@ -211,27 +211,33 @@ module Dashboard {
 
 
     function updateData() {
-      console.log("==== updateData()");
       var url = $routeParams["href"];
       if (url) {
         $scope.url = decodeURIComponent(url);
       }
+      dashboardRepository.getDashboards(dashboardLoaded);
+/*
       dashboardRepository.getDashboards((dashboards) => {
         $scope.dashboards = dashboards;
         Core.$apply($scope);
-        console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
+        //console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
       });
+*/
     }
 
-    function dashboardLoaded(dashboards) {
+    function dashboardLoaded(dashboardMap) {
+      var dashboards = [];
+      angular.forEach(dashboardMap, (dashboard, uri) => {
+        dashboard.uri = uri;
+        dashboards.push(dashboard);
+      });
       $scope.dashboards = dashboards;
       Core.$apply($scope);
-      console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
+      //console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
     }
 
     function addDashboard(newDash) {
-      // TODO how to really add??
-
+      dashboardRepository.addDashboards([newDash], Dashboard.onAddDashboard);
       $scope.dashboards.push(newDash);
       $scope.selectedItems.push(newDash);
     }

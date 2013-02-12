@@ -16,6 +16,8 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+
+    <hawtio-config-dir>${project.build.directory}/hawtio-config</hawtio-config-dir>
   </properties>
 
 
@@ -358,6 +360,15 @@
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
+          <systemProperties>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+<!--
+            <hawtio.config.dir>${hawtio-config-dir}</hawtio.config.dir>
+-->
+          </systemProperties>
         </configuration>
       </plugin>
 
@@ -432,6 +443,10 @@
             <systemProperty>
               <key>webapp-outdir</key>
               <value>${webapp-outdir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
             </systemProperty>
           </systemProperties>
         </configuration>

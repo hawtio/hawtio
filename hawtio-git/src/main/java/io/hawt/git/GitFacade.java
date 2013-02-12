@@ -109,6 +109,7 @@ public class GitFacade implements GitFacadeMXBean {
         gitOperation(personIdent, new Callable<RevCommit>() {
             public RevCommit call() throws Exception {
                 File file = getFile(path);
+                file.getParentFile().mkdirs();
                 IOHelper.write(file, contents);
 
                 String filePattern = path;
@@ -133,8 +134,11 @@ public class GitFacade implements GitFacadeMXBean {
     public File getConfigDirectory() {
         if (configDirectory == null) {
             try {
-                String name = System.getProperty("hawtio.config.dir", "");
-                if (name.length() > 0) {
+                String name = System.getProperty("hawtio.config.dir");
+                if (name == null) {
+                    name = System.getenv("HAWTIO_CONFIG_DIR");
+                }
+                if (name != null) {
                     configDirectory = new File(name);
                 } else {
                     File file = File.createTempFile("hawtio-", "");

@@ -14,8 +14,7 @@ module Dashboard {
     }
 
     $scope.onTabRenamed = function(dash) {
-      // TODO - Persist title change here, dash is the updated model
-      console.log("Dashboard renamed to : " + dash.title);
+      dashboardRepository.addDashboards([dash], Dashboard.onAddDashboard);
     };
 
     dashboardRepository.getDashboards(dashboardLoaded);
