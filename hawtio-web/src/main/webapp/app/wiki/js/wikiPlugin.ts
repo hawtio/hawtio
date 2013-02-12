@@ -7,7 +7,7 @@ module Wiki {
                     when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
-            return new GitWikiRepository(Git.createGitRepository(workspace, jolokia, localStorage));
+            return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
           }).
           factory('marked',function (workspace:Workspace, jolokia, localStorage) {
             marked.setOptions({
