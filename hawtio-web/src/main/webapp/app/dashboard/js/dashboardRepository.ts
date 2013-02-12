@@ -20,40 +20,34 @@ module Dashboard {
     }
 
     public putDashboards(array:any[], commitMessage:string, fn) {
-      this.getMBean().putDashboards(array, commitMessage, fn);
+      this.getRepository().putDashboards(array, commitMessage, fn);
     }
 
     public deleteDashboards(array:any[], fn) {
-      this.getMBean().deleteDashboards(array, fn);
+      this.getRepository().deleteDashboards(array, fn);
     }
 
     /**
      * Loads the dashboards then asynchronously calls the function with the data
      */
     public getDashboards(fn) {
-      this.getMBean().getDashboards(fn);
+      this.getRepository().getDashboards(fn);
     }
 
     /**
      * Loads the given dashboard and invokes the given function with the result
      */
     public getDashboard(id:string, onLoad) {
-      this.getMBean().getDashboard(id, onLoad);
+      this.getRepository().getDashboard(id, onLoad);
     }
 
     /**
      * Looks up the MBean in the JMX tree
      */
-    public getMBean():DashboardRepository {
-      if (this.workspace && this.jolokia) {
-        var mbeanTypesToDomain = this.workspace.mbeanTypesToDomain || {};
-        var gitFacades = mbeanTypesToDomain["GitFacade"] || {};
-        var hawtioFolder = gitFacades["io.hawt.git"] || {};
-        var mbean = hawtioFolder["objectName"];
-        if (mbean) {
-          var git = new JolokiaGit(mbean, this.jolokia, this.localStorage);
-          return new GitDashboardRepository(git);
-        }
+    public getRepository():DashboardRepository {
+      var git = Git.createGitRepository(this.workspace, this.jolokia, this.localStorage);
+      if (git) {
+        return new GitDashboardRepository(git);
       }
       return new LocalDashboardRepository();
     }
@@ -127,7 +121,7 @@ module Dashboard {
   }
 
   export class GitDashboardRepository implements DashboardRepository {
-    constructor(public git:Git) {
+    constructor(public git:Git.GitRepository) {
     }
 
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {

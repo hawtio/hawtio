@@ -1,10 +1,10 @@
-module Dashboard {
+module Git {
 
   /**
    * Provides an interface to interacting with some kind of Git like
    * file and source control system which is versioned
    */
-  export interface Git {
+  export interface GitRepository {
     /**
      * Read the contents of a directory
      */
@@ -40,7 +40,7 @@ module Dashboard {
    * A default implementation which uses jolokia and the
    * GitFacadeMXBean over JMX
    */
-  export class JolokiaGit implements Git {
+  export class JolokiaGit implements GitRepository {
     constructor(public mbean:string, public jolokia, public localStorage, public branch = "master") {
     }
 
