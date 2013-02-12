@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs" ng-controller="Wiki.NavBarController">
-  <li ng-class='{active : isActive("/wiki/page/index")}'>
-    <a ng-href="#/wiki/page/index{{hash}}">
+  <li ng-class='{active : isActive("/wiki/view/index")}'>
+    <a ng-href="#/wiki/view/index{{hash}}">
       Home
     </a>
   </li>
@@ -13,6 +13,10 @@
     <a ng-href="{{editLink()}}{{hash}}" title="Edit this page"
        data-placement="bottom">
       <i class="icon-edit"></i> Edit</a></li>
+  <li class="pull-right">
+    <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
+       data-placement="bottom">
+      <i class="icon-plus"></i> Create</a></li>
 </ul>
 <div class="row-fluid">
   <div ng-view></div>

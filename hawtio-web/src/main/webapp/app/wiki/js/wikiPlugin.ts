@@ -4,6 +4,7 @@ module Wiki {
           config(($routeProvider) => {
             $routeProvider.
                     when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
                     when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {

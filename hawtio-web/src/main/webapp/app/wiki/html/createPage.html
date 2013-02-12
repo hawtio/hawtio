@@ -1,0 +1,18 @@
+<div class="form-horizontal" ng-controller="Wiki.EditController">
+  <div class="control-group">
+    <button id="saveButton" ng-disabled="!isValid()" ng-click="save()"
+            class="btn btn-info"
+            title="Creates this page and saves it in the wiki">
+      <i class="icon-cloud-download"></i> Create
+    </button>
+    <button id="cancelButton" ng-click="cancel()"
+            class="btn"
+            title="Discards any updates">
+      <i class="icon-cloud-download"></i> Cancel
+    </button>
+    <div id="alert-area" class="span9 pull-right"></div>
+  </div>
+  <div class="control-group">
+    <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
+  </div>
+</div>

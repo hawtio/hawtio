@@ -4,14 +4,20 @@ module Wiki {
 
     $scope.pageId = $routeParams['page'];
 
-    wikiRepository.getPage($scope.pageId, (contents) => {
-      $scope.source = contents;
-      Core.$apply($scope);
-    });
+    // only load the source if not in create mode
+    if (!$location.path().startsWith("/wiki/create")) {
+      wikiRepository.getPage($scope.pageId, (contents) => {
+        $scope.source = contents;
+        Core.$apply($scope);
+      });
+    }
+
+    // TODO pick the format based on the extension...
+    var format = "markdown";
 
     var options = {
       mode: {
-        name: "markdown"
+        name: format
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
