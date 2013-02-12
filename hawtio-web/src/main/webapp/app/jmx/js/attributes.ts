@@ -78,7 +78,7 @@ module Jmx {
 
       // TODO - maybe there's a better way to determine when to enable selections
 
-      if (answer.startsWith("app/camel")) {
+      if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
         $scope.selectToggle.setSelect(true);
       } else {
         $scope.selectToggle.setSelect(false);
