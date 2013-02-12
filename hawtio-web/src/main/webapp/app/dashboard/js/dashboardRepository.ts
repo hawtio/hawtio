@@ -202,7 +202,10 @@ module Dashboard {
     }
 
     public getUserDashboardDirectory() {
-      return "/dashboards/user/" + this.git.getUserName();
+      // TODO until we fix #96 lets default to a common user name so
+      // all the dashboards are shared for all users for now
+      //return "/dashboards/user/" + this.git.getUserName();
+      return "/dashboards/team/all";
     }
 
     public getUserDashboardPath(id:String) {
