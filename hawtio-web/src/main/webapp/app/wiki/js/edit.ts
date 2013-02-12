@@ -1,6 +1,5 @@
 module Wiki {
-  export function EditController($scope, $location, $routeParams,
-                                      wikiRepository: GitWikiRepository) {
+  export function EditController($scope, $location, $routeParams, wikiRepository:GitWikiRepository) {
 
     $scope.pageId = $routeParams['page'];
 
@@ -24,21 +23,30 @@ module Wiki {
 
     $scope.isValid = () => true;
 
-    $scope.viewLink = () => {
-      var pageId = $scope.pageId;
-      if (pageId) {
-        return "#/wiki/view/" + pageId;
-      }
-      // lets use the current path
-      var path = $location.path();
-      return path.replace("/edit", "/view");
-    };
+    $scope.viewLink = () => Wiki.viewLink($scope.pageId, $location, $scope.fileName);
 
     $scope.cancel = () => {
       goToView();
     };
 
     $scope.save = () => {
+      saveTo($scope.pageId);
+    };
+
+    $scope.create = () => {
+      // lets combine the file name with the current pageId (which is the directory)
+      var path = $scope.pageId + "/" + $scope.fileName;
+      console.log("creating new file at " + path);
+      saveTo(path);
+    };
+
+    function goToView() {
+      var path = Core.trimLeading($scope.viewLink(), "#");
+      console.log("going to view " + path);
+      $location.path(path);
+    }
+
+    function saveTo(path:string) {
       var commitMessage = $scope.commitMessage || "Updated page";
       var contents = $scope.source;
 
@@ -56,14 +64,10 @@ module Wiki {
         }
       }
       console.log("About to write contents '" + contents + "'");
-      wikiRepository.putPage($scope.pageId, contents, commitMessage, onComplete);
+      wikiRepository.putPage(path, contents, commitMessage, onComplete);
       goToView();
-    };
-
-    function goToView() {
-      var path = Core.trimLeading($scope.viewLink(), "#");
-      $location.path(path);
     }
+
 
     function onComplete(status) {
       console.log("Completed operation with status: " + JSON.stringify(status));

@@ -1,6 +1,6 @@
 <div class="form-horizontal" ng-controller="Wiki.EditController">
   <div class="control-group">
-    <button id="saveButton" ng-disabled="!isValid()" ng-click="save()"
+    <button id="saveButton" ng-disabled="!isValid()" ng-click="create()"
             class="btn btn-info"
             title="Creates this page and saves it in the wiki">
       <i class="icon-cloud-download"></i> Create
@@ -11,6 +11,9 @@
       <i class="icon-cloud-download"></i> Cancel
     </button>
     <div id="alert-area" class="span9 pull-right"></div>
+  </div>
+  <div class="control-group">
+    <input type="text" ng-model="fileName" placeholder="File name" class="span12"/>
   </div>
   <div class="control-group">
     <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
