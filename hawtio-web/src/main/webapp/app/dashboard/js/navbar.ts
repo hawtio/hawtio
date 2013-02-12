@@ -20,8 +20,8 @@ module Dashboard {
       dashboardRepository.getDashboards(dashboardLoaded);
     }
 
-    function dashboardLoaded(dashboardMap) {
-      $scope.dashboards = Dashboard.unpackDashboardMap(dashboardMap);
+    function dashboardLoaded(dashboards) {
+      $scope.dashboards = dashboards;
       Core.$apply($scope);
     }
   }

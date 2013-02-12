@@ -66,8 +66,7 @@ module Dashboard {
       if ($scope.id) {
         dashboardRepository.getDashboard($scope.id, onDashboardLoad);
       } else {
-        dashboardRepository.getDashboards((dashboardMap) => {
-          var dashboards = Dashboard.unpackDashboardMap(dashboardMap);
+        dashboardRepository.getDashboards((dashboards) => {
           var idx = $scope.idx ? parseInt($scope.idx) : 0;
           var id = null;
           if (dashboards.length > 0) {

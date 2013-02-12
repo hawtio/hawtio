@@ -1,5 +1,5 @@
-
 module Dashboard {
+
   export function EditDashboardsController($scope, $routeParams, $http, $route, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
     $scope.searchText = "";
     $scope.selectedItems = [];
@@ -221,8 +221,8 @@ module Dashboard {
       dashboardRepository.getDashboards(dashboardLoaded);
     }
 
-    function dashboardLoaded(dashboardMap) {
-      $scope.dashboards = Dashboard.unpackDashboardMap(dashboardMap);
+    function dashboardLoaded(dashboards) {
+      $scope.dashboards = dashboards;
       Core.$apply($scope);
     }
 

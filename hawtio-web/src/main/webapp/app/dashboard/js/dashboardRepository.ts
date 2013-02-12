@@ -134,7 +134,7 @@ module Dashboard {
     public getDashboards(fn) {
       // TODO lets look in each team directory as well and combine the results...
       var path = getUserDashboardDirectory();
-      var dashboards = {};
+      var dashboards = [];
       this.git.contents(path, (files) => {
         // we now have all the files we need; lets read all their contents
         angular.forEach(files, (file, idx) => {
@@ -145,7 +145,8 @@ module Dashboard {
               if (content) {
                 try {
                   var json = JSON.parse(content);
-                  dashboards[path] = json;
+                  json.uri = path;
+                  dashboards.push(json);
                 } catch (e) {
                   console.log("Failed to parse: " + content + " due to: " + e);
                 }

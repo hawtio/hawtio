@@ -40,13 +40,4 @@ module Dashboard {
   export function onAddDashboard(result) {
     console.log("Completed adding the dashboard with response " + JSON.stringify(result));
   }
-
-  export function unpackDashboardMap(dashboardMap) {
-    var dashboards = [];
-    angular.forEach(dashboardMap, (dashboard, uri) => {
-      dashboard.uri = uri;
-      dashboards.push(dashboard);
-    });
-    return dashboards;
-  }
 }
