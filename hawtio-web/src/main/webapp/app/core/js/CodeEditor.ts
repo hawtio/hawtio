@@ -5,9 +5,11 @@ module CodeEditor {
         tabSize: 4,
         lineNumbers: true,
         indentWithTabs: true,
-        lineWrapping: true
+        lineWrapping: true,
+        autoCloseTags: true
+
         // TODO Add autoformat option (Not explicitly a code mirror option)
-    }
+    };
 
     export function PreferencesController($scope, workspace:Workspace, localStorage) {
         $scope.preferences = GlobalCodeMirrorOptions;
@@ -100,6 +102,8 @@ module CodeEditor {
 
         var readOnly = options.readOnly;
         if (!readOnly) {
+
+/*
             options.extraKeys = angular.extend(options.extraKeys, {
                 "'>'": function (codeMirror) {
                     codeMirror.closeTag(codeMirror, '>');
@@ -108,6 +112,7 @@ module CodeEditor {
                     codeMirror.closeTag(codeMirror, '/');
                 }
             });
+*/
             options.matchBrackets = true;
         }
 

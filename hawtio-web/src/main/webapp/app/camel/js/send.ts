@@ -36,7 +36,9 @@ module Camel {
       };
 
       $scope.autoFormat = () => {
-        CodeEditor.autoFormatEditor($scope.codeMirror);
+        setTimeout(() => {
+          CodeEditor.autoFormatEditor($scope.codeMirror);
+        }, 50);
       };
 
       $scope.sendMessage = () => {

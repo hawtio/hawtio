@@ -211,14 +211,16 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
   }
   function endtag(startOfLine) {
     return function(type) {
+      var tagName = curState.tagName;
+      curState.tagName = null;
       if (type == "selfcloseTag" ||
-          (type == "endTag" && Kludges.autoSelfClosers.hasOwnProperty(curState.tagName.toLowerCase()))) {
-        maybePopContext(curState.tagName.toLowerCase());
+          (type == "endTag" && Kludges.autoSelfClosers.hasOwnProperty(tagName.toLowerCase()))) {
+        maybePopContext(tagName.toLowerCase());
         return cont();
       }
       if (type == "endTag") {
-        maybePopContext(curState.tagName.toLowerCase());
-        pushContext(curState.tagName, startOfLine);
+        maybePopContext(tagName.toLowerCase());
+        pushContext(tagName, startOfLine);
         return cont();
       }
       return cont();
@@ -310,7 +312,9 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
       else return 0;
     },
 
-    electricChars: "/"
+    electricChars: "/",
+
+    configuration: parserConfig.htmlMode ? "html" : "xml"
   };
 });
 
