@@ -46,7 +46,7 @@ module Dashboard {
         }
       }
 
-      updateDashboardRepository();
+      updateDashboardRepository("Removed widget " + widget.title);
     };
 
 /*
@@ -58,9 +58,7 @@ module Dashboard {
 */
 
     $scope.onWidgetRenamed = function(widget) {
-      // TODO - deal with renamed widget here
-      console.log("Widget renamed to : " + widget.title);
-      updateDashboardRepository();
+      updateDashboardRepository("Renamed widget to " + widget.title);
     };
 
     function updateWidgets() {
@@ -191,15 +189,19 @@ module Dashboard {
             }
           });
 
-          updateDashboardRepository();
+          updateDashboardRepository("Changing dashboard layout");
         }
       }
-
     }
 
-    function updateDashboardRepository() {
+
+    function updateDashboardRepository(message: string) {
       if ($scope.dashboard) {
-        dashboardRepository.addDashboards([$scope.dashboard], Dashboard.onOperationComplete);
+        var commitMessage = message;
+        if ($scope.dashboard && $scope.dashboard.title) {
+          commitMessage += " on dashboard " + $scope.dashboard.title;
+        }
+        dashboardRepository.putDashboards([$scope.dashboard], commitMessage, Dashboard.onOperationComplete);
       }
     }
   }

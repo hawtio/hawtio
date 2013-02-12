@@ -42,7 +42,7 @@ module Dashboard {
             dash.group = "Personal";
           }
         });
-        dashboardRepository.addDashboards(array, Dashboard.onOperationComplete);
+        dashboardRepository.putDashboards(array, "Imported dashboard JSON", Dashboard.onOperationComplete);
         $location.path("/dashboard/edit");
       }
     }

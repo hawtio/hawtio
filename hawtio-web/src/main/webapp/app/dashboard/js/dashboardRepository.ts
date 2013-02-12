@@ -9,7 +9,7 @@ function getDashboardPath(dash) {
 module Dashboard {
 
   export interface DashboardRepository {
-    addDashboards: (array:any[], fn) => any;
+    putDashboards: (array:any[], commitMessage: string, fn) => any;
 
     deleteDashboards: (array:any[], fn) => any;
 
@@ -28,8 +28,8 @@ module Dashboard {
       // lets default to using local storage
     }
 
-    public addDashboards(array:any[], fn) {
-      this.getMBean().addDashboards(array, fn);
+    public putDashboards(array:any[], commitMessage: string, fn) {
+      this.getMBean().putDashboards(array,  commitMessage, fn);
     }
 
     public deleteDashboards(array:any[], fn) {
@@ -106,7 +106,7 @@ module Dashboard {
       }
     ];
 
-    public addDashboards(array:any[], fn) {
+    public putDashboards(array:any[], commitMessage: string, fn) {
       this.dashboards = this.dashboards.concat(array);
       fn(null);
     }
@@ -139,11 +139,10 @@ module Dashboard {
     constructor(public git:Git) {
     }
 
-    public addDashboards(array:Dashboard[], fn) {
+    public putDashboards(array:Dashboard[], commitMessage: string, fn) {
       angular.forEach(array, (dash) => {
         var path = getDashboardPath(dash);
         var contents = JSON.stringify(dash, null, "  ");
-        var commitMessage = "Adding dashboard " + path;
         this.git.write(path, commitMessage, contents, fn);
       });
     }

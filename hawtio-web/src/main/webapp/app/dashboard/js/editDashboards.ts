@@ -124,7 +124,8 @@ module Dashboard {
       });
 
       // now lets update the actual dashboard config
-      dashboardRepository.addDashboards($scope.selectedItems, Dashboard.onOperationComplete);
+      var commitMessage = "Add widget";
+      dashboardRepository.putDashboards($scope.selectedItems, commitMessage, Dashboard.onOperationComplete);
 
       if (nextHref) {
         // remove any dodgy query
@@ -136,10 +137,11 @@ module Dashboard {
     $scope.create = () => {
       var counter = $scope.dashboards.length + 1;
       var id = Dashboard.getUUID();
-      var newDash = {id: id, title: "Untitled" + counter, group: "Personal", widgets: []};
+      var title = "Untitled" + counter;
+      var newDash = {id: id, title: title, group: "Personal", widgets: []};
 
       // TODO how to really add??
-      addDashboard(newDash);
+      addDashboard(newDash, "Created new dashboard " + title);
     };
 
     $scope.duplicate = () => {
@@ -149,8 +151,9 @@ module Dashboard {
         var counter = $scope.dashboards.length + 1;
         var id = Dashboard.getUUID();
         var widgets = item.widgets || [];
+        var commitMessage = "Duplicated dashboard " + item.title;
         var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };
-        addDashboard(newDash);
+        addDashboard(newDash, commitMessage);
       });
     };
 
@@ -231,8 +234,8 @@ module Dashboard {
       Core.$apply($scope);
     }
 
-    function addDashboard(newDash) {
-      dashboardRepository.addDashboards([newDash], Dashboard.onOperationComplete);
+    function addDashboard(newDash, commitMessage) {
+      dashboardRepository.putDashboards([newDash], commitMessage, Dashboard.onOperationComplete);
       $scope.dashboards.push(newDash);
       $scope.selectedItems.push(newDash);
     }
