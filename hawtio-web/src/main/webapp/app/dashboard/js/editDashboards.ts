@@ -1,3 +1,4 @@
+
 module Dashboard {
   export function EditDashboardsController($scope, $routeParams, $http, $route, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
     $scope.searchText = "";
@@ -143,7 +144,7 @@ module Dashboard {
         // lets unselect this item
         $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
         var counter = $scope.dashboards.length + 1;
-        var id = Dashbaord.getUUID();
+        var id = Dashboard.getUUID();
         var widgets = item.widgets || [];
         var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };
         addDashboard(newDash);
@@ -215,25 +216,14 @@ module Dashboard {
       if (url) {
         $scope.url = decodeURIComponent(url);
       }
+
+      // TODO can we avoid reloading these on startup from the navbar.ts as well?
       dashboardRepository.getDashboards(dashboardLoaded);
-/*
-      dashboardRepository.getDashboards((dashboards) => {
-        $scope.dashboards = dashboards;
-        Core.$apply($scope);
-        //console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
-      });
-*/
     }
 
     function dashboardLoaded(dashboardMap) {
-      var dashboards = [];
-      angular.forEach(dashboardMap, (dashboard, uri) => {
-        dashboard.uri = uri;
-        dashboards.push(dashboard);
-      });
-      $scope.dashboards = dashboards;
+      $scope.dashboards = Dashboard.unpackDashboardMap(dashboardMap);
       Core.$apply($scope);
-      //console.log("Loaded " + $scope.dashboards.length + " dashboards in phase " + $scope.$$phase);
     }
 
     function addDashboard(newDash) {

@@ -9,14 +9,20 @@ module Dashboard {
       return workspace.isLinkActive("#/dashboard/id/" + dash.id);
     };
 
-    function dashboardLoaded(dashboards) {
-      $scope.dashboards = dashboards;
-    }
-
     $scope.onTabRenamed = function(dash) {
       dashboardRepository.addDashboards([dash], Dashboard.onAddDashboard);
     };
 
-    dashboardRepository.getDashboards(dashboardLoaded);
+    // Lets asynchronously load the dashboards on startup...
+    setTimeout(updateData, 100);
+
+    function updateData() {
+      dashboardRepository.getDashboards(dashboardLoaded);
+    }
+
+    function dashboardLoaded(dashboardMap) {
+      $scope.dashboards = Dashboard.unpackDashboardMap(dashboardMap);
+      Core.$apply($scope);
+    }
   }
 }
