@@ -29,6 +29,7 @@ You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/mas
 * [Apache Camel](http://camel.apache.org/)
 * [Apache OpenEJB](http://openejb.apache.org/)
 * [Apache Tomcat](http://tomcat.apache.org/)
+* Dashboard plugin for creating reusable dashboard user interfaces which are then stored and versioned as JSON files in a git repository
 * [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 * [Health MBeans](http://hawt.io/health/)
 * [JBoss](http://www.jboss.org/jbossas)
@@ -36,6 +37,7 @@ You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/mas
 * JMX
 * Logging
 * OSGi
+* Wiki plugin for creating, editing and viewing text files (markdown, html, xml) which are then versioned and stored in a git repository
 
 ### What can my new plugin do?
 
