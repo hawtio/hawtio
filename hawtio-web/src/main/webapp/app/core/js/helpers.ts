@@ -355,9 +355,11 @@ module Core {
    */
   export function fileExtension(name: string, defaultValue: string = "") {
     var extension = defaultValue;
-    var idx = name.lastIndexOf(".");
-    if (idx > 0) {
-      extension = name.substring(idx + 1, name.length).toLowerCase();
+    if (name) {
+      var idx = name.lastIndexOf(".");
+      if (idx > 0) {
+        extension = name.substring(idx + 1, name.length).toLowerCase();
+      }
     }
     return extension;
   }
