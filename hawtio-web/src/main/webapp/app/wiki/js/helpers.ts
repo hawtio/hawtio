@@ -1,3 +1,4 @@
+
 module Wiki {
 
   export function viewLink(pageId:string, $location, fileName: string = null) {
@@ -50,7 +51,7 @@ module Wiki {
   }
 
   export function fileFormat(name: string, fileExtensionTypeRegistry) {
-    var extension = Core.fileExtension(name, "markdown");
+    var extension = fileExtension(name);
     var answer = null;
     angular.forEach(fileExtensionTypeRegistry, (array, key) => {
       if (array.indexOf(extension) >= 0) {
@@ -63,7 +64,7 @@ module Wiki {
 
   export function iconClass(row) {
     var name = row.getProperty("name");
-    var extension = Core.fileExtension(name, "markdown");
+    var extension = fileExtension(name);
     var directory = row.getProperty("directory");
     if (directory) {
       return "icon-folder-close";
@@ -112,5 +113,9 @@ module Wiki {
     }
     return null
 
+  }
+
+  export function fileExtension(name) {
+    return Core.fileExtension(name, "markdown");
   }
 }
