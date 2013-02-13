@@ -70,9 +70,9 @@ module Wiki {
 
         // if we have a readme then lets render it...
         var item = $scope.children.find((info) => {
-          var name = info.name;
+          var name = (info.name || "").toLowerCase();
           var ext = fileExtension(name);
-          return name && ext && name.toLowerCase().startsWith("readme.");
+          return name && ext && (name.startsWith("readme.") || name === "readme");
         });
         if (item) {
           var pageName = item.path;
