@@ -7,7 +7,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(edit|create)/, "view");
+      link = "#" + path.replace(/(edit|create)/, "view");
     }
     if (fileName) {
       if (!link.endsWith("/")) {
@@ -26,7 +26,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(view|create)/, "edit");
+      link = "#" + path.replace(/(view|create)/, "edit");
     }
     return link;
   }
@@ -38,7 +38,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(view|edit)/, "create");
+      link = "#" + path.replace(/(view|edit)/, "create");
     }
     // we have the link so lets now remove the last path
     // or if there is no / in the path then remove the last section
