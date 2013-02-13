@@ -30,8 +30,6 @@ module Wiki {
     };
 
     var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-    console.log("using file format: " + format);
-
     var options = {
       mode: {
         name: format
@@ -60,6 +58,5 @@ module Wiki {
       }
       Core.$apply($scope);
     });
-
   }
 }
