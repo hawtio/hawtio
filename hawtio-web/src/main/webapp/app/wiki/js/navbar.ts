@@ -13,10 +13,6 @@ module Wiki {
 
     loadBreadcrumbs();
 
-/*    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(loadBreadcrumbs, 50);
-    });*/
 
     function loadBreadcrumbs() {
       var href = "#/wiki/view/";

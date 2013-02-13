@@ -47,7 +47,8 @@ module Wiki {
             return {
               "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
               "htmlmixed": ["html", "xhtml", "htm"],
-              "xml": ["xml"]
+              "xml": ["xml"],
+              "properties": ["properties"]
             };
           }).
           filter('fileIconClass', () => iconClass).
