@@ -10,12 +10,19 @@ hawtio uses the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.
 
 Its a [pluggable](http://hawt.io/developers/plugins.html) management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric etc) and any kind of Java technology and middleware.
 
+### How do I configure hawtio
+
+Mostly hawtio just works. However please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure; via system properties, environment variables or Dependency Injection.
+
 ### How do I build the project
 
 If you just want to run hawtio in a JVM then please see the [getting started section](http://hawt.io/).
 
 If you want to hack the source code then check out [how to build hawtio](http://hawt.io/building/index.html)
 
+### What code conventions do you have?
+
+Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md) for our recommended approach.
 
 ## Plugin Questions
 
