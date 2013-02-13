@@ -154,13 +154,15 @@ module Dashboard {
       // TODO lets look in each team directory as well and combine the results...
       var path = this.getUserDashboardDirectory();
       var dashboards = [];
-      this.git.contents(path, (files) => {
+      this.git.read(path, (details) => {
+        var files = details.children;
         // we now have all the files we need; lets read all their contents
         angular.forEach(files, (file, idx) => {
           var path = file.path;
           if (!file.directory && path.endsWith(".json")) {
-            this.git.read(path, (content) => {
+            this.git.read(path, (details) => {
               // lets parse the contents
+              var content = details.text;
               if (content) {
                 try {
                   var json = JSON.parse(content);
@@ -182,8 +184,9 @@ module Dashboard {
 
     public getDashboard(id:string, fn) {
       var path = this.getUserDashboardPath(id);
-      this.git.read(path, (content) => {
+      this.git.read(path, (details) => {
         var dashboard = null;
+        var content = details.text;
         if (content) {
           try {
             dashboard = JSON.parse(content);

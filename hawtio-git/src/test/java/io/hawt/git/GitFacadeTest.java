@@ -65,7 +65,7 @@ public class GitFacadeTest {
         git.write(branch, readMePath, "Initial commit", authorName, authorEmail, readMeContent);
         git.write(branch, anotherPath, "Second commit", authorName, authorEmail, anotherContent);
 
-        List<FileInfo> contents = git.contents("/");
+        List<FileInfo> contents = assertReadDirectory("/");
         assertNotNull("No contents!", contents);
         assertTrue("Should have some files", contents.size() > 0);
 
@@ -80,9 +80,9 @@ public class GitFacadeTest {
         assertEquals("untracked size", 0, status.getUntracked().size());
 
         // now lets read the files...
-        String readMeActual = git.read(branch, readMePath);
+        String readMeActual = assertReadFileContents(readMePath);
         assertEquals("content of " + readMePath, readMeContent, readMeActual);
-        String anotherActual = git.read(branch, anotherPath);
+        String anotherActual = assertReadFileContents(anotherPath);
         assertEquals("content of " + anotherPath, anotherContent, anotherActual);
 
         System.out.println(readMePath + " = " + readMeActual);
@@ -93,7 +93,7 @@ public class GitFacadeTest {
         git.remove(branch, anotherPath, "Remove another thingy", authorName, authorEmail);
 
         // now lets assert that we can't find the file...
-        contents = git.contents("/");
+        contents = assertReadDirectory("/");
         assertNotNull("No contents!", contents);
         assertTrue("Should have some files", contents.size() > 0);
         for (FileInfo content : contents) {
@@ -102,12 +102,32 @@ public class GitFacadeTest {
 
         String shouldFail = null;
         try {
-            shouldFail = git.read(branch, anotherPath);
+            shouldFail = assertReadFileContents(anotherPath);
             fail("Should have thrown an exception!");
-        } catch (IOException e) {
+        } catch (Throwable e) {
             // expected exception!
         }
         assertNull("Should not find any data", shouldFail);
+    }
+
+    private List<FileInfo> assertReadDirectory(String path) throws IOException {
+        FileContents contents = git.read(branch, path);
+        assertNotNull("Should have FileContents", contents);
+        assertTrue("should be a directory!", contents.isDirectory());
+        String text = contents.getText();
+        assertNull("Should not have text content", text);
+        List<FileInfo> children = contents.getChildren();
+        assertNotNull("Should have children even if empty", children);
+        return children;
+    }
+
+    protected String assertReadFileContents(String readMePath) throws IOException {
+        FileContents contents = git.read(branch, readMePath);
+        assertNotNull("Should have FileContents", contents);
+        assertTrue("should be a file!", !contents.isDirectory());
+        String text = contents.getText();
+        assertNotNull("contents should contain text", text);
+        return text;
     }
 
     protected File assertConfigDirectoryExists(GitFacade helper) throws IOException {

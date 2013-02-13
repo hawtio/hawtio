@@ -6,12 +6,8 @@ module Git {
    */
   export interface GitRepository {
     /**
-     * Read the contents of a directory
-     */
-            contents: (path:string, fn) => void;
-
-    /**
-     * Read the contents of a file
+     * Read the contents of a file or directory
+     * with text or children being returned and a directory flag
      */
             read: (path:string, fn) => void;
 
@@ -42,10 +38,6 @@ module Git {
    */
   export class JolokiaGit implements GitRepository {
     constructor(public mbean:string, public jolokia, public localStorage, public branch = "master") {
-    }
-
-    public contents(path:string, fn) {
-      this.jolokia.execute(this.mbean, "contents", path, onSuccess(fn));
     }
 
     public read(path:string, fn) {

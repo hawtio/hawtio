@@ -6,7 +6,9 @@ module Wiki {
 
     $scope.pageId = $routeParams['page'];
 
-    wikiRepository.getPage($scope.pageId, (contents) => {
+    wikiRepository.getPage($scope.pageId, (details) => {
+      var contents = details.text;
+      // TODO - if direcctory then include the directory page...
 
       var name = $scope.pageId;
       var extension = "";
@@ -17,7 +19,7 @@ module Wiki {
 
       if (extension.length === 0 || extension === "md" || extension === "markdown") {
         // lets convert it to HTML
-        $scope.html = marked(contents);
+        $scope.html = contents ? marked(contents) : "";
 
       } else {
         $scope.html = contents;

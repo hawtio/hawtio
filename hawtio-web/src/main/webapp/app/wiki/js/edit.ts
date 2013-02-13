@@ -5,7 +5,8 @@ module Wiki {
 
     // only load the source if not in create mode
     if (!$location.path().startsWith("/wiki/create")) {
-      wikiRepository.getPage($scope.pageId, (contents) => {
+      wikiRepository.getPage($scope.pageId, (details) => {
+        var contents = details.text;
         $scope.source = contents;
         Core.$apply($scope);
       });

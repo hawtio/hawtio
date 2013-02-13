@@ -17,28 +17,31 @@
  */
 package io.hawt.git;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
- * The JMX MBean interface for working with git configuration files
+ * Represents the text of a text file or a directory
  */
-public interface GitFacadeMXBean {
-    /**
-     * Reads the contents of a file or a directory
-     */
-    FileContents read(String branch, String path) throws IOException;
+public class FileContents {
+    private boolean directory;
+    private List<FileInfo> children;
+    private String text;
 
-    void write(String branch, String path, String commitMessage,
-               String authorName, String authorEmail, String contents);
+    public FileContents(boolean directory, String text, List<FileInfo> children) {
+        this.directory = directory;
+        this.text = text;
+        this.children = children;
+    }
 
-    void remove(String branch, String path, String commitMessage,
-                String authorName, String authorEmail);
+    public List<FileInfo> getChildren() {
+        return children;
+    }
 
+    public String getText() {
+        return text;
+    }
 
-    // TODO
-    // void move(String branch, String oldPath, String newPath);
-    //List<FileInfo> contents(String path);
-
-
+    public boolean isDirectory() {
+        return directory;
+    }
 }

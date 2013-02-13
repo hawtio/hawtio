@@ -74,32 +74,30 @@ public class GitFacade implements GitFacadeMXBean {
         }
     }
 
-    /**
-     * Lists the contents of the given directory path
-     */
-    public List<FileInfo> contents(String path) {
-        File rootDir = getConfigDirectory();
-        File dir = new File(rootDir, path);
-        List<FileInfo> answer = new ArrayList<FileInfo>();
-        if (dir.exists()) {
-            File[] files = dir.listFiles();
-            for (File file : files) {
-                if (!file.getName().equals(".git") || !path.equals("/")) {
-                    answer.add(FileInfo.createFileInfo(rootDir, file));
-                }
-            }
-        }
-        return answer;
-    }
 
     /**
      * Reads the file contents of the given path
      *
      * @return
      */
-    public String read(String branch, String path) throws IOException {
+    public FileContents read(String branch, String path) throws IOException {
+        File rootDir = getConfigDirectory();
         File file = getFile(path);
-        return IOHelper.readFully(file);
+        if (file.isFile()) {
+            String contents = IOHelper.readFully(file);
+            return new FileContents(false, contents, null);
+        } else {
+            List<FileInfo> children = new ArrayList<FileInfo>();
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File child : files) {
+                    if (!child.getName().equals(".git")) {
+                        children.add(FileInfo.createFileInfo(rootDir, child));
+                    }
+                }
+            }
+            return new FileContents(file.isDirectory(), null, children);
+        }
     }
 
 
@@ -110,6 +108,8 @@ public class GitFacade implements GitFacadeMXBean {
             public RevCommit call() throws Exception {
                 File file = getFile(path);
                 file.getParentFile().mkdirs();
+
+                System.out.println("Writing " + path + " contents: " + contents);
                 IOHelper.write(file, contents);
 
                 String filePattern = getFilePattern(path);
@@ -133,7 +133,7 @@ public class GitFacade implements GitFacadeMXBean {
     }
 
     public void remove(final String branch, final String path, final String commitMessage,
-                      final String authorName, final String authorEmail) {
+                       final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
             public RevCommit call() throws Exception {
