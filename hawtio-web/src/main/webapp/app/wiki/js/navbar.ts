@@ -15,19 +15,16 @@ module Wiki {
 
     loadBreadcrumbs();
 
-    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+/*    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(loadBreadcrumbs, 50);
-    });
+    });*/
 
     function loadBreadcrumbs() {
-      $scope.breadcrumbs = [];
+      var href = "#/wiki/view/";
+      $scope.breadcrumbs = [{href: href, name: "/"}];
       var path = Wiki.pageId($routeParams, $location);
-      var array = path.split("/");
-      if (array.length < 2 || array[0] !== "/") {
-        array.splice(0, 0, "/");
-      }
-      var href = "#/wiki/view";
+      var array = path ? path.split("/"): [];
       angular.forEach(array, (name) => {
         if (!name.startsWith("/") && !href.endsWith("/")) {
           href += "/";

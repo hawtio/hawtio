@@ -9,6 +9,7 @@ module Wiki {
 
     $scope.gridOptions = {
       data: 'children',
+      displayFooter: false,
       columnDefs: [
         {
           field: 'name',
