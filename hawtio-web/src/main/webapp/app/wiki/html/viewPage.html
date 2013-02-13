@@ -28,8 +28,7 @@
     <div ng-hide="!html">
       <div ng-bind-html-unsafe="html"></div>
     </div>
-    <div ng-hide="!source">
-      <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
-    </div>
+
+    <div ng-include="sourceView"></div>
   </div>
 </div>

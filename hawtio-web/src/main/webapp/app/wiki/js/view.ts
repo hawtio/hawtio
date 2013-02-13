@@ -27,12 +27,14 @@ module Wiki {
       ]
     };
 
+    updateView();
+
     var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var options = {
+      readOnly: true,
       mode: {
         name: format
-      },
-      readOnly: true
+      }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
@@ -41,8 +43,6 @@ module Wiki {
       return (pageName) ? Wiki.editLink(pageName, $location) : null;
     };
 
-    updateView();
-
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateView, 50);
@@ -50,6 +50,7 @@ module Wiki {
 
     function viewContents(pageName, contents) {
       console.log("format is '" + format + "'");
+      $scope.sourceView = null;
       if ("markdown" === format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
@@ -57,6 +58,7 @@ module Wiki {
         $scope.html = contents
       } else {
         $scope.source = contents;
+        $scope.sourceView = "app/wiki/html/sourceView.html";
       }
       Core.$apply($scope);
     }
