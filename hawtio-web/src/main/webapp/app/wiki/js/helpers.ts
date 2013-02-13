@@ -48,4 +48,15 @@ module Wiki {
     }
     return link;
   }
+
+  export function fileFormat(name: string, fileExtensionTypeRegistry) {
+    var extension = Core.fileExtension(name, "markdown");
+    var answer = null;
+    angular.forEach(fileExtensionTypeRegistry, (array, key) => {
+      if (array.indexOf(extension) >= 0) {
+        answer = key;
+      }
+    });
+    return answer;
+  }
 }

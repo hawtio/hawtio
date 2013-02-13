@@ -30,6 +30,13 @@ module Wiki {
             });
             return marked;
           }).
+          factory('fileExtensionTypeRegistry',function () {
+            return {
+              "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
+              "htmlmixed": ["html", "xhtml", "htm"],
+              "xml": ["xml"]
+            };
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage) => {
 
             viewRegistry['wiki'] = "app/wiki/html/layoutWiki.html";

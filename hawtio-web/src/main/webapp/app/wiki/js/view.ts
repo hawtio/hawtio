@@ -1,19 +1,18 @@
+
 module Wiki {
   export function ViewController($scope, $location, $routeParams,
                                       workspace:Workspace,
-                                      marked,
+                                      marked, fileExtensionTypeRegistry,
                                       wikiRepository: GitWikiRepository) {
 
     $scope.pageId = $routeParams['page'];
-
-
 
     $scope.gridOptions = {
       data: 'children',
       columnDefs: [
         {
           field: 'name',
-          displayName: 'Name',
+          displayName: 'Page Name',
           cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/view{{row.getProperty(' + "'path'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
         },
@@ -30,7 +29,16 @@ module Wiki {
       ]
     };
 
+    var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+    console.log("using file format: " + format);
 
+    var options = {
+      mode: {
+        name: format
+      },
+      readOnly: true
+    };
+    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
 
     wikiRepository.getPage($scope.pageId, (details) => {
@@ -41,21 +49,15 @@ module Wiki {
         $scope.childen = null;
       }
 
-      var name = $scope.pageId;
-      var extension = "";
-      var idx = name.lastIndexOf(".");
-      if (idx > 0) {
-        extension = name.substring(idx + 1, name.length).toLowerCase();
-      }
-
-      if (extension.length === 0 || extension === "md" || extension === "markdown") {
+      var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+      if ("markdown" === format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
-
+      } else if (format && format.startsWith("html")) {
+        $scope.html = contents
       } else {
-        $scope.html = contents;
+        $scope.source = contents;
       }
-
       Core.$apply($scope);
     });
 
