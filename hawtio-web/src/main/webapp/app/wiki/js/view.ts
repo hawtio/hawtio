@@ -1,9 +1,6 @@
 module Wiki {
 
-  export function ViewController($scope, $location, $routeParams,
-                                      workspace:Workspace,
-                                      marked, fileExtensionTypeRegistry,
-                                      wikiRepository: GitWikiRepository) {
+  export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
 
@@ -39,6 +36,11 @@ module Wiki {
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
+    $scope.editLink = () => {
+      var pageName = ($scope.directory) ? $scope.readMePath : Wiki.pageId($routeParams, $location);
+      return (pageName) ? Wiki.editLink(pageName, $location) : null;
+    };
+
     function viewContents(pageName, contents) {
       var format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry);
       if ("markdown" === format) {
@@ -64,6 +66,7 @@ module Wiki {
       if ($scope.children) {
         $scope.html = null;
         $scope.source = null;
+        $scope.readMePath = null;
 
         // if we have a readme then lets render it...
         var item = $scope.children.find((info) => {
@@ -73,6 +76,7 @@ module Wiki {
         });
         if (item) {
           var pageName = item.path;
+          $scope.readMePath = pageName;
           wikiRepository.getPage(pageName, (readmeDetails) => {
             viewContents(pageName, readmeDetails.text);
           });
