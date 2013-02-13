@@ -7,12 +7,28 @@ module Wiki {
   }
 
   export class GitWikiRepository implements WikiRepository {
+    public directoryPrefix = "wiki/";
+
     constructor(public factoryMethod: () => Git.GitRepository) {
     }
 
     public getPage(path:string, fn) {
       var fullPath = this.getPath(path);
-      this.git().read(fullPath, fn);
+      this.git().read(fullPath, (details) => {
+        // lets fix up any paths to be relative to the wiki
+        var children = details.children;
+        angular.forEach(children, (child) => {
+          var path = child.path;
+          if (path) {
+            var directoryPrefix = "/" + this.directoryPrefix;
+            if (path.startsWith(directoryPrefix)) {
+              path = "/" + path.substring(directoryPrefix.length);
+              child.path = path;
+            }
+          }
+        });
+        fn(details);
+      });
     }
 
     public putPage(path:string, contents:string, commitMessage:string, fn) {
@@ -30,7 +46,8 @@ module Wiki {
      * Returns the full path to use in the git repo
      */
     public getPath(path:string) {
-      return "wiki/" + path;
+      var directoryPrefix = this.directoryPrefix;
+      return (directoryPrefix) ? directoryPrefix + path : path;
     }
 
     public git() {

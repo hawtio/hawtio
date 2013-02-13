@@ -7,7 +7,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(edit|create)/, "view");
+      link = "#" + path.replace(/(edit|create)/, "view");
     }
     if (fileName) {
       if (!link.endsWith("/")) {
@@ -26,7 +26,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(view|create)/, "edit");
+      link = "#" + path.replace(/(view|create)/, "edit");
     }
     return link;
   }
@@ -38,7 +38,7 @@ module Wiki {
     } else {
       // lets use the current path
       var path = $location.path();
-      link = path.replace(/(view|edit)/, "create");
+      link = "#" + path.replace(/(view|edit)/, "create");
     }
     // we have the link so lets now remove the last path
     // or if there is no / in the path then remove the last section
@@ -47,5 +47,37 @@ module Wiki {
       link = link.substring(0, idx + 1);
     }
     return link;
+  }
+
+  export function fileFormat(name: string, fileExtensionTypeRegistry) {
+    var extension = Core.fileExtension(name, "markdown");
+    var answer = null;
+    angular.forEach(fileExtensionTypeRegistry, (array, key) => {
+      if (array.indexOf(extension) >= 0) {
+        answer = key;
+      }
+    });
+    return answer;
+  }
+
+  /**
+   * Extracts the pageId from the route parameters
+   */
+  export function pageId($routeParams) {
+    var pageId = $routeParams['page'];
+    if (!pageId) {
+      // Lets deal with the hack of AngularJS not supporting / in a path variable
+      for (var i = 0; i < 100; i++) {
+        var value = $routeParams['path' + i];
+        if (value) {
+          if (!pageId) {
+            pageId = value;
+          } else {
+            pageId += "/" + value;
+          }
+        } else break;
+      }
+    }
+    return pageId;
   }
 }

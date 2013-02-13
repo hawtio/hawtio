@@ -26,6 +26,7 @@ We use the following excellent tools and libraries:
 * [cubism](http://square.github.com/cubism/) implements the real time horizon charts
 * [dagre](https://github.com/cpettitt/dagre) for graphviz style layouts of d3 diagrams (e.g. the Camel diagram view).
 * [ng-grid](http://angular-ui.github.com/ng-grid/) an AngualrJS based table/grid component for sorting/filtering/resizing tables
+* [marked](https://github.com/chjj/marked) for rendering Github flavoured Markdown as HTML
 * [DataTables](http://datatables.net/) for sorted/filtered tables (though we are migrating to ng-grid as its a bit more natural for AngularJS)
 * [DynaTree](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) for tree widget
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS

@@ -1,7 +1,8 @@
 module Wiki {
-  export function EditController($scope, $location, $routeParams, wikiRepository:GitWikiRepository) {
+  export function EditController($scope, $location, $routeParams,
+                                 fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
-    $scope.pageId = $routeParams['page'];
+    $scope.pageId = Wiki.pageId($routeParams);
 
     // only load the source if not in create mode
     if (!$location.path().startsWith("/wiki/create")) {
@@ -12,15 +13,14 @@ module Wiki {
       });
     }
 
-    // TODO pick the format based on the extension...
-    var format = "markdown";
-
+    var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var options = {
       mode: {
         name: format
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+
 
     $scope.isValid = () => true;
 

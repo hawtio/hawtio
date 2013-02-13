@@ -6,6 +6,19 @@ module Wiki {
                     when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
                     when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'});
+
+            // TODO this is a dirty hack until AngularJS supports catch-all / wildcard / regex paths!
+            var numberOfPaths = 10;
+            for (var max = 1; max <= numberOfPaths; max++) {
+              var path = ":path0";
+              for (var i = 1; i <= max; i++) {
+                path += "/:path" + i;
+              }
+              $routeProvider.
+                      when('/wiki/view/' + path, {templateUrl: 'app/wiki/html/viewPage.html'}).
+                      when('/wiki/create/' + path, {templateUrl: 'app/wiki/html/createPage.html'}).
+                      when('/wiki/edit/' + path, {templateUrl: 'app/wiki/html/editPage.html'});
+            }
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
             return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
@@ -30,6 +43,13 @@ module Wiki {
             });
             return marked;
           }).
+          factory('fileExtensionTypeRegistry',function () {
+            return {
+              "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
+              "htmlmixed": ["html", "xhtml", "htm"],
+              "xml": ["xml"]
+            };
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage) => {
 
             viewRegistry['wiki'] = "app/wiki/html/layoutWiki.html";
@@ -38,7 +58,7 @@ module Wiki {
               content: "Wiki",
               title: "View and edit wiki pages",
               isValid: () => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
-              href: () => "#/wiki/view/index"
+              href: () => "#/wiki/view/"
             });
           });
 

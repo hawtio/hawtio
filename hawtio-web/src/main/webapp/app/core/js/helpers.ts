@@ -348,4 +348,19 @@ module Core {
       $scope.$apply();
     }
   }
+
+  /**
+   * Returns the lowercase file extension of the given file name or returns the empty
+   * string if the file does not have an extension
+   */
+  export function fileExtension(name: string, defaultValue: string = "") {
+    var extension = defaultValue;
+    if (name) {
+      var idx = name.lastIndexOf(".");
+      if (idx > 0) {
+        extension = name.substring(idx + 1, name.length).toLowerCase();
+      }
+    }
+    return extension;
+  }
 }
