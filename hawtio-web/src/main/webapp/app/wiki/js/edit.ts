@@ -50,21 +50,7 @@ module Wiki {
     function saveTo(path:string) {
       var commitMessage = $scope.commitMessage || "Updated page";
       var contents = $scope.source;
-
-      // lets convert multiple lines into an array...
-      //contents = contents.split("\n");
-      if (angular.isArray(contents)) {
-        contents = contents.join("\n");
-      }
-      if (contents.indexOf('\n') >= 0) {
-        contents = contents.replace(/\n/g, '\\n');
-        // lets wrap in single quotes
-        //contents = "'" + contents + "'";
-        if (!contents.startsWith('"') && !contents.endsWith('"')) {
-          contents = '"' + contents + '"';
-        }
-      }
-      console.log("About to write contents '" + contents + "'");
+      //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage(path, contents, commitMessage, onComplete);
       goToView();
     }

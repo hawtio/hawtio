@@ -64,10 +64,13 @@
             }
 
             // Jolokia Javascript Client version
-            this.CLIENT_VERSION = "1.0.6-SNAPSHOT";
+            this.CLIENT_VERSION = "1.1.0-SNAPSHOT";
 
             // Registered requests for fetching periodically
             var jobs = [];
+
+            // Options used for every request
+            var agentOptions = {};
 
             // State of the scheduler
             var pollerIsRunning = false;
@@ -76,7 +79,7 @@
             if (typeof param === "string") {
                 param = {url:param};
             }
-            $.extend(this, DEFAULT_CLIENT_PARAMS, param);
+            $.extend(agentOptions, DEFAULT_CLIENT_PARAMS, param);
 
             // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             // Public methods
@@ -161,7 +164,7 @@
              * @return the response object if called synchronously or nothing if called for asynchronous operation.
              */
             this.request = function (request, params) {
-                var opts = $.extend({}, this, params);
+                var opts = $.extend({}, agentOptions, params);
                 assertNotNull(opts.url, "No URL given");
 
                 var ajaxParams = {};
@@ -226,7 +229,7 @@
             };
 
             // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            // Schedule related methods
+            // Scheduler related methods
 
             /**
              * Register one or more requests for periodically polling the agent along with a callback to call on receipt
@@ -236,12 +239,12 @@
              *        with the two attributes <code>success</code> and <code>error</code> for two callbacks, one for a
              *        successful call, one in case on an error. If given only a single callback function, then this
              *        function is called with all responses received as argument, regardless whether the response indicates
-             *        a success or error stat. For the second case, when an object with an success and error function is
+             *        a success or error state. For the second case, when an object with an success and error function is
              *        given, these callback are called with with a single response object as argument. If multiple requests
              *        have been registered along with this callback object, the callback is called multiple times, one for
              *        each request in the same order as the request are given.
              *        As second argument, the handle which is returned by this method is given and as third argument the index
-             *        within the list of requests
+             *        within the list of requests.
              * @param request, request, .... One or more requests to be registered for this single callback
              * @return handle which can be used for unregistering the request again or for correlation purposes in the callbacks
              */
@@ -265,7 +268,8 @@
                         callback: callback
                     };
                 } else {
-                    throw "First argument must be either a callback func " + "or an object with 'success' and 'error' attrs";
+                    throw "First argument must be either a callback func " +
+                          "or an object with 'success' and 'error' attributes";
                 }
                 job.requests = requests;
                 var idx = jobs.length;
@@ -285,6 +289,21 @@
             };
 
             /**
+             * Return an array of handles for currently registered jobs.
+             * @return Array of job handles or an empty array
+             */
+            this.jobs = function() {
+                var ret = [],
+                    len = jobs.length;
+                for (var i = 0; i < len; i++) {
+                    if (jobs[i]) {
+                        ret.push(i);
+                    }
+                }
+                return ret;
+            };
+
+            /**
              * Start the poller. The interval between two polling attempts can be optionally given or are taken from
              * the parameter <code>fetchInterval</code> given at construction time. If no interval is given at all,
              * 30 seconds is the default.
@@ -295,16 +314,16 @@
              * @param interval interval in milliseconds between two polling attempts
              */
             this.start = function(interval) {
-                interval = interval || this.fetchInterval || 30000;
+                interval = interval || agentOptions.fetchInterval || 30000;
                 if (pollerIsRunning) {
-                    if (interval === this.fetchInterval) {
+                    if (interval === agentOptions.fetchInterval) {
                         // Nothing to do
                         return;
                     }
                     // Re-start with new interval
                     this.stop();
                 }
-                this.fetchInterval = interval;
+                agentOptions.fetchInterval = interval;
                 this.timerId = setInterval(callJolokia(this,jobs), interval);
 
                 pollerIsRunning = true;
@@ -334,10 +353,9 @@
             // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         }
 
-        // Private Methods:
 
         // ========================================================================
-
+        // Private Methods:
 
         // Create a function called by a timer, which requests the registered requests
         // calling the stored callback on receipt. jolokia and jobs are put into the closure
@@ -349,7 +367,6 @@
                     i, j,
                     len = jobs.length;
                 var requests = [];
-                var opts;
                 for (i = 0; i < len; i++) {
                     var job = jobs[i];
                     if (!job) {
@@ -381,7 +398,7 @@
                         errorCbs.push(dCb.lcb);
                     }
                 }
-                opts = {
+                var opts = {
                     success: function(resp, j) {
                         return successCbs[j].apply(jolokia, [resp, j]);
                     },

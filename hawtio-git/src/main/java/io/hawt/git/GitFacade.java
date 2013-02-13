@@ -109,7 +109,6 @@ public class GitFacade implements GitFacadeMXBean {
                 File file = getFile(path);
                 file.getParentFile().mkdirs();
 
-                System.out.println("Writing " + path + " contents: " + contents);
                 IOHelper.write(file, contents);
 
                 String filePattern = getFilePattern(path);

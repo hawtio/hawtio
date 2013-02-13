@@ -1,11 +1,11 @@
 /*
- * Copyright 2009-2010 Roland Huss
+ * Copyright 2009-2013 Roland Huss
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -200,7 +200,7 @@
          * provided partially, in which case the remaining map/array is returned. The path given must
          * be already properly escaped (i.e. slashes must be escaped like <code>!/</code> and exlamation
          * marks like <code>!!</code>.
-         * See also the Jolokia Reference Manual for a more detailed discussion of inner pathes and escaping.
+         * See also the Jolokia Reference Manual for a more detailed discussion of inner paths and escaping.
          *
          *
          * @param path optional path for diving into the list

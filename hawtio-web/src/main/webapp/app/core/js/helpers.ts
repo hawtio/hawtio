@@ -123,6 +123,9 @@ function closeHandle($scope, jolokia) {
 function onSuccess(fn, options = {}) {
   options['mimeType'] = 'application/json';
   options['success'] = fn;
+  if (!options['method']) {
+    options['method'] = "POST";
+  }
   if (!options['error']) {
     options['error'] = function (response) {
       //alert("Jolokia request failed: " + response.error);
