@@ -4,6 +4,21 @@ While we don't want to be too anal about coding styles, we are trying to adopt c
 
 Here's a few of them we've found over time...
 
+## Plugin layout
+
+Each plugin should have its own directory tree with optional child folders called:
+
+* **html** for any HTML partials or layouts
+* **js** for JavaScript / TypeScript / CoffeeScript code
+* **img** for images
+* **css** for CSS / SASS / SCSS files
+
+For a plugin called **foo** Inside the **foo/js** folder we typically use a file called **fooPlugin.ts** to define the plugin. This is the file which creates an AngularJS module and defines any associated factories, services, directives, filters, routes etc.
+
+Each controller we typically put into a file; usually using a lowercase version of the controller name (usually omitting the 'Controller' suffix since other than the fooPlugin.ts file most of the source is just controllers).
+
+For general helper functions we tend to have a file called **helpers.ts**
+
 ## URI templates
 
 Its common to use URI templates to denote different views. We try follow these conventions...
