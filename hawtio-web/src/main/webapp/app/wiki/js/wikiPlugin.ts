@@ -51,9 +51,9 @@ module Wiki {
             };
           }).
           filter('fileIconClass', () => iconClass).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
 
-            viewRegistry['wiki'] = "app/wiki/html/layoutWiki.html";
+            viewRegistry['wiki'] = layoutFull;
 
             workspace.topLevelTabs.push({
               content: "Wiki",

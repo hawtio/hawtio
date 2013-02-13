@@ -3,11 +3,14 @@ module Wiki {
 
     $scope.editLink = () => Wiki.editLink(Wiki.pageId($routeParams, $location), $location);
 
-    $scope.createLink = () => Wiki.createLink(Wiki.pageId($routeParams, $location), $location);
+    $scope.createLink = () => Wiki.createLink(Wiki.pageId($routeParams, $location), $location, $scope);
 
     $scope.isActive = (href) => {
       var tidy = Core.trimLeading(href, "#");
-      return $location.path() === tidy;
+      if ($location.path() === tidy) return true;
+      var p1 = Wiki.pageIdFromURI(tidy);
+      var p2 = Wiki.pageIdFromURI($location.path());
+      return p1 === p2;
     };
 
     loadBreadcrumbs();

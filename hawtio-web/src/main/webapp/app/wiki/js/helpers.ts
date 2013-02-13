@@ -31,7 +31,7 @@ module Wiki {
     return link;
   }
 
-  export function createLink(pageId:string, $location) {
+  export function createLink(pageId:string, $location, $scope) {
     var link = null;
     if (pageId) {
       link = "#/wiki/create/" + pageId;
@@ -43,7 +43,7 @@ module Wiki {
     // we have the link so lets now remove the last path
     // or if there is no / in the path then remove the last section
     var idx = link.lastIndexOf("/");
-    if (idx > 0) {
+    if (idx > 0 && !$scope.children) {
       link = link.substring(0, idx + 1);
     }
     return link;
@@ -97,15 +97,20 @@ module Wiki {
 
     // if no $routeParams variables lets figure it out from the $location
     if (!pageId) {
-      var url = $location.path();
-      var wikiPrefix = "/wiki/";
-      if (url.startsWith(wikiPrefix)) {
-        var idx = url.indexOf("/", wikiPrefix.length + 1);
-        if (idx > 0) {
-          pageId = url.substring(idx + 1, url.length)
-        }
-      }
+      pageId = pageIdFromURI($location.path());
     }
     return pageId;
+  }
+
+  export function pageIdFromURI(url: string) {
+    var wikiPrefix = "/wiki/";
+    if (url && url.startsWith(wikiPrefix)) {
+      var idx = url.indexOf("/", wikiPrefix.length + 1);
+      if (idx > 0) {
+        return url.substring(idx + 1, url.length)
+      }
+    }
+    return null
+
   }
 }
