@@ -2,7 +2,7 @@ module Wiki {
   export function EditController($scope, $location, $routeParams,
                                  fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
-    $scope.pageId = $routeParams['page'];
+    $scope.pageId = Wiki.pageId($routeParams);
 
     // only load the source if not in create mode
     if (!$location.path().startsWith("/wiki/create")) {

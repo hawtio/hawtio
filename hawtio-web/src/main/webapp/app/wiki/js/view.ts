@@ -5,7 +5,7 @@ module Wiki {
                                       marked, fileExtensionTypeRegistry,
                                       wikiRepository: GitWikiRepository) {
 
-    $scope.pageId = $routeParams['page'];
+    $scope.pageId = Wiki.pageId($routeParams);
 
     $scope.gridOptions = {
       data: 'children',

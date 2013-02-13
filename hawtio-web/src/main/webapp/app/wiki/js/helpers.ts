@@ -59,4 +59,25 @@ module Wiki {
     });
     return answer;
   }
+
+  /**
+   * Extracts the pageId from the route parameters
+   */
+  export function pageId($routeParams) {
+    var pageId = $routeParams['page'];
+    if (!pageId) {
+      // Lets deal with the hack of AngularJS not supporting / in a path variable
+      for (var i = 0; i < 100; i++) {
+        var value = $routeParams['path' + i];
+        if (value) {
+          if (!pageId) {
+            pageId = value;
+          } else {
+            pageId += "/" + value;
+          }
+        } else break;
+      }
+    }
+    return pageId;
+  }
 }
