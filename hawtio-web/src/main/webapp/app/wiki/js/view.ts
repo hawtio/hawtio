@@ -6,9 +6,37 @@ module Wiki {
 
     $scope.pageId = $routeParams['page'];
 
+
+
+    $scope.gridOptions = {
+      data: 'children',
+      columnDefs: [
+        {
+          field: 'name',
+          displayName: 'Name',
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/view{{row.getProperty(' + "'path'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+        },
+        {
+          field: 'lastModified',
+          displayName: 'Modified'
+        },
+        {
+          field: 'length',
+          displayName: 'Size'
+        }
+      ]
+    };
+
+
+
+
     wikiRepository.getPage($scope.pageId, (details) => {
       var contents = details.text;
-      // TODO - if direcctory then include the directory page...
+
+      $scope.children = details.children;
+      if (!details.directory) {
+        $scope.childen = null;
+      }
 
       var name = $scope.pageId;
       var extension = "";
