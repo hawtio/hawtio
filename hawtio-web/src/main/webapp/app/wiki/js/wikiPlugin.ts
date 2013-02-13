@@ -50,6 +50,7 @@ module Wiki {
               "xml": ["xml"]
             };
           }).
+          filter('fileIconClass', () => iconClass).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage) => {
 
             viewRegistry['wiki'] = "app/wiki/html/layoutWiki.html";

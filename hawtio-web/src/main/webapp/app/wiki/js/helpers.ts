@@ -60,6 +60,22 @@ module Wiki {
     return answer;
   }
 
+
+  export function iconClass(row) {
+    var name = row.getProperty("name");
+    var extension = Core.fileExtension(name, "markdown");
+    var directory = row.getProperty("directory");
+    if (directory) {
+      return "icon-folder-close";
+    }
+    if ("xml" === extension) {
+      return "icon-cog";
+    }
+    // TODO could we use different icons for markdown v xml v html
+    return "icon-file-alt";
+  }
+
+
   /**
    * Extracts the pageId from the route parameters
    */
