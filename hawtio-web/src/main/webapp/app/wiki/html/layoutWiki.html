@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs" ng-controller="Wiki.NavBarController">
-  <li ng-class='{active : isActive("/wiki/view/")}'>
-    <a ng-href="#/wiki/view/{{hash}}">
-      Home
+  <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+    <a ng-href="{{link.href}}{{hash}}">
+      {{link.name}}
     </a>
   </li>
 <!--

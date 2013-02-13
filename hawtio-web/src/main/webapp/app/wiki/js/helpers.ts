@@ -79,7 +79,7 @@ module Wiki {
   /**
    * Extracts the pageId from the route parameters
    */
-  export function pageId($routeParams) {
+  export function pageId($routeParams, $location) {
     var pageId = $routeParams['page'];
     if (!pageId) {
       // Lets deal with the hack of AngularJS not supporting / in a path variable
@@ -92,6 +92,18 @@ module Wiki {
             pageId += "/" + value;
           }
         } else break;
+      }
+    }
+
+    // if no $routeParams variables lets figure it out from the $location
+    if (!pageId) {
+      var url = $location.path();
+      var wikiPrefix = "/wiki/";
+      if (url.startsWith(wikiPrefix)) {
+        var idx = url.indexOf("/", wikiPrefix.length + 1);
+        if (idx > 0) {
+          pageId = url.substring(idx + 1, url.length)
+        }
       }
     }
     return pageId;

@@ -1,11 +1,11 @@
-
 module Wiki {
+
   export function ViewController($scope, $location, $routeParams,
                                       workspace:Workspace,
                                       marked, fileExtensionTypeRegistry,
                                       wikiRepository: GitWikiRepository) {
 
-    $scope.pageId = Wiki.pageId($routeParams);
+    $scope.pageId = Wiki.pageId($routeParams, $location);
 
     $scope.gridOptions = {
       data: 'children',
