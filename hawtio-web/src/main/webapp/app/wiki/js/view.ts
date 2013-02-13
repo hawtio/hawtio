@@ -39,9 +39,11 @@ module Wiki {
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
-
     wikiRepository.getPage($scope.pageId, (details) => {
       var contents = details.text;
+      $scope.directory = details.directory;
+
+      console.log("directory is " + $scope.directory);
 
       $scope.children = details.children;
       if (!details.directory) {
