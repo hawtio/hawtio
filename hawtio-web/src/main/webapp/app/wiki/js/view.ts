@@ -14,15 +14,18 @@ module Wiki {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/view{{row.getProperty(' + "'path'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/view{{row.getProperty(' + "'path'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+          cellFilter: ""
         },
         {
           field: 'lastModified',
-          displayName: 'Modified'
+          displayName: 'Modified',
+          cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
         },
         {
           field: 'length',
-          displayName: 'Size'
+          displayName: 'Size',
+          cellFilter: "number"
         }
       ]
     };
