@@ -17,6 +17,8 @@
  */
 package io.hawt.git;
 
+import org.eclipse.jgit.revwalk.RevCommit;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -35,10 +37,27 @@ public interface GitFacadeMXBean {
     void remove(String branch, String path, String commitMessage,
                 String authorName, String authorEmail);
 
-
     // TODO
     // void move(String branch, String oldPath, String newPath);
-    //List<FileInfo> contents(String path);
+
+    String getHEAD();
+
+    /**
+     * Return the history of the repository or a specific directory or file path
+     */
+    List<CommitInfo> history(String objectId, String path, int limit, int pageOffset, boolean showRemoteRefs, int itemsPerPage);
+
+    /**
+     * Returns the commit log
+     */
+    List<CommitInfo> log(String objectId,
+                         String path, int limit, int pageOffset, boolean showRemoteRefs, int itemsPerPage);
+
+    /**
+     * Get the contents of a blobPath for a given commit objectId
+     */
+    String getContent(String objectId, String blobPath);
+
 
 
 }

@@ -25,7 +25,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -108,6 +107,26 @@ public class GitFacadeTest {
             // expected exception!
         }
         assertNull("Should not find any data", shouldFail);
+
+        // now lets find out the log.
+        String[] paths = {null, readMePath, anotherPath};
+        for (String path : paths) {
+            String name = path;
+            if (name != null && name.startsWith("/")) {
+                name = name.substring(1);
+            }
+            List<CommitInfo> log = git.history(null, name, 0, 0, true, 0);
+            System.out.println("Showing commits for path " + name);
+            for (CommitInfo info : log) {
+                System.out.println("  " + info);
+
+                if (path != null) {
+                    String content = git.getContent(info.getName(), name);
+                    System.out.println("    = " + content);
+                }
+            }
+            System.out.println();
+        }
     }
 
     private List<FileInfo> assertReadDirectory(String path) throws IOException {
