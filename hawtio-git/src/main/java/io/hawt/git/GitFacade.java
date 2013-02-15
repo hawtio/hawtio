@@ -95,6 +95,13 @@ public class GitFacade implements GitFacadeMXBean {
         }
     }
 
+    public ObjectName getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(ObjectName objectName) {
+        this.objectName = objectName;
+    }
 
     /**
      * Reads the file contents of the given path
@@ -190,9 +197,7 @@ public class GitFacade implements GitFacadeMXBean {
             // TODO not sure if this is the right String we should use for the sub module stuff...
             String repositoryName = getConfigDirectory().getPath();
 
-            if (objectId == null) {
-                objectId = getHEAD();
-            }
+            objectId = defaultObjectId(objectId);
             RevCommit commit = JGitUtils.getCommit(r, objectId);
             List<PathModel.PathChangeModel> paths = JGitUtils.getFilesInCommit(r, commit);
 
@@ -312,9 +317,7 @@ public class GitFacade implements GitFacadeMXBean {
             // TODO not sure if this is the right String we should use for the sub module stuff...
             String repositoryName = getConfigDirectory().getPath();
 
-            if (objectId == null) {
-                objectId = getHEAD();
-            }
+            objectId = defaultObjectId(objectId);
 
             final Map<ObjectId, List<RefModel>> allRefs = JGitUtils.getAllRefs(r, showRemoteRefs);
             List<RevCommit> commits;
@@ -353,12 +356,17 @@ public class GitFacade implements GitFacadeMXBean {
 
     @Override
     public String getContent(String objectId, String blobPath) {
-        if (objectId == null) {
-            objectId = getHEAD();
-        }
+        objectId = defaultObjectId(objectId);
         Repository r = git.getRepository();
         RevCommit commit = JGitUtils.getCommit(r, objectId);
         return JGitUtils.getStringContent(r, commit.getTree(), blobPath, encodings);
+    }
+
+    protected String defaultObjectId(String objectId) {
+        if (objectId == null || objectId.trim().length() == 0) {
+            objectId = getHEAD();
+        }
+        return objectId;
     }
 
     protected String getShortCommitHash(String name) {
@@ -460,16 +468,17 @@ public class GitFacade implements GitFacadeMXBean {
     public void initialiseGitRepo() throws IOException, GitAPIException {
         File confDir = getConfigDirectory();
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repository = builder.setGitDir(confDir)
-                .readEnvironment() // scan environment GIT_* variables
-                .findGitDir() // scan up the file system tree
-                .build();
-
-        if (!new File(confDir, ".git").exists()) {
+        File gitDir = new File(confDir, ".git");
+        if (!gitDir.exists()) {
             InitCommand initCommand = Git.init();
             initCommand.setDirectory(confDir);
             git = initCommand.call();
         } else {
+            Repository repository = builder.setGitDir(gitDir)
+                    .readEnvironment() // scan environment GIT_* variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
+
             git = new Git(repository);
         }
     }

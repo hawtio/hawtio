@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -111,10 +112,7 @@ public class GitFacadeTest {
         // now lets find out the log.
         String[] paths = {null, readMePath, anotherPath};
         for (String path : paths) {
-            String name = path;
-            if (name != null && name.startsWith("/")) {
-                name = name.substring(1);
-            }
+            String name = trimLeadingSlash(path);
             List<CommitInfo> log = git.history(null, name, 0, 0, true, 0);
             System.out.println("Showing commits for path " + name);
             for (CommitInfo info : log) {
@@ -127,6 +125,32 @@ public class GitFacadeTest {
             }
             System.out.println();
         }
+
+        // now lets make a new git facade to check we can work with existing repos
+        GitFacade anotherGit = new GitFacade();
+        anotherGit.setObjectName(new ObjectName("io.hawt.git:type=GitFacadePart2"));
+        anotherGit.setConfigDirectory(git.getConfigDirectory());
+        anotherGit.init();
+
+        String path = trimLeadingSlash(anotherPath);
+        List<CommitInfo> log = git.history(null, path, 0, 0, true, 0);
+        assertTrue("should have more than one commit info", log.size() > 0);
+
+        System.out.println("Showing commits for path " + path);
+        for (CommitInfo info : log) {
+            System.out.println("  " + info);
+
+            String content = git.getContent(info.getName(), path);
+            System.out.println("    = " + content);
+        }
+    }
+
+    public static String trimLeadingSlash(String path) {
+        String name = path;
+        if (name != null && name.startsWith("/")) {
+            name = name.substring(1);
+        }
+        return name;
     }
 
     private List<FileInfo> assertReadDirectory(String path) throws IOException {
