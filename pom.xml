@@ -208,8 +208,6 @@
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-karaf</module>
     <module>hawtio-karaf-itest</module>
-    <module>hawtio-plugin-registry</module>
-    <module>hawtio-plugin-examples</module>
     <module>sample</module>
   </modules>
 
@@ -230,6 +228,10 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -276,8 +278,15 @@
     </plugins>
   </build>
 
-
   <profiles>
+    <profile>
+      <id>plugin-examples</id>
+      <modules>
+        <module>hawtio-plugin-registry</module>
+        <module>hawtio-plugin-examples</module>
+      </modules>
+    </profile>
+
     <profile>
       <id>snapshot</id>
       <properties>
