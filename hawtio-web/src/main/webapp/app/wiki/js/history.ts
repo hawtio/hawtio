@@ -41,12 +41,16 @@ module Wiki {
       ]
     };
 
-    updateView();
-
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateView, 50);
     });
+
+    $scope.canRevert = () => {
+      return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
+    };
+
+    updateView();
 
     function updateView() {
       var objectId = "";
