@@ -14,7 +14,7 @@ Its a [pluggable](http://hawt.io/developers/plugins.html) management console for
 
 At first a git based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files or Drools rulebases etc.
 
-From a hawtio perpsective though, a HTML or markdown wiki page is really an AngularJS html partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
+From a hawtio perpsective though its wiki pages can be HTML or markdown and then be an AngularJS html partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
 
 This lets us use HTML & markdown files to define custom views using HTML directives (custom tags) from any any [hawtio plugins](http://hawt.io/developers/plugins.html). Hopefully over time we can build a large library of HTML directives that folks can use inside html or markdown files. e.g. to show attribute values from mbeans in real time or charts or show a panel from a dashboard etc. Then folks can make their own mashups and happy pages showing just the information they want.
 
