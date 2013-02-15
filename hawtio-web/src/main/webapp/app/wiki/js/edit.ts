@@ -3,10 +3,11 @@ module Wiki {
                                  fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
+    $scope.objectId = $routeParams["objectId"];
 
     // only load the source if not in create mode
     if (!$location.path().startsWith("/wiki/create")) {
-      wikiRepository.getPage($scope.pageId, (details) => {
+      wikiRepository.getPage($scope.pageId, $scope.objectId, (details) => {
         var contents = details.text;
         $scope.source = contents;
         Core.$apply($scope);

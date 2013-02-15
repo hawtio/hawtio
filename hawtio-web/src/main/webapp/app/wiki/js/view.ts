@@ -3,6 +3,7 @@ module Wiki {
   export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
+    $scope.objectId = $routeParams["objectId"];
 
     $scope.gridOptions = {
       data: 'children',
@@ -43,7 +44,7 @@ module Wiki {
       return (pageName) ? Wiki.editLink(pageName, $location) : null;
     };
 
-    $scope.historyLink = "#/wiki/history/" +$scope.pageId;
+    $scope.historyLink = "#/wiki/history/" + $scope.pageId;
 
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -67,41 +68,41 @@ module Wiki {
     }
 
     function updateView() {
-      wikiRepository.getPage($scope.pageId, (details) => {
-        var contents = details.text;
-        $scope.directory = details.directory;
+      wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+    }
 
-        $scope.children = details.children;
-        if (!details.directory) {
-          $scope.childen = null;
+    function onFileDetails(details) {
+      var contents = details.text;
+      $scope.directory = details.directory;
 
+      $scope.children = details.children;
+      if (!details.directory) {
+        $scope.childen = null;
+      }
 
-        }
+      $scope.html = null;
+      $scope.source = null;
+      $scope.readMePath = null;
 
-        $scope.html = null;
-        $scope.source = null;
-        $scope.readMePath = null;
-
-        if ($scope.children) {
-          // if we have a readme then lets render it...
-          var item = $scope.children.find((info) => {
-            var name = (info.name || "").toLowerCase();
-            var ext = fileExtension(name);
-            return name && ext && (name.startsWith("readme.") || name === "readme");
+      if ($scope.children) {
+        // if we have a readme then lets render it...
+        var item = $scope.children.find((info) => {
+          var name = (info.name || "").toLowerCase();
+          var ext = fileExtension(name);
+          return name && ext && (name.startsWith("readme.") || name === "readme");
+        });
+        if (item) {
+          var pageName = item.path;
+          $scope.readMePath = pageName;
+          wikiRepository.getPage(pageName, $scope.objectId, (readmeDetails) => {
+            viewContents(pageName, readmeDetails.text);
           });
-          if (item) {
-            var pageName = item.path;
-            $scope.readMePath = pageName;
-            wikiRepository.getPage(pageName, (readmeDetails) => {
-              viewContents(pageName, readmeDetails.text);
-            });
-          }
-        } else {
-          var pageName = $scope.pageId;
-          viewContents(pageName, contents);
         }
-        Core.$apply($scope);
-      });
+      } else {
+        var pageName = $scope.pageId;
+        viewContents(pageName, contents);
+      }
+      Core.$apply($scope);
     }
   }
 }

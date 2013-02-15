@@ -4,6 +4,7 @@ module Wiki {
           config(($routeProvider) => {
             $routeProvider.
                     when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/version/:page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
                     when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'}).
                     when('/wiki/history/:page', {templateUrl: 'app/wiki/html/history.html'});
@@ -17,6 +18,7 @@ module Wiki {
               }
               $routeProvider.
                       when('/wiki/view/' + path, {templateUrl: 'app/wiki/html/viewPage.html'}).
+                      when('/wiki/version' + path + '/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki/create/' + path, {templateUrl: 'app/wiki/html/createPage.html'}).
                       when('/wiki/edit/' + path, {templateUrl: 'app/wiki/html/editPage.html'}).
                       when('/wiki/history' + path, {templateUrl: 'app/wiki/html/history.html'});

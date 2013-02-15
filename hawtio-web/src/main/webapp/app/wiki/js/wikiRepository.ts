@@ -9,26 +9,39 @@ module Wiki {
   export class GitWikiRepository implements WikiRepository {
     public directoryPrefix = "wiki/";
 
-    constructor(public factoryMethod: () => Git.GitRepository) {
+    constructor(public factoryMethod:() => Git.GitRepository) {
     }
 
-    public getPage(path:string, fn) {
-      var fullPath = this.getPath(path);
-      this.git().read(fullPath, (details) => {
-        // lets fix up any paths to be relative to the wiki
-        var children = details.children;
-        angular.forEach(children, (child) => {
-          var path = child.path;
-          if (path) {
-            var directoryPrefix = "/" + this.directoryPrefix;
-            if (path.startsWith(directoryPrefix)) {
-              path = "/" + path.substring(directoryPrefix.length);
-              child.path = path;
-            }
-          }
+    public getPage(path:string, objectId:string, fn) {
+      if (objectId) {
+        var blobPath = this.getLogPath(path);
+        // TODO deal with versioned directories?
+        this.git().getContent(objectId, blobPath, (content) => {
+          var details = {
+            text: content,
+            directory: false
+          };
+          fn(details);
         });
-        fn(details);
-      });
+      } else {
+        var fullPath = this.getPath(path);
+        this.git().read(fullPath, (details) => {
+
+          // lets fix up any paths to be relative to the wiki
+          var children = details.children;
+          angular.forEach(children, (child) => {
+            var path = child.path;
+            if (path) {
+              var directoryPrefix = "/" + this.directoryPrefix;
+              if (path.startsWith(directoryPrefix)) {
+                path = "/" + path.substring(directoryPrefix.length);
+                child.path = path;
+              }
+            }
+          });
+          fn(details);
+        });
+      }
     }
 
     public putPage(path:string, contents:string, commitMessage:string, fn) {
@@ -50,8 +63,8 @@ module Wiki {
       return (directoryPrefix) ? directoryPrefix + path : path;
     }
 
-    public getLogPath(path: string) {
-     return Core.trimLeading(this.getPath(path), "/");
+    public getLogPath(path:string) {
+      return Core.trimLeading(this.getPath(path), "/");
     }
 
     /**
@@ -77,7 +90,6 @@ module Wiki {
       var fullPath = this.getLogPath(blobPath);
       this.git().getContent(objectId, fullPath, fn);
     }
-
 
 
     public git() {
