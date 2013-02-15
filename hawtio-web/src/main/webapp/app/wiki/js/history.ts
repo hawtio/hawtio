@@ -3,10 +3,19 @@ module Wiki {
   export function HistoryController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
+    $scope.selectedItems = [];
+    $scope.searchText = "";
+
+    // TODO we could configure this?
+    $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
 
     $scope.gridOptions = {
       data: 'logs',
-      displayFooter: false,
+      showFilter: false,
+      selectedItems: $scope.selectedItems,
+      filterOptions: {
+        filterText: "searchText"
+      },
       columnDefs: [
         {
           field: 'commitHashText',
@@ -17,7 +26,7 @@ module Wiki {
         {
           field: 'date',
           displayName: 'Modified',
-          cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
+          cellFilter: "date: dateFormat"
         },
         {
           field: 'author',
