@@ -70,6 +70,20 @@
 
 <p>Its a <a href="http://hawt.io/developers/plugins.html">pluggable</a> management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric etc) and any kind of Java technology and middleware.</p>
 
+<h3 id = "Why_does_hawtio_have_its_own_wiki_">Why does hawtio have its own wiki?</h3>
+
+<p>At first a git based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files or Drools rulebases etc.</p>
+
+<p>From a hawtio perpsective though its wiki pages can be HTML or markdown and then be an AngularJS html partial. So it can include JavaScript widgets; or it can include <a href="http://docs.angularjs.org/guide/directive">AngularJS directives</a>.</p>
+
+<p>This lets us use HTML <span class="amp">&amp;</span> markdown files to define custom views using HTML directives (custom tags) from any any <a href="http://hawt.io/developers/plugins.html">hawtio plugins</a>. Hopefully over time we can build a large library of HTML directives that folks can use inside html or markdown files. e.g. to show attribute values from mbeans in real time or charts or show a panel from a dashboard etc. Then folks can make their own mashups and happy pages showing just the information they want.</p>
+
+<p>So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information <span class="amp">&amp;</span> widgets you like in whatever layout you like. You have full control over the content and layout of the page!</p>
+
+<p>Here are some <a href="https://github.com/hawtio/hawtio/issues/103">sample</a> <a href="https://github.com/hawtio/hawtio/issues/62">issues</a> on this if you want to help!</p>
+
+<p>So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views - all the content of the wiki is audited, versioned and stored in git so its easy to see who changed what, when and to roll back changes etc.</p>
+
 <h3 id = "How_do_I_configure_hawtio">How do I configure hawtio</h3>
 
 <p>Mostly hawtio just works. However please check out the <a href="https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md">Configuration Guide</a> to see what kinds of things you can configure; via system properties, environment variables or Dependency Injection.</p>
