@@ -136,7 +136,7 @@ public class GitFacadeTest {
         List<CommitInfo> log = git.history(null, path, 0, 0, true, 0);
         assertTrue("should have more than one commit info", log.size() > 0);
 
-        System.out.println("Showing commits for path " + path);
+        System.out.println("Using existing repo and showing commits for path " + path);
         for (CommitInfo info : log) {
             System.out.println("  " + info);
 
