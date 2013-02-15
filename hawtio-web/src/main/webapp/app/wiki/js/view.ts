@@ -53,19 +53,11 @@ module Wiki {
     });
 
     function viewContents(pageName, contents) {
-      if (contents) {
-        var format = contents.format;
-        if (format) {
-          $scope.format = format;
-        }
-      }
-      console.log("format is '" + $scope.format + "'");
-
       $scope.sourceView = null;
-      if ("markdown" === format) {
+      if ("markdown" === $scope.format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
-      } else if (format && format.startsWith("html")) {
+      } else if ($scope.format && $scope.format.startsWith("html")) {
         $scope.html = contents
       } else {
         $scope.source = contents;
@@ -87,6 +79,14 @@ module Wiki {
     function onFileDetails(details) {
       var contents = details.text;
       $scope.directory = details.directory;
+
+      if (details && details.format) {
+        $scope.format = details.format;
+      } else {
+        $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+      }
+      $scope.codeMirrorOptions.mode.name = $scope.format;
+      console.log("format is '" + $scope.format + "'");
 
       $scope.children = details.children;
       if (!details.directory) {
