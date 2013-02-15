@@ -65,16 +65,16 @@ module Wiki {
     };
 
     $scope.diff = () => {
-      var objectId = "";
+      var defaultValue = " ";
+      var objectId = defaultValue;
       if ($scope.selectedItems.length > 0) {
-        objectId = $scope.selectedItems[0].name || "";
+        objectId = $scope.selectedItems[0].name || defaultValue;
       }
-      var baseObjectId = "";
+      var baseObjectId = defaultValue;
       if ($scope.selectedItems.length > 1) {
-        baseObjectId = $scope.selectedItems[1].name || "";
+        baseObjectId = $scope.selectedItems[1].name ||defaultValue;
       }
-      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
-      console.log("Viewing path: " + path);
+      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId + "/";
       $location.path(path);
     };
 
