@@ -1,4 +1,4 @@
-<div ng-controller="Wiki.ViewController">
+<div ng-controller="Wiki.HistoryController">
   <div ng-controller="Wiki.NavBarController">
     <ul class="nav nav-tabs">
       <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
@@ -23,16 +23,8 @@
   </div>
 
   <div class="form-horizontal">
-    <div ng-hide="!children">
-      <div class="row-fluid">
-        <div class="gridStyle" ng-grid="gridOptions"></div>
-      </div>
+    <div class="row-fluid">
+      <div class="gridStyle" ng-grid="gridOptions"></div>
     </div>
-
-    <div ng-hide="!html">
-      <div ng-bind-html-unsafe="html"></div>
-    </div>
-
-    <div ng-include="sourceView"></div>
   </div>
-</div>
+

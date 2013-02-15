@@ -5,7 +5,8 @@ module Wiki {
             $routeProvider.
                     when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
-                    when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'});
+                    when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'}).
+                    when('/wiki/history/:page', {templateUrl: 'app/wiki/html/history.html'});
 
             // TODO this is a dirty hack until AngularJS supports catch-all / wildcard / regex paths!
             var numberOfPaths = 10;
@@ -17,7 +18,8 @@ module Wiki {
               $routeProvider.
                       when('/wiki/view/' + path, {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki/create/' + path, {templateUrl: 'app/wiki/html/createPage.html'}).
-                      when('/wiki/edit/' + path, {templateUrl: 'app/wiki/html/editPage.html'});
+                      when('/wiki/edit/' + path, {templateUrl: 'app/wiki/html/editPage.html'}).
+                      when('/wiki/history' + path, {templateUrl: 'app/wiki/html/history.html'});
             }
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
@@ -32,14 +34,14 @@ module Wiki {
               sanitize: true,
               smartLists: true,
               langPrefix: 'language-'
-/*
-              highlight: function(code, lang) {
-                if (lang === 'js') {
-                  return highlighter.javascript(code);
-                }
-                return code;
-              }
-*/
+              /*
+               highlight: function(code, lang) {
+               if (lang === 'js') {
+               return highlighter.javascript(code);
+               }
+               return code;
+               }
+               */
             });
             return marked;
           }).
@@ -51,7 +53,7 @@ module Wiki {
               "properties": ["properties"]
             };
           }).
-          filter('fileIconClass', () => iconClass).
+          filter('fileIconClass',() => iconClass).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
 
             viewRegistry['wiki'] = layoutFull;

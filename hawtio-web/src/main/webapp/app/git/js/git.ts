@@ -21,15 +21,32 @@ module Git {
      */
             remove: (path:string, commitMessage:string, fn)  => void;
 
+
+    /**
+     * returns the history of a directory or file
+     */
+            history: (objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) => void;
+
+    /**
+     * Returns the commit log
+     */
+            log: (objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) => void;
+
+    /**
+     * Get the contents of a blobPath for a given commit objectId
+     */
+            getContent: (objectId:string, blobPath:string, fn) => void;
+
+
     /**
      * Returns the user name
      */
-    getUserName: () => string;
+            getUserName: () => string;
 
     /**
      * Returns the user's email address
      */
-    getUserEmail: () => string;
+            getUserEmail: () => string;
   }
 
   /**
@@ -58,13 +75,35 @@ module Git {
       this.jolokia.execute(this.mbean, "remove", this.branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
+    /**
+     * Return the history of the repository or a specific directory or file path
+     */
+    public history(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) {
+      this.jolokia.execute(this.mbean, "history", objectId, path, limit, pageOffset, showRemoteRefs, itemsPerPage, onSuccess(fn));
+    }
+
+    /**
+     * Returns the commit log
+     */
+    public log(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) {
+      this.jolokia.execute(this.mbean, "log", objectId, path, limit, pageOffset, showRemoteRefs, itemsPerPage, onSuccess(fn));
+    }
+
+    /**
+     * Get the contents of a blobPath for a given commit objectId
+     */
+    public getContent(objectId:string, blobPath:string, fn) {
+      this.jolokia.execute(this.mbean, "getContent", objectId, blobPath, onSuccess(fn));
+    }
+
+
     // TODO move...
 
-    public getUserName(): string {
+    public getUserName():string {
       return this.localStorage["gitUserName"] || "anonymous";
     }
 
-    public getUserEmail(): string {
+    public getUserEmail():string {
       return this.localStorage["gitUserEmail"] || "anonymous@gmail.com";
     }
   }

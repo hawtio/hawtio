@@ -50,6 +50,36 @@ module Wiki {
       return (directoryPrefix) ? directoryPrefix + path : path;
     }
 
+    public getLogPath(path: string) {
+     return Core.trimLeading(this.getPath(path), "/");
+    }
+
+    /**
+     * Return the history of the repository or a specific directory or file path
+     */
+    public history(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) {
+      var fullPath = this.getLogPath(path);
+      this.git().history(objectId, fullPath, limit, pageOffset, showRemoteRefs, itemsPerPage, fn);
+    }
+
+    /**
+     * Returns the commit log
+     */
+    public log(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) {
+      var fullPath = this.getLogPath(path);
+      this.git().log(objectId, fullPath, limit, pageOffset, showRemoteRefs, itemsPerPage, fn);
+    }
+
+    /**
+     * Get the contents of a blobPath for a given commit objectId
+     */
+    public getContent(objectId:string, blobPath:string, fn) {
+      var fullPath = this.getLogPath(blobPath);
+      this.git().getContent(objectId, fullPath, fn);
+    }
+
+
+
     public git() {
       var repository = this.factoryMethod();
       if (!repository) {

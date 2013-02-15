@@ -39,9 +39,12 @@ module Wiki {
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
     $scope.editLink = () => {
-      var pageName = ($scope.directory) ? $scope.readMePath : Wiki.pageId($routeParams, $location);
+      var pageName = ($scope.directory) ? $scope.readMePath : $scope.pageId;
       return (pageName) ? Wiki.editLink(pageName, $location) : null;
     };
+
+    $scope.historyLink = "#/wiki/history/" +$scope.pageId;
+
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -71,6 +74,8 @@ module Wiki {
         $scope.children = details.children;
         if (!details.directory) {
           $scope.childen = null;
+
+
         }
 
         $scope.html = null;

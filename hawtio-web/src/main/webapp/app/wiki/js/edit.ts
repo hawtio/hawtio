@@ -48,7 +48,7 @@ module Wiki {
     }
 
     function saveTo(path:string) {
-      var commitMessage = $scope.commitMessage || "Updated page";
+      var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
       var contents = $scope.source;
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage(path, contents, commitMessage, onComplete);
