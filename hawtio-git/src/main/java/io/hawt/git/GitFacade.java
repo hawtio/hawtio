@@ -21,6 +21,7 @@ import com.gitblit.Constants;
 import com.gitblit.models.PathModel;
 import com.gitblit.models.RefModel;
 import com.gitblit.models.SubmoduleModel;
+import com.gitblit.utils.DiffUtils;
 import com.gitblit.utils.JGitUtils;
 import com.gitblit.utils.StringUtils;
 import io.hawt.io.IOHelper;
@@ -147,6 +148,15 @@ public class GitFacade implements GitFacadeMXBean {
                 return commit.call();
             }
         });
+    }
+
+    @Override
+    public void revertTo(final String branch, final String objectId, final String blobPath, final String commitMessage,
+                         final String authorName, final String authorEmail) {
+        String contents = getContent(objectId, blobPath);
+        if (contents != null) {
+            write(branch, blobPath, commitMessage, authorName, authorEmail, contents);
+        }
     }
 
     protected static String getFilePattern(String path) {
@@ -352,6 +362,25 @@ public class GitFacade implements GitFacadeMXBean {
         } catch (Exception e) {
             throw new RuntimeIOException(e);
         }
+    }
+
+    @Override
+    public String diff(String objectId, String baseObjectId, String blobPath) {
+        Repository r = git.getRepository();
+        objectId = defaultObjectId(objectId);
+        RevCommit commit = JGitUtils.getCommit(r, objectId);
+
+        DiffUtils.DiffOutputType diffType = DiffUtils.DiffOutputType.PLAIN;
+        String diff;
+        if (StringUtils.isEmpty(baseObjectId)) {
+            // use first parent
+            diff = DiffUtils.getDiff(r, commit, blobPath, diffType);
+        } else {
+            // base commit specified
+            RevCommit baseCommit = JGitUtils.getCommit(r, baseObjectId);
+            diff = DiffUtils.getDiff(r, baseCommit, commit, blobPath, diffType);
+        }
+        return diff;
     }
 
     @Override

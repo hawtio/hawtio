@@ -57,5 +57,15 @@ public interface GitFacadeMXBean {
     String getContent(String objectId, String blobPath);
 
 
+    /**
+     * Performs a diff of the latest or a specifc version of the given blobPath
+     * against either the previous or a given baseObjectId
+     */
+    String diff(String objectId, String baseObjectId, String blobPath);
 
+    /**
+     * Reverts the file to a previous value
+     */
+    void revertTo(String branch, String objectId, String blobPath, String commitMessage,
+                  String authorName, String authorEmail);
 }

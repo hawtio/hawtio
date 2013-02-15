@@ -80,10 +80,8 @@ public class GitFacadeTest {
         assertEquals("untracked size", 0, status.getUntracked().size());
 
         // now lets read the files...
-        String readMeActual = assertReadFileContents(readMePath);
-        assertEquals("content of " + readMePath, readMeContent, readMeActual);
-        String anotherActual = assertReadFileContents(anotherPath);
-        assertEquals("content of " + anotherPath, anotherContent, anotherActual);
+        String readMeActual = assertReadFileContents(readMePath, readMeContent);
+        String anotherActual = assertReadFileContents(anotherPath, anotherContent);
 
         System.out.println(readMePath + " = " + readMeActual);
         System.out.println(anotherPath + " = " + anotherActual);
@@ -108,6 +106,28 @@ public class GitFacadeTest {
             // expected exception!
         }
         assertNull("Should not find any data", shouldFail);
+
+
+        // lets update the file
+        String readMeContent2 = "Goodbye world!";
+        git.write(branch, readMePath, "Updating the content to goodbye", authorName, authorEmail, readMeContent2);
+        assertReadFileContents(readMePath, readMeContent2);
+
+        // now lets do a diff on this file
+        String blobPath = trimLeadingSlash(readMePath);
+        String diff = git.diff(null, null, blobPath);
+        assertNotNull("Should have returned a diff!");
+        System.out.println("Diff of " + readMePath);
+        System.out.println(diff);
+        System.out.println();
+
+        // now lets try find the history and revert to the first version
+        List<CommitInfo> readMeHistory = git.history(null, blobPath, 0, 0, false, 0);
+        assertTrue("Should have at least 2 items in the history but got " + readMeHistory.size(), readMeHistory.size() >= 2);
+        String objectId = readMeHistory.get(readMeHistory.size() - 1).getName();
+        git.revertTo(branch, objectId, blobPath, "Reverting to first version " + objectId, authorName, authorEmail);
+        assertReadFileContents(readMePath, readMeContent);
+
 
         // now lets find out the log.
         String[] paths = {null, readMePath, anotherPath};
@@ -143,6 +163,12 @@ public class GitFacadeTest {
             String content = git.getContent(info.getName(), path);
             System.out.println("    = " + content);
         }
+    }
+
+    protected String assertReadFileContents(String path, String expectedContents) throws IOException {
+        String readMeActual = assertReadFileContents(path);
+        assertEquals("content of " + path, expectedContents, readMeActual);
+        return readMeActual;
     }
 
     public static String trimLeadingSlash(String path) {
