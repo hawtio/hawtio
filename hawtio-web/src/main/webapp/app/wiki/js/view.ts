@@ -30,11 +30,11 @@ module Wiki {
 
     updateView();
 
-    var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+    $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var options = {
       readOnly: true,
       mode: {
-        name: format
+        name: $scope.format
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
@@ -53,7 +53,14 @@ module Wiki {
     });
 
     function viewContents(pageName, contents) {
-      console.log("format is '" + format + "'");
+      if (contents) {
+        var format = contents.format;
+        if (format) {
+          $scope.format = format;
+        }
+      }
+      console.log("format is '" + $scope.format + "'");
+
       $scope.sourceView = null;
       if ("markdown" === format) {
         // lets convert it to HTML
@@ -68,7 +75,13 @@ module Wiki {
     }
 
     function updateView() {
-      wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+      var path = $location.path();
+      if (path && path.startsWith("/wiki/diff")) {
+        var baseObjectId = $routeParams["baseObjectId"];
+        wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
+      } else {
+        wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+      }
     }
 
     function onFileDetails(details) {

@@ -37,6 +37,10 @@ module Git {
      */
             getContent: (objectId:string, blobPath:string, fn) => void;
 
+    /**
+     * Returns the diff of this commit verses the previous or another commit
+     */
+    diff: (objectId:string, baseObjectId:string, path:string, fn) => void;
 
     /**
      * Returns the user name
@@ -87,6 +91,13 @@ module Git {
      */
     public log(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) {
       this.jolokia.execute(this.mbean, "log", objectId, path, limit, pageOffset, showRemoteRefs, itemsPerPage, onSuccess(fn));
+    }
+
+    /**
+     * Returns a diff
+     */
+    public diff(objectId:string, baseObjectId:string, path:string, fn) {
+      this.jolokia.execute(this.mbean, "diff", objectId, baseObjectId, path, onSuccess(fn));
     }
 
     /**

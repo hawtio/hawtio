@@ -44,6 +44,21 @@ module Wiki {
       }
     }
 
+    /**
+     * Performs a diff on the versions
+     */
+    public diff(objectId:string, baseObjectId: string, path:string, fn) {
+      var fullPath = this.getLogPath(path);
+      this.git().diff(objectId, baseObjectId, fullPath, (content) => {
+        var details = {
+          text: content,
+          format: "diff",
+          directory: false
+        };
+        fn(details);
+      });
+    }
+
     public putPage(path:string, contents:string, commitMessage:string, fn) {
       var fullPath = this.getPath(path);
       this.git().write(fullPath, commitMessage, contents, fn);

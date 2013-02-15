@@ -50,6 +50,20 @@ module Wiki {
       return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
     };
 
+    $scope.diff = () => {
+      var objectId = "";
+      if ($scope.selectedItems.length > 0) {
+        objectId = $scope.selectedItems[0].name || "";
+      }
+      var baseObjectId = "";
+      if ($scope.selectedItems.length > 1) {
+        baseObjectId = $scope.selectedItems[1].name || "";
+      }
+      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
+      console.log("Viewing path: " + path);
+      $location.path(path);
+    };
+
     updateView();
 
     function updateView() {
