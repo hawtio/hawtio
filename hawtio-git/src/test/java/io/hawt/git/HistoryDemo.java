@@ -74,7 +74,7 @@ public class HistoryDemo {
         for (CommitInfo info : log) {
             System.out.println("  " + info);
 
-            if (path != null && path.endsWith(".txt")) {
+            if (path != null && path.indexOf(".") > 0) {
                 String content = git.getContent(info.getName(), path);
                 System.out.println("    = " + content);
             }
@@ -83,7 +83,7 @@ public class HistoryDemo {
     }
 
     public void printLog(String path) throws IOException, GitAPIException {
-        List<CommitInfo> log = git.log(null, path, 0, 0, false, 0);
+        List<CommitInfo> log = git.log("", path, 0, 0, false, 0);
         System.out.println("Showing log for path " + path);
         for (CommitInfo info : log) {
             System.out.println("  " + info);
