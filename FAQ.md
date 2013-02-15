@@ -18,6 +18,8 @@ From a hawtio perpsective though its wiki pages can be HTML or markdown and then
 
 This lets us use HTML & markdown files to define custom views using HTML directives (custom tags) from any any [hawtio plugins](http://hawt.io/developers/plugins.html). Hopefully over time we can build a large library of HTML directives that folks can use inside html or markdown files. e.g. to show attribute values from mbeans in real time or charts or show a panel from a dashboard etc. Then folks can make their own mashups and happy pages showing just the information they want.
 
+So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now the dashboard assumes a grid layout of rectangular widgets. However with a wiki page you can choose to render whatever information & widgets you like in whatever layout you like. You have full control over the content and layout of the page!
+
 Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](https://github.com/hawtio/hawtio/issues/62) on this if you want to help!
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views - all the content of the wiki is audited, versioned and stored in git so its easy to see who changed what, when and to roll back changes etc.
