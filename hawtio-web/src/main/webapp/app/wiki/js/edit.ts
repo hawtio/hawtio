@@ -52,13 +52,9 @@ module Wiki {
       var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
       var contents = $scope.source;
       //console.log("About to write contents '" + contents + "'");
-      wikiRepository.putPage(path, contents, commitMessage, onComplete);
+      wikiRepository.putPage(path, contents, commitMessage, Wiki.onComplete);
       goToView();
     }
 
-
-    function onComplete(status) {
-      console.log("Completed operation with status: " + JSON.stringify(status));
-    }
   }
 }

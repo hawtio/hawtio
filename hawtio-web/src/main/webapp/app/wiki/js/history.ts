@@ -50,6 +50,20 @@ module Wiki {
       return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
     };
 
+    $scope.revert = () => {
+      if ($scope.selectedItems.length > 0) {
+        var objectId = $scope.selectedItems[0].name;
+        if (objectId) {
+          var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
+          wikiRepository.revertTo(objectId, $scope.pageId, commitMessage, (result) => {
+            Wiki.onComplete(result);
+            // now lets update the view
+            updateView();
+          });
+        }
+      }
+    };
+
     $scope.diff = () => {
       var objectId = "";
       if ($scope.selectedItems.length > 0) {

@@ -64,6 +64,11 @@ module Wiki {
       this.git().write(fullPath, commitMessage, contents, fn);
     }
 
+    public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {
+      var fullPath = this.getLogPath(blobPath);
+      this.git().revertTo(objectId, fullPath, commitMessage, fn);
+    }
+
     public deletePage(path:string, fn) {
       var fullPath = this.getPath(path);
       var commitMessage = "Removing wiki page " + path;

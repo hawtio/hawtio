@@ -17,6 +17,11 @@ module Git {
             write: (path:string, commitMessage:string, contents:string, fn) => void;
 
     /**
+     * Reverts to a specific version of the file
+     */
+            revertTo: (objectId:string, blobPath:string, commitMessage:string, fn) => void;
+
+    /**
      * Removes a file if it exists
      */
             remove: (path:string, commitMessage:string, fn)  => void;
@@ -40,7 +45,7 @@ module Git {
     /**
      * Returns the diff of this commit verses the previous or another commit
      */
-    diff: (objectId:string, baseObjectId:string, path:string, fn) => void;
+            diff: (objectId:string, baseObjectId:string, path:string, fn) => void;
 
     /**
      * Returns the user name
@@ -70,6 +75,13 @@ module Git {
       var authorEmail = this.getUserEmail();
 
       this.jolokia.execute(this.mbean, "write", this.branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+    }
+
+    public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {
+      var authorName = this.getUserName();
+      var authorEmail = this.getUserEmail();
+
+      this.jolokia.execute(this.mbean, "revertTo", this.branch, objectId, blobPath, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
     public remove(path:string, commitMessage:string, fn) {

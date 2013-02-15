@@ -118,4 +118,9 @@ module Wiki {
   export function fileExtension(name) {
     return Core.fileExtension(name, "markdown");
   }
+
+
+  export function onComplete(status) {
+    console.log("Completed operation with status: " + JSON.stringify(status));
+  }
 }
