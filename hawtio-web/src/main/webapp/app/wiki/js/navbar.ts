@@ -5,10 +5,14 @@ module Wiki {
 
     $scope.isActive = (href) => {
       var tidy = Core.trimLeading(href, "#");
-      if ($location.path() === tidy) return true;
-      var p1 = Wiki.pageIdFromURI(tidy);
-      var p2 = Wiki.pageIdFromURI($location.path());
-      return p1 === p2;
+      var loc = $location.path();
+      if (loc === tidy) return true;
+      if (loc.startsWith("/wiki/view") || loc.startsWith("/wiki/edit")) {
+        var p1 = Wiki.pageIdFromURI(tidy);
+        var p2 = Wiki.pageIdFromURI(loc);
+        return p1 === p2;
+      }
+      return false;
     };
 
     loadBreadcrumbs();
@@ -16,9 +20,11 @@ module Wiki {
 
     function loadBreadcrumbs() {
       var href = "#/wiki/view/";
-      $scope.breadcrumbs = [{href: href, name: "/"}];
+      $scope.breadcrumbs = [
+        {href: href, name: "/"}
+      ];
       var path = Wiki.pageId($routeParams, $location);
-      var array = path ? path.split("/"): [];
+      var array = path ? path.split("/") : [];
       angular.forEach(array, (name) => {
         if (!name.startsWith("/") && !href.endsWith("/")) {
           href += "/";
@@ -26,6 +32,30 @@ module Wiki {
         href += name;
         $scope.breadcrumbs.push({href: href, name: name});
       });
+      var loc = $location.path();
+      if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version") || loc.startsWith("/wiki/diff")) {
+        // lets add a history tab
+        $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
+      }
+      if (loc.startsWith("/wiki/version")) {
+        // lets add a version tab
+        var name = ($routeParams["objectId"] || "").substring(0, 6) || "Version";
+        $scope.breadcrumbs.push({href: "#" + loc, name: name});
+      }
+      if (loc.startsWith("/wiki/diff")) {
+        // lets add a version tab
+        var v1 = ($routeParams["objectId"] || "").substring(0, 6);
+        var v2 = ($routeParams["baseObjectId"] || "").substring(0, 6);
+        var name = "Diff";
+        if (v1) {
+          if (v2) {
+            name += " " + v1 + " " + v2;
+          } else {
+            name += " " + v1;
+          }
+        }
+        $scope.breadcrumbs.push({href: "#" + loc, name: name});
+      }
       Core.$apply($scope);
     }
   }
