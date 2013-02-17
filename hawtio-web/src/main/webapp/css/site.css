@@ -443,3 +443,28 @@ li.attr-column {
 .ngFooterTotalItems span:first-child {
   margin-right: .5em;
 }
+
+/* Start logs css */
+.logbar {
+    left: 0px;
+    background: white;
+    position: fixed;
+    width: 100%;
+    height: 70px;
+    top: 40px
+}
+
+.logbar-container {
+    margin-top: 20px;
+}
+
+.logbar-search {
+    float: left;
+    margin-left: 20px;
+}
+
+.logbar-filter {
+    float: right;
+    margin-right: 20px;
+}
+/* End logs css */

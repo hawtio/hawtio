@@ -1,37 +1,25 @@
 <div ng-controller="Log.LogController">
-  <div class="row-fluid">
-
-    <div class="pull-left">
-      <form class="form-inline no-bottom-margin">
-        <fieldset>
-          <div class="control-group inline-block">
-            <input class="search-query" type="text" id="logSearch" ng-model="query" placeholder="Filter logs...">
-          </div>
-        </fieldset>
-      </form>
+  <!-- Float the log menu options above the log tables so they're always visible-->
+  <div class="logbar">
+    <div class="logbar-container">
+      <div class="logbar-search">
+        <input class="search-query" type="text" id="logSearch" ng-model="query" placeholder="Filter logs...">
+      </div>
+      <div class="logbar-filter">
+        Filter By Level:
+        <select ng-model="logLevelQuery" id="logLevelQuery">
+          <option value="" selected="selected">None...</option>
+          <option value="FATAL">FATAL</option>
+          <option value="ERROR">ERROR</option>
+          <option value="WARN">WARNING</option>
+          <option value="INFO">INFO</option>
+          <option value="DEBUG">DEBUG</option>
+        </select>
+      </div>
     </div>
-
-    <div class="pull-right">
-      <form class="form-inline no-bottom-margin">
-        <fieldset>
-          <div class="control-group inline-block">
-            <label for="log-level">Filter By Level: </label>
-            <select id="log-level" ng-model="logLevelQuery" id="logLevelQuery">
-              <option value="" selected="selected">None...</option>
-              <option value="FATAL">FATAL</option>
-              <option value="ERROR">ERROR</option>
-              <option value="WARN">WARNING</option>
-              <option value="INFO">INFO</option>
-              <option value="DEBUG">DEBUG</option>
-            </select>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-
   </div>
 
-  <div class="row-fluid" ng-show="filteredLogs.length > 0">
+  <div class="row-fluid" ng-show="filteredLogs.length > 0" style="padding-top: 50px;">
     <table class="table table-condensed table-striped table-hover" title="">
       <!--
           <caption>There are '{{filteredLogs.length}}' logs matching your required criteria</caption>
