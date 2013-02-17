@@ -21,7 +21,10 @@ module.exports = function (grunt) {
     type:{
       compile:{
         files:{
-          "<%= grunt.option('webapp_outdir') %>/app/app.js":appFiles
+          "<%= grunt.option('webapp_outdir') %>/app/app.js":appFiles,
+          // Also compile the code and put it into the unit test folder so it can perform tests
+          // Should it be placed somewhere else perhaps?
+          "src/test/unit/app.js":appFiles
         },
         options:{
           target:'ES5'
