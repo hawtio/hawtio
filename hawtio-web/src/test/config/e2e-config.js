@@ -1,8 +1,11 @@
 basePath = '../../../';
 
+// Files to load during e2e test running
 files = [
+  // Used for E2E tests - Jasmine is for unit tests only
   ANGULAR_SCENARIO,
   ANGULAR_SCENARIO_ADAPTER,
+
   'src/test/e2e/**/*.js'
 ];
 

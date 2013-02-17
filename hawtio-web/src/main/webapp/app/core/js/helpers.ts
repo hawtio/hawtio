@@ -31,7 +31,7 @@ function lineCount(value): number {
 
 function url(path: string): string {
   if (path) {
-    if (path.startsWith("/")) {
+    if (path.startsWith && path.startsWith("/")) {
       if (_urlPrefix === null) {
         _urlPrefix = window.location.pathname || "";
         if (_urlPrefix) {
