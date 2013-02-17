@@ -9,12 +9,16 @@
         Filter By Level:
         <select ng-model="logLevelQuery" id="logLevelQuery">
           <option value="" selected="selected">None...</option>
-          <option value="FATAL">FATAL</option>
-          <option value="ERROR">ERROR</option>
-          <option value="WARN">WARNING</option>
-          <option value="INFO">INFO</option>
-          <option value="DEBUG">DEBUG</option>
+            <option value="TRACE">TRACE</option>
+            <option value="DEBUG">DEBUG</option>
+            <option value="INFO">INFO</option>
+            <option value="WARN">WARN</option>
+            <option value="ERROR">ERROR</option>
         </select>
+        <label style="display:inline">
+          <span>Exact Match:</span>
+          <input type="checkbox" ng-model="logLevelExactMatch">
+        </label>
       </div>
     </div>
   </div>
@@ -32,8 +36,8 @@
         <th width="100%">Message</th>
       </tr>
       </thead>
-      <tbody>
-      <tr ng-repeat="log in filteredLogs = (logs | filter:query | filter:{level: logLevelQuery})"
+      <tbody><!--filter:{level: logLevelQuery})-->
+      <tr ng-repeat="log in filteredLogs = (logs | filter:query | filterLogLevel:logLevelQuery:logLevelExactMatch)"
           ng-class="logClass(log)">
         <td>{{log.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
         <td>{{log.level}}</td>

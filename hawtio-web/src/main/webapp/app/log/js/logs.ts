@@ -14,6 +14,7 @@ module Log {
         toTime: number;
         queryJSON: any;
         logLevelQuery: string;
+        logLevelExactMatch: bool;
         logClass: (log: string) => string;
     }
 
@@ -25,6 +26,8 @@ module Log {
       $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
       // The default logging level to show, empty string => show all
       $scope.logLevelQuery = "";
+      // The default value of the exact match logging filter
+      $scope.logLevelExactMatch = true;
 
       $scope.logClass = (log) => {
         return logLevelClass(log['level']);
