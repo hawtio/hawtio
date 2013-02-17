@@ -4,35 +4,35 @@ General questions on all things hawtio.
 
 ### What is the license?
 
-hawt.io uses the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt).
+hawtio uses the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.txt).
 
-### What does hawt.io do?
+### What does hawtio do?
 
 It's a [pluggable](http://hawt.io/developers/plugins.html) management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric, etc), and any kind of Java technology and middleware.
 
-### Why does hawt.io have its own wiki?
+### Why does hawtio have its own wiki?
 
-At first a git-based wiki might not seem terribly relevant to hawt.io. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawt.io's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.
+At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.
 
-From a hawt.io perspective though its wiki pages can be HTML or Markdown and then be an AngularJS HTML partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
+From a hawtio perspective though its wiki pages can be HTML or Markdown and then be an AngularJS HTML partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
 
-This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any any [hawt.io plugins](http://hawt.io/developers/plugins.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
+This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any any [hawtio plugins](http://hawt.io/developers/plugins.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
 
-So another way to think of hawt.io wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information & widgets you like in whatever layout you like. You have full control over the content and layout of the page!
+So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information & widgets you like in whatever layout you like. You have full control over the content and layout of the page!
 
 Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](https://github.com/hawtio/hawtio/issues/62) on this if you want to help!
 
-So whether the hawt.io wiki is used for documentation, to link to various hawt.io and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
+So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
 
-### How do I configure hawt.io?
+### How do I configure hawtio?
 
-Mostly hawt.io just works. However, please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure via system properties, environment variables, or dependency injection.
+Mostly hawtio just works. However, please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure via system properties, environment variables, or dependency injection.
 
 ### How do I build the project?
 
-If you just want to run hawt.io in a JVM then please see the [Getting Started](http://hawt.io/) section.
+If you just want to run hawtio in a JVM then please see the [Getting Started](http://hawt.io/) section.
 
-If you want to hack the source code then check out [how to build hawt.io](http://hawt.io/building/index.html).
+If you want to hack the source code then check out [how to build hawtio](http://hawt.io/building/index.html).
 
 ### What code conventions do you have?
 
@@ -76,6 +76,6 @@ The only real APIs a plugin needs to worry about are AngularJS (if you want to w
 
 Check out [how plugins work](http://hawt.io/developers/plugins.html). You can then either:
 
-* Fork this project and submit your plugin by [creating a Github pull request](https://help.github.com/articles/creating-a-pull-request) then we'll include your plugin by default in the hawt.io distribution.
+* Fork this project and submit your plugin by [creating a Github pull request](https://help.github.com/articles/creating-a-pull-request) then we'll include your plugin by default in the hawtio distribution.
 * Make your own WAR with your plugin added (by depending on the hawtio-web.war in your pom.xml)
 * Host your plugin at some canonical website (e.g. with Github pages) then [submit an issue](https://github.com/hawtio/hawtio/issues?state=open) to tell us about it and we can add it to the plugin registry JSON file.

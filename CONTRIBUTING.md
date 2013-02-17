@@ -1,6 +1,6 @@
-We love contributions! We really need your help to make [hawt.io](http://hawt.io/) even more hawt, so please [join our community](http://localhost:8020/community/index.html)!
+We love contributions! We really need your help to make [hawtio](http://hawt.io/) even more hawt, so please [join our community](http://localhost:8020/community/index.html)!
 
-Many thanks to all of our [existing contributors](https://github.com/hawtio/hawtio/graphs/contributors)! But we're greedy, we want more! hawt.io is _hawt_, but it can be _hawter_! :)
+Many thanks to all of our [existing contributors](https://github.com/hawtio/hawtio/graphs/contributors)! But we're greedy, we want more! hawtio is _hawt_, but it can be _hawter_! :)
 
 Here's some notes to help you get started:
 
@@ -27,10 +27,10 @@ Here's some notes to help you get started:
 
 # Additional Resources
 
-* [hawt.io FAQ](http://hawt.io/faq/index.html)
+* [hawtio FAQ](http://hawt.io/faq/index.html)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub create pull request documentation](hhttps://help.github.com/articles/creating-a-pull-request)
 * [Here is how to build the code](http://hawt.io/building/index.html)
-* [More information for developers in terms of hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
-* [join the hawt.io community](http://hawt.io/community/index.html)
+* [More information for developers in terms of hawtio technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
+* [join the hawtio community](http://hawt.io/community/index.html)
 

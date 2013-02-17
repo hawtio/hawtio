@@ -1,6 +1,6 @@
-We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawt.io code](http://hawt.io/developers/index.html)
+We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawtio code](http://hawt.io/developers/index.html)
 
-Before you can begin, you'll need to install the [hawt.io](http://hawt.io/) dependencies first.
+Before you can begin, you'll need to install the [hawtio](http://hawt.io/) dependencies first.
 
 ## Installing Local Dependencies
 
@@ -25,7 +25,7 @@ Note, if you are using Ubuntu then you may need to use the `sudo` command:
 
     sudo npm install -g typescript@0.8.1
     
-[hawt.io](http://hawt.io/) also makes use of [gruntjs](http://gruntjs.com/) for building. This is mentioned in more detail [here](http://hawt.io/building/index.html#Building_with_GruntJS).
+[hawtio](http://hawt.io/) also makes use of [gruntjs](http://gruntjs.com/) for building. This is mentioned in more detail [here](http://hawt.io/building/index.html#Building_with_GruntJS).
 
 You can install this by running
 
@@ -59,7 +59,7 @@ To specify a different port to run on, just override the `jettyPort` property
 
 ### Trying Different Containers
 
-The above uses Jetty but you can try running hawt.io in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
+The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
 
     mvn tomcat7:run
     mvn tomcat6:run
@@ -109,11 +109,11 @@ In another in the same directory run the following:
 
 ## How to Get Started Hacking the Code
 
-Check out the [hawt.io technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
+Check out the [hawtio technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
 
-## Trying hawt.io with Fuse Fabric
+## Trying hawtio with Fuse Fabric
 
-As of writing hawt.io depends on the latest snapshot of [Fuse Fabric](http://fuse.fusesource.org/fabric/). To try out hawt.io with it try these steps:
+As of writing hawtio depends on the latest snapshot of [Fuse Fabric](http://fuse.fusesource.org/fabric/). To try out hawtio with it try these steps:
 
   1. Grab the latest [Fuse Fabric source code](http://fuse.fusesource.org/source.html) and do a build in the fabric directory...
 
@@ -135,7 +135,7 @@ As of writing hawt.io depends on the latest snapshot of [Fuse Fabric](http://fus
 
   to properly test things out you might want to create a new version and maybe some child containers.
 
-### Running hawt.io with Fuse Fabric in development mode
+### Running hawtio with Fuse Fabric in development mode
 
     cd hawtio-web
     mvn test-compile exec:java -Psnapshot,fabric
