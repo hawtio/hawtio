@@ -58,13 +58,13 @@
   <div class="container">
     <div id="content"></p>
 
-<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>. This page is intented to help you get started hacking on the code, it contains various information on technology and tools together with code walkthroughs.</p>
+<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>. This page is intended to help you get started hacking on the code, it contains various information on technology and tools together with code walk-throughs.</p>
 
 <p>Welcome and enjoy! Its hawt, but stay cool! :)</p>
 
-<h2 id = "hawtio_technology_overview">hawtio technology overview</h2>
+<h2 id = "hawtio_Technology_Overview">hawtio Technology Overview</h2>
 
-<p>For those interested in <a href="http://hawt.io/contributing/index.html">contributing</a>, here is a list of the various open source libraries used to build hawt.io.</p>
+<p>For those interested in <a href="http://hawt.io/contributing/index.html">contributing</a>, here is a list of the various open source libraries used to build hawtio.</p>
 
 <h3 id = "Architecture">Architecture</h3>
 
@@ -82,17 +82,17 @@
 <p>We use the following excellent tools and libraries:</p>
 
 <ul>
-<li><a href="http://jolokia.org/">jolokia</a> is the server side / JVM plugin for exposing JMX as JSON over HTTP. Its awesome and is currently the only server side component of hawt.io.</li>
-<li><a href="http://typescriptlang.org/">TypeScript</a> is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference <span class="amp">&amp;</span> type checking. We recommend <a href="http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP">IntelliJ IDEA EAP 12 or later</a> for editing TypeScript - especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).</li>
-<li><a href="http://angularjs.org/">AngularJS</a> is the web framework for performing real time 2 way binding of HTML to the model of the UI using simple declarative attributes in the HTML.</li>
-<li><a href="http://d3js.org/">d3</a> is the visualisation library used to do the force layout graphs (for example the diagram view for ActiveMQ)</li>
-<li><a href="http://square.github.com/cubism/">cubism</a> implements the real time horizon charts</li>
+<li><a href="http://jolokia.org/">jolokia</a> is the server side / JVM plugin for exposing JMX as JSON over HTTP. It's awesome and is currently the only server side component of hawtio.</li>
+<li><a href="http://typescriptlang.org/">TypeScript</a> is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference <span class="amp">&amp;</span> type checking. We recommend <a href="http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP">IntelliJ IDEA EAP 12 or later</a> for editing TypeScript&mdash;especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).</li>
+<li><a href="http://angularjs.org/">AngularJS</a> is the web framework for performing real time two-way binding of HTML to the model of the UI using simple declarative attributes in the HTML.</li>
+<li><a href="http://d3js.org/">d3</a> is the visualization library used to do the force layout graphs (for example the diagram view for ActiveMQ)</li>
+<li><a href="http://square.github.com/cubism/">cubism</a> implements the real-time horizon charts</li>
 <li><a href="https://github.com/cpettitt/dagre">dagre</a> for graphviz style layouts of d3 diagrams (e.g. the Camel diagram view).</li>
 <li><a href="http://angular-ui.github.com/ng-grid/">ng-grid</a> an AngualrJS based table/grid component for sorting/filtering/resizing tables</li>
-<li><a href="https://github.com/chjj/marked">marked</a> for rendering Github flavoured Markdown as HTML</li>
+<li><a href="https://github.com/chjj/marked">marked</a> for rendering Github-flavoured Markdown as HTML</li>
 <li><a href="http://datatables.net/">DataTables</a> for sorted/filtered tables (though we are migrating to ng-grid as its a bit more natural for AngularJS)</li>
 <li><a href="http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html">DynaTree</a> for tree widget</li>
-<li><a href="http://jquery.com/">jQuery</a> small bits of general DOM stuff, usually when working with 3rd party libraries which don't use AngularJS</li>
+<li><a href="http://jquery.com/">jQuery</a> small bits of general DOM stuff, usually when working with third-party libraries which don't use AngularJS</li>
 <li><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> for CSS</li>
 </ul>
 
@@ -123,16 +123,16 @@
 <li><a href="http://stackoverflow.com/questions/tagged/angularjs">AngularJS questions on stackoverflow</a></li>
 </ul>
 
-<h2 id = "Code_walkthrough">Code walkthrough</h2>
+<h2 id = "Code_Walkthrough">Code Walkthrough</h2>
 
-<p>If you fancy contributing - and <a href="http://hawt.io/contributing/index.html">we love contributions!</a> the following should give you an overview of how the code hangs together.</p>
+<p>If you fancy contributing&mdash;and <a href="http://hawt.io/contributing/index.html">we love contributions!</a>&mdash;the following should give you an overview of how the code hangs together:</p>
 
 <ul>
-<li>hawt.io is a single page web appplication, from <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html">this single page of HTML</a></li>
-<li>we use <a href="http://docs.angularjs.org/api/ng.directive:ngView">AngularJS routing</a> to display different <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core/html">partial pages</a> depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use <a href="http://angularjs.org/">AngularJS</a> attributes (starting with <strong>ng-</strong>) along with some {{expressions}} in the markup.</li>
-<li>other than the JavaScript libraries listed above which live in <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/lib">webapp/lib</a> and are <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html">included in the index.html</a>, we then implement <a href="http://angularjs.org/">AngularJS</a> controllers using <a href="http://typescriptlang.org/">TypeScript</a>. All the typescript source is in the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app">in files in webapp/app/pluginName/js/ directory</a> which is then compiled into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js">webapp/app/app.js file</a></li>
-<li>to be able to compile with TypeScript static type checking we use the various <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts">TypeScript definition files</a> to define the optionally statically typed APIs for the various APIs we use</li>
-<li>the controllers use the <a href="http://jolokia.org/reference/html/clients.html#client-javascript">Jolokia JavaScript API</a> to interact with the server side JMX mbeans</li>
+<li>hawtio is a single page web application, from <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html">this single page of HTML</a></li>
+<li>We use <a href="http://docs.angularjs.org/api/ng.directive:ngView">AngularJS routing</a> to display different <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core/html">partial pages</a> depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use <a href="http://angularjs.org/">AngularJS</a> attributes (starting with <strong>ng-</strong>) along with some {{expressions}} in the markup.</li>
+<li>Other than the JavaScript libraries listed above which live in <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/lib">webapp/lib</a> and are <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html">included in the index.html</a>, we then implement <a href="http://angularjs.org/">AngularJS</a> controllers using <a href="http://typescriptlang.org/">TypeScript</a>. All the typescript source is in the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app">in files in webapp/app/pluginName/js/ directory</a> which is then compiled into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js">webapp/app/app.js file</a></li>
+<li>To be able to compile with TypeScript's static type checking we use the various <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts">TypeScript definition files</a> to define the optional statically typed APIs for the various APIs we use</li>
+<li>The controllers use the <a href="http://jolokia.org/reference/html/clients.html#client-javascript">Jolokia JavaScript API</a> to interact with the server side JMX MBeans</li>
 </ul>
 
 <h2 id = "Developer_Tools">Developer Tools</h2>
@@ -149,24 +149,30 @@
 <li><a href="http://kapeli.com/">Dash.app</a> is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery etc.</li>
 </ul>
 
-<p>We recommend you enable <a href="https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-&#95;2gc6fAH0KY0k/edit?pli=1">Source Maps</a> in your browser (e.g. in Chrome) for easier debugging by clicking on the bottom right Settings icon in <em>JavaScript Console</em> and <a href="http://www.youtube.com/watch?v=-xJl22Kvgjg">enabling Source Maps support such as in this video</a></p>
+<h4 id = "Enable_Source_Maps_for_Easier_Debugging">Enable Source Maps for Easier Debugging</h4>
 
-<p>To help IDEA navigate to functions in your source <span class="amp">&amp;</span> to avoid noise; you may want to ignore some JavaScript files in IDEA so that they are not included in the navigation. Go to Settings/Preferences &rarr; File Types &rarr; Ignore files then add these patterns to the end; which will let IDEA ignore the minified verisons of the libraries</p>
+<p>We recommend you enable <a href="https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-&#95;2gc6fAH0KY0k/edit?pli=1">Source Maps</a> in your browser (e.g. in Chrome) for easier debugging by clicking on the bottom-right Settings icon in the <em>JavaScript Console</em> and <a href="http://www.youtube.com/watch?v=-xJl22Kvgjg">enabling Source Maps support such as in this video</a>.</p>
+
+<h4 id = "Notes_on_Using_IDEA">Notes on Using IDEA</h4>
+
+<p>To help IDEA navigate to functions in your source and to avoid noise, you may want to ignore some JavaScript files in IDEA so that they are not included in the navigation. Go to <code>Settings/Preferences -&gt; File Types -&gt; Ignore Files</code> then add these patterns to the end:</p>
 
 <pre><code>*.min.js;*-min.js</code></pre>
 
-<p>Then select the generated <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js">webapp/app/app.js file</a> in the Project explorer, right click and select <em>Mark as Plain Text</em> so that it is ignored as being JavaScript source. This hint came from <a href="http://devnet.jetbrains.net/message/5472690#5472690">this forum thread</a>, hopefully there will be a nicer way to do all this one day!</p>
+<p>Ignoring these files will let IDEA ignore the minified versions of the JavaScript libraries.</p>
 
-<h3 id = "Handy_AngularJS_debugging_tip">Handy AngularJS debugging tip</h3>
+<p>Then select the generated <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js">webapp/app/app.js file</a> in the Project Explorer, right-click and select <em>Mark as Plain Text</em> so that it is ignored as being JavaScript source. This hint came from <a href="http://devnet.jetbrains.net/message/5472690#5472690">this forum thread</a>, hopefully there will be a nicer way to do all this one day!</p>
 
-<p>Open the JavaScript console and select the <em>Console</em> tab so you can type expressions into the shell.
+<h4 id = "Handy_AngularJS_debugging_tip">Handy AngularJS debugging tip</h4>
+
+<p>Open the JavaScript Console and select the <em>Console</em> tab so you can type expressions into the shell.
 Select part of the DOM of the scope you want to investigate
 Right click and select <em>Inspect Element</em>
 In the console type the following</p>
 
 <pre><code>s = angular.element($0).scope()</code></pre>
 
-<p>You have now defined a variable called <em>s</em> which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL etc.</p>
+<p>You have now defined a variable called <em>s</em> which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL, etc.</p>
 
 <h3 id = "Local_Storage">Local Storage</h3>
 
@@ -174,17 +180,23 @@ In the console type the following</p>
 
 <p>You can view the current Local Storage in the Chrome developer tools console in the Resources / Local Storage tab.</p>
 
-<p>If you ever want to clear it out in Chrome on OS X you'll find this located at <strong>~/Library/Application Support/Google/Chrome/Default/Local Storage</strong></p>
+<p>If you ever want to clear it out in Chrome on OS X you'll find this located at <code>~/Library/Application Support/Google/Chrome/Default/Local Storage</code>.</p>
 
-<h2 id = "How_the_tabs_work">How the tabs work</h2>
+<h2 id = "How_the_Tabs_Work">How the Tabs Work</h2>
 
-<p>The UI updates in real time based on the contents of the JVM, the <a href="plugins.html">plugins</a> and the UI selections. So tabs become visible or disappear.</p>
+<p>Tabs can dynamically become visible or disappear based on the following:</p>
 
-<p><a href="plugins.html">Plugins</a> can register new top level tabs by adding to the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9">topLevelTabs</a> on the workspace (which can be dependency injected into yourplugin via <a href="http://docs.angularjs.org/guide/di">AngularJS Dependency Injection</a>).</p>
+<ul>
+<li>the contents of the JVM</li>
+<li>the <a href="plugins.html">plugins</a>,</li>
+<li>and the current UI selection(s).</li>
+</ul>
 
-<p>The <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">isValid()</a> function is then used to specify when this top level tab should be visible.</p>
+<p><a href="plugins.html">Plugins</a> can register new top-level tabs by adding to the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9">topLevelTabs</a> on the workspace which can be dependency injected into your plugin via <a href="http://docs.angularjs.org/guide/di">AngularJS Dependency Injection</a>.</p>
 
-<p>Then for sub tabs, such as when browsing JMX you can register <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16">subLevelTabs</a> which are then visible if the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">right kind of MBean is selected</a></p>
+<p>The <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">isValid()</a> function is then used to specify when this top-level tab should be visible.</p>
+
+<p>You can register <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16">subLevelTabs</a> which are then visible when the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">right kind of MBean is selected</a>.</p>
 
 <p>For more detail check out the <a href="plugins.html">plugin documentation</a>.</p>
 
@@ -197,7 +209,7 @@ In the console type the following</p>
           <img src="/images/footer-logo.png" />
           <p class="bottom">
             &#169;
-            Copyright 2012 Red Hat, Inc.
+            Copyright 2012-2013 Red Hat, Inc.
             <br />
             <i class="icon-fire"></i>
             Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.

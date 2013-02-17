@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawtio - manage your server stuff and stay cool!</title>
+    <title>hawt.io - manage your server stuff and stay cool!</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -53,7 +53,7 @@
 		  <p><div class="container">
     <div id="content"></p>
 
-<p><strong>hawtio</strong> is a lightweight and <a href="http://hawt.io/developers/plugins.html">modular</a> HTML5 web console for managing your Java stuff. Its a <em>hawt</em> console to help you stay cool!</p>
+<p><strong>hawtio</strong> is a lightweight and <a href="http://hawt.io/developers/plugins.html">modular</a> HTML5 web console for managing your Java stuff. It's a <em>hawt</em> console to help you stay cool!</p>
 
 <ul class="thumbnails">
   <li class="span10">
@@ -63,42 +63,45 @@
   </li>
 </ul>
 
-<p><strong>hawtio</strong> has <a href="http://hawt.io/developers/plugins.html">plugins</a> for a git based Dashboard and Wiki, working with JMX, OSGi, <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://camel.apache.org/">Apache Camel</a>, <a href="http://openejb.apache.org/">Apache OpenEJB</a>, <a href="http://tomcat.apache.org/">Apache Tomcat</a>, <a href="http://www.eclipse.org/jetty/">Jetty</a>, <a href="http://www.jboss.org/jbossas">JBoss</a> and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a></p>
+<p><strong>hawtio</strong> has <a href="http://hawt.io/developers/plugins.html">plugins</a> for a git-based Dashboard and Wiki, working with JMX, OSGi, <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://camel.apache.org/">Apache Camel</a>, <a href="http://openejb.apache.org/">Apache OpenEJB</a>, <a href="http://tomcat.apache.org/">Apache Tomcat</a>, <a href="http://www.eclipse.org/jetty/">Jetty</a>, <a href="http://www.jboss.org/jbossas">JBoss</a> and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a></p>
 
-<p>You can dynamically <a href="http://hawt.io/developers/plugins.html">extend hawt.io with your own plugins</a> or automaticaly <a href="http://hawt.io/developers/plugins.html">discover plugins</a> inside the JVM</p>
+<p>You can dynamically <a href="http://hawt.io/developers/plugins.html">extend hawtio with your own plugins</a> or automatically <a href="http://hawt.io/developers/plugins.html">discover plugins</a> inside the JVM.</p>
 
 <p>The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent <a href="http://jolokia.org">Jolokia library</a> which has small footprint (around 300Kb) and is available as a <a href="http://jolokia.org/agent/jvm.html">JVM agent</a>, or comes embedded as a servlet inside the <strong>hawtio-web.war</strong> or can be deployed as <a href="http://jolokia.org/agent/osgi.html">an OSGi bundle</a>.</p>
 
-<p><strong>hawtio</strong> also supports <a href="http://hawt.io/health/">Health MBeans</a> to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving</p>
+<p><strong>hawtio</strong> also supports <a href="http://hawt.io/health/">Health MBeans</a> to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving.</p>
 
 <h2 id = "Get_started">Get started</h2>
 
+<h3 id = "Using_a_Traditional_Application_Server">Using a Traditional Application Server</h3>
+
 <p>If you are running Tomcat, Jetty or JBoss you could just deploy the <a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">hawtio-web.war</a> to your container at the hawtio context path (e.g. by renaming the file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console.</p>
+
+<h3 id = "Using_Apache_Karaf__Apache_Servicemix__or_Fuse_ESB">Using Apache Karaf, Apache Servicemix, or Fuse ESB</h3>
 
 <p>If you are using a developer snapshot of <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> you can run:</p>
 
 <pre><code>features:install hawtio</code></pre>
 
-<p>Or if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> the followwing should work:</p>
+<p>Or if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> the following should work:</p>
 
 <pre><code>features:install war
-install https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130205.084731-12.war</code></pre>
+install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130216.052018-26.war</code></pre>
 
-<p>Then open <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a></p>
+<p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>.</p>
 
 <h3 id = "Installing_hawtio_to__a_href__http:__karaf_apache_org___Apache_Karaf__a_">Installing hawtio to <a href="http://karaf.apache.org/">Apache Karaf</a></h3>
 
-<p>You can install public releases of hawtio using a vanilla  <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> container, using the following commands:</p>
+<p>You can install public releases of hawtio using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> container, using the following commands:</p>
 
 <pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.0.0/xml/features
 features:install hawtio</code></pre>
 
-<p>(substitute 1.0.0 with the public release of hawtio you want to use)
-Then open <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a></p>
+<p>(substitute 1.0.0 with the public release of hawtio you want to use). Then open <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a></p>
 
-<h3 id = "Get_started_from_a_git_clone">Get started from a git clone</h3>
+<h3 id = "Using_a_git_Clone">Using a git Clone</h3>
 
-<p>Or from a git clone you should be able to run the a sample hawtio console as follows:</p>
+<p>From a git clone you should be able to run the a sample hawtio console as follows:</p>
 
 <pre><code>git clone git@github.com:hawtio/hawtio.git
 cd hawtio/sample
@@ -106,7 +109,7 @@ mvn jetty:run</code></pre>
 
 <p>Then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> should show hawtio with a sample web application with some ActiveMQ and Camel inside to interact with.</p>
 
-<p>A good MBean for real time values and charts is java.lang/OperatingSystem or try looking at queues or camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.</p>
+<p>A good MBean for real time values and charts is <code>java.lang/OperatingSystem</code>. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.</p>
 
 <h2 id = "Want_to_hack_on_some_code_">Want to hack on some code?</h2>
 
@@ -114,13 +117,11 @@ mvn jetty:run</code></pre>
 
 <ul>
 <li><a href="http://hawt.io/faq/index.html">hawtio FAQ</a></li>
-<li><a href="http://hawt.io/contributing/index.html">how to contribute</a></li>
-<li><a href="http://hawt.io/building/index.html">how to build the code</a></li>
-<li><a href="http://hawt.io/developers/index.html">how to get started working on the code</a></li>
-<li><a href="http://hawt.io/community/index.html">join the hawt.io community</a></li>
+<li><a href="http://hawt.io/contributing/index.html">How to contribute</a></li>
+<li><a href="http://hawt.io/building/index.html">How to build the code</a></li>
+<li><a href="http://hawt.io/developers/index.html">How to get started working on the code</a></li>
+<li><a href="http://hawt.io/community/index.html">Join the hawtio community</a></li>
 </ul>
-
-<p>Its a hawt console to help you can stay cool!</p>
 
 <p></div>
   </div></p>
@@ -131,7 +132,7 @@ mvn jetty:run</code></pre>
           <img src="/images/footer-logo.png" />
           <p class="bottom">
             &#169;
-            Copyright 2012 Red Hat, Inc.
+            Copyright 2012-2013 Red Hat, Inc.
             <br />
             <i class="icon-fire"></i>
             Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.

@@ -55,13 +55,13 @@
 
 <h1 id = "Health_MBeans">Health MBeans</h1>
 
-<p>Its very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the <a href="http://dropwizard.codahale.com/getting-started/#creating-a-health-check">dropwizard notes</a> and the <a href="http://metrics.codahale.com/getting-started/#health-checks">metrics library health checks</a>.</p>
+<p>It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the <a href="http://dropwizard.codahale.com/getting-started/#creating-a-health-check">dropwizard notes</a> and the <a href="http://metrics.codahale.com/getting-started/#health-checks">metrics library health checks</a>.</p>
 
 <p>This document outlines a Health check MBean convention that if folks adopt its then easier to discover and will be included in the Console's Health tab.</p>
 
 <h2 id = "Health_MBean_Convention">Health MBean Convention</h2>
 
-<p>Create at least one MBean and register it with a JMX ObjectName including <strong>service=Health</strong>.</p>
+<p>Create at least one MBean and register it with a JMX ObjectName including <code>service=Health</code>.</p>
 
 <p>For example an ObjectName could be</p>
 
@@ -71,7 +71,7 @@
 
 <ul>
 <li>health() which returns a JMX compliant data structure such as tabular or composite data</li>
-<li>heathList() which returns a List&lt;Object&gt; or array of objects for use by tools like Jolokia that marshall objects nicely to JSON to avoid JMX's marshalling pain.</li>
+<li>heathList() which returns a <code>List&lt;Object&gt;</code> or array of objects for use by tools like Jolokia that marshal objects nicely to JSON to avoid JMX's marshalling pain.</li>
 </ul>
 
 <p>Each health status object should include the following properties if possible&hellip;</p>
@@ -116,12 +116,12 @@
   </tr>
 </table>
 
-<h3 id = "Examples">Examples</h3>
+<h2 id = "Examples">Examples</h2>
 
-<p>To show you how to implement a HealthMBean here are a few examples.</p>
+<p>To show you how to implement a Health MBean here are a few examples.</p>
 
 <ul>
-<li><a href="https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52">AciveMQ Health MBean</a></li>
+<li><a href="https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52">ActiveMQ Health MBean</a></li>
 <li><a href="https://github.com/fusesource/fuse/blob/master/fabric/fabric-core/src/main/scala/org/fusesource/fabric/service/HealthCheck.java#L83">Fuse Fabric Health MBean</a></li>
 </ul>
 
@@ -134,7 +134,7 @@
           <img src="/images/footer-logo.png" />
           <p class="bottom">
             &#169;
-            Copyright 2012 Red Hat, Inc.
+            Copyright 2012-2013 Red Hat, Inc.
             <br />
             <i class="icon-fire"></i>
             Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.

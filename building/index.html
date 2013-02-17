@@ -59,11 +59,11 @@
 <p>  <div class="container">
     <div id="content"></p>
 
-<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>! You may also want to know <a href="http://hawt.io/developers/index.html">how to hack on the hawt.io code</a></p>
+<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>! You may also want to know <a href="http://hawt.io/developers/index.html">how to hack on the hawtio code</a></p>
 
-<p>You'll need to install the <a href="http://hawt.io/">hawt.io</a> dependencies first&hellip;</p>
+<p>Before you can begin, you'll need to install the <a href="http://hawt.io/">hawtio</a> dependencies first.</p>
 
-<h3 id = "Installing_local_dependencies">Installing local dependencies</h3>
+<h2 id = "Installing_Local_Dependencies">Installing Local Dependencies</h2>
 
 <p>To install all of the required local dependencies you first need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a>. If you're on OS X we recommend just installing <a href="https://npmjs.org/">npm</a> directly rather than via things like homebrew to get the latest npm crack.</p>
 
@@ -74,19 +74,19 @@ npm install</code></pre>
 
 <p>If this fails it could be you need a newer <a href="https://npmjs.org/">npm</a> installation.</p>
 
-<h3 id = "Installing_global_dependencies">Installing global dependencies</h3>
+<h2 id = "Installing_Global_Dependencies">Installing Global Dependencies</h2>
 
-<p>In order to make use of <a href="http://typescriptlang.org/">TypeScript</a> you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell</p>
+<p>In order to make use of <a href="http://typescriptlang.org/">TypeScript</a> you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.</p>
 
 <p>You can do this by running:</p>
 
 <pre><code>npm install -g typescript@0.8.1</code></pre>
 
-<p>Note, if you are using Ubuntu then you may need to use the sudo command:</p>
+<p>Note, if you are using Ubuntu then you may need to use the <code>sudo</code> command:</p>
 
 <pre><code>sudo npm install -g typescript@0.8.1</code></pre>
 
-<p><a href="http://hawt.io/">Hawt.io</a> also makes use of <a href="http://gruntjs.com/">gruntjs</a> for building. This is mentioned in more detail <a href="http://hawt.io/building/index.html#Building&#95;with&#95;GruntJS">here</a></p>
+<p><a href="http://hawt.io/">hawtio</a> also makes use of <a href="http://gruntjs.com/">gruntjs</a> for building. This is mentioned in more detail <a href="http://hawt.io/building/index.html#Building&#95;with&#95;GruntJS">here</a>.</p>
 
 <p>You can install this by running</p>
 
@@ -94,31 +94,30 @@ npm install</code></pre>
 
 <h2 id = "Using_LiveReload">Using LiveReload</h2>
 
-<p>The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
+<p>The incremental build and LiveReload support allows you to edit the code and for the browser to autmatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
 
 <p>Here's how to do it:</p>
 
-<p>install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
+<ol>
+<li><p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p></li>
+<li><p>Run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources):</p>
 
-<p>run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources)</p>
+<p>cd hawtio-web
+mvn test-compile exec:java</p></li>
+<li><p>Incrementally build the project using a separate shell:</p>
 
-<pre><code>cd hawtio-web
-mvn test-compile exec:java</code></pre>
+<p>cd hawtio-web
+mvn -Pwatch</p></li>
+<li><p>Enable Live Reload in your browser (open [http://localhost:8080/hawtio/] then click on the Live Reload icon to the right of the location bar).</p></li>
+</ol>
 
-<p>then incrementally build the project using a separate shell:</p>
+<p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)</p>
 
-<pre><code>cd hawtio-web
-mvn -Pwatch</code></pre>
-
-<p>Enable Live Reload in your browser (so open [http://localhost:8080/hawtio/] then click on the Live Reload icon to the right of the location bar).</p>
-
-<p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context switching between your IDE and your browser! :)</p>
-
-<p>To specify a different port to run on, just override the <strong>jettyPort</strong> property</p>
+<p>To specify a different port to run on, just override the <code>jettyPort</code> property</p>
 
 <pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
 
-<h3 id = "Trying_different_containers">Trying different containers</h3>
+<h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
 
 <p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>
 
@@ -127,7 +126,7 @@ mvn tomcat6:run
 mvn jboss-as:run
 mvn jetty:run</code></pre>
 
-<h3 id = "Incremental_compile_with_TypeScript">Incremental compile with TypeScript</h3>
+<h3 id = "Incremental_Compile_with_TypeScript">Incremental Compile with TypeScript</h3>
 
 <p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
 
@@ -146,19 +145,19 @@ mvn jetty:run</code></pre>
 
 <pre><code>grunt</code></pre>
 
-<h2 id = "Running_the_end_to_end_integration_tests">Running the end to end integration tests</h2>
+<h2 id = "Running_the_End-to-End_Integration_Tests">Running the End-to-End Integration Tests</h2>
 
 <p>Install <a href="http://vojtajina.github.com/testacular/">testacular</a>:</p>
 
 <pre><code>npm -g install testacular</code></pre>
 
-<p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell etc) you need 0.5.x or later use this command:</p>
+<p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell, etc.) you need 0.5.x or later use this command:</p>
 
 <pre><code>npm install -g testacular@&quot;~0.5.7&quot;</code></pre>
 
-<h3 id = "Running_tests_with_testacular">Running tests with testacular</h3>
+<h3 id = "Running_Tests_With_Testacular">Running Tests With Testacular</h3>
 
-<p>In a shell in hawtio-web directory run:</p>
+<p>In a shell in the <code>hawtio-web</code> directory run:</p>
 
 <pre><code>mvn test-compile exec:java</code></pre>
 
@@ -166,33 +165,33 @@ mvn jetty:run</code></pre>
 
 <pre><code>testacular start src/test/config/e2e-config.js</code></pre>
 
-<h2 id = "How_to_get_started_hacking_the_code">How to get started hacking the code</h2>
+<h2 id = "How_to_Get_Started_Hacking_the_Code">How to Get Started Hacking the Code</h2>
 
-<p>Check out the <a href="http://hawt.io/developers/index.html">hawt.io technologies, tools and code walkthroughs</a></p>
+<p>Check out the <a href="http://hawt.io/developers/index.html">hawtio technologies, tools and code walkthroughs</a></p>
 
 <h2 id = "Trying_hawtio_with_Fuse_Fabric">Trying hawtio with Fuse Fabric</h2>
 
-<p>As of writing hawt.io depends on the latest snapshot of <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a>. To try out hawt.io with it try these steps:</p>
+<p>As of writing hawtio depends on the latest snapshot of <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a>. To try out hawtio with it try these steps:</p>
 
-<p>grab the latest <a href="http://fuse.fusesource.org/source.html">Fuse Fabric source code</a> and do a build in the fabric directory&hellip;</p>
+<ol>
+<li><p>Grab the latest <a href="http://fuse.fusesource.org/source.html">Fuse Fabric source code</a> and do a build in the fabric directory&hellip;</p>
 
-<pre><code>git clone git://github.com/fusesource/fuse.git
+<p>git clone git://github.com/fusesource/fuse.git
 cd fuse
 cd fabric
-mvn -Dtest=false -DfailIfNoTests=false clean install</code></pre>
+mvn -Dtest=false -DfailIfNoTests=false clean install</p></li>
+<li><p>Now create a Fuse Fabric instance</p>
 
-<p>now create a fuse fabric instance</p>
-
-<pre><code>cd fuse-fabric\target
+<p>cd fuse-fabric\target
 tar xf fuse-fabric-99-master-SNAPSHOT.tar.gz
 cd fuse-fabric-99-master-SNAPSHOT
-bin/fusefabric</code></pre>
+bin/fusefabric</p></li>
+<li><p>When the Fabric starts up run the command</p>
 
-<p>when the fabric starts up run the command</p>
+<p>fabric:create</p>
 
-<pre><code>fabric:create</code></pre>
-
-<p>to properly test things out you might wanna create a new version and maybe some child containers.</p>
+<p>to properly test things out you might want to create a new version and maybe some child containers.</p></li>
+</ol>
 
 <h3 id = "Running_hawtio_with_Fuse_Fabric_in_development_mode">Running hawtio with Fuse Fabric in development mode</h3>
 
@@ -208,7 +207,7 @@ mvn test-compile exec:java -Psnapshot,fabric</code></pre>
           <img src="/images/footer-logo.png" />
           <p class="bottom">
             &#169;
-            Copyright 2012 Red Hat, Inc.
+            Copyright 2012-2013 Red Hat, Inc.
             <br />
             <i class="icon-fire"></i>
             Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
