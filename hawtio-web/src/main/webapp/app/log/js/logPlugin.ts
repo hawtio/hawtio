@@ -22,6 +22,28 @@ module Log {
               isValid: () => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
               href: () => "#/logs"
             });
+          }).
+          filter('filterLogLevel', () => {
+              // Used to represent the ordinal value of a log level
+              var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
+              return (logs: Log.ILog[], logLevelQuery, logLevelExactMatch: bool) => {
+                  if(logLevelQuery === ""){
+                      return logs;
+                  }
+                  // Exact match filtering
+                  if(logLevelExactMatch) {
+                      var filteredLogs = logs.filter((log: Log.ILog) => log.level === logLevelQuery);
+                      return filteredLogs;
+                  } else {
+                      // Filtering based on ordinal value, e.g. >= INFO (e.g. INFO would include WARN and ERROR)
+                      var logLevelQueryOrdinal = logLevels.indexOf(logLevelQuery);
+                      var filteredLogs =  logs.filter((log: Log.ILog) => {
+                          var logLevelOrdinal = logLevels.indexOf(log.level);
+                          return logLevelOrdinal >= logLevelQueryOrdinal;
+                      });
+                      return filteredLogs;
+                  }
+              };
           });
 
   hawtioPluginLoader.addModule(pluginName);
