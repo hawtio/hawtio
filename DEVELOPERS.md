@@ -2,17 +2,17 @@ We love [contributions](http://hawt.io/contributing/index.html). This page is in
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
-## hawtio technology overview
+## hawt.io Technology Overview
 
 For those interested in [contributing](http://hawt.io/contributing/index.html), here is a list of the various open source libraries used to build hawt.io.
 
 ### Architecture
 
-**hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins.html) based on the capability of the server.
+**hawt.io** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins.html) based on the capability of the server.
 
 You may want to check out:
 
-* [hawtio plugins](http://hawt.io/developers/plugins.html)
+* [hawt.io plugins](http://hawt.io/developers/plugins.html)
 * [Health MBeans](http://hawt.io/health/)
 
 ### Tools and Libraries
@@ -87,11 +87,11 @@ To help IDEA navigate to functions in your source and to avoid noise, you may wa
 
     *.min.js;*-min.js
 
-Ignoring these files willlet IDEA ignore the minified versions of the JavaScript libraries.
+Ignoring these files will let IDEA ignore the minified versions of the JavaScript libraries.
 
 Then select the generated [webapp/app/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/app.js) in the Project Explorer, right-click and select _Mark as Plain Text_ so that it is ignored as being JavaScript source. This hint came from [this forum thread](http://devnet.jetbrains.net/message/5472690#5472690), hopefully there will be a nicer way to do all this one day!
 
-### Handy AngularJS debugging tip
+#### Handy AngularJS debugging tip
 
 Open the JavaScript Console and select the _Console_ tab so you can type expressions into the shell.
 Select part of the DOM of the scope you want to investigate

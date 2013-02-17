@@ -1,4 +1,4 @@
-## Hawtio configuration
+## hawt.io configuration
 
 The following table contains the various configuration settings you can set via Java system properties or environment variables
 
