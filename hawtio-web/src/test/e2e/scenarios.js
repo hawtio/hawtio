@@ -54,7 +54,48 @@ describe('Using the Code Editor', function() {
 });
  */
 
-// Commented out be cause I couldn't find out how to ignore tests in jasmine -.-
+describe("using the logs module", function() {
+    beforeEach(function() {
+        browser().navigateTo("/hawtio/#/logs");
+    });
+
+    // TODO Need to create a mocked jolokia service returning the same logs
+    /*beforeEach(inject(function(workspace) {
+        // We need to create fake logs for testing purposes
+        workspace.jolokia = ...
+     }));*/
+
+    describe("filtering by exact match", function() {
+        it("should show only 'WARN' messages when 'WARN' is selected", function() {
+            console.log("Selecting 'WARN' option with exact match")
+            select('logLevelQuery').option('WARN');
+
+            // Exact match should only show logs with 'WARN'
+            console.log("Asserting expectations on filtered results")
+            expect(repeater("#logResultsTable tbody tr").count()).toEqual(1);
+            expect(repeater("#logResultsTable tbody tr").column("log.level")).toEqual(["WARN"]);
+        });
+    });
+
+    describe("filtering by ordinal value", function() {
+        it("should show 'WARN' and 'ERROR' messages when 'WARN' is selected", function() {
+            // Uncheck the exact match filtering to have ordinal
+            console.log("Unchecking exact match for log levels")
+            input("logLevelExactMatch").check();
+
+            // Select the WARN option
+            console.log("Selecting 'WARN' option with ordinal filtering")
+            select('logLevelQuery').option('WARN');
+
+            // Ordinal based filtering expectations, ie >= WARN (e.g. WARN will show WARN and ERROR)
+            console.log("Asserting expectations on filtered results");
+            expect(repeater("#logResultsTable tbody tr").count()).toEqual(2);
+            expect(repeater("#logResultsTable tbody tr").column("log.level")).toEqual(["WARN", "ERROR"]);
+        });
+    });
+});
+
+
 describe('create queue, send message and browse it', function() {
   var timeout = 1;
   var bigTimeout = 2;
