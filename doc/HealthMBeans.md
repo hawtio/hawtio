@@ -1,12 +1,12 @@
 # Health MBeans
 
-Its very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.codahale.com/getting-started/#creating-a-health-check) and the [metrics library health checks](http://metrics.codahale.com/getting-started/#health-checks).
+It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.codahale.com/getting-started/#creating-a-health-check) and the [metrics library health checks](http://metrics.codahale.com/getting-started/#health-checks).
 
 This document outlines a Health check MBean convention that if folks adopt its then easier to discover and will be included in the Console's Health tab.
 
 ## Health MBean Convention
 
-Create at least one MBean and register it with a JMX ObjectName including **service=Health**.
+Create at least one MBean and register it with a JMX ObjectName including `service=Health`.
 
 For example an ObjectName could be
 
@@ -15,7 +15,7 @@ For example an ObjectName could be
 The MBean should then have these methods
 
 * health() which returns a JMX compliant data structure such as tabular or composite data
-* heathList() which returns a List&lt;Object&gt; or array of objects for use by tools like Jolokia that marshall objects nicely to JSON to avoid JMX's marshalling pain.
+* heathList() which returns a `List&lt;Object&gt;` or array of objects for use by tools like Jolokia that marshal objects nicely to JSON to avoid JMX's marshalling pain.
 
 Each health status object should include the following properties if possible...
 
@@ -59,9 +59,9 @@ Each health status object should include the following properties if possible...
   </tr>
 </table>
 
-### Examples
+## Examples
 
-To show you how to implement a HealthMBean here are a few examples.
+To show you how to implement a Health MBean here are a few examples.
 
-* [AciveMQ Health MBean](https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52)
+* [ActiveMQ Health MBean](https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52)
 * [Fuse Fabric Health MBean](https://github.com/fusesource/fuse/blob/master/fabric/fabric-core/src/main/scala/org/fusesource/fabric/service/HealthCheck.java#L83)
