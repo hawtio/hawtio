@@ -135,6 +135,24 @@
 <li>The controllers use the <a href="http://jolokia.org/reference/html/clients.html#client-javascript">Jolokia JavaScript API</a> to interact with the server side JMX MBeans</li>
 </ul>
 
+<h2 id = "How_the_Tabs_Work">How the Tabs Work</h2>
+
+<p>Tabs can dynamically become visible or disappear based on the following:</p>
+
+<ul>
+<li>the contents of the JVM</li>
+<li>the <a href="plugins.html">plugins</a>,</li>
+<li>and the current UI selection(s).</li>
+</ul>
+
+<p><a href="plugins.html">Plugins</a> can register new top-level tabs by adding to the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9">topLevelTabs</a> on the workspace which can be dependency injected into your plugin via <a href="http://docs.angularjs.org/guide/di">AngularJS Dependency Injection</a>.</p>
+
+<p>The <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">isValid()</a> function is then used to specify when this top-level tab should be visible.</p>
+
+<p>You can register <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16">subLevelTabs</a> which are then visible when the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">right kind of MBean is selected</a>.</p>
+
+<p>For more detail check out the <a href="plugins.html">plugin documentation</a>.</p>
+
 <h2 id = "Developer_Tools">Developer Tools</h2>
 
 <p>The following are recommended if you want to contribute to the code</p>
@@ -181,24 +199,6 @@ In the console type the following</p>
 <p>You can view the current Local Storage in the Chrome developer tools console in the Resources / Local Storage tab.</p>
 
 <p>If you ever want to clear it out in Chrome on OS X you'll find this located at <code>~/Library/Application Support/Google/Chrome/Default/Local Storage</code>.</p>
-
-<h2 id = "How_the_Tabs_Work">How the Tabs Work</h2>
-
-<p>Tabs can dynamically become visible or disappear based on the following:</p>
-
-<ul>
-<li>the contents of the JVM</li>
-<li>the <a href="plugins.html">plugins</a>,</li>
-<li>and the current UI selection(s).</li>
-</ul>
-
-<p><a href="plugins.html">Plugins</a> can register new top-level tabs by adding to the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9">topLevelTabs</a> on the workspace which can be dependency injected into your plugin via <a href="http://docs.angularjs.org/guide/di">AngularJS Dependency Injection</a>.</p>
-
-<p>The <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">isValid()</a> function is then used to specify when this top-level tab should be visible.</p>
-
-<p>You can register <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16">subLevelTabs</a> which are then visible when the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">right kind of MBean is selected</a>.</p>
-
-<p>For more detail check out the <a href="plugins.html">plugin documentation</a>.</p>
 
 <p></div>
   </div></p>
