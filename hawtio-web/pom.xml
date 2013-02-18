@@ -17,7 +17,8 @@
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
-    <hawtio-config-dir>${project.build.directory}/hawtio-config</hawtio-config-dir>
+    <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
+    <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
   </properties>
 
 
@@ -365,9 +366,10 @@
               <key>hawtio.config.dir</key>
               <value>${hawtio-config-dir}</value>
             </systemProperty>
-<!--
-            <hawtio.config.dir>${hawtio-config-dir}</hawtio.config.dir>
--->
+            <systemProperty>
+              <key>hawtio.config.repo</key>
+              <value>${hawtio-config-repo}</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>

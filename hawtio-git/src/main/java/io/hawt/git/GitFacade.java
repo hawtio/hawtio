@@ -71,6 +71,7 @@ public class GitFacade implements GitFacadeMXBean {
     private MBeanServer mBeanServer;
     private int shortCommitIdLength = 6;
     private String remote = "origin";
+    private String defaultRemoteRepository;
 
 
     public void init() throws Exception {
@@ -96,6 +97,9 @@ public class GitFacade implements GitFacadeMXBean {
     public String getRemoteRepository() {
         if (remoteRepository == null) {
             remoteRepository = getSystemPropertyOrEnvironmentVariable("hawtio.config.repo", "HAWTIO_CONFIG_REPO");
+        }
+        if (remoteRepository == null) {
+            remoteRepository = defaultRemoteRepository;
         }
         return remoteRepository;
     }
@@ -126,6 +130,14 @@ public class GitFacade implements GitFacadeMXBean {
 
     public void setObjectName(ObjectName objectName) {
         this.objectName = objectName;
+    }
+
+    public String getDefaultRemoteRepository() {
+        return defaultRemoteRepository;
+    }
+
+    public void setDefaultRemoteRepository(String defaultRemoteRepository) {
+        this.defaultRemoteRepository = defaultRemoteRepository;
     }
 
     /**
