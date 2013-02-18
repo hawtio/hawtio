@@ -57,7 +57,6 @@ public class HistoryDemo {
         git.setConfigDirectory(directory);
         git.init();
 
-        printLog(null);
         printHistory(null);
 
         for (int i = offset; i < args.length; i++) {
@@ -69,7 +68,7 @@ public class HistoryDemo {
     }
 
     public void printHistory(String path) throws IOException, GitAPIException {
-        List<CommitInfo> log = git.history(null, path, 0, 0, false, 0);
+        List<CommitInfo> log = git.history(null, path, 0);
         System.out.println("Showing history for path " + path);
         for (CommitInfo info : log) {
             System.out.println("  " + info);
@@ -82,12 +81,4 @@ public class HistoryDemo {
         System.out.println();
     }
 
-    public void printLog(String path) throws IOException, GitAPIException {
-        List<CommitInfo> log = git.log("", path, 0, 0, false, 0);
-        System.out.println("Showing log for path " + path);
-        for (CommitInfo info : log) {
-            System.out.println("  " + info);
-        }
-        System.out.println();
-    }
 }

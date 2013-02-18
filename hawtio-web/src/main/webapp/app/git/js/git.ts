@@ -9,53 +9,48 @@ module Git {
      * Read the contents of a file or directory
      * with text or children being returned and a directory flag
      */
-            read: (path:string, fn) => void;
+    read(path:string, fn): void;
 
     /**
      * Write the content of a file
      */
-            write: (path:string, commitMessage:string, contents:string, fn) => void;
+    write(path:string, commitMessage:string, contents:string, fn): void;
 
     /**
      * Reverts to a specific version of the file
      */
-            revertTo: (objectId:string, blobPath:string, commitMessage:string, fn) => void;
+    revertTo(objectId:string, blobPath:string, commitMessage:string, fn): void;
 
     /**
      * Removes a file if it exists
      */
-            remove: (path:string, commitMessage:string, fn)  => void;
+    remove(path:string, commitMessage:string, fn): void;
 
 
     /**
-     * returns the history of a directory or file
+     * returns the commit history of a directory or file
      */
-            history: (objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) => void;
-
-    /**
-     * Returns the commit log
-     */
-            log: (objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) => void;
+    history(objectId:string, path:string, limit:number, fn): void;
 
     /**
      * Get the contents of a blobPath for a given commit objectId
      */
-            getContent: (objectId:string, blobPath:string, fn) => void;
+    getContent(objectId:string, blobPath:string, fn): void;
 
     /**
      * Returns the diff of this commit verses the previous or another commit
      */
-            diff: (objectId:string, baseObjectId:string, path:string, fn) => void;
+    diff(objectId:string, baseObjectId:string, path:string, fn): void;
 
     /**
      * Returns the user name
      */
-            getUserName: () => string;
+    getUserName(): string;
 
     /**
      * Returns the user's email address
      */
-            getUserEmail: () => string;
+    getUserEmail(): string;
   }
 
   /**
@@ -94,15 +89,8 @@ module Git {
     /**
      * Return the history of the repository or a specific directory or file path
      */
-    public history(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) {
-      this.jolokia.execute(this.mbean, "history", objectId, path, limit, pageOffset, showRemoteRefs, itemsPerPage, onSuccess(fn));
-    }
-
-    /**
-     * Returns the commit log
-     */
-    public log(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) {
-      this.jolokia.execute(this.mbean, "log", objectId, path, limit, pageOffset, showRemoteRefs, itemsPerPage, onSuccess(fn));
+    public history(objectId:string, path:string, limit:number, fn) {
+      this.jolokia.execute(this.mbean, "history", objectId, path, limit, onSuccess(fn));
     }
 
     /**

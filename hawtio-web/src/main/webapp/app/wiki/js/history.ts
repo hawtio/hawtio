@@ -82,14 +82,9 @@ module Wiki {
 
     function updateView() {
       var objectId = "";
-      //var limit = 0;
       var limit = 0;
-      var pageOffset = 0;
-      //var showRemoteRefs = false;
-      var showRemoteRefs = false;
-      var itemsPerPage = 0;
 
-      wikiRepository.history(objectId, $scope.pageId, limit, pageOffset, showRemoteRefs, itemsPerPage, (logArray) => {
+      wikiRepository.history(objectId, $scope.pageId, limit, (logArray) => {
         $scope.logs = logArray;
         Core.$apply($scope);
       });

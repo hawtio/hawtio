@@ -36,6 +36,11 @@
       <artifactId>org.eclipse.jgit</artifactId>
       <version>${jgit-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.gitective</groupId>
+      <artifactId>gitective-core</artifactId>
+      <version>0.9.9</version>
+    </dependency>
 
     <!-- Git HTTP Servlet -->
     <dependency>

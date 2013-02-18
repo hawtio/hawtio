@@ -17,13 +17,6 @@
  */
 package io.hawt.git;
 
-import com.gitblit.Constants;
-import com.gitblit.models.PathModel;
-import com.gitblit.models.RefModel;
-import com.gitblit.models.SubmoduleModel;
-import com.gitblit.utils.DiffUtils;
-import com.gitblit.utils.JGitUtils;
-import com.gitblit.utils.StringUtils;
 import io.hawt.io.IOHelper;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -32,31 +25,34 @@ import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.diff.DiffEntry.ChangeType;
-import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
+import org.gitective.core.BlobUtils;
+import org.gitective.core.CommitFinder;
+import org.gitective.core.CommitUtils;
+import org.gitective.core.PathFilterUtils;
+import org.gitective.core.filter.commit.CommitLimitFilter;
+import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -192,116 +188,41 @@ public class GitFacade implements GitFacadeMXBean {
 
     @Override
     public String getHEAD() {
-        return JGitUtils.getHEADRef(git.getRepository());
+        RevCommit commit = CommitUtils.getHead(git.getRepository());
+        return commit.getName();
     }
 
     @Override
-    public List<CommitInfo> history(String objectId, String path, int limit, int pageOffset, boolean showRemoteRefs, int itemsPerPage) {
+    public List<CommitInfo> history(String objectId, String path, int limit) {
         try {
-            if (itemsPerPage <= 1) {
-                itemsPerPage = 50;
-            }
-            boolean pageResults = limit <= 0;
             Repository r = git.getRepository();
 
-            // TODO not sure if this is the right String we should use for the sub module stuff...
-            String repositoryName = getConfigDirectory().getPath();
-
-            objectId = defaultObjectId(objectId);
-            RevCommit commit = JGitUtils.getCommit(r, objectId);
-            List<PathModel.PathChangeModel> paths = JGitUtils.getFilesInCommit(r, commit);
-
-            Map<String, SubmoduleModel> submodules = new HashMap<String, SubmoduleModel>();
-            for (SubmoduleModel model : JGitUtils.getSubmodules(r, commit.getTree())) {
-                submodules.put(model.path, model);
+            CommitFinder finder = new CommitFinder(r);
+            CommitListFilter block = new CommitListFilter();
+            if (isNotBlank(path)) {
+                finder.setFilter(PathFilterUtils.and(path));
             }
+            finder.setFilter(block);
 
-            PathModel matchingPath = null;
-            for (PathModel p : paths) {
-                if (p.path.equals(path)) {
-                    matchingPath = p;
-                    break;
-                }
+            if (limit > 0) {
+                finder.setFilter(new CommitLimitFilter(100).setStop(true));
             }
-            if (matchingPath == null) {
-                // path not in commit
-                // manually locate path in tree
-                TreeWalk tw = new TreeWalk(r);
-                tw.reset();
-                tw.setRecursive(true);
-                try {
-                    tw.addTree(commit.getTree());
-                    tw.setFilter(PathFilterGroup.createFromStrings(Collections.singleton(path)));
-                    while (tw.next()) {
-                        if (tw.getPathString().equals(path)) {
-                            matchingPath = new PathModel.PathChangeModel(tw.getPathString(), tw.getPathString(), 0, tw
-                                    .getRawMode(0), tw.getObjectId(0).getName(), commit.getId().getName(),
-                                    ChangeType.MODIFY);
-                        }
-                    }
-                } catch (Exception e) {
-                } finally {
-                    tw.release();
-                }
-            }
-
-            final boolean isTree = matchingPath == null ? true : matchingPath.isTree();
-            final boolean isSubmodule = matchingPath == null ? true : matchingPath.isSubmodule();
-
-            // submodule
-            SubmoduleModel submodule = null;
-            if (matchingPath != null) {
-                submodule = getSubmodule(submodules, repositoryName, matchingPath.path);
-            }
-            final String submodulePath;
-            final boolean hasSubmodule;
-            if (submodule != null) {
-                submodulePath = submodule.gitblitPath;
-                hasSubmodule = submodule.hasSubmodule;
+            if (isNotBlank(objectId)) {
+                finder.findFrom(objectId);
             } else {
-                submodulePath = "";
-                hasSubmodule = false;
+                finder.find();
             }
-
-            final Map<ObjectId, List<RefModel>> allRefs = JGitUtils.getAllRefs(r, showRemoteRefs);
-            List<RevCommit> commits;
-            if (pageResults) {
-                // Paging result set
-                commits = JGitUtils.getRevLog(r, objectId, path, pageOffset * itemsPerPage,
-                        itemsPerPage);
-            } else {
-                // Fixed size result set
-                commits = JGitUtils.getRevLog(r, objectId, path, 0, limit);
-            }
-
-            // inaccurate way to determine if there are more commits.
-            // works unless commits.size() represents the exact end.
-            boolean hasMore = commits.size() >= itemsPerPage;
-
+            List<RevCommit> commits = block.getCommits();
             List<CommitInfo> results = new ArrayList<CommitInfo>();
             for (RevCommit entry : commits) {
-                final Date date = JGitUtils.getCommitDate(entry);
+                final Date date = getCommitDate(entry);
                 String author = entry.getAuthorIdent().getName();
                 boolean merge = entry.getParentCount() > 1;
-
                 String shortMessage = entry.getShortMessage();
-                String trimmedMessage = shortMessage;
-                if (allRefs.containsKey(entry.getId())) {
-                    trimmedMessage = StringUtils.trimString(shortMessage, Constants.LEN_SHORTLOG_REFS);
-                } else {
-                    trimmedMessage = StringUtils.trimString(shortMessage, Constants.LEN_SHORTLOG);
-                }
+                String trimmedMessage = trimString(shortMessage, 78);
                 String name = entry.getName();
                 String commitHashText = getShortCommitHash(name);
-
-                String kind;
-                if (isTree) {
-                    kind = "tree";
-                } else if (isSubmodule) {
-                    kind = "submodule";
-                } else kind = "file";
-
-                results.add(new CommitInfo(commitHashText, name, kind, author, date, merge, trimmedMessage, shortMessage));
+                results.add(new CommitInfo(commitHashText, name, author, date, merge, trimmedMessage, shortMessage));
             }
             return results;
         } catch (Exception e) {
@@ -309,86 +230,122 @@ public class GitFacade implements GitFacadeMXBean {
         }
     }
 
-    // Note the following log and history code comes from the excellent
-    // gitblit project: http://gitblit.com/
-    // many thanks!
-
-    @Override
-    public List<CommitInfo> log(String objectId,
-                                final String path, int limit, int pageOffset, boolean showRemoteRefs, int itemsPerPage) {
-
-        try {
-            if (itemsPerPage <= 1) {
-                itemsPerPage = 50;
-            }
-            boolean pageResults = limit <= 0;
-            Repository r = git.getRepository();
-
-            // TODO not sure if this is the right String we should use for the sub module stuff...
-            String repositoryName = getConfigDirectory().getPath();
-
-            objectId = defaultObjectId(objectId);
-
-            final Map<ObjectId, List<RefModel>> allRefs = JGitUtils.getAllRefs(r, showRemoteRefs);
-            List<RevCommit> commits;
-            if (pageResults) {
-                // Paging result set
-                commits = JGitUtils.getRevLog(r, objectId, pageOffset * itemsPerPage, itemsPerPage);
-            } else {
-                // Fixed size result set
-                commits = JGitUtils.getRevLog(r, objectId, 0, limit);
-            }
-
-            List<CommitInfo> answer = new ArrayList<CommitInfo>();
-            for (RevCommit entry : commits) {
-                final Date date = JGitUtils.getCommitDate(entry);
-                String author = entry.getAuthorIdent().getName();
-                boolean merge = entry.getParentCount() > 1;
-
-                // short message
-                String shortMessage = entry.getShortMessage();
-                String trimmedMessage = shortMessage;
-                if (allRefs.containsKey(entry.getId())) {
-                    trimmedMessage = StringUtils.trimString(shortMessage, Constants.LEN_SHORTLOG_REFS);
-                } else {
-                    trimmedMessage = StringUtils.trimString(shortMessage, Constants.LEN_SHORTLOG);
-                }
-
-                String name = entry.getName();
-                String commitHash = getShortCommitHash(name);
-                answer.add(new CommitInfo(commitHash, name, "log", author, date, merge, trimmedMessage, shortMessage));
-            }
-            return answer;
-        } catch (Exception e) {
-            throw new RuntimeIOException(e);
+    /**
+     * Retrieves a Java Date from a Git commit.
+     *
+     * @param commit
+     * @return date of the commit or Date(0) if the commit is null
+     */
+    public static Date getCommitDate(RevCommit commit) {
+        if (commit == null) {
+            return new Date(0);
         }
+        return new Date(commit.getCommitTime() * 1000L);
+    }
+
+    public static String trimString(String value, int max) {
+        if (value == null) {
+            return "";
+        }
+        if (value.length() <= max) {
+            return value;
+        }
+        return value.substring(0, max - 3) + "...";
+    }
+
+    public static boolean isNotBlank(String text) {
+        return text != null && text.trim().length() > 0;
     }
 
     @Override
-    public String diff(String objectId, String baseObjectId, String blobPath) {
+    public String diff(String objectId, String baseObjectId, String path) {
         Repository r = git.getRepository();
-        objectId = defaultObjectId(objectId);
+/*
         RevCommit commit = JGitUtils.getCommit(r, objectId);
 
-        DiffUtils.DiffOutputType diffType = DiffUtils.DiffOutputType.PLAIN;
-        String diff;
-        if (StringUtils.isEmpty(baseObjectId)) {
-            // use first parent
-            diff = DiffUtils.getDiff(r, commit, blobPath, diffType);
+        ObjectId current;
+        if (isNotBlank(objectId)) {
+            current = BlobUtils.getId(r, objectId, blobPath);
         } else {
-            // base commit specified
-            RevCommit baseCommit = JGitUtils.getCommit(r, baseObjectId);
-            diff = DiffUtils.getDiff(r, baseCommit, commit, blobPath, diffType);
+            current = CommitUtils.getHead(r).getId();
         }
-        return diff;
+        ObjectId previous;
+        if (isNotBlank(baseObjectId)) {
+            previous = BlobUtils.getId(r, baseObjectId, blobPath);
+        } else {
+            RevCommit revCommit = CommitUtils.getCommit(r, current);
+            RevCommit[] parents = revCommit.getParents();
+            if (parents.length == 0) {
+                throw new IllegalArgumentException("No parent commits!");
+            } else {
+                previous = parents[0];
+            }
+        }
+        Collection<Edit> changes = BlobUtils.diff(r, previous, current);
+
+        // no idea how to format Collection<Edit> :)
+
+*/
+
+        RevCommit commit;
+        if (isNotBlank(objectId)) {
+            commit = CommitUtils.getCommit(r, objectId);
+        } else {
+            commit = CommitUtils.getHead(r);
+        }
+        RevCommit baseCommit = null;
+        if (isNotBlank(baseObjectId)) {
+            baseCommit = CommitUtils.getCommit(r, baseObjectId);
+        }
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        RawTextComparator cmp = RawTextComparator.DEFAULT;
+        DiffFormatter formatter = new DiffFormatter(buffer);
+        formatter.setRepository(r);
+        formatter.setDiffComparator(cmp);
+        formatter.setDetectRenames(true);
+
+        RevTree commitTree = commit.getTree();
+        RevTree baseTree;
+        try {
+            if (baseCommit == null) {
+                if (commit.getParentCount() > 0) {
+                    final RevWalk rw = new RevWalk(r);
+                    RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
+                    rw.dispose();
+                    baseTree = parent.getTree();
+                } else {
+                    // FIXME initial commit. no parent?!
+                    baseTree = commitTree;
+                }
+            } else {
+                baseTree = baseCommit.getTree();
+            }
+
+            List<DiffEntry> diffEntries = formatter.scan(baseTree, commitTree);
+            if (path != null && path.length() > 0) {
+                for (DiffEntry diffEntry : diffEntries) {
+                    if (diffEntry.getNewPath().equalsIgnoreCase(path)) {
+                        formatter.format(diffEntry);
+                        break;
+                    }
+                }
+            } else {
+                formatter.format(diffEntries);
+            }
+            formatter.flush();
+            return buffer.toString();
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
+        }
     }
 
     @Override
     public String getContent(String objectId, String blobPath) {
         objectId = defaultObjectId(objectId);
         Repository r = git.getRepository();
-        RevCommit commit = JGitUtils.getCommit(r, objectId);
-        return JGitUtils.getStringContent(r, commit.getTree(), blobPath, encodings);
+        return BlobUtils.getContent(r, objectId, blobPath);
     }
 
     protected String defaultObjectId(String objectId) {
@@ -401,70 +358,6 @@ public class GitFacade implements GitFacadeMXBean {
     protected String getShortCommitHash(String name) {
         final int hashLen = shortCommitIdLength;
         return name.substring(0, hashLen);
-    }
-
-    protected SubmoduleModel getSubmodule(Map<String, SubmoduleModel> submodules, String repositoryName, String path) {
-        SubmoduleModel model = submodules.get(path);
-        if (model == null) {
-            // undefined submodule?!
-            model = new SubmoduleModel(path.substring(path.lastIndexOf('/') + 1), path, path);
-            model.hasSubmodule = false;
-            model.gitblitPath = model.name;
-            return model;
-        } else {
-            // extract the repository name from the clone url
-            List<String> patterns = submoduleUrlPatterns;
-            String submoduleName = StringUtils.extractRepositoryPath(model.url, patterns.toArray(new String[0]));
-
-            // determine the current path for constructing paths relative
-            // to the current repository
-            String currentPath = "";
-            if (repositoryName.indexOf('/') > -1) {
-                currentPath = repositoryName.substring(0, repositoryName.lastIndexOf('/') + 1);
-            }
-
-            // try to locate the submodule repository
-            // prefer bare to non-bare names
-            List<String> candidates = new ArrayList<String>();
-
-            // relative
-            candidates.add(currentPath + StringUtils.stripDotGit(submoduleName));
-            candidates.add(candidates.get(candidates.size() - 1) + ".git");
-
-            // relative, no subfolder
-            if (submoduleName.lastIndexOf('/') > -1) {
-                String name = submoduleName.substring(submoduleName.lastIndexOf('/') + 1);
-                candidates.add(currentPath + StringUtils.stripDotGit(name));
-                candidates.add(currentPath + candidates.get(candidates.size() - 1) + ".git");
-            }
-
-            // absolute
-            candidates.add(StringUtils.stripDotGit(submoduleName));
-            candidates.add(candidates.get(candidates.size() - 1) + ".git");
-
-            // absolute, no subfolder
-            if (submoduleName.lastIndexOf('/') > -1) {
-                String name = submoduleName.substring(submoduleName.lastIndexOf('/') + 1);
-                candidates.add(StringUtils.stripDotGit(name));
-                candidates.add(candidates.get(candidates.size() - 1) + ".git");
-            }
-
-            // create a unique, ordered set of candidate paths
-            Set<String> paths = new LinkedHashSet<String>(candidates);
-            for (String candidate : paths) {
-    /*
-                       if (GitBlit.self().hasRepository(candidate)) {
-       					model.hasSubmodule = true;
-       					model.gitblitPath = candidate;
-       					return model;
-       				}
-    */
-            }
-
-            // we do not have a copy of the submodule, but we need a path
-            model.gitblitPath = candidates.get(0);
-            return model;
-        }
     }
 
     public File getConfigDirectory() {

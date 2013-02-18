@@ -1,9 +1,9 @@
 module Wiki {
 
   export interface WikiRepository {
-    putPage: (path:string, contents:string, commitMessage:string, fn) => void;
+    putPage(path:string, contents:string, commitMessage:string, fn): void;
 
-    deletePage: (path:string, fn) => void;
+    deletePage(path:string, fn): void;
   }
 
   export class GitWikiRepository implements WikiRepository {
@@ -90,17 +90,9 @@ module Wiki {
     /**
      * Return the history of the repository or a specific directory or file path
      */
-    public history(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs:bool, itemsPerPage:number, fn) {
+    public history(objectId:string, path:string, limit:number, fn) {
       var fullPath = this.getLogPath(path);
-      this.git().history(objectId, fullPath, limit, pageOffset, showRemoteRefs, itemsPerPage, fn);
-    }
-
-    /**
-     * Returns the commit log
-     */
-    public log(objectId:string, path:string, limit:number, pageOffset:number, showRemoteRefs, itemsPerPage:number, fn) {
-      var fullPath = this.getLogPath(path);
-      this.git().log(objectId, fullPath, limit, pageOffset, showRemoteRefs, itemsPerPage, fn);
+      this.git().history(objectId, fullPath, limit, fn);
     }
 
     /**
