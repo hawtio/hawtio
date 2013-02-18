@@ -44,7 +44,7 @@ public class GitCloneTest {
 
     @Before
     public void init() throws Exception {
-        git.setRemoteRepository("https://github.com/hawtio/hawtio-config.git");
+        git.setRemoteRepository("git@github.com:hawtio/hawtio-config.git");
         git.init();
     }
 

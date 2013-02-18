@@ -70,6 +70,7 @@ public class GitFacade implements GitFacadeMXBean {
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private int shortCommitIdLength = 6;
+    private String remote = "origin";
 
 
     public void init() throws Exception {
@@ -93,11 +94,22 @@ public class GitFacade implements GitFacadeMXBean {
     }
 
     public String getRemoteRepository() {
+        if (remoteRepository == null) {
+            remoteRepository = getSystemPropertyOrEnvironmentVariable("hawtio.config.repo", "HAWTIO_CONFIG_REPO");
+        }
         return remoteRepository;
     }
 
     public void setRemoteRepository(String remoteRepository) {
         this.remoteRepository = remoteRepository;
+    }
+
+    public String getRemote() {
+        return remote;
+    }
+
+    public void setRemote(String remote) {
+        this.remote = remote;
     }
 
     public MBeanServer getmBeanServer() {
@@ -379,10 +391,7 @@ public class GitFacade implements GitFacadeMXBean {
     public File getConfigDirectory() {
         if (configDirectory == null) {
             try {
-                String name = System.getProperty("hawtio.config.dir");
-                if (name == null) {
-                    name = System.getenv("HAWTIO_CONFIG_DIR");
-                }
+                String name = getSystemPropertyOrEnvironmentVariable("hawtio.config.dir", "HAWTIO_CONFIG_DIR");
                 if (name != null) {
                     configDirectory = new File(name);
                 } else {
@@ -399,6 +408,14 @@ public class GitFacade implements GitFacadeMXBean {
         return configDirectory;
     }
 
+    public String getSystemPropertyOrEnvironmentVariable(String systemPropertyName, String environmentVariableName) {
+        String name = System.getProperty(systemPropertyName);
+        if (name == null) {
+            name = System.getenv(environmentVariableName);
+        }
+        return name;
+    }
+
     public void setConfigDirectory(File configDirectory) {
         this.configDirectory = configDirectory;
     }
@@ -410,7 +427,8 @@ public class GitFacade implements GitFacadeMXBean {
         if (!gitDir.exists()) {
             String repo = getRemoteRepository();
             if (isNotBlank(repo)) {
-                CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir);
+                LOG.info("Cloning git repo " + repo);
+                CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
                 git = clone.call();
             } else {
                 InitCommand initCommand = Git.init();
