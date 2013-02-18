@@ -7,7 +7,7 @@ module Wiki {
   }
 
   export class GitWikiRepository implements WikiRepository {
-    public directoryPrefix = "wiki/";
+    public directoryPrefix = "";
 
     constructor(public factoryMethod:() => Git.GitRepository) {
     }
