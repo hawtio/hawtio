@@ -17,8 +17,10 @@
  */
 package io.hawt.git;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.File;
 
 /**
  * A {@link ServletContextListener} which initialises the {@link GitFacade} in the web app
@@ -28,6 +30,15 @@ public class GitContextListener  implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
+            ServletContext context = servletContextEvent.getServletContext();
+            String configDir = context.getInitParameter("hawtio.config.dir");
+            if (configDir != null) {
+                helper.setConfigDirectory(new File(configDir));
+            }
+            String repo = context.getInitParameter("hawtio.config.repo");
+            if (repo != null) {
+                helper.setRemoteRepository(repo);
+            }
             // lets configure the default repo if there is not one already configured
             String defaultRemoteRepository = helper.getDefaultRemoteRepository();
             if (defaultRemoteRepository == null) {
