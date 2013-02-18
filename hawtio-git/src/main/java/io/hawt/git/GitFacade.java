@@ -19,6 +19,7 @@ package io.hawt.git;
 
 import io.hawt.io.IOHelper;
 import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
@@ -63,13 +64,12 @@ public class GitFacade implements GitFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
 
     private File configDirectory;
+    private String remoteRepository;
     private Git git;
     private Object lock = new Object();
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private int shortCommitIdLength = 6;
-    private List<String> submoduleUrlPatterns = new ArrayList<String>(Arrays.asList(".*?://github.com/(.*)"));
-    private String[] encodings = {"UTF-8", "ISO-8859-1"};
 
 
     public void init() throws Exception {
@@ -90,6 +90,22 @@ public class GitFacade implements GitFacadeMXBean {
         if (objectName != null && mBeanServer != null) {
             mBeanServer.unregisterMBean(objectName);
         }
+    }
+
+    public String getRemoteRepository() {
+        return remoteRepository;
+    }
+
+    public void setRemoteRepository(String remoteRepository) {
+        this.remoteRepository = remoteRepository;
+    }
+
+    public MBeanServer getmBeanServer() {
+        return mBeanServer;
+    }
+
+    public void setmBeanServer(MBeanServer mBeanServer) {
+        this.mBeanServer = mBeanServer;
     }
 
     public ObjectName getObjectName() {
@@ -392,9 +408,15 @@ public class GitFacade implements GitFacadeMXBean {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         File gitDir = new File(confDir, ".git");
         if (!gitDir.exists()) {
-            InitCommand initCommand = Git.init();
-            initCommand.setDirectory(confDir);
-            git = initCommand.call();
+            String repo = getRemoteRepository();
+            if (isNotBlank(repo)) {
+                CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir);
+                git = clone.call();
+            } else {
+                InitCommand initCommand = Git.init();
+                initCommand.setDirectory(confDir);
+                git = initCommand.call();
+            }
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables

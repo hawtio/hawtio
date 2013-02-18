@@ -191,7 +191,11 @@ public class GitFacadeTest {
     }
 
     protected String assertReadFileContents(String readMePath) throws IOException {
-        FileContents contents = git.read(branch, readMePath);
+        return assertFileContents(git, branch, readMePath);
+    }
+
+    public static String assertFileContents(GitFacade git, String branchName, String filePath) throws IOException {
+        FileContents contents = git.read(branchName, filePath);
         assertNotNull("Should have FileContents", contents);
         assertTrue("should be a file!", !contents.isDirectory());
         String text = contents.getText();
@@ -199,7 +203,7 @@ public class GitFacadeTest {
         return text;
     }
 
-    protected File assertConfigDirectoryExists(GitFacade helper) throws IOException {
+    public static File assertConfigDirectoryExists(GitFacade helper) throws IOException {
         File confDir = helper.getConfigDirectory();
         System.out.println("Config directory is " + confDir);
         // lets assert the directory exists
