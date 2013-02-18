@@ -67,7 +67,7 @@ If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/produc
 Or if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [Apache ServiceMix](http://servicemix.apache.org/) or [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) the following should work:
 
     features:install war
-    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130216.052018-26.war
+    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/hawtio-web-1.0-20130218.154057-71.war
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
 
