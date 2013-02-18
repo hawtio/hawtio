@@ -38,8 +38,8 @@
       </div>
     </div>
   </div>
-  <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
-  <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
+  <a class="left carousel-control" href="#myCarousel" data-slide="prev">&#8249;</a>
+  <a class="right carousel-control" href="#myCarousel" data-slide="next">&#8250;</a>
 </div>
 
 
