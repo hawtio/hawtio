@@ -19,6 +19,20 @@ module Dashboard {
     return ms.toString(16) + random.toString(16);
   }
 
+  /**
+   * Runs decodeURIComponent() on each value in the object
+   */
+  export function decodeURIComponentProperties(hash) {
+    if (!hash) {
+      return hash;
+    }
+    var decodeHash = {};
+    angular.forEach(hash, (value, key) => {
+      decodeHash[key] = value ? decodeURIComponent(value) : value;
+    });
+    return decodeHash;
+  }
+
   export function onOperationComplete(result) {
     console.log("Completed adding the dashboard with response " + JSON.stringify(result));
   }
