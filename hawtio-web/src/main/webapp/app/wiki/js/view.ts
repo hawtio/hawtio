@@ -100,7 +100,7 @@ module Wiki {
         $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
       }
       $scope.codeMirrorOptions.mode.name = $scope.format;
-      console.log("format is '" + $scope.format + "'");
+      //console.log("format is '" + $scope.format + "'");
 
       $scope.children = details.children;
       if (!details.directory) {
