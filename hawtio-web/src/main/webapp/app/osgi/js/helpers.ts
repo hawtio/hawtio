@@ -16,6 +16,7 @@ module Osgi {
                 img = "red-dot.png";
             }
             img = "img/dots/" + img;
+            row["ImportedPackages"] = row["ImportedPackages"].union([]);
             row["stateImageHref"] = img;
             row["stateImageLink"] = "<img src='" + img + "' title='" + state + "'/> ";
         });
