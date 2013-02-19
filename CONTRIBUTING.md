@@ -17,9 +17,10 @@ Here's some notes to help you get started:
 
 ### Fancy hacking some code?
 
-* If you fancy working on some code, check out the [open apprentice tasks](https://github.com/hawtio/hawtio/issues?labels=apprentice+tasks&page=1&sort=updated&state=open) - which are moderately easy to fix and tend to have links to which bits of the code to look at the fix it or the full list of [open issues](https://github.com/hawtio/hawtio/issues?state=open) if you fancy being more adventurous.
-
-* If you're feeling really hardcore you could tackle one of our [hawt ideas](https://github.com/hawtio/hawtio/issues?labels=hawt+ideas&page=1&sort=updated&state=open) which tend to be hard to do but are really _hawt_!
+* If you fancy working on some code, check out the these lists of issues:
+    * [open apprentice tasks](https://github.com/hawtio/hawtio/issues?labels=apprentice+tasks&page=1&sort=updated&state=open) - which are moderately easy to fix and tend to have links to which bits of the code to look at to fix it or
+    * [all open issues](https://github.com/hawtio/hawtio/issues?state=open) if you fancy being more adventurous.
+    * [hawt ideas](https://github.com/hawtio/hawtio/issues?labels=hawt+ideas&page=1&sort=updated&state=open) if you're feeling like a ninja and fancy tackling our harder issues that tend to add really _hawt_ new features!
 
 * To make code changes, fork the repository on GitHub then you can hack on the code. We love any contribution such as:
    * fixing typos
