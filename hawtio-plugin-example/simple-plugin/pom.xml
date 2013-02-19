@@ -8,17 +8,17 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>simple-plugin-two</artifactId>
+  <artifactId>simple-plugin</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Simple plugin two</description>
+  <description>hawt.io :: Simple plugin</description>
 
   <properties>
     <!-- filtered plugin properties -->
-    <plugin-context>/hawtio/simple-plugin-two</plugin-context>
+    <plugin-context>/hawtio/simple-plugin</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain></plugin-domain>
-    <plugin-scripts>app/js/app.js</plugin-scripts>
+    <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
       io.hawt.web.plugin,
@@ -54,32 +54,6 @@
     </resources>
 
     <plugins>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>typescript-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>grunt</executable>
-              <arguments>
-                <argument>copy</argument>
-                <argument>type</argument>
-                <argument>--webapp_outdir</argument>
-                <argument>${webapp-outdir}</argument>
-                <argument>--webapp_port</argument>
-                <argument>${jettyPort}</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -130,7 +104,6 @@
         <version>2.1.1</version>
         <configuration>
           <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
           <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>

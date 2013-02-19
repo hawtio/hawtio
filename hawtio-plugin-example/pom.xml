@@ -13,19 +13,18 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-  <groupId>io.hawt</groupId>
-  <artifactId>project</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hawtio-plugin-examples</artifactId>
+  <artifactId>hawtio-plugin-example</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: hawtio plugin examples</description>
+  <description>hawtio :: hawtio plugin example</description>
   <packaging>pom</packaging>
 
   <modules>
-    <module>simple-plugin-one</module>
-    <module>simple-plugin-two</module>
+    <module>simple-plugin</module>
   </modules>
 
 </project>

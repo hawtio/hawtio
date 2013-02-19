@@ -46,4 +46,10 @@
 
   </feature>
 
+  <feature name="hawtio-plugin-example" version="${project.version}" resolver="(obr)">
+    <feature>war</feature>
+    <feature>hawtio-plugin-registry</feature>
+    <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
+  </feature>
+
 </features>

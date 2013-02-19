@@ -217,40 +217,6 @@ $(function () {
   });
 });
 
-
-// TODO -- this is just here so the simple plugin examples
-// work and don't break the app :-/
-// ---------------------------------------------------------
-angular.module('main', []).
-        config(function ($routeProvider) {
-          $routeProvider.when('/plugins', {
-            templateUrl: 'html/plugins.html',
-            controller: PluginController
-          });
-
-          //$locationProvider.html5Mode(true);
-        }).
-
-        // service for plugins to register links
-        factory('links',function () {
-          return [];
-        }).
-
-        // constant for plugin to link back to main page
-        constant('home', '#/hawtio').
-
-        run(function () {
-          // console.log("main app running");
-        });
-
-var PluginController = function ($scope, $route, links) {
-  $scope.routes = JSON.stringify($route.routes, null, 4);
-  $scope.links = links;
-};
-
-hawtioPluginLoader.addModule('main');
-// ---------------------------------------------------------
-
 $(function () {
   hawtioPluginLoader.loadPlugins(function () {
     var doc = $(document);

@@ -207,6 +207,8 @@
     <module>hawtio-web</module>
     <module>hawtio-osgi</module>
     <module>hawtio-osgi-devmode</module>
+    <module>hawtio-plugin-registry</module>
+    <module>hawtio-plugin-example</module>
     <module>hawtio-karaf</module>
     <module>hawtio-karaf-itest</module>
     <module>sample</module>
