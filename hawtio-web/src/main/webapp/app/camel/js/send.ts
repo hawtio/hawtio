@@ -2,7 +2,7 @@ module Camel {
     export function SendMessageController($scope, workspace:Workspace) {
       var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
       var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
-      $scope.message = "Enter your message to send.";
+      $scope.message = "";
       // TODO Remove this if possible
       $scope.codeMirror = undefined;
       var options = {
