@@ -10,9 +10,9 @@ module OpenEJB {
             workspace.topLevelTabs.push( {
               content: "OpenEJB",
               title: "Manage your OpenEJB resources",
-              isValid: () => workspace.treeContainsDomainAndProperties("openejb"),
+              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("openejb"),
               href: () => "#/jmx/attributes?tab=openejb",
-              isActive: () => workspace.isTopTabActive("openejb")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("openejb")
             });
           });
 

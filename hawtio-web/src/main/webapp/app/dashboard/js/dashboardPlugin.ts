@@ -31,9 +31,9 @@ module Dashboard {
             workspace.topLevelTabs.push({
               content: "Dashboard",
               title: "View and edit your own custom dashboards",
-              isValid: () => true,
+              isValid: (workspace: Workspace) => true,
               href: () => "#/dashboard/idx/0?tab=dashboard",
-              isActive: () => workspace.isTopTabActive("dashboard")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("dashboard")
             });
 
           });

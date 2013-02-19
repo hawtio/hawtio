@@ -13,9 +13,9 @@ module Jetty {
       workspace.topLevelTabs.push( {
         content: "Jetty",
         title: "Jetty Console",
-        isValid: () => workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server"),
+        isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server"),
         href: () => "#/jettyConsole",
-        isActive: () => workspace.isTopTabActive("jetty")
+        isActive: (workspace: Workspace) => workspace.isTopTabActive("jetty")
       });
 
     });

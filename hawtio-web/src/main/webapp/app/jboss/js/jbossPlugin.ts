@@ -10,11 +10,11 @@ module JBoss {
             workspace.topLevelTabs.push( {
               content: "JBoss",
               title: "Manage your JBoss container",
-              isValid: () => workspace.treeContainsDomainAndProperties("jboss.as") ||
+              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("jboss.as") ||
                       workspace.treeContainsDomainAndProperties("jboss.jta") ||
                       workspace.treeContainsDomainAndProperties("jboss.modules"),
               href: () => "#/jmx/attributes?tab=jboss",
-              isActive: () => workspace.isTopTabActive("jboss")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("jboss")
             });
           });
 

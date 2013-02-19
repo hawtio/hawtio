@@ -10,9 +10,9 @@ module Tomcat {
             workspace.topLevelTabs.push( {
               content: "Tomcat",
               title: "Manage your Tomcat container",
-              isValid: () => workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina"),
+              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina"),
               href: () => "#/jmx/attributes?tab=tomcat",
-              isActive: () => workspace.isTopTabActive("tomcat")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("tomcat")
             });
           });
 

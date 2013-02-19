@@ -1,8 +1,8 @@
 interface MenuItem {
   content: string;
   title?: string;
-  isValid: () => any;
-  isActive?: () => bool;
+  isValid?: (Workspace) => any;
+  isActive?: (Workspace) => bool;
   href: () => any;
 }
 
@@ -288,6 +288,7 @@ class Workspace {
    * Returns true if the path is valid for the current selection
    */
   public validSelection(uri:string) {
+    var workspace = this;
     var filter = (t) => {
       var fn = t.href;
       if (fn) {
@@ -308,7 +309,7 @@ class Workspace {
     if (tab) {
       //console.log("Found tab " + JSON.stringify(tab));
       var validFn = tab.isValid;
-      return !validFn || validFn();
+      return !angular.isDefined(validFn) || validFn(workspace);
     } else {
       console.log("Could not find tab for " + uri);
       return false;
@@ -355,6 +356,7 @@ class Workspace {
   }
 
   public moveIfViewInvalid() {
+    var workspace = this;
     var uri = Core.trimLeading(this.$location.path(), "/");
     if (this.selection) {
       var key = this.selectionViewConfigKey();
@@ -371,7 +373,7 @@ class Workspace {
           defaultPath = null;
           angular.forEach(this.subLevelTabs, (tab) => {
             var fn = tab.isValid;
-            if (!defaultPath && tab.href && fn && fn()) {
+            if (!defaultPath && tab.href && angular.isDefined(fn) && fn(workspace)) {
               defaultPath = tab.href();
             }
           });

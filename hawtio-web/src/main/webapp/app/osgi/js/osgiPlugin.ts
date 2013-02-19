@@ -17,36 +17,36 @@ module Osgi {
             workspace.topLevelTabs.push( {
               content: "OSGi",
               title: "Visualise and manage the bundles and services in this OSGi container",
-              isValid: () => workspace.treeContainsDomainAndProperties("osgi.core"),
+              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("osgi.core"),
               href: () => "#/osgi/bundles?tab=osgiTab",
-              isActive: () => workspace.isTopTabActive("osgiTab")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("osgiTab")
             });
 
             workspace.subLevelTabs.push( {
               content: '<i class="icon-list"></i> Bundles',
               title: "View the available bundles in this OSGi container",
-              isValid: () => workspace.isOsgiFolder(),
+              isValid: (workspace: Workspace) => workspace.isOsgiFolder(),
               href: () => "#/osgi/bundles"
             });
 
             workspace.subLevelTabs.push({
               content: '<i class="icon-list"></i> Packages',
               title: "View the available packages in this OSGi container",
-              isValid: () => workspace.isOsgiFolder(),
+              isValid: (workspace: Workspace) => workspace.isOsgiFolder(),
               href: () => "#/osgi/packages"
             });
 
             workspace.subLevelTabs.push({
                   content: '<i class="icon-list"></i> Services',
                   title: "View the available services in this OSGi container",
-                  isValid: () => workspace.isOsgiFolder(),
+                  isValid: (workspace: Workspace) => workspace.isOsgiFolder(),
                   href: () => "#/osgi/services"
               });
 
           workspace.subLevelTabs.push({
               content: '<i class="icon-list"></i> Configuration',
               title: "View the available configuration in this OSGi container",
-              isValid: () => workspace.isOsgiCompendiumFolder(),
+              isValid: (workspace: Workspace) => workspace.isOsgiCompendiumFolder(),
               href: () => "#/osgi/configurations"
           });
 

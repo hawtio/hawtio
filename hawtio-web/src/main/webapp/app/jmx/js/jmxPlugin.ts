@@ -16,34 +16,34 @@ module Jmx {
             workspace.topLevelTabs.push( {
               content: "JMX",
               title: "View the JMX MBeans in this process",
-              isValid: () => true,
+              isValid: (workspace: Workspace) => true,
               href: () => "#/jmx/attributes",
-              isActive: () => workspace.isTopTabActive("jmx")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("jmx")
             });
 
 
             workspace.subLevelTabs.push( {
               content: '<i class="icon-list"></i> Attributes',
               title: "View the attribute values on your selection",
-              isValid: () => true,
+              isValid: (workspace: Workspace) => true,
               href: () => "#/jmx/attributes"
             });
             workspace.subLevelTabs.push( {
               content: '<i class="icon-bar-chart"></i> Chart',
               title: "View a chart of the metrics on your selection",
-              isValid: () => true,
+              isValid: (workspace: Workspace) => true,
               href: () => "#/jmx/charts"
             });
             workspace.subLevelTabs.push( {
               content: '<i class="icon-cog"></i> Edit Chart',
               title: "Edit the chart configuration",
-              isValid: () => workspace.isLinkActive("jmx/chart"),
+              isValid: (workspace: Workspace) => workspace.isLinkActive("jmx/chart"),
               href: () => "#/jmx/chartEdit"
             });
             workspace.subLevelTabs.push( {
               content: '<i class="icon-leaf"></i> Operations',
               title: "Execute operations on your selection",
-              isValid: () => true,
+              isValid: (workspace: Workspace) => true,
               href: () => "#/jmx/operations"
             });
 

@@ -10,7 +10,7 @@ module Core {
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
-    $scope.isValid = (nav) => nav.isValid();
+    $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
@@ -42,7 +42,7 @@ module Core {
         return workspace.isLinkActive(nav);
       var fn = nav.isActive;
       if (fn) {
-        return fn();
+        return fn(workspace);
       }
       return workspace.isLinkActive(nav.href());
     };

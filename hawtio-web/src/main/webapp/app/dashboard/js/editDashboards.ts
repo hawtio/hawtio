@@ -76,6 +76,9 @@ module Dashboard {
               var names = expression.split("=");
               var key = names[0];
               var value = names.length > 1 ? names[1] : null;
+              if (value) {
+                value = encodeURIComponent(value);
+              }
               var old = search[key];
               if (old) {
                 if (!angular.isArray(old)) {

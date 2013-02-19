@@ -12,15 +12,15 @@ module Karaf {
             workspace.topLevelTabs.push( {
               content: "Karaf",
               title: "Visualise and manage the bundles and services in this OSGi container",
-              isValid: () => workspace.treeContainsDomainAndProperties("org.apache.karaf"),
+              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.apache.karaf"),
               href: () => "#/karaf/features?tab=karafTab",
-              isActive: () => workspace.isTopTabActive("karafTab")
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("karafTab")
             });
 
             workspace.subLevelTabs.push( {
               content: '<i class="icon-list"></i> Features',
               title: "View the available bundles in this OSGi container",
-              isValid: () => workspace.isKarafFolder(),
+              isValid: (workspace: Workspace) => workspace.isKarafFolder(),
               href: () => "#/karaf/features"
             });
       });

@@ -118,6 +118,10 @@ module Dashboard {
         if (key && workspace.tree) {
           // lets find the node for this key...
           childWorkspace.selection = workspace.keyToNodeMap[key];
+          if (!childWorkspace.selection) {
+            var decodedKey = decodeURIComponent(key);
+            childWorkspace.selection = workspace.keyToNodeMap[decodedKey];
+          }
           console.log("Selected node " + childWorkspace.selection);
         }
 

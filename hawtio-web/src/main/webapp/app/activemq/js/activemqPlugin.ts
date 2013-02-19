@@ -51,7 +51,7 @@ module ActiveMQ {
                       workspace.topLevelTabs.push( {
                         content: "Messaging",
                         title: "Manage your message brokers",
-                        isValid: () => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
+                        isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
                         href: () => "#/jmx/attributes?tab=messaging",
                         isActive: () => workspace.isTopTabActive("messaging")
                       });
@@ -60,43 +60,43 @@ module ActiveMQ {
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-envelope"></i> Browse',
                         title: "Browse the messages on the queue",
-                        isValid: () => isQueue(workspace),
+                        isValid: (workspace: Workspace) => isQueue(workspace),
                         href: () => "#/activemq/browseQueue"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-pencil"></i> Send',
                         title: "Send a message to this destination",
-                        isValid: () => isQueue(workspace) || isTopic(workspace),
+                        isValid: (workspace: Workspace) => isQueue(workspace) || isTopic(workspace),
                         href: () => "#/activemq/sendMessage"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-picture"></i> Diagram',
                         title: "View a diagram of the producers, destinations and consumers",
-                        isValid: () => isActiveMQFolder(workspace),
+                        isValid: (workspace: Workspace) => isActiveMQFolder(workspace),
                         href: () => "#/activemq/subscribers"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Queue',
                         title: "Create a new queue",
-                        isValid: () => isQueuesFolder(workspace) || isBroker(workspace),
+                        isValid: (workspace: Workspace) => isQueuesFolder(workspace) || isBroker(workspace),
                         href: () => "#/activemq/createQueue"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-plus"></i> Create Topic',
                         title: "Create a new topic",
-                        isValid: () => isTopicsFolder(workspace) || isBroker(workspace),
+                        isValid: (workspace: Workspace) => isTopicsFolder(workspace) || isBroker(workspace),
                         href: () => "#/activemq/createTopic"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-remove"></i> Delete Topic',
                         title: "Delete this topic",
-                        isValid: () => isTopic(workspace),
+                        isValid: (workspace: Workspace) => isTopic(workspace),
                         href: () => "#/activemq/deleteTopic"
                       });
                       workspace.subLevelTabs.push( {
                         content: '<i class="icon-remove"></i> Delete Queue',
                         title: "Delete this queue",
-                        isValid: () => isQueue(workspace),
+                        isValid: (workspace: Workspace) => isQueue(workspace),
                         href: () => "#/activemq/deleteQueue"
                       });
                     });
