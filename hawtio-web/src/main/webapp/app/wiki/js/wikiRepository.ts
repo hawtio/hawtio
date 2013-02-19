@@ -13,10 +13,11 @@ module Wiki {
     }
 
     public getPage(path:string, objectId:string, fn) {
-      if (objectId) {
+      var git = this.git();
+      if (objectId && git) {
         var blobPath = this.getLogPath(path);
         // TODO deal with versioned directories?
-        this.git().getContent(objectId, blobPath, (content) => {
+        git.getContent(objectId, blobPath, (content) => {
           var details = {
             text: content,
             directory: false
@@ -25,7 +26,7 @@ module Wiki {
         });
       } else {
         var fullPath = this.getPath(path);
-        this.git().read(fullPath, (details) => {
+        git.read(fullPath, (details) => {
 
           // lets fix up any paths to be relative to the wiki
           var children = details.children;
