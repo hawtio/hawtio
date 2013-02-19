@@ -45,6 +45,7 @@ public class GitFacadeTest {
 
     @Before
     public void init() throws Exception {
+        git.setCloneRemoteRepoOnStartup(false);
         git.init();
     }
 

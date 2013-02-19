@@ -51,7 +51,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -71,7 +70,9 @@ public class GitFacade implements GitFacadeMXBean {
     private MBeanServer mBeanServer;
     private int shortCommitIdLength = 6;
     private String remote = "origin";
-    private String defaultRemoteRepository;
+    private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
+    private boolean cloneRemoteRepoOnStartup = true;
+    private boolean pullOnStartup = true;
 
 
     public void init() throws Exception {
@@ -138,6 +139,22 @@ public class GitFacade implements GitFacadeMXBean {
 
     public void setDefaultRemoteRepository(String defaultRemoteRepository) {
         this.defaultRemoteRepository = defaultRemoteRepository;
+    }
+
+    public boolean isPullOnStartup() {
+        return pullOnStartup;
+    }
+
+    public void setPullOnStartup(boolean pullOnStartup) {
+        this.pullOnStartup = pullOnStartup;
+    }
+
+    public boolean isCloneRemoteRepoOnStartup() {
+        return cloneRemoteRepoOnStartup;
+    }
+
+    public void setCloneRemoteRepoOnStartup(boolean cloneRemoteRepoOnStartup) {
+        this.cloneRemoteRepoOnStartup = cloneRemoteRepoOnStartup;
     }
 
     /**
@@ -438,15 +455,20 @@ public class GitFacade implements GitFacadeMXBean {
         File gitDir = new File(confDir, ".git");
         if (!gitDir.exists()) {
             String repo = getRemoteRepository();
-            if (isNotBlank(repo)) {
+            if (isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
                 LOG.info("Cloning git repo " + repo);
                 CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
-                git = clone.call();
-            } else {
-                InitCommand initCommand = Git.init();
-                initCommand.setDirectory(confDir);
-                git = initCommand.call();
+                try {
+                    git = clone.call();
+                    return;
+                } catch (Throwable e) {
+                    LOG.error("Failed to clone remote repo " + repo + ". Reason: " + e, e);
+                    // lets just use an empty repo instead
+                }
             }
+            InitCommand initCommand = Git.init();
+            initCommand.setDirectory(confDir);
+            git = initCommand.call();
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -454,6 +476,16 @@ public class GitFacade implements GitFacadeMXBean {
                     .build();
 
             git = new Git(repository);
+
+            if (isPullOnStartup()) {
+                try {
+                    git.pull().setRebase(true).call();
+                    LOG.info("Performed a git pull to update the local configuration repository");
+                } catch (Throwable e) {
+                    LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
+                    // lets just use an empty repo instead
+                }
+            }
         }
     }
 

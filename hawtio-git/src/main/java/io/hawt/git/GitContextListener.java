@@ -39,11 +39,6 @@ public class GitContextListener  implements ServletContextListener {
             if (repo != null) {
                 helper.setRemoteRepository(repo);
             }
-            // lets configure the default repo if there is not one already configured
-            String defaultRemoteRepository = helper.getDefaultRemoteRepository();
-            if (defaultRemoteRepository == null) {
-                helper.setDefaultRemoteRepository("git@github.com:hawtio/hawtio-config.git");
-            }
             helper.init();
         } catch (Exception e) {
             throw createServletException(e);
