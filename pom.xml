@@ -282,13 +282,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>plugin-examples</id>
-      <modules>
-        <module>hawtio-plugin-registry</module>
-        <module>hawtio-plugin-examples</module>
-      </modules>
-    </profile>
 
     <profile>
       <id>snapshot</id>
