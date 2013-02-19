@@ -46,6 +46,13 @@
   <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
         init-method="start" destroy-method="stop"/>
 
+  <!-- tell Camel to use localhost as the JMX MBean naming to have a fixed name style -->
+  <bean id="managementName" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+      <!-- the hostname does not have to be resolvable, it can be any value you want -->
+      <property name="hostName" value="localhost"/>
+      <property name="domainName" value="org.apache.camel"/>
+  </bean>
+
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
          sends them on a JMS queue. This queue is watched by
