@@ -14,7 +14,14 @@ Here's some notes to help you get started:
 * Submit any issues, feature requests or improvement ideas [our issue tracker](https://github.com/hawtio/hawtio/issues?state=open).
   * Clearly describe the issue including steps to reproduce when it is a bug.
   * Make sure you fill in the earliest version that you know has the issue.
-* Fork the repository on GitHub then you can hack on the code. We love any contribution such as:
+
+### Fancy hacking some code?
+
+* If you fancy working on some code, check out the [open apprentice tasks](https://github.com/hawtio/hawtio/issues?labels=apprentice+tasks&page=1&sort=updated&state=open) - which are moderately easy to fix and tend to have links to which bits of the code to look at the fix it or the full list of [open issues](https://github.com/hawtio/hawtio/issues?state=open) if you fancy being more adventurous.
+
+* If you're feeling really hardcore you could tackle one of our [hawt ideas](https://github.com/hawtio/hawtio/issues?labels=hawt+ideas&page=1&sort=updated&state=open) which tend to be hard to do but are really _hawt_!
+
+* To make code changes, fork the repository on GitHub then you can hack on the code. We love any contribution such as:
    * fixing typos
    * improving the documentation or embedded help
    * writing new test cases or improve existing ones
