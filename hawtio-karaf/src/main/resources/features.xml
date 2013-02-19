@@ -22,4 +22,28 @@
     <bundle>mvn:io.hawt/hawtio-osgi/${project.version}/war</bundle>
   </feature>
 
+  <feature name="hawtio-plugin-registry" version="${project.version}" resolver="(obr)">
+    <bundle>mvn:io.hawt/hawtio-plugin-registry/${project.version}</bundle>
+  </feature>
+
+  <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
+    <details>Adds the hawtio plugin registry and configures the /hawtio context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
+    <feature>war</feature>
+    <feature>hawtio-plugin-registry</feature>
+    <!-- leave out for now until we can figure out the jsch dependency for jgit
+
+    <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit/${jgit-version}</bundle>
+    <bundle>wrap:mvn:org.gitective/gitective-core/0.9.9</bundle>
+    <bundle>wrap:mvn:io.hawt/hawtio-git/${project.version}</bundle>
+
+    -->
+    <bundle>mvn:io.hawt/hawtio-osgi-devmode/${project.version}</bundle>
+
+    <config name="hawtiodev-hawtioweb">
+      context=/hawtio/*
+      content=${karaf.home}/../../../../../hawtio/hawtio-web/target/hawtio-web-${project.version}
+    </config>
+
+  </feature>
+
 </features>
