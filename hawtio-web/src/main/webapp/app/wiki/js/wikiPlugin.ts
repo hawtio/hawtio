@@ -67,7 +67,8 @@ module Wiki {
               content: "Wiki",
               title: "View and edit wiki pages",
               isValid: () => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
-              href: () => "#/wiki/view/wiki"
+              href: () => "#/wiki/view/wiki",
+              isActive: () => workspace.isLinkActive("/wiki")
             });
           });
 
