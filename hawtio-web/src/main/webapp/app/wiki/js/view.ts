@@ -47,10 +47,9 @@ module Wiki {
     $scope.historyLink = "#/wiki/history/" + $scope.pageId;
 
     $scope.$watch('workspace.tree', function () {
-      console.log("view: workspace.tree updated!");
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
-        console.log("Reloading the view as we now seem to have a git mbean!");
+        //console.log("Reloading the view as we now seem to have a git mbean!");
         setTimeout(updateView, 50);
       }
     });
