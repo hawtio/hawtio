@@ -46,6 +46,21 @@ module Wiki {
 
     $scope.historyLink = "#/wiki/history/" + $scope.pageId;
 
+    $scope.$watch('workspace.tree', function () {
+      console.log("view: workspace.tree updated!");
+      if (!$scope.git && Git.getGitMBean(workspace)) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        console.log("Reloading the view as we now seem to have a git mbean!");
+        setTimeout(updateView, 50);
+      }
+    });
+
+    /*
+    // TODO this doesn't work for some reason!
+    $scope.$on('jmxTreeUpdated', function () {
+      console.log("view: jmx tree updated!");
+    });
+    */
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -70,9 +85,9 @@ module Wiki {
       var path = $location.path();
       if (path && path.startsWith("/wiki/diff")) {
         var baseObjectId = $routeParams["baseObjectId"];
-        wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
+        $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
       } else {
-        wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
       }
     }
 

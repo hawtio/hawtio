@@ -43,6 +43,7 @@ module Wiki {
           fn(details);
         });
       }
+      return git;
     }
 
     /**
@@ -50,7 +51,8 @@ module Wiki {
      */
     public diff(objectId:string, baseObjectId: string, path:string, fn) {
       var fullPath = this.getLogPath(path);
-      this.git().diff(objectId, baseObjectId, fullPath, (content) => {
+      var git = this.git();
+      git.diff(objectId, baseObjectId, fullPath, (content) => {
         var details = {
           text: content,
           format: "diff",
@@ -58,6 +60,7 @@ module Wiki {
         };
         fn(details);
       });
+      return git;
     }
 
     public putPage(path:string, contents:string, commitMessage:string, fn) {
