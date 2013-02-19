@@ -1,4 +1,5 @@
 module Dashboard {
+
   export function DashboardController($scope, $location, $routeParams, $injector, $route,
                                       $templateCache,
                                       workspace:Workspace,
@@ -105,8 +106,8 @@ module Dashboard {
         var childScope = $scope.$new(false);
         childScope.widget = widget;
         var path = widget.path;
-        var search = widget.search;
-        var hash = widget.hash;
+        var search = Dashboard.decodeURIComponentProperties(widget.search);
+        var hash = widget.hash; // TODO decode object?
         var location = new RectangleLocation($location, path, search, hash);
 
         var childWorkspace = workspace.createChildWorkspace(location);
