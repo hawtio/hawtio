@@ -54,14 +54,16 @@ module Wiki {
     public diff(objectId:string, baseObjectId:string, path:string, fn) {
       var fullPath = this.getLogPath(path);
       var git = this.git();
-      git.diff(objectId, baseObjectId, fullPath, (content) => {
-        var details = {
-          text: content,
-          format: "diff",
-          directory: false
-        };
-        fn(details);
-      });
+      if (git) {
+        git.diff(objectId, baseObjectId, fullPath, (content) => {
+          var details = {
+            text: content,
+            format: "diff",
+            directory: false
+          };
+          fn(details);
+        });
+      }
       return git;
     }
 
@@ -98,7 +100,11 @@ module Wiki {
      */
     public history(objectId:string, path:string, limit:number, fn) {
       var fullPath = this.getLogPath(path);
-      this.git().history(objectId, fullPath, limit, fn);
+      var git = this.git();
+      if (git) {
+          git.history(objectId, fullPath, limit, fn);
+      }
+      return git;
     }
 
     /**
@@ -106,7 +112,11 @@ module Wiki {
      */
     public getContent(objectId:string, blobPath:string, fn) {
       var fullPath = this.getLogPath(blobPath);
-      this.git().getContent(objectId, fullPath, fn);
+      var git = this.git();
+      if (git) {
+        git.getContent(objectId, fullPath, fn);
+      }
+      return git;
     }
 
 

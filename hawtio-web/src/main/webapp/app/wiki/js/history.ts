@@ -46,6 +46,13 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    $scope.$watch('workspace.tree', function () {
+      if (!$scope.git && Git.getGitMBean(workspace)) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        //console.log("Reloading the view as we now seem to have a git mbean!");
+        setTimeout(updateView, 50);
+      }
+    });
     $scope.canRevert = () => {
       return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
     };
@@ -84,7 +91,7 @@ module Wiki {
       var objectId = "";
       var limit = 0;
 
-      wikiRepository.history(objectId, $scope.pageId, limit, (logArray) => {
+      $scope.git = wikiRepository.history(objectId, $scope.pageId, limit, (logArray) => {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
