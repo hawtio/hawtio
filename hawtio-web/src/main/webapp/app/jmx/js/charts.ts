@@ -25,7 +25,8 @@ module Jmx {
 
     $scope.dereg = $scope.$watch('workspace.selection', render);
 
-    function render(node, oldValue) {
+    function render() {
+      var node = workspace.selection;
       if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
         return;
       }
