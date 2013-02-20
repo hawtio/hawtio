@@ -1,6 +1,6 @@
 
 module Camel {
-  export function CamelController($scope, workspace:Workspace) {
+  export function CamelController($scope, $element, workspace:Workspace) {
       $scope.workspace = workspace;
       $scope.routes = [];
 
@@ -34,8 +34,7 @@ module Camel {
         if (data) {
           var doc = $.parseXML(data);
           var allRoutes = $(doc).find("route");
-
-          var canvasDiv = $('#canvas');
+          var canvasDiv = $($element);
           var width = canvasDiv.width();
           var height = canvasDiv.height();
           if (height < 300) {
@@ -143,7 +142,8 @@ module Camel {
           });
 
           //Core.d3ForceGraph(nodes, links, width, height);
-          $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height);
+          var svg = canvasDiv.children("svg")[0];
+          $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
 
           var jolokia = workspace.jolokia;
           var query = {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesStatsAsXml', arguments: [true, true]};

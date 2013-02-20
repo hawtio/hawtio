@@ -115,7 +115,7 @@ module Core {
   }
 
   // TODO Export as a service
-  export function dagreLayoutGraph(nodes, links, width, height) {
+  export function dagreLayoutGraph(nodes, links, width, height, svgElement) {
     var nodePadding = 10;
     var stateKeys = {};
     var transitions = [];
@@ -170,9 +170,10 @@ module Core {
     }
 
     // Now start laying things out
-    var svg = d3.select("svg");
+    var svg = svgElement ? d3.select(svgElement) : d3.select("svg")
+
     // lets remove all the old g elements
-    $("svg").children("g").remove();
+    $(svg).children("g").remove();
 
     var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
 
