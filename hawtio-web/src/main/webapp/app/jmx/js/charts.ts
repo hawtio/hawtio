@@ -1,5 +1,5 @@
 module Jmx {
-  export function ChartController($scope, $location, workspace:Workspace, jolokia, localStorage) {
+  export function ChartController($scope, $element, $location, workspace:Workspace, jolokia, localStorage) {
 
     $scope.metrics = [];
     $scope.updateRate = parseInt(localStorage['updateRate']);
@@ -10,7 +10,7 @@ module Jmx {
         $scope.context.stop();
         $scope.context = null;
       }
-      $("#charts").children().remove();
+      $($element).children().remove();
     });
 
     $scope.errorMessage = () => {
@@ -21,7 +21,7 @@ module Jmx {
       if ($scope.metrics.length === 0) {
         return "metrics";
       }
-    }
+    };
 
     $scope.dereg = $scope.$watch('workspace.selection', render);
 
@@ -31,8 +31,7 @@ module Jmx {
         return;
       }
       var width = 594;
-      var charts = $("#charts");
-
+      var charts = $($element);
       if (charts) {
         width = charts.width();
       } else {
@@ -126,8 +125,9 @@ module Jmx {
         }
       }
 
+      var d3Selection = d3.select($element[0]);
       if ($scope.metrics.length > 0) {
-        d3.select("#charts").selectAll(".axis")
+        d3Selection.selectAll(".axis")
                 .data(["top", "bottom"])
                 .enter().append("div")
                 .attr("class", function (d) {
@@ -137,7 +137,7 @@ module Jmx {
                   d3.select(this).call(context.axis().ticks(12).orient(d));
                 });
 
-        d3.select("#charts").append("div")
+        d3Selection.append("div")
                 .attr("class", "rule")
                 .call(context.rule());
 
@@ -146,7 +146,7 @@ module Jmx {
         });
 
         $scope.metrics.forEach((metric) => {
-          d3.select("#charts").call(function (div) {
+          d3Selection.call(function (div) {
             div.append("div")
                     .data([metric])
                     .attr("class", "horizon")
