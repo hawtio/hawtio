@@ -20,14 +20,10 @@ import io.hawt.web.plugin.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.management.ManagementFactory;
 
 /**
  *
@@ -37,6 +33,8 @@ public class PluginRegistry implements PluginRegistryMBean, io.hawt.web.plugin.P
   private static final transient Logger LOG = LoggerFactory.getLogger(PluginRegistry.class);
 
   private ObjectName objectName = null;
+
+  private long updateCounter = 0L;
 
   public PluginRegistry() {
 
@@ -54,6 +52,7 @@ public class PluginRegistry implements PluginRegistryMBean, io.hawt.web.plugin.P
         }
 
         getPlatformMBeanServer().registerMBean(new io.hawt.web.plugin.internal.Plugin(plugin), name);
+        updateCounter++;
 
       } catch (Exception e) {
         LOG.warn("An error occured during mbean server registration: " + e, e);
@@ -66,6 +65,7 @@ public class PluginRegistry implements PluginRegistryMBean, io.hawt.web.plugin.P
       try {
         ObjectName name = getObjectName(plugin);
         getPlatformMBeanServer().unregisterMBean(name);
+        updateCounter++;
       } catch (Exception e) {
         LOG.info("An error occured during mbean server registration: " + e, e);
       }
@@ -91,21 +91,13 @@ public class PluginRegistry implements PluginRegistryMBean, io.hawt.web.plugin.P
     }
   }
 
+  public long getUpdateCounter() {
+      return updateCounter;
+  }
+
   private ObjectName getObjectName(Plugin plugin) throws MalformedObjectNameException {
     return new ObjectName("hawtio:type=plugin,name=" + plugin.getName());
   }
-
-  /*
-  public List<Plugin> pluginList() {
-    ArrayList<Plugin> answer = new ArrayList<Plugin>();
-
-    for(Plugin plugin : plugins) {
-      PluginData data = new PluginData(plugin.getName());
-      answer.add(data);
-    }
-    return answer;
-  }
-  */
 
   private MBeanServer getPlatformMBeanServer() {
     return ManagementFactory.getPlatformMBeanServer();

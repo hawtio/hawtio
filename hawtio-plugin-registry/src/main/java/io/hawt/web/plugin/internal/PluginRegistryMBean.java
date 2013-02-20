@@ -16,9 +16,9 @@
 
 package io.hawt.web.plugin.internal;
 
-import java.util.List;
-
 public interface PluginRegistryMBean {
+
+    public long getUpdateCounter();
 
 }
 

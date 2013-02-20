@@ -17,6 +17,8 @@ class Workspace {
   public topLevelTabs = [];
   public subLevelTabs = [];
   public keyToNodeMap = {};
+  public pluginRegisterHandle = null;
+  public pluginUpdateCounter = null;
 
   constructor(public jolokia,
               public $location,
@@ -47,7 +49,38 @@ class Workspace {
   }
 
   public loadTree() {
+    //this.$rootScope.$on('jmxTreeUpdated', angular.bind(this, this.maybeMonitorPlugins));
     Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree)));
+  }
+
+  public maybeMonitorPlugins() {
+    if (this.treeContainsDomainAndProperties("hawtio", {type: "registry"})) {
+      if (this.pluginRegisterHandle === null) {
+        this.pluginRegisterHandle = this.jolokia.register(angular.bind(this, this.maybeUpdatePlugins), {
+          type: "read",
+          mbean: "hawtio:type=registry",
+          attribute: "UpdateCounter"
+        });
+      }
+    } else {
+      if (this.pluginRegisterHandle !== null) {
+        this.jolokia.unregister(this.pluginRegisterHandle);
+        this.pluginRegisterHandle = null;
+        this.pluginUpdateCounter = null;
+      }
+    }
+  }
+
+  public maybeUpdatePlugins(response) {
+    if (this.pluginUpdateCounter === null) {
+      this.pluginUpdateCounter = response.value;
+      return;
+    }
+    if (this.pluginUpdateCounter !== response.value) {
+      if (localStorage['autoRefresh'] === "true") {
+        window.location.reload();
+      }
+    }
   }
 
   public folderGetOrElse(folder, value) {
@@ -199,8 +232,6 @@ class Workspace {
                   }
                 }
 
-
-
               if (serviceName) {
                 angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
               }
@@ -216,6 +247,8 @@ class Workspace {
 
       tree.sortChildren(true);
       this.tree = tree;
+
+      this.maybeMonitorPlugins();
 
       this.$rootScope.$broadcast('jmxTreeUpdated');
       if (!this.$rootScope.$$phase) {
