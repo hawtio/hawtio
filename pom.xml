@@ -23,7 +23,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>project</name>
-  <description>hawt.io :: project</description>
+  <description>hawtio :: project</description>
   <url>http://hawt.io/</url>
 
   <licenses>

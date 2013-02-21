@@ -11,7 +11,7 @@
   <artifactId>hawtio-plugin-registry</artifactId>
   <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Plugin Registry Backend</description>
+  <description>hawtio :: Plugin Registry Backend</description>
 
   <properties>
     <context>/hawtio/plugin_registry</context>

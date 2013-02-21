@@ -11,7 +11,7 @@
   <artifactId>sample</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Sample Web Application and Console</description>
+  <description>hawtio :: Sample Web Application and Console</description>
 
   <dependencies>
     <dependency>

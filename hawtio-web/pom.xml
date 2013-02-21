@@ -11,7 +11,7 @@
   <artifactId>hawtio-web</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: hawtio-web</description>
+  <description>hawtio :: hawtio-web</description>
 
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>

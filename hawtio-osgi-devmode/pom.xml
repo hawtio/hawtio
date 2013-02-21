@@ -11,7 +11,7 @@
   <artifactId>hawtio-osgi-devmode</artifactId>
   <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: DevServlet Managed Service Factory</description>
+  <description>hawtio :: DevServlet Managed Service Factory</description>
 
   <properties>
     <ops4j-pax-web-version>1.1.9</ops4j-pax-web-version>

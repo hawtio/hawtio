@@ -11,7 +11,7 @@
   <artifactId>hawtio-osgi</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Web Console for OSGi</description>
+  <description>hawtio :: Web Console for OSGi</description>
 
   <dependencies>
     <dependency>

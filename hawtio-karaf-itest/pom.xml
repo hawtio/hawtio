@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-karaf-itest</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawt.io :: Performs Karaf compliance integration tests</description>
+  <description>hawtio :: Performs Karaf compliance integration tests</description>
 
   <properties>
     <depends-maven-plugin-version>1.2</depends-maven-plugin-version>

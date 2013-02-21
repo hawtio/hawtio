@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee">
 
-  <description>hawt.io</description>
+  <description>hawtio</description>
   <display-name>hawt.io dev web app</display-name>
 
   <servlet>
