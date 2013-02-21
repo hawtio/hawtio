@@ -177,51 +177,6 @@ module Dashboard {
       }
     };
 
-    $scope.oldgist = () => {
-      var cleanItems = [];
-      angular.forEach($scope.selectedItems, (item) => {
-        // lets ignore any items starting with $ or _ as they are UI stuff
-        var cleanItem = Dashbord.cleanDashboardData(item);
-        cleanItems.push(cleanItem);
-      });
-      var data = {
-        "description": "hawtio dashboards",
-        "public": true,
-        "files": {
-          "dashboards.json": {
-            "content": JSON.stringify(cleanItems, null, "  ")
-          }
-        }
-      };
-
-      console.log("data: " + JSON.stringify(data));
-
-      // now lets post to github...
-      $http.post('https://api.github.com/gists', data).
-              success(function (response) {
-                var url = null;
-                if (response) {
-                  url = response.html_url || response.url;
-                }
-                if (url) {
-                  window.location = url;
-/*
-                  window.open(response.url,'gistWindow',
-                          'width=400,height=200,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,scrollbars=yes,copyhistory=yes,resizable=yes');
-*/
-                }
-                else {
-                  console.log("Completed post and got: " + JSON.stringify(response));
-                  notification("error", "Github response has no url to view!");
-                }
-              }).
-              error(function (response, status) {
-                console.log("Failed post and data: " + JSON.stringify(response) + " status: " + JSON.stringify(status));
-                notification("error", "Github failed with status " + JSON.stringify(response) + " and  data: " + JSON.stringify(response));
-              });
-    };
-
-
     function updateData() {
       var url = $routeParams["href"];
       if (url) {
