@@ -10,6 +10,14 @@ hawtio uses the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.
 
 It's a [pluggable](http://hawt.io/developers/plugins.html) management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric, etc), and any kind of Java technology and middleware.
 
+### How do I configure hawtio?
+
+Mostly hawtio just works. However, please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.
+
+### How do I install hawtio?
+
+See the [getting started guide](https://github.com/hawtio/hawtio#get-started) which is on the home page (if you keep scrolling down).
+
 ### Why does hawtio have its own wiki?
 
 At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.
@@ -23,10 +31,6 @@ So another way to think of hawtio wiki pages is as a kind of plugin or a custom 
 Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](https://github.com/hawtio/hawtio/issues/62) on this if you want to help!
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
-
-### How do I configure hawtio?
-
-Mostly hawtio just works. However, please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure via system properties, environment variables, or dependency injection.
 
 ### How do I build the project?
 
