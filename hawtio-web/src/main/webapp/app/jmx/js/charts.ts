@@ -142,7 +142,7 @@ module Jmx {
                 .call(context.rule());
 
         context.on("focus", function (i) {
-          d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+          d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
         });
 
         $scope.metrics.forEach((metric) => {
