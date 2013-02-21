@@ -72,9 +72,9 @@ public class Main {
 
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(contextPath);
-        String war = getWar();
+        String war = findWar(getWar());
         if (war == null) {
-            war = findWar();
+            war = findWar(getWarPaths());
         }
         if (war == null) {
             throw new IllegalArgumentException("No war property set!");
@@ -96,8 +96,7 @@ public class Main {
      * Strategy method where we could use some smarts to find the war
      * using known paths or maybe the local maven repository?
      */
-    protected String findWar() {
-        String[] paths = getWarPaths();
+    protected String findWar(String... paths) {
         if (paths != null) {
             for (String path : paths) {
                 File file = new File(path);

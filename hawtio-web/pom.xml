@@ -16,9 +16,6 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-
-    <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
-    <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
   </properties>
 
 
