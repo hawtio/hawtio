@@ -80,6 +80,33 @@ You can install public releases of hawtio using a vanilla [Apache Karaf](http://
 
 (substitute 1.0.0 with the public release of hawtio you want to use). Then open [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/)
 
+### Using hawtio inside a stand alone Java application
+
+If you do not use a servlet container or application server and wish to embed hawtio inside your process try the following:
+
+Add the following to your pom.xml
+
+```xml
+<dependency>
+  <groupId>io.hawt</groupId>
+  <artifactId>hawtio-embedded</artifactId>
+  <version>${hawtio-version}</version>
+</dependency>
+```
+
+Then in your application run the following code:
+
+```java
+import io.hawt.embedded.Main;
+
+...
+Main main = new Main();
+main.setWar("somePathOrDirectoryContainingHawtioWar");
+main.run();
+```
+
+If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).
+
 ### Using a git Clone
 
 From a git clone you should be able to run the a sample hawtio console as follows:
