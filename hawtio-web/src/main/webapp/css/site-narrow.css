@@ -30,12 +30,12 @@ body div#main div ul.nav li {
 }
 
 .navbar .btn-navbar span:after {
-  content: "\f0dd";
+  content: "\f0de";
   margin-left: 7px;
 }
 
 .navbar .btn-navbar.collapsed span:after {
-  content: "\f0de";
+  content: "\f0dd";
   margin-left: 7px;
 }
 
