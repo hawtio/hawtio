@@ -19,6 +19,8 @@ module Dashboard {
     constructor(public workspace:Workspace, public jolokia, public localStorage) {
     }
 
+    public dashboards = [];
+
     public putDashboards(array:any[], commitMessage:string, fn) {
       this.getRepository().putDashboards(array, commitMessage, fn);
     }
@@ -31,7 +33,10 @@ module Dashboard {
      * Loads the dashboards then asynchronously calls the function with the data
      */
     public getDashboards(fn) {
-      this.getRepository().getDashboards(fn);
+      this.getRepository().getDashboards((values) => {
+        this.dashboards = values;
+        fn(values);
+      });
     }
 
     /**

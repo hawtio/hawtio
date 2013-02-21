@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
-  <li ng-repeat="dash in dashboards" ng-class='{active : isActive(dash)}'>
+  <li ng-repeat="dash in dashboards()" ng-class='{active : isActive(dash)}'>
     <a ng-href="#/dashboard/id/{{dash.id}}{{hash}}">
       <editable-property class="inline-block" on-save="onTabRenamed(dash)" property="title" ng-model="dash"></editable-property>
     </a>

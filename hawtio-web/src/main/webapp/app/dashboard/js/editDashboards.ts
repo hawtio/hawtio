@@ -1,9 +1,9 @@
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $http, $route, $location, workspace:Workspace, dashboardRepository:DashboardRepository, jolokia) {
+  export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DefaultDashboardRepository) {
     $scope.searchText = "";
     $scope.selectedItems = [];
-    $scope.dashboards = [];
+    $scope.repository = dashboardRepository;
 
     // TODO for case where we navigate to the add view
     // for some reason the route update event isn't enough...
@@ -26,7 +26,7 @@ module Dashboard {
       filterOptions: {
         filterText: "searchText"
       },
-      data: 'dashboards',
+      data: 'repository.dashboards',
       selectWithCheckboxOnly: true,
       columnDefs: [
         {
@@ -138,7 +138,7 @@ module Dashboard {
     };
 
     $scope.create = () => {
-      var counter = $scope.dashboards.length + 1;
+      var counter = dashboards().length + 1;
       var id = Dashboard.getUUID();
       var title = "Untitled" + counter;
       var newDash = {id: id, title: title, group: "Personal", widgets: []};
@@ -151,7 +151,7 @@ module Dashboard {
       angular.forEach($scope.selectedItems, (item, idx) => {
         // lets unselect this item
         $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
-        var counter = $scope.dashboards.length + 1;
+        var counter = dashboards().length + 1;
         var id = Dashboard.getUUID();
         var widgets = item.widgets || [];
         var commitMessage = "Duplicated dashboard " + item.title;
@@ -164,7 +164,7 @@ module Dashboard {
       dashboardRepository.deleteDashboards($scope.selectedItems, Dashboard.onOperationComplete);
 
       angular.forEach($scope.selectedItems, (item) => {
-        $scope.dashboards.remove(item);
+        dashboards().remove(item);
       });
       $scope.selectedItems.splice(0, $scope.selectedItems.length);
     };
@@ -194,8 +194,12 @@ module Dashboard {
 
     function addDashboard(newDash, commitMessage) {
       dashboardRepository.putDashboards([newDash], commitMessage, Dashboard.onOperationComplete);
-      $scope.dashboards.push(newDash);
+      dashboards().push(newDash);
       $scope.selectedItems.push(newDash);
+    }
+
+    function dashboards() {
+      return dashboardRepository.dashboards;
     }
   }
 }

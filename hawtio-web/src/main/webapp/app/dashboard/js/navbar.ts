@@ -1,9 +1,11 @@
 module Dashboard {
   export function NavBarController($scope, $routeParams, $location, workspace:Workspace,
-                                   dashboardRepository: DashboardRepository) {
+                                   dashboardRepository: DefaultDashboardRepository) {
 
     $scope.activeDashboard = $routeParams['dashboardId'];
-    $scope.dashboards = [];
+    $scope.dashboards = () => {
+      return dashboardRepository.dashboards;
+    };
 
     $scope.isActive = (dash) => {
       return workspace.isLinkActive("#/dashboard/id/" + dash.id);
@@ -21,7 +23,6 @@ module Dashboard {
     }
 
     function dashboardLoaded(dashboards) {
-      $scope.dashboards = dashboards;
       Core.$apply($scope);
     }
   }
