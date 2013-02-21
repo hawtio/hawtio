@@ -1,3 +1,75 @@
 #main {
   margin-top: 0px;
 }
+
+.navbar-fixed-top {
+  margin-bottom: 0px;
+}
+
+body div div ul.nav {
+  margin-bottom: 5px;
+  border-radius: 0 0 4px 4px;
+  border: none;
+  min-width: 120px;
+  border: 1px solid #D4D4D4;
+  border-top: 1px transparent;
+  background-color: #FAFAFA;
+  background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
+  background-repeat: repeat-x;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+body div div ul.nav li {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+
+body div div ul.nav li:first-child {
+  margin-left: 3px;
+}
+
+body div div ul.nav li:last-child {
+  margin-right: 3px;
+}
+
+.nav-tabs > li > a, .nav-pills > li > a {
+  margin-right: 0px;
+}
+
+body div div ul.nav li.active a {
+  border: 1px;
+  border-radius: 0px;
+  background-color: #E5E5E5;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125) inset;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+body div div ul.nav li.active a:hover {
+  border: 1px;
+  border-radius: 0px;
+  background-color: #E5E5E5;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125) inset;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+body div div ul.nav li a {
+  border: 1px;
+  border-radius: 0px;
+  background: inherit;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  color: #777777;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+body div div ul.nav li a:hover {
+  border: 1px;
+  border-radius: 0px;
+  background: inherit;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  color: #333333;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+

@@ -21,6 +21,14 @@
   height: 100%;
 }
 
+/* sub tab tweaks */
+body div div ul.nav {
+  margin-bottom: 5px;
+  border-bottom: none;
+}
+
+
+
 /* Chart stuff */
 
 #charts {
