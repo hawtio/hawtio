@@ -16,10 +16,11 @@
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>hawtio-plugin-example</artifactId>
-  <name>${project.artifactId}</name>
+  <artifactId>hawtio-plugin-examples</artifactId>
+  <name>examples</name>
   <description>hawtio :: hawtio plugin example</description>
   <packaging>pom</packaging>
 

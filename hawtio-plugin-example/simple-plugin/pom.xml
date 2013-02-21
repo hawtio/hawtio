@@ -5,6 +5,7 @@
 	  <groupId>io.hawt</groupId>
 	  <artifactId>hawtio-plugin-examples</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <relativePath>..</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
