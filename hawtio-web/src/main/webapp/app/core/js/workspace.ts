@@ -154,10 +154,10 @@ class Workspace {
 
         var configureFolder = function(folder: Folder, name: string) {
             folder.domain = domain;
-            folder.key = rootId + separator + folderNames.join(separator);
-            if (folder.key) {
-              this.keyToNodeMap[folder.key] = folder;
+            if (!folder.key) {
+              folder.key = rootId + separator + folderNames.join(separator);
             }
+            this.keyToNodeMap[folder.key] = folder;
             folder.folderNames = folderNames.clone();
             //var classes = escapeDots(folder.key);
             var classes = "";
@@ -202,11 +202,8 @@ class Workspace {
             if (folder) {
               // lets add the various data into the folder
               folder.entries = entries;
-
-              angular.bind(this, configureFolder, folder, lastPath)();
-
               folder.key = key;
-              this.keyToNodeMap[folder.key] = folder;
+              angular.bind(this, configureFolder, folder, lastPath)();
               folder.title = trimQuotes(lastPath);
               folder.objectName = objectName;
               folder.typeName = typeName;
