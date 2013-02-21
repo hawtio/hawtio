@@ -1,11 +1,14 @@
 module Core {
 
-  export function d3ForceGraph(scope, nodes, links, canvasSelector = "#canvas") {
+  export function d3ForceGraph(scope, nodes, links, canvasElement) {
     // lets remove the old graph first
     if (scope.graphForce) {
       scope.graphForce.stop();
     }
-    var canvasDiv = $(canvasSelector);
+    if (!canvasElement) {
+      canvasElement = $("#canvas")[0];
+    }
+    var canvasDiv = $(canvasElement);
     canvasDiv.children("svg").remove();
 
     if (nodes.length) {
@@ -21,7 +24,7 @@ module Core {
       }
       //console.log("Using width " + width + " and height " + height);
 
-      var svg = d3.select(canvasSelector).append("svg")
+      var svg = d3.select(canvasDiv[0]).append("svg")
               .attr("width", width)
               .attr("height", height);
 
@@ -170,7 +173,7 @@ module Core {
     }
 
     // Now start laying things out
-    var svg = svgElement ? d3.select(svgElement) : d3.select("svg")
+    var svg = svgElement ? d3.select(svgElement) : d3.select("svg");
 
     // lets remove all the old g elements
     $(svg).children("g").remove();

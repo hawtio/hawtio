@@ -1,5 +1,5 @@
 module ActiveMQ {
-    export function SubscriberGraphController($scope, workspace:Workspace, jolokia) {
+    export function SubscriberGraphController($scope, $element, workspace:Workspace, jolokia) {
       $scope.nodes = [];
       $scope.links = [];
       $scope.queues = {};
@@ -98,7 +98,7 @@ module ActiveMQ {
           }
         }
 
-        Core.d3ForceGraph($scope, $scope.nodes, $scope.links);
+        Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
         $scope.$apply();
       };
 
@@ -114,7 +114,7 @@ module ActiveMQ {
           $scope.links.push({ source: localId, target: remoteId });
         }
 
-        Core.d3ForceGraph($scope, $scope.nodes, $scope.links);
+        Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
         $scope.$apply();
       };
 
