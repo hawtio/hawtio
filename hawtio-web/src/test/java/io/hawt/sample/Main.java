@@ -56,7 +56,7 @@ public class Main {
             String webXml = path + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
 
-            println("Connect via http://localhost:$port$contextPath using web app source path: $path");
+            println("Connect via http://localhost:" + port + contextPath + " using web app source path: " + path);
 
             String pathSeparator = File.pathSeparator;
 
