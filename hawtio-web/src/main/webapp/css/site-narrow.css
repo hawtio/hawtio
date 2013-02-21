@@ -24,6 +24,21 @@ body div#main div ul.nav li {
   margin-bottom: 3px;
 }
 
+.navbar .btn-navbar span {
+  color: #777777;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.navbar .btn-navbar span:after {
+  content: "\f0dd";
+  margin-left: 7px;
+}
+
+.navbar .btn-navbar.collapsed span:after {
+  content: "\f0de";
+  margin-left: 7px;
+}
+
 
 body div#main div ul.nav li:first-child {
   margin-left: 3px;

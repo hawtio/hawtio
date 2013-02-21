@@ -48,10 +48,8 @@
 <div class="navbar navbar-fixed-top" ng-show="!fullScreen()">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
     <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+      <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+        <span>{{activeLink()}}</span>
       </a>
       <a class="brand" href="#">
         <img src="img/logo-16px.png"/>
@@ -59,18 +57,20 @@
       </a>
 
 
-      <div class="nav-collapse">
+
+      <div class="nav-collapse collapsed">
         <ul class="nav">
           <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
-            <a ng-href="{{link(nav)}}" title="{{nav.title}}"
-               data-placement="bottom" ng-bind="nav.content"></a></li>
+            <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
+            </a>
+          </li>
         </ul>
 
         <div class="pull-right">
           <ul class="nav pull-right">
             <li ng-class="{active : isActive('#/preferences')}">
               <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
-                <i class="icon-cog"></i>
+                <i class="icon-cogs"></i>
               </a>
             </li>
             <li ng-class="{active : isActive('#/help')}">

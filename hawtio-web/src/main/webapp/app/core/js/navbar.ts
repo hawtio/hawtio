@@ -1,12 +1,10 @@
 module Core {
 
   export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace) {
-    // TODO why do we keep binding the workspace to the scope?
-    $scope.workspace = workspace;
 
-    $scope.topLevelTabs = () => $scope.workspace.topLevelTabs;
+    $scope.topLevelTabs = () => workspace.topLevelTabs;
 
-    $scope.subLevelTabs = () => $scope.workspace.subLevelTabs;
+    $scope.subLevelTabs = () => workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
@@ -46,6 +44,16 @@ module Core {
       }
       return workspace.isLinkActive(nav.href());
     };
+
+    $scope.activeLink = () => {
+      var tabs = $scope.topLevelTabs();
+      if (!tabs) {
+        return "Loading...";
+      }
+      return tabs.find(function(nav) {
+        return $scope.isActive(nav);
+      })['content'];
+    }
 
     $scope.fullScreen = () => {
       var tab = $location.search()['tab'];
