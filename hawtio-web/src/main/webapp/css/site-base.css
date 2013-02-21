@@ -27,7 +27,13 @@ body div div ul.nav {
   border-bottom: none;
 }
 
+ul.dynatree-container {
+  background: inherit;
+}
 
+ul.dynatree-container li {
+  background: inherit;
+}
 
 /* Chart stuff */
 
