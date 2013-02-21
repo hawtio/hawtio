@@ -15,7 +15,11 @@
   <link rel='stylesheet' href='css/angular-ui.css' type='text/css'>
   <link rel='stylesheet' href='css/ng-grid.css' type='text/css'>
   <link rel='stylesheet' href='css/jquery.gridster.css' type='text/css'>
-  <link rel='stylesheet' href='css/site.css' type='text/css'>
+
+  <link rel='stylesheet' href='css/site-base.css' type='text/css'>
+
+  <link rel='stylesheet' media='screen and (min-width: 980px)' href='css/site-wide.css' type='text/css'>
+  <link rel='stylesheet' media='screen and (max-width: 979px)' href='css/site-narrow.css' type='text/css'>
 
   <link rel='stylesheet' href='css/codemirror/themes/ambiance.css' type='text/css'>
   <link rel='stylesheet' href='css/codemirror/themes/blackboard.css' type='text/css'>
@@ -66,10 +70,14 @@
           <ul class="nav pull-right">
             <li ng-class="{active : isActive('#/preferences')}">
               <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
-                <i class="icon-cog"></i> Preferences</a></li>
+                <i class="icon-cog"></i>
+              </a>
+            </li>
             <li ng-class="{active : isActive('#/help')}">
               <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console" data-placement="bottom">
-                <i class="icon-question-sign"></i> Help</a></li>
+                <i class="icon-question-sign"></i>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
