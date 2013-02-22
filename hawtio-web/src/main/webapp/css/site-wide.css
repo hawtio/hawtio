@@ -1,3 +1,7 @@
 #main {
   margin-top: 64px;
 }
+
+#tree-ctrl {
+  display: none;
+}
