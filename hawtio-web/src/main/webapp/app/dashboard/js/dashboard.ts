@@ -56,9 +56,9 @@ module Dashboard {
       var w = entry.widget;
       var scope = entry.scope;
       sizefunc();
-      setTimeout(function() {
-        gridster.resize_widget(w, widget.size_x, widget.size_y);
+      gridster.resize_widget(w, widget.size_x, widget.size_y);
 
+      setTimeout(function() {
         var template = $templateCache.get("widgetTemplate");
         var div = $('<div></div>');
         div.html(template);
@@ -66,8 +66,10 @@ module Dashboard {
 
         $scope.$apply();
 
-        savefunc();
-      });
+        setTimeout(function() {
+          savefunc();
+        }, 50);
+      }, 50);
     }
 
     $scope.growWidgetX = function(widget) {
