@@ -86,24 +86,20 @@ If you do not use a servlet container or application server and wish to embed ha
 
 Add the following to your pom.xml
 
-```xml
-<dependency>
-  <groupId>io.hawt</groupId>
-  <artifactId>hawtio-embedded</artifactId>
-  <version>${hawtio-version}</version>
-</dependency>
-```
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-embedded</artifactId>
+      <version>${hawtio-version}</version>
+     </dependency>
 
 Then in your application run the following code:
 
-```java
-import io.hawt.embedded.Main;
+    import io.hawt.embedded.Main;
 
-...
-Main main = new Main();
-main.setWar("somePathOrDirectoryContainingHawtioWar");
-main.run();
-```
+    ...
+    Main main = new Main();
+    main.setWar("somePathOrDirectoryContainingHawtioWar");
+    main.run();
 
 If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).
 
