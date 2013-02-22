@@ -139,24 +139,20 @@ features:install hawtio</code></pre>
 
 <p>Add the following to your pom.xml</p>
 
-<p>```xml
-<dependency>
-  <groupId>io.hawt</groupId>
-  <artifactId>hawtio-embedded</artifactId>
-  <version>${hawtio-version}</version>
-</dependency>
-```</p>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.hawt&lt;/groupId&gt;
+  &lt;artifactId&gt;hawtio-embedded&lt;/artifactId&gt;
+  &lt;version&gt;${hawtio-version}&lt;/version&gt;
+ &lt;/dependency&gt;</code></pre>
 
 <p>Then in your application run the following code:</p>
 
-<p>```java
-import io.hawt.embedded.Main;</p>
+<pre><code>import io.hawt.embedded.Main;
 
-<p>&hellip;
+...
 Main main = new Main();
-main.setWar("somePathOrDirectoryContainingHawtioWar&rdquo;);
-main.run();
-```</p>
+main.setWar("somePathOrDirectoryContainingHawtioWar");
+main.run();</code></pre>
 
 <p>If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).</p>
 
