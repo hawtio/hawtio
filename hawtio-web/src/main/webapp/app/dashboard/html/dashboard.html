@@ -1,5 +1,21 @@
 <script type="text/ng-template" id="widgetTemplate">
   <div class="widget-area" data-widgetId="{{widget.id}}">
+    <div class="width-controls">
+      <a ng-click="growWidgetX(widget)">
+        <i class="icon-circle-arrow-right"></i>
+      </a>
+      <a ng-click="shrinkWidgetX(widget)">
+        <i class="icon-circle-arrow-left"></i>
+      </a>
+    </div>
+    <div class="height-controls">
+      <a ng-click="growWidgetY(widget)">
+        <i class="icon-circle-arrow-down"></i>
+      </a>
+      <a ng-click="shrinkWidgetY(widget)">
+        <i class="icon-circle-arrow-up"></i>
+      </a>
+    </div>
     <div class="widget-title">
       <div class="row-fluid">
         <div class="pull-left">
@@ -9,12 +25,6 @@
           <i class="icon-remove" title="Removes this view from the dashboard" ng-click="removeWidget(widget)"></i>
         </div>
       </div>
-    </div>
-    <div class="widget-controls">
-      <a class="btn" ng-click="growWidgetX(widget)">Bigger X</a>
-      <a class="btn" ng-click="growWidgetY(widget)">Bigger Y</a>
-      <a class="btn" ng-click="shrinkWidgetX(widget)">Smaller X</a>
-      <a class="btn" ng-click="shrinkWidgetY(widget)">Smaller Y</a>
     </div>
     <div class="widget-body">
       <div ng-include="widget.include"></div>

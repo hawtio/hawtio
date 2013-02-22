@@ -305,6 +305,7 @@ li.attr-column {
   overflow: hidden;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125);
   background: #ffffff;
+  position: relative;
 }
 
 .widget-title {
@@ -358,6 +359,54 @@ li.attr-column {
 
 .widget-body {
   padding: 2px;
+}
+
+.height-controls a {
+  float: left;
+  display: block;
+  color: #bfbfbf;
+  opacity: .1;
+  text-decoration: none;
+}
+
+.width-controls a {
+  float: left;
+  display: block;
+  color: #bfbfbf;
+  opacity: .1;
+  text-decoration: none;
+}
+
+.width-controls a:hover {
+  opacity: .9;
+  text-decoration: none;
+}
+
+.height-controls a:hover {
+  opacity: .9;
+  text-decoration: none;
+}
+
+.width-controls {
+  font-size: 32px;
+  z-index: 50;
+  position: absolute;
+  width: 1.5em;
+  height: 3em;
+  display: block;
+  right: 5px;
+  top: 43%;
+}
+
+.height-controls {
+  font-size: 32px;
+  z-index: 50;
+  position: absolute;
+  display: block;
+  width: 3em;
+  height: 1.5em;
+  left: 41%;
+  bottom: 5px;
 }
 
 .ep > i {
@@ -470,3 +519,4 @@ li.attr-column {
   margin-right: 20px;
 }
 /* End logs css */
+

@@ -15,7 +15,7 @@ module Core {
       var width = canvasDiv.parent().width();
       var height = canvasDiv.parent().height();
 
-      if (height < 300) {
+      if (height < 100) {
         //console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
         var offset = canvasDiv.offset();
         height = $(document).height() - 5;
