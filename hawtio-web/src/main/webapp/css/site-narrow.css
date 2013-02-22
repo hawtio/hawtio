@@ -39,13 +39,9 @@ body div#main div ul.nav li {
   margin-left: 7px;
 }
 
-
-body div#main div ul.nav li:first-child {
-  margin-left: 3px;
-}
-
-body div#main div ul.nav li:last-child {
-  margin-right: 3px;
+body div#main div ul.nav {
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .nav-tabs > li > a, .nav-pills > li > a {
