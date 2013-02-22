@@ -8,6 +8,9 @@ module ActiveMQ {
       $scope.producers = {};
       $scope.networks = {};
 
+      $scope.parentHeight = 0;
+      $scope.parentWidth = 0;
+
       function matchesSelection(destinationName) {
         var selectionDetinationName = $scope.selectionDetinationName;
         return !selectionDetinationName || destinationName === selectionDetinationName;
@@ -117,6 +120,25 @@ module ActiveMQ {
         Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
         $scope.$apply();
       };
+
+      $scope.updateGraph = () => {
+        var canvas = $("#canvas");
+        var parent = canvas.parent();
+        var parentWidth = parent.width();
+        var parentHeight = parent.height();
+
+        // console.log("Parent width: " + parentWidth + " parent height: " + parentHeight);
+        var canvasWidth = canvas.width();
+        var canvasHeight = canvas.height();
+        // console.log("Canvas width: " + canvasWidth + " canvas height: " + canvasHeight);
+
+        if (canvasHeight !== parentHeight || canvasWidth !== parentWidth) {
+          // console.log("force resize");
+          Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
+        }
+      }
+
+      $scope.$watch($scope.updateGraph);
 
       $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;

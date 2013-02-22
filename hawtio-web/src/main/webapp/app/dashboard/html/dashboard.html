@@ -10,6 +10,12 @@
         </div>
       </div>
     </div>
+    <div class="widget-controls">
+      <a class="btn" ng-click="growWidgetX(widget)">Bigger X</a>
+      <a class="btn" ng-click="growWidgetY(widget)">Bigger Y</a>
+      <a class="btn" ng-click="shrinkWidgetX(widget)">Smaller X</a>
+      <a class="btn" ng-click="shrinkWidgetY(widget)">Smaller Y</a>
+    </div>
     <div class="widget-body">
       <div ng-include="widget.include"></div>
     </div>

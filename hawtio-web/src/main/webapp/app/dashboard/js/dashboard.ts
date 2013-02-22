@@ -8,8 +8,8 @@ module Dashboard {
     $scope.route = $route;
     $scope.injector = $injector;
 
-    $scope.gridX = 400;
-    $scope.gridY = 400;
+    $scope.gridX = 150;
+    $scope.gridY = 150;
 
     $scope.widgetMap = {};
 
@@ -49,6 +49,58 @@ module Dashboard {
 
       updateDashboardRepository("Removed widget " + widget.title);
     };
+
+    function changeWidgetSize(widget, sizefunc, savefunc) {
+      var gridster = $("#widgets").gridster().data('gridster');
+      var entry = $scope.widgetMap[widget.id];
+      var w = entry.widget;
+      var scope = entry.scope;
+      sizefunc();
+      setTimeout(function() {
+        gridster.resize_widget(w, widget.size_x, widget.size_y);
+
+        var template = $templateCache.get("widgetTemplate");
+        var div = $('<div></div>');
+        div.html(template);
+        w.html($compile(div.contents())(scope));
+
+        $scope.$apply();
+
+        savefunc();
+      });
+    }
+
+    $scope.growWidgetX = function(widget) {
+      changeWidgetSize(widget, function() {
+        widget.size_x = widget.size_x + 1;
+      }, function() {
+        updateDashboardRepository("Increased width of widget " + widget.title);
+      });
+    }
+
+    $scope.growWidgetY = function(widget) {
+      changeWidgetSize(widget, function() {
+        widget.size_y = widget.size_y + 1;
+      }, function() {
+        updateDashboardRepository("Increased height of widget " + widget.title);
+      });
+    }
+
+    $scope.shrinkWidgetX = function(widget) {
+      changeWidgetSize(widget, function() {
+        widget.size_x = widget.size_x - 1;
+      }, function() {
+        updateDashboardRepository("Decreased width of widget " + widget.title);
+      });
+    }
+
+    $scope.shrinkWidgetY = function(widget) {
+      changeWidgetSize(widget, function() {
+        widget.size_y = widget.size_y - 1;
+      }, function() {
+        updateDashboardRepository("Decreased height of widget " + widget.title);
+      });
+    }
 
 /*
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -134,24 +186,25 @@ module Dashboard {
         };
         childScope.$$scopeInjections = $$scopeInjections;
 
-        if (!widget.sizex) {
-          widget.sizex = 1;
+        if (!widget.size_x || widget.size_x < 1) {
+          widget.size_x = 1;
         }
-        if (!widget.sizey) {
-          widget.sizey = 1;
+        if (!widget.size_y || widget.size_y < 1) {
+          widget.size_y = 1;
         }
         var div = $('<div></div>');
         div.html(template);
 
         var outerDiv = $('<li></li>')
         outerDiv.html($compile(div.contents())(childScope));
-        var w = gridster.add_widget(outerDiv, widget.sizex, widget.sizey, widget.col, widget.row);
+        var w = gridster.add_widget(outerDiv, widget.size_x, widget.size_y, widget.col, widget.row);
 
         $scope.widgetMap[widget.id] = {
           widget: w,
           scope: childScope
         };
 
+        /*
         childScope.$watch(function(scope) {
           var area = w.find('.widget-area')[0];
 
@@ -169,6 +222,7 @@ module Dashboard {
             gridster.set_dom_grid_height();
           }
         });
+        */
 
       });
 

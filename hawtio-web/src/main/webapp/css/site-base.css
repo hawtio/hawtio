@@ -10,10 +10,7 @@
 }
 
 #canvas {
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  display: block;
+  display: inline-block;
 }
 
 .fill {
@@ -23,7 +20,7 @@
 
 /* sub tab tweaks */
 body div div ul.nav {
-  margin-bottom: 5px;
+  margin-bottom: 5p;
   border-bottom: none;
 }
 
@@ -60,7 +57,7 @@ ul.dynatree-container li {
   z-index: 2;
 }
 
-.axis text {
+.axis.text {
   -webkit-transition: fill-opacity 250ms linear;
 }
 
@@ -289,7 +286,7 @@ li.attr-column {
 
 
 .editor-autoresize .CodeMirror {
-  border: 1px solid #eee;
+  border: 1px solid #a4a4a4;
   height: auto;
 }
 
@@ -300,17 +297,18 @@ li.attr-column {
 
 .gridster ul#widgets {
   list-style-type: none;
-
 }
 
 .gridster ul#widgets .gs_w {
   padding: 0px;
+  border: 1px solid #c5c5c5;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125);
+  background: #ffffff;
 }
 
 .widget-title {
   margin: 0;
-
-  border-radius: 5px 5px 0px 0px;
 
   padding-left: 5px;
   padding-right: 5px;
@@ -358,10 +356,8 @@ li.attr-column {
   opacity: 1;
 }
 
-
 .widget-body {
   padding: 2px;
-  overflow: auto;
 }
 
 .ep > i {
@@ -410,7 +406,7 @@ li.attr-column {
 }
 
 #widgets li div div div div div#attributesGrid div.ngTopPanel {
-  display: none;
+  /* display: none; */
 }
 
 #widgets li div div div div div#attributesGrid div div div div.ngHeaderCell {

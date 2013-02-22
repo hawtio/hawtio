@@ -12,8 +12,9 @@ module Core {
     canvasDiv.children("svg").remove();
 
     if (nodes.length) {
-      var width = canvasDiv.width();
-      var height = canvasDiv.height();
+      var width = canvasDiv.parent().width();
+      var height = canvasDiv.parent().height();
+
       if (height < 300) {
         //console.log("browse thinks the height is only " + height + " so calculating offset from doc height");
         var offset = canvasDiv.offset();
