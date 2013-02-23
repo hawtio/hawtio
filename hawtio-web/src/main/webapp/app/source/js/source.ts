@@ -5,7 +5,9 @@ module Source {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-    console.log("Source format is " + $scope.format);
+    var lineNumber = $location.search()["line"] || 1;
+
+    console.log("Source format is " + $scope.format + " line " + lineNumber);
 
     $scope.breadcrumbs = [];
 
@@ -15,15 +17,16 @@ module Source {
     updateView();
 
     var options = {
-      //readOnly: true,
+      readOnly: true,
       mode: {
         lineNumbers: true,
-        matchBrackets: true,
-        theme: "ambiance",
+        cursor: lineNumber,
         name: $scope.format
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+
+    // TODO how to set the line number easily?
 
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
