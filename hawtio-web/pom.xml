@@ -584,6 +584,14 @@
         <fabricUrl>localhost:2181</fabricUrl>
         <fabric-version>99-master-SNAPSHOT</fabric-version>
       </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.fusesource.insight</groupId>
+          <artifactId>insight-maven</artifactId>
+          <version>${fabric-version}</version>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

@@ -53,6 +53,8 @@ module Wiki {
             return {
               "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
               "htmlmixed": ["html", "xhtml", "htm"],
+              "text/x-java": ["java"],
+              "text/x-scala": ["scala"],
               "javascript": ["js", "json", "javascript", "jscript", "ecmascript"],
               "xml": ["xml"],
               "properties": ["properties"]
