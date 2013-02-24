@@ -66,7 +66,14 @@ If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/produc
 
 Otherwise if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [Apache ServiceMix](http://servicemix.apache.org/) or [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) use the following
 
-If you have the [sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots) in your settings you can use this:
+Add the following to the **etc/org.ops4j.pax.url.mvn.cfg** to make sure you have the [sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots) in your settings
+
+```
+org.ops4j.pax.url.mvn.repositories= \
+		https://oss.sonatype.org/content/repositories/snapshots \
+```
+
+Now you can install hawtio via:
 
 ```
     features:addurl mvn:io.hawt/hawtio-karaf/1.0-SNAPSHOT/xml/features
