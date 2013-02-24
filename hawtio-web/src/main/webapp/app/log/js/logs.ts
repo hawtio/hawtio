@@ -55,7 +55,7 @@ module Log {
             {
               field: 'logger',
               displayName: 'Logger',
-              cellTemplate: '<div class="ngCellText"><a ng-href="{{logSourceHref(row)}}">{{row.getProperty(col.field)}}</a></div>',
+              cellTemplate: '<div class="ngCellText" ng-switch><a ng-href="{{logSourceHref(row)}}" ng-switch-when="logSourceHref(row)">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
               cellFilter: null,
               width: "*"
             },
