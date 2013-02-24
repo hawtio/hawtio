@@ -1,20 +1,22 @@
 module Tomcat {
   var pluginName = 'tomcat';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
-      // TODO custom tomcat views go here...
+      $routeProvider.
+          when('/tomcat', {templateUrl: 'app/tomcat/html/tomcat.html'})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
-            viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTree.html";
+             viewRegistry['tomcat'] = layoutFull;
 
-            workspace.topLevelTabs.push( {
+          workspace.topLevelTabs.push( {
               content: "Tomcat",
               title: "Manage your Tomcat container",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina"),
-              href: () => "#/jmx/attributes?tab=tomcat",
+              href: () => "#/tomcat",
               isActive: (workspace: Workspace) => workspace.isTopTabActive("tomcat")
-            });
           });
+
+      });
 
   hawtioPluginLoader.addModule(pluginName);
 }
