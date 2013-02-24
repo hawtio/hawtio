@@ -363,4 +363,27 @@ module Core {
     }
     return extension;
   }
+
+  export function parseIntValue(value, description: string) {
+    if (angular.isString(value)) {
+      try {
+        return parseInt(value);
+      } catch (e) {
+        console.log("Failed to parse " + description + " with text '" + value + "'");
+      }
+    }
+    return null;
+  }
+
+  export function parseFloatValue(value, description: string) {
+    if (angular.isString(value)) {
+      try {
+        return parseFloat(value);
+      } catch (e) {
+        console.log("Failed to parse " + description + " with text '" + value + "'");
+      }
+    }
+    return null;
+  }
+
 }
