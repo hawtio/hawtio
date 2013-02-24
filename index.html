@@ -117,21 +117,30 @@
 
 <pre><code>features:install hawtio</code></pre>
 
-<p>Or if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> the following should work:</p>
+<p>Otherwise if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> use the following</p>
 
-<pre><code>features:install war
-install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/hawtio-web-1.0-20130218.154057-71.war</code></pre>
+<p>Add the following to the <strong>etc/org.ops4j.pax.url.mvn.cfg</strong> to make sure you have the <a href="https://oss.sonatype.org/content/repositories/snapshots">sonatype snapshot repo</a> in your settings</p>
+
+<p>```
+org.ops4j.pax.url.mvn.repositories= \
+        https://oss.sonatype.org/content/repositories/snapshots \
+```</p>
+
+<p>Now you can install hawtio via:</p>
+
+<p>```
+    features:addurl mvn:io.hawt/hawtio-karaf/1.0-SNAPSHOT/xml/features
+    features:install hawtio
+```</p>
+
+<p>Otherwise just install a war build directly:</p>
+
+<p>```
+    features:install war
+    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/hawtio-web-1.0-20130218.154057-71.war
+```</p>
 
 <p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>.</p>
-
-<h3 id = "Installing_hawtio_to__a_href__http:__karaf_apache_org___Apache_Karaf__a_">Installing hawtio to <a href="http://karaf.apache.org/">Apache Karaf</a></h3>
-
-<p>You can install public releases of hawtio using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> container, using the following commands:</p>
-
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.0.0/xml/features
-features:install hawtio</code></pre>
-
-<p>(substitute 1.0.0 with the public release of hawtio you want to use). Then open <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a></p>
 
 <h3 id = "Using_hawtio_inside_a_stand_alone_Java_application">Using hawtio inside a stand alone Java application</h3>
 
