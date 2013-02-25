@@ -68,24 +68,18 @@ Otherwise if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [
 
 Add the following to the **etc/org.ops4j.pax.url.mvn.cfg** to make sure you have the [sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots) in your settings
 
-```
-org.ops4j.pax.url.mvn.repositories= \
-		https://oss.sonatype.org/content/repositories/snapshots \
-```
+    org.ops4j.pax.url.mvn.repositories= \
+        https://oss.sonatype.org/content/repositories/snapshots \
 
 Now you can install hawtio via:
 
-```
     features:addurl mvn:io.hawt/hawtio-karaf/1.0-SNAPSHOT/xml/features
     features:install hawtio
-```
 
-Otherwise just install a war build directly:
+Otherwise just install a [hawtio-osgi.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/) build directly:
 
-```
     features:install war
-    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/hawtio-web-1.0-20130218.154057-71.war
-```
+    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130224.214242-49.war
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
 
