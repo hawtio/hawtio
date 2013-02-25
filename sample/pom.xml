@@ -126,6 +126,20 @@
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
+          <systemProperties>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.repo</key>
+              <value>${hawtio-config-repo}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>java.protocol.handler.pkgs</key>
+              <value>org.ops4j.pax.url</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
 

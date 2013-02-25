@@ -21,33 +21,10 @@ module Log {
       return logLevelClass(log['level']);
     };
 
-    $scope.logSourceHref = (row) => {
-      var log = row.entity;
-      var fileName = log.fileName;
-      var className = log.className;
-      if ((!fileName || fileName === "?") && className) {
-        fileName = className.replace(".", "/") + ".java";
-      }
-      var groupId = "";
-      var artifactId = "";
-      var version = "";
-      var properties = log.properties;
-      if (properties) {
-        var coords = properties["maven.coordinates"];
-        if (coords) {
-          var values = coords.split(":");
-          if (values.length > 2) {
-            groupId = values[0];
-            artifactId = values[1];
-            version = values[2];
-          }
-        }
-      }
-      if (groupId && artifactId && version) {
-        return "#/source/view/" + groupId + "/" + artifactId + "/" + version + "/" + fileName;
-      } else {
-        return "";
-      }
+    $scope.logSourceHref = Log.logSourceHref;
+
+    $scope.hasLogSourceHref = (row) => {
+      return Log.logSourceHref(row) ? true : false;
     };
 
     var columnDefs: any[] = [
@@ -67,7 +44,7 @@ module Log {
             {
               field: 'logger',
               displayName: 'Logger',
-              cellTemplate: '<div class="ngCellText" ng-switch><a ng-href="{{logSourceHref(row)}}" ng-switch-when="logSourceHref(row)">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
+              cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
               cellFilter: null,
               width: "*"
             },

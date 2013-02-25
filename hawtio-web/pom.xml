@@ -367,6 +367,10 @@
               <key>hawtio.config.repo</key>
               <value>${hawtio-config-repo}</value>
             </systemProperty>
+            <systemProperty>
+              <key>java.protocol.handler.pkgs</key>
+              <value>org.ops4j.pax.url</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
@@ -422,7 +426,13 @@
         <configuration>
           <mainClass>io.hawt.sample.Main</mainClass>
           <classpathScope>test</classpathScope>
+
           <systemProperties>
+            <!-- this is required for the mvn url handler -->
+            <systemProperty>
+              <key>java.protocol.handler.pkgs</key>
+              <value>org.ops4j.pax.url</value>
+            </systemProperty>
             <systemProperty>
               <key>basedir</key>
               <value>${basedir}</value>
@@ -584,14 +594,6 @@
         <fabricUrl>localhost:2181</fabricUrl>
         <fabric-version>99-master-SNAPSHOT</fabric-version>
       </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.fusesource.insight</groupId>
-          <artifactId>insight-maven</artifactId>
-          <version>${fabric-version}</version>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>

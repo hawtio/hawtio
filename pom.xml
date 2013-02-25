@@ -76,9 +76,10 @@
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
 <!--
-    <fabric-version>99-master-SNAPSHOT</fabric-version>
--->
     <fabric-version>7.1.0.fuse-${perfectus-build}</fabric-version>
+-->
+    <!-- we now depend on snapshot of fabric until the latest insight-log makes it to a perfectus release -->
+    <fabric-version>99-master-SNAPSHOT</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
