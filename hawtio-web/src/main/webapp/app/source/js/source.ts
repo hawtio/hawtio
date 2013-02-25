@@ -49,14 +49,10 @@ module Source {
     function updateView() {
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        var groupId = $routeParams["groupId"];
-        var artifactId = $routeParams["artifactId"];
-        var versionId = $routeParams["versionId"];
+        var mavenCoords = $routeParams["mavenCoords"];
+        var className = $routeParams["className"];
         var fileName = $scope.pageId;
-        if (!fileName.startsWith("/")) {
-          fileName = "/" + fileName;
-        }
-        jolokia.execute(mbean, "getSource", groupId, artifactId, versionId, fileName, onSuccess(viewContents));
+        jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, onSuccess(viewContents));
       }
     }
   }
