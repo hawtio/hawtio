@@ -71,7 +71,7 @@ public class GitFacade implements GitFacadeMXBean {
     private int shortCommitIdLength = 6;
     private String remote = "origin";
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
-    private boolean cloneRemoteRepoOnStartup = true;
+    private Boolean cloneRemoteRepoOnStartup;
     private boolean pullOnStartup = true;
 
 
@@ -150,6 +150,10 @@ public class GitFacade implements GitFacadeMXBean {
     }
 
     public boolean isCloneRemoteRepoOnStartup() {
+        if (cloneRemoteRepoOnStartup == null) {
+            String flag = getSystemPropertyOrEnvironmentVariable("hawtio.config.cloneOnStartup", "HAWTIO_CONFIG_CLONEONSTARTUP");
+            cloneRemoteRepoOnStartup = flag == null || !flag.equals("false");
+        }
         return cloneRemoteRepoOnStartup;
     }
 

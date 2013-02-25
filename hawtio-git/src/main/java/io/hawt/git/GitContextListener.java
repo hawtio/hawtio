@@ -39,6 +39,10 @@ public class GitContextListener  implements ServletContextListener {
             if (repo != null) {
                 helper.setRemoteRepository(repo);
             }
+            String cloneRemoteRepoOnStartup = context.getInitParameter("hawtio.config.cloneOnStartup");
+            if (cloneRemoteRepoOnStartup != null && cloneRemoteRepoOnStartup.equals("false")) {
+                helper.setCloneRemoteRepoOnStartup(false);
+            }
             helper.init();
         } catch (Exception e) {
             throw createServletException(e);
