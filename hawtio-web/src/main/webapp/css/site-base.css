@@ -497,6 +497,7 @@ li.attr-column {
 
 /* Start logs css */
 .logbar {
+  z-index: 50;
   left: 0px;
   background: white;
   position: fixed;
