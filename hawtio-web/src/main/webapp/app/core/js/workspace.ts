@@ -49,7 +49,12 @@ class Workspace {
   }
 
   public loadTree() {
-    //this.$rootScope.$on('jmxTreeUpdated', angular.bind(this, this.maybeMonitorPlugins));
+    // Make an initial blocking call to ensure the JMX tree is populated while the
+    // app is initializing...
+    var response = {
+      value: this.jolokia.list(null, {canonicalNaming: false, ignoreErrors: true})
+    }
+    this.populateTree(response);
     Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree)));
   }
 
