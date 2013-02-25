@@ -52,7 +52,11 @@ module Source {
         var groupId = $routeParams["groupId"];
         var artifactId = $routeParams["artifactId"];
         var versionId = $routeParams["versionId"];
-        jolokia.execute(mbean, "getArtifactSource", groupId, artifactId, versionId, $scope.pageId, onSuccess(viewContents));
+        var fileName = $scope.pageId;
+        if (!fileName.startsWith("/")) {
+          fileName = "/" + fileName;
+        }
+        jolokia.execute(mbean, "getSource", groupId, artifactId, versionId, fileName, onSuccess(viewContents));
       }
     }
   }
