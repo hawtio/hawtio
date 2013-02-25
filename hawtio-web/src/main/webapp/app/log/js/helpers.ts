@@ -1,9 +1,9 @@
 module Log {
   export function logSourceHref(row) {
     var log = row.entity;
-    var fileName = log.fileName;
-    var className = log.className;
-    if ((!fileName || fileName === "?") && className) {
+    var fileName = Log.removeQuestion(log.fileName);
+    var className = Log.removeQuestion(log.className);
+    if (className && !fileName) {
       fileName = className.replace(".", "/") + ".java";
     }
     var groupId = "";
@@ -21,10 +21,14 @@ module Log {
         }
       }
     }
-    if (groupId && artifactId && version) {
+    if (groupId && artifactId && version && fileName) {
       return "#/source/view/" + groupId + "/" + artifactId + "/" + version + "/" + fileName;
     } else {
       return "";
     }
+  }
+
+  export function removeQuestion(text: string): string {
+    return (!text || text === "?") ? null : text;
   }
 }
