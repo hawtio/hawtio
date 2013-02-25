@@ -1,6 +1,20 @@
-// bootstrap plugin loader
-var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'] || "/hawtio/jolokia";
 
+// Add any other known possible jolokia URLs here
+var jolokiaUrls = [
+  "/hawtio/jolokia",  // instance configured by hawtio-web war file
+  "/jolokia"          // instance that's already installed in a karaf container for example
+  ];
+
+var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'];
+
+if (!jolokiaUrl) {
+  jolokiaUrl = jolokiaUrls.find(function (url) {
+    var jqxhr = $.ajax(url, {async: false});
+    return jqxhr.status === 200;
+  });
+}
+
+// bootstrap plugin loader
 hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
 hawtioPluginLoader.addUrl('/hawtio/test.json');
 
@@ -54,7 +68,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           return {};
         }).
         factory('jolokia',($location:ng.ILocationService, localStorage) => {
-          var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+          // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
+          // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           // console.log("Jolokia URL is " + jolokiaUrl);
           var jolokia = new Jolokia({url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'});
           localStorage['url'] = jolokiaUrl;
