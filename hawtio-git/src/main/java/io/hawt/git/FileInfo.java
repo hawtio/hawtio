@@ -30,7 +30,7 @@ public class FileInfo {
     private final boolean directory;
 
     public static FileInfo createFileInfo(File rootDir, File file) {
-        String path = getRelativePath(rootDir, file);
+        String path = getRelativePath(rootDir, file).replace("\\", "/");
         return new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
     }
 

@@ -28,7 +28,9 @@ var _apacheCamelModel = {
       "description":  "Aggregate",
       "tootip":  "Aggregate",
       "icon":     "aggregate24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "correlationexpression",
 				  				    
@@ -227,7 +229,9 @@ var _apacheCamelModel = {
       "description":  "AOP",
       "tootip":  "AOP",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "beforeuri",
 				  				    
@@ -266,7 +270,7 @@ var _apacheCamelModel = {
       "description":  "Bean",
       "tootip":  "Bean",
       "icon":     "bean24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -310,7 +314,9 @@ var _apacheCamelModel = {
       "description":  "Catch",
       "tootip":  "Catch",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "exceptions",
 				  				    
@@ -339,7 +345,9 @@ var _apacheCamelModel = {
       "description":  "Choice",
       "tootip":  "Choice",
       "icon":     "choice24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "convertBody": {
@@ -348,7 +356,7 @@ var _apacheCamelModel = {
       "description":  "Convert Body",
       "tootip":  "Convert Body",
       "icon":     "convertBody24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "type",
 				  				    
@@ -377,7 +385,9 @@ var _apacheCamelModel = {
       "description":  "Delay",
       "tootip":  "Delay",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -426,7 +436,7 @@ var _apacheCamelModel = {
       "description":  "Dynamic Router",
       "tootip":  "Dynamic Router",
       "icon":     "dynamicRouter24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -465,7 +475,7 @@ var _apacheCamelModel = {
       "description":  "Enrich",
       "tootip":  "Enrich",
       "icon":     "enrich24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "resourceuri",
 				  				    
@@ -494,7 +504,9 @@ var _apacheCamelModel = {
       "description":  "Filter",
       "tootip":  "Filter",
       "icon":     "filter24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -513,7 +525,9 @@ var _apacheCamelModel = {
       "description":  "Finally",
       "tootip":  "Finally",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "idempotentConsumer": {
@@ -522,7 +536,9 @@ var _apacheCamelModel = {
       "description":  "Idempotent Consumer",
       "tootip":  "Idempotent Consumer",
       "icon":     "idempotentConsumer24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -581,7 +597,7 @@ var _apacheCamelModel = {
       "description":  "In Only",
       "tootip":  "In Only",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "uri",
 				  				    
@@ -600,7 +616,7 @@ var _apacheCamelModel = {
       "description":  "In Out",
       "tootip":  "In Out",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "uri",
 				  				    
@@ -619,7 +635,9 @@ var _apacheCamelModel = {
       "description":  "Intercept",
       "tootip":  "Intercept",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "interceptFrom": {
@@ -628,7 +646,9 @@ var _apacheCamelModel = {
       "description":  "Intercept From",
       "tootip":  "Intercept From",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "uri",
 				  				    
@@ -647,7 +667,9 @@ var _apacheCamelModel = {
       "description":  "Intercept Send To Endpoint",
       "tootip":  "Intercept Send To Endpoint",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "uri",
 				  				    
@@ -676,7 +698,9 @@ var _apacheCamelModel = {
       "description":  "Load Balance",
       "tootip":  "Load Balance",
       "icon":     "loadBalance24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "ref",
 				  				    
@@ -714,7 +738,7 @@ var _apacheCamelModel = {
       "description":  "Log",
       "tootip":  "Log",
       "icon":     "log24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "message",
 				  				    
@@ -763,7 +787,9 @@ var _apacheCamelModel = {
       "description":  "Loop",
       "tootip":  "Loop",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -792,7 +818,7 @@ var _apacheCamelModel = {
       "description":  "Marshal",
       "tootip":  "Marshal",
       "icon":     "marshal24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -850,7 +876,9 @@ var _apacheCamelModel = {
       "description":  "Multicast",
       "tootip":  "Multicast",
       "icon":     "multicast24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "strategyref",
 				  				    
@@ -939,7 +967,9 @@ var _apacheCamelModel = {
       "description":  "On Completion",
       "tootip":  "On Completion",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "executorserviceref",
 				  				    
@@ -988,7 +1018,9 @@ var _apacheCamelModel = {
       "description":  "On Exception",
       "tootip":  "On Exception",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "exceptions",
 				  				    
@@ -1077,7 +1109,9 @@ var _apacheCamelModel = {
       "description":  "Otherwise",
       "tootip":  "Otherwise",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "pipeline": {
@@ -1086,7 +1120,9 @@ var _apacheCamelModel = {
       "description":  "Pipeline",
       "tootip":  "Pipeline",
       "icon":     "pipeline24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "policy": {
@@ -1095,7 +1131,9 @@ var _apacheCamelModel = {
       "description":  "Policy",
       "tootip":  "Policy",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "ref",
 				  				    
@@ -1114,7 +1152,7 @@ var _apacheCamelModel = {
       "description":  "Poll Enrich",
       "tootip":  "Poll Enrich",
       "icon":     "pollEnrich24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "resourceuri",
 				  				    
@@ -1153,7 +1191,7 @@ var _apacheCamelModel = {
       "description":  "Process",
       "tootip":  "Process",
       "icon":     "process24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -1172,7 +1210,7 @@ var _apacheCamelModel = {
       "description":  "Recipient List",
       "tootip":  "Recipient List",
       "icon":     "recipientList24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1291,7 +1329,7 @@ var _apacheCamelModel = {
       "description":  "Remove Header",
       "tootip":  "Remove Header",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "headername",
 				  				    
@@ -1310,7 +1348,7 @@ var _apacheCamelModel = {
       "description":  "Remove Headers",
       "tootip":  "Remove Headers",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "pattern",
 				  				    
@@ -1339,7 +1377,7 @@ var _apacheCamelModel = {
       "description":  "Remove Property",
       "tootip":  "Remove Property",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "propertyname",
 				  				    
@@ -1358,7 +1396,9 @@ var _apacheCamelModel = {
       "description":  "Resequence",
       "tootip":  "Resequence",
       "icon":     "resequence24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1391,7 +1431,7 @@ var _apacheCamelModel = {
       "description":  "Rollback",
       "tootip":  "Rollback",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "message",
 				  				    
@@ -1430,7 +1470,9 @@ var _apacheCamelModel = {
       "description":  "Route",
       "tootip":  "Route",
       "icon":     "route24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "autostartup",
 				  				    
@@ -1535,7 +1577,7 @@ var _apacheCamelModel = {
       "description":  "Routing Slip",
       "tootip":  "Routing Slip",
       "icon":     "routingSlip24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1574,7 +1616,9 @@ var _apacheCamelModel = {
       "description":  "Sampling",
       "tootip":  "Sampling",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "sampleperiod",
 				  				    
@@ -1613,7 +1657,7 @@ var _apacheCamelModel = {
       "description":  "Set Body",
       "tootip":  "Set Body",
       "icon":     "setBody24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1632,7 +1676,7 @@ var _apacheCamelModel = {
       "description":  "Set Exchange Pattern",
       "tootip":  "Set Exchange Pattern",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "pattern",
 				  				    
@@ -1651,7 +1695,7 @@ var _apacheCamelModel = {
       "description":  "Set Fault Body",
       "tootip":  "Set Fault Body",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1670,7 +1714,7 @@ var _apacheCamelModel = {
       "description":  "Set Header",
       "tootip":  "Set Header",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1699,7 +1743,7 @@ var _apacheCamelModel = {
       "description":  "Set Out Header",
       "tootip":  "Set Out Header",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1728,7 +1772,7 @@ var _apacheCamelModel = {
       "description":  "Set Property",
       "tootip":  "Set Property",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1757,7 +1801,7 @@ var _apacheCamelModel = {
       "description":  "Sort",
       "tootip":  "Sort",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1786,7 +1830,9 @@ var _apacheCamelModel = {
       "description":  "Split",
       "tootip":  "Split",
       "icon":     "split24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -1885,7 +1931,7 @@ var _apacheCamelModel = {
       "description":  "Stop",
       "tootip":  "Stop",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
         ]
     },
      "threads": {
@@ -1894,7 +1940,9 @@ var _apacheCamelModel = {
       "description":  "Threads",
       "tootip":  "Threads",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "executorserviceref",
 				  				    
@@ -1993,7 +2041,9 @@ var _apacheCamelModel = {
       "description":  "Throttle",
       "tootip":  "Throttle",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -2052,7 +2102,7 @@ var _apacheCamelModel = {
       "description":  "Throw Exception",
       "tootip":  "Throw Exception",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -2071,7 +2121,7 @@ var _apacheCamelModel = {
       "description":  "Transacted",
       "tootip":  "Transacted",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -2090,7 +2140,7 @@ var _apacheCamelModel = {
       "description":  "Transform",
       "tootip":  "Transform",
       "icon":     "transform24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -2109,7 +2159,9 @@ var _apacheCamelModel = {
       "description":  "Try",
       "tootip":  "Try",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
         ]
     },
      "unmarshal": {
@@ -2118,7 +2170,7 @@ var _apacheCamelModel = {
       "description":  "Unmarshal",
       "tootip":  "Unmarshal",
       "icon":     "unmarshal24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "ref",
 				  				    
@@ -2176,7 +2228,7 @@ var _apacheCamelModel = {
       "description":  "Validate",
       "tootip":  "Validate",
       "icon":     "generic24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "expression",
 				  				    
@@ -2195,7 +2247,9 @@ var _apacheCamelModel = {
       "description":  "When",
       "tootip":  "When",
       "icon":     "generic24.png",
-      "properties": [
+			
+      "acceptInput": true,
+            "properties": [
           {
           "id":     "expression",
 				  				    
@@ -2214,7 +2268,7 @@ var _apacheCamelModel = {
       "description":  "Wire Tap",
       "tootip":  "Wire Tap",
       "icon":     "wireTap24.png",
-      "properties": [
+			      "properties": [
           {
           "id":     "uri",
 				  				    

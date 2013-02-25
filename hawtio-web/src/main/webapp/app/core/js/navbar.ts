@@ -50,10 +50,11 @@ module Core {
       if (!tabs) {
         return "Loading...";
       }
-      return tabs.find(function(nav) {
+      var tab = tabs.find(function(nav) {
         return $scope.isActive(nav);
-      })['content'];
-    }
+      });
+      return tab ? tab['content'] : "";
+    };
 
     $scope.fullScreen = () => {
       var tab = $location.search()['tab'];

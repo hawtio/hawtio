@@ -39,6 +39,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.management.MBeanServer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * A simple bootstrap class
@@ -128,12 +130,26 @@ public class Main {
                 LOG.error("Someone somewhere is not using Fuse! :)");
             }
 
+            // TODO temporary hack until we've got blueprint servlet listener to load blueprint services
+            try {
+                Class<?> aetherClass = Class.forName("org.fusesource.insight.maven.aether.AetherFacade");
+                Object aether = aetherClass.newInstance();
+                Method initMethod = aetherClass.getMethod("init");
+                Object[] methodArgs = new Object[0];
+                initMethod.invoke(aether, methodArgs);
+            } catch (InvocationTargetException e) {
+                Throwable target = e.getTargetException();
+                LOG.warn("Failed to initialise AetherFacade due to : " + e, e);
+            } catch (Throwable e) {
+                LOG.warn("Could not load the AetherFacade; only available in snapshots for now: " + e);
+            }
+
             // lets connect to fabric
             String fabricUrl = System.getProperty("fabricUrl", "");
             String fabricPassword = System.getProperty("fabricPassword", "admin");
 
             if (fabricUrl != null && fabricUrl.length() > 0) {
-                LOG.info("Connecting to Fuse Fabric at $fabricUrl");
+                LOG.info("Connecting to Fuse Fabric at " + fabricUrl);
                 ZKClientFactoryBean factory = new ZKClientFactoryBean();
                 factory.setPassword(fabricPassword);
                 factory.setConnectString(fabricUrl);

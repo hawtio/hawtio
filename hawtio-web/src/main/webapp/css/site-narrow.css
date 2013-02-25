@@ -6,7 +6,7 @@
   margin-bottom: 0px;
 }
 
-body div#main div ul.nav {
+div#main div ul.nav {
   margin-bottom: 5px;
   border-radius: 0 0 4px 4px;
   border: none;
@@ -19,7 +19,7 @@ body div#main div ul.nav {
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
-body div#main div ul.nav li {
+div#main div ul.nav li {
   margin-top: 3px;
   margin-bottom: 3px;
 }
@@ -39,20 +39,16 @@ body div#main div ul.nav li {
   margin-left: 7px;
 }
 
-
-body div#main div ul.nav li:first-child {
-  margin-left: 3px;
-}
-
-body div#main div ul.nav li:last-child {
-  margin-right: 3px;
+div#main div ul.nav {
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .nav-tabs > li > a, .nav-pills > li > a {
   margin-right: 0px;
 }
 
-body div#main div ul.nav li.active a {
+div#main div ul.nav li.active a {
   border: 1px;
   border-radius: 2px;
   background-color: #E5E5E5;
@@ -60,7 +56,7 @@ body div#main div ul.nav li.active a {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-body div#main div ul.nav li.active a:hover {
+div#main div ul.nav li.active a:hover {
   border: 1px;
   border-radius: 2px;
   background-color: #E5E5E5;
@@ -68,7 +64,7 @@ body div#main div ul.nav li.active a:hover {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-body div#main div ul.nav li a {
+div#main div ul.nav li a {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -78,7 +74,7 @@ body div#main div ul.nav li a {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-body div#main div ul.nav li a:hover {
+div#main div ul.nav li a:hover {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -87,4 +83,30 @@ body div#main div ul.nav li a:hover {
   color: #333333;
   text-shadow: 0 1px 0 #FFFFFF;
 }
+
+div#main div.row-fluid div.span3 ul#tree-ctrl li {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: center;
+
+}
+
+ul#tree-ctrl li a {
+  text-align: center;
+}
+
+ul#tree-ctrl li a span:after {
+  content: "\f0de";
+  margin-left: 7px;
+}
+
+ul#tree-ctrl li a.collapsed span:after {
+  content: "\f0dd";
+  margin-left: 7px;
+}
+
+#tree-container {
+  border-bottom: 1px solid #D4D4D4;
+}
+
 

@@ -22,6 +22,7 @@ We use the following excellent tools and libraries:
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. It's awesome and is currently the only server side component of hawtio.
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript--especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
 * [AngularJS](http://angularjs.org/) is the web framework for performing real time two-way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
+* [angular ui](http://angular-ui.github.com/) is a library of AngularJS additions and directives
 * [d3](http://d3js.org/) is the visualization library used to do the force layout graphs (for example the diagram view for ActiveMQ)
 * [cubism](http://square.github.com/cubism/) implements the real-time horizon charts
 * [dagre](https://github.com/cpettitt/dagre) for graphviz style layouts of d3 diagrams (e.g. the Camel diagram view).
@@ -31,6 +32,11 @@ We use the following excellent tools and libraries:
 * [DynaTree](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) for tree widget
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with third-party libraries which don't use AngularJS
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
+
+We're not yet using it but these look handy too:
+
+* [jquery-mobile-angular-adapter](https://github.com/tigbro/jquery-mobile-angular-adapter) for easy interop of jQuery Mobile and AngularJS
+* [breezejs](http://www.breezejs.com/) for easy LINQ / ActiveRecord style database access and synchronization
 
 ### Developer References
 
@@ -91,7 +97,7 @@ The following are recommended if you want to contribute to the code
 * [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
 * [Apache Maven 3.0.3 or later](http://maven.apache.org/)
 * [gruntjs](http://gruntjs.com/) a build tool for JavaScript. See nearly the beginning of this document for details of how to install and use.
-* [Dash.app](http://kapeli.com/) is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery etc.
+* [Dash.app](http://kapeli.com/) is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery, AngularJS etc.
 
 #### Enable Source Maps for Easier Debugging
 
