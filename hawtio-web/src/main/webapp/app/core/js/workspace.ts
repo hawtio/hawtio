@@ -253,9 +253,6 @@ class Workspace {
       this.maybeMonitorPlugins();
 
       this.$rootScope.$broadcast('jmxTreeUpdated');
-      if (!this.$rootScope.$$phase) {
-        this.$rootScope.$apply();
-      }
     }
   }
 
