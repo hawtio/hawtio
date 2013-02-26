@@ -4,11 +4,9 @@ module JBoss {
         $scope.webAppObjectNames = jolokia.search("jboss.as:deployment=*")
 
         $scope.webAppName = function webAppName(name) {
-            return jolokia.getAttribute(name, "name")
-        }
-
-        $scope.webAppContextPath = function webAppContextPath(name) {
-            return jolokia.getAttribute(name, "name")
+            var name = jolokia.getAttribute(name, "name")
+            // TODO: a better way to drop .war from the name
+            return name.substring(0, name.length - 4)
         }
 
         $scope.webAppOperation = function webAppOperation(name,operation) {

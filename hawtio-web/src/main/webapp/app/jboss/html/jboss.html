@@ -7,7 +7,6 @@
         <table style="margin-bottom: 20px" class="ng-show:!isEmpty(webAppObjectNames)">
             <tr ng-repeat="oname in webAppObjectNames">
                 <td>{{webAppName(oname)}}</td>
-                <td>{{webAppContextPath(oname)}}</td>
                 <td>
                     <div class="btn-group">
                         <button ng-click="webAppOperation(oname,'deploy')" class="btn"><i class="icon-play"></i></button>
