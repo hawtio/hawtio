@@ -145,8 +145,10 @@ module Dashboard {
       var widgetElement = $("#widgets");
 
       var gridster = widgetElement.gridster({
-        widget_margins: [10, 10],
+        widget_margins: [6, 6],
         widget_base_dimensions: [$scope.gridX, $scope.gridY],
+        extra_rows: 10,
+        extra_cols: 6,
         draggable: {
           stop: (event, ui) => {
             updateLayoutConfiguration();
@@ -198,9 +200,9 @@ module Dashboard {
         var div = $('<div></div>');
         div.html(template);
 
-        var outerDiv = $('<li></li>')
+        var outerDiv = $('<li style="display: list-item; position: absolute"></li>');
         outerDiv.html($compile(div.contents())(childScope));
-        console.log("adding widget " + widget.id + " at col " + widget.col + " row " + widget.row);
+        console.log("adding widget " + widget.id + " size_x: " + widget.size_x + " size_y: " + widget.size_y + " at col: " + widget.col + " row: " + widget.row);
         var w = gridster.add_widget(outerDiv, widget.size_x, widget.size_y, widget.col, widget.row);
 
         $scope.widgetMap[widget.id] = {
@@ -231,6 +233,9 @@ module Dashboard {
       });
 
 
+      // now lets get it to recalc
+      var data = gridster.serialize();
+
 
       if (!$scope.$$phase) {
         $scope.$apply();
@@ -240,7 +245,7 @@ module Dashboard {
         var gridster = getGridster();
         if (gridster) {
           var data = gridster.serialize();
-          //console.log("got data: " + JSON.stringify(data));
+          console.log("got data: " + JSON.stringify(data));
 
           var widgets = $scope.dashboard.widgets || [];
           // lets assume the data is in the order of the widgets...
