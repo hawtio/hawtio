@@ -526,14 +526,23 @@ li.attr-column {
 }
 
 .ACTIVE:before {
+  font-family: FontAwesome;
   content: "\f087";
   font-style: normal;
   color: rgb(119, 119, 119)
 }
 
-.RESOLVED:before { content: "\f0ad"; font-style: normal; }
+.RESOLVED:before {
+  font-family: FontAwesome;
+  content: "\f0ad"; 
+  font-style: normal; 
+}
 
-.STARTING:before { content: "\f021"; font-style: normal;}
+.STARTING:before { 
+  font-family: FontAwesome;
+  content: "\f021"; 
+  font-style: normal;
+}
 
 .STARTING {
   -moz-animation: spin 2s infinite linear;
@@ -542,7 +551,11 @@ li.attr-column {
   animation: spin 2s infinite linear;
 }
 
-.STOPPING:before { content: "\f021";  font-style: normal;}
+.STOPPING:before { 
+  font-family: FontAwesome;
+  content: "\f021";  
+  font-style: normal;
+}
 
 .STOPPING {
   -moz-animation: spin 2s infinite linear;
@@ -551,7 +564,15 @@ li.attr-column {
   animation: spin 2s infinite linear;
 }
 
-.UNINSTALLED:before { content: "\f014";  font-style: normal;}
+.UNINSTALLED:before {
+  font-family: FontAwesome;
+  content: "\f014";  
+  font-style: normal;
+}
 
-.INSTALLED:before { content: "\f06b";  font-style: normal;}
+.INSTALLED:before { 
+  font-family: FontAwesome;
+  content: "\f06b";  
+  font-style: normal;
+}
 

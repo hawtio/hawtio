@@ -1,11 +1,12 @@
 module Osgi {
 
-  export function BundlesController($scope, workspace:Workspace, jolokia) {
+  export function BundlesController($scope, $location, workspace:Workspace, jolokia) {
 
     $scope.result = {};
     $scope.bundles = [];
-    $scope.selectedBundles = [];
+    $scope.selected = [];
     $scope.loading = true;
+    $scope.searchText = "";
 
     var columnDefs = [
       {
@@ -53,16 +54,69 @@ module Osgi {
 
     $scope.gridOptions = {
       data: 'bundles',
-      showfilter: false,
-      selectedItems: $scope.selectedBundles,
+      showFilter: false,
+      selectedItems: $scope.selected,
       selectWithCheckboxOnly: true,
-      columnDefs: columnDefs
+      columnDefs: columnDefs,
+      filterOptions: {
+        filterText: "searchText"
+      }
     };
+
+    $scope.controlBundles = function(op) {
+
+      var onResponse = function() {
+        jolokia.request({
+          type: 'exec',
+          mbean: getSelectionBundleMBean(workspace),
+          operation: 'listBundles()'
+        },
+        {
+          success: render,
+          error: render
+        });
+      };
+
+      var ids = $scope.selected.map(function(b) { return b.Identifier });
+      if (!angular.isArray(ids)) {
+        ids = [ids];
+      }
+      jolokia.request({
+        type: 'exec',
+        mbean: getSelectionFrameworkMBean(workspace),
+        operation: op,
+        arguments: [ids]
+      },
+      {
+        success: onResponse,
+        error: onResponse
+      });
+
+    }
+
+    $scope.stop = function() {
+      $scope.controlBundles('stopBundles([J)');
+    }
+
+    $scope.start = function() {
+      $scope.controlBundles('startBundles([J)');
+    }
+
+    $scope.update = function () {
+      $scope.controlBundles('updateBundles([J)');
+    }
+
+    $scope.refresh = function () {
+      $scope.controlBundles('refreshBundles([J)');
+    }
+
+    $scope.uninstall = function () {
+      $scope.controlBundles('uninstallBundles([J)');
+    }
 
     function render(response) {
       if (!Object.equal($scope.result, response.value)) {
-        console.log("Got: ", response.value);
-        console.log("First: ", response.value[1]);
+        $scope.selected.length = 0;
         $scope.result = response.value;
         $scope.bundles = [];
         angular.forEach($scope.result, function(value, key) {
@@ -77,7 +131,6 @@ module Osgi {
           };
           if (value.Headers['Bundle-Name']) {
             obj.Name = value.Headers['Bundle-Name']['Value'];
-
           }
           $scope.bundles.push(obj);
         });
