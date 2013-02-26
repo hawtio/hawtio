@@ -1,49 +1,7 @@
-<script type="text/ng-template" id="osgiBundleTemplate">
-  <table>
-    <tr>
-      <th>Exported Packages</th>
-      <th>Imported Packages</th>
-      <th>Headers</th>
-    </tr>
-    <tr>
-      <td>
-        <ul>
-          <li ng-repeat="name in row.ExportedPackages">{{name}}</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li ng-repeat="name in row.ImportedPackages">{{name}}</li>
-        </ul>
-      </td>
-      <td>
-        <table>
-          <tr ng-repeat="(key, value) in row.Headers">
-            <td>{{key}}</td>
-            <td>{{value.Value}}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</script>
-
 <div ng-controller="Osgi.BundlesController">
-
-  <table cellpadding="0" cellspacing="0" border="0"
-         class="table table-condensed table-striped table-bordered table-hover"
-         id="grid">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Identifier</th>
-      <th>Symbolic name</th>
-      <th>Status</th>
-      <th>Version</th>
-      <th>Last modified</th>
-    </tr>
-    </thead>
-    <tbody>
-  </table>
-
+  <div ng-hide="loading" class="row-fluid" ng-grid="gridOptions">
+  </div>
+  <div ng-show="loading">
+    Please wait, loading...
+  </div>
 </div>

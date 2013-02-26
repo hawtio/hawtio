@@ -521,3 +521,37 @@ li.attr-column {
 }
 /* End logs css */
 
+.ngCellText:hover i:before {
+  text-shadow: 0px 0px 8px rgba(150, 150, 150, 1);
+}
+
+.ACTIVE:before {
+  content: "\f087";
+  font-style: normal;
+  color: rgb(119, 119, 119)
+}
+
+.RESOLVED:before { content: "\f0ad"; font-style: normal; }
+
+.STARTING:before { content: "\f021"; font-style: normal;}
+
+.STARTING {
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  -webkit-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+
+.STOPPING:before { content: "\f021";  font-style: normal;}
+
+.STOPPING {
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  -webkit-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+
+.UNINSTALLED:before { content: "\f014";  font-style: normal;}
+
+.INSTALLED:before { content: "\f06b";  font-style: normal;}
+

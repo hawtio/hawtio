@@ -1,11 +1,11 @@
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController">
-    <li ng-class='{active : isActive("#/osgi/bundles")}'>
+    <li ng-class='{active : isActive("#/osgi/bundle")}'>
         <a ng-href="#/osgi/bundles{{hash}}">Bundles</a>
     </li>
-    <li ng-class='{active : isActive("#/osgi/packages")}'>
+    <li ng-class='{active : isActive("#/osgi/package")}'>
         <a ng-href="#/osgi/packages{{hash}}">Packages</a>
     </li>
-    <li ng-class='{active : isActive("#/osgi/services")}'>
+    <li ng-class='{active : isActive("#/osgi/service")}'>
         <a ng-href="#/osgi/services{{hash}}">Services</a>
     </li>
     <li ng-class='{active : isActive("#/osgi/configuration")}'>
