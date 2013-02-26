@@ -15,8 +15,9 @@ module Dashboard {
 
     updateWidgets();
 
+
     $scope.removeWidget = function(widget) {
-      var gridster = $("#widgets").gridster().data('gridster');
+      var gridster = getGridster();
       var widgetElem = null;
 
       // lets destroy the widgets's scope
@@ -51,7 +52,7 @@ module Dashboard {
     };
 
     function changeWidgetSize(widget, sizefunc, savefunc) {
-      var gridster = $("#widgets").gridster().data('gridster');
+      var gridster = getGridster();
       var entry = $scope.widgetMap[widget.id];
       var w = entry.widget;
       var scope = entry.scope;
@@ -78,7 +79,7 @@ module Dashboard {
       }, function() {
         updateDashboardRepository("Increased width of widget " + widget.title);
       });
-    }
+    };
 
     $scope.growWidgetY = function(widget) {
       changeWidgetSize(widget, function() {
@@ -86,7 +87,7 @@ module Dashboard {
       }, function() {
         updateDashboardRepository("Increased height of widget " + widget.title);
       });
-    }
+    };
 
     $scope.shrinkWidgetX = function(widget) {
       changeWidgetSize(widget, function() {
@@ -94,7 +95,7 @@ module Dashboard {
       }, function() {
         updateDashboardRepository("Decreased width of widget " + widget.title);
       });
-    }
+    };
 
     $scope.shrinkWidgetY = function(widget) {
       changeWidgetSize(widget, function() {
@@ -199,6 +200,7 @@ module Dashboard {
 
         var outerDiv = $('<li></li>')
         outerDiv.html($compile(div.contents())(childScope));
+        console.log("adding widget " + widget.id + " at col " + widget.col + " row " + widget.row);
         var w = gridster.add_widget(outerDiv, widget.size_x, widget.size_y, widget.col, widget.row);
 
         $scope.widgetMap[widget.id] = {
@@ -235,16 +237,16 @@ module Dashboard {
       }
 
       function updateLayoutConfiguration() {
-        var gridster = widgetElement.gridster().data('gridster');
+        var gridster = getGridster();
         if (gridster) {
           var data = gridster.serialize();
           //console.log("got data: " + JSON.stringify(data));
 
           var widgets = $scope.dashboard.widgets || [];
           // lets assume the data is in the order of the widgets...
-          angular.forEach(data, (value, idx) => {
-            var widget = widgets[idx];
-            if (widget) {
+          angular.forEach(widgets, (widget, idx) => {
+            var value = data[idx];
+            if (value && widget) {
               // lets copy the values across
               angular.forEach(value, (attr, key) => widget[key] = attr);
             }
@@ -264,6 +266,10 @@ module Dashboard {
         }
         dashboardRepository.putDashboards([$scope.dashboard], commitMessage, Dashboard.onOperationComplete);
       }
+    }
+
+    function getGridster() {
+      return $("#widgets").gridster().data('gridster');
     }
   }
 }
