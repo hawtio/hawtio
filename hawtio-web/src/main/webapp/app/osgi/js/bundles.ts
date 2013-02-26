@@ -1,12 +1,17 @@
 module Osgi {
 
-  export function BundlesController($scope, $location, workspace:Workspace, jolokia) {
+  export function BundlesController($scope, workspace:Workspace, jolokia) {
 
     $scope.result = {};
     $scope.bundles = [];
     $scope.selected = [];
     $scope.loading = true;
-    $scope.searchText = "";
+    $scope.search = "";
+    $scope.bundleUrl = "";
+
+    $scope.installDisabled = function() {
+      return $scope.bundleUrl === "";
+    }
 
     var columnDefs = [
       {
@@ -38,13 +43,13 @@ module Osgi {
         field: 'Version',
         displayName: 'Version',
         width: "**"
-      },
+      },/*
       {
         field: 'LastModified',
         displayName: 'Last Modified',
         cellFilter: "date:'yyyy-MM-dd HH:mm:ss'",
         width: "**"
-      },
+      },  */
       {
         field: 'Location',
         displayName: 'Update Location',
@@ -59,24 +64,26 @@ module Osgi {
       selectWithCheckboxOnly: true,
       columnDefs: columnDefs,
       filterOptions: {
-        filterText: "searchText"
+        filterText: 'search'
       }
     };
 
+    $scope.onResponse = function () {
+      jolokia.request({
+            type: 'exec',
+            mbean: getSelectionBundleMBean(workspace),
+            operation: 'listBundles()'
+          },
+          {
+            success: render,
+            error: render
+          });
+    }
+
     $scope.controlBundles = function(op) {
+      var startBundle = function(response) {
 
-      var onResponse = function() {
-        jolokia.request({
-          type: 'exec',
-          mbean: getSelectionBundleMBean(workspace),
-          operation: 'listBundles()'
-        },
-        {
-          success: render,
-          error: render
-        });
-      };
-
+      }
       var ids = $scope.selected.map(function(b) { return b.Identifier });
       if (!angular.isArray(ids)) {
         ids = [ids];
@@ -88,10 +95,9 @@ module Osgi {
         arguments: [ids]
       },
       {
-        success: onResponse,
-        error: onResponse
+        success: $scope.onResponse,
+        error: $scope.onResponse
       });
-
     }
 
     $scope.stop = function() {
@@ -102,16 +108,45 @@ module Osgi {
       $scope.controlBundles('startBundles([J)');
     }
 
-    $scope.update = function () {
+    $scope.update = function() {
       $scope.controlBundles('updateBundles([J)');
     }
 
-    $scope.refresh = function () {
+    $scope.refresh = function() {
       $scope.controlBundles('refreshBundles([J)');
     }
 
-    $scope.uninstall = function () {
+    $scope.uninstall = function() {
       $scope.controlBundles('uninstallBundles([J)');
+    }
+
+    $scope.install = function() {
+      jolokia.request({
+        type: 'exec',
+        mbean: getSelectionFrameworkMBean(workspace),
+        operation: "installBundle(java.lang.String)",
+        arguments: [$scope.bundleUrl]
+      },
+      {
+        success: function(response) {
+          console.log("Got: ", response);
+          $scope.bundleUrl = ""
+          jolokia.request({
+                type: 'exec',
+                mbean: getSelectionFrameworkMBean(workspace),
+                operation: "startBundle(long)",
+                arguments: [response.value]
+              },
+              {
+                success: $scope.onResponse,
+                error: $scope.onResponse
+              });
+        },
+        error: function(response) {
+          $scope.bundleUrl = ""
+          $scope.onResponse();
+        }
+      });
     }
 
     function render(response) {

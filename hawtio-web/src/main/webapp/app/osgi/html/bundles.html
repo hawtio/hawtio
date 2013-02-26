@@ -4,13 +4,17 @@
     <div class="pull-left">
       <form class="form-inline no-bottom-margin">
         <fieldset>
-          <div class="control-group inline-block">
+          <div class="controls control-group inline-block controls-row">
             <div class="btn-group">
               <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()" title="Stop"><i class="icon-stop"></i></button>
               <button ng-disabled="selected.length == 0" class="btn" ng-click="start()" title="Start"><i class="icon-play"></i></button>
               <button ng-disabled="selected.length == 0" class="btn" ng-click="refresh()" title="Refresh"><i class="icon-refresh"></i></button>
               <button ng-disabled="selected.length == 0" class="btn" ng-click="update()" title="Update"><i class="icon-cloud-download"></i></button>
               <button ng-disabled="selected.length == 0" class="btn" ng-click="uninstall()" title="Uninstall"><i class="icon-eject"></i></button>
+            </div>
+            <div class="input-append">
+              <input class="input-xlarge" type="text" placeholder="Install Bundle..." ng-model="bundleUrl">
+              <button ng-disabled="installDisabled()" class="btn" ng-click="install()" title="Install"><i class="icon-ok"></i></button>
             </div>
           </div>
         </fieldset>
@@ -22,7 +26,7 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="control-group inline-block">
-            <input type="text" class="search-query" placeholder="Filter..." ng-model="searchText">
+            <input type="text" class="search-query" placeholder="Filter..." ng-model="search">
           </div>
         </fieldset>
       </form>
