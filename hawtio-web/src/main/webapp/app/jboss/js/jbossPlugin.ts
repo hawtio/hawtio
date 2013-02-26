@@ -1,11 +1,12 @@
 module JBoss {
   var pluginName = 'jboss';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
-      // TODO custom tomcat views go here...
+      $routeProvider.
+          when('/jboss', {templateUrl: 'app/jboss/html/jboss.html'})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
-            viewRegistry['jboss'] = "app/jboss/html/layoutJBossTree.html";
+          viewRegistry['jboss'] = layoutFull;
 
             workspace.topLevelTabs.push( {
               content: "JBoss",
@@ -13,7 +14,7 @@ module JBoss {
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("jboss.as") ||
                       workspace.treeContainsDomainAndProperties("jboss.jta") ||
                       workspace.treeContainsDomainAndProperties("jboss.modules"),
-              href: () => "#/jmx/attributes?tab=jboss",
+              href: () => "#/jboss",
               isActive: (workspace: Workspace) => workspace.isTopTabActive("jboss")
             });
           });

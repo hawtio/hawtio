@@ -1,0 +1,37 @@
+<div id="console" class="row-fluid" ng-controller="JBoss.JBossController">
+
+    <div class="well">
+
+        <legend>Web Applications</legend>
+
+        <table style="margin-bottom: 20px" class="ng-show:!isEmpty(webAppObjectNames)">
+            <tr ng-repeat="oname in webAppObjectNames">
+                <td>{{webAppName(oname)}}</td>
+                <td>{{webAppContextPath(oname)}}</td>
+                <td>
+                    <div class="btn-group">
+                        <button ng-click="webAppOperation(oname,'deploy')" class="btn"><i class="icon-play"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button ng-click="webAppOperation(oname,'undeploy')" class="btn"><i class="icon-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button ng-click="webAppOperation(oname,'redeploy')" class="btn"><i class="icon-refresh"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button ng-click="webAppOperation(oname,'remove')" class="btn"><i class="icon-eject"></i></button>
+                    </div>
+                    <div class="btn-group" ng-switch on="wepAppState(oname)" >
+                        <span class="label label-success" ng-switch-when="OK">Running</span>
+                        <span class="label label-important" ng-switch-when="!OK">Not Running</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <span style="font-style:italic" class="ng-show:isEmpty(webAppObjectNames)">No applications deployed</span>
+
+    </div>
+
+</div>
+
