@@ -9,7 +9,12 @@ module Log {
       mavenCoords = properties["maven.coordinates"];
     }
     if (mavenCoords && fileName) {
-      return "#/source/view/" + mavenCoords + "/" + className + "/" + fileName;
+      var link = "#/source/view/" + mavenCoords + "/" + className + "/" + fileName;
+      var line = log.lineNumber;
+      if (line) {
+        link += "?line=" + line;
+      }
+      return link;
     } else {
       return "";
     }
