@@ -125,7 +125,7 @@
       </releases>
     </repository>
     <repository>
-      <id>ea.fusesource.org</id>
+      <id>snapshot.fusesource.org</id>
       <name>FuseSource Early Access Repository</name>
       <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
       <snapshots>
