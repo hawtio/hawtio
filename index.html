@@ -107,9 +107,16 @@
 
 <h2 id = "Get_started">Get started</h2>
 
-<h3 id = "Using_a_Traditional_Application_Server">Using a Traditional Application Server</h3>
+<h3 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h3>
 
-<p>If you are running Tomcat, Jetty or JBoss you could just deploy the <a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">hawtio-web.war</a> to your container at the hawtio context path (e.g. by renaming the file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console.</p>
+<p>If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR. e.g.</p>
+
+<ul>
+<li><a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">hawtio-web.war</a> which is a bare hawtio web application</li>
+<li><a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/">sample.war</a> which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and <a href="http://camel.apache.org/">Apache Camel</a> to play with</li>
+</ul>
+
+<p>Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
 
 <h3 id = "Using_Apache_Karaf__Apache_Servicemix__or_Fuse_ESB">Using Apache Karaf, Apache Servicemix, or Fuse ESB</h3>
 
