@@ -54,9 +54,14 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 ## Get started
 
-### Using a Traditional Application Server
+### Using a Servlet Engine or Application Server
 
-If you are running Tomcat, Jetty or JBoss you could just deploy the [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) to your container at the hawtio context path (e.g. by renaming the file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console.
+If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR. e.g.
+
+* [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) which is a bare hawtio web application
+* [sample.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/) which comes with some [Apache ActiveMQ](http://activemq.apache.org/) and [Apache Camel](http://camel.apache.org/) to play with
+
+Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
 ### Using Apache Karaf, Apache Servicemix, or Fuse ESB
 
