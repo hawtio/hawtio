@@ -1,8 +1,10 @@
 module Tomcat {
 
-    export function TomcatController($scope, $location, workspace:Workspace) {
+    export function TomcatController($scope, $location, workspace:Workspace, jolokia) {
 
         $scope.webapps = [];
+        $scope.selected = [];
+        $scope.search = "";
 
         var columnDefs: any[] = [
             {
@@ -31,16 +33,22 @@ module Tomcat {
         $scope.gridOptions = {
             data: 'webapps',
             displayFooter: false,
-            columnDefs: columnDefs
+            selectedItems: $scope.selected,
+            selectWithCheckboxOnly: true,
+            columnDefs: columnDefs,
+            filterOptions: {
+                filterText: 'search'
+            }
         };
 
-        var updateValues = function (response) {
-            console.log("Update values with response " + response);
-
+        function render(response) {
             $scope.webapps = [];
+            $scope.selected.length = 0;
+
+            // create structure for each response
             angular.forEach(response, function(value, key) {
-                console.log("Got mbean name " + value);
                 var obj = {
+                    mbeanName: value,
                     name: jolokia.getAttribute(value, "displayName"),
                     contextPath: jolokia.getAttribute(value, "path"),
                     state: jolokia.getAttribute(value, "stateName")
@@ -50,50 +58,55 @@ module Tomcat {
             $scope.$apply();
         };
 
-        var jolokia = workspace.jolokia;
-        jolokia.search("*:j2eeType=WebModule,*", onSuccess(updateValues));
+        // function to trigger reloading page
+        $scope.onResponse = function () {
+            jolokia.search("*:j2eeType=WebModule,*",
+                {
+                    success: render,
+                    error: render
+                });
+        }
 
-/*
-        // listen for updates adding the since
-        var asyncUpdateValues = function (response) {
-            var value = response.value;
-            if (value) {
-                updateValues(value);
-            } else {
-                notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
+        // function to control the web applications
+        $scope.controlWebApps = function(op) {
+            // grab id of mbean names to control
+            var ids = $scope.selected.map(function(b) { return b.mbeanName });
+            if (!angular.isArray(ids)) {
+                ids = [ids];
             }
-        };
 
-        var callback = onSuccess(asyncUpdateValues,
-            {
-                error: (response) => {
-                    asyncUpdateValues(response);
-                }
+            // execute operation on each mbean
+            ids.forEach((id) => {
+                jolokia.request({
+                        type: 'exec',
+                        mbean: id,
+                        operation: op,
+                        arguments: null
+                    },
+                    {
+                        success: $scope.onResponse,
+                        error: $scope.onResponse
+                    });
             });
+        }
 
-        scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
-*/
+        $scope.stop = function() {
+            $scope.controlWebApps('stop');
+        }
 
-//        $scope.webAppObjectNames = jolokia.search("*:j2eeType=WebModule,*")
+        $scope.start = function() {
+            $scope.controlWebApps('start');
+        }
 
-//        $scope.webAppName = function webAppName(name) {
-//            return jolokia.getAttribute(name, "displayName")
-//        }
+        $scope.reload = function() {
+            $scope.controlWebApps('reload');
+        }
 
-//        $scope.webAppContextPath = function webAppContextPath(name) {
-//            return jolokia.getAttribute(name, "path")
-//        }
+        $scope.uninstall = function() {
+            $scope.controlWebApps('destroy');
+        }
 
-//        $scope.webAppOperation = function webAppOperation(name,operation) {
-//            return jolokia.execute(name,operation);
-//        };
-
-//        $scope.wepAppState = function webAppState(name) {
-//            return jolokia.getAttribute(name, "stateName")
-//        }
-
-//        $scope.isEmpty = function isEmpty(map) {
-//            return Object.keys(map).length === 0
-//        }
+        // register to core to poll a search for the web apps so the page is dynamic updated
+        Core.registerSearch(jolokia, $scope, "*:j2eeType=WebModule,*", onSuccess(render));
     }
 }

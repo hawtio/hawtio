@@ -271,7 +271,7 @@ module Core {
     var params = keyValuePairs.join("&");
     return encodeURI(params);
   }
-  
+
   /*
    * Register a JMX operation to poll for changes
    */
@@ -304,7 +304,39 @@ module Core {
     }
   }
 
-  export function unregister(jolokia, scope) {
+    /*
+     * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
+     */
+    export function registerSearch(jolokia, scope, mbeanPattern:string, callback) {
+        if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+            scope.$jhandle = [];
+        }
+        if (angular.isDefined(scope.$on)) {
+            scope.$on('$destroy', function (event) {
+                unregister(jolokia, scope);
+            });
+        }
+        if (angular.isArray(arguments)) {
+            if (arguments.length >= 1) {
+                // TODO can't get this to compile in typescript :)
+                //var args = [callback].concat(arguments);
+                var args = [callback];
+                angular.forEach(arguments, (value) => args.push(value));
+                //var args = [callback];
+                //args.push(arguments);
+                var registerFn = jolokia.register;
+                var handle = registerFn.apply(jolokia, args);
+                scope.$jhandle.push(handle);
+                jolokia.search(mbeanPattern, callback);
+            }
+        } else {
+            var handle = jolokia.register(callback, arguments);
+            scope.$jhandle.push(handle);
+            jolokia.search(mbeanPattern, callback);
+        }
+    }
+
+    export function unregister(jolokia, scope) {
     if (angular.isDefined(scope.$jhandle)) {
       scope.$jhandle.forEach(function (handle) {
         jolokia.unregister(handle);
