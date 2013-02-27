@@ -187,9 +187,9 @@ class Workspace {
                 classes += " " + domainClass + separator + kindName;
               }
             }
-            folder.addClass = classes;
+            folder.addClass = escapeTreeCssStyles(classes);
             return folder;
-          }
+          };
 
           var lastPath = paths.pop();
           paths.forEach(value => {
@@ -232,7 +232,7 @@ class Workspace {
                     }
                     array.push(folder);
                   }
-                }
+                };
 
               if (serviceName) {
                 angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();

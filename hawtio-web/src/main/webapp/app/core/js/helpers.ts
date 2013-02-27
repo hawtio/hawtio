@@ -170,6 +170,13 @@ function escapeDots(text:string) {
 }
 
 /**
+ * Escapes all dots and 'span' text in the css style names to avoid clashing with bootstrap stuff
+ */
+function escapeTreeCssStyles(text:string) {
+  return escapeDots(text).replace(/span/g, 'sp-an');
+}
+
+/**
  * Displays an alert message which is typically the result of some asynchronous operation
  *
  * @param type which is usually "success" or "error" and matches css alert-* css styles

@@ -21,7 +21,7 @@ interface NodeSelection {
 
 class Folder implements NodeSelection {
   constructor(public title:string) {
-    this.addClass = escapeDots(title);
+    this.addClass = escapeTreeCssStyles(title);
   }
 
   key:string = null;
