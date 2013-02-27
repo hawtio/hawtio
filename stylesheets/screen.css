@@ -7544,3 +7544,14 @@ li.L9 {
     margin-right: 0;
   }
 }
+
+table.buttonTable {
+  margin: 30px 30px;
+}
+table.buttonTable tbody tr td {
+  text-align: center;
+  padding: 1px 20px 1px 20px;
+}
+
+
+
