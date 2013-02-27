@@ -22,6 +22,22 @@ module Source {
         lineNumbers: true,
         cursor: lineNumber,
         name: $scope.format
+      },
+      // Quick hack to get the codeMirror instance.
+      onChange: function(codeMirror) {
+        if (codeMirror) {
+          $scope.codeMirror = codeMirror;
+          lineNumber -= 1;
+          var lineText = codeMirror.getLine(lineNumber);
+          var endChar = (lineText) ? lineText.length : 1000;
+          var start = {line: lineNumber, ch: 0};
+          var end = {line: lineNumber, ch: endChar};
+          codeMirror.scrollIntoView(start);
+          codeMirror.setCursor(start);
+          codeMirror.setSelection(start, end);
+          codeMirror.refresh();
+          codeMirror.focus();
+        }
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
