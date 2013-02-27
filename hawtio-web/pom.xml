@@ -390,10 +390,6 @@
               <key>hawtio.config.repo</key>
               <value>${hawtio-config-repo}</value>
             </systemProperty>
-            <systemProperty>
-              <key>java.protocol.handler.pkgs</key>
-              <value>org.ops4j.pax.url</value>
-            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
@@ -451,11 +447,6 @@
           <classpathScope>test</classpathScope>
 
           <systemProperties>
-            <!-- this is required for the mvn url handler -->
-            <systemProperty>
-              <key>java.protocol.handler.pkgs</key>
-              <value>org.ops4j.pax.url</value>
-            </systemProperty>
             <systemProperty>
               <key>basedir</key>
               <value>${basedir}</value>

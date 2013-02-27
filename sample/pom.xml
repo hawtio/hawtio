@@ -135,10 +135,6 @@
               <key>hawtio.config.repo</key>
               <value>${hawtio-config-repo}</value>
             </systemProperty>
-            <systemProperty>
-              <key>java.protocol.handler.pkgs</key>
-              <value>org.ops4j.pax.url</value>
-            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
