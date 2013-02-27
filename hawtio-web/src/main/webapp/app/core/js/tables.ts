@@ -216,8 +216,9 @@ class TableWidget {
   populateDetailDiv(row, div) {
     // lets remove the silly "0" property that gets shoved in there due to the expand/collapse row
     delete row["0"];
-    this.scope.row = row;
-    this.scope.templateDiv = div;
+    var scope = this.scope.$new();
+    scope.row = row;
+    scope.templateDiv = div;
     var template = this.detailTemplate;
     if (!template) {
       var templateId = this.config.rowDetailTemplateId;
@@ -228,7 +229,7 @@ class TableWidget {
     }
     if (template) {
       div.html(template);
-      this.workspace.$compile(div.contents())(this.scope);
+      this.workspace.$compile(div.contents())(scope);
     }
   }
 }

@@ -576,3 +576,58 @@ li.attr-column {
   font-style: normal;
 }
 
+.table-bordered {
+  border: none;
+  border-radius: 0px;
+}
+
+.table-bordered thead:first-child tr:first-child th:first-child, .table-bordered tbody:first-child tr:first-child td:first-child {
+  border-radius: 0px;
+  border-left: none;
+}
+
+.table-bordered th {
+  border-bottom: 1px solid rgb(212,212,212);
+}
+
+.table-bordered th, .table-bordered td {
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid rgb(212,212,212);
+}
+
+.table-bordered th:last-child, .table-bordered td:last-child {
+  border-left: none;
+  border-top: none;
+  border-right: none;
+}
+
+table.table thead .sorting {
+  background: inherit;
+}
+
+table.table thead .sorting_asc {
+  background: url('../img/datatable/sort_asc.png') no-repeat center center;
+}
+
+table.table thead .sorting_desc {
+  background: url('../img/datatable/sort_desc.png') no-repeat center center;
+}
+
+.dataTables_filter label input {
+  padding-right: 14px;
+  padding-right: 4px \9;
+  padding-left: 14px;
+  padding-left: 4px \9;
+  /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
+  margin-bottom: 0;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+
+.nav {
+  margin-bottom: 10px;
+}
+
