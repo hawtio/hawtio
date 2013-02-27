@@ -1721,13 +1721,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }, function(newLang) {
             ng.utils.seti18n($scope, newLang);
         });
-        self.maxCanvasHt = self.calcMaxCanvasHeight();
-        if (self.config.sortInfo) {
-            self.config.sortInfo.column = $scope.columns.filter(function(c) {
-                return c.field == self.config.sortInfo.field;
-            })[0];
-            self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
-            self.sortData(self.config.sortInfo.column);
+      self.maxCanvasHt = self.calcMaxCanvasHeight();
+
+      if (self.config.sortInfo && $scope.columns.length > 0) {
+          self.config.sortInfo.column = $scope.columns.filter(function(c) {
+              return c.field == self.config.sortInfo.field;
+          })[0];
+          self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
+          self.sortData(self.config.sortInfo.column);
         }
     };
     self.prevScrollTop = 0;
