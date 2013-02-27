@@ -41,11 +41,11 @@ module Jmx {
 
       $scope.dump = (data) => {
         console.log(data);
-      }
+      };
 
       $scope.ok = () => {
         $scope.operationResult = '';
-      }
+      };
 
       $scope.reset = () => {
         if ($scope.item.args) {
@@ -54,15 +54,15 @@ module Jmx {
           });
         }
         $scope.ok();
-      }
+      };
 
       $scope.resultIsArray = () => {
         return angular.isArray($scope.operationResult);
-      }
+      };
 
       $scope.resultIsString = () => {
         return angular.isString($scope.operationResult);
-      }
+      };
 
       $scope.typeOf = (data) => {
         if (angular.isArray(data)) {
@@ -72,7 +72,7 @@ module Jmx {
         } else {
           return "string";
         }
-      }
+      };
 
       $scope.execute = () => {
 
@@ -156,10 +156,11 @@ module Jmx {
       };
 
       var asQuery = (node) => {
+        var path = escapeMBeanPath(node);
         var query = {
           type: "LIST",
           method: "post",
-          path: encodeMBeanPath(node),
+          path: path,
           ignoreErrors: true
         };
         return query;
@@ -187,7 +188,7 @@ module Jmx {
 
           var getArgs = function (args) {
             return "(" + args.map(function(arg) {return arg.type}).join() + ")";
-          }
+          };
 
           angular.forEach(ops, function(value, key) {
             if (angular.isArray(value)) {

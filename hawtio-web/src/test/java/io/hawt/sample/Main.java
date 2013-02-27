@@ -21,6 +21,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import io.hawt.sample.infinispan.InfinispanDemo;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -159,6 +160,10 @@ public class Main {
                 impl.setZooKeeper(zooKeeper);
                 impl.init();
             }
+
+            // lets initialise infinispan
+            new InfinispanDemo().run();
+
             LOG.info("starting jetty");
             server.start();
 

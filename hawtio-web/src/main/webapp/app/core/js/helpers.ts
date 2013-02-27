@@ -157,6 +157,10 @@ function encodeMBeanPath(mbean) {
   return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
 }
 
+function escapeMBeanPath(mbean) {
+  return mbean.replace(/\//g, '!/').replace(':', '/');
+}
+
 function encodeMBean(mbean) {
   return mbean.replace(/\//g, '!/').escapeURL();
 }

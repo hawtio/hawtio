@@ -86,6 +86,7 @@
         <guava-version>13.0.1</guava-version>
     -->
     <guava-version>10.0</guava-version>
+    <infinispan-version>5.1.5.FINAL</infinispan-version>
     <jackson-2-version>2.1.0</jackson-2-version>
 
     <!-- TODO lets use Jetty 7.x to avoid servlet 2.5 and 3.0 classpath clashes -->

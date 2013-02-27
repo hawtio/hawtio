@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+   This is just a very simplistic example configuration file.  For more information, please see
+   http://docs.jboss.org/infinispan/5.0/apidocs/config.html
+
+-->
+
+<infinispan
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="urn:infinispan:config:5.0 http://www.infinispan.org/schemas/infinispan-config-5.0.xsd"
+      xmlns="urn:infinispan:config:5.0">
+
+   <global>
+      <globalJmxStatistics enabled="true" jmxDomain="Infinispan" />
+   </global>
+
+   <default>
+      <locking concurrencyLevel="5000" />
+   </default>
+
+   <namedCache name="stock tickers">
+      <locking isolationLevel="REPEATABLE_READ" useLockStriping="false" lockAcquisitionTimeout="10000" />
+   </namedCache>
+
+   <namedCache name="wine cache">
+      <locking lockAcquisitionTimeout="500" />
+      <eviction maxEntries="500" wakeUpInterval="100" />
+      <lazyDeserialization enabled="true" />
+   </namedCache>
+
+   <namedCache name="another">
+      <expiration lifespan="1000" maxIdle="500" />
+   </namedCache>
+
+</infinispan>

@@ -180,7 +180,6 @@ module Dashboard {
             var decodedKey = decodeURIComponent(key);
             childWorkspace.selection = workspace.keyToNodeMap[decodedKey];
           }
-          console.log("Selected node " + childWorkspace.selection);
         }
 
         var $$scopeInjections = {
@@ -202,7 +201,6 @@ module Dashboard {
 
         var outerDiv = $('<li style="display: list-item; position: absolute"></li>');
         outerDiv.html($compile(div.contents())(childScope));
-        console.log("adding widget " + widget.id + " size_x: " + widget.size_x + " size_y: " + widget.size_y + " at col: " + widget.col + " row: " + widget.row);
         var w = gridster.add_widget(outerDiv, widget.size_x, widget.size_y, widget.col, widget.row);
 
         $scope.widgetMap[widget.id] = {
@@ -231,10 +229,6 @@ module Dashboard {
         */
 
       });
-
-
-      // now lets get it to recalc
-      var data = gridster.serialize();
 
 
       if (!$scope.$$phase) {

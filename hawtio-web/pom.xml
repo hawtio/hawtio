@@ -16,6 +16,7 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+
   </properties>
 
 
@@ -203,7 +204,28 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- for infinispan -->
+    <dependency>
+       <groupId>org.infinispan</groupId>
+       <artifactId>infinispan-core</artifactId>
+       <version>${infinispan-version}</version>
+    </dependency>
+
   </dependencies>
+
+  <repositories>
+    <repository>
+       <id>JBoss.org Public Repository</id>
+       <releases>
+          <enabled>true</enabled>
+       </releases>
+       <snapshots>
+          <enabled>true</enabled>
+       </snapshots>
+       <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+    </repository>
+  </repositories>
 
   <build>
 
