@@ -614,6 +614,10 @@ table.table thead .sorting_desc {
   background: url('../img/datatable/sort_desc.png') no-repeat center center;
 }
 
+.dataTables_filter label {
+  margin-bottom: 0px;
+}
+
 .dataTables_filter label input {
   padding-right: 14px;
   padding-right: 4px \9;
