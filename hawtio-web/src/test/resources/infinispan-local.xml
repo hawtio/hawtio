@@ -18,20 +18,24 @@
 
    <default>
       <locking concurrencyLevel="5000" />
+     <jmxStatistics enabled="true"/>
    </default>
 
    <namedCache name="stock tickers">
       <locking isolationLevel="REPEATABLE_READ" useLockStriping="false" lockAcquisitionTimeout="10000" />
+     <jmxStatistics enabled="true"/>
    </namedCache>
 
    <namedCache name="wine cache">
       <locking lockAcquisitionTimeout="500" />
       <eviction maxEntries="500" wakeUpInterval="100" />
       <lazyDeserialization enabled="true" />
+     <jmxStatistics enabled="true"/>
    </namedCache>
 
    <namedCache name="another">
       <expiration lifespan="1000" maxIdle="500" />
+     <jmxStatistics enabled="true"/>
    </namedCache>
 
 </infinispan>
