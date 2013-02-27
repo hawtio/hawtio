@@ -58,8 +58,42 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR. e.g.
 
-* [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/) which is a bare hawtio web application
-* [sample.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/) which comes with some [Apache ActiveMQ](http://activemq.apache.org/) and [Apache Camel](http://camel.apache.org/) to play with
+<style>
+table.buttonTable {
+  margin: 30px 30px;
+}
+table.buttonTable tbody tr td {
+  text-align: center;
+  padding: 1px 20px 1px 20px;
+}
+</style>
+<table class="buttonTable">
+  <tr>
+    <td>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">Download hawtio-web.war</a>
+    </td>
+    <td>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/">Download sample.war</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      a bare hawtio web application with minimal dependencies
+    </td>
+    <td>
+      a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
+    </td>
+  </tr>
+  <tr>
+    <td>
+    </td>
+    <td>
+      <a href="http://camel.apache.org/">Apache Camel</a> to play with which is even <i>hawter</i>
+    </td>
+  </tr>
+</table>
+
+
 
 Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
