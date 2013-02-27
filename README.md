@@ -58,15 +58,6 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR. e.g.
 
-<style>
-table.buttonTable {
-  margin: 30px 30px;
-}
-table.buttonTable tbody tr td {
-  text-align: center;
-  padding: 1px 20px 1px 20px;
-}
-</style>
 <table class="buttonTable">
   <tr>
     <td>
@@ -82,12 +73,6 @@ table.buttonTable tbody tr td {
     </td>
     <td>
       a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
-    </td>
-  </tr>
-  <tr>
-    <td>
-    </td>
-    <td>
       <a href="http://camel.apache.org/">Apache Camel</a> to play with which is even <i>hawter</i>
     </td>
   </tr>
