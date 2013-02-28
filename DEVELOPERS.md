@@ -2,27 +2,24 @@ We love [contributions](http://hawt.io/contributing/index.html). This page is in
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
-## hawtio Technology Overview
-
-For those interested in [contributing](http://hawt.io/contributing/index.html), here is a list of the various open source libraries used to build hawtio.
-
-### Architecture
+## Architecture
 
 **hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins.html) based on the capability of the server.
 
 You may want to check out:
 
-* [hawtio plugins](http://hawt.io/developers/plugins.html)
+* [current list of hawtio plugins](http://hawt.io/faq/index.html#pluginList)
+* [how plugins work](http://hawt.io/developers/plugins.html)
 * [hawtio logs](http://hawt.io/logs/)
 * [Health MBeans](http://hawt.io/health/)
 
-### Tools and Libraries
+## Tools and Libraries
 
-We use the following excellent tools and libraries:
+For those interested in [contributing](http://hawt.io/contributing/index.html) or just learning how to build single page applications, here is a list of the various open source libraries used to build hawtio:
 
+* [AngularJS](http://angularjs.org/) is the web framework for performing real time two-way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. It's awesome and is currently the only server side component of hawtio.
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript--especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
-* [AngularJS](http://angularjs.org/) is the web framework for performing real time two-way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
 * [angular ui](http://angular-ui.github.com/) is a library of AngularJS additions and directives
 * [d3](http://d3js.org/) is the visualization library used to do the force layout graphs (for example the diagram view for ActiveMQ)
 * [cubism](http://square.github.com/cubism/) implements the real-time horizon charts
@@ -39,7 +36,7 @@ We're not yet using it but these look handy too:
 * [jquery-mobile-angular-adapter](https://github.com/tigbro/jquery-mobile-angular-adapter) for easy interop of jQuery Mobile and AngularJS
 * [breezejs](http://www.breezejs.com/) for easy LINQ / ActiveRecord style database access and synchronization
 
-### Developer References
+## Useful information
 
 If you are interested in working on the code the following references and articles have been really useful so far:
 
@@ -72,7 +69,7 @@ If you fancy contributing--and [we love contributions!](http://hawt.io/contribut
 * To be able to compile with TypeScript's static type checking we use the various [TypeScript definition files](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/d.ts) to define the optional statically typed APIs for the various APIs we use
 * The controllers use the [Jolokia JavaScript API](http://jolokia.org/reference/html/clients.html#client-javascript) to interact with the server side JMX MBeans
 
-## How the Tabs Work
+### How the Tabs Work
 
 Tabs can dynamically become visible or disappear based on the following:
 

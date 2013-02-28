@@ -9,7 +9,7 @@ title: hawtio FAQ
   <div class="container">
     <div id="content">
 
-${loadText(new FileInputStream("../FAQ.md"))}
+${unescape(loadText(new FileInputStream("../FAQ.md")))}
 
 </div>
   </div>

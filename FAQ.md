@@ -46,9 +46,11 @@ Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/
 
 Questions on writing or using the available plugins
 
-### What plugins are available?
+<a id="pluginList"><h3>What plugins are available?</h3></a>
 
-You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app). So far we have plugins for:
+You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
+
+So far we have plugins for:
 
 * [Apache ActiveMQ](http://activemq.apache.org/)
 * [Apache Camel](http://camel.apache.org/)
