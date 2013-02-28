@@ -13,6 +13,7 @@ For those interested in [contributing](http://hawt.io/contributing/index.html), 
 You may want to check out:
 
 * [hawtio plugins](http://hawt.io/developers/plugins.html)
+* [hawtio logs](http://hawt.io/logs/)
 * [Health MBeans](http://hawt.io/health/)
 
 ### Tools and Libraries
