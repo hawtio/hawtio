@@ -16,6 +16,12 @@ If you are using OSGi and use [Fuse Fabric](http://fuse.fusesource.org/fabric/) 
 
 If you are not using OSGi then you just need to ensure you have [insight-log4j](https://github.com/fusesource/fuse/tree/master/insight/insight-log4j) in your WAR when you deploy hawtio; which is already included in the [hawtio sample war](https://github.com/hawtio/hawtio/tree/master/sample).
 
+Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is [how we initialise LogQuery](https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/applicationContext.xml#L12) in the [sample war](https://github.com/hawtio/hawtio/tree/master/sample) using spring XML:
+
+    <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
+          lazy-init="false" scope="singleton"
+          init-method="start" destroy-method="stop"/>
+
 ## Things that could go wrong
 
 * If you have no Logs tab in hawtio, then
