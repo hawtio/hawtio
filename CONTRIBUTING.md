@@ -44,10 +44,8 @@ In developmemnt mode if you are running hawtio via the **hawtio-web** directory,
 
 If you are a committer and want to submit any changes back just type:
 
-```
-cd hawtio-config
-git push
-```
+    cd hawtio-config
+    git push
 
 Otherwise if you want to submit pull requests for your new dashboard or wiki content then fork the [hawtio-config repository](https://github.com/hawtio/hawtio-config) then update your hawtio-config directory to point to this directory. e.g. edit the hawtio-config/.git/config file to point to your forked repository.
 

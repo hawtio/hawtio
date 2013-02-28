@@ -60,7 +60,7 @@ You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/mas
 * [JBoss](http://www.jboss.org/jbossas)
 * [Jetty](http://www.eclipse.org/jetty/)
 * JMX
-* Logging
+* [Logs](http://hawt.io/logs/)
 * OSGi
 * Wiki plugin for creating, editing and viewing text files (Markdown, HTML, XML) which are then versioned and stored in a git repository
 
