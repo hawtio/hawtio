@@ -62,7 +62,7 @@ So far we have plugins for:
 * [JBoss](http://www.jboss.org/jbossas)
 * [Jetty](http://www.eclipse.org/jetty/)
 * JMX
-* [Logs](http://hawt.io/logs/)
+* [Logs](http://hawt.io/plugins/logs/)
 * OSGi
 * Wiki plugin for creating, editing and viewing text files (Markdown, HTML, XML) which are then versioned and stored in a git repository
 

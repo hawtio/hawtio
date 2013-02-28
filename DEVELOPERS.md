@@ -10,7 +10,7 @@ You may want to check out:
 
 * [current list of hawtio plugins](http://hawt.io/faq/index.html#pluginList)
 * [how plugins work](http://hawt.io/plugins/index.html)
-* [hawtio logs](http://hawt.io/logs/)
+* [hawtio logs](http://hawt.io/plugins/logs/)
 * [Health MBeans](http://hawt.io/plugins/health/)
 
 ## Tools and Libraries
