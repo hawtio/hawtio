@@ -1,7 +1,7 @@
 module CodeEditor {
     // TODO Wire up to a global config manager service
     var GlobalCodeMirrorOptions = {
-        theme: "default",
+        theme: "ambiance",
         tabSize: 4,
         lineNumbers: true,
         indentWithTabs: true,

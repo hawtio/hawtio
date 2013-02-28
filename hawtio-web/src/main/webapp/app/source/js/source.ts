@@ -14,15 +14,11 @@ module Source {
     // TODO load breadcrumbs
     // $scope.breadcrumbs.push({href: "#" + loc, name: name});
 
-    updateView();
-
     var options = {
       readOnly: true,
-      mode: {
-        lineNumbers: true,
-        cursor: lineNumber,
-        name: $scope.format
-      },
+      mode: $scope.format,
+      lineNumbers: true,
+
       // Quick hack to get the codeMirror instance.
       onChange: function(codeMirror) {
         if (codeMirror) {
@@ -58,6 +54,8 @@ module Source {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateView, 50);
     });
+
+    updateView();
 
     function viewContents(response) {
       $scope.source = response;
