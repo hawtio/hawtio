@@ -9,6 +9,10 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+  <!-- lets enable hawtio logs. See: http://hawt.io/logs/ -->
+  <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
+        init-method="start" destroy-method="stop"/>
+
   <!-- This creates an embedded ActiveMQ Broker -->
   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" useJmx="true">
     <networkConnectors>
@@ -42,9 +46,6 @@
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="failover:tcp://localhost:31316"/>
   </bean>
-
-  <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
-        init-method="start" destroy-method="stop"/>
 
   <!-- tell Camel to use localhost as the JMX MBean naming to have a fixed name style -->
   <bean id="managementName" class="org.apache.camel.management.DefaultManagementNamingStrategy">
