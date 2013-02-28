@@ -4,14 +4,14 @@ Welcome and enjoy! Its hawt, but stay cool! :)
 
 ## Architecture
 
-**hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins.html) based on the capability of the server.
+**hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/developers/plugins/index.html) based on the capability of the server.
 
 You may want to check out:
 
 * [current list of hawtio plugins](http://hawt.io/faq/index.html#pluginList)
-* [how plugins work](http://hawt.io/developers/plugins.html)
+* [how plugins work](http://hawt.io/developers/plugins/index.html)
 * [hawtio logs](http://hawt.io/logs/)
-* [Health MBeans](http://hawt.io/health/)
+* [Health MBeans](http://hawt.io/plugins/health/)
 
 ## Tools and Libraries
 

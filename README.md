@@ -1,4 +1,4 @@
-**hawtio** is a lightweight and [modular](http://hawt.io/developers/plugins.html) HTML5 web console for managing your Java stuff. It's a _hawt_ console to help you stay cool!
+**hawtio** is a lightweight and [modular](http://hawt.io/developers/plugins/index.html) HTML5 web console for managing your Java stuff. It's a _hawt_ console to help you stay cool!
 
 <div id="myCarousel" class="carousel slide">
   <div class="carousel-inner">
@@ -43,13 +43,13 @@
 </div>
 
 
-**hawtio** has [plugins](http://hawt.io/developers/plugins.html) for a git-based Dashboard and Wiki, working with JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/), [Apache OpenEJB](http://openejb.apache.org/), [Apache Tomcat](http://tomcat.apache.org/), [Jetty](http://www.eclipse.org/jetty/), [JBoss](http://www.jboss.org/jbossas) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
+**hawtio** has [plugins](http://hawt.io/developers/plugins/index.html) for a git-based Dashboard and Wiki, working with JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/), [Apache OpenEJB](http://openejb.apache.org/), [Apache Tomcat](http://tomcat.apache.org/), [Jetty](http://www.eclipse.org/jetty/), [JBoss](http://www.jboss.org/jbossas) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 
-You can dynamically [extend hawtio with your own plugins](http://hawt.io/developers/plugins.html) or automatically [discover plugins](http://hawt.io/developers/plugins.html) inside the JVM.
+You can dynamically [extend hawtio with your own plugins](http://hawt.io/developers/plugins/index.html) or automatically [discover plugins](http://hawt.io/developers/plugins/index.html) inside the JVM.
 
 The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300Kb) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the **hawtio-web.war** or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
 
-**hawtio** also supports [Health MBeans](http://hawt.io/health/) to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving.
+**hawtio** also supports [Health MBeans](http://hawt.io/plugins/health/) to make it easy for your Java services to expose their health status so you can see how your Java stuff is behaving.
 
 
 ## Get started
