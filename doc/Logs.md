@@ -44,7 +44,7 @@ The missing part is to also add maven coordinates to non-stack traces; so all lo
 
 Once we've figured out the maven coordinates, class & file name and line number we need to link to the source code from the [log plugin](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/log). This is where the [source plugin](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source) comes in.
 
-If you wish to use links to source code from any other [hawtio plugin](http://hawt.io/developers/plugins/index.html) just use the following link syntax for your hypertext link:
+If you wish to use links to source code from any other [hawtio plugin](http://hawt.io/plugins/index.html) just use the following link syntax for your hypertext link:
 
     #/source/view/:mavenCoords/:className/:fileName
 

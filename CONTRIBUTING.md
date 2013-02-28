@@ -28,7 +28,7 @@ Here's some notes to help you get started:
    * writing new test cases or improve existing ones
    * adding new features
    * improving the layout / design / CSS
-   * creating a new [plugin](http://hawt.io/developers/plugins/index.html)
+   * creating a new [plugin](http://hawt.io/plugins/index.html)
 
 ## Submitting changes to hawtio
 
