@@ -126,6 +126,22 @@ mvn tomcat6:run
 mvn jboss-as:run
 mvn jetty:run</code></pre>
 
+<h3 id = "LiveReload_and_other_containers">LiveReload and other containers</h3>
+
+<p>The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.</p>
+
+<p>e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the <strong>hawtio-web/target/hawtio-web-1.0-SNAPSHOT</strong> directory:</p>
+
+<pre><code>cd tomcat/webapps
+ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.0-SNAPSHOT hawtio</code></pre>
+
+<p>Then in a shell run</p>
+
+<pre><code>cd hawtio-web
+mvn -Pwatch</code></pre>
+
+<p>Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!</p>
+
 <h3 id = "Incremental_Compile_with_TypeScript">Incremental Compile with TypeScript</h3>
 
 <p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
