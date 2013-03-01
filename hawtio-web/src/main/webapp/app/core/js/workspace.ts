@@ -19,6 +19,8 @@ class Workspace {
   public keyToNodeMap = {};
   public pluginRegisterHandle = null;
   public pluginUpdateCounter = null;
+  public treeWatchRegisterHandle = null;
+  public treeWatcherCounter = null;
 
   constructor(public jolokia,
               public $location,
@@ -55,7 +57,8 @@ class Workspace {
       value: this.jolokia.list(null, {canonicalNaming: false, ignoreErrors: true, maxDepth: 2})
     };
     this.populateTree(response);
-    Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
+    // we now only reload the tree if the TreeWatcher mbean is present...
+    // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
   }
 
   public maybeMonitorPlugins() {
@@ -74,6 +77,27 @@ class Workspace {
         this.pluginUpdateCounter = null;
       }
     }
+
+    // lets also listen to see if we have a JMX tree watcher
+    if (this.treeContainsDomainAndProperties("io.hawt.jmx", {type: "TreeWatcher"})) {
+      if (this.treeWatchRegisterHandle === null) {
+        this.treeWatchRegisterHandle = this.jolokia.register(angular.bind(this, this.maybeReloadTree), {
+          type: "read",
+          mbean: "io.hawt.jmx:type=TreeWatcher",
+          attribute: "Counter"
+        });
+      } else {
+        // lets keep using the existing register handle
+
+        /** we don't need to unregister lets keep using it
+        if (this.treeWatchRegisterHandle !== null) {
+          this.jolokia.unregister(this.treeWatchRegisterHandle);
+          this.treeWatchRegisterHandle = null;
+          this.treeWatcherCounter = null;
+        }
+        */
+      }
+    }
   }
 
   public maybeUpdatePlugins(response) {
@@ -85,6 +109,25 @@ class Workspace {
       if (localStorage['autoRefresh'] === "true") {
         window.location.reload();
       }
+    }
+  }
+
+  public maybeReloadTree(response) {
+    var counter = response.value;
+    if (this.treeWatcherCounter === null) {
+      this.treeWatcherCounter = counter;
+      return;
+    }
+    if (this.treeWatcherCounter !== counter) {
+      this.treeWatcherCounter = counter;
+      var workspace = this;
+      function wrapInValue(response) {
+        var wrapper = {
+          value: response
+        };
+        workspace.populateTree(wrapper);
+      }
+      this.jolokia.list(null, onSuccess(wrapInValue, {canonicalNaming: false, ignoreErrors: true, maxDepth: 2}));
     }
   }
 
@@ -100,10 +143,9 @@ class Workspace {
   }
 
   public populateTree(response) {
-
     if (!Object.equal(this.treeResponse, response.value)) {
-
       this.treeResponse = response.value;
+      console.log("JMX tree has been loaded!");
 
       var rootId = 'root';
       var separator = '-';
