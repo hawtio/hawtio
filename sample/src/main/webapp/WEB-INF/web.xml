@@ -22,9 +22,11 @@
   </listener>
 
   <!-- lets specify the configuration directory to use for hawtio's configuration -->
+<!--
   <context-param>
     <param-name>hawtio.config.dir</param-name>
     <param-value>/tmp/hawtio</param-value>
   </context-param>
+-->
 </web-app>
 
