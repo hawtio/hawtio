@@ -52,10 +52,10 @@ class Workspace {
     // Make an initial blocking call to ensure the JMX tree is populated while the
     // app is initializing...
     var response = {
-      value: this.jolokia.list(null, {canonicalNaming: false, ignoreErrors: true})
-    }
+      value: this.jolokia.list(null, {canonicalNaming: false, ignoreErrors: true, maxDepth: 2})
+    };
     this.populateTree(response);
-    Core.register(this.jolokia, this, {type: 'list'}, onSuccess(angular.bind(this, this.populateTree)));
+    Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
   }
 
   public maybeMonitorPlugins() {
