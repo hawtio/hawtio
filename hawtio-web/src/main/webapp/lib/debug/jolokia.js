@@ -64,7 +64,7 @@
             }
 
             // Jolokia Javascript Client version
-            this.CLIENT_VERSION = "1.1.0-SNAPSHOT";
+            this.CLIENT_VERSION = "1.1.0";
 
             // Registered requests for fetching periodically
             var jobs = [];
@@ -620,7 +620,7 @@
 
         // Escape a path part, can be used as a static method outside this function too
         Jolokia.prototype.escape = Jolokia.escape = function (part) {
-            return part.replace(/!/g, "!!").replace(/\//g, "!/");
+            return encodeURIComponent(part.replace(/!/g, "!!").replace(/\//g, "!/"));
         };
 
         /**

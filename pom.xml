@@ -96,7 +96,7 @@
     <jetty-version>7.6.8.v20121106</jetty-version>
     <jetty-plugin-version>7.6.8.v20121106</jetty-plugin-version>
     <jgit-version>2.2.0.201212191850-r</jgit-version>
-    <jolokia-version>1.0.6</jolokia-version>
+    <jolokia-version>1.1.0</jolokia-version>
     <junit-version>4.11</junit-version>
     <kotlin-version>0.4.68</kotlin-version>
     <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
