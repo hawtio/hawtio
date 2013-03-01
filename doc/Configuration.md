@@ -30,6 +30,6 @@ e.g. add this to your web.xml
 <td>hawtio.config.repo</td><td>HAWTIO_CONFIG_REPO</td><td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
 </tr>
 <tr>
-<td>hawtio.config.cloneOnStartup</td><td>HAWTIO_CONFIG_CLONEONSTARTUP</td><td>If set to the value of **false** then there will be no attempt to clone the remote repo</td>
+<td>hawtio.config.cloneOnStartup</td><td>HAWTIO_CONFIG_CLONEONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
 </tr>
 </table>
