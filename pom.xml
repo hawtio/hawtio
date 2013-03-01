@@ -61,7 +61,7 @@
     <jettyPort>8080</jettyPort>
     <context>/hawtio</context>
     <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
-    <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
+    <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
@@ -312,6 +312,13 @@
           </releases>
         </repository>
       </repositories>
+    </profile>
+
+    <profile>
+      <id>committer</id>
+      <properties>
+        <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
+      </properties>
     </profile>
   </profiles>
 </project>
