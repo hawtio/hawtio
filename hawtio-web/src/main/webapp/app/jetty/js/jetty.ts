@@ -38,7 +38,8 @@ module Jetty {
             columnDefs: columnDefs,
             filterOptions: {
                 filterText: 'search'
-            }
+            },
+            title: "Web applications"
         };
 
         function render(response) {
@@ -105,6 +106,18 @@ module Jetty {
 
         // register to core to poll a search for the web apps so the page is dynamic updated
         Core.registerSearch(jolokia, $scope, "org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
+
+        // grab server information once
+        $scope.jettyServerVersion = "";
+        $scope.jettyServerStartupTime = "";
+
+        var servers = jolokia.search("org.eclipse.jetty.server:type=server,*")
+        if (servers && servers.length === 1) {
+            $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
+            $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
+        } else {
+            console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
+        }
 
   }
 }

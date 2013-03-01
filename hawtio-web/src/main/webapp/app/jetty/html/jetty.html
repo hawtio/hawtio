@@ -1,5 +1,15 @@
 <div class="row-fluid" ng-controller="Jetty.JettyController">
 
+    <!-- TOOD: need some html5 nina skills here -->
+    <h2>Jetty Server</h2>
+
+    <table style="margin-bottom: 20px">
+        <tr> <td style="font-style:italic">Startup Time</td> <td>{{jettyServerStartupTime | date:'EEEE, MMMM d, y : hh:mm:ss a'}}</td> </tr>
+        <tr> <td style="font-style:italic">Version</td> <td>{{jettyServerVersion}}</td> </tr>
+    </table>
+
+    <h2>Web applications</h2>
+
     <div class="row-fluid">
         <div class="pull-left">
             <form class="form-inline no-bottom-margin">
