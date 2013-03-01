@@ -460,7 +460,7 @@ public class GitFacade implements GitFacadeMXBean {
         if (!gitDir.exists()) {
             String repo = getRemoteRepository();
             if (isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
-                LOG.info("Cloning git repo " + repo);
+                LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
                 CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
                 try {
                     git = clone.call();
@@ -473,6 +473,7 @@ public class GitFacade implements GitFacadeMXBean {
             InitCommand initCommand = Git.init();
             initCommand.setDirectory(confDir);
             git = initCommand.call();
+            LOG.info("Initialised an empty git configuration rppo at " + confDir.getCanonicalPath());
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -484,7 +485,7 @@ public class GitFacade implements GitFacadeMXBean {
             if (isPullOnStartup()) {
                 try {
                     git.pull().setRebase(true).call();
-                    LOG.info("Performed a git pull to update the local configuration repository");
+                    LOG.info("Performed a git pull to update the local configuration repository at " + confDir.getCanonicalPath());
                 } catch (Throwable e) {
                     LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
                     // lets just use an empty repo instead
