@@ -41,7 +41,6 @@ module JBoss {
         };
 
         function render(response) {
-            console.log("render -> " + response)
             $scope.webapps = [];
             $scope.selected.length = 0;
 
@@ -109,6 +108,20 @@ module JBoss {
 
         // register to core to poll a search for the web apps so the page is dynamic updated
         Core.registerSearch(jolokia, $scope, "jboss.as:deployment=*", onSuccess(render));
+
+        // grab server information once
+        $scope.jbossServerVersion = "";
+        $scope.jbossServerName = "";
+        $scope.jbossServerLaunchType = "";
+
+        var servers = jolokia.search("jboss.as:management-root=server")
+        if (servers && servers.length === 1) {
+            $scope.jbossServerVersion = jolokia.getAttribute(servers[0], "releaseVersion")
+            $scope.jbossServerName = jolokia.getAttribute(servers[0], "name")
+            $scope.jbossServerLaunchType = jolokia.getAttribute(servers[0], "launchType")
+        } else {
+            console.log("Cannot find jboss server or there was more than one server. response is: " + servers)
+        }
 
         function cleanWebAppName(name: string) {
             // JBoss may include .war as the application name, so remove that
