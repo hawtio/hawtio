@@ -45,7 +45,6 @@ module Tomcat {
             $scope.webapps = [];
             $scope.selected.length = 0;
 
-
             function onAttributes(response) {
               var obj = response.value;
               if (obj) {
@@ -60,12 +59,13 @@ module Tomcat {
               var mbean = value;
               jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));
             });
+          Core.$apply($scope);
         };
 
         // function to control the web applications
         $scope.controlWebApps = function(op) {
             // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbeanName });
+            var ids = $scope.selected.map(function(b) { return b.mbean });
             if (!angular.isArray(ids)) {
                 ids = [ids];
             }
@@ -78,10 +78,7 @@ module Tomcat {
                         operation: op,
                         arguments: null
                     },
-                    {
-                        success: $scope.onResponse,
-                        error: $scope.onResponse
-                    });
+                    onSuccess($scope.onResponse, {error: $scope.onResponse}));
             });
         };
 
@@ -102,7 +99,8 @@ module Tomcat {
         };
 
         // function to trigger reloading page
-        $scope.onResponse = function () {
+        $scope.onResponse = function (response) {
+          //console.log("got response: " + response);
           loadData();
         };
 
@@ -112,9 +110,8 @@ module Tomcat {
           setTimeout(loadData, 50);
         });
 
-        loadData();
-
         function loadData() {
+          console.log("Loading tomcat webapp data...");
           jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
         }
     }
