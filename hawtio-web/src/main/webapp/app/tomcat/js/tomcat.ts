@@ -8,21 +8,21 @@ module Tomcat {
 
         var columnDefs: any[] = [
             {
-                field: 'name',
+                field: 'displayName',
                 displayName: 'Name',
                 cellFilter: null,
                 width: "*",
                 resizable: true
             },
             {
-                field: 'contextPath',
+                field: 'path',
                 displayName: 'Context-Path',
                 cellFilter: null,
                 width: "*",
                 resizable: true
             },
             {
-                field: 'state',
+                field: 'stateName',
                 displayName: 'State',
                 cellFilter: null,
                 width: "*",
@@ -45,27 +45,22 @@ module Tomcat {
             $scope.webapps = [];
             $scope.selected.length = 0;
 
+
+            function onAttributes(response) {
+              var obj = response.value;
+              if (obj) {
+                obj.mbean = response.request.mbean;
+                $scope.webapps.push(obj);
+                Core.$apply($scope);
+              }
+            }
+
             // create structure for each response
             angular.forEach(response, function(value, key) {
-                var obj = {
-                    mbeanName: value,
-                    name: jolokia.getAttribute(value, "displayName"),
-                    contextPath: jolokia.getAttribute(value, "path"),
-                    state: jolokia.getAttribute(value, "stateName")
-                };
-                $scope.webapps.push(obj);
+              var mbean = value;
+              jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));
             });
-            $scope.$apply();
         };
-
-        // function to trigger reloading page
-        $scope.onResponse = function () {
-            jolokia.search("*:j2eeType=WebModule,*",
-                {
-                    success: render,
-                    error: render
-                });
-        }
 
         // function to control the web applications
         $scope.controlWebApps = function(op) {
@@ -88,25 +83,39 @@ module Tomcat {
                         error: $scope.onResponse
                     });
             });
-        }
+        };
 
         $scope.stop = function() {
             $scope.controlWebApps('stop');
-        }
+        };
 
         $scope.start = function() {
             $scope.controlWebApps('start');
-        }
+        };
 
         $scope.reload = function() {
             $scope.controlWebApps('reload');
-        }
+        };
 
         $scope.uninstall = function() {
             $scope.controlWebApps('destroy');
-        }
+        };
 
-        // register to core to poll a search for the web apps so the page is dynamic updated
-        Core.registerSearch(jolokia, $scope, "*:j2eeType=WebModule,*", onSuccess(render));
+        // function to trigger reloading page
+        $scope.onResponse = function () {
+          loadData();
+        };
+
+        $scope.$watch('workspace.tree', function () {
+          // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+          // so lets reload, asynchronously just in case
+          setTimeout(loadData, 50);
+        });
+
+        loadData();
+
+        function loadData() {
+          jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
+        }
     }
 }
