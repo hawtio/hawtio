@@ -91,6 +91,8 @@ module Tomcat {
         };
 
         function render(response) {
+            response = Tomcat.filerTomcatOrCatalina(response)
+
             $scope.connectors = [];
             $scope.selected.length = 0;
 

@@ -42,6 +42,8 @@ module Tomcat {
         };
 
         function render(response) {
+            response = Tomcat.filerTomcatOrCatalina(response)
+
             $scope.webapps = [];
             $scope.selected.length = 0;
 
@@ -119,16 +121,11 @@ module Tomcat {
         $scope.tomcatServerVersion = "";
 
         var servers = jolokia.search("*:type=Server")
-        if (servers) {
-            // Tomcat can have mbean server names with Catalina or Tomcat
-            servers = servers.filter(name => {
-                return name.startsWith("Catalina") || name.startsWith("Tomcat")
-            })
-            if (servers.length === 1) {
-                $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo")
-            } else {
-                console.log("Cannot find Tomcat server or there was more than one server. response is: " + servers)
-            }
+        servers = Tomcat.filerTomcatOrCatalina(servers)
+        if (servers && servers.length === 1) {
+            $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo")
+        } else {
+            console.log("Cannot find Tomcat server or there was more than one server. response is: " + servers)
         }
 
     }
