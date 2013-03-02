@@ -32,7 +32,7 @@ module Tomcat {
 
         $scope.gridOptions = {
             data: 'webapps',
-            displayFooter: false,
+            displayFooter: true,
             selectedItems: $scope.selected,
             selectWithCheckboxOnly: true,
             columnDefs: columnDefs,

@@ -81,7 +81,7 @@ module Tomcat {
 
         $scope.gridOptions = {
             data: 'connectors',
-            displayFooter: false,
+            displayFooter: true,
             selectedItems: $scope.selected,
             selectWithCheckboxOnly: true,
             columnDefs: columnDefs,
@@ -114,7 +114,7 @@ module Tomcat {
           Core.$apply($scope);
         };
 
-        // function to control the web applications
+        // function to control the connectors
         $scope.controlConnector = function(op) {
             // grab id of mbean names to control
             var ids = $scope.selected.map(function(b) { return b.mbean });
