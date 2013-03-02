@@ -21,7 +21,7 @@ module JBoss {
                 resizable: true
             },
             {
-                field: 'state',
+                field: 'status',
                 displayName: 'State',
                 cellFilter: null,
                 width: "*",
@@ -44,33 +44,30 @@ module JBoss {
             $scope.webapps = [];
             $scope.selected.length = 0;
 
+            function onAttributes(response) {
+                var obj = response.value;
+                if (obj) {
+                    obj.mbean = response.request.mbean;
+                    obj.name = JBoss.cleanWebAppName(obj.name);
+                    obj.contextPath = JBoss.cleanContextPath(obj.name);
+                    $scope.webapps.push(obj);
+                    Core.$apply($scope);
+                }
+            }
+
             // create structure for each response
             angular.forEach(response, function(value, key) {
-                var obj = {
-                    mbeanName: value,
-                    name: cleanWebAppName(jolokia.getAttribute(value, "name")),
-                    // we do not have a jmx attribute for the context-path
-                    contextPath: cleanContextPath(jolokia.getAttribute(value, "name")),
-                    state: jolokia.getAttribute(value, "status")
-                };
-                $scope.webapps.push(obj);
+                var mbean = value;
+                jolokia.request( {type: "read", mbean: mbean, attribute: ["name", "status"]}, onSuccess(onAttributes));
             });
-            $scope.$apply();
-        };
 
-        // function to trigger reloading page
-        $scope.onResponse = function () {
-            jolokia.search("jboss.as:deployment=*",
-                {
-                    success: render,
-                    error: render
-                });
-        }
+            Core.$apply($scope);
+        };
 
         // function to control the web applications
         $scope.controlWebApps = function(op) {
             // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbeanName });
+            var ids = $scope.selected.map(function(b) { return b.mbean });
             if (!angular.isArray(ids)) {
                 ids = [ids];
             }
@@ -106,8 +103,22 @@ module JBoss {
             $scope.controlWebApps('remove');
         }
 
-        // register to core to poll a search for the web apps so the page is dynamic updated
-        Core.registerSearch(jolokia, $scope, "jboss.as:deployment=*", onSuccess(render));
+        // function to trigger reloading page
+        $scope.onResponse = function (response) {
+            //console.log("got response: " + response);
+            loadData();
+        };
+
+        $scope.$watch('workspace.tree', function () {
+            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+            // so lets reload, asynchronously just in case
+            setTimeout(loadData, 50);
+        });
+
+        function loadData() {
+            console.log("Loading JBoss webapp data...");
+            jolokia.search("jboss.as:deployment=*", onSuccess(render));
+        }
 
         // grab server information once
         $scope.jbossServerVersion = "";
@@ -120,20 +131,7 @@ module JBoss {
             $scope.jbossServerName = jolokia.getAttribute(servers[0], "name")
             $scope.jbossServerLaunchType = jolokia.getAttribute(servers[0], "launchType")
         } else {
-            console.log("Cannot find jboss server or there was more than one server. response is: " + servers)
-        }
-
-        function cleanWebAppName(name: string) {
-            // JBoss may include .war as the application name, so remove that
-            if (name.lastIndexOf(".war") > -1) {
-                return name.replace(".war", "")
-            } else {
-                return name
-            }
-        }
-
-        function cleanContextPath(contextPath: string) {
-            return "/" + cleanWebAppName(contextPath)
+            console.log("Cannot find JBoss server or there was more than one server. response is: " + servers)
         }
 
     }
