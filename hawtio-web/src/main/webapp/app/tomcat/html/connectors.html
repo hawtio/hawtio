@@ -1,0 +1,39 @@
+<div class="row-fluid" ng-controller="Tomcat.ConnectorsController">
+
+    <!-- TOOD: need some html5 nina skills here -->
+    <h2>Tomcat Connectors</h2>
+
+    <div class="row-fluid">
+        <div class="pull-left">
+            <form class="form-inline no-bottom-margin">
+                <fieldset>
+                    <div class="controls control-group inline-block controls-row">
+                        <div class="btn-group">
+                            <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()" title="Stop"><i class="icon-stop"></i></button>
+                            <button ng-disabled="selected.length == 0" class="btn" ng-click="start()" title="Start"><i class="icon-play"></i></button>
+                            <button ng-disabled="selected.length == 0" class="btn" ng-click="destroy()" title="Destroy"><i class="icon-eject"></i></button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+
+        <div class="pull-right">
+            <form class="form-inline no-bottom-margin">
+                <fieldset>
+                    <div class="control-group inline-block">
+                        <input type="text" class="search-query" placeholder="Filter..." ng-model="search">
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div class="row-fluid" style="padding-top: 50px;">
+        <div class="gridStyle" ng-grid="gridOptions"></div>
+    </div>
+
+
+</div>
+
