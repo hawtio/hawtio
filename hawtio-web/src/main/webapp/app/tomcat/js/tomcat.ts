@@ -76,20 +76,22 @@ module Tomcat {
         // function to control the web applications
         $scope.controlWebApps = function(op) {
             // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbean });
-            if (!angular.isArray(ids)) {
-                ids = [ids];
+            var mbeanNames = $scope.selected.map(function(b) { return b.mbean });
+            if (!angular.isArray(mbeanNames)) {
+                mbeanNames = [mbeanNames];
             }
 
             // execute operation on each mbean
-            ids.forEach((id) => {
-                jolokia.request({
+            var lastIndex = (mbeanNames.length || 1) - 1;
+            angular.forEach(mbeanNames, (mbean, idx) => {
+              var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+              jolokia.request({
                         type: 'exec',
-                        mbean: id,
+                        mbean: mbean,
                         operation: op,
                         arguments: null
                     },
-                    onSuccess($scope.onResponse, {error: $scope.onResponse}));
+                    onSuccess(onResponse, {error: onResponse}));
             });
         };
 
@@ -110,9 +112,13 @@ module Tomcat {
         };
 
         // function to trigger reloading page
+        $scope.onLastResponse = function (response) {
+          $scope.onResponse(response);
+          loadData();
+        };
+
         $scope.onResponse = function (response) {
           //console.log("got response: " + response);
-          loadData();
         };
 
         $scope.$watch('workspace.tree', function () {
@@ -129,8 +135,8 @@ module Tomcat {
         // grab server information once
         $scope.tomcatServerVersion = "";
 
-        var servers = jolokia.search("*:type=Server")
-        servers = Tomcat.filerTomcatOrCatalina(servers)
+        var servers = jolokia.search("*:type=Server");
+        servers = Tomcat.filerTomcatOrCatalina(servers);
         if (servers && servers.length === 1) {
             $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo")
         } else {
