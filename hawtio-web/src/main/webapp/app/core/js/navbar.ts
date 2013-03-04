@@ -45,6 +45,16 @@ module Core {
       return workspace.isLinkActive(nav.href());
     };
 
+    $scope.isTopTabActive = (nav) => {
+      if (angular.isString(nav))
+        return workspace.isTopTabActive(nav);
+      var fn = nav.isActive;
+      if (fn) {
+        return fn(workspace);
+      }
+      return workspace.isTopTabActive(nav.href());
+    };
+
     $scope.activeLink = () => {
       var tabs = $scope.topLevelTabs();
       if (!tabs) {
