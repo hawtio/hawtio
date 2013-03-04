@@ -114,6 +114,7 @@ module Tomcat {
         // function to trigger reloading page
         $scope.onLastResponse = function (response) {
           $scope.onResponse(response);
+          // we only want to force updating the data on the last response
           loadData();
         };
 

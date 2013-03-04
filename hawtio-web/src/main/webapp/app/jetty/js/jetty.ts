@@ -44,6 +44,7 @@ module Jetty {
 
         function render(response) {
             $scope.webapps = [];
+            $scope.mbeanIndex = {};
             $scope.selected.length = 0;
 
             function onAttributes(response) {
@@ -51,8 +52,17 @@ module Jetty {
                 if (obj) {
                     obj.mbean = response.request.mbean;
                     obj.state = obj.running ? "started" : "stopped"
-                    $scope.webapps.push(obj);
-                    Core.$apply($scope);
+                    var mbean = obj.mbean;
+                    if (mbean) {
+                      var idx = $scope.mbeanIndex[mbean];
+                      if (angular.isDefined(idx)) {
+                        $scope.webapps[mbean] = obj;
+                      } else {
+                        $scope.mbeanIndex[mbean] = $scope.webapps.length;
+                        $scope.webapps.push(obj);
+                      }
+                      Core.$apply($scope);
+                    }
                 }
             }
 
@@ -63,32 +73,25 @@ module Jetty {
             $scope.$apply();
         };
 
-        // function to trigger reloading page
-        $scope.onResponse = function () {
-            jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*",
-                {
-                    success: render,
-                    error: render
-                });
-        }
-
         // function to control the web applications
         $scope.controlWebApps = function(op) {
             // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbean });
-            if (!angular.isArray(ids)) {
-                ids = [ids];
+            var mbeanNames = $scope.selected.map(function(b) { return b.mbean });
+            if (!angular.isArray(mbeanNames)) {
+              mbeanNames = [mbeanNames];
             }
 
             // execute operation on each mbean
-            ids.forEach((id) => {
-                jolokia.request({
+            var lastIndex = (mbeanNames.length || 1) - 1;
+            angular.forEach(mbeanNames, (mbean, idx) => {
+              var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+              jolokia.request({
                         type: 'exec',
                         mbean: id,
                         operation: op,
                         arguments: null
                     },
-                    onSuccess($scope.onResponse, {error: $scope.onResponse}));
+                    onSuccess(onResponse, {error: onResponse}));
             });
         }
 
@@ -105,9 +108,14 @@ module Jetty {
         }
 
         // function to trigger reloading page
+        $scope.onLastResponse = function (response) {
+          $scope.onResponse(response);
+          // we only want to force updating the data on the last response
+          loadData();
+        };
+
         $scope.onResponse = function (response) {
-            //console.log("got response: " + response);
-            loadData();
+          //console.log("got response: " + response);
         };
 
         $scope.$watch('workspace.tree', function () {
