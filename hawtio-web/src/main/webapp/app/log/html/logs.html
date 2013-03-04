@@ -1,29 +1,29 @@
 <div ng-controller="Log.LogController">
-  <!-- Float the log menu options above the log tables so they're always visible-->
-  <div class="logbar">
-    <div class="logbar-container">
-      <div class="logbar-search">
-        <input class="search-query" type="text" id="logSearch" ng-model="searchText" placeholder="Filter logs...">
-      </div>
-      <div class="logbar-filter">
-        Filter By Level:
-        <select ng-model="filter.logLevelQuery" id="logLevelQuery">
-          <option value="" selected="selected">None...</option>
+  <div class="row-fluid">
+    <div class="control-group">
+      <input class="search-query span6" type="text" id="logSearch" ng-model="searchText" placeholder="Filter logs...">
+
+      <div class="span4 pull-right">
+        <form class="form-inline">
+          <label>Level:
+          <select ng-model="filter.logLevelQuery" id="logLevelQuery">
+            <option value="" selected="selected">None...</option>
             <option value="TRACE">TRACE</option>
             <option value="DEBUG">DEBUG</option>
             <option value="INFO">INFO</option>
             <option value="WARN">WARN</option>
             <option value="ERROR">ERROR</option>
-        </select>
-        <label style="display:inline">
-          <span>Exact Match:</span>
+          </select>
+          </label>
+          <label> Exact Match:
           <input type="checkbox" ng-model="filter.logLevelExactMatch">
-        </label>
+          </label>
+        </form>
       </div>
     </div>
   </div>
 
-  <div class="row-fluid" ng-show="logs.length > 0" style="padding-top: 50px;">
+  <div class="row-fluid" ng-show="logs.length > 0">
     <div class="gridStyle" ng-grid="gridOptions"></div>
   </div>
   <div class="row-fluid" ng-show="logs.length == 0">

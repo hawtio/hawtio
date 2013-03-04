@@ -495,32 +495,6 @@ li.attr-column {
   margin-right: .5em;
 }
 
-/* Start logs css */
-.logbar {
-  z-index: 50;
-  left: 0px;
-  background: white;
-  position: fixed;
-  width: 100%;
-  height: 70px;
-  top: 40px
-}
-
-.logbar-container {
-  margin-top: 20px;
-}
-
-.logbar-search {
-  float: left;
-  margin-left: 20px;
-}
-
-.logbar-filter {
-  float: right;
-  margin-right: 20px;
-}
-/* End logs css */
-
 .ngCellText:hover i:before {
   text-shadow: 0px 0px 8px rgba(150, 150, 150, 1);
 }
