@@ -43,7 +43,7 @@
 
     <config name="hawtiodev-hawtioweb">
       context=/hawtio/*
-      content=${karaf.home}/../../../../../hawtio/hawtio-web/target/hawtio-web-${project.version}
+      content=${project.basedir}/../hawtio-web/target/hawtio-web-${project.version}
     </config>
 
   </feature>
