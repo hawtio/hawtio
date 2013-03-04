@@ -79,7 +79,7 @@ module Fabric {
         self.grid.rowFactory.filteredDataChanged();
       };
       
-    }
+    };
     
     var searchProvider = new SearchProvider($scope, $location);
     
