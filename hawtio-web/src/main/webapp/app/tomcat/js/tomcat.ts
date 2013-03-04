@@ -42,24 +42,34 @@ module Tomcat {
         };
 
         function render(response) {
-            response = Tomcat.filerTomcatOrCatalina(response)
+          response = Tomcat.filerTomcatOrCatalina(response);
 
-            $scope.webapps = [];
-            $scope.selected.length = 0;
+          $scope.webapps = [];
+          $scope.mbeanIndex = {};
+          $scope.selected.length = 0;
 
-            function onAttributes(response) {
-              var obj = response.value;
-              if (obj) {
-                obj.mbean = response.request.mbean;
-                $scope.webapps.push(obj);
+          function onAttributes(response) {
+            var obj = response.value;
+            if (obj) {
+              obj.mbean = response.request.mbean;
+              var mbean = obj.mbean;
+              if (mbean) {
+                var idx = $scope.mbeanIndex[mbean];
+                if (angular.isDefined(idx)) {
+                  $scope.webapps[mbean] = obj;
+                } else {
+                  $scope.mbeanIndex[mbean] = $scope.webapps.length;
+                  $scope.webapps.push(obj);
+                }
                 Core.$apply($scope);
               }
             }
+          }
 
-            angular.forEach(response, function(value, key) {
-              var mbean = value;
-              jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));
-            });
+          angular.forEach(response, function (value, key) {
+            var mbean = value;
+            jolokia.request({type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));
+          });
           Core.$apply($scope);
         };
 
