@@ -10,15 +10,16 @@ module Log {
 
   export function LogController($scope, $location, workspace:Workspace) {
     $scope.logs = [];
-    $scope.filter = { searchText: null };
+    $scope.filteredLogs = [];
+    $scope.searchText = "";
+    $scope.filter = {
+      // The default logging level to show, empty string => show all
+      logLevelQuery: "",
+      // The default value of the exact match logging filter
+      logLevelExactMatch: true
+    };
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
-    // The default logging level to show, empty string => show all
-    $scope.logLevelQuery = "";
-    // The default value of the exact match logging filter
-    $scope.logLevelExactMatch = true;
-
-    var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
 
     $scope.logClass = (log) => {
       return logLevelClass(log['level']);
@@ -64,41 +65,19 @@ module Log {
           ];
 
 
-/*
-      // Used to represent the ordinal value of a log level
-      return (logs:Log.ILog[], logLevelQuery, logLevelExactMatch:bool) => {
-        if (logLevelQuery === "") {
-          return logs;
-        }
-        // Exact match filtering
-        if (logLevelExactMatch) {
-          var filteredLogs = logs.filter((log:Log.ILog) => log.level === logLevelQuery);
-          return filteredLogs;
-        } else {
-          // Filtering based on ordinal value, e.g. >= INFO (e.g. INFO would include WARN and ERROR)
-          var logLevelQueryOrdinal = logLevels.indexOf(logLevelQuery);
-          var filteredLogs = logs.filter((log:Log.ILog) => {
-            var logLevelOrdinal = logLevels.indexOf(log.level);
-            return logLevelOrdinal >= logLevelQueryOrdinal;
-          });
-          return filteredLogs;
-        }
-      };
-    });
-
-    var searchProvider = new SearchProvider($scope, $location);
-*/
-
     $scope.gridOptions = {
-      //plugins: [searchProvider],
-      data: 'logs',
+      data: 'filteredLogs',
       displayFooter: false,
       showFilter: false,
       filterOptions: {
-        filterText: "filter.searchText"
+        filterText: "searchText"
       },
       columnDefs: columnDefs
     };
+
+    $scope.$watch('filter', function () {
+      refilter();
+    });
 
     var updateValues = function (response) {
       var logs = response.events;
@@ -108,7 +87,6 @@ module Log {
         $scope.queryJSON.arguments = [toTime];
       }
       if (logs) {
-        var seq = 0;
         logs.forEach((log:ILog) => {
           if (log) {
             // TODO Why do we compare 'item.seq === log.message' ?
@@ -117,6 +95,7 @@ module Log {
             }
           }
         });
+        refilter();
 
         //console.log("Got results " + logs.length + " last seq: " + seq);
         $scope.$apply();
@@ -146,6 +125,27 @@ module Log {
             });
 
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
-  }
 
+    var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
+
+    function refilter() {
+      console.log("refilter logs");
+      var logLevelExactMatch = $scope.filter.logLevelExactMatch;
+      var logLevelQuery = $scope.filter.logLevelQuery;
+      var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : logLevels.indexOf(logLevelQuery);
+
+      $scope.filteredLogs = $scope.logs.filter((log) => {
+        if (logLevelQuery) {
+          if (logLevelExactMatch) {
+            return log.level === logLevelQuery;
+          } else {
+            var idx = logLevels.indexOf(log.level);
+            return idx >= logLevelQueryOrdinal || idx < 0;
+          }
+        }
+        return true;
+      });
+      Core.$apply($scope);
+    }
+  }
 }
