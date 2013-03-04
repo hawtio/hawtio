@@ -16,7 +16,7 @@ module Log {
       // The default logging level to show, empty string => show all
       logLevelQuery: "",
       // The default value of the exact match logging filter
-      logLevelExactMatch: true
+      logLevelExactMatch: false
     };
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
@@ -75,8 +75,11 @@ module Log {
       columnDefs: columnDefs
     };
 
-    $scope.$watch('filter', function () {
-      refilter();
+    $scope.$watch('filter.logLevelExactMatch', function () {
+      checkIfFilterChanged();
+    });
+    $scope.$watch('filter.logLevelQuery', function () {
+      checkIfFilterChanged();
     });
 
     var updateValues = function (response) {
@@ -87,18 +90,20 @@ module Log {
         $scope.queryJSON.arguments = [toTime];
       }
       if (logs) {
+        var counter = 0;
         logs.forEach((log:ILog) => {
           if (log) {
             // TODO Why do we compare 'item.seq === log.message' ?
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
+              counter += 1;
               $scope.logs.push(log);
             }
           }
         });
-        refilter();
-
-        //console.log("Got results " + logs.length + " last seq: " + seq);
-        $scope.$apply();
+        if (counter) {
+          refilter();
+          $scope.$apply();
+        }
       } else {
         notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
       }
@@ -128,11 +133,21 @@ module Log {
 
     var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
 
+    function checkIfFilterChanged() {
+      if ($scope.logLevelExactMatch !== $scope.filter.logLevelExactMatch ||
+          $scope.logLevelQuery !== $scope.filter.logLevelExactMatch) {
+        refilter();
+      }
+    }
+
     function refilter() {
       console.log("refilter logs");
       var logLevelExactMatch = $scope.filter.logLevelExactMatch;
       var logLevelQuery = $scope.filter.logLevelQuery;
       var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : logLevels.indexOf(logLevelQuery);
+
+      $scope.logLevelExactMatch = logLevelExactMatch;
+      $scope.logLevelQuery = logLevelQuery;
 
       $scope.filteredLogs = $scope.logs.filter((log) => {
         if (logLevelQuery) {
