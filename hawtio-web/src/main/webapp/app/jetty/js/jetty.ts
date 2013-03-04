@@ -8,7 +8,7 @@ module Jetty {
 
         var columnDefs: any[] = [
             {
-                field: 'name',
+                field: 'displayName',
                 displayName: 'Name',
                 cellFilter: null,
                 width: "*",
@@ -32,7 +32,7 @@ module Jetty {
 
         $scope.gridOptions = {
             data: 'webapps',
-            displayFooter: false,
+            displayFooter: true,
             selectedItems: $scope.selected,
             selectWithCheckboxOnly: true,
             columnDefs: columnDefs,
@@ -46,16 +46,19 @@ module Jetty {
             $scope.webapps = [];
             $scope.selected.length = 0;
 
-            // create structure for each response
+            function onAttributes(response) {
+                var obj = response.value;
+                if (obj) {
+                    obj.mbean = response.request.mbean;
+                    obj.state = obj.running ? "started" : "stopped"
+                    $scope.webapps.push(obj);
+                    Core.$apply($scope);
+                }
+            }
+
             angular.forEach(response, function(value, key) {
-                var running = jolokia.getAttribute(value, "running");
-                var obj = {
-                    mbeanName: value,
-                    name: jolokia.getAttribute(value, "displayName"),
-                    contextPath: jolokia.getAttribute(value, "contextPath"),
-                    state: running ? "started" : "stopped"
-                };
-                $scope.webapps.push(obj);
+                var mbean = value;
+                jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "contextPath", "running"]}, onSuccess(onAttributes));
             });
             $scope.$apply();
         };
@@ -72,7 +75,7 @@ module Jetty {
         // function to control the web applications
         $scope.controlWebApps = function(op) {
             // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbeanName });
+            var ids = $scope.selected.map(function(b) { return b.mbean });
             if (!angular.isArray(ids)) {
                 ids = [ids];
             }
@@ -85,10 +88,7 @@ module Jetty {
                         operation: op,
                         arguments: null
                     },
-                    {
-                        success: $scope.onResponse,
-                        error: $scope.onResponse
-                    });
+                    onSuccess($scope.onResponse, {error: $scope.onResponse}));
             });
         }
 
@@ -104,8 +104,22 @@ module Jetty {
             $scope.controlWebApps('destroy');
         }
 
-        // register to core to poll a search for the web apps so the page is dynamic updated
-        Core.registerSearch(jolokia, $scope, "org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
+        // function to trigger reloading page
+        $scope.onResponse = function (response) {
+            //console.log("got response: " + response);
+            loadData();
+        };
+
+        $scope.$watch('workspace.tree', function () {
+            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+            // so lets reload, asynchronously just in case
+            setTimeout(loadData, 50);
+        });
+
+        function loadData() {
+            console.log("Loading tomcat webapp data...");
+            jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
+        }
 
         // grab server information once
         $scope.jettyServerVersion = "";

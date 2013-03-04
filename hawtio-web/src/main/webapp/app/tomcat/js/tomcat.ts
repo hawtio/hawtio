@@ -56,7 +56,6 @@ module Tomcat {
               }
             }
 
-            // create structure for each response
             angular.forEach(response, function(value, key) {
               var mbean = value;
               jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));

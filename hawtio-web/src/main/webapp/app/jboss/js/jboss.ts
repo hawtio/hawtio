@@ -55,7 +55,6 @@ module JBoss {
                 }
             }
 
-            // create structure for each response
             angular.forEach(response, function(value, key) {
                 var mbean = value;
                 jolokia.request( {type: "read", mbean: mbean, attribute: ["name", "status"]}, onSuccess(onAttributes));
