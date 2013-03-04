@@ -1,6 +1,6 @@
 module Log {
   var pluginName = 'log';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/logs', {templateUrl: 'app/log/html/logs.html'})
@@ -22,6 +22,18 @@ module Log {
               isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
               href: () => "#/logs"
             });
+          }).
+          filter("logDateFilter", ($filter) => {
+            return $filter("date");
+/*
+            TODO how to specify a filter this way that works with searching the logs?
+
+            return $filter("date:'yyyy-MM-dd HH:mm:ss'");
+            return $filter("date")("'yyyy-MM-dd HH:mm:ss'");
+            return function(value) => {
+              return $filter("date")(value, "'yyyy-MM-dd HH:mm:ss'");
+            };
+*/
           }).
           filter('filterLogLevel', () => {
             // Used to represent the ordinal value of a log level

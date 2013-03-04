@@ -3,11 +3,11 @@
   <div class="logbar">
     <div class="logbar-container">
       <div class="logbar-search">
-        <input class="search-query" type="text" id="logSearch" ng-model="query" placeholder="Filter logs...">
+        <input class="search-query" type="text" id="logSearch" ng-model="filter.searchText" placeholder="Filter logs...">
       </div>
       <div class="logbar-filter">
         Filter By Level:
-        <select ng-model="logLevelQuery" id="logLevelQuery">
+        <select ng-model="filter.logLevelQuery" id="logLevelQuery">
           <option value="" selected="selected">None...</option>
             <option value="TRACE">TRACE</option>
             <option value="DEBUG">DEBUG</option>
@@ -17,7 +17,7 @@
         </select>
         <label style="display:inline">
           <span>Exact Match:</span>
-          <input type="checkbox" ng-model="logLevelExactMatch">
+          <input type="checkbox" ng-model="filter.logLevelExactMatch">
         </label>
       </div>
     </div>

@@ -10,12 +10,15 @@ module Log {
 
   export function LogController($scope, $location, workspace:Workspace) {
     $scope.logs = [];
+    $scope.filter = { searchText: null };
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
     // The default logging level to show, empty string => show all
     $scope.logLevelQuery = "";
     // The default value of the exact match logging filter
     $scope.logLevelExactMatch = true;
+
+    var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
 
     $scope.logClass = (log) => {
       return logLevelClass(log['level']);
@@ -27,12 +30,17 @@ module Log {
       return Log.logSourceHref(row) ? true : false;
     };
 
+    $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
+
     var columnDefs: any[] = [
             {
               field: 'timestamp',
               displayName: 'Timestamp',
-              cellFilter: "date:'yyyy-MM-dd HH:mm:ss'",
-              width: "*"
+              cellFilter: "logDateFilter",
+              width: "*",
+              sortFn: (a, b) => {
+                return true;
+              }
             },
             {
               field: 'level',
@@ -54,9 +62,41 @@ module Log {
               width: "***"
             }
           ];
+
+
+/*
+      // Used to represent the ordinal value of a log level
+      return (logs:Log.ILog[], logLevelQuery, logLevelExactMatch:bool) => {
+        if (logLevelQuery === "") {
+          return logs;
+        }
+        // Exact match filtering
+        if (logLevelExactMatch) {
+          var filteredLogs = logs.filter((log:Log.ILog) => log.level === logLevelQuery);
+          return filteredLogs;
+        } else {
+          // Filtering based on ordinal value, e.g. >= INFO (e.g. INFO would include WARN and ERROR)
+          var logLevelQueryOrdinal = logLevels.indexOf(logLevelQuery);
+          var filteredLogs = logs.filter((log:Log.ILog) => {
+            var logLevelOrdinal = logLevels.indexOf(log.level);
+            return logLevelOrdinal >= logLevelQueryOrdinal;
+          });
+          return filteredLogs;
+        }
+      };
+    });
+
+    var searchProvider = new SearchProvider($scope, $location);
+*/
+
     $scope.gridOptions = {
+      //plugins: [searchProvider],
       data: 'logs',
       displayFooter: false,
+      showFilter: false,
+      filterOptions: {
+        filterText: "filter.searchText"
+      },
       columnDefs: columnDefs
     };
 
