@@ -35,7 +35,7 @@ module Osgi {
       },
       {
         field: 'SymbolicName',
-        displayName: 'SymbolicName',
+        displayName: 'Symbolic Name',
         width: "***",
         cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}">{{row.getProperty(col.field)}}</a></div>'
       },
