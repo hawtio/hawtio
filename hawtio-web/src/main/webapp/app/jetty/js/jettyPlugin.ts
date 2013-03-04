@@ -1,18 +1,22 @@
 module Jetty {
   var pluginName = 'jetty';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+      config(($routeProvider) => {
         $routeProvider.
-            when('/jetty', {templateUrl: 'app/jetty/html/jetty.html'})
-    }).
-        run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          when('/jetty/server', {templateUrl: 'app/jetty/html/server.html'}).
+          when('/jetty/applications', {templateUrl: 'app/jetty/html/applications.html'}).
+          when('/jetty/mbeans', {templateUrl: 'app/jetty/html/mbeans.html'});
+      }).
+        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
-            viewRegistry['jetty'] = layoutFull;
+            viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
+            viewRegistry['jettyTree'] = "app/jetty/html/layoutJettyTree.html";
 
             workspace.topLevelTabs.push( {
                 content: "Jetty",
-                title: "Jetty Console",
+                title: "Manage your Jetty container",
                 isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server"),
-                href: () => "#/jetty",
+                href: () => "#/jetty/applications",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("jetty")
             });
 

@@ -87,7 +87,7 @@ module Jetty {
               var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
               jolokia.request({
                         type: 'exec',
-                        mbean: id,
+                        mbean: mbean,
                         operation: op,
                         arguments: null
                     },
