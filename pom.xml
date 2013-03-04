@@ -67,19 +67,18 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-build>047</perfectus-build>
-    <activemq-version>5.7.0.fuse-71-${perfectus-build}</activemq-version>
-    <activemq-leveldb-artifactid>activemq-leveldb</activemq-leveldb-artifactid>
+    <perfectus-build>redhat-60012</perfectus-build>
+<!--
+    <perfectus-build>fuse-71-047</perfectus-build>
+-->
+    <activemq-version>5.8.0.${perfectus-build}</activemq-version>
+    <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <camel-version>2.10.0.fuse-71-${perfectus-build}</camel-version>
+    <camel-version>2.10.0.${perfectus-build}</camel-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
-<!--
-    <fabric-version>7.1.0.fuse-${perfectus-build}</fabric-version>
--->
-    <!-- we now depend on snapshot of fabric until the latest insight-log makes it to a perfectus release -->
-    <fabric-version>99-master-SNAPSHOT</fabric-version>
+    <fabric-version>7.2.0.redhat-012</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
