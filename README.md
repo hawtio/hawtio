@@ -43,7 +43,7 @@
   <a class="right carousel-control" href="#myCarousel" data-slide="next">&#8250;</a>
 </div>
 
-**hawtio** has [plugins](http://hawt.io/plugins/index.html) for a git-based Dashboard and Wiki, [logs](http://hawt.io/plugins/logs/index.html), [health](http://hawt.io/plugins/health/index.html), JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/), [Apache OpenEJB](http://openejb.apache.org/), [Apache Tomcat](http://tomcat.apache.org/), [Jetty](http://www.eclipse.org/jetty/), [JBoss](http://www.jboss.org/jbossas) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
+**hawtio** has [logs of plugins](http://hawt.io/plugins/index.html) such as: a git-based Dashboard and Wiki, [logs](http://hawt.io/plugins/logs/index.html), [health](http://hawt.io/plugins/health/index.html), JMX, OSGi, [Apache ActiveMQ](http://activemq.apache.org/), [Apache Camel](http://camel.apache.org/), [Apache OpenEJB](http://openejb.apache.org/), [Apache Tomcat](http://tomcat.apache.org/), [Jetty](http://www.eclipse.org/jetty/), [JBoss](http://www.jboss.org/jbossas) and [Fuse Fabric](http://fuse.fusesource.org/fabric/)
 
 You can dynamically [extend hawtio with your own plugins](http://hawt.io/plugins/index.html) or automatically [discover plugins](http://hawt.io/plugins/index.html) inside the JVM.
 
