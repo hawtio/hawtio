@@ -7,10 +7,21 @@ module ActiveMQ {
       setTimeout(updateSelectionFromURL, 50);
     });
 
-    $scope.$watch('workspace.tree', function () {
-      console.log("workspace tree has changed, lets reload!!");
 
-      if (workspace.moveIfViewInvalid()) return;
+    $scope.$watch('workspace.tree', function () {
+      reloadTree();
+    });
+
+    $scope.$on('jmxTreeUpdated', function () {
+      reloadTree();
+    });
+
+    function updateSelectionFromURL() {
+      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"), true);
+    }
+
+    function reloadTree() {
+      console.log("workspace tree has changed, lets reload the activemq tree");
 
       var children = [];
       var tree = workspace.tree;
@@ -55,10 +66,6 @@ module ActiveMQ {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
       }
-    });
-
-    function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"), true);
     }
   }
 }
