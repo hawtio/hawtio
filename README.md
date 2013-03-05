@@ -11,6 +11,13 @@
       </div>
     </div>
     <div class="item">
+     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/jmx.png" alt="screenshot">
+      <div class="carousel-caption">
+        <h4>JMX</h4>
+        <p>Browse all your MBeans, view their real time attributes, create charts or invoke operations</p>
+      </div>
+    </div>
+    <div class="item">
      <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/dashboard.png" alt="screenshot">
       <div class="carousel-caption">
         <h4>Dashboard</h4>
