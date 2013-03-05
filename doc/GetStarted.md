@@ -1,3 +1,8 @@
+You can use hawtio in many different containers - or outside a container. Below are all the various options for running hawtio.
+
+The out of the box defaults try to do the right thing for most folks but you may want to check out [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things.
+
+
 ## Using a Servlet Engine or Application Server
 
 If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:
@@ -85,4 +90,3 @@ From a git clone you should be able to run the a sample hawtio console as follow
 Then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) should show hawtio with a sample web application with some ActiveMQ and Camel inside to interact with.
 
 A good MBean for real time values and charts is `java.lang/OperatingSystem`. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.
-

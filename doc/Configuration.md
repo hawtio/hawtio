@@ -2,24 +2,22 @@
 
 The following table contains the various configuration settings you can set via Java system properties or environment variables.
 
-You can also specify these via web.xml context parameters in your web.xml such as in the [sample's web.xml](https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24).
+You can also specify these via the **web.xml** context parameters in your web.xml such as in the [sample's web.xml](https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24).
 
 e.g. add this to your web.xml
 
-```xml
-  <listener>
-    <listener-class>io.hawt.git.GitContextListener</listener-class>
-  </listener>
+    <listener>
+      <listener-class>io.hawt.git.GitContextListener</listener-class>
+    </listener>
 
-  <context-param>
-    <param-name>hawtio.config.dir</param-name>
-    <param-value>/tmp/hawtio</param-value>
-  </context-param>
-```
+    <context-param>
+      <param-name>hawtio.config.dir</param-name>
+      <param-value>/tmp/hawtio</param-value>
+    </context-param>
 
 ### configuration system properties and environment variables
 
-<table>
+<table class="table">
 <tr>
 <th>System Property</th><th>Environment Variable</th><th>Description</th>
 </tr>

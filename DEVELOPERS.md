@@ -2,6 +2,10 @@ We love [contributions](http://hawt.io/contributing/index.html). This page is in
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
+## Building the code
+
+Check out the [how to build the code](http://hawt.io/building/index.html) if you want to start hacking on the source.
+
 ## Architecture
 
 **hawtio** is a single page application which is highly modular and capable of dynamically loading [plugins](http://hawt.io/plugins/index.html) based on the capability of the server.
