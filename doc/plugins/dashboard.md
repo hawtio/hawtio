@@ -1,4 +1,4 @@
-## Dashboard plugin
+## hawtio dashboard
 
 The dashboard plugin lets you view, create and modify dashboards of widgets for displaying real time metrics, diagrams or metrics.
 
@@ -26,3 +26,10 @@ Here are some developer guides on how to make nicely behaving views for inclusio
 * if you use any jQuery navigation, good behaving pages use relative locations to the angularjs controller (e.g. using **$element** in the controller / directive) rather than global lookups by ID with jQuery. If you use global ID lookups, then your page won't work if its included into 2 rectangles on a dashboard at the same time :). e.g. [here is how the JMX chart controller uses $element to find where to draw the charts](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/jmx/js/charts.ts#L2)
 * until 1.1, we don't yet support **$routeParams** injection though we will hopefully be [fixing that soon](https://github.com/hawtio/hawtio/issues/146)!
 * any questions on how to allow your view to be added to the dashboard or to get it working on a dashboard, [join the community](http://hawt.io/community/index.html) - we'll be glad to help!
+
+
+## How the configuration works
+
+The default configuration repository for the dashboards is [hawtio-config on github](https://github.com/hawtio/hawtio-config) but you can [configure hawtio](http://hawt.io/configuration/index.html) to use whatever configuration directory or remote git repository you wish.
+
+We'd love it if you [contribute](http://localhost:8000/contributing/index.html) any nice cool dashboards you may have created so we can share them with others! Just fork the  [hawtio-config repository on github](https://github.com/hawtio/hawtio-config) and submit a pull request; or maintain your own public repo!
