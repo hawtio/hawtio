@@ -248,6 +248,10 @@ ul.inline > li, ol.inline > li {
   color: red;
 }
 
+.orange {
+    color: orange;
+}
+
 .green {
   /*
     color: #00ff00;

@@ -25,6 +25,20 @@ module Log {
       return logLevelClass(log['level']);
     };
 
+    $scope.logIcon = (log) => {
+      var style = $scope.logClass(log);
+      if (style === "error") {
+        return "red icon-warning-sign";
+      }
+      if (style === "warning") {
+        return "orange icon-exclamation-sign";
+      }
+      if (style === "info") {
+        return "icon-info-sign";
+      }
+      return "icon-cog";
+    };
+
     $scope.logSourceHref = Log.logSourceHref;
 
     $scope.hasLogSourceHref = (row) => {
@@ -33,46 +47,49 @@ module Log {
 
     $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-    var columnDefs: any[] = [
-            {
-              field: 'timestamp',
-              displayName: 'Timestamp',
-              cellFilter: "logDateFilter",
-              width: "*",
-              sortFn: (a, b) => {
-                return true;
-              }
-            },
-            {
-              field: 'level',
-              displayName: 'Level',
-              cellFilter: null,
-              width: 58,
-              resizable: false
-            },
-            {
-              field: 'logger',
-              displayName: 'Logger',
-              cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
-              cellFilter: null,
-              width: "*"
-            },
-            {
-              field: 'message',
-              displayName: 'Message',
-              width: "***"
-            }
-          ];
+    var columnDefs:any[] = [
+      {
+        field: 'level',
+        displayName: 'Level',
+        cellTemplate: '<div class="ngCellText"><span class="text-{{logClass(row.entity)}}"><i class="{{logIcon(row.entity)}}"></i> {{row.entity.level}}</span></div>',
+        cellFilter: null,
+        width: 74,
+        resizable: false
+      },
+      {
+        field: 'timestamp',
+        displayName: 'Timestamp',
+        cellFilter: "logDateFilter",
+        width: "*",
+        sortFn: (a, b) => {
+          return true;
+        }
+      },
+      {
+        field: 'logger',
+        displayName: 'Logger',
+        cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
+        cellFilter: null,
+        width: "*"
+      },
+      {
+        field: 'message',
+        displayName: 'Message',
+        width: "***"
+      }
+    ];
 
 
     $scope.gridOptions = {
       data: 'filteredLogs',
       displayFooter: false,
+      displaySelectionCheckbox: false,
       showFilter: false,
       filterOptions: {
         filterText: "searchText"
       },
       columnDefs: columnDefs
+      //rowTemplate: '<div ng-style="{\'cursor\': row.cursor}" ng-repeat="col in visibleColumns()" class="{{logClass(row.entity)}} ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>'
     };
 
     $scope.$watch('filter.logLevelExactMatch', function () {
@@ -132,19 +149,24 @@ module Log {
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 
     var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
+    var logLevelMap = {};
+    angular.forEach(logLevels, (name, idx) => {
+      logLevelMap[name] = idx;
+      logLevelMap[name.toLowerCase()] = idx;
+    });
 
     function checkIfFilterChanged() {
       if ($scope.logLevelExactMatch !== $scope.filter.logLevelExactMatch ||
-          $scope.logLevelQuery !== $scope.filter.logLevelExactMatch) {
+              $scope.logLevelQuery !== $scope.filter.logLevelExactMatch) {
         refilter();
       }
     }
 
     function refilter() {
-      console.log("refilter logs");
+      //console.log("refilter logs");
       var logLevelExactMatch = $scope.filter.logLevelExactMatch;
       var logLevelQuery = $scope.filter.logLevelQuery;
-      var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : logLevels.indexOf(logLevelQuery);
+      var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : logLevelMap[logLevelQuery];
 
       $scope.logLevelExactMatch = logLevelExactMatch;
       $scope.logLevelQuery = logLevelQuery;
@@ -154,7 +176,7 @@ module Log {
           if (logLevelExactMatch) {
             return log.level === logLevelQuery;
           } else {
-            var idx = logLevels.indexOf(log.level);
+            var idx = logLevelMap[log.level];
             return idx >= logLevelQueryOrdinal || idx < 0;
           }
         }
