@@ -31,7 +31,7 @@ module JBoss {
 
         $scope.gridOptions = {
             data: 'connectors',
-            displayFooter: true,
+            displayFooter: false,
             columnDefs: columnDefs,
             filterOptions: {
                 filterText: 'search'

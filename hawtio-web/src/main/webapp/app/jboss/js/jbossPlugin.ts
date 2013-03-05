@@ -1,13 +1,17 @@
 module JBoss {
   var pluginName = 'jboss';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+    config(($routeProvider) => {
       $routeProvider.
-          when('/jboss', {templateUrl: 'app/jboss/html/jboss.html'}).
-          when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'})
-  }).
+            when('/jboss/server', {templateUrl: 'app/jboss/html/server.html'}).
+            when('/jboss/applications', {templateUrl: 'app/jboss/html/applications.html'}).
+            when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'}).
+            when('/jboss/mbeans', {templateUrl: 'app/jboss/html/mbeans.html'});
+          }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
-          viewRegistry['jboss'] = layoutFull;
+            viewRegistry['jboss'] = "app/jboss/html/layoutJBossTabs.html";
+            viewRegistry['jbossTree'] = "app/jboss/html/layoutJBossTree.html";
 
             workspace.topLevelTabs.push( {
               content: "JBoss",
@@ -15,19 +19,9 @@ module JBoss {
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("jboss.as") ||
                       workspace.treeContainsDomainAndProperties("jboss.jta") ||
                       workspace.treeContainsDomainAndProperties("jboss.modules"),
-              href: () => "#/jboss",
+              href: () => "#/jboss/applications",
               isActive: (workspace: Workspace) => workspace.isTopTabActive("jboss")
             });
-
-          workspace.subLevelTabs.push( {
-              content: "JBoss Connectors",
-              title: "Manage your JBoss connectors",
-              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("jboss.as") ||
-                  workspace.treeContainsDomainAndProperties("jboss.jta") ||
-                  workspace.treeContainsDomainAndProperties("jboss.modules"),
-              href: () => "#/jboss/connectors",
-              isActive: (workspace: Workspace) => workspace.isTopTabActive("jboss")
-          });
 
       });
 

@@ -1,0 +1,14 @@
+<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+  <li ng-class='{active : isActive("#/jboss/server")}'>
+    <a ng-href="{{link('#/jboss/server')}}">Server</a>
+  </li>
+  <li ng-class='{active : isActive("#/jboss/applications")}'>
+    <a ng-href="{{link('#/jboss/applications')}}">Applications</a>
+  </li>
+  <li ng-class='{active : isActive("#/jboss/connectors")}'>
+    <a ng-href="{{link('#/jboss/connectors')}}">Connectors</a>
+  </li>
+  <li ng-class='{active : isTopTabActive("jbossTree")}'>
+    <a ng-href="#/jmx/attributes?tab=jbossTree{{hash}}">JMX</a>
+  </li>
+</ul>
