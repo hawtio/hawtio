@@ -46,25 +46,9 @@ Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/
 
 Questions on writing or using the available plugins
 
-<a id="pluginList"><h3>What plugins are available?</h3></a>
+### What plugins are available?
 
-You can see the [default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
-
-So far we have plugins for:
-
-* [Apache ActiveMQ](http://activemq.apache.org/)
-* [Apache Camel](http://camel.apache.org/)
-* [Apache OpenEJB](http://openejb.apache.org/)
-* [Apache Tomcat](http://tomcat.apache.org/)
-* Dashboard plugin for creating reusable dashboard user interfaces which are then stored and versioned as JSON files in a git repository
-* [Fuse Fabric](http://fuse.fusesource.org/fabric/)
-* [Health MBeans](http://hawt.io/plugins/health/)
-* [JBoss](http://www.jboss.org/jbossas)
-* [Jetty](http://www.eclipse.org/jetty/)
-* JMX
-* [Logs](http://hawt.io/plugins/logs/)
-* OSGi
-* Wiki plugin for creating, editing and viewing text files (Markdown, HTML, XML) which are then versioned and stored in a git repository
+See the list of [hawtio plugins](http://hawt.io/plugins/index.html)
 
 ### What can my new plugin do?
 
