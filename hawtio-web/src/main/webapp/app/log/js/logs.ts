@@ -60,7 +60,7 @@ module Log {
         field: 'timestamp',
         displayName: 'Timestamp',
         cellFilter: "logDateFilter",
-        width: "*",
+        width: 146,
         sortFn: (a, b) => {
           return true;
         }
@@ -68,14 +68,14 @@ module Log {
       {
         field: 'logger',
         displayName: 'Logger',
-        cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.getProperty(col.field)}}</a><div ng-switch-default>{{row.getProperty(col.field)}}</div></div>',
+        cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)" title="{{row.entity.logger}}"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.entity.logger}}</a><div ng-switch-default>{{row.entity.logger}}</div></div>',
         cellFilter: null,
-        width: "*"
+        width: "**"
       },
       {
         field: 'message',
         displayName: 'Message',
-        width: "***"
+        width: "****"
       }
     ];
 

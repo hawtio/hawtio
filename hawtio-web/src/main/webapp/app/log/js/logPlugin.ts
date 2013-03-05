@@ -23,39 +23,11 @@ module Log {
               href: () => "#/logs"
             });
           }).
-          filter("logDateFilter", ($filter) => {
-            return $filter("date");
-/*
-            TODO how to specify a filter this way that works with searching the logs?
-
-            return $filter("date:'yyyy-MM-dd HH:mm:ss'");
-            return $filter("date")("'yyyy-MM-dd HH:mm:ss'");
-            return function(value) => {
-              return $filter("date")(value, "'yyyy-MM-dd HH:mm:ss'");
-            };
-*/
-          }).
-          filter('filterLogLevel', () => {
-            // Used to represent the ordinal value of a log level
-            var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
-            return (logs:Log.ILog[], logLevelQuery, logLevelExactMatch:bool) => {
-              if (logLevelQuery === "") {
-                return logs;
-              }
-              // Exact match filtering
-              if (logLevelExactMatch) {
-                var filteredLogs = logs.filter((log:Log.ILog) => log.level === logLevelQuery);
-                return filteredLogs;
-              } else {
-                // Filtering based on ordinal value, e.g. >= INFO (e.g. INFO would include WARN and ERROR)
-                var logLevelQueryOrdinal = logLevels.indexOf(logLevelQuery);
-                var filteredLogs = logs.filter((log:Log.ILog) => {
-                  var logLevelOrdinal = logLevels.indexOf(log.level);
-                  return logLevelOrdinal >= logLevelQueryOrdinal;
-                });
-                return filteredLogs;
-              }
-            };
+          filter('logDateFilter', function ($filter) {
+            var standardDateFilter = $filter('date');
+            return function (dateToFormat) {
+              return standardDateFilter(dateToFormat, 'yyyy-MM-dd HH:mm:ss');
+            }
           });
 
   hawtioPluginLoader.addModule(pluginName);
