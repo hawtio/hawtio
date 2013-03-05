@@ -214,7 +214,6 @@
     <module>hawtio-plugin-registry</module>
     <module>hawtio-plugin-example</module>
     <module>hawtio-karaf</module>
-    <module>hawtio-karaf-itest</module>
     <module>sample</module>
   </modules>
 
@@ -327,6 +326,33 @@
       <properties>
         <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
       </properties>
+    </profile>
+
+    <profile>
+      <id>itests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>hawtio-karaf-itest</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <!--
+      TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
+
+      <settings>
+        <profiles>
+          <profile>
+            <id>release</id>
+            <properties>
+              <gpg.passphrase>MyPassPhrase</gpg.passphrase>
+            </properties>
+          </profile>
+          ...
+      -->
     </profile>
   </profiles>
 </project>
