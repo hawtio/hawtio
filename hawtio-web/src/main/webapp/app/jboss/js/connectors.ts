@@ -32,6 +32,8 @@ module JBoss {
         $scope.gridOptions = {
             data: 'connectors',
             displayFooter: false,
+            displaySelectionCheckbox: false,
+            canSelectRows: false,
             columnDefs: columnDefs,
             filterOptions: {
                 filterText: 'search'
