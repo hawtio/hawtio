@@ -6,7 +6,7 @@ The wiki plugin implements a wiki for viewing, creating and editing text files (
   <li class="span4">
     <div class="thumbnail">
       <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/wiki.png" alt="screenshot">
-      <h3>Sample dashboard</h3>
+      <h3>viewing the wiki</h3>
     </div>
   </li>
 </ul>
