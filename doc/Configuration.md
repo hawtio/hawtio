@@ -2,7 +2,7 @@
 
 The following table contains the various configuration settings you can set via Java system properties or environment variables.
 
-You can also specify these via the **web.xml** context parameters in your web.xml such as in the [sample's web.xml](https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24).
+You can also specify these via the _context parameters_ in your **web.xml**. e.g. you can make your own WAR which depends on the hawtio-web.war like the [sample project's pom.xml](https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17) then you can create your own custom web.xml file such as the [sample project's web.xml](https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24).
 
 e.g. add this to your web.xml
 
