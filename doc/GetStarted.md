@@ -10,10 +10,10 @@ If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just d
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">Download hawtio-web.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.0/hawtio-web-1.0.war">Download hawtio-web.war</a>
     </td>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.0/sample-1.0.war">Download sample.war</a>
     </td>
   </tr>
   <tr>
@@ -38,20 +38,15 @@ If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/produc
 
 Otherwise if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [Apache ServiceMix](http://servicemix.apache.org/) or [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) use the following
 
-Add the following to the **etc/org.ops4j.pax.url.mvn.cfg** to make sure you have the [sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots) in your settings
-
-    org.ops4j.pax.url.mvn.repositories= \
-        https://oss.sonatype.org/content/repositories/snapshots \
-
 Now you can install hawtio via:
 
-    features:addurl mvn:io.hawt/hawtio-karaf/1.0-SNAPSHOT/xml/features
+    features:addurl mvn:io.hawt/hawtio-karaf/1.0/xml/features
     features:install hawtio
 
-Otherwise just install a [hawtio-osgi.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/) build directly:
+Otherwise just install a [hawtio-osgi.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-osgi/1.0/hawtio-osgi-1.0.war) build directly:
 
     features:install war
-    install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130224.214242-49.war
+    install -s https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-osgi/1.0/hawtio-osgi-1.0.war
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
 

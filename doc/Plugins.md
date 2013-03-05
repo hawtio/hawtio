@@ -6,7 +6,7 @@ For more details see [how hawtio plugins work](http://hawt.io/plugins/howPlugins
 
 ## Included Plugins
 
-The following plugins are all included by default in the [hawtio-web.war](https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/) distro. You can see the [source for the all default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
+The following plugins are all included by default in the [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.0/hawtio-web-1.0.war) distro. You can see the [source for the all default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
 
 
 <table class="table">

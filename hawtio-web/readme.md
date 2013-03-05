@@ -11,7 +11,7 @@ to get typescript installed first if setting up a new machine.
 
 * Install the war into karaf/fuse-fabric/fuse-esb with:
 
-osgi:install -s mvn:io.hawt/hawtio-web/1.0-SNAPSHOT/war
+osgi:install -s mvn:io.hawt/hawtio-web/1.0/war
 
 You can also run:
 
