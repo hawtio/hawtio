@@ -125,7 +125,7 @@ module Jetty {
         });
 
         function loadData() {
-            console.log("Loading tomcat webapp data...");
+            console.log("Loading Jetty webapp data...");
             jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
         }
 

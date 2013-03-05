@@ -5,6 +5,7 @@ module Jetty {
         $routeProvider.
           when('/jetty/server', {templateUrl: 'app/jetty/html/server.html'}).
           when('/jetty/applications', {templateUrl: 'app/jetty/html/applications.html'}).
+          when('/jetty/connectors', {templateUrl: 'app/jetty/html/connectors.html'}).
           when('/jetty/mbeans', {templateUrl: 'app/jetty/html/mbeans.html'});
       }).
         run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
