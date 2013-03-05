@@ -10,13 +10,13 @@ hawtio uses the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.
 
 It's a [pluggable](http://hawt.io/plugins/index.html) management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric, etc), and any kind of Java technology and middleware.
 
-### How do I configure hawtio?
-
-Mostly hawtio just works. However, please check out the [Configuration Guide](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md) to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.
-
 ### How do I install hawtio?
 
-See the [getting started guide](https://github.com/hawtio/hawtio#get-started) which is on the home page (if you keep scrolling down).
+See the [Getting Started Guide](http://hawt.io/getstarted/index.html) and the [Configuration Guide](http://hawt.io/configuration/index.html)
+
+### How do I configure hawtio?
+
+Mostly hawtio just works. However, please check out the [Configuration Guide](http://hawt.io/configuration/index.html) to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.
 
 ### Why does hawtio have its own wiki?
 
@@ -34,7 +34,7 @@ So whether the hawtio wiki is used for documentation, to link to various hawtio 
 
 ### How do I build the project?
 
-If you just want to run hawtio in a JVM then please see the [Getting Started](http://hawt.io/) section.
+If you just want to run hawtio in a JVM then please see the [Getting Started](http://hawt.io/getstarted/index.html) section.
 
 If you want to hack the source code then check out [how to build hawtio](http://hawt.io/building/index.html).
 
@@ -49,6 +49,10 @@ Questions on writing or using the available plugins
 ### What plugins are available?
 
 See the list of [hawtio plugins](http://hawt.io/plugins/index.html)
+
+### What is a plugin?
+
+See [How Plugins Work](http://hawt.io/plugins/howPluginsWork.html)
 
 ### What can my new plugin do?
 
