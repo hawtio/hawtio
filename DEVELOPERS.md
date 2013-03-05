@@ -12,10 +12,8 @@ Check out the [how to build the code](http://hawt.io/building/index.html) if you
 
 You may want to check out:
 
-* [current list of hawtio plugins](http://hawt.io/plugins/index.html)
-* [how plugins work](http://hawt.io/plugins/index.html)
-* [hawtio logs](http://hawt.io/plugins/logs/)
-* [Health MBeans](http://hawt.io/plugins/health/)
+* [current list of the available plugins](http://hawt.io/plugins/index.html)
+* [how plugins work](http://hawt.io/plugins/howPluginsWork.html)
 
 ## Tools and Libraries
 
