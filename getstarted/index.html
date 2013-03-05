@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawt.io - manage your server stuff and stay cool!</title>
+    <title>get your hawtio running!</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -50,72 +50,103 @@
       </div>
     </header>
     <div id="main">
-		  <p><div class="container">
-    <div id="content"></p>
-
-<p><strong>hawtio</strong> is a lightweight and <a href="http://hawt.io/plugins/index.html">modular</a> HTML5 web console for managing your Java stuff. It's a <em>hawt</em> console to help you stay cool! <a class="btn btn-large  btn-primary pull-right" href="http://hawt.io/getstarted/index.html" title="find out how to get started using hawtio to manage your java stuff">Get Started Now!</a></p>
-
-<p><br/></p>
-
-<div id="myCarousel" class="carousel slide">
-  <div class="carousel-inner">
-    <div class="item active">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/camelRoute.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Camel Route</h4>
-        <p>You can visualise your camel routes and see the throughput rates in real time</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/dashboard.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Dashboard</h4>
-        <p>Create your own dashboards that are stored in git. Then share them on github!</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/wiki.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>git based wiki</h4>
-        <p>view and edit documentation pages for your running system; link stuff FTW!</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/activemqSend.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Send messages to ActiveMQ</h4>
-        <p>Use XML or JSON syntax highlighting, auto-tag close and bracket/tag matching.</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/activemqBrowse.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Browse ActiveMQ Queues</h4>
-        <p>See the message headers and payloads.</p>
-      </div>
+		  <p><div id="content-header">
+    <div class="container">
+      <h1>Get Started</h1>
     </div>
   </div>
-  <a class="left carousel-control" href="#myCarousel" data-slide="prev">&#8249;</a>
-  <a class="right carousel-control" href="#myCarousel" data-slide="next">&#8250;</a>
-</div>
+  <div class="container">
+    <div id="content"></p>
 
-<p><strong>hawtio</strong> has <a href="http://hawt.io/plugins/index.html">plugins</a> for a git-based Dashboard and Wiki, <a href="http://hawt.io/plugins/logs/index.html">logs</a>, <a href="http://hawt.io/plugins/health/index.html">health</a>, JMX, OSGi, <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://camel.apache.org/">Apache Camel</a>, <a href="http://openejb.apache.org/">Apache OpenEJB</a>, <a href="http://tomcat.apache.org/">Apache Tomcat</a>, <a href="http://www.eclipse.org/jetty/">Jetty</a>, <a href="http://www.jboss.org/jbossas">JBoss</a> and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a></p>
+<p>You can use hawtio in many different containers - or outside a container. Below are all the various options for running hawtio.</p>
 
-<p>You can dynamically <a href="http://hawt.io/plugins/index.html">extend hawtio with your own plugins</a> or automatically <a href="http://hawt.io/plugins/index.html">discover plugins</a> inside the JVM.</p>
+<p>The out of the box defaults try to do the right thing for most folks but you may want to check out <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things.</p>
 
-<p>The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent <a href="http://jolokia.org">Jolokia library</a> which has small footprint (around 300Kb) and is available as a <a href="http://jolokia.org/agent/jvm.html">JVM agent</a>, or comes embedded as a servlet inside the <strong>hawtio-web.war</strong> or can be deployed as <a href="http://jolokia.org/agent/osgi.html">an OSGi bundle</a>.</p>
+<h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
 
-<h2 id = "Want_to_hack_on_some_code_">Want to hack on some code?</h2>
+<p>If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:</p>
 
-<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>!</p>
+<table class="buttonTable">
+  <tr>
+    <td>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-web/1.0-SNAPSHOT/">Download hawtio-web.war</a>
+    </td>
+    <td>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/sample/1.0-SNAPSHOT/">Download sample.war</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      a bare hawtio web application with minimal dependencies
+    </td>
+    <td>
+      a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
+      <a href="http://camel.apache.org/">Apache Camel</a> to play with which is even <i>hawter</i>
+    </td>
+  </tr>
+</table>
 
-<ul>
-<li><a href="http://hawt.io/faq/index.html">hawtio FAQ</a></li>
-<li><a href="http://hawt.io/contributing/index.html">How to contribute</a></li>
-<li><a href="http://hawt.io/building/index.html">How to build the code</a></li>
-<li><a href="http://hawt.io/developers/index.html">How to get started working on the code</a></li>
-<li><a href="http://hawt.io/community/index.html">Join the hawtio community</a></li>
-</ul>
+<p>Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
+
+<h2 id = "Using_Apache_Karaf__Apache_Servicemix__or_Fuse_ESB">Using Apache Karaf, Apache Servicemix, or Fuse ESB</h2>
+
+<p>If you are using a developer snapshot of <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> you can run:</p>
+
+<pre><code>features:install hawtio</code></pre>
+
+<p>Otherwise if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> use the following</p>
+
+<p>Add the following to the <strong>etc/org.ops4j.pax.url.mvn.cfg</strong> to make sure you have the <a href="https://oss.sonatype.org/content/repositories/snapshots">sonatype snapshot repo</a> in your settings</p>
+
+<pre><code>org.ops4j.pax.url.mvn.repositories= \
+    https://oss.sonatype.org/content/repositories/snapshots \</code></pre>
+
+<p>Now you can install hawtio via:</p>
+
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.0-SNAPSHOT/xml/features
+features:install hawtio</code></pre>
+
+<p>Otherwise just install a <a href="https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/">hawtio-osgi.war</a> build directly:</p>
+
+<pre><code>features:install war
+install -s https://oss.sonatype.org/content/repositories/snapshots/io/hawt/hawtio-osgi/1.0-SNAPSHOT/hawtio-osgi-1.0-20130224.214242-49.war</code></pre>
+
+<p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>.</p>
+
+<h2 id = "Using_hawtio_inside_a_stand_alone_Java_application">Using hawtio inside a stand alone Java application</h2>
+
+<p>If you do not use a servlet container or application server and wish to embed hawtio inside your process try the following:</p>
+
+<p>Add the following to your pom.xml</p>
+
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.hawt&lt;/groupId&gt;
+  &lt;artifactId&gt;hawtio-embedded&lt;/artifactId&gt;
+  &lt;version&gt;${hawtio-version}&lt;/version&gt;
+ &lt;/dependency&gt;</code></pre>
+
+<p>Then in your application run the following code:</p>
+
+<pre><code>import io.hawt.embedded.Main;
+
+...
+Main main = new Main();
+main.setWar("somePathOrDirectoryContainingHawtioWar");
+main.run();</code></pre>
+
+<p>If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).</p>
+
+<h2 id = "Using_a_git_Clone">Using a git Clone</h2>
+
+<p>From a git clone you should be able to run the a sample hawtio console as follows:</p>
+
+<pre><code>git clone git@github.com:hawtio/hawtio.git
+cd hawtio/sample
+mvn jetty:run</code></pre>
+
+<p>Then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> should show hawtio with a sample web application with some ActiveMQ and Camel inside to interact with.</p>
+
+<p>A good MBean for real time values and charts is <code>java.lang/OperatingSystem</code>. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.</p>
 
 <p></div>
   </div></p>

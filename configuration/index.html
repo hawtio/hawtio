@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawt.io - manage your server stuff and stay cool!</title>
+    <title>configure your hawtio</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -50,72 +50,47 @@
       </div>
     </header>
     <div id="main">
-		  <p><div class="container">
-    <div id="content"></p>
-
-<p><strong>hawtio</strong> is a lightweight and <a href="http://hawt.io/plugins/index.html">modular</a> HTML5 web console for managing your Java stuff. It's a <em>hawt</em> console to help you stay cool! <a class="btn btn-large  btn-primary pull-right" href="http://hawt.io/getstarted/index.html" title="find out how to get started using hawtio to manage your java stuff">Get Started Now!</a></p>
-
-<p><br/></p>
-
-<div id="myCarousel" class="carousel slide">
-  <div class="carousel-inner">
-    <div class="item active">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/camelRoute.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Camel Route</h4>
-        <p>You can visualise your camel routes and see the throughput rates in real time</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/dashboard.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Dashboard</h4>
-        <p>Create your own dashboards that are stored in git. Then share them on github!</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/wiki.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>git based wiki</h4>
-        <p>view and edit documentation pages for your running system; link stuff FTW!</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/activemqSend.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Send messages to ActiveMQ</h4>
-        <p>Use XML or JSON syntax highlighting, auto-tag close and bracket/tag matching.</p>
-      </div>
-    </div>
-    <div class="item">
-     <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/activemqBrowse.png" alt="screenshot">
-      <div class="carousel-caption">
-        <h4>Browse ActiveMQ Queues</h4>
-        <p>See the message headers and payloads.</p>
-      </div>
+		  <p><div id="content-header">
+    <div class="container">
+      <h1>Configuration</h1>
     </div>
   </div>
-  <a class="left carousel-control" href="#myCarousel" data-slide="prev">&#8249;</a>
-  <a class="right carousel-control" href="#myCarousel" data-slide="next">&#8250;</a>
-</div>
+  <div class="container">
+    <div id="content"></p>
 
-<p><strong>hawtio</strong> has <a href="http://hawt.io/plugins/index.html">plugins</a> for a git-based Dashboard and Wiki, <a href="http://hawt.io/plugins/logs/index.html">logs</a>, <a href="http://hawt.io/plugins/health/index.html">health</a>, JMX, OSGi, <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://camel.apache.org/">Apache Camel</a>, <a href="http://openejb.apache.org/">Apache OpenEJB</a>, <a href="http://tomcat.apache.org/">Apache Tomcat</a>, <a href="http://www.eclipse.org/jetty/">Jetty</a>, <a href="http://www.jboss.org/jbossas">JBoss</a> and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a></p>
+<h2 id = "hawtio_configuration">hawtio configuration</h2>
 
-<p>You can dynamically <a href="http://hawt.io/plugins/index.html">extend hawtio with your own plugins</a> or automatically <a href="http://hawt.io/plugins/index.html">discover plugins</a> inside the JVM.</p>
+<p>The following table contains the various configuration settings you can set via Java system properties or environment variables.</p>
 
-<p>The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent <a href="http://jolokia.org">Jolokia library</a> which has small footprint (around 300Kb) and is available as a <a href="http://jolokia.org/agent/jvm.html">JVM agent</a>, or comes embedded as a servlet inside the <strong>hawtio-web.war</strong> or can be deployed as <a href="http://jolokia.org/agent/osgi.html">an OSGi bundle</a>.</p>
+<p>You can also specify these via the <strong>web.xml</strong> context parameters in your web.xml such as in the <a href="https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24">sample's web.xml</a>.</p>
 
-<h2 id = "Want_to_hack_on_some_code_">Want to hack on some code?</h2>
+<p>e.g. add this to your web.xml</p>
 
-<p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>!</p>
+<pre><code>&lt;listener&gt;
+  &lt;listener-class&gt;io.hawt.git.GitContextListener&lt;/listener-class&gt;
+&lt;/listener&gt;
 
-<ul>
-<li><a href="http://hawt.io/faq/index.html">hawtio FAQ</a></li>
-<li><a href="http://hawt.io/contributing/index.html">How to contribute</a></li>
-<li><a href="http://hawt.io/building/index.html">How to build the code</a></li>
-<li><a href="http://hawt.io/developers/index.html">How to get started working on the code</a></li>
-<li><a href="http://hawt.io/community/index.html">Join the hawtio community</a></li>
-</ul>
+&lt;context-param&gt;
+  &lt;param-name&gt;hawtio.config.dir&lt;/param-name&gt;
+  &lt;param-value&gt;/tmp/hawtio&lt;/param-value&gt;
+&lt;/context-param&gt;</code></pre>
+
+<h3 id = "configuration_system_properties_and_environment_variables">configuration system properties and environment variables</h3>
+
+<table class="table">
+<tr>
+<th>System Property</th><th>Environment Variable</th><th>Description</th>
+</tr>
+<tr>
+<td>hawtio.config.dir</td><td>HAWTIO_CONFIG_DIR</td><td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!</td>
+</tr>
+<tr>
+<td>hawtio.config.repo</td><td>HAWTIO_CONFIG_REPO</td><td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
+</tr>
+<tr>
+<td>hawtio.config.cloneOnStartup</td><td>HAWTIO_CONFIG_CLONEONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
+</tr>
+</table>
 
 <p></div>
   </div></p>
