@@ -31,7 +31,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core">core</a></td>
   </tr>
   <tr>
-    <td>dashboard</td>
+    <td><a href="http://hawt.io/plugins/dashboard/">dashboard</a></td>
     <td>Provides some default dashboards for viewing graphs, metrics and other widgets on a customisable tabbed view. You can create your own dashboards; they are
     stored and versioned as JSON files in a git repository so that you can easily share them on <a href="http://github.com/">github</a>.
     The default configuration repository <a href="https://github.com/hawtio/hawtio-config">is here</a></td>
@@ -101,7 +101,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/tomcat">tomcat</a></td>
   </tr>
   <tr>
-    <td>wiki</td>
+    <td><a href="http://hawt.io/plugins/wiki/">wiki</a></td>
     <td>Provides a git based wiki for viewing, creating and editing text files (Markdown, HTML, XML, property files, JSON) which are then versioned and stored in a git repository</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/wiki">wiki</a></td>
   </tr>
