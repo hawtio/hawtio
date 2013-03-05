@@ -126,7 +126,9 @@ module Jetty {
 
         function loadData() {
             console.log("Loading Jetty webapp data...");
+            // support embedded jetty which may use morbay mbean names
             jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
+            jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
         }
 
         // grab server information once

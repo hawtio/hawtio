@@ -3,7 +3,6 @@ module Jetty {
     export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
 
         $scope.connectors = [];
-        $scope.selected = [];
         $scope.search = "";
 
         var columnDefs: any[] = [
@@ -32,9 +31,9 @@ module Jetty {
 
         $scope.gridOptions = {
             data: 'connectors',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
+            displayFooter: false,
+            displaySelectionCheckbox: false,
+            canSelectRows: false,
             columnDefs: columnDefs,
             filterOptions: {
                 filterText: 'search'
@@ -43,7 +42,6 @@ module Jetty {
 
         function render(response) {
             $scope.connectors = [];
-            $scope.selected.length = 0;
 
             function onAttributes(response) {
               var obj = response.value;
@@ -73,38 +71,6 @@ module Jetty {
               jolokia.request( {type: "read", mbean: mbean, attribute: ["confidentialPort", "confidentialScheme", "port", "running"]}, onSuccess(onAttributes));
             });
           Core.$apply($scope);
-        };
-
-        // function to control the connectors
-        $scope.controlConnector = function(op) {
-            // grab id of mbean names to control
-            var ids = $scope.selected.map(function(b) { return b.mbean });
-            if (!angular.isArray(ids)) {
-                ids = [ids];
-            }
-
-            // execute operation on each mbean
-            ids.forEach((id) => {
-                jolokia.request({
-                        type: 'exec',
-                        mbean: id,
-                        operation: op,
-                        arguments: null
-                    },
-                    onSuccess($scope.onResponse, {error: $scope.onResponse}));
-            });
-        };
-
-        $scope.stop = function() {
-            $scope.controlConnector('stop');
-        };
-
-        $scope.start = function() {
-            $scope.controlConnector('start');
-        };
-
-        $scope.destroy = function() {
-            $scope.controlConnector('destroy');
         };
 
         // function to trigger reloading page
