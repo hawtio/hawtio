@@ -13,8 +13,18 @@ The dashboard plugin lets you view, create and modify dashboards of widgets for 
 
 * you can drag the windows around on a dashboard to align them however you wish
 * click the edit icon next to a dashboard or window name to edit the title
-* to add new content to a dashboard click the share icon <i class="icon-share"></i> icon on the top right of a view (such as when viewing the JMX tab to show attributes or charts).
 * click the Edit link (top right of the dashboard page) to be able to copy/delete dashboards
+* to add new content to a dashboard click the share icon <i class="icon-share"></i> icon on the top right of a view (such as when viewing the JMX tab to show attributes or charts).
+
+<ul class="thumbnails">
+  <li class="span4">
+    <div class="thumbnail">
+      <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/jmx.png" alt="screenshot">
+      <h3>JMX page</h3>
+    </div>
+  </li>
+</ul>
+
 
 ### Adding your plugin views to the dashboard
 
