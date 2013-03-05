@@ -1,0 +1,16 @@
+---
+title: get your hawtio running!
+--- pipeline:ssp,markdown
+  <div id="content-header">
+    <div class="container">
+      <h1>Get Started</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div id="content">
+
+${unescape(loadText(new FileInputStream("../doc/GetStarted.md")))}
+
+</div>
+  </div>
+
