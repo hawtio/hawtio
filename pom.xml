@@ -288,6 +288,7 @@
         <version>2.4</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <tag>hawtio-${project.version}</tag>
         </configuration>
       </plugin>
     </plugins>
