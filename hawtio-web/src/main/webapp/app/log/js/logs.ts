@@ -11,6 +11,7 @@ module Log {
   export function LogController($scope, $location, workspace:Workspace) {
     $scope.logs = [];
     $scope.filteredLogs = [];
+    $scope.selectedItems = [];
     $scope.searchText = "";
     $scope.filter = {
       // The default logging level to show, empty string => show all
@@ -47,6 +48,15 @@ module Log {
 
     $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
 
+    $scope.getSupport = () => {
+      if ($scope.selectedItems.length) {
+        var log = $scope.selectedItems[0];
+        var text = log["message"];
+        var uri = "https://access.redhat.com/knowledge/solutions?logger=" + log["logger"] + "&text=" + text;
+        window.location.href = uri;
+      }
+    };
+
     var columnDefs:any[] = [
       {
         field: 'level',
@@ -81,9 +91,9 @@ module Log {
 
 
     $scope.gridOptions = {
+      selectedItems: $scope.selectedItems,
       data: 'filteredLogs',
       displayFooter: false,
-      displaySelectionCheckbox: false,
       showFilter: false,
       filterOptions: {
         filterText: "searchText"
