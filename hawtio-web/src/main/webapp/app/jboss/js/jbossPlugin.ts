@@ -8,6 +8,7 @@ module JBoss {
             when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'}).
             when('/jboss/mbeans', {templateUrl: 'app/jboss/html/mbeans.html'});
           }).
+          filter('jbossIconClass', () => iconClass).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
             viewRegistry['jboss'] = "app/jboss/html/layoutJBossTabs.html";

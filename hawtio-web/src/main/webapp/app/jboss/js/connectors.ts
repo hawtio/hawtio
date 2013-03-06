@@ -2,10 +2,21 @@ module JBoss {
 
     export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
 
+        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
+
         $scope.connectors = [];
         $scope.search = "";
 
         var columnDefs: any[] = [
+            {
+              field: 'bound',
+              displayName: 'State',
+              cellTemplate: stateTemplate,
+              width: 56,
+              minWidth: 56,
+              maxWidth: 56,
+              resizable: false
+            },
             {
                 field: 'name',
                 displayName: 'Name',
@@ -20,13 +31,6 @@ module JBoss {
                 width: "*",
                 resizable: true
             },
-            {
-                field: 'bound',
-                displayName: 'Bound',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
         ];
 
         $scope.gridOptions = {

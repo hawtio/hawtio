@@ -1,11 +1,22 @@
 module JBoss {
     export function JBossController($scope, $location:ng.ILocationService, jolokia) {
 
+        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
+
         $scope.webapps = [];
         $scope.selected = [];
         $scope.search = "";
 
         var columnDefs: any[] = [
+            {
+                field: 'status',
+                displayName: 'State',
+                cellTemplate: stateTemplate,
+                width: 56,
+                minWidth: 56,
+                maxWidth: 56,
+                resizable: false
+            },
             {
                 field: 'name',
                 displayName: 'Name',
@@ -20,13 +31,6 @@ module JBoss {
                 width: "*",
                 resizable: true
             },
-            {
-                field: 'status',
-                displayName: 'State',
-                cellFilter: null,
-                width: "*",
-                resizable: false
-            }
         ];
 
         $scope.gridOptions = {
