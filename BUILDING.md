@@ -70,10 +70,10 @@ The above uses Jetty but you can try running hawtio in different containers via 
 
 The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.
 
-e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the **hawtio-web/target/hawtio-web-1.0-SNAPSHOT** directory:
+e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the **hawtio-web/target/hawtio-web-1.1-SNAPSHOT** directory:
 
     cd tomcat/webapps
-    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.0-SNAPSHOT hawtio
+    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio
 
 Then in a shell run
 
