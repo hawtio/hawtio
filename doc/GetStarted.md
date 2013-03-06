@@ -43,11 +43,6 @@ Now you can install hawtio via:
     features:addurl mvn:io.hawt/hawtio-karaf/1.0/xml/features
     features:install hawtio
 
-Otherwise just install a [hawtio-osgi.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-osgi/1.0/hawtio-osgi-1.0.war) build directly:
-
-    features:install war
-    install -s https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-osgi/1.0/hawtio-osgi-1.0.war
-
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
 
 ## Using hawtio inside a stand alone Java application
