@@ -2,10 +2,21 @@ module Jetty {
 
     export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
 
+        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
+
         $scope.connectors = [];
         $scope.search = "";
 
         var columnDefs: any[] = [
+            {
+                field: 'running',
+                displayName: 'State',
+                cellTemplate: stateTemplate,
+                width: 56,
+                minWidth: 56,
+                maxWidth: 56,
+                resizable: false
+            },
             {
                 field: 'port',
                 displayName: 'Port',
@@ -20,13 +31,6 @@ module Jetty {
                 width: "*",
                 resizable: true
             },
-            {
-                field: 'running',
-                displayName: 'Running',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
         ];
 
         $scope.gridOptions = {

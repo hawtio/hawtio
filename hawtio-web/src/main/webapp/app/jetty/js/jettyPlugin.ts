@@ -8,6 +8,7 @@ module Jetty {
           when('/jetty/connectors', {templateUrl: 'app/jetty/html/connectors.html'}).
           when('/jetty/mbeans', {templateUrl: 'app/jetty/html/mbeans.html'});
       }).
+        filter('jettyIconClass', () => iconClass).
         run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
             viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
