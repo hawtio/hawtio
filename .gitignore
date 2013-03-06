@@ -2,6 +2,7 @@ target
 *.iml
 *.ipr
 *.iws
+*.log
 overlays
 .DS_Store
 .settings
