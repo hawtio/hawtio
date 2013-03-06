@@ -120,11 +120,26 @@ module Osgi {
             var folder = workspace.tree.navigate("osgi.core", "bundleState");
             if (folder) {
                 var children = folder.children;
-                if (children) {
-                    var node = children[0];
-                    if (node) {
-                        return node.objectName;
-                    }
+                if (children && children.length) {
+                    return Osgi.findFirstObjectName(children[0]);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Walks the tree looking in the first child all the way down until we find an objectName
+     */
+    export function findFirstObjectName(node) {
+        if (node) {
+            var answer = node.objectName;
+            if (answer) {
+                return answer;
+            } else {
+                var children = node.children;
+                if (children && children.length) {
+                    return findFirstObjectName(children[0]);
                 }
             }
         }
