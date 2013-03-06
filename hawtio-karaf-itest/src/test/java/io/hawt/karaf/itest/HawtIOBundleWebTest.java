@@ -38,8 +38,12 @@ public class HawtIOBundleWebTest extends AbstractFeatureTest {
         for (int i=0; i<20; i++) {
             TimeUnit.SECONDS.sleep(1);
             try {
-                i = client.executeMethod(get);
-            } catch (java.net.ConnectException ignored) {}
+                System.err.println("Calling http get attempt #" + i);
+                int code = client.executeMethod(get);
+                if (code == 200) {
+                    break;
+                }
+            } catch (Throwable ignored) {}
         }
         assertEquals("get succeeded on " + get, 200, get.getStatusCode());
     }
