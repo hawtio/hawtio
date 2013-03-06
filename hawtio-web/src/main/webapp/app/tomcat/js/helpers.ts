@@ -10,4 +10,14 @@ module Tomcat {
         return response
     };
 
+    export function iconClass(state:string) {
+      if (state) {
+        switch (state.toLowerCase()) {
+          case 'started':
+            return "green icon-play";
+        }
+      }
+      return "red icon-stop";
+    }
+
 }

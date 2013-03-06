@@ -8,6 +8,7 @@ module Tomcat {
                     when('/tomcat/connectors', {templateUrl: 'app/tomcat/html/connectors.html'}).
                     when('/tomcat/mbeans', {templateUrl: 'app/tomcat/html/mbeans.html'});
           }).
+          filter('tomcatIconClass', () => iconClass).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
             viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";

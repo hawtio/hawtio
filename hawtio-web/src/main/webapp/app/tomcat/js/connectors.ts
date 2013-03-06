@@ -2,11 +2,22 @@ module Tomcat {
 
     export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
 
+        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+
         $scope.connectors = [];
         $scope.selected = [];
         $scope.search = "";
 
         var columnDefs: any[] = [
+            {
+              field: 'stateName',
+              displayName: 'State',
+              cellTemplate: stateTemplate,
+              width: 56,
+              minWidth: 56,
+              maxWidth: 56,
+              resizable: false
+            },
             {
                 field: 'port',
                 displayName: 'Port',
@@ -70,13 +81,6 @@ module Tomcat {
                 width: "*",
                 resizable: true
             },
-            {
-                field: 'stateName',
-                displayName: 'State',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
         ];
 
         $scope.gridOptions = {
