@@ -13,19 +13,45 @@ module DataTable {
 
               // used to update the UI
               function updateGrid() {
+                Core.$applyNowOrLater(scope);
               }
 
               function convertToDataTableColumn(columnDef) {
                 var data = {
-                  mDataProp: columnDef.field
+                  mData: columnDef.field
                 };
+                var name = columnDef.displayName;
+                if (name) {
+                  data["sTitle"] = name;
+                }
                 var width = columnDef.width;
                 if (angular.isNumber(width)) {
                   data["sWidth"] = "" + width + "px";
                 }
-                var cellTemplate = columnDef.cellTemplate;
-                if (cellTemplate) {
+                var template = columnDef.cellTemplate;
+                if (template) {
+                  var html = $(template);
+                  // TODO we could share a child scope for all columns maybe?
+                  var childScope = scope.$new(false);
+                  data["mRender"] = function (data, type, full) {
+                    var entity = full;
+                    childScope["row"] = {
+                      entity: entity,
 
+                      getProperty: (name) => {
+                        return entity[name];
+                      }
+                    };
+                    var partial = workspace.$compile(html);
+                    var results = partial(childScope);
+
+                    // TODO bit dirty hack - we should not have to turn into a string only to then reparse back into DOM!
+                    // return results;
+
+                    // TODO this feels dirty
+                    Core.$applyNowOrLater(childScope);
+                    return results.html();
+                  };
                 }
                 var cellFilter = columnDef.cellFilter;
                 if (cellFilter) {
@@ -39,8 +65,7 @@ module DataTable {
                 return data;
               }
 
-              // watch the expression, and update the UI on change.
-              scope.$watch(attrs.hawtioGrid, function (value) {
+              function onTableDataChange(value) {
                 gridOptions = value;
                 if (gridOptions) {
                   // TODO deal with updating the gridOptions on the fly?
@@ -100,21 +125,24 @@ module DataTable {
                         if (initialised || (value && value.length)) {
                           initialised = true;
                           widget.populateTable(value);
+                          updateLater();
                         }
                       });
                     }
                   }
                 }
                 updateGrid();
-              });
+              }
+
+              // watch the expression, and update the UI on change.
+              scope.$watch(attrs.hawtioGrid, onTableDataChange);
 
               // schedule update in one second
               function updateLater() {
                 // save the timeoutId for canceling
                 timeoutId = $timeout(function () {
                   updateGrid(); // update DOM
-                  updateLater(); // schedule another update
-                }, 1000);
+                }, 100);
               }
 
               // listen on DOM destroy (removal) event, and cancel the next UI update
@@ -125,7 +153,8 @@ module DataTable {
 
               updateLater(); // kick off the UI update process.
             }
-          });
+          }
+  );
 
   hawtioPluginLoader.addModule(pluginName);
 }
