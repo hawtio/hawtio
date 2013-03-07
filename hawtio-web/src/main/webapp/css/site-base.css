@@ -694,4 +694,9 @@ div#main div ul.nav li a:hover {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
+#main div div div .nav.nav-tabs {
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #d4d4d4;
+}
 
