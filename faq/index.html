@@ -104,7 +104,7 @@
 
 <h2 id = "Plugin_Questions">Plugin Questions</h2>
 
-<p>Questions on writing or using the available plugins</p>
+<p>Questions on using the available plugins:</p>
 
 <h3 id = "What_plugins_are_available_">What plugins are available?</h3>
 
@@ -113,6 +113,16 @@
 <h3 id = "What_is_a_plugin_">What is a plugin?</h3>
 
 <p>See <a href="http://hawt.io/plugins/howPluginsWork.html">How Plugins Work</a></p>
+
+<h3 id = "Why_does_the_OSGi_tab_not_appear_on_GlassFish_">Why does the OSGi tab not appear on GlassFish?</h3>
+
+<p>This is a <a href="https://github.com/hawtio/hawtio/issues/158">reported issue</a>. It turns out that the standard OSGi MBeans (in the osgi.core domain) are not installed by default on GlassFish.</p>
+
+<p>The workaround is to install the <a href="http://www.eclipse.org/gemini/management/">Gemini Management bundle</a> then you should see the MBeans in the osgi.core domain in the JMX tree; then the OSGi tab should appear!</p>
+
+<h2 id = "Developer_Questions">Developer Questions</h2>
+
+<p>Questions on writing new plugins or hacking on existing ones:</p>
 
 <h3 id = "What_can_my_new_plugin_do_">What can my new plugin do?</h3>
 
