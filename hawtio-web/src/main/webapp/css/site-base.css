@@ -304,11 +304,12 @@ li.attr-column {
 
 .gridster ul#widgets .gs_w {
   padding: 0px;
-  border: 1px solid #c5c5c5;
+  border: 1px solid #D4D4D4;
   overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   background: #ffffff;
   position: relative;
+  border-radius: 6px;
 }
 
 .widget-title {
@@ -316,7 +317,7 @@ li.attr-column {
 
   padding-left: 5px;
   padding-right: 5px;
-  font-weight: bold;
+  /* font-weight: bold; */
 
   transition: background .25s ease-in-out;
   -moz-transition: background .25s ease-in-out;
@@ -326,24 +327,33 @@ li.attr-column {
   -moz-transition: border .25s ease-in-out;
   -webkit-transition: border .25s ease-in-out;
 
-  background-color: #ededed;
-  background-image: -moz-linear-gradient(top, #f2f2f2, #e5e5e5);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f2f2f2), to(#e5e5e5));
-  background-image: -webkit-linear-gradient(top, #f2f2f2, #e5e5e5);
-  background-image: -o-linear-gradient(top, #f2f2f2, #e5e5e5);
-  background-image: linear-gradient(to bottom, #f2f2f2, #e5e5e5);
+  background-color: #FAFAFA;
+  background-image: -moz-linear-gradient(top, #FFFFFF, #F2F2F2);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FFFFFF), to(#F2F2F2));
+  background-image: -webkit-linear-gradient(top, #FFFFFF, #F2F2F2);
+  background-image: -o-linear-gradient(top, #FFFFFF, #F2F2F2);
+  background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2f2f2', endColorstr='#ffe5e5e5', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F2F2F2', GradientType=0);
+
+  border-bottom: 1px solid #D4D4D4;
+
+  color: #777777;
+  text-shadow: 0 1px 0 #FFFFFF;
+
+
+  /*
   border-color: #e5e5e5 #e5e5e5 #bfbfbf;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #e5e5e5;
+  */
 
 }
 
 .widget-title:hover {
   cursor: move;
-  border-bottom-color: #dedede;
-  background: #cecece;
+  /* border-bottom-color: #dedede;
+  background: #cecece; */
 }
 
 .widget-title .row-fluid .pull-right > i {
