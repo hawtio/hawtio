@@ -44,7 +44,7 @@ Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/
 
 ## Plugin Questions
 
-Questions on writing or using the available plugins
+Questions on using the available plugins
 
 ### What plugins are available?
 
@@ -53,6 +53,20 @@ See the list of [hawtio plugins](http://hawt.io/plugins/index.html)
 ### What is a plugin?
 
 See [How Plugins Work](http://hawt.io/plugins/howPluginsWork.html)
+
+
+### Why does the OSGi tab not appear on GlassFish?
+
+This is a [reported issue](https://github.com/hawtio/hawtio/issues/158). It turns out that the standard OSGi MBeans (in the osgi.core domain) are not installed by default on GlassFish.
+
+The workaround is to install the [Gemini Management bundle](http://www.eclipse.org/gemini/management/) then you should see the MBeans in the osgi.core domain in the JMX tree; then the OSGi tab should appear!
+
+
+
+
+## Developer Questions
+
+Questions on writing or using the available plugins
 
 ### What can my new plugin do?
 
