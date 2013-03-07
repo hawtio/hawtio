@@ -4,6 +4,7 @@ module Osgi {
     $routeProvider.
             when('/osgi/bundles', {templateUrl: 'app/osgi/html/bundles.html'}).
             when('/osgi/bundle/:bundleId', {templateUrl: 'app/osgi/html/bundle.html'}).
+            when('/osgi/bundle-list', {templateUrl: 'app/osgi/html/bundle-list.html'}).
             when('/osgi/services', {templateUrl: 'app/osgi/html/services.html'}).
             when('/osgi/packages', {templateUrl: 'app/osgi/html/packages.html'}).
             when('/osgi/package/:package/:version', {templateUrl: 'app/osgi/html/package.html'}).
