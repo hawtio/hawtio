@@ -429,4 +429,27 @@ module Core {
     return null;
   }
 
+  /**
+   * Look up a list of child element names or lazily create them.
+   *
+   * Useful for example to get the <tbody> <tr> element from a <table> lazily creating one
+   * if not present.
+   *
+   * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
+   */
+  export function getOrCreateElements(domElement, arrayOfElementNames:string[]) {
+    var element = domElement;
+    angular.forEach(arrayOfElementNames, name => {
+      if (element) {
+        var children = $(element).children(name);
+        if (!children || !children.length) {
+          $("<" + name + "></" + name + ">").appendTo(element);
+          children = $(element).children(name);
+        }
+        element = children;
+      }
+    });
+    return element;
+  }
+
 }

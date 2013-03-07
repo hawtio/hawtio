@@ -59,21 +59,18 @@ module Log {
 
     var columnDefs:any[] = [
       {
+        field: 'timestamp',
+        displayName: 'Timestamp',
+        cellFilter: "logDateFilter",
+        width: 146
+      },
+      {
         field: 'level',
         displayName: 'Level',
         cellTemplate: '<div class="ngCellText"><span class="text-{{logClass(row.entity)}}"><i class="{{logIcon(row.entity)}}"></i> {{row.entity.level}}</span></div>',
         cellFilter: null,
         width: 74,
         resizable: false
-      },
-      {
-        field: 'timestamp',
-        displayName: 'Timestamp',
-        cellFilter: "logDateFilter",
-        width: 146,
-        sortFn: (a, b) => {
-          return true;
-        }
       },
       {
         field: 'logger',

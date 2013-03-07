@@ -4,6 +4,8 @@ class TableWidget {
   private detailTemplate:string = null;
   private openMessages = [];
 
+  public tableElement = null;
+
   public sortColumns: any[][] = null;
 
   public dataTableConfig = {
@@ -62,8 +64,12 @@ class TableWidget {
         angular.forEach(data, (object) => array.push(object));
       }
 
-      var tableElement = $('#grid');
-      var tableTr = $(tableElement).find("tr");
+      var tableElement = this.tableElement;
+      if (!tableElement) {
+          tableElement = $('#grid');
+      }
+      var tableTr = Core.getOrCreateElements(tableElement, ["thead", "tr"]);
+      var tableBody = Core.getOrCreateElements(tableElement, ["tbody"]);
       var ths = $(tableTr).find("th");
 
       // lets add new columns based on the data...
@@ -121,13 +127,25 @@ class TableWidget {
           this.sortColumns = sortOrder;
         }
       }
-      this.dataTableConfig["aaData"] = array;
+      if (array.length && !angular.isArray(array[0])) {
+        //this.dataTableConfig["aoData"] = array;
+        this.dataTableConfig["aaData"] = array;
+      } else {
+        this.dataTableConfig["aaData"] = array;
+      }
       this.dataTableConfig["aoColumns"] = columns;
       if (this.sortColumns) {
         this.dataTableConfig["aaSorting"] = this.sortColumns;
       }
 
-      $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
+      if ($scope.dataTable) {
+        $scope.dataTable.fnClearTable(false);
+        $scope.dataTable.fnAddData(array);
+        // lets try update it...
+      } else {
+        $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
+
+      }
 
       if ($scope.dataTable) {
         var keys = new KeyTable({
@@ -164,7 +182,7 @@ class TableWidget {
           openMessages.splice(i, 1);
         }
         // lets let angular render any new detail templates
-        $scope.$apply();
+        Core.$apply($scope);
       };
 
       $(document).on("click", "#grid td.control", expandCollapseNode);
@@ -210,7 +228,7 @@ class TableWidget {
         }
       });
     }
-    $scope.$apply();
+    Core.$apply($scope);
   }
 
   populateDetailDiv(row, div) {
