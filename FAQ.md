@@ -44,7 +44,7 @@ Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/
 
 ## Plugin Questions
 
-Questions on using the available plugins
+Questions on using the available plugins:
 
 ### What plugins are available?
 
@@ -63,10 +63,9 @@ The workaround is to install the [Gemini Management bundle](http://www.eclipse.o
 
 
 
-
 ## Developer Questions
 
-Questions on writing or using the available plugins
+Questions on writing new plugins or hacking on existing ones:
 
 ### What can my new plugin do?
 
