@@ -1,7 +1,7 @@
 module DataTable {
   var pluginName = 'datatable';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
-          directive('hawtioGrid', function (workspace, $timeout) {
+          directive('hawtioGrid', function (workspace, $timeout, $filter) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var gridOptions = null;
@@ -16,9 +16,27 @@ module DataTable {
               }
 
               function convertToDataTableColumn(columnDef) {
-                return {
+                var data = {
                   mDataProp: columnDef.field
                 };
+                var width = columnDef.width;
+                if (angular.isNumber(width)) {
+                  data["sWidth"] = "" + width + "px";
+                }
+                var cellTemplate = columnDef.cellTemplate;
+                if (cellTemplate) {
+
+                }
+                var cellFilter = columnDef.cellFilter;
+                if (cellFilter) {
+                  var filter = $filter(cellFilter);
+                  if (filter) {
+                    data["mRender"] = function (data, type, full) {
+                      return filter(data);
+                    }
+                  }
+                }
+                return data;
               }
 
               // watch the expression, and update the UI on change.
