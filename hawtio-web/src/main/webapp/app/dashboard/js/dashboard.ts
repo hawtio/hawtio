@@ -62,6 +62,7 @@ module Dashboard {
       var scope = entry.scope;
       sizefunc(entry);
       gridster.resize_widget(w, widget.size_x, widget.size_y);
+      gridster.set_dom_grid_height();
 
       setTimeout(function() {
         var template = $templateCache.get("widgetTemplate");
@@ -69,14 +70,11 @@ module Dashboard {
         div.html(template);
         w.html($compile(div.contents())(scope));
 
-
+        makeResizable();
         $scope.$apply();
 
         setTimeout(function() {
-
-          savefunc();
-          makeResizable($('.grid-block'));
-          $scope.$apply();
+          savefunc(widget);
         }, 50);
       }, 50);
     }
@@ -179,7 +177,8 @@ module Dashboard {
 
       });
 
-      makeResizable($('.grid-block'));
+      makeResizable();
+      getGridster().enable();
 
       if (!$scope.$$phase) {
         $scope.$apply();
@@ -206,7 +205,10 @@ module Dashboard {
       }
     }
 
-    function makeResizable(blocks:any) {
+    function makeResizable() {
+
+      var blocks:any = $('.grid-block');
+      blocks.resizable('destroy');
 
       blocks.resizable({
         grid: [gridSize + (gridMargin * 2), gridSize + (gridMargin * 2)],
@@ -265,8 +267,8 @@ module Dashboard {
       changeWidgetSize(widget, function(widget) {
         widget.size_x = grid_w;
         widget.size_y = grid_h;
-      }, function() {
-        updateDashboardRepository("Changed size of widget: " + elmObj.attr("data-widgetId"));
+      }, function(widget) {
+        updateDashboardRepository("Changed size of widget: " + widget.id);
       });
 
       /*
