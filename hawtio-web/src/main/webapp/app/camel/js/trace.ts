@@ -101,7 +101,7 @@ module Camel {
           var allMessages = $(doc).find("fabricTracerEventMessage");
           if (!allMessages || !allMessages.length) {
             // lets try find another element name
-            allMessages = $(doc).find("tracerBacklogEventMessages");
+            allMessages = $(doc).find("tracerBacklogEventMessage");
           }
 
           allMessages.each((idx, message) => {
