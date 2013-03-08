@@ -121,6 +121,23 @@ module DataTable {
                     widget = new TableWidget(scope, workspace, columns, widgetOptions);
                     widget.tableElement = tableElement;
 
+                    var filterText = null;
+                    var filterOptions = gridOptions.filterOptions;
+                    if (filterOptions) {
+                      filterText = filterOptions.filterText;
+                    }
+                    if (filterText) {
+                      // disable the text filter box
+                      widget.dataTableConfig.sDom = 'Rlrtip';
+
+                      scope.$watch(filterText, function (value) {
+                        var dataTable = widget.dataTable;
+                        if (dataTable) {
+                          dataTable.fnFilter(value);
+                        }
+                      });
+                    }
+
                     // TODO....
                     // lets make sure there is enough th headers for the columns!
                   }

@@ -14,6 +14,8 @@ class TableWidget {
     bDestroy: true
   };
 
+  // the jQuery DataTable widget
+  public dataTable = null;
 
   constructor(public scope, public workspace:Workspace, public dataTableColumns:TableColumnConfig[], public config:TableWidgetConfig = {}) {
     // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
@@ -34,7 +36,7 @@ class TableWidget {
    * Adds new data to the table
    */
   public addData(newData) {
-    var dataTable = this.scope.dataTable;
+    var dataTable = this.dataTable;
     dataTable.fnAddData(newData);
   }
 
@@ -138,19 +140,18 @@ class TableWidget {
         this.dataTableConfig["aaSorting"] = this.sortColumns;
       }
 
-      if ($scope.dataTable) {
-        $scope.dataTable.fnClearTable(false);
-        $scope.dataTable.fnAddData(array);
+      if (this.dataTable) {
+        this.dataTable.fnClearTable(false);
+        this.dataTable.fnAddData(array);
         // lets try update it...
       } else {
-        $scope.dataTable = tableElement.dataTable(this.dataTableConfig);
-
+        this.dataTable = tableElement.dataTable(this.dataTableConfig);
       }
 
-      if ($scope.dataTable) {
+      if (this.dataTable) {
         var keys = new KeyTable({
           "table": tableElement[0],
-          "datatable": $scope.dataTable
+          "datatable": this.dataTable
         });
         keys.fnSetPosition(0, 0);
       }
