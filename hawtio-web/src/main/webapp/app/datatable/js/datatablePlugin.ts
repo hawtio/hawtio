@@ -10,6 +10,7 @@ module DataTable {
               var timeoutId = null;
               var initialised = false;
               var childScopes = [];
+              var rowDetailTemplate = null;
 
               // used to update the UI
               function updateGrid() {
@@ -76,6 +77,8 @@ module DataTable {
               function onTableDataChange(value) {
                 gridOptions = value;
                 if (gridOptions) {
+                  rowDetailTemplate = gridOptions.rowDetailTemplate;
+
                   // TODO deal with updating the gridOptions on the fly?
                   if (widget === null) {
                     var widgetOptions = {
@@ -100,17 +103,19 @@ module DataTable {
                     // convert the column configurations
                     var columns = [];
                     var columnCounter = 1;
-                    columns.push(
-                            {
-                              "mDataProp": null,
-                              "sClass": "control center",
-                              "sWidth": "30px",
-                              "sDefaultContent": '<i class="icon-plus"></i>'
-                            });
+                    if (rowDetailTemplate) {
+                      columns.push(
+                              {
+                                "mDataProp": null,
+                                "sClass": "control center",
+                                "sWidth": "30px",
+                                "sDefaultContent": '<i class="icon-plus"></i>'
+                              });
 
-                    var th = trElement.children("th");
-                    if (th.length < columnCounter++) {
-                      $("<th></th>").appendTo(trElement);
+                      var th = trElement.children("th");
+                      if (th.length < columnCounter++) {
+                        $("<th></th>").appendTo(trElement);
+                      }
                     }
                     angular.forEach(gridOptions.columnDefs, (columnDef) => {
                       // if there's not another <tr> then lets add one
@@ -131,6 +136,13 @@ module DataTable {
                       widget.dataTableConfig.bAutoWidth = false;
                     }
 
+                    // lets avoid word wrap
+                    widget.dataTableConfig["fnCreatedRow"] = function( nRow, aData, iDataIndex ) {
+                      var cells = $(nRow).children("td");
+                      cells.css("overflow", "hidden");
+                      cells.css("white-space", "nowrap");
+                      cells.css("text-overflow", "ellipsis");
+                    };
 
                     var filterText = null;
                     var filterOptions = gridOptions.filterOptions;
