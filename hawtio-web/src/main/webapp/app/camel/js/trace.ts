@@ -99,6 +99,10 @@ module Camel {
           // lets parse the XML DOM here...
           var doc = $.parseXML(xml);
           var allMessages = $(doc).find("fabricTracerEventMessage");
+          if (!allMessages || !allMessages.length) {
+            // lets try find another element name
+            allMessages = $(doc).find("tracerBacklogEventMessages");
+          }
 
           allMessages.each((idx, message) => {
             var messageData = {
