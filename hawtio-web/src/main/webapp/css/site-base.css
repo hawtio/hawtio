@@ -312,20 +312,25 @@ li.attr-column {
   border-radius: 6px;
 }
 
+.gridster ul#widgets .gs_w.dragging {
+  box-shadow: 0 1px 13px rgba(0, 0, 0, 0.12);
+}
+
+.gridster ul#widgets .preview-holder {
+  transition-property: opacity;
+  transition-duration: 500ms;
+
+  padding: 1px;
+  border-radius: 6px;
+  border: 1px solid #D4D4D4;
+  box-shadow: 0 1px 13px rgba(0, 0, 0, 0.1) inset;
+}
+
 .widget-title {
   margin: 0;
 
   padding-left: 5px;
   padding-right: 5px;
-  /* font-weight: bold; */
-
-  transition: background .25s ease-in-out;
-  -moz-transition: background .25s ease-in-out;
-  -webkit-transition: background .25s ease-in-out;
-
-  transition: border .25s ease-in-out;
-  -moz-transition: border .25s ease-in-out;
-  -webkit-transition: border .25s ease-in-out;
 
   background-color: #FAFAFA;
   background-image: -moz-linear-gradient(top, #FFFFFF, #F2F2F2);
@@ -340,20 +345,25 @@ li.attr-column {
 
   color: #777777;
   text-shadow: 0 1px 0 #FFFFFF;
-
-
-  /*
-  border-color: #e5e5e5 #e5e5e5 #bfbfbf;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #e5e5e5;
-  */
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 
 }
 
 .widget-title:hover {
   cursor: move;
-  /* border-bottom-color: #dedede;
-  background: #cecece; */
+  color: #333333;
+  text-shadow: 0 1px 0 #FFFFFF;
+  border-bottom: 1px solid #D4D4D4;
+
+  background-image: -moz-linear-gradient(top, #fafafa, #f0f0f0);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fafafa), to(#f0f0f0));
+  background-image: -webkit-linear-gradient(top, #fafafa, #f0f0f0);
+  background-image: -o-linear-gradient(top, #fafafa, #f0f0f0);
+  background-image: linear-gradient(to bottom, #fafafa, #f0f0f0);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#f0f0f0', GradientType=0);
+
 }
 
 .widget-title .row-fluid .pull-right > i {
@@ -439,7 +449,8 @@ li.attr-column {
 }
 
 .ep form.no-bottom-margin {
-  margin-bottom: 2px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .ngFooterPanel {
