@@ -15,7 +15,6 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-
   </properties>
 
 
@@ -459,13 +458,9 @@
 
   <profiles>
     <profile>
-      <!-- use a profile for the grunt stuff so folks can exclude it if they wish -->
-      <id>grunt-property</id>
+      <id>grunt</id>
       <activation>
-        <property>
-          <name>grunt-enabled</name>
-          <value>true</value>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -512,27 +507,11 @@
     </profile>
 
     <profile>
-      <id>grunt</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <grunt-enabled>true</grunt-enabled>
-      </properties>
-    </profile>
-
-    <profile>
       <id>nogrunt</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
     </profile>
 
     <profile>
       <id>watch</id>
-      <properties>
-        <grunt-enabled>true</grunt-enabled>
-      </properties>
       <build>
         <plugins>
           <plugin>
@@ -549,6 +528,7 @@
                 <configuration>
                   <executable>grunt</executable>
                   <arguments>
+                    <argument>copy</argument>
                     <argument>reload</argument>
                     <argument>watch</argument>
                     <argument>--webapp_outdir</argument>
@@ -563,7 +543,6 @@
         </plugins>
       </build>
     </profile>
-
 
     <profile>
       <id>tomcat</id>
@@ -658,7 +637,9 @@
       <!-- when using the exec:java target this will try to auto-connect to a local fuse fabric -->
       <properties>
         <fabricUrl>localhost:2181</fabricUrl>
+<!--
         <fabric-version>99-master-SNAPSHOT</fabric-version>
+-->
       </properties>
     </profile>
 
