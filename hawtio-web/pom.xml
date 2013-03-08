@@ -529,6 +529,11 @@
                   <executable>grunt</executable>
                   <arguments>
                     <argument>copy</argument>
+                    <argument>type</argument>
+                    <argument>--webapp_outdir</argument>
+                    <argument>${webapp-outdir}</argument>
+                    <argument>--webapp_port</argument>
+                    <argument>${jettyPort}</argument>
                     <argument>reload</argument>
                     <argument>watch</argument>
                     <argument>--webapp_outdir</argument>
