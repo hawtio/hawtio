@@ -604,12 +604,12 @@ table.table thead .sorting {
   background: inherit;
 }
 
-table.table thead .sorting_asc {
-  background: url('../img/datatable/sort_asc.png') no-repeat center center;
+table.table thead .sorting_asc:after {
+  background: url('../img/datatable/sort_asc.png') no-repeat top center;
 }
 
-table.table thead .sorting_desc {
-  background: url('../img/datatable/sort_desc.png') no-repeat center center;
+table.table thead .sorting_desc:after {
+  background: url('../img/datatable/sort_desc.png') no-repeat top center;
 }
 
 .dataTables_filter label {
