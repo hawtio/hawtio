@@ -149,18 +149,27 @@ class TableWidget {
         this.dataTable = tableElement.dataTable(this.dataTableConfig);
       }
 
+      var widget = this;
+
       if (this.dataTable) {
         var keys = new KeyTable({
           "table": tableElement[0],
           "datatable": this.dataTable
         });
         keys.fnSetPosition(0, 0);
+
+        if (angular.isArray(data) && data.length) {
+          var selected = data[0];
+          var selectHandler = widget.config.selectHandler;
+          if (selected && selectHandler) {
+            selectHandler(selected);
+          }
+        }
       }
 
       // lets try focus on the table
       $(tableElement).focus();
 
-      var widget = this;
 
       // add a handler for the expand/collapse column for all rows (and future rows)
       var expandCollapseNode = function () {

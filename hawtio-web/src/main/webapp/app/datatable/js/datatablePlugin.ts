@@ -11,6 +11,7 @@ module DataTable {
               var initialised = false;
               var childScopes = [];
               var rowDetailTemplate = null;
+              var selectedItems = null;
 
               // used to update the UI
               function updateGrid() {
@@ -76,14 +77,24 @@ module DataTable {
                 childScopes = [];
               }
 
+              function selectHandler(selection) {
+                if (selection && selectedItems) {
+                  selectedItems.splice(0, selectedItems.length);
+                  selectedItems.push(selection);
+                  Core.$apply(scope);
+                }
+              }
+
               function onTableDataChange(value) {
                 gridOptions = value;
                 if (gridOptions) {
+                  selectedItems = gridOptions.selectedItems;
                   rowDetailTemplate = gridOptions.rowDetailTemplate;
 
                   // TODO deal with updating the gridOptions on the fly?
                   if (widget === null) {
                     var widgetOptions = {
+                      selectHandler: selectHandler,
                       disableAddColumns: true,
                       rowDetailTemplateId: 'activemqMessageTemplate',
                       ignoreColumns: gridOptions.ignoreColumns,
