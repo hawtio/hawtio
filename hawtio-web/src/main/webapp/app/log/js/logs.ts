@@ -78,7 +78,7 @@ module Log {
         cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)" title="{{row.entity.logger}}"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.entity.logger}}</a><div ng-switch-default>{{row.entity.logger}}</div></div>',
         cellFilter: null,
         //width: "**"
-        width: "30%"
+        width: "20%"
       },
       {
         field: 'message',
