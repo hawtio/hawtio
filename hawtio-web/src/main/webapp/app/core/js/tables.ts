@@ -193,8 +193,10 @@ class TableWidget {
         expandCollapseNode.call(node);
       });
 
+      var widget = this;
+
       keys.event.focus( null, null, function(node) {
-        var dataTable = $('#grid').dataTable();
+        var dataTable = widget.dataTable;
         var row = node;
         if (node) {
           var nodeName = node.nodeName;
@@ -212,6 +214,7 @@ class TableWidget {
       });
 
       $(document).on("click", "#grid td", function () {
+        var dataTable = widget.dataTable;
         if ($(this).hasClass('selected')) {
           $(this).removeClass('focus selected');
         } else {
