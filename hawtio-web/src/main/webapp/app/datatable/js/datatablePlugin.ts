@@ -29,7 +29,7 @@ module DataTable {
                 var width = columnDef.width;
                 if (angular.isNumber(width)) {
                   data["sWidth"] = "" + width + "px";
-                } else if (angular.isString(width)) {
+                } else if (angular.isString(width) && !width.startsWith("*")) {
                   data["sWidth"] = width;
                 }
                 var template = columnDef.cellTemplate;
@@ -134,7 +134,6 @@ module DataTable {
                     // if all the column definitions have an sWidth then lets turn off
                     // the auto-width calculations
                     if (columns.every(col => col.sWidth)) {
-                      console.log("All columns have sWidth!");
                       widget.dataTableConfig.bAutoWidth = false;
                     }
 
