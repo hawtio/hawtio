@@ -90,7 +90,7 @@ module DataTable {
                     var rootElement = $(element);
                     var tableElement = rootElement.children("table");
                     if (!tableElement.length) {
-                      $("<table class='table'></table>").appendTo(rootElement);
+                      $("<table class='table table-striped table-bordered'></table>").appendTo(rootElement);
                       tableElement = rootElement.children("table");
                     }
                     var trElement = Core.getOrCreateElements(tableElement, ["thead", "tr"]);
