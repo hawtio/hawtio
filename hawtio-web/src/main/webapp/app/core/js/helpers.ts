@@ -383,12 +383,19 @@ module Core {
     }
   }
 
+
   /**
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
    */
   export function $apply($scope) {
     if (!$scope.$$phase) {
       $scope.$apply();
+    }
+  }
+
+  export function $digest($scope) {
+    if (!$scope.$$phase) {
+      $scope.$digest();
     }
   }
 

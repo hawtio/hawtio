@@ -1,7 +1,7 @@
 module DataTable {
   var pluginName = 'datatable';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
-          directive('hawtioGrid', function (workspace, $timeout, $filter) {
+          directive('hawtioGrid', function (workspace, $timeout, $filter, $compile) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var gridOptions = null;
@@ -9,10 +9,11 @@ module DataTable {
               var widget = null;
               var timeoutId = null;
               var initialised = false;
-
+              var childScopes = [];
 
               // used to update the UI
               function updateGrid() {
+                // console.log("updating the grid!!");
                 Core.$applyNowOrLater(scope);
               }
 
@@ -30,11 +31,13 @@ module DataTable {
                 }
                 var template = columnDef.cellTemplate;
                 if (template) {
-                  var html = $(template);
-                  // TODO we could share a child scope for all columns maybe?
-                  var childScope = scope.$new(false);
-                  data["mRender"] = function (data, type, full) {
-                    var entity = full;
+                  data["fnCreatedCell"] = function (nTd, sData, oData, iRow, iCol) {
+                    var childScope = childScopes[iRow];
+                    if (!childScope) {
+                      childScope = scope.$new(false);
+                      childScopes[iRow] = childScope;
+                    }
+                    var entity = oData;
                     childScope["row"] = {
                       entity: entity,
 
@@ -42,27 +45,30 @@ module DataTable {
                         return entity[name];
                       }
                     };
-                    var partial = workspace.$compile(html);
-                    var results = partial(childScope);
 
-                    // TODO bit dirty hack - we should not have to turn into a string only to then reparse back into DOM!
-                    // return results;
-
-                    // TODO this feels dirty
-                    Core.$applyNowOrLater(childScope);
-                    return results.html();
+                    var elem = $(nTd);
+                    elem.html(template);
+                    $compile(elem.contents())(childScope);
                   };
-                }
-                var cellFilter = columnDef.cellFilter;
-                if (cellFilter) {
-                  var filter = $filter(cellFilter);
-                  if (filter) {
-                    data["mRender"] = function (data, type, full) {
-                      return filter(data);
+                } else {
+                  var cellFilter = columnDef.cellFilter;
+                  if (cellFilter) {
+                    var filter = $filter(cellFilter);
+                    if (filter) {
+                      data["mRender"] = function (data, type, full) {
+                        return filter(data);
+                      }
                     }
                   }
                 }
                 return data;
+              }
+
+              function destroyChildScopes() {
+                angular.forEach(childScopes, (childScope) => {
+                  childScope.$destroy();
+                });
+                childScopes = [];
               }
 
               function onTableDataChange(value) {
@@ -87,7 +93,9 @@ module DataTable {
                     }
                     var trElement = Core.getOrCreateElements(tableElement, ["thead", "tr"]);
 
-                    // TODO populate...
+                    destroyChildScopes();
+
+                    // convert the column configurations
                     var columns = [];
                     var columnCounter = 1;
                     columns.push(
@@ -115,7 +123,6 @@ module DataTable {
 
                     // TODO....
                     // lets make sure there is enough th headers for the columns!
-
                   }
                   if (!data) {
                     // TODO deal with the data name changing one day?
@@ -124,6 +131,7 @@ module DataTable {
                       scope.$watch(data, function (value) {
                         if (initialised || (value && value.length)) {
                           initialised = true;
+                          destroyChildScopes();
                           widget.populateTable(value);
                           updateLater();
                         }
@@ -142,12 +150,13 @@ module DataTable {
                 // save the timeoutId for canceling
                 timeoutId = $timeout(function () {
                   updateGrid(); // update DOM
-                }, 100);
+                }, 300);
               }
 
               // listen on DOM destroy (removal) event, and cancel the next UI update
               // to prevent updating ofter the DOM element was removed.
               element.bind('$destroy', function () {
+                destroyChildScopes();
                 $timeout.cancel(timeoutId);
               });
 
