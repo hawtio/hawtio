@@ -11,7 +11,53 @@ module Osgi {
         };
 
         $scope.installDisabled = function() {
-            return true;//  $scope.bundleUrl === "";
+            return $scope.bundleUrl === "";
+        }
+
+        $scope.install = function() {
+            jolokia.request({
+                type: 'exec',
+                mbean: getSelectionFrameworkMBean(workspace),
+                operation: "installBundle(java.lang.String)",
+                arguments: [$scope.bundleUrl]
+            },{
+                success: function(response) {
+                    var bundleID = response.value;
+                    jolokia.request({
+                            type: 'exec',
+                            mbean: getSelectionBundleMBean(workspace),
+                            operation: "isFragment(long)",
+                            arguments: [bundleID]
+                    },{
+                        success: function(response) {
+                            var isFragment = response.value;
+                            if (isFragment) {
+                                notification("success", "Fragment installed succesfully.");
+                                $scope.bundleUrl = "";
+                                $scope.$apply();
+                            } else {
+                                jolokia.request({
+                                    type: 'exec',
+                                    mbean: getSelectionFrameworkMBean(workspace),
+                                    operation: "startBundle(long)",
+                                    arguments: [bundleID]
+                                },{
+                                    success: function(response) {
+                                        notification("success", "Bundle installed and started successfully.");
+                                        $scope.bundleUrl = "";
+                                        $scope.$apply();
+                                    },
+                                    error: function(response) { notification("error", response.error)}
+                                });
+                            }
+                        },
+                        error: function(response) { notification("error", response.error)}
+                    });
+                },
+                error: function(response) {
+                    notification("error", response.error);
+                }
+            });
         }
 
         $scope.$watch("display.sortField", function() {
@@ -154,7 +200,7 @@ module Osgi {
                     var b = $scope.bundles[i];
                     jolokia.request({
                         type: 'exec', mbean: getSelectionBundleMBean(workspace),
-                        operation: 'getStartLevel',
+                        operation: 'getStartLevel(long)',
                         arguments: [$scope.bundles[i].Identifier]
                     }, onSuccess(function(bundle, last) {
                         return function(response) {
