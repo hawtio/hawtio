@@ -51,7 +51,9 @@ module DataTable {
 
                     var elem = $(nTd);
                     elem.html(template);
-                    $compile(elem.contents())(childScope);
+                    var contents = elem.contents();
+                    contents.removeClass("ngCellText");
+                    $compile(contents)(childScope);
                   };
                 } else {
                   var cellFilter = columnDef.cellFilter;
@@ -93,7 +95,7 @@ module DataTable {
                     var rootElement = $(element);
                     var tableElement = rootElement.children("table");
                     if (!tableElement.length) {
-                      $("<table class='table table-striped table-bordered'></table>").appendTo(rootElement);
+                      $("<table class='table table-striped table-bordered table-condensed'></table>").appendTo(rootElement);
                       tableElement = rootElement.children("table");
                     }
                     var trElement = Core.getOrCreateElements(tableElement, ["thead", "tr"]);
