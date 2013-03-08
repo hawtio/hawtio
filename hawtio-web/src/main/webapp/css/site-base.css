@@ -735,3 +735,36 @@ div#main div ul.nav li a:hover {
   border: 1px solid #d4d4d4;
 }
 
+.logbar {
+  z-index: 50;
+  background: white;
+  position: fixed;
+  width: 87%;
+  top: 40px;
+  left: 5%;
+  border-bottom: 1px solid #d4d4d4;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-left: 1px solid #d4d4d4;
+  border-right: 1px solid #d4d4d4;
+}
+
+.logbar-container {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.logbar-container .control-group {
+  margin-bottom: 5px;
+}
+
+.log-main {
+  margin-top: 55px;
+}
+
+.log-filter {
+  margin-right: 30px;
+}

@@ -109,4 +109,12 @@ ul#tree-ctrl li a.collapsed span:after {
   border-bottom: 1px solid #D4D4D4;
 }
 
-
+.logbar {
+  padding-left: 5px;
+  padding-right: 5px;
+  top: 52px;
+  border-radius: 5px;
+  border: 1px solid #d4d4d4;
+  width: 95%;
+  left: 1%;
+}
