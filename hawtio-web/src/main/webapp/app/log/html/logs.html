@@ -54,27 +54,23 @@
     <div title="Headers" class="title">
       {{row.message}}
     </div>
-    <div class="expandable closed">
+    <div class="expandable opened" ng-hide="!row.exception">
       <div title="Headers" class="title">
         <i class="expandable-indicator"></i> Stack Trace
       </div>
       <div class="expandable-body well">
         <table class="table table-condensed table-striped">
+<!--
           <thead>
           <tr>
             <th>Stack</th>
           </tr>
           </thead>
+-->
           <tbody>
-          <tr>
-            <td>stack trace: {{row.stackTrace}}</td>
+          <tr ng-repeat="line in exceptionLines(row)">
+            <td>{{line}}</td>
           </tr>
-          <!--
-                        <tr ng-repeat="(key, value) in headers(row)">
-                          <td class="property-name">{{key}}</td>
-                          <td class="property-value">{{value}}</td>
-                        </tr>
-          -->
           </tbody>
         </table>
       </div>

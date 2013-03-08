@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.hawt.sample.infinispan.InfinispanDemo;
+import org.apache.camel.CamelException;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -111,7 +112,7 @@ public class Main {
                 LOG.info("created logQuery: " + logQuery);
 
                 LOG.warn("Don't run with scissors!");
-                LOG.error("Someone somewhere is not using Fuse! :)");
+                LOG.error("Someone somewhere is not using Fuse! :)", new CamelException("My exception message"));
             }
 
             // TODO temporary hack until we've got blueprint servlet listener to load blueprint services
@@ -125,7 +126,7 @@ public class Main {
                 Throwable target = e.getTargetException();
                 LOG.warn("Failed to initialise AetherFacade due to : " + e, e);
             } catch (Throwable e) {
-                LOG.warn("Could not load the AetherFacade; only available in snapshots for now: " + e);
+                LOG.warn("Could not load the AetherFacade; only available in snapshots for now: " + e, e);
             }
 
             // lets connect to fabric
