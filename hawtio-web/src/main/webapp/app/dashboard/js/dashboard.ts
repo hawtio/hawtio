@@ -8,8 +8,12 @@ module Dashboard {
     $scope.route = $route;
     $scope.injector = $injector;
 
-    $scope.gridX = 150;
-    $scope.gridY = 150;
+    var gridSize = 150;
+    var gridMargin = 6;
+    var gridHeight;
+
+    $scope.gridX = gridSize;
+    $scope.gridY = gridSize;
 
     $scope.widgetMap = {};
 
@@ -56,7 +60,7 @@ module Dashboard {
       var entry = $scope.widgetMap[widget.id];
       var w = entry.widget;
       var scope = entry.scope;
-      sizefunc();
+      sizefunc(entry);
       gridster.resize_widget(w, widget.size_x, widget.size_y);
 
       setTimeout(function() {
@@ -65,53 +69,17 @@ module Dashboard {
         div.html(template);
         w.html($compile(div.contents())(scope));
 
+
         $scope.$apply();
 
         setTimeout(function() {
+
           savefunc();
+          makeResizable($('.grid-block'));
+          $scope.$apply();
         }, 50);
       }, 50);
     }
-
-    $scope.growWidgetX = function(widget) {
-      changeWidgetSize(widget, function() {
-        widget.size_x = widget.size_x + 1;
-      }, function() {
-        updateDashboardRepository("Increased width of widget " + widget.title);
-      });
-    };
-
-    $scope.growWidgetY = function(widget) {
-      changeWidgetSize(widget, function() {
-        widget.size_y = widget.size_y + 1;
-      }, function() {
-        updateDashboardRepository("Increased height of widget " + widget.title);
-      });
-    };
-
-    $scope.shrinkWidgetX = function(widget) {
-      changeWidgetSize(widget, function() {
-        widget.size_x = widget.size_x - 1;
-      }, function() {
-        updateDashboardRepository("Decreased width of widget " + widget.title);
-      });
-    };
-
-    $scope.shrinkWidgetY = function(widget) {
-      changeWidgetSize(widget, function() {
-        widget.size_y = widget.size_y - 1;
-      }, function() {
-        updateDashboardRepository("Decreased height of widget " + widget.title);
-      });
-    }
-
-/*
-    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-      console.log("dashboard changed with $routeParams " + JSON.stringify($routeParams));
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateWidgets, 50);
-    });
-*/
 
     $scope.onWidgetRenamed = function(widget) {
       updateDashboardRepository("Renamed widget to " + widget.title);
@@ -145,7 +113,7 @@ module Dashboard {
       var widgetElement = $("#widgets");
 
       var gridster = widgetElement.gridster({
-        widget_margins: [6, 6],
+        widget_margins: [gridMargin, gridMargin],
         widget_base_dimensions: [$scope.gridX, $scope.gridY],
         extra_rows: 10,
         extra_cols: 6,
@@ -199,7 +167,7 @@ module Dashboard {
         var div = $('<div></div>');
         div.html(template);
 
-        var outerDiv = $('<li style="display: list-item; position: absolute"></li>');
+        var outerDiv = $('<li class="grid-block" style="display: list-item; position: absolute"></li>');
         outerDiv.html($compile(div.contents())(childScope));
         var w = gridster.add_widget(outerDiv, widget.size_x, widget.size_y, widget.col, widget.row);
 
@@ -208,28 +176,10 @@ module Dashboard {
           scope: childScope
         };
 
-        /*
-        childScope.$watch(function(scope) {
-          var area = w.find('.widget-area')[0];
-
-          var desired_width = Math.ceil(area.scrollWidth / $scope.gridX);
-          var desired_height = Math.ceil(area.scrollHeight / $scope.gridY);
-          var actual_width = parseInt(w.attr('data-sizex'));
-          var actual_height = parseInt(w.attr('data-sizey'));
-
-          if (actual_width !== desired_width || actual_height !== desired_height) {
-
-            // TODO - should save this back into the dashboard registry...
-            // console.log("Actual size: " + actual_width + " x " + actual_height);
-            // console.log("desired size: " + desired_width + " x " + desired_height);
-            gridster.resize_widget(w, desired_width, desired_height);
-            gridster.set_dom_grid_height();
-          }
-        });
-        */
 
       });
 
+      makeResizable($('.grid-block'));
 
       if (!$scope.$$phase) {
         $scope.$apply();
@@ -256,6 +206,76 @@ module Dashboard {
       }
     }
 
+    function makeResizable(blocks:any) {
+
+      blocks.resizable({
+        grid: [gridSize + (gridMargin * 2), gridSize + (gridMargin * 2)],
+        animate: false,
+        minWidth: gridSize,
+        minHeight: gridSize,
+        autoHide: false,
+        start: function(event, ui) {
+          gridHeight = getGridster().$el.height();
+        },
+        resize: function(event, ui) {
+          //set new grid height along the dragging period
+          var g = getGridster();
+          var delta = gridSize + gridMargin * 2;
+          if (event.offsetY > g.$el.height())
+          {
+            var extra = Math.floor((event.offsetY - gridHeight) / delta + 1);
+            var newHeight = gridHeight + extra * delta;
+            g.$el.css('height', newHeight);
+          }
+        },
+        stop: function(event, ui) {
+          var resized = $(this);
+          setTimeout(function() {
+            resizeBlock(resized);
+          }, 300);
+        }
+      });
+
+      $('.ui-resizable-handle').hover(function() {
+        getGridster().disable();
+      }, function() {
+        getGridster().enable();
+      });
+    }
+
+
+    function resizeBlock(elmObj) {
+      var elmObj = $(elmObj);
+      var area = elmObj.find('.widget-area');
+      var w = elmObj.width() - gridSize;
+      var h = elmObj.height() - gridSize;
+
+      for (var grid_w = 1; w > 0; w -= (gridSize + (gridMargin * 2))) {
+        grid_w++;
+      }
+
+      for (var grid_h = 1; h > 0; h -= (gridSize + (gridMargin * 2))) {
+        grid_h++;
+      }
+
+      var widget = {
+        id: area.attr('data-widgetId')
+      };
+
+      changeWidgetSize(widget, function(widget) {
+        widget.size_x = grid_w;
+        widget.size_y = grid_h;
+      }, function() {
+        updateDashboardRepository("Changed size of widget: " + elmObj.attr("data-widgetId"));
+      });
+
+      /*
+      var g = getGridster();
+
+      g.resize_widget(elmObj, grid_w, grid_h);
+      g.set_dom_grid_height();
+      */
+    }
 
     function updateDashboardRepository(message: string) {
       if ($scope.dashboard) {

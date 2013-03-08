@@ -768,3 +768,25 @@ div#main div ul.nav li a:hover {
 .log-filter {
   margin-right: 30px;
 }
+
+.ui-resizeable-handle {
+  display: none;
+}
+
+.ui-resizable-se {
+  height: 20px;
+  width: 20px;
+  background: #333333;
+  font-size: 32px;
+  z-index: 50;
+  position: absolute;
+  display: block;
+  right: 0;
+  bottom: 0;
+  border-bottom-right-radius: 5px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  cursor: se-resize;
+
+}
+
