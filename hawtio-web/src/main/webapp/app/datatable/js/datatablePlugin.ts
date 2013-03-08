@@ -11,6 +11,7 @@ module DataTable {
               var initialised = false;
               var childScopes = [];
               var rowDetailTemplate = null;
+              var rowDetailTemplateId = null;
               var selectedItems = null;
 
               // used to update the UI
@@ -90,13 +91,14 @@ module DataTable {
                 if (gridOptions) {
                   selectedItems = gridOptions.selectedItems;
                   rowDetailTemplate = gridOptions.rowDetailTemplate;
+                  rowDetailTemplateId = gridOptions.rowDetailTemplateId;
 
                   // TODO deal with updating the gridOptions on the fly?
                   if (widget === null) {
                     var widgetOptions = {
                       selectHandler: selectHandler,
                       disableAddColumns: true,
-                      rowDetailTemplateId: 'activemqMessageTemplate',
+                      rowDetailTemplateId: rowDetailTemplateId,
                       ignoreColumns: gridOptions.ignoreColumns,
                       flattenColumns: gridOptions.flattenColumns
                     };
@@ -116,7 +118,7 @@ module DataTable {
                     // convert the column configurations
                     var columns = [];
                     var columnCounter = 1;
-                    if (rowDetailTemplate) {
+                    if (rowDetailTemplate || rowDetailTemplateId) {
                       columns.push(
                               {
                                 "mDataProp": null,

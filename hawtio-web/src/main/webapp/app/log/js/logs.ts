@@ -97,7 +97,8 @@ module Log {
       filterOptions: {
         filterText: "searchText"
       },
-      columnDefs: columnDefs
+      columnDefs: columnDefs,
+      rowDetailTemplateId: "logDetailTemplate"
       //rowTemplate: '<div ng-style="{\'cursor\': row.cursor}" ng-repeat="col in visibleColumns()" class="{{logClass(row.entity)}} ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>'
     };
 

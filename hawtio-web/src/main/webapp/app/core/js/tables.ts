@@ -170,10 +170,11 @@ class TableWidget {
       // lets try focus on the table
       $(tableElement).focus();
 
+      var widget = this;
 
       // add a handler for the expand/collapse column for all rows (and future rows)
       var expandCollapseNode = function () {
-        var dataTable = $('#grid').dataTable();
+        var dataTable = widget.dataTable;
         var parentRow = this.parentNode;
         var openMessages = widget.openMessages;
         var i = $.inArray(parentRow, openMessages);
@@ -196,13 +197,13 @@ class TableWidget {
         Core.$apply($scope);
       };
 
-      $(document).on("click", "#grid td.control", expandCollapseNode);
+      $(tableElement).on("click", "td.control", expandCollapseNode);
+      //$(document).on("click", "#grid td.control", expandCollapseNode);
 
       keys.event.action( 0, null, function(node) {
         expandCollapseNode.call(node);
       });
 
-      var widget = this;
 
       keys.event.focus( null, null, function(node) {
         var dataTable = widget.dataTable;
@@ -222,12 +223,12 @@ class TableWidget {
         }
       });
 
-      $(document).on("click", "#grid td", function () {
+      // $(document).on("click", "#grid td", function () {
+      $(tableElement).on("click", "td.control", function () {
         var dataTable = widget.dataTable;
         if ($(this).hasClass('selected')) {
           $(this).removeClass('focus selected');
         } else {
-          var dataTable = $('#grid').dataTable();
           if (!widget.config.multiSelect) {
             dataTable.$('td.selected').removeClass('focus selected');
           }

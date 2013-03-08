@@ -49,4 +49,36 @@
   <div class="row-fluid" ng-show="logs.length == 0">
     There are no logs matching your required criteria
   </div>
+
+  <script type="text/ng-template" id="logDetailTemplate">
+    <div title="Headers" class="title">
+      {{row.message}}
+    </div>
+    <div class="expandable closed">
+      <div title="Headers" class="title">
+        <i class="expandable-indicator"></i> Stack Trace
+      </div>
+      <div class="expandable-body well">
+        <table class="table table-condensed table-striped">
+          <thead>
+          <tr>
+            <th>Stack</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>stack trace: {{row.stackTrace}}</td>
+          </tr>
+          <!--
+                        <tr ng-repeat="(key, value) in headers(row)">
+                          <td class="property-name">{{key}}</td>
+                          <td class="property-value">{{value}}</td>
+                        </tr>
+          -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </script>
+
 </div>
