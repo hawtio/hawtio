@@ -11,7 +11,8 @@ class TableWidget {
   public dataTableConfig = {
     bPaginate: false,
     sDom: 'Rlfrtip',
-    bDestroy: true
+    bDestroy: true,
+    bAutoWidth: true
   };
 
   // the jQuery DataTable widget

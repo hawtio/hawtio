@@ -1,7 +1,7 @@
 module DataTable {
   var pluginName = 'datatable';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
-          directive('hawtioGrid', function (workspace, $timeout, $filter, $compile) {
+          directive('hawtioDatatable', function (workspace, $timeout, $filter, $compile) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var gridOptions = null;
@@ -28,6 +28,8 @@ module DataTable {
                 var width = columnDef.width;
                 if (angular.isNumber(width)) {
                   data["sWidth"] = "" + width + "px";
+                } else if (angular.isString(width)) {
+                  data["sWidth"] = width;
                 }
                 var template = columnDef.cellTemplate;
                 if (template) {
@@ -102,6 +104,7 @@ module DataTable {
                             {
                               "mDataProp": null,
                               "sClass": "control center",
+                              "sWidth": "30px",
                               "sDefaultContent": '<i class="icon-plus"></i>'
                             });
 
@@ -120,6 +123,14 @@ module DataTable {
                     });
                     widget = new TableWidget(scope, workspace, columns, widgetOptions);
                     widget.tableElement = tableElement;
+
+                    // if all the column definitions have an sWidth then lets turn off
+                    // the auto-width calculations
+                    if (columns.every(col => col.sWidth)) {
+                      console.log("All columns have sWidth!");
+                      widget.dataTableConfig.bAutoWidth = false;
+                    }
+
 
                     var filterText = null;
                     var filterOptions = gridOptions.filterOptions;
@@ -160,7 +171,7 @@ module DataTable {
               }
 
               // watch the expression, and update the UI on change.
-              scope.$watch(attrs.hawtioGrid, onTableDataChange);
+              scope.$watch(attrs.hawtioDatatable, onTableDataChange);
 
               // schedule update in one second
               function updateLater() {
