@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.hawt.sample.infinispan.InfinispanDemo;
 import org.apache.camel.CamelException;
+import org.apache.camel.util.CamelContextHelper;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -113,6 +114,13 @@ public class Main {
 
                 LOG.warn("Don't run with scissors!");
                 LOG.error("Someone somewhere is not using Fuse! :)", new CamelException("My exception message"));
+
+                // now lets force an exception with a stack trace from camel...
+                try {
+                    CamelContextHelper.getMandatoryEndpoint(null, null);
+                } catch (Throwable e) {
+                    LOG.warn("Expected exception for testing: " + e, e);
+                }
             }
 
             // TODO temporary hack until we've got blueprint servlet listener to load blueprint services
