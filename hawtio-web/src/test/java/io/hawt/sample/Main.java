@@ -119,7 +119,7 @@ public class Main {
                 try {
                     CamelContextHelper.getMandatoryEndpoint(null, null);
                 } catch (Throwable e) {
-                    LOG.warn("Expected exception for testing: " + e, e);
+                    LOG.error("Expected exception for testing: " + e, e);
                 }
             }
 
