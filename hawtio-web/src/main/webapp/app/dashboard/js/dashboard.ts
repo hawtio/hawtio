@@ -61,7 +61,7 @@ module Dashboard {
       var w = entry.widget;
       var scope = entry.scope;
       sizefunc(entry);
-      gridster.resize_widget(w, widget.size_x, widget.size_y);
+      gridster.resize_widget(w, entry.size_x, entry.size_y);
       gridster.set_dom_grid_height();
 
       setTimeout(function() {
@@ -76,7 +76,7 @@ module Dashboard {
         setTimeout(function() {
           savefunc(widget);
         }, 50);
-      }, 50);
+      }, 30);
     }
 
     $scope.onWidgetRenamed = function(widget) {
@@ -117,11 +117,12 @@ module Dashboard {
         extra_cols: 6,
         draggable: {
           stop: (event, ui) => {
-            updateLayoutConfiguration();
+            if (serializeDashboard()) {
+              updateDashboardRepository("Changing dashboard layout");
+            }
           }
         }
       }).data('gridster');
-
 
       var template = $templateCache.get("widgetTemplate");
       var widgets = ((dashboard) ? dashboard.widgets : null) || [];
@@ -183,26 +184,28 @@ module Dashboard {
       if (!$scope.$$phase) {
         $scope.$apply();
       }
+    }
 
-      function updateLayoutConfiguration() {
-        var gridster = getGridster();
-        if (gridster) {
-          var data = gridster.serialize();
-          console.log("got data: " + JSON.stringify(data));
+    function serializeDashboard() {
+      var gridster = getGridster();
+      if (gridster) {
+        var data = gridster.serialize();
+        console.log("got data: " + JSON.stringify(data));
 
-          var widgets = $scope.dashboard.widgets || [];
-          // lets assume the data is in the order of the widgets...
-          angular.forEach(widgets, (widget, idx) => {
-            var value = data[idx];
-            if (value && widget) {
-              // lets copy the values across
-              angular.forEach(value, (attr, key) => widget[key] = attr);
-            }
-          });
+        var widgets = $scope.dashboard.widgets || [];
+        // console.log("Widgets: ", widgets);
 
-          updateDashboardRepository("Changing dashboard layout");
-        }
+        // lets assume the data is in the order of the widgets...
+        angular.forEach(widgets, (widget, idx) => {
+          var value = data[idx];
+          if (value && widget) {
+            // lets copy the values across
+            angular.forEach(value, (attr, key) => widget[key] = attr);
+          }
+        });
+        return true;
       }
+      return false;
     }
 
     function makeResizable() {
@@ -268,15 +271,11 @@ module Dashboard {
         widget.size_x = grid_w;
         widget.size_y = grid_h;
       }, function(widget) {
-        updateDashboardRepository("Changed size of widget: " + widget.id);
+        if (serializeDashboard()) {
+          updateDashboardRepository("Changed size of widget: " + widget.id);
+        }
       });
 
-      /*
-      var g = getGridster();
-
-      g.resize_widget(elmObj, grid_w, grid_h);
-      g.set_dom_grid_height();
-      */
     }
 
     function updateDashboardRepository(message: string) {
