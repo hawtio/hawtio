@@ -1,14 +1,14 @@
 <div>
-    <table class="overviewSection">
+    <table class="table-hover">
         <tr>
             <td></td>
             <td class="less-big">
                 <div class="btn-group">
-                    <button ng-click="stopBundle(bundleId)" class="icon-stop" title="stop"></button>
-                    <button ng-click="startBundle(bundleId)" class="icon-play" title="start"></button>
-                    <button ng-click="updateBundle(bundleId)" class="icon-upload-alt" title="update"></button>
-                    <button ng-click="refreshBundle(bundleId)" class="icon-refresh" title="refresh"></button>
-                    <button ng-click="uninstallBundle(bundleId)" class="icon-eject" title="uninstall"></button>
+                    <button ng-click="stopBundle(bundleId)" class="btn" title="stop"><i class="icon-stop"/></button>
+                    <button ng-click="startBundle(bundleId)" class="btn" title="start"><i class="icon-play"/></button>
+                    <button ng-click="refreshBundle(bundleId)" class="btn" title="refresh"><i class="icon-refresh"/></button>
+                    <button ng-click="updateBundle(bundleId)" class="btn" title="update"><i class="icon-cloud-download"/></button>
+                    <button ng-click="uninstallBundle(bundleId)" class="btn" title="uninstall"><i class="icon-eject"/></button>
                 </div>
             </td>
         </tr>
@@ -18,7 +18,7 @@
             </td>
         </tr>
         <tr>
-            <td><strong>Symbolic Name:</strong></td>
+            <td><strong>Symbolic&nbsp;Name:</strong></td>
             <td class="less-big">{{row.SymbolicName}}
             </td>
         </tr>
@@ -28,23 +28,28 @@
             </td>
         </tr>
         <tr>
+            <td><strong>Start&nbsp;Level:</strong></td>
+            <td class="less-big">{{row.StartLevel}}
+            </td>
+        </tr>
+        <tr>
             <td><strong>Location:</strong></td>
             <td class="less-big">{{row.Location}}
             </td>
         </tr>
         <tr>
             <td><strong>State:</strong></td>
-            <td class="wrap">
-                <img src="{{row.stateImageHref}}">{{row.State}}
+            <td>
+                <div class="less-big label" ng-class="row.stateStyle">{{row.State}}</div>
             </td>
         </tr>
         <tr>
-            <td><strong>Last Modified:</strong></td>
-            <td class="less-big">{{row.Version}}
+            <td><strong>Last&nbsp;Modified:</strong></td>
+            <td class="less-big">{{row.LastModified | date:'medium'}}
             </td>
         </tr>
         <tr>
-            <td><strong>Fragmenet:</strong></td>
+            <td><strong>Fragment:</strong></td>
             <td class="less-big">{{row.Fragment}}
             </td>
         </tr>
