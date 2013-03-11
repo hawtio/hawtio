@@ -774,18 +774,20 @@ div#main div ul.nav li a:hover {
 }
 
 .ui-resizable-se {
-  height: 20px;
-  width: 20px;
-  background: #333333;
+  height: 10px;
+  width: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  background: inherit;
+  box-shadow: -3px -3px 10px rgba(0, 0, 0, 0.1) inset;
   font-size: 32px;
   z-index: 50;
   position: absolute;
   display: block;
-  right: 0;
-  bottom: 0;
-  border-bottom-right-radius: 5px;
-  border-bottom-width: 1px;
-  border-right-width: 1px;
+  right: 0px;
+  bottom: 0px;
+  border-radius: 6px;
+  border: 1px solid #d4d4d4;
   cursor: se-resize;
 
 }
