@@ -3,6 +3,7 @@ class TableWidget {
   private flattenColumnHash = {};
   private detailTemplate:string = null;
   private openMessages = [];
+  private addedExpandNodes = false;
 
   public tableElement = null;
 
@@ -197,13 +198,17 @@ class TableWidget {
         Core.$apply($scope);
       };
 
-      $(tableElement).on("click", "td.control", expandCollapseNode);
-      //$(document).on("click", "#grid td.control", expandCollapseNode);
 
-      keys.event.action( 0, null, function(node) {
-        expandCollapseNode.call(node);
-      });
+      if (!this.addedExpandNodes) {
+        this.addedExpandNodes = true;
 
+        $(tableElement).on("click", "td.control", expandCollapseNode);
+        //$(document).on("click", "#grid td.control", expandCollapseNode);
+
+        keys.event.action( 0, null, function(node) {
+          expandCollapseNode.call(node);
+        });
+      }
 
       keys.event.focus( null, null, function(node) {
         var dataTable = widget.dataTable;
