@@ -175,7 +175,12 @@
     <dependency>
       <groupId>org.fusesource.insight</groupId>
       <artifactId>insight-log4j</artifactId>
+
+      <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
+      <version>99-master-SNAPSHOT</version>
+<!--
       <version>${fabric-version}</version>
+-->
       <scope>test</scope>
     </dependency>
 
