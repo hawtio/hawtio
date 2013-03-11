@@ -27,6 +27,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A simple bootstrap class
@@ -49,7 +50,7 @@ public class Main {
             String pathSeparator = File.pathSeparator;
 
             String classpath = System.getProperty("java.class.path", "");
-            ImmutableList<String> classpaths = ImmutableList.copyOf(classpath.split(pathSeparator));
+            ImmutableList<String> classpaths = ImmutableList.copyOf(Arrays.asList(classpath.split(pathSeparator)));
 
             Iterable<String> jarNames = Iterables.filter(classpaths, new Predicate<String>() {
                 public boolean apply(String path) {
