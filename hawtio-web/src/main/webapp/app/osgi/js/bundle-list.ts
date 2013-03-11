@@ -83,26 +83,8 @@ module Osgi {
            render();
         });
 
-        function getBadgeColor(state) {
-            switch(state) {
-                case "INSTALLED":
-                    return "badge-important";
-                case "RESOLVED":
-                    return "badge-inverse";
-                case "STARTING":
-                    return "badge-warning";
-                case "ACTIVE":
-                    return "badge-success";
-                case "STOPPING":
-                    return "badge-info";
-                case "UNINSTALLED":
-                    return ""; // the default badge color, which is grey
-                default:
-                    return "badge-important";
-            }
-        }
         function addRow(bundleObject, labelText) {
-            var labelClass = "badge " + getBadgeColor(bundleObject.State);
+            var labelClass = "badge " + Osgi.getStateStyle("badge", bundleObject.State);
             var table = <HTMLTableElement>document.getElementById("bundleTable");
             var numRows = table.rows.length;
             var curRow = <HTMLTableRowElement>table.rows[numRows-1];
@@ -185,7 +167,7 @@ module Osgi {
                         Fragment: value.Fragment,
                         State: value.State,
                         Version: value.Version,
-                        LastModified: value.LastModified,
+                        LastModified: new Date(Number(value.LastModified)),
                         Location: value.Location,
                         StartLevel: undefined
                     };
