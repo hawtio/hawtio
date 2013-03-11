@@ -17,10 +17,28 @@ module Osgi {
             }
             img = "img/dots/" + img;
             row["ImportedPackages"] = row["ImportedPackages"].union([]);
-            row["stateImageHref"] = img;
-            row["stateImageLink"] = "<img src='" + img + "' title='" + state + "'/> ";
+            row["stateStyle"] = getStateStyle("label", state);
         });
         return values;
+    }
+
+    export function getStateStyle(prefix, state) {
+        switch(state) {
+            case "INSTALLED":
+                return prefix + "-important";
+            case "RESOLVED":
+                return prefix + "-inverse";
+            case "STARTING":
+                return prefix + "-warning";
+            case "ACTIVE":
+                return prefix + "-success";
+            case "STOPPING":
+                return prefix + "-info";
+            case "UNINSTALLED":
+                return ""; // the default color, which is grey
+            default:
+                return prefix + "-important";
+        }
     }
 
     export function defaultServiceValues(workspace:Workspace, $scope, values) {
