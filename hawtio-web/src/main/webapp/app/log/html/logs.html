@@ -68,8 +68,8 @@
           </thead>
 -->
           <tbody>
-          <tr ng-repeat="line in exceptionLines(row)">
-            <td>{{line}}</td>
+          <tr ng-repeat="line in row.exception">
+            <td ng-bind-html-unsafe="formatException(line)"></td>
           </tr>
           </tbody>
         </table>

@@ -48,9 +48,8 @@ module Log {
 
     $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-    $scope.exceptionLines = (log) => {
-      var exception = log.exception;
-      return exception;
+    $scope.formatException = (line) => {
+      return Log.formatStackLine(line);
     };
 
     $scope.getSupport = () => {
