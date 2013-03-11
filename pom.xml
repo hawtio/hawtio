@@ -67,7 +67,8 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-build>redhat-60014</perfectus-build>
+    <perfectus-number>014</perfectus-number>
+    <perfectus-build>redhat-60${perfectus-number}</perfectus-build>
 <!--
     <perfectus-build>fuse-71-047</perfectus-build>
 -->
@@ -78,7 +79,7 @@
     <camel-version>2.10.0.${perfectus-build}</camel-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
-    <fabric-version>7.2.0.redhat-014</fabric-version>
+    <fabric-version>7.2.0.redhat-${perfectus-number}</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
