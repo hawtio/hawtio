@@ -54,7 +54,7 @@
   </distributionManagement>
 
   <prerequisites>
-    <maven>3.0.2</maven>
+    <maven>3.0.4</maven>
   </prerequisites>
 
   <properties>
@@ -67,7 +67,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>014</perfectus-number>
+    <perfectus-number>015</perfectus-number>
     <perfectus-build>redhat-60${perfectus-number}</perfectus-build>
 <!--
     <perfectus-build>fuse-71-047</perfectus-build>
