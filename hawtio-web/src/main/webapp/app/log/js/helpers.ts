@@ -24,7 +24,7 @@ module Log {
     return (!text || text === "?") ? null : text;
   }
 
-  var _stackRegex = /\s*at\s+([\w\.$_]+(\.([\w$_]+))*)\((.*)?:(\d+)\)\[(.*)\]/
+  var _stackRegex = /\s*at\s+([\w\.$_]+(\.([\w$_]+))*)\((.*)?:(\d+)\).*\[(.*)\]/
 
   export function formatStackLine(line: string): string {
     var match = _stackRegex.exec(line);
