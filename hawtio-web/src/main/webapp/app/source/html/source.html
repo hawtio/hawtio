@@ -12,4 +12,12 @@
       <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
     </div>
   </div>
+
+  <div class="span12" ng-disabled="!loadingMessage">
+    <div class="alert alert-info">
+      <i class="icon-spinner icon-spin icon-2x"></i>
+      <span ng-bind-html-unsafe="loadingMessage"></span>
+    </div>
+  </div>
+  <div id="alert-area" class="span12"></div>
 </div>

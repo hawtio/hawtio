@@ -6,6 +6,11 @@ module Source {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var lineNumber = $location.search()["line"] || 1;
+    var mavenCoords = $routeParams["mavenCoords"];
+    var className = $routeParams["className"];
+    var fileName = $scope.pageId;
+
+    $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
 
     console.log("Source format is " + $scope.format + " line " + lineNumber);
 
@@ -55,19 +60,22 @@ module Source {
       setTimeout(updateView, 50);
     });
 
-    updateView();
-
     function viewContents(response) {
       $scope.source = response;
+      $scope.loadingMessage = null;
+      if (!response) {
+        var time = new Date().getTime();
+        if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
+          $scope.lastErrorTime = time;
+          notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
+        }
+      }
       Core.$apply($scope);
     }
 
     function updateView() {
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        var mavenCoords = $routeParams["mavenCoords"];
-        var className = $routeParams["className"];
-        var fileName = $scope.pageId;
         jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, onSuccess(viewContents));
       }
     }
