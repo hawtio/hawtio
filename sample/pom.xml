@@ -15,11 +15,11 @@
   <dependencies>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-web</artifactId>
+      <artifactId>hawtio-default</artifactId>
       <version>${project.version}</version>
       <!--
         NOTE this WAR dependency type which enables this WAR to
-        inherit all the plugins and content from the core hawtio-web WAR
+        inherit all the plugins and content from the hawtio-default WAR
       -->
       <type>war</type>
     </dependency>
@@ -86,11 +86,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>${spring-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.insight</groupId>
-      <artifactId>insight-log4j</artifactId>
-      <version>${fabric-version}</version>
     </dependency>
   </dependencies>
 

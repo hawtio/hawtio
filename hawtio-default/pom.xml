@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.fusesource.insight</groupId>
       <artifactId>insight-log4j</artifactId>
-      <version>${fabric-version}</version>
+      <version>${insight-log4j.version}</version>
     </dependency>
   </dependencies>
 
