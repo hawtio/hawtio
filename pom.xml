@@ -209,6 +209,7 @@
   <modules>
     <module>hawtio-git</module>
     <module>hawtio-web</module>
+    <module>hawtio-default</module>
     <module>hawtio-embedded</module>
     <module>hawtio-osgi</module>
     <module>hawtio-osgi-devmode</module>
