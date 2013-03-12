@@ -177,6 +177,9 @@ module Core {
     var svg = svgElement ? d3.select(svgElement) : d3.select("svg");
 
     // lets remove all the old g elements
+    if (svgElement) {
+      $(svgElement).children("g").remove();
+    }
     $(svg).children("g").remove();
 
     var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");

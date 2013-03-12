@@ -12,8 +12,6 @@ module Camel {
       updateRoutes();
     });
 
-    updateRoutes();
-
     function updateRoutes() {
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if ($scope.mbean) {
