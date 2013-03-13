@@ -42,11 +42,13 @@
     </dependency>
 
     <!-- Git HTTP Servlet -->
+<!--
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit.http.server</artifactId>
       <version>${jgit-version}</version>
     </dependency>
+-->
 
     <!-- testing -->
     <dependency>
