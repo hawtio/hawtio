@@ -29,20 +29,22 @@ import static org.junit.Assert.assertTrue;
 
 public class FuseEARepoSearchTest {
     private static boolean verbose = false;
-    protected static MavenIndexerFacade indexer;
+    protected static MavenIndexerFacadeMXBean indexer;
+    protected static MavenIndexerFacade facade;
 
     @BeforeClass
     public static void init() throws Exception {
-        indexer = new MavenIndexerFacade();
+        facade = new MavenIndexerFacade();
         String[] repositories = {"http://repo.fusesource.com/nexus/content/groups/ea@fusesource-ea-repo"};
-        indexer.setRepositories(repositories);
-        indexer.setCacheDirectory(new File(targetDir(), "fuse-ea-mavenIndexer"));
-        indexer.start();
+        facade.setRepositories(repositories);
+        facade.setCacheDirectory(new File(targetDir(), "fuse-ea-mavenIndexer"));
+        facade.start();
+        indexer = facade;
     }
 
     @AfterClass
     public static void destroy() throws Exception {
-        indexer.destroy();
+        facade.destroy();
     }
 
     @Test
@@ -51,6 +53,19 @@ public class FuseEARepoSearchTest {
         if (verbose) {
             for (ArtifactDTO result : results) {
                 System.out.println("camel jar: " + result);
+            }
+        } else {
+            System.out.println("Found " + results.size() + " camel jars");
+        }
+        assertTrue("Should have found at last one camel jar!", results.size() > 0);
+    }
+
+    @Test
+    public void testFindsCamelVersions() throws Exception {
+        List<ArtifactDTO> results = indexer.searchFlat("org.apache.camel", "camel-core", "jar", null);
+        if (true) {
+            for (ArtifactDTO result : results) {
+                System.out.println("camel-core jar version: " + result.getVersion());
             }
         } else {
             System.out.println("Found " + results.size() + " camel jars");

@@ -1,5 +1,6 @@
 package io.hawt.maven.indexer;
 
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -231,6 +232,17 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
 
     @Override
     public List<ArtifactDTO> search(String groupId, String artifactId, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, packaging, classifier);
+        return searchGrouped(bq);
+    }
+
+    @Override
+    public List<ArtifactDTO> searchFlat(String groupId, String artifactId, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, packaging, classifier);
+        return searchFlat(bq);
+    }
+
+    protected BooleanQuery createQuery(String groupId, String artifactId, String packaging, String classifier) {
         BooleanQuery bq = new BooleanQuery();
         if (StringUtils.isNotBlank(groupId)) {
             bq.add(indexer.constructQuery(MAVEN.GROUP_ID, new SourcedSearchExpression(groupId)), Occur.MUST);
@@ -244,8 +256,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         if (StringUtils.isNotBlank(classifier)) {
             bq.add(indexer.constructQuery(MAVEN.CLASSIFIER, new SourcedSearchExpression(classifier)), Occur.MUST);
         }
-
-        return searchGrouped(bq);
+        return bq;
     }
 
     /**
