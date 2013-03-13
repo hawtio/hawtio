@@ -32,11 +32,13 @@
 
 
     <!-- for some sample stuff to browse -->
+<!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <version>${camel-version}</version>
     </dependency>
+-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
@@ -62,6 +64,7 @@
       <artifactId>activemq-camel</artifactId>
       <version>${activemq-version}</version>
     </dependency>
+<!--
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
@@ -87,6 +90,7 @@
       <artifactId>spring-web</artifactId>
       <version>${spring-version}</version>
     </dependency>
+-->
   </dependencies>
 
   <repositories>
