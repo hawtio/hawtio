@@ -1,5 +1,5 @@
 <div>
-    <table class="table-hover">
+    <table>
         <tr>
             <td></td>
             <td class="less-big">
@@ -12,9 +12,20 @@
                 </div>
             </td>
         </tr>
+        <tr><td><p/></td><td/>
         <tr>
-            <td><strong>Identifier:</strong></td>
+            <td>
+                <div ng-switch="row.Fragment">
+                    <div ng-switch-when="true"><strong>Fragment ID:</strong></div>
+                    <div ng-switch-default><strong>Bundle ID:</strong></div>
+                </div>
+            </td>
             <td class="less-big">{{row.Identifier}}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Bundle&nbsp;Name:</strong></td>
+            <td class="less-big">{{row.Headers['Bundle-Name'].Value}}
             </td>
         </tr>
         <tr>
@@ -40,7 +51,7 @@
         <tr>
             <td><strong>State:</strong></td>
             <td>
-                <div class="less-big label" ng-class="row.stateStyle">{{row.State}}</div>
+                <div class="less-big label" ng-class="row.StateStyle">{{row.State}}</div>
             </td>
         </tr>
         <tr>
@@ -49,13 +60,18 @@
             </td>
         </tr>
         <tr>
-            <td><strong>Fragment:</strong></td>
-            <td class="less-big">{{row.Fragment}}
+            <td>
+                <div ng-switch="row.Fragment">
+                    <div ng-switch-when="true"><strong>Hosts:</strong></div>
+                    <div ng-switch-default><strong>Fragments:</strong></div>
+                </div>
             </td>
-        </tr>
-        <tr>
-            <td><strong>Hosts:</strong></td>
-            <td class="less-big" ng-bind-html-unsafe="row.Hosts"></td>
+            <td class="less-big">
+                <div ng-switch="row.Fragment">
+                    <div ng-switch-when="true" ng-bind-html-unsafe="row.Hosts" />
+                    <div ng-switch-default ng-bind-html-unsafe="row.Fragments" />
+                </div>
+            </td>
         </tr>
         <tr>
             <td>
@@ -105,6 +121,28 @@
             <td>
             </td>
             <td>
+                <div class="accordion" id="accordionRequiringBundles">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionRequiringBundles"
+                               href="#collapseRequiringBundles">
+                                Other Bundles using this Bundle
+                            </a>
+                        </div>
+                        <div id="collapseRequiringBundles" class="accordion-body collapse out">
+                            <div class="accordion-inner">
+                                <span ng-repeat="bundle in row.RequiringBundles"><a href='#/osgi/bundle/{{bundle}}'>{{bundle}}</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
                 <div class="accordion" id="accordionHeaders">
                     <div class="accordion-group">
                         <div class="accordion-heading">
@@ -116,7 +154,7 @@
                         <div id="collapsHeaders" class="accordion-body collapse out">
                             <table class="accordion-inner">
                                 <tr ng-repeat="(key, value) in row.Headers">
-                                    <td>{{key}}</td>
+                                    <td valign="top">{{key}}</td>
                                     <td>{{value.Value}}</td>
                                 </tr>
                             </table>

@@ -80,7 +80,7 @@ module Osgi {
             render();
         });
         $scope.$watch("display.startLevelFilter", function() {
-           render();
+            render();
         });
 
         function addRow(bundleObject, labelText) {
@@ -90,15 +90,15 @@ module Osgi {
             var curRow = <HTMLTableRowElement>table.rows[numRows-1];
             var numCols = typeof curRow === 'undefined' ? 999 : curRow.cells.length;
             var newCell;
-            var placement;
             if (numCols < 3) {
                 newCell = <HTMLTableCellElement>curRow.insertCell(numCols);
-                placement = 'left';
             } else {
                 var newRow = <HTMLTableRowElement>table.insertRow(numRows);
                 newCell = <HTMLTableCellElement>newRow.insertCell(0);
-                placement = 'right';
             }
+
+            var placement = (numCols === 2) ? 'left' : 'right';
+
             newCell.innerHTML =
                 "<a href='#/osgi/bundle/" + bundleObject.Identifier +"' id=" + bundleObject.Identifier + " rel='popover'><span class='" + labelClass + "'>" + labelText + "</span></a>";
             var po =
@@ -107,7 +107,9 @@ module Osgi {
                     (bundleObject.Fragment === true ? " (fragment) " : "") + "</td></tr>" +
                 "<tr><td><strong class='muted'>Name</strong> " + bundleObject.Name + "</td></tr>" +
                 "<tr><td><strong class='muted'>Version</strong> " + bundleObject.Version + "</td></tr>" +
-                "<tr><td><strong class='muted'>State</strong> " + bundleObject.State + "</td></tr>" +
+                "<tr><td><strong class='muted'>State</strong> <div class='label "
+                    + Osgi.getStateStyle("label", bundleObject.State)
+                    + "'>" + bundleObject.State + "</div></td></tr>" +
                 "<tr><td><strong class='muted'>Start Level</strong> " + bundleObject.StartLevel + "</td></tr>" +
                 "</table></small>";
             $("#" + bundleObject.Identifier).popover({ title: bundleObject.SymbolicName, trigger: 'hover', html: true, content: po, delay: 100, placement: placement})

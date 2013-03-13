@@ -56,7 +56,7 @@ module Osgi {
             jolokia.request([
                 {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'uninstallBundle', arguments: [bundleId]}
             ],
-                    onSuccess($location.path("/osgi/bundles")));
+                    onSuccess($location.path("/osgi/bundle-list")));
         };
     }
 }

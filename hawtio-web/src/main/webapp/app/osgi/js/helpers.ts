@@ -4,25 +4,14 @@ module Osgi {
         angular.forEach(values, (row) => {
             row["IdentifierLink"] = bundleLinks(workspace, row["Identifier"]);
             row["Hosts"] = bundleLinks(workspace, row["Hosts"]);
-            var state = row["State"];
-            var img = "red-dot.png";
-            if (state === "ACTIVE") {
-                img = "green-dot.png";
-            } else if (state === "INSTALLED") {
-                img = "yellow-dot.png";
-            } else if (state === "STOPPED") {
-                img = "gray-dot.png";
-            } else {
-                img = "red-dot.png";
-            }
-            img = "img/dots/" + img;
+            row["Fragments"] = bundleLinks(workspace, row["Fragments"]);
             row["ImportedPackages"] = row["ImportedPackages"].union([]);
-            row["stateStyle"] = getStateStyle("label", state);
+            row["StateStyle"] = getStateStyle("label", row["State"]);
         });
         return values;
     }
 
-    export function getStateStyle(prefix, state) {
+    export function getStateStyle(prefix : string, state : string) : string {
         switch(state) {
             case "INSTALLED":
                 return prefix + "-important";
