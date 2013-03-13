@@ -122,6 +122,11 @@ module Jmx {
             $scope.operationStatus = "error";
             var error = response.error;
             $scope.operationResult = error;
+            var stacktrace = response.stacktrace;
+            if (stacktrace) {
+              console.log(stacktrace);
+              $scope.operationResult = stacktrace;
+            }
           }
         }));
 
