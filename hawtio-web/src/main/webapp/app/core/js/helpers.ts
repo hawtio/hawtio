@@ -5,7 +5,7 @@ var _urlPrefix: string = null;
 var numberTypeNames = {
   'byte': true,
   'short': true,
-  'integer': true,
+  'int': true,
   'long': true,
   'float': true,
   'double': true,
