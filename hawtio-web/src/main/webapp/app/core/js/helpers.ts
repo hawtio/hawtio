@@ -130,6 +130,11 @@ function onSuccess(fn, options = {}) {
     options['error'] = function (response) {
       //alert("Jolokia request failed: " + response.error);
       console.log("Jolokia request failed: " + response.error);
+      var stacktrace = response.stacktrace;
+      if (stacktrace) {
+        console.log(stacktrace);
+        notification("error", "Operation failed due to: " + stacktrace);
+      }
     };
   }
   return options;
