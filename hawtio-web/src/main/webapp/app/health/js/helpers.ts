@@ -15,7 +15,7 @@ module Health {
   }
 
   /**
-   * Returns the bundle MBean
+   * Returns the health MBeans
    */
   // TODO Make into a service
   export function getHealthMBeans(workspace:Workspace) {
