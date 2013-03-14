@@ -9,13 +9,6 @@ module Maven {
       {
         field: 'groupId',
         displayName: 'Group'
-        /*
-         cellTemplate: stateTemplate,
-         width: 56,
-         minWidth: 56,
-         maxWidth: 56,
-         resizable: false
-         */
       },
       {
         field: 'artifactId',
@@ -24,6 +17,10 @@ module Maven {
       {
         field: 'version',
         displayName: 'Version'
+      },
+      {
+        field: 'name',
+        displayName: 'Name'
       }
     ];
 
@@ -32,7 +29,8 @@ module Maven {
       displayFooter: true,
       selectedItems: $scope.selected,
       selectWithCheckboxOnly: true,
-      columnDefs: columnDefs
+      columnDefs: columnDefs,
+      rowDetailTemplateId: "artifactDetailTemplate"
 /*
       filterOptions: {
         filterText: 'search'
