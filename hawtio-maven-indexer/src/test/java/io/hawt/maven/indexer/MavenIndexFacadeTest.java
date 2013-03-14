@@ -51,7 +51,7 @@ public class MavenIndexFacadeTest {
 
     @Test
     public void testFindsCamelJars() throws Exception {
-        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, "jar", null);
+        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, null, "jar", null);
         if (verbose) {
             for (ArtifactDTO result : results) {
                 System.out.println("camel jar: " + result);
@@ -60,6 +60,40 @@ public class MavenIndexFacadeTest {
             System.out.println("Found " + results.size() + " camel jars");
         }
         assertTrue("Should have found at last one camel jar!", results.size() > 0);
+    }
+
+
+    @Test
+    public void testGroupIdComplete() throws Exception {
+        String text = "org.apache.c";
+        List<String> results = indexer.groupIdComplete(text, "jar", null);
+        for (String result : results) {
+            System.out.println("group IDs starting with '" + text + "': " + result);
+        }
+        assertTrue("Should have found at last one group ID!", results.size() > 0);
+    }
+
+
+    @Test
+    public void testArtifactIdComplete() throws Exception {
+        String text = "camel-j";
+        List<String> results = indexer.artifactIdComplete("org.apache.camel", text, "jar", null);
+        for (String result : results) {
+            System.out.println("artifact Ids starting with '" + text + "': " + result);
+        }
+        assertTrue("Should have found at last one artifact ID!", results.size() > 0);
+    }
+
+    @Test
+    public void testVersionComplete() throws Exception {
+        String groupId = "org.apache.camel";
+        String artifactId = "camel-core";
+        String text = "2";
+        List<String> results = indexer.versionComplete(groupId, artifactId, text, "jar", null);
+        for (String result : results) {
+            System.out.println("" + groupId + ":" + artifactId + " versions starting with '" + text + "': " + result);
+        }
+        assertTrue("Should have found at last one camel-core version!", results.size() > 0);
     }
 
     @Test

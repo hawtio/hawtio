@@ -1,6 +1,5 @@
 package io.hawt.maven.indexer;
 
-import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -53,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A facade over the Maven indexer code so its easy to query repositories
@@ -231,32 +231,15 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     //-------------------------------------------------------------------------
 
     @Override
-    public List<ArtifactDTO> search(String groupId, String artifactId, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, artifactId, packaging, classifier);
+    public List<ArtifactDTO> search(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier);
         return searchGrouped(bq);
     }
 
     @Override
-    public List<ArtifactDTO> searchFlat(String groupId, String artifactId, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, artifactId, packaging, classifier);
+    public List<ArtifactDTO> searchFlat(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier);
         return searchFlat(bq);
-    }
-
-    protected BooleanQuery createQuery(String groupId, String artifactId, String packaging, String classifier) {
-        BooleanQuery bq = new BooleanQuery();
-        if (StringUtils.isNotBlank(groupId)) {
-            bq.add(indexer.constructQuery(MAVEN.GROUP_ID, new SourcedSearchExpression(groupId)), Occur.MUST);
-        }
-        if (StringUtils.isNotBlank(artifactId)) {
-            bq.add(indexer.constructQuery(MAVEN.ARTIFACT_ID, new SourcedSearchExpression(artifactId)), Occur.MUST);
-        }
-        if (StringUtils.isNotBlank(packaging)) {
-            bq.add(indexer.constructQuery(MAVEN.PACKAGING, new SourcedSearchExpression(packaging)), Occur.MUST);
-        }
-        if (StringUtils.isNotBlank(classifier)) {
-            bq.add(indexer.constructQuery(MAVEN.CLASSIFIER, new SourcedSearchExpression(classifier)), Occur.MUST);
-        }
-        return bq;
     }
 
     /**
@@ -309,6 +292,75 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             answer.add(dto);
         }
         return answer;
+    }
+
+    @Override
+    public List<String> groupIdComplete(String groupId, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(endWithStarIfNotBlank(groupId), null, null, packaging, classifier);
+        Set<String> set = new TreeSet<String>();
+        FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
+        for (ArtifactInfo ai : response.getResults()) {
+            set.add(ai.groupId);
+        }
+        return new ArrayList<String>(set);
+    }
+
+
+    @Override
+    public List<String> artifactIdComplete(String groupId, String artifactId, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, endWithStarIfNotBlank(artifactId), null, packaging, classifier);
+        Set<String> set = new TreeSet<String>();
+        FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
+        for (ArtifactInfo ai : response.getResults()) {
+            set.add(ai.artifactId);
+        }
+        return new ArrayList<String>(set);
+    }
+
+    @Override
+    public List<String> versionComplete(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, endWithStarIfNotBlank(version), packaging, classifier);
+        Set<String> set = new TreeSet<String>();
+        FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
+        for (ArtifactInfo ai : response.getResults()) {
+            set.add(ai.version);
+        }
+        return new ArrayList<String>(set);
+    }
+
+    protected BooleanQuery createQuery(String groupId, String artifactId, String version, String packaging, String classifier) {
+        BooleanQuery bq = new BooleanQuery();
+        if (StringUtils.isNotBlank(groupId)) {
+            bq.add(indexer.constructQuery(MAVEN.GROUP_ID, new SourcedSearchExpression(groupId)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(artifactId)) {
+            bq.add(indexer.constructQuery(MAVEN.ARTIFACT_ID, new SourcedSearchExpression(artifactId)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(version)) {
+            bq.add(indexer.constructQuery(MAVEN.VERSION, new SourcedSearchExpression(version)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(packaging)) {
+            bq.add(indexer.constructQuery(MAVEN.PACKAGING, new SourcedSearchExpression(packaging)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(classifier)) {
+            bq.add(indexer.constructQuery(MAVEN.CLASSIFIER, new SourcedSearchExpression(classifier)), Occur.MUST);
+        }
+        return bq;
+    }
+
+    /**
+     * If the string is not blank then return a trimmed version of it ending in *
+     */
+    protected String endWithStarIfNotBlank(String text) {
+        if (StringUtils.isNotBlank(text))
+            if (!text.endsWith("*")) {
+                return StringUtils.trim(text) + "*";
+            } else {
+                return StringUtils.trim(text);
+            }
+        else {
+            return text;
+        }
     }
 
     protected ArtifactDTO createArtifactDTO(ArtifactInfo ai) {
