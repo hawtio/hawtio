@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * A facade over the Maven indexer code so its easy to query repositories
@@ -75,6 +76,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     };
     private File cacheDirectory = new File("mavenIndexer");
     private Map<String, IndexingContext> indexContexts = new HashMap<String, IndexingContext>();
+    private CountDownLatch startedSignal = new CountDownLatch(1);
 
     public MavenIndexerFacade() throws PlexusContainerException, ComponentLookupException {
         this.plexusContainer = new DefaultPlexusContainer();
@@ -129,38 +131,65 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
 
         if (updateIndexOnStartup) {
-            LOG.info("Updating the maven indices. This may take a while, please be patient...");
-            Set<Map.Entry<String, IndexingContext>> entries = indexContexts.entrySet();
-            for (Map.Entry<String, IndexingContext> entry : entries) {
-                final String contextId = entry.getKey();
-                IndexingContext context = entry.getValue();
-                Date contextTime = context.getTimestamp();
-
-                TransferListener listener = new AbstractTransferListener() {
-                    public void transferStarted(TransferEvent transferEvent) {
-                        LOG.info(contextId + ": Downloading " + transferEvent.getResource().getName());
+            Thread thread = new Thread("MavenIndexer reindex thread") {
+                @Override
+                public void run() {
+                    try {
+                        downloadOrUpdateIndices();
+                    } catch (IOException e) {
+                        LOG.error("Failed to update the maven repository indices: " + e, e);
                     }
+                    startedSignal.countDown();
+                }
+            };
+            thread.run();
+        }
+    }
 
-                    public void transferProgress(TransferEvent transferEvent, byte[] buffer, int length) {
-                    }
+    public void startAndWait() throws MalformedObjectNameException, ComponentLookupException, IOException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException {
+        start();
+        while (startedSignal.getCount() > 0) {
+            try {
+                startedSignal.await();
+            } catch (InterruptedException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+        }
+        LOG.info("MavenIndexer has finished updating its indices, its started");
+    }
 
-                    public void transferCompleted(TransferEvent transferEvent) {
-                        LOG.info(contextId + ": Download complete");
-                    }
-                };
-                ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
+    public void downloadOrUpdateIndices() throws IOException {
+        LOG.info("Updating the maven indices. This may take a while, please be patient...");
+        Set<Map.Entry<String, IndexingContext>> entries = indexContexts.entrySet();
+        for (Map.Entry<String, IndexingContext> entry : entries) {
+            final String contextId = entry.getKey();
+            IndexingContext context = entry.getValue();
+            Date contextTime = context.getTimestamp();
 
-                IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
-                IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
-                if (updateResult.isFullUpdate()) {
-                    LOG.info(contextId + ": Full index update completed on index");
+            TransferListener listener = new AbstractTransferListener() {
+                public void transferStarted(TransferEvent transferEvent) {
+                    LOG.info(contextId + ": Downloading " + transferEvent.getResource().getName());
+                }
+
+                public void transferProgress(TransferEvent transferEvent, byte[] buffer, int length) {
+                }
+
+                public void transferCompleted(TransferEvent transferEvent) {
+                    LOG.info(contextId + ": Download complete");
+                }
+            };
+            ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
+
+            IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
+            IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
+            if (updateResult.isFullUpdate()) {
+                LOG.info(contextId + ": Full index update completed on index");
+            } else {
+                Date timestamp = updateResult.getTimestamp();
+                if (timestamp != null && timestamp.equals(contextTime)) {
+                    LOG.info(contextId + ": No index update needed, index is up to date!");
                 } else {
-                    Date timestamp = updateResult.getTimestamp();
-                    if (timestamp != null && timestamp.equals(contextTime)) {
-                        LOG.info(contextId + ": No index update needed, index is up to date!");
-                    } else {
-                        LOG.info(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
-                    }
+                    LOG.info(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
                 }
             }
         }
