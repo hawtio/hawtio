@@ -2,13 +2,17 @@ module Insight {
 
     export function AllController($scope, jolokia, localStorage) {
 
+        $scope.result = null;
         $scope.containers = [];
         $scope.profiles = [ allContainers ];
         $scope.versions = [];
         $scope.profile = allContainers;
 
+        $scope.time_options = ['1m','5m','15m','1h','6h','12h'];
         $scope.timespan = '1m';
         $scope.updateRate = parseInt(localStorage['updateRate']);
+
+        $scope.chartsMeta = [ ];
 
         Core.register(jolokia, $scope, {
             type: 'exec', mbean: managerMBean,
@@ -54,6 +58,7 @@ module Insight {
                                 roots[name] = true;
                                 children.push( {
                                     title: name,
+                                    expand: true,
                                     children: getChildren(
                                                 data[index][mapping],
                                                 name, "",
@@ -65,35 +70,69 @@ module Insight {
                 }
             }
             $("#insighttree").dynatree({
-                title: "Metrics",
-                onActivate: function (node) {
-                    var data = node.data;
-                    buildCharts(data["field"], data["type"], data["hasHost"]);
-                },
+                checkbox: true,
+                selectMode: 2,
+                onSelect: onSelect,
+                onClick: onClick,
+                onKeydown: onKeydown,
                 children: children
             });
         } });
 
-        function buildCharts(field, type, hasHost) {
-            var chartsDef = [ ];
-            if (hasHost) {
-                $scope.containers.forEach(function(container) {
-                    if ($scope.profile === allContainers || $.inArray($scope.profile.id, container.profileIds) >= 0) {
-                        chartsDef.push( {
-                            name: container.name,
-                            type: "sta-" + type,
-                            field: field,
-                            query: "host: \"" + container.name + "\""
-                        });
-                    }
-                });
-            } else {
-                chartsDef.push({
-                    name: field,
-                    type: "sta-" + type,
-                    field: field
-                });
+        $scope.set_timespan = function(t) {
+            $scope.timespan = t;
+            rebuildCharts();
+        }
+
+        $scope.profile_changed = function() {
+            rebuildCharts();
+        }
+
+        function onSelect(flag, node) {
+            var selNodes = node.tree.getSelectedNodes();
+            $scope.chartsMeta = selNodes.map(function(node) {
+                var data = node.data;
+                return { name: data["field"], field: data["field"], type: "sta-" + data["type"], host: data["hasHost"] }
+            });
+            rebuildCharts();
+        }
+
+        function onClick(node, event) {
+            // We should not toggle, if target was "checkbox", because this
+            // would result in double-toggle (i.e. no toggle)
+            if( node.getEventTargetType(event) === "title" )
+                node.toggleSelect();
+        }
+
+        function onKeydown(node, event) {
+            if( event.which === 32 ) {
+                node.toggleSelect();
+                return false;
             }
+        }
+
+        function rebuildCharts() {
+            var chartsDef = [ ];
+            $scope.chartsMeta.forEach(function(meta) {
+                if (meta.host) {
+                    $scope.containers.forEach(function(container) {
+                        if ($scope.profile === allContainers || $.inArray($scope.profile.id, container.profileIds) >= 0) {
+                            chartsDef.push({
+                                name: meta.name + " [" + container.name + "]",
+                                type: meta.type,
+                                field: meta.field,
+                                query: "host: \"" + container.name + "\""
+                            });
+                        }
+                    });
+                } else {
+                    chartsDef.push( {
+                        name: meta.name,
+                        type: meta.type,
+                        field: meta.field,
+                    });
+                }
+            });
             createCharts($scope, chartsDef, "#charts", jolokia);
         }
 

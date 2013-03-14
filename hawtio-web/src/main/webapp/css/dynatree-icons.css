@@ -25,6 +25,40 @@ span.dynatree-drag-helper-img,
     vertical-align: middle;
 }
 
+.dynatree-checkbox {
+    color: #888888
+}
+
+/* Dynatree checkbox */
+span.dynatree-checkbox:before
+{
+    margin-top: 1px;
+    background-position: 0 0;
+    cursor: pointer;
+    content: "";
+}
+
+span.dynatree-checkbox:before:hover
+{
+    background-position: 0 0;
+    content: "";
+}
+
+.dynatree-selected span.dynatree-checkbox:before
+{
+    margin-top: 1px;
+    background-position: 0 0;
+    cursor: pointer;
+    content: "\f00c";
+}
+
+.dynatree-selected span.dynatree-checkbox:before:hover
+{
+    background-position: 0 0;
+    content: "\f00c";
+}
+
+
 .dynatree-expander {
     color: #888888
 }

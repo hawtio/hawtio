@@ -17,10 +17,9 @@ module Insight {
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
           content: "Insight",
-          title: "Insight plugin loaded dynamically",
-          isValid: function() { return true; },
-          href: function() { return "#/insight/all"; },
-          isActive: function() { return workspace.isLinkActive("insight"); }
+          title: "View Insight metrics",
+          isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'}),
+          href: () => "#/insight/all"
         });
 
     });
