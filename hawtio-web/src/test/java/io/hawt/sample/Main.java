@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import io.hawt.maven.indexer.MavenIndexerFacade;
 import io.hawt.sample.infinispan.InfinispanDemo;
 import org.apache.camel.CamelException;
 import org.apache.camel.util.CamelContextHelper;
@@ -136,6 +137,15 @@ public class Main {
                 LOG.warn("Failed to initialise AetherFacade due to : " + e, e);
             } catch (Throwable e) {
                 LOG.warn("Could not load the AetherFacade; only available in snapshots for now: " + e, e);
+            }
+
+            // lets create a maven indexer
+            try {
+                MavenIndexerFacade mavenIndexer = new MavenIndexerFacade();
+                mavenIndexer.setCacheDirectory(new File("target/mavenIndexer"));
+                mavenIndexer.start();
+            } catch (Throwable e) {
+                LOG.warn("Could not create MavenIndexerFacade: " + e, e);
             }
 
             // lets connect to fabric

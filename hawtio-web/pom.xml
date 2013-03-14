@@ -41,6 +41,13 @@
 
     <!-- testing -->
     <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-maven-indexer</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit-version}</version>
