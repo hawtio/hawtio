@@ -4,6 +4,7 @@ module Insight {
     var insightPlugin = angular.module('insight', ['hawtioCore'])
       .config(function($routeProvider) {
         $routeProvider.
+          when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).
           when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).
           when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' });
     });
@@ -18,7 +19,7 @@ module Insight {
           content: "Insight",
           title: "Insight plugin loaded dynamically",
           isValid: function() { return true; },
-          href: function() { return "#/insight/jvms"; },
+          href: function() { return "#/insight/all"; },
           isActive: function() { return workspace.isLinkActive("insight"); }
         });
 

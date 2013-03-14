@@ -1,4 +1,7 @@
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+    <li ng-class='{active : isActive("#/insight/all")}'>
+        <a ng-href="#/insight/all{{hash}}">All</a>
+    </li>
     <li ng-class='{active : isActive("#/insight/jvms")}'>
         <a ng-href="#/insight/jvms{{hash}}">JVMs</a>
     </li>
