@@ -1,6 +1,6 @@
 module Log {
   var pluginName = 'log';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/logs', {templateUrl: 'app/log/html/logs.html'})
