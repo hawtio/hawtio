@@ -86,13 +86,6 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     }
 
     public void start() throws ComponentLookupException, IOException, MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
-        if (objectName == null) {
-            objectName = new ObjectName("io.hawt.maven:type=Indexer");
-        }
-        if (mBeanServer == null) {
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        }
-        mBeanServer.registerMBean(this, objectName);
 
         // Creators we want to use (search for fields it defines)
         if (indexers == null) {
@@ -139,11 +132,28 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
                     } catch (IOException e) {
                         LOG.error("Failed to update the maven repository indices: " + e, e);
                     }
+                    try {
+                        registerMBean();
+                    } catch (Exception e) {
+                        LOG.error("Failed to register MBean: " + e, e);
+                    }
                     startedSignal.countDown();
                 }
             };
             thread.run();
+        } else {
+            registerMBean();
         }
+    }
+
+    protected void registerMBean() throws MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+        if (objectName == null) {
+            objectName = new ObjectName("io.hawt.maven:type=Indexer");
+        }
+        if (mBeanServer == null) {
+            mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        }
+        mBeanServer.registerMBean(this, objectName);
     }
 
     public void startAndWait() throws MalformedObjectNameException, ComponentLookupException, IOException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException {
