@@ -41,9 +41,9 @@
       </div>
       <div class="expandable-body well">
 
-        <form class="form-horizontal" ng-show="operationResult!=''">
+        <form class="form-horizontal no-bottom-margin" ng-show="operationResult!=''">
           <fieldset>
-            <div class="alert alert-{{operationStatus}}">
+            <div class="alert alert-{{operationStatus}} no-bottom-margin">
               <div class="control-group">
 
                 <div ng-switch on="typeOf(operationResult)">
@@ -66,7 +66,7 @@
           </fieldset>
         </form>
 
-        <form id="opForm" class="form-horizontal" ng-show="operationResult==''">
+        <form id="opForm" class="form-horizontal no-bottom-margin" ng-show="operationResult==''">
           <fieldset>
             <legend>{{desc}}</legend>
             <div class="control-group" ng-repeat="arg in args">
