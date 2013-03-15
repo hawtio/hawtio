@@ -3,7 +3,7 @@
 
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-osgi/${project.version}/war</bundle>
+    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
   </feature>
 
   <feature name="hawtio-plugin-registry" version="${project.version}" resolver="(obr)">
