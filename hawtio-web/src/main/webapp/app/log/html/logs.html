@@ -35,19 +35,14 @@
           </button>
         </div>
 
-      <!-- </div> -->
-
     </div>
   </div>
 
   <div class="log-main row-fluid" ng-show="logs.length > 0">
-    <!--
-        <div class="gridStyle" ng-grid="gridOptions"></div>
-    -->
     <div class="gridStyle" hawtio-datatable="gridOptions"></div>
   </div>
-  <div class="row-fluid" ng-show="logs.length == 0">
-    There are no logs matching your required criteria
+  <div class="no-log row-fluid" ng-show="logs.length == 0">
+    Loading...
   </div>
 
   <script type="text/ng-template" id="logDetailTemplate">
@@ -58,7 +53,7 @@
       <div title="Headers" class="title">
         <i class="expandable-indicator"></i> Stack Trace
       </div>
-      <div class="expandable-body well">
+      <div class="expandable-body">
         <table class="table table-condensed table-striped">
 <!--
           <thead>
