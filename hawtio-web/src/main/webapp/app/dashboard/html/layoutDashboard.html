@@ -4,7 +4,7 @@
       <editable-property class="inline-block" on-save="onTabRenamed(dash)" property="title" ng-model="dash"></editable-property>
     </a>
   </li>
-  <li class="pull-right">
+  <li class="pull-right" ng-class='{active : isEditing()}'>
     <a ng-href="#/dashboard/edit{{hash}}" title="Edits the dashboards; letting you add, duplicate or remove dashboards"
        data-placement="bottom">
       <i class="icon-edit"></i> Edit</a></li>

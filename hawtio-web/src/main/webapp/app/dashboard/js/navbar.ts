@@ -11,6 +11,10 @@ module Dashboard {
       return workspace.isLinkActive("#/dashboard/id/" + dash.id);
     };
 
+    $scope.isEditing = () => {
+      return workspace.isLinkActive("#/dashboard/edit");
+    }
+
     $scope.onTabRenamed = function(dash) {
       dashboardRepository.putDashboards([dash], "Renamed dashboard", Dashboard.onOperationComplete);
     };
