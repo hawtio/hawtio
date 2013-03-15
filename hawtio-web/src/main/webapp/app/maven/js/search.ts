@@ -4,6 +4,7 @@ module Maven {
     $scope.artifacts = [];
     $scope.selected = [];
     $scope.searchText = "";
+    $scope.search = "";
 
     var columnDefs:any[] = [
       {
@@ -12,15 +13,12 @@ module Maven {
       },
       {
         field: 'artifactId',
-        displayName: 'Artifact'
+        displayName: 'Artifact',
+        cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}">{{row.entity.artifactId}}</div>'
       },
       {
         field: 'version',
         displayName: 'Version'
-      },
-      {
-        field: 'name',
-        displayName: 'Name'
       }
     ];
 
@@ -30,12 +28,12 @@ module Maven {
       selectedItems: $scope.selected,
       selectWithCheckboxOnly: true,
       columnDefs: columnDefs,
-      rowDetailTemplateId: "artifactDetailTemplate"
-/*
+      rowDetailTemplateId: "artifactDetailTemplate",
+
       filterOptions: {
         filterText: 'search'
       }
-*/
+
     };
 
     $scope.doSearch = () => {

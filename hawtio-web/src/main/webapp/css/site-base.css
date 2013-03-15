@@ -288,7 +288,6 @@ li.attr-column {
 
 
 .editor-autoresize .CodeMirror {
-  border: 1px solid #a4a4a4;
   height: auto;
 }
 
