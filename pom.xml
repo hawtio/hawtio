@@ -215,6 +215,7 @@
   <modules>
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
+    <module>hawtio-osgi-jmx</module>
     <module>hawtio-web</module>
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
