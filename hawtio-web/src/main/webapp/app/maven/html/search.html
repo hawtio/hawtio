@@ -19,13 +19,13 @@
 
   <script type="text/ng-template" id="artifactDetailTemplate">
     <div title="Name" class="title">
-      {{row.name}}
+      Name: {{row.name}}
     </div>
     <div class="expandable opened">
       <div title="Description" class="title">
         <i class="expandable-indicator"></i> pom.xml
       </div>
-      <div class="expandable-body well" ng-controller="Maven.PomXmlController">
+      <div class="expandable-body well editor-autoresize" ng-controller="Maven.PomXmlController">
         <textarea ui-codemirror="{ mode: {name: 'xml'} }" ng-model="mavenPomXml"></textarea>
       </div>
     </div>
@@ -34,7 +34,7 @@
         <i class="expandable-indicator"></i> Description
       </div>
       <div class="expandable-body well">
-        <p>{{row.description}}</p>
+        {{row.description}}
       </div>
     </div>
   </script>

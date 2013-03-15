@@ -186,7 +186,6 @@ i.expandable-indicator {
 
 .expandable.opened .expandable-body {
   display: inline-block;
-  padding-bottom: 1px;
   margin-bottom: 3px;
 }
 
@@ -291,6 +290,15 @@ li.attr-column {
 .editor-autoresize .CodeMirror {
   border: 1px solid #a4a4a4;
   height: auto;
+}
+
+.well.editor-autoresize {
+  padding: 0px;
+}
+
+.well.editor-autoresize .CodeMirror {
+  margin-bottom: 0px;
+  border: none;
 }
 
 .editor-autoresize .CodeMirror .CodeMirror-scroll {
