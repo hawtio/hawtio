@@ -88,7 +88,7 @@
           </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
-            <manifestFile>${basedir}/../hawtio-web/target/osgi/META-INF/MANIFEST.MF</manifestFile>
+            <manifestFile>${basedir}/../hawtio-web/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
           <webResources>
             <resource>
