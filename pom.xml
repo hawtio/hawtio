@@ -218,7 +218,6 @@
     <module>hawtio-web</module>
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
-    <module>hawtio-osgi</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-registry</module>
     <module>hawtio-plugin-example</module>
