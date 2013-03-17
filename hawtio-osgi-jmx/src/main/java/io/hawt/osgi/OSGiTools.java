@@ -45,6 +45,8 @@ public class OSGiTools implements OSGiToolsMXBean {
             ClassLoader classLoader = cls.getClassLoader();
             if (classLoader instanceof BundleReference)
                 return ((BundleReference) classLoader).getBundle().getBundleId();
+            else
+                return 0;
         } catch (ClassNotFoundException e) {
         }
 

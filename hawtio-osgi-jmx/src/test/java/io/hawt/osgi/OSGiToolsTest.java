@@ -23,11 +23,13 @@ public class OSGiToolsTest {
         Mockito.when(b1.getBundleId()).thenReturn(1L);
         TestClassLoader tcl = new TestClassLoader(b1, dir.toURI().toURL());
         Class barClass = tcl.loadClass("org.foo.Bar");
+        Class stringClass = String.class;
 
         Bundle b2 = Mockito.mock(Bundle.class);
         Mockito.when(b2.getBundleId()).thenReturn(2L);
         Mockito.when(b2.loadClass("org.foo.Bar")).thenReturn(barClass);
         Mockito.when(b2.loadClass("org.foo.Bazzz")).thenThrow(ClassNotFoundException.class);
+        Mockito.when(b2.loadClass("java.lang.String")).thenReturn(stringClass);
 
         BundleContext bc = Mockito.mock(BundleContext.class);
         Mockito.when(bc.getBundle(1)).thenReturn(b1);
@@ -37,6 +39,7 @@ public class OSGiToolsTest {
 
         Assert.assertEquals(1, tools.getLoadClassOrigin(2, "org.foo.Bar"));
         Assert.assertEquals(-1, tools.getLoadClassOrigin(2, "org.foo.Bazzz"));
+        Assert.assertEquals(0, tools.getLoadClassOrigin(2, "java.lang.String"));
 
         try {
             tools.getLoadClassOrigin(5, "org.foo.Baz");
