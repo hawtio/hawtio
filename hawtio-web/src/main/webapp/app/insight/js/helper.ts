@@ -83,7 +83,7 @@ module Insight {
             var request = {
                             size: 0,
                             facets: {
-                                threads_count: {
+                                histo: {
                                     date_histogram: {
                                         value_field: chartDef.field,
                                         key_field: "timestamp",
@@ -99,12 +99,31 @@ module Insight {
                          arguments: [ 'POST', '/_all/' + chartDef.type + '/_search', JSON.stringify(request) ] };
             jolokia.request(jreq, { success: function(response) {
                                     var map = {};
-                                    var data = jQuery.parseJSON(response.value)["facets"]["threads_count"]["entries"];
+                                    var data = jQuery.parseJSON(response.value)["facets"]["histo"]["entries"];
                                     data.forEach( function(entry) {
                                         map[ entry.time ] = entry.max;
                                     });
+                                    var delta = 0;
+                                    if (chartDef.meta !== undefined) {
+                                        if (chartDef.meta['type'] === 'trends-up' || chartDef.meta['type'] === 'peak') {
+                                            delta = +1;
+                                        } else if (chartDef.meta['type'] === 'trends-down') {
+                                            delta = -1;
+                                        }
+                                    }
                                     while (start < stop) {
-                                        values.push( map[ start ]);
+                                        var v = 0;
+                                        if (delta !== 0) {
+                                            if (map[ start - step ] !== undefined) {
+                                                var d =  (map[ start ] - map[ start - step ]) * delta;
+                                                v = d > 0 ? d : 0;
+                                            }
+                                        } else {
+                                            if (map[ start ] !== undefined ) {
+                                                v = map[ start ];
+                                            }
+                                        }
+                                        values.push( v );
                                         start += step;
                                     }
                                     callback(null, values);

@@ -40,6 +40,8 @@ module Insight {
             }
         }
 
+        $scope.metrics = jQuery.parseJSON(jolokia.getAttribute("org.fusesource.insight:type=MetricsCollector", "Metrics"));
+
         var jreq = { type: 'exec',
                      mbean: 'org.elasticsearch:service=restjmx',
                      operation: 'exec',
@@ -92,7 +94,7 @@ module Insight {
             var selNodes = node.tree.getSelectedNodes();
             $scope.chartsMeta = selNodes.map(function(node) {
                 var data = node.data;
-                return { name: data["field"], field: data["field"], type: "sta-" + data["type"], host: data["hasHost"] }
+                return { name: data["field"], field: data["field"], type: data["type"], host: data["hasHost"] }
             });
             rebuildCharts();
         }
@@ -114,22 +116,25 @@ module Insight {
         function rebuildCharts() {
             var chartsDef = [ ];
             $scope.chartsMeta.forEach(function(meta) {
+                var metadata = $scope.metrics[meta.type] !== undefined ? $scope.metrics[meta.type][meta.field] : undefined;
                 if (meta.host) {
                     $scope.containers.forEach(function(container) {
                         if ($scope.profile === allContainers || $.inArray($scope.profile.id, container.profileIds) >= 0) {
                             chartsDef.push({
-                                name: meta.name + " [" + container.name + "]",
-                                type: meta.type,
+                                name: (metadata !== undefined ? metadata['description'] : meta.name) + " [" + container.name + "]",
+                                type: "sta-" + meta.type,
                                 field: meta.field,
-                                query: "host: \"" + container.name + "\""
+                                query: "host: \"" + container.name + "\"",
+                                meta: metadata
                             });
                         }
                     });
                 } else {
                     chartsDef.push( {
-                        name: meta.name,
-                        type: meta.type,
+                        name: metadata !== undefined ? metadata['description'] : meta.name,
+                        type: "sta-" + meta.type,
                         field: meta.field,
+                        meta: metadata
                     });
                 }
             });
