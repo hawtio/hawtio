@@ -55,7 +55,7 @@ module Jetty {
                 var obj = response.value;
                 if (obj) {
                     obj.mbean = response.request.mbean;
-                    obj.state = obj.running ? "started" : "stopped"
+                    obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
                     var mbean = obj.mbean;
                     if (mbean) {
                       var idx = $scope.mbeanIndex[mbean];
@@ -72,7 +72,7 @@ module Jetty {
 
             angular.forEach(response, function(value, key) {
                 var mbean = value;
-                jolokia.request( {type: "read", mbean: mbean, attribute: ["displayName", "contextPath", "running"]}, onSuccess(onAttributes));
+                jolokia.request( {type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
             });
             $scope.$apply();
         };
@@ -133,6 +133,7 @@ module Jetty {
             // support embedded jetty which may use morbay mbean names
             jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
             jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
+            jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
         }
 
         // grab server information once

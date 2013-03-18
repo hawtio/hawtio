@@ -54,6 +54,7 @@ module Jetty {
                 obj.mbean = response.request.mbean;
                 obj.scheme = "http";
                 obj.port = obj.port;
+                obj.running = obj['running'] !== undefined ? obj['running'] : true;
                 $scope.connectors.push(obj);
                 if (obj.confidentialPort) {
                   // create a clone of obj for https
@@ -72,7 +73,7 @@ module Jetty {
             // create structure for each response
             angular.forEach(response, function(value, key) {
               var mbean = value;
-              jolokia.request( {type: "read", mbean: mbean, attribute: ["confidentialPort", "confidentialScheme", "port", "running"]}, onSuccess(onAttributes));
+              jolokia.request( {type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
             });
           Core.$apply($scope);
         };
