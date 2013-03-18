@@ -806,3 +806,7 @@ div#main div ul.nav li a:hover {
 .prefs {
   margin-top: 1.5em;
 }
+
+.control i {
+  cursor: pointer;
+}
