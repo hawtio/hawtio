@@ -5,6 +5,18 @@ module Osgi {
 
         updateTableContents();
 
+      $scope.showValue = (key) => {
+        if (key === "Export-Package") {
+          return false;
+        }
+
+        if (key === "Import-Package") {
+          return false;
+        }
+
+        return true;
+      }
+
         function populateTable(response) {
             var values = response.value;
             $scope.bundles = values;
