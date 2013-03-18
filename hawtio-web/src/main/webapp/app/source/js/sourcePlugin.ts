@@ -3,7 +3,8 @@ module Source {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'wiki']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/source/view/:mavenCoords/:className/:page', {templateUrl: 'app/source/html/source.html'});
+                    when('/source/view/:mavenCoords/:className/:page', {templateUrl: 'app/source/html/source.html'}).
+                    when('/source/javadoc/:mavenCoords/:page', {templateUrl: 'app/source/html/javadoc.html'});
 
             // TODO this is a dirty hack until AngularJS supports catch-all / wildcard / regex paths!
             var numberOfPaths = 10;
@@ -14,6 +15,8 @@ module Source {
               }
               $routeProvider.
                       when('/source/view/:mavenCoords/:className/' + path, {templateUrl: 'app/source/html/source.html'});
+              $routeProvider.
+                      when('/source/javadoc/:mavenCoords/' + path, {templateUrl: 'app/source/html/javadoc.html'});
             }
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {

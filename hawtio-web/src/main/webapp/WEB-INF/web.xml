@@ -46,6 +46,18 @@
   </servlet-mapping>
 -->
 
+
+  <servlet>
+    <servlet-name>maven-source</servlet-name>
+    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>maven-source</servlet-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </servlet-mapping>
+
+
   <listener>
     <listener-class>io.hawt.git.GitContextListener</listener-class>
   </listener>

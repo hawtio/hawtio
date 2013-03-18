@@ -6,6 +6,16 @@ module Maven {
     $scope.searchText = "";
     $scope.search = "";
 
+    $scope.javadocLink = (row) => {
+      var group = row.groupId;
+      var artifact = row.artifactId;
+      var version = row.version;
+      if (group && artifact && version) {
+        return "javadoc/" + group + ":" + artifact + ":" + version + "/";
+      }
+      return "";
+    };
+
     var columnDefs:any[] = [
       {
         field: 'groupId',

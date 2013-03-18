@@ -23,6 +23,10 @@
   <script type="text/ng-template" id="artifactDetailTemplate">
     <div title="Name" class="title">
       Name: {{row.name}}
+      <p>
+        {{row.description}}
+      </p>
+      <a href="{{javadocLink(row)}}">JavaDoc</a>
     </div>
     <div class="expandable opened">
       <div title="Description" class="title">
@@ -37,7 +41,7 @@
         <i class="expandable-indicator"></i> Description
       </div>
       <div class="expandable-body well">
-        {{row.description}}
+        
       </div>
     </div>
   </script>

@@ -45,8 +45,6 @@ module Source {
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
-    // TODO how to set the line number easily?
-
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
