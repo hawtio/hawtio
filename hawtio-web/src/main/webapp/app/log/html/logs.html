@@ -46,30 +46,19 @@
   </div>
 
   <script type="text/ng-template" id="logDetailTemplate">
-    <div title="Headers" class="title">
+    <div class="title">
       {{row.message}}
     </div>
-    <div class="expandable opened" ng-hide="!row.exception">
-      <div title="Headers" class="title">
-        <i class="expandable-indicator"></i> Stack Trace
-      </div>
-      <div class="expandable-body">
-        <table class="table table-condensed table-striped">
-<!--
-          <thead>
-          <tr>
-            <th>Stack</th>
-          </tr>
-          </thead>
--->
-          <tbody>
-          <tr ng-repeat="line in row.exception">
-            <td ng-bind-html-unsafe="formatException(line)"></td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+
+    <dl ng-hide="!row.exception">
+      <dt>Stack Trace:</dt>
+      <dd>
+        <ul ng-repeat="line in row.exception">
+          <li ng-bind-html-unsafe="formatException(line)"></li>
+        </ul>
+      </dd>
+    </dl>
+
   </script>
 
 </div>

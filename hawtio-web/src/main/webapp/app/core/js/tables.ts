@@ -56,7 +56,8 @@ class TableWidget {
 
       var formatMessageDetails = (dataTable, parentRow) => {
         var oData = dataTable.fnGetData(parentRow);
-        var div = $('<div class="innerDetails span12">');
+        var div = $('<div>');
+        div.addClass('innerDetails');
         this.populateDetailDiv(oData, div);
         return div;
       };
@@ -185,14 +186,23 @@ class TableWidget {
           element.removeClass('icon-plus');
           element.addClass('icon-minus');
           var dataDiv = formatMessageDetails(dataTable, parentRow);
-          var detailsRow = dataTable.fnOpen(parentRow, dataDiv, 'details');
-          $('div.innerDetails', detailsRow).slideDown();
-          openMessages.push(parentRow);
+          var detailsRow = $(dataTable.fnOpen(parentRow, dataDiv, 'details'));
+          detailsRow.css("padding", "0");
+
+          setTimeout(function() {
+            detailsRow.find(".innerDetails").slideDown(400, function() {
+              $(parentRow).addClass('opened');
+              openMessages.push(parentRow);
+            });
+          }, 20);
         } else {
-          element.removeClass('icon-minus');
-          element.addClass('icon-plus');
-          dataTable.fnClose(parentRow);
-          openMessages.splice(i, 1);
+          $(parentRow.nextSibling).find(".innerDetails").slideUp(400, function() {
+            $(parentRow).removeClass('opened');
+            element.removeClass('icon-minus');
+            element.addClass('icon-plus');
+            dataTable.fnClose(parentRow);
+            openMessages.splice(i, 1);
+          });
         }
         // lets let angular render any new detail templates
         Core.$apply($scope);

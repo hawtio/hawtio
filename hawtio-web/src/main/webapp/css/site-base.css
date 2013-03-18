@@ -155,11 +155,6 @@ td {
   padding-right: 20px;
 }
 
-/** Table details view */
-div.innerDetails {
-  display: none;
-}
-
 .expandable {
   padding: 3px;
 } 
@@ -809,4 +804,34 @@ div#main div ul.nav li a:hover {
 
 .control i {
   cursor: pointer;
+}
+
+td.details {
+  padding: 0px;
+  border: none;
+  margin: 0px;
+  height: 0px;
+}
+
+.innerDetails {
+  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.1) inset;
+  padding: 5px;
+  border: 1px solid #d4d4d4;
+  white-space: normal;
+  display: none;
+  background: #ffffff;
+}
+
+table.dataTable {
+  table-layout: fixed;
+}
+
+table.dataTable tbody tr td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.odd {
+  background-color: #f9f9f9;
 }

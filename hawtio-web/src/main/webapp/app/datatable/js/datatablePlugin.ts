@@ -108,9 +108,11 @@ module DataTable {
                     var rootElement = $(element);
                     var tableElement = rootElement.children("table");
                     if (!tableElement.length) {
-                      $("<table class='table table-striped table-bordered table-condensed'></table>").appendTo(rootElement);
+                      $("<table class='table table-bordered table-condensed'></table>").appendTo(rootElement);
                       tableElement = rootElement.children("table");
                     }
+                    tableElement.removeClass('table-striped');
+                    tableElement.addClass('dataTable');
                     var trElement = Core.getOrCreateElements(tableElement, ["thead", "tr"]);
 
                     destroyChildScopes();
@@ -150,6 +152,7 @@ module DataTable {
                       widget.dataTableConfig.bAutoWidth = false;
                     }
 
+                    /*
                     // lets avoid word wrap
                     widget.dataTableConfig["fnCreatedRow"] = function( nRow, aData, iDataIndex ) {
                       var cells = $(nRow).children("td");
@@ -157,6 +160,7 @@ module DataTable {
                       cells.css("white-space", "nowrap");
                       cells.css("text-overflow", "ellipsis");
                     };
+                    */
 
                     var filterText = null;
                     var filterOptions = gridOptions.filterOptions;
