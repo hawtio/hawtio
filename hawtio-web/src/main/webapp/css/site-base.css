@@ -171,6 +171,11 @@ i.expandable-indicator {
   color: #666;
 }
 
+.expandable-body form fieldset legend {
+  font-size: inherit;
+  margin-bottom: 0px;
+}
+
 .expandable.opened i.expandable-indicator:before {
   content: "\f078";
 }

@@ -166,14 +166,25 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
               var button = expandable.find('.cancel');
 
               button.bind('click', function () {
-                expandable.addClass('closed');
-                expandable.removeClass('opened');
+                expandable.find('.expandable-body').slideUp(400, function() {
+                  expandable.addClass('closed');
+                  expandable.removeClass('opened');
+                });
                 return false;
               });
 
               title.bind('click', function () {
-                expandable.toggleClass('opened');
-                expandable.toggleClass('closed');
+                if (expandable.hasClass('opened')) {
+                  expandable.find('.expandable-body').slideUp(400, function() {
+                    expandable.toggleClass('opened');
+                    expandable.toggleClass('closed');
+                  });
+                } else {
+                  expandable.find('.expandable-body').slideDown(400, function() {
+                    expandable.toggleClass('opened');
+                    expandable.toggleClass('closed');
+                  });
+                }
                 return false;
               });
             }
