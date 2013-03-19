@@ -37,7 +37,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
                   when('/help', {
                     redirectTo: '/help/overview'
                   }).
-                  when('/help/:tabName', {templateUrl: 'app/core/html/help.html'}).
+                  when('/help/:topic/', {templateUrl: 'app/core/html/help.html'}).
+                  when('/help/:topic/:subtopic', {templateUrl: 'app/core/html/help.html'}).
 
                   otherwise({redirectTo: '/help/overview'});
         }).
@@ -69,6 +70,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           return {};
         }).
 
+        factory('helpRegistry', function($rootScope) {
+          return new Core.HelpRegistry($rootScope);
+        }).
+
         factory('jolokia',($location:ng.ILocationService, localStorage) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
@@ -89,7 +94,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
 
         filter('humanize',() => humanizeValue).
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull) => {
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry) => {
 
           $.support.cors = true;
 
@@ -160,6 +165,29 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           viewRegistry['notree'] = layoutFull;
           viewRegistry['help'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
+
+          var plugins = hawtioPluginLoader.getModules();
+
+          helpRegistry.addUserDoc('overview', 'app/core/doc/overview.md');
+
+          plugins.forEach(function(plugin) {
+            angular.forEach(helpRegistry.docTypes, (value, key) => {
+              var target = 'app/' + plugin + '/doc/' + value;
+
+              // avoid trying to discover these if plugins register them
+              if (!angular.isDefined(helpRegistry['plugin'])
+               || !angular.isDefined(helpRegistry['plugin'][key])) {
+                $.ajax(target, {
+                  statusCode: {
+                    200: function() {
+                      helpRegistry.getOrCreateTopic(plugin)[key] = target
+                    }
+                  }
+                });
+              }
+            });
+
+          });
 
         }).
         directive('expandable',function () {

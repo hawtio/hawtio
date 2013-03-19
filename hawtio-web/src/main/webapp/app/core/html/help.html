@@ -1,3 +1,33 @@
+<div ng-controller="Core.HelpController">
+  <div class="row-fluid">
+    <div class="span3">
+      <ul class="nav help-sidebar">
+        <li ng-repeat="(topic, subtopic) in topics" ng-class="{active : isTopicActive(topic)}">
+          <a ng-href="#/help/{{topic}}">{{topic}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="span9">
+      <div class="row">
+        <ul class="nav nav-tabs connected">
+          <li ng-repeat="(subtopic, url) in topics[topic]" ng-class="{active : isSubTopicActive(subtopic)}">
+            <a ng-href="#/help/{{topic}}/{{subtopic}}">{{subtopic}}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div ng-hide="!html">
+          <div ng-bind-html-unsafe="html"></div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
+
+<!--
 <section ng-controller="Core.HelpController" xmlns="http://www.w3.org/1999/html">
   <div class="tabbable" ng-model='currentTab'>
     <div class="tab-pane well" title="Overview" value="overview">
@@ -60,3 +90,4 @@
   </div>
 </section>
 
+-->

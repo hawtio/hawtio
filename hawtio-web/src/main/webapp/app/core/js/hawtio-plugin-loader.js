@@ -20,7 +20,7 @@
   }
 
   hawtioPluginLoader.getModules = function() {
-    return hawtioPluginLoader.modules;
+    return hawtioPluginLoader.modules.clone();
   }
 
   hawtioPluginLoader.parseQueryString = function() {
