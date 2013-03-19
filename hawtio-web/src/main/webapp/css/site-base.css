@@ -849,7 +849,7 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
   background: inherit;
 }
 
-div#main div div div div div.logbar div.logbar-container {
+.wiki.logbar-container {
   margin-top: 2px;
   margin-bottom: 2px;
 }
