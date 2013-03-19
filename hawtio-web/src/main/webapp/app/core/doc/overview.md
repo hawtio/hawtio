@@ -1,4 +1,4 @@
-Welcome to hawtio
+Welcome to ![](img/logo.png)hawtio
 =================
 
 [hawtio](http://hawt.io "hawtio") helps you look inside any JVM via JMX and supports via plugins a number of different technologies including:
