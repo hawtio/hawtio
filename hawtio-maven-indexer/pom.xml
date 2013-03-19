@@ -21,11 +21,14 @@
       <artifactId>indexer-core</artifactId>
       <version>5.1.1</version>
     </dependency>
-    <!-- For ResourceFetcher implementation, if used -->
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
+<!--
       <version>2.2</version>
+-->
+      <!-- lets use the old crusty one to avoid clashes with pax-url-mvn and insight-log4j -->
+      <version>1.0-beta-7</version>
     </dependency>
 
     <!-- Runtime: Plexus IoC compat (is compile since in this example we "boot" plexus) -->
