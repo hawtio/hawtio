@@ -17,7 +17,6 @@
  */
 package io.hawt.maven.indexer;
 
-import org.apache.lucene.search.BooleanQuery;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +50,7 @@ public class MavenIndexFacadeTest {
 
     @Test
     public void testFindsCamelJars() throws Exception {
-        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, null, "jar", null);
+        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, null, "jar", null, null);
         if (verbose) {
             for (ArtifactDTO result : results) {
                 System.out.println("camel jar: " + result);

@@ -3,8 +3,11 @@ module Maven {
   export function SearchController($scope, $location, workspace:Workspace, jolokia) {
     $scope.artifacts = [];
     $scope.selected = [];
-    $scope.searchText = "";
+    $scope.form = {
+      searchText: ""
+    };
     $scope.search = "";
+    $scope.searchForm = 'app/maven/html/searchForm.html';
 
     $scope.javadocLink = (row) => {
       var group = row.groupId;
@@ -46,11 +49,33 @@ module Maven {
 
     };
 
+    $scope.hasAdvancedSearch = (form) => {
+      return form.searchGroup || form.searchArtifact ||
+                          form.searchVersion || form.searchPackaging ||
+                          form.searchClassifier || form.searchClassName;
+    };
+
     $scope.doSearch = () => {
       var mbean = Maven.getMavenIndexerMBean(workspace);
-      console.log("Searching for " + $scope.searchText);
-      if (mbean && $scope.searchText) {
-          jolokia.execute(mbean, "searchText", $scope.searchText, onSuccess(render));
+      var form = $scope.form;
+      console.log("Searching for " + form.searchText);
+      if (mbean) {
+          if (form.searchText) {
+            console.log("Search text is: " + form.searchText);
+            jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
+          } else if ($scope.hasAdvancedSearch(form)) {
+            console.log("Searching for " +
+                    form.searchGroup + "/" + form.searchArtifact + "/" +
+                    form.searchVersion + "/" + form.searchPackaging + "/" +
+                    form.searchClassifier + "/" + form.searchClassName);
+
+            jolokia.execute(mbean, "search",
+                    form.searchGroup || "", form.searchArtifact || "", form.searchVersion || "",
+                    form.searchPackaging || "", form.searchClassifier || "", form.searchClassName || "",
+                    onSuccess(render));
+          } else {
+            console.log("No search stuff!");
+          }
         } else {
           notification("error", "Could not find the Maven Indexer MBean!");
         }

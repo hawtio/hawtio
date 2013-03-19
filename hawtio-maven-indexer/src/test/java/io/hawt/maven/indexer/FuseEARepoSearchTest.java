@@ -49,7 +49,7 @@ public class FuseEARepoSearchTest {
 
     @Test
     public void testFindsCamelJars() throws Exception {
-        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, null, "jar", null);
+        List<ArtifactDTO> results = indexer.search("org.apache.camel", null, null, "jar", null, null);
         if (verbose) {
             for (ArtifactDTO result : results) {
                 System.out.println("camel jar: " + result);
@@ -62,7 +62,7 @@ public class FuseEARepoSearchTest {
 
     @Test
     public void testFindsCamelVersions() throws Exception {
-        List<ArtifactDTO> results = indexer.searchFlat("org.apache.camel", "camel-core", null, "jar", null);
+        List<ArtifactDTO> results = indexer.searchFlat("org.apache.camel", "camel-core", null, "jar", null, null);
         if (true) {
             for (ArtifactDTO result : results) {
                 System.out.println("camel-core jar version: " + result.getVersion());

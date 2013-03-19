@@ -270,14 +270,14 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     //-------------------------------------------------------------------------
 
     @Override
-    public List<ArtifactDTO> search(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier);
+    public List<ArtifactDTO> search(String groupId, String artifactId, String version, String packaging, String classifier, String className) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier, className);
         return searchGrouped(bq);
     }
 
     @Override
-    public List<ArtifactDTO> searchFlat(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier);
+    public List<ArtifactDTO> searchFlat(String groupId, String artifactId, String version, String packaging, String classifier, String className) throws IOException {
+        BooleanQuery bq = createQuery(groupId, artifactId, version, packaging, classifier, className);
         return searchFlat(bq);
     }
 
@@ -335,7 +335,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
 
     @Override
     public List<String> groupIdComplete(String groupId, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(endWithStarIfNotBlank(groupId), null, null, packaging, classifier);
+        BooleanQuery bq = createQuery(endWithStarIfNotBlank(groupId), null, null, packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
         for (ArtifactInfo ai : response.getResults()) {
@@ -347,7 +347,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
 
     @Override
     public List<String> artifactIdComplete(String groupId, String artifactId, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, endWithStarIfNotBlank(artifactId), null, packaging, classifier);
+        BooleanQuery bq = createQuery(groupId, endWithStarIfNotBlank(artifactId), null, packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
         for (ArtifactInfo ai : response.getResults()) {
@@ -358,7 +358,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
 
     @Override
     public List<String> versionComplete(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createQuery(groupId, artifactId, endWithStarIfNotBlank(version), packaging, classifier);
+        BooleanQuery bq = createQuery(groupId, artifactId, endWithStarIfNotBlank(version), packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
         for (ArtifactInfo ai : response.getResults()) {
@@ -367,7 +367,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         return new ArrayList<String>(set);
     }
 
-    protected BooleanQuery createQuery(String groupId, String artifactId, String version, String packaging, String classifier) {
+    protected BooleanQuery createQuery(String groupId, String artifactId, String version, String packaging, String classifier, String className) {
         BooleanQuery bq = new BooleanQuery();
         if (StringUtils.isNotBlank(groupId)) {
             bq.add(indexer.constructQuery(MAVEN.GROUP_ID, new SourcedSearchExpression(groupId)), Occur.MUST);
@@ -383,6 +383,9 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
         if (StringUtils.isNotBlank(classifier)) {
             bq.add(indexer.constructQuery(MAVEN.CLASSIFIER, new SourcedSearchExpression(classifier)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(className)) {
+            bq.add(indexer.constructQuery(MAVEN.CLASSNAMES, new UserInputSearchExpression(className)), Occur.MUST);
         }
         return bq;
     }

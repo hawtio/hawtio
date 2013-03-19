@@ -4,10 +4,10 @@
     <form>
       <div class="control-group" style="text-align: center;">
         <div class="controls inline-block" style="white-space: nowrap;">
-          <input class="search-query span10" type="text" id="mavenSearch" ng-model="searchText"
+          <input class="search-query span10" type="text" id="mavenSearch" ng-model="form.searchText"
                  placeholder="Search maven repositories...">
 
-          <button type="submit" class="btn" ng-disabled="!searchText" ng-click="doSearch()"
+          <button type="submit" class="btn" ng-disabled="!form.searchText" ng-click="doSearch()"
                   title="Search the maven repositories for artifacts containing this text" data-placement="bottom">
             <i class="icon-search"></i> Search
           </button>
@@ -16,25 +16,5 @@
     </form>
   </div>
 
-  <div ng-show="artifacts.length > 0" class="row-fluid">
-    <div class="gridStyle" hawtio-datatable="gridOptions"></div>
-  </div>
-
-  <script type="text/ng-template" id="artifactDetailTemplate">
-    <div title="Name" class="title">
-      Name: {{row.name}}
-      <p>
-        {{row.description}}
-      </p>
-      <a class="btn" target="javadoc" href="{{javadocLink(row)}}">JavaDoc</a>
-    </div>
-    <div class="expandable opened">
-      <div title="Description" class="title">
-        <i class="expandable-indicator"></i> pom.xml
-      </div>
-      <div class="expandable-body well editor-autoresize" ng-controller="Maven.PomXmlController">
-        <textarea ui-codemirror="{ mode: {name: 'xml'} }" ng-model="mavenPomXml"></textarea>
-      </div>
-    </div>
-  </script>
+  <ng-include src="'app/maven/html/searchResults.html'"></ng-include>
 </div>

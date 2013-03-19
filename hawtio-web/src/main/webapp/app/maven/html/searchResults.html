@@ -1,0 +1,23 @@
+<div ng-show="artifacts.length > 0" class="row-fluid">
+  <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+</div>
+
+<script type="text/ng-template" id="artifactDetailTemplate">
+  <div class="pull-right">
+  <a class="btn" target="javadoc" href="{{javadocLink(row)}}">JavaDoc</a>
+  </div>
+  <div title="Name" class="title">
+    <p>
+      {{row.name}}
+    </p>
+    <p>
+      {{row.description}}
+    </p>
+  </div>
+  <div class="expandable opened">
+    <div title="Description" class="title">
+      <i class="expandable-indicator"></i> pom.xml
+    </div>
+    <ng-include src="'app/maven/html/pom.html'"></ng-include>
+  </div>
+</script>

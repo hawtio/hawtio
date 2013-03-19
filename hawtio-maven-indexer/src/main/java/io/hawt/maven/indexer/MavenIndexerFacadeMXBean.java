@@ -17,6 +17,8 @@
  */
 package io.hawt.maven.indexer;
 
+import org.apache.lucene.search.BooleanQuery;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -27,12 +29,12 @@ public interface MavenIndexerFacadeMXBean {
     /**
      * Returns the latest version of each artifact that matches any of the given strings like groupId or groupId and artifactId etc
      */
-    List<ArtifactDTO> search(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException;
+    public List<ArtifactDTO> search(String groupId, String artifactId, String version, String packaging, String classifier, String className) throws IOException;
 
     /**
      * Returns all versions and artifacts that match the given query; such as to find all versions of a given groupId and artifactId.
      */
-    List<ArtifactDTO> searchFlat(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException;
+    List<ArtifactDTO> searchFlat(String groupId, String artifactId, String version, String packaging, String classifier, String className) throws IOException;
 
     /**
      * Returns the latest version of each artifact which contains the given class name text
