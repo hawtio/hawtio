@@ -26,7 +26,7 @@
       <p>
         {{row.description}}
       </p>
-      <a href="{{javadocLink(row)}}">JavaDoc</a>
+      <a class="btn" target="javadoc" href="{{javadocLink(row)}}">JavaDoc</a>
     </div>
     <div class="expandable opened">
       <div title="Description" class="title">
@@ -34,14 +34,6 @@
       </div>
       <div class="expandable-body well editor-autoresize" ng-controller="Maven.PomXmlController">
         <textarea ui-codemirror="{ mode: {name: 'xml'} }" ng-model="mavenPomXml"></textarea>
-      </div>
-    </div>
-    <div class="expandable opened" ng-hide="!row.description">
-      <div title="Description" class="title">
-        <i class="expandable-indicator"></i> Description
-      </div>
-      <div class="expandable-body well">
-        
       </div>
     </div>
   </script>
