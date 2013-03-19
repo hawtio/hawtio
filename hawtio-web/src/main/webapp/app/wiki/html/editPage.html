@@ -1,29 +1,26 @@
 <div ng-controller="Wiki.EditController">
-  <div ng-controller="Wiki.NavBarController">
-    <ul class="connected nav nav-tabs">
-      <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
-        <a ng-href="{{link.href}}{{hash}}">
-          {{link.name}}
-        </a>
-      </li>
+  <div class="logbar" ng-controller="Wiki.NavBarController">
+    <div class="logbar-container">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+          <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
+        </li>
 
-      <div id="alert-area" class="span6"></div>
-
-      <button id="cancelButton" ng-click="cancel()"
-              class="btn pull-right"
-              title="Discards any updates">
-        <i class="icon-cloud-download"></i> Cancel
-      </button>
-
-      <button id="saveButton" ng-disabled="!isValid()" ng-click="save()"
-              class="btn btn-info pull-right"
-              title="Saves the updated wiki page">
-        <i class="icon-cloud-download"></i> Save
-      </button>
-    </ul>
+        <li class="pull-right">
+          <a id="cancelButton" ng-click="cancel()"
+                  title="Discards any updates">
+            <i class="icon-remove"></i> Cancel</a>
+        </li>
+        <li class="pull-right">
+          <a id="saveButton" ng-disabled="!isValid()" ng-click="save()"
+                  title="Saves the updated wiki page">
+            <i class="icon-save"></i> Save</a>
+        </li>
+      </ul>
+    </div>
   </div>
 
-  <div class="form-horizontal">
+  <div class="wiki-fixed form-horizontal">
     <div class="control-group editor-autoresize">
       <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
     </div>

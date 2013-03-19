@@ -1,28 +1,28 @@
 <div ng-controller="Wiki.ViewController">
-  <div ng-controller="Wiki.NavBarController">
-    <ul class="connected nav nav-tabs">
-      <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
-        <a ng-href="{{link.href}}{{hash}}">
-          {{link.name}}
-        </a>
-      </li>
+  <div class="logbar" ng-controller="Wiki.NavBarController">
+    <div class="logbar-container">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+          <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
+        </li>
 
-      <li class="pull-right">
-        <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
-           data-placement="bottom">
-          <i class="icon-edit"></i> Edit</a></li>
-      <li class="pull-right">
-        <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
-           data-placement="bottom">
-          <i class="icon-comments-alt"></i> History</a></li>
-      <li class="pull-right">
-        <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
-           data-placement="bottom">
-          <i class="icon-plus"></i> Create</a></li>
-    </ul>
+        <li class="pull-right">
+          <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
+             data-placement="bottom">
+            <i class="icon-edit"></i> Edit</a></li>
+        <li class="pull-right">
+          <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
+             data-placement="bottom">
+            <i class="icon-comments-alt"></i> History</a></li>
+        <li class="pull-right">
+          <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
+             data-placement="bottom">
+            <i class="icon-plus"></i> Create</a></li>
+      </ul>
+    </div>
   </div>
 
-  <div class="form-horizontal">
+  <div class="wiki-fixed form-horizontal">
     <div ng-hide="!children">
       <div class="row-fluid">
         <div class="gridStyle" ng-grid="gridOptions"></div>
