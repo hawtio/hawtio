@@ -68,6 +68,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
         factory('viewRegistry',function () {
           return {};
         }).
+
         factory('jolokia',($location:ng.ILocationService, localStorage) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
@@ -76,12 +77,18 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           localStorage['url'] = jolokiaUrl;
           return jolokia;
         }).
+
+        factory('toastr', ($window) => {
+          return $window.toastr;
+        }).
         factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
           var answer = new Workspace(jolokia, $location, $compile, $templateCache, localStorage, $rootScope);
           answer.loadTree();
           return answer;
         }).
+
         filter('humanize',() => humanizeValue).
+
         run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull) => {
 
           $.support.cors = true;
