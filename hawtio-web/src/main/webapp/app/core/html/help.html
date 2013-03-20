@@ -3,7 +3,7 @@
     <div class="span2">
       <ul class="nav help-sidebar">
         <li ng-repeat="(topic, subtopic) in topics" ng-class="{active : isTopicActive(topic)}">
-          <a ng-href="#/help/{{topic}}">{{topic}}</a>
+          <a ng-href="#/help/{{topic}}">{{mapTopicName(topic)}}</a>
         </li>
       </ul>
     </div>
@@ -12,7 +12,7 @@
       <div class="row">
         <ul class="nav nav-tabs connected">
           <li ng-repeat="(subtopic, url) in topics[topic]" ng-class="{active : isSubTopicActive(subtopic)}">
-            <a ng-href="#/help/{{topic}}/{{subtopic}}">{{subtopic}}</a>
+            <a ng-href="#/help/{{topic}}/{{subtopic}}">{{mapSubTopicName(topic, subtopic)}}</a>
           </li>
         </ul>
       </div>

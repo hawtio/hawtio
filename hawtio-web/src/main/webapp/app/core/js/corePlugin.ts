@@ -166,28 +166,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           viewRegistry['help'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
 
-          var plugins = hawtioPluginLoader.getModules();
-
           helpRegistry.addUserDoc('overview', 'app/core/doc/overview.md');
-
-          plugins.forEach(function(plugin) {
-            angular.forEach(helpRegistry.docTypes, (value, key) => {
-              var target = 'app/' + plugin + '/doc/' + value;
-
-              // avoid trying to discover these if plugins register them
-              if (!angular.isDefined(helpRegistry['plugin'])
-               || !angular.isDefined(helpRegistry['plugin'][key])) {
-                $.ajax(target, {
-                  statusCode: {
-                    200: function() {
-                      helpRegistry.getOrCreateTopic(plugin)[key] = target
-                    }
-                  }
-                });
-              }
-            });
-
-          });
+          helpRegistry.addSubTopic('overview', 'faq', 'app/core/doc/faq.md');
+          helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
         }).
         directive('expandable',function () {
