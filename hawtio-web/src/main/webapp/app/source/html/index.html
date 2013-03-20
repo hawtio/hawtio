@@ -13,9 +13,7 @@
     </div>
     <table>
       <tr ng-repeat="file in sourceFiles|filter:searchText">
-        <td>
-          <a href="#/source/view/{{mavenCoords}}//{{file}}">{{file}}</a>
-        </td>
+        <td ng-bind-html-unsafe="sourceLinks(file)"></td>
       </tr>
     </table>
   </div>

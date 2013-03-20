@@ -19,9 +19,6 @@ module Source {
       filterFileNames();
     };
 
-    // TODO load breadcrumbs
-    // $scope.breadcrumbs.push({href: "#" + loc, name: name});
-
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
@@ -37,11 +34,31 @@ module Source {
 
     function filterFileNames() {
       if (fileName) {
-        $scope.sourceFiles = $scope.allSourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1));
+        $scope.sourceFiles = $scope.allSourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1)).filter(n => n);
       } else {
         $scope.sourceFiles = $scope.allSourceFiles;
       }
     }
+
+    $scope.sourceLinks = (aFile) => {
+      var name = aFile;
+      var paths = null;
+      var idx = aFile.lastIndexOf('/');
+      if (idx > 0) {
+        name = aFile.substring(idx + 1);
+        paths = aFile.substring(0, idx);
+      }
+      var answer = "";
+      var fullName = fileName || "";
+      if (paths) {
+        angular.forEach(paths.split("/"), (path) => {
+          fullName += "/" + path;
+          answer += "<a href='#/source/index/" + $scope.mavenCoords + "//" + fullName + "'>" + path + "</a>/"
+        });
+      }
+      answer += "<a href='#/source/view/" + $scope.mavenCoords + "//" + fullName + "/" + name + "'>" + name + "</a>";
+      return answer;
+    };
 
     function createBreadcrumbs() {
       $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
