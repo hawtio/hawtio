@@ -7,6 +7,7 @@ module Osgi {
             row["Fragments"] = bundleLinks(workspace, row["Fragments"]);
             row["ImportedPackages"] = row["ImportedPackages"].union([]);
             row["StateStyle"] = getStateStyle("label", row["State"]);
+            row["RequiringBundles"] = bundleLinks(workspace, row["RequiringBundles"]);
         });
         return values;
     }
@@ -83,7 +84,8 @@ module Osgi {
 
     export function bundleLinks(workspace, values) {
         var answer = "";
-        angular.forEach(toCollection(values), function (value, key) {
+        var sorted = toCollection(values).sort((a,b) => {return a-b});
+        angular.forEach(sorted, function (value, key) {
             var prefix = "";
             if (answer.length > 0) {
                 prefix = " ";
@@ -179,6 +181,16 @@ module Osgi {
             // lets navigate to the tree item based on paths
             var folder = workspace.tree.navigate("osgi.compendium", "cm");
             return Osgi.findFirstObjectName(folder);
+        }
+        return null;
+    }
+
+    export function getHawtioOSGiMBean(workspace:Workspace):string {
+        if (workspace) {
+            var mbeanTypesToDomain = workspace.mbeanTypesToDomain || {};
+            var gitFacades = mbeanTypesToDomain["OSGiTools"] || {};
+            var hawtioFolder = gitFacades["io.hawt.osgi"] || {};
+            return hawtioFolder["objectName"];
         }
         return null;
     }

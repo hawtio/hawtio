@@ -77,6 +77,32 @@
             <td>
             </td>
             <td>
+                <div class="accordion" id="accordionInspectClassloading">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionInspectClassloading"
+                               href="#collapseInspectClassloading">
+                                Inspect Classloading
+                            </a>
+                        </div>
+                        <div id="collapseInspectClassloading" class="accordion-body collapse out">
+                            <form class="form-inline">
+                                <fieldset>
+                                    &nbsp;&nbsp;
+                                    <input class="input-xlarge" type="text" ng-model="classToLoad" placeHolder="Enter Class Name to Load...">
+                                    <button class="btn btn-success execute" ng-click="executeLoadClass(classToLoad)"><i class="{{executeIcon}}"></i> Execute</button>
+                                </fieldset>
+                            </form>
+                            <div id="loadClassResult"/>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
                 <div class="accordion" id="accordionImportedPackages">
                     <div class="accordion-group">
                         <div class="accordion-heading">
@@ -131,8 +157,7 @@
                         </div>
                         <div id="collapseRequiringBundles" class="accordion-body collapse out">
                             <div class="accordion-inner">
-                                <span ng-repeat="bundle in row.RequiringBundles"><a href='#/osgi/bundle/{{bundle}}'>{{bundle}}</a>
-                                </span>
+                                <span ng-bind-html-unsafe="row.RequiringBundles" />
                             </div>
                         </div>
                     </div>

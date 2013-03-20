@@ -17,6 +17,48 @@ module Osgi {
         return true;
       }
 
+        $scope.executeLoadClass = (clazz) => {
+            var divEl = document.getElementById("loadClassResult");
+
+            var mbean = getHawtioOSGiMBean(workspace);
+            if (mbean) {
+                jolokia.request(
+                    {type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz]},
+                    {
+                        success: function(response) {
+                            var resultBundle = response.value;
+                            var style;
+                            var resultTxt;
+                            if (resultBundle === -1) {
+                                style="";
+                                resultTxt="Class can not be loaded from this bundle.";
+                            } else {
+                                style="alert-success";
+                                resultTxt="Class is served from Bundle " + bundleLinks(workspace, resultBundle);
+                            }
+                            divEl.innerHTML +=
+                                "<div class='alert " + style + "'>" +
+                                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                                    "Loading class <strong>" + clazz + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt;
+                                    "</div>";
+                        },
+                        error: function(response) {
+                            divEl.innerHTML +=
+                                "<div class='alert alert-error'>" +
+                                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                                    "Problem invoking io.hawt.osgi.OSGiTools MBean. " + response +
+                                "</div>";
+                        }
+                    });
+            } else {
+                divEl.innerHTML +=
+                    "<div class='alert alert-error'>" +
+                        "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                        "The io.hawt.osgi.OSGiTools MBean is not available. Please contact technical support." +
+                    "</div>";
+            }
+        }
+
         function populateTable(response) {
             var values = response.value;
             $scope.bundles = values;
