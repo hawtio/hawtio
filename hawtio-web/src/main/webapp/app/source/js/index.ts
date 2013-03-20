@@ -65,7 +65,7 @@ module Source {
       angular.forEach($scope.breadcrumbs, (breadcrumb) => {
         breadcrumb.active = false;
       });
-      $scope.breadcrumbs.last.active = true;
+      $scope.breadcrumbs.last().active = true;
     }
 
     function viewContents(response) {
