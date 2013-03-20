@@ -8,8 +8,11 @@
   </ul>
 
   <div class="row-fluid">
+    <div class="control-group inline-block">
+      <input class="search-query input-xxlarge" type="text" ng-model="searchText" placeholder="Filter files...">
+    </div>
     <table>
-      <tr ng-repeat="file in sourceFiles">
+      <tr ng-repeat="file in sourceFiles|filter:searchText">
         <td>
           <a href="#/source/view/{{mavenCoords}}//{{file}}">{{file}}</a>
         </td>
@@ -17,7 +20,7 @@
     </table>
   </div>
 
-  <div class="span12" ng-disabled="!loadingMessage">
+  <div class="span12" ng-show="loadingMessage">
     <div class="alert alert-info">
       <i class="icon-spinner icon-spin icon-2x"></i>
       <span ng-bind-html-unsafe="loadingMessage"></span>

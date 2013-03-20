@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="span12" ng-disabled="!loadingMessage">
+  <div class="span12" ng-show="loadingMessage">
     <div class="alert alert-info">
       <i class="icon-spinner icon-spin icon-2x"></i>
       <span ng-bind-html-unsafe="loadingMessage"></span>
