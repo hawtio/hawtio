@@ -871,4 +871,5 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
 
 .help-sidebar li:first-child {
   margin-top: 0px !important;
+  padding-top: 3px;
 }
