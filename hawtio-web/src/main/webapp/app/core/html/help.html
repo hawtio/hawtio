@@ -1,13 +1,14 @@
 <div ng-controller="Core.HelpController">
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span2">
       <ul class="nav help-sidebar">
         <li ng-repeat="(topic, subtopic) in topics" ng-class="{active : isTopicActive(topic)}">
           <a ng-href="#/help/{{topic}}">{{topic}}</a>
         </li>
       </ul>
     </div>
-    <div class="span9">
+    <div class="span1 help-spacer"></div>
+    <div class="span8">
       <div class="row">
         <ul class="nav nav-tabs connected">
           <li ng-repeat="(subtopic, url) in topics[topic]" ng-class="{active : isSubTopicActive(subtopic)}">
