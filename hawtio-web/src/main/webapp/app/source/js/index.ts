@@ -5,11 +5,11 @@ module Source {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.mavenCoords = $routeParams["mavenCoords"];
-    var fileName = $scope.pageId || "/";
+    var fileName = $scope.pageId;
 
     $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
 
-    $scope.breadcrumbs = [];
+    $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
 
     // TODO load breadcrumbs
     // $scope.breadcrumbs.push({href: "#" + loc, name: name});
@@ -30,6 +30,9 @@ module Source {
     function viewContents(response) {
       if (response) {
         $scope.sourceFiles = response.split("\n").map(n => n.trim()).filter(n => n);
+        if (fileName) {
+          $scope.sourceFiles = $scope.sourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1));
+        }
       } else {
         $scope.sourceFiles = [];
       }
@@ -47,7 +50,7 @@ module Source {
     function updateView() {
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, fileName, onSuccess(viewContents));
+        jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", onSuccess(viewContents));
       }
     }
   }

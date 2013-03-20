@@ -8,7 +8,7 @@ module Source {
     var lineNumber = $location.search()["line"] || 1;
     var mavenCoords = $routeParams["mavenCoords"];
     var className = $routeParams["className"];
-    var fileName = $scope.pageId;
+    var fileName = $scope.pageId || "/";
 
     $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
 
@@ -16,8 +16,15 @@ module Source {
 
     $scope.breadcrumbs = [];
 
-    // TODO load breadcrumbs
-    // $scope.breadcrumbs.push({href: "#" + loc, name: name});
+    var idx = fileName.lastIndexOf('/');
+    var path = "/";
+    var name = fileName;
+    if (idx > 0) {
+      path = fileName.substring(0, idx);
+      name = fileName.substring(idx + 1);
+    }
+    $scope.breadcrumbs = Source.createBreadcrumbLinks(mavenCoords, path);
+    $scope.breadcrumbs.push({href: $location.url(), name: name});
 
     var options = {
       readOnly: true,

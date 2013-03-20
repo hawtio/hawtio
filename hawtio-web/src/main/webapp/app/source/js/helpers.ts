@@ -6,4 +6,19 @@ module Source {
     var mbean = insight.objectName;
     return mbean;
   }
+
+  export function createBreadcrumbLinks(mavenCoords: string, pathName: string) {
+    var linkPrefix = "#/source/index/" + mavenCoords;
+    var answer = [{href: linkPrefix, name: "/"}];
+    if (pathName) {
+      var pathNames = pathName.split("/");
+      var fullPath = "/";
+      angular.forEach(pathNames, (path) => {
+        fullPath += "/" + path;
+        var href = linkPrefix + fullPath;
+        answer.push({href: href, name: path || "/"});
+      });
+    }
+    return answer;
+  }
 }
