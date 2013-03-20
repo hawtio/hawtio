@@ -18,14 +18,13 @@ module Osgi {
       }
 
         $scope.executeLoadClass = (clazz) => {
-            var divEl = document.getElementById("loadClassResult");
-
             var mbean = getHawtioOSGiMBean(workspace);
             if (mbean) {
                 jolokia.request(
                     {type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz]},
                     {
                         success: function(response) {
+                            var divEl = document.getElementById("loadClassResult");
                             var resultBundle = response.value;
                             var style;
                             var resultTxt;
@@ -40,23 +39,67 @@ module Osgi {
                                 "<div class='alert " + style + "'>" +
                                     "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
                                     "Loading class <strong>" + clazz + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt;
-                                    "</div>";
+                                "</div>";
                         },
                         error: function(response) {
-                            divEl.innerHTML +=
-                                "<div class='alert alert-error'>" +
-                                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
-                                    "Problem invoking io.hawt.osgi.OSGiTools MBean. " + response +
-                                "</div>";
+                            inspectReportError(response);
                         }
                     });
             } else {
-                divEl.innerHTML +=
-                    "<div class='alert alert-error'>" +
-                        "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
-                        "The io.hawt.osgi.OSGiTools MBean is not available. Please contact technical support." +
-                    "</div>";
+                inspectReportNoMBeanFound();
             }
+        }
+
+        $scope.executeFindResource = (resource) => {
+            var mbean = getHawtioOSGiMBean(workspace);
+            if (mbean) {
+                jolokia.request(
+                    {type: 'exec', mbean: mbean, operation: 'getResourceURL', arguments: [$scope.bundleId, resource]},
+                    {
+                        success: function(response) {
+                            var divEl = document.getElementById("loadClassResult");
+                            var resultURL = response.value;
+                            var style;
+                            var resultTxt;
+                            if (resultURL === null) {
+                                style="";
+                                resultTxt="Resource can not be found from this bundle.";
+                            } else {
+                                style="alert-success";
+                                resultTxt="Resource is available from: " + resultURL;
+                            }
+                            divEl.innerHTML +=
+                                "<div class='alert " + style + "'>" +
+                                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                                    "Finding resource <strong>" + resource + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt;
+                                "</div>";
+                        },
+                        error: function(response) {
+                            inspectReportError(response);
+                        }
+                    }
+                )
+            } else {
+                inspectReportNoMBeanFound();
+            }
+        }
+
+        function inspectReportNoMBeanFound() {
+            var divEl = document.getElementById("loadClassResult");
+            divEl.innerHTML +=
+                "<div class='alert alert-error'>" +
+                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                    "The io.hawt.osgi.OSGiTools MBean is not available. Please contact technical support." +
+                "</div>";
+        }
+
+        function inspectReportError(response) {
+            var divEl = document.getElementById("loadClassResult");
+            divEl.innerHTML +=
+                "<div class='alert alert-error'>" +
+                    "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
+                    "Problem invoking io.hawt.osgi.OSGiTools MBean. " + response +
+                "</div>";
         }
 
         function populateTable(response) {

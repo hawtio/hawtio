@@ -14,7 +14,7 @@ import org.osgi.framework.BundleReference;
 public class OSGiToolsTest {
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testOSGiTools() throws Exception {
+    public void testGetLoadClassOrigin() throws Exception {
         // Setup a mock OSGi classloader
         URL res = getClass().getClassLoader().getResource(getClass().getName().replace('.', '/') + ".class");
         File dir = new File(new File(res.getFile()).getParentFile(), "test");
@@ -44,6 +44,28 @@ public class OSGiToolsTest {
         try {
             tools.getLoadClassOrigin(5, "org.foo.Baz");
             Assert.fail("Should have thrown an IllegalArgumentException, bundle 5 doesn't exist");
+        } catch (IllegalArgumentException iae) {
+            // good
+        }
+    }
+
+    @Test
+    public void testGetResourceURL() {
+        URL someURL = getClass().getClassLoader().getResource(getClass().getName().replace('.', '/') + ".class");
+
+        Bundle bundle = Mockito.mock(Bundle.class);
+        Mockito.when(bundle.getResource("org/foo/Bar.txt")).thenReturn(someURL);
+
+        BundleContext bc = Mockito.mock(BundleContext.class);
+        Mockito.when(bc.getBundle(42)).thenReturn(bundle);
+        OSGiTools tools = new OSGiTools(bc);
+
+        Assert.assertEquals(someURL.toString(), tools.getResourceURL(42L, "org/foo/Bar.txt"));
+        Assert.assertNull(tools.getResourceURL(42L, "org/foo/Bar.txt.doesntexist"));
+
+        try {
+            tools.getResourceURL(7, "nonexistent.resource");
+            Assert.fail("Should have thworn an IllegalArgumentException, bundle 7 does not exist");
         } catch (IllegalArgumentException iae) {
             // good
         }

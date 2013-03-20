@@ -1,6 +1,7 @@
 package io.hawt.osgi;
 
 import java.lang.management.ManagementFactory;
+import java.net.URL;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -51,5 +52,18 @@ public class OSGiTools implements OSGiToolsMXBean {
         }
 
         return -1;
+    }
+
+    @Override
+    public String getResourceURL(long bundleID, String resource) {
+        Bundle b = bundleContext.getBundle(bundleID);
+        if (b == null)
+            throw new IllegalArgumentException("Not a valid bundle ID: " + bundleID);
+
+        URL res = b.getResource(resource);
+        if (res == null)
+            return null;
+        else
+            return res.toString();
     }
 }

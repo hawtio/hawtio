@@ -93,6 +93,13 @@
                                     <button class="btn btn-success execute" ng-click="executeLoadClass(classToLoad)">Load Class</button>
                                 </fieldset>
                             </form>
+                            <form class="form-inline">
+                                <fieldset>
+                                    &nbsp;&nbsp;
+                                    <input class="input-xlarge" type="text" ng-model="resourceToLoad" placeHolder="Enter Resource Name to Find...">
+                                    <button class="btn btn-success execute" ng-click="executeFindResource(resourceToLoad)">Get Resource</button>
+                                </fieldset>
+                            </form>
                             <div id="loadClassResult"/>
                         </div>
                     </div>
