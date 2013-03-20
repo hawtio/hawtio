@@ -9,16 +9,13 @@ module Source {
 
     $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
 
-    $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
-    angular.forEach($scope.breadcrumbs, (breadcrumb) => {
-      breadcrumb.active = false;
-    });
-    $scope.breadcrumbs.last.active = true;
+    createBreadcrumbs();
 
     $scope.setFileName = (breadcrumb) => {
       fileName = Core.trimLeading(breadcrumb.fileName, "/");
       fileName = Core.trimLeading(fileName, "/");
       console.log("selected fileName '" + fileName + "'");
+      createBreadcrumbs();
       filterFileNames();
     };
 
@@ -46,6 +43,14 @@ module Source {
       }
     }
 
+    function createBreadcrumbs() {
+      $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
+      angular.forEach($scope.breadcrumbs, (breadcrumb) => {
+        breadcrumb.active = false;
+      });
+      $scope.breadcrumbs.last.active = true;
+    }
+
     function viewContents(response) {
       if (response) {
         $scope.allSourceFiles = response.split("\n").map(n => n.trim()).filter(n => n);
@@ -70,5 +75,6 @@ module Source {
         jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", onSuccess(viewContents));
       }
     }
+
   }
 }
