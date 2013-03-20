@@ -1,5 +1,6 @@
 package io.hawt.maven.indexer;
 
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -298,12 +299,18 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
      */
     @Override
     public List<ArtifactDTO> searchText(String searchText) throws IOException {
-        //Field[] names = {MAVEN.CLASSNAMES, MAVEN.GROUP_ID, MAVEN.ARTIFACT_ID, MAVEN.VERSION, MAVEN.NAME, MAVEN.DESCRIPTION};
-        Field[] names = {MAVEN.GROUP_ID, MAVEN.ARTIFACT_ID, MAVEN.VERSION, MAVEN.NAME};
-        UserInputSearchExpression input = new UserInputSearchExpression(searchText);
-        BooleanQuery bq = new BooleanQuery();
-        for (Field name : names) {
-            bq.add(indexer.constructQuery(name, input), Occur.SHOULD);
+        BooleanQuery bq = createTextSearchQuery(searchText);
+        return searchGrouped(bq);
+    }
+
+    @Override
+    public List<ArtifactDTO> searchTextAndPackaging(String searchText, String packaging, String classifier) throws IOException {
+        BooleanQuery bq = createTextSearchQuery(searchText);
+        if (StringUtils.isNotBlank(packaging)) {
+            bq.add(indexer.constructQuery(MAVEN.PACKAGING, new SourcedSearchExpression(packaging)), Occur.MUST);
+        }
+        if (StringUtils.isNotBlank(classifier)) {
+            bq.add(indexer.constructQuery(MAVEN.CLASSIFIER, new SourcedSearchExpression(classifier)), Occur.MUST);
         }
         return searchGrouped(bq);
     }
@@ -386,6 +393,19 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
         if (StringUtils.isNotBlank(className)) {
             bq.add(indexer.constructQuery(MAVEN.CLASSNAMES, new UserInputSearchExpression(className)), Occur.MUST);
+        }
+        return bq;
+    }
+
+    protected BooleanQuery createTextSearchQuery(String searchText) {
+        BooleanQuery bq = new BooleanQuery();
+        if (StringUtils.isNotBlank(searchText)) {
+            //Field[] names = {MAVEN.CLASSNAMES, MAVEN.GROUP_ID, MAVEN.ARTIFACT_ID, MAVEN.VERSION, MAVEN.NAME, MAVEN.DESCRIPTION};
+            Field[] names = {MAVEN.GROUP_ID, MAVEN.ARTIFACT_ID, MAVEN.VERSION, MAVEN.NAME};
+            UserInputSearchExpression input = new UserInputSearchExpression(searchText);
+            for (Field name : names) {
+                bq.add(indexer.constructQuery(name, input), Occur.SHOULD);
+            }
         }
         return bq;
     }

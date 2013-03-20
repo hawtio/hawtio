@@ -1,6 +1,6 @@
 module Maven {
   var pluginName = 'maven';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable','hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/maven/search', {templateUrl: 'app/maven/html/search.html'}).

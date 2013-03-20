@@ -47,6 +47,12 @@ public interface MavenIndexerFacadeMXBean {
     List<ArtifactDTO> searchText(String searchText) throws IOException;
 
     /**
+     * Searches for all artifacts for the given text with the optional packaging/classifier filter,
+     * returning the latest matching artifact version
+     */
+    List<ArtifactDTO> searchTextAndPackaging(String searchText, String packaging, String classifier) throws IOException;
+
+    /**
      * Helper method to complete the possible group IDs for a given partial group ID and possible packaging and/or classifier
      */
     List<String> groupIdComplete(String groupId, String packaging, String classifier) throws IOException;
@@ -60,4 +66,5 @@ public interface MavenIndexerFacadeMXBean {
      * Helper method to complete the possible versions for a given group ID, artifact, partial version and possible packaging and/or classifier
      */
     List<String> versionComplete(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException;
+
 }

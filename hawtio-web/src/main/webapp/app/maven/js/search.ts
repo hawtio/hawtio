@@ -51,34 +51,43 @@ module Maven {
 
     $scope.hasAdvancedSearch = (form) => {
       return form.searchGroup || form.searchArtifact ||
-                          form.searchVersion || form.searchPackaging ||
-                          form.searchClassifier || form.searchClassName;
+              form.searchVersion || form.searchPackaging ||
+              form.searchClassifier || form.searchClassName;
     };
 
     $scope.doSearch = () => {
       var mbean = Maven.getMavenIndexerMBean(workspace);
       var form = $scope.form;
-      console.log("Searching for " + form.searchText);
       if (mbean) {
-          if (form.searchText) {
-            console.log("Search text is: " + form.searchText);
-            jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
-          } else if ($scope.hasAdvancedSearch(form)) {
-            console.log("Searching for " +
-                    form.searchGroup + "/" + form.searchArtifact + "/" +
-                    form.searchVersion + "/" + form.searchPackaging + "/" +
-                    form.searchClassifier + "/" + form.searchClassName);
-
-            jolokia.execute(mbean, "search",
-                    form.searchGroup || "", form.searchArtifact || "", form.searchVersion || "",
-                    form.searchPackaging || "", form.searchClassifier || "", form.searchClassName || "",
-                    onSuccess(render));
+        var searchText = form.searchText;
+        var kind = form.artifactType;
+        if (kind) {
+          if (kind === "className") {
+            jolokia.execute(mbean, "searchClasses", searchText, onSuccess(render));
           } else {
-            console.log("No search stuff!");
+            var paths = kind.split('/');
+            var packaging = paths[0];
+            var classifier = paths[1];
+            console.log("Search for: " + form.searchText + " packaging " + packaging + " classifier " + classifier);
+            jolokia.execute(mbean, "searchTextAndPackaging", searchText, packaging, classifier, onSuccess(render));
           }
-        } else {
-          notification("error", "Could not find the Maven Indexer MBean!");
+        } else if (searchText) {
+          console.log("Search text is: " + form.searchText);
+          jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
+        } else if ($scope.hasAdvancedSearch(form)) {
+          console.log("Searching for " +
+                  form.searchGroup + "/" + form.searchArtifact + "/" +
+                  form.searchVersion + "/" + form.searchPackaging + "/" +
+                  form.searchClassifier + "/" + form.searchClassName);
+
+          jolokia.execute(mbean, "search",
+                  form.searchGroup || "", form.searchArtifact || "", form.searchVersion || "",
+                  form.searchPackaging || "", form.searchClassifier || "", form.searchClassName || "",
+                  onSuccess(render));
         }
+      } else {
+        notification("error", "Could not find the Maven Indexer MBean!");
+      }
     };
 
     function render(response) {
