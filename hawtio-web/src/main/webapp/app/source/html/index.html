@@ -1,7 +1,7 @@
 <div ng-controller="Source.IndexController">
   <ul class="nav nav-tabs">
-    <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
-      <a ng-href="{{link.href}}{{hash}}">
+    <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
+      <a ng-click="setFileName(link)">
         {{link.name}}
       </a>
     </li>

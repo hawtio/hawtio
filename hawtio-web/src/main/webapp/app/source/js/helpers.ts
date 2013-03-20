@@ -12,11 +12,11 @@ module Source {
     var answer = [{href: linkPrefix, name: "/"}];
     if (pathName) {
       var pathNames = pathName.split("/");
-      var fullPath = "/";
+      var fullPath = "";
       angular.forEach(pathNames, (path) => {
         fullPath += "/" + path;
         var href = linkPrefix + fullPath;
-        answer.push({href: href, name: path || "/"});
+        answer.push({href: href, name: path || "/", fileName: "/" + fullPath});
       });
     }
     return answer;

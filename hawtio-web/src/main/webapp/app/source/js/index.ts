@@ -10,6 +10,17 @@ module Source {
     $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
 
     $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
+    angular.forEach($scope.breadcrumbs, (breadcrumb) => {
+      breadcrumb.active = false;
+    });
+    $scope.breadcrumbs.last.active = true;
+
+    $scope.setFileName = (breadcrumb) => {
+      fileName = Core.trimLeading(breadcrumb.fileName, "/");
+      fileName = Core.trimLeading(fileName, "/");
+      console.log("selected fileName '" + fileName + "'");
+      filterFileNames();
+    };
 
     // TODO load breadcrumbs
     // $scope.breadcrumbs.push({href: "#" + loc, name: name});
@@ -27,15 +38,21 @@ module Source {
       setTimeout(updateView, 50);
     });
 
+    function filterFileNames() {
+      if (fileName) {
+        $scope.sourceFiles = $scope.allSourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1));
+      } else {
+        $scope.sourceFiles = $scope.allSourceFiles;
+      }
+    }
+
     function viewContents(response) {
       if (response) {
-        $scope.sourceFiles = response.split("\n").map(n => n.trim()).filter(n => n);
-        if (fileName) {
-          $scope.sourceFiles = $scope.sourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1));
-        }
+        $scope.allSourceFiles = response.split("\n").map(n => n.trim()).filter(n => n);
       } else {
-        $scope.sourceFiles = [];
+        $scope.allSourceFiles = [];
       }
+      filterFileNames();
       $scope.loadingMessage = null;
       if (!response) {
         var time = new Date().getTime();
