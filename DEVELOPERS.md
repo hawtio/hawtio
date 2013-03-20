@@ -32,6 +32,7 @@ For those interested in [contributing](http://hawt.io/contributing/index.html) o
 * [DynaTree](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) for tree widget
 * [jQuery](http://jquery.com/) small bits of general DOM stuff, usually when working with third-party libraries which don't use AngularJS
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for CSS
+* [Toastr](https://github.com/CodeSeven/toastr) for notifications
 
 We're not yet using it but these look handy too:
 
