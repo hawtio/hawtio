@@ -19,6 +19,16 @@ module Maven {
       return "";
     };
 
+    $scope.sourceLink = (row) => {
+      var group = row.groupId;
+      var artifact = row.artifactId;
+      var version = row.version;
+      if (group && artifact && version) {
+        return "#/source/index/" + group + ":" + artifact + ":" + version + "/";
+      }
+      return "";
+    };
+
     var columnDefs:any[] = [
       {
         field: 'groupId',

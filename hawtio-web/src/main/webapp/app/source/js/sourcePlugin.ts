@@ -3,6 +3,8 @@ module Source {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'wiki']).
           config(($routeProvider) => {
             $routeProvider.
+                    when('/source/index/:mavenCoords', {templateUrl: 'app/source/html/index.html'}).
+                    when('/source/index/:mavenCoords/:page', {templateUrl: 'app/source/html/index.html'}).
                     when('/source/view/:mavenCoords/:className/:page', {templateUrl: 'app/source/html/source.html'}).
                     when('/source/javadoc/:mavenCoords/:page', {templateUrl: 'app/source/html/javadoc.html'});
 
@@ -13,6 +15,8 @@ module Source {
               for (var i = 1; i <= max; i++) {
                 path += "/:path" + i;
               }
+              $routeProvider.
+                      when('/source/index/:mavenCoords/' + path, {templateUrl: 'app/source/html/index.html'});
               $routeProvider.
                       when('/source/view/:mavenCoords/:className/' + path, {templateUrl: 'app/source/html/source.html'});
               $routeProvider.
