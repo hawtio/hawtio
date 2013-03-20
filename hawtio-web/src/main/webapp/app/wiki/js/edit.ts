@@ -23,7 +23,7 @@ module Wiki {
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
 
-    $scope.isValid = () => true;
+    $scope.isValid = () => $scope.fileName;
 
     $scope.viewLink = () => Wiki.viewLink($scope.pageId, $location, $scope.fileName);
 
