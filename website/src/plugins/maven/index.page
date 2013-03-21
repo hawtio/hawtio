@@ -1,9 +1,8 @@
 ---
-title: hawtio wiki
+title: hawtio maven plugin
 --- pipeline:ssp,markdown
   <div id="content-header">
     <div class="container">
-${unescape(loadText(new FileInputStream(app_dir + "/wiki/doc/help.md")))}
-
+${unescape(loadText(new FileInputStream(app_dir + "/maven/doc/help.md")))}
 </div>
   </div>

@@ -48,4 +48,6 @@ object Website {
   val project_maven_groupId= "io.hawt"
   val project_maven_artifactId= "hawtio-web"
 
+  val app_dir = "../hawtio-web/src/main/webapp/app"
+
 }

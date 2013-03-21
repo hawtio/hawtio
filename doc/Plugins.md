@@ -16,12 +16,12 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <th>Source</th>
   </tr>
   <tr>
-    <td>activemq</td>
+    <td><a href="http://hawt.io/plugins/activemq/">activemq</a></td>
     <td>Adds support for <a href="http://activemq.apache.org/">Apache ActiveMQ</a>. Lets you browse broker statistics, create queues/topcs, browse queues, send messages and visualise subscription and network information</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/activemq">activemq</a></td>
   </tr>
   <tr>
-    <td>camel</td>
+    <td><a href="http://hawt.io/plugins/camel/">camel</a></td>
     <td>Adds support for <a href="http://camel.apache.org/">Apache Camel</a>. Lets you browse CamelContexts, routes, endpoints. Visualise running routes and their metrics. Create endpoints. Send messages. Trace message flows.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/camel">camel</a></td>
   </tr>
@@ -38,7 +38,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/dashboard">dashboard</a></td>
   </tr>
   <tr>
-    <td>fabric</td>
+    <td><a href="http://hawt.io/plugins/fabric/">fabric</a></td>
     <td>Adds support for <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a> such as to view profiles, versions and containers in your fabric and view/edit the profile configuration in git.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/fabric">fabric</a></td>
   </tr>
@@ -54,6 +54,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td>Adds support for <a href="http://hawt.io/plugins/health/">Health MBeans</a> so its easy to see the health of systems which support them
     (such as <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/health">health</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/infinispan/">infinispan</a></td>
+    <td>Adds support for <a href="http://infinispan.org/">Infinispan</a> so you can visualise the caches you have and see their metrics.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/infinispan">infinispan</a></td>
   </tr>
   <tr>
     <td>jboss</td>
@@ -79,6 +84,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="http://hawt.io/plugins/logs/">log</a></td>
     <td>Provides support for visualising the <a href="http://hawt.io/plugins/logs/">logs</a> inside the JVM along with linking log statements to the source code which generates them. <i>Hawt!</i></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/log">log</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/maven/">maven</a></td>
+    <td>Lets you query maven repositories for artefacts; then see the available versions, javadoc and source.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/maven">maven</a></td>
   </tr>
   <tr>
     <td>openejb</td>
