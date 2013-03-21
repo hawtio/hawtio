@@ -29,26 +29,6 @@ module Wiki {
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
             return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
           }).
-          factory('marked',function (workspace:Workspace, jolokia, localStorage) {
-            marked.setOptions({
-              gfm: true,
-              tables: true,
-              breaks: false,
-              pedantic: false,
-              sanitize: true,
-              smartLists: true,
-              langPrefix: 'language-'
-              /*
-               highlight: function(code, lang) {
-               if (lang === 'js') {
-               return highlighter.javascript(code);
-               }
-               return code;
-               }
-               */
-            });
-            return marked;
-          }).
           factory('fileExtensionTypeRegistry',function () {
             return {
               "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],

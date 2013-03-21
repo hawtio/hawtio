@@ -873,3 +873,7 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
   margin-top: 0px !important;
   padding-top: 3px;
 }
+
+div.help-display img:not(.no-shadow) {
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}

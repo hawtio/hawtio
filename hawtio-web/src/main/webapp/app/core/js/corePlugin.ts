@@ -66,6 +66,19 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           return storage;
         }).
 
+        factory('marked',function () {
+          marked.setOptions({
+            gfm: true,
+            tables: true,
+            breaks: false,
+            pedantic: true,
+            sanitize: false,
+            smartLists: true,
+            langPrefix: 'language-'
+          });
+          return marked;
+        }).
+
         factory('viewRegistry',function () {
           return {};
         }).

@@ -1,5 +1,5 @@
 module Core {
-  export function HelpController($scope, $routeParams, $location, helpRegistry) {
+  export function HelpController($scope, $routeParams, marked, helpRegistry) {
 
     $scope.$on('hawtioNewHelpTopic', function() {
       $scope.topics = helpRegistry.getTopics();
@@ -41,6 +41,7 @@ module Core {
       $.ajax({
         url: $scope.topics[$scope.topic][$scope.subTopic],
         dataType: 'html',
+        cache: false,
         success: function(data, textStatus, jqXHR) {
           $scope.html = "Unable to download help data for " + $scope.topic;
           if (angular.isDefined(data)) {
