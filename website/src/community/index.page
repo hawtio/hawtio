@@ -11,6 +11,8 @@ title: join the hawtio community!
   <div id="intro">
 <p>Welcome to the <b>hawtio</b> community! We <a href="../contributing/index.html">love contributions</a>!</p>
 
+<p><a class="btn btn-primary btn-large" href="/contributing/index.html">How To Contribute</a></p>
+
 <p>Please dive in wherever takes your fancy! It's <i>hawt</i> but stay cool!</p>
 </div>
 
@@ -20,7 +22,7 @@ title: join the hawtio community!
 <div class="screenshot"><img src="/images/screenshot-hawtio-jira.png" alt="" /></div>
 -->
 <p>The project tracks bugs, feature requests, and other issues through the Github issue tracking system.</p>
-<p><a href="${project_issue_url}">hawtio issue tracker</a></p>
+<p><a class="btn btn-primary btn-large" href="${project_issue_url}">hawtio issue tracker</a></p>
 <p>To file new issues or comment on existing issues you need to register for a <a href="http://github.com/">Github account</a> which is quick and easy!
 </p>
 </div>
@@ -58,7 +60,7 @@ title: join the hawtio community!
 <!--
 <div class="screenshot"><img src="/images/screenshot-hawtio-github.png" alt="" /></div>
 -->
-<p>All the hawtio source code is managed using the distributed version system <a href="http://git-scm.com">git</a> and hosted at <a href="http://github.com/hawtio/hawtio">hawtio/hawtio</a> at Github.</p>
+<p>All the hawtio source code is managed using the distributed version system <a href="http://git-scm.com">git</a> and hosted at <a class="btn btn-large" href="http://github.com/hawtio/hawtio">hawtio/hawtio</a> on Github.</p>
 <p>Both git and Github are awesome for collaboration! To make improvements or bug fixes to the hawtio project, simply fork the project, commit your changes, and send a pull request.</p>
 </div>
 </div>
