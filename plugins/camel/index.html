@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>get your hawtio running!</title>
+    <title>hawtio Camel plugin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -51,92 +51,17 @@
     </header>
     <div id="main">
 		  <p><div id="content-header">
-    <div class="container">
-      <h1>Get Started</h1>
-    </div>
-  </div>
-  <div class="container">
-    <div id="content"></p>
+    <div class="container"></p>
 
-<p>You can use hawtio in many different containers - or outside a container. Below are all the various options for running hawtio.</p>
+<h3 id = "Camel">Camel</h3>
 
-<p>The out of the box defaults try to do the right thing for most folks but you may want to check out <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things.</p>
+<p>Click <a href="#/jmx/attributes?tab=integration">Integration</a> in the top navigation bar to view all the running Camel Contexts in the current JVM. (The selection will not appear on the navigation bar if there is no Camel running).</p>
 
-<h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
+<p>If you select a CamelContext, Route or Endpoint you can then view the <strong>Attributes</strong> or <strong>Charts</strong> of the  various underlying MBeans.</p>
 
-<p>If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:</p>
+<p>You can use the <strong>Diagram</strong> tab to view a graphical representation of the running routes along with real time runtime metrics. If you select a single route instance then the diagram just shows that route only.</p>
 
-<table class="buttonTable">
-  <tr>
-    <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.0/hawtio-web-1.0.war">Download hawtio-web.war</a>
-    </td>
-    <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.0/sample-1.0.war">Download sample.war</a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      a bare hawtio web application with minimal dependencies
-    </td>
-    <td>
-      a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
-      <a href="http://camel.apache.org/">Apache Camel</a> to play with which is even <i>hawter</i>
-    </td>
-  </tr>
-</table>
-
-<p>Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
-
-<h2 id = "Using_Apache_Karaf__Apache_Servicemix__or_Fuse_ESB">Using Apache Karaf, Apache Servicemix, or Fuse ESB</h2>
-
-<p>If you are using a developer snapshot of <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> you can run:</p>
-
-<pre><code>features:install hawtio</code></pre>
-
-<p>Otherwise if you are using a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a>, <a href="http://servicemix.apache.org/">Apache ServiceMix</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> use the following</p>
-
-<p>Now you can install hawtio via:</p>
-
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.0/xml/features
-features:install hawtio</code></pre>
-
-<p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>.</p>
-
-<h2 id = "Using_hawtio_inside_a_stand_alone_Java_application">Using hawtio inside a stand alone Java application</h2>
-
-<p>If you do not use a servlet container or application server and wish to embed hawtio inside your process try the following:</p>
-
-<p>Add the following to your pom.xml</p>
-
-<pre><code>&lt;dependency&gt;
-  &lt;groupId&gt;io.hawt&lt;/groupId&gt;
-  &lt;artifactId&gt;hawtio-embedded&lt;/artifactId&gt;
-  &lt;version&gt;${hawtio-version}&lt;/version&gt;
- &lt;/dependency&gt;</code></pre>
-
-<p>Then in your application run the following code:</p>
-
-<pre><code>import io.hawt.embedded.Main;
-
-...
-Main main = new Main();
-main.setWar("somePathOrDirectoryContainingHawtioWar");
-main.run();</code></pre>
-
-<p>If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).</p>
-
-<h2 id = "Using_a_git_Clone">Using a git Clone</h2>
-
-<p>From a git clone you should be able to run the a sample hawtio console as follows:</p>
-
-<pre><code>git clone git@github.com:hawtio/hawtio.git
-cd hawtio/sample
-mvn jetty:run</code></pre>
-
-<p>Then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> should show hawtio with a sample web application with some ActiveMQ and Camel inside to interact with.</p>
-
-<p>A good MBean for real time values and charts is <code>java.lang/OperatingSystem</code>. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.</p>
+<p>If you select a <strong>Route</strong> you can then use the <strong>Trace</strong> tab to perform diagnostic tracing of routes; to see every version of each message as it flows around a route.</p>
 
 <p></div>
   </div></p>
