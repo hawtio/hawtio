@@ -31,6 +31,20 @@ module Tomcat {
                 cellFilter: null,
                 width: "*",
                 resizable: true
+            },
+            {
+                field: 'sessionTimeout',
+                displayName: 'Session Timeout',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'startTime',
+                displayName: 'Start Time',
+                cellFilter: null,
+                width: "*",
+                resizable: true
             }
         ];
 
@@ -58,6 +72,10 @@ module Tomcat {
               obj.mbean = response.request.mbean;
               var mbean = obj.mbean;
               if (mbean) {
+
+                // format the start time as readable date format
+                obj.startTime = millisToDateFormat(obj.startTime);
+
                 var idx = $scope.mbeanIndex[mbean];
                 if (angular.isDefined(idx)) {
                   $scope.webapps[mbean] = obj;
@@ -65,14 +83,14 @@ module Tomcat {
                   $scope.mbeanIndex[mbean] = $scope.webapps.length;
                   $scope.webapps.push(obj);
                 }
-                Core.$apply($scope);
               }
             }
           }
 
           angular.forEach(response, function (value, key) {
             var mbean = value;
-            jolokia.request({type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName"]}, onSuccess(onAttributes));
+            jolokia.request({type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName",
+               "sessionTimeout", "startTime"]}, onSuccess(onAttributes));
           });
           Core.$apply($scope);
         };

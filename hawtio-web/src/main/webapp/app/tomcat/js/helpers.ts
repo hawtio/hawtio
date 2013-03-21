@@ -20,4 +20,13 @@ module Tomcat {
       return "red icon-stop";
     }
 
+    export function millisToDateFormat(time) {
+      if (time) {
+        var date = new Date(time);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+      } else {
+        return "";
+      }
+    }
+
 }
