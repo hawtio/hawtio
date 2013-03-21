@@ -29,6 +29,12 @@ module Jmx {
               href: () => "#/jmx/attributes"
             });
             workspace.subLevelTabs.push( {
+              content: '<i class="icon-leaf"></i> Operations',
+              title: "Execute operations on your selection",
+              isValid: (workspace: Workspace) => true,
+              href: () => "#/jmx/operations"
+            });
+            workspace.subLevelTabs.push( {
               content: '<i class="icon-bar-chart"></i> Chart',
               title: "View a chart of the metrics on your selection",
               isValid: (workspace: Workspace) => true,
@@ -39,12 +45,6 @@ module Jmx {
               title: "Edit the chart configuration",
               isValid: (workspace: Workspace) => workspace.isLinkActive("jmx/chart"),
               href: () => "#/jmx/chartEdit"
-            });
-            workspace.subLevelTabs.push( {
-              content: '<i class="icon-leaf"></i> Operations',
-              title: "Execute operations on your selection",
-              isValid: (workspace: Workspace) => true,
-              href: () => "#/jmx/operations"
             });
 
           });
