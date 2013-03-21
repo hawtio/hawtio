@@ -177,10 +177,12 @@ i.expandable-indicator {
 }
 
 .expandable.opened i.expandable-indicator:before {
+  font-family: FontAwesome;
   content: "\f078";
 }
 
 .expandable.closed i.expandable-indicator:before {
+  font-family: FontAwesome;
   content: "\f054";
 }
 
@@ -202,6 +204,7 @@ span.dynatree-icon {
 }
 
 span:not(.dynatree-has-children) .dynatree-icon:before {
+  font-family: FontAwesome;
   color: gray;
   content: "\f013";
 }
@@ -240,9 +243,6 @@ ul.inline > li, ol.inline > li {
 }
 
 .red {
-  /*
-    color: #ff0000;
-  */
   color: red;
 }
 
@@ -250,10 +250,11 @@ ul.inline > li, ol.inline > li {
     color: orange;
 }
 
+.yellow {
+  color: yellow;
+}
+
 .green {
-  /*
-    color: #00ff00;
-  */
   color: green;
 }
 
@@ -668,11 +669,13 @@ div#main div ul.nav li {
 }
 
 .navbar .btn-navbar span:after {
+  font-family: FontAwesome;
   content: "\f0de";
   margin-left: 7px;
 }
 
 .navbar .btn-navbar.collapsed span:after {
+  font-family: FontAwesome;
   content: "\f0dd";
   margin-left: 7px;
 }
@@ -874,6 +877,18 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
   padding-top: 3px;
 }
 
-div.help-display img:not(.no-shadow) {
+.help-display img:not(.no-shadow) {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadowed {
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.help-display h5 {
+  margin-top: 2em;
+}
+
+.help-display h6 {
+  margin-top: 2em;
 }

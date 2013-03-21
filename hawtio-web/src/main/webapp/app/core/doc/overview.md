@@ -12,37 +12,31 @@
 - [JBoss AS 7](http://www.jboss.org/jbossas)
 - [Jetty](http://www.eclipse.org/jetty/)
 
-
-
-
 ##### General Navigation #####
 Primary navigation in [hawtio](http://hawt.io "hawtio") is via the top navigation bar.
 
 ![Main Navigation Bar](app/core/doc/img/main-nav.png "Main Navigation Bar")
 
-The top navigation bar is dynamically populated based on the available JMX MBeans in the JVM.  Clicking on a navigation link will take you to that plugin's main page.
+Clicking on a navigation link will take you to that plugin's main page.
 
-
-
+<i class='yellow text-shadowed icon-warning-sign'></i> **Note:** The available links in the navigation bar depend on what plugins are available and what JMX MBeans are available in the JVM, and so may differ from what is shown here.
 
 ##### Getting Help #####
 Click the Help icon (<i class='icon-question-sign'></i>) in the main navigation bar to access [hawtio](http://hawt.io "hawtio")'s help system. Browse the available help topics for plugin-specific documentation using the help navigation bar on the left.
 
 ![Help Topic Navigation Bar](app/core/doc/img/help-topic-nav.png "Help Topic Navigation Bar")
 
-
-
 Available sub-topics for each plugin can be selected via the secondary navigation bar above the help display area.
 
 ![Help Sub-Topic Navigation Bar](app/core/doc/img/help-subtopic-nav.png "Help Sub-Topic Navigation Bar")
-
-
 
 ##### Preferences #####
 Click the Preferences icon (<i class='icon-cogs'></i>) in the main navigation bar to access the [Preferences](#/preferences) page.  Available configuration options are:
 
 ###### General ######
-- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5 and 30 seconds.  **Note:** Setting this to "No Refreshes" will disable charting, as charting requires fetching periodic metric updates.
+- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5 and 30 seconds.
+
+  <i class='yellow text-shadowed icon-warning-sign'></i> **Note:** Setting this to "No Refreshes" will disable charting, as charting requires fetching periodic metric updates.
 - **Go to server** - Connect this [hawtio](http://hawt.io "hawtio") frontend instance to a different [Jolokia](http://jolokia.org) backend.
 - **Auto Refresh** - Automatically refresh the browser window if [hawtio](http://hawt.io "hawtio") detects a change in available plugins.
 
