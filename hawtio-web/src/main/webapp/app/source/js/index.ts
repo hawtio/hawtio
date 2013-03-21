@@ -34,7 +34,7 @@ module Source {
 
     function filterFileNames() {
       if (fileName) {
-        $scope.sourceFiles = $scope.allSourceFiles.filter(n => n.startsWith(fileName)).map(n => n.substring(fileName.length + 1)).filter(n => n);
+        $scope.sourceFiles = $scope.allSourceFiles.filter(n => n && n.startsWith(fileName)).map(n => n.substring(fileName.length + 1)).filter(n => n);
       } else {
         $scope.sourceFiles = $scope.allSourceFiles;
       }
