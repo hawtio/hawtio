@@ -37,14 +37,22 @@ module Core {
     if (!angular.isDefined($scope.topics[$scope.topic])) {
       $scope.html = "Unable to download help data for " + $scope.topic;
     } else {
-      $.get($scope.topics[$scope.topic][$scope.subTopic], function(data) {
-        $scope.html = "Unable to download help data for " + $scope.topic;
-        if (angular.isDefined(data)) {
-          $scope.html = marked(data);
+      
+      $.ajax({
+        url: $scope.topics[$scope.topic][$scope.subTopic],
+        dataType: 'html',
+        success: function(data, textStatus, jqXHR) {
+          $scope.html = "Unable to download help data for " + $scope.topic;
+          if (angular.isDefined(data)) {
+            $scope.html = marked(data);
+          }
+          $scope.$apply();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          $scope.html = "Unable to download help data for " + $scope.topic;
+          $scope.$apply();
         }
-        $scope.$apply();
-      });
+      })
     }
-
   }
 }
