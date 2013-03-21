@@ -1,0 +1,27 @@
+module Infinispan {
+
+  /**
+   * Returns the name of the cache from the mbean results
+   */
+  export function infinispanCacheName(entity) {
+    // there's no name in the MBean so lets extract it from the JMX ObjectName
+    if (entity) {
+      var id = entity._id;
+      if (id) {
+        var prefix = 'name="';
+        var idx = id.indexOf(prefix);
+        if (idx > 0) {
+          idx += prefix.length;
+          var lastIdx = id.indexOf('"', idx + 1);
+          if (lastIdx > 0) {
+            return id.substring(idx, lastIdx);
+          } else {
+            return id.substring(idx);
+          }
+        }
+      }
+      return id;
+    }
+    return null;
+  }
+}

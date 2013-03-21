@@ -86,7 +86,7 @@
         <guava-version>13.0.1</guava-version>
     -->
     <guava-version>10.0</guava-version>
-    <infinispan-version>5.1.5.FINAL</infinispan-version>
+    <infinispan-version>5.2.5.Final</infinispan-version>
 
     <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
     <insight-log4j.version>99-master-SNAPSHOT</insight-log4j.version>
