@@ -2,6 +2,11 @@
 
 # 1.1 (in progress)
 
+Added the following new plugins:
+
+* [infinispan](http://hawt.io/plugins/infinispan/)
+* [maven](http://hawt.io/plugins/maven/)
+
 Fixes [these issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
 
 
