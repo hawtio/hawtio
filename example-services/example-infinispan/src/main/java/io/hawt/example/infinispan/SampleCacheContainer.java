@@ -1,4 +1,4 @@
-package io.hawt.sample.infinispan;
+package io.hawt.example.infinispan;
 
 import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;

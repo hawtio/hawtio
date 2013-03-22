@@ -5,7 +5,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.hawt.maven.indexer.MavenIndexerFacade;
-import io.hawt.sample.infinispan.InfinispanDemo;
 import org.apache.camel.CamelException;
 import org.apache.camel.util.CamelContextHelper;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -154,9 +153,6 @@ public class Main {
                 impl.setZooKeeper(zooKeeper);
                 impl.init();
             }
-
-            // lets initialise infinispan
-            new InfinispanDemo().run();
 
             LOG.info("starting jetty");
             server.start();

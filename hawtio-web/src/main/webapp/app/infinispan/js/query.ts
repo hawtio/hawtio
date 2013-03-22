@@ -57,7 +57,7 @@ module Infinispan {
     function handleResults(results) {
       console.log("Got results: " + JSON.stringify(results));
       var error = results["ERROR"] || "";
-      var stackTrace = results["STACKTRACE"];
+      var stackTrace = results["STACKTRACE"] || "";
       if (error || stackTrace) {
         if (stackTrace) {
           error += "\n" + stackTrace;
