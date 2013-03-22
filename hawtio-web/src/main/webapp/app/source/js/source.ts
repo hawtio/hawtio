@@ -13,7 +13,7 @@ module Source {
 
     $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
 
-    console.log("Source format is " + $scope.format + " line " + lineNumber + " className " + className + " file " + fileName);
+    //console.log("Source format is " + $scope.format + " line " + lineNumber + " className " + className + " file " + fileName);
 
     $scope.breadcrumbs = [];
 
@@ -35,8 +35,12 @@ module Source {
     $scope.breadcrumbs.push({href: $location.url(), name: name, active: true});
 
     $scope.javaDocLink = () => {
-      if (className) {
-        return "javadoc/" + mavenCoords + "/" + classNamePath + ".html";
+      var path = classNamePath;
+      if (!path && fileName && fileName.endsWith(".java")) {
+        path = fileName.substring(0, fileName.length - 5);
+      }
+      if (path) {
+        return "javadoc/" + mavenCoords + "/" + path + ".html";
       }
       return null;
     };
