@@ -215,11 +215,11 @@
   <modules>
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
-    <module>hawtio-osgi-jmx</module>
     <module>example-services</module>
     <module>hawtio-web</module>
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
+    <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-registry</module>
     <module>hawtio-plugin-example</module>
