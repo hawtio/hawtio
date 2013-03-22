@@ -4,6 +4,7 @@
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <feature>war</feature>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
+    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-plugin-registry" version="${project.version}" resolver="(obr)">
@@ -26,6 +27,7 @@
     <feature>hawtio-plugin-registry</feature>
 
     <bundle>mvn:io.hawt/hawtio-osgi-devmode/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
 
     <config name="hawtiodev-hawtioweb">
       context=/hawtio/*
