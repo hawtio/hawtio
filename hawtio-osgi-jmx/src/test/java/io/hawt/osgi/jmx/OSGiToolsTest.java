@@ -1,4 +1,6 @@
-package io.hawt.osgi;
+package io.hawt.osgi.jmx;
+
+import io.hawt.osgi.jmx.OSGiTools;
 
 import java.io.File;
 import java.net.URL;

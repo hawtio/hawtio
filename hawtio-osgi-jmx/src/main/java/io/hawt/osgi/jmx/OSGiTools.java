@@ -1,4 +1,4 @@
-package io.hawt.osgi;
+package io.hawt.osgi.jmx;
 
 import java.lang.management.ManagementFactory;
 import java.net.URL;

@@ -9,6 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-osgi-jmx</artifactId>
+  <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
   <description>hawtio :: ${project.artifactId}</description>
 
@@ -41,4 +42,32 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Activator>io.hawt.osgi.jmx.Activator</Bundle-Activator>
+            <Export-Package />
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

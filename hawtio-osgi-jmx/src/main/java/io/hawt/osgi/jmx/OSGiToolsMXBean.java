@@ -1,4 +1,4 @@
-package io.hawt.osgi;
+package io.hawt.osgi.jmx;
 
 public interface OSGiToolsMXBean {
     /**
