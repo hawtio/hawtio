@@ -48,7 +48,13 @@ module Jmx {
 
     $scope.$watch('workspace.selection', render);
 
-    function render(node, oldNode) {
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(render, 50);
+    });
+
+    function render() {
+      var node = workspace.selection;
       if (!angular.isDefined(node)) {
         return;
       }
@@ -73,7 +79,8 @@ module Jmx {
             mbeanCounter++;
             $scope.mbeans[name] = name;
             // we need to escape the mbean path for list
-            var listKey = encodeMBeanPath(mbean);
+            var listKey = escapeMBeanPath(mbean);
+            //var listKey = encodeMBeanPath(mbean);
             jolokia.list(listKey, onSuccess((meta) => {
               var attributes = meta.attr;
               if (attributes) {

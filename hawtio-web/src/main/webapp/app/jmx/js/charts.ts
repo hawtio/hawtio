@@ -90,6 +90,10 @@ module Jmx {
           var mbeans = {};
           elementNames.forEach((elementName) => {
             var child = node.get(elementName);
+            var children = node.children;
+            if (!child && children) {
+              child = children.find({title: elementName});
+            }
             if (child) {
               var mbean = child.objectName;
               if (mbean) {
