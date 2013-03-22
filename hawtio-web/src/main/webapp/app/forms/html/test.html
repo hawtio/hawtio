@@ -1,9 +1,32 @@
 <div ng-controller='Forms.FormTestController'>
 
-  <p>Hello World!</p>
+  <h3>Form Testing</h3>
 
   <div>
-    Here is the form
-    <div simple-form='config' url='#/forms/test' method='post'></div>
+    Form with inline arguments
+    <div simple-form url='#/forms/test' method='post' data='setVMOption'></div>
+  </div>
+
+  <hr>
+
+  <div>
+    Form with config object
+    <div simple-form='config'></div>
+  </div>
+
+  <hr>
+
+  <div>
+    form with inline json config
+    <div simple-form url='#/forms/test' method='post' json='
+    {
+      "args": [
+        { "desc": "Argument key", "name": "key", "type": "java.lang.String" },
+        { "desc": "Argument value", "name": "value", "type": "java.lang.String" },
+        { "desc": "Long argument", "name": "longArg", "type": "Long" },
+        { "desc": "Int argument", "name": "intArg", "type": "Integer" }],
+       "desc": "Show some stuff in a form",
+       "ret": "java.lang.String"
+    }'></div>
   </div>
 </div>
