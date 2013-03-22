@@ -20,7 +20,7 @@ Mostly hawtio just works. However, please check out the [Configuration Guide](ht
 
 ### What has changed lately?
 
-Try have a look at the [change log](http://hwat.io/changslog/html)
+Try have a look at the [change log](http://hawt.io/changelog.html) to see the latest changes in hawtio!
 
 ### Why does hawtio have its own wiki?
 
