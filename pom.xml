@@ -89,9 +89,9 @@
     <infinispan-version>5.2.5.Final</infinispan-version>
 
     <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
-    <insight-log4j.version>99-master-SNAPSHOT</insight-log4j.version>
-<!--
     <insight-log4j.version>${fabric-version}</insight-log4j.version>
+<!--
+    <insight-log4j.version>99-master-SNAPSHOT</insight-log4j.version>
 -->
     <jackson-2-version>2.1.0</jackson-2-version>
     <!-- TODO lets use Jetty 7.x to avoid servlet 2.5 and 3.0 classpath clashes -->
