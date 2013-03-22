@@ -24,4 +24,27 @@ module Infinispan {
     }
     return null;
   }
+
+  /**
+   * Returns the MBean ObjectName for the interpreter
+   */
+  export function getInterpreterMBean(workspace:Workspace) {
+    if (workspace) {
+      var folder = workspace.findMBeanWithProperties(Infinispan.jmxDomain, {component: "Interpreter", type: "CacheManager"});
+      if (folder) {
+        return folder.objectName;
+      }
+    }
+    return null;
+  }
+
+  export function getSelectedCacheName(workspace:Workspace) {
+    var selection = workspace.selection;
+    if (selection) {
+      // lets get the cache name
+      return selection.entries["name"];
+    }
+    return null;
+  }
+
 }

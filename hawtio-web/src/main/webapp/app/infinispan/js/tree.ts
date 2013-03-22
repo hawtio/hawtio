@@ -49,6 +49,7 @@ module Infinispan {
               cacheFolder.key = answer.key + "-" + cacheName;
               cacheFolder.objectName = value.objectName;
               cacheFolder.domain = value.domain;
+              cacheFolder.entries = value.entries;
               answer.children.push(cacheFolder);
             } else {
               addAllCacheStatistics(value, answer);

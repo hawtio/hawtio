@@ -555,6 +555,30 @@ class Workspace {
     return false;
   }
 
+  // only display stuff if we have an mbean with the given properties
+  public findMBeanWithProperties(domainName, properties = null, propertiesCount = null) {
+    var tree = this.tree;
+    if (tree) {
+        return this.findChildMBeanWithProperties(tree.get(domainName), properties, propertiesCount);
+    }
+    return null;
+  }
+
+  public findChildMBeanWithProperties(folder, properties = null, propertiesCount = null) {
+    var workspace = this;
+    if (folder) {
+      var children = folder.children;
+      if (children) {
+        var answer = children.find(node => this.matches(node, properties, propertiesCount));
+        if (answer) {
+          return answer;
+        }
+        return children.map(node => workspace.findChildMBeanWithProperties(node, properties, propertiesCount)).find(node => node);
+      }
+    }
+    return null;
+  }
+
 
   public selectionHasDomainAndLastFolderName(objectName: string, lastName: string) {
     var node = this.selection;
