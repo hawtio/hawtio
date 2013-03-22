@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawtio FAQ</title>
+    <title>Ch-ch-ch-changes!</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -50,105 +50,27 @@
       </div>
     </header>
     <div id="main">
-		  <p><div id="content-header">
-    <div class="container">
-      <h1>FAQ</h1>
-    </div>
-  </div>
-  <div class="container">
+		  <p><div class="container">
     <div id="content"></p>
 
-<h2 id = "General_Questions">General Questions</h2>
+<h1 id = "hawtio_change_log">hawtio change log</h1>
 
-<p>General questions on all things hawtio.</p>
+<h1 id = "1_1__in_progress_">1.1 (in progress)</h1>
 
-<h3 id = "What_is_the_license_">What is the license?</h3>
-
-<p>hawtio uses the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a>.</p>
-
-<h3 id = "What_does_hawtio_do_">What does hawtio do?</h3>
-
-<p>It's a <a href="http://hawt.io/plugins/index.html">pluggable</a> management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric, etc), and any kind of Java technology and middleware.</p>
-
-<h3 id = "How_do_I_install_hawtio_">How do I install hawtio?</h3>
-
-<p>See the <a href="http://hawt.io/getstarted/index.html">Getting Started Guide</a> and the <a href="http://hawt.io/configuration/index.html">Configuration Guide</a></p>
-
-<h3 id = "How_do_I_configure_hawtio_">How do I configure hawtio?</h3>
-
-<p>Mostly hawtio just works. However, please check out the <a href="http://hawt.io/configuration/index.html">Configuration Guide</a> to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.</p>
-
-<h3 id = "What_has_changed_lately_">What has changed lately?</h3>
-
-<p>Try have a look at the <a href="http://hawt.io/changelog.html">change log</a> to see the latest changes in hawtio!</p>
-
-<h3 id = "Why_does_hawtio_have_its_own_wiki_">Why does hawtio have its own wiki?</h3>
-
-<p>At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.</p>
-
-<p>From a hawtio perspective though its wiki pages can be HTML or Markdown and then be an AngularJS HTML partial. So it can include JavaScript widgets; or it can include <a href="http://docs.angularjs.org/guide/directive">AngularJS directives</a>.</p>
-
-<p>This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any any <a href="http://hawt.io/plugins/index.html">hawtio plugins</a>. Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.</p>
-
-<p>So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information <span class="amp">&amp;</span> widgets you like in whatever layout you like. You have full control over the content and layout of the page!</p>
-
-<p>Here are some <a href="https://github.com/hawtio/hawtio/issues/103">sample</a> <a href="https://github.com/hawtio/hawtio/issues/62">issues</a> on this if you want to help!</p>
-
-<p>So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views&mdash;all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.</p>
-
-<h3 id = "How_do_I_build_the_project_">How do I build the project?</h3>
-
-<p>If you just want to run hawtio in a JVM then please see the <a href="http://hawt.io/getstarted/index.html">Getting Started</a> section.</p>
-
-<p>If you want to hack the source code then check out <a href="http://hawt.io/building/index.html">how to build hawtio</a>.</p>
-
-<h3 id = "What_code_conventions_do_you_have_">What code conventions do you have?</h3>
-
-<p>Check out the <a href="https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md">Coding Conventions</a> for our recommended approach.</p>
-
-<h2 id = "Plugin_Questions">Plugin Questions</h2>
-
-<p>Questions on using the available plugins:</p>
-
-<h3 id = "What_plugins_are_available_">What plugins are available?</h3>
-
-<p>See the list of <a href="http://hawt.io/plugins/index.html">hawtio plugins</a></p>
-
-<h3 id = "What_is_a_plugin_">What is a plugin?</h3>
-
-<p>See <a href="http://hawt.io/plugins/howPluginsWork.html">How Plugins Work</a></p>
-
-<h3 id = "Why_does_the_OSGi_tab_not_appear_on_GlassFish_">Why does the OSGi tab not appear on GlassFish?</h3>
-
-<p>This is a <a href="https://github.com/hawtio/hawtio/issues/158">reported issue</a>. It turns out that the standard OSGi MBeans (in the osgi.core domain) are not installed by default on GlassFish.</p>
-
-<p>The workaround is to install the <a href="http://www.eclipse.org/gemini/management/">Gemini Management bundle</a> then you should see the MBeans in the osgi.core domain in the JMX tree; then the OSGi tab should appear!</p>
-
-<h2 id = "Developer_Questions">Developer Questions</h2>
-
-<p>Questions on writing new plugins or hacking on existing ones:</p>
-
-<h3 id = "What_can_my_new_plugin_do_">What can my new plugin do?</h3>
-
-<p>Anything you like :). So long as it runs on a web browser, you're good to go. Please start <a href="http://hawt.io/contributing/index.html">contributing</a>!</p>
-
-<h3 id = "Do_I_have_to_use_TypeScript_">Do I have to use TypeScript?</h3>
-
-<p>You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and <a href="http://altjs.org/">any language that compiles to JavaScript</a>.</p>
-
-<p>So take your pick; the person who creates a plugin can use whatever language they prefer, so please contribute a <a href="http://hawt.io/contributing/index.html">new plugin</a> :).</p>
-
-<p>The only real APIs a plugin needs to worry about are AngularJS (if you want to work in the core layout rather than just be an iframe), JSON (for some pretty trivial extension points such as adding new tabs), HTML and CSS.</p>
-
-<h3 id = "How_can_I_add_my_new_plugin_">How can I add my new plugin?</h3>
-
-<p>Check out <a href="http://hawt.io/plugins/index.html">how plugins work</a>. You can then either:</p>
+<p>Added the following new plugins:</p>
 
 <ul>
-<li>Fork this project and submit your plugin by <a href="https://help.github.com/articles/creating-a-pull-request">creating a Github pull request</a> then we'll include your plugin by default in the hawtio distribution.</li>
-<li>Make your own WAR with your plugin added (by depending on the hawtio-web.war in your pom.xml)</li>
-<li>Host your plugin at some canonical website (e.g. with Github pages) then <a href="https://github.com/hawtio/hawtio/issues?state=open">submit an issue</a> to tell us about it and we can add it to the plugin registry JSON file.</li>
+<li><a href="http://hawt.io/plugins/infinispan/">infinispan</a></li>
+<li><a href="http://hawt.io/plugins/maven/">maven</a></li>
 </ul>
+
+<p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=2&amp;state=closed">these issues and enhancements</a></p>
+
+<h1 id = "1_0">1.0</h1>
+
+<p>First main release of hawtio with <a href="http://hawt.io/plugins/index.html">lots of hawt plugins</a>.</p>
+
+<p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=1&amp;state=closed">these 74 issues and enhancements</a></p>
 
 <p></div>
   </div></p>
