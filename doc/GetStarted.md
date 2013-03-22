@@ -30,6 +30,8 @@ If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just d
 
 Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
+To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
+
 ## Using Apache Karaf, Apache Servicemix, or Fuse ESB
 
 If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) you can run:
