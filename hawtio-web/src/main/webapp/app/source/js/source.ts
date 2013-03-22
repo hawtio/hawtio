@@ -7,12 +7,13 @@ module Source {
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var lineNumber = $location.search()["line"] || 1;
     var mavenCoords = $routeParams["mavenCoords"];
-    var className = $routeParams["className"];
+    var className = $routeParams["className"] || "";
     var fileName = $scope.pageId || "/";
+    var classNamePath = className.replace(/\./g, '/');
 
     $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
 
-    console.log("Source format is " + $scope.format + " line " + lineNumber);
+    console.log("Source format is " + $scope.format + " line " + lineNumber + " className " + className + " file " + fileName);
 
     $scope.breadcrumbs = [];
 
@@ -22,10 +23,23 @@ module Source {
     if (idx > 0) {
       path = fileName.substring(0, idx);
       name = fileName.substring(idx + 1);
+    } else if (className && className.indexOf('.') > 0) {
+      path = classNamePath;
+      idx = path.lastIndexOf('/');
+      if (idx > 0) {
+        name = path.substring(idx + 1);
+        path = path.substring(0, idx);
+      }
     }
     $scope.breadcrumbs = Source.createBreadcrumbLinks(mavenCoords, path);
-    $scope.breadcrumbs.push({href: $location.url(), name: name});
+    $scope.breadcrumbs.push({href: $location.url(), name: name, active: true});
 
+    $scope.javaDocLink = () => {
+      if (className) {
+        return "javadoc/" + mavenCoords + "/" + classNamePath + ".html";
+      }
+      return null;
+    };
     var options = {
       readOnly: true,
       mode: $scope.format,

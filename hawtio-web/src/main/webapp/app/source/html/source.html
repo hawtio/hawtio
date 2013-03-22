@@ -1,15 +1,15 @@
 <div ng-controller="Source.SourceController">
   <div class="row-fluid">
     <ul class="nav nav-tabs">
-      <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+      <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
         <a ng-href="{{link.href}}{{hash}}">
           {{link.name}}
         </a>
       </li>
       <li class="pull-right" ng-show="javaDocLink()">
-        <a ng-href="{{javaDocLink()}}{{hash}}" title="View the javadocs"
+        <a target="javadoc" ng-href="{{javaDocLink()}}{{hash}}" title="View the javadocs"
            data-placement="bottom">
-          <i class="icon-edit"></i> JavaDoc</a></li>
+          <i class="icon-file-alt"></i> JavaDoc</a></li>
     </ul>
   </div>
 
