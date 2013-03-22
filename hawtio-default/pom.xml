@@ -32,6 +32,12 @@
     </dependency>
 
     <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-maven-indexer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.fusesource.insight</groupId>
       <artifactId>insight-log4j</artifactId>
       <version>${insight-log4j.version}</version>
