@@ -18,6 +18,10 @@ See the [Getting Started Guide](http://hawt.io/getstarted/index.html) and the [C
 
 Mostly hawtio just works. However, please check out the [Configuration Guide](http://hawt.io/configuration/index.html) to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.
 
+### What has changed lately?
+
+Try have a look at the [change log](http://hwat.io/changslog/html)
+
 ### Why does hawtio have its own wiki?
 
 At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.
