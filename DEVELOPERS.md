@@ -55,11 +55,12 @@ If you are interested in working on the code the following references and articl
 
 ### Developer Articles, Forums and Resources
 
+* [Fun with AngularJS](http://devgirl.org/2013/03/21/fun-with-angularjs/) is great overview on AngularJS!
+* [egghead.io various short angularjs videos](http://egghead.io/)
+* [great angularjs talk](http://www.youtube.com/angularjs)
 * [AngularJS plugins](http://ngmodules.org/)
 * [AngularJS tips and tricks](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED)
 * [more AngularJS magic to supercharge your webapp](http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#)
-* [egghead.io various short angularjs videos](http://egghead.io/)
-* [great angularjs talk](http://www.youtube.com/angularjs)
 * [AngularJS questions on stackoverflow](http://stackoverflow.com/questions/tagged/angularjs)
 
 ## Code Walkthrough
