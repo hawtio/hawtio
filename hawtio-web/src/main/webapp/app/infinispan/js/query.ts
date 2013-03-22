@@ -55,21 +55,24 @@ module Infinispan {
     };
 
     function handleResults(results) {
-      console.log("Got results: " + JSON.stringify(results));
-      var error = results["ERROR"] || "";
-      var stackTrace = results["STACKTRACE"] || "";
-      if (error || stackTrace) {
-        if (stackTrace) {
-          error += "\n" + stackTrace;
-        }
-        notification("error", error);
+      if (!results) {
+        console.log("no output...");
       } else {
-        var output = results["OUTPUT"];
-        if (!output) {
-          notification("error", "No results!");
+        var error = results["ERROR"] || "";
+        var stackTrace = results["STACKTRACE"] || "";
+        if (error || stackTrace) {
+          if (stackTrace) {
+            error += "\n" + stackTrace;
+          }
+          notification("error", error);
         } else {
-          $scope.output = output;
-          Core.$apply($scope);
+          var output = results["OUTPUT"];
+          if (!output) {
+            notification("error", "No results!");
+          } else {
+            $scope.output = output;
+            Core.$apply($scope);
+          }
         }
       }
     }
