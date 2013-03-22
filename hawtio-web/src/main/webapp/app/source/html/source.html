@@ -1,11 +1,17 @@
 <div ng-controller="Source.SourceController">
-  <ul class="nav nav-tabs">
-    <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
-      <a ng-href="{{link.href}}{{hash}}">
-        {{link.name}}
-      </a>
-    </li>
-  </ul>
+  <div class="row-fluid">
+    <ul class="nav nav-tabs">
+      <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+        <a ng-href="{{link.href}}{{hash}}">
+          {{link.name}}
+        </a>
+      </li>
+      <li class="pull-right" ng-show="javaDocLink()">
+        <a ng-href="{{javaDocLink()}}{{hash}}" title="View the javadocs"
+           data-placement="bottom">
+          <i class="icon-edit"></i> JavaDoc</a></li>
+    </ul>
+  </div>
 
   <div class="form-horizontal">
     <div class="control-group editor-autoresize">
