@@ -62,10 +62,6 @@
     <listener-class>io.hawt.git.GitContextListener</listener-class>
   </listener>
 
-  <listener>
-    <listener-class>io.hawt.osgi.OSGiContextListener</listener-class>
-  </listener>
-
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
