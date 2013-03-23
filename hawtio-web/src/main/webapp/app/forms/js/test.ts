@@ -2,9 +2,23 @@ module Forms {
 
   export function FormTestController($scope, workspace) {
     $scope.config = {
-      url: "/some/url",
+      name: 'form-with-config-object',
+      action: "/some/url",
       method: "post",
-      data: 'setVMOption'
+      data: 'setVMOption',
+      showtypes: 'false'
+    }
+
+    $scope.onCancel = (form) => {
+      notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
+    }
+
+    $scope.onSubmit = (form) => {
+      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really)');
+    }
+
+    $scope.derp = (form) => {
+      notification('error', 'derp');
     }
 
     $scope.setVMOption = {
@@ -17,12 +31,14 @@ module Forms {
         {
           desc: 'Argument Value',
           name: 'value',
-          type: 'java.lang.String'
+          type: 'java.lang.String',
+          def: 'foobar'
         },
         {
           desc: 'Long argument',
           name: 'longArg',
-          type: 'Long'
+          type: 'Long',
+          def: '5'
         },
         {
           desc: 'Int argument',

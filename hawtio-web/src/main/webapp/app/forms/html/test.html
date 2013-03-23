@@ -4,7 +4,7 @@
 
   <div>
     Form with inline arguments
-    <div simple-form url='#/forms/test' method='post' data='setVMOption'></div>
+    <div simple-form name='form-with-inline-arguments' action='#/forms/test' method='post' data='setVMOption' onSubmit="derp()" submitText="Derp"></div>
   </div>
 
   <hr>
@@ -18,14 +18,14 @@
 
   <div>
     form with inline json config
-    <div simple-form url='#/forms/test' method='post' json='
+    <div simple-form name='form-with-inline-json-config' action='#/forms/test' method='post' showTypes='false' json='
     {
       "args": [
         { "desc": "Argument key", "name": "key", "type": "java.lang.String" },
         { "desc": "Argument value", "name": "value", "type": "java.lang.String" },
         { "desc": "Long argument", "name": "longArg", "type": "Long" },
         { "desc": "Int argument", "name": "intArg", "type": "Integer" }],
-       "desc": "Show some stuff in a form",
+       "desc": "Show some stuff in a form from JSON",
        "ret": "java.lang.String"
     }'></div>
   </div>

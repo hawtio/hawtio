@@ -1,19 +1,47 @@
 module Forms {
 
+  export class SimpleFormConfig {
+
+    public name = 'form';
+    public method = 'post';
+    public data:any = {};
+    public json:any = undefined;
+    public args = [];
+    public action = '';
+
+    public formclass = 'form-horizontal no-bottom-margin';
+    public controlgroupclass = 'control-group';
+    public controlclass = 'controls';
+    public labelclass = 'control-label';
+
+    public showtypes = 'true';
+
+    public submiticon = 'icon-ok';
+    public reseticon = 'icon-refresh';
+    public cancelicon = 'icon-remove';
+
+    public submittext = 'Submit';
+    public resettext = 'Reset';
+    public canceltext = 'Cancel';
+
+    public oncancel = 'onCancel';
+    public onsubmit = 'onSubmit';
+
+    // TODO - add toggles to turn off cancel or reset buttons
+
+    // TODO - do actual two-way databinding
+  }
+
   export class SimpleForm {
 
     public restrict = 'A';
+    public scope = true;
     public replace = true;
     public transclude = true;
 
     // see constructor for why this is here...
     public link: (scope, element, attrs) => any;
 
-    private method = 'post';
-    private data:any = {};
-    private json:any = undefined;
-    private args = [];
-    private url = '';
 
     constructor(private workspace) {
 
@@ -24,72 +52,177 @@ module Forms {
 
     }
 
-    private sanitize(args) {
-      if (args) {
-        args.forEach( function (arg) {
-          if (angular.isDefined(arg.formType)) {
-            // user-defined input type
-            return;
-          }
-          switch (arg.type) {
-            case "int":
-            case "long":
-              arg.formType = "number";
-              break;
-            default:
-              arg.formType = "text";
-          }
-        });
+    private sanitize(arg) {
+      if (angular.isDefined(arg.formType)) {
+        // user-defined input type
+        return arg;
+      }
+      switch (arg.type.toLowerCase()) {
+        case "int":
+        case "integer":
+        case "long":
+        case "short":
+        case "java.lang.integer":
+        case "java.lang.long":
+          arg.formType = "number";
+          break;
+        default:
+          arg.formType = "text";
       }
 
-      return args;
-    };
+      return arg;
+    }
 
     private doLink(scope, element, attrs) {
-      var config = scope[attrs['simpleForm']];
+      var config = new SimpleFormConfig;
 
-      this.configure(config, attrs);
+      config = this.configure(config, scope[attrs['simpleForm']], attrs);
 
-      //console.log("attrs: ", attrs);
-      //console.log("config: ", config);
-      //console.log("This: ", this);
-
-      if (angular.isDefined(this.json)) {
-        this.data = $.parseJSON(this.json);
+      if (angular.isDefined(config.json)) {
+        config.data = $.parseJSON(config.json);
       } else {
-        this.data = scope[this.data];
+        config.data = scope[config.data];
       }
-      //console.log("data: ", this.data);
-      this.args = this.sanitize(this.data.args);
 
-      console.log("args:", this.args);
-
-      var form = this.createForm();
+      var form = this.createForm(config);
+      var fieldset = form.find('fieldset');
 
       var addInput = function(arg) {
-        var input = this.getInput(arg);
-        form.append(input);
+        var input = this.assembleInput(config, arg);
+        fieldset.append(input);
       }
 
-      this.args.forEach(addInput, this);
+      config.data.args.forEach(addInput, this);
+
+      var group = this.getControlGroup(config, {});
+      var controlDiv = this.getControlDiv(config);
+
+      var cancel = this.getCancelButton(config);
+      var reset = this.getResetButton(config);
+      var submit = this.getSubmitButton(config);
+
+      reset.click((event) => {
+        form.get(0).reset();
+        return false;
+      });
+
+      cancel.click((event) => {
+        scope[config.oncancel.replace('(', '').replace(')', '')](form);
+        return false;
+      });
+
+      submit.click((event) => {
+        form.submit();
+        return false;
+      });
+
+      form.submit(() => {
+        scope[config.onsubmit.replace('(', '').replace(')', '')](form);
+        return false;
+      });
+
+      controlDiv.addClass('btn-group');
+      controlDiv.append(cancel);
+      controlDiv.append(reset);
+      controlDiv.append(submit);
+
+      group.append(controlDiv);
+      fieldset.append(group);
 
       $(element).append(form);
     }
 
-    private createForm() {
-      return $('<form class="form-horizontal no-bottom-margin"><fieldset><legend>' + this.data.desc + '</legend><div class="control-group"></div></fieldset></form>');
+
+    private getCancelButton(config) {
+      return $('<button type="button" class="btn cancel"><i class="' + config.cancelicon + '"></i> ' + config.canceltext + '</button>');
     }
 
-    // TODO: support more input types, i.e. checkboxes/radio/select
-    private getInput(arg) {
-      return $('<div class="control-group" title="' + arg.desc + '"><label class="control-label">' + arg.name.capitalize() + ': </label><div class="controls"><input type="' + arg.formType + '"><span class="help-block">type: ' + arg.type + '</span></div></div>');
+    private getResetButton(config) {
+      return $('<button type="button" class="btn reset"><i class="' + config.reseticon + '"></i> ' + config.resettext + '</button>');
     }
 
-    private configure(config, attrs) {
-      if (angular.isDefined(config)) {
-        angular.extend(this, config);
+    private getSubmitButton(config) {
+      return $('<button type="submit" class="btn btn-success submit"><i class="' + config.submiticon + '"></i> ' + config.submittext + '</button>');
+    }
+
+
+    private createForm(config) {
+      var form = $('<form class="' + config.formclass + '"><fieldset></fieldset></form>');
+      form.attr('name', config.name);
+      form.attr('action', config.action);
+      form.attr('method', config.method);
+      form.find('fieldset').append(this.getLegend(config));
+      return form;
+    }
+
+
+    private getLegend(config) {
+      if (angular.isDefined(config.data.desc)) {
+        return '<legend>' + config.data.desc + '</legend>';
       }
-      angular.extend(this, attrs);
+      return '';
+    }
+
+
+    private getControlGroup(config, arg) {
+      var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+      if (angular.isDefined(arg.desc)) {
+        rc.attr('title', arg.desc);
+      }
+      return rc;
+    }
+
+
+    private getLabel(config, arg) {
+      return $('<label class="' + config.labelclass + '">' + humanizeValue(arg.name.capitalize()) + ': </label>');
+    }
+
+
+    private getControlDiv(config) {
+      return $('<div class="' + config.controlclass + '"></div>');
+    }
+
+
+    private getHelpSpan(config, arg) {
+      var rc = $('<span class="help-block"></span>');
+      if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
+        rc.append('Type: ' + arg.type);
+      }
+      return rc;
+    }
+
+
+    // TODO: support more input types, i.e. checkboxes/radio/select which vary from regular inputs
+    private assembleInput(config, arg) {
+      var group = this.getControlGroup(config, arg);
+      group.append(this.getLabel(config, arg));
+      var controlDiv = this.getControlDiv(config);
+      controlDiv.append(this.getInput(config, arg));
+      controlDiv.append(this.getHelpSpan(config, arg));
+      group.append(controlDiv);
+      return group;
+    }
+
+
+    private getInput(config, arg) {
+      var a = this.sanitize(arg);
+
+      switch (a.formType) {
+        default:
+          var rc = $('<input type="' + a.formType + '">');
+          rc.attr('name', a.name);
+          if (angular.isDefined(a.def)) {
+            rc.attr('value', a.def);
+          }
+          return rc;
+      }
+    }
+
+    private configure(config, scopeConfig, attrs) {
+      if (angular.isDefined(scopeConfig)) {
+        config = angular.extend(config, scopeConfig);
+      }
+      return angular.extend(config, attrs);
     }
 
   }
