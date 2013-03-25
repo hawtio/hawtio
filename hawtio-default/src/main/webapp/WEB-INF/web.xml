@@ -37,7 +37,11 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <listener>
+    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+  </listener>
 
+  <!-- TODO replace these other listeners with META-INF/blueprint.xml files... -->
   <listener>
     <listener-class>io.hawt.git.GitContextListener</listener-class>
   </listener>

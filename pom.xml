@@ -75,6 +75,7 @@
     <activemq-version>5.8.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
+    <blueprint-web-version>1.0.0-SNAPSHOT</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
     <camel-version>2.10.0.${perfectus-build}</camel-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
@@ -149,6 +150,19 @@
       <id>jetbrains-release</id>
       <name>jetbrains-release</name>
       <url>http://repository.jetbrains.com/releases</url>
+    </repository>
+
+    <!-- for blueprint-web-version snapshots -->
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Development Snapshot Repository</name>
+      <url>https://repository.apache.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
 
     <!-- in case we need SNAPSHOT dependency on Fuse projects -->
