@@ -39,6 +39,18 @@ module Forms {
     // TODO - add toggles to turn off cancel or reset buttons
 
     // TODO - do actual two-way databinding
+
+    public getMode() {
+      return this.mode || "edit";
+    }
+
+    public getEntity() {
+      return this.entity || "entity";
+    }
+
+    public isReadOnly() {
+      return this.getMode() === "view";
+    }
   }
 
   export class SimpleForm {
@@ -87,8 +99,8 @@ module Forms {
 
       config = this.configure(config, scope[attrs['simpleForm']], attrs);
 
-      var mode = config.mode || 'edit';
-      var entityName = config.entity || "entity";
+      var mode = config.getMode();
+      var entityName = config.getEntity();
       if (!scope[entityName]) {
         // start with an empty entity if its not defined
         scope[entityName] = {};
@@ -117,7 +129,7 @@ module Forms {
       var cancel = null;
       var reset = null;
       var submit = null;
-      if (mode !== 'view') {
+      if (!config.isReadOnly()) {
         cancel = this.getCancelButton(config);
         reset = this.getResetButton(config);
         submit = this.getSubmitButton(config);
@@ -200,6 +212,10 @@ module Forms {
 
       // compile the template
       this.$compile(form)(scope);
+    }
+
+    private getMode(config) {
+      return config.mode || 'edit';
     }
 
 
@@ -287,10 +303,13 @@ module Forms {
           var modelName = a.model;
           if (!angular.isDefined(a.model)) {
             // TODO always use 2 way binding?
-            modelName = (config.entity || "entity") + "." + a.name;
+            modelName = config.getEntity() + "." + a.name;
           }
           if (modelName) {
             rc.attr('ng-model', modelName);
+          }
+          if (config.isReadOnly()) {
+            rc.attr('readonly', 'true');
           }
           return rc;
       }
