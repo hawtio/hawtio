@@ -82,8 +82,8 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
-    $scope.onSubmit = (form) => {
-      notification("success", "Submitted form data " + form.get(0).name);
+    $scope.onSubmit = (json, form) => {
+      notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
     };
 
     $scope.onCancel = (form) => {
