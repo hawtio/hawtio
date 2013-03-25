@@ -9,6 +9,12 @@ module Forms {
       showtypes: 'false'
     };
 
+    $scope.cheese = {
+      key: "keyABC",
+      value: "valueDEF",
+      intArg: 999
+    };
+
     $scope.onCancel = (form) => {
       notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
     };
@@ -26,27 +32,23 @@ module Forms {
         {
           desc: 'Argument key',
           name: 'key',
-          model: 'entity.key',
           type: 'java.lang.String'
         },
         {
           desc: 'Argument Value',
           name: 'value',
-          model: 'entity.value',
           type: 'java.lang.String',
           def: 'foobar'
         },
         {
           desc: 'Long argument',
           name: 'longArg',
-          model: 'entity.longArg',
           type: 'Long',
           def: '5'
         },
         {
           desc: 'Int argument',
           name: 'intArg',
-          model: 'entity.intArg',
           type: 'Integer'
         }
           // TODO - add more types, above is what I remember from jolokia

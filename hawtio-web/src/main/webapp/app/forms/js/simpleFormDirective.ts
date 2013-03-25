@@ -4,8 +4,14 @@ module Forms {
 
     public name = 'form';
     public method = 'post';
+
+    // the name of the attribute in the scope which is the data to be editted
+    public entity = 'entity';
+
+    // the definition of the form
     public data:any = {};
     public json:any = undefined;
+
     public args = [];
     public action = '';
 
@@ -76,10 +82,13 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      // start with an empty entity
-      scope.entity = {};
-
       config = this.configure(config, scope[attrs['simpleForm']], attrs);
+
+      var entityName = config.entity || "entity";
+      if (!scope[entityName]) {
+        // start with an empty entity if its not defined
+        scope[entityName] = {};
+      }
 
       if (angular.isDefined(config.json)) {
         config.data = $.parseJSON(config.json);
@@ -113,7 +122,7 @@ module Forms {
         } else {
           return null;
         }
-      }
+      };
 
       function maybeGet(scope, func) {
         if (scope !== null) {
@@ -161,8 +170,8 @@ module Forms {
 
       if (angular.isDefined(onSubmit)) {
         form.submit(() => {
-          console.log("About to submit entity " + JSON.stringify(scope.entity));
-          onSubmit(scope.entity, form);
+          var entity = scope[entityName];
+          onSubmit(entity, form);
           return false;
         });
       }
@@ -263,8 +272,13 @@ module Forms {
           if (angular.isDefined(a.def)) {
             rc.attr('value', a.def);
           }
-          if (angular.isDefined(a.model)) {
-            rc.attr('ng-model', a.model);
+          var modelName = a.model;
+          if (!angular.isDefined(a.model)) {
+            // TODO always use 2 way binding?
+            modelName = (config.entity || "entity") + "." + a.name;
+          }
+          if (modelName) {
+            rc.attr('ng-model', modelName);
           }
           return rc;
       }
