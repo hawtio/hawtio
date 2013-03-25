@@ -101,25 +101,67 @@ module Forms {
       var reset = this.getResetButton(config);
       var submit = this.getSubmitButton(config);
 
+      var findFunction = function(scope, func) {
+        if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
+          return scope;
+        }
+        if (angular.isDefined(scope.$parent) && scope.$parent !== null) {
+          return findFunction(scope.$parent, func);
+        } else {
+          return null;
+        }
+      }
+
+      function maybeGet(scope, func) {
+        if (scope !== null) {
+          return scope[func];
+        }
+        return null;
+      }
+
+      var onSubmitFunc = config.onsubmit.replace('(', '').replace(')', '');
+      var onCancelFunc = config.oncancel.replace('(', '').replace(')', '');
+
+
+      var onSubmit = maybeGet(findFunction(scope, onSubmitFunc), onSubmitFunc);
+      var onCancel = maybeGet(findFunction(scope, onCancelFunc), onCancelFunc);
+
+      if (onSubmit === null) {
+        onSubmit = function (form) {
+          notification('error', 'No submit handler defined for form ' + form.get(0).name);
+        }
+      }
+
+      if (onCancel === null) {
+        onCancel = function(form) {
+          notification('error', 'No cancel handler defined for form ' + form.get(0).name);
+        }
+      }
+
+
       reset.click((event) => {
         form.get(0).reset();
         return false;
       });
 
-      cancel.click((event) => {
-        scope[config.oncancel.replace('(', '').replace(')', '')](form);
-        return false;
-      });
+      if (angular.isDefined(onCancel)) {
+        cancel.click((event) => {
+          onCancel(form);
+          return false;
+        });
+      }
 
       submit.click((event) => {
         form.submit();
         return false;
       });
 
-      form.submit(() => {
-        scope[config.onsubmit.replace('(', '').replace(')', '')](form);
-        return false;
-      });
+      if (angular.isDefined(onSubmit)) {
+        form.submit(() => {
+          onSubmit(form);
+          return false;
+        });
+      }
 
       controlDiv.addClass('btn-group');
       controlDiv.append(cancel);

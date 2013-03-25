@@ -82,11 +82,13 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
-    // TODO maybe this is only available on the edit controller?
-    $scope.submitForm = (form) => {
-      console.log("Submitted form data " + JSON.stringify(form));
+    $scope.onSubmit = (form) => {
+      notification("success", "Submitted form data " + form.get(0).name);
     };
 
+    $scope.onCancel = (form) => {
+      notification("success", "Clicked cancel!");
+    }
 
     updateView();
 
