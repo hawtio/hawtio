@@ -113,7 +113,12 @@
     <maven-surefire-plugin-version>2.13</maven-surefire-plugin-version>
     <osgi-version>4.3.1</osgi-version>
     <servlet-api-version>2.5</servlet-api-version>
+
+    <!-- lets stick to the version that insight-log4j uses for now -->
+    <slf4j-version>1.6.1</slf4j-version>
+<!--
     <slf4j-version>1.6.6</slf4j-version>
+-->
     <spring-version>3.1.3.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
     <war-plugin-version>2.1.1</war-plugin-version>
