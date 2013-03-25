@@ -43,7 +43,7 @@ module Forms {
     public link: (scope, element, attrs) => any;
 
 
-    constructor(private workspace) {
+    constructor(private workspace, public $compile) {
 
       // necessary to ensure 'this' is this object <sigh>
       this.link = (scope, element, attrs) => {
@@ -75,6 +75,9 @@ module Forms {
 
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
+
+      // start with an empty entity
+      scope.entity = {};
 
       config = this.configure(config, scope[attrs['simpleForm']], attrs);
 
@@ -127,7 +130,7 @@ module Forms {
       var onCancel = maybeGet(findFunction(scope, onCancelFunc), onCancelFunc);
 
       if (onSubmit === null) {
-        onSubmit = function (form) {
+        onSubmit = function (json, form) {
           notification('error', 'No submit handler defined for form ' + form.get(0).name);
         }
       }
@@ -158,7 +161,8 @@ module Forms {
 
       if (angular.isDefined(onSubmit)) {
         form.submit(() => {
-          onSubmit(form);
+          console.log("About to submit entity " + JSON.stringify(scope.entity));
+          onSubmit(scope.entity, form);
           return false;
         });
       }
@@ -172,6 +176,9 @@ module Forms {
       fieldset.append(group);
 
       $(element).append(form);
+
+      // compile the template
+      this.$compile(form)(scope);
     }
 
 
@@ -255,6 +262,9 @@ module Forms {
           rc.attr('name', a.name);
           if (angular.isDefined(a.def)) {
             rc.attr('value', a.def);
+          }
+          if (angular.isDefined(a.model)) {
+            rc.attr('ng-model', a.model);
           }
           return rc;
       }
