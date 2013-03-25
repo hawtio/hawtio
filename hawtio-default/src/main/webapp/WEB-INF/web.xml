@@ -43,10 +43,6 @@
 
   <!-- TODO replace these other listeners with META-INF/blueprint.xml files... -->
   <listener>
-    <listener-class>io.hawt.git.GitContextListener</listener-class>
-  </listener>
-
-  <listener>
     <listener-class>io.hawt.insight.log4j.InsightContextListener</listener-class>
   </listener>
 
