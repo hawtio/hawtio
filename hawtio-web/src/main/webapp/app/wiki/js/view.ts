@@ -12,7 +12,7 @@ module Wiki {
         {
           field: 'name',
           displayName: 'Page Name',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/view{{row.getProperty(' + "'path'" + ')}}{{hash}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
         },
         {
@@ -28,7 +28,23 @@ module Wiki {
       ]
     };
 
-    updateView();
+    $scope.childLink = (child) => {
+      var postFix = "";
+      var path = child.path;
+      if (child.directory) {
+        // if we are a folder with the same name as a form file, lets add a form param...
+        var formPath = path + ".form";
+        var children = $scope.children;
+        if (children) {
+          var formFile = children.find({path: formPath});
+          if (formFile) {
+            postFix = "?form=" + formPath;
+          }
+        }
+      }
+      return Core.createHref($location, "#/wiki/view" + path + postFix);
+    };
+
 
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var options = {
@@ -66,6 +82,14 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    // TODO maybe this is only available on the edit controller?
+    $scope.submitForm = (form) => {
+      console.log("Submitted form data " + JSON.stringify(form));
+    };
+
+
+    updateView();
+
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
       if ("markdown" === $scope.format) {
@@ -74,8 +98,19 @@ module Wiki {
       } else if ($scope.format && $scope.format.startsWith("html")) {
         $scope.html = contents
       } else {
+        var form = null;
+        if ($scope.format && $scope.format === "javascript") {
+          form = $location.search()["form"];
+        }
         $scope.source = contents;
-        $scope.sourceView = "app/wiki/html/sourceView.html";
+        $scope.form = form;
+        if (form) {
+          // now lets try load the form JSON so we can then render the form
+          $scope.sourceView = null;
+          $scope.git = wikiRepository.getPage(form, $scope.objectId, onFormData);
+        } else {
+          $scope.sourceView = "app/wiki/html/sourceView.html";
+        }
       }
       Core.$apply($scope);
     }
@@ -88,6 +123,13 @@ module Wiki {
       } else {
         $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
       }
+    }
+
+    function onFormData(details) {
+      var text = details.text;
+      $scope.formDefinition = JSON.parse(text);
+      $scope.sourceView = "app/wiki/html/formView.html";
+      Core.$apply($scope);
     }
 
     function onFileDetails(details) {

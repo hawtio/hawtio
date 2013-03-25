@@ -35,7 +35,7 @@ module Wiki {
               "htmlmixed": ["html", "xhtml", "htm"],
               "text/x-java": ["java"],
               "text/x-scala": ["scala"],
-              "javascript": ["js", "json", "javascript", "jscript", "ecmascript"],
+              "javascript": ["js", "json", "javascript", "jscript", "ecmascript", "form"],
               "xml": ["xml"],
               "properties": ["properties"]
             };

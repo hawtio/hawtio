@@ -18,6 +18,10 @@
           <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
              data-placement="bottom">
             <i class="icon-plus"></i> Create</a></li>
+        <li class="pull-right" ng-show="sourceLink()">
+          <a ng-href="{{sourceLink()}}" title="View source code"
+             data-placement="bottom">
+            <i class="icon-file-alt"></i> Source</a></li>
       </ul>
     </div>
   </div>

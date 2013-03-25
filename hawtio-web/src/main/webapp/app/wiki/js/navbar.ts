@@ -3,6 +3,13 @@ module Wiki {
 
     $scope.createLink = () => Wiki.createLink(Wiki.pageId($routeParams, $location), $location, $scope);
 
+    $scope.sourceLink = () => {
+      // remove the form parameter
+      return ($location.search()["form"])
+              ? Core.createHref($location, "#" + $location.path(), ["form"])
+              : null;
+    };
+
     $scope.isActive = (href) => {
       var tidy = Core.trimLeading(href, "#");
       var loc = $location.path();
