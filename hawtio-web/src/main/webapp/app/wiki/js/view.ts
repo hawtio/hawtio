@@ -88,7 +88,7 @@ module Wiki {
 
     $scope.onCancel = (form) => {
       notification("success", "Clicked cancel!");
-    }
+    };
 
     updateView();
 

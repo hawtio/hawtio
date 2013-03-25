@@ -37,6 +37,16 @@ module Wiki {
       saveTo(path);
     };
 
+    $scope.onSubmit = (json, form) => {
+      $scope.source = JSON.stringify(json);
+      $scope.save();
+    };
+
+    $scope.onCancel = (form) => {
+      notification("success", "Clicked cancel!");
+    };
+
+
     updateView();
 
     function isCreate() {
@@ -67,7 +77,7 @@ module Wiki {
             $scope.fileName = "" + Core.getUUID() + ".json";
           }
         }
-        // now lets try load the form JSON so we can then render the form
+        // now lets try load the form defintion JSON so we can then render the form
         $scope.sourceView = null;
         $scope.git = wikiRepository.getPage(form, $scope.objectId, onFormData);
       } else {
@@ -78,6 +88,7 @@ module Wiki {
     function onFormData(details) {
       var text = details.text;
       $scope.formDefinition = JSON.parse(text);
+      $scope.formEntity = JSON.parse($scope.source);
       $scope.sourceView = "app/wiki/html/formEdit.html";
       Core.$apply($scope);
     }
