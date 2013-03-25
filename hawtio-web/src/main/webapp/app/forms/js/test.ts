@@ -19,8 +19,8 @@ module Forms {
       notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
     };
 
-    $scope.onSubmit = (form) => {
-      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really)');
+    $scope.onSubmit = (json, form) => {
+      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
     };
 
     $scope.derp = (json, form) => {
