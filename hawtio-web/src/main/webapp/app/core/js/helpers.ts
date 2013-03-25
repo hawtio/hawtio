@@ -229,7 +229,7 @@ if (!Object.keys) {
 module Core {
 
   /**
-   * Creates a link by appending the current $localtion.search() hash to the given href link,
+   * Creates a link by appending the current $location.search() hash to the given href link,
    * removing any required parameters from the link
    *
    * @param $location
@@ -237,7 +237,7 @@ module Core {
    * @param removeParams any parameters to be removed from the $location.search()
    * @return the link with any $location.search() parameters added
    */
-  export function createHref($location, href, removeParams) {
+  export function createHref($location, href, removeParams = null) {
     var hashMap = angular.copy($location.search());
     // lets remove any top level nav bar related hash searches
     if (removeParams) {

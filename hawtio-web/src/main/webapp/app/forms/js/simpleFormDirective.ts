@@ -90,7 +90,7 @@ module Forms {
       var addInput = function(arg) {
         var input = this.assembleInput(config, arg);
         fieldset.append(input);
-      }
+      };
 
       config.data.args.forEach(addInput, this);
 
