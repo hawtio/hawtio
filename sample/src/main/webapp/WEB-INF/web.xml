@@ -30,9 +30,6 @@
   <listener>
     <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
   </listener>
-  <listener>
-    <listener-class>io.hawt.insight.log4j.InsightContextListener</listener-class>
-  </listener>
 
   <!-- lets specify the configuration directory to use for hawtio's configuration -->
 <!--

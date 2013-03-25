@@ -41,11 +41,6 @@
     <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
   </listener>
 
-  <!-- TODO replace these other listeners with META-INF/blueprint.xml files... -->
-  <listener>
-    <listener-class>io.hawt.insight.log4j.InsightContextListener</listener-class>
-  </listener>
-
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
