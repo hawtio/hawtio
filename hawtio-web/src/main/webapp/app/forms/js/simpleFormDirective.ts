@@ -8,6 +8,9 @@ module Forms {
     // the name of the attribute in the scope which is the data to be editted
     public entity = 'entity';
 
+    // set to 'view' or 'create' for different modes
+    public mode = 'edit';
+
     // the definition of the form
     public data:any = {};
     public json:any = undefined;
@@ -84,6 +87,7 @@ module Forms {
 
       config = this.configure(config, scope[attrs['simpleForm']], attrs);
 
+      var mode = config.mode || 'edit';
       var entityName = config.entity || "entity";
       if (!scope[entityName]) {
         // start with an empty entity if its not defined
@@ -109,9 +113,15 @@ module Forms {
       var group = this.getControlGroup(config, {});
       var controlDiv = this.getControlDiv(config);
 
-      var cancel = this.getCancelButton(config);
-      var reset = this.getResetButton(config);
-      var submit = this.getSubmitButton(config);
+
+      var cancel = null;
+      var reset = null;
+      var submit = null;
+      if (mode !== 'view') {
+        cancel = this.getCancelButton(config);
+        reset = this.getResetButton(config);
+        submit = this.getSubmitButton(config);
+      }
 
       var findFunction = function(scope, func) {
         if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
@@ -134,7 +144,6 @@ module Forms {
       var onSubmitFunc = config.onsubmit.replace('(', '').replace(')', '');
       var onCancelFunc = config.oncancel.replace('(', '').replace(')', '');
 
-
       var onSubmit = maybeGet(findFunction(scope, onSubmitFunc), onSubmitFunc);
       var onCancel = maybeGet(findFunction(scope, onCancelFunc), onCancelFunc);
 
@@ -150,24 +159,6 @@ module Forms {
         }
       }
 
-
-      reset.click((event) => {
-        form.get(0).reset();
-        return false;
-      });
-
-      if (angular.isDefined(onCancel)) {
-        cancel.click((event) => {
-          onCancel(form);
-          return false;
-        });
-      }
-
-      submit.click((event) => {
-        form.submit();
-        return false;
-      });
-
       if (angular.isDefined(onSubmit)) {
         form.submit(() => {
           var entity = scope[entityName];
@@ -177,9 +168,30 @@ module Forms {
       }
 
       controlDiv.addClass('btn-group');
-      controlDiv.append(cancel);
-      controlDiv.append(reset);
-      controlDiv.append(submit);
+      if (cancel) {
+        if (angular.isDefined(onCancel)) {
+          cancel.click((event) => {
+            onCancel(form);
+            return false;
+          });
+        }
+
+        controlDiv.append(cancel);
+      }
+      if (reset) {
+        reset.click((event) => {
+          form.get(0).reset();
+          return false;
+        });
+        controlDiv.append(reset);
+      }
+      if (submit) {
+        submit.click((event) => {
+          form.submit();
+          return false;
+        });
+        controlDiv.append(submit);
+      }
 
       group.append(controlDiv);
       fieldset.append(group);
