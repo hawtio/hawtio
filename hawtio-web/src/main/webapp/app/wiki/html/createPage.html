@@ -28,7 +28,7 @@
       <input type="text" ng-model="fileName" placeholder="File name" class="span12"/>
     </div>
     <div class="control-group">
-      <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
+      <div ng-include="sourceView" class="editor-autoresize"></div>
     </div>
   </div>
 </div>

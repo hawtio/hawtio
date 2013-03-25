@@ -139,7 +139,7 @@ module Dashboard {
 
     $scope.create = () => {
       var counter = dashboards().length + 1;
-      var id = Dashboard.getUUID();
+      var id = Core.getUUID();
       var title = "Untitled" + counter;
       var newDash = {id: id, title: title, group: "Personal", widgets: []};
 
@@ -152,7 +152,7 @@ module Dashboard {
         // lets unselect this item
         $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
         var counter = dashboards().length + 1;
-        var id = Dashboard.getUUID();
+        var id = Core.getUUID();
         var widgets = item.widgets || [];
         var commitMessage = "Duplicated dashboard " + item.title;
         var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };

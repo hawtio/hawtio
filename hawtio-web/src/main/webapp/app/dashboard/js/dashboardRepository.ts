@@ -144,7 +144,7 @@ module Dashboard {
       // TODO assume a user dashboard for now
       // ideally we'd look up the teams path based on the group
 
-      var id = dash.id || Dashboard.getUUID();
+      var id = dash.id || Core.getUUID();
       var path = this.getUserDashboardPath(id);
       return path;
     }

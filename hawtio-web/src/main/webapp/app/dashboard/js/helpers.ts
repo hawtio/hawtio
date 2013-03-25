@@ -12,13 +12,6 @@ module Dashboard {
     return cleanItem;
   }
 
-  export function getUUID() {
-    var d = new Date();
-    var ms = (d.getTime() * 1000) + d.getUTCMilliseconds();
-    var random = Math.floor((1 + Math.random()) * 0x10000);
-    return ms.toString(16) + random.toString(16);
-  }
-
   /**
    * Runs decodeURIComponent() on each value in the object
    */
