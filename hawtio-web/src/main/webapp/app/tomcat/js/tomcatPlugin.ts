@@ -6,6 +6,7 @@ module Tomcat {
                     when('/tomcat/server', {templateUrl: 'app/tomcat/html/server.html'}).
                     when('/tomcat/applications', {templateUrl: 'app/tomcat/html/applications.html'}).
                     when('/tomcat/connectors', {templateUrl: 'app/tomcat/html/connectors.html'}).
+                    when('/tomcat/sessions', {templateUrl: 'app/tomcat/html/sessions.html'}).
                     when('/tomcat/mbeans', {templateUrl: 'app/tomcat/html/mbeans.html'});
           }).
           filter('tomcatIconClass', () => iconClass).

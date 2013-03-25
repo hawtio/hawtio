@@ -8,6 +8,9 @@
   <li ng-class='{active : isActive("#/tomcat/connectors")}'>
     <a ng-href="{{link('#/tomcat/connectors')}}">Connectors</a>
   </li>
+  <li ng-class='{active : isActive("#/tomcat/sessions")}'>
+    <a ng-href="{{link('#/tomcat/sessions')}}">Sessions</a>
+  </li>
   <li ng-class='{active : isTopTabActive("tomcatTree")}'>
     <a ng-href="#/jmx/attributes?tab=tomcatTree{{hash}}">JMX</a>
   </li>

@@ -33,13 +33,6 @@ module Tomcat {
                 resizable: true
             },
             {
-                field: 'sessionTimeout',
-                displayName: 'Session Timeout',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
                 field: 'startTime',
                 displayName: 'Start Time',
                 cellFilter: null,
@@ -89,8 +82,8 @@ module Tomcat {
 
           angular.forEach(response, function (value, key) {
             var mbean = value;
-            jolokia.request({type: "read", mbean: mbean, attribute: ["displayName", "path", "stateName",
-               "sessionTimeout", "startTime"]}, onSuccess(onAttributes));
+            jolokia.request({type: "read", mbean: mbean,
+              attribute: ["displayName", "path", "stateName", "startTime"]}, onSuccess(onAttributes));
           });
           Core.$apply($scope);
         };
