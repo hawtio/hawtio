@@ -15,7 +15,7 @@
     </ext:property-placeholder>
 -->
 
-	<bean id="mavenIndexer" class="io.hawt.maven.indexer.MavenIndexerFacade" init-method="start" destroy-method="destroy">
+	<bean id="mavenIndexer" class="io.hawt.maven.indexer.AsyncMavenIndexerFacadeFactory" init-method="init" destroy-method="destroy">
 	</bean>
 </blueprint>
 

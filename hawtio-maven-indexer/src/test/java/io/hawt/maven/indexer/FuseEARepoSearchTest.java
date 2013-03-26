@@ -38,7 +38,7 @@ public class FuseEARepoSearchTest {
         String[] repositories = {"http://repo.fusesource.com/nexus/content/groups/ea@fusesource-ea-repo"};
         facade.setRepositories(repositories);
         facade.setCacheDirectory(new File(targetDir(), "fuse-ea-mavenIndexer"));
-        facade.startAndWait();
+        facade.start();
         indexer = facade;
     }
 

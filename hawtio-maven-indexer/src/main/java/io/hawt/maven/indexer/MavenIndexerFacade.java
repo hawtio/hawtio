@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * A facade over the Maven indexer code so its easy to query repositories
@@ -76,7 +75,6 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     };
     private File cacheDirectory = new File("mavenIndexer");
     private Map<String, IndexingContext> indexContexts = new HashMap<String, IndexingContext>();
-    private CountDownLatch startedSignal = new CountDownLatch(1);
 
     public MavenIndexerFacade() throws PlexusContainerException, ComponentLookupException {
         this.plexusContainer = new DefaultPlexusContainer();
@@ -96,73 +94,44 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
 
         // now lets create all the indexers
-        Thread thread = new Thread("MavenIndexer index thread") {
-            @Override
-            public void run() {
-                try {
-                    for (String repository : repositories) {
-                        if (StringUtils.isNotBlank(repository)) {
-                            String url = repository;
-                            String id = repository;
-                            int idx = repository.indexOf('@');
-                            if (idx > 0) {
-                                url = repository.substring(0, idx);
-                                id = repository.substring(idx + 1);
-                            }
-                            File repoDir = new File(cacheDirectory, id);
-                            File cacheDir = new File(repoDir, "cache");
-                            File indexDir = new File(repoDir, "index");
-                            cacheDir.mkdirs();
-                            indexDir.mkdirs();
-                            String contextId = id + "-context";
-
-                            IndexingContext repoContext = indexer.createIndexingContext(contextId, id, cacheDir, indexDir,
-                                    url, null, true, true, indexers);
-                            indexContexts.put(id, repoContext);
-                        }
-                        File mergedDir = new File(cacheDirectory, "all");
-                        File cacheDir = new File(mergedDir, "cache");
-                        File indexDir = new File(mergedDir, "index");
-                        ContextMemberProvider members = new StaticContextMemberProvider(indexContexts.values());
-                        mergedContext = indexer.createMergedIndexingContext("all-context", "all", cacheDir, indexDir, true, members);
+        try {
+            for (String repository : repositories) {
+                if (StringUtils.isNotBlank(repository)) {
+                    String url = repository;
+                    String id = repository;
+                    int idx = repository.indexOf('@');
+                    if (idx > 0) {
+                        url = repository.substring(0, idx);
+                        id = repository.substring(idx + 1);
                     }
-                    if (updateIndexOnStartup) {
-                        downloadOrUpdateIndices();
-                    }
-                } catch (IOException e) {
-                    LOG.error("Failed to update the maven repository indices: " + e, e);
-                }
-                try {
-                    registerMBean();
-                } catch (Exception e) {
-                    LOG.error("Failed to register MBean: " + e, e);
-                }
-                startedSignal.countDown();
-            }
-        };
-        thread.run();
-    }
+                    File repoDir = new File(cacheDirectory, id);
+                    File cacheDir = new File(repoDir, "cache");
+                    File indexDir = new File(repoDir, "index");
+                    cacheDir.mkdirs();
+                    indexDir.mkdirs();
+                    String contextId = id + "-context";
 
-    protected void registerMBean() throws MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
-        if (objectName == null) {
-            objectName = new ObjectName("io.hawt.maven:type=Indexer");
-        }
-        if (mBeanServer == null) {
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        }
-        mBeanServer.registerMBean(this, objectName);
-    }
-
-    public void startAndWait() throws MalformedObjectNameException, ComponentLookupException, IOException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException {
-        start();
-        while (startedSignal.getCount() > 0) {
-            try {
-                startedSignal.await();
-            } catch (InterruptedException e) {
-                LOG.warn(e.getMessage(), e);
+                    IndexingContext repoContext = indexer.createIndexingContext(contextId, id, cacheDir, indexDir,
+                            url, null, true, true, indexers);
+                    indexContexts.put(id, repoContext);
+                }
+                File mergedDir = new File(cacheDirectory, "all");
+                File cacheDir = new File(mergedDir, "cache");
+                File indexDir = new File(mergedDir, "index");
+                ContextMemberProvider members = new StaticContextMemberProvider(indexContexts.values());
+                mergedContext = indexer.createMergedIndexingContext("all-context", "all", cacheDir, indexDir, true, members);
             }
+            if (updateIndexOnStartup) {
+                downloadOrUpdateIndices();
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to update the maven repository indices: " + e, e);
         }
-        LOG.info("MavenIndexer has finished updating its indices, its started");
+        try {
+            registerMBean();
+        } catch (Exception e) {
+            LOG.error("Failed to register MBean: " + e, e);
+        }
     }
 
     public void downloadOrUpdateIndices() throws IOException {
@@ -215,11 +184,11 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
     }
 
-    public MBeanServer getmBeanServer() {
+    public MBeanServer getMBeanServer() {
         return mBeanServer;
     }
 
-    public void setmBeanServer(MBeanServer mBeanServer) {
+    public void setMBeanServer(MBeanServer mBeanServer) {
         this.mBeanServer = mBeanServer;
     }
 
@@ -391,6 +360,19 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             bq.add(indexer.constructQuery(MAVEN.CLASSNAMES, new UserInputSearchExpression(className)), Occur.MUST);
         }
         return bq;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    protected void registerMBean() throws MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+        if (objectName == null) {
+            objectName = new ObjectName("io.hawt.maven:type=Indexer");
+        }
+        if (mBeanServer == null) {
+            mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        }
+        mBeanServer.registerMBean(this, objectName);
     }
 
     protected BooleanQuery createTextSearchQuery(String searchText) {
