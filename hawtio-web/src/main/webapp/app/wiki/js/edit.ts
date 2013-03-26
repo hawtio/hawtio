@@ -39,7 +39,11 @@ module Wiki {
 
     $scope.onSubmit = (json, form) => {
       $scope.source = JSON.stringify(json);
-      $scope.save();
+      if (isCreate()) {
+        $scope.create();
+      } else {
+        $scope.save();
+      }
     };
 
     $scope.onCancel = (form) => {
