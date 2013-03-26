@@ -19,9 +19,11 @@ package io.hawt.maven.indexer;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static io.hawt.maven.indexer.MavenIndexFacadeTest.targetDir;
@@ -97,5 +99,23 @@ public class FuseEARepoSearchTest {
         assertTrue("Should have found at last one result!", results.size() > 0);
     }
 
+    @Test
+    public void testFindTestSearchAndPackaging() throws Exception {
+        assertSearchAndPackaging("activemq", "xsd", null);
+        assertSearchAndPackaging("camel", "xml", "features");
+        assertSearchAndPackaging("camel", "maven-archetype", null);
+    }
+
+    protected void assertSearchAndPackaging(String searchText, String packaging, String classifier) throws IOException {
+        System.out.println("Searching for text '" + searchText + "' packaging " + packaging + " classifier " + classifier);
+        List<ArtifactDTO> resultsNoText = indexer.searchTextAndPackaging(null, packaging, classifier);
+        List<ArtifactDTO> results = indexer.searchTextAndPackaging(searchText, packaging, classifier);
+        for (ArtifactDTO result : results) {
+            System.out.println("Found " + result);
+        }
+
+        assertTrue("Expect that the text '" + searchText + "' restricts the results but found " + results.size() + " when with no text we found " + resultsNoText.size(), resultsNoText.size() > results.size());
+        assertTrue("Should have found at last one result!", results.size() > 0);
+    }
 
 }

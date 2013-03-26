@@ -1,7 +1,9 @@
 package io.hawt.maven.indexer;
 
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.ArtifactInfoGroup;
@@ -270,7 +272,13 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
 
     @Override
     public List<ArtifactDTO> searchTextAndPackaging(String searchText, String packaging, String classifier) throws IOException {
-        BooleanQuery bq = createTextSearchQuery(searchText);
+        BooleanQuery bq = new BooleanQuery();
+        if (StringUtils.isNotBlank(searchText)) {
+            BooleanQuery textQuery = createTextSearchQuery(searchText);
+            textQuery.setMinimumNumberShouldMatch(1);
+            bq.add(textQuery, Occur.MUST);
+        }
+
         if (StringUtils.isNotBlank(packaging)) {
             bq.add(indexer.constructQuery(MAVEN.PACKAGING, new SourcedSearchExpression(packaging)), Occur.MUST);
         }
