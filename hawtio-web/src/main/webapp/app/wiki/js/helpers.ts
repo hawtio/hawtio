@@ -33,18 +33,18 @@ module Wiki {
   }
 
   export function createLink(pageId:string, $location, $scope) {
+    var path = $location.path();
     var link = null;
     if (pageId) {
       link = "#/wiki/create/" + pageId;
     } else {
       // lets use the current path
-      var path = $location.path();
-      link = "#" + path.replace(/(view|edit)/, "create");
+      link = "#" + path.replace(/(view|edit|formTable)/, "create");
     }
     // we have the link so lets now remove the last path
     // or if there is no / in the path then remove the last section
     var idx = link.lastIndexOf("/");
-    if (idx > 0 && !$scope.children) {
+    if (idx > 0 && !$scope.children && !path.startsWith("/wiki/formTable")) {
       link = link.substring(0, idx + 1);
     }
     return link;

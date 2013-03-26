@@ -1,7 +1,10 @@
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 
-    $scope.createLink = () => Wiki.createLink(Wiki.pageId($routeParams, $location), $location, $scope);
+    $scope.createLink = () => {
+      var pageId = Wiki.pageId($routeParams, $location);
+      return Wiki.createLink(pageId, $location, $scope);
+    };
 
     $scope.sourceLink = () => {
       var path = $location.path();
