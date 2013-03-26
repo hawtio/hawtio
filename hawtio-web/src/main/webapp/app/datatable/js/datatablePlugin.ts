@@ -22,7 +22,8 @@ module DataTable {
 
               function convertToDataTableColumn(columnDef) {
                 var data = {
-                  mData: columnDef.field
+                  mData: columnDef.field,
+                  sDefaultContent: ""
                 };
                 var name = columnDef.displayName;
                 if (name) {
