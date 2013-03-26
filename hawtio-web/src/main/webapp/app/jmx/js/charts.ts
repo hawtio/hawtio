@@ -5,6 +5,7 @@ module Jmx {
     $scope.updateRate = parseInt(localStorage['updateRate']);
 
     $scope.$on('$destroy', function () {
+      $scope.deregRouteChange();
       $scope.dereg();
       if ($scope.context) {
         $scope.context.stop();
@@ -23,7 +24,15 @@ module Jmx {
       }
     };
 
-    $scope.dereg = $scope.$watch('workspace.selection', render);
+    $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(render, 50);
+    });
+
+    $scope.dereg = $scope.$watch('workspace.selection', function () {
+      if (workspace.moveIfViewInvalid()) return;
+      render();
+    });
 
     function render() {
       var node = workspace.selection;

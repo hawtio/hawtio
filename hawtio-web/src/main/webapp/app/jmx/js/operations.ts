@@ -1,4 +1,6 @@
 module Jmx {
+
+    /*
     export interface IArg {
         name : string;
         type : string;
@@ -11,7 +13,7 @@ module Jmx {
         args : IArg[];
 
         execute : (args : IArg[]) => void;
-    }
+    } */
 
     // IOperationControllerScope
     export function OperationController($scope, workspace:Workspace, jolokia, $document) {
@@ -137,6 +139,7 @@ module Jmx {
 
     }
 
+    /*
     export interface IOperation {
         [key : string] : { name : string; humanReadable : string; args : string; };
         [key : string] : any;
@@ -148,10 +151,13 @@ module Jmx {
         sanitize : (value : IOperation) => IOperation;
         operations : IOperation;
     }
+    */
 
-    export function OperationsController($scope : IOperationsControllerScope, $routeParams : ng.IRouteParamsService, workspace:Workspace, jolokia) {
+    export function OperationsController($scope, $routeParams : ng.IRouteParamsService, workspace:Workspace, jolokia) {
 
-      var sanitize = (value : IOperation) => {
+      $scope.operations = {};
+
+      var sanitize = (value) => {
         for (var item in value) {
           item = "" + item;
           value[item].name = item;
@@ -171,9 +177,21 @@ module Jmx {
         return query;
       };
 
-      $scope.$watch('workspace.selection', function() {
-        if (workspace.moveIfViewInvalid()) return;
+      $scope.isOperationsEmpty = () => {
+        return $.isEmptyObject($scope.operations);
+      }
 
+      $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(render, 50);
+      });
+
+      $scope.$watch('workspace.selection', function () {
+        if (workspace.moveIfViewInvalid()) return;
+        render();
+      });
+
+      function render() {
         var node = workspace.selection;
         if (!node) {
           return;
@@ -187,7 +205,7 @@ module Jmx {
         var query = asQuery(objectName);
 
         var update_values = (response) => {
-          var ops: IOperation = response.value.op;
+          var ops = response.value.op;
 
           var answer = {};
 
@@ -205,6 +223,7 @@ module Jmx {
             }
           });
           $scope.operations = sanitize(answer);
+          console.log("Operations: ", $scope.operations);
           $scope.$apply();
         };
 
@@ -213,7 +232,9 @@ module Jmx {
             notification('error', 'Failed to query available operations: ' + response.error);
           }
         }));
+      }
 
-      });
+      render();
+
     }
-};
+}

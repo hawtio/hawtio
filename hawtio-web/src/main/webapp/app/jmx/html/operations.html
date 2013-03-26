@@ -1,93 +1,101 @@
-<script type="text/ng-template" id="array_item.html">
-  <div ng-switch on="typeOf(data)">
-    <div class="tab" ng-switch-when="array">
-      <ol>
-        <li ng-repeat="data in data" ng-include="'array_item.html'"></li>
-      </ol>
-    </div>
-    <div class="tab" ng-switch-when="object">
-      <ul class="unstyled">
-        <li ng-repeat="(key, value) in data" ng-include="'object_item.html'"></li>
-      </ul>
-    </div>
-    <p style="display: inline;" ng-switch-default>{{data}}</p>
-  </div>
-</script>
+<div ng-controller="Jmx.OperationsController">
 
-<script type="text/ng-template" id="object_item.html">
-  <div>
-    <strong>{{key}}:</strong>
-    <div style="display: inline;" ng-switch on="typeOf(value)">
+  <script type="text/ng-template" id="array_item.html">
+    <div ng-switch on="typeOf(data)">
       <div class="tab" ng-switch-when="array">
         <ol>
-          <li ng-repeat="data in value" ng-include="'array_item.html'"></li>
+          <li ng-repeat="data in data" ng-include="'array_item.html'"></li>
         </ol>
       </div>
       <div class="tab" ng-switch-when="object">
         <ul class="unstyled">
-          <li ng-repeat="(key, value) in value" ng-include="'object_item.html'"></li>
+          <li ng-repeat="(key, value) in data" ng-include="'object_item.html'"></li>
         </ul>
       </div>
-      <p style="display: inline;" ng-switch-default>{{value}}</p>
+      <p style="display: inline;" ng-switch-default>{{data}}</p>
     </div>
-  </div>
-</script>
+  </script>
 
-<ul class="unstyled" ng-controller="Jmx.OperationsController">
-  <li ng-repeat="item in operations">
-    <div class="expandable closed" ng-controller="Jmx.OperationController">
-      <div title="{{desc}}" class="title">
-        <i class="expandable-indicator"></i> {{title}}
+  <script type="text/ng-template" id="object_item.html">
+    <div>
+      <strong>{{key}}:</strong>
+      <div style="display: inline;" ng-switch on="typeOf(value)">
+        <div class="tab" ng-switch-when="array">
+          <ol>
+            <li ng-repeat="data in value" ng-include="'array_item.html'"></li>
+          </ol>
+        </div>
+        <div class="tab" ng-switch-when="object">
+          <ul class="unstyled">
+            <li ng-repeat="(key, value) in value" ng-include="'object_item.html'"></li>
+          </ul>
+        </div>
+        <p style="display: inline;" ng-switch-default>{{value}}</p>
       </div>
-      <div class="expandable-body well">
+    </div>
+  </script>
 
-        <form class="form-horizontal no-bottom-margin" ng-show="operationResult!=''">
-          <fieldset>
-            <div class="alert alert-{{operationStatus}} no-bottom-margin">
-              <div class="control-group">
+  <div class="row-fluid" ng-show="isOperationsEmpty()">
+    The selected MBean has no JMX operations.
+  </div>
 
-                <div ng-switch on="typeOf(operationResult)">
-                  <ol ng-switch-when="array">
-                    <li ng-repeat="data in operationResult" ng-include="'array_item.html'"></li>
-                  </ol>
-                  <ul class="unstyled" ng-switch-when="object">
-                    <li ng-repeat="(key, value) in operationResult" ng-include="'object_item.html'"></li>
-                  </ul>
-                  <span ng-switch-default>{{operationResult}}</span>
+  <ul class="unstyled" ng-hide="isOperationsEmpty()">
+    <li ng-repeat="item in operations">
+      <div class="expandable closed" ng-controller="Jmx.OperationController">
+        <div title="{{desc}}" class="title">
+          <i class="expandable-indicator"></i> {{title}}
+        </div>
+        <div class="expandable-body well">
+
+          <form class="form-horizontal no-bottom-margin" ng-show="operationResult!=''">
+            <fieldset>
+              <div class="alert alert-{{operationStatus}} no-bottom-margin">
+                <div class="control-group">
+
+                  <div ng-switch on="typeOf(operationResult)">
+                    <ol ng-switch-when="array">
+                      <li ng-repeat="data in operationResult" ng-include="'array_item.html'"></li>
+                    </ol>
+                    <ul class="unstyled" ng-switch-when="object">
+                      <li ng-repeat="(key, value) in operationResult" ng-include="'object_item.html'"></li>
+                    </ul>
+                    <span ng-switch-default>{{operationResult}}</span>
+                  </div>
+
                 </div>
+                <div class="control-group">
+                  <div class="controls">
+                    <button class="btn" ng-click="ok()"><i class="icon-ok"></i> Ok</button>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
 
+          <form id="opForm" class="form-horizontal no-bottom-margin" ng-show="operationResult==''">
+            <fieldset>
+              <legend>{{desc}}</legend>
+              <div class="control-group" ng-repeat="arg in args">
+                <!-- Todo Add form validation -->
+                <label class="control-label">{{arg.name}}: </label>
+                  <div class="controls" ng-switch on="arg.formType">
+                    <input ng-switch-when="text" type='text' ng-model="arg.value">
+                    <input ng-switch-when="number" type='number' ng-model="arg.value">
+                    <span class="help-block">type: {{arg.type}}</span>
+                  </div>
               </div>
               <div class="control-group">
                 <div class="controls">
-                  <button class="btn" ng-click="ok()"><i class="icon-ok"></i> Ok</button>
+                  <button class="btn cancel"><i class="icon-remove"></i> Cancel</button>
+                  <button class="btn" ng-click="reset()" ng-show="args"><i class="icon-undo"></i> Reset</button>
+                  <button class="btn btn-success execute" ng-click="execute()"><i class="{{executeIcon}}"></i> Execute</button>
                 </div>
               </div>
-            </div>
-          </fieldset>
-        </form>
-
-        <form id="opForm" class="form-horizontal no-bottom-margin" ng-show="operationResult==''">
-          <fieldset>
-            <legend>{{desc}}</legend>
-            <div class="control-group" ng-repeat="arg in args">
-              <!-- Todo Add form validation -->
-              <label class="control-label">{{arg.name}}: </label>
-                <div class="controls" ng-switch on="arg.formType">
-                  <input ng-switch-when="text" type='text' ng-model="arg.value">
-                  <input ng-switch-when="number" type='number' ng-model="arg.value">
-                  <span class="help-block">type: {{arg.type}}</span>
-                </div>
-            </div>
-            <div class="control-group">
-              <div class="controls">
-                <button class="btn cancel"><i class="icon-remove"></i> Cancel</button>
-                <button class="btn" ng-click="reset()" ng-show="args"><i class="icon-undo"></i> Reset</button>
-                <button class="btn btn-success execute" ng-click="execute()"><i class="{{executeIcon}}"></i> Execute</button>
-              </div>
-            </div>
-          </fieldset>
-        </form>
+            </fieldset>
+          </form>
+        </div>
       </div>
-    </div>
-  </li>
-</ul>
+    </li>
+  </ul>
+
+</div>
