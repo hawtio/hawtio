@@ -29,6 +29,7 @@ module Wiki {
     };
 
     $scope.childLink = (child) => {
+      var prefix = "#/wiki/view";
       var postFix = "";
       var path = child.path;
       if (child.directory) {
@@ -38,11 +39,12 @@ module Wiki {
         if (children) {
           var formFile = children.find({path: formPath});
           if (formFile) {
+            prefix = "#/wiki/formTable";
             postFix = "?form=" + formPath;
           }
         }
       }
-      return Core.createHref($location, "#/wiki/view" + path + postFix);
+      return Core.createHref($location, prefix + path + postFix);
     };
 
 

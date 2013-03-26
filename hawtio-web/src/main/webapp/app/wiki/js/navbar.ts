@@ -4,9 +4,14 @@ module Wiki {
     $scope.createLink = () => Wiki.createLink(Wiki.pageId($routeParams, $location), $location, $scope);
 
     $scope.sourceLink = () => {
-      // remove the form parameter
+      var path = $location.path();
+      var prefix = "/wiki/formTable";
+      if (path.startsWith(prefix)) {
+        return Core.createHref($location, "#/wiki/view" + path.substring(prefix.length))
+      }
+      // remove the form parameter on view/edit links
       return ($location.search()["form"])
-              ? Core.createHref($location, "#" + $location.path(), ["form"])
+              ? Core.createHref($location, "#" + path, ["form"])
               : null;
     };
 
