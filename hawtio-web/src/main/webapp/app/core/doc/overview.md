@@ -7,6 +7,8 @@
 - [Apache ActiveMQ](http://activemq.apache.org)
 - [Apache Camel](http://camel.apache.org)
 - [Apache Karaf](http://karaf.apache.org)
+- [Apache ServiceMix](http://servicemix.apache.org)
+- [Apache Tomcat](http://tomcat.apache.org)
 - OSGi
 - [Fuse Fabric](http://fuse.fusesource.org/fabric)
 - [JBoss AS 7](http://www.jboss.org/jbossas)
