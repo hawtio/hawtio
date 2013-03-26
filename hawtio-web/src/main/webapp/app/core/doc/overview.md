@@ -9,7 +9,7 @@
 - [Apache Karaf](http://karaf.apache.org)
 - [Apache ServiceMix](http://servicemix.apache.org)
 - [Apache Tomcat](http://tomcat.apache.org)
-- OSGi
+- [OSGi](http://osgi.org)
 - [Fuse Fabric](http://fuse.fusesource.org/fabric)
 - [JBoss AS 7](http://www.jboss.org/jbossas)
 - [Jetty](http://www.eclipse.org/jetty/)
