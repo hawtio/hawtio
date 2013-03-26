@@ -33,6 +33,16 @@ public interface GitFacadeMXBean {
      */
     String getContent(String objectId, String blobPath);
 
+    /**
+     * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
+     */
+    String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException;
+
+    /**
+     * Returns the child file contents which match the given name wildcard (using * to match any sequence of characters) and search string (if specified.
+     */
+    String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException;
+
 
     /**
      * Performs a diff of the latest or a specifc version of the given blobPath
@@ -46,7 +56,4 @@ public interface GitFacadeMXBean {
     void revertTo(String branch, String objectId, String blobPath, String commitMessage,
                   String authorName, String authorEmail);
 
-    String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException;
-
-    String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException;
 }

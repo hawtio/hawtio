@@ -178,7 +178,6 @@ public class GitFacade implements GitFacadeMXBean {
 
     /**
      * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
-     * @return
      */
     @Override
     public String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException {
