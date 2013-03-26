@@ -1,31 +1,12 @@
 module Forms {
 
   export function FormTestController($scope, workspace) {
-    $scope.config = {
-      name: 'form-with-config-object',
-      action: "/some/url",
-      method: "post",
-      data: 'setVMOption',
-      showtypes: 'false'
-    };
 
-    $scope.cheese = {
-      key: "keyABC",
-      value: "valueDEF",
-      intArg: 999
-    };
+    $scope.editing = false;
 
-    $scope.onCancel = (form) => {
-      notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
-    };
-
-    $scope.onSubmit = (json, form) => {
-      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
-    };
-
-    $scope.derp = (json, form) => {
-      notification('error', 'derp with json ' + JSON.stringify(json));
-    };
+    $scope.toggleEdit = function() {
+      $scope.editing = !$scope.editing;
+    }
 
     $scope.setVMOption = {
       args: [
@@ -51,11 +32,37 @@ module Forms {
           name: 'intArg',
           type: 'Integer'
         }
-          // TODO - add more types, above is what I remember from jolokia
-        ],
+        // TODO - add more types, above is what I remember from jolokia
+      ],
       desc: 'Show some stuff in a form',
       ret: 'java.lang.String'
     }
+
+    $scope.config = {
+      name: 'form-with-config-object',
+      action: "/some/url",
+      method: "post",
+      data: 'setVMOption',
+      showtypes: 'false'
+    };
+
+    $scope.cheese = {
+      key: "keyABC",
+      value: "valueDEF",
+      intArg: 999
+    };
+
+    $scope.onCancel = (form) => {
+      notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
+    };
+
+    $scope.onSubmit = (json, form) => {
+      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
+    };
+
+    $scope.derp = (json, form) => {
+      notification('error', 'derp with json ' + JSON.stringify(json));
+    };
 
   }
 

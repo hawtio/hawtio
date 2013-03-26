@@ -38,8 +38,6 @@ module Forms {
 
     // TODO - add toggles to turn off cancel or reset buttons
 
-    // TODO - do actual two-way databinding
-
     public getMode() {
       return this.mode || "edit";
     }
@@ -60,6 +58,8 @@ module Forms {
     public replace = true;
     public transclude = true;
 
+    private attributeName = 'simpleForm';
+
     // see constructor for why this is here...
     public link: (scope, element, attrs) => any;
 
@@ -73,7 +73,7 @@ module Forms {
 
     }
 
-    private sanitize(arg) {
+    public sanitize(arg) {
       if (angular.isDefined(arg.formType)) {
         // user-defined input type
         return arg;
@@ -97,7 +97,7 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      config = this.configure(config, scope[attrs['simpleForm']], attrs);
+      config = this.configure(config, scope[attrs[this.attributeName]], attrs);
 
       var mode = config.getMode();
       var entityName = config.getEntity();
@@ -111,6 +111,9 @@ module Forms {
       } else {
         config.data = scope[config.data];
       }
+
+      console.log("This: ", this);
+      console.log("Config: ", config);
 
       var form = this.createForm(config);
       var fieldset = form.find('fieldset');
@@ -187,7 +190,6 @@ module Forms {
             return false;
           });
         }
-
         controlDiv.append(cancel);
       }
       if (reset) {

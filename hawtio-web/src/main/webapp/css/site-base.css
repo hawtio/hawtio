@@ -892,3 +892,8 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
 .help-display h6 {
   margin-top: 2em;
 }
+
+.form-data {
+  display: inline-block;
+  margin: 5px;
+}

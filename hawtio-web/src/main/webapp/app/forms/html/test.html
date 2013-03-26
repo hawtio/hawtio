@@ -10,6 +10,17 @@
   <hr>
 
   <div>
+    Read Only Form with config object
+    <div class="row-fluid">
+      <button class="btn" ng-click="toggleEdit()">Edit</button>
+    </div>
+    <div ng-hide="editing" simple-read-only-form='config' entity='cheese'></div>
+    <div ng-show="editing" simple-form='config' entity='cheese'></div>
+  </div>
+
+  <hr>
+
+  <div>
     Form with config object
     <div simple-form='config'></div>
   </div>
