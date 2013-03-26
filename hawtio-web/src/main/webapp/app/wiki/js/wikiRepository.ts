@@ -120,6 +120,19 @@ module Wiki {
     }
 
 
+    /**
+     * Get the JSON contents of the path with optional name wildcard and search
+     */
+    public jsonChildContents(path:string, nameWildcard:string, search:string, fn) {
+      var fullPath = this.getLogPath(path);
+      var git = this.git();
+      if (git) {
+        git.readJsonChildContent(fullPath, nameWildcard, search, fn);
+      }
+      return git;
+    }
+
+
     public git() {
       var repository = this.factoryMethod();
       if (!repository) {

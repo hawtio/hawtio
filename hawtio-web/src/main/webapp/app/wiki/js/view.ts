@@ -130,10 +130,10 @@ module Wiki {
     function onFormData(details) {
       var text = details.text;
       if (text) {
-        $scope.formDefinition = JSON.parse(text);
+        $scope.formDefinition = Wiki.parseJson(text);
       }
       if ($scope.source) {
-        $scope.formEntity = JSON.parse($scope.source);
+        $scope.formEntity = Wiki.parseJson($scope.source);
       }
       $scope.sourceView = "app/wiki/html/formView.html";
       Core.$apply($scope);

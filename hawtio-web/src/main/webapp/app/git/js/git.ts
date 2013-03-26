@@ -38,6 +38,17 @@ module Git {
     getContent(objectId:string, blobPath:string, fn): void;
 
     /**
+     * Get the JSON contents of children in a directory matching a name wildcard and content search
+     */
+    readJsonChildContent(path:string, nameWildcard:string, search:string, fn): void;
+
+    /**
+     * Get the JSON contents of children in a directory matching a name wildcard and content search
+     */
+    readChildContents(path:string, nameWildcard:string, search:string,
+                             prefix:string, separator:string, postfix:string, fn): void;
+
+    /**
      * Returns the diff of this commit verses the previous or another commit
      */
     diff(objectId:string, baseObjectId:string, path:string, fn): void;
@@ -107,6 +118,23 @@ module Git {
       this.jolokia.execute(this.mbean, "getContent", objectId, blobPath, onSuccess(fn));
     }
 
+
+    /**
+     * Get the JSON contents of children in a directory matching a name wildcard and content search
+     */
+    public readJsonChildContent(path:string, nameWildcard:string, search:string, fn) {
+      this.jolokia.execute(this.mbean, "readJsonChildContent", this.branch, path, nameWildcard, search, onSuccess(fn));
+    }
+
+    /**
+     * Get the JSON contents of children in a directory matching a name wildcard and content search
+     */
+    public readChildContents(path:string, nameWildcard:string, search:string,
+                             prefix:string, separator:string, postfix:string,
+                             fn) {
+      this.jolokia.execute(this.mbean, "readChildContents", this.branch, path, nameWildcard, search,
+              prefix, separator, postfix, onSuccess(fn));
+    }
 
     // TODO move...
 

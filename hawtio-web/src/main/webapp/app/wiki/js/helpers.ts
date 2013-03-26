@@ -123,4 +123,18 @@ module Wiki {
   export function onComplete(status) {
     console.log("Completed operation with status: " + JSON.stringify(status));
   }
+
+  /**
+   * Parses the given JSON text reporting to the user if there is a parse error
+   */
+  export function parseJson(text: string) {
+    if (text) {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        notification("error", "Failed to parse JSON: " + e);
+      }
+    }
+    return null;
+  }
 }
