@@ -184,19 +184,11 @@ public class GitFacade implements GitFacadeMXBean {
         if (!Strings.isNotBlank(fileNameWildcard)) {
             fileNameWildcard = "*.json";
         }
-        return readChildContents(path, fileNameWildcard, search, "[\n", ",\n", "\n]");
-    }
-
-    /**
-     * Returns the child file contents which match the given name wildcard (using * to match any sequence of characters) and search string (if specified.
-     */
-    @Override
-    public String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException {
         File rootDir = getConfigDirectory();
         File file = getFile(path);
         FileFilter filter = FileFilters.createFileFilter(fileNameWildcard);
         boolean first = true;
-        StringBuilder buffer = new StringBuilder(prefix);
+        StringBuilder buffer = new StringBuilder("{\n");
         List<FileInfo> children = new ArrayList<FileInfo>();
         if (file.isDirectory()) {
             if (file.exists()) {
@@ -208,8 +200,11 @@ public class GitFacade implements GitFacadeMXBean {
                             if (first) {
                                 first = false;
                             } else {
-                                buffer.append(separator);
+                                buffer.append(",\n");
                             }
+                            buffer.append("\"");
+                            buffer.append(child.getName());
+                            buffer.append("\": ");
                             buffer.append(text);
                             children.add(FileInfo.createFileInfo(rootDir, child));
                         }
@@ -217,7 +212,7 @@ public class GitFacade implements GitFacadeMXBean {
                 }
             }
         }
-        buffer.append(postfix);
+        buffer.append("\n}");
         return buffer.toString();
     }
 

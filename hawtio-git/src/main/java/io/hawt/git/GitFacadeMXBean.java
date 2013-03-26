@@ -39,12 +39,6 @@ public interface GitFacadeMXBean {
     String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException;
 
     /**
-     * Returns the child file contents which match the given name wildcard (using * to match any sequence of characters) and search string (if specified.
-     */
-    String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException;
-
-
-    /**
      * Performs a diff of the latest or a specifc version of the given blobPath
      * against either the previous or a given baseObjectId
      */

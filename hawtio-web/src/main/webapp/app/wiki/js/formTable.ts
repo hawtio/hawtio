@@ -5,6 +5,23 @@ module Wiki {
     $scope.columnDefs = [];
     $scope.searchText = null;
 
+    $scope.viewLink = (row) => {
+      return childLink(row, "#/wiki/view");
+    };
+    $scope.editLink = (row) => {
+      return childLink(row, "#/wiki/edit");
+    };
+
+    function childLink(child, prefix) {
+      return Core.createHref($location, prefix + "/" + $scope.pageId + "/" + (child._id || ""));
+    }
+
+    var linksColumn = {
+      field: '_id',
+      displayName: 'Actions',
+      cellTemplate: '<div class="ngCellText""><a ng-href="{{viewLink(row.entity)}}" class="btn">View</a> <a ng-href="{{editLink(row.entity)}}" class="btn">Edit</a></div>'
+    };
+
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
@@ -26,7 +43,13 @@ module Wiki {
     updateView();
 
     function onResults(response) {
-      $scope.list = Wiki.parseJson(response);
+      var list = [];
+      var map = Wiki.parseJson(response);
+      angular.forEach(map, (value, key) => {
+        value["_id"] = key;
+        list.push(value);
+      });
+      $scope.list = list;
       Core.$apply($scope);
     }
 
@@ -51,6 +74,7 @@ module Wiki {
             columnDefs.push(colDef);
           }
         });
+        columnDefs.push(linksColumn);
 
         //$scope.gridOptions.columDefs = columnDefs;
         $scope.gridOptions = {
