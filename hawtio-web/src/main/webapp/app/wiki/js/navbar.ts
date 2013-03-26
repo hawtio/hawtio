@@ -30,6 +30,13 @@ module Wiki {
     loadBreadcrumbs();
 
 
+    function switchToFormTableLink(breadcrumb) {
+      var href = breadcrumb.href;
+      if (href) {
+        breadcrumb.href = href.replace("wiki/view", "wiki/formTable");
+      }
+    }
+
     function loadBreadcrumbs() {
       var href = "#/wiki/view/";
       $scope.breadcrumbs = [
@@ -44,7 +51,19 @@ module Wiki {
         href += name;
         $scope.breadcrumbs.push({href: href, name: name});
       });
+      // lets swizzle the last one or two to be formTable views if the last or 2nd to last
+
       var loc = $location.path();
+      if (loc.startsWith("/wiki/formTable") && $scope.breadcrumbs.length) {
+        // lets swizzle the view to a formTable link
+        switchToFormTableLink($scope.breadcrumbs.last());
+      } else if ($location.search()["form"] && $scope.breadcrumbs.length) {
+        var lastName = $scope.breadcrumbs.last().name;
+        if (lastName && lastName.endsWith(".json")) {
+          // previous breadcrumb should be a formTable
+          switchToFormTableLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2]);
+        }
+      }
       if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version") || loc.startsWith("/wiki/diff")) {
         // lets add a history tab
         $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
