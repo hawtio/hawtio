@@ -76,6 +76,9 @@ module Tomcat {
                   $scope.mbeanIndex[mbean] = $scope.webapps.length;
                   $scope.webapps.push(obj);
                 }
+
+                // ensure web page is updated
+                Core.$apply($scope);
               }
             }
           }

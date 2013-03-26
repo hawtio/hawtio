@@ -104,7 +104,6 @@ module Tomcat {
           response = Tomcat.filerTomcatOrCatalina(response);
 
           $scope.sessions = [];
-          $scope.mbeanIndex = {};
 
           function onAttributes(response) {
             var obj = response.value;
@@ -123,13 +122,8 @@ module Tomcat {
                   obj.path = "";
                 }
 
-                var idx = $scope.mbeanIndex[mbean];
-                if (angular.isDefined(idx)) {
-                  $scope.sessions[mbean] = obj;
-                } else {
-                  $scope.sessions[mbean] = $scope.sessions.length;
-                  $scope.sessions.push(obj);
-                }
+                $scope.sessions.push(obj);
+                Core.$apply($scope);
               }
             }
           }
@@ -141,17 +135,6 @@ module Tomcat {
                 "maxInactiveInterval", "sessionCounter", "sessionCreateRate", "sessionExpireRate"]}, onSuccess(onAttributes));
           });
           Core.$apply($scope);
-        };
-
-        // function to trigger reloading page
-        $scope.onLastResponse = function (response) {
-          $scope.onResponse(response);
-          // we only want to force updating the data on the last response
-          loadData();
-        };
-
-        $scope.onResponse = function (response) {
-          //console.log("got response: " + response);
         };
 
         $scope.$watch('workspace.tree', function () {

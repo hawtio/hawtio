@@ -72,12 +72,6 @@ module JBoss {
           Core.$apply($scope);
         };
 
-        // function to trigger reloading page
-        $scope.onResponse = function (response) {
-          //console.log("got response: " + response);
-          loadData();
-        };
-
         $scope.$watch('workspace.tree', function () {
           // if the JMX tree is reloaded its probably because a new MBean has been added or removed
           // so lets reload, asynchronously just in case
