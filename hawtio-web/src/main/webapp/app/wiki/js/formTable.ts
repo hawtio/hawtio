@@ -13,7 +13,8 @@ module Wiki {
     };
 
     function childLink(child, prefix) {
-      return Core.createHref($location, prefix + "/" + $scope.pageId + "/" + (child._id || ""));
+      var childId = (child) ? child["_id"] || "" : "";
+      return Core.createHref($location, prefix + "/" + $scope.pageId + "/" + childId);
     }
 
     var linksColumn = {
