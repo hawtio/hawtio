@@ -1,0 +1,28 @@
+<script type="text/ng-template" id="camelMessageTemplate">
+  <div class="expandable closed">
+    <div title="Headers" class="title">
+      <i class="expandable-indicator"></i> Headers
+    </div>
+    <div class="expandable-body well">
+      <table class="table table-condensed table-striped">
+        <thead>
+        <tr>
+          <th>Header</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="(key, value) in row.headers">
+          <td class="property-name">{{key}}</td>
+          <td class="property-value">{{value}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div ng-controller="Core.EditorController">
+    <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.body)}}"
+              ng-model="row.body"></textarea>
+  </div>
+</script>
