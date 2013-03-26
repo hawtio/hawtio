@@ -1,13 +1,18 @@
 <div ng-controller="Source.IndexController">
-  <ul class="nav nav-tabs">
-    <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
-      <a ng-click="setFileName(link)">
-        {{link.name}}
-      </a>
-    </li>
-  </ul>
 
-  <div class="row-fluid">
+  <div class="logbar">
+    <div class="wiki logbar-container">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
+          <a ng-click="setFileName(link)">
+            {{link.name}}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wiki-fixed row-fluid">
     <div class="control-group inline-block">
       <input class="search-query input-xxlarge" type="text" ng-model="searchText" placeholder="Filter files...">
     </div>
@@ -18,7 +23,7 @@
     </table>
   </div>
 
-  <div class="span12" ng-show="loadingMessage">
+  <div class="wiki-fixed row-fluid" ng-show="loadingMessage">
     <div class="alert alert-info">
       <i class="icon-spinner icon-spin icon-2x"></i>
       <span ng-bind-html-unsafe="loadingMessage"></span>

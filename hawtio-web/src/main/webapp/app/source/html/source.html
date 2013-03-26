@@ -1,25 +1,28 @@
 <div ng-controller="Source.SourceController">
-  <div class="row-fluid">
-    <ul class="nav nav-tabs">
-      <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
-        <a ng-href="{{link.href}}{{hash}}">
-          {{link.name}}
-        </a>
-      </li>
-      <li class="pull-right" ng-show="javaDocLink()">
-        <a target="javadoc" ng-href="{{javaDocLink()}}{{hash}}" title="View the javadocs"
-           data-placement="bottom">
-          <i class="icon-file-alt"></i> JavaDoc</a></li>
-    </ul>
+
+  <div class="logbar">
+    <div class="wiki logbar-container">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : link.active}'>
+          <a ng-href="{{link.href}}{{hash}}">
+            {{link.name}}
+          </a>
+        </li>
+        <li class="pull-right" ng-show="javaDocLink()">
+          <a target="javadoc" ng-href="{{javaDocLink()}}{{hash}}" title="View the javadocs"
+             data-placement="bottom">
+            <i class="icon-file-alt"></i> JavaDoc</a></li>
+      </ul>
+    </div>
   </div>
 
-  <div class="form-horizontal">
+  <div class="wiki-fixed form-horizontal">
     <div class="control-group editor-autoresize">
       <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
     </div>
   </div>
 
-  <div class="span12" ng-show="loadingMessage">
+  <div class="wiki-fixed row-fluid" ng-show="loadingMessage">
     <div class="alert alert-info">
       <i class="icon-spinner icon-spin icon-2x"></i>
       <span ng-bind-html-unsafe="loadingMessage"></span>
