@@ -1,6 +1,8 @@
 package io.hawt.git;
 
+import io.hawt.io.FileFilters;
 import io.hawt.io.IOHelper;
+import io.hawt.io.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -31,6 +33,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -160,13 +163,63 @@ public class GitFacade implements GitFacadeMXBean {
             if (file.exists()) {
                 File[] files = file.listFiles();
                 for (File child : files) {
-                    if (!child.getName().equals(".git")) {
+                    if (!isIgnoreFile(child)) {
                         children.add(FileInfo.createFileInfo(rootDir, child));
                     }
                 }
             }
             return new FileContents(file.isDirectory(), null, children);
         }
+    }
+
+    protected boolean isIgnoreFile(File child) {
+        return child.getName().equals(".git");
+    }
+
+    /**
+     * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
+     * @return
+     */
+    @Override
+    public String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException {
+        if (!Strings.isNotBlank(fileNameWildcard)) {
+            fileNameWildcard = "*.json";
+        }
+        return readChildContents(path, fileNameWildcard, search, "[\n", ",\n", "\n]");
+    }
+
+    /**
+     * Returns the child file contents which match the given name wildcard (using * to match any sequence of characters) and search string (if specified.
+     */
+    @Override
+    public String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException {
+        File rootDir = getConfigDirectory();
+        File file = getFile(path);
+        FileFilter filter = FileFilters.createFileFilter(fileNameWildcard);
+        boolean first = true;
+        StringBuilder buffer = new StringBuilder(prefix);
+        List<FileInfo> children = new ArrayList<FileInfo>();
+        if (file.isDirectory()) {
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File child : files) {
+                    if (!isIgnoreFile(child) && child.isFile()) {
+                        String text = IOHelper.readFully(child);
+                        if (!Strings.isNotBlank(search) || text.contains(search)) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                buffer.append(separator);
+                            }
+                            buffer.append(text);
+                            children.add(FileInfo.createFileInfo(rootDir, child));
+                        }
+                    }
+                }
+            }
+        }
+        buffer.append(postfix);
+        return buffer.toString();
     }
 
 
@@ -243,7 +296,7 @@ public class GitFacade implements GitFacadeMXBean {
 
             CommitFinder finder = new CommitFinder(r);
             CommitListFilter block = new CommitListFilter();
-            if (isNotBlank(path)) {
+            if (Strings.isNotBlank(path)) {
                 finder.setFilter(PathFilterUtils.and(path));
             }
             finder.setFilter(block);
@@ -251,7 +304,7 @@ public class GitFacade implements GitFacadeMXBean {
             if (limit > 0) {
                 finder.setFilter(new CommitLimitFilter(100).setStop(true));
             }
-            if (isNotBlank(objectId)) {
+            if (Strings.isNotBlank(objectId)) {
                 finder.findFrom(objectId);
             } else {
                 finder.find();
@@ -263,7 +316,7 @@ public class GitFacade implements GitFacadeMXBean {
                 String author = entry.getAuthorIdent().getName();
                 boolean merge = entry.getParentCount() > 1;
                 String shortMessage = entry.getShortMessage();
-                String trimmedMessage = trimString(shortMessage, 78);
+                String trimmedMessage = Strings.trimString(shortMessage, 78);
                 String name = entry.getName();
                 String commitHashText = getShortCommitHash(name);
                 results.add(new CommitInfo(commitHashText, name, author, date, merge, trimmedMessage, shortMessage));
@@ -285,20 +338,6 @@ public class GitFacade implements GitFacadeMXBean {
             return new Date(0);
         }
         return new Date(commit.getCommitTime() * 1000L);
-    }
-
-    public static String trimString(String value, int max) {
-        if (value == null) {
-            return "";
-        }
-        if (value.length() <= max) {
-            return value;
-        }
-        return value.substring(0, max - 3) + "...";
-    }
-
-    public static boolean isNotBlank(String text) {
-        return text != null && text.trim().length() > 0;
     }
 
     @Override
@@ -332,13 +371,13 @@ public class GitFacade implements GitFacadeMXBean {
 */
 
         RevCommit commit;
-        if (isNotBlank(objectId)) {
+        if (Strings.isNotBlank(objectId)) {
             commit = CommitUtils.getCommit(r, objectId);
         } else {
             commit = CommitUtils.getHead(r);
         }
         RevCommit baseCommit = null;
-        if (isNotBlank(baseObjectId)) {
+        if (Strings.isNotBlank(baseObjectId)) {
             baseCommit = CommitUtils.getCommit(r, baseObjectId);
         }
 
@@ -442,7 +481,7 @@ public class GitFacade implements GitFacadeMXBean {
         File gitDir = new File(confDir, ".git");
         if (!gitDir.exists()) {
             String repo = getRemoteRepository();
-            if (isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
+            if (Strings.isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
                 LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
                 CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
                 try {

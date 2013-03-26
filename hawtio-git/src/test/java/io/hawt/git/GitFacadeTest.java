@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -147,6 +148,23 @@ public class GitFacadeTest {
             String content = git.getContent(info.getName(), path);
             System.out.println("    = " + content);
         }
+
+
+        // write some JSON files then lets combine them in a single read
+        String jsonDir = "/foo";
+        git.write(branch, jsonDir + "/" + "1.json", "Initial commit", authorName, authorEmail, "{ key: 1, name: 'James'}");
+        git.write(branch, jsonDir + "/" + "2.json", "Initial commit", authorName, authorEmail, "{ key: 2, name: 'Stan'}");
+
+        // now lets read the JSON for the directory
+        String json = git.readJsonChildContent(branch, jsonDir, "*.json", null);
+        System.out.println("Got JSON: " + json);
+        assertTrue("JSON should include James but was: " + json, json.contains("James"));
+
+        json = git.readJsonChildContent(branch, jsonDir, "*.json", "James");
+        assertTrue("JSON should include James but was: " + json, json.contains("James"));
+
+        json = git.readJsonChildContent(branch, jsonDir, "*.json", "Stan");
+        assertFalse("JSON should not include James but was: " + json, json.contains("James"));
     }
 
     protected String assertReadFileContents(String path, String expectedContents) throws IOException {

@@ -45,4 +45,8 @@ public interface GitFacadeMXBean {
      */
     void revertTo(String branch, String objectId, String blobPath, String commitMessage,
                   String authorName, String authorEmail);
+
+    String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException;
+
+    String readChildContents(String path, String fileNameWildcard, String search, String prefix, String separator, String postfix) throws IOException;
 }
