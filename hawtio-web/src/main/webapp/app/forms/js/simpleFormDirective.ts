@@ -118,14 +118,12 @@ module Forms {
       var form = this.createForm(config);
       var fieldset = form.find('fieldset');
 
-      var addInput = function(arg) {
-        var input = this.assembleInput(config, arg);
+      angular.forEach(config.data.properties, (arg, id) => {
+        var input = this.assembleInput(config, arg, id);
         fieldset.append(input);
-      };
+      });
 
-      config.data.properties.forEach(addInput, this);
-
-      var group = this.getControlGroup(config, {});
+      var group = this.getControlGroup(config, {}, "");
       var controlDiv = this.getControlDiv(config);
 
 
@@ -245,24 +243,24 @@ module Forms {
 
 
     private getLegend(config) {
-      if (angular.isDefined(config.data.desc)) {
-        return '<legend>' + config.data.desc + '</legend>';
+      if (angular.isDefined(config.data.description)) {
+        return '<legend>' + config.data.description + '</legend>';
       }
       return '';
     }
 
 
-    private getControlGroup(config, arg) {
+    private getControlGroup(config, arg, id) {
       var rc = $('<div class="' + config.controlgroupclass + '"></div>');
-      if (angular.isDefined(arg.desc)) {
-        rc.attr('title', arg.desc);
+      if (angular.isDefined(arg.description)) {
+        rc.attr('title', arg.description);
       }
       return rc;
     }
 
 
-    private getLabel(config, arg) {
-      return $('<label class="' + config.labelclass + '">' + humanizeValue(arg.name.capitalize()) + ': </label>');
+    private getLabel(config, arg, id) {
+      return $('<label class="' + config.labelclass + '">' + humanizeValue(id.capitalize()) + ': </label>');
     }
 
 
@@ -271,7 +269,7 @@ module Forms {
     }
 
 
-    private getHelpSpan(config, arg) {
+    private getHelpSpan(config, arg, id) {
       var rc = $('<span class="help-block"></span>');
       if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
         rc.append('Type: ' + arg.type);
@@ -281,31 +279,31 @@ module Forms {
 
 
     // TODO: support more input types, i.e. checkboxes/radio/select which vary from regular inputs
-    private assembleInput(config, arg) {
-      var group = this.getControlGroup(config, arg);
-      group.append(this.getLabel(config, arg));
+    private assembleInput(config, arg, id) {
+      var group = this.getControlGroup(config, arg, id);
+      group.append(this.getLabel(config, arg, id));
       var controlDiv = this.getControlDiv(config);
-      controlDiv.append(this.getInput(config, arg));
-      controlDiv.append(this.getHelpSpan(config, arg));
+      controlDiv.append(this.getInput(config, arg, id));
+      controlDiv.append(this.getHelpSpan(config, arg, id));
       group.append(controlDiv);
       return group;
     }
 
 
-    private getInput(config, arg) {
+    private getInput(config, arg, id) {
       var a = this.sanitize(arg);
 
       switch (a.formType) {
         default:
           var rc = $('<input type="' + a.formType + '">');
-          rc.attr('name', a.name);
+          rc.attr('name', id);
           if (angular.isDefined(a.def)) {
             rc.attr('value', a.def);
           }
           var modelName = a.model;
           if (!angular.isDefined(a.model)) {
             // TODO always use 2 way binding?
-            modelName = config.getEntity() + "." + a.name;
+            modelName = config.getEntity() + "." + id;
           }
           if (modelName) {
             rc.attr('ng-model', modelName);

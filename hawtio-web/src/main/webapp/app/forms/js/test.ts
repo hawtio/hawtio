@@ -6,37 +6,33 @@ module Forms {
 
     $scope.toggleEdit = function() {
       $scope.editing = !$scope.editing;
-    }
+    };
 
     $scope.setVMOption = {
-      properties: [
-        {
-          desc: 'Argument key',
-          name: 'key',
+      properties: {
+        'key': {
+          description: 'Argument key',
           type: 'java.lang.String'
         },
-        {
-          desc: 'Argument Value',
-          name: 'value',
+        'value': {
+          description: 'Argument Value',
           type: 'java.lang.String',
           def: 'foobar'
         },
-        {
-          desc: 'Long argument',
-          name: 'longArg',
+        'longArg': {
+          description: 'Long argument',
           type: 'Long',
           def: '5'
         },
-        {
-          desc: 'Int argument',
-          name: 'intArg',
+        'intArg': {
+          description: 'Int argument',
           type: 'Integer'
         }
         // TODO - add more types, above is what I remember from jolokia
-      ],
-      desc: 'Show some stuff in a form',
-      ret: 'java.lang.String'
-    }
+      },
+      description: 'Show some stuff in a form',
+      type: 'java.lang.String'
+    };
 
     $scope.config = {
       name: 'form-with-config-object',

@@ -64,12 +64,11 @@ module Wiki {
         $scope.formDefinition = Wiki.parseJson(text);
 
         var columnDefs = [];
-        angular.forEach($scope.formDefinition.properties, (property) => {
-          var name = property.name;
+        angular.forEach($scope.formDefinition.properties, (property, name) => {
           if (name) {
             var colDef = {
               field: name,
-              displayName: property.desc || name,
+              displayName: property.description || name,
               visible: true
             };
             columnDefs.push(colDef);

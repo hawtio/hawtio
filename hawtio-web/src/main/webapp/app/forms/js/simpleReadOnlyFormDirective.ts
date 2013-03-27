@@ -20,7 +20,7 @@ module Forms {
       return '';
     }
 
-    private getInput(config, arg) {
+    private getInput(config, arg, id) {
       var a = this.sanitize(arg);
 
       switch (a.formType) {
@@ -29,7 +29,7 @@ module Forms {
           var modelName = a.model;
           if (!angular.isDefined(a.model)) {
             // TODO always use 2 way binding?
-            modelName = config.getEntity() + "." + a.name;
+            modelName = config.getEntity() + "." + id;
           }
           if (modelName) {
             rc.attr('ng-model', modelName);
