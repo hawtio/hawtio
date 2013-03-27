@@ -78,7 +78,7 @@ module Forms {
         // user-defined input type
         return arg;
       }
-      switch (arg.type.toLowerCase()) {
+      switch ((arg.type || "").toLowerCase()) {
         case "int":
         case "integer":
         case "long":
