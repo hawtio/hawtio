@@ -15,7 +15,7 @@ module Forms {
     public data:any = {};
     public json:any = undefined;
 
-    public args = [];
+    public properties = [];
     public action = '';
 
     public formclass = 'form-horizontal no-bottom-margin';
@@ -123,7 +123,7 @@ module Forms {
         fieldset.append(input);
       };
 
-      config.data.args.forEach(addInput, this);
+      config.data.properties.forEach(addInput, this);
 
       var group = this.getControlGroup(config, {});
       var controlDiv = this.getControlDiv(config);

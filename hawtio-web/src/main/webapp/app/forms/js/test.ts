@@ -9,7 +9,7 @@ module Forms {
     }
 
     $scope.setVMOption = {
-      args: [
+      properties: [
         {
           desc: 'Argument key',
           name: 'key',

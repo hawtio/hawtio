@@ -64,7 +64,7 @@ module Wiki {
         $scope.formDefinition = Wiki.parseJson(text);
 
         var columnDefs = [];
-        angular.forEach($scope.formDefinition.args, (property) => {
+        angular.forEach($scope.formDefinition.properties, (property) => {
           var name = property.name;
           if (name) {
             var colDef = {
