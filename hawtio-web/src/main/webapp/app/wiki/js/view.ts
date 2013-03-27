@@ -43,6 +43,10 @@ module Wiki {
             postFix = "?form=" + formPath;
           }
         }
+      } else {
+        if (child.path.endsWith(".form")) {
+          postFix = "?form=/";
+        }
       }
       return Core.createHref($location, prefix + path + postFix);
     };
@@ -94,6 +98,16 @@ module Wiki {
 
     updateView();
 
+    function updateView() {
+      var path = $location.path();
+      if (path && path.startsWith("/wiki/diff")) {
+        var baseObjectId = $routeParams["baseObjectId"];
+        $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
+      } else {
+        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+      }
+    }
+
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
       if ("markdown" === $scope.format) {
@@ -111,7 +125,13 @@ module Wiki {
         if (form) {
           // now lets try load the form JSON so we can then render the form
           $scope.sourceView = null;
-          $scope.git = wikiRepository.getPage(form, $scope.objectId, onFormData);
+          if (form === "/") {
+            onFormSchema(_jsonSchema);
+          } else {
+            $scope.git = wikiRepository.getPage(form, $scope.objectId, (details) => {
+              onFormSchema(Wiki.parseJson(details.text));
+            });
+          }
         } else {
           $scope.sourceView = "app/wiki/html/sourceView.html";
         }
@@ -119,21 +139,8 @@ module Wiki {
       Core.$apply($scope);
     }
 
-    function updateView() {
-      var path = $location.path();
-      if (path && path.startsWith("/wiki/diff")) {
-        var baseObjectId = $routeParams["baseObjectId"];
-        $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
-      } else {
-        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
-      }
-    }
-
-    function onFormData(details) {
-      var text = details.text;
-      if (text) {
-        $scope.formDefinition = Wiki.parseJson(text);
-      }
+    function onFormSchema(json) {
+      $scope.formDefinition = json;
       if ($scope.source) {
         $scope.formEntity = Wiki.parseJson($scope.source);
       }

@@ -83,17 +83,20 @@ module Wiki {
         }
         // now lets try load the form defintion JSON so we can then render the form
         $scope.sourceView = null;
-        $scope.git = wikiRepository.getPage(form, $scope.objectId, onFormData);
+        if (form === "/") {
+          onFormSchema(_jsonSchema);
+        } else {
+          $scope.git = wikiRepository.getPage(form, $scope.objectId, (details) => {
+            onFormSchema(Wiki.parseJson(details.text));
+          });
+        }
       } else {
         $scope.sourceView = "app/wiki/html/sourceEdit.html";
       }
     }
 
-    function onFormData(details) {
-      var text = details.text;
-      if (text) {
-        $scope.formDefinition = Wiki.parseJson(text);
-      }
+    function onFormSchema(json) {
+      $scope.formDefinition = json;
       if ($scope.source) {
         $scope.formEntity = Wiki.parseJson($scope.source);
       }
