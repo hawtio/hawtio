@@ -293,6 +293,12 @@ module Forms {
     private getInput(config, arg, id) {
       var a = this.sanitize(arg);
 
+      switch (a.type) {
+        case "object":
+          // create a table UI!
+          // TODO we need a little directive here to generate a nested table inside this form
+          return $('<table class="table"><tr><td>table goes here for model ' + id + '</td></tr></table>')
+      }
       switch (a.formType) {
         default:
           var rc = $('<input type="' + a.formType + '">');
