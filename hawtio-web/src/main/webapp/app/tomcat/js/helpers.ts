@@ -15,9 +15,11 @@ module Tomcat {
         switch (state.toLowerCase()) {
           case 'started':
             return "green icon-play";
+          case 'stopped':
+            return "red icon-stop";
         }
       }
-      return "red icon-stop";
+      return "icon-question-sign";
     }
 
     export function millisToDateFormat(time) {
@@ -27,6 +29,10 @@ module Tomcat {
       } else {
         return "";
       }
+    }
+
+    export function isTomcat6(name) {
+      return name.toString().indexOf("Apache Tomcat/6") !== -1;
     }
 
 }

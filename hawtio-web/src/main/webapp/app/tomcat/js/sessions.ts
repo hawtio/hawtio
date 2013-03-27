@@ -116,8 +116,13 @@ module Tomcat {
                 // grab the 2nd part of the mbean that has context=/name
                 var context = mbean.toString().split(",")[1];
                 if (context) {
-                  // and remove the leading context=/ from the name
-                  obj.path = context.toString().substr(9)
+                  if (context.toString().indexOf("path=") !== -1) {
+                    // and remove the leading path=/ from the name (Tomcat 6)
+                    obj.path = context.toString().substr(5)
+                  } else {
+                    // and remove the leading context=/ from the name (Tomcat 7)
+                    obj.path = context.toString().substr(9)
+                  }
                 } else {
                   obj.path = "";
                 }
@@ -130,9 +135,7 @@ module Tomcat {
 
           angular.forEach(response, function (value, key) {
             var mbean = value;
-            jolokia.request({type: "read", mbean: mbean,
-              attribute: ["stateName", "activeSessions", "expiredSessions", "rejectedSessions", "maxActive", "maxActiveSessions",
-                "maxInactiveInterval", "sessionCounter", "sessionCreateRate", "sessionExpireRate"]}, onSuccess(onAttributes));
+            jolokia.request({type: "read", mbean: mbean}, onSuccess(onAttributes));
           });
           Core.$apply($scope);
         };

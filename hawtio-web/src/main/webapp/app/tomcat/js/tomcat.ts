@@ -8,7 +8,7 @@ module Tomcat {
         $scope.selected = [];
         $scope.search = "";
 
-        var columnDefs: any[] = [
+        var columnDefsTomcat6: any[] = [
             {
                 field: 'stateName',
                 displayName: 'State',
@@ -19,15 +19,41 @@ module Tomcat {
                 resizable: false
             },
             {
-                field: 'displayName',
-                displayName: 'Name',
+                field: 'path',
+                displayName: 'Context-Path',
                 cellFilter: null,
                 width: "*",
                 resizable: true
             },
             {
+                field: 'startTime',
+                displayName: 'Start Time',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            }
+        ];
+
+        var columnDefsTomcat7: any[] = [
+            {
+                field: 'stateName',
+                displayName: 'State',
+                cellTemplate: stateTemplate,
+                width: 56,
+                minWidth: 56,
+                maxWidth: 56,
+                resizable: false
+            },
+            {
                 field: 'path',
                 displayName: 'Context-Path',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'displayName',
+                displayName: 'Display Name',
                 cellFilter: null,
                 width: "*",
                 resizable: true
@@ -46,7 +72,6 @@ module Tomcat {
             displayFooter: true,
             selectedItems: $scope.selected,
             selectWithCheckboxOnly: true,
-            columnDefs: columnDefs,
             filterOptions: {
                 filterText: 'search'
             }
@@ -85,8 +110,14 @@ module Tomcat {
 
           angular.forEach(response, function (value, key) {
             var mbean = value;
-            jolokia.request({type: "read", mbean: mbean,
-              attribute: ["displayName", "path", "stateName", "startTime"]}, onSuccess(onAttributes));
+            if (isTomcat6($scope.tomcatServerVersion)) {
+              // Tomcat 6 does not have displayName attribute
+              jolokia.request({type: "read", mbean: mbean,
+                attribute: ["path", "stateName", "startTime"]}, onSuccess(onAttributes));
+            } else {
+              jolokia.request({type: "read", mbean: mbean,
+                attribute: ["displayName", "path", "stateName", "startTime"]}, onSuccess(onAttributes));
+            }
           });
           Core.$apply($scope);
         };
@@ -160,6 +191,15 @@ module Tomcat {
             $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo")
         } else {
             console.log("Cannot find Tomcat server or there was more than one server. response is: " + servers)
+        }
+
+        // the columns shown in the applications view depends on the Tomcat version in use
+        if (isTomcat6($scope.tomcatServerVersion)) {
+          console.log("Using tomcat6")
+          $scope.gridOptions.columnDefs = columnDefsTomcat6;
+        } else {
+          console.log("Using tomcat7")
+          $scope.gridOptions.columnDefs = columnDefsTomcat7;
         }
 
     }
