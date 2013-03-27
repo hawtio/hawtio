@@ -30,4 +30,10 @@ e.g. add this to your web.xml
 <tr>
 <td>hawtio.config.cloneOnStartup</td><td>HAWTIO_CONFIG_CLONEONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
 </tr>
+<tr>
+<td>hawtio.config.pollOnStartup</td><td>HAWTIO_CONFIG_POLLONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
+</tr>
+<tr>
+<td>hawtio.maven.index.dir</td><td>HAWTIO_MAVEN_INDEX_DIR</td><td>The directory where the maven indexer will use to store its cache and index files</td>
+</tr>
 </table>

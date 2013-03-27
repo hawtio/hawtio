@@ -41,8 +41,7 @@ public class AsyncMavenIndexerFacadeFactory {
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private String[] repositories;
-
-    private File cacheDirectory = new File("mavenIndexer");
+    private String indexDirectory = "mavenIndexer";
 
     public void init() {
         Timer timer = new Timer("MavenIndexerFacade startup timer");
@@ -59,6 +58,7 @@ public class AsyncMavenIndexerFacadeFactory {
             }
         };
         timer.schedule(task, 3000);
+        LOG.info("MavenIndexerFacade will store its data in " + indexDirectory);
         LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
     }
 
@@ -68,12 +68,12 @@ public class AsyncMavenIndexerFacadeFactory {
         }
     }
 
-    public File getCacheDirectory() {
-        return cacheDirectory;
+    public String getIndexDirectory() {
+        return indexDirectory;
     }
 
-    public void setCacheDirectory(File cacheDirectory) {
-        this.cacheDirectory = cacheDirectory;
+    public void setIndexDirectory(String indexDirectory) {
+        this.indexDirectory = indexDirectory;
     }
 
     public MBeanServer getMBeanServer() {
@@ -111,6 +111,7 @@ public class AsyncMavenIndexerFacadeFactory {
     protected void createMavenIndexer() throws Exception {
         mavenIndexer = new MavenIndexerFacade();
         mavenIndexer.setUpdateIndexOnStartup(updateIndexOnStartup);
+        mavenIndexer.setCacheDirectory(new File(indexDirectory));
         if (objectName != null) {
             mavenIndexer.setObjectName(objectName);
         }

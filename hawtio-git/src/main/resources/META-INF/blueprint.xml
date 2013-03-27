@@ -3,19 +3,25 @@
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
 
 <!--
-    TODO add property injection from context parameters / system properties / env vars
-
     <ext:property-placeholder>
         <ext:default-properties>
-            <ext:property name="name" value="value" />
-            <ext:property name="a" value="Hello " />
-            <ext:property name="b" value="FooBar" />
+            <ext:property name="hawtio.config.dir" value="" />
+            <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git" />
+            <ext:property name="hawtio.config.pollOnStartup" value="true" />
+            <ext:property name="hawtio.config.cloneOnStartup" value="true" />
         </ext:default-properties>
-        <ext:location>classpath:test.properties</ext:location>
     </ext:property-placeholder>
 -->
 
 	<bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy">
+<!--
+    <property name="configDirectory" value="${hawtio.config.dir}"/>
+    <property name="remoteRepository" value="${hawtio.config.repo}"/>
+    <property name="pullOnStartup" value="${hawtio.config.pollOnStartup}"/>
+    <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
+-->
 	</bean>
+
+
 </blueprint>
 

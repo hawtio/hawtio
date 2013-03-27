@@ -485,6 +485,8 @@ public class GitFacade implements GitFacadeMXBean {
                     LOG.error("Failed to clone remote repo " + repo + ". Reason: " + e, e);
                     // lets just use an empty repo instead
                 }
+            } else if (!isCloneRemoteRepoOnStartup()) {
+                LOG.info("Clone git repo on startup disabled");
             }
             InitCommand initCommand = Git.init();
             initCommand.setDirectory(confDir);
@@ -506,6 +508,8 @@ public class GitFacade implements GitFacadeMXBean {
                     LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
                     // lets just use an empty repo instead
                 }
+            }  else {
+                LOG.info("git pull from remote config repo on startup is disabled");
             }
         }
     }

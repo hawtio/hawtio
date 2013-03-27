@@ -41,6 +41,11 @@
     <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
   </listener>
 
+  <context-param>
+      <param-name>blueprintProperties</param-name>
+      <param-value>blueprint.properties</param-value>
+  </context-param>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
