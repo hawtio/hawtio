@@ -30,9 +30,8 @@ var _apacheCamelModel = {
       "icon":     "aggregate24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "correlationexpression",
+            "properties": {
+          "correlationexpression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -41,8 +40,7 @@ var _apacheCamelModel = {
           "tooltip":"correlationExpression",
 															          "title":  "correlationExpression"
         },
-          {
-          "id":     "completionpredicate",
+          "completionpredicate": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -51,8 +49,7 @@ var _apacheCamelModel = {
           "tooltip":"completionPredicate",
 															          "title":  "completionPredicate"
         },
-          {
-          "id":     "completiontimeoutexpression",
+          "completiontimeoutexpression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -61,8 +58,7 @@ var _apacheCamelModel = {
           "tooltip":"completionTimeoutExpression",
 															          "title":  "completionTimeoutExpression"
         },
-          {
-          "id":     "completionsizeexpression",
+          "completionsizeexpression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -71,8 +67,7 @@ var _apacheCamelModel = {
           "tooltip":"completionSizeExpression",
 															          "title":  "completionSizeExpression"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -81,8 +76,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "timeoutcheckerexecutorserviceref",
+          "timeoutcheckerexecutorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -91,8 +85,7 @@ var _apacheCamelModel = {
           "tooltip":"timeoutCheckerExecutorServiceRef",
 															          "title":  "timeoutCheckerExecutorServiceRef"
         },
-          {
-          "id":     "aggregationrepositoryref",
+          "aggregationrepositoryref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -101,8 +94,7 @@ var _apacheCamelModel = {
           "tooltip":"aggregationRepositoryRef",
 															          "title":  "aggregationRepositoryRef"
         },
-          {
-          "id":     "strategyref",
+          "strategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -111,8 +103,7 @@ var _apacheCamelModel = {
           "tooltip":"strategyRef",
 															          "title":  "strategyRef"
         },
-          {
-          "id":     "parallelprocessing",
+          "parallelprocessing": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -121,8 +112,7 @@ var _apacheCamelModel = {
           "tooltip":"parallelProcessing",
 															          "title":  "parallelProcessing"
         },
-          {
-          "id":     "completionsize",
+          "completionsize": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -131,8 +121,7 @@ var _apacheCamelModel = {
           "tooltip":"completionSize",
 															          "title":  "completionSize"
         },
-          {
-          "id":     "completioninterval",
+          "completioninterval": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -141,8 +130,7 @@ var _apacheCamelModel = {
           "tooltip":"completionInterval",
 															          "title":  "completionInterval"
         },
-          {
-          "id":     "completiontimeout",
+          "completiontimeout": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -151,8 +139,7 @@ var _apacheCamelModel = {
           "tooltip":"completionTimeout",
 															          "title":  "completionTimeout"
         },
-          {
-          "id":     "completionfrombatchconsumer",
+          "completionfrombatchconsumer": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -161,8 +148,7 @@ var _apacheCamelModel = {
           "tooltip":"completionFromBatchConsumer",
 															          "title":  "completionFromBatchConsumer"
         },
-          {
-          "id":     "groupexchanges",
+          "groupexchanges": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -171,8 +157,7 @@ var _apacheCamelModel = {
           "tooltip":"groupExchanges",
 															          "title":  "groupExchanges"
         },
-          {
-          "id":     "eagercheckcompletion",
+          "eagercheckcompletion": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -181,8 +166,7 @@ var _apacheCamelModel = {
           "tooltip":"eagerCheckCompletion",
 															          "title":  "eagerCheckCompletion"
         },
-          {
-          "id":     "ignoreinvalidcorrelationkeys",
+          "ignoreinvalidcorrelationkeys": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -191,8 +175,7 @@ var _apacheCamelModel = {
           "tooltip":"ignoreInvalidCorrelationKeys",
 															          "title":  "ignoreInvalidCorrelationKeys"
         },
-          {
-          "id":     "closecorrelationkeyoncompletion",
+          "closecorrelationkeyoncompletion": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -201,8 +184,7 @@ var _apacheCamelModel = {
           "tooltip":"closeCorrelationKeyOnCompletion",
 															          "title":  "closeCorrelationKeyOnCompletion"
         },
-          {
-          "id":     "discardoncompletiontimeout",
+          "discardoncompletiontimeout": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -211,8 +193,7 @@ var _apacheCamelModel = {
           "tooltip":"discardOnCompletionTimeout",
 															          "title":  "discardOnCompletionTimeout"
         },
-          {
-          "id":     "forcecompletiononstop",
+          "forcecompletiononstop": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -221,7 +202,7 @@ var _apacheCamelModel = {
           "tooltip":"forceCompletionOnStop",
 															          "title":  "forceCompletionOnStop"
         },
-        ]
+  			}
     },
      "AOP": {
       "title":    "AOP",
@@ -231,9 +212,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "beforeuri",
+            "properties": {
+          "beforeuri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -242,8 +222,7 @@ var _apacheCamelModel = {
           "tooltip":"beforeUri",
 															          "title":  "beforeUri"
         },
-          {
-          "id":     "afteruri",
+          "afteruri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -252,8 +231,7 @@ var _apacheCamelModel = {
           "tooltip":"afterUri",
 															          "title":  "afterUri"
         },
-          {
-          "id":     "afterfinallyuri",
+          "afterfinallyuri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -262,7 +240,7 @@ var _apacheCamelModel = {
           "tooltip":"afterFinallyUri",
 															          "title":  "afterFinallyUri"
         },
-        ]
+  			}
     },
      "bean": {
       "title":    "Bean",
@@ -270,9 +248,8 @@ var _apacheCamelModel = {
       "description":  "Bean",
       "tootip":  "Bean",
       "icon":     "bean24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	              "type":   "combo",
 				"kind":   "beanRef",
@@ -283,8 +260,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-          {
-          "id":     "method",
+          "method": {
 				  				    
 				  	      
 					"type":   "combo",
@@ -296,8 +272,7 @@ var _apacheCamelModel = {
           "tooltip":"method",
 															          "title":  "method"
         },
-          {
-          "id":     "beantype",
+          "beantype": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -306,7 +281,7 @@ var _apacheCamelModel = {
           "tooltip":"beanType",
 															          "title":  "beanType"
         },
-        ]
+  			}
     },
      "catch": {
       "title":    "Catch",
@@ -316,9 +291,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "exceptions",
+            "properties": {
+          "exceptions": {
 				  				    
 				  	      
       	        "type":   "java.util.List",
@@ -327,8 +301,7 @@ var _apacheCamelModel = {
           "tooltip":"exceptions",
 															          "title":  "exceptions"
         },
-          {
-          "id":     "handled",
+          "handled": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -337,7 +310,7 @@ var _apacheCamelModel = {
           "tooltip":"handled",
 															          "title":  "handled"
         },
-        ]
+  			}
     },
      "choice": {
       "title":    "Choice",
@@ -347,8 +320,8 @@ var _apacheCamelModel = {
       "icon":     "choice24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "convertBody": {
       "title":    "Convert Body",
@@ -356,9 +329,8 @@ var _apacheCamelModel = {
       "description":  "Convert Body",
       "tootip":  "Convert Body",
       "icon":     "convertBody24.png",
-			      "properties": [
-          {
-          "id":     "type",
+			      "properties": {
+          "type": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -367,8 +339,7 @@ var _apacheCamelModel = {
           "tooltip":"type",
 															          "title":  "type"
         },
-          {
-          "id":     "charset",
+          "charset": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -377,7 +348,7 @@ var _apacheCamelModel = {
           "tooltip":"charset",
 															          "title":  "charset"
         },
-        ]
+  			}
     },
      "delay": {
       "title":    "Delay",
@@ -387,9 +358,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -398,8 +368,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -408,8 +377,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "asyncdelayed",
+          "asyncdelayed": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -418,8 +386,7 @@ var _apacheCamelModel = {
           "tooltip":"asyncDelayed",
 															          "title":  "asyncDelayed"
         },
-          {
-          "id":     "callerrunswhenrejected",
+          "callerrunswhenrejected": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -428,7 +395,7 @@ var _apacheCamelModel = {
           "tooltip":"callerRunsWhenRejected",
 															          "title":  "callerRunsWhenRejected"
         },
-        ]
+  			}
     },
      "dynamicRouter": {
       "title":    "Dynamic Router",
@@ -436,9 +403,8 @@ var _apacheCamelModel = {
       "description":  "Dynamic Router",
       "tootip":  "Dynamic Router",
       "icon":     "dynamicRouter24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -447,8 +413,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "uridelimiter",
+          "uridelimiter": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -457,8 +422,7 @@ var _apacheCamelModel = {
           "tooltip":"uriDelimiter",
 															          "title":  "uriDelimiter"
         },
-          {
-          "id":     "ignoreinvalidendpoints",
+          "ignoreinvalidendpoints": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -467,7 +431,7 @@ var _apacheCamelModel = {
           "tooltip":"ignoreInvalidEndpoints",
 															          "title":  "ignoreInvalidEndpoints"
         },
-        ]
+  			}
     },
      "enrich": {
       "title":    "Enrich",
@@ -475,9 +439,8 @@ var _apacheCamelModel = {
       "description":  "Enrich",
       "tootip":  "Enrich",
       "icon":     "enrich24.png",
-			      "properties": [
-          {
-          "id":     "resourceuri",
+			      "properties": {
+          "resourceuri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -486,8 +449,7 @@ var _apacheCamelModel = {
           "tooltip":"resourceUri",
 															          "title":  "resourceUri"
         },
-          {
-          "id":     "aggregationstrategyref",
+          "aggregationstrategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -496,7 +458,7 @@ var _apacheCamelModel = {
           "tooltip":"aggregationStrategyRef",
 															          "title":  "aggregationStrategyRef"
         },
-        ]
+  			}
     },
      "filter": {
       "title":    "Filter",
@@ -506,9 +468,8 @@ var _apacheCamelModel = {
       "icon":     "filter24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -517,7 +478,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "finally": {
       "title":    "Finally",
@@ -527,8 +488,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "idempotentConsumer": {
       "title":    "Idempotent Consumer",
@@ -538,9 +499,8 @@ var _apacheCamelModel = {
       "icon":     "idempotentConsumer24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -549,8 +509,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "messageidrepositoryref",
+          "messageidrepositoryref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -559,8 +518,7 @@ var _apacheCamelModel = {
           "tooltip":"messageIdRepositoryRef",
 															          "title":  "messageIdRepositoryRef"
         },
-          {
-          "id":     "eager",
+          "eager": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -569,8 +527,7 @@ var _apacheCamelModel = {
           "tooltip":"eager",
 															          "title":  "eager"
         },
-          {
-          "id":     "skipduplicate",
+          "skipduplicate": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -579,8 +536,7 @@ var _apacheCamelModel = {
           "tooltip":"skipDuplicate",
 															          "title":  "skipDuplicate"
         },
-          {
-          "id":     "removeonfailure",
+          "removeonfailure": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -589,7 +545,7 @@ var _apacheCamelModel = {
           "tooltip":"removeOnFailure",
 															          "title":  "removeOnFailure"
         },
-        ]
+  			}
     },
      "inOnly": {
       "title":    "In Only",
@@ -597,9 +553,8 @@ var _apacheCamelModel = {
       "description":  "In Only",
       "tootip":  "In Only",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "uri",
+			      "properties": {
+          "uri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -608,7 +563,7 @@ var _apacheCamelModel = {
           "tooltip":"uri",
 															          "title":  "uri"
         },
-        ]
+  			}
     },
      "inOut": {
       "title":    "In Out",
@@ -616,9 +571,8 @@ var _apacheCamelModel = {
       "description":  "In Out",
       "tootip":  "In Out",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "uri",
+			      "properties": {
+          "uri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -627,7 +581,7 @@ var _apacheCamelModel = {
           "tooltip":"uri",
 															          "title":  "uri"
         },
-        ]
+  			}
     },
      "intercept": {
       "title":    "Intercept",
@@ -637,8 +591,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "interceptFrom": {
       "title":    "Intercept From",
@@ -648,9 +602,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "uri",
+            "properties": {
+          "uri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -659,7 +612,7 @@ var _apacheCamelModel = {
           "tooltip":"uri",
 															          "title":  "uri"
         },
-        ]
+  			}
     },
      "interceptSendToEndpoint": {
       "title":    "Intercept Send To Endpoint",
@@ -669,9 +622,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "uri",
+            "properties": {
+          "uri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -680,8 +632,7 @@ var _apacheCamelModel = {
           "tooltip":"uri",
 															          "title":  "uri"
         },
-          {
-          "id":     "skipsendtooriginalendpoint",
+          "skipsendtooriginalendpoint": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -690,7 +641,7 @@ var _apacheCamelModel = {
           "tooltip":"skipSendToOriginalEndpoint",
 															          "title":  "skipSendToOriginalEndpoint"
         },
-        ]
+  			}
     },
      "loadBalance": {
       "title":    "Load Balance",
@@ -700,9 +651,8 @@ var _apacheCamelModel = {
       "icon":     "loadBalance24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "ref",
+            "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -711,8 +661,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-          {
-          "id":     "loadbalancertype",
+          "loadbalancertype": {
 				  				    
 						"elements": {
 						  				       "failover": "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition",
@@ -730,7 +679,7 @@ var _apacheCamelModel = {
           "tooltip":"loadBalancerType",
 															          "title":  "loadBalancerType"
         },
-        ]
+  			}
     },
      "log": {
       "title":    "Log",
@@ -738,9 +687,8 @@ var _apacheCamelModel = {
       "description":  "Log",
       "tootip":  "Log",
       "icon":     "log24.png",
-			      "properties": [
-          {
-          "id":     "message",
+			      "properties": {
+          "message": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -749,8 +697,7 @@ var _apacheCamelModel = {
           "tooltip":"message",
 															          "title":  "message"
         },
-          {
-          "id":     "logname",
+          "logname": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -759,8 +706,7 @@ var _apacheCamelModel = {
           "tooltip":"logName",
 															          "title":  "logName"
         },
-          {
-          "id":     "marker",
+          "marker": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -769,8 +715,7 @@ var _apacheCamelModel = {
           "tooltip":"marker",
 															          "title":  "marker"
         },
-          {
-          "id":     "logginglevel",
+          "logginglevel": {
 				  				    
 				  	      
       	        "type":   "org.apache.camel.LoggingLevel",
@@ -779,7 +724,7 @@ var _apacheCamelModel = {
           "tooltip":"loggingLevel",
 															          "title":  "loggingLevel"
         },
-        ]
+  			}
     },
      "loop": {
       "title":    "Loop",
@@ -789,9 +734,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -800,8 +744,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "copy",
+          "copy": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -810,7 +753,7 @@ var _apacheCamelModel = {
           "tooltip":"copy",
 															          "title":  "copy"
         },
-        ]
+  			}
     },
      "marshal": {
       "title":    "Marshal",
@@ -818,9 +761,8 @@ var _apacheCamelModel = {
       "description":  "Marshal",
       "tootip":  "Marshal",
       "icon":     "marshal24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -829,8 +771,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-          {
-          "id":     "dataformattype",
+          "dataformattype": {
 				  				    
 						"elements": {
 						  				       "avro": "org.apache.camel.model.dataformat.AvroDataFormat",
@@ -868,7 +809,7 @@ var _apacheCamelModel = {
           "tooltip":"dataFormatType",
 															          "title":  "dataFormatType"
         },
-        ]
+  			}
     },
      "multicast": {
       "title":    "Multicast",
@@ -878,9 +819,8 @@ var _apacheCamelModel = {
       "icon":     "multicast24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "strategyref",
+            "properties": {
+          "strategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -889,8 +829,7 @@ var _apacheCamelModel = {
           "tooltip":"strategyRef",
 															          "title":  "strategyRef"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -899,8 +838,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "onprepareref",
+          "onprepareref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -909,8 +847,7 @@ var _apacheCamelModel = {
           "tooltip":"onPrepareRef",
 															          "title":  "onPrepareRef"
         },
-          {
-          "id":     "parallelprocessing",
+          "parallelprocessing": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -919,8 +856,7 @@ var _apacheCamelModel = {
           "tooltip":"parallelProcessing",
 															          "title":  "parallelProcessing"
         },
-          {
-          "id":     "streaming",
+          "streaming": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -929,8 +865,7 @@ var _apacheCamelModel = {
           "tooltip":"streaming",
 															          "title":  "streaming"
         },
-          {
-          "id":     "stoponexception",
+          "stoponexception": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -939,8 +874,7 @@ var _apacheCamelModel = {
           "tooltip":"stopOnException",
 															          "title":  "stopOnException"
         },
-          {
-          "id":     "timeout",
+          "timeout": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -949,8 +883,7 @@ var _apacheCamelModel = {
           "tooltip":"timeout",
 															          "title":  "timeout"
         },
-          {
-          "id":     "shareunitofwork",
+          "shareunitofwork": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -959,7 +892,7 @@ var _apacheCamelModel = {
           "tooltip":"shareUnitOfWork",
 															          "title":  "shareUnitOfWork"
         },
-        ]
+  			}
     },
      "onCompletion": {
       "title":    "On Completion",
@@ -969,9 +902,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "executorserviceref",
+            "properties": {
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -980,8 +912,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "oncompleteonly",
+          "oncompleteonly": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -990,8 +921,7 @@ var _apacheCamelModel = {
           "tooltip":"onCompleteOnly",
 															          "title":  "onCompleteOnly"
         },
-          {
-          "id":     "onfailureonly",
+          "onfailureonly": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1000,8 +930,7 @@ var _apacheCamelModel = {
           "tooltip":"onFailureOnly",
 															          "title":  "onFailureOnly"
         },
-          {
-          "id":     "useoriginalmessagepolicy",
+          "useoriginalmessagepolicy": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1010,7 +939,7 @@ var _apacheCamelModel = {
           "tooltip":"useOriginalMessagePolicy",
 															          "title":  "useOriginalMessagePolicy"
         },
-        ]
+  			}
     },
      "onException": {
       "title":    "On Exception",
@@ -1020,9 +949,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "exceptions",
+            "properties": {
+          "exceptions": {
 				  				    
 				  	      
       	        "type":   "java.util.List",
@@ -1031,8 +959,7 @@ var _apacheCamelModel = {
           "tooltip":"exceptions",
 															          "title":  "exceptions"
         },
-          {
-          "id":     "retrywhile",
+          "retrywhile": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1041,8 +968,7 @@ var _apacheCamelModel = {
           "tooltip":"retryWhile",
 															          "title":  "retryWhile"
         },
-          {
-          "id":     "redeliverypolicyref",
+          "redeliverypolicyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1051,8 +977,7 @@ var _apacheCamelModel = {
           "tooltip":"redeliveryPolicyRef",
 															          "title":  "redeliveryPolicyRef"
         },
-          {
-          "id":     "handled",
+          "handled": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1061,8 +986,7 @@ var _apacheCamelModel = {
           "tooltip":"handled",
 															          "title":  "handled"
         },
-          {
-          "id":     "continued",
+          "continued": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1071,8 +995,7 @@ var _apacheCamelModel = {
           "tooltip":"continued",
 															          "title":  "continued"
         },
-          {
-          "id":     "onredeliveryref",
+          "onredeliveryref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1081,8 +1004,7 @@ var _apacheCamelModel = {
           "tooltip":"onRedeliveryRef",
 															          "title":  "onRedeliveryRef"
         },
-          {
-          "id":     "redeliverypolicy",
+          "redeliverypolicy": {
 				  				    
 				  	      
       	        "type":   "org.apache.camel.model.RedeliveryPolicyDefinition",
@@ -1091,8 +1013,7 @@ var _apacheCamelModel = {
           "tooltip":"redeliveryPolicy",
 															          "title":  "redeliveryPolicy"
         },
-          {
-          "id":     "useoriginalmessagepolicy",
+          "useoriginalmessagepolicy": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1101,7 +1022,7 @@ var _apacheCamelModel = {
           "tooltip":"useOriginalMessagePolicy",
 															          "title":  "useOriginalMessagePolicy"
         },
-        ]
+  			}
     },
      "otherwise": {
       "title":    "Otherwise",
@@ -1111,8 +1032,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "pipeline": {
       "title":    "Pipeline",
@@ -1122,8 +1043,8 @@ var _apacheCamelModel = {
       "icon":     "pipeline24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "policy": {
       "title":    "Policy",
@@ -1133,9 +1054,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "ref",
+            "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1144,7 +1064,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-        ]
+  			}
     },
      "pollEnrich": {
       "title":    "Poll Enrich",
@@ -1152,9 +1072,8 @@ var _apacheCamelModel = {
       "description":  "Poll Enrich",
       "tootip":  "Poll Enrich",
       "icon":     "pollEnrich24.png",
-			      "properties": [
-          {
-          "id":     "resourceuri",
+			      "properties": {
+          "resourceuri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1163,8 +1082,7 @@ var _apacheCamelModel = {
           "tooltip":"resourceUri",
 															          "title":  "resourceUri"
         },
-          {
-          "id":     "aggregationstrategyref",
+          "aggregationstrategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1173,8 +1091,7 @@ var _apacheCamelModel = {
           "tooltip":"aggregationStrategyRef",
 															          "title":  "aggregationStrategyRef"
         },
-          {
-          "id":     "timeout",
+          "timeout": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1183,7 +1100,7 @@ var _apacheCamelModel = {
           "tooltip":"timeout",
 															          "title":  "timeout"
         },
-        ]
+  			}
     },
      "process": {
       "title":    "Process",
@@ -1191,9 +1108,8 @@ var _apacheCamelModel = {
       "description":  "Process",
       "tootip":  "Process",
       "icon":     "process24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1202,7 +1118,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-        ]
+  			}
     },
      "recipientList": {
       "title":    "Recipient List",
@@ -1210,9 +1126,8 @@ var _apacheCamelModel = {
       "description":  "Recipient List",
       "tootip":  "Recipient List",
       "icon":     "recipientList24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1221,8 +1136,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "delimiter",
+          "delimiter": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1231,8 +1145,7 @@ var _apacheCamelModel = {
           "tooltip":"delimiter",
 															          "title":  "delimiter"
         },
-          {
-          "id":     "strategyref",
+          "strategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1241,8 +1154,7 @@ var _apacheCamelModel = {
           "tooltip":"strategyRef",
 															          "title":  "strategyRef"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1251,8 +1163,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "onprepareref",
+          "onprepareref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1261,8 +1172,7 @@ var _apacheCamelModel = {
           "tooltip":"onPrepareRef",
 															          "title":  "onPrepareRef"
         },
-          {
-          "id":     "parallelprocessing",
+          "parallelprocessing": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1271,8 +1181,7 @@ var _apacheCamelModel = {
           "tooltip":"parallelProcessing",
 															          "title":  "parallelProcessing"
         },
-          {
-          "id":     "stoponexception",
+          "stoponexception": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1281,8 +1190,7 @@ var _apacheCamelModel = {
           "tooltip":"stopOnException",
 															          "title":  "stopOnException"
         },
-          {
-          "id":     "ignoreinvalidendpoints",
+          "ignoreinvalidendpoints": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1291,8 +1199,7 @@ var _apacheCamelModel = {
           "tooltip":"ignoreInvalidEndpoints",
 															          "title":  "ignoreInvalidEndpoints"
         },
-          {
-          "id":     "streaming",
+          "streaming": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1301,8 +1208,7 @@ var _apacheCamelModel = {
           "tooltip":"streaming",
 															          "title":  "streaming"
         },
-          {
-          "id":     "timeout",
+          "timeout": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1311,8 +1217,7 @@ var _apacheCamelModel = {
           "tooltip":"timeout",
 															          "title":  "timeout"
         },
-          {
-          "id":     "shareunitofwork",
+          "shareunitofwork": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1321,7 +1226,7 @@ var _apacheCamelModel = {
           "tooltip":"shareUnitOfWork",
 															          "title":  "shareUnitOfWork"
         },
-        ]
+  			}
     },
      "removeHeader": {
       "title":    "Remove Header",
@@ -1329,9 +1234,8 @@ var _apacheCamelModel = {
       "description":  "Remove Header",
       "tootip":  "Remove Header",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "headername",
+			      "properties": {
+          "headername": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1340,7 +1244,7 @@ var _apacheCamelModel = {
           "tooltip":"headerName",
 															          "title":  "headerName"
         },
-        ]
+  			}
     },
      "removeHeaders": {
       "title":    "Remove Headers",
@@ -1348,9 +1252,8 @@ var _apacheCamelModel = {
       "description":  "Remove Headers",
       "tootip":  "Remove Headers",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "pattern",
+			      "properties": {
+          "pattern": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1359,8 +1262,7 @@ var _apacheCamelModel = {
           "tooltip":"pattern",
 															          "title":  "pattern"
         },
-          {
-          "id":     "excludepattern",
+          "excludepattern": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1369,7 +1271,7 @@ var _apacheCamelModel = {
           "tooltip":"excludePattern",
 															          "title":  "excludePattern"
         },
-        ]
+  			}
     },
      "removeProperty": {
       "title":    "Remove Property",
@@ -1377,9 +1279,8 @@ var _apacheCamelModel = {
       "description":  "Remove Property",
       "tootip":  "Remove Property",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "propertyname",
+			      "properties": {
+          "propertyname": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1388,7 +1289,7 @@ var _apacheCamelModel = {
           "tooltip":"propertyName",
 															          "title":  "propertyName"
         },
-        ]
+  			}
     },
      "resequence": {
       "title":    "Resequence",
@@ -1398,9 +1299,8 @@ var _apacheCamelModel = {
       "icon":     "resequence24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1409,8 +1309,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "resequencerconfig",
+          "resequencerconfig": {
 				  				    
 						"elements": {
 						  				       "batch-config": "org.apache.camel.model.config.BatchResequencerConfig",
@@ -1423,7 +1322,7 @@ var _apacheCamelModel = {
           "tooltip":"resequencerConfig",
 															          "title":  "resequencerConfig"
         },
-        ]
+  			}
     },
      "rollback": {
       "title":    "Rollback",
@@ -1431,9 +1330,8 @@ var _apacheCamelModel = {
       "description":  "Rollback",
       "tootip":  "Rollback",
       "icon":     "generic24.png",
-			      "properties": [
-          {
-          "id":     "message",
+			      "properties": {
+          "message": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1442,8 +1340,7 @@ var _apacheCamelModel = {
           "tooltip":"message",
 															          "title":  "message"
         },
-          {
-          "id":     "markrollbackonly",
+          "markrollbackonly": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1452,8 +1349,7 @@ var _apacheCamelModel = {
           "tooltip":"markRollbackOnly",
 															          "title":  "markRollbackOnly"
         },
-          {
-          "id":     "markrollbackonlylast",
+          "markrollbackonlylast": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1462,7 +1358,7 @@ var _apacheCamelModel = {
           "tooltip":"markRollbackOnlyLast",
 															          "title":  "markRollbackOnlyLast"
         },
-        ]
+  			}
     },
      "route": {
       "title":    "Route",
@@ -1472,9 +1368,8 @@ var _apacheCamelModel = {
       "icon":     "route24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "autostartup",
+            "properties": {
+          "autostartup": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1485,8 +1380,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "autoStartup"
         },
-          {
-          "id":     "delayer",
+          "delayer": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1497,8 +1391,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "delayer"
         },
-          {
-          "id":     "errorhandlerref",
+          "errorhandlerref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1509,8 +1402,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "errorHandlerRef"
         },
-          {
-          "id":     "group",
+          "group": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1521,8 +1413,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "group"
         },
-          {
-          "id":     "handlefault",
+          "handlefault": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1533,8 +1424,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "handleFault"
         },
-          {
-          "id":     "routepolicyref",
+          "routepolicyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1545,8 +1435,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "routePolicyRef"
         },
-          {
-          "id":     "streamcache",
+          "streamcache": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1557,8 +1446,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "streamCache"
         },
-          {
-          "id":     "trace",
+          "trace": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1569,7 +1457,7 @@ var _apacheCamelModel = {
           "optional": true,
 		      					          "title":  "trace"
         },
-        ]
+  			}
     },
      "routingSlip": {
       "title":    "Routing Slip",
@@ -1577,9 +1465,8 @@ var _apacheCamelModel = {
       "description":  "Routing Slip",
       "tootip":  "Routing Slip",
       "icon":     "routingSlip24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1588,8 +1475,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "uridelimiter",
+          "uridelimiter": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1598,8 +1484,7 @@ var _apacheCamelModel = {
           "tooltip":"uriDelimiter",
 															          "title":  "uriDelimiter"
         },
-          {
-          "id":     "ignoreinvalidendpoints",
+          "ignoreinvalidendpoints": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1608,7 +1493,7 @@ var _apacheCamelModel = {
           "tooltip":"ignoreInvalidEndpoints",
 															          "title":  "ignoreInvalidEndpoints"
         },
-        ]
+  			}
     },
      "sampling": {
       "title":    "Sampling",
@@ -1618,9 +1503,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "sampleperiod",
+            "properties": {
+          "sampleperiod": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1629,8 +1513,7 @@ var _apacheCamelModel = {
           "tooltip":"samplePeriod",
 															          "title":  "samplePeriod"
         },
-          {
-          "id":     "messagefrequency",
+          "messagefrequency": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1639,8 +1522,7 @@ var _apacheCamelModel = {
           "tooltip":"messageFrequency",
 															          "title":  "messageFrequency"
         },
-          {
-          "id":     "units",
+          "units": {
 				  				    
 				  	      
       	        "type":   "java.util.concurrent.TimeUnit",
@@ -1649,7 +1531,7 @@ var _apacheCamelModel = {
           "tooltip":"units",
 															          "title":  "units"
         },
-        ]
+  			}
     },
      "setBody": {
       "title":    "Set Body",
@@ -1657,9 +1539,8 @@ var _apacheCamelModel = {
       "description":  "Set Body",
       "tootip":  "Set Body",
       "icon":     "setBody24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1668,7 +1549,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "setExchangePattern": {
       "title":    "Set Exchange Pattern",
@@ -1676,9 +1557,8 @@ var _apacheCamelModel = {
       "description":  "Set Exchange Pattern",
       "tootip":  "Set Exchange Pattern",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "pattern",
+			      "properties": {
+          "pattern": {
 				  				    
 				  	      
       	        "type":   "org.apache.camel.ExchangePattern",
@@ -1687,7 +1567,7 @@ var _apacheCamelModel = {
           "tooltip":"pattern",
 															          "title":  "pattern"
         },
-        ]
+  			}
     },
      "setFaultBody": {
       "title":    "Set Fault Body",
@@ -1695,9 +1575,8 @@ var _apacheCamelModel = {
       "description":  "Set Fault Body",
       "tootip":  "Set Fault Body",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1706,7 +1585,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "setHeader": {
       "title":    "Set Header",
@@ -1714,9 +1593,8 @@ var _apacheCamelModel = {
       "description":  "Set Header",
       "tootip":  "Set Header",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1725,8 +1603,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "headername",
+          "headername": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1735,7 +1612,7 @@ var _apacheCamelModel = {
           "tooltip":"headerName",
 															          "title":  "headerName"
         },
-        ]
+  			}
     },
      "setOutHeader": {
       "title":    "Set Out Header",
@@ -1743,9 +1620,8 @@ var _apacheCamelModel = {
       "description":  "Set Out Header",
       "tootip":  "Set Out Header",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1754,8 +1630,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "headername",
+          "headername": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1764,7 +1639,7 @@ var _apacheCamelModel = {
           "tooltip":"headerName",
 															          "title":  "headerName"
         },
-        ]
+  			}
     },
      "setProperty": {
       "title":    "Set Property",
@@ -1772,9 +1647,8 @@ var _apacheCamelModel = {
       "description":  "Set Property",
       "tootip":  "Set Property",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1783,8 +1657,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "propertyname",
+          "propertyname": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1793,7 +1666,7 @@ var _apacheCamelModel = {
           "tooltip":"propertyName",
 															          "title":  "propertyName"
         },
-        ]
+  			}
     },
      "sort": {
       "title":    "Sort",
@@ -1801,9 +1674,8 @@ var _apacheCamelModel = {
       "description":  "Sort",
       "tootip":  "Sort",
       "icon":     "generic24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1812,8 +1684,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "comparatorref",
+          "comparatorref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1822,7 +1693,7 @@ var _apacheCamelModel = {
           "tooltip":"comparatorRef",
 															          "title":  "comparatorRef"
         },
-        ]
+  			}
     },
      "split": {
       "title":    "Split",
@@ -1832,9 +1703,8 @@ var _apacheCamelModel = {
       "icon":     "split24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -1843,8 +1713,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "strategyref",
+          "strategyref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1853,8 +1722,7 @@ var _apacheCamelModel = {
           "tooltip":"strategyRef",
 															          "title":  "strategyRef"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1863,8 +1731,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "onprepareref",
+          "onprepareref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1873,8 +1740,7 @@ var _apacheCamelModel = {
           "tooltip":"onPrepareRef",
 															          "title":  "onPrepareRef"
         },
-          {
-          "id":     "parallelprocessing",
+          "parallelprocessing": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1883,8 +1749,7 @@ var _apacheCamelModel = {
           "tooltip":"parallelProcessing",
 															          "title":  "parallelProcessing"
         },
-          {
-          "id":     "streaming",
+          "streaming": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1893,8 +1758,7 @@ var _apacheCamelModel = {
           "tooltip":"streaming",
 															          "title":  "streaming"
         },
-          {
-          "id":     "stoponexception",
+          "stoponexception": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1903,8 +1767,7 @@ var _apacheCamelModel = {
           "tooltip":"stopOnException",
 															          "title":  "stopOnException"
         },
-          {
-          "id":     "timeout",
+          "timeout": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1913,8 +1776,7 @@ var _apacheCamelModel = {
           "tooltip":"timeout",
 															          "title":  "timeout"
         },
-          {
-          "id":     "shareunitofwork",
+          "shareunitofwork": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -1923,7 +1785,7 @@ var _apacheCamelModel = {
           "tooltip":"shareUnitOfWork",
 															          "title":  "shareUnitOfWork"
         },
-        ]
+  			}
     },
      "stop": {
       "title":    "Stop",
@@ -1931,8 +1793,8 @@ var _apacheCamelModel = {
       "description":  "Stop",
       "tootip":  "Stop",
       "icon":     "generic24.png",
-			      "properties": [
-        ]
+			      "properties": {
+  			}
     },
      "threads": {
       "title":    "Threads",
@@ -1942,9 +1804,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "executorserviceref",
+            "properties": {
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1953,8 +1814,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "threadname",
+          "threadname": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -1963,8 +1823,7 @@ var _apacheCamelModel = {
           "tooltip":"threadName",
 															          "title":  "threadName"
         },
-          {
-          "id":     "poolsize",
+          "poolsize": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1973,8 +1832,7 @@ var _apacheCamelModel = {
           "tooltip":"poolSize",
 															          "title":  "poolSize"
         },
-          {
-          "id":     "maxpoolsize",
+          "maxpoolsize": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1983,8 +1841,7 @@ var _apacheCamelModel = {
           "tooltip":"maxPoolSize",
 															          "title":  "maxPoolSize"
         },
-          {
-          "id":     "keepalivetime",
+          "keepalivetime": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -1993,8 +1850,7 @@ var _apacheCamelModel = {
           "tooltip":"keepAliveTime",
 															          "title":  "keepAliveTime"
         },
-          {
-          "id":     "timeunit",
+          "timeunit": {
 				  				    
 				  	      
       	        "type":   "java.util.concurrent.TimeUnit",
@@ -2003,8 +1859,7 @@ var _apacheCamelModel = {
           "tooltip":"timeUnit",
 															          "title":  "timeUnit"
         },
-          {
-          "id":     "maxqueuesize",
+          "maxqueuesize": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -2013,8 +1868,7 @@ var _apacheCamelModel = {
           "tooltip":"maxQueueSize",
 															          "title":  "maxQueueSize"
         },
-          {
-          "id":     "rejectedpolicy",
+          "rejectedpolicy": {
 				  				    
 				  	      
       	        "type":   "org.apache.camel.ThreadPoolRejectedPolicy",
@@ -2023,8 +1877,7 @@ var _apacheCamelModel = {
           "tooltip":"rejectedPolicy",
 															          "title":  "rejectedPolicy"
         },
-          {
-          "id":     "callerrunswhenrejected",
+          "callerrunswhenrejected": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -2033,7 +1886,7 @@ var _apacheCamelModel = {
           "tooltip":"callerRunsWhenRejected",
 															          "title":  "callerRunsWhenRejected"
         },
-        ]
+  			}
     },
      "throttle": {
       "title":    "Throttle",
@@ -2043,9 +1896,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -2054,8 +1906,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2064,8 +1915,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "timeperiodmillis",
+          "timeperiodmillis": {
 				  				    
 				  	      
       	        "type":   "number",
@@ -2074,8 +1924,7 @@ var _apacheCamelModel = {
           "tooltip":"timePeriodMillis",
 															          "title":  "timePeriodMillis"
         },
-          {
-          "id":     "asyncdelayed",
+          "asyncdelayed": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -2084,8 +1933,7 @@ var _apacheCamelModel = {
           "tooltip":"asyncDelayed",
 															          "title":  "asyncDelayed"
         },
-          {
-          "id":     "callerrunswhenrejected",
+          "callerrunswhenrejected": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -2094,7 +1942,7 @@ var _apacheCamelModel = {
           "tooltip":"callerRunsWhenRejected",
 															          "title":  "callerRunsWhenRejected"
         },
-        ]
+  			}
     },
      "throwException": {
       "title":    "Throw Exception",
@@ -2102,9 +1950,8 @@ var _apacheCamelModel = {
       "description":  "Throw Exception",
       "tootip":  "Throw Exception",
       "icon":     "generic24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2113,7 +1960,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-        ]
+  			}
     },
      "transacted": {
       "title":    "Transacted",
@@ -2121,9 +1968,8 @@ var _apacheCamelModel = {
       "description":  "Transacted",
       "tootip":  "Transacted",
       "icon":     "generic24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2132,7 +1978,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-        ]
+  			}
     },
      "transform": {
       "title":    "Transform",
@@ -2140,9 +1986,8 @@ var _apacheCamelModel = {
       "description":  "Transform",
       "tootip":  "Transform",
       "icon":     "transform24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -2151,7 +1996,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "try": {
       "title":    "Try",
@@ -2161,8 +2006,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-        ]
+            "properties": {
+  			}
     },
      "unmarshal": {
       "title":    "Unmarshal",
@@ -2170,9 +2015,8 @@ var _apacheCamelModel = {
       "description":  "Unmarshal",
       "tootip":  "Unmarshal",
       "icon":     "unmarshal24.png",
-			      "properties": [
-          {
-          "id":     "ref",
+			      "properties": {
+          "ref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2181,8 +2025,7 @@ var _apacheCamelModel = {
           "tooltip":"ref",
 															          "title":  "ref"
         },
-          {
-          "id":     "dataformattype",
+          "dataformattype": {
 				  				    
 						"elements": {
 						  				       "avro": "org.apache.camel.model.dataformat.AvroDataFormat",
@@ -2220,7 +2063,7 @@ var _apacheCamelModel = {
           "tooltip":"dataFormatType",
 															          "title":  "dataFormatType"
         },
-        ]
+  			}
     },
      "validate": {
       "title":    "Validate",
@@ -2228,9 +2071,8 @@ var _apacheCamelModel = {
       "description":  "Validate",
       "tootip":  "Validate",
       "icon":     "generic24.png",
-			      "properties": [
-          {
-          "id":     "expression",
+			      "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -2239,7 +2081,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "when": {
       "title":    "When",
@@ -2249,9 +2091,8 @@ var _apacheCamelModel = {
       "icon":     "generic24.png",
 			
       "acceptInput": true,
-            "properties": [
-          {
-          "id":     "expression",
+            "properties": {
+          "expression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -2260,7 +2101,7 @@ var _apacheCamelModel = {
           "tooltip":"expression",
 															          "title":  "expression"
         },
-        ]
+  			}
     },
      "wireTap": {
       "title":    "Wire Tap",
@@ -2268,9 +2109,8 @@ var _apacheCamelModel = {
       "description":  "Wire Tap",
       "tootip":  "Wire Tap",
       "icon":     "wireTap24.png",
-			      "properties": [
-          {
-          "id":     "uri",
+			      "properties": {
+          "uri": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2279,8 +2119,7 @@ var _apacheCamelModel = {
           "tooltip":"uri",
 															          "title":  "uri"
         },
-          {
-          "id":     "newexchangeprocessorref",
+          "newexchangeprocessorref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2289,8 +2128,7 @@ var _apacheCamelModel = {
           "tooltip":"newExchangeProcessorRef",
 															          "title":  "newExchangeProcessorRef"
         },
-          {
-          "id":     "newexchangeexpression",
+          "newexchangeexpression": {
 				  				    
 				  	      				"kind" : "expression",
       	        "type":   "org.apache.camel.model.language.ExpressionDefinition",
@@ -2299,8 +2137,7 @@ var _apacheCamelModel = {
           "tooltip":"newExchangeExpression",
 															          "title":  "newExchangeExpression"
         },
-          {
-          "id":     "headers",
+          "headers": {
 				  				    
 				  	      
       	        "type":   "java.util.List",
@@ -2309,8 +2146,7 @@ var _apacheCamelModel = {
           "tooltip":"headers",
 															          "title":  "headers"
         },
-          {
-          "id":     "executorserviceref",
+          "executorserviceref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2319,8 +2155,7 @@ var _apacheCamelModel = {
           "tooltip":"executorServiceRef",
 															          "title":  "executorServiceRef"
         },
-          {
-          "id":     "onprepareref",
+          "onprepareref": {
 				  				    
 				  	      
       	        "type":   "string",
@@ -2329,8 +2164,7 @@ var _apacheCamelModel = {
           "tooltip":"onPrepareRef",
 															          "title":  "onPrepareRef"
         },
-          {
-          "id":     "copy",
+          "copy": {
 				  				    
 				  	      
       	        "type":   "bool",
@@ -2339,7 +2173,7 @@ var _apacheCamelModel = {
           "tooltip":"copy",
 															          "title":  "copy"
         },
-        ]
+  			}
     },
 	},
 	"languages": {
