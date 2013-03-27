@@ -40,11 +40,10 @@ module Infinispan {
 
   export function getSelectedCacheName(workspace:Workspace) {
     var selection = workspace.selection;
-    if (selection) {
+    if (selection && selection.domain === Infinispan.jmxDomain) {
       // lets get the cache name
       return selection.entries["name"];
     }
     return null;
   }
-
 }
