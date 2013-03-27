@@ -70,6 +70,9 @@ public class JavaDocServlet extends HttpServlet {
                 try {
                     Object answer = mbeanServer.invoke(objectName, "getJavaDoc", arguments, argumentTypes);
                     if (answer instanceof String) {
+                        if (!pathInfo.endsWith(".css")) {
+                            resp.setContentType("text/html;charset=utf-8");
+                        }
                         resp.getWriter().println(answer);
                     }
                 } catch (Exception e) {
