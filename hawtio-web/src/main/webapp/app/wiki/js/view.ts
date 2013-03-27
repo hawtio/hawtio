@@ -48,7 +48,7 @@ module Wiki {
           postFix = "?form=/";
         }
       }
-      return Core.createHref($location, prefix + path + postFix);
+      return Core.createHref($location, prefix + path + postFix, ["form"]);
     };
 
 
