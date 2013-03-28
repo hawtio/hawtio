@@ -14,7 +14,7 @@ module Forms {
           directive('simpleReadOnlyForm',function (workspace, $compile) {
             return new Forms.SimpleReadOnlyForm(workspace, $compile);
           }).
-          directive('inputTable', function (workspace, $compile) {
+          directive('hawtioInputTable', function (workspace, $compile) {
             return new Forms.InputTable(workspace, $compile);
           });
 

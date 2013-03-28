@@ -15,6 +15,12 @@ module Forms {
     public data:any = {};
     public json:any = undefined;
 
+    // the scope
+    public scope:any = null;
+
+    // the name to look up in the scope for the configuration data
+    public scopeName: string = null;
+
     public properties = [];
     public action = '';
 
@@ -23,7 +29,7 @@ module Forms {
     public controlclass = 'controls';
     public labelclass = 'control-label';
 
-    public showtypes = 'true';
+    public showtypes = 'false';
 
     public submiticon = 'icon-ok';
     public reseticon = 'icon-refresh';
@@ -93,24 +99,18 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      config = this.configure(config, scope[attrs[this.attributeName]], attrs);
+      var configScopeName = attrs[this.attributeName] || attrs["data"];
+      config = this.configure(config, scope[configScopeName], attrs);
+      config.scopeName = configScopeName;
+      config.scope = scope;
 
       var entityName = config.getEntity();
-/*
-      if (!scope[entityName]) {
-        // start with an empty entity if its not defined
-        scope[entityName] = {};
-      }
-*/
 
       if (angular.isDefined(config.json)) {
         config.data = $.parseJSON(config.json);
       } else {
         config.data = scope[config.data];
       }
-
-      console.log("This: ", this);
-      console.log("Config: ", config);
 
       var form = this.createForm(config);
       var fieldset = form.find('fieldset');
@@ -289,7 +289,29 @@ module Forms {
         case "object":
           // create a table UI!
           // TODO we need a little directive here to generate a nested table inside this form
-          return $('<table class="table"><tr><td>table goes here for model ' + id + '</td></tr></table>')
+          var tableConfigPaths = [config.scopeName, id, "inputTable"];
+          // TODO lets auto-create a default configuration if there is none!
+          var scope = config.scope;
+          var tableConfig = Core.pathGet(scope, tableConfigPaths);
+          if (!tableConfig) {
+            var tableConfigScopeName = tableConfigPaths.join(".");
+            console.log("Creating " + tableConfigScopeName + " in scope!");
+            tableConfig = {
+              data: config.entity + "." + id,
+              displayFooter: false,
+              showFilter: false,
+
+              // TODO use 1 or 2 properties from the type?
+              columnDefs: [
+                {
+                  field: 'id',
+                  displayName: 'ID'
+                }
+              ]
+            };
+            Core.pathSet(scope, tableConfigPaths, tableConfig);
+          }
+          return $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>')
       }
       switch (a.formType) {
         default:

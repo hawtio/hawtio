@@ -66,7 +66,7 @@ module Forms {
     public replace = true;
     public transclude = true;
 
-    private attributeName = 'inputTable';
+    private attributeName = 'hawtioInputTable';
 
     // see constructor for why this is here...
     public link:(scope, element, attrs) => any;
@@ -216,11 +216,11 @@ module Forms {
     }
 
     private getEditButton(config) {
-      return $('<button type="button" class="btn btn-info edit"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
+      return $('<button type="button" class="btn edit"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
     }
 
     private getRemoveButton(config) {
-      return $('<button type="remove" class="btn btn-warning remove"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
+      return $('<button type="remove" class="btn remove"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
     }
 
 
