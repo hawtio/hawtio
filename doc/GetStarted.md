@@ -5,7 +5,7 @@ The out of the box defaults try to do the right thing for most folks but you may
 
 ## Using a Servlet Engine or Application Server
 
-If you are running Tomcat 6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:
+If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:
 
 <table class="buttonTable">
   <tr>
