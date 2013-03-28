@@ -2,26 +2,21 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
 
-<!--
-    <ext:property-placeholder>
-        <ext:default-properties>
-            <ext:property name="hawtio.config.dir" value="" />
-            <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git" />
-            <ext:property name="hawtio.config.pollOnStartup" value="true" />
-            <ext:property name="hawtio.config.cloneOnStartup" value="true" />
-        </ext:default-properties>
-    </ext:property-placeholder>
--->
+  <ext:property-placeholder>
+    <ext:default-properties>
+      <ext:property name="hawtio.config.dir" value=""/>
+      <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git"/>
+      <ext:property name="hawtio.config.pollOnStartup" value="true"/>
+      <ext:property name="hawtio.config.cloneOnStartup" value="true"/>
+    </ext:default-properties>
+  </ext:property-placeholder>
 
-	<bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy">
-<!--
+  <bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy">
     <property name="configDirectory" value="${hawtio.config.dir}"/>
     <property name="remoteRepository" value="${hawtio.config.repo}"/>
     <property name="pullOnStartup" value="${hawtio.config.pollOnStartup}"/>
     <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
--->
-	</bean>
-
+  </bean>
 
 </blueprint>
 
