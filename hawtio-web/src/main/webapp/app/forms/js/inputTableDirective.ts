@@ -103,7 +103,8 @@ module Forms {
       var config = new InputTableConfig;
 
       var configName = attrs[this.attributeName];
-      config = this.configure(config, scope[configName], attrs);
+      var tableConfig = Core.pathGet(scope, configName);
+      config = this.configure(config, tableConfig, attrs);
 
       var entityName = config.getEntity();
 
@@ -119,7 +120,7 @@ module Forms {
       var div = $("<div></div>");
 
       // TODO lets ensure we have some default columns in the column configuration?
-      var tableConfig = scope.$eval(configName);
+      var tableConfig = Core.pathGet(scope, configName);
       if (!tableConfig) {
         console.log("No table configuration for table " + tableName);
       }

@@ -193,7 +193,7 @@ module DataTable {
                     data = gridOptions.data;
                     if (data) {
                       scope.$watch(data, function (value) {
-                        if (initialised || (value && value.length)) {
+                        if (initialised || (value && (!angular.isArray(value) || value.length))) {
                           initialised = true;
                           destroyChildScopes();
                           widget.populateTable(value);

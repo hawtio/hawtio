@@ -289,13 +289,12 @@ module Forms {
         case "object":
           // create a table UI!
           // TODO we need a little directive here to generate a nested table inside this form
-          var tableConfigPaths = [config.scopeName, id, "inputTable"];
+          var tableConfigPaths = [config.scopeName, "properties", id, "inputTable"];
           // TODO lets auto-create a default configuration if there is none!
           var scope = config.scope;
           var tableConfig = Core.pathGet(scope, tableConfigPaths);
           if (!tableConfig) {
             var tableConfigScopeName = tableConfigPaths.join(".");
-            console.log("Creating " + tableConfigScopeName + " in scope!");
             tableConfig = {
               data: config.entity + "." + id,
               displayFooter: false,
