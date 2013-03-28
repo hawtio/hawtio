@@ -168,16 +168,21 @@ module DataTable {
                     if (filterOptions) {
                       filterText = filterOptions.filterText;
                     }
+                    if (filterText || (angular.isDefined(gridOptions.showFilter) && !gridOptions.showFilter)) {
+                       // disable the text filter box
+                       widget.dataTableConfig.sDom = 'Rlrtip';
+                    }
                     if (filterText) {
-                      // disable the text filter box
-                      widget.dataTableConfig.sDom = 'Rlrtip';
-
                       scope.$watch(filterText, function (value) {
                         var dataTable = widget.dataTable;
                         if (dataTable) {
                           dataTable.fnFilter(value);
                         }
                       });
+                    }
+                    if (angular.isDefined(gridOptions.displayFooter) && !gridOptions.displayFooter && widget.dataTableConfig.sDom) {
+                      // remove the footer
+                      widget.dataTableConfig.sDom = widget.dataTableConfig.sDom.replace('i', '');
                     }
 
                     // TODO....

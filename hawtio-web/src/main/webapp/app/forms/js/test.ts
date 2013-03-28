@@ -60,6 +60,22 @@ module Forms {
       notification('error', 'derp with json ' + JSON.stringify(json));
     };
 
+    $scope.inputTableData = [
+      { id: "object1" },
+      { id: "object2" }
+    ];
+
+    $scope.inputTableConfig = {
+      data: 'inputTableData',
+      displayFooter: false,
+      showFilter: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'ID'
+        }
+      ]
+    };
   }
 
 }

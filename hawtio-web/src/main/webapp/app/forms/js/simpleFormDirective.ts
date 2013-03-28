@@ -52,7 +52,6 @@ module Forms {
   }
 
   export class SimpleForm {
-
     public restrict = 'A';
     public scope = true;
     public replace = true;
@@ -63,14 +62,11 @@ module Forms {
     // see constructor for why this is here...
     public link: (scope, element, attrs) => any;
 
-
     constructor(private workspace, public $compile) {
-
       // necessary to ensure 'this' is this object <sigh>
       this.link = (scope, element, attrs) => {
         return this.doLink(scope, element, attrs);
       }
-
     }
 
     public sanitize(arg) {
@@ -99,12 +95,13 @@ module Forms {
 
       config = this.configure(config, scope[attrs[this.attributeName]], attrs);
 
-      var mode = config.getMode();
       var entityName = config.getEntity();
+/*
       if (!scope[entityName]) {
         // start with an empty entity if its not defined
         scope[entityName] = {};
       }
+*/
 
       if (angular.isDefined(config.json)) {
         config.data = $.parseJSON(config.json);
@@ -213,11 +210,6 @@ module Forms {
       // compile the template
       this.$compile(form)(scope);
     }
-
-    private getMode(config) {
-      return config.mode || 'edit';
-    }
-
 
     private getCancelButton(config) {
       return $('<button type="button" class="btn cancel"><i class="' + config.cancelicon + '"></i> ' + config.canceltext + '</button>');
