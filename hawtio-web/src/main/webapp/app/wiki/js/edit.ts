@@ -41,7 +41,6 @@ module Wiki {
     };
 
     $scope.onSubmit = (json, form) => {
-      $scope.entity.source = JSON.stringify(json);
       if (isCreate()) {
         $scope.create();
       } else {
@@ -50,7 +49,10 @@ module Wiki {
     };
 
     $scope.onCancel = (form) => {
-      notification("success", "Clicked cancel!");
+      setTimeout(() => {
+        goToView();
+        Core.$apply($scope)
+      }, 50);
     };
 
 
@@ -111,15 +113,21 @@ module Wiki {
       var path = Core.trimLeading($scope.viewLink(), "#");
       console.log("going to view " + path);
       $location.path(path);
+      console.log("location is now " + $location.path());
     }
 
     function saveTo(path:string) {
       var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
       var contents = $scope.entity.source;
+      if ($scope.formEntity) {
+        contents = JSON.stringify($scope.formEntity);
+      }
       //console.log("About to write contents '" + contents + "'");
-      wikiRepository.putPage(path, contents, commitMessage, Wiki.onComplete);
-      goToView();
+      wikiRepository.putPage(path, contents, commitMessage, (status) => {
+        Wiki.onComplete(status);
+        goToView();
+        Core.$apply($scope);
+      });
     }
-
   }
 }

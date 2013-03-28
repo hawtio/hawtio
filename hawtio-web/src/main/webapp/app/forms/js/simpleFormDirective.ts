@@ -304,7 +304,7 @@ module Forms {
               // TODO use 1 or 2 properties from the type?
               columnDefs: [
                 {
-                  field: 'id',
+                  field: 'description',
                   displayName: 'ID'
                 }
               ]
