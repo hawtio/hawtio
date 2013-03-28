@@ -120,7 +120,7 @@ module Wiki {
       var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
       var contents = $scope.entity.source;
       if ($scope.formEntity) {
-        contents = JSON.stringify($scope.formEntity);
+        contents = JSON.stringify($scope.formEntity, null, "  ");
       }
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage(path, contents, commitMessage, (status) => {
