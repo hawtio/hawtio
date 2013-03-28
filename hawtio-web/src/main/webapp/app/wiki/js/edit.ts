@@ -3,6 +3,9 @@ module Wiki {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.objectId = $routeParams["objectId"];
+    $scope.entity = {
+      source: null
+    };
 
     var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
     var form = null;
@@ -38,7 +41,7 @@ module Wiki {
     };
 
     $scope.onSubmit = (json, form) => {
-      $scope.source = JSON.stringify(json);
+      $scope.entity.source = JSON.stringify(json);
       if (isCreate()) {
         $scope.create();
       } else {
@@ -68,7 +71,7 @@ module Wiki {
 
     function onFileContents(details) {
       var contents = details.text;
-      $scope.source = contents;
+      $scope.entity.source = contents;
       updateSourceView();
       Core.$apply($scope);
     }
@@ -97,8 +100,8 @@ module Wiki {
 
     function onFormSchema(json) {
       $scope.formDefinition = json;
-      if ($scope.source) {
-        $scope.formEntity = Wiki.parseJson($scope.source);
+      if ($scope.entity.source) {
+        $scope.formEntity = Wiki.parseJson($scope.entity.source);
       }
       $scope.sourceView = "app/wiki/html/formEdit.html";
       Core.$apply($scope);
@@ -112,7 +115,7 @@ module Wiki {
 
     function saveTo(path:string) {
       var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-      var contents = $scope.source;
+      var contents = $scope.entity.source;
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage(path, contents, commitMessage, Wiki.onComplete);
       goToView();
