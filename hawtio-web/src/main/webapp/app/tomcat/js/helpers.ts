@@ -12,13 +12,27 @@ module Tomcat {
 
     export function iconClass(state:string) {
       if (state) {
-        switch (state.toLowerCase()) {
+        switch (state.toString().toLowerCase()) {
+          case '1':
+            return "green icon-play";
           case 'started':
             return "green icon-play";
+          case '0':
+            return "red icon-stop";
           case 'stopped':
             return "red icon-stop";
         }
       }
+
+      try {
+        // Tomcat 5 uses 0 for stopped
+        if (state !== null && state.toString() === '0') {
+          return "red icon-stop";
+        }
+      } catch (Exception) {
+        // just to be safe if state is undefined
+      }
+
       return "icon-question-sign";
     }
 
@@ -31,8 +45,12 @@ module Tomcat {
       }
     }
 
+    export function isTomcat5(name) {
+      return name.toString().indexOf("Apache Tomcat/5") !== -1
+    }
+
     export function isTomcat6(name) {
-      return name.toString().indexOf("Apache Tomcat/6") !== -1;
+      return name.toString().indexOf("Apache Tomcat/6") !== -1
     }
 
 }

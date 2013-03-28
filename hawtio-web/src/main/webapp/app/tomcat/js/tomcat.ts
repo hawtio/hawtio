@@ -8,6 +8,32 @@ module Tomcat {
         $scope.selected = [];
         $scope.search = "";
 
+        var columnDefsTomcat5: any[] = [
+            {
+                field: 'state',
+                displayName: 'State',
+                cellTemplate: stateTemplate,
+                width: 56,
+                minWidth: 56,
+                maxWidth: 56,
+                resizable: false
+            },
+            {
+                field: 'path',
+                displayName: 'Context-Path',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'startTime',
+                displayName: 'Start Time',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            }
+        ];
+
         var columnDefsTomcat6: any[] = [
             {
                 field: 'stateName',
@@ -110,8 +136,10 @@ module Tomcat {
 
           angular.forEach(response, function (value, key) {
             var mbean = value;
-            if (isTomcat6($scope.tomcatServerVersion)) {
-              // Tomcat 6 does not have displayName attribute
+            if (isTomcat5($scope.tomcatServerVersion)) {
+              jolokia.request({type: "read", mbean: mbean,
+                attribute: ["path", "state", "startTime"]}, onSuccess(onAttributes));
+            } else if (isTomcat6($scope.tomcatServerVersion)) {
               jolokia.request({type: "read", mbean: mbean,
                 attribute: ["path", "stateName", "startTime"]}, onSuccess(onAttributes));
             } else {
@@ -194,11 +222,14 @@ module Tomcat {
         }
 
         // the columns shown in the applications view depends on the Tomcat version in use
-        if (isTomcat6($scope.tomcatServerVersion)) {
-          console.log("Using tomcat6")
+        if (isTomcat5($scope.tomcatServerVersion)) {
+          console.log("Using Tomcat 5")
+          $scope.gridOptions.columnDefs = columnDefsTomcat5;
+        } else if (isTomcat6($scope.tomcatServerVersion)) {
+          console.log("Using Tomcat 6")
           $scope.gridOptions.columnDefs = columnDefsTomcat6;
         } else {
-          console.log("Using tomcat7")
+          console.log("Using Tomcat 7")
           $scope.gridOptions.columnDefs = columnDefsTomcat7;
         }
 

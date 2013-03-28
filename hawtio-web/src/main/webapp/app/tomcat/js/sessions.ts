@@ -117,7 +117,7 @@ module Tomcat {
                 var context = mbean.toString().split(",")[1];
                 if (context) {
                   if (context.toString().indexOf("path=") !== -1) {
-                    // and remove the leading path=/ from the name (Tomcat 6)
+                    // and remove the leading path=/ from the name (Tomcat 5 or 6)
                     obj.path = context.toString().substr(5)
                   } else {
                     // and remove the leading context=/ from the name (Tomcat 7)
