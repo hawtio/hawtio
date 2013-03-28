@@ -289,6 +289,21 @@ module Forms {
     private getInput(config, arg, id) {
       var a = this.sanitize(arg);
 
+      function renderRow(cell, type, data) {
+        if (data) {
+          var description = data["description"];
+          if (!description) {
+            angular.forEach(data, (value, key) => {
+              if (value) {
+                return value;
+              }
+            })
+          }
+          return description;
+        }
+        return null;
+      }
+
       switch (a.type) {
         case "object":
           // create a table UI!
@@ -298,17 +313,20 @@ module Forms {
           var scope = config.scope;
           var tableConfig = Core.pathGet(scope, tableConfigPaths);
           if (!tableConfig) {
+            // TODO ideally we should merge this config with whatever folks have hand-defined
             var tableConfigScopeName = tableConfigPaths.join(".");
             tableConfig = {
               data: config.entity + "." + id,
               displayFooter: false,
               showFilter: false,
 
-              // TODO use 1 or 2 properties from the type?
+              // lets default to show a text value for the object
+              // as we don't know the type...
               columnDefs: [
                 {
-                  field: 'description',
-                  displayName: 'ID'
+                  field: '_id',
+                  displayName: humanizeValue(id),
+                  render: renderRow
                 }
               ]
             };
