@@ -42,10 +42,6 @@ module Forms {
 
     // TODO - add toggles to turn off add or edit buttons
 
-    public getEntity() {
-      return this.entity || "entity";
-    }
-
     public getTableConfig() {
       return this.tableConfig || "tableConfig";
     }
@@ -98,7 +94,7 @@ module Forms {
       var tableConfig = Core.pathGet(scope, configName);
       config = this.configure(config, tableConfig, attrs);
 
-      var entityName = config.getEntity();
+      var entityName = config.data || "entity";
 
       // TODO better name?
       var tableName = entityName;
@@ -109,12 +105,16 @@ module Forms {
         config.data = scope[config.data];
       }
 
+      scope.selectedItems = [];
+
       var div = $("<div></div>");
 
       // TODO lets ensure we have some default columns in the column configuration?
       var tableConfig = Core.pathGet(scope, configName);
       if (!tableConfig) {
         console.log("No table configuration for table " + tableName);
+      } else {
+        tableConfig["selectedItems"] = scope.selectedItems;
       }
 
       var table = this.createTable(config, configName);
@@ -162,7 +162,36 @@ module Forms {
 
       if (onRemove === null) {
         onRemove = function () {
-          notification('error', 'No remove handler defined for input table ' + tableName);
+          // TODO wow this is a meaty bit of code - maybe move this to a helper function?
+          var data = Core.pathGet(scope, entityName);
+          if (data) {
+            angular.forEach(scope.selectedItems, (selected) => {
+              var id = selected["_id"];
+              delete selected["_id"];
+              if (angular.isArray(data)) {
+                data = data.remove((value) => Object.equal(value, selected));
+              } else {
+                if (id) {
+                  delete data[id];
+                } else {
+                  // lets iterate for the value
+                  var found = false;
+                  angular.forEach(data, (value, key) => {
+                    if (!found && (Object.equal(value, selected))) {
+                      console.log("Found row to delete! " + key);
+                      delete data[key];
+                      found = true;
+                    }
+                  });
+                  if (!found) {
+                    console.log("Could not find " + JSON.stringify(selected) + " in " + JSON.stringify(data));
+                  }
+                }
+              }
+            });
+          }
+          Core.pathSet(scope, entityName, data);
+          Core.$apply(scope);
         }
       }
       if (onEdit === null) {
@@ -210,11 +239,11 @@ module Forms {
     }
 
     private getEditButton(config) {
-      return $('<button type="button" class="btn edit"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
+      return $('<button type="button" class="btn edit" ng-disabled="!selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
     }
 
     private getRemoveButton(config) {
-      return $('<button type="remove" class="btn remove"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
+      return $('<button type="remove" class="btn remove" ng-disabled="!selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
     }
 
 

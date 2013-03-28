@@ -289,6 +289,8 @@ module Forms {
     private getInput(config, arg, id) {
       var a = this.sanitize(arg);
 
+      // lets default to show a text value for the object
+      // as we don't know the type...
       function renderRow(cell, type, data) {
         if (data) {
           var description = data["description"];
@@ -307,25 +309,23 @@ module Forms {
       switch (a.type) {
         case "object":
           // create a table UI!
-          // TODO we need a little directive here to generate a nested table inside this form
           var tableConfigPaths = [config.scopeName, "properties", id, "inputTable"];
-          // TODO lets auto-create a default configuration if there is none!
           var scope = config.scope;
           var tableConfig = Core.pathGet(scope, tableConfigPaths);
+          // lets auto-create a default configuration if there is none
           if (!tableConfig) {
             // TODO ideally we should merge this config with whatever folks have hand-defined
             var tableConfigScopeName = tableConfigPaths.join(".");
+            //var cellDescription = a["description"] || humanizeValue(id);
+            var cellDescription = humanizeValue(id);
             tableConfig = {
               data: config.entity + "." + id,
               displayFooter: false,
               showFilter: false,
-
-              // lets default to show a text value for the object
-              // as we don't know the type...
               columnDefs: [
                 {
                   field: '_id',
-                  displayName: humanizeValue(id),
+                  displayName: cellDescription,
                   render: renderRow
                 }
               ]
@@ -335,7 +335,7 @@ module Forms {
           var table = $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>');
           if (this.isReadOnly() || config.isReadOnly()) {
             table.attr("readonly", "true");
-          };
+          }
           return table;
       }
       switch (a.formType) {
