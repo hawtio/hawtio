@@ -42,16 +42,8 @@ module Forms {
 
     // TODO - add toggles to turn off add or edit buttons
 
-    public getMode() {
-      return this.mode || "edit";
-    }
-
     public getEntity() {
       return this.entity || "entity";
-    }
-
-    public isReadOnly() {
-      return this.getMode() === "view";
     }
 
     public getTableConfig() {
@@ -135,7 +127,8 @@ module Forms {
       var add = null;
       var edit = null;
       var remove = null;
-      if (!config.isReadOnly()) {
+      var readOnly = attrs["readonly"];
+      if (!readOnly) {
         add = this.getAddButton(config);
         edit = this.getEditButton(config);
         remove = this.getRemoveButton(config);

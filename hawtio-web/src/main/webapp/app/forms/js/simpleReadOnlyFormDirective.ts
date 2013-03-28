@@ -8,6 +8,11 @@ module Forms {
       super(workspace, $compile);
     }
 
+    public isReadOnly() {
+      return true;
+    }
+
+
     private getCancelButton(config) {
       return '';
     }

@@ -75,6 +75,10 @@ module Forms {
       }
     }
 
+    public isReadOnly() {
+      return false;
+    }
+
     public sanitize(arg) {
       if (angular.isDefined(arg.formType)) {
         // user-defined input type
@@ -310,7 +314,11 @@ module Forms {
             };
             Core.pathSet(scope, tableConfigPaths, tableConfig);
           }
-          return $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>')
+          var table = $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>');
+          if (this.isReadOnly() || config.isReadOnly()) {
+            table.attr("readonly", "true");
+          };
+          return table;
       }
       switch (a.formType) {
         default:
