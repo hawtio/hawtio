@@ -60,13 +60,17 @@ module DataTable {
                   };
                 } else {
                   var cellFilter = columnDef.cellFilter;
-                  if (cellFilter) {
+                  var render = columnDef.render;
+                  if (cellFilter && !render) {
                     var filter = $filter(cellFilter);
                     if (filter) {
-                      data["mRender"] = function (data, type, full) {
+                      render = function (data, type, full) {
                         return filter(data);
-                      }
+                      };
                     }
+                  }
+                  if (render) {
+                    data["mRender"] = render;
                   }
                 }
                 return data;
