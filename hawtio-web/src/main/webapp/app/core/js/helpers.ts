@@ -468,4 +468,50 @@ module Core {
     var random = Math.floor((1 + Math.random()) * 0x10000);
     return ms.toString(16) + random.toString(16);
   }
+
+  /**
+   * Navigates the given set of paths in turn on the source object
+   * and returns the last most value of the path or null if it could not be found.
+   *
+   * @param object the start object to start navigating from
+   * @param paths an array of path names to navigate or a string of dot separated paths to navigate
+   * @param newValue the value to update
+   * @return {*} the last step on the path which is updated
+   */
+  export function pathGet(object, paths) {
+    var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
+    var value = object;
+    angular.forEach(pathArray, (name) => {
+      if (angular.isObject(value)) {
+        value = value[name];
+      } else {
+        return null;
+      }
+    });
+    return value;
+  }
+
+  /**
+   * Navigates the given set of paths in turn on the source object
+   * and updates the last path value to the given newValue
+   *
+   * @param object the start object to start navigating from
+   * @param paths an array of path names to navigate or a string of dot separated paths to navigate
+   * @param newValue the value to update
+   * @return {*} the last step on the path which is updated
+   */
+  export function pathSet(object, paths, newValue) {
+    var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
+    var value = object;
+    var lastIndex = pathArray.length - 1;
+    angular.forEach(pathArray, (name, idx) => {
+      var next = value[name];
+      if (!angular.isObject(next)) {
+        next = (idx < lastIndex) ? {} : newValue;
+        value[name] = next;
+      }
+      value = next;
+    });
+    return value;
+  }
 }
