@@ -1,6 +1,6 @@
 module Wiki {
 
-  export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.objectId = $routeParams["objectId"];
@@ -113,8 +113,10 @@ module Wiki {
       if ("markdown" === $scope.format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
+        $scope.html = $compile($scope.html)($scope);
       } else if ($scope.format && $scope.format.startsWith("html")) {
-        $scope.html = contents
+        $scope.html = contents;
+        $compile($scope.html)($scope);
       } else {
         var form = null;
         if ($scope.format && $scope.format === "javascript") {
