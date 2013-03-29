@@ -66,33 +66,12 @@ module Forms {
       }
     }
 
-    public sanitize(arg) {
-      if (angular.isDefined(arg.formType)) {
-        // user-defined input type
-        return arg;
-      }
-      switch ((arg.type || "").toLowerCase()) {
-        case "int":
-        case "integer":
-        case "long":
-        case "short":
-        case "java.lang.integer":
-        case "java.lang.long":
-          arg.formType = "number";
-          break;
-        default:
-          arg.formType = "text";
-      }
-
-      return arg;
-    }
-
     private doLink(scope, element, attrs) {
       var config = new InputTableConfig;
 
       var configName = attrs[this.attributeName];
       var tableConfig = Core.pathGet(scope, configName);
-      config = this.configure(config, tableConfig, attrs);
+      config = configure(config, tableConfig, attrs);
 
       var entityName = config.data || "entity";
 
@@ -283,11 +262,5 @@ module Forms {
       return rc;
     }
 
-    private configure(config, scopeConfig, attrs) {
-      if (angular.isDefined(scopeConfig)) {
-        config = angular.extend(config, scopeConfig);
-      }
-      return angular.extend(config, attrs);
-    }
   }
 }

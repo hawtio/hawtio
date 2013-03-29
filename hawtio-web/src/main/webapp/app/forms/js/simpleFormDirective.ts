@@ -79,32 +79,11 @@ module Forms {
       return false;
     }
 
-    public sanitize(arg) {
-      if (angular.isDefined(arg.formType)) {
-        // user-defined input type
-        return arg;
-      }
-      switch ((arg.type || "").toLowerCase()) {
-        case "int":
-        case "integer":
-        case "long":
-        case "short":
-        case "java.lang.integer":
-        case "java.lang.long":
-          arg.formType = "number";
-          break;
-        default:
-          arg.formType = "text";
-      }
-
-      return arg;
-    }
-
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
       var configScopeName = attrs[this.attributeName] || attrs["data"];
-      config = this.configure(config, scope[configScopeName], attrs);
+      config = configure(config, scope[configScopeName], attrs);
       config.scopeName = configScopeName;
       config.scope = scope;
 
@@ -120,13 +99,28 @@ module Forms {
       var fieldset = form.find('fieldset');
 
       angular.forEach(config.data.properties, (arg, id) => {
-        var input = this.assembleInput(config, arg, id);
+
+        // TODO should also support getting inputs from the template cache, maybe
+        // for type="template"
+
+        var input = $('<div></div>');
+
+        input.attr(Forms.normalize(arg.type), '');
+        input.attr('name', id);
+        input.attr('entity', config.getEntity());
+        input.attr('mode', config.getMode());
+
+        angular.forEach(arg, function(value, key) {
+          input.attr(key, value);
+        });
+
         fieldset.append(input);
       });
 
-      var group = this.getControlGroup(config, {}, "");
-      var controlDiv = this.getControlDiv(config);
-
+      // TODO, I think these buttons could maybe be implemented differently as
+      // a separate directive...
+      var group = Forms.getControlGroup(config, {}, "");
+      var controlDiv = Forms.getControlDiv(config);
 
       var cancel = null;
       var reset = null;
@@ -227,7 +221,6 @@ module Forms {
       return $('<button type="submit" class="btn btn-success submit"><i class="' + config.submiticon + '"></i> ' + config.submittext + '</button>');
     }
 
-
     private createForm(config) {
       var form = $('<form class="' + config.formclass + '"><fieldset></fieldset></form>');
       form.attr('name', config.name);
@@ -237,134 +230,11 @@ module Forms {
       return form;
     }
 
-
     private getLegend(config) {
       if (angular.isDefined(config.data.description)) {
         return '<legend>' + config.data.description + '</legend>';
       }
       return '';
-    }
-
-
-    private getControlGroup(config, arg, id) {
-      var rc = $('<div class="' + config.controlgroupclass + '"></div>');
-      if (angular.isDefined(arg.description)) {
-        rc.attr('title', arg.description);
-      }
-      return rc;
-    }
-
-
-    private getLabel(config, arg, id) {
-      return $('<label class="' + config.labelclass + '">' + humanizeValue(id.capitalize()) + ': </label>');
-    }
-
-
-    private getControlDiv(config) {
-      return $('<div class="' + config.controlclass + '"></div>');
-    }
-
-
-    private getHelpSpan(config, arg, id) {
-      var rc = $('<span class="help-block"></span>');
-      if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
-        rc.append('Type: ' + arg.type);
-      }
-      return rc;
-    }
-
-
-    // TODO: support more input types, i.e. checkboxes/radio/select which vary from regular inputs
-    private assembleInput(config, arg, id) {
-      var group = this.getControlGroup(config, arg, id);
-      group.append(this.getLabel(config, arg, id));
-      var controlDiv = this.getControlDiv(config);
-      controlDiv.append(this.getInput(config, arg, id));
-      controlDiv.append(this.getHelpSpan(config, arg, id));
-      group.append(controlDiv);
-      return group;
-    }
-
-
-    private getInput(config, arg, id) {
-      var a = this.sanitize(arg);
-
-      // lets default to show a text value for the object
-      // as we don't know the type...
-      function renderRow(cell, type, data) {
-        if (data) {
-          var description = data["description"];
-          if (!description) {
-            angular.forEach(data, (value, key) => {
-              if (value) {
-                return value;
-              }
-            })
-          }
-          return description;
-        }
-        return null;
-      }
-
-      switch (a.type) {
-        case "object":
-          // create a table UI!
-          var tableConfigPaths = [config.scopeName, "properties", id, "inputTable"];
-          var scope = config.scope;
-          var tableConfig = Core.pathGet(scope, tableConfigPaths);
-          // lets auto-create a default configuration if there is none
-          if (!tableConfig) {
-            // TODO ideally we should merge this config with whatever folks have hand-defined
-            var tableConfigScopeName = tableConfigPaths.join(".");
-            //var cellDescription = a["description"] || humanizeValue(id);
-            var cellDescription = humanizeValue(id);
-            tableConfig = {
-              data: config.entity + "." + id,
-              displayFooter: false,
-              showFilter: false,
-              columnDefs: [
-                {
-                  field: '_id',
-                  displayName: cellDescription,
-                  render: renderRow
-                }
-              ]
-            };
-            Core.pathSet(scope, tableConfigPaths, tableConfig);
-          }
-          var table = $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>');
-          if (this.isReadOnly() || config.isReadOnly()) {
-            table.attr("readonly", "true");
-          }
-          return table;
-      }
-      switch (a.formType) {
-        default:
-          var rc = $('<input type="' + a.formType + '">');
-          rc.attr('name', id);
-          if (angular.isDefined(a.def)) {
-            rc.attr('value', a.def);
-          }
-          var modelName = a.model;
-          if (!angular.isDefined(a.model)) {
-            // TODO always use 2 way binding?
-            modelName = config.getEntity() + "." + id;
-          }
-          if (modelName) {
-            rc.attr('ng-model', modelName);
-          }
-          if (config.isReadOnly()) {
-            rc.attr('readonly', 'true');
-          }
-          return rc;
-      }
-    }
-
-    private configure(config, scopeConfig, attrs) {
-      if (angular.isDefined(scopeConfig)) {
-        config = angular.extend(config, scopeConfig);
-      }
-      return angular.extend(config, attrs);
     }
 
   }

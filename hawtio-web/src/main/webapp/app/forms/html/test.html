@@ -14,8 +14,7 @@
     <div class="row-fluid">
       <button class="btn" ng-click="toggleEdit()">Edit</button>
     </div>
-    <div ng-hide="editing" simple-read-only-form='config' entity='cheese'></div>
-    <div ng-show="editing" simple-form='config' entity='cheese'></div>
+    <div simple-form='config' entity='cheese' mode='view'></div>
   </div>
 
   <hr>

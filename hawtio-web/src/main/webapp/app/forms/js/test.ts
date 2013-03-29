@@ -8,6 +8,13 @@ module Forms {
       $scope.editing = !$scope.editing;
     };
 
+    $scope.view = function() {
+      if (!$scope.editing) {
+        return "view";
+      }
+      return "edit";
+    }
+
     $scope.setVMOption = {
       properties: {
         'key': {
@@ -16,17 +23,21 @@ module Forms {
         },
         'value': {
           description: 'Argument Value',
-          type: 'java.lang.String',
-          def: 'foobar'
+          type: 'java.lang.String'
         },
         'longArg': {
           description: 'Long argument',
           type: 'Long',
-          def: '5'
+          minimum: '5',
+          maximum: '10'
         },
         'intArg': {
           description: 'Int argument',
           type: 'Integer'
+        },
+        'objectArg': {
+          description: 'some object',
+          type: 'object'
         }
         // TODO - add more types, above is what I remember from jolokia
       },
@@ -60,9 +71,19 @@ module Forms {
       notification('error', 'derp with json ' + JSON.stringify(json));
     };
 
+    $scope.inputTableSchema = {
+      properties: {
+        'id': {
+          description: 'Object ID',
+          type: 'java.lang.String'
+        }
+      },
+      description: 'Some objects'
+    }
+
     $scope.inputTableData = [
-      { id: "object1" },
-      { id: "object2" }
+      { id: "object1", name: 'foo' },
+      { id: "object2", name: 'bar' }
     ];
 
     $scope.inputTableConfig = {
@@ -73,7 +94,12 @@ module Forms {
         {
           field: 'id',
           displayName: 'ID'
+        },
+        {
+          field: 'name',
+          displayName: 'Name'
         }
+
       ]
     };
   }
