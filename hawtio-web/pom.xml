@@ -15,6 +15,8 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+    <grunt-executable>grunt</grunt-executable>
+    <npm-executable>npm</npm-executable>
   </properties>
 
 
@@ -477,7 +479,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>npm</executable>
+                  <executable>${npm-executable}</executable>
                   <arguments>
                     <argument>install</argument>
                   </arguments>
@@ -490,7 +492,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>grunt</executable>
+                  <executable>${grunt-executable}</executable>
                   <arguments>
                     <argument>copy</argument>
                     <argument>type</argument>
@@ -527,7 +529,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>grunt</executable>
+                  <executable>${grunt-executable}</executable>
                   <arguments>
                     <argument>copy</argument>
                     <argument>type</argument>
@@ -658,5 +660,17 @@
       </properties>
     </profile>
 
+    <profile>
+      <id>windows-grunt</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <grunt-executable>grunt.cmd</grunt-executable>
+        <npm-executable>npm.cmd</npm-executable>
+      </properties>
+    </profile>
   </profiles>
 </project>
