@@ -24,13 +24,11 @@ module Tomcat {
         }
       }
 
-      try {
-        // Tomcat 5 uses 0 for stopped
-        if (state !== null && state.toString() === '0') {
+      // Tomcat 5 uses 0 for stopped
+      if (angular.isNumber(state)) {
+        if (state.toString() === '0') {
           return "red icon-stop";
         }
-      } catch (Exception) {
-        // just to be safe if state is undefined
       }
 
       return "icon-question-sign";
