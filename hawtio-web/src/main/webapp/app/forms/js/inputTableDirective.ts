@@ -170,6 +170,10 @@ module Forms {
             });
           }
           Core.pathSet(scope, entityName, data);
+
+          // TODO for some reason this doesn't notify the underlying hawtio-datatable that the table has changed
+          // so lets force it with a notify...
+          scope.$emit("hawtio.datatable." + entityName, data);
           Core.$apply(scope);
         }
       }

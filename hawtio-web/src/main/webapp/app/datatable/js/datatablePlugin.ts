@@ -196,13 +196,22 @@ module DataTable {
                     // TODO deal with the data name changing one day?
                     data = gridOptions.data;
                     if (data) {
-                      scope.$watch(data, function (value) {
+                      var listener = function (value) {
                         if (initialised || (value && (!angular.isArray(value) || value.length))) {
                           initialised = true;
                           destroyChildScopes();
                           widget.populateTable(value);
                           updateLater();
                         }
+                      };
+                      scope.$watch(data, listener);
+
+                      // lets add a separate event so we can force updates
+                      // if we find cases where the delta logic doesn't work
+                      // (such as for nested hawtioinput-input-table)
+                      scope.$on("hawtio.datatable." + data, function (args) {
+                        var value = Core.pathGet(scope, data);
+                        listener(value);
                       });
                     }
                   }
