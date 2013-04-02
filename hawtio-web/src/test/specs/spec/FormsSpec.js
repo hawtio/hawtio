@@ -1,0 +1,52 @@
+describe("Forms", function() {
+  beforeEach(function() {
+  });
+
+  it("typeNameAliasWorks", function() {
+    var schema = {
+      "description": "Show some stuff in a form from JSON",
+    	"definitions": {
+    		"foo": {
+    			"type": "object",
+    	    "properties": {
+    	        "name": { "type": "string" },
+    	        "value": { "type": "string" }
+    	    }
+    		}
+    	},
+      "properties": {
+        "key": { "description": "Argument key", "type": "java.lang.String" },
+        "value": { "description": "Argument value", "type": "java.lang.String" },
+    		"tableValue": {
+    			"description": "A table of values with nested schema properties",
+    			"type": "array",
+    			"items": {
+    				"properties": {
+    	        "key": { "type": "string" },
+    	        "value": { "type": "string" }
+    				}
+    			}
+    		},
+    		"fooValue": {
+    			"description": "A table of values with referenced foo type definition",
+    			"type": "array",
+    			"items": {
+    				"type": "foo"
+    			}
+    		},
+        "longArg": { "description": "Long argument", "type": "Long" },
+        "intArg": { "description": "Int argument", "type": "Integer" }
+    	}
+    };
+
+    expect(Forms.resolveTypeNameAlias(null, schema)).toEqual(null);
+    expect(Forms.resolveTypeNameAlias("bar", schema)).toEqual("bar");
+    expect(Forms.resolveTypeNameAlias("foo", schema)).toEqual("object");
+
+    expect(Forms.isArrayOrNestedObject(schema.properties.key, schema)).toEqual(false);
+    expect(Forms.isArrayOrNestedObject(schema.properties.value, schema)).toEqual(false);
+    expect(Forms.isArrayOrNestedObject(schema.properties.tableValue, schema)).toEqual(true);
+    expect(Forms.isArrayOrNestedObject(schema.properties.fooValue, schema)).toEqual(true);
+  });
+
+});
