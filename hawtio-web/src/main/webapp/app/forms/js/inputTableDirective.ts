@@ -118,22 +118,41 @@ module Forms {
         Core.$apply(scope);
       }
 
+      function removeSelected(data) {
+        angular.forEach(scope.selectedItems, (selected) => {
+          var id = selected["_id"];
+          delete selected["_id"];
+          if (angular.isArray(data)) {
+            data = data.remove((value) => Object.equal(value, selected));
+          } else {
+            if (id) {
+              delete data[id];
+            } else {
+              // lets iterate for the value
+              var found = false;
+              angular.forEach(data, (value, key) => {
+                if (!found && (Object.equal(value, selected))) {
+                  console.log("Found row to delete! " + key);
+                  delete data[key];
+                  found = true;
+                }
+              });
+              if (!found) {
+                console.log("Could not find " + JSON.stringify(selected) + " in " + JSON.stringify(data));
+              }
+            }
+          }
+        });
+        return data;
+      }
+
       var add = null;
       var edit = null;
       var remove = null;
       var addDialog = null;
+      var editDialog = null;
       var readOnly = attrs["readonly"];
       if (!readOnly) {
-        add = this.getAddButton(config);
-        // lets add the modal div
-        var addTitle = "Add " + tableName;
-
-        scope.addDialogOptions = {
-          backdropFade: true,
-          dialogFade:true
-        };
-        scope.showAddDialog = false;
-
         var property = null;
         var schema = null;
         var dataName = attrs["data"];
@@ -144,14 +163,23 @@ module Forms {
           property = Core.pathGet(schema, ["properties", propertyName]);
         }
 
+        add = this.getAddButton(config);
+
+        scope.addDialogOptions = {
+          backdropFade: true,
+          dialogFade:true
+        };
+        scope.showAddDialog = false;
+
         scope.openAddDialog = () => {
           // lets lazily create the add dialog
           scope.addEntity = {};
           scope.addFormConfig = Forms.findArrayItemsSchema(property, schema);
 
           if (!addDialog) {
+            var title = "Add " + tableName;
             addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
-                    '<div class="modal-header"><h4>' + addTitle + '</h4></div>\n' +
+                    '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
                     '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
                     '<div class="modal-footer">' +
                     '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
@@ -183,6 +211,59 @@ module Forms {
         };
 
         edit = this.getEditButton(config);
+
+        scope.editDialogOptions = {
+          backdropFade: true,
+          dialogFade:true
+        };
+        scope.showEditDialog = false;
+
+        scope.openEditDialog = () => {
+          var selected = scope.selectedItems;
+          // lets make a deep copy for the value being edited
+          var editObject = {};
+          if (selected && selected.length) {
+            angular.copy(selected[0], editObject);
+          }
+          scope.editEntity = editObject;
+          scope.editFormConfig = Forms.findArrayItemsSchema(property, schema);
+
+          // lets lazily create the edit dialog
+          if (!editDialog) {
+            var title = "Edit " + tableName;
+            editDialog = $('<div modal="showEditDialog" close="closeEditDialog()" options="editDialogOptions">\n' +
+                    '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
+                    '<div class="modal-body"><div simple-form="editFormConfig" entity="editEntity"></div></div>\n' +
+                    '<div class="modal-footer">' +
+                    '<button class="btn btn-primary save" type="button" ng-click="editAndCloseDialog()">Save</button>' +
+                    '<button class="btn btn-warning cancel" type="button" ng-click="closeEditDialog()">Cancel</button>' +
+                    '</div></div>');
+            div.append(editDialog);
+            this.$compile(editDialog)(scope);
+          }
+          scope.showEditDialog = true;
+          Core.$apply(scope);
+        };
+
+        scope.closeEditDialog = () => {
+          scope.showEditDialog = false;
+          scope.editEntity = {};
+        };
+
+        scope.editAndCloseDialog = () => {
+          var newData = scope.editEntity;
+          console.log("About to edit the new entity " + JSON.stringify(newData));
+          if (newData) {
+            updateData((data) => {
+              data = removeSelected(data);
+              // TODO deal with non arrays
+              data.push(newData);
+              return data;
+            });
+          }
+          scope.closeEditDialog();
+        };
+
         remove = this.getRemoveButton(config);
       }
 
@@ -215,44 +296,18 @@ module Forms {
       if (onRemove === null) {
         onRemove = function () {
           updateData((data) => {
-            angular.forEach(scope.selectedItems, (selected) => {
-              var id = selected["_id"];
-              delete selected["_id"];
-              if (angular.isArray(data)) {
-                data = data.remove((value) => Object.equal(value, selected));
-              } else {
-                if (id) {
-                  delete data[id];
-                } else {
-                  // lets iterate for the value
-                  var found = false;
-                  angular.forEach(data, (value, key) => {
-                    if (!found && (Object.equal(value, selected))) {
-                      console.log("Found row to delete! " + key);
-                      delete data[key];
-                      found = true;
-                    }
-                  });
-                  if (!found) {
-                    console.log("Could not find " + JSON.stringify(selected) + " in " + JSON.stringify(data));
-                  }
-                }
-              }
-            });
-            return data;
+            return removeSelected(data);
           });
         }
       }
       if (onEdit === null) {
         onEdit = function () {
-          notification('error', 'No edit handler defined for input table ' + tableName);
+          scope.openEditDialog();
         }
       }
       if (onAdd === null) {
         onAdd = function (form) {
           scope.openAddDialog();
-          scope.showAddDialog = true;
-          Core.$apply(scope);
         }
       }
       if (add) {
