@@ -66,12 +66,16 @@ module Wiki {
         var columnDefs = [];
         angular.forEach($scope.formDefinition.properties, (property, name) => {
           if (name) {
-            var colDef = {
-              field: name,
-              displayName: property.description || name,
-              visible: true
-            };
-            columnDefs.push(colDef);
+            var propType = property["type"];
+            // we may want to hide properties which have no property type as they could be objects?
+            if (!propType || propType !== "object") {
+              var colDef = {
+                field: name,
+                displayName: property.description || name,
+                visible: true
+              };
+              columnDefs.push(colDef);
+            }
           }
         });
         columnDefs.push(linksColumn);
