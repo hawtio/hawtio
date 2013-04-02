@@ -121,12 +121,48 @@ module Forms {
       var add = null;
       var edit = null;
       var remove = null;
+      var addDialog = null;
       var readOnly = attrs["readonly"];
       if (!readOnly) {
         add = this.getAddButton(config);
         // lets add the modal div
         var addTitle = "Add " + tableName;
+
+        scope.addDialogOptions = {
+          backdropFade: true,
+          dialogFade:true
+        };
         scope.showAddDialog = false;
+
+        var property = null;
+        var schema = null;
+        var dataName = attrs["data"];
+        if (dataName) {
+          schema = Core.pathGet(scope, dataName);
+        }
+        if (propertyName && schema) {
+          property = Core.pathGet(schema, ["properties", propertyName]);
+        }
+
+        scope.openAddDialog = () => {
+          // lets lazily create the add dialog
+          scope.addEntity = {};
+          scope.addFormConfig = Forms.findArrayItemsSchema(property, schema);
+
+          if (!addDialog) {
+            addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
+                    '<div class="modal-header"><h4>' + addTitle + '</h4></div>\n' +
+                    '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
+                    '<div class="modal-footer">' +
+                    '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
+                    '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
+                    '</div></div>');
+            div.append(addDialog);
+            this.$compile(addDialog)(scope);
+          }
+          scope.showAddDialog = true;
+          Core.$apply(scope);
+        };
 
         scope.closeAddDialog = () => {
           scope.showAddDialog = false;
@@ -145,34 +181,6 @@ module Forms {
           }
           scope.closeAddDialog();
         };
-
-        scope.addDialogOptions = {
-          backdropFade: true,
-          dialogFade:true
-        };
-
-        scope.addEntity = {};
-
-        // TODO get these!!!
-        var property = null;
-        var schema = null;
-        var dataName = attrs["data"];
-        if (dataName) {
-          schema = Core.pathGet(scope, dataName);
-        }
-        if (propertyName && schema) {
-          property = Core.pathGet(schema, ["properties", propertyName]);
-        }
-        scope.addFormConfig = Forms.findArrayItemsSchema(property, schema);
-
-        var addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
-                '<div class="modal-header"><h4>' + addTitle + '</h4></div>\n' +
-                '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
-                '<div class="modal-footer">' +
-                '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
-                '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
-                '</div></div>');
-        div.append(addDialog);
 
         edit = this.getEditButton(config);
         remove = this.getRemoveButton(config);
@@ -242,6 +250,7 @@ module Forms {
       }
       if (onAdd === null) {
         onAdd = function (form) {
+          scope.openAddDialog();
           scope.showAddDialog = true;
           Core.$apply(scope);
         }
