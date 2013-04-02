@@ -199,6 +199,7 @@ module Forms {
         var cellDescription = humanizeValue(id);
         tableConfig = {
           data: config.entity + "." + id,
+          title: cellDescription,
           displayFooter: false,
           showFilter: false,
           columnDefs: [

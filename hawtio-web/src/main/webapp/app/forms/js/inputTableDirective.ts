@@ -76,7 +76,7 @@ module Forms {
       var entityName = config.data || "entity";
 
       // TODO better name?
-      var tableName = entityName;
+      var tableName = config["title"] || entityName;
 
       if (angular.isDefined(config.json)) {
         config.data = $.parseJSON(config.json);
@@ -109,6 +109,34 @@ module Forms {
       var readOnly = attrs["readonly"];
       if (!readOnly) {
         add = this.getAddButton(config);
+        // lets add the modal div
+        var addTitle = "Add " + tableName;
+        scope.showAddDialog = false;
+
+        scope.closeAddDialog = () => {
+          scope.showAddDialog = false;
+        };
+
+        scope.addAndCloseDialog = () => {
+          scope.closeAddDialog();
+          // TODO do the actual add!
+        };
+
+        scope.addDialogOptions = {
+          backdropFade: true,
+          dialogFade:true
+        };
+
+        var addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
+                '<div class="modal-header"><h4>' + addTitle + '</h4></div>\n' +
+                //'<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
+                '<div class="modal-body"><p>the form details goes here!!!</p></div>\n' +
+                '<div class="modal-footer">' +
+                '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
+                '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
+                '</div></div>');
+        div.append(addDialog);
+
         edit = this.getEditButton(config);
         remove = this.getRemoveButton(config);
       }
@@ -184,7 +212,8 @@ module Forms {
       }
       if (onAdd === null) {
         onAdd = function (form) {
-          notification('error', 'No add handler defined for input table ' + tableName);
+          scope.showAddDialog = true;
+          Core.$apply(scope);
         }
       }
       if (add) {
