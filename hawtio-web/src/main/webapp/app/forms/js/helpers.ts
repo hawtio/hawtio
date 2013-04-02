@@ -5,18 +5,49 @@ module Forms {
    */
   export function resolveTypeNameAlias(type, schema) {
     if (type && schema) {
-      var defs = schema.definitions;
-      if (defs) {
-        var alias = defs[type];
-        if (alias) {
-          var realType = alias["type"];
-          if (realType) {
-            type = realType;
-          }
+      var alias = lookupDefinition(type, schema);
+      if (alias) {
+        var realType = alias["type"];
+        if (realType) {
+          type = realType;
         }
       }
     }
     return type;
+  }
+
+  /**
+   * Looks up the given type name in the schemas definitions
+   */
+  export function lookupDefinition(name, schema) {
+    if (schema) {
+      var defs = schema.definitions;
+      if (defs) {
+        return defs[name];
+      }
+    }
+    return null;
+  }
+
+  /**
+   * For an array property, find the schema of the items which is either nested inside this property
+   * in the 'items' property; or the type name is used to lookup in the schemas definitions
+   */
+  export function findArrayItemsSchema(property, schema) {
+    var items = null;
+    if (property && schema) {
+      items = property.items;
+      if (items) {
+        var typeName = items["type"];
+        if (typeName) {
+          var definition = lookupDefinition(typeName, schema);
+          if (definition) {
+            return definition;
+          }
+        }
+      }
+    }
+    return items;
   }
 
   /**
