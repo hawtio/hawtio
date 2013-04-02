@@ -1,6 +1,6 @@
 module Forms {
 
-  export class SubmitForm {
+  export class ResetForm {
     public restrict = 'A';
     public scope = true;
 
@@ -17,10 +17,13 @@ module Forms {
 
       var el = $(element);
 
-      var target = 'form[name=' + attrs['hawtioSubmit'] + ']';
+      var target = 'form[name=' + attrs['hawtioReset'] + ']';
 
       el.click(function() {
-        $(target).submit();
+        var forms:any = $(target);
+        for (var i=0; i < forms.length; i++) {
+          forms[i].reset();
+        }
         return false;
       });
 

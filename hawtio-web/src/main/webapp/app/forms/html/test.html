@@ -3,7 +3,10 @@
   <h3>Form Testing</h3>
 
   <div>
-    <a class='btn' ng-href="" hawtio-submit='form-with-inline-arguments'><i class="icon-save"></i> Save</a>
+    <div class="control-group">
+      <a class='btn' ng-href="" hawtio-submit='form-with-inline-arguments'><i class="icon-save"></i> Save</a>
+      <a class='btn' ng-href="" hawtio-reset='form-with-inline-arguments'><i class="icon-refresh"></i> Clear</a>
+    </div>
     Form with inline arguments
     <div simple-form name='form-with-inline-arguments' action='#/forms/test' method='post' data='setVMOption' entity='cheese' onSubmit="derp()" submitText="Derp"></div>
   </div>

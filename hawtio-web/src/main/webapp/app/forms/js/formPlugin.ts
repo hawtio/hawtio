@@ -26,6 +26,9 @@ module Forms {
           }).
           directive('hawtioSubmit', function() {
             return new Forms.SubmitForm();
+          }).
+          directive('hawtioReset', function() {
+            return new Forms.ResetForm();
           });
 
 
