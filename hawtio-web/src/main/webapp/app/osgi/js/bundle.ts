@@ -5,17 +5,18 @@ module Osgi {
 
         updateTableContents();
 
-      $scope.showValue = (key) => {
-        if (key === "Export-Package") {
-          return false;
+        $scope.showValue = (key) => {
+            switch (key) {
+                case "Bundle-Name":
+                case "Bundle-SymbolicName":
+                case "Bundle-Version":
+                case "Export-Package":
+                case "Import-Package":
+                    return false
+                default:
+                    return true;
+            }
         }
-
-        if (key === "Import-Package") {
-          return false;
-        }
-
-        return true;
-      }
 
         $scope.executeLoadClass = (clazz) => {
             var mbean = getHawtioOSGiMBean(workspace);
@@ -109,7 +110,19 @@ module Osgi {
             Osgi.defaultBundleValues(workspace, $scope, values);
             $scope.row = Osgi.findBundle($scope.bundleId, values);
             $scope.$apply();
+
+            // setup tooltips
+            $("#bsn").tooltip({title: readHeaderData($scope.row.Headers["Bundle-SymbolicName"].Value),
+                placement: "right"});
         };
+
+        function readHeaderData(header: string) : string {
+            var idx = header.indexOf(";");
+            if (idx <= 0)
+                return "";
+
+            return header.substring(idx + 1).trim();
+        }
 
         function updateTableContents() {
             //console.log("Loading the bundles");
