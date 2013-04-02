@@ -31,18 +31,7 @@ module Forms {
 
     public showtypes = 'false';
 
-    public submiticon = 'icon-ok';
-    public reseticon = 'icon-refresh';
-    public cancelicon = 'icon-remove';
-
-    public submittext = 'Submit';
-    public resettext = 'Reset';
-    public canceltext = 'Cancel';
-
-    public oncancel = 'onCancel';
     public onsubmit = 'onSubmit';
-
-    // TODO - add toggles to turn off cancel or reset buttons
 
     public getMode() {
       return this.mode || "edit";
@@ -124,20 +113,6 @@ module Forms {
         fieldset.append(input);
       });
 
-      // TODO, I think these buttons could maybe be implemented differently as
-      // a separate directive...
-      var group = Forms.getControlGroup(config, {}, "");
-      var controlDiv = Forms.getControlDiv(config);
-
-      var cancel = null;
-      var reset = null;
-      var submit = null;
-      if (!config.isReadOnly()) {
-        cancel = this.getCancelButton(config);
-        reset = this.getResetButton(config);
-        submit = this.getSubmitButton(config);
-      }
-
       var findFunction = function(scope, func) {
         if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
           return scope;
@@ -157,20 +132,11 @@ module Forms {
       }
 
       var onSubmitFunc = config.onsubmit.replace('(', '').replace(')', '');
-      var onCancelFunc = config.oncancel.replace('(', '').replace(')', '');
-
       var onSubmit = maybeGet(findFunction(scope, onSubmitFunc), onSubmitFunc);
-      var onCancel = maybeGet(findFunction(scope, onCancelFunc), onCancelFunc);
 
       if (onSubmit === null) {
         onSubmit = function (json, form) {
           notification('error', 'No submit handler defined for form ' + form.get(0).name);
-        }
-      }
-
-      if (onCancel === null) {
-        onCancel = function(form) {
-          notification('error', 'No cancel handler defined for form ' + form.get(0).name);
         }
       }
 
@@ -182,50 +148,12 @@ module Forms {
         });
       }
 
-      controlDiv.addClass('btn-group');
-      if (cancel) {
-        if (angular.isDefined(onCancel)) {
-          cancel.click((event) => {
-            onCancel(form);
-            return false;
-          });
-        }
-        controlDiv.append(cancel);
-      }
-      if (reset) {
-        reset.click((event) => {
-          form.get(0).reset();
-          return false;
-        });
-        controlDiv.append(reset);
-      }
-      if (submit) {
-        submit.click((event) => {
-          form.submit();
-          return false;
-        });
-        controlDiv.append(submit);
-      }
-
-      group.append(controlDiv);
-      fieldset.append(group);
+      fieldset.append('<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">');
 
       $(element).append(form);
 
       // compile the template
       this.$compile(form)(scope);
-    }
-
-    private getCancelButton(config) {
-      return $('<button type="button" class="btn cancel"><i class="' + config.cancelicon + '"></i> ' + config.canceltext + '</button>');
-    }
-
-    private getResetButton(config) {
-      return $('<button type="button" class="btn reset"><i class="' + config.reseticon + '"></i> ' + config.resettext + '</button>');
-    }
-
-    private getSubmitButton(config) {
-      return $('<button type="submit" class="btn btn-success submit"><i class="' + config.submiticon + '"></i> ' + config.submittext + '</button>');
     }
 
     private createForm(config) {

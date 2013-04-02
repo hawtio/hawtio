@@ -79,17 +79,6 @@ module Forms {
     return angular.extend(config, attrs);
   }
 
-  /*
-   export function sanitize(arg) {
-   if (angular.isDefined(arg.formType)) {
-   // user-defined input type
-   return arg;
-   }
-   arg.formType = Forms.normalize(arg.type);
-   return arg;
-   }
-   */
-
   export function getControlGroup(config, arg, id) {
     var rc = $('<div class="' + config.controlgroupclass + '"></div>');
     if (angular.isDefined(arg.description)) {
