@@ -169,6 +169,7 @@ module Forms {
       config = Forms.configure(config, null, attrs);
 
       var id = config.name;
+      var dataName = attrs["data"] || "";
 
       function renderRow(cell, type, data) {
         if (data) {
@@ -198,8 +199,10 @@ module Forms {
         //var cellDescription = a["description"] || humanizeValue(id);
         var cellDescription = humanizeValue(id);
         tableConfig = {
-          data: config.entity + "." + id,
+          formConfig: config,
           title: cellDescription,
+
+          data: config.entity + "." + id,
           displayFooter: false,
           showFilter: false,
           columnDefs: [
@@ -212,7 +215,7 @@ module Forms {
         };
         Core.pathSet(scope, tableConfigPaths, tableConfig);
       }
-      var table = $('<div hawtio-input-table="' + tableConfigScopeName + '"></div>');
+      var table = $('<div hawtio-input-table="' + tableConfigScopeName + '" data="' + dataName + '" property="' + id + '"></div>');
       if (config.isReadOnly()) {
         table.attr("readonly", "true");
       }

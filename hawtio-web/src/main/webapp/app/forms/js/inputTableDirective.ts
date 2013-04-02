@@ -115,11 +115,14 @@ module Forms {
 
         scope.closeAddDialog = () => {
           scope.showAddDialog = false;
+          scope.addEntity = {};
         };
 
         scope.addAndCloseDialog = () => {
-          scope.closeAddDialog();
           // TODO do the actual add!
+          console.log("About to add the new entity " + JSON.stringify(scope.addEntity));
+
+          scope.closeAddDialog();
         };
 
         scope.addDialogOptions = {
@@ -127,10 +130,24 @@ module Forms {
           dialogFade:true
         };
 
+        scope.addEntity = {};
+
+        // TODO get these!!!
+        var property = null;
+        var schema = null;
+        var dataName = attrs["data"];
+        var propertyName = attrs["property"];
+        if (dataName) {
+          schema = Core.pathGet(scope, dataName);
+        }
+        if (propertyName && schema) {
+          property = Core.pathGet(schema, ["properties", propertyName]);
+        }
+        scope.addFormConfig = Forms.findArrayItemsSchema(property, schema);
+
         var addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
                 '<div class="modal-header"><h4>' + addTitle + '</h4></div>\n' +
-                //'<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
-                '<div class="modal-body"><p>the form details goes here!!!</p></div>\n' +
+                '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
                 '<div class="modal-footer">' +
                 '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
                 '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
@@ -267,7 +284,8 @@ module Forms {
 
 
     private getLegend(config) {
-      if (angular.isDefined(config.data.description)) {
+      var description = Core.pathGet(config, "data.description");
+      if (description) {
         return '<legend>' + config.data.description + '</legend>';
       }
       return '';

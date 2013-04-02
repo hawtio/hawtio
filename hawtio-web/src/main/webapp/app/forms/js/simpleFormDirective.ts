@@ -82,7 +82,7 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      var configScopeName = attrs[this.attributeName] || attrs["schema"];
+      var configScopeName = attrs[this.attributeName] || attrs["schema"] || attrs["data"];
       config = configure(config, scope[configScopeName], attrs);
       config.scopeName = configScopeName;
       config.scope = scope;
@@ -92,7 +92,7 @@ module Forms {
       if (angular.isDefined(config.json)) {
         config.data = $.parseJSON(config.json);
       } else {
-        config.data = scope[config.data];
+        config.data = scope[configScopeName] || scope[config.data];
       }
 
       var form = this.createForm(config);
@@ -110,9 +110,14 @@ module Forms {
         input.attr('name', id);
         input.attr('entity', config.getEntity());
         input.attr('mode', config.getMode());
+        if (configScopeName) {
+          input.attr('data', configScopeName);
+        }
 
         angular.forEach(arg, function(value, key) {
-          input.attr(key, value);
+          if (!angular.isObject(value)) {
+            input.attr(key, value);
+          }
         });
 
         fieldset.append(input);
@@ -232,12 +237,12 @@ module Forms {
     }
 
     private getLegend(config) {
-      if (angular.isDefined(config.data.description)) {
-        return '<legend>' + config.data.description + '</legend>';
+      var description = Core.pathGet(config, "data.description");
+      if (description) {
+        return '<legend>' + description + '</legend>';
       }
       return '';
     }
-
   }
 
 }
