@@ -175,8 +175,8 @@ module Forms {
           var description = data["description"];
           if (!description) {
             angular.forEach(data, (value, key) => {
-              if (value) {
-                return value;
+              if (value && !description) {
+                description = value;
               }
             })
           }

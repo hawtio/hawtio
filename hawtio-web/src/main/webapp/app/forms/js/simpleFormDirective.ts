@@ -82,7 +82,7 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      var configScopeName = attrs[this.attributeName] || attrs["data"];
+      var configScopeName = attrs[this.attributeName] || attrs["schema"];
       config = configure(config, scope[configScopeName], attrs);
       config.scopeName = configScopeName;
       config.scope = scope;
@@ -98,14 +98,15 @@ module Forms {
       var form = this.createForm(config);
       var fieldset = form.find('fieldset');
 
-      angular.forEach(config.data.properties, (arg, id) => {
+      var schema = config.data;
+      angular.forEach(schema.properties, (arg, id) => {
 
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
 
         var input = $('<div></div>');
 
-        input.attr(Forms.normalize(arg.type), '');
+        input.attr(Forms.normalize(arg.type, schema), '');
         input.attr('name', id);
         input.attr('entity', config.getEntity());
         input.attr('mode', config.getMode());

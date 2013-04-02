@@ -1,5 +1,39 @@
 module Forms {
 
+  /**
+   * If the type name refers to an alias in the schemas defintions then perform the lookup and return the real type name
+   */
+  export function resolveTypeNameAlias(type, schema) {
+    if (type && schema) {
+      var defs = schema.definitions;
+      if (defs) {
+        var alias = defs[type];
+        if (alias) {
+          var realType = alias["type"];
+          if (realType) {
+            type = realType;
+          }
+        }
+      }
+    }
+    return type;
+  }
+
+  /**
+   * Returns true if the given property represents a nested object or array of objects
+   */
+  export function isArrayOrNestedObject(property, schema) {
+    if (property) {
+      var propType = resolveTypeNameAlias(property["type"], schema);
+      if (propType) {
+        if (propType === "object" || propType === "array") {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   export function configure(config, scopeConfig, attrs) {
     if (angular.isDefined(scopeConfig)) {
       config = angular.extend(config, scopeConfig);
@@ -7,14 +41,16 @@ module Forms {
     return angular.extend(config, attrs);
   }
 
-  export function sanitize(arg) {
-    if (angular.isDefined(arg.formType)) {
-      // user-defined input type
-      return arg;
-    }
-    arg.formType = Forms.normalize(arg.type);
-    return arg;
-  }
+  /*
+   export function sanitize(arg) {
+   if (angular.isDefined(arg.formType)) {
+   // user-defined input type
+   return arg;
+   }
+   arg.formType = Forms.normalize(arg.type);
+   return arg;
+   }
+   */
 
   export function getControlGroup(config, arg, id) {
     var rc = $('<div class="' + config.controlgroupclass + '"></div>');

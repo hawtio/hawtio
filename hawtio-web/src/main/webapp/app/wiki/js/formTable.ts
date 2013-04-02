@@ -64,11 +64,10 @@ module Wiki {
         $scope.formDefinition = Wiki.parseJson(text);
 
         var columnDefs = [];
-        angular.forEach($scope.formDefinition.properties, (property, name) => {
+        var schema = $scope.formDefinition;
+        angular.forEach(schema.properties, (property, name) => {
           if (name) {
-            var propType = property["type"];
-            // we may want to hide properties which have no property type as they could be objects?
-            if (!propType || propType !== "object") {
+            if (!Forms.isArrayOrNestedObject(property, schema)) {
               var colDef = {
                 field: name,
                 displayName: property.description || name,
