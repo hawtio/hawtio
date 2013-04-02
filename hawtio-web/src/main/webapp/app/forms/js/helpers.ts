@@ -46,6 +46,13 @@ module Forms {
           }
         }
       }
+      // are we a json schema properties with a link to the schema doc?
+      var additionalProperties = property.additionalProperties;
+      if (additionalProperties) {
+        if (additionalProperties["$ref"] === "#") {
+          return schema;
+        }
+      }
     }
     return items;
   }

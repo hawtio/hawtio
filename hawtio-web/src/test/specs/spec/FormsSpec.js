@@ -57,4 +57,13 @@ describe("Forms", function() {
     expect(s2.properties.name.type).toEqual("string");
   });
 
+  it("properties lookup in json schema", function() {
+    var propertiesSchema = Forms.findArrayItemsSchema(_jsonSchema.properties.properties, _jsonSchema);
+
+    console.log("Properties schema is " + JSON.stringify(propertiesSchema));
+    // we should have some properties
+    //expect(propertiesSchema.properties).toEqual("string");
+
+  });
+
 });
