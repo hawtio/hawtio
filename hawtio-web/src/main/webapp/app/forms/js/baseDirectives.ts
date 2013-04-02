@@ -170,6 +170,7 @@ module Forms {
 
       var id = config.name;
       var dataName = attrs["data"] || "";
+      var entityName = attrs["entity"] || config.entity;
 
       function renderRow(cell, type, data) {
         if (data) {
@@ -215,7 +216,8 @@ module Forms {
         };
         Core.pathSet(scope, tableConfigPaths, tableConfig);
       }
-      var table = $('<div hawtio-input-table="' + tableConfigScopeName + '" data="' + dataName + '" property="' + id + '"></div>');
+      var table = $('<div hawtio-input-table="' + tableConfigScopeName + '" data="' + dataName
+              + '" property="' + id + '" entity="' + entityName + '"></div>');
       if (config.isReadOnly()) {
         table.attr("readonly", "true");
       }

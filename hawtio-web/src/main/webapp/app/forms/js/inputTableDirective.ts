@@ -73,7 +73,9 @@ module Forms {
       var tableConfig = Core.pathGet(scope, configName);
       config = configure(config, tableConfig, attrs);
 
-      var entityName = config.data || "entity";
+      var entityName = attrs["entity"] || config.data || "entity";
+      var propertyName = attrs["property"] || "arrayData";
+      var entityPath = entityName + "." + propertyName;
 
       // TODO better name?
       var tableName = config["title"] || entityName;
@@ -103,6 +105,19 @@ module Forms {
       controlDiv.addClass('btn-group');
       group.append(controlDiv);
 
+      function updateData(action) {
+        var data = Core.pathGet(scope, entityPath);
+        if (data) {
+          data = action(data);
+        }
+        Core.pathSet(scope, entityPath, data);
+
+        // TODO for some reason this doesn't notify the underlying hawtio-datatable that the table has changed
+        // so lets force it with a notify...
+        scope.$emit("hawtio.datatable." + entityPath, data);
+        Core.$apply(scope);
+      }
+
       var add = null;
       var edit = null;
       var remove = null;
@@ -119,9 +134,15 @@ module Forms {
         };
 
         scope.addAndCloseDialog = () => {
-          // TODO do the actual add!
-          console.log("About to add the new entity " + JSON.stringify(scope.addEntity));
-
+          var newData = scope.addEntity;
+          console.log("About to add the new entity " + JSON.stringify(newData));
+          if (newData) {
+            updateData((data) => {
+              // TODO deal with non arrays
+              data.push(newData);
+              return data;
+            });
+          }
           scope.closeAddDialog();
         };
 
@@ -136,7 +157,6 @@ module Forms {
         var property = null;
         var schema = null;
         var dataName = attrs["data"];
-        var propertyName = attrs["property"];
         if (dataName) {
           schema = Core.pathGet(scope, dataName);
         }
@@ -186,9 +206,7 @@ module Forms {
 
       if (onRemove === null) {
         onRemove = function () {
-          // TODO wow this is a meaty bit of code - maybe move this to a helper function?
-          var data = Core.pathGet(scope, entityName);
-          if (data) {
+          updateData((data) => {
             angular.forEach(scope.selectedItems, (selected) => {
               var id = selected["_id"];
               delete selected["_id"];
@@ -213,13 +231,8 @@ module Forms {
                 }
               }
             });
-          }
-          Core.pathSet(scope, entityName, data);
-
-          // TODO for some reason this doesn't notify the underlying hawtio-datatable that the table has changed
-          // so lets force it with a notify...
-          scope.$emit("hawtio.datatable." + entityName, data);
-          Core.$apply(scope);
+            return data;
+          });
         }
       }
       if (onEdit === null) {

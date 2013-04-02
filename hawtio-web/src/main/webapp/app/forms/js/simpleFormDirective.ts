@@ -107,18 +107,18 @@ module Forms {
         var input = $('<div></div>');
 
         input.attr(Forms.normalize(arg.type, schema), '');
-        input.attr('name', id);
-        input.attr('entity', config.getEntity());
-        input.attr('mode', config.getMode());
-        if (configScopeName) {
-          input.attr('data', configScopeName);
-        }
-
         angular.forEach(arg, function(value, key) {
           if (!angular.isObject(value)) {
             input.attr(key, value);
           }
         });
+        input.attr('name', id);
+        input.attr('entity', config.getEntity());
+        input.attr('mode', config.getMode());
+
+        if (configScopeName) {
+          input.attr('data', configScopeName);
+        }
 
         fieldset.append(input);
       });
