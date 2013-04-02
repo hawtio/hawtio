@@ -514,4 +514,23 @@ module Core {
     });
     return value;
   }
+
+  export function escapeHtml(str) {
+    if (angular.isString(str)) {
+      var newStr = "";
+      for (var i = 0; i < str.length; i++) {
+        var nextCode = str.charCodeAt(i);
+        if (nextCode > 0 && nextCode < 48) {
+          newStr += "&#" + nextCode + ";";
+        }
+        else {
+          newStr += str.charAt(i);
+        }
+      }
+      return newStr;
+    }
+    else {
+      return str;
+    }
+  }
 }

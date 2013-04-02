@@ -108,8 +108,9 @@ module Forms {
 
         input.attr(Forms.normalize(arg.type, schema), '');
         angular.forEach(arg, function(value, key) {
-          if (!angular.isObject(value)) {
-            input.attr(key, value);
+          if (angular.isString(value) && key.indexOf("$") < 0) {
+            var html = Core.escapeHtml(value);
+            input.attr(key, html);
           }
         });
         input.attr('name', id);
