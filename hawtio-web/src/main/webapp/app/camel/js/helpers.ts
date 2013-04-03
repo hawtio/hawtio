@@ -27,6 +27,9 @@ module Camel {
               {type: 'exec', mbean: mbean, operation: 'dumpRoutesAsXml()'},
               onSuccess(onRouteXml, {error: onRouteXml}));
     } else {
+      if (!selectedRouteId) {
+        console.log("No selectedRouteId when trying to lazy load the route!")
+      }
       onRoute(null);
     }
   }

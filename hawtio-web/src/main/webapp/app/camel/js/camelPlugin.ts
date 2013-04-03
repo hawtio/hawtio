@@ -146,7 +146,6 @@ module Camel {
               isValid: (workspace: Workspace) => workspace.isEndpointsFolder(),
               href: () => "#/camel/createEndpoint"
             });
-
           });
 
   hawtioPluginLoader.addModule(pluginName);
@@ -171,5 +170,4 @@ module Camel {
       return null;
     });
   });
-
 }
