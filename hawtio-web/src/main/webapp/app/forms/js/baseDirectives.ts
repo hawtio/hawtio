@@ -86,7 +86,7 @@ module Forms {
 
   export class TextInput extends InputBase {
 
-    public type="text";
+    public type = "text";
 
     constructor(private workspace, private $compile) {
       super(workspace, $compile);
@@ -235,10 +235,30 @@ module Forms {
       super(workspace, $compile);
     }
 
-    private doLink(scope, element, attrs) {
-      // TODO
-      console.log("BooleanInput");
+    public getInput(config, arg, id) {
+
+      var rc = $('<input class="hawtio-checkbox" type="checkbox">');
+      rc.attr('name', id);
+
+      if (config.isReadOnly()) {
+        rc.attr('disabled', 'true');
+      }
+
+      var modelName = arg.model;
+      if (!angular.isDefined(arg.model)) {
+        // TODO always use 2 way binding?
+        modelName = config.getEntity() + "." + id;
+      }
+      if (modelName) {
+        rc.attr('ng-model', modelName);
+      }
+      if (config.isReadOnly()) {
+        rc.attr('readonly', 'true');
+      }
+      return rc;
     }
+
+
   }
 
 

@@ -897,3 +897,7 @@ div#main div div div div div.logbar div.logbar-container ul.nav.nav-tabs {
   display: inline-block;
   margin: 5px;
 }
+
+input[type="checkbox"].hawtio-checkbox {
+  margin-top: 10px;
+}

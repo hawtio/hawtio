@@ -24,6 +24,10 @@ module Forms {
       case "object":
       case "java.lang.object":
         return "hawtio-form-object";
+      case "boolean":
+      case "bool":
+      case "java.lang.boolean":
+        return "hawtio-form-checkbox";
       default:
         // lets check if this name is an alias to a definition in the schema
         return "hawtio-form-text";

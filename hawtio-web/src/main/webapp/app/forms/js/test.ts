@@ -38,6 +38,10 @@ module Forms {
         'objectArg': {
           description: 'some object',
           type: 'object'
+        },
+        'booleanArg': {
+          description: 'Some boolean value',
+          type: 'java.lang.Boolean'
         }
         // TODO - add more types, above is what I remember from jolokia
       },

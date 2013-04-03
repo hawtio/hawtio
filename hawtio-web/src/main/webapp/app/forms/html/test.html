@@ -8,7 +8,7 @@
       <a class='btn' ng-href="" hawtio-reset='form-with-inline-arguments'><i class="icon-refresh"></i> Clear</a>
     </div>
     Form with inline arguments
-    <div simple-form name='form-with-inline-arguments' action='#/forms/test' method='post' data='setVMOption' entity='cheese' onSubmit="derp()" submitText="Derp"></div>
+    <div simple-form name='form-with-inline-arguments' action='#/forms/test' method='post' data='setVMOption' entity='cheese' onSubmit="derp()"></div>
   </div>
 
   <hr>
@@ -18,7 +18,7 @@
     <div class="row-fluid">
       <button class="btn" ng-click="toggleEdit()">Edit</button>
     </div>
-    <div simple-form='config' entity='cheese' mode='view'></div>
+    <div simple-form data='setVMOption' entity='cheese' mode='view'></div>
   </div>
 
   <hr>
