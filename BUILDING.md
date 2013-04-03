@@ -37,19 +37,24 @@ The incremental build and LiveReload support allows you to edit the code and for
 
 Here's how to do it:
 
- 1. Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
+Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
- 2. Run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources):
+Run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources):
 
     cd hawtio-web
+    mvn compile
     mvn test-compile exec:java
 
- 3. Incrementally build the project using a separate shell:
+On OS X and linux the _mvn compile_ command above is unnecessary but folks have found on windows there can be timing issues with grunt and maven that make this extra step a requirement (see [issue #203 for more details](https://github.com/hawtio/hawtio/issues/203#issuecomment-15808516))
+
+Incrementally build the project using a separate shell:
+
 
     cd hawtio-web
     mvn -Pwatch
 
- 4. Enable Live Reload in your browser (open [http://localhost:8080/hawtio/] then click on the Live Reload icon to the right of the location bar).
+
+Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)
 
@@ -102,6 +107,16 @@ Make sure you install the local and global dependencies (see above).
 Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
 
     grunt
+
+## Running Unit Tests
+
+Once you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via
+
+    cd hawtio-web
+    open src/test/specs/SpecRunner.html
+
+This then runs the [unit test specificiations](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
+
 
 ## Running the End-to-End Integration Tests
 
