@@ -58,7 +58,14 @@ module Camel {
 
   export function getSelectedRouteNode(workspace:Workspace) {
     var selection = workspace.selection;
-    return selection ? selection["routeXmlNode"] : null;
+    return (selection && jmxDomain === selection.domain) ? selection["routeXmlNode"] : null;
+  }
+
+  /**
+   * Looks up the given node name in the Camel schema
+   */
+  export function getCamelSchema(nodeId) {
+    return nodeId ? _apacheCamelModel.nodes[nodeId] : null;
   }
 
   /**
@@ -69,7 +76,7 @@ module Camel {
     $(route).children("*").each((idx, n) => {
       var nodeName = n.nodeName;
       if (nodeName) {
-        var nodeSettings = _apacheCamelModel.nodes[nodeName];
+        var nodeSettings = getCamelSchema(nodeName);
         if (nodeSettings) {
           var label = nodeSettings["title"] || nodeName;
           var uri = getRouteNodeUri(n);

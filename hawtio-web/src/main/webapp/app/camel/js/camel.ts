@@ -1,3 +1,4 @@
+
 module Camel {
   export function CamelController($scope, $element, workspace:Workspace, jolokia) {
     $scope.routes = [];
@@ -87,7 +88,7 @@ module Camel {
           parentId = id;
         }
         var nodeId = route.nodeName;
-        var nodeSettings = _apacheCamelModel.nodes[nodeId];
+        var nodeSettings = getCamelSchema(nodeId);
         var node = null;
         if (nodeSettings) {
           var label = nodeSettings["title"] || nodeId;

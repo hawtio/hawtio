@@ -18,7 +18,8 @@ module Camel {
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
-                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'})
+                    when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
+                    when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
           filter('camelIconClass', () => iconClass).
           run((workspace:Workspace, jolokia, viewRegistry) => {
@@ -121,6 +122,12 @@ module Camel {
               title: "View the source of the Camel routes",
               isValid: (workspace: Workspace) => workspace.isCamelFolder(),
               href: () => "#/camel/source"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class=" icon-edit"></i> Properties',
+              title: "View the pattern properties",
+              isValid: (workspace: Workspace) => getSelectedRouteNode(workspace),
+              href: () => "#/camel/properties"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-envelope"></i> Browse',
