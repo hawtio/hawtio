@@ -1628,7 +1628,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 t = isPercent ? colWidth : parseInt(colWidth, 10);
             }
             // test visibility from the scope as this changes through the column menu
-            if ($scope.columns[i].visible !== false) {
+          var columnI = $scope.columns[i];
+          var visible = (columnI) ? columnI.visible : null;
+          if (columnI && (!angular.isDefined(visible) || visible !== false)) {
                 // check if it is a number
                 if (isNaN(t)) {
                     t = colWidth;
@@ -1638,9 +1640,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     }
                     // figure out if the width is defined or if we need to calculate it
                     if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
-                        $scope.columns[i].width = col.minWidth;
-                        totalWidth += $scope.columns[i].width;
-                        var temp = $scope.columns[i];
+                        columnI.width = col.minWidth;
+                        totalWidth += columnI.width;
+                        var temp = columnI;
                         $scope.$evalAsync(function() {
                             self.resizeOnData(temp, true);
                         });
@@ -1658,7 +1660,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                         throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                     }
                 } else {
-                    totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
+                    totalWidth += columnI.width = parseInt(col.width, 10);
                 }
             }
         });
