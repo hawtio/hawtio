@@ -95,8 +95,11 @@ public class Main {
             // on Windows when using mvn -Pwatch
             // see http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
             // https://github.com/hawtio/hawtio/issues/22
-            context.setCopyWebDir(true);
-            context.setInitParameter("useFileMappedBuffer", "false");
+            if (System.getProperty("jettyUseFileLock", "").toLowerCase().equals("false")) {
+                LOG.info("Disabling the use of the Jetty file lock for static content to try fix incremental grunt compilation on Windows");
+                context.setCopyWebDir(true);
+                context.setInitParameter("useFileMappedBuffer", "false");
+            }
 
             Server server = new Server(port);
             server.setHandler(context);

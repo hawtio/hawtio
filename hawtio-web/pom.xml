@@ -453,6 +453,10 @@
               <key>hawtio.config.dir</key>
               <value>${hawtio-config-dir}</value>
             </systemProperty>
+            <systemProperty>
+              <key>jettyUseFileLock</key>
+              <value>${jetty-use-file-lock}</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
@@ -670,6 +674,7 @@
       <properties>
         <grunt-executable>grunt.cmd</grunt-executable>
         <npm-executable>npm.cmd</npm-executable>
+        <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
   </profiles>
