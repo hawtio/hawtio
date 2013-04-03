@@ -35,6 +35,28 @@ module Camel {
   }
 
   /**
+   * Returns the URI string for the given EIP pattern node or null if it is not applicable
+   */
+  export function getRouteNodeUri(node) {
+    var uri = null;
+    if (node) {
+      uri = node.getAttribute("uri");
+      if (!uri) {
+        var ref = node.getAttribute("ref");
+        if (ref) {
+          uri = "ref:" + ref;
+        }
+      }
+    }
+    return uri;
+  }
+
+  export function getRouteNodeIcon(nodeSettings) {
+    var imageName = nodeSettings["icon"] || "generic24.png";
+    return url("/app/camel/img/" + imageName);
+  }
+
+  /**
    * Adds the route children to the given folder for each step in the route
    */
   export function addRouteChildren(folder: Folder, route) {
@@ -42,24 +64,38 @@ module Camel {
     $(route).children("*").each((idx, n) => {
       var nodeName = n.nodeName;
       if (nodeName) {
-        var name = nodeName;
-        if (nodeName === "from" || nodeName === "to") {
-          var uri = n.getAttribute("uri");
-          if (!uri) {
-            var ref = n.getAttribute("ref");
-            if (ref) {
-              uri = "ref:" + ref;
+        var nodeSettings = _apacheCamelModel.nodes[nodeName];
+        if (nodeSettings) {
+          var label = nodeSettings["title"] || nodeName;
+          var uri = getRouteNodeUri(n);
+          if (uri) {
+            label += " " + uri;
+          }
+          var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
+          var imageUrl = getRouteNodeIcon(nodeSettings);
+
+          var child = new Folder(label);
+          child.domain = jmxDomain;
+          child.typeName = "routeNode";
+          child.icon = imageUrl;
+          child.tooltip = tooltip;
+          folder.children.push(child);
+          addRouteChildren(child, n);
+        } else {
+          // ignore non EIP nodes, though we should add expressions...
+          var langSettings = _apacheCamelModel.languages[nodeName];
+          if (langSettings && folder) {
+            // lets add the language kind
+            var name = langSettings["name"] || nodeName;
+            var text = route.textContent;
+            if (text) {
+              folder.tooltip = folder.title + " " + name + " " + text;
+              folder.title = text;
+            } else {
+              folder.title = folder.title + " " + name;
             }
           }
-          if (uri) {
-            name += " " + uri;
-          }
         }
-        var child = new Folder(name);
-        child.domain = jmxDomain;
-        child.typeName = "routeNode";
-        folder.children.push(child);
-        addRouteChildren(child, n);
       }
     });
   }

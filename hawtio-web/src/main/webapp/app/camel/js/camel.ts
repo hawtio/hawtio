@@ -66,17 +66,13 @@ module Camel {
             var nodeSettings = _apacheCamelModel.nodes[nodeId];
             var node = null;
             if (nodeSettings) {
-              var imageName = nodeSettings["icon"];
-              if (!imageName) {
-                imageName = "generic24.png";
-              }
               var label = nodeSettings["title"] || nodeId;
-              var uri = route.getAttribute("uri");
+              var uri = getRouteNodeUri(route);
               if (uri) {
                 label += " " + uri;
               }
               var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || name;
-              var imageUrl = url("/app/camel/img/" + imageName);
+              var imageUrl = getRouteNodeIcon(nodeSettings);
 
               //console.log("Image URL is " + imageUrl);
               var cid = route.getAttribute("id");

@@ -35,6 +35,8 @@ class Folder implements NodeSelection {
   addClass = null;
   parent: Folder = null;
   isLazy: bool = false;
+  icon: string = null;
+  tooltip: string = null;
 
   get(key:string):NodeSelection {
     return this.map[key];
