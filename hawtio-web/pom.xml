@@ -677,5 +677,37 @@
         <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
+
+    <profile>
+      <!-- Runs the Jasmine Unit tests, requires PhantonJS to be on the path -->
+      <id>jasmine-test</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>PhantomJS Unit Testing</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>phantomjs</executable>
+              <workingDirectory>src/test/specs</workingDirectory>
+              <arguments>
+                <argument>phantomjs_jasminexml_runner.js</argument>
+                <argument>SpecRunner.html</argument>
+                <argument>${project.build.directory}/surefire-reports</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
