@@ -117,6 +117,10 @@ Once you have a local build (or ideally are using the _mvn -Pwatch_ command to d
 
 This then runs the [unit test specifications](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
 
+If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) you can then hit the LiveReload icon to the right of the address bar and if you are running the watch profile, the tests are re-run every time there is a compile:
+
+    mvn -Pwatch
+
 
 ## Running the End-to-End Integration Tests
 
