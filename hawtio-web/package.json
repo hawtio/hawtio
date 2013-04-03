@@ -38,7 +38,8 @@
     "analyze": true,
     "devDependencies": {
         "grunt": "~0.3.17",
-        "typescript": "~0.8.1"
+        "typescript": "~0.8.1",
+        "phantomjs": "1.9.0-1"
     },
     "bundledDependencies": [
     ],
