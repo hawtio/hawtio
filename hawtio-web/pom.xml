@@ -17,6 +17,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
     <grunt-executable>grunt</grunt-executable>
     <npm-executable>npm</npm-executable>
+    <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs</phantomjs-executable>
   </properties>
 
 
@@ -674,13 +675,16 @@
       <properties>
         <grunt-executable>grunt.cmd</grunt-executable>
         <npm-executable>npm.cmd</npm-executable>
+        <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs.cmd</phantomjs-executable>
         <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
 
     <profile>
-      <!-- Runs the Jasmine Unit tests, requires PhantonJS to be on the path -->
       <id>jasmine-test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -697,7 +701,7 @@
               </execution>
             </executions>
             <configuration>
-              <executable>phantomjs</executable>
+              <executable>${phantomjs-executable}</executable>
               <workingDirectory>src/test/specs</workingDirectory>
               <arguments>
                 <argument>phantomjs_jasminexml_runner.js</argument>
