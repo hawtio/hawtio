@@ -77,8 +77,11 @@ module Camel {
           var child = new Folder(label);
           child.domain = jmxDomain;
           child.typeName = "routeNode";
+          var id = n.getAttribute("id") || nodeName + idx;
+          child.key = folder.key + "." + id;
           child.icon = imageUrl;
           child.tooltip = tooltip;
+          child["routeXmlNode"] = n;
           folder.children.push(child);
           addRouteChildren(child, n);
         } else {
