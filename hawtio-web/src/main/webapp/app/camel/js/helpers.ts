@@ -77,6 +77,9 @@ module Camel {
           var child = new Folder(label);
           child.domain = jmxDomain;
           child.typeName = "routeNode";
+          // TODO should maybe auto-generate these?
+          child.parent = folder;
+          child.folderNames = folder.folderNames;
           var id = n.getAttribute("id") || nodeName + idx;
           child.key = folder.key + "." + id;
           child.icon = imageUrl;
