@@ -83,10 +83,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           return {};
         }).
 
-        factory('jmxTreeLazyLoadRegistry',function () {
-          return {};
-        }).
-
         factory('helpRegistry', function($rootScope) {
           return new Core.HelpRegistry($rootScope);
         }).

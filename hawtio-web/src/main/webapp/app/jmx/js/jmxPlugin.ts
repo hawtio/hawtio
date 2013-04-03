@@ -9,6 +9,10 @@ module Jmx {
             when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html'}).
             when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html'})
   }).
+          factory('jmxTreeLazyLoadRegistry',function () {
+            return Jmx.lazyLoaders;
+          }).
+
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
 
             viewRegistry['jmx'] = layoutTree;

@@ -1,9 +1,14 @@
+/// <reference path="../../jmx/js/helpers.ts"/>
+
 module Camel {
+  import jmxModule = Jmx;
+
   var pluginName = 'camel';
   export var jmxDomain = 'org.apache.camel';
 
   var routeToolBar = "app/camel/html/attributeToolBarRoutes.html";
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
+
 
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
@@ -16,22 +21,9 @@ module Camel {
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'})
           }).
           filter('camelIconClass', () => iconClass).
-          run((workspace:Workspace, jolokia, viewRegistry, jmxTreeLazyLoadRegistry) => {
+          run((workspace:Workspace, jolokia, viewRegistry) => {
 
             viewRegistry['integration'] = 'app/camel/html/layoutCamelTree.html';
-
-            jmxTreeLazyLoadRegistry[jmxDomain] = [function (folder, typeName, onComplete) {
-              if ("routes" === typeName) {
-                processRouteXml(workspace, jolokia, folder, (route) => {
-                  if (route) {
-                    addRouteChildren(folder, route);
-                  }
-                  onComplete();
-                });
-              } else {
-                onComplete();
-              }
-            }];
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
               // TODO there should be a nicer way to do this!
@@ -158,4 +150,26 @@ module Camel {
           });
 
   hawtioPluginLoader.addModule(pluginName);
+
+  // register the jmx lazy loader here as it won't have been invoked in the run methot
+  hawtioPluginLoader.loadPlugins(() => {
+    jmxModule.registerLazyLoadHandler(jmxDomain, (folder:Folder) => {
+      if (jmxDomain === folder.domain && "routes" === folder.typeName) {
+        return (workspace, folder, onComplete) => {
+          if ("routes" === folder.typeName) {
+            processRouteXml(workspace, workspace.jolokia, folder, (route) => {
+              if (route) {
+                addRouteChildren(folder, route);
+              }
+              onComplete();
+            });
+          } else {
+            onComplete();
+          }
+        }
+      }
+      return null;
+    });
+  });
+
 }

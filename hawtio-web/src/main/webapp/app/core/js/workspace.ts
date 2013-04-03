@@ -6,6 +6,7 @@ interface MenuItem {
   href: () => any;
 }
 
+
 class Workspace {
   public operationCounter = 0;
   public selection:NodeSelection;
@@ -311,12 +312,8 @@ class Workspace {
       })
     } else {
       // we have no children so enable lazy loading if we have a custom loader registered
-      var customLoader = this.jmxTreeLazyLoadRegistry[folder.domain];
-      if (customLoader) {
-        console.log("Enabling lazy loading for " + folder.title);
-        folder.isLazy = true;
-      } else {
-        // TODO dirty hack as the jmxTreeLazyLoadRegistry is not configured until after we load the jmx tree
+      var lazyFunction = Jmx.findLazyLoadingFunction(this, folder);
+      if (lazyFunction) {
         folder.isLazy = true;
       }
     }

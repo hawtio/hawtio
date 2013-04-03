@@ -2,6 +2,43 @@ module Jmx {
 
   var attributesToolBars = {};
 
+  export var lazyLoaders = null;
+
+  export function findLazyLoadingFunction(workspace, folder) {
+    var factories = workspace.jmxTreeLazyLoadRegistry[folder.domain];
+    var lazyFunction = null;
+    if (factories && factories.length) {
+      angular.forEach(factories, (customLoader) => {
+        if (!lazyFunction) {
+          lazyFunction = customLoader(folder);
+        }
+      });
+    }
+    return lazyFunction;
+  }
+
+
+  export function registerLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Folder) => any) {
+    if (!lazyLoaders) {
+      lazyLoaders = {};
+    }
+    var array = lazyLoaders[domain];
+    if (!array) {
+      array = [];
+      lazyLoaders[domain] = array;
+    }
+    array.push(lazyLoaderFactory);
+  }
+
+  export function unregisterLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Folder) => any) {
+    if (lazyLoaders) {
+      var array = lazyLoaders[domain];
+      if (array) {
+        array.remove(lazyLoaderFactory);
+      }
+    }
+  }
+
   /**
    * Registers a toolbar template for the given plugin name, jmxDomain.
    *
@@ -99,27 +136,23 @@ module Jmx {
         },
         onLazyRead: function(treeNode) {
           var folder = treeNode.data;
+          var plugin = null;
           if (folder) {
+            plugin = Jmx.findLazyLoadingFunction(workspace, folder);
+          }
+          if (plugin) {
             console.log("Lazy loading folder " + folder.title);
-            var domain = folder.domain;
-            var customPlugins = workspace.jmxTreeLazyLoadRegistry[domain];
-            if (customPlugins && customPlugins.length) {
-              var oldChildren = folder.children;
-              angular.forEach(customPlugins, (plugin) => {
-                plugin(folder, folder.typeName, () => {
-                  treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-                  var newChildren = folder.children;
-                  if (newChildren !== oldChildren) {
-                    treeNode.removeChildren();
-                    angular.forEach(newChildren, newChild => {
-                      treeNode.addChild(newChild);
-                    });
-                  }
-                });
-              });
-            } else {
+            var oldChildren = folder.childen;
+            plugin(workspace, folder, () => {
               treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-            }
+              var newChildren = folder.children;
+              if (newChildren !== oldChildren) {
+                treeNode.removeChildren();
+                angular.forEach(newChildren, newChild => {
+                  treeNode.addChild(newChild);
+                });
+              }
+            });
           } else {
             treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
           }
