@@ -13,8 +13,7 @@ module Camel {
     });
 
     function updateRoutes() {
-      var selection = workspace.selection;
-      var routeXmlNode = selection ? selection["routeXmlNode"] : null;
+      var routeXmlNode = getSelectedRouteNode(workspace);
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node

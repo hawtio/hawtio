@@ -19,8 +19,12 @@ module Camel {
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
     function updateRoutes() {
+      var routeXmlNode = getSelectedRouteNode(workspace);
       $scope.mbean = getSelectionCamelContextMBean(workspace);
-      if ($scope.mbean) {
+      if (routeXmlNode) {
+        $scope.source = Core.xmlNodeToString(routeXmlNode);
+        Core.$apply($scope);
+      } else if ($scope.mbean) {
         var jolokia = workspace.jolokia;
         jolokia.request(
                 {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},

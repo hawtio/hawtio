@@ -56,6 +56,11 @@ module Camel {
     return url("/app/camel/img/" + imageName);
   }
 
+  export function getSelectedRouteNode(workspace:Workspace) {
+    var selection = workspace.selection;
+    return selection ? selection["routeXmlNode"] : null;
+  }
+
   /**
    * Adds the route children to the given folder for each step in the route
    */
