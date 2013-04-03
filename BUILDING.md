@@ -110,7 +110,13 @@ Then to incrementally compile the project its a simple matter of running 'grunt'
 
 ## Running Unit Tests
 
-Once you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via
+You can run the unit tests via maven:
+
+    cd hawtio-web
+    mvn test
+
+
+If you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via the following:
 
     cd hawtio-web
     open src/test/specs/SpecRunner.html
@@ -120,6 +126,8 @@ This then runs the [unit test specifications](https://github.com/hawtio/hawtio/t
 If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) you can then hit the LiveReload icon to the right of the address bar and if you are running the watch profile, the tests are re-run every time there is a compile:
 
     mvn -Pwatch
+
+Now the unit tests are all re-run whenever you edit the source.
 
 
 ## Running the End-to-End Integration Tests
