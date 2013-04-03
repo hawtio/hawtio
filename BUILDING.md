@@ -115,7 +115,7 @@ Once you have a local build (or ideally are using the _mvn -Pwatch_ command to d
     cd hawtio-web
     open src/test/specs/SpecRunner.html
 
-This then runs the [unit test specificiations](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
+This then runs the [unit test specifications](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
 
 
 ## Running the End-to-End Integration Tests
