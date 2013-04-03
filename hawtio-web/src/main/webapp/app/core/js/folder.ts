@@ -34,7 +34,7 @@ class Folder implements NodeSelection {
   entries = {};
   addClass = null;
   parent: Folder = null;
-
+  isLazy: bool = false;
 
   get(key:string):NodeSelection {
     return this.map[key];

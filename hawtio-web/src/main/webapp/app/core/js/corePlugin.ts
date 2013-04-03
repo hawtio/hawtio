@@ -83,6 +83,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
           return {};
         }).
 
+        factory('jmxTreeLazyLoadRegistry',function () {
+          return {};
+        }).
+
         factory('helpRegistry', function($rootScope) {
           return new Core.HelpRegistry($rootScope);
         }).
@@ -99,8 +103,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui']).
         factory('toastr', ($window) => {
           return $window.toastr;
         }).
-        factory('workspace',($location:ng.ILocationService, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
-          var answer = new Workspace(jolokia, $location, $compile, $templateCache, localStorage, $rootScope);
+        factory('workspace',($location:ng.ILocationService, jmxTreeLazyLoadRegistry, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
+          var answer = new Workspace(jolokia, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
           answer.loadTree();
           return answer;
         }).

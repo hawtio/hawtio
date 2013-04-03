@@ -86,6 +86,7 @@ module Jmx {
     //$scope.workspace = workspace;
 
     if (treeElement.length) {
+      workspace.treeElement = treeElement;
       treeElement.dynatree({
         /**
          * The event handler called when a different node in the tree is selected
@@ -95,6 +96,33 @@ module Jmx {
           //$scope.select(data);
           workspace.updateSelectionNode(data);
           $scope.$apply();
+        },
+        onLazyRead: function(treeNode) {
+          var folder = treeNode.data;
+          if (folder) {
+            console.log("Lazy loading folder " + folder.title);
+            var domain = folder.domain;
+            var customPlugins = workspace.jmxTreeLazyLoadRegistry[domain];
+            if (customPlugins && customPlugins.length) {
+              var oldChildren = folder.children;
+              angular.forEach(customPlugins, (plugin) => {
+                plugin(folder, folder.typeName, () => {
+                  treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
+                  var newChildren = folder.children;
+                  if (newChildren !== oldChildren) {
+                    treeNode.removeChildren();
+                    angular.forEach(newChildren, newChild => {
+                      treeNode.addChild(newChild);
+                    });
+                  }
+                });
+              });
+            } else {
+              treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
+            }
+          } else {
+            treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
+          }
         },
         onClick: function (node:DynaTreeNode, event:Event) {
           if (event["metaKey"]) {
@@ -130,7 +158,7 @@ module Jmx {
       });
 
       if (redraw) {
-        treeElement.dynatree("getTree").reload();
+        workspace.redrawTree();
       }
     }
   }

@@ -21,8 +21,10 @@ class Workspace {
   public pluginUpdateCounter = null;
   public treeWatchRegisterHandle = null;
   public treeWatcherCounter = null;
+  public treeElement = null;
 
   constructor(public jolokia,
+              public jmxTreeLazyLoadRegistry,
               public $location,
               public $compile:ng.ICompileService,
               public $templateCache:ng.ITemplateCacheService, 
@@ -35,7 +37,7 @@ class Workspace {
    * Creates a shallow copy child workspace with its own selection and location
    */
   public createChildWorkspace(location): Workspace {
-    var child = new Workspace(this.jolokia, this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope);
+    var child = new Workspace(this.jolokia, this.jmxTreeLazyLoadRegistry, this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope);
     // lets copy across all the properties just in case
     angular.forEach(this, (value, key) => child[key] = value);
     child.$location = location;
@@ -290,11 +292,33 @@ class Workspace {
       }
 
       tree.sortChildren(true);
+
+      // now lets mark the nodes with no children as lazy loading...
+      this.enableLazyLoading(tree);
       this.tree = tree;
 
       this.maybeMonitorPlugins();
 
       this.$rootScope.$broadcast('jmxTreeUpdated');
+    }
+  }
+
+  private enableLazyLoading(folder: Folder) {
+    var children = folder.children;
+    if (children && children.length) {
+      angular.forEach(children, (child) => {
+        this.enableLazyLoading(child);
+      })
+    } else {
+      // we have no children so enable lazy loading if we have a custom loader registered
+      var customLoader = this.jmxTreeLazyLoadRegistry[folder.domain];
+      if (customLoader) {
+        console.log("Enabling lazy loading for " + folder.title);
+        folder.isLazy = true;
+      } else {
+        // TODO dirty hack as the jmxTreeLazyLoadRegistry is not configured until after we load the jmx tree
+        folder.isLazy = true;
+      }
     }
   }
 
@@ -491,6 +515,30 @@ class Workspace {
         if (defaultPath) {
           this.$location.path(defaultPath);
         }
+      }
+    }
+  }
+
+  /**
+   * Redraws the tree widget
+   */
+  public redrawTree() {
+    var treeElement = this.treeElement;
+    if (treeElement) {
+      treeElement.dynatree("getTree").reload();
+    }
+  }
+
+
+  /**
+   * Expand / collapse the current active node
+   */
+  public expandSelection(flag) {
+    var treeElement = this.treeElement;
+    if (treeElement) {
+      var node = treeElement.dynatree("getActiveNode");
+      if (node) {
+        node.expand(flag);
       }
     }
   }

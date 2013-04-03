@@ -22,7 +22,7 @@ module Jmx {
       $scope.tree = workspace.tree;
       enableTree($scope, $location, workspace, treeElement, $scope.tree.children, true);
       setTimeout(updateSelectionFromURL, 50);
-    }
+    };
 
     $scope.$on('jmxTreeUpdated', $scope.populateTree);
 

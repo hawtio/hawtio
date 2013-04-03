@@ -1,6 +1,6 @@
 module Camel {
   var pluginName = 'camel';
-  var jmxDomain = 'org.apache.camel';
+  export var jmxDomain = 'org.apache.camel';
 
   var routeToolBar = "app/camel/html/attributeToolBarRoutes.html";
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
@@ -16,9 +16,22 @@ module Camel {
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'})
           }).
           filter('camelIconClass', () => iconClass).
-          run((workspace:Workspace, viewRegistry) => {
+          run((workspace:Workspace, jolokia, viewRegistry, jmxTreeLazyLoadRegistry) => {
 
             viewRegistry['integration'] = 'app/camel/html/layoutCamelTree.html';
+
+            jmxTreeLazyLoadRegistry[jmxDomain] = [function (folder, typeName, onComplete) {
+              if ("routes" === typeName) {
+                processRouteXml(workspace, jolokia, folder, (route) => {
+                  if (route) {
+                    addRouteChildren(folder, route);
+                  }
+                  onComplete();
+                });
+              } else {
+                onComplete();
+              }
+            }];
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
               // TODO there should be a nicer way to do this!
