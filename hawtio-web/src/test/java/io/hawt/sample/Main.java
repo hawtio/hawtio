@@ -91,6 +91,13 @@ public class Main {
             context.setContextPath(contextPath);
             context.setParentLoaderPriority(true);
 
+            // lets try disable the memory mapped file which causes issues
+            // on Windows when using mvn -Pwatch
+            // see http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
+            // https://github.com/hawtio/hawtio/issues/22
+            context.setCopyWebDir(true);
+            context.setInitParameter("useFileMappedBuffer", "false");
+
             Server server = new Server(port);
             server.setHandler(context);
 
