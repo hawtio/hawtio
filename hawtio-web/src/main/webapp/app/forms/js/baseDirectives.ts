@@ -6,9 +6,13 @@ module Forms {
     public type = '';
     public description = '';
     public _default = '';
+    public scope = null;
 
     // Can also be 'view'
     public mode = 'edit';
+
+    // the name of the full schema
+    public schemaName = "schema";
 
     public controlgroupclass = 'control-group';
     public controlclass = 'controls';
@@ -56,6 +60,8 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new InputBaseConfig
       config = configure(config, null, attrs);
+      config.scope = scope;
+      config.schemaName = attrs["schema"] || "schema";
 
       var group = Forms.getControlGroup(config, config, config.name);
       group.append(Forms.getLabel(config, config, attrs["title"] || config.name));
@@ -64,7 +70,6 @@ module Forms {
       controlDiv.append(Forms.getHelpSpan(config, config, config.name));
       group.append(controlDiv);
       $(element).append(this.$compile(group)(scope));
-
     }
 
     public getInput(config, arg, id) {
@@ -132,9 +137,27 @@ module Forms {
       var rc = $('<select>' + defaultOption + '</select>');
       rc.attr('name', id);
 
+      var scope = config.scope;
       var data = config.data;
-      if (data) {
-        rc.attr("ng-options", "for value in " + data + ".enum");
+      if (data && scope) {
+        // this is a big ugly - would be nice to expose this a bit easier...
+        // maybe nested objects should expose the model easily...
+        var fullSchema = scope[config.schemaName];
+        var model = scope[data];
+        // now we need to keep walking the model to find the enum values
+        var paths = id.split(".");
+        var property = null;
+        angular.forEach(paths, (path) => {
+          property = Core.pathGet(model, ["properties", path]);
+          var typeName = Core.pathGet(property, ["type"]);
+          var alias = Forms.lookupDefinition(typeName, fullSchema);
+          if (alias) {
+            model = alias;
+          }
+        });
+        var values = Core.pathGet(property, ["enum"]);
+        scope["$selectValues"] = values;
+        rc.attr("ng-options", "value for value in $selectValues");
       }
       var modelName = arg.model;
       if (!angular.isDefined(arg.model)) {
@@ -294,11 +317,6 @@ module Forms {
       }
       return rc;
     }
-
-
   }
-
-
-
 
 }

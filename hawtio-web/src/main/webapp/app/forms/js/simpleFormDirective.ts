@@ -8,6 +8,9 @@ module Forms {
     // the name of the attribute in the scope which is the data to be editted
     public entity = 'entity';
 
+    // the name of the full schema
+    public schemaName = 'schema';
+
     // set to 'view' or 'create' for different modes
     public mode = 'edit';
 
@@ -74,6 +77,8 @@ module Forms {
       var fullSchemaName = attrs["schema"];
       var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
 
+      config.schemaName = fullSchemaName;
+
       var configScopeName = attrs[this.attributeName] || attrs["data"];
       config = configure(config, scope[configScopeName], attrs);
       config.scopeName = configScopeName;
@@ -119,6 +124,11 @@ module Forms {
           input.attr('name', id);
           input.attr('entity', config.getEntity());
           input.attr('mode', config.getMode());
+
+          var fullSchemaName = config.schemaName;
+          if (fullSchemaName) {
+            input.attr('schema', fullSchemaName);
+          }
 
           if (configScopeName) {
             input.attr('data', configScopeName);
