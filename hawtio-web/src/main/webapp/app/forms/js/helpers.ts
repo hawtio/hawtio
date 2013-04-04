@@ -87,6 +87,14 @@ module Forms {
   }
 
   /**
+   * Returns true if the given schema definition is an object
+   */
+  export function isObjectType(definition) {
+    var typeName = Core.pathGet(definition, "type");
+    return typeName && "object" === typeName;
+  }
+
+  /**
    * Returns true if the given property represents a nested object or array of objects
    */
   export function isArrayOrNestedObject(property, schema) {

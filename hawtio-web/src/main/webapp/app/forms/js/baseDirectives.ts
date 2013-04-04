@@ -58,7 +58,7 @@ module Forms {
       config = configure(config, null, attrs);
 
       var group = Forms.getControlGroup(config, config, config.name);
-      group.append(Forms.getLabel(config, config, config.name));
+      group.append(Forms.getLabel(config, config, attrs["title"] || config.name));
       var controlDiv = Forms.getControlDiv(config);
       controlDiv.append(this.getInput(config, config, config.name));
       controlDiv.append(Forms.getHelpSpan(config, config, config.name));
@@ -157,7 +157,7 @@ module Forms {
   }
 
 
-  export class ObjectInput extends InputBase {
+  export class ArrayInput extends InputBase {
 
     constructor(private workspace, private $compile) {
       super(workspace, $compile);

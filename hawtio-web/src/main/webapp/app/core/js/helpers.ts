@@ -515,17 +515,29 @@ module Core {
     return value;
   }
 
+  var _escapeHtmlChars = {
+    "#": "&#35;",
+    "'": "&#39;",
+    "<": "&lt;",
+    "\"": "&quot;"
+  };
+
   export function escapeHtml(str) {
     if (angular.isString(str)) {
       var newStr = "";
       for (var i = 0; i < str.length; i++) {
+        var ch = str.charAt(i);
+        var ch = _escapeHtmlChars[ch] || ch;
+        newStr += ch;
+/*
         var nextCode = str.charCodeAt(i);
         if (nextCode > 0 && nextCode < 48) {
           newStr += "&#" + nextCode + ";";
         }
         else {
-          newStr += str.charAt(i);
+          newStr += ch;
         }
+*/
       }
       return newStr;
     }

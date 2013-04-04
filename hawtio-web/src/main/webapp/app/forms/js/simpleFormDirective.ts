@@ -71,7 +71,10 @@ module Forms {
     private doLink(scope, element, attrs) {
       var config = new SimpleFormConfig;
 
-      var configScopeName = attrs[this.attributeName] || attrs["schema"] || attrs["data"];
+      var fullSchemaName = attrs["schema"];
+      var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
+
+      var configScopeName = attrs[this.attributeName] || attrs["data"];
       config = configure(config, scope[configScopeName], attrs);
       config.scopeName = configScopeName;
       config.scope = scope;
@@ -88,29 +91,45 @@ module Forms {
       var fieldset = form.find('fieldset');
 
       var schema = config.data;
-      angular.forEach(schema.properties, (arg, id) => {
 
+      function addProperty(id, property) {
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
-
-        var input = $('<div></div>');
-
-        input.attr(Forms.normalize(arg.type, schema), '');
-        angular.forEach(arg, function(value, key) {
-          if (angular.isString(value) && key.indexOf("$") < 0) {
-            var html = Core.escapeHtml(value);
-            input.attr(key, html);
-          }
-        });
-        input.attr('name', id);
-        input.attr('entity', config.getEntity());
-        input.attr('mode', config.getMode());
-
-        if (configScopeName) {
-          input.attr('data', configScopeName);
+        var propTypeName = property.type;
+        var propSchema = Forms.lookupDefinition(propTypeName, schema);
+        if (!propSchema) {
+          propSchema = Forms.lookupDefinition(propTypeName, fullSchema);
         }
+        if (propSchema && Forms.isObjectType(propSchema)) {
+          console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));
 
-        fieldset.append(input);
+          angular.forEach(propSchema.properties, (childProp, childId) => {
+            var newId = id + "." + childId;
+            addProperty(newId, childProp);
+          });
+        } else {
+          var input = $('<div></div>');
+          input.attr(Forms.normalize(propTypeName, schema), '');
+          angular.forEach(property, function (value, key) {
+            if (angular.isString(value) && key.indexOf("$") < 0) {
+              var html = Core.escapeHtml(value);
+              input.attr(key, html);
+            }
+          });
+          input.attr('name', id);
+          input.attr('entity', config.getEntity());
+          input.attr('mode', config.getMode());
+
+          if (configScopeName) {
+            input.attr('data', configScopeName);
+          }
+
+          fieldset.append(input);
+        }
+      }
+
+      angular.forEach(schema.properties, (property, id) => {
+        addProperty(id, property);
       });
 
       var findFunction = function(scope, func) {

@@ -21,8 +21,8 @@ module Forms {
           directive('hawtioFormNumber', function (workspace, $compile) {
             return new Forms.NumberInput(workspace, $compile);
           }).
-          directive('hawtioFormObject', function(workspace, $compile) {
-            return new Forms.ObjectInput(workspace, $compile);
+          directive('hawtioFormArray', function(workspace, $compile) {
+            return new Forms.ArrayInput(workspace, $compile);
           }).
           directive('hawtioFormCheckbox', function(workspace, $compile) {
             return new Forms.BooleanInput(workspace, $compile);

@@ -17,13 +17,23 @@ module Forms {
       case "java.lang.float":
       case "java.lang.double":
         return "hawtio-form-number";
+
+      // collections or arrays
       case "array":
+      case "java.lang.array":
+      case "java.lang.iterable":
+      case "java.util.list":
+      case "java.util.collection":
+      case "java.util.iterator":
+      case "java.util.set":
       case "object[]":
 
         // TODO hack for now - objects should not really use the table, thats only really for arrays...
+/*
       case "object":
       case "java.lang.object":
-        return "hawtio-form-object";
+*/
+        return "hawtio-form-array";
       case "boolean":
       case "bool":
       case "java.lang.boolean":
