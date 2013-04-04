@@ -78,7 +78,6 @@ module Forms {
         rc.attr('ng-model', modelName);
         rc.append('{{' + modelName + '}}')
       }
-
       return rc;
     }
   }
@@ -99,6 +98,44 @@ module Forms {
       var rc = $('<input type="' + this.type + '">');
       rc.attr('name', id);
 
+      var modelName = arg.model;
+      if (!angular.isDefined(arg.model)) {
+        // TODO always use 2 way binding?
+        modelName = config.getEntity() + "." + id;
+      }
+      if (modelName) {
+        rc.attr('ng-model', modelName);
+      }
+      if (config.isReadOnly()) {
+        rc.attr('readonly', 'true');
+      }
+      return rc;
+    }
+
+  }
+
+  export class SelectInput extends InputBase {
+
+    constructor(private workspace, private $compile) {
+      super(workspace, $compile);
+    }
+
+    public getInput(config, arg, id) {
+      if (config.isReadOnly()) {
+        return super.getInput(config, arg, id);
+      }
+      // TODO calculate from input attributes...
+      var required = true;
+
+      // TODO we could configure the null option...
+      var defaultOption = required ? "" : '<option value=""></option>';
+      var rc = $('<select>' + defaultOption + '</select>');
+      rc.attr('name', id);
+
+      var data = config.data;
+      if (data) {
+        rc.attr("ng-options", "for value in " + data + ".enum");
+      }
       var modelName = arg.model;
       if (!angular.isDefined(arg.model)) {
         // TODO always use 2 way binding?

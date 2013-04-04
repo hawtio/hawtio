@@ -109,7 +109,7 @@ module Forms {
           });
         } else {
           var input = $('<div></div>');
-          input.attr(Forms.normalize(propTypeName, schema), '');
+          input.attr(Forms.normalize(propTypeName, property, schema), '');
           angular.forEach(property, function (value, key) {
             if (angular.isString(value) && key.indexOf("$") < 0) {
               var html = Core.escapeHtml(value);

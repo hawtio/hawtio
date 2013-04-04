@@ -1,10 +1,16 @@
 module Forms {
 
-  export function normalize(type, schema) {
+  export function normalize(type, property, schema) {
     type = Forms.resolveTypeNameAlias(type, schema);
     if (!type) {
       return "hawtio-form-text";
     }
+    var enumValues = Core.pathGet(property, ["enum"]);
+    if (enumValues) {
+      // TODO could use different kinds of radio / combo box
+      return "hawtio-form-select";
+    }
+
     switch (type.toLowerCase()) {
       case "int":
       case "integer":
