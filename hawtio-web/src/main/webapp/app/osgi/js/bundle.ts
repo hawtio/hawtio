@@ -123,51 +123,67 @@ module Osgi {
             );
 
             // setup tooltips
-            $("#bsn").tooltip({title: readHeaderData($scope.row.Headers["Bundle-SymbolicName"].Value),
+            $("#bsn").tooltip({title: readBSNHeaderData($scope.row.Headers["Bundle-SymbolicName"].Value),
                 placement: "right"});
 
-            // setup export popovers
-            var exportPackageHeaders = Osgi.parseExportPackageHeaders($scope.row.Headers);
+            createImportPackageSection();
+            createExportPackageSection();
+        };
+
+        function createImportPackageSection() : void {
+            // setup popovers
+            var importPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Import-Package");
+            for (var pkg in $scope.row.ImportData) {
+                var po = "<small><table>" +
+                    "<tr><td><strong>Imported Version=</strong>" + $scope.row.ImportData[pkg].ReportedVersion + "</td></tr>";
+                po += formatAttributesAndDirectivesForPopover(importPackageHeaders[pkg], false);
+                po += "</table></small>";
+                if (importPackageHeaders[pkg]["Dresolution"] !== "optional") {
+                    $(document.getElementById("import." + pkg)).addClass("badge-info");
+                }
+                $(document.getElementById("import." + pkg)).
+                    popover({title: "attributes and directives", content: po, trigger: "hover", html: true });
+
+                // Unset the value so that we can see whether there are any unbound optional imports left...
+                importPackageHeaders[pkg] = undefined;
+            }
+
+            var unsatisfied = "";
+            for (var pkg in importPackageHeaders) {
+                if (importPackageHeaders[pkg] === undefined) {
+                    continue;
+                }
+                unsatisfied += "<tr><td><div class='less-big badge badge-warning' id='unsatisfied." + pkg + "'>" + pkg + "</div></td></tr>";
+            }
+
+            if (unsatisfied !== "") {
+                unsatisfied = "<p/><p class='text-warning'>The following optional imports were not satisfied:<table>" + unsatisfied + "</table></p>"
+                document.getElementById("unsatisfiedOptionalImports").innerHTML = unsatisfied;
+            }
+
+            for (var pkg in importPackageHeaders) {
+                if (importPackageHeaders[pkg] === undefined) {
+                    continue;
+                }
+                var po = "<small><table>";
+                po += formatAttributesAndDirectivesForPopover(importPackageHeaders[pkg], false);
+                po += "</table></small>";
+                $(document.getElementById("unsatisfied." + pkg)).
+                    popover({title: "attributes and directives", content: po, trigger: "hover", html: true });
+            }
+        }
+
+        function createExportPackageSection() : void {
+            // setup popovers
+            var exportPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Export-Package");
             for (var pkg in $scope.row.ExportData) {
                 var po = "<small><table>" +
-                        "<tr><td><strong class='text-info'>Version=</strong>" + $scope.row.ExportData[pkg].ReportedVersion + "</td></tr>";
-                for (var da in exportPackageHeaders[pkg]) {
-                    var type = da.charAt(0);
-
-                    var separator = "";
-                    var txtClass;
-                    if (type === "A") {
-                        separator = "=";
-                        txtClass = "text-info";
-                    }
-                    if (type === "D") {
-                        separator = ":=";
-                        txtClass = "muted";
-                    }
-
-                    if (separator !== "") {
-                        if (da === "Aversion") {
-                            // We're using the 'ReportedVersion' as it comes from PackageAdmin
-                            continue;
-                        }
-
-                        var value = exportPackageHeaders[pkg][da];
-                        value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
-                        po += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
-                    }
-                }
+                    "<tr><td><strong>Exported Version=</strong>" + $scope.row.ExportData[pkg].ReportedVersion + "</td></tr>";
+                po += formatAttributesAndDirectivesForPopover(exportPackageHeaders[pkg], true);
                 po += "</table></small>";
                 $(document.getElementById("export." + pkg)).
                     popover({title: "attributes and directives", content: po, trigger: "hover", html: true });
             }
-        };
-
-        function readHeaderData(header: string) : string {
-            var idx = header.indexOf(";");
-            if (idx <= 0)
-                return "";
-
-            return header.substring(idx + 1).trim();
         }
 
         function updateTableContents() {
@@ -214,5 +230,50 @@ module Osgi {
             ],
                     onSuccess($location.path("/osgi/bundle-list")));
         };
+    }
+
+    // These functions are exported independently to facilitate unit testing
+    export function readBSNHeaderData(header: string) : string {
+        var idx = header.indexOf(";");
+        if (idx <= 0) {
+            return "";
+        }
+        return header.substring(idx + 1).trim();
+    }
+
+    export function formatAttributesAndDirectivesForPopover(data : {}, skipVersion : bool) : string {
+        var str = "";
+        var sortedKeys = Object.keys(data).sort();
+        for (var i = 0; i < sortedKeys.length; i++) {
+            var da = sortedKeys[i];
+            var type = da.charAt(0);
+
+            var separator = "";
+            var txtClass;
+            if (type === "A") {
+                separator = "=";
+                txtClass = "text-info";
+            }
+            if (type === "D") {
+                separator = ":=";
+                txtClass = "muted";
+            }
+
+            if (separator !== "") {
+                if (skipVersion) {
+                    if (da === "Aversion") {
+                        // We're using the 'ReportedVersion' as it comes from PackageAdmin
+                        continue;
+                    }
+                }
+
+                var value = data[da];
+                if (value.length > 15) {
+                    value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
+                }
+                str += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
+            }
+        }
+        return str;
     }
 }

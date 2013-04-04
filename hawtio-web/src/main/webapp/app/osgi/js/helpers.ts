@@ -2,7 +2,8 @@ module Osgi {
 
     export function defaultBundleValues(workspace:Workspace, $scope, values) {
         angular.forEach(values, (row) => {
-            row["ExportData"] = handleExportedPackages(row["ExportedPackages"]);
+            row["ImportData"] = parseActualPackages(row["ImportedPackages"])
+            row["ExportData"] = parseActualPackages(row["ExportedPackages"]);
             row["IdentifierLink"] = bundleLinks(workspace, row["Identifier"]);
             row["Hosts"] = bundleLinks(workspace, row["Hosts"]);
             row["Fragments"] = bundleLinks(workspace, row["Fragments"]);
@@ -74,14 +75,14 @@ module Osgi {
         return array;
     }
 
-    export function handleExportedPackages(packages : string[]) : {} {
+    export function parseActualPackages(packages : string[]) : {} {
         var result = {};
         for (var i = 0; i < packages.length; i++) {
-            var exported = packages[i];
-            var idx = exported.indexOf(";");
+            var pkg = packages[i];
+            var idx = pkg.indexOf(";");
             if (idx > 0) {
-                var name = exported.substring(0, idx);
-                var ver = exported.substring(idx + 1)
+                var name = pkg.substring(0, idx);
+                var ver = pkg.substring(idx + 1)
                 var data = result[name];
                 if (data === undefined) {
                     data = {};
@@ -93,11 +94,11 @@ module Osgi {
         return result;
     }
 
-    export function parseExportPackageHeaders(headers : {}) : {} {
+    export function parseManifestHeader(headers : {}, name : string) : {} {
         var result = {};
         var data = {}
 
-        var hdr = headers["Export-Package"];
+        var hdr = headers[name];
         if (hdr === undefined) {
             return result;
         }
@@ -107,7 +108,7 @@ module Osgi {
         var pkgName = "";
         var daDecl = "";
         for (var i = 0; i < ephdr.length; i++) {
-            var c = ephdr.charAt(i);
+            var c = ephdr[i];
             if (c === '"') {
                 inQuotes = !inQuotes;
                 continue;
