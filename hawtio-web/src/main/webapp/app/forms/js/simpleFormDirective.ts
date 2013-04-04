@@ -27,7 +27,7 @@ module Forms {
     public properties = [];
     public action = '';
 
-    public formclass = 'form-horizontal no-bottom-margin';
+    public formclass = 'hawtio-form form-horizontal no-bottom-margin';
     public controlgroupclass = 'control-group';
     public controlclass = 'controls';
     public labelclass = 'control-label';
@@ -97,6 +97,33 @@ module Forms {
 
       var schema = config.data;
 
+      var tabs = {
+        elements: {},
+        locations: {},
+        use: false
+      };
+      
+      if (angular.isDefined(schema.tabs)) {
+        tabs.use = true;
+        tabs['div'] = $('<div class="tabbable hawtio-form-tabs"></div>');
+
+        angular.forEach(schema.tabs, function(value, key) {
+          tabs.elements[key] = $('<div class="tab-pane" title="' + key + '"></div>');
+          tabs['div'].append(tabs.elements[key]);
+          value.forEach(function(val) {
+            tabs.locations[val] = key;
+          });
+        });
+
+        if (!tabs.locations['*']) {
+          tabs.locations['*'] = Object.extended(schema.tabs).keys()[0];
+        }
+      }
+
+      if (!tabs.use) {
+        fieldset.append('<div class="spacer"></div>');
+      }
+        
       function addProperty(id, property) {
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
@@ -134,13 +161,25 @@ module Forms {
             input.attr('data', configScopeName);
           }
 
-          fieldset.append(input);
+          if (tabs.use) {
+            if (tabs.locations[id]) {
+              tabs.elements[tabs.locations[id]].append(input);
+            } else {
+              tabs.elements[tabs.locations['*']].append(input);
+            }
+          } else {
+            fieldset.append(input);
+          }
         }
       }
 
       angular.forEach(schema.properties, (property, id) => {
         addProperty(id, property);
       });
+
+      if (tabs.use) {
+        fieldset.append(tabs['div']);
+      }
 
       var findFunction = function(scope, func) {
         if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
@@ -179,10 +218,7 @@ module Forms {
 
       fieldset.append('<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">');
 
-      $(element).append(form);
-
-      // compile the template
-      this.$compile(form)(scope);
+      $(element).append(this.$compile(form)(scope));
     }
 
     private createForm(config) {

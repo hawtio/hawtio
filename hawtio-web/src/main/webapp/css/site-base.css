@@ -981,3 +981,62 @@ input[type="checkbox"].hawtio-checkbox {
   margin-right: auto;
 }
 
+div.hawtio-form-tabs div.tab-content {
+  border: 1px solid #D4D4D4;
+  border-radius: 4px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  padding-top: 15px;
+  padding: 10px;
+
+}
+
+.hawtio-form fieldset legend {
+  margin-bottom: 0px;
+  border-bottom: none;
+}
+
+.spacer {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+div.hawtio-form-tabs ul.nav-tabs {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: inherit;
+  background-color: inherit !important;
+  background-image: inherit !important;
+  border-top: none !important;
+  /* border-bottom: 1px solid #D4D4D4 !important; */
+  margin-bottom: 0px !important;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li {
+  border: 1px solid #D4D4D4 !important;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-right: -1px;
+  background-color: inherit;
+  margin-bottom: -1px !important;
+  box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.08) !important;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li.active:first-child {
+  margin-left: 0px;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li.active {
+  margin-right: 1px;
+  margin-left: 2px;
+  border-bottom: 1px solid white !important;
+  background-color: white;
+  box-shadow: 0 -10px 10px -10px rgba(0, 0, 0, 0.1) !important;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li.active a {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  background-color: inherit !important;
+}
+

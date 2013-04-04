@@ -46,7 +46,12 @@ module Forms {
         // TODO - add more types, above is what I remember from jolokia
       },
       description: 'Show some stuff in a form',
-      type: 'java.lang.String'
+      type: 'java.lang.String',
+      tabs: {
+        'Tab One': ['key', 'value'],
+        'Tab Two': ['*'],
+        'Tab Three': ['booleanArg']
+      }
     };
 
     $scope.config = {
