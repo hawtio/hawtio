@@ -1040,3 +1040,12 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   background-color: inherit !important;
 }
 
+.popover-inner .popover-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popover {
+  width: auto;
+}
