@@ -123,7 +123,7 @@ module Camel {
           }
         } else {
           // ignore non EIP nodes, though we should add expressions...
-          var langSettings = _apacheCamelModel.languages[nodeId];
+          var langSettings =  Camel.camelLanguageSettings(nodeId);
           if (langSettings && parentNode) {
             // lets add the language kind
             var name = langSettings["name"] || nodeId;

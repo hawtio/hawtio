@@ -14,15 +14,15 @@ module Camel {
     });
 
     function updateData() {
-      $scope.nodeData = {};
-
       var routeXmlNode = getSelectedRouteNode(workspace);
+      $scope.nodeData = getRouteNodeJSON(routeXmlNode);
+
       if (routeXmlNode) {
         var nodeName = routeXmlNode.nodeName;
         $scope.schema = getCamelSchema(nodeName);
 
         if ($scope.schema) {
-          // TODO now lets create the data from the XML
+          console.log("data is: " + JSON.stringify($scope.nodeData, null, "  "));
           console.log("schema is: " + JSON.stringify($scope.schema, null, "  "));
 
           // TODO as a little hack for now lets use the edit form

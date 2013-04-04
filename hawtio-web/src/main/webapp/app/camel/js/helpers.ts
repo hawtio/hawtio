@@ -1,3 +1,4 @@
+
 module Camel {
 
   /**
@@ -51,6 +52,34 @@ module Camel {
     return uri;
   }
 
+  export function getRouteNodeJSON(routeXmlNode, answer = {}) {
+    if (routeXmlNode) {
+      angular.forEach(routeXmlNode.attributes, (attr) => {
+        answer[attr.name] = attr.value;
+      });
+
+      // lets look for nested elements and convert those
+      // explicitly looking for expressions
+      $(routeXmlNode).children("*").each((idx, element) => {
+        var nodeName = element.nodeName;
+        var langSettings = Camel.camelLanguageSettings(nodeName);
+        if (langSettings) {
+          // TODO the expression key could be anything really; how should we know?
+          answer["expression"] = {
+            language: nodeName,
+            expression: element.textContent
+          };
+        } else {
+          var nested = getRouteNodeJSON(element);
+          if (nested) {
+            answer[nodeName] = nested;
+          }
+        }
+      });
+    }
+    return answer;
+  }
+
   export function getRouteNodeIcon(nodeSettings) {
     var imageName = nodeSettings["icon"] || "generic24.png";
     return url("/app/camel/img/" + imageName);
@@ -66,6 +95,13 @@ module Camel {
    */
   export function getCamelSchema(nodeId) {
     return Forms.lookupDefinition(nodeId, _apacheCamelModel);
+  }
+
+  /**
+   * Looks up the Camel language settings for the given language name
+   */
+  export function camelLanguageSettings(nodeName) {
+    return _apacheCamelModel.languages[nodeName];
   }
 
   /**
@@ -101,7 +137,7 @@ module Camel {
           addRouteChildren(child, n);
         } else {
           // ignore non EIP nodes, though we should add expressions...
-          var langSettings = _apacheCamelModel.languages[nodeName];
+          var langSettings = Camel.camelLanguageSettings(nodeName);
           if (langSettings && folder) {
             // lets add the language kind
             var name = langSettings["name"] || nodeName;
