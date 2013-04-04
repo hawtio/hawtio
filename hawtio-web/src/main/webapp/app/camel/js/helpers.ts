@@ -65,7 +65,7 @@ module Camel {
    * Looks up the given node name in the Camel schema
    */
   export function getCamelSchema(nodeId) {
-    return nodeId ? _apacheCamelModel.nodes[nodeId] : null;
+    return nodeId ? _apacheCamelModel.definitions[nodeId] : null;
   }
 
   /**
