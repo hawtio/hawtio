@@ -12,6 +12,15 @@ describe("Forms", function() {
     	        "name": { "type": "string" },
     	        "value": { "type": "string" }
     	    }
+    		},
+    		"bar": {
+    			"type": "object",
+          "extends": {
+            "type": "foo"
+          },
+    	    "properties": {
+    	        "cheese": { "type": "number" }
+    	    }
     		}
     	},
       "properties": {
@@ -40,9 +49,10 @@ describe("Forms", function() {
     };
     var s1 = Forms.findArrayItemsSchema(schema.properties.tableValue, schema);
     var s2 = Forms.findArrayItemsSchema(schema.properties.fooValue, schema);
+    var bar = Forms.lookupDefinition("bar", schema);
 
     expect(Forms.resolveTypeNameAlias(null, schema)).toEqual(null);
-    expect(Forms.resolveTypeNameAlias("bar", schema)).toEqual("bar");
+    expect(Forms.resolveTypeNameAlias("something", schema)).toEqual("something");
     expect(Forms.resolveTypeNameAlias("foo", schema)).toEqual("object");
 
     expect(Forms.isArrayOrNestedObject(schema.properties.key, schema)).toEqual(false);
@@ -55,6 +65,16 @@ describe("Forms", function() {
 
     expect(s1.properties.key.type).toEqual("string");
     expect(s2.properties.name.type).toEqual("string");
+
+    expect(bar.properties.cheese.type).toEqual("number");
+    expect(bar.properties.name.type).toEqual("string");
+    expect(bar.properties.value.type).toEqual("string");
+  });
+
+  it("camel model has inheritence", function() {
+    var toSchema = Forms.lookupDefinition("to", _apacheCamelModel);
+
+    expect(toSchema.properties.id.type).toEqual("string");
   });
 
   it("properties lookup in json schema", function() {

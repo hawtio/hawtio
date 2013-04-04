@@ -23,7 +23,36 @@ module Forms {
     if (schema) {
       var defs = schema.definitions;
       if (defs) {
-        return defs[name];
+        var answer = defs[name];
+        if (answer) {
+          var fullSchema = answer["fullSchema"];
+          if (fullSchema) {
+            return fullSchema;
+          }
+          // we may extend another, if so we need to copy in the base properties
+          var extendsTypes = Core.pathGet(answer, ["extends", "type"]);
+          if (extendsTypes) {
+            fullSchema = angular.copy(answer);
+            fullSchema.properties = fullSchema.properties || {};
+            if (!angular.isArray(extendsTypes)) {
+              extendsTypes = [extendsTypes];
+            }
+            angular.forEach(extendsTypes, (extendType) => {
+              if (angular.isString(extendType)) {
+                var extendDef = lookupDefinition(extendType, schema);
+                var properties = Core.pathGet(extendDef, ["properties"]);
+                if (properties) {
+                  angular.forEach(properties, (property, key) => {
+                    fullSchema.properties[key] = property;
+                  });
+                }
+              }
+            });
+            answer["fullSchema"] = fullSchema;
+            return fullSchema;
+          }
+        }
+        return answer;
       }
     }
     return null;
