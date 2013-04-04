@@ -2,7 +2,7 @@ module Osgi {
 
     export function defaultBundleValues(workspace:Workspace, $scope, values) {
         angular.forEach(values, (row) => {
-            row["ExportData"] = handleExportedPackages(row["ExportedPackages"], row["Headers"]);
+            row["ExportData"] = handleExportedPackages(row["ExportedPackages"]);
             row["IdentifierLink"] = bundleLinks(workspace, row["Identifier"]);
             row["Hosts"] = bundleLinks(workspace, row["Hosts"]);
             row["Fragments"] = bundleLinks(workspace, row["Fragments"]);
@@ -74,9 +74,8 @@ module Osgi {
         return array;
     }
 
-    export function handleExportedPackages(packages : string[], headers : {}) : {} {
-        var result = parseExportPackageHeaders(headers);
-
+    export function handleExportedPackages(packages : string[]) : {} {
+        var result = {};
         for (var i = 0; i < packages.length; i++) {
             var exported = packages[i];
             var idx = exported.indexOf(";");

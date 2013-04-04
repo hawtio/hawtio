@@ -57,14 +57,10 @@ describe("OSGi", function() {
     });
 
     it("helpers.handleExportedPackages1", function() {
-        var value = {};
-        value["Value"] = "org.foo.bar;someattr=1.2.3";
-        var headers = {};
-        headers["Export-Package"] = value;
-        var result = Osgi.handleExportedPackages(["org.foo.bar;1.0.0"], headers);
+        var result = Osgi.handleExportedPackages(["org.foo.bar;1.0.0"]);
 
         expect(Object.keys(result).length).toEqual(1);
-        var expected = {Asomeattr: "1.2.3", ReportedVersion: "1.0.0"};
+        var expected = {ReportedVersion: "1.0.0"};
         expect(result["org.foo.bar"]).toEqual(expected);
     });
 })

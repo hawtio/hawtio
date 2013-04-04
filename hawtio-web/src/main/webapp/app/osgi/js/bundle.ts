@@ -127,10 +127,11 @@ module Osgi {
                 placement: "right"});
 
             // setup export popovers
+            var exportPackageHeaders = Osgi.parseExportPackageHeaders($scope.row.Headers);
             for (var pkg in $scope.row.ExportData) {
                 var po = "<small><table>" +
                         "<tr><td><strong class='text-info'>Version=</strong>" + $scope.row.ExportData[pkg].ReportedVersion + "</td></tr>";
-                for (var da in $scope.row.ExportData[pkg]) {
+                for (var da in exportPackageHeaders[pkg]) {
                     var type = da.charAt(0);
 
                     var separator = "";
@@ -150,7 +151,7 @@ module Osgi {
                             continue;
                         }
 
-                        var value = $scope.row.ExportData[pkg][da];
+                        var value = exportPackageHeaders[pkg][da];
                         value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
                         po += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
                     }
