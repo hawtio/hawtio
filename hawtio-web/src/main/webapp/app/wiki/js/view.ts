@@ -1,5 +1,10 @@
 module Wiki {
 
+  var camelNamespaces = ["http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint"];
+  var springNamespaces = ["http://www.springframework.org/schema/beans"]
+  var droolsNamespaces = ["http://drools.org/schema/drools-spring"]
+
+
   export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
@@ -44,6 +49,14 @@ module Wiki {
           }
         }
       } else {
+        var xmlNamespaces = child.xmlNamespaces;
+        if (xmlNamespaces && xmlNamespaces.length) {
+          if (xmlNamespaces.any((ns) => camelNamespaces.any(ns))) {
+            prefix = "#/wiki/camel";
+          } else {
+            console.log("child " + path + " has namespaces " + xmlNamespaces);
+          }
+        }
         if (child.path.endsWith(".form")) {
           postFix = "?form=/";
         }

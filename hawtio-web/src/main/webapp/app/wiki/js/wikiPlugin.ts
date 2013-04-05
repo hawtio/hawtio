@@ -5,6 +5,7 @@ module Wiki {
             $routeProvider.
                     when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/formTable/:page', {templateUrl: 'app/wiki/html/formTable.html'}).
+                    when('/wiki/camel/:page', {templateUrl: 'app/wiki/html/camel.html'}).
                     when('/wiki/version/:page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/diff/:page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
@@ -21,6 +22,7 @@ module Wiki {
               $routeProvider.
                       when('/wiki/view/' + path, {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki/formTable/' + path, {templateUrl: 'app/wiki/html/formTable.html'}).
+                      when('/wiki/camel/' + path, {templateUrl: 'app/wiki/html/camel.html'}).
                       when('/wiki/version' + path + '/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki/diff' + path + '/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki/create/' + path, {templateUrl: 'app/wiki/html/createPage.html'}).

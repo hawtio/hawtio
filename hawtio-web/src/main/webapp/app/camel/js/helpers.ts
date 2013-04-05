@@ -104,6 +104,37 @@ module Camel {
     return _apacheCamelModel.languages[nodeName];
   }
 
+  export function loadCamelTree(xml: string) {
+    var doc = $.parseXML(xml);
+
+    // TODO get id from camelContext
+    var id = "camelContext";
+    var folder = new Folder(id);
+    folder.addClass = "org-apache-camel-context";
+    folder.domain = Camel.jmxDomain;
+    folder.typeName = "context";
+
+    var context = $(doc).find("camelContext");
+    if (!context || !context.length) {
+      context = $(doc).find("routes");
+    }
+
+    if (context && context.length) {
+      $(context).children("route").each((idx, route) => {
+        // TODO add a route node!!
+          var id = route.getAttribute("id") || "route" + idx;
+          var routeFolder = new Folder(id);
+          routeFolder.addClass = "org-apache-camel-route";
+          routeFolder.typeName = "routes";
+          routeFolder.domain = Camel.jmxDomain;
+          folder.children.push(routeFolder);
+
+          addRouteChildren(routeFolder, route);
+      });
+    }
+    return folder;
+  }
+
   /**
    * Adds the route children to the given folder for each step in the route
    */
