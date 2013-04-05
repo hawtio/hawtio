@@ -77,6 +77,24 @@ describe("OSGi", function() {
         expect(result["org.foo.bar"]).toEqual(expected);
     });
 
+    it("helpers.labelBundleLinks", function() {
+        var mockWorkSpace = {hash: function() {return "";}};
+        var allValues = {39: {SymbolicName: "com.example.foo"},
+            52: {SymbolicName: "org.acme.bar"}};
+
+        var res = Osgi.labelBundleLinks(mockWorkSpace, "52", allValues);
+        expect(res).toContain("#/osgi/bundle/52");
+        expect(res).toContain("org.acme.bar");
+        expect(res).not.toContain("#/osgi/bundle/39");
+        expect(res).not.toContain("com.example.foo");
+
+        var res2 = Osgi.labelBundleLinks(mockWorkSpace, "39", allValues);
+        expect(res2).not.toContain("#/osgi/bundle/52");
+        expect(res2).not.toContain("org.acme.bar");
+        expect(res2).toContain("#/osgi/bundle/39");
+        expect(res2).toContain("com.example.foo");
+    });
+
     it("bundle.readBSNHeader", function() {
         expect(Osgi.readBSNHeaderData("blah.blah")).toEqual("");
         expect(Osgi.readBSNHeaderData("blah.blah;foo=bar;zoo:=zar")).toEqual("foo=bar;zoo:=zar");

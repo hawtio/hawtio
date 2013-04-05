@@ -1,15 +1,16 @@
 module Osgi {
 
     export function defaultBundleValues(workspace:Workspace, $scope, values) {
+        var allValues = values;
         angular.forEach(values, (row) => {
             row["ImportData"] = parseActualPackages(row["ImportedPackages"])
             row["ExportData"] = parseActualPackages(row["ExportedPackages"]);
             row["IdentifierLink"] = bundleLinks(workspace, row["Identifier"]);
-            row["Hosts"] = bundleLinks(workspace, row["Hosts"]);
-            row["Fragments"] = bundleLinks(workspace, row["Fragments"]);
+            row["Hosts"] = labelBundleLinks(workspace, row["Hosts"], allValues);
+            row["Fragments"] = labelBundleLinks(workspace, row["Fragments"], allValues);
             row["ImportedPackages"] = row["ImportedPackages"].union([]);
             row["StateStyle"] = getStateStyle("label", row["State"]);
-            row["RequiringBundles"] = bundleLinks(workspace, row["RequiringBundles"]);
+            row["RequiringBundles"] = labelBundleLinks(workspace, row["RequiringBundles"], allValues);
         });
         return values;
     }
@@ -177,6 +178,19 @@ module Osgi {
         return collection;
     }
 
+    export function labelBundleLinks(workspace, values, allValues) {
+        var answer = "";
+        var sorted = toCollection(values).sort((a,b) => {return a-b});
+        angular.forEach(sorted, function (value, key) {
+            var prefix = "";
+            if (answer.length > 0) {
+                prefix = " ";
+            }
+            var labelText = allValues[value].SymbolicName;
+            answer += prefix + "<a class='label' href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + labelText + "</a>";
+        });
+        return answer;
+    }
 
     export function bundleLinks(workspace, values) {
         var answer = "";
@@ -186,7 +200,7 @@ module Osgi {
             if (answer.length > 0) {
                 prefix = " ";
             }
-            answer += prefix + "<a href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
+            answer += prefix + "<a class='label' href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
         });
         return answer;
     }
