@@ -108,6 +108,13 @@ describe("OSGi", function() {
             toEqual("a=testversion=1.2.3.blahdirective:=1.2.3resolution:=required");
     });
 
+    it("bundle.formatServiceName", function() {
+        expect(Osgi.formatServiceName("a.b.c.DDD")).toEqual("DDD");
+        expect(Osgi.formatServiceName("NoPackage")).toEqual("NoPackage");
+        expect(Osgi.formatServiceName(["org.osgi.service.log.LogService", "org.ops4j.pax.logging.PaxLoggingService", "org.knopflerfish.service.log.LogService", "org.osgi.service.cm.ManagedService"])).
+            toEqual("LogService,ManagedService,PaxLoggingService");
+    });
+
     function stripTags(text) {
         var rv = "";
         var inTag = false;

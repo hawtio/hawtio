@@ -154,6 +154,35 @@
             </td>
         </tr>
         <tr>
+            <td></td>
+            <td>
+                <div class="accordion" id="accordionServices">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionServices"
+                               href="#collapseServices">
+                                Services
+                            </a>
+                        </div>
+                        <div id="collapseServices" class="accordion-body collapse out">
+                            Registered Services
+                            <table>
+                                <tr ng-repeat="id in row.RegisteredServices">
+                                    <td><i class="icon-cog less-big text-success" id="registers.service.{{id}}">{{id}}</i></td>
+                                </tr>
+                            </table><br/>
+                            Services used by this Bundle
+                            <table>
+                                <tr ng-repeat="id in row.ServicesInUse">
+                                    <td><i class="icon-cog less-big text-info" id="uses.service.{{id}}">{{id}}</i></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td>
             </td>
             <td>

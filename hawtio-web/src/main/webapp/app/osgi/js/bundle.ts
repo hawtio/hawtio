@@ -128,19 +128,33 @@ module Osgi {
 
             createImportPackageSection();
             createExportPackageSection();
+            populateServicesSection();
         };
 
         function createImportPackageSection() : void {
             // setup popovers
             var importPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Import-Package");
             for (var pkg in $scope.row.ImportData) {
+                var data = importPackageHeaders[pkg];
                 var po = "<small><table>" +
                     "<tr><td><strong>Imported Version=</strong>" + $scope.row.ImportData[pkg].ReportedVersion + "</td></tr>";
-                po += formatAttributesAndDirectivesForPopover(importPackageHeaders[pkg], false);
-                po += "</table></small>";
-                if (importPackageHeaders[pkg]["Dresolution"] !== "optional") {
-                    $(document.getElementById("import." + pkg)).addClass("badge-info");
+                if (data !== undefined) {
+                    // This happens in case the package was imported due to a DynamicImport-Package
+                    po += formatAttributesAndDirectivesForPopover(data, false);
+                    if (importPackageHeaders[pkg]["Dresolution"] !== "optional") {
+                        $(document.getElementById("import." + pkg)).addClass("badge-info");
+                    }
+                } else {
+                    // This is a dynamic import
+                    $(document.getElementById("import." + pkg)).addClass("badge-important");
+                    var reason = $scope.row.Headers["DynamicImport-Package"];
+                    if (reason !== undefined) {
+                        reason = reason.Value;
+                        po += "<tr><td>Dynamic Import. Imported due to:</td></tr>";
+                        po += "<tr><td><strong>DynamicImport-Package=</strong>" + reason + "</td></tr>";
+                    }
                 }
+                po += "</table></small>";
                 $(document.getElementById("import." + pkg)).
                     popover({title: "attributes and directives", content: po, trigger: "hover", html: true });
 
@@ -151,6 +165,11 @@ module Osgi {
             var unsatisfied = "";
             for (var pkg in importPackageHeaders) {
                 if (importPackageHeaders[pkg] === undefined) {
+                    continue;
+                }
+                if ($scope.row.ExportData[pkg] !== undefined) {
+                    // The bundle exports this package and also imports it. In this case it is satisfied from the bundle
+                    // itself so it should not be listed as unsatisfied.
                     continue;
                 }
                 unsatisfied += "<tr><td><div class='less-big badge badge-warning' id='unsatisfied." + pkg + "'>" + pkg + "</div></td></tr>";
@@ -183,6 +202,68 @@ module Osgi {
                 po += "</table></small>";
                 $(document.getElementById("export." + pkg)).
                     popover({title: "attributes and directives", content: po, trigger: "hover", html: true });
+            }
+        }
+
+        function populateServicesSection() : void {
+            if (($scope.row.RegisteredServices === undefined || $scope.row.RegisteredServices.length === 0) &&
+                ($scope.row.ServicesInUse === undefined || $scope.row.ServicesInUse === 0)) {
+                // no services for this bundle
+                return;
+            }
+
+            var mbean = getSelectionServiceMBean(workspace);
+            if (mbean) {
+                jolokia.request(
+                    {type: 'exec', mbean: mbean, operation: 'listServices()'},
+                    onSuccess(updateServices));
+            }
+        }
+
+        function updateServices(result) {
+            var data = result.value;
+            for (var id in data) {
+                var reg = document.getElementById("registers.service." + id);
+                var uses = document.getElementById("uses.service." + id);
+
+                if ((reg === undefined || reg === null) && (uses === undefined || uses === null)) {
+                    continue;
+                }
+
+                jolokia.request({
+                        type: 'exec', mbean: getSelectionServiceMBean(workspace),
+                        operation: 'getProperties', arguments: [id]},
+                    onSuccess(function(svcId, regEl, usesEl) {
+                        return function(resp) {
+                            var props = resp.value;
+                            var sortedKeys = Object.keys(props).sort();
+                            var po = "<small><table>";
+                            for (var i = 0; i < sortedKeys.length; i++) {
+                                var value = props[sortedKeys[i]];
+                                if (value !== undefined) {
+                                    var fval = value.Value;
+                                    if (fval.length > 15) {
+                                        fval = fval.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
+                                    }
+
+                                    po += "<tr><td valign='top'>" + sortedKeys[i] + "</td><td>" + fval + "</td></tr>"
+                                }
+                            }
+
+                            var regBID = data[svcId].BundleIdentifier;
+                            po += "<tr><td>Registered&nbsp;by</td><td>Bundle " + regBID + " <div class='less-big label'>" + $scope.bundles[regBID].SymbolicName + "</div></td></tr>"
+                            po += "</table></small>";
+
+                            if (regEl !== undefined && regEl !== null) {
+                                regEl.innerText = " " + formatServiceName(data[svcId].objectClass);
+                                $(regEl).popover({title: "service properties", content: po, trigger: "hover", html: true});
+                            }
+                            if (usesEl !== undefined && usesEl !== null) {
+                                usesEl.innerText = " " + formatServiceName(data[svcId].objectClass);
+                                $(usesEl).popover({title: "service properties", content: po, trigger: "hover", html: true});
+                            }
+                        }
+                    }(id, reg, uses)));
             }
         }
 
@@ -275,5 +356,27 @@ module Osgi {
             }
         }
         return str;
+    }
+
+    export function formatServiceName(objClass : any) : string {
+        if (Object.isArray(objClass)) {
+            return formatServiceNameArray(objClass);
+        }
+        var name = objClass.toString();
+        var idx = name.lastIndexOf('.');
+        return name.substring(idx + 1);
+    }
+
+    function formatServiceNameArray(objClass : string[]) : string {
+        var rv = [];
+        for (var i=0; i < objClass.length; i++) {
+            rv.add(formatServiceName(objClass[i]));
+        }
+        rv = rv.filter(function(elem, pos, self) {
+            return self.indexOf(elem) === pos;
+        })
+
+        rv.sort();
+        return rv.toString();
     }
 }
