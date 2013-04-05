@@ -3,8 +3,10 @@
 
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <feature>war</feature>
+    <feature>hawtio-plugin-registry</feature>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-plugin-registry" version="${project.version}" resolver="(obr)">
@@ -25,9 +27,9 @@
     <details>Adds the hawtio plugin registry and configures the /hawtio context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
     <feature>war</feature>
     <feature>hawtio-plugin-registry</feature>
-
     <bundle>mvn:io.hawt/hawtio-osgi-devmode/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
 
     <config name="hawtiodev-hawtioweb">
       context=/hawtio/*
@@ -38,7 +40,6 @@
 
   <feature name="hawtio-plugin-example" version="${project.version}" resolver="(obr)">
     <feature>war</feature>
-    <feature>hawtio-plugin-registry</feature>
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
   </feature>
 
