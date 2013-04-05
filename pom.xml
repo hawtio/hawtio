@@ -67,7 +67,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>020</perfectus-number>
+    <perfectus-number>023</perfectus-number>
     <perfectus-build>redhat-60${perfectus-number}</perfectus-build>
 <!--
     <perfectus-build>fuse-71-047</perfectus-build>
@@ -244,6 +244,7 @@
     <module>hawtio-plugin-example</module>
     <module>hawtio-karaf</module>
     <module>sample</module>
+    <module>hawtio-json-schema-mbean</module>
   </modules>
 
   <build>
