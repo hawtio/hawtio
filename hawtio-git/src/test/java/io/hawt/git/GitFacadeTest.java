@@ -8,6 +8,7 @@ import org.junit.Test;
 import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -165,6 +166,34 @@ public class GitFacadeTest {
 
         json = git.readJsonChildContent(branch, jsonDir, "*.json", "Stan");
         assertFalse("JSON should not include James but was: " + json, json.contains("James"));
+
+        // now lets write some XML with namespaces
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<beans xmlns=\"http://www.springframework.org/schema/beans\"\n"
+                + "       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                + "       xmlns:amq=\"http://activemq.apache.org/schema/core\"\n"
+                + "       xsi:schemaLocation=\"\n"
+                + "       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd\n"
+                + "       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd\n"
+                + "       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd\">\n"
+                + " <camelContext xmlns=\"http://camel.apache.org/schema/spring\"/>\n"
+                + " <broker xmlns=\"http://activemq.apache.org/schema/core\" brokerName=\"broker1\" useJmx=\"true\"/>\n"
+                + "</beans>\n";
+
+        git.write(branch, "spring.xml", "Added a spring XML", authorName, authorEmail, xml);
+
+        FileContents rootContents = git.read(branch, "/");
+        assertTrue("Should be directory", rootContents.isDirectory());
+        List<FileInfo> children = rootContents.getChildren();
+        for (FileInfo child : children) {
+            if (child.getName().equals("spring.xml")) {
+                String[] xmlNamespaces = child.getXmlNamespaces();
+                assertNotNull("Should have some XML namespaces!", xmlNamespaces);
+                List<String> list = Arrays.asList(xmlNamespaces);
+                System.out.println("Found spring XML!" + child + " with namespaces " + list);
+                assertTrue("Should contain camel-spring but was " + list, list.contains("http://camel.apache.org/schema/spring"));
+            }
+        }
     }
 
     protected String assertReadFileContents(String path, String expectedContents) throws IOException {

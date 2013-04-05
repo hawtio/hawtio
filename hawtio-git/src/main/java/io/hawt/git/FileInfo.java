@@ -1,20 +1,43 @@
 package io.hawt.git;
 
+import io.hawt.io.XmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  */
 public class FileInfo {
+    private static final transient Logger LOG = LoggerFactory.getLogger(FileInfo.class);
+
     private final String path;
     private final String name;
     private final long lastModified;
     private final long length;
     private final boolean directory;
+    private String[] xmlNamespaces;
 
     public static FileInfo createFileInfo(File rootDir, File file) {
         String path = getRelativePath(rootDir, file).replace("\\", "/");
-        return new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
+        FileInfo answer = new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
+        if (file.isFile() && file.getName().endsWith(".xml")) {
+            // lets load the XML namespaces
+            try {
+                Set<String> uris = XmlHelper.getNamespaces(file);
+                if (uris.size() > 0) {
+                    String[] namespaces = uris.toArray(new String[uris.size()]);
+                    answer.setXmlNamespaces(namespaces);
+                }
+            } catch (Exception e) {
+                LOG.warn("Failed to parse the XML namespaces in " + file + ". " + e, e);
+            }
+        }
+        return answer;
     }
 
     public static String getRelativePath(File rootDir, File file) {
@@ -62,5 +85,13 @@ public class FileInfo {
 
     public String getPath() {
         return path;
+    }
+
+    public void setXmlNamespaces(String[] xmlNamespaces) {
+        this.xmlNamespaces = xmlNamespaces;
+    }
+
+    public String[] getXmlNamespaces() {
+        return xmlNamespaces;
     }
 }
