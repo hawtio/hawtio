@@ -1,0 +1,32 @@
+module Jclouds {
+
+    export function ComputeLocationController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+        $scope.computeId = $routeParams.computeId
+        $scope.locationId = $routeParams.locationId;
+
+        updateTableContents();
+
+        function setLocationProfiles(locationProfiles) {
+            $scope.row = findLocationById(locationProfiles, $scope.locationId)
+            $scope.$apply();
+        };
+
+
+        function updateTableContents() {
+            var jolokia = workspace.jolokia;
+            var computeMbean = getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
+
+            if (computeMbean) {
+                setLocationProfiles(jolokia.request(
+                    {type: 'exec', mbean:computeMbean, operation: 'listAssignableLocations()'}).value
+                );
+            }
+        }
+
+        function findLocationById(locationProfiles, id) {
+            return locationProfiles.find(function (location) {
+                return location.id === id
+            });
+        }
+   }
+}
