@@ -52,11 +52,14 @@ module Source {
       var fullName = fileName || "";
       if (paths) {
         angular.forEach(paths.split("/"), (path) => {
-          fullName += "/" + path;
-          answer += "<a href='#/source/index/" + $scope.mavenCoords + "//" + fullName + "'>" + path + "</a>/"
+          if (fullName) {
+            fullName += "/";
+          }
+          fullName += path;
+          answer += "<a href='#/source/index/" + $scope.mavenCoords + "/" + fullName + "'>" + path + "</a>/"
         });
       }
-      answer += "<a href='#/source/view/" + $scope.mavenCoords + "//" + fullName + "/" + name + "'>" + name + "</a>";
+      answer += "<a href='#/source/view/" + $scope.mavenCoords + "/" + fullName + "/" + name + "'>" + name + "</a>";
       return answer;
     };
 

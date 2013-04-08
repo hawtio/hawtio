@@ -9,7 +9,7 @@ module Log {
       mavenCoords = properties["maven.coordinates"];
     }
     if (mavenCoords && fileName) {
-      var link = "#/source/view/" + mavenCoords + "/" + className + "/" + fileName;
+      var link = "#/source/view/" + mavenCoords + "/class/" + className + "/" + fileName;
       var line = log.lineNumber;
       if (line) {
         link += "?line=" + line;
@@ -40,7 +40,7 @@ module Log {
         if (idx > 0) {
           className = classAndMethod.substring(0, idx);
         }
-        var link = "#/source/view/" + mvnCoords + "/" + className + "/" + fileName;
+        var link = "#/source/view/" + mvnCoords + "/class/" + className + "/" + fileName;
         if (angular.isDefined(line)) {
           link += "?line=" + line;
         }
