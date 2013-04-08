@@ -25,11 +25,19 @@ module Karaf {
             self.location = location;
 
             self.callback = function (newValue, oldValue) {
-                if (newValue === oldValue) {
-                    return;
+                if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+                  // if for some reason we do not have a values
+                  return
                 }
-                if (newValue.id === oldValue.id) {
-                    return;
+
+                // if we have an old value to quick compare against
+                if (angular.isDefined(oldValue)) {
+                  if (newValue === oldValue) {
+                      return;
+                  }
+                  if (newValue.id === oldValue.id) {
+                      return;
+                  }
                 }
                 self.scope.features = featuresOfRepo(self.scope.repository.id, self.scope.features);
                 self.scope.feature = setSelect(self.scope.repository, self.scope.repositories);
@@ -50,10 +58,12 @@ module Karaf {
 
             self.evalFilter = function () {
                 var byRepo = self.grid.sortedData;
-                if (self.scope.repository.id !== "") {
-                    byRepo = self.grid.sortedData.findAll(function (item) {
-                        return item.Repository === self.scope.repository.id
-                    });
+                if (angular.isDefined(self.scope.repository)) {
+                  if (self.scope.repository.id !== "") {
+                      byRepo = self.grid.sortedData.findAll(function (item) {
+                          return item.Repository === self.scope.repository.id
+                      });
+                  }
                 }
                 self.grid.filteredData = byRepo;
                 self.grid.rowFactory.filteredDataChanged();
