@@ -33,6 +33,10 @@ describe("Core", function() {
     expect(Core.parseVersionNumbers("camel-12.45.jar")).toEqual([12, 45]);
     expect(Core.parseVersionNumbers("camel-2.3.45.jar")).toEqual([2, 3, 45]);
     expect(Core.parseVersionNumbers("camel-55.3.45.jar")).toEqual([55, 3, 45]);
+
+    expect(Core.parseVersionNumbers("2.45.jar")).toEqual([2, 45]);
+    expect(Core.parseVersionNumbers("55.3.45.jar")).toEqual([55, 3, 45]);
+
   });
 
   it("compare version numbers", function() {

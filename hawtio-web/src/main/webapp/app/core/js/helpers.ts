@@ -553,11 +553,13 @@ module Core {
     }
   }
 
-  var _versionRegex = /.*\-(\d+)\.(\d+)(\.(\d+))?.*/
+  var _versionRegex = /[^\d]*(\d+)\.(\d+)(\.(\d+))?.*/
 
   /**
-   * Parses some text of the form "xxxx-2.3.4xxxx"
+   * Parses some text of the form "xxxx2.3.4xxxx"
    * to extract the version numbers as an array of numbers then returns an array of 2 or 3 numbers.
+   *
+   * Characters before the first digit are ignored as are characters after the last digit.
    *
    * @param text a maven like string containing a dash then numbers separated by dots
    */
