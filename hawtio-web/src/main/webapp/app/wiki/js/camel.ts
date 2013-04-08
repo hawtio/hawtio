@@ -3,6 +3,23 @@ module Wiki {
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
 
+    $scope.camelSubLevelTabs = () => {
+      return [
+        {
+          content: '<i class=" icon-edit"></i> Properties',
+          title: "View the pattern properties",
+          isValid: (workspace:Workspace) => true,
+          href: () => "#/wiki/camel/properties"
+        },
+        {
+          content: '<i class="icon-picture"></i> Diagram',
+          title: "View a diagram of the route",
+          isValid: (workspace:Workspace) => true,
+          href: () => "#/wiki/camel/diagram"
+        }
+      ];
+    };
+
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress

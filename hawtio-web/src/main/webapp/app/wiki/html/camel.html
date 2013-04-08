@@ -1,4 +1,23 @@
 <div ng-controller="Wiki.CamelController">
+  <div class="row-fluid" ng-controller="Wiki.NavBarController">
+    <div class="">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+          <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
+        </li>
+
+        <li class="pull-right">
+          <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this camel configuration"
+             data-placement="bottom">
+            <i class="icon-edit"></i> Edit</a></li>
+        <li class="pull-right" ng-show="sourceLink()">
+          <a ng-href="{{sourceLink()}}" title="View source code"
+             data-placement="bottom">
+            <i class="icon-file-alt"></i> Source</a></li>
+      </ul>
+    </div>
+  </div>
+
   <div class="row-fluid">
     <div id="tree-container" class="span3">
       <ul id="tree-ctrl" class="nav">
@@ -12,8 +31,8 @@
     </div>
 
     <div class="span9">
+      <ng-include src="'app/wiki/html/camelSubLevelTabs.html'"></ng-include>
 <!--
-      <ng-include src="'app/jmx/html/subLevelTabs.html'"></ng-include>
       <div id="properties" ng-view></div>
 -->
     </div>

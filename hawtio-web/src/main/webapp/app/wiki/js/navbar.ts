@@ -1,6 +1,8 @@
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 
+    var customViewLinks = ["/wiki/formTable", "/wiki/camel"];
+
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
       return Wiki.createLink(pageId, $location, $scope);
@@ -8,14 +10,16 @@ module Wiki {
 
     $scope.sourceLink = () => {
       var path = $location.path();
-      var prefix = "/wiki/formTable";
-      if (path.startsWith(prefix)) {
-        return Core.createHref($location, "#/wiki/view" + path.substring(prefix.length))
-      }
+      var answer = null;
+      angular.forEach(customViewLinks, (link) => {
+        if (path.startsWith(link)) {
+          answer = Core.createHref($location, "#/wiki/view" + path.substring(link.length))
+        }
+      });
       // remove the form parameter on view/edit links
-      return ($location.search()["form"])
+      return (!answer && $location.search()["form"])
               ? Core.createHref($location, "#" + path, ["form"])
-              : null;
+              : answer;
     };
 
     $scope.isActive = (href) => {
@@ -33,10 +37,10 @@ module Wiki {
     loadBreadcrumbs();
 
 
-    function switchToFormTableLink(breadcrumb) {
+    function switchFromViewToCustomLink(breadcrumb, link) {
       var href = breadcrumb.href;
       if (href) {
-        breadcrumb.href = href.replace("wiki/view", "wiki/formTable");
+        breadcrumb.href = href.replace("wiki/view", link);
       }
     }
 
@@ -57,14 +61,21 @@ module Wiki {
       // lets swizzle the last one or two to be formTable views if the last or 2nd to last
 
       var loc = $location.path();
-      if (loc.startsWith("/wiki/formTable") && $scope.breadcrumbs.length) {
-        // lets swizzle the view to a formTable link
-        switchToFormTableLink($scope.breadcrumbs.last());
-      } else if ($location.search()["form"] && $scope.breadcrumbs.length) {
-        var lastName = $scope.breadcrumbs.last().name;
-        if (lastName && lastName.endsWith(".json")) {
-          // previous breadcrumb should be a formTable
-          switchToFormTableLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2]);
+      if ($scope.breadcrumbs.length) {
+        var swizzled = false;
+        angular.forEach(customViewLinks, (link) => {
+          if (!swizzled && loc.startsWith(link)) {
+            // lets swizzle the view to the current link
+            switchFromViewToCustomLink($scope.breadcrumbs.last(), Core.trimLeading(link, "/"));
+            swizzled = true;
+          }
+        });
+        if (!swizzled && $location.search()["form"]) {
+          var lastName = $scope.breadcrumbs.last().name;
+          if (lastName && lastName.endsWith(".json")) {
+            // previous breadcrumb should be a formTable
+            switchFromViewToCustomLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2], "/wiki/formTable");
+          }
         }
       }
       if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version") || loc.startsWith("/wiki/diff")) {
