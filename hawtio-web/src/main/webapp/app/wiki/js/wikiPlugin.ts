@@ -3,32 +3,14 @@ module Wiki {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/wiki/view/:page', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/formTable/:page', {templateUrl: 'app/wiki/html/formTable.html'}).
-                    when('/wiki/camel/:page', {templateUrl: 'app/wiki/html/camel.html'}).
-                    when('/wiki/version/:page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/diff/:page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/create/:page', {templateUrl: 'app/wiki/html/createPage.html'}).
-                    when('/wiki/edit/:page', {templateUrl: 'app/wiki/html/editPage.html'}).
-                    when('/wiki/history/:page', {templateUrl: 'app/wiki/html/history.html'});
-
-            // TODO this is a dirty hack until AngularJS supports catch-all / wildcard / regex paths!
-            var numberOfPaths = 10;
-            for (var max = 1; max <= numberOfPaths; max++) {
-              var path = ":path0";
-              for (var i = 1; i <= max; i++) {
-                path += "/:path" + i;
-              }
-              $routeProvider.
-                      when('/wiki/view/' + path, {templateUrl: 'app/wiki/html/viewPage.html'}).
-                      when('/wiki/formTable/' + path, {templateUrl: 'app/wiki/html/formTable.html'}).
-                      when('/wiki/camel/' + path, {templateUrl: 'app/wiki/html/camel.html'}).
-                      when('/wiki/version' + path + '/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                      when('/wiki/diff' + path + '/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                      when('/wiki/create/' + path, {templateUrl: 'app/wiki/html/createPage.html'}).
-                      when('/wiki/edit/' + path, {templateUrl: 'app/wiki/html/editPage.html'}).
-                      when('/wiki/history' + path, {templateUrl: 'app/wiki/html/history.html'});
-            }
+                    when('/wiki/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/formTable/*page', {templateUrl: 'app/wiki/html/formTable.html'}).
+                    when('/wiki/camel/*page', {templateUrl: 'app/wiki/html/camel.html'}).
+                    when('/wiki/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
+                    when('/wiki/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
+                    when('/wiki/history/*page', {templateUrl: 'app/wiki/html/history.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
             return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));

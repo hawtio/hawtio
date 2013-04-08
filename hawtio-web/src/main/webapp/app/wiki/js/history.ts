@@ -81,7 +81,7 @@ module Wiki {
       if ($scope.selectedItems.length > 1) {
         baseObjectId = $scope.selectedItems[1].name ||defaultValue;
       }
-      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId + "/";
+      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
       $location.path(path);
     };
 
