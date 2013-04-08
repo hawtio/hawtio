@@ -74,7 +74,7 @@ module Wiki {
           var lastName = $scope.breadcrumbs.last().name;
           if (lastName && lastName.endsWith(".json")) {
             // previous breadcrumb should be a formTable
-            switchFromViewToCustomLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2], "/wiki/formTable");
+            switchFromViewToCustomLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2], "wiki/formTable");
           }
         }
       }
