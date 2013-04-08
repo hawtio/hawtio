@@ -375,15 +375,20 @@ module Core {
   export function $applyNowOrLater($scope) {
     if ($scope.$$phase) {
       setTimeout(() => {
-        if (!$scope.$$phase) {
-          $scope.$apply();
-        } else {
-          console.log("Still in a digest!!");
-        }
+        Core.$apply($scope);
       }, 50);
     } else {
       $scope.$apply();
     }
+  }
+
+  /**
+   * Performs a $scope.$apply() after the given timeout period
+   */
+  export function $applyLater($scope, timeout = 50) {
+    setTimeout(() => {
+      Core.$apply($scope);
+    }, timeout);
   }
 
 
@@ -392,8 +397,7 @@ module Core {
    */
   export function $apply($scope) {
     var phase = $scope.$$phase;
-    if (!phase && "null" !== phase) {
-      console.log("calling apply on phase '" + phase + "'");
+    if (!phase) {
       $scope.$apply();
     }
   }

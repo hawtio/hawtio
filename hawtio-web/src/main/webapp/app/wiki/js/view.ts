@@ -47,7 +47,7 @@ module Wiki {
         var xmlNamespaces = child.xmlNamespaces;
         if (xmlNamespaces && xmlNamespaces.length) {
           if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
-            prefix = "#/wiki/camel";
+            prefix = "#/wiki/camel/properties";
           } else {
             console.log("child " + path + " has namespaces " + xmlNamespaces);
           }

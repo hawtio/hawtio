@@ -3,22 +3,35 @@ module Wiki {
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
 
+    var breadcrumbs = [
+      {
+        content: '<i class=" icon-edit"></i> Properties',
+        title: "View the pattern properties",
+        isValid: (workspace:Workspace) => true,
+        href: () => "#/wiki/camel/properties/" + $scope.pageId
+      },
+      {
+        content: '<i class="icon-picture"></i> Diagram',
+        title: "View a diagram of the route",
+        isValid: (workspace:Workspace) => true,
+        href: () => "#/wiki/camel/diagram/" + $scope.pageId
+      }
+    ];
+
     $scope.camelSubLevelTabs = () => {
-      return [
-        {
-          content: '<i class=" icon-edit"></i> Properties',
-          title: "View the pattern properties",
-          isValid: (workspace:Workspace) => true,
-          href: () => "#/wiki/camel/properties"
-        },
-        {
-          content: '<i class="icon-picture"></i> Diagram',
-          title: "View a diagram of the route",
-          isValid: (workspace:Workspace) => true,
-          href: () => "#/wiki/camel/diagram"
-        }
-      ];
+      return breadcrumbs;
     };
+
+    $scope.isActive = (nav) => {
+      if (angular.isString(nav))
+        return workspace.isLinkActive(nav);
+      var fn = nav.isActive;
+      if (fn) {
+        return fn(workspace);
+      }
+      return workspace.isLinkActive(nav.href());
+    };
+
 
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
@@ -46,7 +59,7 @@ module Wiki {
           Jmx.enableTree($scope, $location, workspace, treeElement, [tree]);
         }
       }
-      Core.$apply($scope);
+      Core.$applyLater($scope);
     }
 
     function updateView() {

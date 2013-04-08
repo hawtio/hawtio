@@ -1,7 +1,7 @@
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 
-    var customViewLinks = ["/wiki/formTable", "/wiki/camel"];
+    var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/properties"];
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
