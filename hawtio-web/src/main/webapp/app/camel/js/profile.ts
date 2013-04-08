@@ -238,8 +238,9 @@ module Camel {
           var camelVersion = getCamelVersion(workspace, jolokia);
           if (camelVersion) {
             console.log("Camel version " + camelVersion)
+            camelVersion += "camel-";
             var numbers = Core.parseVersionNumbers("camel-" + camelVersion);
-            if (numbers[0] >= 2 && numbers[1] >= 11) {
+            if (Core.compareVersionNumberArrays(numbers, [2, 11]) >= 0) {
               // this is Camel 2.11 or better so we dont need to calculate data manually
               console.log("Camel 2.11 or better detected")
               $scope.calcManually = false
