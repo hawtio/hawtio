@@ -330,4 +330,13 @@ module Camel {
     return null;
   }
 
+  export function getCamelVersion(workspace: Workspace, jolokia) {
+    var mbean = getSelectionCamelContextMBean(workspace);
+    if (mbean) {
+      return jolokia.getAttribute(mbean, "CamelVersion");
+    } else {
+      return null;
+    }
+  }
+
 }

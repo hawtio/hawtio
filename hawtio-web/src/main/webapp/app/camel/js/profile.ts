@@ -4,8 +4,9 @@ module Camel {
 
         $scope.data = [];
         $scope.search = "";
+        $scope.calcManually = false;
 
-      var columnDefs: any[] = [
+        var columnDefs: any[] = [
             {
                 field: 'id',
                 displayName: 'Id',
@@ -133,6 +134,8 @@ module Camel {
             if (self) {
               messageData.self = self;
             } else {
+              // we need to calculate this manually
+              $scope.calcManually = true
               messageData.self = "TODO";
             }
 
@@ -176,6 +179,8 @@ module Camel {
             if (total) {
               messageData.total = total;
             } else {
+              // we need to calculate this manually
+              $scope.calcManually = true
               messageData.total = "TOOD"
             }
             // self time for processors is their total time
@@ -183,6 +188,30 @@ module Camel {
 
             updatedData.push(messageData);
           });
+        }
+
+        // for Camel 2.10 or older we need to run through the data and calculate the self/total times manually
+        // TODO: check camel version and enable this or not using a flag
+        if ($scope.calcManually) {
+          var accTotal = 0;
+          updatedData.reverse().forEach((data, idx) => {
+              // update accTotal with self time
+              if (idx < updatedData.length - 1) {
+                // each processor should have the total updated with the accumulated total
+                accTotal += +data.self;
+                data.total = accTotal;
+              } else {
+                // the last row is the route, which should have self calculated as follows
+                data.self = +(data.total - accTotal);
+                // just to be safe we dont want negative values self value for the route
+                if (data.self < 0) {
+                  data.self = 0;
+                }
+              }
+            });
+
+          // reverse back again
+          updatedData.reverse();
         }
 
         // replace data with updated data
@@ -210,7 +239,7 @@ module Camel {
 
           // schedule update the profile data, based on the configured interval
           // TODO: trigger loading data first time page is viewed so we dont have to wait or show a loading... page
-          // TODO: show eips in the table/tree
+          // TODO: show eips in the table/tree, and use the position from this tree to position the data
           // TODO: have cellFilter with bar grey-scale for highlighting the scales between the numbers
 
           var query = {type: 'exec', mbean: routeMBean, operation: 'dumpRouteStatsAsXml(boolean,boolean)', arguments: [false, true]};
