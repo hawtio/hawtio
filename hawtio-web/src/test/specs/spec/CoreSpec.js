@@ -25,4 +25,13 @@ describe("Core", function() {
     expect(Core.pathGet(data, "foo.c.name")).toEqual("Stan");
   });
 
+
+  it("parse version numbers", function() {
+    expect(Core.parseVersionNumbers("camel-2.1")).toEqual([2, 1]);
+    expect(Core.parseVersionNumbers("camel-2.3.jar")).toEqual([2, 3]);
+    expect(Core.parseVersionNumbers("camel-2.45.jar")).toEqual([2, 45]);
+    expect(Core.parseVersionNumbers("camel-12.45.jar")).toEqual([12, 45]);
+    expect(Core.parseVersionNumbers("camel-2.3.45.jar")).toEqual([2, 3, 45]);
+    expect(Core.parseVersionNumbers("camel-55.3.45.jar")).toEqual([55, 3, 45]);
+  });
 });

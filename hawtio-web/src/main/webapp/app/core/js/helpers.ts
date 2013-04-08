@@ -552,4 +552,31 @@ module Core {
       return str;
     }
   }
+
+  var _versionRegex = /.*\-(\d+)\.(\d+)(\.(\d+))?.*/
+
+  /**
+   * Parses some text of the form "xxxx-2.3.4xxxx"
+   * to extract the version numbers as an array of numbers then returns an array of 2 or 3 numbers.
+   *
+   * @param text a maven like string containing a dash then numbers separated by dots
+   */
+  export function parseVersionNumbers(text: string) {
+    if (text) {
+      var m = text.match(_versionRegex);
+      if (m && m.length > 4) {
+        var m1 = m[1];
+        var m2 = m[2];
+        var m4 = m[4];
+        if (angular.isDefined(m4)) {
+          return [parseInt(m1), parseInt(m2), parseInt(m4)];
+        } else if (angular.isDefined(m2)) {
+          return [parseInt(m1), parseInt(m2)];
+        } else if (angular.isDefined(m1)) {
+          return [parseInt(m1)];
+        }
+      }
+    }
+    return null;
+  }
 }
