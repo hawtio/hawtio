@@ -658,10 +658,8 @@
 
     <profile>
       <id>camelSnapshot</id>
-
-      <!-- when using the exec:java target this will try to auto-connect to a local fuse fabric -->
       <properties>
-        <camel-version>2.11-SNAPSHOT</camel-version>
+        <camel-version>2.12-SNAPSHOT</camel-version>
       </properties>
     </profile>
 

@@ -304,4 +304,30 @@ module Camel {
     }
     return selectedRouteId;
   }
+
+  /**
+   * Returns the selected camel route mbean for the given route id
+   */
+    // TODO Should be a service
+  export function getSelectionRouteMBean(workspace: Workspace, routeId: String) {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "routes");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title === routeId);
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
 }

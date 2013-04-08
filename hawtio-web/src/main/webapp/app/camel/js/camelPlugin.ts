@@ -19,6 +19,7 @@ module Camel {
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
+                    when('/camel/profileRoute', {templateUrl: 'app/camel/html/profileRoute.html'}).
                     when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
           filter('camelIconClass', () => iconClass).
@@ -140,6 +141,12 @@ module Camel {
               title: "Trace the messages flowing through the Camel route",
               isValid: (workspace: Workspace) => workspace.isRoute() && Camel.getSelectionCamelTraceMBean(workspace),
               href: () => "#/camel/traceRoute"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-bar-chart"></i> Profile',
+              title: "Profile the messages flowing through the Camel route",
+              isValid: (workspace: Workspace) => workspace.isRoute() && Camel.getSelectionCamelTraceMBean(workspace),
+              href: () => "#/camel/profileRoute"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-pencil"></i> Send',
