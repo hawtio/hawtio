@@ -579,4 +579,41 @@ module Core {
     }
     return null;
   }
+
+  /**
+   * Compares the 2 version arrays and returns -1 if v1 is less than v2 or 0 if they are equal or 1 if v1 is greater than v2
+   *
+   * @param v1 an array of version numbers with the most significant version first (major, minor, patch).
+   * @param v2
+   */
+  export function compareVersionNumberArrays(v1:number[], v2:number[]) {
+    if (v1 && !v2) {
+      return 1;
+    }
+    if (!v1 && v2) {
+      return -1;
+    }
+    if (v1 === v2) {
+      return 0;
+    }
+    for (var i = 0; i < v1.length; i++) {
+      var n1 = v1[i];
+      if (i >= v2.length) {
+        return 1;
+      }
+      var n2 = v2[i];
+      if (!angular.isDefined(n1)) {
+        return -1;
+      }
+      if (!angular.isDefined(n2)) {
+        return 1;
+      }
+      if (n1 > n2) {
+        return 1;
+      } else if (n1 < n2) {
+        return -1;
+      }
+    }
+    return 0;
+  }
 }

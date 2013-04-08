@@ -34,4 +34,18 @@ describe("Core", function() {
     expect(Core.parseVersionNumbers("camel-2.3.45.jar")).toEqual([2, 3, 45]);
     expect(Core.parseVersionNumbers("camel-55.3.45.jar")).toEqual([55, 3, 45]);
   });
+
+  it("compare version numbers", function() {
+    function compareVersion(text, version, expectedValue) {
+      var actualVersion = Core.parseVersionNumbers(text);
+      var compared = Core.compareVersionNumberArrays(actualVersion, version);
+      expect(compared).toEqual(expectedValue);
+    }
+    expect(compareVersion("camel-2.1.jar", [2, 1], 0));
+    expect(compareVersion("camel-2.11.jar", [2, 10], 1));
+    expect(compareVersion("camel-2.11.0.jar", [2, 10], 1));
+    expect(compareVersion("camel-2.11.jar", [2, 12], -1));
+    expect(compareVersion("camel-2.11.2.jar", [2, 12], -1));
+    expect(compareVersion("camel-2.11.2.jar", [2, 11, 3], -1));
+  });
 });
