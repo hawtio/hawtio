@@ -4,7 +4,7 @@ module Camel {
 
         $scope.data = [];
         $scope.search = "";
-        $scope.calcManually = false;
+        $scope.calcManually = true;
 
         var columnDefs: any[] = [
             {
@@ -136,7 +136,7 @@ module Camel {
             } else {
               // we need to calculate this manually
               $scope.calcManually = true
-              messageData.self = "TODO";
+              messageData.self = "0";
             }
 
             updatedData.push(messageData);
@@ -179,9 +179,7 @@ module Camel {
             if (total) {
               messageData.total = total;
             } else {
-              // we need to calculate this manually
-              $scope.calcManually = true
-              messageData.total = "TOOD"
+              messageData.total = "0"
             }
             // self time for processors is their total time
             messageData.self = message.getAttribute("totalProcessingTime");
@@ -236,6 +234,20 @@ module Camel {
           var selectedRouteId = getSelectedRouteId(workspace);
           var routeMBean = getSelectionRouteMBean(workspace, selectedRouteId);
           console.log("Selected route is " + selectedRouteId)
+
+          var camelVersion = getCamelVersion(workspace, jolokia);
+          if (camelVersion) {
+            console.log("Camel version " + camelVersion)
+            var numbers = Core.parseVersionNumbers("camel-" + camelVersion);
+            if (numbers[0] >= 2 && numbers[1] >= 11) {
+              // this is Camel 2.11 or better so we dont need to calculate data manually
+              console.log("Camel 2.11 or better detected")
+              $scope.calcManually = false
+            } else {
+              console.log("Camel 2.10 or older detected")
+              $scope.calcManually = true
+            }
+          }
 
           // schedule update the profile data, based on the configured interval
           // TODO: trigger loading data first time page is viewed so we dont have to wait or show a loading... page
