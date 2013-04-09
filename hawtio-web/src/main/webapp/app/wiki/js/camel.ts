@@ -3,6 +3,9 @@ module Wiki {
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.schema = _apacheCamelModel;
 
+    var routeModel = _apacheCamelModel.definitions.route;
+    routeModel["_id"] = "route";
+
     $scope.addDialogOptions = {
       backdropFade: true,
       dialogFade: true
@@ -29,7 +32,11 @@ module Wiki {
     });
 
     $scope.addNode = () => {
-      $scope.showAddDialog = true;
+      if ($scope.nodeXmlNode) {
+        $scope.showAddDialog = true;
+      } else {
+        addNewNode(routeModel);
+      }
     };
 
     $scope.closeAddDialog = () => {
@@ -41,10 +48,11 @@ module Wiki {
     };
 
     $scope.addAndCloseDialog = () => {
-      console.log("About to add node: " + $scope.selectedPaletteNode["title"]);
+      if ($scope.selectedPaletteNode) {
+        addNewNode($scope.selectedPaletteNode["nodeModel"]);
+      }
       $scope.closeAddDialog();
     };
-
 
     $scope.camelSubLevelTabs = () => {
       return $scope.breadcrumbs;
@@ -73,16 +81,18 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
-    $scope.onNodeSelect = (treeNode) => {
+    $scope.onNodeSelect = (folder, treeNode) => {
+      $scope.selectedFolder = folder;
+      $scope.treeNode = treeNode;
       $scope.propertiesTemplate = null;
       $scope.diagramTemplate = null;
       $scope.nodeXmlNode = null;
-      var routeXmlNode = treeNode["routeXmlNode"];
+      var routeXmlNode = folder["routeXmlNode"];
       if (routeXmlNode) {
         $scope.nodeXmlNode = routeXmlNode;
         $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
         $scope.nodeDataChangedFields = {};
-        var nodeName = routeXmlNode.nodeName;
+        var nodeName = routeXmlNode.localName;
         $scope.nodeModel = Camel.getCamelSchema(nodeName);
         if ($scope.nodeModel) {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
@@ -111,6 +121,21 @@ module Wiki {
           }
         }
       }
+      var selectedFolder = $scope.selectedFolder;
+      if ($scope.treeNode && selectedFolder) {
+        var routeXmlNode = selectedFolder["routeXmlNode"];
+        if (routeXmlNode) {
+          var nodeName = routeXmlNode.localName;
+          var nodeSettings = Camel.getCamelSchema(nodeName);
+          if (nodeSettings) {
+            // redraw the title
+            selectedFolder.title = Camel.getRouteNodeLabel(routeXmlNode, nodeSettings);
+            $scope.treeNode.render(false, false);
+          }
+        }
+        //$scope.treeNode.reloadChildren(function (node, isOk) {});
+      }
+
     }
 
     function onNodeDataChanged() {
@@ -154,6 +179,23 @@ module Wiki {
 
       if (Git.getGitMBean(workspace)) {
         $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onResults);
+      }
+    }
+
+    function addNewNode(nodeModel) {
+      var parentFolder = ($scope.selectedFolder) ? $scope.selectedFolder: $scope.camelContextTree;
+      var key = nodeModel["_id"];
+      if (!key) {
+        console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
+      } else {
+        var node = $("<" + key + "/>")[0];
+        var addedNode = Camel.addRouteChild(parentFolder, node);
+        console.log("Added node: " + addedNode);
+
+        if ($scope.treeNode && addedNode) {
+          $scope.treeNode.addChild(addedNode);
+          //$scope.treeNode.reloadChildren(function (node, isOk) {});
+        }
       }
     }
   }

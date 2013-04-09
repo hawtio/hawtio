@@ -1,4 +1,3 @@
-
 module Camel {
 
   /**
@@ -61,7 +60,7 @@ module Camel {
       // lets look for nested elements and convert those
       // explicitly looking for expressions
       $(routeXmlNode).children("*").each((idx, element) => {
-        var nodeName = element.nodeName;
+        var nodeName = element.localName;
         var langSettings = Camel.camelLanguageSettings(nodeName);
         if (langSettings) {
           // TODO the expression key could be anything really; how should we know?
@@ -165,48 +164,66 @@ module Camel {
     folder.children = [];
     folder["routeXmlNode"] = route;
     $(route).children("*").each((idx, n) => {
-      var nodeName = n.nodeName;
-      if (nodeName) {
-        var nodeSettings = getCamelSchema(nodeName);
-        if (nodeSettings) {
-          var label = nodeSettings["title"] || nodeName;
-          var uri = getRouteNodeUri(n);
-          if (uri) {
-            label += " " + uri;
-          }
-          var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
-          var imageUrl = getRouteNodeIcon(nodeSettings);
+      addRouteChild(folder, n);
+    });
+  }
 
-          var child = new Folder(label);
-          child.domain = jmxDomain;
-          child.typeName = "routeNode";
-          // TODO should maybe auto-generate these?
-          child.parent = folder;
-          child.folderNames = folder.folderNames;
-          var id = n.getAttribute("id") || nodeName + idx;
-          child.key = folder.key + "." + id;
-          child.icon = imageUrl;
-          child.tooltip = tooltip;
-          child["routeXmlNode"] = n;
-          folder.children.push(child);
-          addRouteChildren(child, n);
-        } else {
-          // ignore non EIP nodes, though we should add expressions...
-          var langSettings = Camel.camelLanguageSettings(nodeName);
-          if (langSettings && folder) {
-            // lets add the language kind
-            var name = langSettings["name"] || nodeName;
-            var text = route.textContent;
-            if (text) {
-              folder.tooltip = folder.title + " " + name + " " + text;
-              folder.title = text;
-            } else {
-              folder.title = folder.title + " " + name;
-            }
+  /**
+   * Adds a child to the given folder / route
+   */
+  export function addRouteChild(folder, n) {
+    var nodeName = n.localName;
+    if (nodeName) {
+      var nodeSettings = getCamelSchema(nodeName);
+      if (nodeSettings) {
+        var label = getRouteNodeLabel(n, nodeSettings);
+        var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
+        var imageUrl = getRouteNodeIcon(nodeSettings);
+
+        var child = new Folder(label);
+        child.domain = jmxDomain;
+        child.typeName = "routeNode";
+        // TODO should maybe auto-generate these?
+        child.parent = folder;
+        child.folderNames = folder.folderNames;
+        var id = n.getAttribute("id") || nodeName;
+        child.key = folder.key + "." + id;
+        child.icon = imageUrl;
+        child.tooltip = tooltip;
+        child["routeXmlNode"] = n;
+        if (!folder.children) {
+          folder.children = [];
+        }
+        folder.children.push(child);
+        addRouteChildren(child, n);
+        return child;
+      } else {
+        // ignore non EIP nodes, though we should add expressions...
+        var langSettings = Camel.camelLanguageSettings(nodeName);
+        if (langSettings && folder) {
+          // lets add the language kind
+          var name = langSettings["name"] || nodeName;
+          var text = n.textContent;
+          if (text) {
+            folder.tooltip = folder.title + " " + name + " " + text;
+            folder.title = text;
+          } else {
+            folder.title = folder.title + " " + name;
           }
         }
+        return null;
       }
-    });
+    }
+    return null;
+  }
+
+  export function getRouteNodeLabel(routeXmlNode, nodeSettings) {
+    var label = nodeSettings["title"] || routeXmlNode.localName;
+    var uri = getRouteNodeUri(routeXmlNode);
+    if (uri) {
+      label += " " + uri;
+    }
+    return label;
   }
 
   /**

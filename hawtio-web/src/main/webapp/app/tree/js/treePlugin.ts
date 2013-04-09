@@ -62,7 +62,7 @@ module Tree {
                     onActivate: function (node:DynaTreeNode) {
                       var data = node.data;
                       if (onSelectFn) {
-                        onSelectFn(data);
+                        onSelectFn(data, node);
                       } else {
                         workspace.updateSelectionNode(data);
                       }
