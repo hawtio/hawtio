@@ -251,7 +251,6 @@ module Camel {
           }
 
           // schedule update the profile data, based on the configured interval
-          // TODO: trigger loading data first time page is viewed so we dont have to wait or show a loading... page
           // TODO: show eips in the table/tree, and use the position from this tree to position the data
           // TODO: have cellFilter with bar grey-scale for highlighting the scales between the numbers
 

@@ -12,8 +12,11 @@
         </div>
     </div>
 
-    <div class="row-fluid">
+    <div class="row-fluid" ng-show="data.length > 0">
         <div class="gridStyle" ng-grid="gridOptions"></div>
+    </div>
+    <div class="row-fluid" ng-show="data.length == 0">
+        Loading...
     </div>
 
 </div>
