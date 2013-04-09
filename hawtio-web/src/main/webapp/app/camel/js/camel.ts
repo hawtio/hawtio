@@ -204,15 +204,17 @@ module Camel {
         if (id && completed) {
           var node = isRoute ? $scope.routeNodes[id]: $scope.nodes[id];
           if (node) {
-            var meanProcessingTime = stat.getAttribute("meanProcessingTime");
-            if (meanProcessingTime) {
-              tooltip = "mean processing time " + meanProcessingTime + " (ms)";
-            }
             var total = 0 + parseInt(completed);
             var failed = stat.getAttribute("exchangesFailed");
             if (failed) {
               total += parseInt(failed);
             }
+            var last = stat.getAttribute("lastProcessingTime");
+            var mean = stat.getAttribute("meanProcessingTime");
+            var min = stat.getAttribute("minProcessingTime");
+            var max = stat.getAttribute("maxProcessingTime");
+            tooltip = "last: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
+
             node["counter"] = total;
             node["tooltip"] = tooltip;
           } else {
