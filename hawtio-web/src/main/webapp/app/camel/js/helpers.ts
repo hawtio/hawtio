@@ -86,11 +86,11 @@ module Camel {
         if (angular.isObject(value)) {
           // TODO deal with nested objects...
           var nested = $(routeXmlNode).children(key);
-          if (nested && nested.length) {
-            setRouteNodeJSON(nested[0], value);
-          } else {
-            console.log("No nested element called " + key + " inside " + routeXmlNode);
+          if (!nested || !nested.length) {
+            nested = $("<" + key + "/>");
+            $(routeXmlNode).append(nested);
           }
+          setRouteNodeJSON(nested[0], value);
         } else {
           if (value) {
             var text = value.toString();
