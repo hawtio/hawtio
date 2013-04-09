@@ -126,6 +126,30 @@ In the console type the following
 
 You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL, etc.
 
+### Handy AngularJS programming tips
+
+#### Use a nested scope object to own state for 2 way binding
+
+When binding models to HTML templates; its always a good idea to use a level of indirection between the $scope and the property. So rather than binding to $scope.name, bind to $scope.entity.name then have code like
+
+    $scope.entity = { "name": "James" };
+
+This means to that to reset the form you can just do
+
+    $scope.entity = {};
+
+And you can then refer to the entire entity via **$scope.entity**. Another reason for doing this is that when you have lots of nested scopes; for example when using nested directives, or using includes or layouts, you don't get inheritence issues; since you can acess $scope.entity from child scopes fine.
+
+#### When working with $routeParams use the $scope.$on
+
+Its often useful to use $routeParams to get the URI template parameters. However due to [the rules on who gets the $routeParams injected](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED#routing) when using layouts and so forth, the $routeParams can be empty.
+
+So put all code that uses $routeParams inside the $routeChangeSuccess callback:
+
+    $scope.$on('$routeChangeSuccess', function(event, routeData){
+      // process $routeParams now...
+    });
+
 ### Local Storage
 
 hawtio uses local storage to store preferences and preferred views for different kinds of MBean type and so forth.
