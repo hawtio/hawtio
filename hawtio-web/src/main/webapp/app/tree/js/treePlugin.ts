@@ -124,6 +124,19 @@ module Tree {
                     debugLevel: 0,
                     children: children
                   });
+/*
+                  // select and activate first child?
+*/
+                  var root = treeElement.dynatree("getRoot");
+                  if (root) {
+                    var children = root.getChildren();
+                    if (children && children.length) {
+                      var child = children[0];
+                      child.expand(true);
+                      child.activate(true);
+                    }
+                  }
+
 
                   /*
                    if (redraw) {

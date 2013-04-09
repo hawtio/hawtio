@@ -188,12 +188,26 @@ module Wiki {
       if (!key) {
         console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
       } else {
+        var treeNode = $scope.treeNode;
+        if (key === "route") {
+          // lets add to the tree
+          parentFolder = $scope.camelContextTree;
+          treeNode = treeNode.getParent();
+        }
         var node = $("<" + key + "/>")[0];
+        $(parentFolder["routeXmlNode"]).append(node);
         var addedNode = Camel.addRouteChild(parentFolder, node);
         console.log("Added node: " + addedNode);
 
-        if ($scope.treeNode && addedNode) {
-          $scope.treeNode.addChild(addedNode);
+        if (treeNode && addedNode) {
+          var added = treeNode.addChild(addedNode);
+          console.log("Added is " + added);
+          if (added) {
+            added.expand(true);
+            added.select(true);
+            added.activate(true);
+          }
+
           //$scope.treeNode.reloadChildren(function (node, isOk) {});
         }
       }

@@ -143,15 +143,24 @@ module Camel {
 
     if (context && context.length) {
       $(context).children("route").each((idx, route) => {
-        // TODO add a route node!!
-          var id = route.getAttribute("id") || "route" + idx;
-          var routeFolder = new Folder(id);
-          routeFolder.addClass = "org-apache-camel-route";
-          routeFolder.typeName = "routes";
-          routeFolder.domain = Camel.jmxDomain;
-          folder.children.push(routeFolder);
+        var id = route.getAttribute("id");
+        if (!id) {
+          id = "route" + idx;
+          route.setAttribute("id", id);
+        }
+        var routeFolder = new Folder(id);
+        routeFolder.addClass = "org-apache-camel-route";
+        routeFolder.typeName = "routes";
+        routeFolder.domain = Camel.jmxDomain;
+        var nodeSettings = getCamelSchema("route");
+        if (nodeSettings) {
+          var imageUrl = getRouteNodeIcon(nodeSettings);
+          routeFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
+          routeFolder.icon = imageUrl;
+        }
+        folder.children.push(routeFolder);
 
-          addRouteChildren(routeFolder, route);
+        addRouteChildren(routeFolder, route);
       });
     }
     return folder;
@@ -218,7 +227,20 @@ module Camel {
   }
 
   export function getRouteNodeLabel(routeXmlNode, nodeSettings) {
+    var id = routeXmlNode.getAttribute("id");
+    // lets use the ID for routes and other things we give an id
+    if (id) {
+      return id;
+    }
     var label = nodeSettings["title"] || routeXmlNode.localName;
+    if (label === "endpoint" || label === "Endpoint") {
+      // if we are the first endpoint then use "From" otherwise use "To"
+      var parent = $(routeXmlNode).parent();
+      var endpoints = parent.children("endpoint");
+      var fromCount = parent.children("from").length;
+      var from = !fromCount && (endpoints.length && endpoints[0] === routeXmlNode);
+      label = (from) ? "From" : "To";
+    }
     var uri = getRouteNodeUri(routeXmlNode);
     if (uri) {
       label += " " + uri;
