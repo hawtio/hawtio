@@ -133,7 +133,9 @@ function onSuccess(fn, options = {}) {
       var stacktrace = response.stacktrace;
       if (stacktrace) {
         console.log(stacktrace);
-        notification("error", "Operation failed due to: " + stacktrace);
+        if (!options['silent']) {
+          notification("error", "Operation failed due to: " + stacktrace);
+        }
       }
     };
   }
