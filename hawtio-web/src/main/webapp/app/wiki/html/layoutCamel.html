@@ -19,15 +19,8 @@
   </div>
 
   <div class="row-fluid">
-    <div id="tree-container" class="span3">
-      <ul id="tree-ctrl" class="nav">
-        <li>
-          <a data-toggle="collapse" data-target="#camelxml">
-            <span>Camel Tree</span>
-          </a>
-        </li>
-      </ul>
-      <div id="camelxml" class="in collapse"></div>
+    <div id="tree-container" class="span3" ng-controller="Camel.TreeController">
+      <div hawtio-tree="camelContextTree" onselect="onNodeSelect" hideRoot="true"></div>
     </div>
 
     <div class="span9">

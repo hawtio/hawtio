@@ -1,6 +1,6 @@
 module Wiki {
   var pluginName = 'wiki';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'tree']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/wiki/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).

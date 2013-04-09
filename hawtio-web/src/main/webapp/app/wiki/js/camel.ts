@@ -1,25 +1,10 @@
 module Wiki {
 
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
-    $scope.pageId = Wiki.pageId($routeParams, $location);
-
-    var breadcrumbs = [
-      {
-        content: '<i class=" icon-edit"></i> Properties',
-        title: "View the pattern properties",
-        isValid: (workspace:Workspace) => true,
-        href: () => "#/wiki/camel/properties/" + $scope.pageId
-      },
-      {
-        content: '<i class="icon-picture"></i> Diagram',
-        title: "View a diagram of the route",
-        isValid: (workspace:Workspace) => true,
-        href: () => "#/wiki/camel/diagram/" + $scope.pageId
-      }
-    ];
+    $scope.schema = _apacheCamelModel;
 
     $scope.camelSubLevelTabs = () => {
-      return breadcrumbs;
+      return $scope.breadcrumbs;
     };
 
     $scope.isActive = (nav) => {
@@ -32,9 +17,8 @@ module Wiki {
       return workspace.isLinkActive(nav.href());
     };
 
-
     $scope.$watch('workspace.tree', function () {
-      if (!$scope.git && Git.getGitMBean(workspace)) {
+      if (!$scope.git) {
         // lets do this asynchronously to avoid Error: $digest already in progress
         //console.log("Reloading the view as we now seem to have a git mbean!");
         setTimeout(updateView, 50);
@@ -46,6 +30,21 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    $scope.onNodeSelect = (treeNode) => {
+      console.log("Selected tree node: " + Core.pathGet(treeNode, ["title"]));
+      $scope.propertiesTemplate = null;
+      var routeXmlNode = treeNode["routeXmlNode"];
+      if (routeXmlNode) {
+        $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
+        var nodeName = routeXmlNode.nodeName;
+        $scope.nodeModel = Camel.getCamelSchema(nodeName);
+        if ($scope.nodeModel) {
+          $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+        }
+        Core.$apply($scope);
+      }
+    };
+
     updateView();
 
     function onResults(response) {
@@ -54,16 +53,36 @@ module Wiki {
         var tree = Camel.loadCamelTree(text);
         if (tree) {
           tree.key = $scope.pageId + "_camelContext";
-
-          var treeElement = $("#camelxml");
-          Jmx.enableTree($scope, $location, workspace, treeElement, [tree]);
+          $scope.camelContextTree = tree;
         }
+      } else {
+        console.log("No XML found for page " + $scope.pageId);
       }
       Core.$applyLater($scope);
     }
 
     function updateView() {
-      $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onResults);
+      $scope.pageId = Wiki.pageId($routeParams, $location);
+      console.log("Has page id: " + $scope.pageId + " with $routeParams " + JSON.stringify($routeParams));
+
+      $scope.breadcrumbs = [
+        {
+          content: '<i class=" icon-edit"></i> Properties',
+          title: "View the pattern properties",
+          isValid: (workspace:Workspace) => true,
+          href: () => "#/wiki/camel/properties/" + $scope.pageId
+        },
+        {
+          content: '<i class="icon-picture"></i> Diagram',
+          title: "View a diagram of the route",
+          isValid: (workspace:Workspace) => true,
+          href: () => "#/wiki/camel/diagram/" + $scope.pageId
+        }
+      ];
+
+      if (Git.getGitMBean(workspace)) {
+        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onResults);
+      }
     }
   }
 }

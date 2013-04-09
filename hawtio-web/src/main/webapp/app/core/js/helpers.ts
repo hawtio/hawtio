@@ -618,4 +618,11 @@ module Core {
     }
     return 0;
   }
+
+  /**
+   * If the value is not an array then wrap it in one
+   */
+  export function asArray(value) {
+    return angular.isArray(value) ? value : [value];
+  }
 }

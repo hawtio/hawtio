@@ -34,6 +34,11 @@ module Wiki {
       return false;
     };
 
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(loadBreadcrumbs, 50);
+    });
+
     loadBreadcrumbs();
 
 
