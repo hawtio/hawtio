@@ -17,7 +17,7 @@ module Wiki {
 
     angular.forEach(_apacheCamelModel.definitions, (value, key) => {
       if (value.group) {
-        var group = $scope.paletteTree.getOrElse(value.group);
+        var group = (key === "route") ? $scope.paletteTree: $scope.paletteTree.getOrElse(value.group);
         value["_id"] = key;
         var title = value["title"] || key;
         var node = new Folder(title);
