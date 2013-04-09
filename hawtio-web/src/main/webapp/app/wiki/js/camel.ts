@@ -31,7 +31,6 @@ module Wiki {
     });
 
     $scope.onNodeSelect = (treeNode) => {
-      console.log("Selected tree node: " + Core.pathGet(treeNode, ["title"]));
       $scope.propertiesTemplate = null;
       var routeXmlNode = treeNode["routeXmlNode"];
       if (routeXmlNode) {

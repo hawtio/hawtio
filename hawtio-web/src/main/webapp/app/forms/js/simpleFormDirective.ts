@@ -22,7 +22,7 @@ module Forms {
     public scope:any = null;
 
     // the name to look up in the scope for the configuration data
-    public scopeName: string = null;
+    public scopeName:string = null;
 
     public properties = [];
     public action = '';
@@ -58,7 +58,7 @@ module Forms {
     private attributeName = 'simpleForm';
 
     // see constructor for why this is here...
-    public link: (scope, element, attrs) => any;
+    public link:(scope, element, attrs) => any;
 
     constructor(private workspace, public $compile) {
       // necessary to ensure 'this' is this object <sigh>
@@ -77,94 +77,111 @@ module Forms {
       var fullSchemaName = attrs["schema"];
       var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
 
-      config.schemaName = fullSchemaName;
-
+      var compiledNode = null;
+      var tabs = null;
+      var fieldset = null;
+      var schema = null;
       var configScopeName = attrs[this.attributeName] || attrs["data"];
-      config = configure(config, scope[configScopeName], attrs);
-      config.scopeName = configScopeName;
-      config.scope = scope;
 
-      var entityName = config.getEntity();
+      var simple = this;
+      scope.$watch(configScopeName, onWidgetDataChange);
 
-      if (angular.isDefined(config.json)) {
-        config.data = $.parseJSON(config.json);
-      } else {
-        config.data = scope[configScopeName] || scope[config.data];
-      }
-
-      var form = this.createForm(config);
-      var fieldset = form.find('fieldset');
-
-      var schema = config.data;
-
-      var tabs = {
-        elements: {},
-        locations: {},
-        use: false
-      };
-      
-      if (schema && angular.isDefined(schema.tabs)) {
-        tabs.use = true;
-        tabs['div'] = $('<div class="tabbable hawtio-form-tabs"></div>');
-
-        angular.forEach(schema.tabs, function(value, key) {
-          tabs.elements[key] = $('<div class="tab-pane" title="' + key + '"></div>');
-          tabs['div'].append(tabs.elements[key]);
-          value.forEach(function(val) {
-            tabs.locations[val] = key;
-          });
-        });
-
-        if (!tabs.locations['*']) {
-          tabs.locations['*'] = Object.extended(schema.tabs).keys()[0];
+      function onWidgetDataChange(scopeData) {
+        if (scopeData) {
+          onScopeData(scopeData);
         }
       }
 
-      if (!tabs.use) {
-        fieldset.append('<div class="spacer"></div>');
-      }
+      function onScopeData(scopeData) {
+        config = configure(config, scopeData, attrs);
+        config.schemaName = fullSchemaName;
+        config.scopeName = configScopeName;
+        config.scope = scope;
 
-      if (schema) {
-        angular.forEach(schema.properties, (property, id) => {
-          addProperty(id, property);
-        });
-      }
+        var entityName = config.getEntity();
 
-      if (tabs.use) {
-        fieldset.append(tabs['div']);
-      }
-
-      var findFunction = function(scope, func) {
-        if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
-          return scope;
-        }
-        if (angular.isDefined(scope.$parent) && scope.$parent !== null) {
-          return findFunction(scope.$parent, func);
+        if (angular.isDefined(config.json)) {
+          config.data = $.parseJSON(config.json);
         } else {
-          return null;
+          config.data = scopeData;
         }
-      };
 
-      var onSubmitFunc = config.onsubmit.replace('(', '').replace(')', '');
-      var onSubmit = maybeGet(findFunction(scope, onSubmitFunc), onSubmitFunc);
+        var form = simple.createForm(config);
+        fieldset = form.find('fieldset');
+        schema = config.data;
+        tabs = {
+          elements: {},
+          locations: {},
+          use: false
+        };
 
-      if (onSubmit === null) {
-        onSubmit = function (json, form) {
-          notification('error', 'No submit handler defined for form ' + form.get(0).name);
+        if (schema && angular.isDefined(schema.tabs)) {
+          tabs.use = true;
+          tabs['div'] = $('<div class="tabbable hawtio-form-tabs"></div>');
+
+          angular.forEach(schema.tabs, function (value, key) {
+            tabs.elements[key] = $('<div class="tab-pane" title="' + key + '"></div>');
+            tabs['div'].append(tabs.elements[key]);
+            value.forEach(function (val) {
+              tabs.locations[val] = key;
+            });
+          });
+
+          if (!tabs.locations['*']) {
+            tabs.locations['*'] = Object.extended(schema.tabs).keys()[0];
+          }
         }
+
+        if (!tabs.use) {
+          fieldset.append('<div class="spacer"></div>');
+        }
+
+        if (schema) {
+          angular.forEach(schema.properties, (property, id) => {
+            addProperty(id, property);
+          });
+        }
+
+        if (tabs.use) {
+          fieldset.append(tabs['div']);
+        }
+
+        var findFunction = function (scope, func) {
+          if (angular.isDefined(scope[func]) && angular.isFunction(scope[func])) {
+            return scope;
+          }
+          if (angular.isDefined(scope.$parent) && scope.$parent !== null) {
+            return findFunction(scope.$parent, func);
+          } else {
+            return null;
+          }
+        };
+
+        var onSubmitFunc = config.onsubmit.replace('(', '').replace(')', '');
+        var onSubmit = maybeGet(findFunction(scope, onSubmitFunc), onSubmitFunc);
+
+        if (onSubmit === null) {
+          onSubmit = function (json, form) {
+            notification('error', 'No submit handler defined for form ' + form.get(0).name);
+          }
+        }
+
+        if (angular.isDefined(onSubmit)) {
+          form.submit(() => {
+            var entity = scope[entityName];
+            onSubmit(entity, form);
+            return false;
+          });
+        }
+
+        fieldset.append('<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">');
+
+        if (compiledNode) {
+          $(compiledNode).remove();
+        }
+        compiledNode = simple.$compile(form)(scope);
+        $(element).append(compiledNode);
       }
-
-      if (angular.isDefined(onSubmit)) {
-        form.submit(() => {
-          var entity = scope[entityName];
-          onSubmit(entity, form);
-          return false;
-        });
-      }
-
-      fieldset.append('<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">');
-
-      $(element).append(this.$compile(form)(scope));
 
       function addProperty(id, property) {
         // TODO should also support getting inputs from the template cache, maybe
@@ -207,7 +224,8 @@ module Forms {
             if (tabs.locations[id]) {
               tabs.elements[tabs.locations[id]].append(input);
             } else {
-              tabs.elements[tabs.locations['*']].append(input);
+              tabs.elements[tabs.locations['*']].append
+                      (input);
             }
           } else {
             fieldset.append(input);
