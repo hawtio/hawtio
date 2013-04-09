@@ -14,7 +14,7 @@ module ActiveMQ {
           }).
                     run(($location: ng.ILocationService, workspace: Workspace, viewRegistry) => {
 
-                      viewRegistry['messaging'] = 'app/activemq/html/layoutActiveMQTree.html';
+                      viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
 
                       // register default attribute views
                       var attributes = workspace.attributeColumnDefs;
@@ -49,11 +49,11 @@ module ActiveMQ {
                       ];
 
                       workspace.topLevelTabs.push( {
-                        content: "Messaging",
-                        title: "Manage your message brokers",
+                        content: "ActiveMQ",
+                        title: "Manage your ActiveMQ message brokers",
                         isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
-                        href: () => "#/jmx/attributes?tab=messaging",
-                        isActive: () => workspace.isTopTabActive("messaging")
+                        href: () => "#/jmx/attributes?tab=activemq",
+                        isActive: () => workspace.isTopTabActive("activemq")
                       });
 
                       // add sub level tabs

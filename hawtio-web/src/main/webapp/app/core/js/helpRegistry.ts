@@ -7,8 +7,8 @@ module Core {
     }
 
     private topicNameMappings = {
-      activemq: 'Messaging',
-      camel: 'Integration',
+      activemq: 'ActiveMQ',
+      camel: 'Camel',
       jmx: 'JMX',
       log: 'Logs',
       datatable: 'hawtio-datatable'

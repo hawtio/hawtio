@@ -70,4 +70,4 @@ Hides the JMX tree so only the current view is visible on the page.
 
 ##### Other Functions #####
 
-Plugins can extend the JMX toolbar and add additional functions.  Descriptions of these functions can be found in the plugins documentation such as [Messaging](#/help/activemq) or [Integration](#/help/camel).
+Plugins can extend the JMX toolbar and add additional functions.  Descriptions of these functions can be found in the plugins documentation such as [ActiveMQ](#/help/activemq) or [Camel](#/help/camel).

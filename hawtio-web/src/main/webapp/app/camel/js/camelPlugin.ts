@@ -25,7 +25,7 @@ module Camel {
           filter('camelIconClass', () => iconClass).
           run((workspace:Workspace, jolokia, viewRegistry) => {
 
-            viewRegistry['integration'] = 'app/camel/html/layoutCamelTree.html';
+            viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
               // TODO there should be a nicer way to do this!
@@ -104,11 +104,11 @@ module Camel {
             ];
 
             workspace.topLevelTabs.push({
-              content: "Integration",
-              title: "Manage your Apache Camel integration patterns",
+              content: "Camel",
+              title: "Manage your Apache Camel applications",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
-              href: () => "#/jmx/attributes?tab=integration",
-              isActive: (workspace: Workspace) => workspace.isTopTabActive("integration")
+              href: () => "#/jmx/attributes?tab=camel",
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("camel")
             });
 
             // add sub level tabs
