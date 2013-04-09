@@ -71,6 +71,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jetty">jetty</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/jclouds/">jclouds</a></td>
+    <td>Adds support for <a href="http://jclouds.org/">jclouds</a> so you can view your cloud resources and start, stop and restart your compute nodes etc.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jclouds">jclouds</a></td>
+  </tr>
+  <tr>
     <td>jmx</td>
     <td>Provides the core <a href="http://www.oracle.com/technetwork/java/javase/tech/javamanagement-140525.html">JMX</a> support for interacting with MBeans, viewing real time attributes, charting and invoking operations.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jmx">jmx</a></td>

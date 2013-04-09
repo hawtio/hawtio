@@ -5,6 +5,7 @@
 Added the following new plugins:
 
 * [infinispan](http://hawt.io/plugins/infinispan/)
+* [jclouds](http://hawt.io/plugins/jclouds/)
 * [maven](http://hawt.io/plugins/maven/)
 
 Added more flexible documentation system
