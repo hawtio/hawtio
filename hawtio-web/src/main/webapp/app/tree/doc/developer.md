@@ -1,0 +1,24 @@
+# tree plugin
+
+This plugin provides a simple HTML directive for working with [jQuery DynaTree widgets](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) from AngularJS
+
+To use the directive, in your $scope create a tree model (e.g. using the Folder class) and assign it to some scope value...
+
+    $scope.foo = new Folder("cheese");
+    // populate the folders
+
+    $scope.onFooSelected = function (selection) {
+      // do something...
+    };
+
+Then in your HTML use
+
+    <div hawtio-tree="foo"></div>
+
+To invoke a function on your $scope when a node is selected add the **onSelect** attribute:
+
+    <div hawtio-tree="foo" onSelect="onFooSelected"></div>
+
+If you want to hide the root tree node you can add a hideRoot flag:
+
+    <div hawtio-tree="foo" hideRoot="true"></div>
