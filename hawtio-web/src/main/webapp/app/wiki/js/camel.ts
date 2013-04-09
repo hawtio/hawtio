@@ -32,6 +32,7 @@ module Wiki {
 
     $scope.onNodeSelect = (treeNode) => {
       $scope.propertiesTemplate = null;
+      $scope.diagramTemplate = null;
       $scope.nodeXmlNode = null;
       var routeXmlNode = treeNode["routeXmlNode"];
       if (routeXmlNode) {
@@ -43,6 +44,7 @@ module Wiki {
         if ($scope.nodeModel) {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
         }
+        $scope.diagramTemplate = "app/camel/html/routes.html";
         Core.$apply($scope);
       }
     };

@@ -2,6 +2,7 @@
 module Camel {
   export function CamelController($scope, $element, workspace:Workspace, jolokia) {
     $scope.routes = [];
+    $scope.routeNodes = {};
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -13,8 +14,13 @@ module Camel {
       updateRoutes();
     });
 
+    $scope.$watch('nodeXmlNode', function () {
+      if (workspace.moveIfViewInvalid()) return;
+      updateRoutes();
+    });
+
     function updateRoutes() {
-      var routeXmlNode = getSelectedRouteNode(workspace);
+      var routeXmlNode = getSelectedRouteNode(workspace) || $scope.nodeXmlNode;
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
@@ -38,7 +44,7 @@ module Camel {
       $scope.routes = data;
       // nodes and routeNodes is the GUI nodes for the processors and routes shown in the diagram
       $scope.nodes = {};
-      $scope.routeNodes = {}
+      $scope.routeNodes = {};
       var nodes = [];
       var links = [];
       var selectedRouteId = getSelectedRouteId(workspace);
@@ -70,11 +76,13 @@ module Camel {
       var svg = canvasDiv.children("svg")[0];
       $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
 
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: $scope.mbean,
-        operation: 'dumpRoutesStatsAsXml',
-        arguments: [true, true]
-      }, onSuccess(statsCallback));
+      if ($scope.mbean) {
+        Core.register(jolokia, $scope, {
+          type: 'exec', mbean: $scope.mbean,
+          operation: 'dumpRoutesStatsAsXml',
+          arguments: [true, true]
+        }, onSuccess(statsCallback));
+      }
       return width;
     }
 
