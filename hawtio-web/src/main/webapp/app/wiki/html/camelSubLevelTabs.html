@@ -8,3 +8,13 @@
       <i class="icon-plus"></i> Add</a></li>
 </ul>
 
+<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">
+  <div class="modal-header"><h4>Add Node</h4></div>
+  <div class="modal-body">
+    <div hawtio-tree="paletteTree" hideRoot="true" onselect="onPaletteSelect"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary add" type="button" ng-disabled="!selectedPaletteNode" ng-click="addAndCloseDialog()">Add</button>
+    <button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>
+  </div>
+</div>

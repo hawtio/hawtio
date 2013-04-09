@@ -3,6 +3,48 @@ module Wiki {
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.schema = _apacheCamelModel;
 
+    $scope.addDialogOptions = {
+      backdropFade: true,
+      dialogFade: true
+    };
+    $scope.showAddDialog = false;
+
+    $scope.paletteItemSearch = "";
+    $scope.paletteTree = new Folder("Palette");
+
+    angular.forEach(_apacheCamelModel.definitions, (value, key) => {
+      if (value.group) {
+        var group = $scope.paletteTree.getOrElse(value.group);
+        value["_id"] = key;
+        var node = new Folder(key);
+        node["nodeModel"] = value;
+        var imageUrl = Camel.getRouteNodeIcon(value);
+        node.icon = imageUrl;
+        node.tooltip = tooltip;
+        var tooltip = value["tooltip"] || value["description"] || label;
+
+        group.children.push(node);
+      }
+    });
+
+    $scope.addNode = () => {
+      $scope.showAddDialog = true;
+    };
+
+    $scope.closeAddDialog = () => {
+      $scope.showAddDialog = false;
+    };
+
+    $scope.onPaletteSelect = (node) => {
+      $scope.selectedPaletteNode =  (node && node["nodeModel"]) ? node : null;
+    };
+
+    $scope.addAndCloseDialog = () => {
+      console.log("About to add node: " + $scope.selectedPaletteNode["title"]);
+      $scope.closeAddDialog();
+    };
+
+
     $scope.camelSubLevelTabs = () => {
       return $scope.breadcrumbs;
     };
