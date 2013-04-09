@@ -34,8 +34,11 @@ module Camel {
 
     var populateTable = function (response) {
       var data = response.value;
+      // routes is the xml data of the routes
       $scope.routes = data;
+      // nodes and routeNodes is the GUI nodes for the processors and routes shown in the diagram
       $scope.nodes = {};
+      $scope.routeNodes = {}
       var nodes = [];
       var links = [];
       var selectedRouteId = getSelectedRouteId(workspace);
@@ -104,6 +107,7 @@ module Camel {
           node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
           if (rid) {
             node["rid"] = rid;
+            $scope.routeNodes[rid] = node;
           }
           if (cid) {
             $scope.nodes[cid] = node;
@@ -177,39 +181,49 @@ module Camel {
       var data = response.value;
       if (data) {
         var doc = $.parseXML(data);
+
+        var allStats = $(doc).find("routeStat");
+        allStats.each((idx, stat) => {
+          addTooltipToNode(true, stat);
+        });
+
         var allStats = $(doc).find("processorStat");
         allStats.each((idx, stat) => {
-          var id = stat.getAttribute("id");
-          var completed = stat.getAttribute("exchangesCompleted");
-          var tooltip = "";
-          if (id && completed) {
-            var node = $scope.nodes[id];
-            if (node) {
-              var meanProcessingTime = stat.getAttribute("meanProcessingTime");
-              if (meanProcessingTime) {
-                tooltip = "mean processing time " + meanProcessingTime + " (ms)";
-              }
-              var total = 0 + parseInt(completed);
-              var failed = stat.getAttribute("exchangesFailed");
-              if (failed) {
-                total += parseInt(failed);
-              }
-              node["counter"] = total;
-              node["tooltip"] = tooltip;
-            } else {
-              // we are probably not showing the route for these stats
-              //console.log("Warning, could not find " + id);
-            }
-          }
+          addTooltipToNode(false, stat);
         });
 
         // now lets try update the graph
         Core.dagreUpdateGraphData($scope.graphData);
       }
+
+      function addTooltipToNode(isRoute, stat) {
+        // we could have used a function instead of the boolean isRoute parameter (but sometimes that is easier)
+        var id = stat.getAttribute("id");
+        var completed = stat.getAttribute("exchangesCompleted");
+        var tooltip = "";
+        if (id && completed) {
+          var node = isRoute ? $scope.routeNodes[id]: $scope.nodes[id];
+          if (node) {
+            var meanProcessingTime = stat.getAttribute("meanProcessingTime");
+            if (meanProcessingTime) {
+              tooltip = "mean processing time " + meanProcessingTime + " (ms)";
+            }
+            var total = 0 + parseInt(completed);
+            var failed = stat.getAttribute("exchangesFailed");
+            if (failed) {
+              total += parseInt(failed);
+            }
+            node["counter"] = total;
+            node["tooltip"] = tooltip;
+          } else {
+            // we are probably not showing the route for these stats
+            //console.log("Warning, could not find " + id);
+          }
+        }
+      }
     }
+
   }
-
-
 
 }
 
