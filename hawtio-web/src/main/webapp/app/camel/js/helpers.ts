@@ -140,6 +140,7 @@ module Camel {
    */
   export function addRouteChildren(folder: Folder, route) {
     folder.children = [];
+    folder["routeXmlNode"] = route;
     $(route).children("*").each((idx, n) => {
       var nodeName = n.nodeName;
       if (nodeName) {
