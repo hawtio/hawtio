@@ -19,9 +19,11 @@ module Forms {
     public labelclass = 'control-label';
     public showtypes = 'false';
 
-    // the name of the attribute in the scope which is the data to be editted
+    /** the name of the attribute in the scope which is the data to be edited */
     public entity = 'entity';
 
+    /** the model expression to bind to. If ommited this defaults to entity + "." + name **/
+    public model = undefined;
 
     public getEntity() {
       return this.entity || "entity";
@@ -63,22 +65,31 @@ module Forms {
       config.scope = scope;
       config.schemaName = attrs["schema"] || "schema";
 
-      var group = Forms.getControlGroup(config, config, config.name);
-      group.append(Forms.getLabel(config, config, attrs["title"] || config.name));
-      var controlDiv = Forms.getControlDiv(config);
-      controlDiv.append(this.getInput(config, config, config.name));
-      controlDiv.append(Forms.getHelpSpan(config, config, config.name));
-      group.append(controlDiv);
-      $(element).append(this.$compile(group)(scope));
-    }
+      var id = config.name;
+      var group = Forms.getControlGroup(config, config, id);
 
-    public getInput(config, arg, id) {
-      var rc = $('<span class="form-data"></span>');
-      var modelName = arg.model;
-      if (!angular.isDefined(arg.model)) {
+      var modelName = config.model;
+      if (!angular.isDefined(modelName)) {
         // TODO always use 2 way binding?
         modelName = config.getEntity() + "." + id;
       }
+      group.append(Forms.getLabel(config, config, attrs["title"] || id));
+      var controlDiv = Forms.getControlDiv(config);
+      controlDiv.append(this.getInput(config, config, id, modelName));
+      controlDiv.append(Forms.getHelpSpan(config, config, id));
+      group.append(controlDiv);
+      $(element).append(this.$compile(group)(scope));
+
+      if (scope && modelName) {
+        scope.$watch(modelName, onModelChange);
+      }
+      function onModelChange(newValue) {
+        scope.$emit("hawtio.form.modelChange", modelName, newValue);
+      }
+    }
+
+    public getInput(config, arg, id, modelName) {
+      var rc = $('<span class="form-data"></span>');
       if (modelName) {
         rc.attr('ng-model', modelName);
         rc.append('{{' + modelName + '}}')
@@ -96,18 +107,12 @@ module Forms {
       super(workspace, $compile);
     }
 
-    public getInput(config, arg, id) {
+    public getInput(config, arg, id, modelName) {
       if (config.isReadOnly()) {
-        return super.getInput(config, arg, id);
+        return super.getInput(config, arg, id, modelName);
       }
       var rc = $('<input type="' + this.type + '">');
       rc.attr('name', id);
-
-      var modelName = arg.model;
-      if (!angular.isDefined(arg.model)) {
-        // TODO always use 2 way binding?
-        modelName = config.getEntity() + "." + id;
-      }
       if (modelName) {
         rc.attr('ng-model', modelName);
       }
@@ -125,9 +130,9 @@ module Forms {
       super(workspace, $compile);
     }
 
-    public getInput(config, arg, id) {
+    public getInput(config, arg, id, modelName) {
       if (config.isReadOnly()) {
-        return super.getInput(config, arg, id);
+        return super.getInput(config, arg, id, modelName);
       }
       // TODO calculate from input attributes...
       var required = true;
@@ -159,11 +164,6 @@ module Forms {
         scope["$selectValues"] = values;
         rc.attr("ng-options", "value for value in $selectValues");
       }
-      var modelName = arg.model;
-      if (!angular.isDefined(arg.model)) {
-        // TODO always use 2 way binding?
-        modelName = config.getEntity() + "." + id;
-      }
       if (modelName) {
         rc.attr('ng-model', modelName);
       }
@@ -182,9 +182,9 @@ module Forms {
       super(workspace, $compile);
     }
 
-    public getInput(config, arg, id) {
+    public getInput(config, arg, id, modelName) {
       if (config.isReadOnly()) {
-        return super.getInput(config, arg, id);
+        return super.getInput(config, arg, id, modelName);
       }
       var rc = $('<input type="number">');
       rc.attr('name', id);
@@ -201,11 +201,6 @@ module Forms {
         rc.attr('max', arg.maximum);
       }
 
-      var modelName = arg.model;
-      if (!angular.isDefined(arg.model)) {
-        // TODO always use 2 way binding?
-        modelName = config.getEntity() + "." + id;
-      }
       if (modelName) {
         rc.attr('ng-model', modelName);
       }
@@ -295,19 +290,13 @@ module Forms {
       super(workspace, $compile);
     }
 
-    public getInput(config, arg, id) {
+    public getInput(config, arg, id, modelName) {
 
       var rc = $('<input class="hawtio-checkbox" type="checkbox">');
       rc.attr('name', id);
 
       if (config.isReadOnly()) {
         rc.attr('disabled', 'true');
-      }
-
-      var modelName = arg.model;
-      if (!angular.isDefined(arg.model)) {
-        // TODO always use 2 way binding?
-        modelName = config.getEntity() + "." + id;
       }
       if (modelName) {
         rc.attr('ng-model', modelName);

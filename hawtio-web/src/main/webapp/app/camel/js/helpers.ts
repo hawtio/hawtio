@@ -80,6 +80,29 @@ module Camel {
     return answer;
   }
 
+  export function setRouteNodeJSON(routeXmlNode, newData) {
+    if (routeXmlNode) {
+      angular.forEach(newData, (value, key) => {
+        if (angular.isObject(value)) {
+          // TODO deal with nested objects...
+          var nested = $(routeXmlNode).children(key);
+          if (nested && nested.length) {
+            setRouteNodeJSON(nested[0], value);
+          } else {
+            console.log("No nested element called " + key + " inside " + routeXmlNode);
+          }
+        } else {
+          if (value) {
+            var text = value.toString();
+            routeXmlNode.setAttribute(key, text);
+          } else {
+            routeXmlNode.removeAttribute(key);
+          }
+        }
+      });
+    }
+  }
+
   export function getRouteNodeIcon(nodeSettings) {
     var imageName = nodeSettings["icon"] || "generic24.png";
     return url("/app/camel/img/" + imageName);

@@ -78,6 +78,7 @@ module Forms {
       var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
 
       var compiledNode = null;
+      var childScope = null;
       var tabs = null;
       var fieldset = null;
       var schema = null;
@@ -179,7 +180,11 @@ module Forms {
         if (compiledNode) {
           $(compiledNode).remove();
         }
-        compiledNode = simple.$compile(form)(scope);
+        if (childScope) {
+          childScope.$destroy();
+        }
+        childScope = scope.$new(false);
+        compiledNode = simple.$compile(form)(childScope);
         $(element).append(compiledNode);
       }
 

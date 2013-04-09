@@ -32,9 +32,12 @@ module Wiki {
 
     $scope.onNodeSelect = (treeNode) => {
       $scope.propertiesTemplate = null;
+      $scope.nodeXmlNode = null;
       var routeXmlNode = treeNode["routeXmlNode"];
       if (routeXmlNode) {
+        $scope.nodeXmlNode = routeXmlNode;
         $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
+        $scope.nodeDataChangedFields = {};
         var nodeName = routeXmlNode.nodeName;
         $scope.nodeModel = Camel.getCamelSchema(nodeName);
         if ($scope.nodeModel) {
@@ -44,7 +47,32 @@ module Wiki {
       }
     };
 
+    $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
+
     updateView();
+
+    function onModelChangeEvent(event, name) {
+      // lets filter out events due to the node changing causing the
+      // forms to be recreated
+      if ($scope.nodeData) {
+        var fieldMap = $scope.nodeDataChangedFields;
+        if (fieldMap) {
+          if (fieldMap[name]) {
+            onNodeDataChanged();
+          } else {
+            // the selection has just changed so we get the initial event
+            // we can ignore this :)
+            fieldMap[name] = true;
+          }
+        }
+      }
+    }
+
+    function onNodeDataChanged() {
+      if ($scope.nodeXmlNode) {
+        Camel.setRouteNodeJSON($scope.nodeXmlNode, $scope.nodeData);
+      }
+    }
 
     function onResults(response) {
       var text = response.text;
