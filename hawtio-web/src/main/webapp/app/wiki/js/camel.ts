@@ -54,6 +54,13 @@ module Wiki {
       $scope.closeAddDialog();
     };
 
+    $scope.removeNode = () => {
+      if ($scope.selectedFolder && $scope.treeNode) {
+        $scope.selectedFolder.detach();
+        $scope.treeNode.remove();
+      }
+    };
+
     $scope.camelSubLevelTabs = () => {
       return $scope.breadcrumbs;
     };

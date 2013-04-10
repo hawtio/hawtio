@@ -117,21 +117,29 @@ class Folder implements NodeSelection {
   }
 
   public moveChild(child: Folder) {
-    if (child) {
-      var oldParent = child.parent;
-      if (oldParent) {
-        var oldParentChildren = oldParent.children;
-        if (oldParentChildren) {
-          var idx = oldParentChildren.indexOf(child);
-          if (idx < 0) {
-            oldParent.children = <NodeSelection[]>oldParent.children.remove({key: child.key});
-          } else {
-            oldParentChildren.slice(idx, idx);
-          }
-        }
-      }
+    if (child && child.parent !== this) {
+      child.detach();
       child.parent = this;
       this.children.push(child);
+    }
+  }
+
+  /**
+   * Removes this node from my parent if I have one
+   */
+  public detach() {
+    var oldParent = this.parent;
+    if (oldParent) {
+      var oldParentChildren = oldParent.children;
+      if (oldParentChildren) {
+        var idx = oldParentChildren.indexOf(this);
+        if (idx < 0) {
+          oldParent.children = <NodeSelection[]>oldParent.children.remove({key: this.key});
+        } else {
+          oldParentChildren.slice(idx, idx);
+        }
+      }
+      this.parent = null;
     }
   }
 
