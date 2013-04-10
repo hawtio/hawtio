@@ -533,9 +533,10 @@ module Core {
 
   export function unescapeHtml(str) {
     angular.forEach(_escapeHtmlChars, (value, key) => {
-      var regex = new RegExp(value, "g")
+      var regex = new RegExp(value, "g");
       str = str.replace(regex, key);
     });
+    str = str.replace(/&gt;/g, ">");
     return str;
   }
 
