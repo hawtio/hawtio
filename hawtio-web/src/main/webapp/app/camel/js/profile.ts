@@ -5,11 +5,13 @@ module Camel {
         $scope.data = [];
         $scope.search = "";
         $scope.calcManually = true;
+        $scope.icons = {};
 
         var columnDefs: any[] = [
             {
                 field: 'id',
                 displayName: 'Id',
+                cellTemplate: '<div class="ngCellText"><span ng-bind-html-unsafe="rowIcon(row.entity.id)"/> {{row.entity.id}}</div>',
                 cellFilter: null,
                 width: "*",
                 resizable: true
@@ -71,6 +73,33 @@ module Camel {
                 resizable: true
             }
         ];
+
+        $scope.rowIcon = (id) => {
+          var answer = $scope.icons[id];
+          if (!answer) {
+            var routeXml = Core.pathGet(workspace.selection, ["routeXmlNode"]);
+            if (routeXml) {
+              var routeId = routeXml.getAttribute("id");
+              var node = (id === routeId) ? routeXml : null;
+              if (!node) {
+                // now lets find the child node which has the given id
+                var child = $(routeXml).find('*[id="' + id + '"]');
+                if (child && child.length) {
+                  node = child[0];
+                }
+              }
+              if (node) {
+                var icon = Camel.getRouteNodeIcon(node);
+                if (icon) {
+                  answer = "<img src='" + icon + "'>";
+                  $scope.icons[id] = answer;
+                }
+              }
+            }
+
+          }
+          return answer;
+        };
 
         $scope.gridOptions = {
             data: 'data',

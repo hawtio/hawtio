@@ -102,9 +102,22 @@ module Camel {
     }
   }
 
-  export function getRouteNodeIcon(nodeSettings) {
-    var imageName = nodeSettings["icon"] || "generic24.png";
-    return url("/app/camel/img/" + imageName);
+  export function getRouteNodeIcon(nodeSettingsOrXmlNode) {
+    var nodeSettings = null;
+    if (nodeSettingsOrXmlNode) {
+      var nodeName = nodeSettingsOrXmlNode.localName;
+      if (nodeName) {
+        nodeSettings = getCamelSchema(nodeName);
+      } else {
+        nodeSettings = nodeSettingsOrXmlNode;
+      }
+    }
+    if (nodeSettings) {
+      var imageName = nodeSettings["icon"] || "generic24.png";
+      return url("/app/camel/img/" + imageName);
+    } else {
+      return null;
+    }
   }
 
   export function getSelectedRouteNode(workspace:Workspace) {
