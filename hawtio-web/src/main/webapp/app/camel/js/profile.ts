@@ -6,13 +6,13 @@ module Camel {
         $scope.search = "";
         $scope.calcManually = true;
         $scope.icons = {};
+        $scope.selectedRouteId = "";
 
         var columnDefs: any[] = [
             {
                 field: 'id',
                 displayName: 'Id',
-                // TODO while nice this does seem to cause a nasty flicker so disabling the icon rendering for now
-                // cellTemplate: '<div class="ngCellText" ng-bind-html-unsafe="rowIcon(row.entity.id)"></div>',
+                cellTemplate: '<div class="ngCellText" ng-bind-html-unsafe="rowIcon(row.entity.id)"></div>',
                 cellFilter: null,
                 width: "*",
                 resizable: true
@@ -76,31 +76,13 @@ module Camel {
         ];
 
         $scope.rowIcon = (id) => {
-          var answer = $scope.icons[id];
-          if (!answer) {
-            var routeXml = Core.pathGet(workspace.selection, ["routeXmlNode"]);
-            if (routeXml) {
-              var routeId = routeXml.getAttribute("id");
-              var node = (id === routeId) ? routeXml : null;
-              if (!node) {
-                // now lets find the child node which has the given id
-                var child = $(routeXml).find('*[id="' + id + '"]');
-                if (child && child.length) {
-                  node = child[0];
-                }
-              }
-              if (node) {
-                var icon = Camel.getRouteNodeIcon(node);
-                if (icon) {
-                  answer = "<img src='" + icon + "'>";
-                  $scope.icons[id] = answer;
-                }
-              }
-            }
-
+          var entry = $scope.icons[id];
+          if (entry) {
+            return entry.img + " " + id;
+          } else {
+            return id;
           }
-          return answer ? answer += " " + id : id;
-        };
+        }
 
         $scope.gridOptions = {
             data: 'data',
@@ -221,6 +203,20 @@ module Camel {
         // for Camel 2.10 or older we need to run through the data and calculate the self/total times manually
         // TODO: check camel version and enable this or not using a flag
         if ($scope.calcManually) {
+
+          // sort the data accordingly to order in the icons map
+          console.log("Before sorting " + updatedData);
+          updatedData.sort((e1, e2) => {
+            var entry1 = $scope.icons[e1.id];
+            var entry2 = $scope.icons[e2.id];
+            if (entry1 && entry2) {
+              return entry1.index - entry2.index;
+            } else {
+              return 0;
+            }
+          });
+          console.log("After sorting " + updatedData);
+
           var accTotal = 0;
           updatedData.reverse().forEach((data, idx) => {
               // update accTotal with self time
@@ -243,7 +239,14 @@ module Camel {
         }
 
         // replace data with updated data
-        $scope.data = updatedData;
+        if ($scope.data.length === 0) {
+          $scope.data = updatedData;
+        } else {
+          updatedData.forEach((data, idx) => {
+            $scope[idx] = data;
+          });
+        }
+
         Core.$apply($scope);
       };
 
@@ -259,11 +262,48 @@ module Camel {
           setTimeout(loadData, 50);
         });
 
+        function initIdToIcon() {
+          console.log("initializing id and icons")
+
+          $scope.icons = {};
+          var routeXml = Core.pathGet(workspace.selection, ["routeXmlNode"]);
+          if (routeXml) {
+
+            // add route id first
+            var entry = {
+              img : "",
+              index : 0
+            };
+            entry.index = -1;
+            entry.img = "<img src='app/camel/img/camel_route.png'>";
+            $scope.icons[$scope.selectedRouteId] = entry;
+
+            // then each processor id and icons
+            $(routeXml).find('*').each((idx, element) => {
+              var id = element.getAttribute("id");
+              if (id) {
+                var entry = {
+                  img : "",
+                  index : 0
+                };
+                entry.index = idx;
+                var icon = Camel.getRouteNodeIcon(element);
+                if (icon) {
+                  entry.img = "<img src='" + icon + "'>";
+                } else {
+                  entry.img = "";
+                }
+                $scope.icons[id] = entry;
+              }
+            });
+          }
+        }
+
         function loadData() {
           console.log("Loading Camel route profile data...");
-          var selectedRouteId = getSelectedRouteId(workspace);
-          var routeMBean = getSelectionRouteMBean(workspace, selectedRouteId);
-          console.log("Selected route is " + selectedRouteId)
+          $scope.selectedRouteId = getSelectedRouteId(workspace);
+          var routeMBean = getSelectionRouteMBean(workspace, $scope.selectedRouteId);
+          console.log("Selected route is " + $scope.selectedRouteId)
 
           var camelVersion = getCamelVersion(workspace, jolokia);
           if (camelVersion) {
@@ -280,9 +320,13 @@ module Camel {
             }
           }
 
+          initIdToIcon();
+          console.log("Initialized icons, with " + $scope.icons.length + " icons")
+
           // schedule update the profile data, based on the configured interval
-          // TODO: show eips in the table/tree, and use the position from this tree to position the data
+          // TOOD: the icons is not initialized the first time, for some reason, the routeXmlNode is empty/undefined
           // TODO: have cellFilter with bar grey-scale for highlighting the scales between the numbers
+          // TODO: have the icons indent, there is some CSS ninja crack to do this
 
           var query = {type: 'exec', mbean: routeMBean, operation: 'dumpRouteStatsAsXml(boolean,boolean)', arguments: [false, true]};
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateProfileMessages, query));
