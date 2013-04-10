@@ -160,9 +160,7 @@ module Jmx {
               var query = mbeans.map((mbean) => {
                 return { type: "READ", mbean: mbean, ignoreErrors: true};
               });
-              if (query.length === 1) {
-                request = query[0];
-              } else if (query.length > 1) {
+              if (query.length > 0) {
                 request = query;
 
                 // deal with multiple results
