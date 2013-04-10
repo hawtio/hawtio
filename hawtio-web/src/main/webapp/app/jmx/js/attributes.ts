@@ -260,10 +260,11 @@ module Jmx {
         }
       } else {
         $scope.columnDefs = propertiesColumnDefs;
+        var showAllAttributes = true;
         if (angular.isObject(data)) {
           var properties = [];
           angular.forEach(data, (value, key) => {
-            if (includePropertyValue(key, value)) {
+            if (showAllAttributes || includePropertyValue(key, value)) {
               properties.push({name: humanizeValue(key), value: value});
             }
           });
