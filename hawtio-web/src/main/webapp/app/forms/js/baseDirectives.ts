@@ -19,6 +19,13 @@ module Forms {
     public labelclass = 'control-label';
     public showtypes = 'false';
 
+
+    /**
+     * Custom template for custom form controls
+     * @type {null}
+     */
+    public formtemplate = null;
+
     /** the name of the attribute in the scope which is the data to be edited */
     public entity = 'entity';
 
@@ -121,7 +128,29 @@ module Forms {
       }
       return rc;
     }
+  }
 
+  export class CustomInput extends InputBase {
+
+    constructor(private workspace, private $compile) {
+      super(workspace, $compile);
+    }
+
+    public getInput(config, arg, id, modelName) {
+      var template = arg.formtemplate;
+      template = Core.unescapeHtml(template);
+      var rc = $(template);
+      if (!rc.attr("name")) {
+        rc.attr('name', id);
+      }
+      if (modelName) {
+        rc.attr('ng-model', modelName);
+      }
+      if (config.isReadOnly()) {
+        rc.attr('readonly', 'true');
+      }
+      return rc;
+    }
   }
 
   export class SelectInput extends InputBase {

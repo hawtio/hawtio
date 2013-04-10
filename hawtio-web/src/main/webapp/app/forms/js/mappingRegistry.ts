@@ -5,6 +5,10 @@ module Forms {
     if (!type) {
       return "hawtio-form-text";
     }
+    var custom = Core.pathGet(property, ["formTemplate"]);
+    if (custom) {
+      return "hawtio-form-custom";
+    }
     var enumValues = Core.pathGet(property, ["enum"]);
     if (enumValues) {
       // TODO could use different kinds of radio / combo box
