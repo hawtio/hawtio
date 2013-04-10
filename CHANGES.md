@@ -4,9 +4,11 @@
 
 Added the following new plugins:
 
+* [forms](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md)
 * [infinispan](http://hawt.io/plugins/infinispan/)
 * [jclouds](http://hawt.io/plugins/jclouds/)
 * [maven](http://hawt.io/plugins/maven/)
+* [tree](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md)
 
 Added more flexible documentation system
 
