@@ -11,7 +11,8 @@ module Camel {
             {
                 field: 'id',
                 displayName: 'Id',
-                cellTemplate: '<div class="ngCellText"><span ng-bind-html-unsafe="rowIcon(row.entity.id)"/> {{row.entity.id}}</div>',
+                // TODO while nice this does seem to cause a nasty flicker so disabling the icon rendering for now
+                // cellTemplate: '<div class="ngCellText" ng-bind-html-unsafe="rowIcon(row.entity.id)"></div>',
                 cellFilter: null,
                 width: "*",
                 resizable: true
@@ -98,7 +99,7 @@ module Camel {
             }
 
           }
-          return answer;
+          return answer ? answer += " " + id : id;
         };
 
         $scope.gridOptions = {
