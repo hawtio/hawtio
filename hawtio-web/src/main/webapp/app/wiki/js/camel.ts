@@ -102,6 +102,50 @@ module Wiki {
       }
     };
 
+    function getFolderCamelNodeId(folder) {
+      return Core.pathGet(folder, ["routeXmlNode", "localName"]);
+    }
+
+    $scope.onNodeDragEnter = (node, sourceNode) => {
+      var nodeFolder = node.data;
+      var sourceFolder = sourceNode.data;
+      if (nodeFolder && sourceFolder) {
+        var nodeId = getFolderCamelNodeId(nodeFolder);
+        var sourceId = getFolderCamelNodeId(sourceFolder);
+        if (nodeId && sourceId) {
+          // we can only drag routes onto other routes (before / after / over)
+          if (sourceId === "route") {
+            return nodeId === "route";
+          }
+          return true;
+        }
+      }
+      return false;
+    };
+
+    $scope.onNodeDrop = (node, sourceNode, hitMode, ui, draggable) => {
+      var nodeFolder = node.data;
+      var sourceFolder = sourceNode.data;
+      if (nodeFolder && sourceFolder) {
+        // we cannot drop a route into a route or a non-route to a top level!
+        var nodeId = getFolderCamelNodeId(nodeFolder);
+        var sourceId = getFolderCamelNodeId(sourceFolder);
+
+        if (nodeId === "route") {
+          // hitMode must be "over" if we are not another route
+          if (sourceId === "route") {
+            if (hitMode === "over") {
+              hitMode = "after";
+            }
+          } else {
+            hitMode = "over";
+          }
+        }
+        console.log("nodeDrop owner: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
+      }
+      sourceNode.move(node, hitMode);
+    };
+
     $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
 
     updateView();

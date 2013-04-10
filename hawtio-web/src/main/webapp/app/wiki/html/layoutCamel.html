@@ -20,7 +20,7 @@
 
   <div class="row-fluid">
     <div id="tree-container" class="span3" ng-controller="Camel.TreeController">
-      <div hawtio-tree="camelContextTree" onselect="onNodeSelect" hideRoot="true"></div>
+      <div hawtio-tree="camelContextTree" onselect="onNodeSelect" onDragEnter="onNodeDragEnter" onDrop="onNodeDrop" hideRoot="true"></div>
     </div>
 
     <div class="span9">
