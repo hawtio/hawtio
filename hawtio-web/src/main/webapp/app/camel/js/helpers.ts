@@ -262,6 +262,7 @@ module Camel {
       return id;
     }
     var label = nodeSettings["title"] || routeXmlNode.localName;
+/*
     if (label === "endpoint" || label === "Endpoint") {
       // if we are the first endpoint then use "From" otherwise use "To"
       var parent = $(routeXmlNode).parent();
@@ -270,9 +271,12 @@ module Camel {
       var from = !fromCount && (endpoints.length && endpoints[0] === routeXmlNode);
       label = (from) ? "From" : "To";
     }
+*/
     var uri = getRouteNodeUri(routeXmlNode);
     if (uri) {
-      label += " " + uri;
+      // Don't use from/to as it gets odd if you drag/drop and reorder
+      // label += " " + uri;
+      label = uri;
     }
     return label;
   }
