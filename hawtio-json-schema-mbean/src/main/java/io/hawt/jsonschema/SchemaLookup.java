@@ -2,6 +2,7 @@ package io.hawt.jsonschema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,13 @@ public class SchemaLookup implements SchemaLookupMXBean {
         try {
             if (mapper == null) {
                 mapper = new ObjectMapper();
+
+                JaxbAnnotationModule module1 = new JaxbAnnotationModule();
+                mapper.registerModule(module1);
+
+                BeanValidationAnnotationModule module2 = new BeanValidationAnnotationModule();
+                mapper.registerModule(module2);
+
             }
             // now lets expose the mbean...
             if (objectName == null) {

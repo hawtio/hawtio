@@ -38,4 +38,26 @@ public class SchemaLookupTest {
         return lookup;
     }
 
+    // right now these just verify the lookup doesn't bail
+    @Test
+    public void testObjectWithJaxbAnnotations() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass("io.hawt.jsonschema.ObjectWithJaxbAnnotations");
+        System.out.println("Got: \n\n" + result + "\n\n");
+    }
+
+    @Test
+    public void testObjectWithValidationAnnotations() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass("io.hawt.jsonschema.ObjectWithValidationAnnotations");
+        System.out.println("Got: \n\n" + result + "\n\n");
+    }
+
+    @Test
+    public void testObjectWithJsonAnnotations() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass("io.hawt.jsonschema.ObjectWithJsonAnnotations");
+        System.out.println("Got: \n\n" + result + "\n\n");
+    }
+
 }
