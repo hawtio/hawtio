@@ -54,9 +54,6 @@ module Infinispan {
         if (!this.useSessionIds) {
           sql = "cache " + this.cacheName + "; " + sql;
         }
-        // TODO we could try not pass in a sessionId if we could prefix the sql
-        // with some kind of value like: "cache " + this.cacheName + "; "
-        // to bind the remaining SQL against the named cache
         if (sessionId || !this.useSessionIds) {
           var mbean = Infinispan.getInterpreterMBean(this.workspace);
           if (mbean) {
