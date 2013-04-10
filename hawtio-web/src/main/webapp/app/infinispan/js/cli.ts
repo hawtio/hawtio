@@ -41,15 +41,25 @@ module Infinispan {
     }
 
     public execute(sql:string, handler) {
-      if (this.sessionId) {
-        var mbean = Infinispan.getInterpreterMBean(this.workspace);
-        if (mbean) {
-          this.jolokia.execute(mbean, "execute", this.sessionId, sql, onSuccess(handler));
-        } else {
-          this.warnMissingMBean();
+      if (sql) {
+        sql = sql.trim();
+        if (!sql.endsWith(";")) {
+          sql += ";";
         }
-      } else {
-        notification("warning", "Cannot evaluate SQL as we don't have a sessionId yet!");
+        var sessionId = this.sessionId;
+        // TODO we could try not pass in a sessionId if we could prefix the sql
+        // with some kind of value like: "cache " + this.cacheName + "; "
+        // to bind the remaining SQL against the named cache
+        if (sessionId) {
+          var mbean = Infinispan.getInterpreterMBean(this.workspace);
+          if (mbean) {
+            this.jolokia.execute(mbean, "execute", sessionId, sql, onSuccess(handler));
+          } else {
+            this.warnMissingMBean();
+          }
+        } else {
+          notification("warning", "Cannot evaluate SQL as we don't have a sessionId yet!");
+        }
       }
     }
 

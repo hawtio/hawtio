@@ -55,6 +55,7 @@ module Infinispan {
     };
 
     function handleResults(results) {
+      $scope.output = null;
       if (!results) {
         console.log("no output...");
       } else {
@@ -71,6 +72,7 @@ module Infinispan {
             notification("error", "No results!");
           } else {
             $scope.output = output;
+            console.log("==== output: " + output);
             Core.$apply($scope);
           }
         }
