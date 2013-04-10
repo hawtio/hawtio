@@ -13,15 +13,25 @@
     <bundle>mvn:io.hawt/hawtio-plugin-registry/${project.version}</bundle>
   </feature>
 
-<!-- TODO: this feature is work in progress
+  <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
+    <bundle>fab:mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
+  </feature>
+
   <feature name="hawtio-git" version="${project.version}" resolver="(obr)">
+
+    <config>
+      hawtio.config.dir=./git
+      hawtio.config.repo=https://github.com/hawtio/hawtio-config.git
+      hawtio.config.pollOnStartup=true
+      hawtio.config.cloneOnStartup=true
+    </config>
+
     <bundle>fab:mvn:com.jcraft/jsch/0.1.44-1</bundle>
     <bundle>fab:mvn:org.gitective/gitective-core/0.9.9</bundle>
     <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit/${jgit-version}</bundle>
     <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit.http.server/${jgit-version}</bundle>
-    <bundle>wrap:mvn:io.hawt/hawtio-git/${project.version}</bundle>
+    <bundle>fab:mvn:io.hawt/hawtio-git/${project.version}</bundle>
   </feature>
--->
 
   <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
     <details>Adds the hawtio plugin registry and configures the /hawtio context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
