@@ -237,6 +237,7 @@
     <module>example-services</module>
     <module>hawtio-web</module>
     <module>hawtio-default</module>
+    <module>hawtio-default-offline</module>
     <module>hawtio-embedded</module>
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>

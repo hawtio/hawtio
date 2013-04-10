@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+	  <groupId>io.hawt</groupId>
+	  <artifactId>project</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-default-offline</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Default Web Application for use offline</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-default</artifactId>
+      <version>${project.version}</version>
+      <!--
+        NOTE this WAR dependency type which enables this WAR to
+        inherit all the plugins and content from the hawtio-default WAR
+      -->
+      <type>war</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
+          <scanIntervalSeconds>1</scanIntervalSeconds>
+          <webAppConfig>
+            <contextPath>${context}</contextPath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${jettyPort}</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <systemProperties>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.repo</key>
+              <value>${hawtio-config-repo}</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <port>9090</port>
+          <path>${context}</path>
+          <systemProperties>
+          </systemProperties>
+          <useTestClasspath>false</useTestClasspath>
+          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat6-maven-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <port>9090</port>
+          <path>${context}</path>
+          <systemProperties>
+          </systemProperties>
+          <useTestClasspath>false</useTestClasspath>
+          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/overlays</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
