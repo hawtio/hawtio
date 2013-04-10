@@ -153,6 +153,9 @@ public class GitFacade implements GitFacadeMXBean {
      * @return
      */
     public FileContents read(String branch, String path) throws IOException {
+        if (path == null || path.length() == 0) {
+            return null;
+        }
         File rootDir = getConfigDirectory();
         File file = getFile(path);
         if (file.isFile()) {
