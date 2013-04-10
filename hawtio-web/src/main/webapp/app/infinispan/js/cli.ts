@@ -10,6 +10,8 @@ module Infinispan {
     public cacheName:string = null;
     public sessionId:string = null;
 
+    public useSessionIds = true;
+
     public setCacheName(name:string) {
       if (name) {
         name = trimQuotes(name);
@@ -28,15 +30,17 @@ module Infinispan {
     }
 
     public createSession() {
-      var mbean = Infinispan.getInterpreterMBean(this.workspace);
-      if (mbean) {
-        var cli = this;
-        this.jolokia.execute(mbean, "createSessionId", this.cacheName, onSuccess((value) => {
-          console.log("Has session ID: " + value);
-          this.sessionId = value;
-        }));
-      } else {
-        this.warnMissingMBean();
+      if (this.useSessionIds) {
+        var mbean = Infinispan.getInterpreterMBean(this.workspace);
+        if (mbean) {
+          var cli = this;
+          this.jolokia.execute(mbean, "createSessionId", this.cacheName, onSuccess((value) => {
+            console.log("Has session ID: " + value);
+            this.sessionId = value;
+          }));
+        } else {
+          this.warnMissingMBean();
+        }
       }
     }
 
@@ -46,11 +50,14 @@ module Infinispan {
         if (!sql.endsWith(";")) {
           sql += ";";
         }
-        var sessionId = this.sessionId;
+        var sessionId = (this.useSessionIds) ? this.sessionId : null;
+        if (!this.useSessionIds) {
+          sql = "cache " + this.cacheName + "; " + sql;
+        }
         // TODO we could try not pass in a sessionId if we could prefix the sql
         // with some kind of value like: "cache " + this.cacheName + "; "
         // to bind the remaining SQL against the named cache
-        if (sessionId) {
+        if (sessionId || !this.useSessionIds) {
           var mbean = Infinispan.getInterpreterMBean(this.workspace);
           if (mbean) {
             this.jolokia.execute(mbean, "execute", sessionId, sql, onSuccess(handler));
