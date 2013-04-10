@@ -4,11 +4,11 @@
        data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>
 
   <li class="pull-right">
-    <a title="Deletes the selected pattern" ng-disabled="!selectedFolder" ng-click="removeNode()" data-placement="bottom">
-      <i class="icon-remove"></i> Delete</a></li>
-  <li class="pull-right">
     <a title="Add new pattern node connecting to this pattern" ng-click="addNode()" data-placement="bottom">
       <i class="icon-plus"></i> Add</a></li>
+  <li class="pull-right">
+    <a title="Deletes the selected pattern" ng-disabled="!selectedFolder" ng-click="removeNode()" data-placement="bottom">
+      <i class="icon-remove"></i> Delete</a></li>
 </ul>
 
 <div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">
