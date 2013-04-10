@@ -1,20 +1,28 @@
 module Tree {
   var pluginName = 'tree';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
-          directive('hawtioTree',function (workspace, $timeout, $filter, $compile) {
+          directive('hawtioTree',function (workspace, $timeout, $location, $filter, $compile) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var tree = null;
               var data = null;
               var widget = null;
               var timeoutId = null;
-              var onSelectFn = null;
-              var onSelectFnName = attrs.onselect;
-              if (onSelectFnName) {
-                onSelectFn = Core.pathGet(scope, onSelectFnName);
-                if (!angular.isFunction(onSelectFn)) {
-                  onSelectFn = null;
+              var onSelectFn = lookupFunction("onselect");
+              var onDragStartFn = lookupFunction("ondragstart");
+              var onDragEnterFn = lookupFunction("ondragenter");
+              var onDropFn = lookupFunction("ondrop");
+
+              function lookupFunction(attrName) {
+                var answer = null;
+                var fnName = attrs[attrName];
+                if (fnName) {
+                  answer = Core.pathGet(scope, fnName);
+                  if (!angular.isFunction(answer)) {
+                    answer = null;
+                  }
                 }
+                return answer;
               }
 
               // watch the expression, and update the UI on change.
@@ -46,7 +54,7 @@ module Tree {
 
               function onWidgetDataChange(value) {
                 tree = value;
-                if (tree) {
+                if (tree && !widget) {
                   // lets find a child table element
                   // or lets add one if there's not one already
                   var treeElement = $(element);
@@ -55,7 +63,7 @@ module Tree {
                   if ("true" === hideRoot) {
                     children = tree.children;
                   }
-                  widget = treeElement.dynatree({
+                  var config = {
                     /**
                      * The event handler called when a different node in the tree is selected
                      */
@@ -122,11 +130,37 @@ module Tree {
                     },
                     persist: false,
                     debugLevel: 0,
-                    children: children
-                  });
-/*
-                  // select and activate first child?
-*/
+                    children: children,
+                    dnd: {
+                      onDragStart: onDragStartFn ? onDragStartFn : function (node) {
+                        /** This function MUST be defined to enable dragging for the tree.
+                         *  Return false to cancel dragging of node.
+                         */
+                        console.log("onDragStart!");
+                        return true;
+                      },
+                      onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
+                        console.log("onDragEnter!");
+                        return true;
+                      },
+                      onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
+                        console.log("onDrop!");
+                        /** This function MUST be defined to enable dropping of items on
+                         *  the tree.
+                         */
+                        sourceNode.move(node, hitMode);
+                        return true;
+                      }
+                    }
+                  };
+                  if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
+                    console.log("Disabling DND due to " + onDragStartFn + " " + onDragEnterFn + " " + onDropFn);
+                    delete config["dnd"];
+                  }
+                  widget = treeElement.dynatree(config);
+
+                  // select and activate first child
+                  // TODO allow this to be disabled?
                   var root = treeElement.dynatree("getRoot");
                   if (root) {
                     var children = root.getChildren();

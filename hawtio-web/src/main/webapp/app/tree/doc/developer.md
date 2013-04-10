@@ -22,3 +22,5 @@ To invoke a function on your $scope when a node is selected add the **onSelect**
 If you want to hide the root tree node you can add a hideRoot flag:
 
     <div hawtio-tree="foo" hideRoot="true"></div>
+
+You can add support for drag and drop by adding one of the drag and drop functions on your scope and them mentioning its name on the **onDragStart**, **onDragEnter**, **onDrop**,
