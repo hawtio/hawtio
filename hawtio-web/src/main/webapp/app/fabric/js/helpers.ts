@@ -14,36 +14,30 @@ module Fabric {
     }
   }
 
-
+  export function containerAction(action, jolokia, id, success, error) {
+    jolokia.request(
+        {
+          type: 'exec', mbean: managerMBean,
+          operation: action,
+          arguments: [id]
+        },
+        {
+          method: 'POST',
+          success: success,
+          error: error
+        });
+  }
   
   export function stopContainer(jolokia, id, success, error) {
-    jolokia.request(
-      {
-        type: 'exec', mbean: managerMBean,
-        operation: 'stopContainer(java.lang.String)',
-        arguments: [id]
-      },
-      onSuccess(success, { error: error }));
+    containerAction('stopContainer(java.lang.String)', jolokia, id, success, error);
   }
 
   export function destroyContainer(jolokia, id, success, error) {
-    jolokia.request(
-      {
-        type: 'exec', mbean: managerMBean,
-        operation: 'destroyContainer(java.lang.String)',
-        arguments: [id]
-      },
-      onSuccess(success, { error: error }));
+    containerAction('destroyContainer(java.lang.String)', jolokia, id, success, error);
   }
 
   export function startContainer(jolokia, id, success, error) {
-    jolokia.request(
-      {
-        type: 'exec', mbean: managerMBean,
-        operation: 'startContainer(java.lang.String)',
-        arguments: [id]
-      },
-      onSuccess(success, { error: error }));
+    containerAction('startContainer(java.lang.String)', jolokia, id, success, error);
   }
   
   
