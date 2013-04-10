@@ -98,6 +98,7 @@ module Camel {
 
 
       var populateProfileMessages = function (response) {
+        console.log("Populate profile data...")
         var updatedData = [];
 
         // its xml structure so we need to parse it
@@ -238,14 +239,16 @@ module Camel {
           updatedData.reverse();
         }
 
+        // TODO: need a way to update data without flickering
+        // if we do as below with the forEach then the data does not update
         // replace data with updated data
-        if ($scope.data.length === 0) {
+//        if ($scope.data.length === 0) {
           $scope.data = updatedData;
-        } else {
-          updatedData.forEach((data, idx) => {
-            $scope[idx] = data;
-          });
-        }
+//        } else {
+//          updatedData.forEach((data, idx) => {
+//            $scope.data[idx] = data;
+//          });
+//        }
 
         Core.$apply($scope);
       };
