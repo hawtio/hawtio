@@ -1,0 +1,19 @@
+<div ng-controller="Fabric.CreateContainerController">
+
+  <div class="row-fluid">
+    <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
+      <div class="tab-pane" title="Child Container" value='org.fusesource.fabric.api.CreateContainerChildOptions'>
+        <div simple-form name='create-child-container' data='schema' entity='entity'></div>
+      </div>
+      <div class="tab-pane" title="SSH Container" value='org.fusesource.fabric.api.CreateSshContainerOptions'>
+        <div simple-form name='create-ssh-container' data='schema' entity='entity'></div>
+      </div>
+      <div class="tab-pane" title="Cloud Container" value='org.fusesource.fabric.api.CreateJCloudsContainerOptions'>
+        <div simple-form name='create-cloud-container' data='schema' entity='entity'></div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

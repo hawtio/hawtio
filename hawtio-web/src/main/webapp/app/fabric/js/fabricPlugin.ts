@@ -1,7 +1,8 @@
 module Fabric {
-  angular.module('fabric', ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
+  angular.module('fabric', ['bootstrap', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html'}).
+            when('/fabric/createContainer', {templateUrl: 'app/fabric/html/createContainer.html'}).
             when('/fabric/map', {templateUrl: 'app/fabric/html/map.html'}).
             when('/fabric/container/:containerId', {templateUrl: 'app/fabric/html/container.html'}).
             when('/fabric/profiles', {templateUrl: 'app/fabric/html/profiles.html'}).
