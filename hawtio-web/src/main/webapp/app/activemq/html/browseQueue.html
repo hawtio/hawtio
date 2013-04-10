@@ -21,9 +21,10 @@
     </div>
   </div>
 
-  <div ng-controller="Core.EditorController">
-      <textarea ui-codemirror="codeMirrorOptions" class="messageDetail" ng-model="row.Text" class="input-xlarge" rows="{{lineCount(row.Text)}}"></textarea>
-  </div>
+    <div ng-controller="Core.EditorController">
+      <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
+                ng-model="row.Text"></textarea>
+    </div>
 </script>
 
 <div ng-controller="ActiveMQ.BrowseQueueController">
