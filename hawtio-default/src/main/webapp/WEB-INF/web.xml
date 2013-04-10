@@ -44,6 +44,8 @@
   <context-param>
       <param-name>blueprintProperties</param-name>
       <param-value>blueprint.properties</param-value>
+      <param-name>blueprintLocation</param-name>
+      <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
   </context-param>
 
   <welcome-file-list>
