@@ -16,7 +16,7 @@
   <!-- This creates an embedded ActiveMQ Broker -->
   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" useJmx="true">
     <networkConnectors>
-      <networkConnector uri="static:(tcp://localhost:31317)"/>
+      <networkConnector uri="static:(tcp://localhost:31317)" userName="admin" password="admin"/>
     </networkConnectors>
     <transportConnectors>
       <transportConnector uri="tcp://localhost:31316"/>
@@ -25,11 +25,18 @@
     <persistenceAdapter>
       <levelDB directory="target/activemq/broker1/data/leveldb" logSize="107374182"/>
     </persistenceAdapter>
+    <plugins>
+      <simpleAuthenticationPlugin>
+        <users>
+          <authenticationUser username="admin" password="admin" groups="users,admins"/>
+        </users>
+      </simpleAuthenticationPlugin>      
+    </plugins>
   </broker>
 
   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker2" useJmx="true">
     <networkConnectors>
-      <networkConnector uri="static:(tcp://localhost:31316)"/>
+      <networkConnector uri="static:(tcp://localhost:31316)" userName="admin" password="admin"/>
     </networkConnectors>
     <transportConnectors>
       <transportConnector uri="tcp://localhost:31317"/>
@@ -38,6 +45,13 @@
     <persistenceAdapter>
       <levelDB directory="target/activemq/broker2/data/leveldb" logSize="107374182"/>
     </persistenceAdapter>
+    <plugins>
+      <simpleAuthenticationPlugin>
+        <users>
+          <authenticationUser username="admin" password="admin" groups="users,admins"/>
+        </users>
+      </simpleAuthenticationPlugin>      
+    </plugins>    
   </broker>
 
   <!-- Lets connect the Camel ActiveMQ component to the embedded broker.
@@ -45,6 +59,8 @@
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="failover:tcp://localhost:31316"/>
+    <property name="userName" value="admin"/>
+    <property name="password" value="admin"/>
   </bean>
 
   <!-- tell Camel to use localhost as the JMX MBean naming to have a fixed name style -->

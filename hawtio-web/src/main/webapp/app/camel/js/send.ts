@@ -1,5 +1,5 @@
 module Camel {
-    export function SendMessageController($scope, workspace:Workspace) {
+    export function SendMessageController($scope, workspace:Workspace, localStorage) {
       var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
       var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
       $scope.message = "";
@@ -58,7 +58,7 @@ module Camel {
                 notification("error", "Could not find CamelContext MBean!");
               }
             } else {
-              jolokia.execute(mbean, "sendTextMessage(java.lang.String)", body, onSuccess(sendWorked));
+              jolokia.execute(mbean, "sendTextMessage(java.lang.String, java.lang.String, java.lang.String)", body, localStorage["activemqUserName"], localStorage["activemqPassword"], onSuccess(sendWorked));
             }
           }
         }

@@ -21,7 +21,7 @@ module Core {
       console.log("AutoRefresh", $scope.autoRefresh);
     });
 
-    var names = ["gitUserName", "gitUserEmail"];
+    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword"];
     angular.forEach(names, (name) => {
       $scope[name] =  localStorage[name] || "";
       $scope.$watch(name, () => {

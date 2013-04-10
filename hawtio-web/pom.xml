@@ -156,6 +156,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jaas</artifactId>
+      <version>${activemq-version}</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
       <artifactId>${activemq-leveldb-artifactid}</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
