@@ -105,7 +105,6 @@
             <Embed-Transitive>true</Embed-Transitive>
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Bundle-Activator>io.hawt.jsonschema.Activator</Bundle-Activator>
             <Export-Package />
             <DynamicImport-Package>*</DynamicImport-Package>
           </instructions>

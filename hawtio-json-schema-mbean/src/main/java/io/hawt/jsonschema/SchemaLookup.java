@@ -2,7 +2,6 @@ package io.hawt.jsonschema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +20,8 @@ public class SchemaLookup implements SchemaLookupMXBean {
     private ObjectName objectName;
 
     private ObjectMapper mapper;
-    private BundleContext context = null;
 
     public SchemaLookup() {
-        this.init();
-    }
-
-    public SchemaLookup(BundleContext context) {
-        this.context = context;
-        this.init();
     }
 
     public void init() {
