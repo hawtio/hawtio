@@ -139,7 +139,7 @@ module Camel {
     return _apacheCamelModel.languages[nodeName];
   }
 
-  export function loadCamelTree(xml: string) {
+  export function loadCamelTree(xml: string, key: string) {
     var doc = $.parseXML(xml);
 
     // TODO get id from camelContext
@@ -148,6 +148,7 @@ module Camel {
     folder.addClass = "org-apache-camel-context";
     folder.domain = Camel.jmxDomain;
     folder.typeName = "context";
+    folder.key = key;
 
     var context = $(doc).find("camelContext");
     if (!context || !context.length) {
@@ -165,6 +166,7 @@ module Camel {
         routeFolder.addClass = "org-apache-camel-route";
         routeFolder.typeName = "routes";
         routeFolder.domain = Camel.jmxDomain;
+        routeFolder.key = folder.key + "_" + id;
         var nodeSettings = getCamelSchema("route");
         if (nodeSettings) {
           var imageUrl = getRouteNodeIcon(nodeSettings);
@@ -209,7 +211,21 @@ module Camel {
         child.parent = folder;
         child.folderNames = folder.folderNames;
         var id = n.getAttribute("id") || nodeName;
-        child.key = folder.key + "." + id;
+        var key = folder.key + "." + id;
+
+        // lets find the next key thats unique
+        var counter = 1;
+        var notFound = true;
+        while (notFound) {
+          var tmpKey = key + counter;
+          if (folder.children.some({key: tmpKey})) {
+            counter += 1;
+          } else {
+            notFound = false;
+            key = tmpKey;
+          }
+        }
+        child.key = key;
         child.icon = imageUrl;
         child.tooltip = tooltip;
         child["routeXmlNode"] = n;

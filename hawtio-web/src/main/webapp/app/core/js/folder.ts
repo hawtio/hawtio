@@ -116,4 +116,24 @@ class Folder implements NodeSelection {
     }
   }
 
+  public moveChild(child: Folder) {
+    if (child) {
+      var oldParent = child.parent;
+      if (oldParent) {
+        var oldParentChildren = oldParent.children;
+        if (oldParentChildren) {
+          var idx = oldParentChildren.indexOf(child);
+          if (idx < 0) {
+            oldParent.children = <NodeSelection[]>oldParent.children.remove({key: child.key});
+          } else {
+            oldParentChildren.slice(idx, idx);
+          }
+        }
+      }
+      child.parent = this;
+      this.children.push(child);
+    }
+  }
+
+
 }

@@ -142,8 +142,10 @@ module Wiki {
           }
         }
         console.log("nodeDrop owner: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
+
+        sourceNode.move(node, hitMode);
+        nodeFolder.moveChild(sourceFolder);
       }
-      sourceNode.move(node, hitMode);
     };
 
     $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
@@ -191,9 +193,8 @@ module Wiki {
     function onResults(response) {
       var text = response.text;
       if (text) {
-        var tree = Camel.loadCamelTree(text);
+        var tree = Camel.loadCamelTree(text, $scope.pageId);
         if (tree) {
-          tree.key = $scope.pageId + "_camelContext";
           $scope.camelContextTree = tree;
         }
       } else {
