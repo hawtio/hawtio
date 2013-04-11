@@ -13,7 +13,6 @@ module Camel {
       var data = response ? response.value : null;
       if (data) {
         var doc = $.parseXML(data);
-        console.log("Finding route for ID " + selectedRouteId);
         var routes = $(doc).find("route[id='" + selectedRouteId + "']");
         if (routes && routes.length) {
           route = routes[0];
@@ -333,10 +332,10 @@ module Camel {
   export function createFolderXmlTree(treeNode, xmlNode, indent = Camel.increaseIndent("")) {
     var folder = treeNode.data;
     var count = 0;
+    var parentName = getFolderCamelNodeId(folder);
     if (folder) {
       if (!xmlNode) {
-        var name = getFolderCamelNodeId(folder);
-        xmlNode = document.createElement(name);
+        xmlNode = document.createElement(parentName);
         var rootJson = Camel.getRouteFolderJSON(folder);
         if (rootJson) {
           Camel.setRouteNodeJSON(xmlNode, rootJson, indent);
@@ -345,7 +344,7 @@ module Camel {
       var doc = xmlNode.ownerDocument || document;
       var namespaceURI = xmlNode.namespaceURI;
 
-      var from = false;
+      var from = parentName !== "route";
       var childIndent = Camel.increaseIndent(indent);
       angular.forEach(treeNode.getChildren(), (childTreeNode) => {
         var childFolder = childTreeNode.data;
