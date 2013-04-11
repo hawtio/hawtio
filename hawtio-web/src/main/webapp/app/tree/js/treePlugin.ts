@@ -163,6 +163,13 @@ module Tree {
                   // TODO allow this to be disabled?
                   var root = treeElement.dynatree("getRoot");
                   if (root) {
+                    var onRootName = attrs["onroot"];
+                    if (onRootName) {
+                      var fn = scope[onRootName];
+                      if (fn) {
+                        fn(root);
+                      }
+                    }
                     var children = root.getChildren();
                     if (children && children.length) {
                       var child = children[0];

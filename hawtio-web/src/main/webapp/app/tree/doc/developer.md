@@ -24,3 +24,13 @@ If you want to hide the root tree node you can add a hideRoot flag:
     <div hawtio-tree="foo" hideRoot="true"></div>
 
 You can add support for drag and drop by adding one of the drag and drop functions on your scope and them mentioning its name on the **onDragStart**, **onDragEnter**, **onDrop**,
+
+If you wish to be called back with the root node after population of the tree add the **onRoot** attribute
+
+    <div hawtio-tree="foo" onRoot="onMyRootThingy"></div>
+
+Then add:
+
+     $scope.onMyRootThingy = (rootNode) => {
+        // process the rootNode
+     };
