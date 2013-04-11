@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import io.hawt.maven.indexer.MavenIndexerFacade;
+import org.apache.aries.blueprint.container.BlueprintContainerImpl;
 import org.apache.camel.CamelException;
 import org.apache.camel.util.CamelContextHelper;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -25,9 +25,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.management.MBeanServer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple bootstrap class
@@ -112,6 +116,25 @@ public class Main {
             }
             server.addBean(mbeanContainer);
 
+            // lets initialise blueprint
+            List<URL> resourcePaths = new ArrayList<URL>();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            Enumeration<URL> resources = classLoader.getResources("OSGI-INF/blueprint/blueprint.xml");
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                String text = url.toString();
+                if (text.contains("karaf")) {
+                    LOG.info("Ignoring karaf based blueprint file " + text);
+                } else {
+                    resourcePaths.add(url);
+                }
+            }
+            LOG.info("Loading Blueprint contexts " + resourcePaths);
+
+            Map<String, String> properties = new HashMap<String, String>();
+            BlueprintContainerImpl container = new BlueprintContainerImpl(classLoader, resourcePaths, properties, true);
+
+
             if (args.length == 0 || !args[0].equals("nospring")) {
                 // now lets startup a spring application context
                 LOG.info("starting spring application context");
@@ -119,9 +142,6 @@ public class Main {
                 Object activemq = appContext.getBean("activemq");
                 LOG.info("created activemq: " + activemq);
                 appContext.start();
-
-                Object logQuery = appContext.getBean("logQuery");
-                LOG.info("created logQuery: " + logQuery);
 
                 LOG.warn("Don't run with scissors!");
                 LOG.error("Someone somewhere is not using Fuse! :)", new CamelException("My exception message"));
@@ -134,19 +154,6 @@ public class Main {
                 }
             }
 
-            // TODO temporary hack until we've got blueprint servlet listener to load blueprint services
-            try {
-                Class<?> aetherClass = Class.forName("org.fusesource.insight.maven.aether.AetherFacade");
-                Object aether = aetherClass.newInstance();
-                Method initMethod = aetherClass.getMethod("init");
-                Object[] methodArgs = new Object[0];
-                initMethod.invoke(aether, methodArgs);
-            } catch (InvocationTargetException e) {
-                Throwable target = e.getTargetException();
-                LOG.warn("Failed to initialise AetherFacade due to : " + e, e);
-            } catch (Throwable e) {
-                LOG.warn("Could not load the AetherFacade; only available in snapshots for now: " + e, e);
-            }
 
             // lets connect to fabric
             String fabricUrl = System.getProperty("fabricUrl", "");
@@ -166,15 +173,6 @@ public class Main {
 
             LOG.info("starting jetty");
             server.start();
-
-            // lets create a maven indexer
-            try {
-                MavenIndexerFacade mavenIndexer = new MavenIndexerFacade();
-                mavenIndexer.setCacheDirectory(new File("target/mavenIndexer"));
-                mavenIndexer.start();
-            } catch (Throwable e) {
-                LOG.warn("Could not create MavenIndexerFacade: " + e, e);
-            }
 
             LOG.info("Joining the jetty server thread...");
             server.join();
