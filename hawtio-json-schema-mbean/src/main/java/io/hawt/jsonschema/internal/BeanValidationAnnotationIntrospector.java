@@ -1,4 +1,4 @@
-package io.hawt.jsonschema;
+package io.hawt.jsonschema.internal;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;

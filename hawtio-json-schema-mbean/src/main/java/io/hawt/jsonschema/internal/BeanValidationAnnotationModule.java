@@ -1,4 +1,4 @@
-package io.hawt.jsonschema;
+package io.hawt.jsonschema.internal;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -15,7 +15,7 @@ public class BeanValidationAnnotationModule extends SimpleModule {
     public void setupModule(SetupContext context) {
         BeanValidationAnnotationIntrospector introspector = new BeanValidationAnnotationIntrospector(context.getTypeFactory());
 
-        context.appendAnnotationIntrospector(introspector);
+        context.insertAnnotationIntrospector(introspector);
     }
 
 }

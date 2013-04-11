@@ -1,4 +1,4 @@
-package io.hawt.jsonschema;
+package io.hawt.jsonschema.test.objects;
 
 
 import javax.validation.constraints.NotNull;

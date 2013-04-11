@@ -247,6 +247,7 @@
     <module>hawtio-karaf</module>
     <module>sample</module>
     <module>hawtio-json-schema-mbean</module>
+    <module>hawtio-json-schema-mixins</module>
   </modules>
 
   <build>

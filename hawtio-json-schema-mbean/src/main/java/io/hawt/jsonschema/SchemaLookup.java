@@ -3,6 +3,8 @@ package io.hawt.jsonschema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import io.hawt.jsonschema.api.MixInAnnotation;
+import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,8 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Stan Lewis
@@ -21,6 +25,7 @@ public class SchemaLookup implements SchemaLookupMXBean {
 
     private MBeanServer mBeanServer;
     private ObjectName objectName;
+    private Map<Class<?>, Class<?>> mixins = new HashMap<Class<?>, Class<?>>();
 
     private ObjectMapper mapper;
 
@@ -81,7 +86,7 @@ public class SchemaLookup implements SchemaLookupMXBean {
         }
     }
 
-    private Class getClass(String name) {
+    protected Class getClass(String name) {
         // TODO - well, this relies on DynamicImport-Package to work, but seems simpler than mucking about with org.osgi.framework.wiring
         try {
             return Class.forName(name);
@@ -91,6 +96,25 @@ public class SchemaLookup implements SchemaLookupMXBean {
         }
     }
 
+    public void registerMixIn(MixInAnnotation mixin) {
+        // Just to be on the safe side, force loading the classes directly to avoid
+        // any odd proxy classes which will screw up our mixin' in
+        Class target = getClass(mixin.getTarget().getCanonicalName());
+        Class mixinSource = getClass(mixin.getMixinSource().getCanonicalName());
+        LOG.info("Adding mixin for target class " + target.getCanonicalName() + " using annotation source " + mixinSource.getCanonicalName());
+        mixins.put(target, mixinSource);
+        getMapper().setMixInAnnotations(mixins);
+        LOG.debug("Current mixin count: " + getMapper().mixInCount());
+    }
+
+    public void unregisterMixIn(MixInAnnotation mixin) {
+        if (mixin != null) {
+            LOG.info("Removing mixin for target class " + mixin.getTarget().getCanonicalName() + " using annotation source " + mixin.getMixinSource().getCanonicalName());
+            mixins.remove(mixin.getTarget());
+            getMapper().setMixInAnnotations(mixins);
+            LOG.debug("Current mixin count: " + getMapper().mixInCount());
+        }
+    }
 
     @Override
     public String getSchemaForClass(String name) {
@@ -99,6 +123,7 @@ public class SchemaLookup implements SchemaLookupMXBean {
     }
 
     public String getSchemaForClass(Class clazz) {
+        LOG.info("Looking up schema for " + clazz.getCanonicalName());
         String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
