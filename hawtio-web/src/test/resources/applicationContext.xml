@@ -91,8 +91,8 @@
       </choice>
     </route>
     <!-- route for having something trigger all the time -->
-    <route id="timerToLog">
-      <from uri="timer:foo?period=2000"/>
+    <route id="timerToAMQ">
+      <from uri="timer:foo?period=5000"/>
       <setBody><constant>Hello World</constant></setBody>
       <delay><constant>500</constant></delay>
       <log message="The message contains ${body}" loggingLevel="DEBUG"/>
