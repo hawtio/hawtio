@@ -20,7 +20,7 @@ module Camel {
     });
 
     function updateRoutes() {
-      var routeXmlNode = getSelectedRouteNode(workspace) || $scope.nodeXmlNode;
+      var routeXmlNode = $scope.nodeXmlNode || getSelectedRouteNode(workspace);
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
@@ -92,13 +92,14 @@ module Camel {
       var y = parentY + delta;
       var rid = parent.getAttribute("id");
       var siblingNodes = [];
+      var parenNodeName = parent.localName;
       $(parent).children().each((idx, route) => {
         var id = nodes.length;
         // from acts as a parent even though its a previous sibling :)
-        if (route.nodeName === "from" && !parentId) {
+        var nodeId = route.localName;
+        if (nodeId === "from" && !parentId) {
           parentId = id;
         }
-        var nodeId = route.nodeName;
         var nodeSettings = getCamelSchema(nodeId);
         var node = null;
         if (nodeSettings) {
@@ -124,7 +125,7 @@ module Camel {
           rid = null;
           nodes.push(node);
           if (parentId !== null && parentId !== id) {
-            if (siblingNodes.length === 0 || parent.nodeName === "choice") {
+            if (siblingNodes.length === 0 || parenNodeName === "choice") {
               links.push({"source": parentId, "target": id, "value": 1});
             } else {
               siblingNodes.forEach(function (nodeId) {
@@ -149,7 +150,7 @@ module Camel {
           }
         }
         var siblings = addChildren(route, nodes, links, id, x, y, node);
-        if (parent.nodeName === "choice") {
+        if (parenNodeName === "choice") {
           siblingNodes = siblingNodes.concat(siblings);
           x += delta;
         } else if (nodeId === "choice") {

@@ -317,6 +317,73 @@ module Camel {
     return null;
   }
 
+  export function getFolderCamelNodeId(folder) {
+    var answer = Core.pathGet(folder, ["routeXmlNode", "localName"]);
+    return ("from" === answer || "to" === answer) ? "endpoint" : answer;
+  }
+
+  /**
+   * Rebuilds the DOM tree from the folder tree and performs all the various hacks
+   * to turn the folder / JSON / model into valid camel XML
+   * such as renaming language elements from <language expression="foo" language="bar/>
+   * to <bar>foo</bar>
+   * and changing <endpoint> into either <from> or <to>
+   */
+  export function createFolderXmlTree(folder, xmlNode, indent = Camel.increaseIndent("")) {
+    var count = 0;
+    if (folder) {
+      if (!xmlNode) {
+        var name = getFolderCamelNodeId(folder);
+        xmlNode = document.createElement(name);
+        var rootJson = Camel.getRouteFolderJSON(folder);
+        if (rootJson) {
+          Camel.setRouteNodeJSON(xmlNode, rootJson, indent);
+        }
+      }
+      var doc = xmlNode.ownerDocument || document;
+      var namespaceURI = xmlNode.namespaceURI;
+
+      var from = false;
+      var childIndent = Camel.increaseIndent(indent);
+      angular.forEach(folder.children, (childFolder) => {
+        var name = Camel.getFolderCamelNodeId(childFolder);
+        var json = Camel.getRouteFolderJSON(childFolder);
+        if (name && json) {
+          var language = false;
+          if (name === "endpoint") {
+            if (from) {
+              name = "to";
+            } else {
+              name = "from";
+              from = true;
+            }
+          }
+          if (name === "expression") {
+            var languageName = json["language"];
+            if (languageName) {
+              name = languageName;
+              language = true;
+            }
+          }
+
+          // lets create the XML
+          xmlNode.appendChild(doc.createTextNode("\n" + childIndent));
+          var newNode = doc.createElementNS(namespaceURI, name);
+
+          Camel.setRouteNodeJSON(newNode, json, childIndent);
+          xmlNode.appendChild(newNode);
+          count += 1;
+          createFolderXmlTree(childFolder, newNode, childIndent);
+        }
+      });
+      if (count) {
+        xmlNode.appendChild(doc.createTextNode("\n" + indent));
+      }
+    }
+    return xmlNode;
+  }
+
+
   export function getRouteNodeLabel(routeXmlNode, nodeSettings) {
     var id = routeXmlNode.getAttribute("id");
     // lets use the ID for routes and other things we give an id

@@ -112,15 +112,22 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    function getFolderXmlNode(folder) {
+      var routeXmlNode = Camel.createFolderXmlTree(folder, null);
+      if (routeXmlNode) {
+        $scope.nodeXmlNode = routeXmlNode;
+      }
+      return routeXmlNode;
+    }
+
     $scope.onNodeSelect = (folder, treeNode) => {
       $scope.selectedFolder = folder;
       $scope.treeNode = treeNode;
       $scope.propertiesTemplate = null;
       $scope.diagramTemplate = null;
       $scope.nodeXmlNode = null;
-      var routeXmlNode = folder["routeXmlNode"];
+      var routeXmlNode = getFolderXmlNode(folder);
       if (routeXmlNode) {
-        $scope.nodeXmlNode = routeXmlNode;
         $scope.nodeData = Camel.getRouteFolderJSON(folder);
         $scope.nodeDataChangedFields = {};
         var nodeName = routeXmlNode.localName;
@@ -137,8 +144,8 @@ module Wiki {
       var nodeFolder = node.data;
       var sourceFolder = sourceNode.data;
       if (nodeFolder && sourceFolder) {
-        var nodeId = getFolderCamelNodeId(nodeFolder);
-        var sourceId = getFolderCamelNodeId(sourceFolder);
+        var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
+        var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
         if (nodeId && sourceId) {
           // we can only drag routes onto other routes (before / after / over)
           if (sourceId === "route") {
@@ -155,8 +162,8 @@ module Wiki {
       var sourceFolder = sourceNode.data;
       if (nodeFolder && sourceFolder) {
         // we cannot drop a route into a route or a non-route to a top level!
-        var nodeId = getFolderCamelNodeId(nodeFolder);
-        var sourceId = getFolderCamelNodeId(sourceFolder);
+        var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
+        var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
 
         if (nodeId === "route") {
           // hitMode must be "over" if we are not another route
@@ -196,7 +203,7 @@ module Wiki {
       }
       var selectedFolder = $scope.selectedFolder;
       if ($scope.treeNode && selectedFolder) {
-        var routeXmlNode = selectedFolder["routeXmlNode"];
+        var routeXmlNode = getFolderXmlNode(selectedFolder);
         if (routeXmlNode) {
           var nodeName = routeXmlNode.localName;
           var nodeSettings = Camel.getCamelSchema(nodeName);
@@ -208,21 +215,29 @@ module Wiki {
         }
         //$scope.treeNode.reloadChildren(function (node, isOk) {});
       }
-
     }
 
-    function onNodeDataChanged() {
+
+    function getRealSelectedFolder() {
+      return $scope.selectedFolder;
+/*
       if ($scope.selectedFolder) {
         // TODO lets find the node in the camel folder tree and update that!
         // as for some reason dynatree creates clones of our model!
         var key = $scope.selectedFolder.key;
         if (key) {
-          var folder = $scope.camelContextTree.findDescendant((folder) => key === folder.key);
-          if (folder) {
-            console.log("===== found child folder with key " + key);
-            folder["camelNodeData"] = $scope.nodeData;
-          }
+          var selectedFolder = $scope.camelContextTree.findDescendant((folder) => key === folder.key);
+          return selectedFolder;
         }
+      }
+      return null;
+*/
+    }
+
+    function onNodeDataChanged() {
+      var selectedFolder = getRealSelectedFolder();
+      if (selectedFolder) {
+        selectedFolder["camelNodeData"] = $scope.nodeData;
       }
     }
 
@@ -263,12 +278,8 @@ module Wiki {
       }
     }
 
-    function getFolderCamelNodeId(folder) {
-      return Core.pathGet(folder, ["routeXmlNode", "localName"]);
-    }
-
     function addNewNode(nodeModel) {
-      var parentFolder = ($scope.selectedFolder) ? $scope.selectedFolder: $scope.camelContextTree;
+      var parentFolder = getRealSelectedFolder() || $scope.camelContextTree;
       var key = nodeModel["_id"];
       if (!key) {
         console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
@@ -279,9 +290,9 @@ module Wiki {
           parentFolder = $scope.camelContextTree;
           treeNode = treeNode.getParent();
         }
-        var node = $("<" + key + "/>")[0];
-        $(parentFolder["routeXmlNode"]).append(node);
+        var node = document.createElement(key);
         var addedNode = Camel.addRouteChild(parentFolder, node);
+        getFolderXmlNode(addedNode);
         console.log("Added node: " + addedNode);
 
         if (treeNode && addedNode) {
@@ -338,63 +349,9 @@ module Wiki {
             }
           }
         }
-
-        regenerateCamelRouteTree(folder, context[0], Camel.increaseIndent(""));
+        Camel.createFolderXmlTree(folder, context[0]);
       }
       return doc;
-    }
-
-    /**
-     * Rebuilds the DOM tree from the folder tree and performs all the various hacks
-     * to turn the folder / JSON / model into valid camel XML
-     * such as renaming language elements from <language expression="foo" language="bar/>
-     * to <bar>foo</bar>
-     * and changing <endpoint> into either <from> or <to>
-     */
-    function regenerateCamelRouteTree(folder, xmlNode, indent) {
-      var count = 0;
-      if (folder && xmlNode) {
-        var doc = xmlNode.ownerDocument || document;
-        var namespaceURI = xmlNode.namespaceURI;
-
-        var from = false;
-        var childIndent = Camel.increaseIndent(indent);
-        angular.forEach(folder.children, (childFolder) => {
-          var name = getFolderCamelNodeId(childFolder);
-          var json = Camel.getRouteFolderJSON(childFolder);
-          if (name && json) {
-            var language = false;
-            if (name === "endpoint") {
-              if (from) {
-                name = "to";
-              } else {
-                name = "from";
-                from = false;
-              }
-            }
-            if (name === "expression") {
-              var languageName = json["language"];
-              if (languageName) {
-                name = languageName;
-                language = true;
-              }
-            }
-
-            // lets create the XML
-            xmlNode.appendChild(doc.createTextNode("\n" + childIndent));
-            var newNode = doc.createElementNS(namespaceURI, name);
-
-            Camel.setRouteNodeJSON(newNode, json, childIndent);
-            xmlNode.appendChild(newNode);
-            count += 1;
-            regenerateCamelRouteTree(childFolder, newNode, childIndent);
-          }
-        });
-        if (count) {
-          xmlNode.appendChild(doc.createTextNode("\n" + indent));
-        }
-      }
-      return count;
     }
 
     function goToView() {
