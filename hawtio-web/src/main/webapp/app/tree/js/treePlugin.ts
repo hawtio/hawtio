@@ -64,6 +64,8 @@ module Tree {
                     children = tree.children;
                   }
                   var config = {
+                    clickFolderMode: 3, // activate and expand
+
                     /**
                      * The event handler called when a different node in the tree is selected
                      */
@@ -154,13 +156,23 @@ module Tree {
                     }
                   };
                   if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
-                    console.log("Disabling DND due to " + onDragStartFn + " " + onDragEnterFn + " " + onDropFn);
                     delete config["dnd"];
                   }
                   widget = treeElement.dynatree(config);
 
-                  // select and activate first child
-                  // TODO allow this to be disabled?
+                  var activatedNode = false;
+                  var activateNodeName = attrs["activatenodes"];
+                  if (activateNodeName) {
+                    var values = scope[activateNodeName];
+                    var tree = treeElement.dynatree("getTree");
+                    if (values && tree) {
+                      angular.forEach(Core.asArray(values), (value) => {
+                        //tree.selectKey(value, true);
+                        tree.activateKey(value);
+                        activatedNode = true;
+                      });
+                    }
+                  }
                   var root = treeElement.dynatree("getRoot");
                   if (root) {
                     var onRootName = attrs["onroot"];
@@ -170,20 +182,16 @@ module Tree {
                         fn(root);
                       }
                     }
-                    var children = root.getChildren();
-                    if (children && children.length) {
-                      var child = children[0];
-                      child.expand(true);
-                      child.activate(true);
+                    // select and activate first child if we have not activated any others
+                    if (!activatedNode) {
+                      var children = root.getChildren();
+                      if (children && children.length) {
+                        var child = children[0];
+                        child.expand(true);
+                        child.activate(true);
+                      }
                     }
                   }
-
-
-                  /*
-                   if (redraw) {
-                   workspace.redrawTree();
-                   }
-                   */
                 }
                 updateWidget();
               }

@@ -34,3 +34,5 @@ Then add:
      $scope.onMyRootThingy = (rootNode) => {
         // process the rootNode
      };
+
+If you wish to activate/select a number of nodes on startup then use the **activateNodes** attribute to map to a $scope variable which is an id or a list of IDs to activate on startup.
