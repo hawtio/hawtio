@@ -17,7 +17,7 @@ module Wiki {
 
     angular.forEach(_apacheCamelModel.definitions, (value, key) => {
       if (value.group) {
-        var group = (key === "route") ? $scope.paletteTree: $scope.paletteTree.getOrElse(value.group);
+        var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
         value["_id"] = key;
         var title = value["title"] || key;
         var node = new Folder(title);
@@ -30,6 +30,12 @@ module Wiki {
         group.children.push(node);
       }
     });
+
+    $scope.onRootTreeNode = (rootTreeNode) => {
+      $scope.rootTreeNode = rootTreeNode;
+      // restore the real data at the root for saving the doc etc
+      rootTreeNode.data = $scope.camelContextTree;
+    };
 
     $scope.addNode = () => {
       if ($scope.nodeXmlNode) {
@@ -44,7 +50,7 @@ module Wiki {
     };
 
     $scope.onPaletteSelect = (node) => {
-      $scope.selectedPaletteNode =  (node && node["nodeModel"]) ? node : null;
+      $scope.selectedPaletteNode = (node && node["nodeModel"]) ? node : null;
     };
 
     $scope.addAndCloseDialog = () => {
@@ -77,8 +83,8 @@ module Wiki {
 
     $scope.save = () => {
       // generate the new XML
-      if ($scope.camelContextTree) {
-        var xmlNode = generateXmlFromFolder($scope.camelContextTree);
+      if ($scope.rootTreeNode) {
+        var xmlNode = generateXmlFromFolder($scope.rootTreeNode);
         if (xmlNode) {
           var text = Core.xmlNodeToString(xmlNode);
           if (text) {
@@ -112,8 +118,8 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
-    function getFolderXmlNode(folder) {
-      var routeXmlNode = Camel.createFolderXmlTree(folder, null);
+    function getFolderXmlNode(treeNode) {
+      var routeXmlNode = Camel.createFolderXmlTree(treeNode, null);
       if (routeXmlNode) {
         $scope.nodeXmlNode = routeXmlNode;
       }
@@ -126,7 +132,7 @@ module Wiki {
       $scope.propertiesTemplate = null;
       $scope.diagramTemplate = null;
       $scope.nodeXmlNode = null;
-      var routeXmlNode = getFolderXmlNode(folder);
+      var routeXmlNode = getFolderXmlNode(treeNode);
       if (routeXmlNode) {
         $scope.nodeData = Camel.getRouteFolderJSON(folder);
         $scope.nodeDataChangedFields = {};
@@ -178,7 +184,6 @@ module Wiki {
         console.log("nodeDrop owner: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
 
         sourceNode.move(node, hitMode);
-        nodeFolder.moveChild(sourceFolder);
       }
     };
 
@@ -203,7 +208,7 @@ module Wiki {
       }
       var selectedFolder = $scope.selectedFolder;
       if ($scope.treeNode && selectedFolder) {
-        var routeXmlNode = getFolderXmlNode(selectedFolder);
+        var routeXmlNode = getFolderXmlNode($scope.treeNode);
         if (routeXmlNode) {
           var nodeName = routeXmlNode.localName;
           var nodeSettings = Camel.getCamelSchema(nodeName);
@@ -213,29 +218,11 @@ module Wiki {
             $scope.treeNode.render(false, false);
           }
         }
-        //$scope.treeNode.reloadChildren(function (node, isOk) {});
       }
-    }
-
-
-    function getRealSelectedFolder() {
-      return $scope.selectedFolder;
-/*
-      if ($scope.selectedFolder) {
-        // TODO lets find the node in the camel folder tree and update that!
-        // as for some reason dynatree creates clones of our model!
-        var key = $scope.selectedFolder.key;
-        if (key) {
-          var selectedFolder = $scope.camelContextTree.findDescendant((folder) => key === folder.key);
-          return selectedFolder;
-        }
-      }
-      return null;
-*/
     }
 
     function onNodeDataChanged() {
-      var selectedFolder = getRealSelectedFolder();
+      var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
         selectedFolder["camelNodeData"] = $scope.nodeData;
       }
@@ -279,7 +266,7 @@ module Wiki {
     }
 
     function addNewNode(nodeModel) {
-      var parentFolder = getRealSelectedFolder() || $scope.camelContextTree;
+      var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
       var key = nodeModel["_id"];
       if (!key) {
         console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
@@ -292,13 +279,13 @@ module Wiki {
         }
         var node = document.createElement(key);
         var addedNode = Camel.addRouteChild(parentFolder, node);
-        getFolderXmlNode(addedNode);
         console.log("Added node: " + addedNode);
 
         if (treeNode && addedNode) {
           var added = treeNode.addChild(addedNode);
           console.log("Added is " + added);
           if (added) {
+            getFolderXmlNode(added);
             added.expand(true);
             added.select(true);
             added.activate(true);
@@ -309,7 +296,9 @@ module Wiki {
       }
     }
 
-    function generateXmlFromFolder(folder) {
+    function generateXmlFromFolder(treeNode) {
+      var folder = treeNode ? treeNode.data : null;
+      if (!folder) return null;
       var doc = folder["xmlDocument"];
       var context = folder["routeXmlNode"];
 
@@ -349,7 +338,7 @@ module Wiki {
             }
           }
         }
-        Camel.createFolderXmlTree(folder, context[0]);
+        Camel.createFolderXmlTree(treeNode, context[0]);
       }
       return doc;
     }

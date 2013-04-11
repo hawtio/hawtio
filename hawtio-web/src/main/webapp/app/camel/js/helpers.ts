@@ -323,13 +323,14 @@ module Camel {
   }
 
   /**
-   * Rebuilds the DOM tree from the folder tree and performs all the various hacks
+   * Rebuilds the DOM tree from the tree node and performs all the various hacks
    * to turn the folder / JSON / model into valid camel XML
    * such as renaming language elements from <language expression="foo" language="bar/>
    * to <bar>foo</bar>
    * and changing <endpoint> into either <from> or <to>
    */
-  export function createFolderXmlTree(folder, xmlNode, indent = Camel.increaseIndent("")) {
+  export function createFolderXmlTree(treeNode, xmlNode, indent = Camel.increaseIndent("")) {
+    var folder = treeNode.data;
     var count = 0;
     if (folder) {
       if (!xmlNode) {
@@ -345,7 +346,8 @@ module Camel {
 
       var from = false;
       var childIndent = Camel.increaseIndent(indent);
-      angular.forEach(folder.children, (childFolder) => {
+      angular.forEach(treeNode.getChildren(), (childTreeNode) => {
+        var childFolder = childTreeNode.data;
         var name = Camel.getFolderCamelNodeId(childFolder);
         var json = Camel.getRouteFolderJSON(childFolder);
         if (name && json) {
@@ -373,7 +375,7 @@ module Camel {
           Camel.setRouteNodeJSON(newNode, json, childIndent);
           xmlNode.appendChild(newNode);
           count += 1;
-          createFolderXmlTree(childFolder, newNode, childIndent);
+          createFolderXmlTree(childTreeNode, newNode, childIndent);
         }
       });
       if (count) {
