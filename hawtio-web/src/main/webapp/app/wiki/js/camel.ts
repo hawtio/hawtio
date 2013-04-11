@@ -281,9 +281,9 @@ module Wiki {
       } else {
         var treeNode = $scope.treeNode;
         if (key === "route") {
-          // lets add to the tree
-          parentFolder = $scope.camelContextTree;
-          treeNode = treeNode.getParent();
+          // lets add to the root of the tree
+          treeNode = $scope.rootTreeNode;
+          parentFolder = treeNode.data;
         }
         var node = document.createElement(key);
         var addedNode = Camel.addRouteChild(parentFolder, node);
