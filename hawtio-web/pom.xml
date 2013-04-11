@@ -50,6 +50,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Camel module -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-camel</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>io.hawt.example.services</groupId>
       <artifactId>example-infinispan</artifactId>

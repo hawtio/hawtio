@@ -28,7 +28,9 @@ public class CamelFacade implements CamelFacadeMXBean {
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private SchemaLookup schemaLookup;
-    private boolean conciseErrors;
+
+    // we tend to get massive stack overflow errors so lets use concise by default
+    private boolean conciseErrors = true;
 
     public void init() throws Exception {
         // lets check if we have a config directory if not lets create one...
@@ -49,7 +51,7 @@ public class CamelFacade implements CamelFacadeMXBean {
     }
 
     @Override
-    public String getCustomEndpointsJson() throws LoadPropertiesException {
+    public String findCustomEndpointsJson() throws LoadPropertiesException {
         boolean first = true;
         StringBuilder builder = new StringBuilder();
         // TODO should we find a camel context in JMX first?

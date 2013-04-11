@@ -9,5 +9,5 @@ import java.util.List;
  * The JMX MBean interface for working with camel
  */
 public interface CamelFacadeMXBean {
-    String getCustomEndpointsJson() throws LoadPropertiesException;
+    String findCustomEndpointsJson() throws LoadPropertiesException;
 }
