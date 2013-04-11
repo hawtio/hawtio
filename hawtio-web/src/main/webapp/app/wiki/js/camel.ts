@@ -6,14 +6,18 @@ module Wiki {
     var routeModel = _apacheCamelModel.definitions.route;
     routeModel["_id"] = "route";
 
-    $scope.addDialogOptions = {
-      backdropFade: true,
-      dialogFade: true
-    };
     $scope.showAddDialog = false;
 
     $scope.paletteItemSearch = "";
     $scope.paletteTree = new Folder("Palette");
+
+    $scope.$watch('showAddDialog', function() {
+      if ($scope.showAddDialog) {
+        setTimeout(function() {
+          $('#submit').focus();
+        }, 50);
+      }
+    });
 
     $scope.paletteActivations = ["Endpoints_endpoint"];
 
