@@ -132,11 +132,15 @@ module Wiki {
       $scope.propertiesTemplate = null;
       $scope.diagramTemplate = null;
       $scope.nodeXmlNode = null;
-      var routeXmlNode = getFolderXmlNode(treeNode);
-      if (routeXmlNode) {
+      if (folder) {
         $scope.nodeData = Camel.getRouteFolderJSON(folder);
         $scope.nodeDataChangedFields = {};
-        var nodeName = routeXmlNode.localName;
+      }
+      var nodeName = Camel.getFolderCamelNodeId(folder);
+      // lets lazily create the XML tree so it can be used by the diagram
+      var routeXmlNode = getFolderXmlNode(treeNode);
+      if (nodeName) {
+        //var nodeName = routeXmlNode.localName;
         $scope.nodeModel = Camel.getCamelSchema(nodeName);
         if ($scope.nodeModel) {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
@@ -206,6 +210,9 @@ module Wiki {
           }
         }
       }
+    }
+
+    function onNodeDataChanged() {
       var selectedFolder = $scope.selectedFolder;
       if ($scope.treeNode && selectedFolder) {
         var routeXmlNode = getFolderXmlNode($scope.treeNode);
@@ -218,12 +225,7 @@ module Wiki {
             $scope.treeNode.render(false, false);
           }
         }
-      }
-    }
-
-    function onNodeDataChanged() {
-      var selectedFolder = $scope.selectedFolder;
-      if (selectedFolder) {
+        // TODO not sure we need this to be honest
         selectedFolder["camelNodeData"] = $scope.nodeData;
       }
     }

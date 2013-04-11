@@ -120,6 +120,7 @@ module Camel {
             if (languageName) {
               key = languageName;
               textContent = value["expression"];
+              value = angular.copy(value);
               delete value["expression"];
               delete value["language"];
             }
