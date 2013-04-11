@@ -180,8 +180,8 @@ module Camel {
   /**
    * Looks up the given node name in the Camel schema
    */
-  export function getCamelSchema(nodeId) {
-    return Forms.lookupDefinition(nodeId, _apacheCamelModel);
+  export function getCamelSchema(nodeIdOrDefinition) {
+    return (angular.isObject(nodeIdOrDefinition)) ? nodeIdOrDefinition : Forms.lookupDefinition(nodeIdOrDefinition, _apacheCamelModel);
   }
 
   /**
@@ -190,6 +190,33 @@ module Camel {
    */
   export function isCamelPattern(nodeId) {
     return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
+  }
+
+  /**
+   * Returns true if the given node type prefers adding the next sibling as a child
+   */
+  export function isNextSiblingAddedAsChild(nodeIdOrDefinition) {
+    var definition = getCamelSchema(nodeIdOrDefinition);
+    if (definition) {
+      return definition["nextSiblingAddedAsChild"] || false
+    }
+    return null;
+  }
+
+  export function acceptInput(nodeIdOrDefinition) {
+    var definition = getCamelSchema(nodeIdOrDefinition);
+    if (definition) {
+      return definition["acceptInput"] || false
+    }
+    return null;
+  }
+
+  export function acceptOutput(nodeIdOrDefinition) {
+    var definition = getCamelSchema(nodeIdOrDefinition);
+    if (definition) {
+      return definition["acceptOutput"] || false
+    }
+    return null;
   }
 
   /**

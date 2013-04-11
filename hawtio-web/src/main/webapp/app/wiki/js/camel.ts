@@ -282,6 +282,7 @@ module Wiki {
     function addNewNode(nodeModel) {
       var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
       var key = nodeModel["_id"];
+      var beforeNode = null;
       if (!key) {
         console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
       } else {
@@ -289,7 +290,6 @@ module Wiki {
         if (key === "route") {
           // lets add to the root of the tree
           treeNode = $scope.rootTreeNode;
-          parentFolder = treeNode.data;
         } else {
           if (!treeNode) {
             // lets select the last route - and create a new route if need be
@@ -306,16 +306,29 @@ module Wiki {
               return;
             }
           }
+
+
+          // if the parent folder likes to act as a pipeline, then add
+          // after the parent, rather than as a child
+          var parentId = Camel.getFolderCamelNodeId(treeNode.data);
+          if (!Camel.acceptOutput(parentId)) {
+            // lets add the new node to the end of the parent
+            beforeNode = treeNode.getNextSibling();
+            treeNode = treeNode.getParent() || treeNode;
+          }
         }
-        var node = document.createElement(key);
-        var addedNode = Camel.addRouteChild(parentFolder, node);
-        if (treeNode && addedNode) {
-          var added = treeNode.addChild(addedNode);
-          if (added) {
-            getFolderXmlNode(added);
-            added.expand(true);
-            added.select(true);
-            added.activate(true);
+        if (treeNode) {
+          var node = document.createElement(key);
+          parentFolder = treeNode.data;
+          var addedNode = Camel.addRouteChild(parentFolder, node);
+          if (addedNode) {
+            var added = treeNode.addChild(addedNode, beforeNode);
+            if (added) {
+              getFolderXmlNode(added);
+              added.expand(true);
+              added.select(true);
+              added.activate(true);
+            }
           }
         }
       }
