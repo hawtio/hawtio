@@ -20,7 +20,15 @@ module Camel {
     });
 
     function updateRoutes() {
-      var routeXmlNode = $scope.nodeXmlNode || getSelectedRouteNode(workspace);
+      var routeXmlNode = getSelectedRouteNode(workspace);
+      if (!routeXmlNode) {
+        routeXmlNode = $scope.nodeXmlNode;
+      }
+      if (routeXmlNode && routeXmlNode.localName !== "route") {
+        var wrapper = document.createElement("route");
+        wrapper.appendChild(routeXmlNode.cloneNode(true));
+        routeXmlNode = wrapper;
+      }
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
