@@ -194,10 +194,20 @@ module Wiki {
               hitMode = "after";
             }
           } else {
+            // disable before / after
             hitMode = "over";
           }
         }
-        console.log("nodeDrop owner: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
+        else {
+          if (Camel.acceptOutput(nodeId)) {
+            hitMode = "over";
+          } else {
+            if (hitMode !== "before") {
+              hitMode = "after";
+            }
+          }
+        }
+        console.log("nodeDrop nodeId: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
 
         sourceNode.move(node, hitMode);
       }
