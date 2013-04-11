@@ -212,10 +212,17 @@ module Wiki {
     }
 
     function onNodeDataChanged() {
-      if ($scope.nodeXmlNode) {
-/*
-        Camel.setRouteNodeJSON($scope.nodeXmlNode, $scope.nodeData);
-*/
+      if ($scope.selectedFolder) {
+        // TODO lets find the node in the camel folder tree and update that!
+        // as for some reason dynatree creates clones of our model!
+        var key = $scope.selectedFolder.key;
+        if (key) {
+          var folder = $scope.camelContextTree.findDescendant((folder) => key === folder.key);
+          if (folder) {
+            console.log("===== found child folder with key " + key);
+            folder["camelNodeData"] = $scope.nodeData;
+          }
+        }
       }
     }
 
@@ -310,10 +317,13 @@ module Wiki {
         // lets go backwards removing all the text nodes on either side of each route along with the route
         while (routeIndices.length) {
           var idx = routeIndices.pop();
-          for (var i = idx + 1; i < element.childNodes.length; i++) {
-            var node = element.childNodes[i];
+          var nextIndex = idx + 1;
+          while (true) {
+            var node = element.childNodes[nextIndex];
             if (Core.isTextNode(node)) {
               element.removeChild(node);
+            } else {
+              break;
             }
           }
           if (idx < element.childNodes.length) {
@@ -323,6 +333,8 @@ module Wiki {
             var node = element.childNodes[i];
             if (Core.isTextNode(node)) {
               element.removeChild(node);
+            } else {
+              break;
             }
           }
         }

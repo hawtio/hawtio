@@ -143,5 +143,20 @@ class Folder implements NodeSelection {
     }
   }
 
+  /**
+   * Searches this folder and all its descendants for the first folder to match the filter
+   */
+  public findDescendant(filter) {
+    if (filter(this)) {
+      return this;
+    }
+    var answer = null;
+    angular.forEach(this.children, (child) => {
+      if (!answer) {
+        answer = child.findDescendant(filter);
+      }
+    });
+    return answer;
+  }
 
 }
