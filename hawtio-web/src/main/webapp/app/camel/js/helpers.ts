@@ -51,45 +51,97 @@ module Camel {
     return uri;
   }
 
+  /**
+   * Returns the JSON data for the camel folder; extracting it from the associated
+   * routeXmlNode or using the previously extracted and/or editted JSON
+   */
+  export function getRouteFolderJSON(folder, answer = {}) {
+    var nodeData = folder["camelNodeData"];
+    if (!nodeData) {
+      var routeXmlNode = folder["routeXmlNode"];
+      if (routeXmlNode) {
+        nodeData = Camel.getRouteNodeJSON(routeXmlNode);
+      }
+      if (!nodeData) {
+        nodeData = answer;
+      }
+      folder["camelNodeData"] = nodeData;
+    }
+    return nodeData;
+  }
+
   export function getRouteNodeJSON(routeXmlNode, answer = {}) {
     if (routeXmlNode) {
       angular.forEach(routeXmlNode.attributes, (attr) => {
         answer[attr.name] = attr.value;
       });
 
-      // lets look for nested elements and convert those
-      // explicitly looking for expressions
-      $(routeXmlNode).children("*").each((idx, element) => {
-        var nodeName = element.localName;
-        var langSettings = Camel.camelLanguageSettings(nodeName);
-        if (langSettings) {
-          // TODO the expression key could be anything really; how should we know?
-          answer["expression"] = {
-            language: nodeName,
-            expression: element.textContent
-          };
-        } else {
-          var nested = getRouteNodeJSON(element);
-          if (nested) {
-            answer[nodeName] = nested;
+      // lets not iterate into routes or top level tags
+      var localName = routeXmlNode.localName;
+      if (localName !== "route" && localName !== "routes" && localName !== "camelContext") {
+        // lets look for nested elements and convert those
+        // explicitly looking for expressions
+        $(routeXmlNode).children("*").each((idx, element) => {
+          var nodeName = element.localName;
+          var langSettings = Camel.camelLanguageSettings(nodeName);
+          if (langSettings) {
+            // TODO the expression key could be anything really; how should we know?
+            answer["expression"] = {
+              language: nodeName,
+              expression: element.textContent
+            };
+          } else {
+            if (!isCamelPattern(nodeName)) {
+              var nested = getRouteNodeJSON(element);
+              if (nested) {
+                answer[nodeName] = nested;
+              }
+            }
           }
-        }
-      });
+        });
+      }
     }
     return answer;
   }
 
-  export function setRouteNodeJSON(routeXmlNode, newData) {
+  export function increaseIndent(currentIndent: string, indentAmount = "  ") {
+    return currentIndent + indentAmount;
+  }
+
+  export function setRouteNodeJSON(routeXmlNode, newData, indent) {
     if (routeXmlNode) {
+      var childIndent = increaseIndent(indent);
       angular.forEach(newData, (value, key) => {
         if (angular.isObject(value)) {
+          // convert languages to the right xml
+          var textContent = null;
+          if (key === "expression") {
+            var languageName = value["language"];
+            if (languageName) {
+              key = languageName;
+              textContent = value["expression"];
+              delete value["expression"];
+              delete value["language"];
+            }
+          }
           // TODO deal with nested objects...
           var nested = $(routeXmlNode).children(key);
+          var element = null;
           if (!nested || !nested.length) {
-            nested = $("<" + key + "/>");
-            $(routeXmlNode).append(nested);
+            var doc = routeXmlNode.ownerDocument || document;
+            routeXmlNode.appendChild(doc.createTextNode("\n" + childIndent));
+            element = doc.createElement(key);
+            if (textContent) {
+              element.appendChild(doc.createTextNode(textContent));
+            }
+            routeXmlNode.appendChild(element);
+          } else {
+            element = nested[0];
           }
-          setRouteNodeJSON(nested[0], value);
+          setRouteNodeJSON(element, value, childIndent);
+          if (textContent) {
+            nested.text(textContent);
+          }
         } else {
           if (value) {
             var text = value.toString();
@@ -133,6 +185,14 @@ module Camel {
   }
 
   /**
+   * Returns true if the given nodeId is a route, endpoint or pattern
+   * (and not some nested type like a data format)
+   */
+  export function isCamelPattern(nodeId) {
+    return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
+  }
+
+  /**
    * Looks up the Camel language settings for the given language name
    */
   export function camelLanguageSettings(nodeName) {
@@ -156,6 +216,8 @@ module Camel {
     }
 
     if (context && context.length) {
+      folder["xmlDocument"] = doc;
+      folder["routeXmlNode"] = context;
       $(context).children("route").each((idx, route) => {
         var id = route.getAttribute("id");
         if (!id) {

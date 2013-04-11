@@ -75,6 +75,30 @@ module Wiki {
       return workspace.isLinkActive(nav.href());
     };
 
+    $scope.save = () => {
+      // generate the new XML
+      if ($scope.camelContextTree) {
+        var xmlNode = generateXmlFromFolder($scope.camelContextTree);
+        if (xmlNode) {
+          var text = Core.xmlNodeToString(xmlNode);
+          if (text) {
+            // lets save the file...
+            var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+            wikiRepository.putPage($scope.pageId, text, commitMessage, (status) => {
+              Wiki.onComplete(status);
+              goToView();
+              Core.$apply($scope);
+            });
+          }
+        }
+      }
+    };
+
+    $scope.cancel = () => {
+      console.log("cancelling...");
+      // TODO show dialog if folks are about to lose changes...
+    };
+
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git) {
         // lets do this asynchronously to avoid Error: $digest already in progress
@@ -97,7 +121,7 @@ module Wiki {
       var routeXmlNode = folder["routeXmlNode"];
       if (routeXmlNode) {
         $scope.nodeXmlNode = routeXmlNode;
-        $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
+        $scope.nodeData = Camel.getRouteFolderJSON(folder);
         $scope.nodeDataChangedFields = {};
         var nodeName = routeXmlNode.localName;
         $scope.nodeModel = Camel.getCamelSchema(nodeName);
@@ -108,10 +132,6 @@ module Wiki {
         Core.$apply($scope);
       }
     };
-
-    function getFolderCamelNodeId(folder) {
-      return Core.pathGet(folder, ["routeXmlNode", "localName"]);
-    }
 
     $scope.onNodeDragEnter = (node, sourceNode) => {
       var nodeFolder = node.data;
@@ -193,7 +213,9 @@ module Wiki {
 
     function onNodeDataChanged() {
       if ($scope.nodeXmlNode) {
+/*
         Camel.setRouteNodeJSON($scope.nodeXmlNode, $scope.nodeData);
+*/
       }
     }
 
@@ -234,6 +256,10 @@ module Wiki {
       }
     }
 
+    function getFolderCamelNodeId(folder) {
+      return Core.pathGet(folder, ["routeXmlNode", "localName"]);
+    }
+
     function addNewNode(nodeModel) {
       var parentFolder = ($scope.selectedFolder) ? $scope.selectedFolder: $scope.camelContextTree;
       var key = nodeModel["_id"];
@@ -262,6 +288,111 @@ module Wiki {
 
           //$scope.treeNode.reloadChildren(function (node, isOk) {});
         }
+      }
+    }
+
+    function generateXmlFromFolder(folder) {
+      var doc = folder["xmlDocument"];
+      var context = folder["routeXmlNode"];
+
+      if (context && context.length) {
+        var element = context[0];
+        var children = element.childNodes;
+        var routeIndices = [];
+        for (var i = 0; i < children.length; i++) {
+          var node = children[i];
+          var name = node.localName;
+          if ("route" === name && parent) {
+            routeIndices.push(i);
+          }
+        }
+
+        // lets go backwards removing all the text nodes on either side of each route along with the route
+        while (routeIndices.length) {
+          var idx = routeIndices.pop();
+          for (var i = idx + 1; i < element.childNodes.length; i++) {
+            var node = element.childNodes[i];
+            if (Core.isTextNode(node)) {
+              element.removeChild(node);
+            }
+          }
+          if (idx < element.childNodes.length) {
+            element.removeChild(element.childNodes[idx]);
+          }
+          for (var i = idx - 1; i >= 0; i--) {
+            var node = element.childNodes[i];
+            if (Core.isTextNode(node)) {
+              element.removeChild(node);
+            }
+          }
+        }
+
+        regenerateCamelRouteTree(folder, context[0], Camel.increaseIndent(""));
+      }
+      return doc;
+    }
+
+    /**
+     * Rebuilds the DOM tree from the folder tree and performs all the various hacks
+     * to turn the folder / JSON / model into valid camel XML
+     * such as renaming language elements from <language expression="foo" language="bar/>
+     * to <bar>foo</bar>
+     * and changing <endpoint> into either <from> or <to>
+     */
+    function regenerateCamelRouteTree(folder, xmlNode, indent) {
+      var count = 0;
+      if (folder && xmlNode) {
+        var doc = xmlNode.ownerDocument || document;
+        var namespaceURI = xmlNode.namespaceURI;
+
+        var from = false;
+        var childIndent = Camel.increaseIndent(indent);
+        angular.forEach(folder.children, (childFolder) => {
+          var name = getFolderCamelNodeId(childFolder);
+          var json = Camel.getRouteFolderJSON(childFolder);
+          if (name && json) {
+            var language = false;
+            if (name === "endpoint") {
+              if (from) {
+                name = "to";
+              } else {
+                name = "from";
+                from = false;
+              }
+            }
+            if (name === "expression") {
+              var languageName = json["language"];
+              if (languageName) {
+                name = languageName;
+                language = true;
+              }
+            }
+
+            // lets create the XML
+            xmlNode.appendChild(doc.createTextNode("\n" + childIndent));
+            var newNode = doc.createElementNS(namespaceURI, name);
+
+            Camel.setRouteNodeJSON(newNode, json, childIndent);
+            xmlNode.appendChild(newNode);
+            count += 1;
+            regenerateCamelRouteTree(childFolder, newNode, childIndent);
+          }
+        });
+        if (count) {
+          xmlNode.appendChild(doc.createTextNode("\n" + indent));
+        }
+      }
+      return count;
+    }
+
+    function goToView() {
+      if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+        var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+        console.log("goToView has found view " + viewLink);
+        var path = Core.trimLeading(viewLink, "#");
+        $location.path(path);
+      } else {
+        console.log("goToView has no breadcrumbs!");
       }
     }
   }

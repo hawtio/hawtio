@@ -6,21 +6,37 @@
           <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
         </li>
 
+        <!--
+                <li class="pull-right">
+                  <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this camel configuration"
+                     data-placement="bottom">
+                    <i class="icon-edit"></i> Edit</a></li>
+                <li class="pull-right" ng-show="sourceLink()">
+        -->
         <li class="pull-right">
-          <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this camel configuration"
-             data-placement="bottom">
-            <i class="icon-edit"></i> Edit</a></li>
-        <li class="pull-right" ng-show="sourceLink()">
+          <a id="saveButton" ng-disabled="!isValid()" ng-click="save()"
+             title="Saves the Camel document">
+            <i class="icon-save"></i> Save</a>
+        </li>
+        <li class="pull-right">
+          <a id="cancelButton" ng-click="cancel()"
+             title="Discards any updates">
+            <i class="icon-remove"></i> Cancel</a>
+        </li>
+
+        <li class="pull-right">
           <a ng-href="{{sourceLink()}}" title="View source code"
              data-placement="bottom">
-            <i class="icon-file-alt"></i> Source</a></li>
+            <i class="icon-file-alt"></i> Source</a>
+        </li>
       </ul>
     </div>
   </div>
 
   <div class="row-fluid">
     <div id="tree-container" class="span3" ng-controller="Camel.TreeController">
-      <div hawtio-tree="camelContextTree" onselect="onNodeSelect" onDragEnter="onNodeDragEnter" onDrop="onNodeDrop" hideRoot="true"></div>
+      <div hawtio-tree="camelContextTree" onselect="onNodeSelect" onDragEnter="onNodeDragEnter" onDrop="onNodeDrop"
+           hideRoot="true"></div>
     </div>
 
     <div class="span9">

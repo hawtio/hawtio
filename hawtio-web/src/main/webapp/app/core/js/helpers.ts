@@ -372,6 +372,14 @@ module Core {
   }
 
   /**
+   * Returns true if the given DOM node is a text node
+   */
+  export function isTextNode(node) {
+    return node && node.nodeType === 3;
+  }
+
+
+  /**
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
    */
   export function $applyNowOrLater($scope) {

@@ -17,6 +17,26 @@ module Forms {
   }
 
   /**
+   * Walks the base class hierarchy checking if the given type is an instance of the given type name
+   */
+  export function isJsonType(name, schema, typeName) {
+    var definition = lookupDefinition(name, schema);
+    while (definition) {
+      var extendsTypes = Core.pathGet(definition, ["extends", "type"]);
+      if (extendsTypes) {
+        if (typeName === extendsTypes) {
+          return true;
+        } else {
+          definition = lookupDefinition(extendsTypes, schema);
+        }
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Looks up the given type name in the schemas definitions
    */
   export function lookupDefinition(name, schema) {
