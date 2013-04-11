@@ -70,7 +70,13 @@ module Wiki {
       if ($scope.selectedFolder && $scope.treeNode) {
         $scope.selectedFolder.detach();
         $scope.treeNode.remove();
+        $scope.selectedFolder = null;
+        $scope.treeNode = null;
       }
+    };
+
+    $scope.canDelete = () => {
+      return $scope.selectedFolder ? true : false;
     };
 
     $scope.camelSubLevelTabs = () => {
@@ -284,22 +290,33 @@ module Wiki {
           // lets add to the root of the tree
           treeNode = $scope.rootTreeNode;
           parentFolder = treeNode.data;
+        } else {
+          if (!treeNode) {
+            // lets select the last route - and create a new route if need be
+            var root = $scope.rootTreeNode;
+            var children = root.getChildren();
+            if (!children || !children.length) {
+              addNewNode(Camel.getCamelSchema("route"));
+              children = root.getChildren();
+            }
+            if (children && children.length) {
+              treeNode = children[children.length - 1];
+            } else {
+              console.log("Could not add a new route to the empty tree!");
+              return;
+            }
+          }
         }
         var node = document.createElement(key);
         var addedNode = Camel.addRouteChild(parentFolder, node);
-        console.log("Added node: " + addedNode);
-
         if (treeNode && addedNode) {
           var added = treeNode.addChild(addedNode);
-          console.log("Added is " + added);
           if (added) {
             getFolderXmlNode(added);
             added.expand(true);
             added.select(true);
             added.activate(true);
           }
-
-          //$scope.treeNode.reloadChildren(function (node, isOk) {});
         }
       }
     }

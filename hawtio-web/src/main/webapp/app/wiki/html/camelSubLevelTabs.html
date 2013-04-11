@@ -7,7 +7,7 @@
     <a title="Add new pattern node connecting to this pattern" ng-click="addNode()" data-placement="bottom">
       <i class="icon-plus"></i> Add</a></li>
   <li class="pull-right">
-    <a title="Deletes the selected pattern" ng-disabled="!selectedFolder" ng-click="removeNode()" data-placement="bottom">
+    <a title="Deletes the selected pattern" ng-show="canDelete()" ng-click="removeNode()" data-placement="bottom">
       <i class="icon-remove"></i> Delete</a></li>
 </ul>
 
