@@ -232,6 +232,7 @@
   </pluginRepositories>
 
   <modules>
+    <module>hawtio-camel</module>
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
     <module>example-services</module>

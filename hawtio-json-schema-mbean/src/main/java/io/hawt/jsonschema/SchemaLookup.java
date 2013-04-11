@@ -17,12 +17,22 @@ import java.lang.management.ManagementFactory;
 public class SchemaLookup implements SchemaLookupMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(SchemaLookup.class);
 
+    private static SchemaLookup singleton;
+
     private MBeanServer mBeanServer;
     private ObjectName objectName;
 
     private ObjectMapper mapper;
 
     public SchemaLookup() {
+    }
+
+    public static SchemaLookup getSingleton() {
+        if (singleton == null) {
+            // lazy create one
+            new SchemaLookup().init();
+        }
+        return singleton;
     }
 
     public void init() {
@@ -53,6 +63,7 @@ public class SchemaLookup implements SchemaLookupMXBean {
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
             }
+            singleton = this;
         } catch (Exception e) {
             LOG.warn("Exception during initialization: ", e);
             throw new RuntimeException(e);
@@ -84,6 +95,11 @@ public class SchemaLookup implements SchemaLookupMXBean {
     @Override
     public String getSchemaForClass(String name) {
         Class clazz = getClass(name);
+        return getSchemaForClass(clazz);
+    }
+
+    public String getSchemaForClass(Class clazz) {
+        String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
             return writer.writeValueAsString(mapper.generateJsonSchema(clazz));
@@ -91,5 +107,29 @@ public class SchemaLookup implements SchemaLookupMXBean {
             LOG.warn("Failed to generate JSON schema for class {}", name, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
+    public void setMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    public MBeanServer getmBeanServer() {
+        return mBeanServer;
+    }
+
+    public void setmBeanServer(MBeanServer mBeanServer) {
+        this.mBeanServer = mBeanServer;
+    }
+
+    public ObjectName getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(ObjectName objectName) {
+        this.objectName = objectName;
     }
 }
