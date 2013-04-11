@@ -15,12 +15,18 @@ module Wiki {
     $scope.paletteItemSearch = "";
     $scope.paletteTree = new Folder("Palette");
 
+    $scope.paletteActivations = ["Endpoints_endpoint"];
+
     angular.forEach(_apacheCamelModel.definitions, (value, key) => {
       if (value.group) {
         var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
+        if (!group.key) {
+          group.key = value.group;
+        }
         value["_id"] = key;
         var title = value["title"] || key;
         var node = new Folder(title);
+        node.key = group.key + "_" + key;
         node["nodeModel"] = value;
         var imageUrl = Camel.getRouteNodeIcon(value);
         node.icon = imageUrl;
