@@ -242,8 +242,8 @@ module Wiki {
           var nodeName = routeXmlNode.localName;
           var nodeSettings = Camel.getCamelSchema(nodeName);
           if (nodeSettings) {
-            // redraw the title
-            selectedFolder.title = Camel.getRouteNodeLabel(routeXmlNode, nodeSettings);
+            // update the title and tooltip etc
+            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, routeXmlNode, nodeSettings);
             $scope.treeNode.render(false, false);
           }
         }

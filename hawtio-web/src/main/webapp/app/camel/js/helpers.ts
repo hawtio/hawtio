@@ -226,6 +226,10 @@ module Camel {
     return _apacheCamelModel.languages[nodeName];
   }
 
+  export function isCamelLanguage(nodeName) {
+    return (camelLanguageSettings(nodeName) || nodeName === "expression") ? true : false;
+  }
+
   export function loadCamelTree(xml: string, key: string) {
     var doc = $.parseXML(xml);
 
@@ -289,13 +293,13 @@ module Camel {
     if (nodeName) {
       var nodeSettings = getCamelSchema(nodeName);
       if (nodeSettings) {
-        var label = getRouteNodeLabel(n, nodeSettings);
-        var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
         var imageUrl = getRouteNodeIcon(nodeSettings);
 
-        var child = new Folder(label);
+        var child = new Folder(nodeName);
         child.domain = jmxDomain;
         child.typeName = "routeNode";
+        updateRouteNodeLabelAndTooltip(child, n, nodeSettings);
+
         // TODO should maybe auto-generate these?
         child.parent = folder;
         child.folderNames = folder.folderNames;
@@ -316,7 +320,6 @@ module Camel {
         }
         child.key = key;
         child.icon = imageUrl;
-        child.tooltip = tooltip;
         child["routeXmlNode"] = n;
         if (!folder.children) {
           folder.children = [];
@@ -324,21 +327,6 @@ module Camel {
         folder.children.push(child);
         addRouteChildren(child, n);
         return child;
-      } else {
-        // ignore non EIP nodes, though we should add expressions...
-        var langSettings = Camel.camelLanguageSettings(nodeName);
-        if (langSettings && folder) {
-          // lets add the language kind
-          var name = langSettings["name"] || nodeName;
-          var text = n.textContent;
-          if (text) {
-            folder.tooltip = folder.title + " " + name + " " + text;
-            folder.title = text;
-          } else {
-            folder.title = folder.title + " " + name;
-          }
-        }
-        return null;
       }
     }
     return null;
@@ -413,29 +401,42 @@ module Camel {
   }
 
 
-  export function getRouteNodeLabel(routeXmlNode, nodeSettings) {
+  export function updateRouteNodeLabelAndTooltip(folder, routeXmlNode, nodeSettings) {
+    var localName = routeXmlNode.localName;
     var id = routeXmlNode.getAttribute("id");
+    var label = nodeSettings["title"] || localName;
+
     // lets use the ID for routes and other things we give an id
+    var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
     if (id) {
-      return id;
+      label = id;
+    } else {
+      var uri = getRouteNodeUri(routeXmlNode);
+      if (uri) {
+        // Don't use from/to as it gets odd if you drag/drop and reorder
+        // label += " " + uri;
+        label = uri;
+      } else {
+        var children = $(routeXmlNode).children("*");
+        if (children && children.length) {
+          var child = children[0];
+          var childName = child.localName;
+          var expression = null;
+          if (Camel.isCamelLanguage(childName)) {
+            expression = child.textContent;
+            if (!expression) {
+              expression = child.getAttribute("expression");
+            }
+          }
+          if (expression) {
+            label += " " + expression;
+            tooltip += " " + childName + " expression";
+          }
+        }
+      }
     }
-    var label = nodeSettings["title"] || routeXmlNode.localName;
-/*
-    if (label === "endpoint" || label === "Endpoint") {
-      // if we are the first endpoint then use "From" otherwise use "To"
-      var parent = $(routeXmlNode).parent();
-      var endpoints = parent.children("endpoint");
-      var fromCount = parent.children("from").length;
-      var from = !fromCount && (endpoints.length && endpoints[0] === routeXmlNode);
-      label = (from) ? "From" : "To";
-    }
-*/
-    var uri = getRouteNodeUri(routeXmlNode);
-    if (uri) {
-      // Don't use from/to as it gets odd if you drag/drop and reorder
-      // label += " " + uri;
-      label = uri;
-    }
+    folder.title = label;
+    folder.tooltip = tooltip;
     return label;
   }
 
