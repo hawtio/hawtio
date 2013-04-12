@@ -358,7 +358,7 @@
     <profile>
       <id>camelSnapshot</id>
       <properties>
-        <camel-version>2.11-SNAPSHOT</camel-version>
+        <camel-version>2.12-SNAPSHOT</camel-version>
       </properties>
       <repositories>
       </repositories>
