@@ -66,7 +66,7 @@ public class CamelFacade implements CamelFacadeMXBean {
             try {
                 Component component = camelContext.getComponent(key);
                 if (component != null) {
-                    Class<? extends Component> componentClass = component.getClass();
+                    Class<? extends Component>   componentClass = component.getClass();
                     //System.out.println("Found component key " + key + " class " + aClass.getName());
 
                     // now lets try to resolve the endpoint

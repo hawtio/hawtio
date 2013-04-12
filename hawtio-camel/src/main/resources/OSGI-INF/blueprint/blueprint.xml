@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
+
+<!--
+  <ext:property-placeholder>
+    <ext:default-properties>
+      <ext:property name="hawtio.config.dir" value=""/>
+    </ext:default-properties>
+  </ext:property-placeholder>
+-->
+
+  <bean id="camelFacade" class="io.hawt.camel.CamelFacade" init-method="init" destroy-method="destroy">
+  </bean>
+
+</blueprint>
+
