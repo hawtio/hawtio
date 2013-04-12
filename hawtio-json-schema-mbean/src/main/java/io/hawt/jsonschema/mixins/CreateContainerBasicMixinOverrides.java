@@ -1,6 +1,7 @@
 package io.hawt.jsonschema.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.hawt.jsonschema.SchemaLookup;
 import io.hawt.jsonschema.api.MixInAnnotation;
 import org.fusesource.fabric.api.CreateContainerBasicOptions;
@@ -33,6 +34,9 @@ public class CreateContainerBasicMixinOverrides implements MixInAnnotation {
 abstract class CreateContainerMixin extends CreateContainerBasicOptions {
 
     @JsonIgnore
+    protected String providerType;
+
+    @JsonIgnore
     protected String zookeeperUrl;
 
     @JsonIgnore
@@ -40,6 +44,9 @@ abstract class CreateContainerMixin extends CreateContainerBasicOptions {
 
     @JsonIgnore
     protected Map<String, CreateContainerMetadata<?>> metadataMap;
+
+    @JsonProperty(value = "jvmOptions")
+    protected String jvmOpts;
 
     @JsonIgnore
     private CreationStateListener creationStateListener;

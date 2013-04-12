@@ -18,6 +18,10 @@
   <!-- override for CreateContainerOptions -->
   <bean id="CreateContainerRemoteOptionsMixin" class="io.hawt.jsonschema.mixins.CreateContainerRemoteMixinOverrides"/>
 
+  <bean id="CreateContainerNoParentMixinOverrides" class="io.hawt.jsonschema.mixins.CreateContainerNoParentMixinOverrides"/>
+
+  <bean id="CreateContainerChildMixinOverrides" class="io.hawt.jsonschema.mixins.CreateContainerChildMixinOverrides"/>
+
 
 </blueprint>
 
