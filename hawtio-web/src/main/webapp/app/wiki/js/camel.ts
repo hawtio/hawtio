@@ -396,6 +396,8 @@ module Wiki {
     }
 
     function goToView() {
+      // TODO lets navigate to the view if we have a separate view one day :)
+/*
       if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
         var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
         console.log("goToView has found view " + viewLink);
@@ -404,6 +406,7 @@ module Wiki {
       } else {
         console.log("goToView has no breadcrumbs!");
       }
+*/
     }
   }
 }
