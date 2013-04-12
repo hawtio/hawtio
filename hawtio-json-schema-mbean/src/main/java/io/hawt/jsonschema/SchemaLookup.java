@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import io.hawt.jsonschema.api.MixInAnnotation;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
+import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,8 @@ public class SchemaLookup implements SchemaLookupMXBean {
         try {
             if (mapper == null) {
                 mapper = new ObjectMapper();
+
+                mapper.setVisibilityChecker(new IgnorePropertiesBackedByTransientFields(mapper.getVisibilityChecker()));
 
                 JaxbAnnotationModule module1 = new JaxbAnnotationModule();
                 mapper.registerModule(module1);
