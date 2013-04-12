@@ -356,6 +356,15 @@
     </profile>
 
     <profile>
+      <id>camelSnapshot</id>
+      <properties>
+        <camel-version>2.11-SNAPSHOT</camel-version>
+      </properties>
+      <repositories>
+      </repositories>
+    </profile>
+
+    <profile>
       <id>committer</id>
       <properties>
         <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
