@@ -87,6 +87,14 @@
       <version>${jackson-version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.fusesource.fabric</groupId>
+      <artifactId>fabric-core</artifactId>
+      <version>${fabric-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
     <!--
     <dependency>
       <groupId>org.osgi</groupId>
@@ -100,13 +108,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fusesource.fabric</groupId>
-      <artifactId>fabric-core</artifactId>
-      <version>${fabric-version}</version>
       <scope>test</scope>
     </dependency>
 

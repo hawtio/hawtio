@@ -1,6 +1,7 @@
 package io.hawt.jsonschema.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hawt.jsonschema.SchemaLookup;
 import io.hawt.jsonschema.api.MixInAnnotation;
 import org.fusesource.fabric.api.CreateEnsembleOptions;
 import org.fusesource.fabric.api.CreateRemoteContainerOptions;
@@ -9,6 +10,10 @@ import org.fusesource.fabric.api.CreateRemoteContainerOptions;
  * @author Stan Lewis
  */
 public class CreateContainerRemoteMixinOverrides implements MixInAnnotation {
+
+    public CreateContainerRemoteMixinOverrides() {
+        SchemaLookup.getSingleton().registerMixIn(this);
+    }
 
     @Override
     public Class getMixinSource() {

@@ -1,4 +1,4 @@
-package io.hawt.jsonschema.mixins.fabric;
+package io.hawt.jsonschema.test.fabric;
 
 import io.hawt.jsonschema.SchemaLookup;
 import io.hawt.jsonschema.mixins.CreateContainerBasicMixinOverrides;
@@ -20,8 +20,8 @@ public class TestFabricMixins {
     @Test
     public void testCreateContainerOptionsMixin() throws Exception {
         SchemaLookup lookup = createSchemaLookup();
-        lookup.registerMixIn(new CreateContainerBasicMixinOverrides());
-        lookup.registerMixIn(new CreateContainerRemoteMixinOverrides());
+        new CreateContainerBasicMixinOverrides();
+        new CreateContainerRemoteMixinOverrides();
 
         String result = "";
 

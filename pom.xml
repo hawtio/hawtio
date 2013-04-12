@@ -235,6 +235,7 @@
     <module>hawtio-camel</module>
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
+    <module>hawtio-json-schema-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
     <module>hawtio-default</module>
@@ -246,8 +247,6 @@
     <module>hawtio-plugin-example</module>
     <module>hawtio-karaf</module>
     <module>sample</module>
-    <module>hawtio-json-schema-mbean</module>
-    <module>hawtio-json-schema-mixins</module>
   </modules>
 
   <build>

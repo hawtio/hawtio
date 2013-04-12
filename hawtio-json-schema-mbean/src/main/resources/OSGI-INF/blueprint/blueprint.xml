@@ -3,11 +3,21 @@
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
 
 
+  <!--
   <reference-list id="mixin-annotations" availability="optional" interface="io.hawt.jsonschema.api.MixInAnnotation">
     <reference-listener ref="schemaLookup" bind-method="registerMixIn" unbind-method="unregisterMixIn"/>
   </reference-list>
+  -->
 
   <bean id="schemaLookup" class="io.hawt.jsonschema.SchemaLookup" init-method="init" destroy-method="destroy"/>
+
+
+  <!-- override for CreateContainerOptions -->
+  <bean id="CreateContainerBasicOptionsMixin" class="io.hawt.jsonschema.mixins.CreateContainerBasicMixinOverrides"/>
+
+  <!-- override for CreateContainerOptions -->
+  <bean id="CreateContainerRemoteOptionsMixin" class="io.hawt.jsonschema.mixins.CreateContainerRemoteMixinOverrides"/>
+
 
 </blueprint>
 
