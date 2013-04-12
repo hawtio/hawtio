@@ -4,6 +4,7 @@ import io.hawt.jsonschema.SchemaLookup;
 import io.hawt.jsonschema.api.MixInAnnotation;
 import io.hawt.jsonschema.test.objects.ObjectWithJsonAnnotations;
 import io.hawt.jsonschema.test.objects.ObjectWithMixinOverride;
+import io.hawt.jsonschema.test.objects.ObjectWithTransientModifiers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -62,6 +63,13 @@ public class SchemaLookupTest {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass("io.hawt.jsonschema.test.objects.ObjectWithJsonAnnotations");
         System.out.println("testObjectWithJsonAnnotations - Got: \n\n" + result + "\n\n");
+    }
+
+    @Test
+    public void testObjectWithTransientModifiers() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass(ObjectWithTransientModifiers.class.getName());
+        System.out.println("testObjectWithTransientModifiers - Got: \n\n" + result + "\n\n");
     }
 
     @Test
