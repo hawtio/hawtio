@@ -1,7 +1,5 @@
 package io.hawt.git;
 
-import io.hawt.jmx.JmxTreeWatcher;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -12,7 +10,6 @@ import java.io.File;
  */
 public class GitContextListener  implements ServletContextListener {
     private GitFacade helper = new GitFacade();
-    private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
@@ -31,18 +28,12 @@ public class GitContextListener  implements ServletContextListener {
             }
             helper.init();
 
-            treeWatcher.init();
         } catch (Exception e) {
             throw createServletException(e);
         }
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        try {
-            treeWatcher.destroy();
-        } catch (Exception e) {
-            throw createServletException(e);
-        }
         try {
             helper.destroy();
         } catch (Exception e) {

@@ -18,8 +18,5 @@
     <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
   </bean>
 
-  <bean id="treeWatcher" class="io.hawt.jmx.JmxTreeWatcher" init-method="init" destroy-method="destroy"/>
-
-
 </blueprint>
 

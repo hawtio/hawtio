@@ -57,6 +57,9 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
