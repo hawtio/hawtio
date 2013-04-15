@@ -14,33 +14,9 @@
  * permissions and limitations under the License.
  */
 
-package io.hawt.web.plugin.internal;
+package io.hawt.web.plugin;
 
-/**
- *
- */
-public class Plugin implements PluginMBean {
-
-  private io.hawt.web.plugin.Plugin self = null;
-
-  Plugin(io.hawt.web.plugin.Plugin self) {
-    this.self = self;
-  }
-
-  public String getName() {
-    return self.getName();
-  }
-
-  public String getContext() {
-    return self.getContext();
-  }
-
-  public String getDomain() {
-    return self.getDomain();
-  }
-
-  public String[] getScripts() {
-    return self.getScripts();
-  }
+public interface HawtioPluginMBean extends io.hawt.web.plugin.Plugin {
 
 }
+

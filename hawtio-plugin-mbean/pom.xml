@@ -7,14 +7,12 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-plugin-registry</artifactId>
+  <artifactId>hawtio-plugin-mbean</artifactId>
   <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Plugin Registry Backend</description>
+  <description>hawtio :: Plugin MBean</description>
 
   <properties>
-    <context>/hawtio/plugin_registry</context>
-
     <fuse.osgi.export>
       io.hawt.web.plugin
     </fuse.osgi.export>
@@ -23,9 +21,6 @@
       javax.management,
       *;resolution:=optional
     </fuse.osgi.import>
-    <fuse.osgi.private.pkg>
-      io.hawt.web.plugin.internal
-    </fuse.osgi.private.pkg>
 
     <slf4j-version>1.6.1</slf4j-version>
 
@@ -64,8 +59,6 @@
 
             <Export-Package>${fuse.osgi.export}</Export-Package>
             <Import-Package>${fuse.osgi.import}</Import-Package>
-            <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
-            <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
 
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>

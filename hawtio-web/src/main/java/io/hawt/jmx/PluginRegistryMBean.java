@@ -14,9 +14,11 @@
  * permissions and limitations under the License.
  */
 
-package io.hawt.web.plugin.internal;
+package io.hawt.jmx;
 
-public interface PluginMBean extends io.hawt.web.plugin.Plugin {
+public interface PluginRegistryMBean {
+
+    public long getUpdateCounter();
 
 }
 

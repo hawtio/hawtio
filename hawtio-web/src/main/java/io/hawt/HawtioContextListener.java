@@ -1,6 +1,7 @@
 package io.hawt;
 
 import io.hawt.jmx.JmxTreeWatcher;
+import io.hawt.jmx.PluginRegistry;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -11,10 +12,13 @@ import javax.servlet.ServletContextListener;
 public class HawtioContextListener implements ServletContextListener {
 
     private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
+    private PluginRegistry registry = new PluginRegistry();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
             treeWatcher.init();
+            registry.init();
+
         } catch (Exception e) {
             throw createServletException(e);
         }
@@ -23,6 +27,7 @@ public class HawtioContextListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         try {
             treeWatcher.destroy();
+            registry.destroy();
         } catch (Exception e) {
             throw createServletException(e);
         }

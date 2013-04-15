@@ -1,11 +1,6 @@
 package io.hawt.jmx;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerDelegate;
-import javax.management.Notification;
-import javax.management.NotificationFilter;
-import javax.management.NotificationListener;
-import javax.management.ObjectName;
+import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,31 +12,31 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     private MBeanServer mBeanServer;
     private AtomicLong counter = new AtomicLong(0);
     private NotificationListener listener;
+    private NotificationFilter filter;
 
     public void init() throws Exception {
         if (objectName == null) {
-            objectName = new ObjectName("io.hawt.jmx:type=TreeWatcher");
+            objectName = getObjectName();
         }
+
         if (mBeanServer == null) {
             mBeanServer = ManagementFactory.getPlatformMBeanServer();
         }
+
         if (mBeanServer != null) {
-            mBeanServer.registerMBean(this, objectName);
+            try {
+                mBeanServer.registerMBean(this, objectName);
+            } catch(InstanceAlreadyExistsException iaee) {
+                // Try to remove and re-register
+                mBeanServer.unregisterMBean(objectName);
+                mBeanServer.registerMBean(this, objectName);
+            }
 
             Object handback = null;
-            listener = new NotificationListener() {
-                @Override
-                public void handleNotification(Notification notification, Object handback) {
-                    // TODO should we filter only types "JMX.mbean.registered" and "JMX.mbean.unregistered"?
-                    counter.incrementAndGet();
-                }
-            };
-            NotificationFilter filter = new NotificationFilter() {
-                @Override
-                public boolean isNotificationEnabled(Notification notification) {
-                    return true;
-                }
-            };
+
+            listener = getNotificationListener();
+            filter =  getNotificationFilter();
+
             mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, handback);
         }
     }
@@ -55,6 +50,29 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
                 mBeanServer.unregisterMBean(objectName);
             }
         }
+    }
+
+    protected ObjectName getObjectName() throws Exception {
+        return new ObjectName("io.hawt.jmx:type=TreeWatcher");
+    }
+
+    protected NotificationListener getNotificationListener() {
+        return new NotificationListener() {
+            @Override
+            public void handleNotification(Notification notification, Object handback) {
+                // TODO should we filter only types "JMX.mbean.registered" and "JMX.mbean.unregistered"?
+                counter.incrementAndGet();
+            }
+        };
+    }
+
+    protected NotificationFilter getNotificationFilter() {
+        return new NotificationFilter() {
+            @Override
+            public boolean isNotificationEnabled(Notification notification) {
+                return true;
+            }
+        };
     }
 
     @Override

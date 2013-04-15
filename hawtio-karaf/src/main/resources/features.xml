@@ -2,22 +2,20 @@
 <features name='hawtio-${project.version}'>
 
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
+    <details>Installs the main hawtio war file, an MBean helper for OSGi and an MBean helper to get JSON Schema out of Java objects</details>
     <feature>war</feature>
-    <feature>hawtio-plugin-registry</feature>
-    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
-  </feature>
-
-  <feature name="hawtio-plugin-registry" version="${project.version}" resolver="(obr)">
-    <bundle>mvn:io.hawt/hawtio-plugin-registry/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
   </feature>
 
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
+    <details>Installs the hawtio maven indexer service as a separate bundle</details>
     <bundle>fab:mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-git" version="${project.version}" resolver="(obr)">
+    <details>Installs the hawtio git service as a separate bundle</details>
 
     <config>
       hawtio.config.dir=./git
@@ -48,6 +46,7 @@
   </feature>
 
   <feature name="hawtio-plugin-example" version="${project.version}" resolver="(obr)">
+    <details>A simple example plugin for hawtio</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
   </feature>

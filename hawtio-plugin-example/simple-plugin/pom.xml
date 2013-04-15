@@ -21,7 +21,6 @@
     <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
-      io.hawt.web.plugin,
       *;resolution:=optional
     </fuse.osgi.import>
     <!--
@@ -35,9 +34,8 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-plugin-registry</artifactId>
+      <artifactId>hawtio-plugin-mbean</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
   </dependencies>
