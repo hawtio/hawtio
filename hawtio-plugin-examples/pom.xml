@@ -18,7 +18,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>hawtio-plugin-example</artifactId>
+  <artifactId>hawtio-plugin-examples</artifactId>
   <name>examples</name>
   <description>hawtio :: hawtio plugin example</description>
   <packaging>pom</packaging>

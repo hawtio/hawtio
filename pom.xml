@@ -244,7 +244,7 @@
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-mbean</module>
-    <module>hawtio-plugin-example</module>
+    <module>hawtio-plugin-examples</module>
     <module>hawtio-karaf</module>
     <module>sample</module>
   </modules>
