@@ -135,8 +135,6 @@ module Log {
           refilter();
           $scope.$apply();
         }
-      } else {
-        notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
       }
     };
 
