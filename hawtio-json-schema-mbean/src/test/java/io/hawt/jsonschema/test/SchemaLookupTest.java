@@ -1,9 +1,6 @@
 package io.hawt.jsonschema.test;
 
 import io.hawt.jsonschema.SchemaLookup;
-import io.hawt.jsonschema.api.MixInAnnotation;
-import io.hawt.jsonschema.test.objects.ObjectWithJsonAnnotations;
-import io.hawt.jsonschema.test.objects.ObjectWithMixinOverride;
 import io.hawt.jsonschema.test.objects.ObjectWithTransientModifiers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -70,29 +67,6 @@ public class SchemaLookupTest {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass(ObjectWithTransientModifiers.class.getName());
         System.out.println("testObjectWithTransientModifiers - Got: \n\n" + result + "\n\n");
-    }
-
-    @Test
-    public void testOverrideObjectViaMixin() throws Exception {
-        SchemaLookup lookup = createSchemaLookup();
-        lookup.registerMixIn(new MixInAnnotation() {
-
-            @Override
-            public Class getMixinSource() {
-                return ObjectWithMixinOverride.class;
-            }
-
-            @Override
-            public Class getTarget() {
-                return ObjectWithJsonAnnotations.class;
-            }
-        });
-
-        String result = lookup.getSchemaForClass("io.hawt.jsonschema.test.objects.ObjectWithJsonAnnotations");
-        System.out.println("testOverrideObjectViaMixin - Got: \n\n" + result + "\n\n");
-
-        Assert.assertTrue(!result.contains("foobar"));
-
     }
 
 }
