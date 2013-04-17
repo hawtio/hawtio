@@ -193,34 +193,45 @@ module Fabric {
     
     $scope.stopContainer = (name) => {
       // TODO proper notifications
-      stopContainer(jolokia, name, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});      
+      stopContainer(jolokia, name, function() {console.log("Stopped " + name)}, function() {console.log("Failed to stop " + name)});
     }
-    
+
+    $scope.extractSelected = () => {
+      var rc = [];
+      $scope.selectedContainers.forEach(function(container) {
+        rc.push(container.name);
+      });
+
+      $scope.selectedContainers = [];
+      return rc;
+    }
+
+
     $scope.stop = () => {
-      $scope.selectedContainers.forEach(function (container) {
-        $scope.stopContainer(container.name);
+      $scope.extractSelected().forEach(function(name) {
+        $scope.stopContainer(name);
       });
     }
-    
+
     $scope.deleteContainer = (name) => {
       // TODO proper notifications
-      destroyContainer(jolokia, name, function() {console.log("Deleted!")}, function() {console.log("Failed to delete!")});
+      destroyContainer(jolokia, name, function() {console.log("Deleted " + name)}, function() {console.log("Failed to delete " + name)});
     }
 
     $scope.delete = () => {
-      $scope.selectedContainers.forEach(function (container) {
-        $scope.deleteContainer(container.name);
+      $scope.extractSelected().forEach(function (name) {
+        $scope.deleteContainer(name);
       });
     }
-    
+
     $scope.startContainer = (name) => {
       // TODO proper notifications
-      startContainer(jolokia, name, function() {console.log("Started!")}, function() {console.log("Failed to start!")});
+      startContainer(jolokia, name, function() {console.log("Started " + name)}, function() {console.log("Failed to start " + name)});
     }
 
     $scope.start = () => {
-      $scope.selectedContainers.forEach(function (container) {
-        $scope.startContainer(container.name);
+      $scope.extractSelected().forEach(function (name) {
+        $scope.startContainer(name);
       });
     }
     
