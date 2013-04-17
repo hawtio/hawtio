@@ -26,9 +26,7 @@ module Camel {
           console.log("data is: " + JSON.stringify($scope.nodeData, null, "  "));
           console.log("model schema is: " + JSON.stringify($scope.model, null, "  "));
 
-          // TODO as a little hack for now lets use the edit form
-          //$scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
-          $scope.viewTemplate = "app/camel/html/nodePropertiesEdit.html";
+          $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
         }
       }
     }
