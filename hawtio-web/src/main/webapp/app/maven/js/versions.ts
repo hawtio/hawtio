@@ -8,10 +8,19 @@ module Maven {
     $scope.classifier = $routeParams["classifier"] || "";
     $scope.packaging = $routeParams["packaging"] || "";
 
+    var id = $scope.group + "/" + $scope.artifact;
+    if ($scope.classifier) {
+      id += "/" + $scope.classifier;
+    }
+    if ($scope.packaging) {
+      id += "/" + $scope.packaging;
+    }
+    var columnTitle = id + " versions";
+
     var columnDefs:any[] = [
       {
         field: 'version',
-        displayName: 'Version'
+        displayName: columnTitle
       }
     ];
 
