@@ -120,9 +120,14 @@ function closeHandle($scope, jolokia) {
   }
 }
 
+/**
+ * Pass in null for the success function to switch to sync mode
+ */
 function onSuccess(fn, options = {}) {
   options['mimeType'] = 'application/json';
-  options['success'] = fn;
+  if (angular.isDefined(fn)) {
+    options['success'] = fn;
+  }
   if (!options['method']) {
     options['method'] = "POST";
   }
