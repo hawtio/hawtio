@@ -249,10 +249,14 @@ module Core {
             });
 
     var labelPadding = 12;
+    var minLabelwidth = 80;
 
     labels.each(function (d) {
       var bbox = this.getBBox();
       d.bbox = bbox;
+      if (bbox.width < minLabelwidth) {
+        bbox.width = minLabelwidth;
+      }
       d.width = bbox.width + 2 * nodePadding;
       d.height = bbox.height + 2 * nodePadding + labelPadding;
     });
