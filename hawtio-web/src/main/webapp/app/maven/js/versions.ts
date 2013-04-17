@@ -19,8 +19,9 @@ module Maven {
 
     var columnDefs:any[] = [
       {
-        field: 'version',
-        displayName: columnTitle
+        field: 'versionNumber',
+        displayName: columnTitle,
+        cellTemplate: '<div class="ngCellText">{{row.entity.version}}</div>',
       }
     ];
 
@@ -32,7 +33,7 @@ module Maven {
       columnDefs: columnDefs,
       rowDetailTemplateId: "artifactDetailTemplate",
 
-      sortInfo: { field: 'version', direction: 'DESC'},
+      sortInfo: { field: 'versionNumber', direction: 'DESC'},
 
       filterOptions: {
         filterText: 'search'
@@ -54,7 +55,6 @@ module Maven {
     function updateTableContents() {
       var mbean = Maven.getMavenIndexerMBean(workspace);
       if (mbean) {
-        console.log("Updating table contents from mbean: " + mbean);
         jolokia.execute(mbean, "versionComplete", $scope.group, $scope.artifact, $scope.version, $scope.packaging, $scope.classifier,
                 onSuccess(render));
       } else {
@@ -65,12 +65,21 @@ module Maven {
     function render(response) {
       $scope.artifacts = [];
       angular.forEach(response, (version) => {
+        var versionNumberArray = Core.parseVersionNumbers(version);
+        var versionNumber = 0;
+        for (var i = 0; i <= 4; i++) {
+          var num = (i >= versionNumberArray.length) ? 0 : versionNumberArray[i];
+          versionNumber *= 1000;
+          versionNumber += num;
+        }
+
         $scope.artifacts.push({
           groupId: $scope.group,
           artifactId: $scope.artifact,
           packaging: $scope.packaging,
           classifier: $scope.classifier,
-          version: version
+          version: version,
+          versionNumber: versionNumber
         });
       });
       Core.$apply($scope);
