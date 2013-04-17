@@ -16,7 +16,17 @@ module Camel {
             nodes.attr("class", "node");
 
             nodes.filter(function (item) {
-              return item && (toNode === item["cid"] || toNode === item["rid"]);
+              if (item) {
+                var cid = item["cid"];
+                var rid = item["rid"];
+                if (cid) {
+                  // we should match cid if defined
+                  return toNode === cid;
+                } else {
+                  return toNode === rid;
+                }
+              }
+              return null;
             }).attr("class", "node selected");
           }
         }
