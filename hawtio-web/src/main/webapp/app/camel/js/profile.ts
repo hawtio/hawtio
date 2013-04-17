@@ -98,7 +98,6 @@ module Camel {
 
 
       var populateProfileMessages = function (response) {
-        console.log("Populate profile data...")
         var updatedData = [];
 
         // its xml structure so we need to parse it
@@ -155,7 +154,6 @@ module Camel {
             updatedData.push(messageData);
           });
 
-          console.log("Updating processor stats...");
           var processorMessages = $(doc).find("processorStat");
 
           processorMessages.each((idx, message) => {
@@ -202,11 +200,9 @@ module Camel {
         }
 
         // for Camel 2.10 or older we need to run through the data and calculate the self/total times manually
-        // TODO: check camel version and enable this or not using a flag
         if ($scope.calcManually) {
 
           // sort the data accordingly to order in the icons map
-          console.log("Before sorting " + updatedData);
           updatedData.sort((e1, e2) => {
             var entry1 = $scope.icons[e1.id];
             var entry2 = $scope.icons[e2.id];
@@ -216,7 +212,6 @@ module Camel {
               return 0;
             }
           });
-          console.log("After sorting " + updatedData);
 
           var accTotal = 0;
           updatedData.reverse().forEach((data, idx) => {
@@ -242,13 +237,7 @@ module Camel {
         // TODO: need a way to update data without flickering
         // if we do as below with the forEach then the data does not update
         // replace data with updated data
-//        if ($scope.data.length === 0) {
-          $scope.data = updatedData;
-//        } else {
-//          updatedData.forEach((data, idx) => {
-//            $scope.data[idx] = data;
-//          });
-//        }
+        $scope.data = updatedData;
 
         Core.$apply($scope);
       };
