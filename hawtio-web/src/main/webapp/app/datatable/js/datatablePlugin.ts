@@ -107,7 +107,6 @@ module DataTable {
                       ignoreColumns: gridOptions.ignoreColumns,
                       flattenColumns: gridOptions.flattenColumns
                     };
-
                     // lets find a child table element
                     // or lets add one if there's not one already
                     var rootElement = $(element);
@@ -125,7 +124,8 @@ module DataTable {
                     // convert the column configurations
                     var columns = [];
                     var columnCounter = 1;
-                    if (rowDetailTemplate || rowDetailTemplateId) {
+                    var extraLeftColumn = rowDetailTemplate || rowDetailTemplateId;
+                    if (extraLeftColumn) {
                       columns.push(
                               {
                                 "mDataProp": null,
@@ -139,6 +139,7 @@ module DataTable {
                         $("<th></th>").appendTo(trElement);
                       }
                     }
+
                     angular.forEach(gridOptions.columnDefs, (columnDef) => {
                       // if there's not another <tr> then lets add one
                       th = trElement.children("th");
@@ -150,6 +151,27 @@ module DataTable {
                     });
                     widget = new TableWidget(scope, workspace, columns, widgetOptions);
                     widget.tableElement = tableElement;
+
+                    var sortInfo = gridOptions.sortInfo;
+                    var columnDefs = gridOptions.columnDefs;
+                    if (sortInfo && columnDefs) {
+                      var sortColumns = [];
+                      var field = sortInfo.field;
+                      if (field) {
+                        var idx = columnDefs.findIndex({ field: field });
+                        if (idx >= 0) {
+                          if (extraLeftColumn) {
+                            idx += 1;
+                          }
+                          var asc = sortInfo.direction || "asc";
+                          asc = asc.toLowerCase();
+                          sortColumns.push([idx, asc]);
+                        }
+                      }
+                      if (sortColumns.length) {
+                        widget.sortColumns = sortColumns;
+                      }
+                    }
 
                     // if all the column definitions have an sWidth then lets turn off
                     // the auto-width calculations
