@@ -626,13 +626,17 @@ class Workspace {
 
 
   public selectionHasDomainAndLastFolderName(objectName: string, lastName: string) {
+    var lastNameLower = (lastName || "").toLowerCase();
+    function isName(name) {
+      return (name || "").toLowerCase() === lastNameLower
+    }
     var node = this.selection;
     if (node) {
       if (objectName === node.domain) {
         var folders = node.folderNames;
         if (folders) {
           var last = folders.last();
-          return last === lastName && node.isFolder() && !node.objectName;
+          return (isName(last) || isName(node.title)) && node.isFolder() && !node.objectName;
         }
       }
     }

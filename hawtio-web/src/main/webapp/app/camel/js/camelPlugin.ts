@@ -115,13 +115,13 @@ module Camel {
             workspace.subLevelTabs.push({
               content: '<i class="icon-picture"></i> Diagram',
               title: "View a diagram of the Camel routes",
-              isValid: (workspace: Workspace) => workspace.isCamelFolder(),
+              isValid: (workspace: Workspace) => workspace.isRoute(),
               href: () => "#/camel/routes"
             });
             workspace.subLevelTabs.push({
               content: '<i class=" icon-file-alt"></i> Source',
               title: "View the source of the Camel routes",
-              isValid: (workspace: Workspace) => workspace.isCamelFolder(),
+              isValid: (workspace: Workspace) => workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext(),
               href: () => "#/camel/source"
             });
             workspace.subLevelTabs.push({
