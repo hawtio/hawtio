@@ -45,8 +45,7 @@ module Camel {
       function setTracing(flag:Boolean) {
         var mbean = getSelectionCamelTraceMBean(workspace);
         if (mbean) {
-          var options = onSuccess(tracingChanged);
-          jolokia.execute(mbean, 'setEnabled', flag, options);
+          jolokia.setAttribute(mbean, "Enabled", flag, onSuccess(tracingChanged));
         }
       }
 
@@ -66,7 +65,7 @@ module Camel {
 
         var mbean = getSelectionCamelTraceMBean(workspace);
         if (mbean) {
-          $scope.tracing = jolokia.execute(mbean, 'isEnabled');
+          $scope.tracing = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
 
           if ($scope.tracing) {
             var traceMBean = mbean;
