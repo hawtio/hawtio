@@ -5,6 +5,7 @@ module Maven {
             $routeProvider.
                     when('/maven/search', {templateUrl: 'app/maven/html/search.html'}).
                     when('/maven/advancedSearch', {templateUrl: 'app/maven/html/advancedSearch.html'}).
+                    when('/maven/versions/:group/:artifact/:classifier/:packaging', {templateUrl: 'app/maven/html/versions.html'}).
                     when('/maven/view/:group/:artifact/:version/:classifier/:packaging', {templateUrl: 'app/maven/html/view.html'});
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {

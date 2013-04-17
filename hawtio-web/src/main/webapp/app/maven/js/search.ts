@@ -9,25 +9,7 @@ module Maven {
     $scope.search = "";
     $scope.searchForm = 'app/maven/html/searchForm.html';
 
-    $scope.javadocLink = (row) => {
-      var group = row.groupId;
-      var artifact = row.artifactId;
-      var version = row.version;
-      if (group && artifact && version) {
-        return "javadoc/" + group + ":" + artifact + ":" + version + "/";
-      }
-      return "";
-    };
-
-    $scope.sourceLink = (row) => {
-      var group = row.groupId;
-      var artifact = row.artifactId;
-      var version = row.version;
-      if (group && artifact && version) {
-        return "#/source/index/" + group + ":" + artifact + ":" + version + "/";
-      }
-      return "";
-    };
+    addMavenFunctions($scope);
 
     var columnDefs:any[] = [
       {
