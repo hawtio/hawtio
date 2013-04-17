@@ -32,6 +32,8 @@ module Maven {
       columnDefs: columnDefs,
       rowDetailTemplateId: "artifactDetailTemplate",
 
+      sortInfo: { field: 'version', direction: 'DESC'},
+
       filterOptions: {
         filterText: 'search'
       }
