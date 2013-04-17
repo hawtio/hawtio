@@ -588,8 +588,8 @@ module Camel {
   export function getCamelVersion(workspace: Workspace, jolokia) {
     var mbean = getSelectionCamelContextMBean(workspace);
     if (mbean) {
-      // force using POST as that works in all containers (GET dont work in Tomcat etc)
-      return jolokia.getAttribute(mbean, "CamelVersion", {method: "POST"});
+      // must use onSuccess(null) that means sync as we need the version asap
+      return jolokia.getAttribute(mbean, "CamelVersion", onSuccess(null));
     } else {
       return null;
     }
