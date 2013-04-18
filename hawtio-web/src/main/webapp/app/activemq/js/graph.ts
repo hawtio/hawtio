@@ -187,10 +187,11 @@ module ActiveMQ {
                 mbean: "org.apache.activemq:Type=Subscription,destinationType=" + typeName + ",*" },
               {type: 'read',
                 mbean: "org.apache.activemq:Type=Producer,*"}
-            ], onSuccess([populateSubscribers, populateProducers]));
+              // there may not be any producers so be silent if no mbeans exists
+            ], onSuccess([populateSubscribers, populateProducers], {silent : true, error: false}));
           } else {
             // the network bridge is optional and may not be in use, so do not barf on error
-            jolokia.request({type: 'read', mbean: "org.apache.activemq:Type=NetworkBridge,*"}, onSuccess(populateNetworks, {silent : true}));
+            jolokia.request({type: 'read', mbean: "org.apache.activemq:Type=NetworkBridge,*"}, onSuccess(populateNetworks, {silent : true, error: false}));
           }
         }
       });
