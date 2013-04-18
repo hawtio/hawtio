@@ -36,7 +36,7 @@ If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to
 
 ### Enable JMX on Jetty 8.x
 
-If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in start.ini (you may have to uncomment it to enable JMX).
+If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in **jetty-distribution/start.ini** (you may have to uncomment it to enable JMX).
 
     etc/jetty-jmx.xml
 
