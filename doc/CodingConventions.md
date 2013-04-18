@@ -24,6 +24,7 @@ Each plugin should have its own directory tree with optional child folders calle
 * `js` for JavaScript / TypeScript / CoffeeScript code
 * `img` for images
 * `css` for CSS / SASS / SCSS files
+* `doc` for user documentation  (in `doc\help.md` and other files) and developer documentation (`doc\developer.md`) which then plugins into the help system
 
 For a plugin called `foo` Inside the `foo/js` folder we typically use a file called `fooPlugin.ts` to define the plugin. This is the file which creates an AngularJS module and defines any associated factories, services, directives, filters, routes, etc.
 
