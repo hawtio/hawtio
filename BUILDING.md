@@ -71,7 +71,7 @@ The above uses Jetty but you can try running hawtio in different containers via 
     mvn jboss-as:run
     mvn jetty:run
 
-### LiveReload and other containers
+### Using your build & LiveReload inside web containers containers
 
 The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.
 
