@@ -50,9 +50,10 @@ module Jmx {
       filterOptions: {
         filterText: "searchText"
       },
+      // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
+      //sortInfo: { field: 'name', direction: 'asc'},
       data: 'gridData',
-      columnDefs: 'columnDefs',
-      sortInfo: { field: 'name', direction: 'asc'}
+      columnDefs: 'columnDefs'
     };
 
 
