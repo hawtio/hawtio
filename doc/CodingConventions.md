@@ -4,7 +4,19 @@ While we don't want to be too anal about coding styles, we are trying to adopt c
 
 Here's a few of them we've found over time...
 
-## Plugin Layout
+## TypeScript / JavaScript code style
+
+* Use 2 spaces for TypeScript / JavaScript / JSON / HTML / CSS / XML please
+
+## Angular Controllers
+
+* for AngularJS Controllers, setup all the $scope properties and functions at the top of the controller code please
+* then put all the associated nested functions below; so its easier to grok the $scope by looking at the top of the file
+* its good practice to put a plugin in a TypeScript / JavaScript module
+* when sharing functions across controllers, pop them into the module as exported functions; they could be handy outside the module too.
+  * we've been using the naming convention of helpers.ts in a plugin for these helper exported functions.
+
+## Plugin File Layout
 
 Each plugin should have its own directory tree with optional child folders called:
 
