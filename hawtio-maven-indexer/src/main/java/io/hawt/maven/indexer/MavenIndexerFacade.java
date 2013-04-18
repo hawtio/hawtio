@@ -1,6 +1,7 @@
 package io.hawt.maven.indexer;
 
 import io.hawt.config.ConfigFacade;
+import io.hawt.util.FileLocker;
 import io.hawt.util.Strings;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -71,6 +72,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     private boolean updateIndexOnStartup = true;
     private ObjectName objectName;
     private MBeanServer mBeanServer;
+    private int maximumIndexersPerMachine = 1000;
     private String[] repositories = {
             "http://repo.fusesource.com/nexus/content/repositories/releases@id=fusesource.release.repo",
             "http://repo1.maven.org/maven2@central"
@@ -78,6 +80,9 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     private String cacheDirName;
     private File cacheDirectory;
     private Map<String, IndexingContext> indexContexts = new HashMap<String, IndexingContext>();
+    private FileLocker fileLock;
+    private String lockFileName = "hawtio.lock";
+
 
     public MavenIndexerFacade() throws PlexusContainerException, ComponentLookupException {
         this.plexusContainer = new DefaultPlexusContainer();
@@ -178,6 +183,9 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     }
 
     public void destroy() throws IOException, MBeanRegistrationException, InstanceNotFoundException {
+        if (fileLock != null) {
+            fileLock.destroy();
+        }
         if (objectName != null && mBeanServer != null) {
             mBeanServer.unregisterMBean(objectName);
         }
@@ -230,6 +238,18 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         this.repositories = repositories;
     }
 
+    public int getMaximumIndexersPerMachine() {
+        return maximumIndexersPerMachine;
+    }
+
+    /**
+     * If we do not specify the directory to use for caches, then create a directory per process
+     * up to this maximum number
+     */
+    public void setMaximumIndexersPerMachine(int maximumIndexersPerMachine) {
+        this.maximumIndexersPerMachine = maximumIndexersPerMachine;
+    }
+
     public String getCacheDirName() {
         return cacheDirName;
     }
@@ -244,13 +264,28 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             if (Strings.isNotBlank(name)) {
                 cacheDirectory = new File(name);
             } else {
+                File dir = new File(".");
+                name = "mavenIndex";
                 ConfigFacade configFacade = ConfigFacade.getSingleton();
                 if (configFacade != null) {
-                    cacheDirectory = new File(configFacade.getConfigDirectory(), "mavenIndex");
+                    dir = configFacade.getConfigDirectory();
                 }
-            }
-            if (cacheDirectory == null) {
-                cacheDirectory = new File("mavenIndex");
+
+                String postfix = "";
+                for (int i = 2; i < maximumIndexersPerMachine; i++) {
+                    File tryDir = new File(dir, name + postfix);
+                    fileLock = FileLocker.getLock(new File(tryDir, lockFileName));
+                    if (fileLock != null) {
+                        cacheDirectory = tryDir;
+                        break;
+                    }
+                    postfix = "-" + i;
+                }
+                if (cacheDirectory == null) {
+                    LOG.warn("Could not find a directory inside of " + dir.getAbsolutePath()
+                            + " which did not have a lock file " + lockFileName
+                            + " so giving up after " + maximumIndexersPerMachine + " attempt(s).");
+                }
             }
         }
         return cacheDirectory;
