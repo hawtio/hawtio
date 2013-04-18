@@ -122,13 +122,16 @@ module Jetty {
           //console.log("got response: " + response);
         };
 
-        $scope.$watch('workspace.tree', function () {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        });
+        $scope.$on('jmxTreeUpdated', reloadFunction);
+        $scope.$watch('workspace.tree', reloadFunction);
 
-        function loadData() {
+      function reloadFunction() {
+        // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+        // so lets reload, asynchronously just in case
+        setTimeout(loadData, 50);
+      }
+
+      function loadData() {
             console.log("Loading Jetty webapp data...");
             // support embedded jetty which may use morbay mbean names
             jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));

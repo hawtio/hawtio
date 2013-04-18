@@ -84,14 +84,20 @@ module Jetty {
           loadData();
         };
 
-        $scope.$watch('workspace.tree', function () {
-          // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-          // so lets reload, asynchronously just in case
-          setTimeout(loadData, 50);
-        });
+      $scope.$on('jmxTreeUpdated', reloadFunction);
+      $scope.$watch('workspace.tree', reloadFunction);
+
+      function reloadFunction() {
+        // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+        // so lets reload, asynchronously just in case
+        setTimeout(loadData, 50);
+      }
+
 
         function loadData() {
           console.log("Loading Jetty connector data...");
+          var tree = workspace.tree;
+
           jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render));
         }
 
