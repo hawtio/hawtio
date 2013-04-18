@@ -87,6 +87,13 @@ Then in a shell run
 
 Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!
 
+#### Using your build from inside Jetty
+
+For jetty you need to name the symlink directory **hawtio.war** for [Jetty to recognise it](http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html).
+
+Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.
+
+So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.1-SNAPSHOT/](http://localhost:8080/hawtio-web-1.1-SNAPSHOT/)
 
 
 ### Incremental Compile with TypeScript
