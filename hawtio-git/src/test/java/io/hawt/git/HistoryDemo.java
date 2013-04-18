@@ -6,12 +6,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static io.hawt.git.GitFacadeTest.createTestGitFacade;
+
 /**
  * A little sample program that lets you view the log and history of one or more paths or files
  */
 public class HistoryDemo {
     private final File directory;
-    private GitFacade git = new GitFacade();
+    private GitFacade git = createTestGitFacade();
 
     public static void main(String[] args) {
         if (args.length <= 0) {

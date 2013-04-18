@@ -15,22 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.io;
+package io.hawt.git;
+
+import io.hawt.config.ConfigFacade;
+import org.junit.Test;
 
 /**
  */
-public class Strings {
-    public static String trimString(String value, int max) {
-        if (value == null) {
-            return "";
-        }
-        if (value.length() <= max) {
-            return value;
-        }
-        return value.substring(0, max - 3) + "...";
+public class VersionTest {
+    @Test
+    public void testVersion() throws Exception {
+        String version = ConfigFacade.getSingleton().getVersion();
+        System.out.println("Version is: " + version);
     }
 
-    public static boolean isNotBlank(String text) {
-        return text != null && text.trim().length() > 0;
-    }
 }

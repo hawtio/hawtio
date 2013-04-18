@@ -12,6 +12,7 @@ import java.util.List;
 
 import static io.hawt.git.GitFacadeTest.assertConfigDirectoryExists;
 import static io.hawt.git.GitFacadeTest.assertFileContents;
+import static io.hawt.git.GitFacadeTest.createTestGitFacade;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +24,7 @@ import static org.junit.Assert.fail;
  * Tests we can clone a remote repo
  */
 public class GitCloneTest {
-    GitFacade git = new GitFacade();
+    GitFacade git = createTestGitFacade();
 
     @Before
     public void init() throws Exception {

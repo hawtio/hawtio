@@ -1,5 +1,6 @@
 package io.hawt.git;
 
+import io.hawt.config.ConfigFacade;
 import io.hawt.io.FileFilters;
 import io.hawt.io.IOHelper;
 import io.hawt.io.Strings;
@@ -48,6 +49,7 @@ import java.util.concurrent.Callable;
 public class GitFacade implements GitFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
 
+    private String configDirName;
     private File configDirectory;
     private String remoteRepository;
     private Git git;
@@ -117,6 +119,14 @@ public class GitFacade implements GitFacadeMXBean {
 
     public void setObjectName(ObjectName objectName) {
         this.objectName = objectName;
+    }
+
+    public String getConfigDirName() {
+        return configDirName;
+    }
+
+    public void setConfigDirName(String configDirName) {
+        this.configDirName = configDirName;
     }
 
     public String getDefaultRemoteRepository() {
@@ -443,14 +453,26 @@ public class GitFacade implements GitFacadeMXBean {
     public File getConfigDirectory() {
         if (configDirectory == null) {
             try {
-                String name = getSystemPropertyOrEnvironmentVariable("hawtio.config.dir", "HAWTIO_CONFIG_DIR");
-                if (name != null) {
+                String name = getConfigDirName();
+                if (Strings.isBlank(name)) {
+                    name = getSystemPropertyOrEnvironmentVariable("hawtio.config.dir", "HAWTIO_CONFIG_DIR");
+                }
+                if (Strings.isNotBlank(name)) {
                     configDirectory = new File(name);
                 } else {
-                    File file = File.createTempFile("hawtio-", "");
-                    file.delete();
-                    configDirectory = new File(file, "config");
-                    configDirectory.mkdirs();
+                    ConfigFacade singleton = ConfigFacade.getSingleton();
+                    if (singleton != null) {
+                        File hawtioConfigDir = singleton.getConfigDirectory();
+                        if (hawtioConfigDir.exists()) {
+                            configDirectory = new File(hawtioConfigDir, "config");
+                        }
+                    }
+                    if (configDirectory == null) {
+                        File file = File.createTempFile("hawtio-", "");
+                        file.delete();
+                        configDirectory = new File(file, "config");
+                        configDirectory.mkdirs();
+                    }
                 }
                 LOG.info("hawtio using config directory: " + configDirectory);
             } catch (IOException e) {
@@ -494,7 +516,7 @@ public class GitFacade implements GitFacadeMXBean {
             InitCommand initCommand = Git.init();
             initCommand.setDirectory(confDir);
             git = initCommand.call();
-            LOG.info("Initialised an empty git configuration rppo at " + confDir.getCanonicalPath());
+            LOG.info("Initialised an empty git configuration repo at " + confDir.getCanonicalPath());
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -511,7 +533,7 @@ public class GitFacade implements GitFacadeMXBean {
                     LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
                     // lets just use an empty repo instead
                 }
-            }  else {
+            } else {
                 LOG.info("git pull from remote config repo on startup is disabled");
             }
         }

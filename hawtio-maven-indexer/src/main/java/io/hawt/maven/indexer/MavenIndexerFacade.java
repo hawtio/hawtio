@@ -1,5 +1,7 @@
 package io.hawt.maven.indexer;
 
+import io.hawt.config.ConfigFacade;
+import io.hawt.io.Strings;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -75,7 +77,8 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             "http://repo.fusesource.com/nexus/content/repositories/releases@id=fusesource.release.repo",
             "http://repo1.maven.org/maven2@central"
     };
-    private File cacheDirectory = new File("mavenIndexer");
+    private String cacheDirName;
+    private File cacheDirectory;
     private Map<String, IndexingContext> indexContexts = new HashMap<String, IndexingContext>();
 
     public MavenIndexerFacade() throws PlexusContainerException, ComponentLookupException {
@@ -106,7 +109,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
                         url = repository.substring(0, idx);
                         id = repository.substring(idx + 1);
                     }
-                    File repoDir = new File(cacheDirectory, id);
+                    File repoDir = new File(getCacheDirectory(), id);
                     File cacheDir = new File(repoDir, "cache");
                     File indexDir = new File(repoDir, "index");
                     cacheDir.mkdirs();
@@ -117,7 +120,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
                             url, null, true, true, indexers);
                     indexContexts.put(id, repoContext);
                 }
-                File mergedDir = new File(cacheDirectory, "all");
+                File mergedDir = new File(getCacheDirectory(), "all");
                 File cacheDir = new File(mergedDir, "cache");
                 File indexDir = new File(mergedDir, "index");
                 ContextMemberProvider members = new StaticContextMemberProvider(indexContexts.values());
@@ -226,7 +229,29 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         this.repositories = repositories;
     }
 
+    public String getCacheDirName() {
+        return cacheDirName;
+    }
+
+    public void setCacheDirName(String cacheDirName) {
+        this.cacheDirName = cacheDirName;
+    }
+
     public File getCacheDirectory() {
+        if (cacheDirectory == null) {
+            String name = getCacheDirName();
+            if (Strings.isNotBlank(name)) {
+                cacheDirectory = new File(name);
+            } else {
+                ConfigFacade configFacade = ConfigFacade.getSingleton();
+                if (configFacade != null) {
+                    cacheDirectory = new File(configFacade.getConfigDirectory(), "mavenIndex");
+                }
+            }
+            if (cacheDirectory == null) {
+                cacheDirectory = new File("mavenIndex");
+            }
+        }
         return cacheDirectory;
     }
 

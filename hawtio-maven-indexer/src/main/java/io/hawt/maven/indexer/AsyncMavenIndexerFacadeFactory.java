@@ -17,6 +17,7 @@
  */
 package io.hawt.maven.indexer;
 
+import io.hawt.io.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class AsyncMavenIndexerFacadeFactory {
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private String[] repositories;
-    private String indexDirectory = "mavenIndexer";
+    private String indexDirectory;
 
     public void init() {
         Timer timer = new Timer("MavenIndexerFacade startup timer");
@@ -111,7 +112,9 @@ public class AsyncMavenIndexerFacadeFactory {
     protected void createMavenIndexer() throws Exception {
         mavenIndexer = new MavenIndexerFacade();
         mavenIndexer.setUpdateIndexOnStartup(updateIndexOnStartup);
-        mavenIndexer.setCacheDirectory(new File(indexDirectory));
+        if (Strings.isNotBlank(indexDirectory)) {
+            mavenIndexer.setCacheDirName(indexDirectory);
+        }
         if (objectName != null) {
             mavenIndexer.setObjectName(objectName);
         }
