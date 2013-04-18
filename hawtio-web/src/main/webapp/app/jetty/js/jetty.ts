@@ -96,6 +96,18 @@ module Jetty {
     $scope.$on('jmxTreeUpdated', reloadFunction);
     $scope.$watch('workspace.tree', reloadFunction);
 
+    // grab server information once
+    $scope.jettyServerVersion = "";
+    $scope.jettyServerStartupTime = "";
+
+    var servers = jolokia.search("org.eclipse.jetty.server:type=server,*")
+    if (servers && servers.length === 1) {
+      $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
+      $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
+    } else {
+      console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
+    }
+
 
     function reloadFunction() {
       // if the JMX tree is reloaded its probably because a new MBean has been added or removed
@@ -111,49 +123,35 @@ module Jetty {
       jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
     }
 
-    // grab server information once
-    $scope.jettyServerVersion = "";
-    $scope.jettyServerStartupTime = "";
+    function render(response) {
+      $scope.webapps = [];
+      $scope.mbeanIndex = {};
+      $scope.selected.length = 0;
 
-    var servers = jolokia.search("org.eclipse.jetty.server:type=server,*")
-    if (servers && servers.length === 1) {
-      $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
-      $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
-    } else {
-      console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
-    }
-
-  }
-
-  function render(response) {
-    $scope.webapps = [];
-    $scope.mbeanIndex = {};
-    $scope.selected.length = 0;
-
-    function onAttributes(response) {
-      var obj = response.value;
-      if (obj) {
-        obj.mbean = response.request.mbean;
-        obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
-        var mbean = obj.mbean;
-        if (mbean) {
-          var idx = $scope.mbeanIndex[mbean];
-          if (angular.isDefined(idx)) {
-            $scope.webapps[mbean] = obj;
-          } else {
-            $scope.mbeanIndex[mbean] = $scope.webapps.length;
-            $scope.webapps.push(obj);
+      function onAttributes(response) {
+        var obj = response.value;
+        if (obj) {
+          obj.mbean = response.request.mbean;
+          obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
+          var mbean = obj.mbean;
+          if (mbean) {
+            var idx = $scope.mbeanIndex[mbean];
+            if (angular.isDefined(idx)) {
+              $scope.webapps[mbean] = obj;
+            } else {
+              $scope.mbeanIndex[mbean] = $scope.webapps.length;
+              $scope.webapps.push(obj);
+            }
+            Core.$apply($scope);
           }
-          Core.$apply($scope);
         }
       }
+
+      angular.forEach(response, function (value, key) {
+        var mbean = value;
+        jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
+      });
+      $scope.$apply();
     }
-
-    angular.forEach(response, function (value, key) {
-      var mbean = value;
-      jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
-    });
-    $scope.$apply();
   }
-
 }
