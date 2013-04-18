@@ -91,6 +91,9 @@ Now just run Tomcat as normal. You should have full LiveReload support and shoul
 
 For jetty you need to name the symlink directory **hawtio.war** for [Jetty to recognise it](http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html).
 
+    cd jetty-distribution/webapps
+    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio.war
+
 Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.
 
 So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.1-SNAPSHOT/](http://localhost:8080/hawtio-web-1.1-SNAPSHOT/)
