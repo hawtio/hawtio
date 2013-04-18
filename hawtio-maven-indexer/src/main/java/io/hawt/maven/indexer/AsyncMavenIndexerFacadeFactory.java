@@ -58,7 +58,6 @@ public class AsyncMavenIndexerFacadeFactory {
             }
         };
         timer.schedule(task, 3000);
-        LOG.info("MavenIndexerFacade will store its data in " + indexDirectory);
         LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
     }
 

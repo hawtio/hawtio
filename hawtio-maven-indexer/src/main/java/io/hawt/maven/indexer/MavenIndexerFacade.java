@@ -96,6 +96,9 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             indexers.add(plexusContainer.lookup(IndexCreator.class, "maven-plugin"));
         }
 
+        File dir = getCacheDirectory();
+        LOG.info("Storing maven index files in local directory: " + dir.getAbsolutePath());
+
         // now lets create all the indexers
         try {
             for (String repository : repositories) {
@@ -107,7 +110,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
                         url = repository.substring(0, idx);
                         id = repository.substring(idx + 1);
                     }
-                    File repoDir = new File(getCacheDirectory(), id);
+                    File repoDir = new File(dir, id);
                     File cacheDir = new File(repoDir, "cache");
                     File indexDir = new File(repoDir, "index");
                     cacheDir.mkdirs();
@@ -118,7 +121,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
                             url, null, true, true, indexers);
                     indexContexts.put(id, repoContext);
                 }
-                File mergedDir = new File(getCacheDirectory(), "all");
+                File mergedDir = new File(dir, "all");
                 File cacheDir = new File(mergedDir, "cache");
                 File indexDir = new File(mergedDir, "index");
                 ContextMemberProvider members = new StaticContextMemberProvider(indexContexts.values());
