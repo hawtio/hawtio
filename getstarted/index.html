@@ -69,7 +69,7 @@
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.0/hawtio-web-1.0.war">Download hawtio-web.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.0/hawtio-default-1.0.war">Download hawtio-default.war</a>
     </td>
     <td>
       <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.0/sample-1.0.war">Download sample.war</a>
@@ -88,7 +88,18 @@
 
 <p>Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
 
+<p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
+ <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.0/hawtio-default-offline-1.0.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
+
 <p>To see whats changed lately check out the <a href="http://hawt.io/changelog.html">change log</a>.</p>
+
+<p>If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.</p>
+
+<h3 id = "Enable_JMX_on_Jetty_8_x">Enable JMX on Jetty 8.x</h3>
+
+<p>If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in <strong>jetty-distribution/start.ini</strong> (you may have to uncomment it to enable JMX).</p>
+
+<pre><code>etc/jetty-jmx.xml</code></pre>
 
 <h2 id = "Using_Apache_Karaf__Apache_Servicemix__or_Fuse_ESB">Using Apache Karaf, Apache Servicemix, or Fuse ESB</h2>
 

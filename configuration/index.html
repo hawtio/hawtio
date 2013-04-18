@@ -62,39 +62,39 @@
 
 <p>The following table contains the various configuration settings you can set via Java system properties or environment variables.</p>
 
-<p>You can also specify these via the <em>context parameters</em> in your <strong>web.xml</strong>. e.g. you can make your own WAR which depends on the hawtio-web.war like the <a href="https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17">sample project's pom.xml</a> then you can create your own custom web.xml file such as the <a href="https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/web.xml#L24">sample project's web.xml</a>.</p>
+<h4 id = "web_application_configuration">web application configuration</h4>
 
-<p>e.g. add this to your web.xml</p>
+<p>If you are using a web container, the easiest way to change these configuration values is </p>
 
-<pre><code>&lt;listener&gt;
-  &lt;listener-class&gt;io.hawt.git.GitContextListener&lt;/listener-class&gt;
-&lt;/listener&gt;
+<ul>
+<li>Create your own WAR which depends on the <strong>hawtio-default.war</strong> like the <a href="https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17">sample project's pom.xml</a></li>
+<li>Create your own <a href="https://github.com/hawtio/hawtio/blob/master/sample/src/main/resources/blueprint.properties#L7">blueprint.properties</a> file that then can override whatever properties you require</li>
+</ul>
 
-&lt;context-param&gt;
-  &lt;param-name&gt;hawtio.config.dir&lt;/param-name&gt;
-  &lt;param-value&gt;/tmp/hawtio&lt;/param-value&gt;
-&lt;/context-param&gt;</code></pre>
+<h4 id = "OSGi_configuration">OSGi configuration</h4>
+
+<p>Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.</p>
 
 <h3 id = "configuration_system_properties_and_environment_variables">configuration system properties and environment variables</h3>
 
 <table class="table">
 <tr>
-<th>System Property</th><th>Environment Variable</th><th>Description</th>
+<th>System Property</th><th>Description</th>
 </tr>
 <tr>
-<td>hawtio.config.dir</td><td>HAWTIO_CONFIG_DIR</td><td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!</td>
+<td>hawtio.config.dir</td><td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!</td>
 </tr>
 <tr>
-<td>hawtio.config.repo</td><td>HAWTIO_CONFIG_REPO</td><td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
+<td>hawtio.config.repo</td><td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
 </tr>
 <tr>
-<td>hawtio.config.cloneOnStartup</td><td>HAWTIO_CONFIG_CLONEONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
+<td>hawtio.config.cloneOnStartup</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
 </tr>
 <tr>
-<td>hawtio.config.pollOnStartup</td><td>HAWTIO_CONFIG_POLLONSTARTUP</td><td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
+<td>hawtio.config.pullOnStartup</td><td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
 </tr>
 <tr>
-<td>hawtio.maven.index.dir</td><td>HAWTIO_MAVEN_INDEX_DIR</td><td>The directory where the maven indexer will use to store its cache and index files</td>
+<td>hawtio.maven.index.dir</td><td>The directory where the maven indexer will use to store its cache and index files</td>
 </tr>
 </table>
 

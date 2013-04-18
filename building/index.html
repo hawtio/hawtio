@@ -130,7 +130,7 @@ mvn tomcat6:run
 mvn jboss-as:run
 mvn jetty:run</code></pre>
 
-<h3 id = "LiveReload_and_other_containers">LiveReload and other containers</h3>
+<h3 id = "Using_your_build__span_class__amp___amp___span__LiveReload_inside_web_containers_containers">Using your build <span class="amp">&amp;</span> LiveReload inside web containers containers</h3>
 
 <p>The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.</p>
 
@@ -145,6 +145,17 @@ ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio</code></pre>
 mvn -Pwatch</code></pre>
 
 <p>Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!</p>
+
+<h4 id = "Using_your_build_from_inside_Jetty">Using your build from inside Jetty</h4>
+
+<p>For jetty you need to name the symlink directory <strong>hawtio.war</strong> for <a href="http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html">Jetty to recognise it</a>.</p>
+
+<pre><code>cd jetty-distribution/webapps
+ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio.war</code></pre>
+
+<p>Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.</p>
+
+<p>So to open the application in Jetty open <a href="http://localhost:8080/hawtio-web-1.1-SNAPSHOT/">http://localhost:8080/hawtio-web-1.1-SNAPSHOT/</a></p>
 
 <h3 id = "Incremental_Compile_with_TypeScript">Incremental Compile with TypeScript</h3>
 
@@ -193,7 +204,7 @@ open src/test/specs/SpecRunner.html</code></pre>
 
 <p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell, etc.) you need 0.5.x or later use this command:</p>
 
-<pre><code>npm install -g testacular@&quot;~0.5.7&quot;</code></pre>
+<pre><code>npm install -g testacular@"~0.5.7"</code></pre>
 
 <h3 id = "Running_Tests_With_Testacular">Running Tests With Testacular</h3>
 
