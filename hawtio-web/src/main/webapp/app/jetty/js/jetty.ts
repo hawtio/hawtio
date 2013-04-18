@@ -82,6 +82,16 @@ module Jetty {
       $scope.controlWebApps('destroy');
     };
 
+    $scope.anySelectionHasState = (state) => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.any((s) => isState(s, state));
+    };
+
+    $scope.everySelectionHasState = (state) => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.every((s) => isState(s, state));
+    };
+
     // function to trigger reloading page
     $scope.onLastResponse = function (response) {
       $scope.onResponse(response);

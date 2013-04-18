@@ -6,9 +6,11 @@
                 <fieldset>
                     <div class="controls control-group inline-block controls-row">
                         <div class="btn-group">
-                            <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()" title="Stop"><i class="icon-stop"></i></button>
-                            <button ng-disabled="selected.length == 0" class="btn" ng-click="start()" title="Start"><i class="icon-play"></i></button>
-                            <button ng-disabled="selected.length == 0" class="btn" ng-click="uninstall()" title="Uninstall"><i class="icon-eject"></i></button>
+                            <button ng-disabled="selected.length == 0 || !anySelectionHasState('start')" class="btn" ng-click="stop()" title="Stop">
+                              <i class="icon-stop"></i></button>
+                            <button ng-disabled="selected.length == 0 || !anySelectionHasState('stop')" class="btn" ng-click="start()" title="Start">
+                              <i class="icon-play"></i></button>
+                            <button ng-disabled="selected.length == 0 || !everySelectionHasState('stop')" class="btn" ng-click="uninstall()" title="Uninstall"><i class="icon-eject"></i></button>
                         </div>
                     </div>
                 </fieldset>
