@@ -32,6 +32,10 @@ Copy the WAR file to your deploy directory in your container; for simplicity use
 
 To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
 
+If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in start.ini (you may have to uncomment it to enable JMX).
+
+    etc/jetty-jmx.xml
+
 ## Using Apache Karaf, Apache Servicemix, or Fuse ESB
 
 If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) you can run:
