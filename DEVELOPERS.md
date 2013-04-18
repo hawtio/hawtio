@@ -4,7 +4,7 @@ Welcome and enjoy! Its hawt, but stay cool! :)
 
 ## Building the code
 
-Check out the [how to build the code](http://hawt.io/building/index.html) if you want to start hacking on the source.
+Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/index.html">How To Build The Code</a> if you want to start hacking on the source.
 
 ## Architecture
 

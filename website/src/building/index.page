@@ -9,7 +9,7 @@ title: hawt builds
   <div class="container">
     <div id="content">
 		
-${loadText(new FileInputStream("../BUILDING.md"))}
+${unescape(loadText(new FileInputStream("../BUILDING.md")))}
 
 </div>
   </div>

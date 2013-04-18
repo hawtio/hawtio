@@ -9,7 +9,7 @@ title: hawt developers
   <div class="container">
     <div id="content">
 
-${loadText(new FileInputStream("../DEVELOPERS.md"))}
+${unescape(loadText(new FileInputStream("../DEVELOPERS.md")))}
 
 </div>
   </div>
