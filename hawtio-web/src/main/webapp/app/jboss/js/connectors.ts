@@ -52,7 +52,11 @@ module JBoss {
               if (obj) {
                 obj.mbean = response.request.mbean;
                 if (!obj.port) {
-                    obj.port = obj.boundPort;
+                  obj.port = obj.boundPort;
+                }
+                if (!obj.name) {
+                  // special hack for mail-smtp, it only has port
+                  obj.name = "mail-smtp";
                 }
                 $scope.connectors.push(obj);
                 Core.$apply($scope);
@@ -62,11 +66,16 @@ module JBoss {
             // create structure for each response
             angular.forEach(response, function(value, key) {
               var mbean = value;
-              // management mbean do not have port
-              if (mbean.lastIndexOf("management") > 0) {
-                jolokia.request( {type: "read", mbean: mbean, attribute: ["boundPort", "name",  "bound"]}, onSuccess(onAttributes));
-              } else {
-                jolokia.request( {type: "read", mbean: mbean, attribute: ["port", "name",  "bound"]}, onSuccess(onAttributes));
+              if (mbean.toString() !== "jboss.as:socket-binding-group=standard-sockets") {
+                if (mbean.toString().lastIndexOf("management") > 0) {
+                  // management mbean do not have port
+                  jolokia.request( {type: "read", mbean: mbean, attribute: ["boundPort", "name",  "bound"]}, onSuccess(onAttributes));
+                } else if (mbean.toString().lastIndexOf("mail-smtp") > 0) {
+                  // special hack for mail-smtp, it only has port
+                  jolokia.request( {type: "read", mbean: mbean, attribute: ["port"]}, onSuccess(onAttributes));
+                } else {
+                  jolokia.request( {type: "read", mbean: mbean, attribute: ["port", "name",  "bound"]}, onSuccess(onAttributes));
+                }
               }
             });
           Core.$apply($scope);
