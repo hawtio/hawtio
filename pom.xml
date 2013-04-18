@@ -255,6 +255,7 @@
     <module>hawtio-plugin-examples</module>
     <module>hawtio-karaf</module>
     <module>sample</module>
+    <module>hawtio-local-jvm-mbean</module>
   </modules>
 
   <build>
