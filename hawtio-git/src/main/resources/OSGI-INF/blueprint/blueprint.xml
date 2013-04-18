@@ -6,7 +6,7 @@
     <ext:default-properties>
       <ext:property name="hawtio.config.dir" value=""/>
       <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git"/>
-      <ext:property name="hawtio.config.pollOnStartup" value="true"/>
+      <ext:property name="hawtio.config.pullOnStartup" value="true"/>
       <ext:property name="hawtio.config.cloneOnStartup" value="true"/>
     </ext:default-properties>
   </ext:property-placeholder>
@@ -14,7 +14,7 @@
   <bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy">
     <property name="configDirName" value="${hawtio.config.dir}"/>
     <property name="remoteRepository" value="${hawtio.config.repo}"/>
-    <property name="pullOnStartup" value="${hawtio.config.pollOnStartup}"/>
+    <property name="pullOnStartup" value="${hawtio.config.pullOnStartup}"/>
     <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
   </bean>
 
