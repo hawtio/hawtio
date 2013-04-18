@@ -75,10 +75,11 @@ module Camel {
               {field: 'RouteId', displayName: 'Route'},
               {field: 'ProcessorId', displayName: 'Processor'},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
-              {field: 'TotalProcessingTime', displayName: 'Total Time'},
+              {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
               {field: 'MinProcessingTime', displayName: 'Min Time'},
-              {field: 'MaxProcessingTime', displayName: 'Max Time'}
+              {field: 'MaxProcessingTime', displayName: 'Max Time'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time'}
             ];
             attributes[jmxDomain + "/services/folder"] = [
               stateColumn,
@@ -98,9 +99,11 @@ module Camel {
               {field: 'CamelId', displayName: 'Context'},
               {field: 'RouteId', displayName: 'Route'},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'ExternalRedeliveries', displayName: 'Redeliveries %'},
-              {field: 'TotalProcessingTime', displayName: 'Total Time'},
-              {field: 'MeanProcessingTime', displayName: 'Mean Time'}
+              {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
+              {field: 'MinProcessingTime', displayName: 'Min Time'},
+              {field: 'MaxProcessingTime', displayName: 'Max Time'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time'}
             ];
 
             workspace.topLevelTabs.push({

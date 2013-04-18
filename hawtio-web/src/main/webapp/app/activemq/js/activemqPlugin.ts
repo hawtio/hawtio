@@ -33,9 +33,9 @@ module ActiveMQ {
                         {field: 'QueueSize', displayName: 'Queue Size'},
                         {field: 'ProducerCount', displayName: 'Producer #'},
                         {field: 'ConsumerCount', displayName: 'Consumer #'},
+                        {field: 'EnqueueCount', displayName: 'Enqueue #'},
+                        {field: 'DequeueCount', displayName: 'Dequeue #'},
                         {field: 'MemoryPercentUsage', displayName: 'Memory %'},
-                        {field: 'EnqueueCount', displayName: 'Enqueue #', visible: false},
-                        {field: 'DequeueCount', displayName: 'Dequeue #', visible: false},
                         {field: 'DispatchCount', displayName: 'Dispatch #', visible: false}
                       ];
                       attributes[jmxDomain + "/Topic/folder"] = [
@@ -45,7 +45,7 @@ module ActiveMQ {
                         {field: 'EnqueueCount', displayName: 'Enqueue #'},
                         {field: 'DequeueCount', displayName: 'Dequeue #'},
                         {field: 'MemoryPercentUsage', displayName: 'Memory %'},
-                        {field: 'DispatchCount', displayName: 'Dispatch Count', visible: false}
+                        {field: 'DispatchCount', displayName: 'Dispatch #', visible: false}
                       ];
 
                       workspace.topLevelTabs.push( {
