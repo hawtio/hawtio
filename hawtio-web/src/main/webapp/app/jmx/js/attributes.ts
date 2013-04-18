@@ -51,7 +51,8 @@ module Jmx {
         filterText: "searchText"
       },
       data: 'gridData',
-      columnDefs: 'columnDefs'
+      columnDefs: 'columnDefs',
+      sortInfo: { field: 'name', direction: 'asc'}
     };
 
 
