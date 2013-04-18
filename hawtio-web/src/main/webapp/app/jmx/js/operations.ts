@@ -126,9 +126,10 @@ module Jmx {
             $scope.operationResult = error;
             var stacktrace = response.stacktrace;
             if (stacktrace) {
-              console.log(stacktrace);
+              //console.log(stacktrace);
               $scope.operationResult = stacktrace;
             }
+            $scope.$apply();
           }
         }));
 
@@ -223,7 +224,6 @@ module Jmx {
             }
           });
           $scope.operations = sanitize(answer);
-          console.log("Operations: ", $scope.operations);
           $scope.$apply();
         };
 
