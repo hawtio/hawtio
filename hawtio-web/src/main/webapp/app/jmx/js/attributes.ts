@@ -266,7 +266,10 @@ module Jmx {
           var properties = [];
           angular.forEach(data, (value, key) => {
             if (showAllAttributes || includePropertyValue(key, value)) {
-              properties.push({name: humanizeValue(key), value: value});
+              // always skip keys which start with _
+              if (!key.startsWith("_")) {
+                properties.push({name: humanizeValue(key), value: value});
+              }
             }
           });
           $scope.selectedItems = [data];
@@ -279,7 +282,7 @@ module Jmx {
     }
 
     function includePropertyValue(key: string, value) {
-      return !angular.isObject(value) && !key.startsWith("_");
+      return !angular.isObject(value);
     }
   }
 
