@@ -132,7 +132,10 @@ module Jetty {
         var obj = response.value;
         if (obj) {
           obj.mbean = response.request.mbean;
-          obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
+          if (!obj.state) {
+            // lets leave the state as it is if it is defined
+            obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
+          }
           var mbean = obj.mbean;
           if (mbean) {
             var idx = $scope.mbeanIndex[mbean];
