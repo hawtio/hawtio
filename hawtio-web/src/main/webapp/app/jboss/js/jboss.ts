@@ -125,11 +125,14 @@ module JBoss {
           //console.log("got response: " + response);
         };
 
-        $scope.$watch('workspace.tree', function () {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        });
+      $scope.$on('jmxTreeUpdated', reloadFunction);
+      $scope.$watch('workspace.tree', reloadFunction);
+
+      function reloadFunction() {
+        // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+        // so lets reload, asynchronously just in case
+        setTimeout(loadData, 50);
+      }
 
         function loadData() {
             console.log("Loading JBoss webapp data...");
