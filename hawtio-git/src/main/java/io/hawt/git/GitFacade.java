@@ -1,9 +1,9 @@
 package io.hawt.git;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.io.FileFilters;
-import io.hawt.io.IOHelper;
-import io.hawt.io.Strings;
+import io.hawt.util.FileFilters;
+import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;

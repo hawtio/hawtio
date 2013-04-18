@@ -17,6 +17,7 @@
  */
 package io.hawt.io;
 
+import io.hawt.util.FileFilters;
 import org.junit.Test;
 
 import java.io.File;

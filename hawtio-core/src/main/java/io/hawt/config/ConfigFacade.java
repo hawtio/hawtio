@@ -1,7 +1,7 @@
 package io.hawt.config;
 
-import io.hawt.io.IOHelper;
-import io.hawt.io.Strings;
+import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

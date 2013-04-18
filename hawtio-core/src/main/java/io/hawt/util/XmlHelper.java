@@ -1,4 +1,4 @@
-package io.hawt.io;
+package io.hawt.util;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

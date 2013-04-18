@@ -1,11 +1,9 @@
 package io.hawt.maven.indexer;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.io.Strings;
-import org.apache.lucene.queryParser.QueryParser;
+import io.hawt.util.Strings;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.ArtifactInfoGroup;
