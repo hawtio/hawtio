@@ -116,9 +116,14 @@ module Log {
     var updateValues = function (response) {
       var logs = response.events;
       var toTime = response.toTimestamp;
-      if (toTime) {
-        $scope.toTime = toTime;
-        $scope.queryJSON.arguments = [toTime];
+      if (toTime && angular.isNumber(toTime)) {
+        if (toTime < 0) {
+          // on JBoss we get odd values and never seem to get any log events!
+          console.log("ignoring dodgy value of toTime: " + toTime);
+        } else {
+          $scope.toTime = toTime;
+          $scope.queryJSON.arguments = [toTime];
+        }
       }
       if (logs) {
         var counter = 0;
