@@ -140,7 +140,13 @@ module DataTable {
                       }
                     }
 
-                    angular.forEach(gridOptions.columnDefs, (columnDef) => {
+                    var columnDefs = gridOptions.columnDefs;
+                    if (angular.isString(columnDefs)) {
+                      // TODO watch this value?
+                      columnDefs = scope[columnDefs];
+                    }
+
+                    angular.forEach(columnDefs, (columnDef) => {
                       // if there's not another <tr> then lets add one
                       th = trElement.children("th");
                       if (th.length < columnCounter++) {
@@ -153,7 +159,6 @@ module DataTable {
                     widget.tableElement = tableElement;
 
                     var sortInfo = gridOptions.sortInfo;
-                    var columnDefs = gridOptions.columnDefs;
                     if (sortInfo && columnDefs) {
                       var sortColumns = [];
                       var field = sortInfo.field;
