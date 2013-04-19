@@ -1,8 +1,8 @@
-describe("Core", function() {
-  beforeEach(function() {
+describe("Core", function () {
+  beforeEach(function () {
   });
 
-  it("pathGet and pathSet work in nested structures with paths or arrays of paths", function() {
+  it("pathGet and pathSet work in nested structures with paths or arrays of paths", function () {
     var data = {
       "foo": {
         "a": {
@@ -26,7 +26,7 @@ describe("Core", function() {
   });
 
 
-  it("parse version numbers", function() {
+  it("parse version numbers", function () {
     expect(Core.parseVersionNumbers("camel-2.1")).toEqual([2, 1]);
     expect(Core.parseVersionNumbers("camel-2.3.jar")).toEqual([2, 3]);
     expect(Core.parseVersionNumbers("camel-2.45.jar")).toEqual([2, 45]);
@@ -39,12 +39,13 @@ describe("Core", function() {
 
   });
 
-  it("compare version numbers", function() {
+  it("compare version numbers", function () {
     function compareVersion(text, version, expectedValue) {
       var actualVersion = Core.parseVersionNumbers(text);
       var compared = Core.compareVersionNumberArrays(actualVersion, version);
       expect(compared).toEqual(expectedValue);
     }
+
     expect(compareVersion("camel-2.1.jar", [2, 1], 0));
     expect(compareVersion("camel-2.11.jar", [2, 10], 1));
     expect(compareVersion("camel-2.11.0.jar", [2, 10], 1));
@@ -52,4 +53,20 @@ describe("Core", function() {
     expect(compareVersion("camel-2.11.2.jar", [2, 12], -1));
     expect(compareVersion("camel-2.11.2.jar", [2, 11, 3], -1));
   });
+
+  angular.forEach([
+    "something?bar=something",
+    "?bar=something",
+    "?bar=something&another",
+    "?foo=abc&bar=something&another",
+    "foo=abc&bar=something&another",
+    ["?foo=abc&bar=something&another"]
+  ], function (value) {
+    var map = hawtioPluginLoader.parseQueryString(value);
+    it("value " + JSON.stringify(value)
+            + " when parsed as query string should have bar value: " + JSON.stringify(map), function () {
+      expect(map["bar"]).toEqual(["something"]);
+    });
+  });
+
 });

@@ -29,7 +29,15 @@
    * @return a map of key/values
    */
   hawtioPluginLoader.parseQueryString = function(text) {
-      var query = (text || window.location.search || '?').substr(1);
+      var query = (text || window.location.search || '?');
+      var idx = -1;
+      if (angular.isArray(query)) {
+        query = query[0];
+      }
+      idx = query.indexOf("?");
+      if (idx >= 0) {
+        query = query.substr(idx + 1);
+      }
       var map = {};
       query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
           (map[key] = map[key] || []).push(value); 
