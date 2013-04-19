@@ -1,23 +1,23 @@
 package io.hawt.jvm.local;
 
-import org.jolokia.jvmagent.client.util.ProcessDescription;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 
 /**
  * @author Stan Lewis
  */
 public class VMDescriptorDTO {
 
-    private ProcessDescription descriptor;
+    private VirtualMachineDescriptor descriptor;
     private String alias;
     private String agentUrl;
 
-    public VMDescriptorDTO(ProcessDescription descriptor) {
+    public VMDescriptorDTO(VirtualMachineDescriptor descriptor) {
         this.descriptor = descriptor;
-        this.alias = JVMList.getVmAlias(descriptor.getDisplay());
+        this.alias = JVMList.getVmAlias(descriptor.displayName());
     }
 
     public String getId() {
-        return descriptor.getId();
+        return descriptor.id();
     }
 
     public String getAlias() {
@@ -25,7 +25,7 @@ public class VMDescriptorDTO {
     }
 
     public String getDisplayName() {
-        return descriptor.getDisplay();
+        return descriptor.displayName();
     }
 
     public String getAgentUrl() {

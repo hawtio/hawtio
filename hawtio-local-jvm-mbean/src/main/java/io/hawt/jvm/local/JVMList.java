@@ -1,13 +1,13 @@
 package io.hawt.jvm.local;
 
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 import org.jolokia.jvmagent.JvmAgent;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
-import org.jolokia.jvmagent.client.util.ProcessDescription;
 import org.jolokia.jvmagent.client.util.VirtualMachineHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
@@ -59,6 +59,10 @@ public class JVMList implements JVMListMBean {
 
     public void init() {
         try {
+
+            // let's just hit any errors we're going to hit before even creating the mbean
+            listLocalJVMs();
+
             if (objectName == null) {
                 objectName = new ObjectName("io.hawt.jvm.local:type=JVMList");
             }
@@ -96,8 +100,8 @@ public class JVMList implements JVMListMBean {
     public List<VMDescriptorDTO> listLocalJVMs() {
         List<VMDescriptorDTO> rc = new ArrayList<VMDescriptorDTO>();
         try {
-            List<ProcessDescription> processes = new VirtualMachineHandler(null).listProcesses();
-            for(ProcessDescription process : processes) {
+            List<VirtualMachineDescriptor> processes = VirtualMachine.list();
+            for(VirtualMachineDescriptor process : processes) {
                 VMDescriptorDTO dto = new VMDescriptorDTO(process);
                 dto.setAgentUrl(agentStatus(dto.getId()));
                 rc.add(dto);
