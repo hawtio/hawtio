@@ -50,6 +50,28 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-json-schema-mbean</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-local-jvm-mbean</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-plugin-mbean</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
     <!-- Camel module -->
 <!--
     <dependency>

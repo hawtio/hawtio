@@ -9,6 +9,7 @@ public class VMDescriptorDTO {
 
     private ProcessDescription descriptor;
     private String alias;
+    private String agentUrl;
 
     public VMDescriptorDTO(ProcessDescription descriptor) {
         this.descriptor = descriptor;
@@ -27,9 +28,21 @@ public class VMDescriptorDTO {
         return descriptor.getDisplay();
     }
 
+    public String getAgentUrl() {
+        return agentUrl;
+    }
+
+    public void setAgentUrl(String url) {
+        this.agentUrl = url;
+    }
+
     @Override
     public String toString() {
-        return getId() + " : " + getAlias() + " (" + getDisplayName() + ")";
+        String agentEnabled = "*";
+        if (getAgentUrl() == null) {
+            agentEnabled = " ";
+        }
+        return getId() + " : [" + agentEnabled + "] " + getAlias() + " (" + getDisplayName() + ")";
     }
 
 

@@ -1,19 +1,33 @@
 package io.hawt.jvm.local;
 
+import org.jolokia.jvmagent.JvmAgent;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
 import org.jolokia.jvmagent.client.util.ProcessDescription;
 import org.jolokia.jvmagent.client.util.VirtualMachineHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.ServerSocket;
+import java.util.*;
 
 /**
  * @author Stan Lewis
  */
 public class JVMList implements JVMListMBean {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(JVMList.class);
+
+    private MBeanServer mBeanServer;
+    private ObjectName objectName;
+
 
     protected static final Map<String,String> vmAliasMap = new HashMap<String, String>();
     private VirtualMachineHandler vmHandler;
@@ -44,30 +58,67 @@ public class JVMList implements JVMListMBean {
     }
 
     public void init() {
+        try {
+            if (objectName == null) {
+                objectName = new ObjectName("io.hawt.jvm.local:type=JVMList");
+            }
+            if (mBeanServer == null) {
+                mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            }
+            try {
+                mBeanServer.registerMBean(this, objectName);
+            } catch (InstanceAlreadyExistsException iaee) {
+                // Try to remove and re-register
+                LOG.info("Re-registering SchemaLookup MBean");
+                mBeanServer.unregisterMBean(objectName);
+                mBeanServer.registerMBean(this, objectName);
+            }
 
+        } catch (Exception e) {
+            LOG.warn("Exception during initialization: ", e);
+            throw new RuntimeException(e);
+        }
     }
+
+    public void destroy() {
+        try {
+            if (objectName != null && mBeanServer != null) {
+                mBeanServer.unregisterMBean(objectName);
+            }
+        } catch (Exception e) {
+            LOG.warn("Exception unregistering mbean: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public List<VMDescriptorDTO> listLocalJVMs() {
-
         List<VMDescriptorDTO> rc = new ArrayList<VMDescriptorDTO>();
-
         try {
             List<ProcessDescription> processes = new VirtualMachineHandler(null).listProcesses();
             for(ProcessDescription process : processes) {
-                rc.add(new VMDescriptorDTO(process));
+                VMDescriptorDTO dto = new VMDescriptorDTO(process);
+                dto.setAgentUrl(agentStatus(dto.getId()));
+                rc.add(dto);
             }
         } catch (Exception e) {
+            LOG.warn("Failed to get local JVM processes due to:", e);
             throw new RuntimeException("Failed to get local JVM processes due to " + e);
         }
-
         return rc;
     }
 
     private void doAction(String PID, String action) {
-        OptionsAndArgs options = new OptionsAndArgs(CommandDispatcher.getAvailableCommands(), "--quiet", "start", PID);
+        OptionsAndArgs options = null;
 
-        System.out.println("Jar file at : " + options.getJarFilePath());
+        if (action.equals("start")) {
+            options = new OptionsAndArgs(CommandDispatcher.getAvailableCommands(), "--quiet", "--port", allocateFreePort(), action, PID);
+        } else {
+            options = new OptionsAndArgs(CommandDispatcher.getAvailableCommands(), "--quiet", action, PID);
+        }
+
+        // System.out.println("Jar file at : " + options.getJarFilePath());
 
         VirtualMachineHandler vmHandler = new VirtualMachineHandler(options);
         CommandDispatcher dispatcher = new CommandDispatcher(options);
@@ -90,24 +141,63 @@ public class JVMList implements JVMListMBean {
         }
     }
 
+    private String allocateFreePort() {
+        int port = 8778;
+
+        ServerSocket sock = null;
+
+        try {
+            sock = new ServerSocket(0);
+            port = sock.getLocalPort();
+        } catch (Exception e) {
+            // ignore;
+        } finally {
+            if (sock != null) {
+                try {
+                    sock.close();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+
+        return new Integer(port).toString();
+    }
+
     @Override
     public void startAgent(String PID) {
         doAction(PID, "start");
     }
 
-
     @Override
     public String agentStatus(String PID) {
-        return null;
+        Object vm = null;
+
+        OptionsAndArgs options = new OptionsAndArgs(CommandDispatcher.getAvailableCommands(), "--quiet", "status", PID);
+        VirtualMachineHandler vmHandler = new VirtualMachineHandler(options);
+
+        String agentUrl = null;
+
+        try {
+            vm = vmHandler.attachVirtualMachine();
+            agentUrl = checkAgentUrl(vm);
+        } catch (Exception e) {
+            // maybe log this
+        } finally {
+            try {
+                vmHandler.detachAgent(vm);
+            } catch (Exception e) {
+                // log this
+            }
+        }
+
+        return agentUrl;
     }
-
-
 
     @Override
     public String agentVersion(String PID) {
         return null;
     }
-
 
     @Override
     public void stopAgent(String PID) {
@@ -115,13 +205,24 @@ public class JVMList implements JVMListMBean {
     }
 
     static String getVmAlias(String displayName) {
-
         for (String key : vmAliasMap.keySet()) {
             if (displayName.contains(key)) {
                 return vmAliasMap.get(key);
             }
         }
-
         return displayName;
     }
+
+    // borrowed these from AbstractBaseCommand for now
+    protected String checkAgentUrl(Object pVm) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Properties systemProperties = getAgentSystemProperties(pVm);
+        return systemProperties.getProperty(JvmAgent.JOLOKIA_AGENT_URL);
+    }
+
+    protected Properties getAgentSystemProperties(Object pVm) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Class clazz = pVm.getClass();
+        Method method = clazz.getMethod("getSystemProperties");
+        return (Properties) method.invoke(pVm);
+    }
+
 }

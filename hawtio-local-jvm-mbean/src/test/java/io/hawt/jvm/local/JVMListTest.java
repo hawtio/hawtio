@@ -1,13 +1,16 @@
 package io.hawt.jvm.local;
 
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.util.List;
 
 /**
  * @author Stan Lewis
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JVMListTest {
 
     public JVMList getJVMList() {
@@ -18,7 +21,7 @@ public class JVMListTest {
 
 
     @Test
-    public void testListJVMs() {
+    public void test03ListJVMs() {
         List<VMDescriptorDTO> jvms = getJVMList().listLocalJVMs();
 
         for (VMDescriptorDTO jvm : jvms) {
@@ -26,14 +29,49 @@ public class JVMListTest {
         }
     }
 
+    public void sleep() {
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+
+        }
+    }
+
     @Test
-    public void testStartAndStopAgent() {
+    public void test02StopAgent() {
+        JVMList list = getJVMList();
+        List<VMDescriptorDTO> jvms = list.listLocalJVMs();
+        VMDescriptorDTO me = null;
+
+        for (VMDescriptorDTO jvm : jvms) {
+            //System.out.println("JVM: " + jvm);
+            if (jvm.getAlias().equals("Maven Surefire Test")) {
+                me = jvm;
+            }
+        }
+
+        list.stopAgent(me.getId());
+
+        jvms = list.listLocalJVMs();
+
+        for (VMDescriptorDTO jvm : jvms) {
+            if (jvm.getId().equals(me.getId())) {
+                me = jvm;
+            }
+        }
+
+        System.out.println("Agent URL: " + me.getAgentUrl());
+        Assert.assertNull(me.getAgentUrl());
+    }
+
+    @Test
+    public void test01StartAgent() {
         JVMList list = getJVMList();
         List<VMDescriptorDTO> jvms = list.listLocalJVMs();
 
         VMDescriptorDTO me = null;
         for (VMDescriptorDTO jvm : jvms) {
-            System.out.println("JVM: " + jvm);
+            //System.out.println("JVM: " + jvm);
             if (jvm.getAlias().equals("Maven Surefire Test")) {
                 me = jvm;
             }
@@ -44,15 +82,17 @@ public class JVMListTest {
         System.out.println("Starting agent in " + me.getId());
         list.startAgent(me.getId());
 
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
+        sleep();
 
+        jvms = list.listLocalJVMs();
+
+        for (VMDescriptorDTO jvm : jvms) {
+            if (jvm.getId().equals(me.getId())) {
+                me = jvm;
+            }
         }
 
-        System.out.println("Stopping agent in " + me.getId());
-        list.stopAgent(me.getId());
-
-
+        System.out.println("Agent URL: " + me.getAgentUrl());
+        Assert.assertNotNull(me.getAgentUrl());
     }
 }

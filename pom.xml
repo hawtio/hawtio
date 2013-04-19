@@ -246,6 +246,8 @@
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-json-schema-mbean</module>
+    <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
     <module>hawtio-default</module>
@@ -253,11 +255,9 @@
     <module>hawtio-embedded</module>
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
-    <module>hawtio-plugin-mbean</module>
     <module>hawtio-plugin-examples</module>
     <module>hawtio-karaf</module>
     <module>sample</module>
-    <module>hawtio-local-jvm-mbean</module>
   </modules>
 
   <build>
