@@ -22,7 +22,7 @@ module Jmx {
       self.init = function(childScope, grid) {
         self.grid = grid;
         self.childScope = childScope;
-      }
+      };
 
       self.setSelect = function(flag) {
         if (angular.isDefined(self.grid)) {
@@ -36,7 +36,7 @@ module Jmx {
           }
         }
       }
-    }
+    };
 
     $scope.selectToggle = new SelectToggle($scope);
 
@@ -273,6 +273,7 @@ module Jmx {
               }
             }
           });
+          properties = properties.sortBy("name");
           $scope.selectedItems = [data];
           data = properties;
         }
