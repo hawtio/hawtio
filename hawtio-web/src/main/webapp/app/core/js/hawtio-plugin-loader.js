@@ -45,6 +45,19 @@
       return map;
   };
 
+  /**
+   * Parses the username:password from a http basic auth URL, e.g.
+   * http://foo:bar@example.com
+   */
+  hawtioPluginLoader.getCredentials = function(url) {
+    var uri = new Uri(url);
+    var credentials = uri.userInfo();
+    if (credentials.indexOf(':') > -1) {
+      return credentials.split(':');
+    } 
+    return [];
+  };
+
   hawtioPluginLoader.loadPlugins = function(callback) {
 
     var plugins = {};

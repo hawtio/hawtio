@@ -4,6 +4,7 @@ module Hawtio {
 
     parseQueryString():any;
     parseQueryString(text: string):any;
+    getCredentials(text: string):any;
 
     addModule(module:String);
     addUrl(url:String);
