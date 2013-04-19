@@ -67,4 +67,8 @@ public interface MavenIndexerFacadeMXBean {
      */
     List<String> versionComplete(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException;
 
+    /**
+     * Returns the current list of maven repositories
+     */
+    String[] getRepositories();
 }

@@ -230,6 +230,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         this.indexers = indexers;
     }
 
+    @Override
     public String[] getRepositories() {
         return repositories;
     }
