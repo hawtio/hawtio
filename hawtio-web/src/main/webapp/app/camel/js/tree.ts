@@ -7,13 +7,13 @@ module Camel {
       setTimeout(updateSelectionFromURL, 50);
     });
 
-    $scope.$watch('workspace.tree', function () {
-      if (workspace.moveIfViewInvalid()) return;
+    $scope.$on('jmxTreeUpdated', reloadFunction);
+    $scope.$watch('workspace.tree', reloadFunction);
 
+    function reloadFunction() {
       var children = [];
 
       // lets pull out each context
-
       var tree = workspace.tree;
       if (tree) {
         var domainName = "org.apache.camel";
@@ -49,8 +49,14 @@ module Camel {
                     var endpointsFolder = new Folder("Endpoints");
                     endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
                     endpointsFolder.children = endpointsNode.children;
-                    angular.forEach(endpointsFolder.children, (n) => n.addClass = "org-apache-camel-endpoints");
+                    angular.forEach(endpointsFolder.children, (n) => {
+                      n.addClass = "org-apache-camel-endpoints";
+                      if (!getContextId(n)) {
+                        n.entries["context"] = contextNode.entries["context"];
+                      }
+                    });
                     folder.children.push(endpointsFolder);
+                    endpointsFolder.entries = contextNode.entries;
                     endpointsFolder.typeName = "endpoints";
                     endpointsFolder.key = endpointsNode.key;
                     endpointsFolder.domain = endpointsNode.domain;
@@ -77,27 +83,27 @@ module Camel {
 
         var treeElement = $("#cameltree");
         Jmx.enableTree($scope, $location, workspace, treeElement, children);
-/*
+        /*
 
-        // lets select the first node if we have no selection
-        var key = $location.search()['nid'];
-        var node = children[0];
-        if (!key && node) {
-          key = node['key'];
-          if (key) {
-            var q = $location.search();
-            q['nid'] = key;
-            $location.search(q);
-          }
-        }
-        if (!key) {
-          updateSelectionFromURL();
-        }
-*/
+         // lets select the first node if we have no selection
+         var key = $location.search()['nid'];
+         var node = children[0];
+         if (!key && node) {
+         key = node['key'];
+         if (key) {
+         var q = $location.search();
+         q['nid'] = key;
+         $location.search(q);
+         }
+         }
+         if (!key) {
+         updateSelectionFromURL();
+         }
+         */
         // lets do this asynchronously to avoid Error: $digest already in progress
         setTimeout(updateSelectionFromURL, 50);
       }
-    });
+    }
 
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#cameltree"), true);
