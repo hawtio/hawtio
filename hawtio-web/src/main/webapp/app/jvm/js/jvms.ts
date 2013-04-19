@@ -3,30 +3,48 @@ module JVM {
   export function JVMsController($scope, $window, jolokia, mbeanName) {
 
     $scope.data = [];
+    $scope.deploying = false;
+    $scope.status = 'Discovering local JVM processes, please wait...';
 
 
     $scope.fetch = () => {
+      $scope.status = 'Discovering local JVM processes, please wait...';
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'listLocalJVMs()',
         arguments: []
-      }, onSuccess(render));
+      }, {
+        success: render,
+        error: (response) => {
+          $scope.data = [];
+          $scope.status = 'Could not discover local JVM processes: ' + response.error;
+          $scope.$apply();
+        }
+      });
     }
 
     $scope.stopAgent = (pid) => {
+      notification('info', "Attempting to detach agent from PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'stopAgent(java.lang.String)',
         arguments: [pid]
-      }, onSuccess($scope.fetch));
+      }, onSuccess(function() {
+        notification('success', "Detached agent from PID " + pid);
+        $scope.fetch()
+      }));
     }
 
     $scope.startAgent = (pid) => {
+      notification('info', "Attempting to attach agent to PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'startAgent(java.lang.String)',
         arguments: [pid]
-      }, onSuccess($scope.fetch));
+      }, onSuccess(function() {
+        notification('success', "Attached agent to PID " + pid);
+        $scope.fetch()
+      }));
     }
 
     $scope.connectTo = (url) => {
@@ -35,8 +53,10 @@ module JVM {
 
 
     function render(response) {
-      console.log("Got: ", response);
       $scope.data = response.value
+      if ($scope.data.length === 0) {
+        $scope.status = 'Could not discover local JVM processes';
+      }
       $scope.$apply();
     }
 

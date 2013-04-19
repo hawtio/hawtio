@@ -10,7 +10,11 @@
     </div>
   </div>
 
-  <div class="wiki-fixed row-fluid">
+  <div ng-hide='data.length > 0' class='wiki-fixed row-fluid'>
+    {{status}}
+  </div>
+
+  <div ng-show='data.length > 0' class="wiki-fixed row-fluid">
     <table class='centered table table-bordered table-condensed table-striped'>
       <thead>
       <tr>
