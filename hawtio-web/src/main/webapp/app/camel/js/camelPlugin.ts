@@ -65,7 +65,7 @@ module Camel {
               stateColumn,
               {field: 'CamelId', displayName: 'Context'},
               {field: 'RouteId', displayName: 'Route'},
-              {field: 'EndpointUri', displayName: 'Endpoint URI'},
+              {field: 'EndpointUri', displayName: 'Endpoint URI', width: "**"},
               {field: 'Suspended', displayName: 'Suspended', resizable: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'}
             ];
