@@ -694,6 +694,14 @@
       </properties>
     </profile>
 
+    <!--
+    this profile is here so we disable the jasmine profile when releasing
+    as for some reason it fails when ran inside mvn release:prepare
+    -->
+    <profile>
+      <id>release</id>
+    </profile>
+
     <profile>
       <id>jasmine-test</id>
       <activation>
