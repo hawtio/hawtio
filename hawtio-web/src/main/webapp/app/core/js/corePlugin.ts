@@ -6,7 +6,15 @@ var jolokiaUrls = [
   "/jolokia"          // instance that's already installed in a karaf container for example
   ];
 
-var jolokiaUrl = hawtioPluginLoader.parseQueryString()['url'];
+var jolokiaUrl = getJolokiaUrl();
+
+function getJolokiaUrl() {
+  var uri = hawtioPluginLoader.parseQueryString()['url'];
+  if (angular.isArray(uri)) {
+    uri = uri[0];
+  }
+  return decodeURIComponent(uri);
+}
 
 if (!jolokiaUrl) {
   jolokiaUrl = jolokiaUrls.find(function (url) {
