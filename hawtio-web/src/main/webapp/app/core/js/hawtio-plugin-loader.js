@@ -45,16 +45,26 @@
       return map;
   };
 
+  hawtioPluginLoader.credentialsRegex = new RegExp(/.*:\/\/([^@]+)@.*/);
+
   /**
    * Parses the username:password from a http basic auth URL, e.g.
    * http://foo:bar@example.com
    */
   hawtioPluginLoader.getCredentials = function(url) {
+/*
+    No Uri class outside of IE right?
+
     var uri = new Uri(url);
     var credentials = uri.userInfo();
-    if (credentials.indexOf(':') > -1) {
-      return credentials.split(':');
-    } 
+*/
+    var m = url.match(hawtioPluginLoader.credentialsRegex);
+    if (m && m.length > 1) {
+      var credentials = m[1];
+      if (credentials && credentials.indexOf(':') > -1) {
+        return credentials.split(':');
+      }
+    }
     return [];
   };
 
