@@ -240,36 +240,6 @@
       <version>${insight-log4j.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- for fabric -->
-    <dependency>
-      <groupId>org.fusesource.fabric</groupId>
-      <artifactId>tooling-fabric-all</artifactId>
-      <version>${fabric-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.karaf.shell</groupId>
-          <artifactId>org.apache.karaf.shell.console</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.linkedin</groupId>
-      <artifactId>org.linkedin.zookeeper-impl</artifactId>
-      <version>${linkedin-zookeeper-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.jdmk</groupId>
-          <artifactId>jmxtools</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jmx</groupId>
-          <artifactId>jmxri</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
 
   <repositories>
@@ -411,6 +381,10 @@
               <key>hawtio.config.repo</key>
               <value>${hawtio-config-repo}</value>
             </systemProperty>
+            <systemProperty>
+              <key>karaf.data</key>
+              <value>${project.build.directory}/karaf-data</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
@@ -495,6 +469,10 @@
             <systemProperty>
               <key>jettyUseFileLock</key>
               <value>${jetty-use-file-lock}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>karaf.data</key>
+              <value>${project.build.directory}/karaf-data</value>
             </systemProperty>
           </systemProperties>
         </configuration>
@@ -692,6 +670,55 @@
         <fabric-version>99-master-SNAPSHOT</fabric-version>
 -->
       </properties>
+    </profile>
+
+    <profile>
+      <id>fabricSnapshot</id>
+
+      <!-- when using the exec:java target this will try to auto-connect to a local fuse fabric -->
+      <properties>
+        <fabricUrl>localhost:2181</fabricUrl>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>io.hawt.example.services</groupId>
+          <artifactId>example-fabric</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.fusesource.fabric</groupId>
+          <artifactId>tooling-fabric-all</artifactId>
+          <version>${fabric-version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.karaf.shell</groupId>
+              <artifactId>org.apache.karaf.shell.console</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.fusesource.fabric</groupId>
+          <artifactId>fabric-zookeeper</artifactId>
+          <version>${fabric-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.linkedin</groupId>
+          <artifactId>org.linkedin.zookeeper-impl</artifactId>
+          <version>${linkedin-zookeeper-version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.sun.jdmk</groupId>
+              <artifactId>jmxtools</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.jmx</groupId>
+              <artifactId>jmxri</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
     </profile>
 
     <profile>

@@ -14,9 +14,6 @@ import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
-import org.fusesource.fabric.service.FabricServiceImpl;
-import org.fusesource.fabric.zookeeper.IZKClient;
-import org.fusesource.fabric.zookeeper.spring.ZKClientFactoryBean;
 import org.mortbay.jetty.plugin.JettyWebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,20 +155,6 @@ public class Main {
 
 
             // lets connect to fabric
-            String fabricUrl = System.getProperty("fabricUrl", "");
-            String fabricPassword = System.getProperty("fabricPassword", "admin");
-
-            if (fabricUrl != null && fabricUrl.length() > 0) {
-                LOG.info("Connecting to Fuse Fabric at " + fabricUrl);
-                ZKClientFactoryBean factory = new ZKClientFactoryBean();
-                factory.setPassword(fabricPassword);
-                factory.setConnectString(fabricUrl);
-                IZKClient zooKeeper = factory.getObject();
-                FabricServiceImpl impl = new FabricServiceImpl();
-                impl.setMbeanServer(mbeanServer);
-                impl.setZooKeeper(zooKeeper);
-                impl.init();
-            }
 
             LOG.info("starting jetty");
             server.start();

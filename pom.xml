@@ -404,6 +404,13 @@
     </profile>
 
     <profile>
+      <id>fabricSnapshot</id>
+      <properties>
+        <fabric-version>99-master-SNAPSHOT</fabric-version>
+      </properties>
+    </profile>
+
+    <profile>
       <id>release</id>
       <!--
       TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
