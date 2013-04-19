@@ -240,7 +240,9 @@
 
   <modules>
     <module>hawtio-core</module>
+<!--
     <module>hawtio-camel</module>
+-->
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-json-schema-mbean</module>
