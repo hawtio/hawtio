@@ -13,7 +13,7 @@ function getJolokiaUrl() {
   if (angular.isArray(uri)) {
     uri = uri[0];
   }
-  return decodeURIComponent(uri);
+  return uri ? decodeURIComponent(uri) : null;
 }
 
 if (!jolokiaUrl) {
