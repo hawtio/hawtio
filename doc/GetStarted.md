@@ -10,10 +10,10 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.0/hawtio-default-1.0.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.1/hawtio-default-1.1.war">Download hawtio-default.war</a>
     </td>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.0/sample-1.0.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.1/sample-1.1.war">Download sample.war</a>
     </td>
   </tr>
   <tr>
@@ -30,7 +30,7 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just
 Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
- <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.0/hawtio-default-offline-1.0.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
+ <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.1/hawtio-default-offline-1.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
 
 To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
@@ -53,7 +53,7 @@ Otherwise if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [
 
 Now you can install hawtio via:
 
-    features:addurl mvn:io.hawt/hawtio-karaf/1.0/xml/features
+    features:addurl mvn:io.hawt/hawtio-karaf/1.1/xml/features
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
