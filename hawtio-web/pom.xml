@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.1</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -644,8 +644,8 @@
                     <!-- copy the images from the eclipse plugin -->
                     <copy todir="${basedir}/src/main/webapp/img/camel" overwrite="true">
                       <fileset dir="${basedir}/../../../fuseide/plugins/org.fusesource.ide.camel.model/icons">
-                        <include name="*24.png" />
-                        <include name="*15.png" />
+                        <include name="*24.png"/>
+                        <include name="*15.png"/>
                       </fileset>
                     </copy>
                   </target>
