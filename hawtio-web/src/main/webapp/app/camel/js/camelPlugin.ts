@@ -105,6 +105,15 @@ module Camel {
               {field: 'MaxProcessingTime', displayName: 'Max Time'},
               {field: 'TotalProcessingTime', displayName: 'Total Time'}
             ];
+            attributes[jmxDomain + "/threadpools/folder"] = [
+              {field: 'Id', displayName: 'Id', width: "**"},
+              {field: 'ActiveCount', displayName: 'Active #'},
+              {field: 'PoolSize', displayName: 'Pool Size'},
+              {field: 'CorePoolSize', displayName: 'Core Pool Size'},
+              {field: 'TaskQueueSize', displayName: 'Task Queue Size'},
+              {field: 'TaskCount', displayName: 'Task #'},
+              {field: 'CompletedTaskCount', displayName: 'Completed Task #'}
+            ];
 
             workspace.topLevelTabs.push({
               content: "Camel",
