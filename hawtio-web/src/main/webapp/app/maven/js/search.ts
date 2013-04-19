@@ -3,6 +3,7 @@ module Maven {
   export function SearchController($scope, $location, workspace:Workspace, jolokia) {
     $scope.artifacts = [];
     $scope.selected = [];
+    $scope.done = false;
     $scope.form = {
       searchText: ""
     };
@@ -48,6 +49,7 @@ module Maven {
     };
 
     $scope.doSearch = () => {
+      $scope.done = false;
       var mbean = Maven.getMavenIndexerMBean(workspace);
       var form = $scope.form;
       if (mbean) {
@@ -83,6 +85,7 @@ module Maven {
     };
 
     function render(response) {
+      $scope.done = true;
       $scope.artifacts = response;
       Core.$apply($scope);
     }

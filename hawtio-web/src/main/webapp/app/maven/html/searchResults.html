@@ -1,6 +1,9 @@
 <div ng-show="artifacts.length > 0" class="row-fluid">
   <div class="gridStyle" hawtio-datatable="gridOptions"></div>
 </div>
+<div ng-show="artifacts.length == 0 && done" class="row-fluid">
+  <p>No results found</p>
+</div>
 
 <script type="text/ng-template" id="artifactDetailTemplate">
   <div class="pull-right">
