@@ -105,7 +105,15 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           // console.log("Jolokia URL is " + jolokiaUrl);
-          var jolokia = new Jolokia({url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'});
+          var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
+          var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
+          // pass basic auth credentials down to jolokia if set
+          if (credentials.length === 2) {
+            jolokiaParams['username'] = credentials[0];
+            jolokiaParams['password'] = credentials[1];
+          }
+
+          var jolokia = new Jolokia(jolokiaParams);
           localStorage['url'] = jolokiaUrl;
           return jolokia;
         }).
