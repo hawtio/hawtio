@@ -2,21 +2,14 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
 
-<!--
-    TODO add property injection from context parameters / system properties / env vars
+  <ext:property-placeholder>
+    <ext:default-properties>
+      <ext:property name="hawtio.log.buffer.size" value="2000"/>
+    </ext:default-properties>
+  </ext:property-placeholder>
 
-    <ext:property-placeholder>
-        <ext:default-properties>
-            <ext:property name="name" value="value" />
-            <ext:property name="a" value="Hello " />
-            <ext:property name="b" value="FooBar" />
-        </ext:default-properties>
-        <ext:location>classpath:test.properties</ext:location>
-    </ext:property-placeholder>
--->
-
-	<bean id="logFacade" class="org.fusesource.insight.log.log4j.Log4jLogQuery" init-method="start" destroy-method="stop">
-    <!-- TODO configure size property from hawtio.log.size -->
-	</bean>
+  <bean id="logFacade" class="org.fusesource.insight.log.log4j.Log4jLogQuery" init-method="start" destroy-method="stop">
+    <property name="size" value="${hawtio.log.buffer.size}"/>
+  </bean>
 </blueprint>
 

@@ -45,7 +45,6 @@ public class ConfigFacade implements ConfigFacadeMXBean {
             mBeanServer = ManagementFactory.getPlatformMBeanServer();
         }
         if (!registered && !mBeanServer.isRegistered(objectName)) {
-            System.out.println("Registering " + objectName + " as there is no bean registered yet with: " + this);
             mBeanServer.registerMBean(this, objectName);
             registered = true;
         }
@@ -113,7 +112,7 @@ public class ConfigFacade implements ConfigFacadeMXBean {
 
     @Override
     public String getConfigDir() {
-        if (configDir == null) {
+        if (Strings.isBlank(configDir)) {
             // lets default to the users home directory
             String home = System.getProperty("user.home", "~");
             configDir = home + "/.hawtio";

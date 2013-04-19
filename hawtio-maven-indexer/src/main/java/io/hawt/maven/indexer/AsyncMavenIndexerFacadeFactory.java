@@ -26,6 +26,7 @@ import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +60,9 @@ public class AsyncMavenIndexerFacadeFactory {
         };
         timer.schedule(task, 3000);
         LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
+        if (repositories != null) {
+            LOG.info("Using remote repositories: " + Arrays.asList(repositories));
+        }
     }
 
     public void destroy() throws InstanceNotFoundException, IOException, MBeanRegistrationException {

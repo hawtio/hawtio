@@ -8,6 +8,7 @@
       <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git"/>
       <ext:property name="hawtio.config.pullOnStartup" value="true"/>
       <ext:property name="hawtio.config.cloneOnStartup" value="true"/>
+      <ext:property name="hawtio.config.remote" value="origin"/>
     </ext:default-properties>
   </ext:property-placeholder>
 
@@ -16,6 +17,7 @@
     <property name="remoteRepository" value="${hawtio.config.repo}"/>
     <property name="pullOnStartup" value="${hawtio.config.pullOnStartup}"/>
     <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
+    <property name="remote" value="${hawtio.config.remote}"/>
   </bean>
 
 </blueprint>
