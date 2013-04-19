@@ -5,15 +5,15 @@ The following walks through how we make a release.
 * Pop onto [IRC](http://hawt.io/community/index.html) and let folks know you're about to cut a release
 * Now pull and make sure things build locally fine first :)
 
-		mvn release:prepare -P release
+		mvn release:prepare -P release,grunt
 
 If the build fails then rollback via
 
-    mvn release:rollback -P release
+    mvn release:rollback -P release,grunt
 
 The tag should get auto-defaulted to something like **hawtio-1.2**
 
-		mvn release:perform -P release
+		mvn release:perform -P release,grunt
 
 when the release is done:
 
