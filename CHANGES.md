@@ -14,7 +14,7 @@
 
 * Added more flexible documentation system so that plugins are now self documenting for users and developers
 
-* Fixes [these issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
+* Fixes [these 47 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
 
 
 # 1.0

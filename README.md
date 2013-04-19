@@ -54,7 +54,7 @@
 
 You can dynamically [extend hawtio with your own plugins](http://hawt.io/plugins/index.html) or automatically [discover plugins](http://hawt.io/plugins/index.html) inside the JVM.
 
-The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300Kb) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the **hawtio-web.war** or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
+The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300Kb) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the **hawtio-default.war** or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
 
 
 ## Want to hack on some code?
