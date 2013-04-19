@@ -12,25 +12,30 @@
   hawtioPluginLoader.addModule = function(module) {
     // console.log("Adding module: " + module);
     hawtioPluginLoader.modules.push(module);
-  }
+  };
 
   hawtioPluginLoader.addUrl = function(url) {
     // console.log("Adding URL: " + url);
     hawtioPluginLoader.urls.push(url);
-  }
+  };
 
   hawtioPluginLoader.getModules = function() {
     return hawtioPluginLoader.modules.clone();
-  }
+  };
 
-  hawtioPluginLoader.parseQueryString = function() {
-      var query = (window.location.search || '?').substr(1);
+  /**
+   * Parses the given query search string of the form "?foo=bar&whatnot"
+   * @param text
+   * @return a map of key/values
+   */
+  hawtioPluginLoader.parseQueryString = function(text) {
+      var query = (text || window.location.search || '?').substr(1);
       var map = {};
       query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
           (map[key] = map[key] || []).push(value); 
         });
       return map;
-  }
+  };
 
   hawtioPluginLoader.loadPlugins = function(callback) {
 

@@ -3,6 +3,7 @@ module Hawtio {
   export interface PluginLoaderStatic {
 
     parseQueryString():any;
+    parseQueryString(text: string):any;
 
     addModule(module:String);
     addUrl(url:String);
@@ -12,8 +13,8 @@ module Hawtio {
     loadPlugins(callback: () => void);
     debug();
 
-  };
+  }
 
-};
+}
 
 declare var hawtioPluginLoader: Hawtio.PluginLoaderStatic;
