@@ -1049,3 +1049,7 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 .popover {
   width: auto;
 }
+
+li.stacktrace {
+    line-height: 10px;
+}
