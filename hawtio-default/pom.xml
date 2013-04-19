@@ -52,14 +52,22 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-indexer</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-json-schema-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-local-jvm-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>
 

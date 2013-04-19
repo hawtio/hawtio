@@ -1053,3 +1053,37 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 li.stacktrace {
     line-height: 10px;
 }
+
+ul.jvm-list {
+  margin-top: 20px;
+  list-style-type: none;
+  width: 80%;
+}
+
+ul.jvm-list li {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #D4D4D4;
+  border-radius: 4px;
+  box-shadow: 0 -10px 10px -10px rgba(0, 0, 0, 0.1);
+}
+
+ul.jvm-list li div.inline-block {
+  width: 100%;
+}
+
+ul.jvm-list li div.inline-block div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+ul.jvm-list li div.inline-block div.pull-left {
+  width: 50%;
+}
+
+ul.jvm-list li div.inline-block div.pull-right {
+  width: 50%;
+}
+
