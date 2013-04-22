@@ -25,4 +25,6 @@
 
 # In Progress (1.2)
 
+* New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
+
 
