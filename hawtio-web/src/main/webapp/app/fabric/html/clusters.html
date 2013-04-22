@@ -14,7 +14,7 @@
   </div>
 
   <div class="wiki-fixed form-horizontal">
-    <div ng-hide="!children">
+    <div ng-hide="!children.length">
       <div class="row-fluid">
         <div class="gridStyle" ng-grid="gridOptions"></div>
       </div>
@@ -23,7 +23,5 @@
     <div ng-hide="!html">
       <div ng-bind-html-unsafe="html"></div>
     </div>
-
-    <div ng-include="sourceView" class="editor-autoresize"></div>
   </div>
 </div>

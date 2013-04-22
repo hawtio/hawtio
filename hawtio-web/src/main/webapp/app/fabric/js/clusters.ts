@@ -55,14 +55,26 @@ module Fabric {
     function onContents(contents) {
       // for now it returns just lists of names
       $scope.children = [];
+      $scope.stringData = null;
+      $scope.html = null;
       if (contents) {
         angular.forEach(contents.children, (childName) => {
           $scope.children.push({ name: childName });
         });
-      } else {
-        console.log("no contents for " + $scope.path);
+        if (!$scope.children.length) {
+          var stringData = contents.stringData;
+          if (stringData) {
+            $scope.stringData = stringData;
+            var json = Core.tryParseJson(stringData);
+            if (json) {
+              $scope.html = Core.valueToHtml(json);
+            } else {
+              // TODO detect properties files
+              $scope.html = stringData;
+            }
+          }
+        }
       }
-      // $scope.sourceView = "app/wiki/html/sourceView.html";
       Core.$apply($scope);
     }
 

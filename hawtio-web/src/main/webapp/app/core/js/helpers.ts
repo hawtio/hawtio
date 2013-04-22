@@ -649,4 +649,49 @@ module Core {
   export function asArray(value) {
     return angular.isArray(value) ? value : [value];
   }
+
+  /**
+   * Helper function which converts objects into tables of key/value properties and
+   * lists into a <ul> for each value.
+   */
+  export function valueToHtml(value) {
+    if (angular.isArray(value)) {
+      var size = value.length;
+      if (!size) {
+        return "";
+      } else if (size === 1) {
+        return valueToHtml(value[0]);
+      } else {
+        var buffer = "<ul>"
+        angular.forEach(value, (childValue) => {
+          buffer += "<li>" + valueToHtml(childValue) + "</li>"
+        });
+        return buffer + "</ul>"
+      }
+    } else if (angular.isObject(value)) {
+      var buffer = "<table>";
+      angular.forEach(value, (childValue, key) => {
+        buffer += "<tr><td>" + key + "</td><td>" + valueToHtml(childValue) + "</td></tr>"
+      });
+      return buffer + "</table>"
+    }
+    return value;
+  }
+
+  /**
+   * If the string starts and ends with [] {} then try parse as JSON and return the parsed content or return null
+   * if it does not appear to be JSON
+   */
+  export function tryParseJson(text: string) {
+    text = text.trim();
+    if ((text.startsWith("[") && text.endsWith("]")) || (text.startsWith("{") && text.endsWith("}"))) {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        // ignore
+      }
+    }
+    return null;
+  }
+
 }
