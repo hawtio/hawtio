@@ -662,7 +662,7 @@ module Core {
       } else if (size === 1) {
         return valueToHtml(value[0]);
       } else {
-        var buffer = "<ul>"
+        var buffer = "<ul>";
         angular.forEach(value, (childValue) => {
           buffer += "<li>" + valueToHtml(childValue) + "</li>"
         });
