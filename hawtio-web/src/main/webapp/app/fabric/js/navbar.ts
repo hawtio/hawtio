@@ -7,7 +7,7 @@ module Fabric {
 
     $scope.clusterLink = () => {
       // TODO move to use /fabric/clusters by default maybe?
-      return Core.createHref($location, "#/fabric/clusters/fabric/registry/webapps", ["cv", "cp", "pv"]);
+      return Core.createHref($location, "#/fabric/clusters/fabric/registry", ["cv", "cp", "pv"]);
     };
   }
 }
