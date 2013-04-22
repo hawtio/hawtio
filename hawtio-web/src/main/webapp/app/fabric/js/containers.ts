@@ -30,6 +30,85 @@ module Fabric {
     $scope.selectedContainers = [];
 
 
+    $scope.stopContainer = (name) => {
+      // TODO proper notifications
+      stopContainer(jolokia, name, function() {console.log("Stopped " + name)}, function() {console.log("Failed to stop " + name)});
+    };
+
+    $scope.extractSelected = () => {
+      var rc = [];
+      $scope.selectedContainers.forEach(function(container) {
+        rc.push(container.name);
+      });
+
+      $scope.selectedContainers.splice(0, $scope.selectedContainers.length);
+      return rc;
+    };
+
+
+    $scope.stop = () => {
+      $scope.extractSelected().forEach(function(name) {
+        $scope.stopContainer(name);
+      });
+    };
+
+    $scope.deleteContainer = (name) => {
+      // TODO proper notifications
+      destroyContainer(jolokia, name, function() {console.log("Deleted " + name)}, function() {console.log("Failed to delete " + name)});
+    };
+
+    $scope.delete = () => {
+      $scope.extractSelected().forEach(function (name) {
+        $scope.deleteContainer(name);
+      });
+    };
+
+    $scope.startContainer = (name) => {
+      // TODO proper notifications
+      startContainer(jolokia, name, function() {console.log("Started " + name)}, function() {console.log("Failed to start " + name)});
+    };
+
+    $scope.start = () => {
+      $scope.extractSelected().forEach(function (name) {
+        $scope.startContainer(name);
+      });
+    };
+
+    $scope.anySelectionAlive = (state) => {
+      var selected = $scope.selectedContainers || [];
+      return selected.length && selected.any((s) => s.alive === state);
+    };
+
+    $scope.everySelectionAlive = (state) => {
+      var selected = $scope.selectedContainers || [];
+      return selected.length && selected.every((s) => s.alive === state);
+    };
+
+    $scope.statusIcon = (row) => {
+      if (row) {
+        if (row.alive) {
+          switch(row.provisionResult) {
+            case 'success':
+              return "icon-thumbs-up";
+            case 'downloading':
+              return "icon-download-alt";
+            case 'installing':
+              return "icon-hdd";
+            case 'analyzing':
+            case 'finalizing':
+              return "icon-refresh icon-spin";
+            case 'resolving':
+              return "icon-sitemap";
+            case 'error':
+              return "red icon-warning-sign";
+          }
+        } else {
+          return "icon-off";
+        }
+      }
+      return "icon-refresh icon-spin";
+    };
+
     var SearchProvider = function(scope, location) {
       var self = this;
       self.scope = scope;
@@ -190,74 +269,6 @@ module Fabric {
         $scope.$apply();
       }
     }
-    
-    $scope.stopContainer = (name) => {
-      // TODO proper notifications
-      stopContainer(jolokia, name, function() {console.log("Stopped " + name)}, function() {console.log("Failed to stop " + name)});
-    }
 
-    $scope.extractSelected = () => {
-      var rc = [];
-      $scope.selectedContainers.forEach(function(container) {
-        rc.push(container.name);
-      });
-
-      $scope.selectedContainers = [];
-      return rc;
-    }
-
-
-    $scope.stop = () => {
-      $scope.extractSelected().forEach(function(name) {
-        $scope.stopContainer(name);
-      });
-    }
-
-    $scope.deleteContainer = (name) => {
-      // TODO proper notifications
-      destroyContainer(jolokia, name, function() {console.log("Deleted " + name)}, function() {console.log("Failed to delete " + name)});
-    }
-
-    $scope.delete = () => {
-      $scope.extractSelected().forEach(function (name) {
-        $scope.deleteContainer(name);
-      });
-    }
-
-    $scope.startContainer = (name) => {
-      // TODO proper notifications
-      startContainer(jolokia, name, function() {console.log("Started " + name)}, function() {console.log("Failed to start " + name)});
-    }
-
-    $scope.start = () => {
-      $scope.extractSelected().forEach(function (name) {
-        $scope.startContainer(name);
-      });
-    }
-    
-    $scope.statusIcon = (row) => {
-      if (row) {
-        if (row.alive) {
-          switch(row.provisionResult) {
-            case 'success': 
-              return "icon-thumbs-up";
-            case 'downloading':
-              return "icon-download-alt";
-            case 'installing':
-              return "icon-hdd";
-            case 'analyzing':
-            case 'finalizing':
-              return "icon-refresh icon-spin";
-            case 'resolving':
-              return "icon-sitemap";
-            case 'error':
-              return "red icon-warning-sign";
-          }
-        } else {
-          return "icon-off";
-        }
-      }
-      return "icon-refresh icon-spin";
-    }
   }
 }
