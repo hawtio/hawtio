@@ -38,6 +38,11 @@
       if (idx >= 0) {
         query = query.substr(idx + 1);
       }
+      // if query string ends with #/ then lets remove that too
+      idx = query.indexOf("#/");
+      if (idx > 0) {
+        query = query.substr(0, idx);
+      }
       var map = {};
       query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
           (map[key] = map[key] || []).push(value); 

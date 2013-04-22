@@ -57,6 +57,7 @@ describe("Core", function () {
   angular.forEach([
     "something?bar=something",
     "?bar=something",
+    "?bar=something#/help/overview/",
     "?bar=something&another",
     "?foo=abc&bar=something&another",
     "foo=abc&bar=something&another",

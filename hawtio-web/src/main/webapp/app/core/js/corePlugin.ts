@@ -7,9 +7,11 @@ var jolokiaUrls = [
   ];
 
 var jolokiaUrl = getJolokiaUrl();
+console.log("jolokiaUrl " + jolokiaUrl);
 
 function getJolokiaUrl() {
-  var uri = hawtioPluginLoader.parseQueryString()['url'];
+  var query = hawtioPluginLoader.parseQueryString();
+  var uri = query['url'];
   if (angular.isArray(uri)) {
     uri = uri[0];
   }
