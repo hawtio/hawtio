@@ -2,6 +2,8 @@ module Core {
 
   export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace) {
 
+    $scope.workspace = workspace;
+
     $scope.topLevelTabs = () => workspace.topLevelTabs;
 
     $scope.subLevelTabs = () => workspace.subLevelTabs;

@@ -192,4 +192,9 @@ module Fabric {
     });
     return values;
   }
+
+  export function getZooKeeperFacadeMBean(workspace: Workspace) {
+    var folder = workspace.findMBeanWithProperties(jmxDomain, {type: "ZooKeeper"});
+    return Core.pathGet(folder, "objectName");
+  }
 }
