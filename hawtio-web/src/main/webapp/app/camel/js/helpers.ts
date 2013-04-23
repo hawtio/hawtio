@@ -172,9 +172,23 @@ module Camel {
     }
   }
 
+  /**
+   * Returns the cached Camel XML route node stored in the current tree selection Folder
+   */
   export function getSelectedRouteNode(workspace:Workspace) {
     var selection = workspace.selection;
     return (selection && jmxDomain === selection.domain) ? selection["routeXmlNode"] : null;
+  }
+
+  /**
+   * Flushes the cached Camel XML route node stored in the selected tree Folder
+   * @param workspace
+   */
+  export function clearSelectedRouteNode(workspace:Workspace) {
+    var selection = workspace.selection;
+    if (selection && jmxDomain === selection.domain) {
+      delete selection["routeXmlNode"];
+    }
   }
 
   /**

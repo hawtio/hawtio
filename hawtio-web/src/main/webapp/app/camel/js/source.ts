@@ -49,10 +49,13 @@ module Camel {
       }
       $scope.source = data;
       $scope.$apply();
-    }
+    };
     
     var saveWorked = () => {
       notification("success", "Route updated!");
+      // lets clear the cached route XML so we reload the new value
+      clearSelectedRouteNode(workspace);
+      updateRoutes();
     };
 
     $scope.saveRouteXml = () => {
@@ -62,7 +65,6 @@ module Camel {
         var mbean = getSelectionCamelContextMBean(workspace);
         if (mbean) {
           jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", routeXml, onSuccess(saveWorked));
-          jolokia.request({type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'}, onSuccess(populateTable));
         } else {
           notification("error", "Could not find CamelContext MBean!");
         }
