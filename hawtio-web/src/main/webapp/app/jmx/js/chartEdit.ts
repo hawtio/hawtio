@@ -66,9 +66,9 @@ module Jmx {
       var mbeanCounter = 0;
       var resultCounter = 0;
 
-      // lets iterate through all the children
+      // lets iterate through all the children if the current node is not an mbean
       var children = node.children;
-      if (!children || !children.length) {
+      if (!children || !children.length || node.objectName) {
         children = [node];
       }
       if (children) {
