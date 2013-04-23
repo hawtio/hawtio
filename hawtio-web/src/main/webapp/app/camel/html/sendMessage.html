@@ -2,10 +2,11 @@
   <div class="control-group">
     <button id="sendButton" type="submit" class="btn btn-info pull-left" ng-click="sendMessage()">Send Message</button>
 
-    <div class="pull-right">
-      <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">message format</label>
+    <button id="addHeaderButton" class="btn" ng-click="addHeader()" title="Add a new message header">Add Header</button>
 
+    <div class="pull-right">
       <div class="controls">
+        <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">message format</label>
         <select ng-model="codeMirrorOptions.mode.name" id="sourceFormat">
           <option value="javascript">JSON</option>
           <option value="text">Plain Text</option>
@@ -17,6 +18,21 @@
         <button class="btn" ng-click="autoFormat()" title="Automatically pretty prints the message so its easier to read">Auto Format</button>
       </div>
     </div>
+  </div>
+  <div class="control-group">
+    <table>
+      <tr ng-repeat="header in headers">
+        <td>
+          <input type="text" ng-model="header.name" placeholder="Name of the message header">
+        </td>
+        <td>
+          <input type="text" ng-model="header.value" placeholder="Value of the message header">
+        </td>
+        <td>
+          <button ng-click="removeHeader(header)" title="Removes this message header"><i class="icon-remove"></i></button>
+        </td>
+      </tr>
+    </table>
   </div>
   <div class="control-group">
       <textarea ui-codemirror="codeMirrorOptions" ng-model="message"></textarea>

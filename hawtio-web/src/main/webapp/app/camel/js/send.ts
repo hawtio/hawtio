@@ -18,6 +18,16 @@ module Camel {
       };
       $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
+      $scope.headers = [];
+
+      $scope.addHeader = () => {
+        $scope.headers.push({name: "", value: ""});
+      };
+
+      $scope.removeHeader = (header) => {
+        $scope.headers = $scope.headers.remove(header);
+      };
+
       // TODO Find out what this does
       $scope.$watch('workspace.selection', function () {
         workspace.moveIfViewInvalid();
@@ -47,6 +57,17 @@ module Camel {
         if (selection) {
           var mbean = selection.objectName;
           if (mbean) {
+            var headers = null;
+            if ($scope.headers.length) {
+              headers = {};
+              angular.forEach($scope.headers, (object) => {
+                var key = object.name;
+                if (key) {
+                  headers[key] = object.value;
+                }
+              });
+            }
+
             var jolokia = workspace.jolokia;
             // if camel then use a different operation on the camel context mbean
             if (selection.domain === "org.apache.camel") {
@@ -58,7 +79,14 @@ module Camel {
                 notification("error", "Could not find CamelContext MBean!");
               }
             } else {
-              jolokia.execute(mbean, "sendTextMessage(java.lang.String, java.lang.String, java.lang.String)", body, localStorage["activemqUserName"], localStorage["activemqPassword"], onSuccess(sendWorked));
+              var user = localStorage["activemqUserName"];
+              var pwd = localStorage["activemqPassword"];
+              var callback = onSuccess(sendWorked);
+              if (headers) {
+                jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
+              } else {
+                jolokia.execute(mbean, "sendTextMessage(java.lang.String, java.lang.String, java.lang.String)", body, user, pwd, callback);
+              }
             }
           }
         }
