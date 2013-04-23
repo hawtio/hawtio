@@ -62,6 +62,7 @@ module Camel {
         var mbean = getSelectionCamelContextMBean(workspace);
         if (mbean) {
           jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", routeXml, onSuccess(saveWorked));
+          jolokia.request({type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'}, onSuccess(populateTable));
         } else {
           notification("error", "Could not find CamelContext MBean!");
         }
