@@ -4,8 +4,14 @@ module Jmx {
     $scope.metrics = [];
     $scope.updateRate = parseInt(localStorage['updateRate']);
 
+    // lets disable as it causes 2 events which
+    // cause double charts
+    var watchRouteChange = false;
+
     $scope.$on('$destroy', function () {
-      $scope.deregRouteChange();
+      if (watchRouteChange) {
+        $scope.deregRouteChange();
+      }
       $scope.dereg();
       if ($scope.context) {
         $scope.context.stop();
@@ -24,11 +30,12 @@ module Jmx {
       }
     };
 
-    $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(render, 50);
-    });
-
+    if (watchRouteChange) {
+      $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(render, 50);
+      });
+    }
     $scope.dereg = $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
       render();
