@@ -26,7 +26,9 @@ if (!jolokiaUrl) {
 }
 
 // bootstrap plugin loader
-hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
+if (jolokiaUrl) {
+  hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
+}
 hawtioPluginLoader.addUrl('/hawtio/test.json');
 
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
@@ -107,17 +109,40 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           // console.log("Jolokia URL is " + jolokiaUrl);
-          var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
-          var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
-          // pass basic auth credentials down to jolokia if set
-          if (credentials.length === 2) {
-            jolokiaParams['username'] = credentials[0];
-            jolokiaParams['password'] = credentials[1];
-          }
+          if (jolokiaUrl) {
+            var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
+            var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
+            // pass basic auth credentials down to jolokia if set
+            if (credentials.length === 2) {
+              jolokiaParams['username'] = credentials[0];
+              jolokiaParams['password'] = credentials[1];
+            }
 
-          var jolokia = new Jolokia(jolokiaParams);
-          localStorage['url'] = jolokiaUrl;
-          return jolokia;
+            var jolokia = new Jolokia(jolokiaParams);
+            localStorage['url'] = jolokiaUrl;
+            return jolokia;
+          } else {
+            // empty jolokia that returns nothing
+            return {
+              request: () => null,
+              register: () => null,
+              list: () => null,
+              search: () => null,
+              read: () => null,
+              execute: () => null,
+
+              start: () => {
+                this.running = true;
+                return null;
+              },
+              stop: () => {
+                this.running = false;
+                return null;
+              },
+              isRunning: () => this.running,
+              jobs: () => []
+            };
+          }
         }).
 
         factory('toastr', ($window) => {
@@ -129,6 +154,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return answer;
         }).
 
+        filter("valueToHtml", () => Core.valueToHtml).
         filter('humanize',() => humanizeValue).
 
         run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry) => {
