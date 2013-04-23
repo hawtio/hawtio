@@ -674,6 +674,15 @@ module Core {
         buffer += "<tr><td>" + key + "</td><td>" + valueToHtml(childValue) + "</td></tr>"
       });
       return buffer + "</table>"
+    } else if (angular.isString(value)) {
+      var uriPrefixes = ["http://", "https://", "file://", "mailto:"];
+      var answer = value;
+      angular.forEach(uriPrefixes, (prefix) => {
+        if (answer.startsWith(prefix)) {
+          answer = "<a href='" + value + "'>" + value + "</a>";
+        }
+      });
+      return answer;
     }
     return value;
   }
