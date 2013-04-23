@@ -89,7 +89,7 @@ module Fabric {
         if (row.alive) {
           switch(row.provisionResult) {
             case 'success':
-              return "icon-thumbs-up";
+              return "green icon-play-circle";
             case 'downloading':
               return "icon-download-alt";
             case 'installing':
@@ -103,7 +103,7 @@ module Fabric {
               return "red icon-warning-sign";
           }
         } else {
-          return "icon-off";
+          return "orange icon-off";
         }
       }
       return "icon-refresh icon-spin";
