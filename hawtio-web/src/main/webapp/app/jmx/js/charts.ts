@@ -72,22 +72,36 @@ module Jmx {
         if (meta) {
           var attributes = meta.attr;
           if (attributes) {
+            var foundNames = [];
             for (var key in attributes) {
               var value = attributes[key];
               if (value) {
                 var typeName = value['type'];
-                if (isNumberTypeName(typeName) && (!attributeNames.length || attributeNames.indexOf(key) >= 0)) {
-                  var metric = $scope.jolokiaContext.metric({
-                    type: 'read',
-                    mbean: mbean,
-                    attribute: key
-                  }, humanizeValue(key));
-                  if (metric) {
-                    $scope.metrics.push(metric);
-                  }
+                if (isNumberTypeName(typeName)) {
+                  foundNames.push(key);
                 }
               }
             }
+
+            // lets filter the attributes
+            // if we find none then the att search attribute is invalid
+            // so lets discard the filter - as it must be for some other mbean
+            if (attributeNames.length) {
+              var filtered = foundNames.filter((key) => attributeNames.indexOf(key) >= 0);
+              if (filtered.length) {
+                foundNames = filtered;
+              }
+            }
+            angular.forEach(foundNames, (key) => {
+              var metric = $scope.jolokiaContext.metric({
+                type: 'read',
+                mbean: mbean,
+                attribute: key
+              }, humanizeValue(key));
+              if (metric) {
+                $scope.metrics.push(metric);
+              }
+            });
           }
         }
       } else {
