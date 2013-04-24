@@ -31,7 +31,6 @@ module Camel {
       $scope.headers = $scope.headers.remove(header);
     };
 
-    //$scope.defaultHeaderNames = [ "JMSPriority", "JMSType", "breadCrumbId" ];
     $scope.defaultHeaderNames = () => {
       var answer = [];
       function addHeaderSchema(schema) {
@@ -86,6 +85,7 @@ module Camel {
                 headers[key] = object.value;
               }
             });
+            //console.log("About to send headers: " + JSON.stringify(headers));
           }
 
           var jolokia = workspace.jolokia;
