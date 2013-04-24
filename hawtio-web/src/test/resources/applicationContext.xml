@@ -87,7 +87,7 @@
       <to uri="activemq:personnel.records"/>
       <to uri="activemq:browse.me"/>
     </route>
-    <route>
+    <route id="foo">
       <from uri="activemq:personnel.records"/>
       <choice>
         <when>
