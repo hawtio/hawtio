@@ -12,7 +12,8 @@
         <table style="width: 100%">
           <tr ng-repeat="header in headers">
             <td style="width: 45%">
-              <input type="text" style="width: 100%" ng-model="header.name" typeahead="header for header in defaultHeaderNames() | filter:$viewValue">
+              <input type="text" style="width: 100%" ng-model="header.name" typeahead="header for header in defaultHeaderNames() | filter:$viewValue"
+                     placeholder="Header name">
             </td>
             <td style="width: 55%">
               <input type="text" style="width: 100%" ng-model="header.value" placeholder="Value of the message header">
