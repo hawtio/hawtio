@@ -4,8 +4,7 @@
       <button id="sendButton" type="submit" class="btn btn-primary pull-left" ng-click="sendMessage()">Send Message
       </button>
 
-      <button id="addHeaderButton" class="btn pull-right" ng-click="addHeader()" title="Add a new message header">Add
-        Header
+      <button id="addHeaderButton" class="btn pull-right" ng-click="addHeader()" title="Add a new message header"><i class="icon-plus"></i>
       </button>
     </div>
     <div class="row-fluid">
@@ -19,7 +18,7 @@
               <input type="text" style="width: 100%" ng-model="header.value" placeholder="Value of the message header">
             </td>
             <td style="width: 1px">
-              <button ng-click="removeHeader(header)" title="Removes this message header"><i class="icon-remove"></i></button>
+              <button ng-click="removeHeader(header)" class="btn pull-right" title="Removes this message header"><i class="icon-remove"></i></button>
             </td>
           </tr>
         </table>
