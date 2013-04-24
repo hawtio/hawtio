@@ -1,77 +1,94 @@
 module ActiveMQ {
-    export function BrowseQueueController($scope, workspace:Workspace) {
-      var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
-      var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
-        "DoubleProperties", "StringProperties"];
+  export function BrowseQueueController($scope, workspace:Workspace) {
 
-      $scope.widget = new TableWidget($scope, workspace, [
+    $scope.selectedItems = [];
+
+    $scope.gridOptions = {
+      selectedItems: $scope.selectedItems,
+      data: 'messages',
+      displayFooter: false,
+      showFilter: false,
+      filterOptions: {
+        filterText: "searchText"
+      },
+      columnDefs: [
         {
-          "mDataProp": null,
-          "sClass": "control center",
-          "sDefaultContent": '<i class="icon-plus"></i>'
+          field: 'JMSMessageID',
+          displayName: 'Message ID',
+          width: "22em"
         },
-        { "mDataProp": "JMSMessageID" },
-        /*
-         {
-         "sDefaultContent": "",
-         "mData": null,
-         "mDataProp": "Text"
-         },
-         */
-        { "mDataProp": "JMSCorrelationID" },
-        { "mDataProp": "JMSTimestamp" },
-        { "mDataProp": "JMSDeliveryMode" },
-        { "mDataProp": "JMSReplyTo" },
-        { "mDataProp": "JMSRedelivered" },
-        { "mDataProp": "JMSPriority" },
-        { "mDataProp": "JMSXGroupSeq" },
-        { "mDataProp": "JMSExpiration" },
-        { "mDataProp": "JMSType" },
-        { "mDataProp": "JMSDestination" }
-      ], {
-        rowDetailTemplateId: 'activemqMessageTemplate',
-        ignoreColumns: ignoreColumns,
-        flattenColumns: flattenColumns
-      });
+        {
+          field: 'JMSType',
+          displayName: 'Type'
+        },
+        {
+          field: 'JMSPriority',
+          displayName: 'Priority'
+        },
+        {
+          field: 'JMSTimestamp',
+          displayName: 'Timestamp'
+        },
+        {
+          field: 'JMSExpiration',
+          displayName: 'Expires'
+        },
+        {
+          field: 'JMSReplyTo',
+          displayName: 'Reply To'
+        },
+        {
+          field: 'JMSCorrelationID',
+          displayName: 'Correlation ID'
+        }
+      ],
+      rowDetailTemplateId: "activemqMessageTemplate"
+    };
 
-      var populateTable = function (response) {
-        $scope.widget.populateTable(response.value);
-      };
+    var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
+    var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
+      "DoubleProperties", "StringProperties"];
 
-      function loadTable() {
-        var selection = workspace.selection;
-        if (selection) {
-          var mbean = selection.objectName;
-          if (mbean) {
-            var jolokia = workspace.jolokia;
+    // TODO This should be a directive
+    $scope.$watch('workspace.selection', function () {
+      if (workspace.moveIfViewInvalid()) return;
 
-            jolokia.request(
-                    {type: 'exec', mbean: mbean, operation: 'browse()'},
-                    onSuccess(populateTable));
+      // lets defer execution as we may not have the selection just yet
+      setTimeout(loadTable, 50);
+    });
+
+    $scope.headers = (row) => {
+      var answer = {};
+      angular.forEach(row, (value, key) => {
+        if (!ignoreColumns.any(key)) {
+          if (flattenColumns.any(key)) {
+            angular.forEach(value, (v2, k2) => answer[k2] = v2);
+          } else {
+            answer[key] = value;
           }
         }
-      }
-
-      // TODO This should be a directive
-      $scope.$watch('workspace.selection', function () {
-        if (workspace.moveIfViewInvalid()) return;
-
-        // lets defer execution as we may not have the selection just yet
-        setTimeout(loadTable, 50);
       });
+      return answer;
+    };
 
-      $scope.headers = (row) => {
-        var answer = {};
-        angular.forEach(row, (value, key) => {
-          if (!ignoreColumns.any(key)) {
-            if (flattenColumns.any(key)) {
-              angular.forEach(value, (v2, k2) => answer[k2] = v2);
-            } else {
-              answer[key] = value;
-            }
-          }
-        });
-        return answer;
-      };
+    function populateTable(response) {
+      $scope.messages = response.value;
+      //$scope.widget.populateTable(response.value);
+      Core.$apply($scope);
     }
+
+    function loadTable() {
+      var selection = workspace.selection;
+      if (selection) {
+        var mbean = selection.objectName;
+        if (mbean) {
+          var jolokia = workspace.jolokia;
+
+          jolokia.request(
+                  {type: 'exec', mbean: mbean, operation: 'browse()'},
+                  onSuccess(populateTable));
+        }
+      }
+    }
+  }
 }
