@@ -34,10 +34,16 @@ module Camel {
     //$scope.defaultHeaderNames = [ "JMSPriority", "JMSType", "breadCrumbId" ];
     $scope.defaultHeaderNames = () => {
       var answer = [];
-      if (isJmsEndpoint()) {
-        angular.forEach(Camel.jmsHeaderSchema.definitions.headers.properties, (value, name) => {
+      function addHeaderSchema(schema) {
+        angular.forEach(schema.definitions.headers.properties, (value, name) => {
           answer.push(name);
         });
+      }
+      if (isJmsEndpoint()) {
+        addHeaderSchema(Camel.jmsHeaderSchema);
+      }
+      if (isCamelEndpoint()) {
+        addHeaderSchema(Camel.camelHeaderSchema);
       }
       return answer;
     };
@@ -110,9 +116,13 @@ module Camel {
       }
     };
 
+    function isCamelEndpoint() {
+      // TODO check for the camel or if its an activemq endpoint
+      return true;
+    }
+
     function isJmsEndpoint() {
       // TODO check for the jms/activemq endpoint in camel or if its an activemq endpoint
-      //var selection = workspace.selection;
       return true;
     }
   }
