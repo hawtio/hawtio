@@ -109,6 +109,47 @@
     </route>
   </camelContext>
 
+  <camelContext id="onExceptionContext" xmlns="http://camel.apache.org/schema/spring">
+    <onException>
+      <exception>java.lang.Exception</exception>
+      <choice>
+        <when>
+          <xpath>$foo = 'bar'</xpath>
+          <to uri="direct:b"/>
+        </when>
+        <when>
+          <xpath>$foo = 'cheese'</xpath>
+          <to uri="direct:c"/>
+        </when>
+        <otherwise>
+          <to uri="direct:d"/>
+        </otherwise>
+      </choice>
+    </onException>
+    <route id="route1">
+      <from uri="timer://purgeTimer?period=900000"/>
+      <log loggingLevel="INFO" logName="test" message="testPing..."/>
+      <to uri="direct:e"/>
+    </route>
+    <route id="route2">
+      <from uri="direct:b"/>
+      <log loggingLevel="INFO" logName="test" message="direct:b"/>
+    </route>
+    <route>
+      <from uri="direct:c"/>
+      <log loggingLevel="INFO" logName="test" message="direct:c"/>
+    </route>
+    <route>
+      <from uri="direct:d"/>
+      <log loggingLevel="INFO" logName="test" message="direct:d"/>
+    </route>
+    <route>
+      <from uri="direct:e"/>
+      <log loggingLevel="INFO" logName="test" message="direct:e"/>
+    </route>
+  </camelContext>
+
+
   <!-- infinispan demo -->
   <bean id="infinispanFactory" class="io.hawt.example.infinispan.InfinispanDemo" init-method="init" lazy-init="false"/>
 </beans>
