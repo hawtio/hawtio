@@ -70,18 +70,22 @@ module Camel {
 
             var jolokia = workspace.jolokia;
             // if camel then use a different operation on the camel context mbean
+            var callback = onSuccess(sendWorked);
             if (selection.domain === "org.apache.camel") {
               var uri = selection.title;
               mbean = getSelectionCamelContextMBean(workspace);
               if (mbean) {
-                jolokia.execute(mbean, "sendStringBody(java.lang.String,java.lang.String)", uri, body, onSuccess(sendWorked));
+                if (headers) {
+                  jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
+                } else {
+                  jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
+                }
               } else {
                 notification("error", "Could not find CamelContext MBean!");
               }
             } else {
               var user = localStorage["activemqUserName"];
               var pwd = localStorage["activemqPassword"];
-              var callback = onSuccess(sendWorked);
               if (headers) {
                 jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
               } else {
