@@ -89,7 +89,8 @@ module Camel {
           type: 'exec', mbean: $scope.mbean,
           operation: 'dumpRoutesStatsAsXml',
           arguments: [true, true]
-        }, onSuccess(statsCallback));
+          // the dumpRoutesStatsAsXml is not available in all Camel versions so do not barf on errors
+        }, onSuccess(statsCallback, {silent: true, error: false}));
       }
       return width;
     }
