@@ -1,6 +1,7 @@
 module Camel {
     export function TraceRouteController($scope, workspace:Workspace) {
       $scope.tracing = false;
+      $scope.tracingBodyLength = 1000;
       $scope.data = [];
       $scope.graphView = null;
       $scope.tableView = null;
@@ -80,6 +81,11 @@ module Camel {
           if ($scope.tracing) {
             var traceMBean = mbean;
             if (traceMBean) {
+              // set the body length
+              // the body max chars attribute is not available on all Camel versions, so do not barf on error
+              console.log("Setting body max chars to " + $scope.tracingBodyLength);
+              jolokia.setAttribute(mbean, "BodyMaxChars", $scope.tracingBodyLength, onSuccess(null, {silent: true, error: false}));
+
               var query = {type: 'exec', mbean: traceMBean, operation: 'dumpAllTracedMessagesAsXml'};
               scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteMessages, query));
             }

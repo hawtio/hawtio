@@ -492,19 +492,19 @@ module Camel {
       if (tree && selection) {
         var domain = selection.domain;
         if (domain && contextId) {
-          // look for the fuse camel fabric mbean
-          var result = tree.navigate(domain, contextId, "fabric");
+          // look for the Camel 2.11 mbean which we prefer
+          var result = tree.navigate(domain, contextId, "tracer");
           if (result && result.children) {
-            var mbean = result.children.first();
-            return mbean.objectName;
+            var mbean = result.children.find(m => m.title.startsWith("Backlog"));
+            if (mbean) {
+              return mbean.objectName;
+            }
           } else {
-            // look for the Camel 2.11 mbean
-            var result = tree.navigate(domain, contextId, "tracer");
+            // look for the fuse camel fabric mbean
+            var result = tree.navigate(domain, contextId, "fabric");
             if (result && result.children) {
-              var mbean = result.children.find(m => m.title.startsWith("Backlog"));
-              if (mbean) {
-                return mbean.objectName;
-              }
+              var mbean = result.children.first();
+              return mbean.objectName;
             }
           }
         }
