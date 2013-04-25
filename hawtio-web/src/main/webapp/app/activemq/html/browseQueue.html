@@ -47,9 +47,49 @@
   </div>
 
   <div class="row-fluid">
-    <div class="gridStyle" hawtio-datatable="gridOptions"></div>
-<!--
     <div class="gridStyle" ng-grid="gridOptions"></div>
--->
+    <!--
+        <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+    -->
+  </div>
+
+  <div modal="showMessageDialog" close="closeMessageDialog()" options="messageDialogOptions">
+    <form class="form-horizontal no-bottom-margin" ng-submit="closeMessageDialog()">
+      <div class="modal-header"><h4>Message {{row.JMSMessageID}}</h4></div>
+      <div class="modal-body">
+        <div class="expandable closed">
+          <div title="Headers" class="title">
+            <i class="expandable-indicator"></i> Headers
+          </div>
+          <div class="expandable-body well">
+            <table class="table table-condensed table-striped">
+              <thead>
+              <tr>
+                <th>Header</th>
+                <th>Value</th>
+              </tr>
+              </thead>
+              <tbody ng-bind-html-unsafe="row.headerHtml">
+              </tbody>
+              <!--
+                            <tr ng-repeat="(key, value) in row.headers">
+                              <td class="property-name">{{key}}</td>
+                              <td class="property-value">{{value}}</td>
+                            </tr>
+              -->
+            </table>
+          </div>
+        </div>
+
+        <div ng-controller="Core.EditorController">
+          <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
+                    ng-model="row.Text"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input id="submit" class="btn btn-primary" type="submit" ng-click="closeMessageDialog()" value="Close">
+      </div>
+    </form>
   </div>
 </div>
+

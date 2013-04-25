@@ -2,6 +2,13 @@ module ActiveMQ {
   export function BrowseQueueController($scope, workspace:Workspace) {
 
     $scope.selectedItems = [];
+    $scope.headers = {};
+
+    $scope.showMessageDialog = false;
+    $scope.messageDialogOptions = {
+      backdropFade: true,
+      dialogFade: true
+    };
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -11,13 +18,16 @@ module ActiveMQ {
       filterOptions: {
         filterText: "searchText"
       },
+      selectWithCheckboxOnly: true,
       columnDefs: [
         {
           field: 'JMSMessageID',
           displayName: 'Message ID',
+          cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.JMSMessageID}}</a></div>',
           // for ng-grid
-          // width: "***"
-          width: "22em"
+          width: "***"
+          // for hawtio-datatable
+          // width: "22em"
         },
         {
           field: 'JMSType',
@@ -47,11 +57,11 @@ module ActiveMQ {
       rowDetailTemplateId: "activemqMessageTemplate"
     };
 
+
     var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
     var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
       "DoubleProperties", "StringProperties"];
 
-    // TODO This should be a directive
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
 
@@ -59,7 +69,44 @@ module ActiveMQ {
       setTimeout(loadTable, 50);
     });
 
-    $scope.headers = (row) => {
+    $scope.openMessageDialog = (message) => {
+      $scope.row = Core.pathGet(message, ["entity"]);
+      if ($scope.row) {
+        $scope.showMessageDialog = true;
+      }
+    };
+
+    $scope.closeMessageDialog = () => {
+      $scope.showMessageDialog = false;
+    };
+
+    $scope.move = () => {
+      console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
+    };
+
+    function populateTable(response) {
+      $scope.messages = response.value;
+      angular.forEach($scope.messages, (message) => {
+        message.headerHtml = createHeaderHtml(message);
+      });
+      Core.$apply($scope);
+    }
+
+    /**
+     * For some reason using ng-repeat in the modal dialog doesn't work so lets
+     * just create the HTML in code :)
+     */
+    function createHeaderHtml(message) {
+      var headers = createHeaders(message);
+      var buffer = "";
+      angular.forEach(headers, (value, key) => {
+        buffer += "<tr><td class='property-name'>" + key + "</td>" +
+                "<td class='property-value'>" + value + "</td></tr>";
+      });
+      return buffer;
+    }
+
+    function createHeaders(row) {
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key)) {
@@ -71,16 +118,6 @@ module ActiveMQ {
         }
       });
       return answer;
-    };
-
-    $scope.move = () => {
-      console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
-    };
-
-    function populateTable(response) {
-      $scope.messages = response.value;
-      //$scope.widget.populateTable(response.value);
-      Core.$apply($scope);
     }
 
     function loadTable() {
