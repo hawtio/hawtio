@@ -25,7 +25,7 @@ module ActiveMQ {
           displayName: 'Message ID',
           cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.JMSMessageID}}</a></div>',
           // for ng-grid
-          width: "***"
+          width: "****"
           // for hawtio-datatable
           // width: "22em"
         },
