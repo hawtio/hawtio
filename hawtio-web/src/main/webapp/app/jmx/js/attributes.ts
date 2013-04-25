@@ -1,8 +1,8 @@
 module Jmx {
 
   export var propertiesColumnDefs = [
-    {field: 'name', displayName: 'Property' /*, width: "20%"*/},
-    {field: 'value', displayName: 'Value' /*,  width: "70%"*/}
+    {field: 'name', displayName: 'Property', width: "30%"},
+    {field: 'value', displayName: 'Value',  width: "70%"}
   ];
 
   export var foldersColumnDefs = [{
