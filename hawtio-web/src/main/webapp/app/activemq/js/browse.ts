@@ -84,6 +84,32 @@ module ActiveMQ {
       console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
     };
 
+    $scope.openDeleteDialog = () => {
+      $scope.showDeleteDialog = true;
+    };
+
+    $scope.deleteMessagesAndCloseDeleteDialog = () => {
+      var jolokia = workspace.jolokia;
+      var selection = workspace.selection;
+      var mbean = selection.objectName;
+      if (mbean && selection && jolokia) {
+        $scope.message = "Deleted message";
+        var operation = "removeMessage(java.lang.String)";
+        angular.forEach($scope.selectedItems, (item, idx) => {
+          var id = item.JMSMessageID;
+          if (id) {
+            var callback = (idx + 1 < $scope.selectedItems.length) ? intermediateResult : deleteSuccess;
+            jolokia.execute(mbean, operation, id, onSuccess(callback));
+          }
+        });
+      }
+      $scope.closeDeleteDialog();
+    };
+
+    $scope.closeDeleteDialog = () => {
+      $scope.showDeleteDialog = false;
+    };
+
     function populateTable(response) {
       $scope.messages = response.value;
       angular.forEach($scope.messages, (message) => {
@@ -134,20 +160,12 @@ module ActiveMQ {
       }
     }
 
-    $scope.deleteMessage = (id) => {
-        var jolokia = workspace.jolokia;
-        var selection = workspace.selection;
-        var mbean = selection.objectName;
-        if (mbean && selection && jolokia) {
-          $scope.message = "Deleted message";
-          var operation = "removeMessage(java.lang.String)";
-          jolokia.execute(mbean, operation, id, onSuccess(deleteSuccess()));
-        }
+    function intermediateResult() {
     }
 
-      function deleteSuccess() {
-        notification("success", $scope.message);
-        setTimeout(loadTable, 50);
-      }
+    function deleteSuccess() {
+      notification("success", $scope.message);
+      setTimeout(loadTable, 50);
+    }
   }
 }

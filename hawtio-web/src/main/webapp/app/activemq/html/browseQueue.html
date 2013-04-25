@@ -1,45 +1,18 @@
-<script type="text/ng-template" id="activemqMessageTemplate">
-  <div class="expandable closed">
-    <div title="Headers" class="title">
-      <i class="expandable-indicator"></i> Headers
-    </div>
-    <div class="expandable-body well">
-      <table class="table table-condensed table-striped">
-        <thead>
-        <tr>
-          <th>Header</th>
-          <th>Value</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="(key, value) in headers(row)">
-          <td class="property-name">{{key}}</td>
-          <td class="property-value">{{value}}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div ng-controller="Core.EditorController">
-    <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
-              ng-model="row.Text"></textarea>
-  </div>
-
-  <div><button type="submit" class="btn" ng-click="deleteMessage(row.JMSMessageID)"><i class="icon-remove"></i> Delete Message</button></div>
-</script>
-
 <div ng-controller="ActiveMQ.BrowseQueueController">
   <div class="row-fluid">
-    <form class="form-inline no-bottom-margin">
-      <div class="control-group">
+    <form class="form-inline">
+      <div class="control-group span12">
         <div class="controls inline-block">
-          <input class="search-query span8" type="text" ng-model="searchText"
+          <input class="search-query span4" type="text" ng-model="searchText"
                  placeholder="Filter messages">
 
           <button class="btn pull-right" ng-disabled="!selectedItems.length" ng-click="move()"
-                  title="Move the message to another destination" data-placement="bottom">
+                  title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-move"></i> Move
+          </button>
+          <button type="submit" class="btn pull-right" ng-disabled="!selectedItems.length" ng-click="openDeleteDialog()"
+                  title="Delete the selected messages">
+            <i class="icon-remove"></i> Delete
           </button>
         </div>
       </div>
@@ -87,7 +60,20 @@
         </div>
       </div>
       <div class="modal-footer">
-        <input id="submit" class="btn btn-primary" type="submit" ng-click="closeMessageDialog()" value="Close">
+        <input class="btn btn-primary" type="submit" ng-click="closeMessageDialog()" value="Close">
+      </div>
+    </form>
+  </div>
+
+  <div modal="showDeleteDialog" close="closeDeleteDialog()" options="messageDialogOptions">
+    <form class="form-horizontal no-bottom-margin" ng-submit="closeDeleteDialog()">
+      <div class="modal-header"><h4>Are you sure?</h4></div>
+      <div class="modal-body">
+        <p>You are about to delete {{selectedItems.length}} messages!</p>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-danger" type="submit" ng-click="deleteMessagesAndCloseDeleteDialog()" value="Delete">
+        <input class="btn btn-primary" ng-click="closeDeleteDialog()" value="Cancel">
       </div>
     </form>
   </div>
