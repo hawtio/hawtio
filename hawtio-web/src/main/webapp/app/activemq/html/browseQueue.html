@@ -21,34 +21,33 @@
     </div>
   </div>
 
-    <div ng-controller="Core.EditorController">
-      <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
-                ng-model="row.Text"></textarea>
-    </div>
+  <div ng-controller="Core.EditorController">
+    <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
+              ng-model="row.Text"></textarea>
+  </div>
 </script>
 
 <div ng-controller="ActiveMQ.BrowseQueueController">
-  <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+  <div class="row-fluid">
+    <form class="form-inline no-bottom-margin">
+      <div class="control-group">
+        <div class="controls inline-block">
+          <input class="search-query span8" type="text" ng-model="searchText"
+                 placeholder="Filter messages">
+
+          <button class="btn pull-right" ng-disabled="!selectedItems.length" ng-click="move()"
+                  title="Move the message to another destination" data-placement="bottom">
+            <i class="icon-move"></i> Move
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row-fluid">
+    <div class="gridStyle" hawtio-datatable="gridOptions"></div>
 <!--
-  <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-striped table-bordered table-hover"
-         id="grid" style="table-layout: auto;">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Message ID</th>
-      <th>Correlation ID</th>
-      <th>Timestamp</th>
-      <th>Delivery Mode</th>
-      <th>Reply To</th>
-      <th>Redelivered</th>
-      <th>Priority</th>
-      <th>Group ID</th>
-      <th>Expiration</th>
-      <th>Type</th>
-      <th>Destination</th>
-    </tr>
-    </thead>
-    <tbody>
-  </table>
+    <div class="gridStyle" ng-grid="gridOptions"></div>
 -->
+  </div>
 </div>

@@ -15,6 +15,8 @@ module ActiveMQ {
         {
           field: 'JMSMessageID',
           displayName: 'Message ID',
+          // for ng-grid
+          // width: "***"
           width: "22em"
         },
         {
@@ -69,6 +71,10 @@ module ActiveMQ {
         }
       });
       return answer;
+    };
+
+    $scope.move = () => {
+      console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
     };
 
     function populateTable(response) {
