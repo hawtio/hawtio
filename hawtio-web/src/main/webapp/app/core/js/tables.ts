@@ -146,6 +146,7 @@ class TableWidget {
       if (this.dataTable) {
         this.dataTable.fnClearTable(false);
         this.dataTable.fnAddData(array);
+        this.dataTable.fnDraw();
         // lets try update it...
       } else {
         this.dataTable = tableElement.dataTable(this.dataTableConfig);
