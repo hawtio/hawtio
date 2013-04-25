@@ -25,6 +25,8 @@
     <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
               ng-model="row.Text"></textarea>
   </div>
+
+  <div><button type="submit" class="btn" ng-click="deleteMessage(row.JMSMessageID)"><i class="icon-remove"></i> Delete Message</button></div>
 </script>
 
 <div ng-controller="ActiveMQ.BrowseQueueController">
@@ -51,3 +53,4 @@
 -->
   </div>
 </div>
+<div></div>

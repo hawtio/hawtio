@@ -96,5 +96,21 @@ module ActiveMQ {
         }
       }
     }
+
+    $scope.deleteMessage = (id) => {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var mbean = selection.objectName;
+        if (mbean && selection && jolokia) {
+          $scope.message = "Deleted message";
+          var operation = "removeMessage(java.lang.String)";
+          jolokia.execute(mbean, operation, id, onSuccess(deleteSuccess()));
+        }
+    }
+
+      function deleteSuccess() {
+        notification("success", $scope.message);
+        setTimeout(loadTable, 50);
+      }
   }
 }
