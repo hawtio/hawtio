@@ -64,8 +64,8 @@ module Camel {
               {field: 'Uptime', displayName: 'Uptime', visible: false},
               {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'LastExchangeCompletedTimestamp', displayName: 'Completed Since', cellTemplate: sinceTemplate},
-              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
+              // TODO: #294 -- consider if we want to have a column with since last message info
+              //{field: 'LastExchangeCompletedTimestamp', displayName: 'Completed Since', cellTemplate: sinceTemplate},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
