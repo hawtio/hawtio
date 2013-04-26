@@ -112,7 +112,7 @@ module Jmx {
             operationComplete();
           }
         };
-        jolokia.request(queries, onSuccess(callback));
+        jolokia.request(queries, onSuccess(callback, {error: callback}));
       }
     };
 

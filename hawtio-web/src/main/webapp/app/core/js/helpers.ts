@@ -134,12 +134,19 @@ function onSuccess(fn, options = {}) {
   if (!options['error']) {
     options['error'] = function (response) {
       //alert("Jolokia request failed: " + response.error);
-      console.log("Jolokia request failed: " + response.error);
       var stacktrace = response.stacktrace;
       if (stacktrace) {
         console.log(stacktrace);
         if (!options['silent']) {
-          notification("error", "Operation failed due to: " + stacktrace);
+          if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
+                  stacktrace.indexOf(" java.lang.IllegalArgumentException: No operation") >= 0) {
+            // ignore these errors as they can happen on timing issues
+            // such as its been removed
+            // or if we run against older containers
+          } else {
+            notification("error", "Operation failed due to: " + stacktrace);
+            console.log("Jolokia request failed: " + response.error);
+          }
         }
       }
     };
