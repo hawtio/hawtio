@@ -149,6 +149,15 @@
     </route>
   </camelContext>
 
+  <camelContext id="cheese" xmlns="http://camel.apache.org/schema/spring">
+  </camelContext>
+
+  <camelContext id="thingy" xmlns="http://camel.apache.org/schema/spring">
+  </camelContext>
+
+  <camelContext id="bar" xmlns="http://camel.apache.org/schema/spring">
+  </camelContext>
+
 
   <!-- infinispan demo -->
   <bean id="infinispanFactory" class="io.hawt.example.infinispan.InfinispanDemo" init-method="init" lazy-init="false"/>
