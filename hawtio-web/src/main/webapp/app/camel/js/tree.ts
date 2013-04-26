@@ -7,10 +7,17 @@ module Camel {
       setTimeout(updateSelectionFromURL, 50);
     });
 
-    $scope.$on('jmxTreeUpdated', reloadFunction);
-    $scope.$watch('workspace.tree', reloadFunction);
+    $scope.$watch('workspace.tree', function () {
+      reloadFunction();
+    });
+
+    $scope.$on('jmxTreeUpdated', function () {
+      reloadFunction();
+    });
 
     function reloadFunction() {
+      console.log("reloading the camel tree!!!");
+
       var children = [];
       var domainName = "org.apache.camel";
 
@@ -90,7 +97,7 @@ module Camel {
         }
 
         var treeElement = $("#cameltree");
-        Jmx.enableTree($scope, $location, workspace, treeElement, [rootFolder]);
+        Jmx.enableTree($scope, $location, workspace, treeElement, [rootFolder], true);
         /*
 
          // lets select the first node if we have no selection
