@@ -702,4 +702,13 @@ module Core {
     }
     return null;
   }
+
+  /**
+   * Given values (n, "person") will return either "1 person" or "2 people" depending on if a plural
+   * is required using the String.pluralize() function from sugarjs
+   */
+  export function maybePlural(count: Number, word: string) {
+    var pluralWord = (count === 1) ? word : word.pluralize();
+    return "" + count + " " + pluralWord;
+  }
 }

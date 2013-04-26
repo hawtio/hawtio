@@ -71,7 +71,12 @@
     <form class="form-horizontal no-bottom-margin" ng-submit="deleteDialog.close()">
       <div class="modal-header"><h4>Are you sure?</h4></div>
       <div class="modal-body">
-        <p>You are about to delete {{selectedItems.length}} messages!</p>
+        <p>You are about to delete
+          <ng-pluralize count="selectedItems.length"
+                           when="{'1': 'a message!', 'other': '{} messages!'}">
+          </ng-pluralize>
+        </p>
+        <p>This operation cannot be undone so please be careful.</p>
       </div>
       <div class="modal-footer">
         <input class="btn btn-danger" type="submit" ng-click="deleteMessagesAndCloseDeleteDialog()" value="Delete">

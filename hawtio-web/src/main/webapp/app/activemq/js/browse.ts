@@ -82,7 +82,7 @@ module ActiveMQ {
       var selection = workspace.selection;
       var mbean = selection.objectName;
       if (mbean && selection && jolokia) {
-        $scope.message = "Deleted message";
+        $scope.message = "Deleted " + Core.maybePlural($scope.selectedItems.length, "message");
         var operation = "removeMessage(java.lang.String)";
         angular.forEach($scope.selectedItems, (item, idx) => {
           var id = item.JMSMessageID;
