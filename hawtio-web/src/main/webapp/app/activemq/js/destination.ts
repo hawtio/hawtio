@@ -16,12 +16,7 @@ module ActiveMQ {
 
     function deleteSuccess() {
       // lets set the selection to the parent
-      if (workspace.selection) {
-        var parent = workspace.selection.parent;
-        if (parent) {
-          $scope.workspace.updateSelectionNode(parent);
-        }
-      }
+      workspace.selectParentNode();
       $scope.workspace.operationCounter += 1;
       $scope.$apply();
       notification("success", $scope.message);

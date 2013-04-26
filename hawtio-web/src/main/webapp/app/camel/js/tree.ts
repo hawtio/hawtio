@@ -12,11 +12,18 @@ module Camel {
 
     function reloadFunction() {
       var children = [];
+      var domainName = "org.apache.camel";
 
       // lets pull out each context
       var tree = workspace.tree;
       if (tree) {
-        var domainName = "org.apache.camel";
+        var rootFolder = new Folder("Camel Contexts");
+        rootFolder.addClass = "org-apache-camel-contexts-folder";
+        rootFolder.children = children;
+        rootFolder.typeName = "contexts";
+        rootFolder.key = "camelContexts";
+        rootFolder.domain = domainName;
+
         var folder = tree.get(domainName);
         if (folder) {
           angular.forEach(folder.children, (value, key) => {
@@ -74,6 +81,7 @@ module Camel {
                     jmxNode.sortChildren(false);
                     folder.children.push(jmxNode);
                   }
+                  folder.parent = rootFolder;
                   children.push(folder);
                 }
               }
@@ -82,7 +90,7 @@ module Camel {
         }
 
         var treeElement = $("#cameltree");
-        Jmx.enableTree($scope, $location, workspace, treeElement, children);
+        Jmx.enableTree($scope, $location, workspace, treeElement, [rootFolder]);
         /*
 
          // lets select the first node if we have no selection

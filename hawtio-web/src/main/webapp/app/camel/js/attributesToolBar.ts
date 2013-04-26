@@ -15,7 +15,11 @@ module Camel {
     };
 
     $scope.stop = () => {
-      $scope.invokeSelectedMBeans("stop()");
+      $scope.invokeSelectedMBeans("stop()", () => {
+        // lets navigate to the parent folder!
+        // as this will be going way
+        workspace.selectParentNode();
+      });
     };
 
     /**

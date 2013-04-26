@@ -421,6 +421,20 @@ class Workspace {
   }
 
   /**
+   * In cases where we have just deleted something we typically want to change
+   * the selection to the parent node
+   */
+  public selectParentNode() {
+    var selection = this.selection;
+    if (selection) {
+      var parent = selection.parent;
+      if (parent) {
+        this.updateSelectionNode(parent);
+      }
+    }
+  }
+
+  /**
    * Returns the view configuration key for the kind of selection
    * for example based on the domain and the node type
    */
