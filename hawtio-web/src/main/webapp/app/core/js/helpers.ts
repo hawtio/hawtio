@@ -139,6 +139,7 @@ function onSuccess(fn, options = {}) {
         console.log(stacktrace);
         if (!options['silent']) {
           if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
+                  stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
                   stacktrace.indexOf(" java.lang.IllegalArgumentException: No operation") >= 0) {
             // ignore these errors as they can happen on timing issues
             // such as its been removed
