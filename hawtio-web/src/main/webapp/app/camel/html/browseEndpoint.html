@@ -1,5 +1,3 @@
-<ng-include src="'app/camel/html/browseMessageTemplate.html'"></ng-include>
-
 <div ng-controller="Camel.BrowseEndpointController">
   <div class="row-fluid">
     <div class="span6">
@@ -32,36 +30,5 @@
     -->
   </div>
 
-  <div modal="messageDialog.show" close="messageDialog.close()" options="messageDialog.options">
-    <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
-      <div class="modal-header"><h4>Message {{row.id}}</h4></div>
-      <div class="modal-body">
-        <div class="expandable closed">
-          <div title="Headers" class="title">
-            <i class="expandable-indicator"></i> Headers
-          </div>
-          <div class="expandable-body well">
-            <table class="table table-condensed table-striped">
-              <thead>
-              <tr>
-                <th>Header</th>
-                <th>Value</th>
-              </tr>
-              </thead>
-              <tbody ng-bind-html-unsafe="row.headerHtml">
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div ng-controller="Core.EditorController">
-          <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.body)}}"
-                    ng-model="row.body"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-primary" type="submit" ng-click="messageDialog.close()" value="Close">
-      </div>
-    </form>
-  </div>
+  <ng-include src="'app/camel/html/browseMessageTemplate.html'"></ng-include>
 </div>

@@ -1,3 +1,4 @@
+
 module Camel {
 
   export function BrowseEndpointController($scope, workspace:Workspace, jolokia) {
@@ -60,48 +61,7 @@ module Camel {
         var allMessages = $(doc).find("message");
 
         allMessages.each((idx, message) => {
-          var messageData = {
-            headers: {},
-            headerTypes: {},
-            id: null,
-            headerHtml: ""
-          };
-          var headers = $(message).find("header");
-          var headerHtml = "";
-          headers.each((idx, header) => {
-            var key = header.getAttribute("key");
-            var typeName = header.getAttribute("type");
-            var value = header.textContent;
-            if (key) {
-              if (value) messageData.headers[key] = value;
-              if (typeName) messageData.headerTypes[key] = typeName;
-
-              headerHtml += "<tr><td class='property-name'>" + key + "</td>" +
-                      "<td class='property-value'>" + (value || "") + "</td></tr>";
-            }
-          });
-          messageData.headerHtml = headerHtml;
-          var id = messageData.headers["breadcrumbId"];
-          if (!id) {
-            // lets find the first header with a name or Path in it
-            angular.forEach(messageData.headers, (value, key) => {
-              if (!id && (key.endsWith("Name") || key.endsWith("Path"))) {
-                id = value;
-              }
-            });
-            // if still no value, lets use the first :)
-            angular.forEach(messageData.headers, (value, key) => {
-              if (!id) id = value;
-            });
-          }
-          messageData.id = id;
-          var body = $(message).children("body")[0];
-          if (body) {
-            var bodyText = body.textContent;
-            var bodyType = body.getAttribute("type");
-            messageData["body"] = bodyText;
-            messageData["bodyType"] = bodyType;
-          }
+          var messageData = Camel.createMessageFromXml(message);
           data.push(messageData);
         });
       }
