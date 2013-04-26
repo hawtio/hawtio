@@ -59,12 +59,15 @@ module Camel {
             attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
               {field: 'CamelId', displayName: 'Name'},
+              {field: 'Uptime', displayName: 'Uptime', visible: false},
+              {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
               {field: 'MinProcessingTime', displayName: 'Min Time'},
               {field: 'MaxProcessingTime', displayName: 'Max Time'},
-              {field: 'TotalProcessingTime', displayName: 'Total Time'}
+              {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false}
             ];
             attributes[jmxDomain + "/components/folder"] = [
               stateColumn,
