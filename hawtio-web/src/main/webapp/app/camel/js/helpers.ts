@@ -103,7 +103,7 @@ module Camel {
     return answer;
   }
 
-  export function increaseIndent(currentIndent: string, indentAmount = "  ") {
+  export function increaseIndent(currentIndent:string, indentAmount = "  ") {
     return currentIndent + indentAmount;
   }
 
@@ -244,7 +244,7 @@ module Camel {
     return (camelLanguageSettings(nodeName) || nodeName === "expression") ? true : false;
   }
 
-  export function loadCamelTree(xml: string, key: string) {
+  export function loadCamelTree(xml:string, key:string) {
     var doc = $.parseXML(xml);
 
     // TODO get id from camelContext
@@ -291,7 +291,7 @@ module Camel {
   /**
    * Adds the route children to the given folder for each step in the route
    */
-  export function addRouteChildren(folder: Folder, route) {
+  export function addRouteChildren(folder:Folder, route) {
     folder.children = [];
     folder["routeXmlNode"] = route;
     $(route).children("*").each((idx, n) => {
@@ -499,16 +499,12 @@ module Camel {
             if (mbean) {
               return mbean.objectName;
             }
-            // lets try the first child then
-            mbean = result.children.first();
+          }
+          // look for the fuse camel fabric mbean
+          var fabricResult = tree.navigate(domain, contextId, "fabric");
+          if (fabricResult && fabricResult.children) {
+            var mbean = fabricResult.children.first();
             return mbean.objectName;
-          } else {
-            // look for the fuse camel fabric mbean
-            var result = tree.navigate(domain, contextId, "fabric");
-            if (result && result.children) {
-              var mbean = result.children.first();
-              return mbean.objectName;
-            }
           }
         }
       }
@@ -576,7 +572,7 @@ module Camel {
     return answer;
   }
 
-  export function sinceFromTimestamp(timestamp: number) {
+  export function sinceFromTimestamp(timestamp:number) {
     if (!timestamp) {
       return null;
     }
@@ -589,7 +585,7 @@ module Camel {
     return diff;
   }
 
-  export function getSelectedRouteId(workspace: Workspace, folder = null) {
+  export function getSelectedRouteId(workspace:Workspace, folder = null) {
     var selection = folder || workspace.selection;
     var selectedRouteId = null;
     if (selection) {
@@ -608,7 +604,7 @@ module Camel {
    * Returns the selected camel route mbean for the given route id
    */
     // TODO Should be a service
-  export function getSelectionRouteMBean(workspace: Workspace, routeId: String) {
+  export function getSelectionRouteMBean(workspace:Workspace, routeId:String) {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -629,7 +625,7 @@ module Camel {
     return null;
   }
 
-  export function getCamelVersion(workspace: Workspace, jolokia) {
+  export function getCamelVersion(workspace:Workspace, jolokia) {
     var mbean = getSelectionCamelContextMBean(workspace);
     if (mbean) {
       // must use onSuccess(null) that means sync as we need the version asap
