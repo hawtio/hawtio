@@ -14,12 +14,28 @@ module Fabric {
     }
   }
 
-  export function containerAction(action, jolokia, id, success, error) {
+  export function createVersion(jolokia, base, id, success, error) {
+    doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
+  }
+
+  export function createProfile(jolokia, version, id, success, error) {
+    doAction('createProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
+  }
+
+  export function deleteVersion(jolokia, id, success, error) {
+    doAction('deleteVersion(java.lang.String)', jolokia, [id], success, error);
+  }
+
+  export function deleteProfile(jolokia, version, id, success, error) {
+    doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
+  }
+
+  export function doAction(action, jolokia, arguments, success, error) {
     jolokia.request(
         {
           type: 'exec', mbean: managerMBean,
           operation: action,
-          arguments: [id]
+          arguments: arguments
         },
         {
           method: 'POST',
@@ -29,15 +45,15 @@ module Fabric {
   }
   
   export function stopContainer(jolokia, id, success, error) {
-    containerAction('stopContainer(java.lang.String)', jolokia, id, success, error);
+    doAction('stopContainer(java.lang.String)', jolokia, [id], success, error);
   }
 
   export function destroyContainer(jolokia, id, success, error) {
-    containerAction('destroyContainer(java.lang.String)', jolokia, id, success, error);
+    doAction('destroyContainer(java.lang.String)', jolokia, [id], success, error);
   }
 
   export function startContainer(jolokia, id, success, error) {
-    containerAction('startContainer(java.lang.String)', jolokia, id, success, error);
+    doAction('startContainer(java.lang.String)', jolokia, [id], success, error);
   }
   
   

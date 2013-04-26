@@ -1,10 +1,14 @@
 module Fabric {
   
   export function ProfilesController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
-    
-    $scope.version = {id: "1.0"};
-    
-    
+
+    $scope.defaultVersion = jolokia.execute(managerMBean, "defaultVersion()");
+    $scope.version = { id: $scope.defaultVersion.id };
+    $scope.selected = [];
+
+    $scope.deleteVersionDialog = new Core.Dialog();
+    $scope.deleteProfileDialog = new Core.Dialog();
+
     var key = $location.search()['pv'];
     if (key) {
       $scope.version = { id: key };
@@ -43,8 +47,21 @@ module Fabric {
         {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String)', arguments: [$scope.version.id]}],
         onSuccess(render));
     });
-    
-    
+
+    $scope.selectedHasContainers = () => {
+      return $scope.selected.findAll(function(item) { return item.containerCount > 0 }).length > 0;
+    }
+
+    $scope.versionCanBeDeleted = () => {
+      if ($scope.version.id === $scope.defaultVersion.id) {
+        return true;
+      }
+      if ($scope.versions.length === 0) {
+        return true;
+      }
+      return $scope.profiles.findAll(function(item) {return item.containerCount > 0 }).length > 0;
+    }
+
     $scope.gridOptions = {
       data: 'profiles',
       showFilter: false,
@@ -52,7 +69,12 @@ module Fabric {
       filterOptions: {
         filterText: ''
       },
+      selectedItems: $scope.selected,
+      showSelectionCheckbox: true,
+      multiSelect: true,
       selectWithCheckboxOnly: true,
+      keepLastSelected: false,
+      checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" ng-disabled="row.entity.containerCount > 0 || row.entity.childIds.length > 0"/></div>',
       columnDefs: [
         { 
           field: 'id',
@@ -90,6 +112,32 @@ module Fabric {
       ]
     };
 
+    $scope.deleteVersion = () => {
+
+      // avoid getting any not found errors while deleting the version
+      Core.unregister(jolokia, $scope);
+
+      deleteVersion(jolokia, $scope.version.id, function() {
+        notification('success', "Deleted version " + $scope.version.id);
+        $scope.version = $scope.defaultVersion;
+        $scope.$apply();
+      }, function(response) {
+        notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
+        $scope.version = $scope.defaultVersion;
+        $scope.$apply();
+      });
+    }
+
+    $scope.deleteSelected = () => {
+      $scope.selected.each(function(profile) {
+        deleteProfile(jolokia, $scope.version.id, profile.id, function() {
+          notification('success', "Deleted profile " + profile.id);
+        }, function(response) {
+          notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
+        })
+      });
+    }
+
     function filterActive(data) {
       var rc = data;
       if ($scope.activeOnly) {
@@ -107,7 +155,18 @@ module Fabric {
         if (!Object.equal($scope.versionResponse, response.value)) {
           $scope.versionResponse = response.value
           
-          $scope.versions = response.value.map(function(version) { return {id: version.id, default:version.defaultVersion}});
+          $scope.versions = response.value.map(function(version) {
+            var v = {
+              id: version.id,
+              'defaultVersion': version.defaultVersion
+            }
+
+            if (v['defaultVersion']) {
+              $scope.defaultVersion = v;
+            }
+
+            return v;
+          });
           $scope.version = setSelect($scope.version, $scope.versions);
           
           $scope.$apply();

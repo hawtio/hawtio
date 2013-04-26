@@ -1,7 +1,7 @@
 module Fabric {
   export var jmxDomain = 'org.fusesource.fabric';
 
-  angular.module('fabric', ['bootstrap', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore']).config(($routeProvider) => {
+  angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html'}).
             when('/fabric/createContainer', {templateUrl: 'app/fabric/html/createContainer.html'}).
