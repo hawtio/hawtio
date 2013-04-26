@@ -49,12 +49,13 @@ This avoids us having `/foo` and `/foos` top level paths and having to figure ou
 
 ## UI Conventions
 
-When showing buttons we tend to use the order Start, Pause, Stop, Delete (remove where applicable) so that the more serious options like Delete are at the far end and the easier options (start/pause) are closer together.
+When showing buttons we tend to use the order Start, Pause, Stop, Refresh, Delete (remove where applicable) so that the more serious options like Delete are at the far end and the easier options (start/pause) are closer together.
 
-We are currently using these Font Awesome icons by default
+We are currently using these [Font Awesome icons](http://fortawesome.github.io/Font-Awesome/) by default
 
   * start: green icon-play-circle
   * pause: icon-pause
   * stop: orangle icon-off
+  * refresh: icon-refresh
   * delete: icon-remove
 
