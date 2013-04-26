@@ -702,5 +702,4 @@ module Core {
     }
     return null;
   }
-
 }

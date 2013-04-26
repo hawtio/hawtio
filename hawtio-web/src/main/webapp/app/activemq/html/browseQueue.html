@@ -12,7 +12,7 @@
             <i class="icon-move"></i> Move
           </button>
           <button type="submit" class="btn" ng-disabled="!selectedItems.length"
-                  ng-click="openDeleteDialog()"
+                  ng-click="deleteDialog.open()"
                   title="Delete the selected messages">
             <i class="icon-remove"></i> Delete
           </button>
@@ -28,8 +28,8 @@
     -->
   </div>
 
-  <div modal="showMessageDialog" close="closeMessageDialog()" options="messageDialogOptions">
-    <form class="form-horizontal no-bottom-margin" ng-submit="closeMessageDialog()">
+  <div modal="messageDialog.show" close="messageDialog.close()" options="messageDialog.options">
+    <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
       <div class="modal-header"><h4>Message {{row.JMSMessageID}}</h4></div>
       <div class="modal-body">
         <div class="expandable closed">
@@ -62,20 +62,20 @@
         </div>
       </div>
       <div class="modal-footer">
-        <input class="btn btn-primary" type="submit" ng-click="closeMessageDialog()" value="Close">
+        <input class="btn btn-primary" type="submit" ng-click="messageDialog.close()" value="Close">
       </div>
     </form>
   </div>
 
-  <div modal="showDeleteDialog" close="closeDeleteDialog()" options="messageDialogOptions">
-    <form class="form-horizontal no-bottom-margin" ng-submit="closeDeleteDialog()">
+  <div modal="deleteDialog.show" close="deleteDialog.close()" options="deleteDialog.options">
+    <form class="form-horizontal no-bottom-margin" ng-submit="deleteDialog.close()">
       <div class="modal-header"><h4>Are you sure?</h4></div>
       <div class="modal-body">
         <p>You are about to delete {{selectedItems.length}} messages!</p>
       </div>
       <div class="modal-footer">
         <input class="btn btn-danger" type="submit" ng-click="deleteMessagesAndCloseDeleteDialog()" value="Delete">
-        <input class="btn btn-primary" ng-click="closeDeleteDialog()" value="Cancel">
+        <input class="btn btn-primary" ng-click="deleteDialog.close()" value="Cancel">
       </div>
     </form>
   </div>

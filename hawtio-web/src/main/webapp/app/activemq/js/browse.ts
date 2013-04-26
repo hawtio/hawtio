@@ -4,11 +4,8 @@ module ActiveMQ {
     $scope.selectedItems = [];
     $scope.headers = {};
 
-    $scope.showMessageDialog = false;
-    $scope.messageDialogOptions = {
-      backdropFade: true,
-      dialogFade: true
-    };
+    $scope.deleteDialog = new Core.Dialog();
+    $scope.messageDialog = new Core.Dialog();
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -72,20 +69,12 @@ module ActiveMQ {
     $scope.openMessageDialog = (message) => {
       $scope.row = Core.pathGet(message, ["entity"]);
       if ($scope.row) {
-        $scope.showMessageDialog = true;
+        $scope.messageDialog.open();
       }
-    };
-
-    $scope.closeMessageDialog = () => {
-      $scope.showMessageDialog = false;
     };
 
     $scope.move = () => {
       console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
-    };
-
-    $scope.openDeleteDialog = () => {
-      $scope.showDeleteDialog = true;
     };
 
     $scope.deleteMessagesAndCloseDeleteDialog = () => {
@@ -103,11 +92,7 @@ module ActiveMQ {
           }
         });
       }
-      $scope.closeDeleteDialog();
-    };
-
-    $scope.closeDeleteDialog = () => {
-      $scope.showDeleteDialog = false;
+      $scope.deleteDialog.close();
     };
 
     function populateTable(response) {
