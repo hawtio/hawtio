@@ -14,20 +14,20 @@ module Tomcat {
       if (state) {
         switch (state.toString().toLowerCase()) {
           case '1':
-            return "green icon-play";
+            return "green icon-play-circle";
           case 'started':
-            return "green icon-play";
+            return "green icon-play-circle";
           case '0':
-            return "red icon-stop";
+            return "orange icon-off";
           case 'stopped':
-            return "red icon-stop";
+            return "orange icon-off";
         }
       }
 
       // Tomcat 5 uses 0 for stopped
       if (angular.isNumber(state)) {
         if (state.toString() === '0') {
-          return "red icon-stop";
+          return "orange icon-off";
         }
       }
 

@@ -21,14 +21,14 @@ module JBoss {
       if (state) {
         switch (state.toString().toLowerCase()) {
           case 'started':
-            return "green icon-play";
+            return "green icon-play-circle";
           case 'ok':
-            return "green icon-play";
+            return "green icon-play-circle";
           case 'true':
-            return "green icon-play";
+            return "green icon-play-circle";
         }
       }
-      return "red icon-stop";
+      return "orange icon-off";
     }
 
 }

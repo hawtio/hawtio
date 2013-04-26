@@ -551,12 +551,12 @@ module Camel {
     if (state) {
       switch (state.toLowerCase()) {
         case 'started':
-          return "green icon-play";
+          return "green icon-play-circle";
         case 'suspended':
           return "icon-pause";
       }
     }
-    return "red icon-stop";
+    return "orange icon-off";
   }
 
   export function getSelectedRouteId(workspace: Workspace, folder = null) {
