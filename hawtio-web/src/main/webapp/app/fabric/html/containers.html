@@ -7,7 +7,7 @@
             <div class="btn-group">
               <button ng-disabled="selectedContainers.length == 0 || !anySelectionAlive(false)" class="btn" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
               <button ng-disabled="selectedContainers.length == 0 || !anySelectionAlive(true)" class="btn" ng-click="stop()"><i class="icon-off"></i> Stop</button>
-              <button ng-disabled="selectedContainers.length == 0 || !everySelectionAlive(false)" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+              <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
             </div>
           </div>
           <!--
