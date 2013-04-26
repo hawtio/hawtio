@@ -63,7 +63,10 @@ module Jmx {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if (workspace.moveIfViewInvalid()) {
+        Core.unregister(jolokia, $scope);
+        return;
+      }
       updateTableContents();
     });
 
@@ -136,6 +139,9 @@ module Jmx {
     };
 
     function updateTableContents() {
+      // lets clear any previous queries just in case!
+      Core.unregister(jolokia, $scope);
+
       $scope.gridData = [];
       $scope.mbeanIndex = null;
       var mbean = workspace.getSelectedMBeanName();
@@ -181,8 +187,6 @@ module Jmx {
       var callback = onSuccess(render);
       if (request) {
         $scope.request = request;
-        // lets clear any previous queries
-        Core.unregister(jolokia, $scope);
         Core.register(jolokia, $scope, request, callback);
       } else if (node) {
         if (node.key !== $scope.lastKey) {

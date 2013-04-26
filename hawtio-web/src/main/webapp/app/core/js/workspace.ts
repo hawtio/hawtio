@@ -424,11 +424,21 @@ class Workspace {
    * In cases where we have just deleted something we typically want to change
    * the selection to the parent node
    */
-  public selectParentNode() {
+  public removeAndSelectParentNode() {
     var selection = this.selection;
     if (selection) {
       var parent = selection.parent;
       if (parent) {
+        // lets remove the selection from the parent so we don't do any more JMX attribute queries on the children
+        // or include it in table views etc
+        // would be nice to eagerly remove the tree node too?
+        var idx = parent.children.indexOf(selection);
+        if (idx < 0) {
+          idx = parent.children.findIndex({key: selection.key});
+        }
+        if (idx >= 0) {
+          parent.children.splice(idx, 1);
+        }
         this.updateSelectionNode(parent);
       }
     }
