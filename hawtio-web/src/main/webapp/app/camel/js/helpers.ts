@@ -562,6 +562,20 @@ module Camel {
     return "orange icon-off";
   }
 
+  export function lastExchangeCompletedSince(entity) {
+    var answer = null;
+    if (entity) {
+      answer = entity.lastExchangeCompletedSince;
+      if (!answer) {
+        answer = sinceFromTimestamp(entity["LastExchangeCompletedTimestamp"]);
+        if (answer) {
+          entity.lastExchangeCompletedSince = answer;
+        }
+      }
+    }
+    return answer;
+  }
+
   export function sinceFromTimestamp(timestamp: number) {
     if (!timestamp) {
       return null;

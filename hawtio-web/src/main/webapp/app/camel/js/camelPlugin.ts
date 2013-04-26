@@ -23,7 +23,7 @@ module Camel {
                     when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
           filter('camelIconClass', () => iconClass).
-          filter('sinceFromTimestamp', () => sinceFromTimestamp).
+          filter('lastExchangeCompletedSince', () => lastExchangeCompletedSince).
           run((workspace:Workspace, jolokia, viewRegistry) => {
 
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
@@ -56,7 +56,7 @@ module Camel {
               resizable: false
             };
 
-            var sinceTemplate = '<div class="ngCellText">{{row.getProperty(col.field) | sinceFromTimestamp}}</div>';
+            var sinceTemplate = '<div class="ngCellText">{{row.entity | lastExchangeCompletedSince}}</div>';
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
@@ -64,8 +64,8 @@ module Camel {
               {field: 'Uptime', displayName: 'Uptime', visible: false},
               {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              // TODO: #294 -- consider if we want to have a column with since last message info
-              //{field: 'LastExchangeCompletedTimestamp', displayName: 'Completed Since', cellTemplate: sinceTemplate},
+              {field: 'CompletedSince', displayName: 'Completed Since', cellTemplate: sinceTemplate},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
