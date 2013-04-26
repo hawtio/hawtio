@@ -499,6 +499,9 @@ module Camel {
             if (mbean) {
               return mbean.objectName;
             }
+            // lets try the first child then
+            mbean = result.children.first();
+            return mbean.objectName;
           } else {
             // look for the fuse camel fabric mbean
             var result = tree.navigate(domain, contextId, "fabric");
