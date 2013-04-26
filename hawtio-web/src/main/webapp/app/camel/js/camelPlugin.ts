@@ -56,7 +56,7 @@ module Camel {
             };
 
             var attributes = workspace.attributeColumnDefs;
-            attributes[jmxDomain + "/contexts/folder"] = [
+            attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
               {field: 'CamelId', displayName: 'Name'},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},

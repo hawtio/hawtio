@@ -18,9 +18,9 @@ module Camel {
       var tree = workspace.tree;
       if (tree) {
         var rootFolder = new Folder("Camel Contexts");
-        rootFolder.addClass = "org-apache-camel-contexts-folder";
+        rootFolder.addClass = "org-apache-camel-context-folder";
         rootFolder.children = children;
-        rootFolder.typeName = "contexts";
+        rootFolder.typeName = "context";
         rootFolder.key = "camelContexts";
         rootFolder.domain = domainName;
 
