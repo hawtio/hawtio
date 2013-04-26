@@ -173,7 +173,10 @@ module Fabric {
       },
       selectedItems: $scope.selectedContainers,
       rowHeight: 32,
+      showSelectionCheckbox: true,
       selectWithCheckboxOnly: true,
+      keepLastSelected: false,
+      multiSelect: true,
       columnDefs: [
         { 
           field: 'status',
