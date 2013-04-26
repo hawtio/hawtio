@@ -1,7 +1,10 @@
 module ActiveMQ {
   export function BrowseQueueController($scope, workspace:Workspace) {
 
+    $scope.searchText = '';
+
     $scope.selectedItems = [];
+    $scope.messages = [];
     $scope.headers = {};
 
     $scope.deleteDialog = new Core.Dialog();
@@ -12,46 +15,57 @@ module ActiveMQ {
       data: 'messages',
       displayFooter: false,
       showFilter: false,
+      showColumnMenu: true,
+      enableColumnResize: true,
+      enableColumnReordering: true,
       filterOptions: {
-        filterText: "searchText"
+        filterText: ''
       },
       selectWithCheckboxOnly: true,
+      maintainColumnRatios: false,
       columnDefs: [
         {
           field: 'JMSMessageID',
           displayName: 'Message ID',
           cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.JMSMessageID}}</a></div>',
           // for ng-grid
-          width: "****"
+          width: '50%'
           // for hawtio-datatable
           // width: "22em"
         },
         {
           field: 'JMSType',
-          displayName: 'Type'
+          displayName: 'Type',
+          width: '10%'
         },
         {
           field: 'JMSPriority',
-          displayName: 'Priority'
+          displayName: 'Priority',
+          width: '10%'
         },
         {
           field: 'JMSTimestamp',
-          displayName: 'Timestamp'
+          displayName: 'Timestamp',
+          width: '40%'
         },
         {
           field: 'JMSExpiration',
-          displayName: 'Expires'
+          displayName: 'Expires',
+          width: '10%'
         },
         {
           field: 'JMSReplyTo',
-          displayName: 'Reply To'
+          displayName: 'Reply To',
+          width: '10%'
         },
         {
           field: 'JMSCorrelationID',
-          displayName: 'Correlation ID'
+          displayName: 'Correlation ID',
+          width: '40%'
         }
-      ],
-      rowDetailTemplateId: "activemqMessageTemplate"
+      ]//,
+      /*
+      rowDetailTemplateId: "activemqMessageTemplate"*/
     };
 
 

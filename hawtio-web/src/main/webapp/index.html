@@ -46,7 +46,7 @@
 </style>
 
 <!--  navbar-inverse -->
-<div class="navbar navbar-fixed-top" ng-show="!fullScreen()">
+<div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
     <div class="container">
       <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
@@ -112,11 +112,7 @@ TODO add patch for dashboard until angular supports nested custom injections
 <script type="text/javascript" src="lib/angular-resource.min.js"></script>
 
 <!-- ng-grid -->
-<!--
-TODO replace with non-debug when we can build the patched ng-grid
-<script type="text/javascript" src="lib/ng-grid-1.6.3.js"></script>
--->
-<script type="text/javascript" src="lib/ng-grid-1.6.3.debug.js"></script>
+<script type="text/javascript" src="lib/ng-grid-2.0.4.min.js"></script>
 
 <!-- dyna tree -->
 <script type="text/javascript" src="lib/jquery-ui.custom.min.js"></script>

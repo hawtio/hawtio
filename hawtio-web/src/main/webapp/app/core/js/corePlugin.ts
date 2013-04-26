@@ -233,6 +233,41 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           helpRegistry.addSubTopic('overview', 'faq', 'app/core/doc/faq.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
+          var setGridSize = function (event) {
+
+            var grid = $('.gridStyle');
+
+            if (grid.length > 0) {
+
+              var gridTop = grid.position().top;
+
+              var windowHeight = $(window).height();
+              var height = windowHeight - gridTop - 10;
+
+              var heightStr = height + 'px';
+
+              /*
+              if (grid.parent().css('height')) {
+                console.log("Parent element height: " + grid.parent().css('height'));
+                heightStr = grid.parent().css('height');
+              }
+              */
+
+              grid.css({
+                'min-height': heightStr,
+                'height': heightStr
+              });
+              if (!event || event.type !== "resize") {
+                //console.log("Triggering resize");
+                $(window).resize();
+              }
+            }
+          }
+
+          $rootScope.$on('$includeContentLoaded',setGridSize);
+          $rootScope.$on('$viewContentLoaded', setGridSize);
+          $(window).resize(setGridSize);
+
         }).
         directive('expandable',function () {
           return {
@@ -323,12 +358,22 @@ $(function () {
   });
 });
 
+var adjustHeight = function () {
+  var windowHeight = $(window).height()
+  var headerHeight = $("#main-nav").height()
+  var containerHeight = windowHeight - headerHeight;
+  $("#main").css("min-height", "" + containerHeight + "px");
+}
+
 $(function () {
   hawtioPluginLoader.loadPlugins(function () {
     var doc = $(document);
     angular.bootstrap(doc, hawtioPluginLoader.getModules());
     $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");
     $(document.documentElement).attr('ng-app', 'hawtioCore');
+    adjustHeight();
+    $(window).resize(adjustHeight);
+
   });
 });
 

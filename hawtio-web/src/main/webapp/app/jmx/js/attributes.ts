@@ -1,7 +1,7 @@
 module Jmx {
 
   export var propertiesColumnDefs = [
-    {field: 'name', displayName: 'Property', width: "30%"},
+    {field: 'name', displayName: 'Property', width: "27%"},
     {field: 'value', displayName: 'Value',  width: "70%"}
   ];
 
@@ -11,7 +11,7 @@ module Jmx {
     }];
 
   export function AttributesController($scope, $location, workspace:Workspace, jolokia) {
-    $scope.searchText = "";
+    $scope.searchText = '';
     $scope.columnDefs = [];
     $scope.selectedItems = [];
     $scope.selectCheckBox = true;
@@ -46,9 +46,10 @@ module Jmx {
       showFilter: false,
       //showColumnMenu: false,
       canSelectRows: false,
+      showColumnMenu: true,
       displaySelectionCheckbox: false,
       filterOptions: {
-        filterText: "searchText"
+        filterText: ''
       },
       // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
       //sortInfo: { field: 'name', direction: 'asc'},

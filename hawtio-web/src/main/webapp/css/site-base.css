@@ -1057,3 +1057,11 @@ li.stacktrace {
 .control-button {
   width: 14px;
 }
+
+.ngViewport:focus {
+  outline: none;
+}
+
+.wikiGridStyle {
+  height: 200px;
+}

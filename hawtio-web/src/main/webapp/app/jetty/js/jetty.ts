@@ -6,7 +6,6 @@ module Jetty {
 
     $scope.webapps = [];
     $scope.selected = [];
-    $scope.search = "";
 
     var columnDefs:any[] = [
       {
@@ -41,7 +40,7 @@ module Jetty {
       selectWithCheckboxOnly: true,
       columnDefs: columnDefs,
       filterOptions: {
-        filterText: 'search'
+        filterText: ''
       },
       title: "Web applications"
     };

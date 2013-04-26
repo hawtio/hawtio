@@ -5,7 +5,6 @@ module Jetty {
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
     $scope.connectors = [];
-    $scope.search = "";
 
     var columnDefs:any[] = [
       {
@@ -40,7 +39,7 @@ module Jetty {
       canSelectRows: false,
       columnDefs: columnDefs,
       filterOptions: {
-        filterText: 'search'
+        filterText: ''
       }
     };
 
