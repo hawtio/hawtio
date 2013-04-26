@@ -2,6 +2,8 @@ module Camel {
 
   export function AttributesToolBarController($scope, workspace:Workspace, jolokia) {
 
+    $scope.deleteDialog = new Core.Dialog();
+
     $scope.start = () => {
       $scope.invokeSelectedMBeans((item) => {
         return isState(item, "suspend") ? "resume()" :"start()";
@@ -16,6 +18,9 @@ module Camel {
       $scope.invokeSelectedMBeans("stop()");
     };
 
+    /**
+     * Only for routes!
+     */
     $scope.delete = () => {
       $scope.invokeSelectedMBeans("remove()", () => {
         // force a reload of the tree

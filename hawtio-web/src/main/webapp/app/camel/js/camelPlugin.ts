@@ -10,7 +10,7 @@ module Camel {
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
 
 
-  angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
