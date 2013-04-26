@@ -4,10 +4,15 @@ module Fabric {
 
     $scope.defaultVersion = jolokia.execute(managerMBean, "defaultVersion()");
     $scope.version = { id: $scope.defaultVersion.id };
+
     $scope.selected = [];
+    $scope.selectedParents = [];
 
     $scope.deleteVersionDialog = new Core.Dialog();
     $scope.deleteProfileDialog = new Core.Dialog();
+
+    $scope.createProfileDialog = new Core.Dialog();
+    $scope.newProfileName = '';
 
     var key = $location.search()['pv'];
     if (key) {
@@ -40,6 +45,10 @@ module Fabric {
       var q = $location.search();
       q['pv'] = $scope.version.id;
       $location.search(q);
+
+      if (oldValue === newValue) {
+        notification('info', "Please wait, fetching profile data for version" + $scope.version.id);
+      }
       
       Core.unregister(jolokia, $scope);
       Core.register(jolokia, $scope,[
@@ -61,6 +70,21 @@ module Fabric {
       }
       return $scope.profiles.findAll(function(item) {return item.containerCount > 0 }).length > 0;
     }
+
+    $scope.createProfileGridOptions = {
+      data: 'profiles',
+      selectedItems: $scope.selectedParents,
+      showSelectionCheckbox: true,
+      multiSelect: true,
+      selectWithCheckboxOnly: false,
+      keepLastSelected: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Name'
+        }]
+    }
+
 
     $scope.gridOptions = {
       data: 'profiles',

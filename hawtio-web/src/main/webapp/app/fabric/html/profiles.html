@@ -4,7 +4,7 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="btn-group inline-block">
-            <a href="" title="Create new Profile" class="btn"><i class="icon-plus"></i></a>
+            <a href="" title="Create new Profile" class="btn" ng-click="createProfileDialog.open()"><i class="icon-plus"></i></a>
             <a href="" title="Delete selected Profiles" class="btn" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog.open()"><i class="icon-minus"></i></a>
           </div>
 
@@ -70,10 +70,27 @@
     </form>
   </div>
 
-  <div ng-hide="profiles.length > 0" class="row-fluid">
-    Please wait, loading profile data...
+  <div modal="createProfileDialog.show" close="createProfileDialog.close()" options="createProfileDialog.options">
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
+      <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
+      <div class="modal-body">
+        <label>Profile Name: </label>
+        <input name="id" class="input-xlarge" type="text" ng-model="newProfileName" required ng-pattern="/^[a-zA-Z0-9_-]*$/">
+        <span class="help-block" ng-show="createProfile.id.$error.required">Please enter a name for this profile</span>
+        <span class="help-block" ng-show="createProfile.id.$error.pattern">Name can only contain letters, numbers, '-', and '_'</span>
+
+        <p></p>
+        <label>Select one or more parent profiles as needed: </label>
+        <div style="height: 250px;" ng-grid="createProfileGridOptions"></div>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" ng-click="createProfile()" value="Create">
+        <input class="btn btn-primary" ng-click="createProfileDialog.close()" value="Cancel">
+      </div>
+    </form>
   </div>
-  <div ng-show="profiles.length > 0" class="row-fluid">
+
+  <div class="row-fluid">
     <div class="gridStyle" ng-grid="gridOptions"></div>
   </div>
 </div>
