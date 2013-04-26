@@ -23,6 +23,7 @@ module Camel {
                     when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
           filter('camelIconClass', () => iconClass).
+          filter('sinceFromTimestamp', () => sinceFromTimestamp).
           run((workspace:Workspace, jolokia, viewRegistry) => {
 
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
@@ -55,6 +56,7 @@ module Camel {
               resizable: false
             };
 
+            var sinceTemplate = '<div class="ngCellText">{{row.getProperty(col.field) | sinceFromTimestamp}}</div>';
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
@@ -62,6 +64,8 @@ module Camel {
               {field: 'Uptime', displayName: 'Uptime', visible: false},
               {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Completed Since', cellTemplate: sinceTemplate},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},

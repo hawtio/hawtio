@@ -562,6 +562,19 @@ module Camel {
     return "orange icon-off";
   }
 
+  export function sinceFromTimestamp(timestamp: number) {
+    if (!timestamp) {
+      return null;
+    }
+
+    // convert from timestamp to delta since now
+    // 2013-04-26T145:01:17+0200
+    var time = new Date(timestamp);
+    var now = new Date();
+    var diff = now.getTime() - time.getTime();
+    return diff;
+  }
+
   export function getSelectedRouteId(workspace: Workspace, folder = null) {
     var selection = folder || workspace.selection;
     var selectedRouteId = null;
@@ -611,5 +624,6 @@ module Camel {
       return null;
     }
   }
+
 
 }
