@@ -9,8 +9,7 @@
           </div>
           &nbsp;
           <div class="control-group inline-block">
-            <label for="activeOnly" title="Only show profiles that have been applied to a container">Active
-              only: </label>
+            <label for="activeOnly" title="Only show profiles that have been applied to a container">Active only: </label>
             <input type="checkbox" id="activeOnly" name="activeOnly" ng-model="activeOnly">
           </div>
         </fieldset>
@@ -20,8 +19,7 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="control-group inline-block">
-            <label>Filter: </label>
-            <input class="search-query" type="text">
+            <input class="search-query" type="text" ng-model="gridOptions.filterOptions.filterText" placeholder="Filter...">
           </div>
         </fieldset>
       </form>

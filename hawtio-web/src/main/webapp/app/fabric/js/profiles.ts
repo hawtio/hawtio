@@ -50,7 +50,7 @@ module Fabric {
       showFilter: false,
       showColumnMenu: false,
       filterOptions: {
-        useExternalFilter: true
+        filterText: ''
       },
       selectWithCheckboxOnly: true,
       columnDefs: [
@@ -89,7 +89,16 @@ module Fabric {
         
       ]
     };
-    
+
+    function filterActive(data) {
+      var rc = data;
+      if ($scope.activeOnly) {
+        rc = data.filter(function(item) {
+          return item.containerCount > 0;
+        });
+      }
+      return rc;
+    }
 
     function render(response) {
       
@@ -120,6 +129,8 @@ module Fabric {
               abstract: profile.abstractProfile
             })
           });
+
+          $scope.profiles = filterActive($scope.profiles);
           $scope.$apply();
         }
       }

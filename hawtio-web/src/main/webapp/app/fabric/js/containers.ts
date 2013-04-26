@@ -109,6 +109,7 @@ module Fabric {
       return "icon-refresh icon-spin";
     };
 
+    /*
     var SearchProvider = function(scope, location) {
       var self = this;
       self.scope = scope;
@@ -161,14 +162,14 @@ module Fabric {
     };
     
     var searchProvider = new SearchProvider($scope, $location);
+    */
     
     $scope.containerOptions = {
-      plugins: [searchProvider],
       data: 'containers',
       showFilter: false,
       showColumnMenu: false,
       filterOptions: {
-        useExternalFilter: true
+        filterText: ''
       },
       selectedItems: $scope.selectedContainers,
       rowHeight: 32,

@@ -242,16 +242,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               var gridTop = grid.position().top;
 
               var windowHeight = $(window).height();
-              var height = windowHeight - gridTop - 10;
+              var height = windowHeight - gridTop - 30;
 
               var heightStr = height + 'px';
-
-              /*
-              if (grid.parent().css('height')) {
-                console.log("Parent element height: " + grid.parent().css('height'));
-                heightStr = grid.parent().css('height');
-              }
-              */
 
               grid.css({
                 'min-height': heightStr,

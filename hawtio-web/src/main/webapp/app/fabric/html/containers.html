@@ -10,6 +10,7 @@
               <button ng-disabled="selectedContainers.length == 0 || !everySelectionAlive(false)" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
             </div>
           </div>
+          <!--
           &nbsp;
           <div class="control-group inline-block">
             <label for="versions">Versions: </label>
@@ -20,21 +21,17 @@
             <label for="profiles">Profiles: </label>
             <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
           </div>
+          -->
         </fieldset>
       </form>
     </div>
 
     <div class="pull-right">
-      <!--
-
       <form class="form-inline">
         <fieldset>
-          <label for="search" title="Filter Table">Search: </label>
-          <input id="search" type="text" ng-model="search">
+          <input class="search-query" id="search" type="text" ng-model="containerOptions.filterOptions.filterText" placeholder="Filter...">
         </fieldset>
       </form>
-
-      -->
     </div>
   </div>
 
