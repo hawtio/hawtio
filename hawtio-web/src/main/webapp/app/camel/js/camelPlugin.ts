@@ -56,6 +56,16 @@ module Camel {
             };
 
             var attributes = workspace.attributeColumnDefs;
+            attributes[jmxDomain + "/contexts/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Name'},
+              {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
+              {field: 'MinProcessingTime', displayName: 'Min Time'},
+              {field: 'MaxProcessingTime', displayName: 'Max Time'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time'}
+            ];
             attributes[jmxDomain + "/components/folder"] = [
               stateColumn,
               {field: 'CamelId', displayName: 'Context'},
