@@ -7,7 +7,7 @@
     <div class="span6">
       <div class="pull-right">
         <form class="form-inline">
-          <button class="btn" ng-disabled="!selectedItems.length" ng-click="move()"
+          <button class="btn" ng-disabled="!selectedItems.length" ng-click="moveDialog.open()"
                   title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-move"></i> Move
           </button>
@@ -82,6 +82,19 @@
         <input class="btn btn-danger" type="submit" ng-click="deleteMessagesAndCloseDeleteDialog()" value="Delete">
         <input class="btn btn-primary" ng-click="deleteDialog.close()" value="Cancel">
       </div>
+    </form>
+  </div>
+
+<div modal="moveDialog.show" close="moveDialog.close()" options="moveDialog.options">
+  <form class="form-horizontal no-bottom-margin" ng-submit="moveDialog.close()">
+    <div class="modal-header"><h4>Move to</h4></div>
+    <div class="modal-body">
+        <p>Move {{selectedItems.length}} messages to  <input type="text" style="width: 100%" ng-model="queueName" placeholder="Queue name"></p>
+    </div>
+    <div class="modal-footer">
+      <input id="submit" class="btn btn-primary add" type="submit" ng-click="moveMessagesAndCloseMoveDialog()" value="Move">
+      <button class="btn btn-warning cancel" type="button" ng-click="moveDialog.close()">Cancel</button>
+    </div>
     </form>
   </div>
 </div>

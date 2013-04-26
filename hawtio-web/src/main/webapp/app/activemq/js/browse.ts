@@ -9,6 +9,9 @@ module ActiveMQ {
 
     $scope.deleteDialog = new Core.Dialog();
     $scope.messageDialog = new Core.Dialog();
+    $scope.moveDialog = new Core.Dialog();
+
+    $scope.showMoveDialog = false;
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -87,9 +90,23 @@ module ActiveMQ {
       }
     };
 
-    $scope.move = () => {
-      console.log("moving selected items " + $scope.selectedItems.length + " to another destination!");
-    };
+    $scope.moveMessagesAndCloseMoveDialog = () => {
+        var jolokia = workspace.jolokia;
+        var selection = workspace.selection;
+        var mbean = selection.objectName;
+        if (mbean && selection && jolokia) {
+            $scope.message = "Moved " + Core.maybePlural($scope.selectedItems.length, "message" + " to " + $scope.queueName);
+            var operation = "moveMessageTo(java.lang.String, java.lang.String)"
+            angular.forEach($scope.selectedItems, (item, idx) => {
+                var id = item.JMSMessageID;
+                if (id) {
+                    var callback = (idx + 1 < $scope.selectedItems.length) ? intermediateResult : deleteSuccess;
+                    jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
+                }
+            });
+        }
+        $scope.moveDialog.close();
+    }
 
     $scope.deleteMessagesAndCloseDeleteDialog = () => {
       var jolokia = workspace.jolokia;
