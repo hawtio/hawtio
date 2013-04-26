@@ -46,3 +46,15 @@ For a given entity or resource `Foo` consider using these URI templates:
 Having the extra level of indirection between `/foo` and the id of a `foo` item; lets us have other ways to navigate the foo collection; by name/location/country or whatever.
 
 This avoids us having `/foo` and `/foos` top level paths and having to figure out a nice URI for plural of foo and makes it easier to group all `foo` URIs by `path.startsWith("/foo")`
+
+## UI Conventions
+
+When showing buttons we tend to use the order Start, Pause, Stop, Delete (remove where applicable) so that the more serious options like Delete are at the far end and the easier options (start/pause) are closer together.
+
+We are currently using these Font Awesome icons by default
+
+  * start: green icon-play-circle
+  * pause: icon-pause
+  * stop: orangle icon-off
+  * delete: icon-remove
+
