@@ -6,13 +6,13 @@ module Wiki {
     var routeModel = _apacheCamelModel.definitions.route;
     routeModel["_id"] = "route";
 
-    $scope.showAddDialog = false;
+    $scope.addDialog = new Core.Dialog();
 
     $scope.paletteItemSearch = "";
     $scope.paletteTree = new Folder("Palette");
 
-    $scope.$watch('showAddDialog', function() {
-      if ($scope.showAddDialog) {
+    $scope.$watch('addDialog.show', function() {
+      if ($scope.addDialog.show) {
         setTimeout(function() {
           $('#submit').focus();
         }, 50);
@@ -49,14 +49,10 @@ module Wiki {
 
     $scope.addNode = () => {
       if ($scope.nodeXmlNode) {
-        $scope.showAddDialog = true;
+        $scope.addDialog.open();
       } else {
         addNewNode(routeModel);
       }
-    };
-
-    $scope.closeAddDialog = () => {
-      $scope.showAddDialog = false;
     };
 
     $scope.onPaletteSelect = (node) => {
@@ -67,7 +63,7 @@ module Wiki {
       if ($scope.selectedPaletteNode) {
         addNewNode($scope.selectedPaletteNode["nodeModel"]);
       }
-      $scope.closeAddDialog();
+      $scope.addDialog.close();
     };
 
     $scope.removeNode = () => {
