@@ -106,7 +106,7 @@ module ActiveMQ {
             });
         }
         $scope.moveDialog.close();
-    }
+    };
 
     $scope.deleteMessagesAndCloseDeleteDialog = () => {
       var jolokia = workspace.jolokia;
