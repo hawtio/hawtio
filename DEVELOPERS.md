@@ -62,6 +62,8 @@ If you are interested in working on the code the following references and articl
 * [AngularJS tips and tricks](http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED)
 * [more AngularJS magic to supercharge your webapp](http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#)
 * [AngularJS questions on stackoverflow](http://stackoverflow.com/questions/tagged/angularjs)
+* [Modeling Data and State in Your AngularJS Application](http://joelhooks.com/blog/2013/04/24/modeling-data-and-state-in-your-angularjs-application/)
+* [6 Common Pitfalls Using Scopes](http://thenittygritty.co/angularjs-pitfalls-using-scopes)
 
 ## Code Walkthrough
 
