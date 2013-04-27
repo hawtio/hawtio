@@ -2,6 +2,7 @@ module Karaf {
   var pluginName = 'karaf';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
+            when('/karaf/server', {templateUrl: 'app/karaf/html/server.html'}).
             when('/karaf/features', {templateUrl: 'app/karaf/html/features.html'}).
             when('/karaf/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html'})
   }).
@@ -15,6 +16,13 @@ module Karaf {
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("org.apache.karaf"),
               href: () => "#/karaf/features?tab=karafTab",
               isActive: (workspace: Workspace) => workspace.isTopTabActive("karafTab")
+            });
+
+            workspace.subLevelTabs.push( {
+              content: '<i class="icon-list"></i> Server',
+              title: "View information about this OSGi container",
+              isValid: (workspace: Workspace) => workspace.isKarafFolder(),
+              href: () => "#/karaf/server"
             });
 
             workspace.subLevelTabs.push( {
