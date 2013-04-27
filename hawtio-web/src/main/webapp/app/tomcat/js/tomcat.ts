@@ -8,7 +8,6 @@ module Tomcat {
 
         $scope.webapps = [];
         $scope.selected = [];
-        $scope.search = "";
 
         var columnDefsTomcat5: any[] = [
             {
@@ -101,7 +100,7 @@ module Tomcat {
             selectedItems: $scope.selected,
             selectWithCheckboxOnly: true,
             filterOptions: {
-                filterText: 'search'
+              filterText: ''
             }
         };
 

@@ -96,7 +96,7 @@ module Tomcat {
             canSelectRows: false,
             columnDefs: columnDefs,
             filterOptions: {
-              filterText: 'search'
+              filterText: ''
             }
         };
 

@@ -6,7 +6,6 @@ module Tomcat {
 
         $scope.connectors = [];
         $scope.selected = [];
-        $scope.search = "";
 
         var columnDefs: any[] = [
             {
@@ -90,7 +89,7 @@ module Tomcat {
             selectWithCheckboxOnly: true,
             columnDefs: columnDefs,
             filterOptions: {
-                filterText: 'search'
+              filterText: ''
             }
         };
 
