@@ -31,6 +31,10 @@ module Camel {
           // for hawtio-datatable
           // width: "22em",
           cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.id}}</a></div>'
+        },
+        {
+          field: 'toNode',
+          displayName: 'To Node'
         }
       ]
     };
