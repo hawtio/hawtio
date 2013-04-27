@@ -560,12 +560,26 @@ module Camel {
 
   export function lastExchangeCompletedSince(entity) {
     var answer = null;
-    if (entity) {
+    if (entity && isState(entity, "started")) {
       answer = entity.lastExchangeCompletedSince;
       if (!answer) {
         answer = sinceFromTimestamp(entity["LastExchangeCompletedTimestamp"]);
         if (answer) {
           entity.lastExchangeCompletedSince = answer;
+        }
+      }
+    }
+    return answer;
+  }
+
+  export function lastExchangeFailedSince(entity) {
+    var answer = null;
+    if (entity && isState(entity, "started")) {
+      answer = entity.lastExchangeFailedSince;
+      if (!answer) {
+        answer = sinceFromTimestamp(entity["LastExchangeFailedTimestamp"]);
+        if (answer) {
+          entity.lastExchangeFailedSince = answer;
         }
       }
     }

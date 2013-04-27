@@ -24,6 +24,7 @@ module Camel {
           }).
           filter('camelIconClass', () => iconClass).
           filter('lastExchangeCompletedSince', () => lastExchangeCompletedSince).
+          filter('lastExchangeFailedSince', () => lastExchangeFailedSince).
           run((workspace:Workspace, jolokia, viewRegistry) => {
 
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
@@ -56,7 +57,8 @@ module Camel {
               resizable: false
             };
 
-            var sinceTemplate = '<div class="ngCellText">{{row.entity | lastExchangeCompletedSince}}</div>';
+            var sinceCompletedTemplate = '<div class="ngCellText">{{row.entity | lastExchangeCompletedSince}}</div>';
+            var sinceFailedTemplate = '<div class="ngCellText">{{row.entity | lastExchangeFailedSince}}</div>';
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
@@ -64,9 +66,11 @@ module Camel {
               {field: 'Uptime', displayName: 'Uptime', visible: false},
               {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'CompletedSince', displayName: 'Completed Since', cellTemplate: sinceTemplate},
+              {field: 'LastCompletedSince', displayName: 'Last Completed Since', cellTemplate: sinceCompletedTemplate},
               {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'LastFailedSince', displayName: 'Last Failed Since', cellTemplate: sinceFailedTemplate},
+              {field: 'LastExchangeFailedTimestamp', displayName: 'Last exchange failed timestamp', visible: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
               {field: 'MinProcessingTime', displayName: 'Min Time'},
