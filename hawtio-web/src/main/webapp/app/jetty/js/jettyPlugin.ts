@@ -1,6 +1,6 @@
 module Jetty {
   var pluginName = 'jetty';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/jetty/server', {templateUrl: 'app/jetty/html/server.html'}).

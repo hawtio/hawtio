@@ -4,6 +4,8 @@ module Jetty {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
+    $scope.uninstallDialog = new Core.Dialog()
+
     $scope.webapps = [];
     $scope.selected = [];
 
@@ -79,6 +81,7 @@ module Jetty {
 
     $scope.uninstall = function () {
       $scope.controlWebApps('destroy');
+      $scope.uninstallDialog.close();
     };
 
     $scope.anySelectionHasState = (state) => {
