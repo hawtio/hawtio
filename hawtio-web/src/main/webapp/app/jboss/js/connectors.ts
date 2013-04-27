@@ -5,7 +5,6 @@ module JBoss {
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
 
         $scope.connectors = [];
-        $scope.search = "";
 
         var columnDefs: any[] = [
             {
@@ -40,7 +39,7 @@ module JBoss {
             canSelectRows: false,
             columnDefs: columnDefs,
             filterOptions: {
-                filterText: 'search'
+              filterText: ''
             }
         };
 

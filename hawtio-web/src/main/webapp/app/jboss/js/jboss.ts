@@ -7,7 +7,6 @@ module JBoss {
 
         $scope.webapps = [];
         $scope.selected = [];
-        $scope.search = "";
 
         var columnDefs: any[] = [
             {
@@ -42,7 +41,7 @@ module JBoss {
             selectWithCheckboxOnly: true,
             columnDefs: columnDefs,
             filterOptions: {
-                filterText: 'search'
+              filterText: ''
             }
         };
 
