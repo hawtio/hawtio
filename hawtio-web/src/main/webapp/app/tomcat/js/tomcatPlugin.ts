@@ -1,6 +1,6 @@
 module Tomcat {
   var pluginName = 'tomcat';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/tomcat/server', {templateUrl: 'app/tomcat/html/server.html'}).
