@@ -5,38 +5,12 @@ module Camel {
     $scope.graphView = null;
     $scope.tableView = null;
 
-    $scope.selectHandler = (selected) => {
-      if (selected) {
-        var toNode = selected["toNode"];
-        if (toNode) {
-          // lets highlight the node in the diagram
-          var nodes = d3.select("svg").selectAll("g .node");
-
-          // lets clear the selected node first
-          nodes.attr("class", "node");
-
-          nodes.filter(function (item) {
-            if (item) {
-              var cid = item["cid"];
-              var rid = item["rid"];
-              if (cid) {
-                // we should match cid if defined
-                return toNode === cid;
-              } else {
-                return toNode === rid;
-              }
-            }
-            return null;
-          }).attr("class", "node selected");
-        }
-      }
-    };
-
     $scope.messageDialog = new Core.Dialog();
 
     // TODO should share from browse.ts
     $scope.gridOptions = {
-      selectedItems: $scope.selectedItems,
+      afterSelectionChange: onSelectionChanged,
+      selectedItems: [],
       data: 'messages',
       displayFooter: false,
       showFilter: false,
@@ -103,7 +77,6 @@ module Camel {
       }
     }
 
-
     function populateRouteMessages(response) {
       var first = $scope.messages.length === 0;
       var xml = response.value;
@@ -126,7 +99,37 @@ module Camel {
           Core.$apply($scope);
         });
       }
-    };
+    }
+
+    function onSelectionChanged() {
+      console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
+      angular.forEach($scope.gridOptions.selectedItems, (selected) => {
+      if (selected) {
+        var toNode = selected["toNode"];
+        if (toNode) {
+          // lets highlight the node in the diagram
+          var nodes = d3.select("svg").selectAll("g .node");
+
+          // lets clear the selected node first
+          nodes.attr("class", "node");
+
+          nodes.filter(function (item) {
+            if (item) {
+              var cid = item["cid"];
+              var rid = item["rid"];
+              if (cid) {
+                // we should match cid if defined
+                return toNode === cid;
+              } else {
+                return toNode === rid;
+              }
+            }
+            return null;
+          }).attr("class", "node selected");
+        }
+      }
+      });
+    }
 
     function tracingChanged(response) {
       reloadTracingFlag();
