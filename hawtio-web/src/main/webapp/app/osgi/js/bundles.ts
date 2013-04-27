@@ -6,7 +6,6 @@ module Osgi {
     $scope.bundles = [];
     $scope.selected = [];
     $scope.loading = true;
-    $scope.search = "";
     $scope.bundleUrl = "";
 
     $scope.installDisabled = function() {
@@ -64,7 +63,7 @@ module Osgi {
       selectWithCheckboxOnly: true,
       columnDefs: columnDefs,
       filterOptions: {
-        filterText: 'search'
+        filterText: ''
       }
     };
 
