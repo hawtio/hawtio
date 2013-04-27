@@ -3,7 +3,6 @@ module Wiki {
   export function FormTableController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.columnDefs = [];
-    $scope.searchText = null;
 
     $scope.viewLink = (row) => {
       return childLink(row, "#/wiki/view");
@@ -55,7 +54,7 @@ module Wiki {
     }
 
     function updateView() {
-      $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", $scope.searchText, onResults);
+      $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", $scope.gridOptions.filterOptions.filterText, onResults);
     }
 
     function onFormData(details) {
@@ -85,7 +84,7 @@ module Wiki {
           displayFooter: false,
           showFilter: false,
           filterOptions: {
-            filterText: "searchText"
+            filterText: ''
           },
           columnDefs: columnDefs
         };

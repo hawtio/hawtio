@@ -4,7 +4,6 @@ module Wiki {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.selectedItems = [];
-    $scope.searchText = "";
 
     // TODO we could configure this?
     $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
@@ -14,7 +13,7 @@ module Wiki {
       showFilter: false,
       selectedItems: $scope.selectedItems,
       filterOptions: {
-        filterText: "searchText"
+        filterText: ''
       },
       columnDefs: [
         {
