@@ -1,6 +1,6 @@
 module JBoss {
   var pluginName = 'jboss';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).
     config(($routeProvider) => {
       $routeProvider.
             when('/jboss/server', {templateUrl: 'app/jboss/html/server.html'}).

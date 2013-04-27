@@ -3,6 +3,8 @@ module JBoss {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
 
+        $scope.uninstallDialog = new Core.Dialog()
+
         $scope.webapps = [];
         $scope.selected = [];
         $scope.search = "";
@@ -112,6 +114,7 @@ module JBoss {
 
         $scope.uninstall = function() {
             $scope.controlWebApps('remove');
+            $scope.uninstallDialog.close();
         }
 
         // function to trigger reloading page
