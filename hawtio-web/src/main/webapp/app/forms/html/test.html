@@ -24,6 +24,34 @@
   <hr>
 
   <div>
+    Confirmation Dialog
+    <div class="row-fluid">
+      <button class="btn" ng-click="showDeleteOne = true">Delete Stuff</button>
+      <button class="btn" ng-click="showDeleteTwo = true">Delete Other Stuff</button>
+
+      <div hawtio-confirm-dialog="showDeleteOne"
+           title="Delete Stuff?"
+           ok-button-text="Yes, Delete the Stuff"
+           cancel-button-text="No, Keep the Stuff"
+           on-cancel="onCancelled('One')"
+           on-ok="onOk('One')">
+        Are you sure you want to delete all the stuff?
+      </div>
+      <!-- Use more defaults -->
+      <div hawtio-confirm-dialog="showDeleteTwo"
+           on-cancel="onCancelled('Two')"
+           on-ok="onOk('Two')">
+        Are you sure you want to delete all the other stuff?
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+  <!--
+  <div>
     Form with config object
     <div simple-form='config'></div>
   </div>
@@ -43,4 +71,6 @@
        "type": "java.lang.String"
     }'></div>
   </div>
+
+  -->
 </div>

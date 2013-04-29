@@ -341,7 +341,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             }
           };
           return editableProperty;
-        }]);
+        }]).
+        directive('hawtioConfirmDialog', function() {
+          return new Core.ConfirmDialog();
+        });
 
 // enable bootstrap tooltips
 $(function () {
