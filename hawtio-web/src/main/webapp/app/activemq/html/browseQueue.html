@@ -73,7 +73,7 @@
       <div class="modal-body">
         <p>You are about to delete
           <ng-pluralize count="selectedItems.length"
-                           when="{'1': 'a message!', 'other': '{} messages!'}">
+                        when="{'1': 'a message!', 'other': '{} messages!'}">
           </ng-pluralize>
         </p>
         <p>This operation cannot be undone so please be careful.</p>
@@ -85,20 +85,31 @@
     </form>
   </div>
 
-<div modal="moveDialog.show" close="moveDialog.close()" options="moveDialog.options">
-  <form class="form-horizontal no-bottom-margin" ng-submit="moveDialog.close()">
-    <div class="modal-header"><h4>Move <ng-pluralize count="selectedItems.length"
-                               when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize>
-    </h4></div>
-    <div class="modal-body">
-        <p>Move <ng-pluralize count="selectedItems.length"
-                                   when="{'1': 'a message', 'other': '{} messages'}"></ng-pluralize>
-         to: <input type="text" style="width: 100%" ng-model="queueName" placeholder="Queue name"></p>
-    </div>
-    <div class="modal-footer">
-      <input id="submit" class="btn btn-primary add" type="submit" ng-click="moveMessagesAndCloseMoveDialog()" value="Move">
-      <button class="btn btn-warning cancel" type="button" ng-click="moveDialog.close()">Cancel</button>
-    </div>
+  <div modal="moveDialog.show" close="moveDialog.close()" options="moveDialog.options">
+    <form class="form-horizontal no-bottom-margin" ng-submit="moveDialog.close()">
+      <div class="modal-header">
+        <h4>Move
+          <ng-pluralize count="selectedItems.length"
+                        when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <p>Move
+          <ng-pluralize count="selectedItems.length"
+                        when="{'1': 'a message', 'other': '{} messages'}"></ng-pluralize>
+          to: <input type="text" style="width: 100%" ng-model="queueName" placeholder="Queue name"
+                     typeahead="title for title in queueNames() | filter:$viewValue" typeahead-editable='false'></p>
+        <p>
+          You cannot undo this operation.
+          Though after the move you can always move the <ng-pluralize count="selectedItems.length"
+                                  when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize> back again.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <input id="submit" class="btn btn-primary add" type="submit" ng-click="moveMessagesAndCloseMoveDialog()"
+               value="Move">
+        <button class="btn btn-warning cancel" type="button" ng-click="moveDialog.close()">Cancel</button>
+      </div>
     </form>
   </div>
 </div>

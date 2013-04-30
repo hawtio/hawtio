@@ -127,6 +127,11 @@ module ActiveMQ {
       $scope.deleteDialog.close();
     };
 
+    $scope.queueNames = () => {
+      var queuesFolder = getSelectionQueuesFolder(workspace);
+      return (queuesFolder) ? queuesFolder.children.map(n => n.title) : [];
+    };
+
     function populateTable(response) {
       $scope.messages = response.value;
       angular.forEach($scope.messages, (message) => {
