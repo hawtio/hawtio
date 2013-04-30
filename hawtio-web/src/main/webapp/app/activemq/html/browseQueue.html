@@ -22,50 +22,55 @@
   </div>
 
   <div class="row-fluid">
-    <div class="gridStyle" ng-grid="gridOptions"></div>
-    <!--
-        <div class="gridStyle" hawtio-datatable="gridOptions"></div>
-    -->
+    <div ng-switch="messageDialog.show" class="slide-frame" ng-animate="'wave'">
+      <div ng-switch-when="false">
+        <div class="gridStyle" ng-grid="gridOptions"></div>
+        <!--
+            <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+        -->
+      </div>
+      <div ng-switch-when="true">
+        <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
+          <h4>Message {{row.JMSMessageID}}</h4>
+          <div class="pull-right">
+            <input class="btn" type="submit" ng-click="messageDialog.close()" value="Close">
+          </div>
+          <div class="modal-body">
+            <div class="expandable closed">
+              <div title="Headers" class="title">
+                <i class="expandable-indicator"></i> Headers
+              </div>
+              <div class="expandable-body well">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                  <tr>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                  </thead>
+                  <tbody ng-bind-html-unsafe="row.headerHtml">
+                  </tbody>
+                  <!--
+                                <tr ng-repeat="(key, value) in row.headers">
+                                  <td class="property-name">{{key}}</td>
+                                  <td class="property-value">{{value}}</td>
+                                </tr>
+                  -->
+                </table>
+              </div>
+            </div>
+
+            <div ng-controller="Core.EditorController">
+              <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true"
+                        rows="{{lineCount(row.Text)}}"
+                        ng-model="row.Text"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <div modal="messageDialog.show" close="messageDialog.close()" options="messageDialog.options">
-    <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
-      <div class="modal-header"><h4>Message {{row.JMSMessageID}}</h4></div>
-      <div class="modal-body">
-        <div class="expandable closed">
-          <div title="Headers" class="title">
-            <i class="expandable-indicator"></i> Headers
-          </div>
-          <div class="expandable-body well">
-            <table class="table table-condensed table-striped">
-              <thead>
-              <tr>
-                <th>Header</th>
-                <th>Value</th>
-              </tr>
-              </thead>
-              <tbody ng-bind-html-unsafe="row.headerHtml">
-              </tbody>
-              <!--
-                            <tr ng-repeat="(key, value) in row.headers">
-                              <td class="property-name">{{key}}</td>
-                              <td class="property-value">{{value}}</td>
-                            </tr>
-              -->
-            </table>
-          </div>
-        </div>
-
-        <div ng-controller="Core.EditorController">
-          <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.Text)}}"
-                    ng-model="row.Text"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-primary" type="submit" ng-click="messageDialog.close()" value="Close">
-      </div>
-    </form>
-  </div>
 
   <div modal="deleteDialog.show" close="deleteDialog.close()" options="deleteDialog.options">
     <form class="form-horizontal no-bottom-margin" ng-submit="deleteDialog.close()">
@@ -101,8 +106,10 @@
                      typeahead="title for title in queueNames() | filter:$viewValue" typeahead-editable='false'></p>
         <p>
           You cannot undo this operation.
-          Though after the move you can always move the <ng-pluralize count="selectedItems.length"
-                                  when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize> back again.
+          Though after the move you can always move the
+          <ng-pluralize count="selectedItems.length"
+                        when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize>
+          back again.
         </p>
       </div>
       <div class="modal-footer">
