@@ -6,9 +6,9 @@ module ActiveMQ {
     $scope.messages = [];
     $scope.headers = {};
 
-    $scope.deleteDialog = new Core.Dialog();
+    $scope.deleteDialog = false
     $scope.messageDialog = new Core.Dialog();
-    $scope.moveDialog = new Core.Dialog();
+    $scope.moveDialog = false
 
     $scope.showMoveDialog = false;
 
@@ -90,7 +90,7 @@ module ActiveMQ {
       }
     };
 
-    $scope.moveMessagesAndCloseMoveDialog = () => {
+    $scope.moveMessages = () => {
         var jolokia = workspace.jolokia;
         var selection = workspace.selection;
         var mbean = selection.objectName;
@@ -106,10 +106,9 @@ module ActiveMQ {
                 }
             });
         }
-        $scope.moveDialog.close();
     };
 
-    $scope.deleteMessagesAndCloseDeleteDialog = () => {
+    $scope.deleteMessages = () => {
       var jolokia = workspace.jolokia;
       var selection = workspace.selection;
       var mbean = selection.objectName;
@@ -125,7 +124,6 @@ module ActiveMQ {
           }
         });
       }
-      $scope.deleteDialog.close();
     };
 
     $scope.queueNames = () => {

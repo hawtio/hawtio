@@ -7,24 +7,18 @@
       <button class="btn" ng-disabled="!anySelectionHasState('start')" ng-click="pause()"><i class="icon-pause"></i>
         Pause
       </button>
-      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="deleteDialog.open()"><i
+      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="deleteDialog = true"><i
               class="icon-remove"></i> Destroy
       </button>
     </div>
 
-    <div modal="deleteDialog.show" close="deleteDialog.close()" options="deleteDialog.options">
-      <form class="form-horizontal no-bottom-margin" ng-submit="deleteDialog.close()">
-        <div class="modal-header"><h4>Are you sure?</h4></div>
-        <div class="modal-body">
-          <p>You are about to delete this Camel Context.</p>
-          <p>This operation cannot be undone so please be careful.</p>
-        </div>
-        <div class="modal-footer">
-          <input class="btn btn-danger" type="submit" ng-click="stop()" value="Delete">
-          <input class="btn btn-primary" ng-click="deleteDialog.close()" value="Cancel">
-        </div>
-      </form>
+    <div hawtio-confirm-dialog="deleteDialog"
+         ok-button-text="Delete"
+         on-ok="stop()">
+      <p>You are about to delete this Camel Context.</p>
+      <p>This operation cannot be undone so please be careful.</p>
     </div>
+
   </div>
   <div class="span6">
     <div class="control-group">

@@ -2,7 +2,7 @@ module Camel {
 
   export function AttributesToolBarController($scope, workspace:Workspace, jolokia) {
 
-    $scope.deleteDialog = new Core.Dialog();
+    $scope.deleteDialog = false
 
     $scope.start = () => {
       $scope.invokeSelectedMBeans((item) => {

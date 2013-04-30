@@ -1,7 +1,7 @@
 module Core {
 
   export class ConfirmDialog {
-    public restrict = 'EA';
+    public restrict = 'A';
     public replace = true;
     public transclude = true;
     public templateUrl = 'app/core/html/confirmDialog.html';
@@ -16,7 +16,22 @@ module Core {
       onClose: '&'
     }
 
-    public controller = ($scope, $element, $attrs) => {
+    public controller = ($scope, $element, $attrs, $transclude, $compile) => {
+
+      $scope.clone = null;
+
+      $transclude(function(clone) {
+        $scope.clone = $(clone).filter('.dialog-body');
+      });
+
+      $scope.$watch('show', function() {
+        if ($scope.show) {
+          setTimeout(function() {
+            $scope.body = $('.modal-body');
+            $scope.body.html($compile($scope.clone.html())($scope.$parent));
+          }, 50);
+        }
+      });
 
       $attrs.$observe('okButtonText', function(value) {
         if (!angular.isDefined(value)) {
@@ -50,23 +65,8 @@ module Core {
 
     }
 
-    // see constructor for why this is here...
-    public compile:(tElement, tAttrs, transclude) => any;
+    public constructor () {
 
-    constructor() {
-      this.compile = (tElement, tAttrs, transclude) => {
-        return this.doCompile(tElement, tAttrs, transclude);
-      }
-
-    }
-
-    private doCompile(tElement, tAttrs, transclude) {
-      return (scope, element, attrs) => {
-        transclude(scope, function(clone) {
-          var modalBody = element.find('.modal-body');
-          modalBody.append(clone);
-        });
-      }
     }
 
   }
