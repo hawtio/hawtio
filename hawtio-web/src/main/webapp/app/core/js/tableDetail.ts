@@ -3,9 +3,27 @@ module Core {
   /**
    * Provides an abstraction for stepping through a table in a detail view with next/previous/first/last options
    */
-  export class TableDetailDialog extends Dialog {
+  export class TableDetailDialog {
+
+    /* Not sure why but using "extends" was breaking the app */
+
+    public show = false;
+
+    public options = {
+      backdropFade: true,
+      dialogFade: true
+    };
+
+    public open() {
+      this.show = true;
+    }
+
+    public close() {
+      this.show = false;
+    }
+
     constructor(public $scope, public gridOptions) {
-      super();
+
     }
 
     public first() {
