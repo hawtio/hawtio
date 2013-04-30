@@ -7,11 +7,11 @@
     <div class="span6">
       <div class="pull-right">
         <form class="form-inline">
-          <button class="btn" ng-disabled="!selectedItems.length" ng-click="moveDialog.open()"
+          <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog.open()"
                   title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-move"></i> Move
           </button>
-          <button type="submit" class="btn" ng-disabled="!selectedItems.length"
+          <button type="submit" class="btn" ng-disabled="!gridOptions.selectedItems.length"
                   ng-click="deleteDialog.open()"
                   title="Delete the selected messages">
             <i class="icon-remove"></i> Delete

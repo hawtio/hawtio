@@ -3,7 +3,6 @@ module ActiveMQ {
 
     $scope.searchText = '';
 
-    $scope.selectedItems = [];
     $scope.messages = [];
     $scope.headers = {};
 
@@ -14,7 +13,7 @@ module ActiveMQ {
     $scope.showMoveDialog = false;
 
     $scope.gridOptions = {
-      selectedItems: $scope.selectedItems,
+      selectedItems: [],
       data: 'messages',
       displayFooter: false,
       showFilter: false,
@@ -96,12 +95,13 @@ module ActiveMQ {
         var selection = workspace.selection;
         var mbean = selection.objectName;
         if (mbean && selection && jolokia) {
-            $scope.message = "Moved " + Core.maybePlural($scope.selectedItems.length, "message" + " to " + $scope.queueName);
+          var selectedItems = $scope.gridOptions.selectedItems;
+          $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
             var operation = "moveMessageTo(java.lang.String, java.lang.String)"
-            angular.forEach($scope.selectedItems, (item, idx) => {
+            angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
                 if (id) {
-                    var callback = (idx + 1 < $scope.selectedItems.length) ? intermediateResult : deleteSuccess;
+                    var callback = (idx + 1 < selectedItems.length) ? intermediateResult : deleteSuccess;
                     jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
                 }
             });
@@ -114,12 +114,13 @@ module ActiveMQ {
       var selection = workspace.selection;
       var mbean = selection.objectName;
       if (mbean && selection && jolokia) {
-        $scope.message = "Deleted " + Core.maybePlural($scope.selectedItems.length, "message");
+        var selectedItems = $scope.gridOptions.selectedItems;
+        $scope.message = "Deleted " + Core.maybePlural(selectedItems.length, "message");
         var operation = "removeMessage(java.lang.String)";
-        angular.forEach($scope.selectedItems, (item, idx) => {
+        angular.forEach(selectedItems, (item, idx) => {
           var id = item.JMSMessageID;
           if (id) {
-            var callback = (idx + 1 < $scope.selectedItems.length) ? intermediateResult : deleteSuccess;
+            var callback = (idx + 1 < selectedItems.length) ? intermediateResult : deleteSuccess;
             jolokia.execute(mbean, operation, id, onSuccess(callback));
           }
         });
