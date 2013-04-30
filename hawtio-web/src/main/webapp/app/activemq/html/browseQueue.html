@@ -90,13 +90,13 @@
     <div class="dialog-body">
       <p>Move
         <ng-pluralize count="gridOptions.selectedItems.length"
-                      when="{'1': 'a message', 'other': '{} messages'}"></ng-pluralize>
+                      when="{'1': 'message', 'other': '{} messages'}"></ng-pluralize>
         to: <input type="text" ng-model="queueName" placeholder="Queue name"
                    typeahead="title for title in queueNames() | filter:$viewValue" typeahead-editable='false'></p>
       <p>
-        You cannot undo this operation.
+        You cannot undo this operation.<br>
         Though after the move you can always move the <ng-pluralize count="gridOptions.selectedItems.length"
-                                                                    when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize> back again.
+                                                                    when="{'1': 'message', 'other': 'messages'}"></ng-pluralize> back again.
       </p>
     </div>
   </div>
