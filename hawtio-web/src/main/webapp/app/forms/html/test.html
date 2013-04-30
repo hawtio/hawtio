@@ -35,13 +35,17 @@
            cancel-button-text="No, Keep the Stuff"
            on-cancel="onCancelled('One')"
            on-ok="onOk('One')">
-        Are you sure you want to delete all the stuff?
+        <div class="dialog-body">
+          Are you sure you want to delete all the stuff?
+        </div>
       </div>
       <!-- Use more defaults -->
       <div hawtio-confirm-dialog="showDeleteTwo"
            on-cancel="onCancelled('Two')"
            on-ok="onOk('Two')">
-        Are you sure you want to delete all the other stuff?
+        <div class="dialog-body">
+          Are you sure you want to delete all the other stuff?
+        </div>
       </div>
 
     </div>
