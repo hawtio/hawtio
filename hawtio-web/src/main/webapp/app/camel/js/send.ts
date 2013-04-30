@@ -85,7 +85,7 @@ module Camel {
                 headers[key] = object.value;
               }
             });
-            //console.log("About to send headers: " + JSON.stringify(headers));
+            console.log("About to send headers: " + JSON.stringify(headers));
           }
 
           var jolokia = workspace.jolokia;
