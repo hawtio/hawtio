@@ -21,53 +21,64 @@
     </div>
   </div>
 
-  <div class="row-fluid">
-    <div ng-switch="messageDialog.show" class="slide-frame" ng-animate="'wave'">
-      <div ng-switch-when="false">
+  <div ng-switch="messageDialog.show" class="slide-frame" ng-animate="'wave'">
+    <div ng-switch-when="false">
+      <div class="row-fluid">
         <div class="gridStyle" ng-grid="gridOptions"></div>
         <!--
             <div class="gridStyle" hawtio-datatable="gridOptions"></div>
         -->
       </div>
-      <div ng-switch-when="true">
-        <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
-          <h4>Message {{row.JMSMessageID}}</h4>
+    </div>
+    <div ng-switch-when="true">
+      <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
+        <div class="row-fluid">
+          <div class="span8">
+            <h4>Message {{row.JMSMessageID}}</h4>
+          </div>
           <div class="pull-right">
-            <input class="btn" type="submit" ng-click="messageDialog.close()" value="Close">
+            <button class="btn" ng-click="messageDialog.first()"><i class="icon-fast-backward"></i></button>
+            <button class="btn" ng-click="messageDialog.previous()"><i class="icon-step-backward"></i></button>
+            <button class="btn" ng-click="messageDialog.next()"><i class="icon-step-forward"></i></button>
+            <button class="btn" ng-click="messageDialog.last()"><i class="icon-fast-forward"></i></button>
+            <button class="btn" ng-click="messageDialog.close()" title="Closes the message detail view"><i
+                    class="icon-eject"></i></button>
           </div>
-          <div class="modal-body">
-            <div class="expandable closed">
-              <div title="Headers" class="title">
-                <i class="expandable-indicator"></i> Headers
-              </div>
-              <div class="expandable-body well">
-                <table class="table table-condensed table-striped">
-                  <thead>
-                  <tr>
-                    <th>Header</th>
-                    <th>Value</th>
-                  </tr>
-                  </thead>
-                  <tbody ng-bind-html-unsafe="row.headerHtml">
-                  </tbody>
-                  <!--
-                                <tr ng-repeat="(key, value) in row.headers">
-                                  <td class="property-name">{{key}}</td>
-                                  <td class="property-value">{{value}}</td>
-                                </tr>
-                  -->
-                </table>
-              </div>
+        </div>
+        <div class="row-fluid">
+          <div class="expandable closed">
+            <div title="Headers" class="title">
+              <i class="expandable-indicator"></i> Headers
             </div>
+            <div class="expandable-body well">
+              <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                  <th>Header</th>
+                  <th>Value</th>
+                </tr>
+                </thead>
+                <tbody ng-bind-html-unsafe="row.headerHtml">
+                </tbody>
+                <!--
+                              <tr ng-repeat="(key, value) in row.headers">
+                                <td class="property-name">{{key}}</td>
+                                <td class="property-value">{{value}}</td>
+                              </tr>
+                -->
+              </table>
+            </div>
+          </div>
+        </div>
 
-            <div ng-controller="Core.EditorController">
-              <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true"
-                        rows="{{lineCount(row.Text)}}"
-                        ng-model="row.Text"></textarea>
-            </div>
+        <div class="row-fluid">
+          <div ng-controller="Core.EditorController">
+            <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true"
+                      rows="{{lineCount(row.Text)}}"
+                      ng-model="row.Text"></textarea>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
 
