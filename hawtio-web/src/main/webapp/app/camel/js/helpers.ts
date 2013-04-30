@@ -480,6 +480,21 @@ module Camel {
     return null;
   }
 
+  export function getSelectionCamelContextEndpoints(workspace:Workspace) {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          return tree.navigate(domain, contextId, "endpoints");
+        }
+      }
+    }
+    return null;
+  }
+
   /**
    * Returns the selected camel trace mbean for the given selection or null if it cannot be found
    */
@@ -697,6 +712,7 @@ module Camel {
 
   export function createBrowseGridOptions() {
     return {
+       selectedItems: [],
        data: 'messages',
        displayFooter: false,
        showFilter: false,

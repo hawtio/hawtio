@@ -7,17 +7,10 @@
     <div class="span6">
       <div class="pull-right">
         <form class="form-inline">
-          <!--
-          <button class="btn" ng-disabled="!selectedItems.length" ng-click="moveDialog.open()"
-                  title="Move the selected messages to another destination" data-placement="bottom">
-            <i class="icon-move"></i> Move
+          <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="forwardDialog.open()"
+                  title="Forward the selected messages to another endpoint" data-placement="bottom">
+            <i class="icon-forward"></i> Forward
           </button>
-          <button type="submit" class="btn" ng-disabled="!selectedItems.length"
-                  ng-click="deleteDialog.open()"
-                  title="Delete the selected messages">
-            <i class="icon-remove"></i> Delete
-          </button>
--->
         </form>
       </div>
     </div>
@@ -31,4 +24,28 @@
   </div>
 
   <ng-include src="'app/camel/html/browseMessageTemplate.html'"></ng-include>
+  
+  
+  <div modal="forwardDialog.show" close="forwardDialog.close()" options="forwardDialog.options">
+    <form class="form-horizontal no-bottom-margin" ng-submit="forwardDialog.close()">
+      <div class="modal-header">
+        <h4>Forward
+          <ng-pluralize count="selectedItems.length"
+                        when="{'1': 'a message', 'other': 'messages'}"></ng-pluralize>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <p>Forward
+          <ng-pluralize count="selectedItems.length"
+                        when="{'1': 'a message', 'other': '{} messages'}"></ng-pluralize>
+          to: <input type="text" style="width: 100%" ng-model="endpointUri" placeholder="Endpoint URI"
+                     typeahead="title for title in endpointUris() | filter:$viewValue" typeahead-editable='false'></p>
+      </div>
+      <div class="modal-footer">
+        <input id="submit" class="btn btn-primary add" type="submit" ng-click="forwardMessagesAndCloseForwardDialog()"
+               value="Forward">
+        <button class="btn btn-warning cancel" type="button" ng-click="forwardDialog.close()">Cancel</button>
+      </div>
+    </form>
+  </div>
 </div>
