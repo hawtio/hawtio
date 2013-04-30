@@ -41,8 +41,8 @@ public class Main {
             System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
             Log.setLog(new Slf4jLog("jetty"));
             int port = Integer.parseInt(System.getProperty("jettyPort", "8080"));
-            String contextPath = System.getProperty("context", "/sample");
-            String path = System.getProperty("webapp-outdir", "src/main/webapp");
+            String contextPath = System.getProperty("context", "/hawtio");
+            String path = System.getProperty("webapp-outdir", "target/hawtio-web-1.2-SNAPSHOT");
             String webXml = path + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
 
