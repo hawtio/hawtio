@@ -25,6 +25,7 @@ module ActiveMQ {
         filterText: ''
       },
       selectWithCheckboxOnly: true,
+      showSelectionCheckbox: true,
       maintainColumnRatios: false,
       columnDefs: [
         {
