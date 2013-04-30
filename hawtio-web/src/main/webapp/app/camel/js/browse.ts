@@ -6,31 +6,7 @@ module Camel {
 
     $scope.messageDialog = new Core.Dialog();
 
-    $scope.gridOptions = {
-      selectedItems: $scope.selectedItems,
-      data: 'messages',
-      displayFooter: false,
-      showFilter: false,
-      showColumnMenu: true,
-      enableColumnResize: true,
-      enableColumnReordering: true,
-      filterOptions: {
-        filterText: ''
-      },
-      selectWithCheckboxOnly: true,
-      maintainColumnRatios: false,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'ID',
-          // for ng-grid
-          //width: '50%',
-          // for hawtio-datatable
-          // width: "22em",
-          cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.id}}</a></div>'
-        }
-      ]
-    };
+    $scope.gridOptions = Camel.createBrowseGridOptions();
 
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
