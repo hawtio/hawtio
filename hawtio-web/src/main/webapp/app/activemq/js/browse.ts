@@ -32,7 +32,7 @@ module ActiveMQ {
           displayName: 'Message ID',
           cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.JMSMessageID}}</a></div>',
           // for ng-grid
-          width: '50%'
+          width: '34%'
           // for hawtio-datatable
           // width: "22em"
         },
@@ -44,12 +44,12 @@ module ActiveMQ {
         {
           field: 'JMSPriority',
           displayName: 'Priority',
-          width: '10%'
+          width: '7%'
         },
         {
           field: 'JMSTimestamp',
           displayName: 'Timestamp',
-          width: '40%'
+          width: '19%'
         },
         {
           field: 'JMSExpiration',
@@ -64,7 +64,7 @@ module ActiveMQ {
         {
           field: 'JMSCorrelationID',
           displayName: 'Correlation ID',
-          width: '40%'
+          width: '10%'
         }
       ]//,
       /*
