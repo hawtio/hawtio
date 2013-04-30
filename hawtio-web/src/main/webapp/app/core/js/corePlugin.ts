@@ -233,34 +233,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           helpRegistry.addSubTopic('overview', 'faq', 'app/core/doc/faq.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
-          var setGridSize = function (event) {
-
-            var grid = $('.gridStyle');
-
-            if (grid.length > 0) {
-
-              var gridTop = grid.position().top;
-
-              var windowHeight = $(window).height();
-              var height = windowHeight - gridTop - 30;
-
-              var heightStr = height + 'px';
-
-              grid.css({
-                'min-height': heightStr,
-                'height': heightStr
-              });
-              if (!event || event.type !== "resize") {
-                //console.log("Triggering resize");
-                $(window).resize();
-              }
-            }
-          }
-
-          $rootScope.$on('$includeContentLoaded',setGridSize);
-          $rootScope.$on('$viewContentLoaded', setGridSize);
-          $(window).resize(setGridSize);
-
         }).
         directive('expandable',function () {
           return {
@@ -344,6 +316,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         }]).
         directive('hawtioConfirmDialog', function() {
           return new Core.ConfirmDialog();
+        }).
+        directive('gridStyle', function($window) {
+          return new Core.GridStyle($window);
         });
 
 // enable bootstrap tooltips
