@@ -16,6 +16,7 @@ module Jmx {
     $scope.selectedItems = [];
     $scope.selectCheckBox = true;
 
+/*
     var SelectToggle = function(scope) {
       var self = this;
       self.scope = scope;
@@ -37,12 +38,12 @@ module Jmx {
         }
       }
     };
-
     $scope.selectToggle = new SelectToggle($scope);
+*/
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
-      plugins: [$scope.selectToggle],
+      //plugins: [$scope.selectToggle],
       showFilter: false,
       //showColumnMenu: false,
       canSelectRows: false,
@@ -84,11 +85,13 @@ module Jmx {
 
       // TODO - maybe there's a better way to determine when to enable selections
 
+/*
       if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
         $scope.selectToggle.setSelect(true);
       } else {
         $scope.selectToggle.setSelect(false);
       }
+*/
       return answer;
     };
 
