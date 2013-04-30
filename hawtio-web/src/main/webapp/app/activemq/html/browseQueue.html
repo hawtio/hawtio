@@ -31,18 +31,18 @@
       </div>
     </div>
     <div ng-switch-when="true">
-      <form class="form-horizontal no-bottom-margin" ng-submit="messageDialog.close()">
+      <form class="form-horizontal no-bottom-margin">
         <div class="row-fluid">
           <div class="span8">
             <h4>Message {{row.JMSMessageID}}</h4>
           </div>
           <div class="pull-right">
-            <button class="btn" ng-click="messageDialog.first()"><i class="icon-fast-backward"></i></button>
-            <button class="btn" ng-click="messageDialog.previous()"><i class="icon-step-backward"></i></button>
-            <button class="btn" ng-click="messageDialog.next()"><i class="icon-step-forward"></i></button>
-            <button class="btn" ng-click="messageDialog.last()"><i class="icon-fast-forward"></i></button>
-            <button class="btn" ng-click="messageDialog.close()" title="Closes the message detail view"><i
-                    class="icon-eject"></i></button>
+            <button class="btn" ng-disabled="messageDialog.isEmptyOrFirst()" ng-click="messageDialog.first()"><i class="icon-fast-backward"></i></button>
+            <button class="btn" ng-disabled="messageDialog.isEmptyOrFirst()" ng-click="messageDialog.previous()"><i class="icon-step-backward"></i></button>
+            <button class="btn" ng-disabled="messageDialog.isEmptyOrLast()" ng-click="messageDialog.next()"><i class="icon-step-forward"></i></button>
+            <button class="btn" ng-disabled="messageDialog.isEmptyOrLast()" ng-click="messageDialog.last()"><i class="icon-fast-forward"></i></button>
+            <button class="btn" ng-click="messageDialog.close()" title="Closes the message detail view">
+              <i class="icon-eject"></i></button>
           </div>
         </div>
         <div class="row-fluid">

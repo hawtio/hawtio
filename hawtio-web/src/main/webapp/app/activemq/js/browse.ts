@@ -1,16 +1,13 @@
 module ActiveMQ {
-  export function BrowseQueueController($scope, workspace:Workspace) {
+  export function BrowseQueueController($scope, workspace:Workspace, jolokia) {
 
     $scope.searchText = '';
 
     $scope.messages = [];
     $scope.headers = {};
 
-    $scope.deleteDialog = false
-    $scope.messageDialog = new Core.Dialog();
-    $scope.moveDialog = false
-
-    $scope.showMoveDialog = false;
+    $scope.deleteDialog = false;
+    $scope.moveDialog = false;
 
     $scope.gridOptions = {
       selectedItems: [],
@@ -66,11 +63,10 @@ module ActiveMQ {
           displayName: 'Correlation ID',
           width: '10%'
         }
-      ]//,
-      /*
-      rowDetailTemplateId: "activemqMessageTemplate"*/
+      ]
     };
 
+    $scope.messageDialog = new Core.TableDetailDialog($scope, $scope.gridOptions);
 
     var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
     var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
@@ -84,6 +80,7 @@ module ActiveMQ {
     });
 
     $scope.openMessageDialog = (message) => {
+      $scope.rowIndex = Core.pathGet(message, ["rowIndex"]);
       $scope.row = Core.pathGet(message, ["entity"]);
       if ($scope.row) {
         $scope.messageDialog.open();
@@ -91,13 +88,12 @@ module ActiveMQ {
     };
 
     $scope.moveMessages = () => {
-        var jolokia = workspace.jolokia;
         var selection = workspace.selection;
         var mbean = selection.objectName;
-        if (mbean && selection && jolokia) {
+        if (mbean && selection) {
           var selectedItems = $scope.gridOptions.selectedItems;
           $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
-            var operation = "moveMessageTo(java.lang.String, java.lang.String)"
+            var operation = "moveMessageTo(java.lang.String, java.lang.String)";
             angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
                 if (id) {
@@ -109,10 +105,9 @@ module ActiveMQ {
     };
 
     $scope.deleteMessages = () => {
-      var jolokia = workspace.jolokia;
       var selection = workspace.selection;
       var mbean = selection.objectName;
-      if (mbean && selection && jolokia) {
+      if (mbean && selection) {
         var selectedItems = $scope.gridOptions.selectedItems;
         $scope.message = "Deleted " + Core.maybePlural(selectedItems.length, "message");
         var operation = "removeMessage(java.lang.String)";
@@ -172,8 +167,6 @@ module ActiveMQ {
       if (selection) {
         var mbean = selection.objectName;
         if (mbean) {
-          var jolokia = workspace.jolokia;
-
           jolokia.request(
                   {type: 'exec', mbean: mbean, operation: 'browse()'},
                   onSuccess(populateTable));
