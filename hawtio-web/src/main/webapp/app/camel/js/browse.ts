@@ -30,7 +30,7 @@ module Camel {
           var callback = (idx + 1 < selectedItems.length) ? intermediateResult : operationSuccess;
           var body = item.body;
           var headers = item.headers;
-          console.log("sending to uri " + uri + " headers: " + JSON.stringify(headers) + " body: " + body);
+          //console.log("sending to uri " + uri + " headers: " + JSON.stringify(headers) + " body: " + body);
           jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, onSuccess(callback));
         });
       }
