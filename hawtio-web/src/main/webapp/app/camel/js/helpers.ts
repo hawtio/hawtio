@@ -664,14 +664,24 @@ module Camel {
     }
   }
 
-  export function createMessageFromXml(message) {
+  export function createMessageFromXml(exchange) {
+    var exchangeElement = $(exchange);
+    var uid = exchangeElement.children("uid").text();
+    var timestamp = exchangeElement.children("timestamp").text();
     var messageData = {
       headers: {},
       headerTypes: {},
       id: null,
+      uid: uid,
+      timestamp: timestamp,
       headerHtml: ""
     };
-    var headers = $(message).find("header");
+    var message = exchangeElement.children("message")[0];
+    if (!message) {
+      message = exchange;
+    }
+    var messageElement = $(message);
+    var headers = messageElement.find("header");
     var headerHtml = "";
     headers.each((idx, header) => {
       var key = header.getAttribute("key");
@@ -685,6 +695,7 @@ module Camel {
                 "<td class='property-value'>" + (value || "") + "</td></tr>";
       }
     });
+
     messageData.headerHtml = headerHtml;
     var id = messageData.headers["breadcrumbId"];
     if (!id) {
@@ -700,7 +711,7 @@ module Camel {
       });
     }
     messageData.id = id;
-    var body = $(message).children("body")[0];
+    var body = messageElement.children("body")[0];
     if (body) {
       var bodyText = body.textContent;
       var bodyType = body.getAttribute("type");
