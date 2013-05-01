@@ -14,6 +14,9 @@ module UI {
       }).
       directive('hawtioSlideout', function() {
         return new UI.SlideOut();
+      }).
+      directive('hawtioPager', function() {
+        return new UI.TablePager();
       });
 
 

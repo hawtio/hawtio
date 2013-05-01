@@ -1,10 +1,10 @@
-module Forms {
+module UI {
 
   export class TablePager {
     public restrict = 'A';
     public scope = true;
 
-    public templateUrl = 'app/forms/html/tablePager.html';
+    public templateUrl = UI.templatePath + 'tablePager.html';
 
     public link:(scope, element, attrs) => any;
 
