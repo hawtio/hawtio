@@ -42,7 +42,10 @@ module Camel {
       var mbean = getSelectionCamelContextMBean(workspace);
       var selectedItems = $scope.gridOptions.selectedItems;
       var uri = $scope.endpointUri;
-      if (mbean && selectedItems && uri) {
+      if (mbean && uri && selectedItems && selectedItems.length) {
+        //console.log("Creating a new endpoint called: " + uri + " just in case!");
+        jolokia.execute(mbean, "createEndpoint(java.lang.String)", uri, onSuccess(intermediateResult));
+
         $scope.message = "Forwarded " + Core.maybePlural(selectedItems.length, "message" + " to " + uri);
         angular.forEach(selectedItems, (item, idx) => {
           var callback = (idx + 1 < selectedItems.length) ? intermediateResult : operationSuccess;
