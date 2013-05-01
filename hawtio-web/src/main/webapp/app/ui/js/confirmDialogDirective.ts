@@ -4,7 +4,7 @@ module UI {
     public restrict = 'A';
     public replace = true;
     public transclude = true;
-    public templateUrl = 'app/ui/html/confirmDialog.html';
+    public templateUrl = UI.templatePath + 'confirmDialog.html';
 
     public scope = {
       show: '=hawtioConfirmDialog',
