@@ -38,6 +38,9 @@ module Forms {
           }).
           directive('hawtioReset', function() {
             return new Forms.ResetForm();
+          }).
+          directive('hawtioPager', function() {
+            return new Forms.TablePager();
           });
 
 

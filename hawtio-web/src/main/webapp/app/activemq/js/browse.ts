@@ -66,7 +66,7 @@ module ActiveMQ {
       ]
     };
 
-    $scope.messageDialog = new Core.TableDetailDialog($scope, $scope.gridOptions);
+    $scope.messageDialog = new Core.Dialog();
 
     var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
     var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
