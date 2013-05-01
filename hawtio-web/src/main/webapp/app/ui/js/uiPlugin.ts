@@ -11,6 +11,9 @@ module UI {
       }).
       directive('hawtioConfirmDialog', function() {
         return new UI.ConfirmDialog();
+      }).
+      directive('hawtioSlideout', function() {
+        return new UI.SlideOut();
       });
 
 

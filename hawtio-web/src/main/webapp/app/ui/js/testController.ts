@@ -5,6 +5,8 @@ module UI {
     $scope.showDeleteOne = false;
     $scope.showDeleteTwo = false;
 
+    $scope.transcludedValue = "and this is transcluded";
+
     $scope.onCancelled = (number) => {
       notification('info', 'cancelled ' + number);
     }
@@ -12,6 +14,9 @@ module UI {
     $scope.onOk = (number) => {
       notification('info', number + ' ok!');
     }
+
+    $scope.showSlideoutRight = false;
+    $scope.showSlideoutLeft = false;
 
 
   }
