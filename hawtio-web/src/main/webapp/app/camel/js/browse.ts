@@ -13,6 +13,8 @@ module Camel {
       loadData();
     });
 
+
+    // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
     $scope.openMessageDialog = (message) => {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
