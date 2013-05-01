@@ -1,10 +1,10 @@
-module Core {
+module UI {
 
   export class ConfirmDialog {
     public restrict = 'A';
     public replace = true;
     public transclude = true;
-    public templateUrl = 'app/core/html/confirmDialog.html';
+    public templateUrl = 'app/ui/html/confirmDialog.html';
 
     public scope = {
       show: '=hawtioConfirmDialog',

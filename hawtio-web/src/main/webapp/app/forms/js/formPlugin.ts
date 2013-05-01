@@ -2,7 +2,7 @@ module Forms {
 
   export var pluginName = 'hawtio-forms';
 
-  angular.module(Forms.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'datatable', 'ui.bootstrap', 'ui.bootstrap.dialog']).
+  angular.module(Forms.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'datatable', 'ui.bootstrap', 'ui.bootstrap.dialog', 'hawtio-ui']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/forms/test', {templateUrl: 'app/forms/html/test.html'}).

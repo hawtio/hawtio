@@ -2,7 +2,7 @@ module ActiveMQ {
   var pluginName = 'activemq';
   var jmxDomain = 'org.apache.activemq';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']).config(($routeProvider) => {
             $routeProvider.
                     when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html'}).
                     when('/activemq/subscribers', {templateUrl: 'app/activemq/html/subscribers.html'}).

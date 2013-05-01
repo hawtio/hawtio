@@ -314,9 +314,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           };
           return editableProperty;
         }]).
-        directive('hawtioConfirmDialog', function() {
-          return new Core.ConfirmDialog();
-        }).
         directive('gridStyle', function($window) {
           return new Core.GridStyle($window);
         });
