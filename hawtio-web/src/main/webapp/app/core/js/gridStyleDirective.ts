@@ -41,7 +41,7 @@ module Core {
 
       $(this.$window).resize(function() {
         resizeFunc();
-        scope.$apply();
+        Core.$apply(scope);
         return false;
       });
     }
