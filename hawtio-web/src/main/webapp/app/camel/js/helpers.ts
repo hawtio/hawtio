@@ -699,12 +699,18 @@ module Camel {
     messageData.headerHtml = headerHtml;
     var id = messageData.headers["breadcrumbId"];
     if (!id) {
-      // lets find the first header with a name or Path in it
-      angular.forEach(messageData.headers, (value, key) => {
-        if (!id && (key.endsWith("Name") || key.endsWith("Path"))) {
-          id = value;
+      var postFixes = ["MessageID", "ID", "Path", "Name"];
+      angular.forEach(postFixes, (postfix) => {
+        if (!id) {
+          angular.forEach(messageData.headers, (value, key) => {
+            if (!id && key.endsWith(postfix)) {
+              id = value;
+            }
+          });
         }
       });
+
+      // lets find the first header with a name or Path in it
       // if still no value, lets use the first :)
       angular.forEach(messageData.headers, (value, key) => {
         if (!id) id = value;
