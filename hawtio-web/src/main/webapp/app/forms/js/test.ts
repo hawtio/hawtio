@@ -4,17 +4,6 @@ module Forms {
 
     $scope.editing = false;
 
-    $scope.showDeleteOne = false;
-    $scope.showDeleteTwo = false;
-
-    $scope.onCancelled = (number) => {
-      notification('info', 'cancelled ' + number);
-    }
-
-    $scope.onOk = (number) => {
-      notification('info', number + ' ok!');
-    }
-
     $scope.toggleEdit = function() {
       $scope.editing = !$scope.editing;
     };

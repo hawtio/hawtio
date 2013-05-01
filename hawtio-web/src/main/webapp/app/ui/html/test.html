@@ -1,0 +1,40 @@
+<div ng-controller="UI.UITestController">
+
+  <div>
+    Confirmation Dialog
+    <div class="row-fluid">
+      <button class="btn" ng-click="showDeleteOne = true">Delete Stuff</button>
+      <button class="btn" ng-click="showDeleteTwo = true">Delete Other Stuff</button>
+
+      <div hawtio-confirm-dialog="showDeleteOne"
+           title="Delete Stuff?"
+           ok-button-text="Yes, Delete the Stuff"
+           cancel-button-text="No, Keep the Stuff"
+           on-cancel="onCancelled('One')"
+           on-ok="onOk('One')">
+        <div class="dialog-body">
+          <p>
+            Are you sure you want to delete all the stuff?
+          </p>
+        </div>
+      </div>
+      <!-- Use more defaults -->
+      <div hawtio-confirm-dialog="showDeleteTwo"
+           on-cancel="onCancelled('Two')"
+           on-ok="onOk('Two')">
+        <div class="dialog-body">
+          <p>
+            Are you sure you want to delete all the other stuff?
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+
+
+</div>
