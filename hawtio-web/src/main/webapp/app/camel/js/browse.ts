@@ -14,11 +14,27 @@ module Camel {
     });
 
     $scope.openMessageDialog = (message) => {
-      $scope.row = Core.pathGet(message, ["entity"]);
+      var idx = Core.pathGet(message, ["rowIndex"]);
+      $scope.selectRowIndex(idx);
       if ($scope.row) {
         $scope.messageDialog.open();
       }
     };
+
+    $scope.selectRowIndex = (idx) => {
+      $scope.rowIndex = idx;
+      var selected = $scope.gridOptions.selectedItems;
+      selected.splice(0, selected.length);
+      if (idx >= 0 && idx < $scope.messages.length) {
+        $scope.row = $scope.messages[idx];
+        if ($scope.row) {
+          selected.push($scope.row);
+        }
+      } else {
+        $scope.row = null;
+      }
+    };
+
 
     $scope.forwardMessagesAndCloseForwardDialog = () => {
       var mbean = getSelectionCamelContextMBean(workspace);
@@ -46,6 +62,7 @@ module Camel {
     }
 
     function operationSuccess() {
+      $scope.messageDialog.close();
       notification("success", $scope.message);
       setTimeout(loadData, 50);
     }

@@ -47,7 +47,7 @@ module Camel {
             scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteMessages, query));
           }
           $scope.graphView = "app/camel/html/routes.html";
-          $scope.tableView = "app/camel/html/browseRoute.html";
+          $scope.tableView = "app/camel/html/browseMessages.html";
         } else {
           $scope.messages = [];
           $scope.graphView = null;

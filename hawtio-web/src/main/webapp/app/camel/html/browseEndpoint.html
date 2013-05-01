@@ -16,16 +16,8 @@
     </div>
   </div>
 
-  <div class="row-fluid">
-    <div class="gridStyle" ng-grid="gridOptions"></div>
-    <!--
-        <div class="gridStyle" hawtio-datatable="gridOptions"></div>
-    -->
-  </div>
+  <ng-include src="'app/camel/html/browseMessages.html'"></ng-include>
 
-  <ng-include src="'app/camel/html/browseMessageTemplate.html'"></ng-include>
-  
-  
   <div modal="forwardDialog.show" close="forwardDialog.close()" options="forwardDialog.options">
     <form class="form-horizontal no-bottom-margin" ng-submit="forwardDialog.close()">
       <div class="modal-header">
