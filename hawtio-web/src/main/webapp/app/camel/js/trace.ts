@@ -107,7 +107,7 @@ module Camel {
     }
 
     function onSelectionChanged() {
-      console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
+      //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
       angular.forEach($scope.gridOptions.selectedItems, (selected) => {
         if (selected) {
           var toNode = selected["toNode"];
