@@ -12,7 +12,7 @@ module Forms {
     public element = null;
     public attrs = null;
     public tableName:string = null;
-    public rowName:string = null;
+    public setRowIndexName:string = null;
     public rowIndexName:string = null;
 
     constructor() {
@@ -27,7 +27,7 @@ module Forms {
       this.element = element;
       this.attrs = attrs;
       this.tableName = attrs["hawtioPager"] || attrs["array"] || "data";
-      this.rowName = attrs["row"] || "row";
+      this.setRowIndexName = attrs["onIndexChange"] || "onIndexChange";
       this.rowIndexName = attrs["rowIndex"] || "rowIndex";
 
       scope.first = () => {
@@ -74,16 +74,13 @@ module Forms {
     }
 
     public goToIndex(idx:number) {
-      var data = this.tableData();
-      if (!data) {
-        console.log("No data for idx: " + idx);
-      } else if (idx >= 0 && idx < data.length) {
-        //console.log("Navigating to index: " + idx);
-        var scope = this.$scope.$parent;
-        scope[this.rowName] = data[idx];
-        scope[this.rowIndexName] = idx;
+      var name = this.setRowIndexName;
+      var fn = this.$scope[name];
+      if (angular.isFunction(fn)) {
+        fn(idx);
       } else {
-        console.log("Ignoring idx out of range: " + idx);
+        console.log("No function defined in scope for " + name + " but was " + fn);
+        this.$scope[this.rowIndexName] = idx;
       }
     }
   }
