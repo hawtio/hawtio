@@ -5,6 +5,10 @@ module UI {
   export var templatePath = 'app/ui/html/';
 
   angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui', 'ui.bootstrap']).
+      config(function($routeProvider) => {
+        $routeProvider.
+            when('/ui/test', {templateUrl: templatePath + 'test.html'})
+      }).
       directive('hawtioConfirmDialog', function() {
         return new UI.ConfirmDialog();
       });
