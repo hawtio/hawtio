@@ -13,7 +13,7 @@
           <tr ng-repeat="header in headers">
             <td style="width: 45%">
               <input type="text" style="width: 100%" ng-model="header.name" typeahead="completion for completion in defaultHeaderNames() | filter:$viewValue"
-                     typeahead-editable='false'
+                     typeahead-editable='true'
                      placeholder="Header name">
             </td>
             <td style="width: 55%">

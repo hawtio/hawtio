@@ -31,7 +31,7 @@
           <ng-pluralize count="selectedItems.length"
                         when="{'1': 'a message', 'other': '{} messages'}"></ng-pluralize>
           to: <input type="text" style="width: 100%" ng-model="endpointUri" placeholder="Endpoint URI"
-                     typeahead="title for title in endpointUris() | filter:$viewValue" typeahead-editable='false'></p>
+                     typeahead="title for title in endpointUris() | filter:$viewValue" typeahead-editable='true'></p>
       </div>
       <div class="modal-footer">
         <input id="submit" class="btn btn-primary add" type="submit" ng-click="forwardMessagesAndCloseForwardDialog()"
