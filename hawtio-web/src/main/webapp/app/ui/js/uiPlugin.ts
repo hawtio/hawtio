@@ -17,6 +17,9 @@ module UI {
       }).
       directive('hawtioPager', function() {
         return new UI.TablePager();
+      }).
+      directive('hawtioEditor', function() {
+        return new UI.Editor();
       });
 
 

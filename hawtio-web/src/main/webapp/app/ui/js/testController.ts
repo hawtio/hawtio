@@ -18,6 +18,14 @@ module UI {
     $scope.showSlideoutRight = false;
     $scope.showSlideoutLeft = false;
 
+    $scope.someText = "var someValue = 0;\n" +
+                      "var someFunc = function() {\n" +
+                      "  return \"Hello World!;\n" +
+                      "}\n";
+
+    $scope.$watch('someText', function() {
+      console.log("Some text: ", $scope.someText);
+    });
 
   }
 

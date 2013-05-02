@@ -158,7 +158,7 @@ CodeMirror.defineMode('coffeescript', function(conf) {
         if (stream.match(identifiers)) {
             return 'variable';
         }
-        
+
         if (stream.match(properties)) {
             return 'property';
         }
@@ -170,7 +170,7 @@ CodeMirror.defineMode('coffeescript', function(conf) {
 
     function tokenFactory(delimiter, outclass) {
         var singleline = delimiter.length == 1;
-        return function tokenString(stream, state) {
+        return function(stream, state) {
             while (!stream.eol()) {
                 stream.eatWhile(/[^'"\/\\]/);
                 if (stream.eat('\\')) {
