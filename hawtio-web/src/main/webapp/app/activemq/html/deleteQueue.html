@@ -1,13 +1,25 @@
-<form class="form-horizontal" ng-controller="ActiveMQ.DestinationController">
+<div ng-controller="ActiveMQ.DestinationController">
+  <div class="row-fluid">
+
     <div class="control-group">
-        <div class="alert">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          <strong>Warning!</strong> You are about to delete queue '{{name()}}'.
-          <br/>
-          This operation cannot be undone!
-        </div>
+      <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Warning:</strong> these operations cannot be undone. Please be careful!
+      </div>
     </div>
-    <div class="control-group">
+  </div>
+  <div class="row-fluid">
+    <div class="span4">
+      <div class="control-group">
         <button type="submit" class="btn btn-warning" ng-click="deleteDestination()">Delete Queue '{{name()}}'</button>
+        <label>This will remove the queue completely.</label>
+      </div>
     </div>
-</form>
+    <div class="span4">
+      <div class="control-group">
+        <button type="submit" class="btn btn-warning" ng-click="purgeDestination()">Purge Queue '{{name()}}'</button>
+        <label>Purges all the current messages on the queue.</label>
+      </div>
+    </div>
+  </div>
+</div>

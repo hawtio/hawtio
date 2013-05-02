@@ -87,13 +87,13 @@ module ActiveMQ {
               href: () => "#/activemq/subscribers"
             });
             workspace.subLevelTabs.push({
-              content: '<i class="icon-plus"></i> Create Queue',
+              content: '<i class="icon-plus"></i> Create',
               title: "Create a new queue",
               isValid: (workspace:Workspace) => isQueuesFolder(workspace) || isBroker(workspace),
               href: () => "#/activemq/createQueue"
             });
             workspace.subLevelTabs.push({
-              content: '<i class="icon-plus"></i> Create Topic',
+              content: '<i class="icon-plus"></i> Create',
               title: "Create a new topic",
               isValid: (workspace:Workspace) => isTopicsFolder(workspace) || isBroker(workspace),
               href: () => "#/activemq/createTopic"
@@ -105,8 +105,8 @@ module ActiveMQ {
               href: () => "#/activemq/deleteTopic"
             });
             workspace.subLevelTabs.push({
-              content: '<i class="icon-remove"></i> Delete Queue',
-              title: "Delete this queue",
+              content: '<i class="icon-remove"></i> Delete',
+              title: "Delete or purge this queue",
               isValid: (workspace:Workspace) => isQueue(workspace),
               href: () => "#/activemq/deleteQueue"
             });

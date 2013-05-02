@@ -1,5 +1,5 @@
 module ActiveMQ {
-  export function DestinationController($scope, $location, workspace:Workspace) {
+  export function DestinationController($scope, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
     $scope.message = "";
 
@@ -46,7 +46,6 @@ module ActiveMQ {
     }
 
     $scope.createDestination = (name, isQueue) => {
-      var jolokia = workspace.jolokia;
       var mbean = getBrokerMBean(jolokia);
       if (mbean) {
         var operation;
@@ -66,13 +65,11 @@ module ActiveMQ {
     };
 
     $scope.deleteDestination = () => {
-      var jolokia = workspace.jolokia;
       var mbean = getBrokerMBean(jolokia);
       var selection = workspace.selection;
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
         var domain = selection.domain;
-        //var name = entries["Destination"];
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
@@ -84,6 +81,18 @@ module ActiveMQ {
           $scope.message = "Deleted topic " + name;
         }
         jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
+      }
+    };
+
+    $scope.purgeDestination = () => {
+      var mbean = workspace.getSelectedMBeanName();
+      var selection = workspace.selection;
+      var entries = selection.entries;
+      if (mbean && selection && jolokia && entries) {
+        var name = entries["Destination"] || entries["destinationName"] || selection.title;
+        var operation = "purge()";
+        $scope.message = "Purged queue " + name;
+        jolokia.execute(mbean, operation, onSuccess(operationSuccess));
       }
     };
 
