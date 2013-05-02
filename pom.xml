@@ -342,7 +342,7 @@
     <profile>
       <id>snapshot</id>
       <properties>
-        <activemq-version>5.8-SNAPSHOT</activemq-version>
+        <activemq-version>5.9-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
 <!--
         <camel-version>2.11-SNAPSHOT</camel-version>
@@ -362,6 +362,30 @@
             <enabled>false</enabled>
           </releases>
         </repository>
+      </repositories>
+    </profile>
+
+    <profile>
+      <id>amqSnapshot</id>
+      <properties>
+        <activemq-version>5.9-SNAPSHOT</activemq-version>
+        <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
+      </properties>
+
+      <repositories>
+<!--
+        <repository>
+          <id>fusesource-snapshots</id>
+          <name>fusesource-snapshots</name>
+          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+-->
       </repositories>
     </profile>
 
