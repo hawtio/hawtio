@@ -3,6 +3,9 @@ module ActiveMQ {
     $scope.workspace = workspace;
     $scope.message = "";
 
+    $scope.deleteDialog = false;
+    $scope.purgeDialog = false;
+
     $scope.$watch('workspace.selection', function () {
       workspace.moveIfViewInvalid();
     });
