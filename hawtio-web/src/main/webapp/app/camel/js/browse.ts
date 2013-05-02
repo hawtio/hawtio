@@ -63,11 +63,14 @@ module Camel {
       return (endpointFolder) ? endpointFolder.children.map(n => n.title) : [];
     };
 
+    $scope.refresh = loadData;
+
     function intermediateResult() {
     }
 
     function operationSuccess() {
       $scope.messageDialog.close();
+      $scope.gridOptions.selectedItems.splice(0);
       notification("success", $scope.message);
       setTimeout(loadData, 50);
     }
