@@ -204,7 +204,6 @@ module ActiveMQ {
     }
 
     function loadTable() {
-      console.log("Loading the table");
       var selection = workspace.selection;
       if (selection) {
         var mbean = selection.objectName;
