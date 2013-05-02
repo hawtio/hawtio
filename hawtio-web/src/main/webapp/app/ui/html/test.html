@@ -105,15 +105,16 @@
 
     Instance 1
     <div class="row-fluid">
-      <div hawtio-editor="someText" mode="javascript"></div>
+      <div hawtio-editor="someText" name='theMaster' mode="javascript"></div>
       <div>Text : {{someText}}</div>
     </div>
 
     Instance 2 (readonly)
     <div class="row-fluid">
-      <div hawtio-editor="someText" read-only="true" mode="javascript"></div>
+      <div hawtio-editor="someText" read-only="true" mode="javascript" selected-line="{{selectedLine}}"></div>
       <div>Text : {{someText}}</div>
     </div>
+    <input type="number" ng-model="selectedLine">
   </div>
 
 
