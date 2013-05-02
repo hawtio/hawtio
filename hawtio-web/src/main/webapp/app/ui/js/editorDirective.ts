@@ -23,7 +23,6 @@ module UI {
       $scope.applyOptions = () => {
         if ($scope.codeMirror) {
           $scope.options.each(function(option) {
-            console.log("Applying option", option.key, "to value", option['value']);
             $scope.codeMirror.setOption(option.key, option['value']);
           });
           $scope.options = [];
@@ -59,8 +58,6 @@ module UI {
     };
 
     public link = ($scope, $element, $attrs) => {
-
-      console.log("$attrs", $attrs);
 
       var config = Object.extended($attrs).clone();
 
