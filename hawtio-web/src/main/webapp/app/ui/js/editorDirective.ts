@@ -54,6 +54,11 @@ module UI {
             $scope.text = $scope.doc.getValue();
             $scope.$apply();
           });
+
+          setTimeout(function() {
+            $scope.codeEditor.refresh();
+          }, 10);
+
         }
       });
 
