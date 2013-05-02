@@ -56,7 +56,19 @@ module ActiveMQ {
               {field: 'DispatchedQueueSize', displayName: 'Dispatched Queue #'},
               {field: 'SlowConsumer', displayName: 'Slow ?'},
               {field: 'Retroactive', displayName: 'Retroactive'},
-              {field: 'Selector', displayName: 'Selector'},
+              {field: 'Selector', displayName: 'Selector'}
+            ];
+            attributes[jmxDomain + "/networkConnectors/folder"] = [
+              {field: 'Name', displayName: 'Name', width: "**"},
+              {field: 'UserName', displayName: 'User Name'},
+              {field: 'PrefetchSize', displayName: 'Prefetch Size'},
+              {field: 'ConduitSubscriptions', displayName: 'Conduit Subscriptions?'},
+              {field: 'Duplex', displayName: 'Duplex'},
+              {field: 'DynamicOnly', displayName: 'Dynamic Only'}
+            ];
+            attributes[jmxDomain + "/PersistenceAdapter/folder"] = [
+              {field: 'IndexDirectory', displayName: 'Index Directory', width: "**"},
+              {field: 'LogDirectory', displayName: 'Log Directory', width: "**"}
             ];
 
             workspace.topLevelTabs.push({
