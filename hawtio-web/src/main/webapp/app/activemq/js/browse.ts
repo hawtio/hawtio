@@ -141,7 +141,15 @@ module ActiveMQ {
     };
 
     function populateTable(response) {
-      $scope.messages = response.value;
+      var data = response.value;
+      if (!angular.isArray(data)) {
+        $scope.messages = [];
+        angular.forEach(data, (value, idx) => {
+          $scope.messages.push(value);
+        });
+      } else {
+        $scope.messages = data;
+      }
       angular.forEach($scope.messages, (message) => {
         message.headerHtml = createHeaderHtml(message);
       });
