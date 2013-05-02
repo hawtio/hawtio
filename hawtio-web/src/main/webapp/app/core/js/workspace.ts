@@ -314,7 +314,6 @@ class Workspace {
       this.tree = tree;
 
       var processors = this.treePostProcessors;
-      console.log("We have " + processors.length + " post processors!");
       angular.forEach(processors, (processor) => processor(tree));
 
       this.maybeMonitorPlugins();
