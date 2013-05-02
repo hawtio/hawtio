@@ -136,8 +136,9 @@ function onSuccess(fn, options = {}) {
       //alert("Jolokia request failed: " + response.error);
       var stacktrace = response.stacktrace;
       if (stacktrace) {
-        console.log(stacktrace);
-        if (!options['silent']) {
+        var silent = options['silent'];
+        if (!silent) {
+          console.log(stacktrace);
           if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
                   stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
                   stacktrace.indexOf(" java.lang.IllegalArgumentException: No operation") >= 0) {
