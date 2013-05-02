@@ -15,6 +15,7 @@ class Workspace {
   public mbeanTypesToDomain = {};
   public mbeanServicesToDomain = {};
   public attributeColumnDefs = {};
+  public treePostProcessors = [];
   public topLevelTabs = [];
   public subLevelTabs = [];
   public keyToNodeMap = {};
@@ -62,6 +63,20 @@ class Workspace {
     this.populateTree(response);
     // we now only reload the tree if the TreeWatcher mbean is present...
     // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
+  }
+
+  /**
+   * Adds a post processor of the tree to swizzle the tree metadata after loading
+   * such as correcting any typeName values or CSS styles by hand
+   */
+  public addTreePostProcessor(processor) {
+    this.treePostProcessors.push(processor);
+
+    var tree = this.tree;
+    if (tree) {
+      // the tree is loaded already so lets process it now :)
+      processor(tree);
+    }
   }
 
   public maybeMonitorPlugins() {
@@ -297,6 +312,10 @@ class Workspace {
       // now lets mark the nodes with no children as lazy loading...
       this.enableLazyLoading(tree);
       this.tree = tree;
+
+      var processors = this.treePostProcessors;
+      console.log("We have " + processors.length + " post processors!");
+      angular.forEach(processors, (processor) => processor(tree));
 
       this.maybeMonitorPlugins();
 
