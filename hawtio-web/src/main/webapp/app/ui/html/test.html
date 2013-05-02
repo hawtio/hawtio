@@ -37,8 +37,8 @@
   <div>
     Slideout
     <div class="row-fluid">
-      <button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show Slideout Right</button>
       <button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show Slideout Left</button>
+      <button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show Slideout Right</button>
 
       <div hawtio-slideout="showSlideoutRight" title="foobar mcgee">
         <div class="dialog-body">
@@ -85,7 +85,6 @@
 
       <div hawtio-slideout="showSlideoutLeft" direction="left" title="I like pastry">
         <div class="dialog-body">
-          <div>Bollocks</div>
           <div hawtio-editor="someText" mode="javascript"></div>
         </div>
       </div>
@@ -103,8 +102,16 @@
 
   <div>
     CodeMirror
+
+    Instance 1
     <div class="row-fluid">
       <div hawtio-editor="someText" mode="javascript"></div>
+      <div>Text : {{someText}}</div>
+    </div>
+
+    Instance 2 (readonly)
+    <div class="row-fluid">
+      <div hawtio-editor="someText" read-only="true" mode="javascript"></div>
       <div>Text : {{someText}}</div>
     </div>
   </div>

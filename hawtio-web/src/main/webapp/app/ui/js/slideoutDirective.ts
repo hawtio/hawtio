@@ -32,10 +32,8 @@ module UI {
 
       $scope.$watch('show', function() {
         if ($scope.show) {
-          setTimeout(function() {
-            $scope.body = $('.slideout-body');
-            $scope.body.html($compile($scope.clone.html())($scope.$parent));
-          }, 50);
+          $scope.body = $element.find('.slideout-body');
+          $scope.body.html($compile($scope.clone.html())($scope.$parent));
         }
       });
     };

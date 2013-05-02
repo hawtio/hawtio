@@ -9,35 +9,72 @@ module UI {
 
     public scope = {
       text: '=hawtioEditor',
-      mode: '@',
       name: '@',
-      readonly: '@',
-      id: '@'
     };
 
     public controller = ($scope, $element, $attrs) => {
 
       $scope.codeMirror = null;
+      $scope.doc = null;
       $scope.options = [];
 
       observe($scope, $attrs, 'name', 'editor');
-      observe($scope, $attrs, 'mode', 'text');
-      observe($scope, $attrs, 'readonly', 'false');
 
       $scope.applyOptions = () => {
         if ($scope.codeMirror) {
           $scope.options.each(function(option) {
+            console.log("Applying option", option.key, "to value", option['value']);
             $scope.codeMirror.setOption(option.key, option['value']);
           });
           $scope.options = [];
         }
-      }
+      };
+
+      $scope.$watch('doc', () => {
+        if ($scope.doc) {
+          $scope.codeMirror.on('change', function(changeObj) {
+            var phase = $scope.$parent.$$phase;
+            if (!phase) {
+              $scope.text = $scope.doc.getValue();
+              Core.$applyNowOrLater($scope);
+            }
+          });
+        }
+      });
+
+      $scope.$watch('codeMirror', () => {
+        if ($scope.codeMirror) {
+          $scope.doc = $scope.codeMirror.getDoc();
+        }
+      });
+
+      $scope.$watch('text', function() {
+        if ($scope.codeMirror && $scope.doc) {
+          if (!$scope.codeMirror.hasFocus()) {
+            $scope.doc.setValue($scope.text);
+          }
+        }
+      });
 
     };
 
     public link = ($scope, $element, $attrs) => {
 
-      $scope.$watch('options.length', $scope.applyOptions);
+      console.log("$attrs", $attrs);
+
+      var config = Object.extended($attrs).clone();
+
+      delete config['$$element']
+      delete config['$attr'];
+      delete config['class'];
+      delete config['hawtioEditor'];
+
+      angular.forEach(config, function(value, key) {
+        $scope.options.push({
+          key: key,
+          'value': value
+        });
+      });
 
       $scope.$watch('text', function() {
         if (!$scope.codeMirror) {
@@ -49,36 +86,10 @@ module UI {
           options = CodeEditor.createEditorSettings(options);
           $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
           $scope.applyOptions();
-          $scope.doc = $scope.codeMirror.getDoc();
-          $scope.codeMirror.on('change', function(changeObj) {
-            $scope.text = $scope.doc.getValue();
-            $scope.$apply();
-          });
-
-          setTimeout(function() {
-            $scope.codeEditor.refresh();
-          }, 10);
-
         }
       });
 
-      $scope.$watch('mode', function() {
-        if ($scope.mode) {
-          $scope.options.push({
-            key: 'mode',
-            'value': $scope.mode
-          });
-        }
-      });
-
-      $scope.$watch('readonly', function() {
-        $scope.options.push({
-          key: 'readonly',
-          'value': $scope.readonly
-        });
-      });
     };
-
 
   }
 }
