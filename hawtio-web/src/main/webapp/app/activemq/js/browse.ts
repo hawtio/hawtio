@@ -66,7 +66,7 @@ module ActiveMQ {
       ]
     };
 
-    $scope.messageDialog = new Core.Dialog();
+    $scope.showMessageDetails = false;
 
     var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
     var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties",
@@ -83,7 +83,7 @@ module ActiveMQ {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
       if ($scope.row) {
-        $scope.messageDialog.open();
+        $scope.showMessageDetails = true;
       }
     };
 
