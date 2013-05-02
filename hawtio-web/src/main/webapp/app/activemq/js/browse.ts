@@ -87,6 +87,8 @@ module ActiveMQ {
       }
     };
 
+    $scope.refresh = loadTable;
+
     $scope.selectRowIndex = (idx) => {
       $scope.rowIndex = idx;
       var selected = $scope.gridOptions.selectedItems;
@@ -128,7 +130,24 @@ module ActiveMQ {
         angular.forEach(selectedItems, (item, idx) => {
           var id = item.JMSMessageID;
           if (id) {
-            var callback = (idx + 1 < selectedItems.length) ? intermediateResult : deleteSuccess;
+            var callback = (idx + 1 < selectedItems.length) ? intermediateResult : operationSuccess;
+            jolokia.execute(mbean, operation, id, onSuccess(callback));
+          }
+        });
+      }
+    };
+
+    $scope.retryMessages = () => {
+      var selection = workspace.selection;
+      var mbean = selection.objectName;
+      if (mbean && selection) {
+        var selectedItems = $scope.gridOptions.selectedItems;
+        $scope.message = "Retry " + Core.maybePlural(selectedItems.length, "message");
+        var operation = "retryMessage(java.lang.String)";
+        angular.forEach(selectedItems, (item, idx) => {
+          var id = item.JMSMessageID;
+          if (id) {
+            var callback = (idx + 1 < selectedItems.length) ? intermediateResult : operationSuccess;
             jolokia.execute(mbean, operation, id, onSuccess(callback));
           }
         });
@@ -185,10 +204,13 @@ module ActiveMQ {
     }
 
     function loadTable() {
+      console.log("Loading the table");
       var selection = workspace.selection;
       if (selection) {
         var mbean = selection.objectName;
         if (mbean) {
+          $scope.dlq = false;
+          jolokia.getAttribute(mbean, "DLQ", onSuccess(onDlq, {silent: true}));
           jolokia.request(
                   {type: 'exec', mbean: mbean, operation: 'browse()'},
                   onSuccess(populateTable));
@@ -196,11 +218,17 @@ module ActiveMQ {
       }
     }
 
+    function onDlq(response) {
+      $scope.dlq = response;
+      Core.$apply($scope);
+    }
+
     function intermediateResult() {
     }
 
-    function deleteSuccess() {
+    function operationSuccess() {
       $scope.messageDialog.close();
+      $scope.gridOptions.selectedItems.splice(0);
       notification("success", $scope.message);
       setTimeout(loadTable, 50);
     }

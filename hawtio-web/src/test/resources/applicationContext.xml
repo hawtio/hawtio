@@ -67,6 +67,7 @@
     <property name="userName" value="admin"/>
     <property name="password" value="admin"/>
     <property name="preserveMessageQos" value="true"/>
+    <property name="explicitQosEnabled" value="true"/>
   </bean>
 
   <!-- tell Camel to use localhost as the JMX MBean naming to have a fixed name style -->
