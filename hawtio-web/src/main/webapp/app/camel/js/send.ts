@@ -92,7 +92,7 @@ module Camel {
           // if camel then use a different operation on the camel context mbean
           var callback = onSuccess(sendWorked);
           if (selection.domain === "org.apache.camel") {
-            var uri = selection.title;
+            var uri = selection.title.replace("\\?", "?");
             mbean = getSelectionCamelContextMBean(workspace);
             if (mbean) {
               if (headers) {
