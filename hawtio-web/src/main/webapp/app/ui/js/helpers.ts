@@ -16,20 +16,6 @@ module UI {
     });
   }
 
-  export function executeActions(type, actions) {
-    var toExecute = actions.filter(function(action) {
-      return angular.isDefined(action[type]);
-    });
-    var remaining = actions.exclude(function(action) {
-      return !angular.isDefined(action[type]);
-    });
-    toExecute.each(function(action) {
-      action[type]();
-    });
-    return remaining;
-  }
-
-
 
 
 

@@ -9,8 +9,7 @@ module UI {
 
     public scope = {
       text: '=hawtioEditor',
-      selectedLine: '@',
-      name: '@'
+      name: '@',
     };
 
     public controller = ($scope, $element, $attrs) => {
@@ -18,7 +17,6 @@ module UI {
       $scope.codeMirror = null;
       $scope.doc = null;
       $scope.options = [];
-      $scope.actions = [];
 
       observe($scope, $attrs, 'name', 'editor');
 
@@ -31,39 +29,21 @@ module UI {
         }
       };
 
-      $scope.actions.push({
-         doc: () => {
-           $scope.codeMirror.on('change', function(changeObj) {
-             var phase = $scope.$parent.$$phase;
-             if (!phase) {
-               $scope.text = $scope.doc.getValue();
-               Core.$applyNowOrLater($scope);
-             }
-           });
-         }
-      });
-
       $scope.$watch('doc', () => {
         if ($scope.doc) {
-          $scope.actions = executeActions('doc', $scope.actions);
-        }
-      });
-
-      $scope.actions.push({
-        editor: () => {
-          $scope.doc = $scope.codeMirror.getDoc();
-        }
-      });
-
-      $scope.actions.push({
-        editor: () => {
-          $scope.applyOptions();
+          $scope.codeMirror.on('change', function(changeObj) {
+            var phase = $scope.$parent.$$phase;
+            if (!phase) {
+              $scope.text = $scope.doc.getValue();
+              Core.$applyNowOrLater($scope);
+            }
+          });
         }
       });
 
       $scope.$watch('codeMirror', () => {
         if ($scope.codeMirror) {
-          $scope.actions = executeActions('editor', $scope.actions);
+          $scope.doc = $scope.codeMirror.getDoc();
         }
       });
 
@@ -72,27 +52,6 @@ module UI {
           if (!$scope.codeMirror.hasFocus()) {
             $scope.doc.setValue($scope.text);
           }
-        }
-      });
-
-      $scope.$watch('selectedLine', function() {
-
-        var setLine = () => {
-          if ($scope.selectedLine < $scope.codeMirror.lineCount()) {
-            var lineText = $scope.doc.getLine($scope.selectedLine);
-            var endChar = (lineText) ? lineText.length : 1000;
-            var start = {line: $scope.selectedLine, ch: 0};
-            var end = {line: $scope.selectedLine, ch: endChar};
-            $scope.codeMirror.scrollIntoView(start);
-            $scope.codeMirror.setSelection(start, end);
-            $scope.codeMirror.refresh();
-          }
-        }
-
-        if ($scope.codeMirror && $scope.doc) {
-          setLine();
-        } else {
-          $scope.actions.push( { doc: setLine });
         }
       });
 
@@ -123,6 +82,7 @@ module UI {
 
           options = CodeEditor.createEditorSettings(options);
           $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
+          $scope.applyOptions();
         }
       });
 

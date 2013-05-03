@@ -23,8 +23,6 @@ module UI {
                       "  return \"Hello World!;\"\n" +
                       "}\n";
 
-    $scope.selectedLine = 0;
-
 
   }
 
