@@ -280,6 +280,18 @@ module Core {
   }
 
   /**
+   * Trims the trailing postfix from a string if its present
+   */
+  export function trimTrailing(text:string, postfix:string) {
+    if (text && postfix) {
+      if (text.endsWith(postfix)) {
+        return text.substring(0, text.length - postfix.length);
+      }
+    }
+    return text;
+  }
+
+  /**
    * Turns the given search hash into a URI style query string
    */
   export function hashToString(hash) {

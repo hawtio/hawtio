@@ -14,6 +14,8 @@ module JVM {
       var host = $scope.host || "localhost";
       var port = $scope.port;
       var path = Core.trimLeading($scope.path || "jolokia", "/");
+      path = Core.trimTrailing(path, "/");
+
       if (port > 0) {
         host += ":" + port;
       }
