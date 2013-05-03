@@ -245,7 +245,7 @@ module Fabric {
       if (password) {
         full += "&_pwd=" + password;
       }
-      window.open(full);
+      window.open(full + "/#/jmx/attributes?nid=root-java.lang-Runtime" );
     }
   }
 }

@@ -74,25 +74,18 @@ module Fabric {
       });
     };
 
-    $scope.connect = () => {
-      var selected = $scope.selectedContainers || [];
-      var row = selected.find((s) => s.jolokiaUrl);
+    $scope.connect = (row) => {
       if (row) {
         // TODO lets find these from somewhere! :)
         var userName = "admin";
         var password = "admin";
-        Fabric.connect($scope.row, userName, password, true);
+        Fabric.connect(row, userName, password, true);
       }
     };
 
     $scope.anySelectionAlive = (state) => {
       var selected = $scope.selectedContainers || [];
       return selected.length && selected.any((s) => s.alive === state);
-    };
-
-    $scope.anySelectionHasJolokia = () => {
-      var selected = $scope.selectedContainers || [];
-      return selected.length && selected.any((s) => s.jolokiaUrl);
     };
 
     $scope.everySelectionAlive = (state) => {
@@ -188,7 +181,7 @@ module Fabric {
         filterText: ''
       },
       selectedItems: $scope.selectedContainers,
-      rowHeight: 32,
+      rowHeight: 42,
       showSelectionCheckbox: true,
       selectWithCheckboxOnly: true,
       keepLastSelected: false,
@@ -200,6 +193,13 @@ module Fabric {
           cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{row.getProperty(col.field)}}"></i></div>',
           width: 56,
           resizable: false
+        },
+        {
+          field: 'jolokiaUrl',
+          displayName: 'Connect',
+          headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="Connect to container"><i class="icon-cloud"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>',
+          cellTemplate: '<div class="ngCellText centered"><button class="btn" ng-disabled="!row.entity.jolokiaUrl" title="Open a new window and connect to this container" ng-click="connect(row.entity)"><i class="icon-signin"></i></button></div>',
+          width: 48
         },
         {
           field: 'name',
@@ -260,7 +260,7 @@ module Fabric {
       if (!Object.equal($scope.result, response.value)) {
 
         $scope.result = response.value;
-        
+
         $scope.containers = [];
         $scope.profiles = empty();
         $scope.versions = empty();
@@ -278,7 +278,8 @@ module Fabric {
             version: container.versionId,
             status: $scope.statusIcon(container),
             services: services,
-            profileIds: container.profileIds
+            profileIds: container.profileIds,
+            jolokiaUrl: container.jolokiaUrl
           });
         });
 
