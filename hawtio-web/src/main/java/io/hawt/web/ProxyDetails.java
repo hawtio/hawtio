@@ -57,8 +57,6 @@ public class ProxyDetails {
     }
 
     public ProxyDetails(String pathInfo) {
-        System.out.println("pathInfo: " + pathInfo);
-
         hostAndPort = pathInfo;
         while (hostAndPort.startsWith("/")) {
             hostAndPort = hostAndPort.substring(1);
@@ -104,8 +102,9 @@ public class ProxyDetails {
                 stringProxyURL += "?" + URIUtil.encodeQuery(httpServletRequest.getQueryString());
             }
 */
-            System.out.println("Proxying to " + stringProxyURL);
-            LOG.debug("Proxying to " + stringProxyURL);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Proxying to " + stringProxyURL);
+            }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
