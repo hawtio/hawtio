@@ -74,9 +74,25 @@ module Fabric {
       });
     };
 
+    $scope.connect = () => {
+      var selected = $scope.selectedContainers || [];
+      var row = selected.find((s) => s.jolokiaUrl);
+      if (row) {
+        // TODO lets find these from somewhere! :)
+        var userName = "admin";
+        var password = "admin";
+        Fabric.connect($scope.row, userName, password, true);
+      }
+    };
+
     $scope.anySelectionAlive = (state) => {
       var selected = $scope.selectedContainers || [];
       return selected.length && selected.any((s) => s.alive === state);
+    };
+
+    $scope.anySelectionHasJolokia = () => {
+      var selected = $scope.selectedContainers || [];
+      return selected.length && selected.any((s) => s.jolokiaUrl);
     };
 
     $scope.everySelectionAlive = (state) => {

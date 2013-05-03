@@ -17,7 +17,7 @@ module Fabric {
       // TODO lets find these from somewhere! :)
       var userName = "admin";
       var password = "admin";
-      Fabric.connect($scope.row, userName, password, tru);
+      Fabric.connect($scope.row, userName, password, true);
     };
 
     $scope.stop = () => {
