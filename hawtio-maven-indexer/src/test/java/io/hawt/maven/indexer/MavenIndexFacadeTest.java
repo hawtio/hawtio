@@ -42,7 +42,7 @@ public class MavenIndexFacadeTest {
     public static void init() throws Exception {
         indexer = new MavenIndexerFacade();
         indexer.setCacheDirectory(new File(targetDir(), "mavenIndexer"));
-        indexer.start();
+        indexer.init();
     }
 
     @AfterClass

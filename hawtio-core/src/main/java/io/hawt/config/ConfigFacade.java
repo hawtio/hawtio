@@ -1,29 +1,24 @@
 package io.hawt.config;
 
 import io.hawt.util.IOHelper;
+import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.io.File;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
 /**
  * A facade for the hawtio configuration features.
  */
-public class ConfigFacade implements ConfigFacadeMXBean {
+public class ConfigFacade extends MBeanSupport implements ConfigFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigFacade.class);
     private static ConfigFacade singleton;
 
-    private ObjectName objectName;
-    private MBeanServer mBeanServer;
     private String configDir;
     private String version;
-    private boolean registered;
 
     public static ConfigFacade getSingleton() {
         if (singleton == null) {
@@ -33,30 +28,14 @@ public class ConfigFacade implements ConfigFacadeMXBean {
         return singleton;
     }
 
+    @Override
     public void init() throws Exception {
-        singleton = this;
+        ConfigFacade.singleton = this;
+        super.init();
 
-        // lets check if we have a config directory if not lets create one...
-        // now lets expose the mbean...
-        if (objectName == null) {
-            objectName = new ObjectName(getDefaultObjectName());
-        }
-        if (mBeanServer == null) {
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        }
-        if (!registered && !mBeanServer.isRegistered(objectName)) {
-            mBeanServer.registerMBean(this, objectName);
-            registered = true;
-        }
     }
 
-    public void destroy() throws Exception {
-        if (registered && objectName != null && mBeanServer != null) {
-            registered = false;
-            mBeanServer.unregisterMBean(objectName);
-        }
-    }
-
+    @Override
     protected String getDefaultObjectName() {
         return "io.hawt.config:type=ConfigFacade";
     }
@@ -124,19 +103,4 @@ public class ConfigFacade implements ConfigFacadeMXBean {
         this.configDir = configDir;
     }
 
-    public MBeanServer getMBeanServer() {
-        return mBeanServer;
-    }
-
-    public void setMBeanServer(MBeanServer mBeanServer) {
-        this.mBeanServer = mBeanServer;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
-    }
 }

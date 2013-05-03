@@ -2,6 +2,7 @@ package io.hawt.maven.indexer;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.util.FileLocker;
+import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -60,7 +61,7 @@ import java.util.TreeSet;
 /**
  * A facade over the Maven indexer code so its easy to query repositories
  */
-public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
+public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(MavenIndexerFacade.class);
 
     private final PlexusContainer plexusContainer;
@@ -70,8 +71,6 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     private IndexingContext mergedContext;
     private List<IndexCreator> indexers;
     private boolean updateIndexOnStartup = true;
-    private ObjectName objectName;
-    private MBeanServer mBeanServer;
     private int maximumIndexersPerMachine = 1000;
     private String[] repositories = {
             "http://repo.fusesource.com/nexus/content/repositories/releases@id=fusesource.release.repo",
@@ -91,7 +90,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         this.httpWagon = plexusContainer.lookup(Wagon.class, "http");
     }
 
-    public void start() throws ComponentLookupException, IOException, MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+    public void init() throws Exception {
 
         // Creators we want to use (search for fields it defines)
         if (indexers == null) {
@@ -139,7 +138,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             LOG.error("Failed to update the maven repository indices: " + e, e);
         }
         try {
-            registerMBean();
+            super.init();
         } catch (Exception e) {
             LOG.error("Failed to register MBean: " + e, e);
         }
@@ -182,12 +181,9 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
         }
     }
 
-    public void destroy() throws IOException, MBeanRegistrationException, InstanceNotFoundException {
+    public void destroy() throws Exception {
         if (fileLock != null) {
             fileLock.destroy();
-        }
-        if (objectName != null && mBeanServer != null) {
-            mBeanServer.unregisterMBean(objectName);
         }
         if (indexer != null) {
             for (IndexingContext context : indexContexts.values()) {
@@ -196,22 +192,7 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             }
             indexContexts.clear();
         }
-    }
-
-    public MBeanServer getMBeanServer() {
-        return mBeanServer;
-    }
-
-    public void setMBeanServer(MBeanServer mBeanServer) {
-        this.mBeanServer = mBeanServer;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
+        super.destroy();
     }
 
     public boolean isUpdateIndexOnStartup() {
@@ -435,16 +416,6 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void registerMBean() throws MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
-        if (objectName == null) {
-            objectName = new ObjectName("io.hawt.maven:type=Indexer");
-        }
-        if (mBeanServer == null) {
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        }
-        mBeanServer.registerMBean(this, objectName);
-    }
-
     protected BooleanQuery createTextSearchQuery(String searchText) {
         BooleanQuery bq = new BooleanQuery();
         if (StringUtils.isNotBlank(searchText)) {
@@ -456,6 +427,11 @@ public class MavenIndexerFacade implements MavenIndexerFacadeMXBean {
             }
         }
         return bq;
+    }
+
+    @Override
+    protected String getDefaultObjectName() {
+        return "io.hawt.maven:type=Indexer";
     }
 
     /**

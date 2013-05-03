@@ -34,6 +34,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!--
     Hmm, brings in some crazy imports including sun.misc...
     <dependency>

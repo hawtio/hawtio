@@ -3,6 +3,7 @@ package io.hawt.jsonschema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
 import org.slf4j.Logger;
@@ -16,13 +17,10 @@ import java.lang.management.ManagementFactory;
 /**
  * @author Stan Lewis
  */
-public class SchemaLookup implements SchemaLookupMXBean {
+public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(SchemaLookup.class);
 
     private static SchemaLookup singleton;
-
-    private MBeanServer mBeanServer;
-    private ObjectName objectName;
 
     private ObjectMapper mapper;
 
@@ -53,20 +51,7 @@ public class SchemaLookup implements SchemaLookupMXBean {
 
             }
             // now lets expose the mbean...
-            if (objectName == null) {
-                objectName = new ObjectName("io.hawt.jsonschema:type=SchemaLookup");
-            }
-            if (mBeanServer == null) {
-                mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            }
-            try {
-                mBeanServer.registerMBean(this, objectName);
-            } catch (InstanceAlreadyExistsException iaee) {
-                // Try to remove and re-register
-                LOG.info("Re-registering SchemaLookup MBean");
-                mBeanServer.unregisterMBean(objectName);
-                mBeanServer.registerMBean(this, objectName);
-            }
+            super.init();
             singleton = this;
         } catch (Exception e) {
             LOG.warn("Exception during initialization: ", e);
@@ -74,15 +59,9 @@ public class SchemaLookup implements SchemaLookupMXBean {
         }
     }
 
-    public void destroy() {
-        try {
-            if (objectName != null && mBeanServer != null) {
-                mBeanServer.unregisterMBean(objectName);
-            }
-        } catch (Exception e) {
-            LOG.warn("Exception unregistering mbean: ", e);
-            throw new RuntimeException(e);
-        }
+    @Override
+    protected String getDefaultObjectName() {
+        return "io.hawt.jsonschema:type=SchemaLookup";
     }
 
     protected Class getClass(String name) {
@@ -119,21 +98,5 @@ public class SchemaLookup implements SchemaLookupMXBean {
 
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
-    }
-
-    public MBeanServer getmBeanServer() {
-        return mBeanServer;
-    }
-
-    public void setmBeanServer(MBeanServer mBeanServer) {
-        this.mBeanServer = mBeanServer;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
     }
 }

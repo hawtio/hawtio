@@ -65,7 +65,7 @@ public class AsyncMavenIndexerFacadeFactory {
         }
     }
 
-    public void destroy() throws InstanceNotFoundException, IOException, MBeanRegistrationException {
+    public void destroy() throws Exception {
         if (mavenIndexer != null) {
             mavenIndexer.destroy();
         }
@@ -126,6 +126,6 @@ public class AsyncMavenIndexerFacadeFactory {
         if (repositories != null) {
             mavenIndexer.setRepositories(repositories);
         }
-        mavenIndexer.start();
+        mavenIndexer.init();
     }
 }

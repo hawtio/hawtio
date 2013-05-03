@@ -3,6 +3,7 @@ package io.hawt.git;
 import io.hawt.config.ConfigFacade;
 import io.hawt.util.FileFilters;
 import io.hawt.util.IOHelper;
+import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CloneCommand;
@@ -46,7 +47,7 @@ import java.util.concurrent.Callable;
  * A git bean to create a local git repo for configuration data which if configured will push/pull
  * from some central repo
  */
-public class GitFacade implements GitFacadeMXBean {
+public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
 
     private String configDirName;
@@ -54,8 +55,6 @@ public class GitFacade implements GitFacadeMXBean {
     private String remoteRepository;
     private Git git;
     private Object lock = new Object();
-    private ObjectName objectName;
-    private MBeanServer mBeanServer;
     private int shortCommitIdLength = 6;
     private String remote = "origin";
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
@@ -67,20 +66,12 @@ public class GitFacade implements GitFacadeMXBean {
         // lets check if we have a config directory if not lets create one...
         initialiseGitRepo();
 
-        // now lets expose the mbean...
-        if (objectName == null) {
-            objectName = new ObjectName("io.hawt.git:type=GitFacade");
-        }
-        if (mBeanServer == null) {
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        }
-        mBeanServer.registerMBean(this, objectName);
+        super.init();
     }
 
-    public void destroy() throws Exception {
-        if (objectName != null && mBeanServer != null) {
-            mBeanServer.unregisterMBean(objectName);
-        }
+    @Override
+    protected String getDefaultObjectName() {
+        return "io.hawt.git:type=GitFacade";
     }
 
     public String getRemoteRepository() {
@@ -103,22 +94,6 @@ public class GitFacade implements GitFacadeMXBean {
 
     public void setRemote(String remote) {
         this.remote = remote;
-    }
-
-    public MBeanServer getmBeanServer() {
-        return mBeanServer;
-    }
-
-    public void setmBeanServer(MBeanServer mBeanServer) {
-        this.mBeanServer = mBeanServer;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
     }
 
     public String getConfigDirName() {
