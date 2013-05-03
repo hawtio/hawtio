@@ -16,17 +16,17 @@ module Fabric {
     $scope.stop = () => {
       // TODO proper notifications
       stopContainer(jolokia, $scope.containerId, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});
-    }
+    };
 
     $scope.delete = () => {
       // TODO proper notifications
       destroyContainer(jolokia, $scope.containerId, function() {console.log("Deleted!")}, function() {console.log("Failed to delete!")});
-    }
+    };
 
     $scope.start = () => {
       // TODO proper notifications
       startContainer(jolokia, $scope.containerId, function() {console.log("Started!")}, function() {console.log("Failed to start!")});
-    }
+    };
 
     $scope.getType = () => {
       if ($scope.row) {
@@ -39,7 +39,7 @@ module Fabric {
         }
       }
       return "";
-    }
+    };
 
 
     function render(response) {
