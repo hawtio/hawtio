@@ -293,7 +293,9 @@
             <Embed-Transitive>true</Embed-Transitive>
 
             <!-- fix jgit, and slf4j imports -->
-            <Import-Package>!com.jcraft.jzlib,org.slf4j;resolution:=optional,!org.slf4j.impl,*</Import-Package>
+            <Import-Package>!com.jcraft.jzlib,org.slf4j;resolution:=optional,
+              !org.slf4j.impl,!com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
+              !org.apache.commons.io*,!org.apache.log*,*</Import-Package>
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
