@@ -59,7 +59,7 @@ module Karaf {
         $scope.data.pid = rootInstance.Pid;
 
         // TODO: we need to get version from another mbean
-        $scope.data.version = "";
+        $scope.data.version = "?";
 
         Core.$apply($scope);
       }
