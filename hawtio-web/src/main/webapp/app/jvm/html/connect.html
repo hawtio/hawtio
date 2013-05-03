@@ -17,11 +17,45 @@
   <div class="wiki-fixed row-fluid">
     <form class="form-horizontal">
       <div class="control-group">
-        <label class="control-label" for="url">Go to server</label>
+        <label class="control-label" for="host">host name</label>
 
         <div class="controls">
-          <input id="url" name="url" type="text" placeholder="http://host:port/jolokia" ng-model="url"/>
-          <input type="submit" value="Go To Server" class="btn" ng-disabled="!url" ng-click="gotoServer(url)"
+          <input id="host" name="host" type="text" ng-model="host"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="port">port</label>
+
+        <div class="controls">
+          <input id="port" name="port" type="number" min="1" required="true" ng-model="port"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="path">path</label>
+
+        <div class="controls">
+          <input id="path" name="path" type="text" ng-model="path"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="userName" title="The user name to be used when connecting to Jolokia">User
+          Name</label>
+
+        <div class="controls">
+          <input id="userName" type="text" placeholder="username" ng-model="userName"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="password"
+               title="Password to be used when connecting to Jolokia">Password</label>
+
+        <div class="controls">
+          <input id="password" type="password" placeholder="password" ng-model="password"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <input type="submit" value="Connect To Remote Server" class="btn" ng-disabled="!host" ng-click="gotoServer()"
                  title="Opens a new browser window connecting to the given JVM process via its Jolokia servlet URL">
         </div>
       </div>
