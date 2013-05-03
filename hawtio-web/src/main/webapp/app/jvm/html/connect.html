@@ -1,0 +1,30 @@
+<!-- TODO Should we split this page into partials, and just just allow plugins to register their configurable preferences to this page? -->
+<div ng-controller="JVM.ConnectController">
+  <div class="logbar">
+    <div class="wiki logbar-container">
+      <ul class="nav nav-tabs">
+        <li ng-repeat="link in breadcrumbs" ng-show="isValid(link)" ng-class='{active : isActive(link.href)}'>
+          <a ng-href="{{link.href}}{{hash}}" ng-bind-html-unsafe="link.content"></a>
+        </li>
+        <li class="pull-right">
+          <a href='' ng-click="fetch()"><i class="icon-refresh"></i> Refresh</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="wiki-fixed row-fluid">
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="url">Go to server</label>
+
+        <div class="controls">
+          <input id="url" name="url" type="text" placeholder="http://host:port/jolokia" ng-model="url"/>
+          <input type="submit" value="Go To Server" class="btn" ng-disabled="!url" ng-click="gotoServer(url)"
+                 title="Opens a new browser window connecting to the given JVM process via its Jolokia servlet URL">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

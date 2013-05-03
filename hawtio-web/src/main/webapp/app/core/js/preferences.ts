@@ -31,10 +31,5 @@ module Core {
         }
       });
     });
-
-    $scope.gotoServer = (url) => {
-      console.log("going to server: " + url);
-      window.open("?url=" + encodeURIComponent(url));
-    }
   }
 }

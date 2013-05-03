@@ -26,5 +26,9 @@
 # In Progress (1.2)
 
 * New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
+  * this tab also now includes the Connect logic to connect to a remote JVM (and its now been removed from the Preferences page)
+* Huge improvements in the ActiveMQ tooling; so we can more easily page through messages on a queue, move messages, delete them, retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)
+* Neater Camel message tracing; letting you zoom into a message and step through the messages with video player controls
+* Can now forward messages on a Camel endpoints
 
 

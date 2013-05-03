@@ -1,7 +1,8 @@
-module JVM {
+  module JVM {
 
-  export function JVMsController($scope, $window, jolokia, mbeanName) {
+  export function JVMsController($scope, $window, $location, workspace, jolokia, mbeanName) {
 
+    JVM.configureScope($scope, $location, workspace);
     $scope.data = [];
     $scope.deploying = false;
     $scope.status = 'Discovering local JVM processes, please wait...';
