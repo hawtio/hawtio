@@ -13,6 +13,13 @@ module Fabric {
       
     }
 
+    $scope.connect = () => {
+      // TODO lets find these from somewhere! :)
+      var userName = "admin";
+      var password = "admin";
+      Fabric.connect($scope.row, userName, password, tru);
+    };
+
     $scope.stop = () => {
       // TODO proper notifications
       stopContainer(jolokia, $scope.containerId, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});
