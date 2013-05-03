@@ -19,6 +19,8 @@ module Karaf {
         // selected features
         $scope.selectedFeatures = [];
 
+
+      /*
         var SearchProvider = function (scope, location) {
             var self = this;
             self.scope = scope;
@@ -72,9 +74,10 @@ module Karaf {
         }
 
         var searchProvider = new SearchProvider($scope, $location);
+      */
 
         $scope.featureOptions = {
-            plugins: [searchProvider],
+            //plugins: [searchProvider],
             data: 'features',
             showFilter: false,
             showColumnMenu: false,

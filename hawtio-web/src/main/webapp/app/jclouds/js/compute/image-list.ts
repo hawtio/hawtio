@@ -15,6 +15,7 @@ module Jclouds {
         // selected images
         $scope.selectedImages = [];
 
+      /*
         var SearchProvider = function (scope, location) {
             var self = this;
             self.scope = scope;
@@ -56,9 +57,10 @@ module Jclouds {
         }
 
         var searchProvider = new SearchProvider($scope, $location);
+        */
 
         $scope.imageTable = {
-            plugins: [searchProvider],
+            //plugins: [searchProvider],
             data: 'images',
             showFilter: false,
             showColumnMenu: false,

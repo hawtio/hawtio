@@ -24,6 +24,7 @@ module Jclouds {
         // selected nodes
         $scope.selectedNodes = [];
 
+      /*
         var SearchProvider = function (scope, location) {
             var self = this;
             self.scope = scope;
@@ -74,9 +75,10 @@ module Jclouds {
         }
 
         var searchProvider = new SearchProvider($scope, $location);
+      */
 
         $scope.nodeTable = {
-            plugins: [searchProvider],
+            //plugins: [searchProvider],
             data: 'nodes',
             showFilter: false,
             showColumnMenu: false,

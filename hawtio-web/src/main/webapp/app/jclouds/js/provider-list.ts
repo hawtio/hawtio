@@ -14,6 +14,7 @@ module Jclouds {
         // selected providers
         $scope.selectedProviders = [];
 
+      /*
         var SearchProvider = function (scope, location) {
             var self = this;
             self.scope = scope;
@@ -53,9 +54,10 @@ module Jclouds {
         }
 
         var searchProvider = new SearchProvider($scope, $location);
+      */
 
         $scope.providerTable = {
-            plugins: [searchProvider],
+            //plugins: [searchProvider],
             data: 'providers',
             showFilter: false,
             showColumnMenu: false,

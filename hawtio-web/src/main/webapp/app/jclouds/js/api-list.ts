@@ -14,6 +14,7 @@ module Jclouds {
         // selected apis
         $scope.selectedApis = [];
 
+      /*
         var SearchProvider = function (scope, location) {
             var self = this;
             self.scope = scope;
@@ -53,9 +54,10 @@ module Jclouds {
         }
 
         var searchProvider = new SearchProvider($scope, $location);
+      */
 
         $scope.apiTable = {
-            plugins: [searchProvider],
+            //plugins: [searchProvider],
             data: 'apis',
             showFilter: false,
             showColumnMenu: false,
