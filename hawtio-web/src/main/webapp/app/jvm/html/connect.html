@@ -17,21 +17,21 @@
   <div class="wiki-fixed row-fluid">
     <form class="form-horizontal">
       <div class="control-group">
-        <label class="control-label" for="host">host name</label>
+        <label class="control-label" for="host" title="The host name used to connect over HTTP">host name</label>
 
         <div class="controls">
           <input id="host" name="host" type="text" ng-model="host"/>
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="port">port</label>
+        <label class="control-label" for="port" title="The HTTP port used to connect to the server">port</label>
 
         <div class="controls">
-          <input id="port" name="port" type="number" min="1" required="true" ng-model="port"/>
+          <input id="port" name="port" type="number" min="0" ng-model="port"/>
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="path">path</label>
+        <label class="control-label" for="path" title="The URL path used to connect to Jolokia on the remote server">path</label>
 
         <div class="controls">
           <input id="path" name="path" type="text" ng-model="path"/>
@@ -51,6 +51,14 @@
 
         <div class="controls">
           <input id="password" type="password" placeholder="password" ng-model="password"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="useProxy"
+               title="Whether or not we should use a proxy to connect to the remote server">Use proxy</label>
+
+        <div class="controls">
+          <input id="useProxy" type="checkbox" ng-model="useProxy"/>
         </div>
       </div>
       <div class="control-group">

@@ -12,12 +12,19 @@ module JVM {
 
     $scope.gotoServer = () => {
       var host = $scope.host || "localhost";
-      var port = $scope.port || 80;
+      var port = $scope.port;
       var path = Core.trimLeading($scope.path || "jolokia", "/");
-      var url = host + ":" + port + "/" + path;
+      if (port > 0) {
+        host += ":" + port;
+      }
+      var url = host + "/" + path;
 
       if ($scope.useProxy) {
         url = "/hawtio/proxy/" + url;
+      } else {
+        if (url.indexOf("://") < 0) {
+          url = "http://" + url;
+        }
       }
       console.log("going to server: " + url + " as user " + $scope.userName);
 
