@@ -17,6 +17,7 @@
  */
 package io.hawt.web;
 
+import io.hawt.util.IOHelper;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -26,7 +27,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -40,6 +44,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,7 +225,7 @@ public class ProxyServlet extends HttpServlet {
      *                               the POST data to be sent via the {@link PostMethod}
      */
     @SuppressWarnings("unchecked")
-    private void handleStandardPost(PostMethod postMethodProxyRequest, HttpServletRequest httpServletRequest) {
+    private void handleStandardPost(PostMethod postMethodProxyRequest, HttpServletRequest httpServletRequest) throws IOException {
         // Get the client POST data as a Map
         Map<String, String[]> mapPostParameters = (Map<String, String[]>) httpServletRequest.getParameterMap();
         // Create a List to hold the NameValuePairs to be passed to the PostMethod
@@ -235,8 +240,24 @@ public class ProxyServlet extends HttpServlet {
                 listNameValuePairs.add(nameValuePair);
             }
         }
-        // Set the proxy request POST data
-        postMethodProxyRequest.setRequestBody(listNameValuePairs.toArray(new NameValuePair[]{}));
+        RequestEntity entity = null;
+        String contentType = httpServletRequest.getContentType();
+        if (contentType != null) {
+            contentType = contentType.toLowerCase();
+            if (contentType.contains("json") || contentType.contains("xml")) {
+                String body = IOHelper.readFully(httpServletRequest.getReader());
+                entity = new StringRequestEntity(body, contentType, httpServletRequest.getCharacterEncoding());
+                postMethodProxyRequest.setRequestEntity(entity);
+            }
+        }
+        NameValuePair[] parameters = listNameValuePairs.toArray(new NameValuePair[]{});
+        if (entity != null) {
+            // TODO add as URL parameters?
+            //postMethodProxyRequest.addParameters(parameters);
+        } else {
+            // Set the proxy request POST data
+            postMethodProxyRequest.setRequestBody(parameters);
+        }
     }
 
     /**
