@@ -18,6 +18,7 @@ module Karaf {
               isActive: (workspace: Workspace) => workspace.isTopTabActive("karafTab")
             });
 
+/*
             workspace.subLevelTabs.push( {
               content: '<i class="icon-list"></i> Server',
               title: "View information about this OSGi container",
@@ -31,6 +32,7 @@ module Karaf {
               isValid: (workspace: Workspace) => getSelectionFeaturesMBean(workspace),
               href: () => "#/karaf/features"
             });
+*/
       });
 
   hawtioPluginLoader.addModule(pluginName);
