@@ -70,27 +70,32 @@ public class ProxyDetails {
             userName = hostAndPort.substring(0, idx);
             hostAndPort = hostAndPort.substring(idx + 1);
 
-            idx = userName.indexOf(":");
+            idx = indexOf(userName, ":", "/");
             if (idx > 0) {
                 password = userName.substring(idx + 1);
                 userName = userName.substring(0, idx);
             }
         }
-        stringProxyURL = "http://" + hostAndPort;
-
-        idx = hostAndPort.indexOf("/");
-        if (idx > 0) {
-            path = hostAndPort.substring(idx);
-            hostAndPort = hostAndPort.substring(0, idx);
-        }
-
         host = hostAndPort;
-        idx = hostAndPort.indexOf(":");
+        idx = indexOf(hostAndPort, ":", "/");
         if (idx > 0) {
             host = hostAndPort.substring(0, idx);
             String portText = hostAndPort.substring(idx + 1);
-            port = Integer.parseInt(portText);
+            idx = portText.indexOf("/");
+            if (idx >= 0) {
+                path = portText.substring(idx);
+                portText = portText.substring(0, idx);
+            }
+
+            if (Strings.isNotBlank(portText)) {
+                port = Integer.parseInt(portText);
+                hostAndPort = host + ":" + port;
+            } else {
+                hostAndPort = host;
+            }
         }
+        stringProxyURL = "http://" + hostAndPort + path;
+
 
         try {
             // Handle the query string
@@ -104,6 +109,22 @@ public class ProxyDetails {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    /**
+     * Returns the lowest index of the given list of values
+     */
+    protected int indexOf(String text, String... values) {
+        int answer = -1;
+        for (String value : values) {
+            int idx = text.indexOf(value);
+            if (idx >= 0) {
+                if (answer < 0 || idx < answer) {
+                    answer = idx;
+                }
+            }
+        }
+        return answer;
     }
 
     public HttpClient createHttpClient(HttpMethod httpMethodProxyRequest) {

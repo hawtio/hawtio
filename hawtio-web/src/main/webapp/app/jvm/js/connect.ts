@@ -39,8 +39,9 @@ module JVM {
       var path = Core.trimLeading($scope.path || "jolokia", "/");
       path = Core.trimTrailing(path, "/");
 
+      host += "/";
       if (port > 0) {
-        host += ":" + port;
+        host += "" + port;
       }
       var url = host + "/" + path;
 
