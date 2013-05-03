@@ -50,9 +50,11 @@ public abstract class MBeanSupport {
                 mBeanServer.registerMBean(this, objectName);
             } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
-                LOG.info("Already registered, trying to re-register MBean " + objectName);
+                LOG.warn("This mbean is already registered " + objectName + ". There must be multiple deployment units with this mbean inside.");
+/*
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
+*/
             }
             registered = true;
         }
