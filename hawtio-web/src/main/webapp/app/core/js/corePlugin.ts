@@ -113,9 +113,24 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
             var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
             // pass basic auth credentials down to jolokia if set
+            var username = null;
+            var password = null;
             if (credentials.length === 2) {
-              jolokiaParams['username'] = credentials[0];
-              jolokiaParams['password'] = credentials[1];
+              username = credentials[0];
+              password = credentials[1];
+            } else {
+              // lets see if they are passed in via request parameter...
+              var search = hawtioPluginLoader.parseQueryString();
+              username = search["_user"];
+              password = search["_pwd"];
+              if (angular.isArray(username)) username = username[0];
+              if (angular.isArray(password)) password = password[0];
+            }
+            if (username && password) {
+              jolokiaParams['username'] = username;
+              jolokiaParams['password'] = password;
+
+              console.log("Using user / pwd " + username + " / " + password);
             }
 
             var jolokia = new Jolokia(jolokiaParams);

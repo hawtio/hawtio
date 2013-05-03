@@ -28,6 +28,16 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <url-pattern>/proxy/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>maven-source</servlet-name>
     <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
