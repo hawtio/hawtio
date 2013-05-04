@@ -7,6 +7,8 @@ module Karaf {
       version: "",
       state: "",
       root: "",
+      startLevel: "",
+      framework: "",
       location: "",
       sshPort: "",
       rmiRegistryPort: "",
@@ -30,8 +32,6 @@ module Karaf {
     }
 
     function render(response) {
-      console.log("Response is " + response);
-
       // grab the first mbean as there should ideally only be one karaf in the JVM
       if (angular.isArray(response)) {
         var mbean = response[0];
@@ -39,14 +39,12 @@ module Karaf {
           jolokia.getAttribute(mbean, "Instances", onSuccess(onInstances));
         }
       }
-
-      // ensure web page is updated
-      Core.$apply($scope);
     }
 
     function onInstances(instances) {
       if (instances) {
-        console.log("Instances is " + JSON.stringify(instances));
+        // console.log("Instances is " + JSON.stringify(instances));
+
         // the name is the first child
         var rootInstance = instances['root'];
         $scope.data.name = rootInstance.Name;
@@ -58,11 +56,25 @@ module Karaf {
         $scope.data.rmiServerPort = rootInstance["RMI Server Port"];
         $scope.data.pid = rootInstance.Pid;
 
-        // TODO: we need to get version from another mbean
+        // we need to get these data from the system mbean
         $scope.data.version = "?";
+        $scope.data.startLevel = "?";
+        $scope.data.framework = "?";
 
-        Core.$apply($scope);
+        var systemMbean = "org.apache.karaf:type=system,name=" + rootInstance.Name;
+        var response = jolokia.request({type: "read", mbean: systemMbean,
+          attribute: ["StartLevel", "Framework", "Version"]}, onSuccess(null));
+
+        var obj = response.value;
+        if (obj) {
+          $scope.data.version = obj.Version;
+          $scope.data.startLevel = obj.StartLevel;
+          $scope.data.framework = obj.Framework;
+        }
       }
+
+      // ensure web page is updated
+      Core.$apply($scope);
     }
   }
 }
