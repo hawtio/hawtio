@@ -3,7 +3,6 @@ module Camel {
     export function ProfileRouteController($scope, $location, workspace:Workspace, jolokia) {
 
         $scope.data = [];
-        $scope.search = "";
         $scope.calcManually = true;
         $scope.icons = {};
         $scope.selectedRouteId = "";
@@ -92,7 +91,7 @@ module Camel {
             enableSorting: false,
             columnDefs: columnDefs,
             filterOptions: {
-                filterText: 'search'
+              filterText: ''
             }
         };
 
