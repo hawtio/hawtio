@@ -9,6 +9,7 @@ module Karaf {
       root: "",
       startLevel: "",
       framework: "",
+      frameworkVersion: "",
       location: "",
       sshPort: "",
       rmiRegistryPort: "",
@@ -17,8 +18,6 @@ module Karaf {
 
     $scope.$on('jmxTreeUpdated', reloadFunction);
     $scope.$watch('workspace.tree', reloadFunction);
-
-    // TODO: we need the framework and version from another mbean
 
     function reloadFunction() {
       // if the JMX tree is reloaded its probably because a new MBean has been added or removed
@@ -60,8 +59,10 @@ module Karaf {
         $scope.data.version = "?";
         $scope.data.startLevel = "?";
         $scope.data.framework = "?";
+        $scope.data.frameworkVersion = "?";
 
         var systemMbean = "org.apache.karaf:type=system,name=" + rootInstance.Name;
+        // get more data, and its okay to do this synchronously
         var response = jolokia.request({type: "read", mbean: systemMbean,
           attribute: ["StartLevel", "Framework", "Version"]}, onSuccess(null));
 
@@ -70,6 +71,20 @@ module Karaf {
           $scope.data.version = obj.Version;
           $scope.data.startLevel = obj.StartLevel;
           $scope.data.framework = obj.Framework;
+        }
+
+        // and the osgi framework version is the bundle version
+        var response2 = jolokia.search("osgi.core:type=bundleState,*", onSuccess(null));
+        if (angular.isArray(response2)) {
+          var mbean = response2[0];
+          if (mbean) {
+            // get more data, and its okay to do this synchronously
+            var response3 = jolokia.request({type: 'exec', mbean: mbean, operation: 'getVersion(long)', arguments: [0]}, onSuccess(null));
+            var obj3 = response3.value;
+            if (obj3) {
+              $scope.data.frameworkVersion = obj3;
+            }
+          }
         }
       }
 
