@@ -1,7 +1,6 @@
 module Dashboard {
 
   export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DefaultDashboardRepository) {
-    $scope.searchText = "";
     $scope.selectedItems = [];
     $scope.repository = dashboardRepository;
 
@@ -24,7 +23,7 @@ module Dashboard {
       showFilter: false,
       showColumnMenu: false,
       filterOptions: {
-        filterText: "searchText"
+        filterText: ''
       },
       data: 'repository.dashboards',
       selectWithCheckboxOnly: true,
