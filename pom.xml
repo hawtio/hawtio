@@ -246,6 +246,7 @@
     <module>hawtio-git</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-json-schema-mbean</module>
+    <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
