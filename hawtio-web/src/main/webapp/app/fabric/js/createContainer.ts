@@ -1,13 +1,15 @@
 module Fabric {
 
   export function CreateContainerController($scope, $window, workspace, jolokia) {
-    $scope.activeTab = 'org.fusesource.fabric.api.CreateContainerChildOptions';
+    $scope.activeTab = 'org_fusesource_fabric_api_CreateContainerChildOptions';
     $scope.schema = {};
     $scope.entity = {};
 
-    $scope.render = (response) => {
-      $scope.schema = $.parseJSON(response.value);
+    $scope.render = (optionSchema) => {
+
+      $scope.schema = Object.extended($window[optionSchema]).clone();
       $scope.schema.description = '';
+      
       angular.forEach($scope.schema.properties, (value, key) => {
         if (!value) {
           delete $scope.schema.properties[key];
@@ -22,7 +24,7 @@ module Fabric {
 
       switch($scope.activeTab) {
 
-        case 'org.fusesource.fabric.api.CreateContainerChildOptions':
+        case 'org_fusesource_fabric_api_CreateContainerChildOptions':
           $scope.entity['providerType'] = 'child';
 
           delete $scope.schema.properties['preferredAddress'];
@@ -33,17 +35,16 @@ module Fabric {
 
           break;
 
-        case 'org.fusesource.fabric.api.CreateSshContainerOptions':
+        case 'org_fusesource_fabric_api_CreateSshContainerOptions':
           $scope.entity['providerType'] = 'ssh';
           delete $scope.schema.properties['parent'];
           break;
 
-        case 'org.fusesource.fabric.api.CreateJCloudsContainerOptions':
+        case 'org_fusesource_fabric_api_CreateJCloudsContainerOptions':
           $scope.entity['providerType'] = 'jclouds';
           delete $scope.schema.properties['parent'];
           break;
       }
-      $scope.$apply();
     }
 
     $scope.onSubmit = (json, form) => {
@@ -75,11 +76,7 @@ module Fabric {
     }
 
     $scope.$watch('activeTab', () => {
-      jolokia.request({
-        type: 'exec', mbean: 'io.hawt.jsonschema:type=SchemaLookup',
-        operation: 'getSchemaForClass(java.lang.String)',
-        arguments: [$scope.activeTab]
-      }, onSuccess($scope.render));
+      $scope.render($scope.activeTab);
     });
   }
 
