@@ -36,7 +36,7 @@ public class JsonSchemaGeneratorMojo extends AbstractMojo
                 getLog().info("Looking up schema for class " + clazz);
 
                 String targetFileName = this.classes.get(clazz);
-                String fileContents = "var " + clazz + " = " + lookup.getSchemaForClass(clazz);
+                String fileContents = "var " + clazz.replace('.', '_') + " = " + lookup.getSchemaForClass(clazz);
 
                 File outputFile = new File(targetFileName);
 

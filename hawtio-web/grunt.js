@@ -43,6 +43,17 @@ module.exports = function (grunt) {
             }
         }
     },
+
+    concat: {
+      main: {
+        src: ["target/schema/js/*.js", "<%= grunt.option('webapp_outdir') %>/app/app.js"],
+        dest: "<%= grunt.option('webapp_outdir') %>/app/app.js"
+      },
+      test: {
+        src: ["target/schema/js/*.js", "<%= grunt.option('webapp_outdir') %>/app/app.js"],
+        dest: "src/test/unit/app.js"
+      }
+    },
     reload: {
       port: 35729,
       liveReload: {},
@@ -53,14 +64,14 @@ module.exports = function (grunt) {
     },
     watch: {
       app: {
-        files: "src/main/webapp/**",
-        tasks: 'copy type reload'
+        files: ["src/main/webapp/**", "target/schema/js/*.js"],
+        tasks: 'copy type concat reload'
       }
     }
   });
 
 
   // Default task.
-  grunt.registerTask('default', 'copy type reload watch');
+  grunt.registerTask('default', 'copy type concat reload watch');
 
 };

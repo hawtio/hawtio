@@ -18,6 +18,7 @@
     <grunt-executable>grunt</grunt-executable>
     <npm-executable>npm</npm-executable>
     <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs</phantomjs-executable>
+    <schema-outdir>${project.build.directory}/schema/js</schema-outdir>
   </properties>
 
 
@@ -334,6 +335,38 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-json-schema-generator-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-json-schema</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <classes>
+            <org.fusesource.fabric.api.CreateContainerChildOptions>
+              ${schema-outdir}/createContainerChildOptions.js
+            </org.fusesource.fabric.api.CreateContainerChildOptions>
+            <org.fusesource.fabric.api.CreateSshContainerOptions>
+              ${schema-outdir}/createSshContainerOptions.js
+            </org.fusesource.fabric.api.CreateSshContainerOptions>
+            <org.fusesource.fabric.api.CreateJCloudsContainerOptions>
+              ${schema-outdir}/createJcloudsContainerOptions.js
+            </org.fusesource.fabric.api.CreateJCloudsContainerOptions>
+          </classes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.fusesource.fabric</groupId>
+            <artifactId>fabric-core</artifactId>
+            <version>${fabric-version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
       <!--
       <plugin>
@@ -526,6 +559,7 @@
                   <arguments>
                     <argument>copy</argument>
                     <argument>type</argument>
+                    <argument>concat</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
                     <argument>--webapp_port</argument>
@@ -563,10 +597,7 @@
                   <arguments>
                     <argument>copy</argument>
                     <argument>type</argument>
-                    <argument>--webapp_outdir</argument>
-                    <argument>${webapp-outdir}</argument>
-                    <argument>--webapp_port</argument>
-                    <argument>${jettyPort}</argument>
+                    <argument>concat</argument>
                     <argument>reload</argument>
                     <argument>watch</argument>
                     <argument>--webapp_outdir</argument>
