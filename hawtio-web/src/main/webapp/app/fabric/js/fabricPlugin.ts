@@ -16,10 +16,27 @@ module Fabric {
 
             viewRegistry['fabric'] = "app/fabric/html/layoutFabric.html";
 
+            var isValid = (workspace) => {
+              if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
+
+                var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus');
+
+                console.log("status:", status);
+
+                if (status) {
+                  return status.clientValid && status.clientConnected;
+                } else {
+                  return false;
+                }
+              }
+              return false;
+            }
+
+
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
-              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'}),
+              isValid: isValid,
               href: () => "#/fabric/containers",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
