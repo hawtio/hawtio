@@ -24,7 +24,8 @@ module Maven {
       },
       {
         field: 'version',
-        displayName: 'Version'
+        displayName: 'Version',
+        cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}"><a ng-href="{{detailLink(row.entity)}}">{{row.entity.version}}</a</div>'
       }
     ];
 

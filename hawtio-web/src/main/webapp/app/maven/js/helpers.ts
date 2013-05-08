@@ -22,6 +22,18 @@ module Maven {
   }
 
   export function addMavenFunctions($scope) {
+    $scope.detailLink = (row) => {
+      var group = row.groupId;
+      var artifact = row.artifactId;
+      var version = row.version || "";
+      var classifier = row.classifier || "";
+      var packaging = row.packaging || "";
+      if (group && artifact) {
+        return "#/maven/artifact/" + group + "/" + artifact + "/" + version + "/" + classifier + "/" + packaging;
+      }
+      return "";
+    };
+
     $scope.javadocLink = (row) => {
       var group = row.groupId;
       var artifact = row.artifactId;
