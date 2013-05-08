@@ -14,7 +14,7 @@
 
 * Added more flexible documentation system so that plugins are now self documenting for users and developers
 
-* Fixes [these 47 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
+* Fixes [these 80 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
 
 
 # 1.0
@@ -25,10 +25,18 @@
 
 # In Progress (1.2)
 
-* New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
-  * this tab also now includes the Connect logic to connect to a remote JVM (and its now been removed from the Preferences page)
-* Huge improvements in the ActiveMQ tooling; so we can more easily page through messages on a queue, move messages, delete them, retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)
-* Neater Camel message tracing; letting you zoom into a message and step through the messages with video player controls
-* Can now forward messages on a Camel endpoints
+* Connectivity
+  * New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
+  * New _Connect_ tab to connect to a remote JVM running jolokia (and its now been removed from the Preferences page)
+* ActiveMQ gets huge improvements in its tooling
+  * we can more easily page through messages on a queue
+  * move messages from one queue to another
+  * delete messages
+  * retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)
+  * purge queues
+* Camel
+  * Neater message tracing; letting you zoom into a message and step through the messages with video player controls
+  * Can now forward messages on any browseable camel enpdoint to any other Camel endpoints
 
+* Fixes [these  issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=4&state=open)
 
