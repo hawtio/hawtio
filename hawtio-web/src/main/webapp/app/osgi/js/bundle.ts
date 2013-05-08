@@ -83,6 +83,51 @@ module Osgi {
       }
     };
 
+
+    $scope.mavenLink = (row) => {
+      var loc = row.Location;
+      if (loc && loc.startsWith("mvn:")) {
+        return "#/maven/artifact/" + loc.substring(4);
+      }
+      // TODO try using the LogQuery mbean to find the mvn coords for a bundle id?
+      return "";
+    };
+
+    $scope.startBundle = (bundleId) => {
+      jolokia.request([
+        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId]}
+      ],
+              onSuccess(updateTableContents));
+    };
+
+    $scope.stopBundle = (bundleId) => {
+      jolokia.request([
+        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId]}
+      ],
+              onSuccess(updateTableContents));
+    };
+
+    $scope.updatehBundle = (bundleId) => {
+      jolokia.request([
+        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId]}
+      ],
+              onSuccess(updateTableContents));
+    };
+
+    $scope.refreshBundle = (bundleId) => {
+      jolokia.request([
+        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId]}
+      ],
+              onSuccess(updateTableContents));
+    };
+
+    $scope.uninstallBundle = (bundleId) => {
+      jolokia.request([
+        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'uninstallBundle', arguments: [bundleId]}
+      ],
+              onSuccess($location.path("/osgi/bundle-list")));
+    };
+
     function inspectReportNoMBeanFound() {
       var divEl = document.getElementById("loadClassResult");
       divEl.innerHTML +=
@@ -275,50 +320,6 @@ module Osgi {
                 onSuccess(populateTable));
       }
     }
-
-    $scope.mavenLink = (row) => {
-      var loc = row.Location;
-      if (loc && loc.startsWith("mvn:")) {
-        return "#/maven/artifact/" + loc.substring(4);
-      }
-      // TODO try using the LogQuery mbean to find the mvn coords for a bundle id?
-      return "";
-    };
-
-    $scope.startBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId]}
-      ],
-              onSuccess(updateTableContents));
-    };
-
-    $scope.stopBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId]}
-      ],
-              onSuccess(updateTableContents));
-    };
-
-    $scope.updatehBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId]}
-      ],
-              onSuccess(updateTableContents));
-    };
-
-    $scope.refreshBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId]}
-      ],
-              onSuccess(updateTableContents));
-    };
-
-    $scope.uninstallBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'uninstallBundle', arguments: [bundleId]}
-      ],
-              onSuccess($location.path("/osgi/bundle-list")));
-    };
   }
 
   // These functions are exported independently to facilitate unit testing
