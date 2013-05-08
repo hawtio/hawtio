@@ -45,7 +45,10 @@
         </tr>
         <tr>
             <td><strong>Location:</strong></td>
-            <td class="less-big">{{row.Location}}
+            <td class="less-big">
+              <a ng-href="{{mavenLink(row)}}">
+                {{row.Location}}
+              </a>
             </td>
         </tr>
         <tr>
