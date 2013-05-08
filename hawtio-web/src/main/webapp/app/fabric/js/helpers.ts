@@ -14,12 +14,12 @@ module Fabric {
     }
   }
 
-  export function createVersion(jolokia, base, id, success, error) {
-    doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
+  export function createProfile(jolokia, version, id, parents, success, error) {
+    doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
   }
 
-  export function createProfile(jolokia, version, id, success, error) {
-    doAction('createProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
+  export function createVersion(jolokia, base, id, success, error) {
+    doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
   }
 
   export function deleteVersion(jolokia, id, success, error) {

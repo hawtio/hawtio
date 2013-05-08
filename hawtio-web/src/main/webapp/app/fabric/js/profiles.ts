@@ -145,6 +145,18 @@ module Fabric {
       ]
     };
 
+    $scope.doCreateProfile = () => {
+      $scope.createProfileDialog = false;
+      var parents = $scope.selectedParents.map(function(profile) {return profile.id});
+      createProfile(jolokia, $scope.version.id, $scope.newProfileName, parents, function() {
+        notification('success', "Created profile " + $scope.newProfileName);
+        $scope.newProfileName = "";
+        $scope.$apply();
+      }, function(response) {
+        notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
+      });
+    };
+
     $scope.deleteVersion = () => {
 
       // avoid getting any not found errors while deleting the version
@@ -159,7 +171,7 @@ module Fabric {
         $scope.version = $scope.defaultVersion;
         $scope.$apply();
       });
-    }
+    };
 
     $scope.deleteSelected = () => {
       $scope.selected.each(function(profile) {
@@ -169,7 +181,7 @@ module Fabric {
           notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
         })
       });
-    }
+    };
 
     function filterActive(data) {
       var rc = data;

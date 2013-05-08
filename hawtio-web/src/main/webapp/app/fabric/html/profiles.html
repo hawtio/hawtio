@@ -57,7 +57,7 @@
   </div>
 
   <div modal="createProfileDialog">
-    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile()">
       <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
       <div class="modal-body">
         <label>Profile Name: </label>
@@ -70,7 +70,7 @@
         <div class='dialogGrid' style="height: 250px;" ng-grid="createProfileGridOptions"></div>
       </div>
       <div class="modal-footer">
-        <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" ng-click="createProfile()" value="Create">
+        <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" value="Create">
         <input class="btn btn-primary" ng-click="createProfileDialog = false" value="Cancel">
       </div>
     </form>
