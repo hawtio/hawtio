@@ -181,7 +181,7 @@ module Fabric {
         filterText: ''
       },
       selectedItems: $scope.selectedContainers,
-      rowHeight: 42,
+      rowHeight: 32,
       showSelectionCheckbox: true,
       selectWithCheckboxOnly: true,
       keepLastSelected: false,
@@ -198,7 +198,7 @@ module Fabric {
           field: 'jolokiaUrl',
           displayName: 'Connect',
           headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="Connect to container"><i class="icon-cloud"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>',
-          cellTemplate: '<div class="ngCellText centered"><button class="btn" ng-disabled="!row.entity.jolokiaUrl" title="Open a new window and connect to this container" ng-click="connect(row.entity)"><i class="icon-signin"></i></button></div>',
+          cellTemplate: '<div class="ngCellText pagination-centered"><a href="" ng-disabled="!row.entity.jolokiaUrl" title="Open a new window and connect to this container" ng-click="connect(row.entity)"><i class="icon-signin"></i></a></div>',
           width: 48
         },
         {

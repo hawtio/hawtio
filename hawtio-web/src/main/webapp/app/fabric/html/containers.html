@@ -10,18 +10,12 @@
               <button ng-disabled="selectedContainers.length == 0" class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
             </div>
           </div>
-          <!--
-          &nbsp;
           <div class="control-group inline-block">
-            <label for="versions">Versions: </label>
-            <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
+            <a class="btn" ng-href="#/fabric/containers/createContainer">Create Container</a>
+            <a class="btn" ng-href="#/fabric/containers/assignProfiles">Assign Profiles</a>
+            <a class="btn" ng-href="#/fabric/containers/migrateVersions">Migrate Containers</a>
           </div>
-          &nbsp;
-          <div class="control-group inline-block">
-            <label for="profiles">Profiles: </label>
-            <select id="profiles" ng-model="profile" ng-options="p.id for p in profiles"></select>
-          </div>
-          -->
+
         </fieldset>
       </form>
     </div>
