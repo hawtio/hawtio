@@ -10,6 +10,17 @@ module Maven {
     } else return null;
   }
 
+  export function getName(row) {
+    var id = row.group + "/" + row.artifact;
+    if (row.classifier) {
+      id += "/" + row.classifier;
+    }
+    if (row.packaging) {
+      id += "/" + row.packaging;
+    }
+    return id;
+  }
+
   export function addMavenFunctions($scope) {
     $scope.javadocLink = (row) => {
       var group = row.groupId;
