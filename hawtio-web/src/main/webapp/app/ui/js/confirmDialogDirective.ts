@@ -29,6 +29,7 @@ module UI {
           setTimeout(function() {
             $scope.body = $('.modal-body');
             $scope.body.html($compile($scope.clone.html())($scope.$parent));
+            $scope.$apply();
           }, 50);
         }
       });

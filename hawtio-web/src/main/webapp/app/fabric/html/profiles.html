@@ -5,7 +5,7 @@
         <fieldset>
           <div class="btn-group inline-block">
             <a href="" title="Create new Profile" class="btn" ng-click="createProfileDialog = true"><i class="icon-plus"></i></a>
-            <a href="" title="Delete selected Profiles" class="btn" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog.open()"><i class="icon-minus"></i></a>
+            <a href="" title="Delete selected Profiles" class="btn" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"><i class="icon-minus"></i></a>
           </div>
 
           &nbsp;
@@ -20,7 +20,7 @@
           </div>
           <div class="btn-group inline-block">
             <a href="" title="Create new Version" class="btn"><i class="icon-plus"></i></a>
-            <a href="" title="Delete this Version" class="btn" ng-disabled="versionCanBeDeleted()" ng-click="deleteVersionDialog.open()"><i class="icon-minus"></i></a>
+            <a href="" title="Delete this Version" class="btn" ng-disabled="versionCanBeDeleted()" ng-click="deleteVersionDialog = true"><i class="icon-minus"></i></a>
           </div>
           &nbsp;
         </fieldset>
@@ -41,37 +41,23 @@
     </div>
   </div>
 
-  <div modal="deleteVersionDialog.show" close="deleteVersionDialog.close()" options="deleteVersionDialog.options">
-    <form class="form-horizontal no-bottom-margin" ng-submit="deleteVersionDialog.close()">
-      <div class="modal-header"><h4>Delete version?</h4></div>
-      <div class="modal-body">
-        Are you sure you want to delete version {{version.id}}?
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-danger" type="submit" ng-click="deleteVersion()" value="Delete">
-        <input class="btn btn-primary" ng-click="deleteVersionDialog.close()" value="Cancel">
-      </div>
-    </form>
+  <div hawtio-confirm-dialog="deleteVersionDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
+    <div class="dialog-body">
+      <p>Delete version {{version.id}}?</p>
+    </div>
   </div>
 
-  <div modal="deleteProfileDialog.show" close="deleteProfileDialog.close()" options="deleteProfileDialog.options">
-    <form class="form-horizontal no-bottom-margin" ng-submit="deleteProfileDialog.close()">
-      <div class="modal-header"><h4>Delete profiles?</h4></div>
-      <div class="modal-body">
-        Are you sure you want to delete the selected profiles:
-        <ol>
-          <li ng-repeat="profile in selected">{{profile.id}}</li>
-        </ol>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-danger" type="submit" ng-click="deleteSelected()" value="Delete">
-        <input class="btn btn-primary" ng-click="deleteProfileDialog.close()" value="Cancel">
-      </div>
-    </form>
+  <div hawtio-confirm-dialog="deleteProfileDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelected()">
+    <div class="dialog-body">
+      <p>Are you sure you want to delete the selected profiles:</p>
+      <ol>
+        <li ng-repeat="profile in selected">{{profile.id}}</li>
+      </ol>
+    </div>
   </div>
 
   <div modal="createProfileDialog">
-    <form name="createProfile" class="dialog-body form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
       <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
       <div class="modal-body">
         <label>Profile Name: </label>

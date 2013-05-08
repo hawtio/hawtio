@@ -8,8 +8,8 @@ module Fabric {
     $scope.selected = [];
     $scope.selectedParents = [];
 
-    $scope.deleteVersionDialog = new Core.Dialog();
-    $scope.deleteProfileDialog = new Core.Dialog();
+    $scope.deleteVersionDialog = false;
+    $scope.deleteProfileDialog = false;
 
     $scope.createProfileDialog = false;
 
