@@ -26,10 +26,8 @@ module UI {
 
       $scope.$watch('show', function() {
         if ($scope.show) {
-          setTimeout(function() {
-            $scope.body = $('.modal-body');
-            $scope.body.html($compile($scope.clone.html())($scope.$parent));
-          }, 50);
+          $scope.body = $element.find('.modal-body');
+          $scope.body.html($compile($scope.clone.html())($scope.$parent));
         }
       });
 
