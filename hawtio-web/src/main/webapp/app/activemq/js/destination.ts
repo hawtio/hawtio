@@ -15,6 +15,7 @@ module ActiveMQ {
       $scope.workspace.operationCounter += 1;
       $scope.$apply();
       notification("success", $scope.message);
+      $scope.workspace.loadTree();
     }
 
     function deleteSuccess() {
@@ -23,6 +24,7 @@ module ActiveMQ {
       $scope.workspace.operationCounter += 1;
       $scope.$apply();
       notification("success", $scope.message);
+      $scope.workspace.loadTree();
     }
 
     function getBrokerMBean(jolokia) {

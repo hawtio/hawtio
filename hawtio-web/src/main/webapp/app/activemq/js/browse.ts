@@ -113,7 +113,7 @@ module ActiveMQ {
             angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
                 if (id) {
-                    var callback = (idx + 1 < selectedItems.length) ? intermediateResult : operationSuccess;
+                    var callback = (idx + 1 < selectedItems.length) ? intermediateResult : moveSuccess;
                     jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
                 }
             });
@@ -230,6 +230,11 @@ module ActiveMQ {
       $scope.gridOptions.selectedItems.splice(0);
       notification("success", $scope.message);
       setTimeout(loadTable, 50);
+    }
+
+    function moveSuccess() {
+        operationSuccess();
+        $scope.workspace.loadTree();
     }
   }
 }
