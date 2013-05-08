@@ -18,15 +18,26 @@ module Fabric {
 
             var isValid = (workspace) => {
               if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
+                try {
+                  var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus');
 
-                var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus');
+                  if (status) {
+                    return status.clientValid && status.clientConnected;
+                  } else {
+                    return false;
+                  }
+                } catch (e) {
+                    try {
+                      var container = workspace.jolokia.execute(managerMBean, 'currentContainer()');
+                      if (container) {
+                        return true;
+                      } else {
+                        return false;
+                      }
 
-                console.log("status:", status);
-
-                if (status) {
-                  return status.clientValid && status.clientConnected;
-                } else {
-                  return false;
+                    } catch (e) {
+                      return false;
+                    }
                 }
               }
               return false;
