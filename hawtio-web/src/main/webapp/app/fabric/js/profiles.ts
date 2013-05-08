@@ -7,21 +7,35 @@ module Fabric {
 
     $scope.selected = [];
     $scope.selectedParents = [];
+    $scope.selectedParentVersion = [];
 
     $scope.deleteVersionDialog = false;
     $scope.deleteProfileDialog = false;
 
     $scope.createProfileDialog = false;
+    $scope.createVersionDialog = false;
+
+    $scope.triggerResize = () => {
+      setTimeout(function() {
+        $('.dialogGrid').trigger('resize');
+      }, 10);
+
+    }
 
     $scope.$watch('createProfileDialog', function() {
       if ($scope.createProfileDialog) {
-        setTimeout(function() {
-          $('.dialogGrid').trigger('resize');
-        }, 10);
+        $scope.triggerResize();
+      }
+    });
+
+    $scope.$watch('createVersionDialog', function() {
+      if ($scope.createVersionDialog) {
+        $scope.triggerResize();
       }
     });
 
     $scope.newProfileName = '';
+    $scope.newVersionName = '';
 
     var key = $location.search()['pv'];
     if (key) {
@@ -80,11 +94,26 @@ module Fabric {
       return $scope.profiles.findAll(function(item) {return item.containerCount > 0 }).length > 0;
     }
 
+
     $scope.createProfileGridOptions = {
       data: 'profiles',
       selectedItems: $scope.selectedParents,
       showSelectionCheckbox: true,
       multiSelect: true,
+      selectWithCheckboxOnly: false,
+      keepLastSelected: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Name'
+        }]
+    }
+
+    $scope.createVersionGridOptions = {
+      data: 'versions',
+      selectedItems: $scope.selectedParentVersion,
+      showSelectionCheckbox: true,
+      multiSelect: false,
       selectWithCheckboxOnly: false,
       keepLastSelected: false,
       columnDefs: [
@@ -157,8 +186,34 @@ module Fabric {
       });
     };
 
-    $scope.deleteVersion = () => {
+    $scope.doCreateVersion = () => {
+      $scope.createVersionDialog = false;
 
+      var success = function (response) {
+        notification('success', "Created version " + response.value.id);
+        $scope.newVersionName = '';
+        $scope.version = response.value;
+        $scope.$apply();
+      }
+
+      var error = function (response) {
+        var msg = "Error creating new version: " + response.error;
+        if ($scope.newVersionName !== '') {
+          msg = "Error creating " + $scope.newVersionName + " : " + response.error;
+        }
+        notification('error', msg);
+      }
+
+      if ($scope.selectedParentVersion.length > 0 && $scope.newVersionName !== '') {
+        createVersionWithParentAndId(jolokia, $scope.selectedParentVersion[0].id, $scope.newVersionName, success, error);
+      } else if ($scope.newVersionName !== '') {
+        createVersionWithId(jolokia, $scope.newVersionName, success, error);
+      } else {
+        createVersion(jolokia, success, error);
+      }
+    }
+
+    $scope.deleteVersion = () => {
       // avoid getting any not found errors while deleting the version
       Core.unregister(jolokia, $scope);
 

@@ -19,7 +19,7 @@
             <select id="versions" ng-model="version" ng-options="v.id for v in versions"></select>
           </div>
           <div class="btn-group inline-block">
-            <a href="" title="Create new Version" class="btn"><i class="icon-plus"></i></a>
+            <a href="" title="Create new Version" class="btn" ng-click="createVersionDialog = true"><i class="icon-plus"></i></a>
             <a href="" title="Delete this Version" class="btn" ng-disabled="versionCanBeDeleted()" ng-click="deleteVersionDialog = true"><i class="icon-minus"></i></a>
           </div>
           &nbsp;
@@ -72,6 +72,26 @@
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" value="Create">
         <input class="btn btn-primary" ng-click="createProfileDialog = false" value="Cancel">
+      </div>
+    </form>
+  </div>
+
+  <div modal="createVersionDialog">
+    <form name="createVersion" class="form-horizontal no-bottom-margin" ng-submit="doCreateVersion()">
+      <div class="modal-header"><h4>Create new Version...</h4></div>
+      <div class="modal-body">
+        <label>Version Name: </label>
+        <input name="id" class="input-xlarge" type="text" ng-model="newVersionName" ng-pattern="/^[.a-zA-Z0-9_-]*$/">
+        <span class="help-block" ng-hide="createVersion.id.$invalid">Leave blank to use the next available version number</span>
+        <span class="help-block" ng-show="createVersion.id.$error.pattern">Name can only contain letters, numbers, '-', '_' and '.'</span>
+        <p></p>
+        <label ng-show="newVersionName != ''">Select a version to derive version {{newVersionName}} from if required, otherwise the highest version number will be the parent of version {{newVersionName}}.</label>
+        <label ng-hide="newVersionName != ''">Select a version to derive the new version from if required, otherwise the highest version number will be the parent of the new version</label>
+        <div class='dialogGrid' style="height: 250px;" ng-grid="createVersionGridOptions"></div>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!createVersion.$valid" type="submit" value="Create">
+        <input class="btn btn-primary" ng-click="createVersionDialog = false" value="Cancel">
       </div>
     </form>
   </div>

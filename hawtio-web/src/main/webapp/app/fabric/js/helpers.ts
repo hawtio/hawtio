@@ -18,8 +18,16 @@ module Fabric {
     doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
   }
 
-  export function createVersion(jolokia, base, id, success, error) {
+  export function createVersionWithParentAndId(jolokia, base, id, success, error) {
     doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
+  }
+
+  export function createVersionWithId(jolokia, id, success, error) {
+    doAction('createVersion(java.lang.String)', jolokia, [id], success, error);
+  }
+
+  export function createVersion(jolokia, success, error) {
+    doAction('createVersion()', jolokia, [], success, error);
   }
 
   export function deleteVersion(jolokia, id, success, error) {
