@@ -11,7 +11,16 @@ module Fabric {
     $scope.deleteVersionDialog = new Core.Dialog();
     $scope.deleteProfileDialog = new Core.Dialog();
 
-    $scope.createProfileDialog = new Core.Dialog();
+    $scope.createProfileDialog = false;
+
+    $scope.$watch('createProfileDialog', function() {
+      if ($scope.createProfileDialog) {
+        setTimeout(function() {
+          $('.dialogGrid').trigger('resize');
+        }, 10);
+      }
+    });
+
     $scope.newProfileName = '';
 
     var key = $location.search()['pv'];

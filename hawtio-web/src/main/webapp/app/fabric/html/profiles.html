@@ -4,7 +4,7 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="btn-group inline-block">
-            <a href="" title="Create new Profile" class="btn" ng-click="createProfileDialog.open()"><i class="icon-plus"></i></a>
+            <a href="" title="Create new Profile" class="btn" ng-click="createProfileDialog = true"><i class="icon-plus"></i></a>
             <a href="" title="Delete selected Profiles" class="btn" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog.open()"><i class="icon-minus"></i></a>
           </div>
 
@@ -70,8 +70,8 @@
     </form>
   </div>
 
-  <div modal="createProfileDialog.show" close="createProfileDialog.close()" options="createProfileDialog.options">
-    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
+  <div modal="createProfileDialog">
+    <form name="createProfile" class="dialog-body form-horizontal no-bottom-margin" ng-submit="createProfileDialog.close()">
       <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
       <div class="modal-body">
         <label>Profile Name: </label>
@@ -81,11 +81,11 @@
 
         <p></p>
         <label>Select one or more parent profiles as needed: </label>
-        <div style="height: 250px;" ng-grid="createProfileGridOptions"></div>
+        <div class='dialogGrid' style="height: 250px;" ng-grid="createProfileGridOptions"></div>
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" ng-click="createProfile()" value="Create">
-        <input class="btn btn-primary" ng-click="createProfileDialog.close()" value="Cancel">
+        <input class="btn btn-primary" ng-click="createProfileDialog = false" value="Cancel">
       </div>
     </form>
   </div>
