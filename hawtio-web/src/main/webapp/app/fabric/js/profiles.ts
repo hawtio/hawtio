@@ -70,7 +70,7 @@ module Fabric {
       $location.search(q);
 
       if (oldValue === newValue) {
-        notification('info', "Please wait, fetching profile data for version" + $scope.version.id);
+        notification('info', "Please wait, fetching profile data for version " + $scope.version.id);
       }
       
       Core.unregister(jolokia, $scope);

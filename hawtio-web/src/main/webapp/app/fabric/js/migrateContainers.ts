@@ -27,7 +27,6 @@ module Fabric {
       }
     };
 
-
     $scope.containerGridOptions = {
       data: 'containers',
       selectedItems: $scope.selectedContainers,
