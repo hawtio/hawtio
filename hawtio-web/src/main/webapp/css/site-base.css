@@ -1186,3 +1186,8 @@ li.stacktrace {
 .slideout.left.out {
     left: 0%;
 }
+
+.column-filter {
+  width: 94%;
+  margin-bottom: 10px !important;
+}
