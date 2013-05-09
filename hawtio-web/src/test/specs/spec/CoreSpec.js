@@ -76,4 +76,24 @@ describe("Core", function () {
     expect(creds[0]).toEqual("foo");
     expect(creds[1]).toEqual("bar");
   });
+
+
+  assertObjectNameKeyValue("org.apache.activemq", { "dummy": null });
+
+  assertObjectNameKeyValue("org.apache.activemq:brokerName=foo", { "dummy": null });
+
+  assertObjectNameKeyValue("org.apache.activemq:brokerName=broker1,clientId=dejan,type=Broker", {
+    "brokerName": "broker1",
+    "clientId": "dejan",
+    "type": "Broker"
+  });
+
+  function assertObjectNameKeyValue(objectName, values) {
+    var entries = Core.objectNameProperties(objectName);
+    angular.forEach(values, function (value, key) {
+      it("objectName " + objectName + " should have key " + key, function () {
+        expect(entries[key]).toEqual(value);
+      });
+    });
+  }
 });

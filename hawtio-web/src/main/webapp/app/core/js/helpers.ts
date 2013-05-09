@@ -732,4 +732,27 @@ module Core {
     var pluralWord = (count === 1) ? word : word.pluralize();
     return "" + count + " " + pluralWord;
   }
+
+  /**
+   * given a JMX ObjectName of the form <code>domain:key=value,another=something</code> then return the object
+   * <code>{key: "value", another: "something"}</code>
+   * @param name
+   */
+  export function objectNameProperties(objectName: string) {
+    var entries = {};
+    if (objectName) {
+      var idx = objectName.indexOf(":");
+      if (idx > 0) {
+        var path = objectName.substring(idx + 1);
+        var items = path.split(',');
+        angular.forEach(items, (item) => {
+          var kv = item.split('=');
+          var key = kv[0];
+          var value = kv[1] || key;
+          entries[key] = value;
+        });
+      }
+    }
+    return entries;
+  }
 }
