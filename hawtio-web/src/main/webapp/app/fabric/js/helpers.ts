@@ -14,6 +14,10 @@ module Fabric {
     }
   }
 
+  export function migrateContainers(jolokia, version, containers, success, error) {
+    doAction('applyVersionToContainers(java.lang.String, java.util.List)', jolokia, [version, containers], success, error);
+  }
+
   export function createProfile(jolokia, version, id, parents, success, error) {
     doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
   }

@@ -10,7 +10,7 @@
   </div>
 
   <div class="row-fluid">
-    <div class="span4">
+    <div class="span4 offset2">
       <p>Select the target version</p>
       <input class="search-query column-filter" type="text" ng-model="versionGridOptions.filterOptions.filterText" placeholder="Filter...">
       <div class="gridStyle" ng-grid="versionGridOptions"></div>
@@ -21,14 +21,6 @@
       <input class="search-query column-filter" type="text" ng-model="containerGridOptions.filterOptions.filterText" placeholder="Filter...">
       <div class="gridStyle" ng-grid="containerGridOptions"></div>
     </div>
-
-    <div class="span4">
-      <ol>
-        <li ng-repeat="c in selectedContainers">{{c.id}}</li>
-      </ol>
-    </div>
-
-
   </div>
 
   <div hawtio-confirm-dialog="showApply" ok-button-text="Yes" cancel-button-text="No" on-ok="migrateContainers()" title="Migrate Containers?">

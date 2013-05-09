@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function MigrateContainersController($scope, jolokia) {
+  export function MigrateContainersController($scope, jolokia, $location) {
 
     $scope.versions = [];
     $scope.containers = [];
@@ -74,9 +74,17 @@ module Fabric {
 
     $scope.migrateContainers = () => {
 
+      var containerIds = $scope.selectedContainers.map((container) => { return container.id });
+      var versionId = $scope.selectedVersion[0].id;
 
+      notification('info', "Moving containers to version " + versionId);
+      $location.path("/fabric/containers");
 
-
+      migrateContainers(jolokia, versionId, containerIds, () => {
+        notification('success', "Successfully migrated containers");
+      }, (response) => {
+        notification('error', "Failed to migrate containers due to " + response.error);
+      });
     };
 
 

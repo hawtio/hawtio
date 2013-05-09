@@ -263,8 +263,8 @@ ul.inline > li, ol.inline > li {
 }
 
 .centered {
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .inline {
@@ -1190,4 +1190,8 @@ li.stacktrace {
 .column-filter {
   width: 94%;
   margin-bottom: 10px !important;
+}
+
+.ngHeaderCell:last-child {
+  border-right: 1px solid rgba(0, 0, 0, 0) !important;
 }
