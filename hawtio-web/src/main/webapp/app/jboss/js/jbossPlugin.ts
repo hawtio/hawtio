@@ -5,6 +5,7 @@ module JBoss {
       $routeProvider.
             when('/jboss/server', {templateUrl: 'app/jboss/html/server.html'}).
             when('/jboss/applications', {templateUrl: 'app/jboss/html/applications.html'}).
+            when('/jboss/dmr', {templateUrl: 'app/jboss/html/dmr.html'}).
             when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'}).
             when('/jboss/mbeans', {templateUrl: 'app/jboss/html/mbeans.html'});
           }).
