@@ -31,8 +31,12 @@ module Fabric {
 
 
     $scope.stopContainer = (name) => {
-      // TODO proper notifications
-      stopContainer(jolokia, name, function() {console.log("Stopped " + name)}, function() {console.log("Failed to stop " + name)});
+      stopContainer(jolokia, name, () => {
+        notification('success', "Stopped " + name);
+      }, (response) => {
+        notification('error', "Failed to stop " + name + " due to " + response.error);
+        console.log("Failed to stop " + name)
+      });
     };
 
     $scope.extractSelected = () => {
@@ -53,8 +57,11 @@ module Fabric {
     };
 
     $scope.deleteContainer = (name) => {
-      // TODO proper notifications
-      destroyContainer(jolokia, name, function() {console.log("Deleted " + name)}, function() {console.log("Failed to delete " + name)});
+      destroyContainer(jolokia, name, () => {
+        notification('success', "Deleted " + name);
+      }, (response) => {
+        notification('error', "Failed to delete " + name + " due to " + response.error);
+      });
     };
 
     $scope.delete = () => {
@@ -64,8 +71,11 @@ module Fabric {
     };
 
     $scope.startContainer = (name) => {
-      // TODO proper notifications
-      startContainer(jolokia, name, function() {console.log("Started " + name)}, function() {console.log("Failed to start " + name)});
+      startContainer(jolokia, name, () => {
+        notification('success', "Started " + name);
+      }, (response) => {
+        notification('error', "Failed to start " + name + " due to " + response.error);
+      });
     };
 
     $scope.start = () => {

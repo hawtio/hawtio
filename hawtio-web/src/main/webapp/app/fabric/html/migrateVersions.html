@@ -11,13 +11,13 @@
 
   <div class="row-fluid">
     <div class="span4 offset2">
-      <p>Select the target version</p>
+      <p>1. Select the target version: </p>
       <input class="search-query column-filter" type="text" ng-model="versionGridOptions.filterOptions.filterText" placeholder="Filter...">
       <div class="gridStyle" ng-grid="versionGridOptions"></div>
     </div>
     <div class="span4">
-      <p ng-show="selectedVersion.length == 0">Select the containers that should be migrated to the target version</p>
-      <p ng-show="selectedVersion.length > 0">Select the containers that should be migrated to version {{selectedVersion[0].id}}</p>
+      <p ng-show="selectedVersion.length == 0">2. Select the containers that should be migrated: </p>
+      <p ng-show="selectedVersion.length > 0">2. Select the containers that should be migrated to {{selectedVersion[0].id}}: </p>
       <input class="search-query column-filter" type="text" ng-model="containerGridOptions.filterOptions.filterText" placeholder="Filter...">
       <div class="gridStyle" ng-grid="containerGridOptions"></div>
     </div>
