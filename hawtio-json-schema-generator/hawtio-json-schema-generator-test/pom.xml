@@ -36,14 +36,14 @@
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-api</artifactId>
-      <version>1.13.1</version>
+      <version>${aether-version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-util</artifactId>
-      <version>1.13.1</version>
+      <version>${aether-version}</version>
       <scope>test</scope>
     </dependency>
 

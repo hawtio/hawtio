@@ -74,6 +74,7 @@
 -->
     <activemq-version>5.8.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
+    <aether-version>1.13.1</aether-version>
     <atmosphere-version>1.0.0.beta5</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
@@ -114,6 +115,7 @@
     <kotlin-version>0.4.68</kotlin-version>
     <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
     <log4j-version>1.2.17</log4j-version>
+    <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
@@ -128,7 +130,9 @@
 -->
     <spring-version>3.1.3.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
+    <wagon-version>2.4</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>
+
 
   </properties>
 
@@ -240,6 +244,7 @@
 
   <modules>
     <module>hawtio-core</module>
+    <module>hawtio-aether</module>
 <!--
     <module>hawtio-camel</module>
 -->
