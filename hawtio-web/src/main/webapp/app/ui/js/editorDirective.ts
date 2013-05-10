@@ -10,6 +10,7 @@ module UI {
     public scope = {
       text: '=hawtioEditor',
       mode:  '=',
+      dirty: '=',
       name: '@'
     };
 
@@ -36,6 +37,7 @@ module UI {
             var phase = $scope.$parent.$$phase;
             if (!phase) {
               $scope.text = $scope.doc.getValue();
+              $scope.dirty = !$scope.doc.isClean();
               Core.$applyNowOrLater($scope);
             }
           });
@@ -48,7 +50,7 @@ module UI {
         }
       });
 
-      $scope.$watch('text', function() {
+      $scope.$watch('text', function(oldValue, newValue) {
         if ($scope.codeMirror && $scope.doc) {
           if (!$scope.codeMirror.hasFocus()) {
             $scope.doc.setValue($scope.text);
@@ -67,6 +69,7 @@ module UI {
       delete config['class'];
       delete config['hawtioEditor'];
       delete config['mode'];
+      delete config['dirty'];
 
       angular.forEach(config, function(value, key) {
         $scope.options.push({
@@ -85,6 +88,12 @@ module UI {
           } else {
             $scope.codeMirror.setOption('mode', $scope.mode);
           }
+        }
+      });
+
+      $scope.$watch('dirty', () => {
+        if ($scope.dirty && !$scope.doc.isClean()) {
+          $scope.doc.markClean();
         }
       });
 
