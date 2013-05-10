@@ -1,3 +1,6 @@
+
+declare var base64:any;
+
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
 var _urlPrefix: string = null;
@@ -755,4 +758,19 @@ module Core {
     }
     return entries;
   }
+
+  export function decode(s) {
+    if (!window.atob) {
+      return base64.decode(s);
+    }
+    return window.atob(s);
+  }
+
+  export function encode(b) {
+    if (!window.btoa) {
+      return base64.encode(b);
+    }
+    return window.btoa(b);
+  }
+
 }
