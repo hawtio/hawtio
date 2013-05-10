@@ -19,7 +19,10 @@ module Maven {
   }
 
   export function getName(row) {
-    var id = row.group + "/" + row.artifact;
+    var id = (row.group || row.groupId) + "/" + (row.artifact || row.artifactId);
+    if (row.version) {
+      id += "/" + row.version;
+    }
     if (row.classifier) {
       id += "/" + row.classifier;
     }
@@ -68,8 +71,9 @@ module Maven {
       var artifact = row.artifactId;
       var classifier = row.classifier || "";
       var packaging = row.packaging || "";
+      var version = row.version;
       if (group && artifact) {
-        return "#/maven/dependencies/" + group + "/" + artifact + "/" + classifier + "/" + packaging;
+        return "#/maven/dependencies/" + group + "/" + artifact + "/" +  version + "/" + classifier + "/" + packaging;
       }
       return "";
     };
