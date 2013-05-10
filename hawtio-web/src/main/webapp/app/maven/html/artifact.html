@@ -2,6 +2,7 @@
   <div class="row-fluid">
     <div class="pull-right">
       <a class="btn" href="{{versionsLink(row)}}">Versions</a>
+      <a class="btn" href="{{dependenciesLink(row)}}" ng-show="{{hasDependencyMBean()}}">Dependencies</a>
       <a class="btn" target="javadoc" href="{{javadocLink(row)}}">JavaDoc</a>
       <a class="btn" target="source" href="{{sourceLink(row)}}">Source</a>
     </div>

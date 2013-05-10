@@ -10,7 +10,7 @@ module Maven {
     $scope.search = "";
     $scope.searchForm = 'app/maven/html/searchForm.html';
 
-    addMavenFunctions($scope);
+    addMavenFunctions($scope, workspace);
 
     var columnDefs:any[] = [
       {

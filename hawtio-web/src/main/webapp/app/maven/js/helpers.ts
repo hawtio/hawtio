@@ -10,6 +10,14 @@ module Maven {
     } else return null;
   }
 
+  export function getAetherMBean(workspace:Workspace) {
+    if (workspace) {
+      var mavenStuff = workspace.mbeanTypesToDomain["AetherFacade"] || {};
+      var object = mavenStuff["io.hawt.aether"] || {};
+      return object.objectName;
+    } else return null;
+  }
+
   export function getName(row) {
     var id = row.group + "/" + row.artifact;
     if (row.classifier) {
@@ -21,7 +29,7 @@ module Maven {
     return id;
   }
 
-  export function addMavenFunctions($scope) {
+  export function addMavenFunctions($scope, workspace) {
     $scope.detailLink = (row) => {
       var group = row.groupId;
       var artifact = row.artifactId;
@@ -53,6 +61,22 @@ module Maven {
         return "#/maven/versions/" + group + "/" + artifact + "/" + classifier + "/" + packaging;
       }
       return "";
+    };
+
+    $scope.dependenciesLink = (row) => {
+      var group = row.groupId;
+      var artifact = row.artifactId;
+      var classifier = row.classifier || "";
+      var packaging = row.packaging || "";
+      if (group && artifact) {
+        return "#/maven/dependencies/" + group + "/" + artifact + "/" + classifier + "/" + packaging;
+      }
+      return "";
+    };
+
+    $scope.hasDependencyMBean = () => {
+      var mbean = Maven.getAetherMBean(workspace);
+      return angular.isDefined(mbean);
     };
 
     $scope.sourceLink = (row) => {

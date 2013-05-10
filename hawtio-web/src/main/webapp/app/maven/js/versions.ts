@@ -40,7 +40,7 @@ module Maven {
       }
     };
 
-    addMavenFunctions($scope);
+    addMavenFunctions($scope, workspace);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
