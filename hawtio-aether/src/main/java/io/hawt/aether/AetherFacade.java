@@ -1,6 +1,7 @@
 package io.hawt.aether;
 
 import io.hawt.util.MBeanSupport;
+import io.hawt.util.Strings;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -76,7 +77,7 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
     }
 
     public AetherResult resolve(String groupId, String artifactId, String version, String extension, String classifier) throws PlexusContainerException, ComponentLookupException, DependencyCollectionException, ArtifactResolutionException, DependencyResolutionException {
-        if (extension == null || extension.equals("bundle")) {
+        if (Strings.isBlank(extension) || extension.equals("bundle")) {
             extension = DEFAULT_EXTENSION;
         }
         if (classifier == null) {

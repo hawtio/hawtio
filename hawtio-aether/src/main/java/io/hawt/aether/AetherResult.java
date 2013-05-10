@@ -87,6 +87,10 @@ public class AetherResult {
         if (Strings.isNotBlank(extension) && !extension.equals("jar")) {
             appendJsonProperty(sb, childIndent, "extension", extension, false);
         }
+        String scope = dependency.getScope();
+        if (Strings.isNotBlank(scope)) {
+            appendJsonProperty(sb, childIndent, "scope", scope, false);
+        }
         List<DependencyNode> children = node.getChildren();
         if (!children.isEmpty()) {
             sb.append(childIndent);
