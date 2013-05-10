@@ -1,8 +1,11 @@
 module Fabric {
 
-  export function ProfileController($scope, workspace:Workspace, $routeParams, jolokia) {
+  export function ProfileController($scope, $routeParams, jolokia, $location) {
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
+
+    $scope.newFileDialog = false;
+    $scope.newFileName = '';
     
     if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
       
@@ -12,6 +15,16 @@ module Fabric {
         arguments: [$scope.versionId, $scope.profileId]
       }, onSuccess(render));
       
+    }
+
+    $scope.doCreateFile = () => {
+      $scope.newFileDialog = false;
+      newConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.newFileName, () => {
+        notification('success', 'Created new configuration file ' + $scope.newFileName);
+        $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId + "/" + $scope.newFileName);
+      }, (response) => {
+        notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
+      })
     }
     
     function render(response) {
