@@ -76,7 +76,7 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
     }
 
     public AetherResult resolve(String groupId, String artifactId, String version, String extension, String classifier) throws PlexusContainerException, ComponentLookupException, DependencyCollectionException, ArtifactResolutionException, DependencyResolutionException {
-        if (extension == null) {
+        if (extension == null || extension.equals("bundle")) {
             extension = DEFAULT_EXTENSION;
         }
         if (classifier == null) {

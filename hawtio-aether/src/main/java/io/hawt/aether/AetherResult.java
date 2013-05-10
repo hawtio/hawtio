@@ -67,7 +67,7 @@ public class AetherResult {
 
     public String jsonString() {
         StringBuilder builder = new StringBuilder();
-        toJson(rootNode, "", builder, false);
+        toJson(rootNode, "", builder, true);
         return builder.toString();
     }
 
@@ -87,8 +87,6 @@ public class AetherResult {
         if (Strings.isNotBlank(extension) && !extension.equals("jar")) {
             appendJsonProperty(sb, childIndent, "extension", extension, false);
         }
-        appendJsonProperty(sb, childIndent, "version", artifact.getVersion(), true);
-
         List<DependencyNode> children = node.getChildren();
         if (!children.isEmpty()) {
             sb.append(childIndent);
@@ -101,8 +99,10 @@ public class AetherResult {
                 toJson(child, grandChildIndent, sb, ++idx >= lastIdx);
             }
             sb.append(childIndent);
-            sb.append("]\n");
+            sb.append("],\n");
         }
+        appendJsonProperty(sb, childIndent, "version", artifact.getVersion(), true);
+
         sb.append(indent);
         sb.append("}");
         if (!last) {
