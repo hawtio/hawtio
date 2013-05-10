@@ -14,6 +14,10 @@ module Fabric {
     }
   }
 
+  export function saveConfigFile(jolokia, version, profile, pid, data, success, error) {
+    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, [B)', jolokia, [version, profile, pid, data], success, error);
+  }
+
   export function applyProfiles(jolokia, version, profiles, containers, success, error) {
     doAction('applyProfilesToContainers(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, containers], success, error);
   }
