@@ -91,7 +91,9 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
         collectRequest.setRoot(dependency);
 
         List<RemoteRepository> repos = getRemoteRepositories();
-        for (RemoteRepository repo : repos) {
+        RemoteRepository[] repoArray = new RemoteRepository[repos.size()];
+        repos.toArray(repoArray);
+        for (RemoteRepository repo : repoArray) {
             collectRequest.addRepository(repo);
         }
         RepositorySystem system = getRepositorySystem();
