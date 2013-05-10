@@ -9,7 +9,8 @@ module UI {
 
     public scope = {
       text: '=hawtioEditor',
-      name: '@',
+      mode:  '=',
+      name: '@'
     };
 
     public controller = ($scope, $element, $attrs) => {
@@ -65,12 +66,26 @@ module UI {
       delete config['$attr'];
       delete config['class'];
       delete config['hawtioEditor'];
+      delete config['mode'];
 
       angular.forEach(config, function(value, key) {
         $scope.options.push({
           key: key,
           'value': value
         });
+      });
+
+      $scope.$watch('mode', () => {
+        if ($scope.mode) {
+          if (!$scope.codeMirror) {
+            $scope.options.push({
+              key: 'mode',
+              'value': $scope.mode
+            });
+          } else {
+            $scope.codeMirror.setOption('mode', $scope.mode);
+          }
+        }
       });
 
       $scope.$watch('text', function() {
