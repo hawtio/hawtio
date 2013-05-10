@@ -35,7 +35,7 @@ module Fabric {
     }
 
     $scope.save = () => {
-      saveConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.fname, stringToBytes($scope.data), () => {
+      saveConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.fname, $scope.data.encodeBase64(), () => {
         $scope.dirty = false;
         notification('success', "Saved " + $scope.fname);
         $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId);
@@ -59,7 +59,7 @@ module Fabric {
     function render(response) {
       if (!Object.equal($scope.response, response.value)) {
         $scope.response = response.value;
-        $scope.data = bytesToString($scope.response);
+        $scope.data = $scope.response.decodeBase64();
         $scope.mode = $scope.getMode();
         $scope.$apply();
       }

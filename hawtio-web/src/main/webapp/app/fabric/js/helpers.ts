@@ -19,11 +19,11 @@ module Fabric {
   }
 
   export function newConfigFile(jolokia, version, profile, pid, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, [B)', jolokia, [version, profile, pid, []], success, error);
+    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, ''], success, error);
   }
 
   export function saveConfigFile(jolokia, version, profile, pid, data, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, [B)', jolokia, [version, profile, pid, data], success, error);
+    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, data], success, error);
   }
 
   export function applyProfiles(jolokia, version, profiles, containers, success, error) {
