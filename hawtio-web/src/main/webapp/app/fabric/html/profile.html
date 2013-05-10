@@ -97,12 +97,20 @@
         <dd>
           <ul class="unstyled">
             <li ng-repeat="configuration in row.configurations">
+              <a href="" ng-click="deleteFile(configuration)" title="delete {{configuration}}"><i class="red icon-remove"></i></a>
               <a href="#/fabric/profile/{{versionId}}/{{profileId}}/{{configuration}}">{{configuration}}</a>
             </li>
           </ul>
           <button class="btn" ng-click="newFileDialog = true"><i class="icon-file-alt"></i> New</button>
         </dd>
       </dl>
+    </div>
+  </div>
+
+  <div hawtio-confirm-dialog="deleteFileDialog" ok-button-text="Delete" on-ok="doDeleteFile()">
+    <div class="dialog-body">
+      <p>Delete file {{markedForDeletion}}?</p>
+      <p>This operation cannot be undone so please be careful.</p>
     </div>
   </div>
 

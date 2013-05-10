@@ -14,6 +14,10 @@ module Fabric {
     }
   }
 
+  export function deleteConfigFile(jolokia, version, profile, pid, success, error) {
+    doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
+  }
+
   export function newConfigFile(jolokia, version, profile, pid, success, error) {
     doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, [B)', jolokia, [version, profile, pid, []], success, error);
   }
