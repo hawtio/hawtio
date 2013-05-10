@@ -24,7 +24,6 @@ module Fabric {
 
     $scope.doDeleteFile = () => {
       $scope.deleteFileDialog = false;
-      console.log("file", $scope.markedForDeletion);
       deleteConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.markedForDeletion, () => {
         notification('success', 'Deleted file ' + $scope.markedForDeletion);
         $scope.markedForDeletion = '';
