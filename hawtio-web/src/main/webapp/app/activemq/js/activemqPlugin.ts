@@ -10,7 +10,8 @@ module ActiveMQ {
             when('/activemq/createTopic', {templateUrl: 'app/activemq/html/createTopic.html'}).
             when('/activemq/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html'}).
             when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html'}).
-            when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'})
+            when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
+            when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'})
   }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 
@@ -121,6 +122,12 @@ module ActiveMQ {
               title: "Delete or purge this queue",
               isValid: (workspace:Workspace) => isQueue(workspace),
               href: () => "#/activemq/deleteQueue"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-list"></i> Durable Subscribers',
+              title: "Manage durable subscribers",
+              isValid: (workspace:Workspace) => isBroker(workspace),
+              href: () => "#/activemq/durableSubscribers"
             });
 
             function postProcessTree(tree) {
