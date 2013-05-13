@@ -1,7 +1,7 @@
 module Jmx {
   var pluginName = 'jmx';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
             when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html'}).

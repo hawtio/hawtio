@@ -2,7 +2,9 @@ module Jmx {
 
   export var propertiesColumnDefs = [
     {field: 'name', displayName: 'Property', width: "27%"},
-    {field: 'value', displayName: 'Value',  width: "70%"}
+    {field: 'value', displayName: 'Value',  width: "70%",
+      cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.summary"></div>'
+    }
   ];
 
   export var foldersColumnDefs = [{
@@ -16,30 +18,7 @@ module Jmx {
     $scope.selectedItems = [];
     $scope.selectCheckBox = true;
 
-/*
-    var SelectToggle = function(scope) {
-      var self = this;
-      self.scope = scope;
-      self.init = function(childScope, grid) {
-        self.grid = grid;
-        self.childScope = childScope;
-      };
-
-      self.setSelect = function(flag) {
-        if (angular.isDefined(self.grid)) {
-          if (flag !== self.grid.config.canSelectRows && flag !== self.grid.config.selectWithCheckboxonly) {
-            self.scope.canSelectRows = true;
-            self.scope.displaySelectionCheckbox = true;
-            self.grid.config.canSelectRows = flag;
-            self.grid.config.displaySelectionCheckbox = flag;
-            self.grid.rowFactory.rowConfig.canSelectRows = flag;
-            self.grid.rowFactory.filteredDataChanged();
-          }
-        }
-      }
-    };
-    $scope.selectToggle = new SelectToggle($scope);
-*/
+    $scope.valueDetails = new Core.Dialog();
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -71,10 +50,6 @@ module Jmx {
       }
       updateTableContents();
     });
-
-    function operationComplete() {
-      updateTableContents();
-    }
 
     /**
      * Returns the toolBar template HTML to use for the current selection
@@ -141,6 +116,21 @@ module Jmx {
 */
       return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
     };
+
+    $scope.openDetailView = (entity) => {
+      $scope.row = entity;
+      console.log("open detail view for key: " + entity.key);
+      var value = entity.value;
+      if (angular.isObject(value) && !angular.isArray(value)) {
+        console.log("Opening dialog");
+        $scope.valueDetails.open();
+      }
+    };
+
+
+    function operationComplete() {
+      updateTableContents();
+    }
 
     function updateTableContents() {
       // lets clear any previous queries just in case!
@@ -277,7 +267,14 @@ module Jmx {
             if (showAllAttributes || includePropertyValue(key, value)) {
               // always skip keys which start with _
               if (!key.startsWith("_")) {
-                properties.push({name: humanizeValue(key), value: value});
+                // lets format the ObjectName nicely
+                if (key === "ObjectName") {
+                  value = unwrapObjectName(value);
+                }
+                var data = {key: key, name: humanizeValue(key), value: value};
+
+                generateSummaryAndDetail(data);
+                properties.push(data);
               }
             }
           });
@@ -286,8 +283,36 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-
         $scope.$apply();
+      }
+    }
+
+    function unwrapObjectName(value) {
+      var keys = Object.keys(value);
+      if (keys.length === 1 && keys[0] === "objectName") {
+        return value["objectName"];
+      }
+      return value;
+    }
+
+    function generateSummaryAndDetail(data) {
+      var value = data.value;
+      if (!angular.isArray(value) && angular.isObject(value)) {
+        var detailHtml = "<table class='table table-striped'>";
+        var summary = "";
+        var object = value;
+        var keys = Object.keys(value).sort();
+        angular.forEach(keys, (key) => {
+          var value = object[key];
+          detailHtml += "<tr><td>"
+                  + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+          summary += "" + humanizeValue(key) + ": " + value + "  "
+        });
+        detailHtml += "</table>";
+        data.summary = summary;
+        data.detailHtml = detailHtml;
+      } else {
+        data.summary = value;
       }
     }
 
