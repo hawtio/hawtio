@@ -56,4 +56,12 @@ module Log {
     }
     return line;
   }
+
+  export function getLogCacheSize(localStorage) {
+    var text = localStorage['logCacheSize'];
+    if (text) {
+      return parseInt(text);
+    }
+    return 1000;
+  }
 }

@@ -6,6 +6,14 @@ module Core {
     $scope.url = localStorage['url'];
     $scope.autoRefresh = localStorage['autoRefresh'] === "true";
 
+    var defaults = {
+      logCacheSize: 1000
+    };
+
+    var converters = {
+      logCacheSize: parseInt
+    };
+
     console.log("AutoRefresh", $scope.autoRefresh);
 
     $scope.$watch('updateRate', () => {
@@ -21,9 +29,18 @@ module Core {
       console.log("AutoRefresh", $scope.autoRefresh);
     });
 
-    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword"];
+    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "logCacheSize"];
+
     angular.forEach(names, (name) => {
-      $scope[name] =  localStorage[name] || "";
+      $scope[name] = localStorage[name];
+      var converter = converters[name];
+      if (converter) {
+        $scope[name] = converter($scope[name]);
+      }
+      if (!$scope[name]) {
+        $scope[name] = defaults[name] || "";
+      }
+
       $scope.$watch(name, () => {
         var value = $scope[name];
         if (value) {
@@ -31,5 +48,7 @@ module Core {
         }
       });
     });
+
+    console.log("logCacheSize " + $scope.logCacheSize);
   }
 }

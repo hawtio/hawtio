@@ -25,7 +25,18 @@
     </div>
   </form>
 
-  <strong>git</strong>
+  <strong>Logs</strong>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="logCacheSize" title="The number of log messages to keep in the browser">Log cache size</label>
+
+      <div class="controls">
+        <input id="logCacheSize" type="number" ng-model="logCacheSize"/>
+      </div>
+    </div>
+  </form>
+
+  <strong>Git</strong>
   <form class="form-horizontal">
     <div class="control-group">
       <label class="control-label" for="gitUserName" title="The user name to be used when making changes to files with the source control system">User Name</label>
@@ -43,7 +54,7 @@
     </div>
   </form>
 
-  <strong>activemq</strong>
+  <strong>ActiveMQ</strong>
   <form class="form-horizontal">
     <div class="control-group">
       <label class="control-label" for="activemqUserName" title="The user name to be used when connecting to the broker">User Name</label>
@@ -64,7 +75,7 @@
 
 <!-- TODO Split into its file and include as a partial -->
 <div ng-controller="CodeEditor.PreferencesController">
-    <strong>Code Editor</strong>
+    <strong>Editor</strong>
     <form class="form-horizontal">
         <div class="control-group">
             <label class="control-label" for="theme" title="The default theme to be used by the code editor">Theme</label>

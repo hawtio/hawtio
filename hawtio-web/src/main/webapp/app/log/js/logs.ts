@@ -8,7 +8,7 @@ module Log {
     level: string;
   }
 
-  export function LogController($scope, $location, workspace:Workspace) {
+  export function LogController($scope, $location, localStorage, workspace:Workspace) {
     $scope.logs = [];
     $scope.filteredLogs = [];
     $scope.selectedItems = [];
@@ -21,6 +21,7 @@ module Log {
     };
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
+
 
     $scope.logClass = (log) => {
       return logLevelClass(log['level']);
@@ -126,6 +127,7 @@ module Log {
         }
       }
       if (logs) {
+        var maxSize = getLogCacheSize(localStorage);
         var counter = 0;
         logs.forEach((log:ILog) => {
           if (log) {
@@ -136,6 +138,14 @@ module Log {
             }
           }
         });
+        if (maxSize > 0) {
+          var size = $scope.logs.length;
+          if (size > maxSize) {
+            // lets trim the log size
+            var count = size - maxSize;
+            $scope.logs.splice(0, count);
+          }
+        }
         if (counter) {
           refilter();
           $scope.$apply();
