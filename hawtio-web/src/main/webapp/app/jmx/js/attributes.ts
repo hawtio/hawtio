@@ -119,10 +119,7 @@ module Jmx {
 
     $scope.openDetailView = (entity) => {
       $scope.row = entity;
-      console.log("open detail view for key: " + entity.key);
-      var value = entity.value;
-      if (angular.isObject(value) && !angular.isArray(value)) {
-        console.log("Opening dialog");
+      if (entity.detailHtml) {
         $scope.valueDetails.open();
       }
     };
@@ -312,7 +309,10 @@ module Jmx {
         data.summary = summary;
         data.detailHtml = detailHtml;
       } else {
-        data.summary = value;
+        // TODO can we format any nicer?
+        var text = value;
+        data.summary = "" + text + "";
+        data.detailHtml = "<pre>" + text + "</pre>";
       }
     }
 
