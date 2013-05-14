@@ -755,4 +755,10 @@ module Core {
     }
     return entries;
   }
+
+  export function setPageTitle($document, title) {
+    document.title = title.join(' : ');
+  }
+
+
 }

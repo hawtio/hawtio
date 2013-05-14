@@ -13,9 +13,19 @@ module Jmx {
             return Jmx.lazyLoaders;
           }).
 
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle) => {
 
             viewRegistry['jmx'] = layoutTree;
+
+
+            try {
+              var id = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
+              if (id) {
+                pageTitle.push(id);
+              }
+            } catch (e) {
+              // ignore
+            }
 
             workspace.topLevelTabs.push( {
               content: "JMX",

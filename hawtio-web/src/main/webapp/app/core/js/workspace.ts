@@ -350,6 +350,22 @@ class Workspace {
   }
 
   /**
+   * Returns the currently active tab
+   * @param href
+   * @return {*}
+   */
+  public getActiveTab() {
+    var workspace = this;
+    return this.topLevelTabs.find((tab) => {
+      if (!angular.isDefined(tab.isActive)) {
+        return workspace.isLinkActive(tab.href());
+      } else {
+        return tab.isActive(workspace);
+      }
+    });
+  }
+
+  /**
    * Returns true if the given link is active. The link can omit the leading # or / if necessary.
    * The query parameters of the URL are ignored in the comparison.
    *

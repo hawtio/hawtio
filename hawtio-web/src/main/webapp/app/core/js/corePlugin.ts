@@ -98,6 +98,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return marked;
         }).
 
+        factory('pageTitle', function () {
+          return ['hawtio'];
+        }).
+
         factory('viewRegistry',function () {
           return {};
         }).

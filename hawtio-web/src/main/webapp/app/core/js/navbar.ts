@@ -1,8 +1,8 @@
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $document, pageTitle) {
 
-    $scope.workspace = workspace;
+    $scope.hash = null;
 
     $scope.topLevelTabs = () => workspace.topLevelTabs;
 
@@ -15,7 +15,22 @@ module Core {
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
+      var tab = workspace.getActiveTab();
+      if (tab && tab.content) {
+        var foo:any = Array;
+        setPageTitle($document, foo.create(pageTitle, tab.content));
+      } else {
+        setPageTitle($document, pageTitle);
+      }
     });
+
+    /*
+    $scope.$watch('hash', function() {
+      console.log("$scope.hash: ", $scope.hash);
+      console.log("$location:", $location);
+      console.log("viewRegistry:", viewRegistry);
+    });
+    */
 
     $scope.link = (nav) => {
       var href;

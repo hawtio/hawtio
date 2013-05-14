@@ -14,9 +14,19 @@ module Fabric {
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'});
   }).
-          run(($location: ng.ILocationService, workspace: Workspace, viewRegistry) => {
+          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 
             viewRegistry['fabric'] = "app/fabric/html/layoutFabric.html";
+
+            try {
+              var id = jolokia.getAttribute('org.fusesource.fabric:type=Fabric', 'CurrentContainerName');
+              if (id) {
+                pageTitle.push(id);
+              }
+            } catch (e) {
+              // ignore
+            }
+
 
             var isValid = (workspace) => {
               if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
