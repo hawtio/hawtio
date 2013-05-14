@@ -50,7 +50,7 @@ public class ProxyDetails {
         if (Strings.isNotBlank(userParam)) {
             userName = userParam;
         }
-        String pwdParam = httpServletRequest.getParameter("pwd");
+        String pwdParam = httpServletRequest.getParameter("_pwd");
         if (Strings.isNotBlank(pwdParam)) {
             password = pwdParam;
         }
@@ -130,12 +130,11 @@ public class ProxyDetails {
         HttpClient client = new HttpClient();
 
         if (userName != null) {
-            client.getParams().setAuthenticationPreemptive(true);
+            //client.getParams().setAuthenticationPreemptive(true);
             httpMethodProxyRequest.setDoAuthentication(true);
 
             Credentials defaultcreds = new UsernamePasswordCredentials(userName, password);
-            client.getState().setProxyCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
-            //client.getState().setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
+            client.getState().setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
         }
         return client;
     }

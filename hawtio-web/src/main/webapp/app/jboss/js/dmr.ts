@@ -5,42 +5,65 @@ module JBoss {
     var url = "/hawtio/proxy/localhost/9990/management";
     var user = search["_user"] || "";
     var pwd = search["_pwd"] || "";
+    if (user) {
+      url += "?_user=" + user;
+      if (pwd) {
+        url += "&_pwd=" + pwd;
+      }
+    }
 
-    // create an operation
-    var op = new dmr.ModelNode();
-    op.get("operation").set("read-attribute");
-    op.get("address").setEmptyList();
-    op.get("name").set("release-version");
+    var isDmr = "dmr" === search["_format"];
+    var data = null;
+    var format = "application/dmr-encoded";
+    if (isDmr) {
+      // create an operation
+      var op = new dmr.ModelNode();
+      //op.get("operation").set("read-resource");
+      op.get("operation").set("read-attribute");
+      op.get("address").setEmptyList();
+      op.get("name").set("release-version");
 
-    var data = op.toBase64String();
+      data = op.toBase64String();
+    } else {
+      format = "application/json";
+      var request = {
+        "operation": "read-resource"
+      };
+      data = JSON.stringify(request);
+    }
+
+    console.log("Using dmr: " + isDmr + " with content type: " + format + " and data " + data);
 
     $.ajax({
       url: url,
       data: data,
-/*
       dataType: "text",
-      dataType: "application/dmr-encoded",
-*/
       processData: false,
-      contentType: "application/dmr-encoded",
-      accepts: "application/dmr-encoded",
-      //type: "POST",
+      type: "POST",
+      contentType: format,
+      accepts: format,
       headers: {
-        "Content-type": "application/dmr-encoded",
-        "Accept": "application/dmr-encoded"
-      },
-      username: user,
-      password: pwd
+        "Content-type": format,
+        "Accept": format
+      }
     }).done(onData);
 
     function onData(data) {
-      var response = dmr.ModelNode.fromBase64(data);
+      if (data) {
+        var json = null;
+        if (isDmr) {
+          var response = dmr.ModelNode.fromBase64(data);
+          var jsonText = response.toJSONString();
+          json = JSON.parse(jsonText);
+        } else {
+          json = JSON.parse(data);
+          json = json.result;
+        }
 
-      var jsonText = response.toJSONString();
-      var json = JSON.parse(jsonText);
-      $scope.row = json;
-      Core.$apply($scope);
-      console.log("Response: " + JSON.stringify(json, null, "  "));
+        $scope.row = json;
+        Core.$apply($scope);
+        console.log("Response: " + JSON.stringify(json, null, "  "));
+      }
     }
   }
 }

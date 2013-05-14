@@ -27,7 +27,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -44,7 +43,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +77,10 @@ public class ProxyServlet extends HttpServlet {
      * Key for content length header.
      */
     private static final String STRING_CONTENT_LENGTH_HEADER_NAME = "Content-Length";
+
+    private static final String[] IGNORE_HEADER_NAMES = {STRING_CONTENT_LENGTH_HEADER_NAME, "Origin", "Authorization"};
+
+
     /**
      * Key for host header
      */
@@ -354,7 +356,10 @@ public class ProxyServlet extends HttpServlet {
         Enumeration enumerationOfHeaderNames = httpServletRequest.getHeaderNames();
         while (enumerationOfHeaderNames.hasMoreElements()) {
             String stringHeaderName = (String) enumerationOfHeaderNames.nextElement();
-            if (stringHeaderName.equalsIgnoreCase(STRING_CONTENT_LENGTH_HEADER_NAME))
+
+            if (stringHeaderName.equalsIgnoreCase(STRING_CONTENT_LENGTH_HEADER_NAME) ||
+                    stringHeaderName.equalsIgnoreCase("Authorization") ||
+                    stringHeaderName.equalsIgnoreCase("Origin"))
                 continue;
             // As per the Java Servlet API 2.5 documentation:
             //		Some headers, such as Accept-Language can be sent by clients
