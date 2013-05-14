@@ -105,15 +105,25 @@
 
     Instance 1
     <div class="row-fluid">
-      <div hawtio-editor="someText" mode="javascript"></div>
+      <div hawtio-editor="someText" mode="mode" dirty="dirty"></div>
       <div>Text : {{someText}}</div>
     </div>
 
     Instance 2 (readonly)
     <div class="row-fluid">
-      <div hawtio-editor="someText" read-only="true" mode="javascript"></div>
+      <div hawtio-editor="someText" read-only="true" mode="mode" dirty="dirty"></div>
       <div>Text : {{someText}}</div>
     </div>
+  </div>
+
+  <div>
+    Color picker
+    <div class="row-fluid">
+      <div hawtio-color-picker='myColor'></div>
+      <div>
+        My color : <div class="inline-block" style="padding: 3px; width: 8px; height: 8px; border-radius: 4px; border-size: 1px; background-color: {{myColor}}"></div>{{myColor}}</div>
+    </div>
+
   </div>
 
 

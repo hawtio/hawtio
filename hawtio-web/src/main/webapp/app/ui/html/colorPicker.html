@@ -1,0 +1,9 @@
+<table class="color-picker">
+  <tr>
+    <td ng-repeat="color in colorList">
+      <div class="{{color.select}}" style="background-color: {{color.color}};"
+           ng-click="selectColor(color)">
+      </div>
+    <td>
+  </tr>
+</table>

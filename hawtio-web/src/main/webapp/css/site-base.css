@@ -1195,3 +1195,22 @@ li.stacktrace {
 .ngHeaderCell:last-child {
   border-right: 1px solid rgba(0, 0, 0, 0) !important;
 }
+
+.color-picker tr td div {
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.color-picker tr td {
+  padding-right: 5px;
+}
+
+.color-picker tr td div.selected {
+  border-color: #474747;
+
+}

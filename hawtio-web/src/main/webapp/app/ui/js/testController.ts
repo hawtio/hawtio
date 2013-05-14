@@ -18,10 +18,16 @@ module UI {
     $scope.showSlideoutRight = false;
     $scope.showSlideoutLeft = false;
 
+    $scope.dirty = false;
+    $scope.mode = 'javascript';
+
     $scope.someText = "var someValue = 0;\n" +
                       "var someFunc = function() {\n" +
-                      "  return \"Hello World!;\"\n" +
+                      "  return \"Hello World!\";\n" +
                       "}\n";
+
+
+    $scope.myColor = "#FF887C";
 
 
   }
