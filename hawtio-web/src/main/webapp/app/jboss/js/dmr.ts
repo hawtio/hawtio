@@ -17,8 +17,14 @@ module JBoss {
     var format = "application/dmr-encoded";
     if (isDmr) {
       // create an operation
+/*
       var op = new dmr.ModelNode();
       //op.get("operation").set("read-resource");
+      op.get("operation").set("read-attribute");
+      op.get("address").setEmptyList();
+      op.get("name").set("release-version");
+*/
+      var op = new dmr.ModelNode();
       op.get("operation").set("read-attribute");
       op.get("address").setEmptyList();
       op.get("name").set("release-version");
@@ -37,9 +43,9 @@ module JBoss {
     $.ajax({
       url: url,
       data: data,
-      dataType: "text",
       processData: false,
       type: "POST",
+      dataType: "text",
       contentType: format,
       accepts: format,
       headers: {
