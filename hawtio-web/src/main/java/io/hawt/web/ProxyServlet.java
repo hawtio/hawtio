@@ -246,7 +246,7 @@ public class ProxyServlet extends HttpServlet {
         String contentType = httpServletRequest.getContentType();
         if (contentType != null) {
             contentType = contentType.toLowerCase();
-            if (contentType.contains("json") || contentType.contains("xml")) {
+            if (contentType.contains("json") || contentType.contains("xml") || contentType.contains("application") || contentType.contains("text")) {
                 String body = IOHelper.readFully(httpServletRequest.getReader());
                 entity = new StringRequestEntity(body, contentType, httpServletRequest.getCharacterEncoding());
                 postMethodProxyRequest.setRequestEntity(entity);
