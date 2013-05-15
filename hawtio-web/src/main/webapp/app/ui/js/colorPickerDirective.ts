@@ -42,6 +42,12 @@ module UI {
 
     public controller = ($scope, $element, $timeout) => {
 
+      $scope.popout = false;
+
+      $scope.$watch('popout', () => {
+        $element.find('.color-picker-popout').toggleClass('popout-open', $scope.popout);
+      });
+
       $scope.selectColor = (color) => {
         for (var i = 0; i < $scope.colorList.length; i++) {
           $scope.colorList[i].select = unselected;

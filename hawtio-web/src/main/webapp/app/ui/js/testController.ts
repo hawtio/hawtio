@@ -28,6 +28,7 @@ module UI {
 
 
     $scope.myColor = "#FF887C";
+    $scope.showColorDialog = false;
 
 
   }

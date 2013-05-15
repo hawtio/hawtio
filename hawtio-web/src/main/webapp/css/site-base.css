@@ -1196,9 +1196,55 @@ li.stacktrace {
   border-right: 1px solid rgba(0, 0, 0, 0) !important;
 }
 
-.color-picker tr td div {
-  width: 8px;
-  height: 8px;
+.color-picker {
+  display: inline-block;
+  margin: 0px;
+  line-height: 0px;
+}
+
+.color-picker .wrapper {
+  display: inline-block;
+  border: 1px solid #d4d4d4;
+  padding: 2px;
+  border-radius: 4px;
+  line-height: 0;
+}
+
+.selected-color {
+  width: 1em;
+  height: 1em;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.color-picker-popout {
+  transition: opacity 0.25s ease-in-out;
+  display: inline-flex;
+  overflow: hidden;
+  background: white;
+  border-radius: 4px;
+  padding: 0px;
+  line-height: 0;
+  margin: 0px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  width: 0px;
+  opacity: 0;
+}
+
+.popout-open {
+  border: 1px solid #d4d4d4;
+  padding: 1px;
+  width: auto;
+  opacity: 1;
+}
+
+.color-picker div table tr td div {
+  width: 1em;
+  height: 1em;
   border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 4px;
   padding: 3px;
@@ -1206,11 +1252,27 @@ li.stacktrace {
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
-.color-picker tr td {
+.color-picker div i {
+  margin-top: 0.3em;
+  cursor: pointer;
+  color: #d4d4d4;
+  opacity: .4;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.color-picker div i:hover {
+  opacity: 1;
+}
+
+.color-picker div table tr td {
   padding-right: 5px;
 }
 
-.color-picker tr td div.selected {
+.color-picker div table tr td:last-child {
+  padding-right: 0px;
+}
+
+.color-picker  div table tr td div.selected {
   border-color: #474747;
 
 }

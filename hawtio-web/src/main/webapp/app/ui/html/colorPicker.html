@@ -1,9 +1,17 @@
-<table class="color-picker">
-  <tr>
-    <td ng-repeat="color in colorList">
-      <div class="{{color.select}}" style="background-color: {{color.color}};"
-           ng-click="selectColor(color)">
-      </div>
-    <td>
-  </tr>
-</table>
+<div class="color-picker">
+  <div class="wrapper">
+    <div class="selected-color" style="background-color: {{property}};" ng-click="popout = !popout"></div>
+  </div>
+  <div class="color-picker-popout">
+    <table>
+      <tr>
+        <td ng-repeat="color in colorList">
+          <div class="{{color.select}}" style="background-color: {{color.color}};"
+               ng-click="selectColor(color)">
+          </div>
+        <td>
+      </tr>
+    </table>
+    <i class="icon-remove" ng-click="popout = !popout"></i>
+  </div>
+</div>
