@@ -1276,3 +1276,24 @@ li.stacktrace {
   border-color: #474747;
 
 }
+
+.modal-body div form fieldset div.spacer {
+  display: inherit;
+  margin-bottom: inherit;
+}
+
+.clickable {
+  cursor: pointer;
+  color: #787878;
+}
+
+.host-indicator {
+  margin-top: 12px;
+  margin-right: 3px;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 4px;
+  border: 1px solid #d4d4d4;
+  opacity: .5;
+}

@@ -1,8 +1,10 @@
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $document, pageTitle) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $document, pageTitle, localStorage) {
 
     $scope.hash = null;
+
+    $scope.match = null;
 
     $scope.topLevelTabs = () => workspace.topLevelTabs;
 
@@ -21,6 +23,23 @@ module Core {
         setPageTitle($document, foo.create(pageTitle, tab.content));
       } else {
         setPageTitle($document, pageTitle);
+      }
+
+      try {
+        var regexs = angular.fromJson(localStorage['regexs']);
+        if (regexs) {
+          regexs.reverse().each((regex) => {
+            var r = new RegExp(regex.regex, 'g');
+            if (r.test($location.absUrl())) {
+              $scope.match = {
+                name: regex.name,
+                color: regex.color
+              }
+            }
+          });
+        }
+      } catch (e) {
+        // ignore
       }
     });
 

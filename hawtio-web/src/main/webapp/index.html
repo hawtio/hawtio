@@ -38,7 +38,7 @@
   <link rel='stylesheet' media='screen and (max-width: 979px)' href='css/site-narrow.css' type='text/css'>
 
 </head>
-<body  ng-controller="Core.NavBarController">
+<body ng-controller="Core.NavBarController">
 <style>
   .ng-cloak {
     display: none;
@@ -69,6 +69,9 @@
 
         <div class="pull-right">
           <ul class="nav pull-right">
+            <li>
+              <div ng-show="match" class="host-indicator" title="{{match.name}}" style="background: {{match.color}}"></div>
+            </li>
             <li ng-class="{active : isActive('#/preferences')}">
               <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
                 <i class="icon-cogs"></i>
