@@ -50,4 +50,8 @@ public interface GitFacadeMXBean {
     void revertTo(String branch, String objectId, String blobPath, String commitMessage,
                   String authorName, String authorEmail);
 
+    /**
+     * Returns all the branch names we can use in the local repo
+     */
+    List<String> branches();
 }

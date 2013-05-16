@@ -10,6 +10,7 @@ import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
@@ -17,7 +18,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -42,8 +43,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 /**
@@ -83,20 +86,19 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 t = new Timer();
                 setTimer(t);
             }
-            if (stashPersonIdent == null) {
-                stashPersonIdent = new PersonIdent("dummy", "dummy");
-            }
             final Callable<Object> emptyCallable = new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    LOG.info("Pulled from remote repository " + getRemoteRepository());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Pulled from remote repository " + getRemoteRepository());
+                    }
                     return null;
                 }
             };
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    gitOperation(stashPersonIdent, emptyCallable);
+                    gitOperation(getStashPersonIdent(), emptyCallable);
                 }
             };
             t.schedule(task, timePeriod, timePeriod);
@@ -104,10 +106,22 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         super.init();
     }
 
+    public PersonIdent getStashPersonIdent() {
+        if (stashPersonIdent == null) {
+            stashPersonIdent = new PersonIdent("dummy", "dummy");
+        }
+        return stashPersonIdent;
+    }
+
+    public void setStashPersonIdent(PersonIdent stashPersonIdent) {
+        this.stashPersonIdent = stashPersonIdent;
+    }
+
     @Override
     protected String getDefaultObjectName() {
         return "io.hawt.git:type=GitFacade";
     }
+
     public String getRemoteRepository() {
         if (remoteRepository == null) {
             remoteRepository = getSystemPropertyOrEnvironmentVariable("hawtio.config.repo", "HAWTIO_CONFIG_REPO");
@@ -343,6 +357,29 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 } else {
                     return null;
                 }
+            }
+        });
+    }
+
+    @Override
+    public List<String> branches() {
+        return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
+            @Override
+            public List<String> call() throws Exception {
+                SortedSet<String> names = new TreeSet<String>();
+
+                List<Ref> call = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+                for (Ref ref : call) {
+                    String name = ref.getName();
+                    int idx = name.lastIndexOf('/');
+                    if (idx >= 0) {
+                        name = name.substring(idx + 1);
+                    }
+                    if (name.length() > 0) {
+                        names.add(name);
+                    }
+                }
+                return new ArrayList<String>(names);
             }
         });
     }
