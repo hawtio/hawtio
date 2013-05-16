@@ -17,12 +17,15 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.CommitUtils;
@@ -39,6 +42,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 
 /**
@@ -60,12 +65,42 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private boolean pullOnStartup = true;
     private CredentialsProvider credentials;
     private boolean cloneAllBranches = false;
+    private boolean pushOnCommit = false;
+    private boolean pullBeforeOperation = false;
+    private long pullTimePeriod;
+    private Timer timer;
+    private PersonIdent stashPersonIdent;
 
 
     public void init() throws Exception {
         // lets check if we have a config directory if not lets create one...
         initialiseGitRepo();
 
+        long timePeriod = getPullTimePeriod();
+        if (timePeriod > 0 && isPullBeforeOperation()) {
+            Timer t = getTimer();
+            if (t == null) {
+                t = new Timer();
+                setTimer(t);
+            }
+            if (stashPersonIdent == null) {
+                stashPersonIdent = new PersonIdent("dummy", "dummy");
+            }
+            final Callable<Object> emptyCallable = new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    LOG.info("Pulled from remote repository " + getRemoteRepository());
+                    return null;
+                }
+            };
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    gitOperation(stashPersonIdent, emptyCallable);
+                }
+            };
+            t.schedule(task, timePeriod, timePeriod);
+        }
         super.init();
     }
 
@@ -127,12 +162,28 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         this.cloneAllBranches = cloneAllBranches;
     }
 
+    public boolean isPushOnCommit() {
+        return pushOnCommit;
+    }
+
+    public void setPushOnCommit(boolean pushOnCommit) {
+        this.pushOnCommit = pushOnCommit;
+    }
+
+    public boolean isPullBeforeOperation() {
+        return pullBeforeOperation;
+    }
+
+    public void setPullBeforeOperation(boolean pullBeforeOperation) {
+        this.pullBeforeOperation = pullBeforeOperation;
+    }
+
     public boolean isCloneRemoteRepoOnStartup() {
-        if (cloneRemoteRepoOnStartup == null) {
+        if (getCloneRemoteRepoOnStartup() == null) {
             String flag = getSystemPropertyOrEnvironmentVariable("hawtio.config.cloneOnStartup", "HAWTIO_CONFIG_CLONEONSTARTUP");
             cloneRemoteRepoOnStartup = flag == null || !flag.equals("false");
         }
-        return cloneRemoteRepoOnStartup;
+        return getCloneRemoteRepoOnStartup();
     }
 
     public void setCloneRemoteRepoOnStartup(boolean cloneRemoteRepoOnStartup) {
@@ -145,6 +196,22 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     public void setCredentials(CredentialsProvider credentials) {
         this.credentials = credentials;
+    }
+
+    public long getPullTimePeriod() {
+        return pullTimePeriod;
+    }
+
+    public void setPullTimePeriod(long pullTimePeriod) {
+        this.pullTimePeriod = pullTimePeriod;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
     /**
@@ -235,7 +302,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 add.call();
 
                 CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                return commit.call();
+                return commitThenPush(commit);
             }
         });
     }
@@ -272,12 +339,24 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     String filePattern = getFilePattern(path);
                     git.rm().addFilepattern(filePattern).call();
                     CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                    return commit.call();
+                    return commitThenPush(commit);
                 } else {
                     return null;
                 }
             }
         });
+    }
+
+    protected RevCommit commitThenPush(CommitCommand commit) throws GitAPIException {
+        RevCommit answer = commit.call();
+        LOG.info("Committed " + answer);
+        if (isPushOnCommit()) {
+            Iterable<PushResult> results = git.push().setCredentialsProvider(getCredentials()).setRemote(getRemote()).call();
+            for (PushResult result : results) {
+                LOG.info("Pushed: " + results);
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -491,9 +570,10 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         if (!gitDir.exists()) {
             String repo = getRemoteRepository();
             if (Strings.isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
-                LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
-                CloneCommand command = Git.cloneRepository().setCredentialsProvider(credentials).
-                        setCloneAllBranches(cloneAllBranches).setURI(repo).setDirectory(confDir).setRemote(remote);
+                boolean cloneAll = isCloneAllBranches();
+                LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath() + " cloneAllBranches: " + cloneAll);
+                CloneCommand command = Git.cloneRepository().setCredentialsProvider(getCredentials()).
+                        setCloneAllBranches(cloneAll).setURI(repo).setDirectory(confDir).setRemote(remote);
                 try {
                     git = command.call();
                     return;
@@ -517,18 +597,29 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             git = new Git(repository);
 
             if (isPullOnStartup()) {
-                try {
-                    git.pull().setCredentialsProvider(credentials).setRebase(true).call();
-                    LOG.info("Performed a git pull to update the local configuration repository at " + confDir.getCanonicalPath());
-                } catch (Throwable e) {
-                    LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
-                    // lets just use an empty repo instead
-                }
+                doPull();
             } else {
                 LOG.info("git pull from remote config repo on startup is disabled");
             }
         }
     }
+
+    protected void doPull() {
+        CredentialsProvider cp = getCredentials();
+        try {
+            git.pull().setCredentialsProvider(cp).setRebase(true).call();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Performed a git pull to update the local configuration repository at " + getConfigDirectory().getCanonicalPath());
+            }
+        } catch (Throwable e) {
+            String credText = "";
+            if (cp instanceof UsernamePasswordCredentialsProvider) {
+
+            }
+            LOG.error("Failed to pull from the remote git repo with credentials " + cp + ". Reason: " + e, e);
+        }
+    }
+
 
     /**
      * Returns the file for the given path
@@ -562,11 +653,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     hasHead = false;
                 }
 
-                // TODO pull if we have a remote repo
-
                 if (hasHead) {
                     // lets stash any local changes just in case..
                     git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
+                }
+                if (isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
+                    doPull();
                 }
                 return callable.call();
             } catch (Exception e) {
@@ -575,4 +667,11 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
     }
 
+    public Boolean getCloneRemoteRepoOnStartup() {
+        return cloneRemoteRepoOnStartup;
+    }
+
+    public void setCloneRemoteRepoOnStartup(Boolean cloneRemoteRepoOnStartup) {
+        this.cloneRemoteRepoOnStartup = cloneRemoteRepoOnStartup;
+    }
 }
