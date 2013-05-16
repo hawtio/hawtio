@@ -1,3 +1,6 @@
+
+@control-border: #d4d4d4;
+
 .navbar .brand {
   font-size: 18px;
 }
@@ -7,6 +10,7 @@
 }
 
 .property-value {
+
 }
 
 #canvas {
@@ -35,13 +39,11 @@ ul.dynatree-container li {
 /* Chart stuff */
 
 #charts {
-  /*
-    font-family: "Helvetica Neue", Helvetica, sans-serif;
-    width: 1440px;
-  */
+  display: block;
+  overflow: hidden;
   margin: 5px auto;
   position: relative;
-  padding-bottom: 54px;
+  padding-bottom: 35px;
 }
 
 .group {
@@ -50,9 +52,6 @@ ul.dynatree-container li {
 
 .axis {
   font: 10px sans-serif;
-  /*
-    position: fixed;
-  */
   pointer-events: none;
   z-index: 2;
 }
@@ -71,33 +70,21 @@ ul.dynatree-container li {
 }
 
 .axis.top {
-  background-image: linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -o-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -moz-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -webkit-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -ms-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
-  top: 0px;
+  position: relative;
+  top: 0;
   padding: 0;
-  border-bottom: 1px solid #aaaaaa;
+  border-bottom: 1px solid @control-border;
 }
 
 .axis.bottom {
-  border-top: 1px solid #aaaaaa;
-  background-image: linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -o-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -moz-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -webkit-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
-  background-image: -ms-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+  border-top: 1px solid @control-border;
   position: absolute;
-  bottom: 23px;
+  bottom: 0px;
   padding: 0;
-  /*
-    bottom: -54px;
-  */
 }
 
 .horizon {
-  border-bottom: solid 1px #eeeeee;
+  border-bottom: solid 1px lighten(@control-border, 10%);
   overflow: hidden;
   position: relative;
 }
@@ -149,7 +136,7 @@ ul.dynatree-container li {
 /** Code formatting */
 
 .CodeMirror {
-  border: 1px solid #eee;
+  border: 1px solid @control-border;
 }
 td {
   padding-right: 20px;
@@ -247,7 +234,7 @@ ul.inline > li, ol.inline > li {
 }
 
 .orange {
-    color: orange;
+  color: orange;
 }
 
 .yellow {
@@ -312,7 +299,7 @@ li.attr-column {
 
 .gridster ul#widgets .gs_w {
   padding: 0px;
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   overflow: hidden;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   background: #ffffff;
@@ -330,7 +317,7 @@ li.attr-column {
 
   padding: 1px;
   border-radius: 6px;
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.1) inset;
 }
 
@@ -349,7 +336,7 @@ li.attr-column {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F2F2F2', GradientType=0);
 
-  border-bottom: 1px solid #D4D4D4;
+  border-bottom: 1px solid @control-border;
 
   color: #777777;
   text-shadow: 0 1px 0 #FFFFFF;
@@ -362,7 +349,7 @@ li.attr-column {
   cursor: move;
   color: #333333;
   text-shadow: 0 1px 0 #FFFFFF;
-  border-bottom: 1px solid #D4D4D4;
+  border-bottom: 1px solid @control-border;
 
   background-image: -moz-linear-gradient(top, #fafafa, #f0f0f0);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fafafa), to(#f0f0f0));
@@ -650,7 +637,7 @@ div#main div ul.nav {
   border-radius: 0 0 4px 4px;
   border: none;
   min-width: 120px;
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   border-top: 1px transparent;
   background-color: #FAFAFA;
   background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
@@ -731,7 +718,7 @@ div#main div ul.nav li a:hover {
   border-radius: 0 0 4px 4px;
   border: none;
   min-width: 120px;
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   border-top: 1px transparent;
   background-color: #FAFAFA;
   background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
@@ -742,7 +729,7 @@ div#main div ul.nav li a:hover {
 #main div div div .nav.nav-tabs:not(.connected) {
   margin-top: 5px;
   border-radius: 4px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
 }
 
 .logbar {
@@ -752,14 +739,14 @@ div#main div ul.nav li a:hover {
   width: 87%;
   top: 40px;
   left: 5%;
-  border-bottom: 1px solid #d4d4d4;
+  border-bottom: 1px solid @control-border;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   padding-left: 20px;
   padding-right: 20px;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  border-left: 1px solid #d4d4d4;
-  border-right: 1px solid #d4d4d4;
+  border-left: 1px solid @control-border;
+  border-right: 1px solid @control-border;
 }
 
 .logbar-container {
@@ -797,7 +784,7 @@ div#main div ul.nav li a:hover {
   right: 0px;
   bottom: 0px;
   border-radius: 6px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
   cursor: se-resize;
 
 }
@@ -824,7 +811,7 @@ td.details {
 .innerDetails {
   box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.1) inset;
   padding: 5px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
   white-space: normal;
   display: none;
   background: #ffffff;
@@ -904,7 +891,7 @@ input[type="checkbox"].hawtio-checkbox {
 
 #bundleTable tbody tr td a {
   border-radius: 4px;
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   display: block;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 
@@ -982,7 +969,7 @@ input[type="checkbox"].hawtio-checkbox {
 }
 
 div.hawtio-form-tabs div.tab-content {
-  border: 1px solid #D4D4D4;
+  border: 1px solid @control-border;
   border-radius: 4px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   padding-top: 15px;
@@ -1008,12 +995,12 @@ div.hawtio-form-tabs ul.nav-tabs {
   background-color: inherit !important;
   background-image: inherit !important;
   border-top: none !important;
-  /* border-bottom: 1px solid #D4D4D4 !important; */
+  /* border-bottom: 1px solid @control-border !important; */
   margin-bottom: 0px !important;
 }
 
 div.hawtio-form-tabs ul.nav-tabs li {
-  border: 1px solid #D4D4D4 !important;
+  border: 1px solid @control-border !important;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   margin-right: -1px;
@@ -1091,7 +1078,7 @@ li.stacktrace {
 .slideout {
     position: fixed;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #d4d4d4;
+    border: 1px solid @control-border;
     z-index: 40;
     width: 75%;
     background: white;
@@ -1162,7 +1149,7 @@ li.stacktrace {
 
 .slideout .slideout-title a {
     display: inline-block;
-    color: #d4d4d4;
+    color: @control-border;
 }
 
 .slideout .slideout-title a:hover {
@@ -1204,7 +1191,7 @@ li.stacktrace {
 
 .color-picker .wrapper {
   display: inline-block;
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
   padding: 2px;
   border-radius: 4px;
   line-height: 0;
@@ -1236,7 +1223,7 @@ li.stacktrace {
 }
 
 .popout-open {
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
   padding: 1px;
   width: auto;
   opacity: 1;
@@ -1255,7 +1242,7 @@ li.stacktrace {
 .color-picker div i {
   margin-top: 0.3em;
   cursor: pointer;
-  color: #d4d4d4;
+  color: @control-border;
   opacity: .4;
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
@@ -1292,7 +1279,7 @@ li.stacktrace {
   margin-right: 3px;
   display: inline;
   border-radius: 4px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid @control-border;
   opacity: .5;
   padding: 3px;
 }
@@ -1305,8 +1292,8 @@ li.stacktrace {
   position: fixed;
   bottom: 0;
   right: 0;
-  border-top: 1px solid #d4d4d4;
-  border-left: 1px solid #d4d4d4;
+  border-top: 1px solid @control-border;
+  border-left: 1px solid @control-border;
   background: white;
   text-align: right;
   opacity: .8;
