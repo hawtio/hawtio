@@ -14,7 +14,8 @@ module Wiki {
 
     public getPage(path:string, objectId:string, fn) {
       var git = this.git();
-      if (git && path) {
+      path = path || "/";
+      if (git) {
         if (objectId) {
           var blobPath = this.getLogPath(path);
           // TODO deal with versioned directories?
