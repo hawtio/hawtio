@@ -4,8 +4,6 @@ module Core {
 
     $scope.hash = null;
 
-    $scope.match = null;
-
     $scope.topLevelTabs = () => workspace.topLevelTabs;
 
     $scope.subLevelTabs = () => workspace.subLevelTabs;
@@ -17,30 +15,6 @@ module Core {
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
-      var tab = workspace.getActiveTab();
-      if (tab && tab.content) {
-        var foo:any = Array;
-        setPageTitle($document, foo.create(pageTitle, tab.content));
-      } else {
-        setPageTitle($document, pageTitle);
-      }
-
-      try {
-        var regexs = angular.fromJson(localStorage['regexs']);
-        if (regexs) {
-          regexs.reverse().each((regex) => {
-            var r = new RegExp(regex.regex, 'g');
-            if (r.test($location.absUrl())) {
-              $scope.match = {
-                name: regex.name,
-                color: regex.color
-              }
-            }
-          });
-        }
-      } catch (e) {
-        // ignore
-      }
     });
 
     /*
@@ -102,12 +76,5 @@ module Core {
       return tab ? tab['content'] : "";
     };
 
-    $scope.fullScreen = () => {
-      var tab = $location.search()['tab'];
-      if (tab) {
-        return tab === "fullscreen";
-      }
-      return false;
-    }
   }
 }

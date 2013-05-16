@@ -1290,10 +1290,39 @@ li.stacktrace {
 .host-indicator {
   margin-top: 12px;
   margin-right: 3px;
-  display: inline-block;
-  width: 1em;
-  height: 1em;
+  display: inline;
   border-radius: 4px;
   border: 1px solid #d4d4d4;
   opacity: .5;
+  padding: 3px;
+}
+
+.instance-name {
+  display: block;
+  float: left;
+  white-space: nowrap;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid #d4d4d4;
+  border-left: 1px solid #d4d4d4;
+  background: white;
+  text-align: right;
+  opacity: .8;
+  transition: all 1s ease-in-out;
+  border-top-left-radius: 4px;
+  padding-right: 2em;
+  overflow: hidden;
+  box-shadow: 0 1px 13px rgba(0, 0, 0, 0.12);
+  width: auto;
+}
+
+.instance-name-collapse {
+  width: 10px;
+  padding-right: 0px;
+}
+
+.instance-name:hover {
+  opacity: 1;
 }

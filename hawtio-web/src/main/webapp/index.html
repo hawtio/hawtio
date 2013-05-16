@@ -38,7 +38,7 @@
   <link rel='stylesheet' media='screen and (max-width: 979px)' href='css/site-narrow.css' type='text/css'>
 
 </head>
-<body ng-controller="Core.NavBarController">
+<body ng-controller="Core.AppController">
 <style>
   .ng-cloak {
     display: none;
@@ -46,7 +46,7 @@
 </style>
 
 <!--  navbar-inverse -->
-<div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()">
+<div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()" ng-controller="Core.NavBarController">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
     <div class="container">
       <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
@@ -56,7 +56,6 @@
         <img src="img/logo-16px.png"/>
         hawtio
       </a>
-
 
 
       <div class="nav-collapse collapsed">
@@ -69,16 +68,14 @@
 
         <div class="pull-right">
           <ul class="nav pull-right">
-            <li>
-              <div ng-show="match" class="host-indicator" title="{{match.name}}" style="background: {{match.color}}"></div>
-            </li>
             <li ng-class="{active : isActive('#/preferences')}">
               <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
                 <i class="icon-cogs"></i>
               </a>
             </li>
             <li ng-class="{active : isActive('#/help')}">
-              <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console" data-placement="bottom">
+              <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console"
+                 data-placement="bottom">
                 <i class="icon-question-sign"></i>
               </a>
             </li>
@@ -92,6 +89,16 @@
 <div id="main" class="container-fluid" ng-controller="Core.ViewController">
   <div ng-include src="viewPartial"></div>
 </div>
+
+<div class='instance-name clearfix ng-cloak' ng-class="collapse">
+  <i ng-show="collapse === ''" class="clickable icon-caret-right" title="Hide" ng-click="collapse = 'instance-name-collapse'"></i>
+  <i ng-show="collapse === 'instance-name-collapse'" class="clickable icon-caret-left" title="Show" ng-click="collapse = ''"></i>
+  <div ng-show="match" class="host-indicator" style="background: {{match.color}}">{{match.name}}</div>
+  <ul class='unstyled inline'>
+    <li ng-repeat='title in pageTitle'>{{title}}</li>
+  </ul>
+</div>
+
 
 <!-- charts and jolokia for jmx -->
 <script type="text/javascript" src="lib/d3.v3.min.js"></script>
