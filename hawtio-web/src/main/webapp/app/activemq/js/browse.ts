@@ -5,6 +5,7 @@ module ActiveMQ {
 
     $scope.messages = [];
     $scope.headers = {};
+    $scope.mode = 'text';
 
     $scope.deleteDialog = false;
     $scope.moveDialog = false;
@@ -83,6 +84,7 @@ module ActiveMQ {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
       if ($scope.row) {
+        $scope.mode = CodeEditor.detectTextFormat($scope.row.Text);
         $scope.showMessageDetails = true;
       }
     };

@@ -39,10 +39,10 @@
         </div>
       </div>
 
-      <div ng-controller="Core.EditorController">
-        <textarea readonly class="messageDetail" class="input-xlarge" codeMirror="true" rows="{{lineCount(row.body)}}"
-                  ng-model="row.body"></textarea>
+      <div class="row-fluid">
+        <div hawtio-editor="row.body" read-only="true" mode="mode"></div>
       </div>
+
     </div>
   </div>
 </div>

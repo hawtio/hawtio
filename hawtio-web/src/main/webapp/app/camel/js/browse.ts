@@ -3,8 +3,10 @@ module Camel {
   export function BrowseEndpointController($scope, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
 
-    $scope.messageDialog = new Core.Dialog();
     $scope.forwardDialog = new Core.Dialog();
+
+    $scope.showMessageDetails = false;
+    $scope.mode = 'text';
 
     $scope.gridOptions = Camel.createBrowseGridOptions();
 
@@ -19,7 +21,8 @@ module Camel {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
       if ($scope.row) {
-        $scope.messageDialog.open();
+        $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
+        $scope.showMessageDetails = true;
       }
     };
 

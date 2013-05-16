@@ -4,6 +4,7 @@ module Camel {
     $scope.messages = [];
     $scope.graphView = null;
     $scope.tableView = null;
+    $scope.mode = 'text';
 
     $scope.messageDialog = new Core.Dialog();
 
@@ -36,6 +37,7 @@ module Camel {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
       if ($scope.row) {
+        $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
         $scope.messageDialog.open();
       }
     };
