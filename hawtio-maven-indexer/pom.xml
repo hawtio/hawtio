@@ -77,6 +77,8 @@
         <version>${maven-surefire-plugin-version}</version>
         <configuration>
           <excludes>
+            <!-- lets avoid this test as it can be flaky due to the fuse nexus repo -->
+            <exclude>**/Fuse*.*</exclude>
             <!-- lets avoid this test by default as it downloads large indices -->
             <exclude>**/MavenIndexFacadeTest.*</exclude>
           </excludes>
