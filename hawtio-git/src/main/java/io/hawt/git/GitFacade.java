@@ -483,15 +483,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             String repo = getRemoteRepository();
             if (Strings.isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
                 LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
-                CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
-                if (credentials != null) {
-                    clone = clone.setCredentialsProvider(credentials);
-                }
+                CloneCommand command = Git.cloneRepository().setCredentialsProvider(credentials).setURI(repo).setDirectory(confDir).setRemote(remote);
                 try {
-                    git = clone.call();
+                    git = command.call();
                     return;
                 } catch (Throwable e) {
-                    LOG.error("Failed to clone remote repo " + repo + ". Reason: " + e, e);
+                    LOG.error("Failed to command remote repo " + repo + ". Reason: " + e, e);
                     // lets just use an empty repo instead
                 }
             } else if (!isCloneRemoteRepoOnStartup()) {
@@ -511,7 +508,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
             if (isPullOnStartup()) {
                 try {
-                    git.pull().setRebase(true).call();
+                    git.pull().setCredentialsProvider(credentials).setRebase(true).call();
                     LOG.info("Performed a git pull to update the local configuration repository at " + confDir.getCanonicalPath());
                 } catch (Throwable e) {
                     LOG.error("Failed to pull from the remote git repo. Reason: " + e, e);
@@ -522,7 +519,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             }
         }
     }
-
 
     /**
      * Returns the file for the given path
