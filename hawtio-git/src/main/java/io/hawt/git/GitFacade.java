@@ -22,6 +22,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.CommitUtils;
@@ -31,13 +32,10 @@ import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +58,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
     private Boolean cloneRemoteRepoOnStartup;
     private boolean pullOnStartup = true;
+    private CredentialsProvider credentials;
 
 
     public void init() throws Exception {
@@ -73,7 +72,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     protected String getDefaultObjectName() {
         return "io.hawt.git:type=GitFacade";
     }
-
     public String getRemoteRepository() {
         if (remoteRepository == null) {
             remoteRepository = getSystemPropertyOrEnvironmentVariable("hawtio.config.repo", "HAWTIO_CONFIG_REPO");
@@ -130,6 +128,14 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     public void setCloneRemoteRepoOnStartup(boolean cloneRemoteRepoOnStartup) {
         this.cloneRemoteRepoOnStartup = cloneRemoteRepoOnStartup;
+    }
+
+    public CredentialsProvider getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(CredentialsProvider credentials) {
+        this.credentials = credentials;
     }
 
     /**
@@ -478,6 +484,9 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             if (Strings.isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
                 LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
                 CloneCommand clone = Git.cloneRepository().setURI(repo).setDirectory(confDir).setRemote(remote);
+                if (credentials != null) {
+                    clone = clone.setCredentialsProvider(credentials);
+                }
                 try {
                     git = clone.call();
                     return;
