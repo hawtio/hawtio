@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -193,11 +195,11 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
     public boolean isCloneRemoteRepoOnStartup() {
-        if (getCloneRemoteRepoOnStartup() == null) {
+        if (cloneRemoteRepoOnStartup == null) {
             String flag = getSystemPropertyOrEnvironmentVariable("hawtio.config.cloneOnStartup", "HAWTIO_CONFIG_CLONEONSTARTUP");
             cloneRemoteRepoOnStartup = flag == null || !flag.equals("false");
         }
-        return getCloneRemoteRepoOnStartup();
+        return cloneRemoteRepoOnStartup;
     }
 
     public void setCloneRemoteRepoOnStartup(boolean cloneRemoteRepoOnStartup) {
@@ -228,6 +230,13 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         this.timer = timer;
     }
 
+    @Override
+    public String getContent(String objectId, String blobPath) {
+        objectId = defaultObjectId(objectId);
+        Repository r = git.getRepository();
+        return BlobUtils.getContent(r, objectId, blobPath);
+    }
+
     /**
      * Reads the file contents of the given path
      *
@@ -235,9 +244,13 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      */
     public FileContents read(String branch, String path) throws IOException {
         if (path == null || path.length() == 0) {
-            return null;
+            path = "/";
         }
         File rootDir = getConfigDirectory();
+        if (Strings.isNotBlank(branch)) {
+            // lets checkout the branch
+        }
+
         File file = getFile(path);
         if (file.isFile()) {
             String contents = IOHelper.readFully(file);
@@ -537,13 +550,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
     }
 
-    @Override
-    public String getContent(String objectId, String blobPath) {
-        objectId = defaultObjectId(objectId);
-        Repository r = git.getRepository();
-        return BlobUtils.getContent(r, objectId, blobPath);
-    }
-
     protected String defaultObjectId(String objectId) {
         if (objectId == null || objectId.trim().length() == 0) {
             objectId = getHEAD();
@@ -697,18 +703,28 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 if (isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
                     doPull();
                 }
-                return callable.call();
+                // lets remember the current branch so we can check it out afterwards
+                String originalBranch = currentBranch();
+                T call = callable.call();
+                String currentBranch = currentBranch();
+                if (!Objects.equals(currentBranch, originalBranch)) {
+                    checkoutBranch(originalBranch);
+                }
+                return call;
             } catch (Exception e) {
                 throw new RuntimeIOException(e);
             }
         }
     }
 
-    public Boolean getCloneRemoteRepoOnStartup() {
-        return cloneRemoteRepoOnStartup;
+    protected String currentBranch() {
+        // TODO how to find the current branch
+        return null;
     }
 
-    public void setCloneRemoteRepoOnStartup(Boolean cloneRemoteRepoOnStartup) {
-        this.cloneRemoteRepoOnStartup = cloneRemoteRepoOnStartup;
+    protected void checkoutBranch(String branch) throws GitAPIException {
+        Ref call = git.checkout().setName(branch).call();
+        System.out.println("Checked out branch " + branch + " with results " + branch);
     }
+
 }
