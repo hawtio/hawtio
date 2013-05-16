@@ -242,14 +242,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      *
      * @return
      */
-    public FileContents read(String branch, String path) throws IOException {
+    public FileContents read(String branch, String path) throws IOException, GitAPIException {
         if (path == null || path.length() == 0) {
             path = "/";
         }
         File rootDir = getConfigDirectory();
-        if (Strings.isNotBlank(branch)) {
-            // lets checkout the branch
-        }
+        switchToBranch(branch);
 
         File file = getFile(path);
         if (file.isFile()) {
@@ -717,10 +715,27 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
     }
 
-    protected String currentBranch() {
-        // TODO how to find the current branch
-        return null;
+    public String currentBranch() {
+        try {
+            return git.getRepository().getBranch();
+        } catch (IOException e) {
+            LOG.warn("Failed to get the current branch: " + e, e);
+            return null;
+        }
     }
+
+    /**
+     * If the given branch name is not empty and not equal to the current branch then lets check it out
+     */
+    protected void switchToBranch(String branch) throws GitAPIException {
+        if (Strings.isNotBlank(branch)) {
+            String current = currentBranch();
+            if (!Objects.equals(current, branch)) {
+                checkoutBranch(branch);
+            }
+        }
+    }
+
 
     protected void checkoutBranch(String branch) throws GitAPIException {
         Ref call = git.checkout().setName(branch).call();

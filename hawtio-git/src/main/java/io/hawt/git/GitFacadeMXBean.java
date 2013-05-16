@@ -1,5 +1,7 @@
 package io.hawt.git;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface GitFacadeMXBean {
     /**
      * Reads the contents of a file or a directory
      */
-    FileContents read(String branch, String path) throws IOException;
+    FileContents read(String branch, String path) throws IOException, GitAPIException;
 
     void write(String branch, String path, String commitMessage,
                String authorName, String authorEmail, String contents);

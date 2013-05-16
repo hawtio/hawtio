@@ -1,6 +1,7 @@
 package io.hawt.git;
 
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -80,6 +81,9 @@ public class GitFacadeTest {
         assertEquals("added size", 0, status.getAdded().size());
         assertEquals("untracked size", 0, status.getUntracked().size());
 
+        String branch = git.currentBranch();
+        System.out.println("Branch is: " + branch);
+
         // now lets read the files...
         String readMeActual = assertReadFileContents(readMePath, readMeContent);
         String anotherActual = assertReadFileContents(anotherPath, anotherContent);
@@ -89,7 +93,7 @@ public class GitFacadeTest {
 
 
         // now lets try remove one of the files we created
-        git.remove(branch, anotherPath, "Remove another thingy", authorName, authorEmail);
+        git.remove(this.branch, anotherPath, "Remove another thingy", authorName, authorEmail);
 
         // now lets assert that we can't find the file...
         contents = assertReadDirectory("/");
@@ -111,7 +115,7 @@ public class GitFacadeTest {
 
         // lets update the file
         String readMeContent2 = "Goodbye world!";
-        git.write(branch, readMePath, "Updating the content to goodbye", authorName, authorEmail, readMeContent2);
+        git.write(this.branch, readMePath, "Updating the content to goodbye", authorName, authorEmail, readMeContent2);
         assertReadFileContents(readMePath, readMeContent2);
 
         // now lets do a diff on this file
@@ -126,7 +130,7 @@ public class GitFacadeTest {
         List<CommitInfo> readMeHistory = git.history(null, blobPath, 0);
         assertTrue("Should have at least 2 items in the history but got " + readMeHistory.size(), readMeHistory.size() >= 2);
         String objectId = readMeHistory.get(readMeHistory.size() - 1).getName();
-        git.revertTo(branch, objectId, blobPath, "Reverting to first version " + objectId, authorName, authorEmail);
+        git.revertTo(this.branch, objectId, blobPath, "Reverting to first version " + objectId, authorName, authorEmail);
         assertReadFileContents(readMePath, readMeContent);
 
 
@@ -168,18 +172,18 @@ public class GitFacadeTest {
 
         // write some JSON files then lets combine them in a single read
         String jsonDir = "/foo";
-        git.write(branch, jsonDir + "/" + "1.json", "Initial commit", authorName, authorEmail, "{ key: 1, name: 'James'}");
-        git.write(branch, jsonDir + "/" + "2.json", "Initial commit", authorName, authorEmail, "{ key: 2, name: 'Stan'}");
+        git.write(this.branch, jsonDir + "/" + "1.json", "Initial commit", authorName, authorEmail, "{ key: 1, name: 'James'}");
+        git.write(this.branch, jsonDir + "/" + "2.json", "Initial commit", authorName, authorEmail, "{ key: 2, name: 'Stan'}");
 
         // now lets read the JSON for the directory
-        String json = git.readJsonChildContent(branch, jsonDir, "*.json", null);
+        String json = git.readJsonChildContent(this.branch, jsonDir, "*.json", null);
         System.out.println("Got JSON: " + json);
         assertTrue("JSON should include James but was: " + json, json.contains("James"));
 
-        json = git.readJsonChildContent(branch, jsonDir, "*.json", "James");
+        json = git.readJsonChildContent(this.branch, jsonDir, "*.json", "James");
         assertTrue("JSON should include James but was: " + json, json.contains("James"));
 
-        json = git.readJsonChildContent(branch, jsonDir, "*.json", "Stan");
+        json = git.readJsonChildContent(this.branch, jsonDir, "*.json", "Stan");
         assertFalse("JSON should not include James but was: " + json, json.contains("James"));
 
         // now lets write some XML with namespaces
@@ -195,9 +199,9 @@ public class GitFacadeTest {
                 + " <broker xmlns=\"http://activemq.apache.org/schema/core\" brokerName=\"broker1\" useJmx=\"true\"/>\n"
                 + "</beans>\n";
 
-        git.write(branch, "spring.xml", "Added a spring XML", authorName, authorEmail, xml);
+        git.write(this.branch, "spring.xml", "Added a spring XML", authorName, authorEmail, xml);
 
-        FileContents rootContents = git.read(branch, "/");
+        FileContents rootContents = git.read(this.branch, "/");
         assertTrue("Should be directory", rootContents.isDirectory());
         List<FileInfo> children = rootContents.getChildren();
         for (FileInfo child : children) {
@@ -211,7 +215,7 @@ public class GitFacadeTest {
         }
     }
 
-    protected String assertReadFileContents(String path, String expectedContents) throws IOException {
+    protected String assertReadFileContents(String path, String expectedContents) throws IOException, GitAPIException {
         String readMeActual = assertReadFileContents(path);
         assertEquals("content of " + path, expectedContents, readMeActual);
         return readMeActual;
@@ -225,7 +229,7 @@ public class GitFacadeTest {
         return name;
     }
 
-    private List<FileInfo> assertReadDirectory(String path) throws IOException {
+    private List<FileInfo> assertReadDirectory(String path) throws IOException, GitAPIException {
         FileContents contents = git.read(branch, path);
         assertNotNull("Should have FileContents", contents);
         assertTrue("should be a directory!", contents.isDirectory());
@@ -236,11 +240,11 @@ public class GitFacadeTest {
         return children;
     }
 
-    protected String assertReadFileContents(String readMePath) throws IOException {
+    protected String assertReadFileContents(String readMePath) throws IOException, GitAPIException {
         return assertFileContents(git, branch, readMePath);
     }
 
-    public static String assertFileContents(GitFacade git, String branchName, String filePath) throws IOException {
+    public static String assertFileContents(GitFacade git, String branchName, String filePath) throws IOException, GitAPIException {
         FileContents contents = git.read(branchName, filePath);
         assertNotNull("Should have FileContents", contents);
         assertTrue("should be a file!", !contents.isDirectory());
