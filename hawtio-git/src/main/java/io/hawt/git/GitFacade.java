@@ -59,6 +59,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private Boolean cloneRemoteRepoOnStartup;
     private boolean pullOnStartup = true;
     private CredentialsProvider credentials;
+    private boolean cloneAllBranches = false;
 
 
     public void init() throws Exception {
@@ -116,6 +117,14 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     public void setPullOnStartup(boolean pullOnStartup) {
         this.pullOnStartup = pullOnStartup;
+    }
+
+    public boolean isCloneAllBranches() {
+        return cloneAllBranches;
+    }
+
+    public void setCloneAllBranches(boolean cloneAllBranches) {
+        this.cloneAllBranches = cloneAllBranches;
     }
 
     public boolean isCloneRemoteRepoOnStartup() {
@@ -483,7 +492,8 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             String repo = getRemoteRepository();
             if (Strings.isNotBlank(repo) && isCloneRemoteRepoOnStartup()) {
                 LOG.info("Cloning git repo " + repo + " into directory " + confDir.getCanonicalPath());
-                CloneCommand command = Git.cloneRepository().setCredentialsProvider(credentials).setURI(repo).setDirectory(confDir).setRemote(remote);
+                CloneCommand command = Git.cloneRepository().setCredentialsProvider(credentials).
+                        setCloneAllBranches(cloneAllBranches).setURI(repo).setDirectory(confDir).setRemote(remote);
                 try {
                     git = command.call();
                     return;
