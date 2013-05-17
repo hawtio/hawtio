@@ -1,8 +1,7 @@
 module Wiki {
   export function EditController($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
-    $scope.pageId = Wiki.pageId($routeParams, $location);
-    $scope.objectId = $routeParams["objectId"];
+    Wiki.initScope($scope, $routeParams, $location);
     $scope.entity = {
       source: null
     };
@@ -30,7 +29,7 @@ module Wiki {
     };
 
     $scope.save = () => {
-      saveTo($scope.pageId);
+      saveTo($scope["pageId"]);
     };
 
     $scope.create = () => {
@@ -67,7 +66,7 @@ module Wiki {
       if (isCreate()) {
         updateSourceView();
       } else {
-        wikiRepository.getPage($scope.pageId, $scope.objectId, onFileContents);
+        wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileContents);
       }
     }
 
@@ -91,7 +90,7 @@ module Wiki {
         if (form === "/") {
           onFormSchema(_jsonSchema);
         } else {
-          $scope.git = wikiRepository.getPage(form, $scope.objectId, (details) => {
+          $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
             onFormSchema(Wiki.parseJson(details.text));
           });
         }
@@ -123,7 +122,7 @@ module Wiki {
         contents = JSON.stringify($scope.formEntity, null, "  ");
       }
       //console.log("About to write contents '" + contents + "'");
-      wikiRepository.putPage(path, contents, commitMessage, (status) => {
+      wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
         Wiki.onComplete(status);
         goToView();
         Core.$apply($scope);

@@ -82,6 +82,16 @@ module Wiki {
 
 
   /**
+   * Extracts the pageId, branch, objectId from the route parameters
+   */
+  export function initScope($scope, $routeParams, $location) {
+    $scope.pageId = Wiki.pageId($routeParams, $location);
+    $scope.branch = $routeParams["branch"] || $location.search()["branch"];
+    $scope.objectId = $routeParams["objectId"];
+  }
+
+
+  /**
    * Extracts the pageId from the route parameters
    */
   export function pageId($routeParams, $location) {
@@ -98,6 +108,7 @@ module Wiki {
           }
         } else break;
       }
+      return pageId || "/";
     }
 
     // if no $routeParams variables lets figure it out from the $location

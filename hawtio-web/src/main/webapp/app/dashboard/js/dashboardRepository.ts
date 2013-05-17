@@ -123,11 +123,13 @@ module Dashboard {
     constructor(public git:Git.GitRepository) {
     }
 
+    public branch: string = null;
+
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {
       angular.forEach(array, (dash) => {
         var path = this.getDashboardPath(dash);
         var contents = JSON.stringify(dash, null, "  ");
-        this.git.write(path, commitMessage, contents, fn);
+        this.git.write(this.branch, path, commitMessage, contents, fn);
       });
     }
 
@@ -153,13 +155,13 @@ module Dashboard {
       // TODO lets look in each team directory as well and combine the results...
       var path = this.getUserDashboardDirectory();
       var dashboards = [];
-      this.git.read(path, (details) => {
+      this.git.read(this.branch, path, (details) => {
         var files = details.children;
         // we now have all the files we need; lets read all their contents
         angular.forEach(files, (file, idx) => {
           var path = file.path;
           if (!file.directory && path.endsWith(".json")) {
-            this.git.read(path, (details) => {
+            this.git.read(this.branch, path, (details) => {
               // lets parse the contents
               var content = details.text;
               if (content) {
@@ -183,7 +185,7 @@ module Dashboard {
 
     public getDashboard(id:string, fn) {
       var path = this.getUserDashboardPath(id);
-      this.git.read(path, (details) => {
+      this.git.read(this.branch, path, (details) => {
         var dashboard = null;
         var content = details.text;
         if (content) {

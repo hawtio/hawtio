@@ -3,6 +3,8 @@ module Wiki {
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
     $scope.schema = _apacheCamelModel;
 
+    Wiki.initScope($scope, $routeParams, $location);
+
     var routeModel = _apacheCamelModel.definitions.route;
     routeModel["_id"] = "route";
 
@@ -102,7 +104,7 @@ module Wiki {
           if (text) {
             // lets save the file...
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-            wikiRepository.putPage($scope.pageId, text, commitMessage, (status) => {
+            wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
               goToView();
               Core.$apply($scope);
@@ -285,7 +287,7 @@ module Wiki {
       ];
 
       if (Git.getGitMBean(workspace)) {
-        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onResults);
+        $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
       }
     }
 

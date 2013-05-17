@@ -1,7 +1,7 @@
 module Wiki {
 
   export interface WikiRepository {
-    putPage(path:string, contents:string, commitMessage:string, fn): void;
+    putPage(branch:string, path:string, contents:string, commitMessage:string, fn): void;
 
     deletePage(path:string, fn): void;
   }
@@ -12,7 +12,7 @@ module Wiki {
     constructor(public factoryMethod:() => Git.GitRepository) {
     }
 
-    public getPage(path:string, objectId:string, fn) {
+    public getPage(branch:string, path:string, objectId:string, fn) {
       var git = this.git();
       path = path || "/";
       if (git) {
@@ -28,7 +28,7 @@ module Wiki {
           });
         } else {
           var fullPath = this.getPath(path);
-          git.read(fullPath, (details) => {
+          git.read(branch, fullPath, (details) => {
 
             // lets fix up any paths to be relative to the wiki
             var children = details.children;
@@ -68,9 +68,9 @@ module Wiki {
       return git;
     }
 
-    public putPage(path:string, contents:string, commitMessage:string, fn) {
+    public putPage(branch:string, path:string, contents:string, commitMessage:string, fn) {
       var fullPath = this.getPath(path);
-      this.git().write(fullPath, commitMessage, contents, fn);
+      this.git().write(branch, fullPath, commitMessage, contents, fn);
     }
 
     public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {

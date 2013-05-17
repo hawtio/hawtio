@@ -1,7 +1,7 @@
 module Wiki {
 
   export function FormTableController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
-    $scope.pageId = Wiki.pageId($routeParams, $location);
+    Wiki.initScope($scope, $routeParams, $location);
     $scope.columnDefs = [];
 
     $scope.viewLink = (row) => {
@@ -37,7 +37,7 @@ module Wiki {
 
     var form = $location.search()["form"];
     if (form) {
-      wikiRepository.getPage(form, $scope.objectId, onFormData);
+      wikiRepository.getPage($scope.branch, form, $scope.objectId, onFormData);
     }
 
     updateView();

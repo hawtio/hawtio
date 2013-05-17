@@ -11,6 +11,8 @@ module Wiki {
                     when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
                     when('/wiki/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
+                    when('/wiki/branch/:branch/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/branch/:branch/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
                     when('/wiki/history/*page', {templateUrl: 'app/wiki/html/history.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {

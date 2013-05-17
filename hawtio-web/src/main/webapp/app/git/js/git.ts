@@ -9,12 +9,12 @@ module Git {
      * Read the contents of a file or directory
      * with text or children being returned and a directory flag
      */
-    read(path:string, fn): void;
+    read(branch:string, path:string, fn): void;
 
     /**
      * Write the content of a file
      */
-    write(path:string, commitMessage:string, contents:string, fn): void;
+    write(branch:string, path:string, commitMessage:string, contents:string, fn): void;
 
     /**
      * Reverts to a specific version of the file
@@ -66,11 +66,11 @@ module Git {
     constructor(public mbean:string, public jolokia, public localStorage, public branch = "master") {
     }
 
-    public read(path:string, fn) {
-      this.jolokia.execute(this.mbean, "read", this.branch, path, onSuccess(fn));
+    public read(branch:string, path:string, fn) {
+      this.jolokia.execute(this.mbean, "read", branch, path, onSuccess(fn));
     }
 
-    public write(path:string, commitMessage:string, contents:string, fn) {
+    public write(branch:string, path:string, commitMessage:string, contents:string, fn) {
       var authorName = this.getUserName();
       var authorEmail = this.getUserEmail();
 

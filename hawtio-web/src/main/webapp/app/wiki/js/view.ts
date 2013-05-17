@@ -1,9 +1,7 @@
 module Wiki {
 
   export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
-
-    $scope.pageId = Wiki.pageId($routeParams, $location);
-    $scope.objectId = $routeParams["objectId"];
+    Wiki.initScope($scope, $routeParams, $location);
 
     $scope.gridOptions = {
       data: 'children',
@@ -112,7 +110,7 @@ module Wiki {
         var baseObjectId = $routeParams["baseObjectId"];
         $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
       } else {
-        $scope.git = wikiRepository.getPage($scope.pageId, $scope.objectId, onFileDetails);
+        $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
     }
 
@@ -138,7 +136,7 @@ module Wiki {
           if (form === "/") {
             onFormSchema(_jsonSchema);
           } else {
-            $scope.git = wikiRepository.getPage(form, $scope.objectId, (details) => {
+            $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
               onFormSchema(Wiki.parseJson(details.text));
             });
           }
@@ -189,7 +187,7 @@ module Wiki {
         if (item) {
           var pageName = item.path;
           $scope.readMePath = pageName;
-          wikiRepository.getPage(pageName, $scope.objectId, (readmeDetails) => {
+          wikiRepository.getPage($scope.branch, pageName, $scope.objectId, (readmeDetails) => {
             viewContents(pageName, readmeDetails.text);
           });
         }
