@@ -1277,6 +1277,8 @@ li.stacktrace {
 .clickable {
   cursor: pointer;
   color: #787878;
+  height: 100%;
+  width: 1em;
 }
 
 .host-indicator {
@@ -1287,14 +1289,14 @@ li.stacktrace {
   border: 1px solid @control-border;
   opacity: .5;
   padding: 3px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .instance-name {
-  display: block;
-  float: left;
-  white-space: nowrap;
-  padding: 3px;
   position: fixed;
+  padding: 3px;
   bottom: 0;
   right: 0;
   border-top: 1px solid @control-border;
@@ -1302,17 +1304,20 @@ li.stacktrace {
   background: white;
   text-align: right;
   opacity: .8;
-  transition: width 1s ease-in-out;
   border-top-left-radius: 4px;
-  padding-right: 2em;
-  overflow: hidden;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.12);
+}
+
+.collapse-target {
+  transition: width 1s 0 linear;
+  display: inline-block;
   width: auto;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .instance-name-collapse {
-  width: 10px;
-  padding-right: 0px;
+  width: 0px;
 }
 
 .instance-name:hover {

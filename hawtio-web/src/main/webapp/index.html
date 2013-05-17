@@ -37,6 +37,8 @@
   <link rel='stylesheet/less' media='screen and (min-width: 980px)' href='css/site-wide.less' type='text/css'>
   <link rel='stylesheet/less' media='screen and (max-width: 979px)' href='css/site-narrow.less' type='text/css'>
 
+  <link rel='icon' type='image/ico' href='favicon.ico'>
+
 </head>
 <body ng-controller="Core.AppController">
 <style>
@@ -90,13 +92,15 @@
   <div ng-include src="viewPartial"></div>
 </div>
 
-<div class='instance-name clearfix ng-cloak' ng-class="collapse">
+<div class='instance-name clearfix ng-cloak'>
   <i ng-show="collapse === ''" class="clickable icon-caret-right" title="Hide" ng-click="collapse = 'instance-name-collapse'"></i>
   <i ng-show="collapse === 'instance-name-collapse'" class="clickable icon-caret-left" title="Show" ng-click="collapse = ''"></i>
-  <div ng-show="match" class="host-indicator" style="background: {{match.color}}">{{match.name}}</div>
-  <ul class='unstyled inline'>
-    <li ng-repeat='title in pageTitle'>{{title}}</li>
-  </ul>
+  <div class='collapse-target' ng-class='collapse'>
+    <div ng-show="match" class="host-indicator" style="background: {{match.color}}">{{match.name}}</div>
+    <ul class='unstyled inline'>
+      <li ng-repeat='title in pageTitle'>{{title}}</li>
+    </ul>
+  </div>
 </div>
 
 
