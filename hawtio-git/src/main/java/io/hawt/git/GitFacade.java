@@ -766,7 +766,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         if (Strings.isNotBlank(branch)) {
             StoredConfig config = git.getRepository().getConfig();
             if (Strings.isBlank(config.getString("branch", branch, "remote")) || Strings.isBlank(config.getString("branch", branch, "merge"))) {
-                System.out.println("updating git config for branch " + branch);
                 config.setString("branch", branch, "remote", getRemote());
                 config.setString("branch", branch, "merge", "refs/heads/" + branch);
                 try {
