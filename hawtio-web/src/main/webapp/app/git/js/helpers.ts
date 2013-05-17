@@ -9,13 +9,29 @@ module Git {
     return null;
   }
 
+  export var jmxDomain = "io.hawt.git";
+  export var mbeanType = "GitFacade";
+
+  /**
+   * Returns the JMX ObjectName of the git mbean
+   */
   export function getGitMBean(workspace:Workspace):string {
-    if (workspace) {
-      var mbeanTypesToDomain = workspace.mbeanTypesToDomain || {};
-      var gitFacades = mbeanTypesToDomain["GitFacade"] || {};
-      var hawtioFolder = gitFacades["io.hawt.git"] || {};
-      return hawtioFolder["objectName"];
-    }
-    return null;
+    return Core.getMBeanTypeObjectName(workspace, Git.jmxDomain, Git.mbeanType);
+  }
+
+  /**
+   * Returns the Folder for the git mbean if it can be found
+   */
+  export function getGitMBeanFolder(workspace:Workspace):Folder {
+    return Core.getMBeanTypeFolder(workspace, Git.jmxDomain, Git.mbeanType);
+  }
+
+  /**
+   * Returns true if the git mbean is a fabric configuration repository
+   * (so we can use it for the fabric plugin)
+   */
+  export function isGitMBeanFabric(workspace:Workspace):bool {
+    var folder = getGitMBeanFolder(workspace);
+    return folder && folder.entries["repo"] === "fabric";
   }
 }

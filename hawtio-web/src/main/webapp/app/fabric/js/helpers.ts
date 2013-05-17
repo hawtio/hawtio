@@ -2,6 +2,12 @@ module Fabric {
   
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
 
+  export function initScope($scope, workspace) {
+    $scope.hasFabricWiki = () => {
+      return Git.isGitMBeanFabric(workspace);
+    }
+  }
+
   export function setSelect(selection, group) {
     if (!angular.isDefined(selection)) {
       return group[0];

@@ -1,6 +1,8 @@
 module Fabric {
 
-  export function ProfileController($scope, $routeParams, jolokia, $location) {
+  export function ProfileController($scope, $routeParams, jolokia, $location, workspace:Workspace) {
+    Fabric.initScope($scope, workspace);
+
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
 
@@ -20,7 +22,7 @@ module Fabric {
     $scope.deleteFile = (file) => {
       $scope.markedForDeletion = file;
       $scope.deleteFileDialog = true;
-    }
+    };
 
     $scope.doDeleteFile = () => {
       $scope.deleteFileDialog = false;
@@ -33,7 +35,7 @@ module Fabric {
         $scope.markedForDeletion = '';
         $scope.$apply();
       });
-    }
+    };
 
     $scope.doCreateFile = () => {
       $scope.newFileDialog = false;
@@ -43,7 +45,7 @@ module Fabric {
       }, (response) => {
         notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
       })
-    }
+    };
     
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
