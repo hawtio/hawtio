@@ -5,11 +5,10 @@
     JVM.configureScope($scope, $location, workspace);
     $scope.data = [];
     $scope.deploying = false;
-    $scope.status = 'Discovering local JVM processes, please wait...';
-
+    $scope.status = '';
 
     $scope.fetch = () => {
-      $scope.status = 'Discovering local JVM processes, please wait...';
+      notification('info', 'Discovering local JVM processes, please wait...');
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'listLocalJVMs()',
