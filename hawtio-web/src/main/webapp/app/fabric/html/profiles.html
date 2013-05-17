@@ -5,6 +5,8 @@
         <fieldset>
           <div class="btn-group inline-block">
             <a href="" title="Create new Profile" class="btn" ng-click="createProfileDialog = true"><i class="icon-plus"></i></a>
+            <a ng-href="#/wiki/branch/{{version.id}}/view/{{selected[0].id}}" class="btn" ng-disabled="selected.length == 0" ng-show="hasFabricWiki()"
+               title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i></a>
             <a href="" title="Delete selected Profiles" class="btn" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"><i class="icon-minus"></i></a>
           </div>
 
