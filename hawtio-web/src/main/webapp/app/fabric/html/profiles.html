@@ -20,6 +20,8 @@
           </div>
           <div class="btn-group inline-block">
             <a href="" title="Create new Version" class="btn" ng-click="createVersionDialog = true"><i class="icon-plus"></i></a>
+            <a ng-href="#/wiki/branch/{{version.id}}/view/" class="btn" ng-show="hasFabricWiki()"
+               title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i></a>
             <a href="" title="Delete this Version" class="btn" ng-disabled="versionCanBeDeleted()" ng-click="deleteVersionDialog = true"><i class="icon-minus"></i></a>
           </div>
           &nbsp;
