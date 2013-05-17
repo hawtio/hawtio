@@ -22,7 +22,7 @@ module Wiki {
 
     $scope.isValid = () => $scope.fileName;
 
-    $scope.viewLink = () => Wiki.viewLink($scope.pageId, $location, $scope.fileName);
+    $scope.viewLink = () => Wiki.viewLink($scope.branch, $scope.pageId, $location, $scope.fileName);
 
     $scope.cancel = () => {
       goToView();

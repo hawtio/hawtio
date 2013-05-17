@@ -27,7 +27,8 @@ module Wiki {
     };
 
     $scope.childLink = (child) => {
-      var prefix = "#/wiki/view";
+      var start = startLink($scope.branch);
+      var prefix = start + "/view";
       var postFix = "";
       var path = child.path;
       if (child.directory) {
@@ -37,7 +38,7 @@ module Wiki {
         if (children) {
           var formFile = children.find({path: formPath});
           if (formFile) {
-            prefix = "#/wiki/formTable";
+            prefix = start + "/formTable";
             postFix = "?form=" + formPath;
           }
         }
@@ -45,7 +46,7 @@ module Wiki {
         var xmlNamespaces = child.xmlNamespaces;
         if (xmlNamespaces && xmlNamespaces.length) {
           if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
-            prefix = "#/wiki/camel/properties";
+            prefix = start + "/camel/properties";
           } else {
             console.log("child " + path + " has namespaces " + xmlNamespaces);
           }
@@ -69,7 +70,7 @@ module Wiki {
 
     $scope.editLink = () => {
       var pageName = ($scope.directory) ? $scope.readMePath : $scope.pageId;
-      return (pageName) ? Wiki.editLink(pageName, $location) : null;
+      return (pageName) ? Wiki.editLink($scope.branch, pageName, $location) : null;
     };
 
     $scope.historyLink = "#/wiki/history/" + $scope.pageId;

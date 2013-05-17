@@ -276,13 +276,13 @@ module Wiki {
           content: '<i class=" icon-edit"></i> Properties',
           title: "View the pattern properties",
           isValid: (workspace:Workspace) => true,
-          href: () => "#/wiki/camel/properties/" + $scope.pageId
+          href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
         },
         {
           content: '<i class="icon-picture"></i> Diagram',
           title: "View a diagram of the route",
           isValid: (workspace:Workspace) => true,
-          href: () => "#/wiki/camel/diagram/" + $scope.pageId
+          href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
         }
       ];
 

@@ -5,15 +5,16 @@ module Wiki {
     $scope.columnDefs = [];
 
     $scope.viewLink = (row) => {
-      return childLink(row, "#/wiki/view");
+      return childLink(row, "/view");
     };
     $scope.editLink = (row) => {
-      return childLink(row, "#/wiki/edit");
+      return childLink(row, "/edit");
     };
 
     function childLink(child, prefix) {
+      var start = Wiki.startLink($scope.branch);
       var childId = (child) ? child["_id"] || "" : "";
-      return Core.createHref($location, prefix + "/" + $scope.pageId + "/" + childId);
+      return Core.createHref($location, start + prefix + "/" + $scope.pageId + "/" + childId);
     }
 
     var linksColumn = {

@@ -5,10 +5,19 @@ module Wiki {
   export var springNamespaces = ["http://www.springframework.org/schema/beans"];
   export var droolsNamespaces = ["http://drools.org/schema/drools-spring"];
 
-  export function viewLink(pageId:string, $location, fileName: string = null) {
+  export function startLink(branch:string) {
+    var start = "#/wiki";
+    if (branch) {
+      start += "/branch/" + branch;
+    }
+    return start;
+  }
+
+  export function viewLink(branch:string, pageId:string, $location, fileName: string = null) {
     var link = null;
+    var start = startLink(branch);
     if (pageId) {
-      link = "#/wiki/view/" + pageId;
+      link = start + "/view/" + pageId;
     } else {
       // lets use the current path
       var path = $location.path();
@@ -24,10 +33,11 @@ module Wiki {
   }
 
 
-  export function editLink(pageId:string, $location) {
+  export function editLink(branch:string, pageId:string, $location) {
     var link = null;
+    var start = startLink(branch);
     if (pageId) {
-      link = "#/wiki/edit/" + pageId;
+      link = start + "/edit/" + pageId;
     } else {
       // lets use the current path
       var path = $location.path();
@@ -36,11 +46,12 @@ module Wiki {
     return link;
   }
 
-  export function createLink(pageId:string, $location, $scope) {
+  export function createLink(branch:string, pageId:string, $location, $scope) {
     var path = $location.path();
+    var start = startLink(branch);
     var link = null;
     if (pageId) {
-      link = "#/wiki/create/" + pageId;
+      link = start + "/create/" + pageId;
     } else {
       // lets use the current path
       link = "#" + path.replace(/(view|edit|formTable)/, "create");

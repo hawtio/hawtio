@@ -5,7 +5,7 @@ module Wiki {
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
-      return Wiki.createLink(pageId, $location, $scope);
+      return Wiki.createLink($scope.branch, pageId, $location, $scope);
     };
 
     $scope.sourceLink = () => {
@@ -13,7 +13,7 @@ module Wiki {
       var answer = null;
       angular.forEach(customViewLinks, (link) => {
         if (path.startsWith(link)) {
-          answer = Core.createHref($location, "#/wiki/view" + path.substring(link.length))
+          answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
         }
       });
       // remove the form parameter on view/edit links
@@ -50,7 +50,8 @@ module Wiki {
     }
 
     function loadBreadcrumbs() {
-      var href = "#/wiki/view/";
+      var start = Wiki.startLink($scope.branch);
+      var href = start + "/view/";
       $scope.breadcrumbs = [
         {href: href, name: "/"}
       ];

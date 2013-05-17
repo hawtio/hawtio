@@ -2,17 +2,21 @@ module Wiki {
   var pluginName = 'wiki';
   angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'hawtioCore', 'tree', 'camel']).
           config(($routeProvider) => {
+
+            // allow optional branch paths...
+            angular.forEach(["", "/branch/:branch"], (path) => {
+              $routeProvider.
+                      when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                      when('/wiki' + path + '/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
+                      when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
+                      when('/wiki' + path + '/formTable/*page', {templateUrl: 'app/wiki/html/formTable.html'}).
+                      when('/wiki' + path + '/camel/diagram/*page', {templateUrl: 'app/wiki/html/camelDiagram.html'}).
+                      when('/wiki' + path + '/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'});
+            });
+
             $routeProvider.
-                    when('/wiki/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/formTable/*page', {templateUrl: 'app/wiki/html/formTable.html'}).
-                    when('/wiki/camel/diagram/*page', {templateUrl: 'app/wiki/html/camelDiagram.html'}).
-                    when('/wiki/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'}).
-                    when('/wiki/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
-                    when('/wiki/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
-                    when('/wiki/branch/:branch/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                    when('/wiki/branch/:branch/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
+                    when('/wiki/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                     when('/wiki/history/*page', {templateUrl: 'app/wiki/html/history.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
@@ -38,9 +42,9 @@ module Wiki {
             workspace.topLevelTabs.push({
               content: "Wiki",
               title: "View and edit wiki pages",
-              isValid: (workspace: Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
+              isValid: (workspace:Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
               href: () => "#/wiki/view/wiki",
-              isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki")
+              isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki")
             });
           });
 
