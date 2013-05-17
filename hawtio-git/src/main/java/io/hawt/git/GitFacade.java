@@ -7,8 +7,10 @@ import io.hawt.util.MBeanSupport;
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.ListBranchCommand;
@@ -21,6 +23,7 @@ import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -74,6 +77,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private long pullTimePeriod;
     private Timer timer;
     private PersonIdent stashPersonIdent;
+    private String defaultBranch;
 
 
     public void init() throws Exception {
@@ -132,6 +136,20 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     public void setRemoteRepository(String remoteRepository) {
         this.remoteRepository = remoteRepository;
+        if (git != null && Strings.isNotBlank(remoteRepository)) {
+            Repository repository = git.getRepository();
+            if (repository != null) {
+                StoredConfig config = repository.getConfig();
+                String origin = getRemote();
+                config.setString("remote", origin, "url", remoteRepository);
+                config.setString("remote", origin, "fetch", "+refs/heads/*:refs/remotes/" + origin + "/*");
+                try {
+                    config.save();
+                } catch (IOException e) {
+                    LOG.error("Failed to save the git configuration to " + getConfigDirName() + " with remote repo: " + remoteRepository + ". " + e, e);
+                }
+            }
+        }
     }
 
     public String getRemote() {
@@ -222,6 +240,17 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         this.timer = timer;
     }
 
+    /**
+     * Defaults to the current branch on disk if not explicitly configured
+     */
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
+    }
+
     @Override
     public String getContent(String objectId, String blobPath) {
         objectId = defaultObjectId(objectId);
@@ -239,7 +268,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             path = "/";
         }
         File rootDir = getConfigDirectory();
-        switchToBranch(branch);
+        checkoutBranch(branch);
 
         File file = getFile(path);
         if (file.isFile()) {
@@ -705,22 +734,41 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
     }
 
-    /**
-     * If the given branch name is not empty and not equal to the current branch then lets check it out
-     */
-    protected void switchToBranch(String branch) throws GitAPIException {
-        if (Strings.isNotBlank(branch)) {
-            String current = currentBranch();
-            if (!Objects.equals(current, branch)) {
-                checkoutBranch(branch);
-            }
+    protected void checkoutBranch(String branch) throws GitAPIException {
+        String current = currentBranch();
+        if (defaultBranch == null) {
+            defaultBranch = current;
+        }
+        if (Strings.isBlank(branch)) {
+            branch = defaultBranch;
+        }
+        if (Objects.equals(current, branch)) {
+            return;
+        }
+        // lets check if the branch exists
+        CheckoutCommand command = git.checkout().setName(branch);
+        if (!localBranchExists(branch)) {
+            command = command.setCreateBranch(true).
+                    setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
+                    setStartPoint(getRemote() + "/" + branch);
+        }
+        Ref ref = command.call();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checked out branch " + branch + " with results " + ref.getName());
         }
     }
 
-
-    protected void checkoutBranch(String branch) throws GitAPIException {
-        Ref call = git.checkout().setName(branch).call();
-        System.out.println("Checked out branch " + branch + " with results " + branch);
+    protected boolean localBranchExists(String branch) throws GitAPIException {
+        List<Ref> list = git.branchList().call();
+        String fullName = "refs/heads/" + branch;
+        boolean localBranchExists = false;
+        for (Ref ref : list) {
+            String name = ref.getName();
+            if (Objects.equals(name, fullName)) {
+                localBranchExists = true;
+            }
+        }
+        return localBranchExists;
     }
 
 }
