@@ -65,7 +65,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private int shortCommitIdLength = 6;
     private String remote = "origin";
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
-    private Boolean cloneRemoteRepoOnStartup;
+    private boolean cloneRemoteRepoOnStartup = true;
     private boolean pullOnStartup = true;
     private CredentialsProvider credentials;
     private boolean cloneAllBranches = false;
@@ -124,9 +124,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
     public String getRemoteRepository() {
-        if (remoteRepository == null) {
-            remoteRepository = getSystemPropertyOrEnvironmentVariable("hawtio.config.repo", "HAWTIO_CONFIG_REPO");
-        }
         if (remoteRepository == null) {
             remoteRepository = defaultRemoteRepository;
         }
@@ -194,10 +191,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
     public boolean isCloneRemoteRepoOnStartup() {
-        if (cloneRemoteRepoOnStartup == null) {
-            String flag = getSystemPropertyOrEnvironmentVariable("hawtio.config.cloneOnStartup", "HAWTIO_CONFIG_CLONEONSTARTUP");
-            cloneRemoteRepoOnStartup = flag == null || !flag.equals("false");
-        }
         return cloneRemoteRepoOnStartup;
     }
 
@@ -563,9 +556,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         if (configDirectory == null) {
             try {
                 String name = getConfigDirName();
-                if (Strings.isBlank(name)) {
-                    name = getSystemPropertyOrEnvironmentVariable("hawtio.config.dir", "HAWTIO_CONFIG_DIR");
-                }
                 if (Strings.isNotBlank(name)) {
                     configDirectory = new File(name);
                 } else {
@@ -589,14 +579,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             }
         }
         return configDirectory;
-    }
-
-    public String getSystemPropertyOrEnvironmentVariable(String systemPropertyName, String environmentVariableName) {
-        String name = System.getProperty(systemPropertyName);
-        if (name == null) {
-            name = System.getenv(environmentVariableName);
-        }
-        return name;
     }
 
     public void setConfigDirectory(File configDirectory) {
