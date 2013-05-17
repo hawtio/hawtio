@@ -47,10 +47,14 @@
               <i class="icon-share-alt"></i> Move
             </button>
 
-            <button class="btn" ng-disabled="!gridOptions.selectedItems.length"
+            <button class="btn btn-danger" ng-disabled="!gridOptions.selectedItems.length"
                     ng-click="deleteDialog = true"
                     title="Delete the selected messages">
               <i class="icon-remove"></i> Delete
+            </button>
+
+            <button class="btn" ng-click="showMessageDetails = !showMessageDetails" title="Close this dialog">
+              <i class="icon-remove"></i> Close
             </button>
 
           </form>

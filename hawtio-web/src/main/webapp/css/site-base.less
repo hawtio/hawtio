@@ -1082,7 +1082,6 @@ li.stacktrace {
     z-index: 40;
     width: 75%;
     background: white;
-    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 .slideout > .slideout-title {
@@ -1097,6 +1096,8 @@ li.stacktrace {
     min-height: 93%;
     max-height: 93%;
     overflow: auto;
+    // -webkit-transform-style: preserve-3d;
+    -webkit-transform: translateZ(0);
 }
 
 .slideout.right {
@@ -1159,6 +1160,10 @@ li.stacktrace {
 .slideout.right .slideout-title a {
     margin-left: 5px;
     float: left;
+}
+
+.out {
+  transition: left 1s, right 1s ease-in-out;
 }
 
 .slideout.left .slideout-title a {
