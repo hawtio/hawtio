@@ -263,73 +263,78 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      *
      * @return
      */
-    public FileContents read(String branch, String path) throws IOException, GitAPIException {
-        if (path == null || path.length() == 0) {
-            path = "/";
-        }
-        File rootDir = getConfigDirectory();
-        checkoutBranch(branch);
-
-        File file = getFile(path);
-        if (file.isFile()) {
-            String contents = IOHelper.readFully(file);
-            return new FileContents(false, contents, null);
-        } else {
-            List<FileInfo> children = new ArrayList<FileInfo>();
-            if (file.exists()) {
-                File[] files = file.listFiles();
-                for (File child : files) {
-                    if (!isIgnoreFile(child)) {
-                        children.add(FileInfo.createFileInfo(rootDir, child));
+    public FileContents read(final String branch, String pathOrEmpty) throws IOException, GitAPIException {
+        final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
+            @Override
+            public FileContents call() throws Exception {
+                File rootDir = getConfigDirectory();
+                checkoutBranch(branch);
+                File file = getFile(path);
+                if (file.isFile()) {
+                    String contents = IOHelper.readFully(file);
+                    return new FileContents(false, contents, null);
+                } else {
+                    List<FileInfo> children = new ArrayList<FileInfo>();
+                    if (file.exists()) {
+                        File[] files = file.listFiles();
+                        for (File child : files) {
+                            if (!isIgnoreFile(child)) {
+                                children.add(FileInfo.createFileInfo(rootDir, child));
+                            }
+                        }
                     }
+                    return new FileContents(file.isDirectory(), null, children);
                 }
             }
-            return new FileContents(file.isDirectory(), null, children);
-        }
+        });
     }
 
     protected boolean isIgnoreFile(File child) {
-        return child.getName().equals(".git");
+        return child.getName().startsWith(".");
     }
 
     /**
      * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
      */
     @Override
-    public String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException {
-        if (!Strings.isNotBlank(fileNameWildcard)) {
-            fileNameWildcard = "*.json";
-        }
-        File rootDir = getConfigDirectory();
-        File file = getFile(path);
-        FileFilter filter = FileFilters.createFileFilter(fileNameWildcard);
-        boolean first = true;
-        StringBuilder buffer = new StringBuilder("{\n");
-        List<FileInfo> children = new ArrayList<FileInfo>();
-        if (file.isDirectory()) {
-            if (file.exists()) {
-                File[] files = file.listFiles();
-                for (File child : files) {
-                    if (!isIgnoreFile(child) && child.isFile()) {
-                        String text = IOHelper.readFully(child);
-                        if (!Strings.isNotBlank(search) || text.contains(search)) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                buffer.append(",\n");
+    public String readJsonChildContent(final String branch, final String path, String fileNameWildcardOrBlank, final String search) throws IOException {
+        final String fileNameWildcard = (Strings.isBlank(fileNameWildcardOrBlank)) ? "*.json" : fileNameWildcardOrBlank;
+        return gitOperation(getStashPersonIdent(), new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                File rootDir = getConfigDirectory();
+                File file = getFile(path);
+                FileFilter filter = FileFilters.createFileFilter(fileNameWildcard);
+                boolean first = true;
+                StringBuilder buffer = new StringBuilder("{\n");
+                List<FileInfo> children = new ArrayList<FileInfo>();
+                if (file.isDirectory()) {
+                    if (file.exists()) {
+                        File[] files = file.listFiles();
+                        for (File child : files) {
+                            if (!isIgnoreFile(child) && child.isFile()) {
+                                String text = IOHelper.readFully(child);
+                                if (!Strings.isNotBlank(search) || text.contains(search)) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        buffer.append(",\n");
+                                    }
+                                    buffer.append("\"");
+                                    buffer.append(child.getName());
+                                    buffer.append("\": ");
+                                    buffer.append(text);
+                                    children.add(FileInfo.createFileInfo(rootDir, child));
+                                }
                             }
-                            buffer.append("\"");
-                            buffer.append(child.getName());
-                            buffer.append("\": ");
-                            buffer.append(text);
-                            children.add(FileInfo.createFileInfo(rootDir, child));
                         }
                     }
                 }
+                buffer.append("\n}");
+                return buffer.toString();
             }
-        }
-        buffer.append("\n}");
-        return buffer.toString();
+        });
     }
 
 
@@ -639,6 +644,9 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             initCommand.setDirectory(confDir);
             git = initCommand.call();
             LOG.info("Initialised an empty git configuration repo at " + confDir.getCanonicalPath());
+
+            String branch = git.getRepository().getBranch();
+            configureBranch(branch);
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -711,14 +719,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 if (isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
                     doPull();
                 }
-                // lets remember the current branch so we can check it out afterwards
-                String originalBranch = currentBranch();
-                T call = callable.call();
-                String currentBranch = currentBranch();
-                if (!Objects.equals(currentBranch, originalBranch)) {
-                    checkoutBranch(originalBranch);
-                }
-                return call;
+                return callable.call();
             } catch (Exception e) {
                 throw new RuntimeIOException(e);
             }
@@ -747,14 +748,34 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
         // lets check if the branch exists
         CheckoutCommand command = git.checkout().setName(branch);
-        if (!localBranchExists(branch)) {
-            command = command.setCreateBranch(true).
+        boolean exists = localBranchExists(branch);
+        if (!exists) {
+            command = command.setCreateBranch(true).setForce(true).
                     setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
                     setStartPoint(getRemote() + "/" + branch);
         }
         Ref ref = command.call();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Checked out branch " + branch + " with results " + ref.getName());
+        }
+        configureBranch(branch);
+    }
+
+    protected void configureBranch(String branch) {
+        // lets update the merge config
+        if (Strings.isNotBlank(branch)) {
+            StoredConfig config = git.getRepository().getConfig();
+            if (Strings.isBlank(config.getString("branch", branch, "remote")) || Strings.isBlank(config.getString("branch", branch, "merge"))) {
+                System.out.println("updating git config for branch " + branch);
+                config.setString("branch", branch, "remote", getRemote());
+                config.setString("branch", branch, "merge", "refs/heads/" + branch);
+                try {
+                    config.save();
+                } catch (IOException e) {
+                    LOG.error("Failed to save the git configuration to " + getConfigDirName()
+                            + " with branch " + branch + " on remote repo: " + remoteRepository + ". " + e, e);
+                }
+            }
         }
     }
 
