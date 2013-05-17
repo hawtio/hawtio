@@ -21,7 +21,7 @@ module Fabric {
         $('.dialogGrid').trigger('resize');
       }, 10);
 
-    }
+    };
 
     $scope.$watch('createProfileDialog', function() {
       if ($scope.createProfileDialog) {
@@ -83,7 +83,7 @@ module Fabric {
 
     $scope.selectedHasContainers = () => {
       return $scope.selected.findAll(function(item) { return item.containerCount > 0 }).length > 0;
-    }
+    };
 
     $scope.versionCanBeDeleted = () => {
       if ($scope.version.id === $scope.defaultVersion.id) {
@@ -93,7 +93,7 @@ module Fabric {
         return true;
       }
       return $scope.profiles.findAll(function(item) {return item.containerCount > 0 }).length > 0;
-    }
+    };
 
 
     $scope.createProfileGridOptions = {
@@ -108,7 +108,7 @@ module Fabric {
           field: 'id',
           displayName: 'Name'
         }]
-    }
+    };
 
     $scope.createVersionGridOptions = {
       data: 'versions',
@@ -122,7 +122,7 @@ module Fabric {
           field: 'id',
           displayName: 'Name'
         }]
-    }
+    };
 
 
     $scope.gridOptions = {
@@ -195,7 +195,7 @@ module Fabric {
         $scope.newVersionName = '';
         $scope.version = response.value;
         $scope.$apply();
-      }
+      };
 
       var error = function (response) {
         var msg = "Error creating new version: " + response.error;
@@ -203,7 +203,7 @@ module Fabric {
           msg = "Error creating " + $scope.newVersionName + " : " + response.error;
         }
         notification('error', msg);
-      }
+      };
 
       if ($scope.selectedParentVersion.length > 0 && $scope.newVersionName !== '') {
         createVersionWithParentAndId(jolokia, $scope.selectedParentVersion[0].id, $scope.newVersionName, success, error);
@@ -212,7 +212,7 @@ module Fabric {
       } else {
         createVersion(jolokia, success, error);
       }
-    }
+    };
 
     $scope.deleteVersion = () => {
       // avoid getting any not found errors while deleting the version
@@ -254,13 +254,13 @@ module Fabric {
       if (response.request.operation === 'versions') {
         
         if (!Object.equal($scope.versionResponse, response.value)) {
-          $scope.versionResponse = response.value
+          $scope.versionResponse = response.value;
           
           $scope.versions = response.value.map(function(version) {
             var v = {
               id: version.id,
               'defaultVersion': version.defaultVersion
-            }
+            };
 
             if (v['defaultVersion']) {
               $scope.defaultVersion = v;
