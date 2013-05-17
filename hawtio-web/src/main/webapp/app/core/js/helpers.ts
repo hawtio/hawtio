@@ -760,5 +760,23 @@ module Core {
     document.title = title.join(' : ');
   }
 
+  /**
+   * Returns the Folder object for the given domain name and type name or null if it can not be found
+   */
+  export function getMBeanTypeFolder(workspace:Workspace, domain: string, typeName: string):Folder {
+    if (workspace) {
+      var mbeanTypesToDomain = workspace.mbeanTypesToDomain || {};
+      var types = mbeanTypesToDomain[typeName] || {};
+      return types[domain];
+    }
+    return null;
+  }
 
+  /**
+   * Returns the JMX objectName for the given jmx domain and type name
+   */
+  export function getMBeanTypeObjectName(workspace:Workspace, domain: string, typeName: string):string {
+    var folder = Core.getMBeanTypeFolder(workspace, domain, typeName);
+    return Core.pathGet(folder, ["objectName"]);
+  }
 }
