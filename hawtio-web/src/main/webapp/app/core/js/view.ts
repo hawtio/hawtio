@@ -13,15 +13,27 @@ module Core {
 
     function searchRegistry(path) {
       var answer = undefined;
-
-      Object.extended(viewRegistry).keys(function(key, value) {
-        if (path.startsWith(key)) {
-          answer = value;
+      Object.extended(viewRegistry).keys(function (key, value) {
+        if (!answer) {
+          if (key.startsWith("/") && key.endsWith("/")) {
+            // assume its a regex
+            var text = key.substring(1, key.length - 1);
+            try {
+              var reg = new RegExp(text, "");
+              if (reg.exec(path)) {
+                answer = value;
+              }
+            } catch (e) {
+              console.log("Invalid RegExp " + text + " for viewRegistry value: " + value);
+            }
+          } else {
+            if (path.startsWith(key)) {
+              answer = value;
+            }
+          }
         }
       });
-
       //console.log("Searching for: " + path + " returning: ", answer);
-
       return answer;
     }
 

@@ -36,8 +36,14 @@ module Wiki {
           filter('fileIconClass',() => iconClass).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
 
+/*
+            //viewRegistry['wiki/camel'] = "app/wiki/html/layoutCamel.html";
+            var key = new RegExp('', '');
+            Core.pathSet(viewRegistry, [key], "app/wiki/html/layoutCamel.html");
+            //viewRegistry[key] = "app/wiki/html/layoutCamel.html";
+*/
+            viewRegistry["/wiki/(branch/.*/)?camel/.*/"] = "app/wiki/html/layoutCamel.html";
             viewRegistry['wiki'] = layoutFull;
-            viewRegistry['wiki/camel'] = "app/wiki/html/layoutCamel.html";
 
             workspace.topLevelTabs.push({
               content: "Wiki",
