@@ -48,6 +48,7 @@ module Fabric {
 
     $scope.profilesGridOptions = {
       data: 'profileIdArray',
+      selectedItems: [],
       showSelectionCheckbox: true,
       multiSelect: true,
       selectWithCheckboxOnly: true,

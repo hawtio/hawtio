@@ -8,7 +8,7 @@
 </div>
 
 <div class="row-fluid">
-  <div class="span3">
+  <div class="span4">
       <dl class="dl-horizontal">
         <dt>Server Status:</dt>
         <dd>
@@ -78,15 +78,6 @@
       <dd>{{row.versionId}}</dd>
     </dl>
     <dl class="dl-horizontal">
-      <dt>Profiles:</dt>
-      <dd>
-        <div class="gridStyle" ng-grid="profilesGridOptions"></div>
-      </dd>
-    </dl>
-  </div>
-
-  <div class="span3">
-    <dl class="dl-horizontal">
       <dt>Location:</dt>
       <dd>
         {{row.location}}
@@ -127,6 +118,19 @@
       <dd>
         {{row.resolver}}
       </dd>
+    </dl>
+  </div>
+
+  <div class="span4">
+    <dl class="dl-horizontal">
+      <div class="btn-group pull-right">
+        <button class="btn" ng-click="addProfiles()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
+        <button class="btn" ng-click="deleteProfiles()" ng-disabled="profilesGridOptions.selectedItems.length == 0"
+                title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
+      </div>
+    </dl>
+    <dl class="dl-horizontal">
+      <div class="gridStyle" ng-grid="profilesGridOptions"></div>
     </dl>
   </div>
 </div>
