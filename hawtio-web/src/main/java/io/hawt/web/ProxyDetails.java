@@ -27,6 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A helper object to store the proxy location details
@@ -42,6 +46,8 @@ public class ProxyDetails {
     private  String host;
     private int port = 80;
 
+    private static Set<String> ignoreHeaderNames = new HashSet<String>(Arrays.asList("_user", "_pwd", "_url", "url"));
+
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
 
@@ -53,6 +59,25 @@ public class ProxyDetails {
         String pwdParam = httpServletRequest.getParameter("_pwd");
         if (Strings.isNotBlank(pwdParam)) {
             password = pwdParam;
+        }
+
+        // lets add the query parameters
+        Enumeration iter = httpServletRequest.getParameterNames();
+        while (iter.hasMoreElements()) {
+            Object next = iter.nextElement();
+            if (next instanceof String) {
+                String name = next.toString();
+                if (!ignoreHeaderNames.contains(name)) {
+                    String[] values = httpServletRequest.getParameterValues(name);
+                    for (String value : values) {
+                        String prefix = "?";
+                        if (stringProxyURL.contains("?")) {
+                            prefix = "&";
+                        }
+                        stringProxyURL += prefix + name + "=" + value;
+                    }
+                }
+            }
         }
     }
 
