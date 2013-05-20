@@ -210,6 +210,13 @@ function notification (type:string, message:string) {
   w.toastr[type](message);
 }
 
+/**
+ * Clears all the pending notifications
+ */
+function clearNotifications() {
+  var w:any = window;
+  w.toastr.clear();
+}
 
 /**
  * Returns the CSS class for a log level based on if its info, warn, error etc.

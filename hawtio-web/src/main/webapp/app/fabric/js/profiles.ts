@@ -251,7 +251,8 @@ module Fabric {
     }
 
     function render(response) {
-      
+      clearNotifications();
+
       if (response.request.operation === 'versions') {
         
         if (!Object.equal($scope.versionResponse, response.value)) {
