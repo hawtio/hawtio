@@ -3,6 +3,9 @@ module Fabric {
   export function ClusterController($scope, $location, $routeParams, workspace:Workspace, jolokia) {
 
     $scope.path = $routeParams["page"] || "/";
+    if (!$scope.path.startsWith("/")) {
+      $scope.path = "/" + $scope.path;
+    }
 
     $scope.gridOptions = {
       data: 'children',
@@ -20,8 +23,7 @@ module Fabric {
     $scope.isTabActive = (href) => {
       var tidy = Core.trimLeading(href, "#");
       var loc = $location.path();
-      if (loc === tidy) return true;
-      return false;
+      return loc === tidy;
     };
 
 
