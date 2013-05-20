@@ -61,6 +61,28 @@ module Fabric {
         }]
     };
 
+    $scope.addProfiles = () => {
+
+    };
+
+    $scope.deleteProfiles = () => {
+      var containerIds = [ $scope.containerId ];
+      var profileIds = $scope.row.profileIds;
+      // remove the selected ones
+      angular.forEach($scope.profilesGridOptions.selectedItems, (object) => {
+        profileIds = profileIds.remove(object.id);
+      });
+      var versionId = $scope.versionId;
+      console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
+
+      var text = Core.maybePlural($scope.profilesGridOptions.selectedItems.length, "profile");
+      applyProfiles(jolokia, versionId, profileIds, containerIds, () => {
+        notification('success', "Successfully removed " + text);
+      }, (response) => {
+        notification('error', "Failed to remove " + text + " due to " + response.error);
+      });
+    };
+
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
@@ -68,6 +90,7 @@ module Fabric {
           var versionId = $scope.row.versionId;
           $scope.versionId = versionId;
           var profileIds = $scope.row.profileIds;
+          console.log("==== loaded profile Ids: " + profileIds);
           $scope.profileIdArray = profileIds ? profileIds.map((value) => { return {id: value, versionId: versionId}; }) : [];
           $scope.services = getServiceList($scope.row);
         }
