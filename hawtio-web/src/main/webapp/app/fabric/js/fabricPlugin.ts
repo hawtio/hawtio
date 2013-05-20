@@ -41,26 +41,21 @@ module Fabric {
                 } catch (e) {
                     try {
                       var container = workspace.jolokia.execute(managerMBean, 'currentContainer()');
-                      if (container) {
-                        return true;
-                      } else {
-                        return false;
-                      }
-
+                      return container;
                     } catch (e) {
                       return false;
                     }
                 }
               }
               return false;
-            }
+            };
 
 
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
               isValid: isValid,
-              href: () => "#/fabric/containers",
+              href: () => "#/fabric/profiles",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
 

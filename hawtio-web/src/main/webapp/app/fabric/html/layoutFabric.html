@@ -1,9 +1,9 @@
 <ul class="nav nav-tabs" ng-controller="Fabric.NavBarController">
-  <li ng-class='{active : isActive("#/fabric/container")}'>
-    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
-  </li>
   <li ng-class='{active : isActive("#/fabric/profile")}'>
     <a ng-href="#/fabric/profiles{{hash}}">Profiles</a>
+  </li>
+  <li ng-class='{active : isActive("#/fabric/container")}'>
+    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>
   <li ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}">Clusters</a>
