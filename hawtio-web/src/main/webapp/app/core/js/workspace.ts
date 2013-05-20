@@ -57,10 +57,11 @@ class Workspace {
   public loadTree() {
     // Make an initial blocking call to ensure the JMX tree is populated while the
     // app is initializing...
-    var response = {
-      value: this.jolokia.list(null, {canonicalNaming: false, ignoreErrors: true, maxDepth: 2})
-    };
-    this.populateTree(response);
+    var options = onSuccess(null, {ignoreErrors: true, maxDepth: 2});
+    var data = this.jolokia.list(null, options);
+    this.populateTree({
+      value: data
+    });
     // we now only reload the tree if the TreeWatcher mbean is present...
     // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
   }
@@ -145,7 +146,7 @@ class Workspace {
         };
         workspace.populateTree(wrapper);
       }
-      this.jolokia.list(null, onSuccess(wrapInValue, {canonicalNaming: false, ignoreErrors: true, maxDepth: 2}));
+      this.jolokia.list(null, onSuccess(wrapInValue, {ignoreErrors: true, maxDepth: 2}));
     }
   }
 

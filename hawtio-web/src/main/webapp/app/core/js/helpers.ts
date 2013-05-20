@@ -131,6 +131,8 @@ function onSuccess(fn, options = {}) {
   if (!options['method']) {
     options['method'] = "POST";
   }
+  options['canonicalNaming'] = false;
+  options['canonicalProperties'] = false;
   if (!options['error']) {
     options['error'] = function (response) {
       //alert("Jolokia request failed: " + response.error);
