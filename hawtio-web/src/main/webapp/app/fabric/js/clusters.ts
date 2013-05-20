@@ -10,6 +10,7 @@ module Fabric {
     $scope.gridOptions = {
       data: 'children',
       displayFooter: false,
+      sortInfo: { fields: ['name'], directions: ['asc'] },
       columnDefs: [
         {
           field: 'name',

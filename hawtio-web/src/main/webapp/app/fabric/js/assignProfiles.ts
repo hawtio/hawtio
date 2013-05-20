@@ -27,6 +27,7 @@ module Fabric {
         field: 'id',
         displayName: 'Profile Name'
       }],
+      sortInfo: { fields: ['id'], directions: ['asc'] },
       filterOptions: {
         filterText: ''
       }
@@ -42,6 +43,7 @@ module Fabric {
         field: 'id',
         displayName: 'Container Name'
       }],
+      sortInfo: { fields: ['id'], directions: ['asc'] },
       filterOptions: {
         filterText: ''
       }
