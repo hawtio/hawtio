@@ -128,6 +128,10 @@ features:install hawtio</code></pre>
 
 <pre><code>org.ops4j.pax.url.mvn.proxySupport=true</code></pre>
 
+<p>You may also want <strong>org.ops4j.pax.url.mvn.settings</strong> to point to your Maven settings.xml file. <strong>NOTE</strong> use / in the path, not &#46;</p>
+
+<pre><code>org.ops4j.pax.url.mvn.settings=C:/Program Files/MyStuff/apache-maven-3.0.5/conf/settings.xml</code></pre>
+
 <p>Fuse / Karaf / ServiceMix will then use your <a href="http://maven.apache.org/guides/mini/guide-proxies.html">maven HTTP proxy settings</a> from your <strong>~/.m2/settings.xml</strong> to connect to the maven repositories listed in <strong>etc/org.ops4j.pax.url.mvn.cfg</strong> to download artifacts.</p>
 
 <p>If you're still struggling getting your HTTP proxy to work with Fuse, try jump on the <a href="https://community.jboss.org/en/jbossfuse">Fuse Form and ask for more help</a>.</p>
