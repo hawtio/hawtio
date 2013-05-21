@@ -86,7 +86,11 @@
   </tr>
 </table>
 
-<p>Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to <em>hawtio.war</em> in your deploy directory) then opening <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
+<p>Copy the WAR file to your deploy directory in your container.</p>
+
+<p>If you rename the downloaded file to <em>hawtio.war</em> then drop it into your deploy directory then open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
+
+<p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.1/">http://localhost:8080/hawtio-default-1.1/</a> or <a href="http://localhost:8080/sample-1.1/">http://localhost:8080/sample-1.1/</a>  depending on the file name you downloaded.</p>
 
 <p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
  <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.1/hawtio-default-offline-1.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
