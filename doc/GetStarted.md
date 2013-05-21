@@ -46,20 +46,32 @@ If you are using Jetty 8.x then JMX may not enabled by default, so make sure the
 
     etc/jetty-jmx.xml
 
-## Using Apache Karaf, Apache Servicemix, or Fuse ESB
+## Using Fuse, Apache Karaf or Apache Servicemix
 
-If you are using a developer snapshot of [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) you can run:
+If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse) you can run:
 
     features:install hawtio
 
-Otherwise if you are using a vanilla [Apache Karaf](http://karaf.apache.org/), [Apache ServiceMix](http://servicemix.apache.org/) or [Fuse ESB](http://fusesource.com/products/fuse-esb-enterprise/) use the following
-
-Now you can install hawtio via:
+Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/products/fuse) or a vanilla [Apache Karaf](http://karaf.apache.org/) or [Apache ServiceMix](http://servicemix.apache.org/) then try the following:
 
     features:addurl mvn:io.hawt/hawtio-karaf/1.1/xml/features
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
+
+### If you use a HTTP proxy
+
+If you are behind a http proxy; you will need to enable HTTP Proxy support in Fuse / Karaf / ServiceMix to be able to download hawtio from the central maven repository.
+
+There are a few [articles about](http://mpashworth.wordpress.com/2012/09/27/installing-apache-karaf-features-behind-a-firewall/) [this](http://stackoverflow.com/questions/9922467/how-to-setup-a-proxy-for-apache-karaf) which may help. Here are the steps:
+
+Edit the **etc/org.ops4j.pax.url.mvn.cfg** file and make sure the following line is uncommented:
+
+    org.ops4j.pax.url.mvn.proxySupport=true
+
+Fuse / Karaf / ServiceMix will then use your [maven HTTP proxy settings](http://maven.apache.org/guides/mini/guide-proxies.html) from your **~/.m2/settings.xml** to connect to the maven repositories listed in **etc/org.ops4j.pax.url.mvn.cfg** to download artifacts.
+
+If you're still struggling getting your HTTP proxy to work with Fuse, try jump on the [Fuse Form and ask for more help](https://community.jboss.org/en/jbossfuse).
 
 ## Using hawtio inside a stand alone Java application
 
