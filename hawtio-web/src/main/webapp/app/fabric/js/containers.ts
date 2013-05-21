@@ -241,8 +241,8 @@ module Fabric {
   
     Core.register(jolokia, $scope, {
       type: 'exec', mbean: managerMBean,
-      operation: 'containers()',
-      arguments: []
+      operation: 'containers(java.util.List)',
+      arguments: [["id", "alive", "versionId", "profileIds", "jmxDomains", "alive", "provisionResult", "jolokiaUrl"]]
     }, onSuccess(render));
     
     function empty() {

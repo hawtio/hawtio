@@ -77,8 +77,8 @@ module Fabric {
       
       Core.unregister(jolokia, $scope);
       Core.register(jolokia, $scope,[
-        {type: 'exec', mbean: managerMBean, operation: 'versions'},
-        {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String)', arguments: [$scope.version.id]}],
+        {type: 'exec', mbean: managerMBean, operation: 'versions()'},
+        {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String, java.util.List)', arguments: [$scope.version.id, ["id", "parentIds", "childIds", "containerCount", "locked", "abstract"]]}],
         onSuccess(render));
     });
 
@@ -253,11 +253,10 @@ module Fabric {
     function render(response) {
       clearNotifications();
 
-      if (response.request.operation === 'versions') {
+      if (response.request.operation === 'versions()') {
         
         if (!Object.equal($scope.versionResponse, response.value)) {
           $scope.versionResponse = response.value;
-          
           $scope.versions = response.value.map(function(version) {
             var v = {
               id: version.id,
@@ -288,7 +287,7 @@ module Fabric {
               containerCount: profile.containerCount,
               containers: profile.containers,
               locked: profile.locked,
-              abstract: profile.abstractProfile
+              abstract: profile['abstract']
             })
           });
 
