@@ -1,0 +1,10 @@
+<div ng-controller="Wiki.CamelController">
+  <ng-include src="'app/wiki/html/camelNavBar.html'"></ng-include>
+
+  <div class="row-fluid">
+    <div class="span12">
+      <ng-include src="'app/wiki/html/camelSubLevelTabs.html'"></ng-include>
+      <div ng-view></div>
+    </div>
+  </div>
+</div>

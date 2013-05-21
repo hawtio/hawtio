@@ -11,6 +11,7 @@ module Wiki {
                       when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
                       when('/wiki' + path + '/formTable/*page', {templateUrl: 'app/wiki/html/formTable.html'}).
                       when('/wiki' + path + '/camel/diagram/*page', {templateUrl: 'app/wiki/html/camelDiagram.html'}).
+                      when('/wiki' + path + '/camel/canvas/*page', {templateUrl: 'app/wiki/html/camelCanvas.html'}).
                       when('/wiki' + path + '/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'});
             });
 
@@ -42,6 +43,7 @@ module Wiki {
             Core.pathSet(viewRegistry, [key], "app/wiki/html/layoutCamel.html");
             //viewRegistry[key] = "app/wiki/html/layoutCamel.html";
 */
+            viewRegistry["/wiki/(branch/.*/)?camel/canvas/"] = "app/wiki/html/layoutCamelCanvas.html";
             viewRegistry["/wiki/(branch/.*/)?camel/.*/"] = "app/wiki/html/layoutCamel.html";
             viewRegistry['wiki'] = layoutFull;
 

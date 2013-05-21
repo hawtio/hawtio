@@ -17,10 +17,16 @@ module Wiki {
         href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
       },
       {
-        content: '<i class="icon-picture"></i> Diagram',
+        content: '<i class="icon-sitemap"></i> Diagram',
         title: "View a diagram of the route",
         isValid: (workspace:Workspace) => true,
         href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
+      },
+      {
+        content: '<i class="icon-picture"></i> Canvas',
+        title: "Edit the diagram in a draggy droppy way",
+        isValid: (workspace:Workspace) => true,
+        href: () => Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId
       }
     ];
 
