@@ -49,6 +49,12 @@ module Fabric {
     $scope.profilesGridOptions = {
       data: 'profileIdArray',
       selectedItems: [],
+      afterSelectionChange: () => {
+        $scope.profileIdHtml = "";
+        angular.forEach($scope.profilesGridOptions.selectedItems, (object) => {
+          $scope.profileIdHtml += "<li>" + object.id + "</li>";
+        });
+      },
       showSelectionCheckbox: true,
       multiSelect: true,
       selectWithCheckboxOnly: true,
@@ -73,7 +79,7 @@ module Fabric {
         profileIds = profileIds.remove(object.id);
       });
       var versionId = $scope.versionId;
-      console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
+      //console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
 
       var text = Core.maybePlural($scope.profilesGridOptions.selectedItems.length, "profile");
       applyProfiles(jolokia, versionId, profileIds, containerIds, () => {
@@ -90,7 +96,6 @@ module Fabric {
           var versionId = $scope.row.versionId;
           $scope.versionId = versionId;
           var profileIds = $scope.row.profileIds;
-          console.log("==== loaded profile Ids: " + profileIds);
           $scope.profileIdArray = profileIds ? profileIds.map((value) => { return {id: value, versionId: versionId}; }) : [];
           $scope.services = getServiceList($scope.row);
         }

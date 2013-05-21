@@ -125,7 +125,7 @@
     <dl class="dl-horizontal">
       <div class="btn-group pull-right">
         <button class="btn" ng-click="addProfiles()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
-        <button class="btn" ng-click="deleteProfiles()" ng-disabled="profilesGridOptions.selectedItems.length == 0"
+        <button class="btn" ng-click="deleteProfileDialog = true" ng-disabled="profilesGridOptions.selectedItems.length == 0"
                 title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
       </div>
     </dl>
@@ -148,3 +148,17 @@
     </dl>
   </div>
 </div>
+
+<div hawtio-confirm-dialog="deleteProfileDialog"
+     ok-button-text="Delete"
+     on-ok="deleteProfiles()">
+  <div class="dialog-body">
+    <p>You are about to remove
+      <ng-pluralize count="profilesGridOptions.selectedItems.length"
+                    when="{'1': 'this profile', 'other': 'these {} profiles'}">
+      </ng-pluralize>
+      from container {{row.id}}</p>
+    <ul ng-bind-html-unsafe="profileIdHtml"></ul>
+  </div>
+</div>
+
