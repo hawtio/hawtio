@@ -6,14 +6,6 @@ module Fabric {
     $scope.profiles = [];
     $scope.addProfileArray = [];
 
-    if (angular.isDefined($scope.containerId)) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: managerMBean,
-        operation: 'getContainer(java.lang.String)',
-        arguments: [$scope.containerId]
-      }, onSuccess(render));
-    }
-
     $scope.connect = () => {
       // TODO lets find these from somewhere! :)
       var userName = "admin";
@@ -137,6 +129,14 @@ module Fabric {
       });
     };
 
+    if (angular.isDefined($scope.containerId)) {
+      Core.register(jolokia, $scope, {
+        type: 'exec', mbean: managerMBean,
+        operation: 'getContainer(java.lang.String)',
+        arguments: [$scope.containerId]
+      }, onSuccess(render));
+    }
+
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
@@ -174,7 +174,10 @@ module Fabric {
      */
     function updateAddProfiles() {
       var newData = $scope.profiles.filter(object => !$scope.profileIdArray.find({id: object.id}));
+      $scope.addProfileArray = newData;
+/*
       $scope.addProfileArray.splice(0, $scope.addProfileArray.length, newData);
+*/
       Core.$apply($scope);
     }
   }
