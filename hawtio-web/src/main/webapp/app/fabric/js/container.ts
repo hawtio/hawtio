@@ -2,12 +2,15 @@ module Fabric {
 
   export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
     $scope.containerId = $routeParams.containerId;
+    $scope.profileQuery = [null, ["id"]];
+    $scope.profiles = [];
+    $scope.addProfileArray = [];
 
     if (angular.isDefined($scope.containerId)) {
       Core.register(jolokia, $scope, {
-          type: 'exec', mbean: managerMBean,
-          operation: 'getContainer(java.lang.String)',
-          arguments: [$scope.containerId]
+        type: 'exec', mbean: managerMBean,
+        operation: 'getContainer(java.lang.String)',
+        arguments: [$scope.containerId]
       }, onSuccess(render));
     }
 
@@ -20,17 +23,29 @@ module Fabric {
 
     $scope.stop = () => {
       // TODO proper notifications
-      stopContainer(jolokia, $scope.containerId, function() {console.log("Stopped!")}, function() {console.log("Failed to stop!")});
+      stopContainer(jolokia, $scope.containerId, function () {
+        console.log("Stopped!")
+      }, function () {
+        console.log("Failed to stop!")
+      });
     };
 
     $scope.delete = () => {
       // TODO proper notifications
-      destroyContainer(jolokia, $scope.containerId, function() {console.log("Deleted!")}, function() {console.log("Failed to delete!")});
+      destroyContainer(jolokia, $scope.containerId, function () {
+        console.log("Deleted!")
+      }, function () {
+        console.log("Failed to delete!")
+      });
     };
 
     $scope.start = () => {
       // TODO proper notifications
-      startContainer(jolokia, $scope.containerId, function() {console.log("Started!")}, function() {console.log("Failed to start!")});
+      startContainer(jolokia, $scope.containerId, function () {
+        console.log("Started!")
+      }, function () {
+        console.log("Failed to start!")
+      });
     };
 
     $scope.getType = () => {
@@ -64,11 +79,44 @@ module Fabric {
           field: 'id',
           displayName: 'Profiles',
           cellTemplate: '<div class="ngCellText"><a href="#/fabric/profile/{{versionId}}/{{row.entity.id}}{{hash}}">{{row.entity.id}}</a></div>'
-        }]
+        }
+      ]
+    };
+
+    $scope.addProfileGridOptions = {
+      data: 'addProfileArray',
+      selectedItems: [],
+      showSelectionCheckbox: true,
+      multiSelect: true,
+      selectWithCheckboxOnly: false,
+      keepLastSelected: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Name'
+        }
+      ]
     };
 
     $scope.addProfiles = () => {
+      console.log("Adding profiles: " + $scope.addProfileGridOptions.selectedItems);
 
+      var containerIds = [ $scope.containerId ];
+      var profileIds = $scope.row.profileIds;
+      // remove the selected ones
+      angular.forEach($scope.addProfileGridOptions.selectedItems, (object) => {
+        profileIds.push(object.id);
+      });
+      profileIds = profileIds.unique();
+      var versionId = $scope.versionId;
+      //console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
+
+      var text = Core.maybePlural($scope.addProfileGridOptions.selectedItems.length, "profile");
+      applyProfiles(jolokia, versionId, profileIds, containerIds, () => {
+        notification('success', "Successfully added " + text);
+      }, (response) => {
+        notification('error', "Failed to add " + text + " due to " + response.error);
+      });
     };
 
     $scope.deleteProfiles = () => {
@@ -94,13 +142,40 @@ module Fabric {
         $scope.row = response.value;
         if ($scope.row) {
           var versionId = $scope.row.versionId;
-          $scope.versionId = versionId;
+          if (versionId) {
+            $scope.versionId = versionId;
+            $scope.profileQuery[0] = versionId;
+            if (!$scope.registeredProfiles) {
+              $scope.registeredProfiles = true;
+              Core.register(jolokia, $scope, {
+                type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String, java.util.List)', arguments: $scope.profileQuery
+              }, onSuccess(onProfiles));
+            }
+          }
           var profileIds = $scope.row.profileIds;
-          $scope.profileIdArray = profileIds ? profileIds.map((value) => { return {id: value, versionId: versionId}; }) : [];
+          $scope.profileIdArray = profileIds ? profileIds.map((value) => {
+            return {id: value, versionId: versionId};
+          }) : [];
           $scope.services = getServiceList($scope.row);
+          updateAddProfiles();
         }
-        $scope.$apply();
       }
     }
- }
+
+    function onProfiles(response) {
+      if (response.value) {
+        $scope.profiles = response.value;
+      }
+      updateAddProfiles();
+    }
+
+    /**
+     * Lets filter out all the profiles that are not currently in use
+     */
+    function updateAddProfiles() {
+      var newData = $scope.profiles.filter(object => !$scope.profileIdArray.find({id: object.id}));
+      $scope.addProfileArray.splice(0, $scope.addProfileArray.length, newData);
+      Core.$apply($scope);
+    }
+  }
 }

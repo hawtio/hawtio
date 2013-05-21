@@ -45,11 +45,7 @@ module Fabric {
     
     key = $location.search()['ao'];
     // lets default to activeOnly if no query parameter used
-    if (!angular.isDefined(key) || key === 'true') {
-      $scope.activeOnly = true;
-    } else {
-      $scope.activeOnly = false;
-    }
+    $scope.activeOnly = !angular.isDefined(key) || key === 'true';
     
     $scope.versions = [];
     $scope.profiles = [];
