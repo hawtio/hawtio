@@ -5,6 +5,25 @@ module Wiki {
 
     Wiki.initScope($scope, $routeParams, $location);
 
+    $scope.isValid = (nav) => {
+      return nav && nav.isValid(workspace);
+    };
+
+    $scope.camelSubLevelTabs = [
+      {
+        content: '<i class=" icon-edit"></i> Properties',
+        title: "View the pattern properties",
+        isValid: (workspace:Workspace) => true,
+        href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
+      },
+      {
+        content: '<i class="icon-picture"></i> Diagram',
+        title: "View a diagram of the route",
+        isValid: (workspace:Workspace) => true,
+        href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
+      }
+    ];
+
     var routeModel = _apacheCamelModel.definitions.route;
     routeModel["_id"] = "route";
 
@@ -79,10 +98,6 @@ module Wiki {
 
     $scope.canDelete = () => {
       return $scope.selectedFolder ? true : false;
-    };
-
-    $scope.camelSubLevelTabs = () => {
-      return $scope.breadcrumbs;
     };
 
     $scope.isActive = (nav) => {
@@ -270,21 +285,6 @@ module Wiki {
     function updateView() {
       $scope.pageId = Wiki.pageId($routeParams, $location);
       console.log("Has page id: " + $scope.pageId + " with $routeParams " + JSON.stringify($routeParams));
-
-      $scope.breadcrumbs = [
-        {
-          content: '<i class=" icon-edit"></i> Properties',
-          title: "View the pattern properties",
-          isValid: (workspace:Workspace) => true,
-          href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
-        },
-        {
-          content: '<i class="icon-picture"></i> Diagram',
-          title: "View a diagram of the route",
-          isValid: (workspace:Workspace) => true,
-          href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
-        }
-      ];
 
       if (Git.getGitMBean(workspace)) {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
