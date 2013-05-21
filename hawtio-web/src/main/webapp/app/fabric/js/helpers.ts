@@ -32,6 +32,10 @@ module Fabric {
     doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, data], success, error);
   }
 
+  export function addProfilesToContainer(jolokia, container, profiles, success, error) {
+    doAction('addProfilesToContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
+  }
+
   export function applyProfiles(jolokia, version, profiles, containers, success, error) {
     doAction('applyProfilesToContainers(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, containers], success, error);
   }

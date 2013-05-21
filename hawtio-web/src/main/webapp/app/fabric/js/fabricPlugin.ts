@@ -1,7 +1,7 @@
 module Fabric {
   export var jmxDomain = 'org.fusesource.fabric';
 
-  angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore']).config(($routeProvider) => {
+  angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop']).config(($routeProvider) => {
     $routeProvider.
             when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html'}).
             when('/fabric/containers/createContainer', {templateUrl: 'app/fabric/html/createContainer.html'}).
@@ -12,7 +12,8 @@ module Fabric {
             when('/fabric/container/:containerId', {templateUrl: 'app/fabric/html/container.html'}).
             when('/fabric/profiles', {templateUrl: 'app/fabric/html/profiles.html'}).
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
-            when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'});
+            when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'}).
+            when('/fabric/view', {templateUrl: 'app/fabric/html/fabricView.html'});
   }).
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 

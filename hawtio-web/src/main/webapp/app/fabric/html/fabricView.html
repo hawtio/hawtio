@@ -1,0 +1,59 @@
+<div ng-controller="Fabric.FabricViewController">
+  <div class="row-fluid">
+
+    <div class="span2">
+      <ul>
+        <li>
+          <a href="" ng-click="setActiveVersionId('')">Show All</a>
+        </li>
+        <li ng-repeat="version in versions">
+          <div class="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:true, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid'}">
+            <a href="" ng-click="setActiveVersionId(version.id)">{{version.id}} {{containersForVersion(version.id)}}</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="span2" ng-show="profiles.length > 0">
+      <ul>
+        <li>
+          <a href="" ng-click="setActiveProfileId('')">Show All</a>
+        </li>
+        <li ng-repeat="profile in profiles">
+          <div class="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:true, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid'}">
+            <a href="" ng-click="setActiveProfileId(profile)">{{profile}} {{containersForProfile(profile)}}</a>
+          </div>
+        </li>
+      </ul>
+
+    </div>
+
+    <div class="span2">
+      <ul>
+        <li>
+          <a href="" ng-click="setActiveContainerId('')">Show All</a>
+        </li>
+        <li ng-repeat="container in containers">
+          <div class="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}" ng-model="dropContainer">
+            <a href="" ng-click="setActiveContainerId(container.id)">{{container.id}}</a>
+          </div>
+        </li>
+      </ul>
+
+    </div>
+
+    <div class="span2">
+      <ul>
+        <li>
+          <a href="" ng-click="setActiveProfileId('')">Show All</a>
+        </li>
+        <li ng-repeat="profile in activeProfiles">
+          <a href="" ng-click="setActiveProfileId(profile.id)">{{profile.id}} ({{profile.count}})</a>
+        </li>
+      </ul>
+    </div>
+
+
+
+  </div>
+</div>
