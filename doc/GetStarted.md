@@ -27,11 +27,14 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just
   </tr>
 </table>
 
-Copy the WAR file to your deploy directory in your container; for simplicity use the 'hawtio' context path (e.g. by copying the WAR file to _hawtio.war_ in your deploy directory) then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
+Copy the WAR file to your deploy directory in your container.
+
+If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
+
+Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.1/](http://localhost:8080/hawtio-default-1.1/) or [http://localhost:8080/sample-1.1/](http://localhost:8080/sample-1.1/)  depending on the file name you downloaded.
 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
  <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.1/hawtio-default-offline-1.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
-
 
 To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
 
