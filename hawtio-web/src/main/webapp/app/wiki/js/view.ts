@@ -46,7 +46,7 @@ module Wiki {
         var xmlNamespaces = child.xmlNamespaces;
         if (xmlNamespaces && xmlNamespaces.length) {
           if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
-            prefix = start + "/camel/properties";
+            prefix = start + "/camel/canvas";
           } else {
             console.log("child " + path + " has namespaces " + xmlNamespaces);
           }
