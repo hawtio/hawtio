@@ -34,23 +34,6 @@ module Wiki {
       }
     }
 
-    var connectorStrokeColor = "rgba(50, 50, 200, 1)",
-            connectorHighlightStrokeColor = "rgba(180, 180, 200, 1)",
-            hoverPaintStyle = { strokeStyle: "#7ec3d9" };			// hover paint style is merged on normal style, so you
-    // don't necessarily need to specify a lineWidth
-
-    var overlays:any[] = ["PlainArrow", {location: 1, width: 20, length: 12} ];
-    var stateMachineConnector = {
-      connector: "StateMachine",
-      paintStyle: {lineWidth: 3, strokeStyle: "#056"},
-      hoverPaintStyle: {strokeStyle: "#dbe300"},
-      endpoint: "Blank",
-      anchor: "Continuous",
-      overlays: [
-        overlays
-      ]
-    };
-
     function showGraph(nodes, links) {
       var width = getWidth();
       var height = Camel.getCanvasHeight($($element));
@@ -68,7 +51,31 @@ module Wiki {
       } catch (e) {
         // ignore errors
       }
+      try {
+        jsPlumb.deleteEveryEndpoint();
+      } catch (e) {
+        // ignore errors
+      }
       containerElement.find("div.component").remove();
+
+      var endpointStyle:any[] = ["Dot", {radius:2}];
+      //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
+      var labelStyles: any[] = [ "Label" ];
+      var arrowStyles: any[] = [ "Arrow", {
+         						location:1,
+         						id:"arrow",
+         	                    length:14,
+         	                    foldback:0.8
+         					} ];
+      jsPlumb.importDefaults({
+   				Endpoint : endpointStyle,
+   				HoverPaintStyle : {strokeStyle:"#42a62c", lineWidth:2 },
+   				ConnectionOverlays : [
+   					arrowStyles,
+   	                labelStyles
+   				]
+   			});
+
 
       // Create the layout and get the graph
       dagre.layout()
@@ -85,38 +92,74 @@ module Wiki {
       var top = Core.pathGet(offset, ["top"]) || 0;
 
       angular.forEach(states, (node) => {
-        var id = node.id;
+        var id = "node-" + node.id;
         var x = node.x || 0;
         var y =  node["y:"] || 0;
-        if (left) {
-          x += left;
-        }
-/*
-        if (top) {
-          y += top;
-        }
-*/
+        if (left) x += left;
+        // if (top)  y += top;
+
         var style = "top: " + y  + "px; left: " + x + "px;";
-        $("<div class='component window' id='node-" + id
+        $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip
-                + "' style='" + style + "'><img src='" + node.imageUrl + "'><span>" + node.label + "</span></div>").appendTo(containerElement);
+                + "' style='" + style + "'><img class='nodeIcon' src='" + node.imageUrl + "'>" +
+                "<span class='nodeText'>" + node.label + "</span></div>").appendTo(containerElement);
       });
+
+      var nodes = containerElement.find("div.component");
+
+      var connectorStyle:any[] = [ "StateMachine", { curviness:20 } ];
+      nodes.each(function(i,e) {
+   				jsPlumb.makeSource($(e), {
+   					filter:"img.nodeIcon",
+   					anchor:"Continuous",
+   					connector:connectorStyle,
+   					connectorStyle:{ strokeStyle:"#666", lineWidth:2 },
+   					maxConnections:-1
+   				});
+   			});
+
+      jsPlumb.makeTarget(nodes, {
+        dropOptions:{ hoverClass:"dragHover" },
+    				anchor:"Continuous"
+   			});
 
       angular.forEach(links, (link) => {
         jsPlumb.connect({
           source: "node-" + link.source,
           target: "node-" + link.target
-        }, stateMachineConnector);
+        });
       });
 
-      // make draggable
-      var selector = jsPlumb.getSelector(".window");
-      jsPlumb.draggable(selector);
+      jsPlumb.draggable(nodes);
 /*
-      jsPlumb.draggable(selector, {
+      jsPlumb.draggable(nodes, {
         containment: containerElement
       });
 */
+
+      // double click on any connection
+      jsPlumb.bind("dblclick", function (connection, originalEvent) {
+        alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
+      });
+
+      // lets delete connections on click
+   			jsPlumb.bind("click", function(c) {
+   				jsPlumb.detach(c);
+   			});
+
+
+      // single click on any endpoint
+      jsPlumb.bind("endpointClick", function (endpoint, originalEvent) {
+        alert("click on endpoint on element " + endpoint.elementId);
+      });
+
+      // context menu (right click) on any component.
+      jsPlumb.bind("contextmenu", function (component, originalEvent) {
+        alert("context menu on component " + component.id);
+        originalEvent.preventDefault();
+        return false;
+      });
+
       return states;
     }
 
@@ -125,30 +168,14 @@ module Wiki {
       return canvasDiv.width();
     }
 
+/*
     if (jsPlumb) {
       jsPlumb.bind("ready", setup);
     }
 
     function setup() {
-      jsPlumb.importDefaults({
-        DragOptions: { cursor: "pointer", zIndex: 2000 },
-        HoverClass: "connector-hover"
-      });
-
-      // double click on any connection
-      jsPlumb.bind("dblclick", function (connection, originalEvent) {
-        alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
-      });
-      // single click on any endpoint
-      jsPlumb.bind("endpointClick", function (endpoint, originalEvent) {
-        alert("click on endpoint on element " + endpoint.elementId);
-      });
-      // context menu (right click) on any component.
-      jsPlumb.bind("contextmenu", function (component, originalEvent) {
-        alert("context menu on component " + component.id);
-        originalEvent.preventDefault();
-        return false;
-      });
+      $scope.jsPlumbSetup = true;
     }
+*/
   }
 }

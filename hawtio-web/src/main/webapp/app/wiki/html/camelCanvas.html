@@ -14,16 +14,33 @@
       z-index: 20;
       position: absolute;
       font-size: 0.8em;
-      /*margin:1em;*/
+    	filter:alpha(opacity=80);
+    	cursor:move;
+
+      border-radius:1em;
+     	border:1px solid #346789;
+     	box-shadow: 2px 2px 19px #e0e0e0;
+     	-o-box-shadow: 2px 2px 19px #e0e0e0;
+     	-webkit-box-shadow: 2px 2px 19px #e0e0e0;
+     	-moz-box-shadow: 2px 2px 19px #e0e0e0;
+     	-moz-border-radius:0.5em;
+     	border-radius:0.5em;
     }
 
-    .label {
+    img.nodeIcon {
+      cursor: crosshair;
+    }
+
+    .nodeText {
+/*
       border: 1px solid #346789;
+*/
       padding: 8px;
       padding: 8px;
+
     }
 
-    .label:hover {
+    .nodeText:hover {
       border-color: #5d94a6;
     }
 
