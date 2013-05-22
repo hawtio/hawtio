@@ -50,7 +50,9 @@ module Wiki {
       var transitions = [];
       var states = Core.createGraphStates(nodes, links, transitions);
 
-      var containerElement = $($element);
+      var rootElement = $($element);
+      var containerElement = rootElement.find(".canvas");
+      if (!containerElement || !containerElement.length) containerElement = rootElement;
       try {
         jsPlumb.detachEveryConnection();
       } catch (e) {
@@ -83,6 +85,28 @@ module Wiki {
       });
 
 
+
+      var offset = containerElement.offset();
+      var left = Core.pathGet(offset, ["left"]) || 0;
+      var top = Core.pathGet(offset, ["top"]) || 0;
+
+      angular.forEach(states, (node) => {
+        var id = "node-" + node.id;
+        $("<div class='component window' id='" + id
+                + "' title='" + node.tooltip + "'" +
+                //+ " style='" + style + "'" +
+                "><img class='nodeIcon' src='" + node.imageUrl + "'>" +
+                "<span class='nodeText'>" + node.label + "</span></div>").appendTo(containerElement);
+
+        var div = $("#" + id);
+        var height = div.height();
+        var width = div.width();
+        if (height || width) {
+          node.width = width;
+          node.height = height;
+        }
+      });
+
       // Create the layout and get the graph
       dagre.layout()
               .nodeSep(50)
@@ -93,26 +117,18 @@ module Wiki {
               .debugLevel(1)
               .run();
 
-      var offset = containerElement.offset();
-      var left = Core.pathGet(offset, ["left"]) || 0;
-      var top = Core.pathGet(offset, ["top"]) || 0;
-
       angular.forEach(states, (node) => {
         var id = "node-" + node.id;
-        var x = node.x || 0;
-        var y = node["y:"] || 0;
-        if (left) x += left;
-        // if (top)  y += top;
-
-        var style = "top: " + y + "px; left: " + x + "px;";
-        $("<div class='component window' id='" + id
-                + "' title='" + node.tooltip
-                + "' style='" + style + "'><img class='nodeIcon' src='" + node.imageUrl + "'>" +
-                "<span class='nodeText'>" + node.label + "</span></div>").appendTo(containerElement);
+        var dagre = node.dagre || node;
+        var x = dagre.x || 0;
+        var y = dagre.y || dagre["y:"] || 0;
+        //if (left) x += left;
+        if (top)  y += top;
+        var div = $("#" + id);
+        div.css({top: y, left: x});
       });
 
       var nodes = containerElement.find("div.component");
-
       var connectorStyle:any[] = [ "StateMachine", { curviness: 20 } ];
       nodes.each(function (i, e) {
         jsPlumb.makeSource($(e), {
