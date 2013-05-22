@@ -99,6 +99,7 @@ module Wiki {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.branch = $routeParams["branch"] || $location.search()["branch"];
     $scope.objectId = $routeParams["objectId"];
+    $scope.startLink = Wiki.startLink($scope.branch);
   }
 
 
