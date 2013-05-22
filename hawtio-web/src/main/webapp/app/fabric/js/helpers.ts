@@ -36,6 +36,10 @@ module Fabric {
     doAction('addProfilesToContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
   }
 
+  export function removeProfilesFromContainer(jolokia, container, profiles, success, error) {
+    doAction('removeProfilesFromContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
+  }
+
   export function applyProfiles(jolokia, version, profiles, containers, success, error) {
     doAction('applyProfilesToContainers(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, containers], success, error);
   }
