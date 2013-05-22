@@ -1,5 +1,28 @@
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia) {
+    Camel.initGraph($scope, $element, workspace, jolokia, showGraph);
+
+    function showGraph(nodes, links) {
+      var canvasDiv = $($element);
+      var width = $scope.getWidth();
+      var height = $scope.getHeight();
+/*
+      var svg = canvasDiv.children("svg")[0];
+      $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
+*/
+
+/*
+      if ($scope.mbean) {
+        Core.register(jolokia, $scope, {
+          type: 'exec', mbean: $scope.mbean,
+          operation: 'dumpRoutesStatsAsXml',
+          arguments: [true, true]
+          // the dumpRoutesStatsAsXml is not available in all Camel versions so do not barf on errors
+        }, onSuccess(statsCallback, {silent: true, error: false}));
+      }
+*/
+      return width;
+    }
 
     if (jsPlumb) {
       jsPlumb.bind("ready", setup);
