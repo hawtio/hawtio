@@ -5,15 +5,34 @@ module Wiki {
       var tree = $scope.camelContextTree;
       var doc = Core.pathGet(tree, ["xmlDocument"]);
       if (doc) {
-        var nodes = [];
-        var links = [];
-        // TODO
-        //var selectedRouteId = getSelectedRouteId(workspace);
-        var selectedRouteId = "route1";
-        Camel.loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, getWidth());
-        showGraph(nodes, links);
+        $scope.doc = doc;
+        $scope.routeIds = [];
+        $(doc).find("route").each((idx, route) => {
+          var id = route.getAttribute("id");
+          if (id) {
+            $scope.routeIds.push(id);
+          }
+        });
+        onRouteSelectionChanged();
       }
     });
+
+    $scope.$watch("selectedRouteId", onRouteSelectionChanged);
+
+    function onRouteSelectionChanged() {
+      if ($scope.doc) {
+        if (!$scope.selectedRouteId && $scope.routeIds && $scope.routeIds.length) {
+          $scope.selectedRouteId = $scope.routeIds[0];
+        }
+        if ($scope.selectedRouteId && $scope.selectedRouteId !== $scope.drawnRouteId) {
+          var nodes = [];
+          var links = [];
+          Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
+          showGraph(nodes, links);
+          $scope.drawnRouteId = $scope.selectedRouteId;
+        }
+      }
+    }
 
     var connectorStrokeColor = "rgba(50, 50, 200, 1)",
             connectorHighlightStrokeColor = "rgba(180, 180, 200, 1)",
@@ -44,8 +63,8 @@ module Wiki {
       var states = Core.createGraphStates(nodes, links, transitions);
 
       var containerElement = $($element);
-      containerElement.children("div").remove();
-
+      jsPlumb.detachEveryConnection();
+      containerElement.find("div.component").remove();
 
       // Create the layout and get the graph
       dagre.layout()
@@ -79,10 +98,7 @@ module Wiki {
                 + "' style='" + style + "'><img src='" + node.imageUrl + "'><span>" + node.label + "</span></div>").appendTo(containerElement);
       });
 
-      jsPlumb.detachEveryConnection();
-
       angular.forEach(links, (link) => {
-        console.log("connect " + link.source + " to " + link.target);
         jsPlumb.connect({
           source: "node-" + link.source,
           target: "node-" + link.target
