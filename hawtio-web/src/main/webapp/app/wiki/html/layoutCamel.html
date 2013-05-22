@@ -2,6 +2,10 @@
   <ng-include src="'app/wiki/html/camelNavBar.html'"></ng-include>
 
   <div class="row-fluid">
+    <ng-include src="'app/wiki/html/camelSubLevelTabs.html'"></ng-include>
+  </div>
+
+  <div class="row-fluid">
     <div id="tree-container" class="span3" ng-controller="Camel.TreeController">
       <div hawtio-tree="camelContextTree" onselect="onNodeSelect" onDragEnter="onNodeDragEnter" onDrop="onNodeDrop"
            onRoot="onRootTreeNode"
@@ -9,7 +13,6 @@
     </div>
 
     <div class="span9">
-      <ng-include src="'app/wiki/html/camelSubLevelTabs.html'"></ng-include>
       <div ng-view></div>
     </div>
   </div>

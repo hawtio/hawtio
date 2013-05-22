@@ -11,23 +11,25 @@ module Wiki {
 
     $scope.camelSubLevelTabs = [
       {
-        content: '<i class=" icon-edit"></i> Properties',
-        title: "View the pattern properties",
+        content: '<i class="icon-picture"></i> Canvas',
+        title: "Edit the diagram in a draggy droppy way",
+        isValid: (workspace:Workspace) => true,
+        href: () => Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId
+      },
+      {
+        content: '<i class=" icon-sitemap"></i> Tree',
+        title: "View the routes as a tree",
         isValid: (workspace:Workspace) => true,
         href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
       },
+/*
       {
         content: '<i class="icon-sitemap"></i> Diagram',
         title: "View a diagram of the route",
         isValid: (workspace:Workspace) => true,
         href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
       },
-      {
-        content: '<i class="icon-picture"></i> Canvas',
-        title: "Edit the diagram in a draggy droppy way",
-        isValid: (workspace:Workspace) => true,
-        href: () => Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId
-      }
+*/
     ];
 
     var routeModel = _apacheCamelModel.definitions.route;
