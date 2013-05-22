@@ -755,4 +755,97 @@ module Camel {
        ]
      };
   }
+
+  export function loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, width) {
+    var allRoutes = $(doc).find("route");
+    var routeDelta = width / allRoutes.length;
+    var rowX = 0;
+    allRoutes.each((idx, route) => {
+      var routeId = route.getAttribute("id");
+      if (!selectedRouteId || !routeId || selectedRouteId === routeId) {
+        Camel.addRouteXmlChildren($scope, route, nodes, links, null, rowX, 0);
+        rowX += routeDelta;
+      }
+    });
+  }
+
+  export function addRouteXmlChildren($scope, parent, nodes, links, parentId, parentX, parentY, parentNode = null) {
+    var delta = 150;
+    var x = parentX;
+    var y = parentY + delta;
+    var rid = parent.getAttribute("id");
+    var siblingNodes = [];
+    var parenNodeName = parent.localName;
+    $(parent).children().each((idx, route) => {
+      var id = nodes.length;
+      // from acts as a parent even though its a previous sibling :)
+      var nodeId = route.localName;
+      if (nodeId === "from" && !parentId) {
+        parentId = id;
+      }
+      var nodeSettings = getCamelSchema(nodeId);
+      var node = null;
+      if (nodeSettings) {
+        var label = nodeSettings["title"] || nodeId;
+        var uri = getRouteNodeUri(route);
+        if (uri) {
+          label += " " + uri;
+        }
+        var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || name;
+        var imageUrl = getRouteNodeIcon(nodeSettings);
+
+        //console.log("Image URL is " + imageUrl);
+        var cid = route.getAttribute("id");
+        node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
+        if (rid) {
+          node["rid"] = rid;
+          if (!$scope.routeNodes) $scope.routeNodes = {};
+          $scope.routeNodes[rid] = node;
+        }
+        if (cid) {
+          if (!$scope.nodes) $scope.nodes = {}
+          $scope.nodes[cid] = node;
+        }
+        // only use the route id on the first from node
+        rid = null;
+        nodes.push(node);
+        if (parentId !== null && parentId !== id) {
+          if (siblingNodes.length === 0 || parenNodeName === "choice") {
+            links.push({"source": parentId, "target": id, "value": 1});
+          } else {
+            siblingNodes.forEach(function (nodeId) {
+              links.push({"source": nodeId, "target": id, "value": 1});
+            });
+            siblingNodes.length = 0;
+          }
+        }
+      } else {
+        // ignore non EIP nodes, though we should add expressions...
+        var langSettings =  Camel.camelLanguageSettings(nodeId);
+        if (langSettings && parentNode) {
+          // lets add the language kind
+          var name = langSettings["name"] || nodeId;
+          var text = route.textContent;
+          if (text) {
+            parentNode["tooltip"] = parentNode["label"] + " " + name + " " + text;
+            parentNode["label"] = text;
+          } else {
+            parentNode["label"] = parentNode["label"] + " " + name;
+          }
+        }
+      }
+      var siblings = addRouteXmlChildren($scope, route, nodes, links, id, x, y, node);
+      if (parenNodeName === "choice") {
+        siblingNodes = siblingNodes.concat(siblings);
+        x += delta;
+      } else if (nodeId === "choice") {
+        siblingNodes = siblings;
+        y += delta;
+      } else {
+        siblingNodes = [nodes.length - 1];
+        y += delta;
+      }
+    });
+    return siblingNodes;
+  }
 }
