@@ -63,30 +63,31 @@ module Wiki {
       }
       containerElement.find("div.component").remove();
 
-      var endpointStyle:any[] = ["Dot", {radius:2}];
+      var endpointStyle:any[] = ["Dot", {radius: 2}];
       //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
-      var labelStyles: any[] = [ "Label" ];
-      var arrowStyles: any[] = [ "Arrow", {
-         						location:1,
-         						id:"arrow",
-         	                    length:14,
-         	                    foldback:0.8
-         					} ];
+      var labelStyles:any[] = [ "Label" ];
+      var arrowStyles:any[] = [ "Arrow", {
+        location: 1,
+        id: "arrow",
+        length: 8,
+        width: 8,
+        foldback: 0.8
+      } ];
       jsPlumb.importDefaults({
-   				Endpoint : endpointStyle,
-   				HoverPaintStyle : {strokeStyle:"#42a62c", lineWidth:2 },
-   				ConnectionOverlays : [
-   					arrowStyles,
-   	                labelStyles
-   				]
-   			});
+        Endpoint: endpointStyle,
+        HoverPaintStyle: {strokeStyle: "#42a62c", lineWidth: 4 },
+        ConnectionOverlays: [
+          arrowStyles,
+          labelStyles
+        ]
+      });
 
 
       // Create the layout and get the graph
       dagre.layout()
-              .nodeSep(40)
+              .nodeSep(50)
               .edgeSep(10)
-              .rankSep(40)
+              .rankSep(50)
               .nodes(states)
               .edges(transitions)
               .debugLevel(1)
@@ -99,11 +100,11 @@ module Wiki {
       angular.forEach(states, (node) => {
         var id = "node-" + node.id;
         var x = node.x || 0;
-        var y =  node["y:"] || 0;
+        var y = node["y:"] || 0;
         if (left) x += left;
         // if (top)  y += top;
 
-        var style = "top: " + y  + "px; left: " + x + "px;";
+        var style = "top: " + y + "px; left: " + x + "px;";
         $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip
                 + "' style='" + style + "'><img class='nodeIcon' src='" + node.imageUrl + "'>" +
@@ -112,21 +113,21 @@ module Wiki {
 
       var nodes = containerElement.find("div.component");
 
-      var connectorStyle:any[] = [ "StateMachine", { curviness:20 } ];
-      nodes.each(function(i,e) {
-   				jsPlumb.makeSource($(e), {
-   					filter:"img.nodeIcon",
-   					anchor:"Continuous",
-   					connector:connectorStyle,
-   					connectorStyle:{ strokeStyle:"#666", lineWidth:2 },
-   					maxConnections:-1
-   				});
-   			});
+      var connectorStyle:any[] = [ "StateMachine", { curviness: 20 } ];
+      nodes.each(function (i, e) {
+        jsPlumb.makeSource($(e), {
+          filter: "img.nodeIcon",
+          anchor: "Continuous",
+          connector: connectorStyle,
+          connectorStyle: { strokeStyle: "#666", lineWidth: 2 },
+          maxConnections: -1
+        });
+      });
 
       jsPlumb.makeTarget(nodes, {
-        dropOptions:{ hoverClass:"dragHover" },
-    				anchor:"Continuous"
-   			});
+        dropOptions: { hoverClass: "dragHover" },
+        anchor: "Continuous"
+      });
 
       angular.forEach(links, (link) => {
         jsPlumb.connect({
@@ -136,11 +137,11 @@ module Wiki {
       });
 
       jsPlumb.draggable(nodes);
-/*
-      jsPlumb.draggable(nodes, {
-        containment: containerElement
-      });
-*/
+      /*
+       jsPlumb.draggable(nodes, {
+       containment: containerElement
+       });
+       */
 
       // double click on any connection
       jsPlumb.bind("dblclick", function (connection, originalEvent) {
@@ -148,9 +149,9 @@ module Wiki {
       });
 
       // lets delete connections on click
-   			jsPlumb.bind("click", function(c) {
-   				jsPlumb.detach(c);
-   			});
+      jsPlumb.bind("click", function (c) {
+        jsPlumb.detach(c);
+      });
 
 
       // single click on any endpoint
@@ -173,14 +174,14 @@ module Wiki {
       return canvasDiv.width();
     }
 
-/*
-    if (jsPlumb) {
-      jsPlumb.bind("ready", setup);
-    }
+    /*
+     if (jsPlumb) {
+     jsPlumb.bind("ready", setup);
+     }
 
-    function setup() {
-      $scope.jsPlumbSetup = true;
-    }
-*/
+     function setup() {
+     $scope.jsPlumbSetup = true;
+     }
+     */
   }
 }
