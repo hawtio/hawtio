@@ -17,6 +17,11 @@ module Wiki {
       }
     });
 
+    $scope.doLayout = () => {
+      $scope.drawnRouteId = null;
+      onRouteSelectionChanged();
+    };
+
     $scope.$watch("selectedRouteId", onRouteSelectionChanged);
 
     function onRouteSelectionChanged() {
@@ -79,9 +84,9 @@ module Wiki {
 
       // Create the layout and get the graph
       dagre.layout()
-              .nodeSep(50)
+              .nodeSep(40)
               .edgeSep(10)
-              .rankSep(50)
+              .rankSep(40)
               .nodes(states)
               .edges(transitions)
               .debugLevel(1)

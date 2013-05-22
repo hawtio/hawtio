@@ -43,7 +43,8 @@ module Wiki {
             Core.pathSet(viewRegistry, [key], "app/wiki/html/layoutCamel.html");
             //viewRegistry[key] = "app/wiki/html/layoutCamel.html";
 */
-            viewRegistry["/wiki/(branch/.*/)?camel/canvas/"] = "app/wiki/html/layoutCamelCanvas.html";
+            viewRegistry["/wiki/(branch/.*/)?camel/canvas/"] = layoutFull;
+            //viewRegistry["/wiki/(branch/.*/)?camel/canvas/"] = "app/wiki/html/layoutCamelCanvas.html";
             viewRegistry["/wiki/(branch/.*/)?camel/.*/"] = "app/wiki/html/layoutCamel.html";
             viewRegistry['wiki'] = layoutFull;
 
