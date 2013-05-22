@@ -63,7 +63,11 @@ module Wiki {
       var states = Core.createGraphStates(nodes, links, transitions);
 
       var containerElement = $($element);
-      jsPlumb.detachEveryConnection();
+      try {
+        jsPlumb.detachEveryConnection();
+      } catch (e) {
+        // ignore errors
+      }
       containerElement.find("div.component").remove();
 
       // Create the layout and get the graph
@@ -77,8 +81,8 @@ module Wiki {
               .run();
 
       var offset = containerElement.offset();
-      var left = offset["left"];
-      var top = offset["top"];
+      var left = Core.pathGet(offset, ["left"]) || 0;
+      var top = Core.pathGet(offset, ["top"]) || 0;
 
       angular.forEach(states, (node) => {
         var id = node.id;
