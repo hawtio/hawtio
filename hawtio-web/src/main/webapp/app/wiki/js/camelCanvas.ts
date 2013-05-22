@@ -40,39 +40,8 @@ module Wiki {
     }
 
     function layoutGraph(nodes, links, width, height) {
-      $scope.nodes = nodes;
-      $scope.links = links;
-
-      var nodePadding = 10;
-
-      // TODO the creation of transitions and stateKeys could be reused across camel.ts
-      var stateKeys = {};
       var transitions = [];
-
-      nodes.forEach((node) => {
-        var idx = node.id;
-        if (idx === undefined) {
-          console.log("No node found for node " + JSON.stringify(node));
-        } else {
-          if (node.edges === undefined) node.edges = [];
-          if (!node.label) node.label = "node " + idx;
-          stateKeys[idx] = node;
-        }
-      });
-      var states = d3.values(stateKeys);
-      links.forEach(function (d) {
-        var source = stateKeys[d.source];
-        var target = stateKeys[d.target];
-        if (source === undefined || target === undefined) {
-          console.log("Bad link!  " + source + " target " + target + " for " + d);
-        } else {
-          var edge = { source: source, target: target };
-          transitions.push(edge);
-          source.edges.push(edge);
-          target.edges.push(edge);
-          // TODO should we add the edge to the target?
-        }
-      });
+      var states = Core.createGraphStates(nodes, links, transitions);
 
       var containerElement = $($element);
       containerElement.children("div").remove();

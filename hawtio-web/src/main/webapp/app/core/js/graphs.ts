@@ -118,11 +118,8 @@ module Core {
     }
   }
 
-  // TODO Export as a service
-  export function dagreLayoutGraph(nodes, links, width, height, svgElement) {
-    var nodePadding = 10;
+  export function createGraphStates(nodes, links, transitions) {
     var stateKeys = {};
-    var transitions = [];
     nodes.forEach((node) => {
       var idx = node.id;
       if (idx === undefined) {
@@ -147,7 +144,14 @@ module Core {
         // TODO should we add the edge to the target?
       }
     });
+    return states;
+  }
 
+  // TODO Export as a service
+  export function dagreLayoutGraph(nodes, links, width, height, svgElement) {
+    var nodePadding = 10;
+    var transitions = [];
+    var states = Core.createGraphStates(nodes, links, transitions);
     function spline(e) {
       var points = e.dagre.points.slice(0);
       var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
