@@ -136,7 +136,7 @@ class Folder implements NodeSelection {
         if (idx < 0) {
           oldParent.children = <NodeSelection[]>oldParent.children.remove({key: this.key});
         } else {
-          oldParentChildren.slice(idx, idx);
+          oldParentChildren.splice(idx, 1);
         }
       }
       this.parent = null;
