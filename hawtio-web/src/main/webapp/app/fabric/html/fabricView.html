@@ -13,13 +13,13 @@
         <div class="canvas">
 
           <div ng-repeat="container in containers" ng-show="filterContainer(container)">
-            <div class="box" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
+            <div class="box" ng-class="isSelectedContainer(container)" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
 
               <input type="checkbox" ng-model="container.selected">
 
-              <a href="" ng-click="setActiveContainer(container)">
+              <div ng-click="setActiveContainer(container)">
                 {{container.id}}
-              </a>
+              </div>
 
             </div>
           </div>
@@ -35,11 +35,10 @@
         <div class="version-section">
           <div class="canvas">
             <div ng-repeat="version in versions">
-              <div class="box" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
+              <div class="box" ng-class="isSelectedVersion(version.id)" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}" ng-click="setActiveVersionId(version.id)">
 
-                <a href="" ng-click="setActiveVersionId(version.id)">
-                  {{version.id}} {{containersForVersion(version.id)}}
-                </a>
+
+                {{version.id}} {{containersForVersion(version.id)}}
 
               </div>
             </div>
@@ -53,11 +52,9 @@
 
           <div class="canvas">
             <div ng-repeat="profile in profiles">
-              <div class="box" id="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
+              <div class="box" ng-class="isSelectedProfile(profile)" id="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}" ng-click="setActiveProfileId(profile)">
 
-                <a href="" ng-click="setActiveProfileId(profile)">
-                  {{profile}} {{containersForProfile(profile)}}
-                </a>
+                {{profile}} {{containersForProfile(profile)}}
 
               </div>
             </div>
@@ -76,13 +73,15 @@
 
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
             <div class="box">
+
               <a href="" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0">
                 <i class="icon-remove"></i>
               </a>
 
-              <a href="" ng-click="setActiveProfile(profile)">
+              <div ng-click="setActiveProfile(profile.id)">
+
                 {{profile.versionId}} / {{profile.id}} ({{profile.count}})
-              </a>
+              </div>
             </div>    
           </div>
         </div>

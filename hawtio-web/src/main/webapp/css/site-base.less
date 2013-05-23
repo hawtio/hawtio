@@ -1356,8 +1356,8 @@ li.stacktrace {
   position: relative;
   margin-top: 0px;
   //width: 32%;
-  border: 1px solid @control-border;
-  border-radius: 4px;
+  //border: 1px solid @control-border;
+  //border-radius: 4px;
   height: 98%;
   //margin: .2em;
   //padding: .2em;
@@ -1392,26 +1392,59 @@ li.stacktrace {
 
 .box {
   border: 1px solid @control-border;
-  border-radius: 4px;
-  padding: 5px;
+  border-radius: 1em;
+  padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
+
+        
+  position: relative;
+  
+
+  transition: color .2s;
+  line-height: 2em;
+
+  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.1),
+              inset 0px 0px 3px rgba(0, 0, 0, 0.2);
+
+  cursor: pointer;
+
   background: white;
+
 }
 
 .version-section {
-  height: 20%;
+  height: 30%;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .profile-section {
-  height: 70%;
+  height: 60%;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .box.ui-draggable-dragging {
   width: 274px;
+}
+
+.box.selected {
+
+  color: hsl(210, 100%, 40%);
+  text-shadow: hsla(210,100%,20%,.3) 0 -1px 0, hsl(210,100%,85%) 0 2px 1px, hsla(200,100%,80%,1) 0 0 5px, hsla(210,100%,50%,.6) 0 0 20px;
+
+  box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.1),
+              inset 1px 1px 5px rgba(0, 0, 0, 0.4);
+}
+
+.box div {
+  display: inline-block;
+  width: 80%;
+}
+
+.box input[type='checkbox'] {
+  margin-top: .6em;
+  display: inline-block;
 }
 

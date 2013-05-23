@@ -31,6 +31,10 @@ module Fabric {
     $scope.$watch('containers', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         $scope.selectedContainers = $scope.containers.filter((c) => { return c.selected; });
+        if ($scope.selectedContainers.length > 0) {
+          $scope.activeContainerId = '';
+          //$scope.activeVersionId = '';
+        }
       }      
     }, true);
 
@@ -38,13 +42,13 @@ module Fabric {
     $scope.handleDrop = (event, element) => {
 
       //console.log("event: ", event);
-      console.log("element: ", element);
+      //console.log("element: ", element);
 
       var sourceElement = element.draggable.get(0);
       var targetElement = event.target;
 
-      console.log("sourceElement: ", sourceElement);
-      console.log("targetElement: ", targetElement);
+      //console.log("sourceElement: ", sourceElement);
+      //console.log("targetElement: ", targetElement);
 
       var temp = targetElement.id.split('#');
 
@@ -123,6 +127,7 @@ module Fabric {
       } else {
         $scope.removeProfile($scope.activeContainerId, profile.id);
       }
+      $scope.activeProfileId = '';
     };
 
 
@@ -247,6 +252,34 @@ module Fabric {
     };
 
 
+    $scope.isSelectedVersion = (id) => {
+      if ($scope.activeVersionId === id) {
+        return 'selected';
+      }
+      return '';
+    };
+
+    $scope.isSelectedProfile = (id) => {
+      if ($scope.activeProfileId === id) {
+        return 'selected';
+      }
+      return '';
+    }
+
+    $scope.isSelectedContainer = (container) => {
+      if ($scope.activeContainerId === container.id && 
+          $scope.activeContainerVersion === container.versionId) {
+        return 'selected';
+      }
+
+      if (container.selected) {
+        return 'selected';
+      }
+
+      return '';
+    }
+
+
     $scope.setActiveProfileId = (id) => {
       $scope.activeProfileId = id;
     };
@@ -273,10 +306,12 @@ module Fabric {
       if (!container || container === null) {
         $scope.activeContainerId = '';
         $scope.activeContainerVersion = '';
+        $scope.containers.each((c) => {c.selected = false});
         return;
       }
       $scope.activeContainerId = container.id;
       $scope.activeContainerVersion = container.versionId;
+      $scope.containers.each((c) => {c.selected = false});
     };
 
 
