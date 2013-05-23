@@ -98,6 +98,10 @@
             <a href='' title="Automatically layout the diagram " ng-click="doLayout()"
                data-placement="bottom">
               <i class="icon-magic"></i> Layout</a></li>
+          <li class="pull-right">
+            <a href='' title="Edit the properties for the selected node" ng-disabled="!selectedFolder" ng-click="propertiesDialog.open()"
+               data-placement="bottom">
+              <i class="icon-edit"></i> Properties</a></li>
         </ul>
 
         <div modal="addDialog.show" close="addDialog.close()" ng-options="addDialog.options">
@@ -111,6 +115,20 @@
               <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode"
                      value="Add">
               <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div modal="propertiesDialog.show" close="propertiesDialog.close()" ng-options="propertiesDialog.options">
+          <form class="form-horizontal no-bottom-margin" ng-submit="updatePropertiesAndCloseDialog()">
+            <div class="modal-header"><h4>Properties</h4></div>
+            <div class="modal-body">
+              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"></div>
+            </div>
+            <div class="modal-footer">
+              <input class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode"
+                     value="OK">
+              <button class="btn btn-warning cancel" type="button" ng-click="propertiesDialog.close()">Cancel</button>
             </div>
           </form>
         </div>

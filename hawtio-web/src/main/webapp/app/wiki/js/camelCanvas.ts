@@ -1,6 +1,8 @@
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia) {
     $scope.selectedFolder = null;
+    $scope.addDialog = new Core.Dialog();
+    $scope.propertiesDialog = new Core.Dialog();
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
@@ -22,13 +24,19 @@ module Wiki {
       }
     });
 
-    $scope.addDialog = new Core.Dialog();
-
     $scope.addAndCloseDialog = () => {
       if ($scope.selectedPaletteNode) {
         addNewNode($scope.selectedPaletteNode["nodeModel"]);
       }
       $scope.addDialog.close();
+    };
+
+    $scope.removeNode = () => {
+      if ($scope.selectedFolder) {
+        $scope.selectedFolder.detach();
+        $scope.selectedFolder = null;
+        treeModified();
+      }
     };
 
     $scope.doLayout = () => {
@@ -77,19 +85,10 @@ module Wiki {
           var node = document.createElement(key);
           parentFolder = treeNode;
           var addedNode = Camel.addRouteChild(parentFolder, node);
-          }
         }
-        treeModified();
       }
+      treeModified();
     }
-
-    $scope.removeNode = () => {
-      if ($scope.selectedFolder) {
-        $scope.selectedFolder.detach();
-        $scope.selectedFolder = null;
-        treeModified();
-      }
-    };
 
     function treeModified() {
       // lets recreate the XML model from the update Folder tree
@@ -178,8 +177,6 @@ module Wiki {
         ]
       });
 
-
-
       var offset = containerElement.offset();
       var left = Core.pathGet(offset, ["left"]) || 0;
       var top = Core.pathGet(offset, ["top"]) || 0;
@@ -188,7 +185,7 @@ module Wiki {
         var id = getNodeId(node);
         $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip + "'" +
-                //+ " style='" + style + "'" +
+          //+ " style='" + style + "'" +
                 "><img class='nodeIcon' src='" + node.imageUrl + "'>" +
                 "<span class='nodeText'>" + node.label + "</span></div>").appendTo(containerElement);
 
@@ -235,21 +232,21 @@ module Wiki {
         });
       });
 
-      nodes.click(function() {
+      nodes.click(function () {
         var thisNode = $(this);
         var newFlag = !thisNode.hasClass("selected");
         nodes.toggleClass("selected", false);
         thisNode.toggleClass("selected", newFlag);
         var id = thisNode.attr("id");
-        $scope.selectedFolder = null;
-        if (newFlag && $scope.nodes) {
-          var selectedNode = $scope.nodes[id];
-          if (selectedNode) {
-            var cid = selectedNode.cid;
-            if (cid) {
-              $scope.selectedFolder = $scope.folders[cid];
-            }
-          }
+        updateSelection(id);
+        Core.$apply($scope);
+      });
+
+      nodes.dblclick(function () {
+        var id = $(this).attr("id");
+        updateSelection(id);
+        if ($scope.selectedFolder) {
+          $scope.propertiesDialog.open();
         }
         Core.$apply($scope);
       });
@@ -268,7 +265,7 @@ module Wiki {
 
       jsPlumb.draggable(nodes);
       /*
-        TODO containment within the canvas div doesn't seem to work?
+       TODO containment within the canvas div doesn't seem to work?
 
        jsPlumb.draggable(nodes, {
        containment: containerElement
@@ -295,6 +292,31 @@ module Wiki {
       return states;
     }
 
+    /**
+     * Updates the selection with the given folder or ID
+     */
+    function updateSelection(folderOrId) {
+      var folder = null;
+      if (angular.isString(folderOrId)) {
+        var id = folderOrId;
+        folder = (id && $scope.folders) ? $scope.folders[id] : null;
+      } else {
+        folder = folderOrId;
+      }
+      $scope.selectedFolder = folder;
+      $scope.nodeXmlNode = null;
+      $scope.propertiesTemplate = null;
+      if (folder) {
+        var nodeName = Camel.getFolderCamelNodeId(folder);
+        $scope.nodeData = Camel.getRouteFolderJSON(folder);
+        $scope.nodeDataChangedFields = {};
+        $scope.nodeModel = Camel.getCamelSchema(nodeName);
+        if ($scope.nodeModel) {
+          $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+        }
+      }
+    }
+
     function getWidth() {
       var canvasDiv = $($element);
       return canvasDiv.width();
@@ -315,6 +337,7 @@ module Wiki {
       }
       return answer;
     }
+
     /*
      if (jsPlumb) {
      jsPlumb.bind("ready", setup);
