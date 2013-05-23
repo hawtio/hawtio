@@ -281,6 +281,7 @@ module Camel {
         routeFolder.typeName = "routes";
         routeFolder.domain = Camel.jmxDomain;
         routeFolder.key = folder.key + "_" + Core.toSafeDomID(id);
+        routeFolder.parent = folder;
         var nodeSettings = getCamelSchema("route");
         if (nodeSettings) {
           var imageUrl = getRouteNodeIcon(nodeSettings);
