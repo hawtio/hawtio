@@ -37,15 +37,21 @@ module Fabric {
 
     $scope.handleDrop = (event, element) => {
 
-      var sourceElement = $(event.srcElement);
-      var targetElement = $(event.target);
+      //console.log("event: ", event);
+      console.log("element: ", element);
 
-      var temp = targetElement.attr('class').split('#');
+      var sourceElement = element.draggable.get(0);
+      var targetElement = event.target;
+
+      console.log("sourceElement: ", sourceElement);
+      console.log("targetElement: ", targetElement);
+
+      var temp = targetElement.id.split('#');
 
       var targetType = temp[0];
       var targetName = temp[1];
 
-      temp = sourceElement.attr('class').split('#');
+      temp = sourceElement.id.split('#');
 
       var sourceType = temp[0];
       var sourceName = temp[1];
@@ -302,7 +308,6 @@ module Fabric {
             container['selected'] = false;
           }
         });
-
 
         $scope.containers = newContainers;
         $scope.activeProfiles = $scope.currentActiveProfiles();
