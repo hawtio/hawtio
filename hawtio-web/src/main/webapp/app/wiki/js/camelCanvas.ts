@@ -57,6 +57,8 @@ module Wiki {
           var nodes = [];
           var links = [];
           Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
+          // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
+          $scope.folders = Camel.addFoldersToIndex($scope.camelContextTree);
           showGraph(nodes, links);
           $scope.drawnRouteId = $scope.selectedRouteId;
         }
@@ -187,11 +189,16 @@ module Wiki {
         console.log("node " + id + " selected " + newFlag);
         $scope.selectedFolder = null;
         if (newFlag && $scope.nodes) {
-          var selectetedNode = $scope.nodes[id];
-          console.log("Found selectedNode: " + selectetedNode);
+          var selectedNode = $scope.nodes[id];
+          console.log("Found selectedNode: " + selectedNode);
 
-          //$scope.selectedFolder =
-          // find the folder for the id..
+          if (selectedNode) {
+            var cid = selectedNode.cid;
+            if (cid) {
+              $scope.selectedFolder = $scope.folders[cid];
+            }
+          }
+          console.log("Found selectedFolder: " + $scope.selectedFolder);
         }
         Core.$apply($scope);
       });

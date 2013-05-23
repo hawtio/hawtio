@@ -253,7 +253,8 @@ module Camel {
     folder.addClass = "org-apache-camel-context";
     folder.domain = Camel.jmxDomain;
     folder.typeName = "context";
-    folder.key = key;
+
+    folder.key = Core.toSafeDomID(key);
 
     var context = $(doc).find("camelContext");
     if (!context || !context.length) {
@@ -273,7 +274,7 @@ module Camel {
         routeFolder.addClass = "org-apache-camel-route";
         routeFolder.typeName = "routes";
         routeFolder.domain = Camel.jmxDomain;
-        routeFolder.key = folder.key + "_" + id;
+        routeFolder.key = folder.key + "_" + Core.toSafeDomID(id);
         var nodeSettings = getCamelSchema("route");
         if (nodeSettings) {
           var imageUrl = getRouteNodeIcon(nodeSettings);
@@ -294,6 +295,7 @@ module Camel {
   export function addRouteChildren(folder:Folder, route) {
     folder.children = [];
     folder["routeXmlNode"] = route;
+    route.setAttribute("_cid", folder.key);
     $(route).children("*").each((idx, n) => {
       addRouteChild(folder, n);
     });
@@ -318,7 +320,7 @@ module Camel {
         child.parent = folder;
         child.folderNames = folder.folderNames;
         var id = n.getAttribute("id") || nodeName;
-        var key = folder.key + "." + id;
+        var key = folder.key + "_" + Core.toSafeDomID(id);
 
         // lets find the next key thats unique
         var counter = 1;
@@ -795,7 +797,7 @@ module Camel {
         var imageUrl = getRouteNodeIcon(nodeSettings);
 
         //console.log("Image URL is " + imageUrl);
-        var cid = route.getAttribute("id");
+        var cid = route.getAttribute("_cid") || route.getAttribute("id");
         node = { "name": name, "label": label, "group": 1, "id": id, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip};
         if (rid) {
           node["rid"] = rid;
@@ -868,4 +870,19 @@ module Camel {
     }
     return height;
   }
+
+  /**
+   * Recursively add all the folders which have a cid value into the given map
+   */
+  export function addFoldersToIndex(folder:Folder, map = {}) {
+    if (folder) {
+      var key = folder.key
+      if (key) {
+        map[key] = folder;
+      }
+      angular.forEach(folder.children, (child) => addFoldersToIndex(child, map));
+    }
+    return map;
+  }
+
 }

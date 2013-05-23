@@ -335,6 +335,7 @@ module Wiki {
     function onResults(response) {
       var text = response.text;
       if (text) {
+        // lets remove any dodgy characters so we can use it as a DOM id
         var tree = Camel.loadCamelTree(text, $scope.pageId);
         if (tree) {
           $scope.camelContextTree = tree;

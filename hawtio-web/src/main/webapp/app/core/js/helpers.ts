@@ -788,4 +788,13 @@ module Core {
     var folder = Core.getMBeanTypeFolder(workspace, domain, typeName);
     return Core.pathGet(folder, ["objectName"]);
   }
+
+  /**
+   * Removes dodgy characters from a value such as '/' or '.' so that it can be used as a DOM ID value
+   * and used in jQuery / CSS selectors
+   */
+  export function toSafeDomID(text: string) {
+    return text ? text.replace(/(\/|\.)/g, "_") : text;
+  }
+
 }
