@@ -31,6 +31,7 @@ module Fabric {
     $scope.$watch('containers', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         $scope.selectedContainers = $scope.containers.filter((c) => { return c.selected; });
+        console.log("$scope.selectedContainers", $scope.selectedContainers);
         if ($scope.selectedContainers.length > 0) {
           $scope.activeContainerId = '';
           //$scope.activeVersionId = '';
@@ -351,6 +352,10 @@ module Fabric {
       $scope.activeProfileId = profile.id;
       $scope.activeVersionId = profile.versionId;
     };
+
+    $scope.selectAllContainers = () => {
+      $scope.containers.each((container) => { container.selected = true });
+    }
 
 
     $scope.setActiveContainer = (container) => {

@@ -1279,6 +1279,14 @@ li.stacktrace {
   color: #787878;
   height: 100%;
   width: 1em;
+  opacity: 0.6;
+  transition: opacity .5s;
+  text-decoration: none;
+}
+
+.clickable:hover {
+  opacity: 1;
+  text-decoration: none;
 }
 
 .host-indicator {
@@ -1401,7 +1409,7 @@ li.stacktrace {
   position: relative;
   
 
-  transition: color .2s;
+  transition: all .2s;
   line-height: 2em;
 
   box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.1),
@@ -1410,6 +1418,7 @@ li.stacktrace {
   cursor: pointer;
 
   background: white;
+  height: 28px;
 
 }
 
@@ -1427,6 +1436,7 @@ li.stacktrace {
 
 .box.ui-draggable-dragging {
   width: 274px;
+  transition: none;
 }
 
 .box.selected {
@@ -1438,13 +1448,62 @@ li.stacktrace {
               inset 1px 1px 5px rgba(0, 0, 0, 0.4);
 }
 
-.box div {
-  display: inline-block;
-  width: 80%;
+.box.selected .box-right i {
+  text-shadow: none;
+}
+
+.box .box-left div {
+  padding: 5px;
+  //border: 1px solid @control-border;
+  border-radius: 4px;
+  top: -8px;
+  left: 12px;
+  position: absolute;
+  display: inline;
+  right: 36px;
+  //width: 90%;
+}
+
+.box .box-left .profile-select {
+  top: -36px;
+  left: 0px;
 }
 
 .box input[type='checkbox'] {
-  margin-top: .6em;
+  margin-top: 5px;
+  display: inline;
+}
+
+.box .active-profile a.invisible {
+  visibility: none;
+}
+
+.box .active-profile div {
+  display: inline;
+}
+
+.box .active-profile {
+  position: absolute;
   display: inline-block;
+
+  top: 10px;
+  left: 12px;
+  right: 0px;
+}
+
+.box .box-left {
+  display: inline-block;
+  position: absolute;
+  left: 11px;
+  bottom: 14%;
+  right: 0px;
+  //border: 1px solid black;
+}
+
+.box .box-right {
+  display: inline-block;
+  position: absolute;
+  right: 11px;
+  bottom: 14%;
 }
 

@@ -6,8 +6,9 @@
 
 
       <div id="center" class="column">
-        <div>
-          <a href="" ng-click="setActiveContainer(null)">Show All</a>
+
+        <div class="section-header">
+          <a href="" ng-click="setActiveContainer(null)">Clear Selection</a>
         </div>
 
         <div class="canvas">
@@ -25,9 +26,7 @@
               </div>
 
               <div class="box-right">
-                <a href="" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)">
-                  <i class="icon1point5x icon-signin"></i>
-                </a>                
+                <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)"></i>
                 <i class="icon1point5x" title="{{getTitle(container)}}" ng-class='statusIcon(container)'></i>
               </div>
 
@@ -38,8 +37,8 @@
 
 
       <div id="left" class="column">
-        <div>
-          <a href="" ng-click="setActiveVersionId('')">Show All</a>
+        <div class="section-header">
+          <a href="" ng-click="setActiveVersionId('')">Clear Selection</a>
         </div>
 
         <div class="version-section">
@@ -55,16 +54,24 @@
           </div>
         </div>
 
-        <div>
-          <a href="" ng-click="setActiveProfileId('')">Show All</a>
+        <div class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
+          <a href="" ng-click="setActiveProfileId('')">Clear Selection</a>
         </div>
         <div class="profile-section">
 
           <div class="canvas">
             <div ng-repeat="profile in profiles">
-              <div class="box" ng-class="isSelectedProfile(profile)" id="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}" ng-click="setActiveProfileId(profile)">
+              <div class="box" ng-class="isSelectedProfile(profile)" id="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
 
-                {{profile}} {{containersForProfile(profile)}}
+                <div class="box-left">
+                  <div class="profile-select" ng-click="setActiveProfileId(profile)">
+                    {{profile}} {{containersForProfile(profile)}}
+                  </div>
+                </div>
+
+                <div class="box-right">
+                  <i class="icon1point5x clickable icon-info-sign" title="Show Details"></i>
+                </div>
 
               </div>
             </div>
@@ -76,8 +83,8 @@
 
 
       <div id="right" class="column">
-        <div>
-          <a href="" ng-click="setActiveProfile(null)">Show All</a>
+        <div class="section-header">
+          <a href="" ng-click="setActiveProfile(null)">Clear Selection</a>
         </div>
         <div class="canvas">
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
