@@ -70,6 +70,8 @@ module Wiki {
       }
     });
 
+    $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
+
     $scope.onRootTreeNode = (rootTreeNode) => {
       $scope.rootTreeNode = rootTreeNode;
       // restore the real data at the root for saving the doc etc
@@ -238,7 +240,6 @@ module Wiki {
       }
     };
 
-    $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
 
     updateView();
 

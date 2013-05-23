@@ -123,11 +123,10 @@
           <form class="form-horizontal no-bottom-margin" ng-submit="updatePropertiesAndCloseDialog()">
             <div class="modal-header"><h4>Properties</h4></div>
             <div class="modal-body">
-              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"></div>
+              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema" onsubmit="updatePropertiesAndCloseDialog"></div>
             </div>
             <div class="modal-footer">
-              <input class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode"
-                     value="OK">
+              <input class="btn btn-primary add" type="submit" ng-click="updatePropertiesAndCloseDialog()" value="OK">
               <button class="btn btn-warning cancel" type="button" ng-click="propertiesDialog.close()">Cancel</button>
             </div>
           </form>

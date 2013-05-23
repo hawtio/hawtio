@@ -44,6 +44,28 @@ module Wiki {
       onRouteSelectionChanged();
     };
 
+    $scope.updatePropertiesAndCloseDialog = () => {
+      var selectedFolder = $scope.selectedFolder;
+      if (selectedFolder) {
+        var routeXmlNode = selectedFolder["routeXmlNode"];
+        if (routeXmlNode) {
+          var nodeName = routeXmlNode.localName;
+          var nodeSettings = Camel.getCamelSchema(nodeName);
+          if (nodeSettings) {
+            // update the title and tooltip etc
+            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, routeXmlNode, nodeSettings);
+            // TODO update the div directly rather than a full layout?
+          }
+        }
+        // TODO not sure we need this to be honest
+        selectedFolder["camelNodeData"] = $scope.nodeData;
+      }
+      $scope.propertiesDialog.close();
+      Core.$apply($scope);
+      treeModified();
+    };
+
+
     $scope.$watch("selectedRouteId", onRouteSelectionChanged);
 
     function addNewNode(nodeModel) {
@@ -99,6 +121,7 @@ module Wiki {
         $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
       }
       $scope.doLayout();
+      Core.$apply($scope);
     }
 
 
