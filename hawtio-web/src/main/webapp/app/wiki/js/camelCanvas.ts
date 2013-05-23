@@ -1,5 +1,5 @@
 module Wiki {
-  export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia) {
+  export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
     $scope.selectedFolder = null;
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
@@ -65,8 +65,45 @@ module Wiki {
       treeModified();
     };
 
+    $scope.save = () => {
+      // generate the new XML
+      if ($scope.rootFolder) {
+        var xmlNode = Camel.generateXmlFromFolder($scope.rootFolder);
+        if (xmlNode) {
+          var text = Core.xmlNodeToString(xmlNode);
+          if (text) {
+            // lets save the file...
+            var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+            wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
+              Wiki.onComplete(status);
+              goToView();
+              Core.$apply($scope);
+            });
+        }
+      }
+    };
+
+    $scope.cancel = () => {
+      console.log("cancelling...");
+      // TODO show dialog if folks are about to lose changes...
+    };
 
     $scope.$watch("selectedRouteId", onRouteSelectionChanged);
+
+
+    function goToView() {
+      // TODO lets navigate to the view if we have a separate view one day :)
+/*
+      if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+        var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+        console.log("goToView has found view " + viewLink);
+        var path = Core.trimLeading(viewLink, "#");
+        $location.path(path);
+      } else {
+        console.log("goToView has no breadcrumbs!");
+      }
+*/
+    }
 
     function addNewNode(nodeModel) {
       var parentFolder = $scope.selectedFolder || $scope.rootFolder;
@@ -338,6 +375,7 @@ module Wiki {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
         }
       }
+
     }
 
     function getWidth() {
