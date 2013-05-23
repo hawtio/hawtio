@@ -27,7 +27,7 @@ module Wiki {
     $scope.removeNode = () => {
       var folder = getSelectedOrRouteFolder();
       if (folder) {
-        var nodeName = routeFolderXmlLocalName(folder);
+        var nodeName = Camel.getFolderCamelNodeId(folder);
         folder.detach();
         if ("route" === nodeName) {
           // lets also clear the selected route node
@@ -46,7 +46,7 @@ module Wiki {
     $scope.updatePropertiesAndCloseDialog = () => {
       var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
-        var nodeName = routeFolderXmlLocalName(selectedFolder);
+        var nodeName = Camel.getFolderCamelNodeId(selectedFolder);
         if (nodeName) {
           var nodeSettings = Camel.getCamelSchema(nodeName);
           if (nodeSettings) {
@@ -106,7 +106,6 @@ module Wiki {
     function addNewNode(nodeModel) {
       var parentFolder = $scope.selectedFolder || $scope.rootFolder;
       var key = nodeModel["_id"];
-      var beforeNode = null;
       if (!key) {
         console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
       } else {
@@ -133,8 +132,8 @@ module Wiki {
 
           // if the parent folder likes to act as a pipeline, then add
           // after the parent, rather than as a child
-          var parentId = Camel.getFolderCamelNodeId(treeNode);
-          if (!Camel.acceptOutput(parentId)) {
+          var parentTypeName = Camel.getFolderCamelNodeId(treeNode);
+          if (!Camel.acceptOutput(parentTypeName)) {
             treeNode = treeNode.parent || treeNode;
           }
         }
@@ -142,6 +141,19 @@ module Wiki {
           var node = document.createElement(key);
           parentFolder = treeNode;
           var addedNode = Camel.addRouteChild(parentFolder, node);
+          if (key === "route") {
+            // lets generate a new routeId and switch to it
+            var count = $scope.routeIds.length;
+            var nodeId = null;
+            while (true) {
+              nodeId = "route" + (++count);
+              if (!$scope.routeIds.find(nodeId)) {
+                break;
+              }
+            }
+            addedNode["routeXmlNode"].setAttribute("id", nodeId);
+            $scope.selectedRouteId = nodeId;
+          }
         }
       }
       treeModified();
@@ -206,16 +218,6 @@ module Wiki {
         }
       }
       return node.cid || "node-" + node.id;
-    }
-
-    function routeFolderXmlLocalName(selectedFolder) {
-      if (selectedFolder) {
-        var routeXmlNode = selectedFolder["routeXmlNode"];
-        if (routeXmlNode) {
-          return routeXmlNode.localName;
-        }
-      }
-      return null;
     }
 
     function getSelectedOrRouteFolder() {
@@ -409,16 +411,26 @@ module Wiki {
       return canvasDiv.width();
     }
 
+    function getFolderIdAttribute(route) {
+      var id = null;
+      if (route) {
+        var xmlNode = route["routeXmlNode"];
+        if (xmlNode) {
+          id = xmlNode.getAttribute("id");
+        }
+      }
+      return id;
+    }
+
     function getRouteFolder(tree, routeId) {
       var answer = null;
       if (tree) {
         angular.forEach(tree.children, (route) => {
-          var xmlNode = route["routeXmlNode"];
-          if (xmlNode && !answer) {
-            var id = xmlNode.getAttribute("id");
-            if (id === routeId) {
-              answer = route;
-            }
+          if (!answer) {
+            var id = getFolderIdAttribute(route);
+            if (routeId === id) {
+                answer = route;
+              }
           }
         });
       }
