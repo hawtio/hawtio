@@ -27,6 +27,10 @@
       border-radius: 0.5em;
     }
 
+    .window.selected {
+      background-color: #f0f0a0;
+    }
+
     img.nodeIcon {
       cursor: crosshair;
     }
@@ -83,11 +87,11 @@
               <i class="icon-sitemap"></i> Tree</a></li>
 
           <li class="pull-right">
-            <a href='' title="Add new pattern node connecting to this pattern" ng-click="addNode()"
+            <a href='' title="Add new pattern node connecting to this pattern" ng-click="addDialog.open()"
                data-placement="bottom">
               <i class="icon-plus"></i> Add</a></li>
           <li class="pull-right">
-            <a href='' title="Deletes the selected pattern" ng-show="canDelete()" ng-click="removeNode()"
+            <a href='' title="Deletes the selected pattern" ng-disabled="!canDelete()" ng-click="removeNode()"
                data-placement="bottom">
               <i class="icon-remove"></i> Delete</a></li>
           <li class="pull-right">

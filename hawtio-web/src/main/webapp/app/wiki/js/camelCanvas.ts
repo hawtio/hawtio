@@ -1,6 +1,14 @@
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia) {
 
+    // START copied from CamelController - not sure why inheritence not working...
+    $scope.canDelete = () => {
+      return $scope.selectedFolder ? true : false;
+    };
+    // END copied from CamelController - not sure why inheritence not working...
+
+    $scope.selectedFolder = null;
+
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
       var doc = Core.pathGet(tree, ["xmlDocument"]);
@@ -17,12 +25,28 @@ module Wiki {
       }
     });
 
+    $scope.addDialog = new Core.Dialog();
+
+
+    $scope.addAndCloseDialog = () => {
+      if ($scope.selectedPaletteNode) {
+        addNewNode($scope.selectedPaletteNode["nodeModel"]);
+      }
+      $scope.addDialog.close();
+    };
+
     $scope.doLayout = () => {
       $scope.drawnRouteId = null;
       onRouteSelectionChanged();
     };
 
     $scope.$watch("selectedRouteId", onRouteSelectionChanged);
+
+    function addNewNode(nodeModel) {
+      console.log("Adding new node " + nodeModel);
+      $scope.$parent.addNewNode(nodeModel);
+      $scope.doLayout();
+    }
 
     function onRouteSelectionChanged() {
       if ($scope.doc) {
@@ -46,9 +70,22 @@ module Wiki {
       return width;
     }
 
+    function getNodeId(node) {
+      if (angular.isNumber(node)) {
+        var idx = node;
+        node = $scope.nodeStates[idx];
+        if (!node) {
+          console.log("Cant find node at " + idx);
+          return "node-" + idx;
+        }
+      }
+      return node.cid || "node-" + node.id;
+    }
+
     function layoutGraph(nodes, links, width, height) {
       var transitions = [];
       var states = Core.createGraphStates(nodes, links, transitions);
+      $scope.nodeStates = states;
 
       var rootElement = $($element);
       var containerElement = rootElement.find(".canvas");
@@ -91,7 +128,7 @@ module Wiki {
       var top = Core.pathGet(offset, ["top"]) || 0;
 
       angular.forEach(states, (node) => {
-        var id = "node-" + node.id;
+        var id = getNodeId(node);
         $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip + "'" +
                 //+ " style='" + style + "'" +
@@ -118,7 +155,7 @@ module Wiki {
               .run();
 
       angular.forEach(states, (node) => {
-        var id = "node-" + node.id;
+        var id = getNodeId(node);
         var dagre = node.dagre || node;
         var x = dagre.x || 0;
         var y = dagre.y || dagre["y:"] || 0;
@@ -131,13 +168,32 @@ module Wiki {
       var nodes = containerElement.find("div.component");
       var connectorStyle:any[] = [ "StateMachine", { curviness: 20 } ];
       nodes.each(function (i, e) {
-        jsPlumb.makeSource($(e), {
+        var endpoint = $(e);
+        jsPlumb.makeSource(endpoint, {
           filter: "img.nodeIcon",
           anchor: "Continuous",
           connector: connectorStyle,
           connectorStyle: { strokeStyle: "#666", lineWidth: 2 },
           maxConnections: -1
         });
+      });
+
+      nodes.click(function() {
+        var thisNode = $(this);
+        var newFlag = !thisNode.hasClass("selected");
+        nodes.toggleClass("selected", false);
+        thisNode.toggleClass("selected", newFlag);
+        var id = thisNode.attr("id");
+        console.log("node " + id + " selected " + newFlag);
+        $scope.selectedFolder = null;
+        if (newFlag && $scope.nodes) {
+          var selectetedNode = $scope.nodes[id];
+          console.log("Found selectedNode: " + selectetedNode);
+
+          //$scope.selectedFolder =
+          // find the folder for the id..
+        }
+        Core.$apply($scope);
       });
 
       jsPlumb.makeTarget(nodes, {
@@ -147,13 +203,15 @@ module Wiki {
 
       angular.forEach(links, (link) => {
         jsPlumb.connect({
-          source: "node-" + link.source,
-          target: "node-" + link.target
+          source: getNodeId(link.source),
+          target: getNodeId(link.target)
         });
       });
 
       jsPlumb.draggable(nodes);
       /*
+        TODO containment within the canvas div doesn't seem to work?
+
        jsPlumb.draggable(nodes, {
        containment: containerElement
        });
@@ -167,12 +225,6 @@ module Wiki {
       // lets delete connections on click
       jsPlumb.bind("click", function (c) {
         jsPlumb.detach(c);
-      });
-
-
-      // single click on any endpoint
-      jsPlumb.bind("endpointClick", function (endpoint, originalEvent) {
-        alert("click on endpoint on element " + endpoint.elementId);
       });
 
       // context menu (right click) on any component.

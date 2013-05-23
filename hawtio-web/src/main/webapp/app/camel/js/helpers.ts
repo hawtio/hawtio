@@ -802,8 +802,12 @@ module Camel {
           if (!$scope.routeNodes) $scope.routeNodes = {};
           $scope.routeNodes[rid] = node;
         }
+        if (!cid) {
+          cid = nodeId + (nodes.length + 1);
+        }
         if (cid) {
-          if (!$scope.nodes) $scope.nodes = {}
+          node["cid"] = cid;
+          if (!$scope.nodes) $scope.nodes = {};
           $scope.nodes[cid] = node;
         }
         // only use the route id on the first from node

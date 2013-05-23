@@ -80,7 +80,7 @@ module Wiki {
       if ($scope.nodeXmlNode) {
         $scope.addDialog.open();
       } else {
-        addNewNode(routeModel);
+        $scope.addNewNode(routeModel);
       }
     };
 
@@ -90,7 +90,7 @@ module Wiki {
 
     $scope.addAndCloseDialog = () => {
       if ($scope.selectedPaletteNode) {
-        addNewNode($scope.selectedPaletteNode["nodeModel"]);
+        $scope.addNewNode($scope.selectedPaletteNode["nodeModel"]);
       }
       $scope.addDialog.close();
     };
@@ -238,6 +238,61 @@ module Wiki {
       }
     };
 
+    $scope.addNewNode = (nodeModel) => {
+      var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
+      var key = nodeModel["_id"];
+      var beforeNode = null;
+      if (!key) {
+        console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
+      } else {
+        var treeNode = $scope.treeNode;
+        if (key === "route") {
+          // lets add to the root of the tree
+          treeNode = $scope.rootTreeNode;
+        } else {
+          if (!treeNode) {
+            // lets select the last route - and create a new route if need be
+            var root = $scope.rootTreeNode;
+            var children = root.getChildren();
+            if (!children || !children.length) {
+              $scope.addNewNode(Camel.getCamelSchema("route"));
+              children = root.getChildren();
+            }
+            if (children && children.length) {
+              treeNode = children[children.length - 1];
+            } else {
+              console.log("Could not add a new route to the empty tree!");
+              return;
+            }
+          }
+
+
+          // if the parent folder likes to act as a pipeline, then add
+          // after the parent, rather than as a child
+          var parentId = Camel.getFolderCamelNodeId(treeNode.data);
+          if (!Camel.acceptOutput(parentId)) {
+            // lets add the new node to the end of the parent
+            beforeNode = treeNode.getNextSibling();
+            treeNode = treeNode.getParent() || treeNode;
+          }
+        }
+        if (treeNode) {
+          var node = document.createElement(key);
+          parentFolder = treeNode.data;
+          var addedNode = Camel.addRouteChild(parentFolder, node);
+          if (addedNode) {
+            var added = treeNode.addChild(addedNode, beforeNode);
+            if (added) {
+              getFolderXmlNode(added);
+              added.expand(true);
+              added.select(true);
+              added.activate(true);
+            }
+          }
+        }
+      }
+    };
+
     $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
 
     updateView();
@@ -299,60 +354,6 @@ module Wiki {
       }
     }
 
-    function addNewNode(nodeModel) {
-      var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
-      var key = nodeModel["_id"];
-      var beforeNode = null;
-      if (!key) {
-        console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
-      } else {
-        var treeNode = $scope.treeNode;
-        if (key === "route") {
-          // lets add to the root of the tree
-          treeNode = $scope.rootTreeNode;
-        } else {
-          if (!treeNode) {
-            // lets select the last route - and create a new route if need be
-            var root = $scope.rootTreeNode;
-            var children = root.getChildren();
-            if (!children || !children.length) {
-              addNewNode(Camel.getCamelSchema("route"));
-              children = root.getChildren();
-            }
-            if (children && children.length) {
-              treeNode = children[children.length - 1];
-            } else {
-              console.log("Could not add a new route to the empty tree!");
-              return;
-            }
-          }
-
-
-          // if the parent folder likes to act as a pipeline, then add
-          // after the parent, rather than as a child
-          var parentId = Camel.getFolderCamelNodeId(treeNode.data);
-          if (!Camel.acceptOutput(parentId)) {
-            // lets add the new node to the end of the parent
-            beforeNode = treeNode.getNextSibling();
-            treeNode = treeNode.getParent() || treeNode;
-          }
-        }
-        if (treeNode) {
-          var node = document.createElement(key);
-          parentFolder = treeNode.data;
-          var addedNode = Camel.addRouteChild(parentFolder, node);
-          if (addedNode) {
-            var added = treeNode.addChild(addedNode, beforeNode);
-            if (added) {
-              getFolderXmlNode(added);
-              added.expand(true);
-              added.select(true);
-              added.activate(true);
-            }
-          }
-        }
-      }
-    }
 
     function generateXmlFromFolder(treeNode) {
       var folder = treeNode ? treeNode.data : null;
