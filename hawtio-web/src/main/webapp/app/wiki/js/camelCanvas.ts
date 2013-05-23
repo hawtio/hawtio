@@ -1,6 +1,5 @@
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
-    $scope.selectedFolder = null;
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
 
@@ -13,13 +12,7 @@ module Wiki {
       var doc = Core.pathGet(tree, ["xmlDocument"]);
       if (doc) {
         $scope.doc = doc;
-        $scope.routeIds = [];
-        $(doc).find("route").each((idx, route) => {
-          var id = route.getAttribute("id");
-          if (id) {
-            $scope.routeIds.push(id);
-          }
-        });
+        reloadRouteIds();
         onRouteSelectionChanged();
       }
     });
@@ -32,9 +25,15 @@ module Wiki {
     };
 
     $scope.removeNode = () => {
-      if ($scope.selectedFolder) {
-        $scope.selectedFolder.detach();
-        $scope.selectedFolder = null;
+      var folder = getSelectedOrRouteFolder();
+      if (folder) {
+        var nodeName = routeFolderXmlLocalName(folder);
+        folder.detach();
+        if ("route" === nodeName) {
+          // lets also clear the selected route node
+          $scope.selectedRouteId = null;
+        }
+        updateSelection(null);
         treeModified();
       }
     };
@@ -47,13 +46,12 @@ module Wiki {
     $scope.updatePropertiesAndCloseDialog = () => {
       var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
-        var routeXmlNode = selectedFolder["routeXmlNode"];
-        if (routeXmlNode) {
-          var nodeName = routeXmlNode.localName;
+        var nodeName = routeFolderXmlLocalName(selectedFolder);
+        if (nodeName) {
           var nodeSettings = Camel.getCamelSchema(nodeName);
           if (nodeSettings) {
             // update the title and tooltip etc
-            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, routeXmlNode, nodeSettings);
+            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, selectedFolder["routeXmlNode"], nodeSettings);
             // TODO update the div directly rather than a full layout?
           }
         }
@@ -90,7 +88,6 @@ module Wiki {
     };
 
     $scope.$watch("selectedRouteId", onRouteSelectionChanged);
-
 
     function goToView() {
       // TODO lets navigate to the view if we have a separate view one day :)
@@ -158,10 +155,21 @@ module Wiki {
         $scope.rootFolder = tree;
         $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
       }
+      reloadRouteIds();
       $scope.doLayout();
       Core.$apply($scope);
     }
 
+
+    function reloadRouteIds() {
+      $scope.routeIds = [];
+      $($scope.doc).find("route").each((idx, route) => {
+        var id = route.getAttribute("id");
+        if (id) {
+          $scope.routeIds.push(id);
+        }
+      });
+    }
 
     function onRouteSelectionChanged() {
       if ($scope.doc) {
@@ -172,6 +180,7 @@ module Wiki {
           var nodes = [];
           var links = [];
           Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
+          updateSelection($scope.selectedRouteId);
           // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
           $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
           showGraph(nodes, links);
@@ -197,6 +206,20 @@ module Wiki {
         }
       }
       return node.cid || "node-" + node.id;
+    }
+
+    function routeFolderXmlLocalName(selectedFolder) {
+      if (selectedFolder) {
+        var routeXmlNode = selectedFolder["routeXmlNode"];
+        if (routeXmlNode) {
+          return routeXmlNode.localName;
+        }
+      }
+      return null;
+    }
+
+    function getSelectedOrRouteFolder() {
+      return $scope.selectedFolder ||  getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
     }
 
     function layoutGraph(nodes, links, width, height) {
@@ -293,6 +316,10 @@ module Wiki {
         });
       });
 
+      containerElement.dblclick(function () {
+        $scope.propertiesDialog.open();
+      });
+
       nodes.click(function () {
         var thisNode = $(this);
         var newFlag = !thisNode.hasClass("selected");
@@ -306,9 +333,7 @@ module Wiki {
       nodes.dblclick(function () {
         var id = $(this).attr("id");
         updateSelection(id);
-        if ($scope.selectedFolder) {
-          $scope.propertiesDialog.open();
-        }
+        $scope.propertiesDialog.open();
         Core.$apply($scope);
       });
 
@@ -365,6 +390,7 @@ module Wiki {
         folder = folderOrId;
       }
       $scope.selectedFolder = folder;
+      folder = getSelectedOrRouteFolder();
       $scope.nodeXmlNode = null;
       $scope.propertiesTemplate = null;
       if (folder) {
