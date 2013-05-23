@@ -1,16 +1,14 @@
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia) {
-
-    // START copied from CamelController - not sure why inheritence not working...
-    $scope.canDelete = () => {
-      return $scope.selectedFolder ? true : false;
-    };
-    // END copied from CamelController - not sure why inheritence not working...
-
     $scope.selectedFolder = null;
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
+      $scope.rootFolder = tree;
+      console.log("rootFolder changed!");
+      // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
+      $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
+
       var doc = Core.pathGet(tree, ["xmlDocument"]);
       if (doc) {
         $scope.doc = doc;
@@ -26,7 +24,6 @@ module Wiki {
     });
 
     $scope.addDialog = new Core.Dialog();
-
 
     $scope.addAndCloseDialog = () => {
       if ($scope.selectedPaletteNode) {
@@ -45,8 +42,29 @@ module Wiki {
     function addNewNode(nodeModel) {
       console.log("Adding new node " + nodeModel);
       $scope.$parent.addNewNode(nodeModel);
+      treeModified();
+    }
+
+    $scope.removeNode = () => {
+      console.log("==== removing tree node!");
+      if ($scope.selectedFolder) {
+        $scope.selectedFolder.detach();
+        $scope.selectedFolder = null;
+        treeModified();
+      }
+    };
+
+    function treeModified() {
+      // lets recreate the XML model from the update Folder tree
+      var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
+      var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
+      if (tree) {
+        $scope.rootFolder = tree;
+        $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
+      }
       $scope.doLayout();
     }
+
 
     function onRouteSelectionChanged() {
       if ($scope.doc) {
@@ -58,7 +76,7 @@ module Wiki {
           var links = [];
           Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
           // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
-          $scope.folders = Camel.addFoldersToIndex($scope.camelContextTree);
+          $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
           showGraph(nodes, links);
           $scope.drawnRouteId = $scope.selectedRouteId;
         }

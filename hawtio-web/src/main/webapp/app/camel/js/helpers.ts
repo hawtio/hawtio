@@ -244,8 +244,14 @@ module Camel {
     return (camelLanguageSettings(nodeName) || nodeName === "expression") ? true : false;
   }
 
-  export function loadCamelTree(xml:string, key:string) {
-    var doc = $.parseXML(xml);
+  /**
+   * Converts the XML string or DOM node to a camel tree
+   */
+  export function loadCamelTree(xml, key:string) {
+    var doc = xml;
+    if (angular.isString(xml)) {
+      doc = $.parseXML(xml);
+    }
 
     // TODO get id from camelContext
     var id = "camelContext";
@@ -359,9 +365,11 @@ module Camel {
    * such as renaming language elements from <language expression="foo" language="bar/>
    * to <bar>foo</bar>
    * and changing <endpoint> into either <from> or <to>
+   *
+   * @param treeNode is either the Node from the tree widget (with the real Folder in the data property) or a Folder
    */
   export function createFolderXmlTree(treeNode, xmlNode, indent = Camel.increaseIndent("")) {
-    var folder = treeNode.data;
+    var folder = treeNode.data || treeNode;
     var count = 0;
     var parentName = getFolderCamelNodeId(folder);
     if (folder) {
@@ -377,8 +385,8 @@ module Camel {
 
       var from = parentName !== "route";
       var childIndent = Camel.increaseIndent(indent);
-      angular.forEach(treeNode.getChildren(), (childTreeNode) => {
-        var childFolder = childTreeNode.data;
+      angular.forEach(treeNode.children || treeNode.getChildren(), (childTreeNode) => {
+        var childFolder = childTreeNode.data || childTreeNode;
         var name = Camel.getFolderCamelNodeId(childFolder);
         var json = Camel.getRouteFolderJSON(childFolder);
         if (name && json) {
@@ -883,6 +891,58 @@ module Camel {
       angular.forEach(folder.children, (child) => addFoldersToIndex(child, map));
     }
     return map;
+  }
+
+
+
+  /**
+   * Re-generates the XML document using the given Tree widget Node or Folder as the source
+   */
+  export function generateXmlFromFolder(treeNode) {
+    var folder = (treeNode && treeNode.data) ? treeNode.data : treeNode;
+    if (!folder) return null;
+    var doc = folder["xmlDocument"];
+    var context = folder["routeXmlNode"];
+
+    if (context && context.length) {
+      var element = context[0];
+      var children = element.childNodes;
+      var routeIndices = [];
+      for (var i = 0; i < children.length; i++) {
+        var node = children[i];
+        var name = node.localName;
+        if ("route" === name && parent) {
+          routeIndices.push(i);
+        }
+      }
+
+      // lets go backwards removing all the text nodes on either side of each route along with the route
+      while (routeIndices.length) {
+        var idx = routeIndices.pop();
+        var nextIndex = idx + 1;
+        while (true) {
+          var node = element.childNodes[nextIndex];
+          if (Core.isTextNode(node)) {
+            element.removeChild(node);
+          } else {
+            break;
+          }
+        }
+        if (idx < element.childNodes.length) {
+          element.removeChild(element.childNodes[idx]);
+        }
+        for (var i = idx - 1; i >= 0; i--) {
+          var node = element.childNodes[i];
+          if (Core.isTextNode(node)) {
+            element.removeChild(node);
+          } else {
+            break;
+          }
+        }
+      }
+      Camel.createFolderXmlTree(treeNode, context[0]);
+    }
+    return doc;
   }
 
 }

@@ -121,7 +121,7 @@ module Wiki {
     $scope.save = () => {
       // generate the new XML
       if ($scope.rootTreeNode) {
-        var xmlNode = generateXmlFromFolder($scope.rootTreeNode);
+        var xmlNode = Camel.generateXmlFromFolder($scope.rootTreeNode);
         if (xmlNode) {
           var text = Core.xmlNodeToString(xmlNode);
           if (text) {
@@ -355,53 +355,6 @@ module Wiki {
       }
     }
 
-
-    function generateXmlFromFolder(treeNode) {
-      var folder = treeNode ? treeNode.data : null;
-      if (!folder) return null;
-      var doc = folder["xmlDocument"];
-      var context = folder["routeXmlNode"];
-
-      if (context && context.length) {
-        var element = context[0];
-        var children = element.childNodes;
-        var routeIndices = [];
-        for (var i = 0; i < children.length; i++) {
-          var node = children[i];
-          var name = node.localName;
-          if ("route" === name && parent) {
-            routeIndices.push(i);
-          }
-        }
-
-        // lets go backwards removing all the text nodes on either side of each route along with the route
-        while (routeIndices.length) {
-          var idx = routeIndices.pop();
-          var nextIndex = idx + 1;
-          while (true) {
-            var node = element.childNodes[nextIndex];
-            if (Core.isTextNode(node)) {
-              element.removeChild(node);
-            } else {
-              break;
-            }
-          }
-          if (idx < element.childNodes.length) {
-            element.removeChild(element.childNodes[idx]);
-          }
-          for (var i = idx - 1; i >= 0; i--) {
-            var node = element.childNodes[i];
-            if (Core.isTextNode(node)) {
-              element.removeChild(node);
-            } else {
-              break;
-            }
-          }
-        }
-        Camel.createFolderXmlTree(treeNode, context[0]);
-      }
-      return doc;
-    }
 
     function goToView() {
       // TODO lets navigate to the view if we have a separate view one day :)
