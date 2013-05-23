@@ -79,6 +79,7 @@ module Wiki {
               goToView();
               Core.$apply($scope);
             });
+          }
         }
       }
     };
@@ -93,16 +94,16 @@ module Wiki {
 
     function goToView() {
       // TODO lets navigate to the view if we have a separate view one day :)
-/*
-      if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
-        var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
-        console.log("goToView has found view " + viewLink);
-        var path = Core.trimLeading(viewLink, "#");
-        $location.path(path);
-      } else {
-        console.log("goToView has no breadcrumbs!");
-      }
-*/
+      /*
+       if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+       var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+       console.log("goToView has found view " + viewLink);
+       var path = Core.trimLeading(viewLink, "#");
+       $location.path(path);
+       } else {
+       console.log("goToView has no breadcrumbs!");
+       }
+       */
     }
 
     function addNewNode(nodeModel) {
@@ -375,7 +376,6 @@ module Wiki {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
         }
       }
-
     }
 
     function getWidth() {
