@@ -15,10 +15,20 @@
           <div ng-repeat="container in containers" ng-show="filterContainer(container)">
             <div class="box" ng-class="isSelectedContainer(container)" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
 
-              <input type="checkbox" ng-model="container.selected">
+              <div class="box-left">
 
-              <div ng-click="setActiveContainer(container)">
-                {{container.id}}
+                <input type="checkbox" ng-model="container.selected">
+
+                <div ng-click="setActiveContainer(container)">
+                  {{container.id}}
+                </div>
+              </div>
+
+              <div class="box-right">
+                <a href="" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)">
+                  <i class="icon1point5x icon-signin"></i>
+                </a>                
+                <i class="icon1point5x" title="{{getTitle(container)}}" ng-class='statusIcon(container)'></i>
               </div>
 
             </div>
@@ -70,18 +80,18 @@
           <a href="" ng-click="setActiveProfile(null)">Show All</a>
         </div>
         <div class="canvas">
-
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
             <div class="box">
 
-              <a href="" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0">
-                <i class="icon-remove"></i>
-              </a>
+              <div class="active-profile">
+                <i class="icon-remove clickable" style="display: inline;" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0"></i>
+                
 
-              <div ng-click="setActiveProfile(profile.id)">
-
-                {{profile.versionId}} / {{profile.id}} ({{profile.count}})
+                <div ng-click="setActiveProfile(profile)">
+                  {{profile.versionId}} / {{profile.id}} ({{profile.count}})
+                </div>
               </div>
+
             </div>    
           </div>
         </div>

@@ -362,6 +362,9 @@ $(function () {
     adjustHeight();
     $(window).resize(adjustHeight);
 
+    var tmp:any = window;
+    tmp.less.watch();
+
   });
 });
 

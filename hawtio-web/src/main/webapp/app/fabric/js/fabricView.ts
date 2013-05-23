@@ -233,6 +233,57 @@ module Fabric {
       return answer;
     };
 
+
+    $scope.statusIcon = (row) => {
+      if (row) {
+        if (row.alive) {
+          switch(row.provisionResult) {
+            case 'success':
+              return "green icon-play-circle";
+            case 'downloading':
+              return "icon-download-alt";
+            case 'installing':
+              return "icon-hdd";
+            case 'analyzing':
+            case 'finalizing':
+              return "icon-refresh icon-spin";
+            case 'resolving':
+              return "icon-sitemap";
+            case 'error':
+              return "red icon-warning-sign";
+          }
+        } else {
+          return "orange icon-off";
+        }
+      }
+      return "icon-refresh icon-spin";
+    };
+
+
+
+    $scope.connect = (row) => {
+      if (row) {
+        // TODO lets find these from somewhere! :)
+        var userName = "admin";
+        var password = "admin";
+        Fabric.connect(row, userName, password, true);
+      }
+    };
+
+
+    $scope.getTitle = (container) => {
+      var answer = 'Alive';
+
+      if (!container.alive) {
+        answer = 'Not Running';
+      } else {
+        answer += ' - ' + humanizeValue(container.provisionResult);
+      }
+
+      return answer;
+    }
+
+
     $scope.containersForVersion = (id) => {
       var count = $scope.containers.findAll((container) => { return container.versionId === id }).length;
       if (count === 0) {
