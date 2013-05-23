@@ -144,8 +144,12 @@ module Camel {
           }
         } else {
           if (value) {
-            var text = value.toString();
-            routeXmlNode.setAttribute(key, text);
+            if (key.startsWith("_")) {
+              // ignore
+            } else {
+              var text = value.toString();
+              routeXmlNode.setAttribute(key, text);
+            }
           } else {
             routeXmlNode.removeAttribute(key);
           }
