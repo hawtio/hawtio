@@ -80,7 +80,7 @@ module Wiki {
       if ($scope.nodeXmlNode) {
         $scope.addDialog.open();
       } else {
-        $scope.addNewNode(routeModel);
+        addNewNode(routeModel);
       }
     };
 
@@ -90,7 +90,7 @@ module Wiki {
 
     $scope.addAndCloseDialog = () => {
       if ($scope.selectedPaletteNode) {
-        $scope.addNewNode($scope.selectedPaletteNode["nodeModel"]);
+        addNewNode($scope.selectedPaletteNode["nodeModel"]);
       }
       $scope.addDialog.close();
     };
@@ -238,7 +238,11 @@ module Wiki {
       }
     };
 
-    $scope.addNewNode = (nodeModel) => {
+    $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
+
+    updateView();
+
+    function addNewNode (nodeModel) {
       var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
       var key = nodeModel["_id"];
       var beforeNode = null;
@@ -255,7 +259,7 @@ module Wiki {
             var root = $scope.rootTreeNode;
             var children = root.getChildren();
             if (!children || !children.length) {
-              $scope.addNewNode(Camel.getCamelSchema("route"));
+              addNewNode(Camel.getCamelSchema("route"));
               children = root.getChildren();
             }
             if (children && children.length) {
@@ -291,11 +295,7 @@ module Wiki {
           }
         }
       }
-    };
-
-    $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
-
-    updateView();
+    }
 
     function onModelChangeEvent(event, name) {
       // lets filter out events due to the node changing causing the
