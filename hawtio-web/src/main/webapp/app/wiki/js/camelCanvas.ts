@@ -299,7 +299,7 @@ module Wiki {
         nodes.toggleClass("selected", false);
         thisNode.toggleClass("selected", newFlag);
         var id = thisNode.attr("id");
-        updateSelection(id);
+        updateSelection(newFlag ? id : null);
         Core.$apply($scope);
       });
 
