@@ -20,14 +20,17 @@ module Camel {
     });
 
     function updateRoutes() {
-      var routeXmlNode = getSelectedRouteNode(workspace);
-      if (!routeXmlNode) {
-        routeXmlNode = $scope.nodeXmlNode;
-      }
-      if (routeXmlNode && routeXmlNode.localName !== "route") {
-        var wrapper = document.createElement("route");
-        wrapper.appendChild(routeXmlNode.cloneNode(true));
-        routeXmlNode = wrapper;
+      var routeXmlNode = null;
+      if (!$scope.ignoreRouteXmlNode) {
+        routeXmlNode = getSelectedRouteNode(workspace);
+        if (!routeXmlNode) {
+          routeXmlNode = $scope.nodeXmlNode;
+        }
+        if (routeXmlNode && routeXmlNode.localName !== "route") {
+          var wrapper = document.createElement("route");
+          wrapper.appendChild(routeXmlNode.cloneNode(true));
+          routeXmlNode = wrapper;
+        }
       }
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
