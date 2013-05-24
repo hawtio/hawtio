@@ -35,7 +35,8 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -58,7 +59,7 @@ import java.util.Map;
 
 public class ProxyServlet extends HttpServlet {
 
-    private final static Logger LOG = Logger.getLogger(ProxyServlet.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
 
     /**
      * Serialization UID.
