@@ -1,9 +1,8 @@
 <div ng-controller="Fabric.FabricViewController">
+
   <div class="row-fluid fabric-view gridStyle">
 
-
     <div class="columns">
-
 
       <!-- containers -->
       <div id="center" class="column">
@@ -17,27 +16,35 @@
             <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
 
           </div>
+          <div class="section-filter">
+            <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
+            <i class="icon-remove clickable" title="Clear Filter" ng-click="containerIdFilter = ''"></i>
+          </div>
         </div>
 
-        <div class="canvas">
+        <div class="container-section">
 
-          <div ng-repeat="container in containers" ng-show="filterContainer(container)">
-            <div class="box" ng-class="isSelectedContainer(container)" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
+          <div class="canvas">
 
-              <div class="box-left">
+            <div ng-repeat="container in containers" ng-show="filterContainer(container)">
+              <div class="box" ng-class="isSelectedContainer(container)" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
 
-                <input type="checkbox" ng-model="container.selected">
+                <div class="box-left">
 
-                <div ng-click="setActiveContainer(container)">
-                  {{container.id}}
+                  <i ng-show="!container.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="container.selected = true"></i>
+                  <i ng-show="container.selected" class="icon-circle clickable" title="Selected" ng-click="container.selected = false"></i>
+
+                  <div ng-click="setActiveContainer(container)">
+                    {{container.id}}
+                  </div>
                 </div>
-              </div>
 
-              <div class="box-right">
-                <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)"></i>
-                <i class="icon1point5x" title="{{getTitle(container)}}" ng-class='statusIcon(container)'></i>
-              </div>
+                <div class="box-right">
+                  <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)"></i>
+                  <i class="icon1point5x" title="{{getTitle(container)}}" ng-class='statusIcon(container)'></i>
+                </div>
 
+              </div>
             </div>
           </div>
         </div>
@@ -55,8 +62,8 @@
             <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveVersionId('')"></i>
 
             <i class="icon-plus clickable" 
-               title="Create new Version"
-               ng-click="createVersionDialog = true"></i>
+            title="Create new Version"
+            ng-click="createVersionDialog = true"></i>
 
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/" ng-show="hasFabricWiki()"
@@ -64,18 +71,18 @@
                <i class="icon-edit"></i>
              </a>-->
 
-            <i class="icon-minus clickable" 
-              ng-disabled="versionCanBeDeleted()" 
-              ng-click="deleteVersionDialog = true" 
-              title="Delete this Version"></i>
+             <i class="icon-minus clickable" 
+             ng-disabled="versionCanBeDeleted()" 
+             ng-click="deleteVersionDialog = true" 
+             title="Delete this Version"></i>
 
 
-          </div>
-        </div>
-        <div class="version-section">
+           </div>
+         </div>
+         <div class="version-section">
           <div class="canvas">
             <div ng-repeat="version in versions">
-              <div class="box" ng-class="isSelectedVersion(version.id)" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}" ng-click="setActiveVersionId(version.id)">
+              <div class="box" ng-class="isSelectedVersion(version.id)" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', scroll: true, helper: 'clone'}" ng-click="setActiveVersionId(version.id)">
 
                 {{version.id}} {{containersForVersion(version.id)}}
 
@@ -88,9 +95,7 @@
             Profiles
           </div>
           <div class="section-controls">
-
             <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveProfileId('')"></i>
-
             <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
 
             <!--
@@ -98,10 +103,10 @@
                title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
              </a>-->
 
-            <i class="icon-minus clickable" title="Delete selected Profiles" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"></i>
+             <i class="icon-minus clickable" title="Delete selected Profiles" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"></i>
 
-          </div>
-          <div class="section-filter">
+           </div>
+           <div class="section-filter">
             <input type="text" class="search-query" placeholder="Filter..." ng-model="profileIdFilter">
             <i class="icon-remove clickable" title="Clear Filter" ng-click="profileIdFilter = ''"></i>
           </div>
@@ -109,10 +114,14 @@
         <div class="profile-section">
           <div class="canvas">
             <div ng-repeat="profile in profiles" ng-show="profile.id.startsWith(profileIdFilter, 0, false)">
-              <div class="box" ng-class="isSelectedProfile(profile.id)" id="profile#{{profile.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
+              <div class="box" ng-class="isSelectedProfile(profile.id)" id="profile#{{profile.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element',  scroll: true, helper: 'clone'}">
 
                 <div class="box-left">
-                  <div class="profile-select" ng-click="setActiveProfileId(profile.id)">
+
+                  <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
+                  <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
+
+                  <div class="profile-select" title="{{profile.id}} {{containersForProfile(profile.id)}}" ng-click="setActiveProfileId(profile.id)">
                     {{profile.id}} {{containersForProfile(profile.id)}}
                   </div>
                 </div>
@@ -171,7 +180,7 @@
     <div class="dialog-body">
       <p>Are you sure you want to delete the selected profiles:</p>
       <ol>
-        <li ng-repeat="profile in selected">{{profile.id}}</li>
+        <li ng-repeat="profile in selectedProfiles">{{profile.id}}</li>
       </ol>
     </div>
   </div>

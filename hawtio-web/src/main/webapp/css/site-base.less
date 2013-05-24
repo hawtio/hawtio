@@ -1422,6 +1422,12 @@ li.stacktrace {
 
 }
 
+.container-section {
+  height: 90%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .version-section {
   height: 25%;
   overflow-x: hidden;
@@ -1465,8 +1471,9 @@ li.stacktrace {
 }
 
 .box .box-left .profile-select {
-  top: -36px;
-  left: 0px;
+  top: -8px;
+  left: 12px;
+  text-overflow: ellipsis;
 }
 
 .box input[type='checkbox'] {
@@ -1491,6 +1498,11 @@ li.stacktrace {
   right: 0px;
 }
 
+.box [class^='icon-circle'] {
+  position: relative;
+  top: -3px;
+}
+
 .box .box-left {
   display: inline-block;
   position: absolute;
@@ -1507,3 +1519,14 @@ li.stacktrace {
   bottom: 14%;
 }
 
+.section-title {
+  display: inline-block;
+}
+
+.section-controls {
+  display: inline-block;
+}
+
+.section_filter {
+  display: inline-block;
+}

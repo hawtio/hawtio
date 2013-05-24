@@ -15,11 +15,13 @@ module Fabric {
     $scope.versions = [];
     $scope.containers = [];
     $scope.selectedContainers = [];
+    $scope.selectedProfiles = [];
     $scope.profiles = [];
     $scope.dialogProfiles = [];
     $scope.activeProfiles = [];
 
     $scope.profileIdFilter = '';
+    $scope.containerIdFilter = '';
 
 
     $scope.deleteVersionDialog = false;
@@ -95,10 +97,24 @@ module Fabric {
       }
     });
 
+    $scope.$watch('profiles', (oldValue, newValue) => {
+      if (oldValue !== newValue) {
+        if ($scope.profiles.length === 0) {
+          $scope.selectedProfiles = [];
+        } else {
+          $scope.selectedProfiles = $scope.profiles.filter((p) => { return p.selected; });
+          if ($scope.selectedProfiles.length > 0) {
+            $scope.activeProfileId = '';
+          }
+        }
+
+      }
+    }, true);
+
     $scope.$watch('containers', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         $scope.selectedContainers = $scope.containers.filter((c) => { return c.selected; });
-        console.log("$scope.selectedContainers", $scope.selectedContainers);
+
         if ($scope.selectedContainers.length > 0) {
           $scope.activeContainerId = '';
           //$scope.activeVersionId = '';
@@ -270,6 +286,11 @@ module Fabric {
 
 
     $scope.filterContainer = (container) => {
+
+      if (!container.id.startsWith($scope.containerIdFilter, 0, false)) {
+        return false;
+      }
+
       if ($scope.activeVersionId && 
           $scope.activeVersionId !== '' && 
           container.versionId !== $scope.activeVersionId) {
@@ -335,11 +356,22 @@ module Fabric {
       var answer = [];
 
       version.profiles.each((p) => {
+
+        var profile = $scope.profiles.find((prof) => { return p === prof.id });
+
+        var selected = false;
+        if (profile && profile.version === version.id) {
+          selected = profile.selected;
+        }
+
         answer.push({
           id: p,
-          versionId: version.id
+          versionId: version.id,
+          selected: selected
         });
       });
+
+
 
       return answer;
     };
@@ -498,7 +530,11 @@ module Fabric {
     };
 
     $scope.selectAllContainers = () => {
-      $scope.containers.each((container) => { container.selected = true });
+      $scope.containers.each((container) => { 
+        if ($scope.filterContainer(container)) {
+          container.selected = true;
+        }
+      });
     }
 
 
