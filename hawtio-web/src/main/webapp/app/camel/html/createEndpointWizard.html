@@ -13,11 +13,14 @@
         <label class="control-label" for="endpointPath">Endpoint</label>
 
         <div class="controls">
-          <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="Endpoint path"
+          <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="name"
                  typeahead="title for title in endpointCompletions() | filter:$viewValue" typeahead-editable='true'
                  min-length="1">
         </div>
       </div>
+
+      <div simple-form name="formEditor" entity='endpointParameters' data='endpointSchema' schema="schema"></div>
+
       <div class="control-group">
         <div class="controls">
           <button type="submit" class="btn btn-info" ng-click="createEndpointFromData()"

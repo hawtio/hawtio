@@ -2,12 +2,26 @@ module Camel {
   export function EndpointController($scope, $location, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
     $scope.message = "";
+    $scope.selectedComponentName = null;
+    $scope.endpointParameters = {};
+    $scope.schema = {
+      definitions: {
+      }
+    };
 
     var silentOptions = {silent: true};
 
     $scope.$watch('workspace.selection', function () {
       workspace.moveIfViewInvalid();
       loadData();
+    });
+
+    $scope.$watch('selectedComponentName', () => {
+      if ($scope.selectedComponentName !== $scope.loadedComponentName) {
+        $scope.endpointParameters = {};
+        loadEndpointSchema($scope.selectedComponentName);
+        $scope.loadedComponentName = $scope.selectedComponentName;
+      }
     });
 
     $scope.createEndpoint = (name) => {
@@ -27,6 +41,16 @@ module Camel {
     $scope.createEndpointFromData = () => {
       if ($scope.selectedComponentName && $scope.endpointPath) {
         var name = $scope.selectedComponentName + "://" + $scope.endpointPath;
+        console.log("Have endpoint data " + JSON.stringify($scope.endpointParameters));
+
+        var params = "";
+        angular.forEach($scope.endpointParameters, (value, key) => {
+          var prefix = params ? "&" : "";
+          params += prefix + key + "=" + value;
+        });
+        if (params) {
+          name += "?" + params;
+        }
         // TODO use form data too for URIs parameters...
         $scope.createEndpoint(name);
       }
@@ -57,9 +81,7 @@ module Camel {
       var endpointParameters = {};
       var completionText = $scope.endpointPath || "";
       if (mbean && componentName && completionText) {
-        console.log("Completing on endpoint " + componentName + " with text '" + completionText);
         answer = jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
-        console.log("got results: " + answer);
       }
       return answer;
     };
@@ -76,6 +98,28 @@ module Camel {
       $scope.componentNames = response;
       $scope.hasComponentNames = $scope.componentNames ? true : false;
       Core.$apply($scope);
+    }
+
+    function loadEndpointSchema(componentName) {
+      var mbean = Camel.getSelectionCamelContextMBean(workspace);
+      if (mbean && componentName) {
+        jolokia.execute(mbean, 'componentParametersJson', componentName, onSuccess(onEndpointSchema, silentOptions));
+      }
+    }
+
+    function onEndpointSchema(response) {
+      if (response) {
+        try {
+          //console.log("got JSON: " + response);
+          var json = JSON.parse(response);
+          $scope.endpointSchema = json;
+          $scope.schema.definitions[$scope.selectedComponentName] = json;
+          Core.$apply($scope);
+        } catch (e) {
+          console.log("Failed to parse JSON " + e);
+          console.log("JSON: " + response);
+        }
+      }
     }
 
     function operationSuccess() {
