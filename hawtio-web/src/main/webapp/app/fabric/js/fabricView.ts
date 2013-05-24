@@ -16,14 +16,81 @@ module Fabric {
     $scope.containers = [];
     $scope.selectedContainers = [];
     $scope.profiles = [];
+    $scope.dialogProfiles = [];
     $scope.activeProfiles = [];
 
+    $scope.profileIdFilter = '';
 
+
+    $scope.deleteVersionDialog = false;
+    $scope.deleteProfileDialog = false;
+    $scope.createProfileDialog = false;
+    $scope.createVersionDialog = false;
+
+    // Data for profile/version creation dialogs
+    $scope.createProfileGridOptions = {
+      data: 'profiles',
+      selectedItems: $scope.selectedParents,
+      showSelectionCheckbox: true,
+      multiSelect: true,
+      selectWithCheckboxOnly: false,
+      keepLastSelected: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Name'
+        }]
+    };
+
+    $scope.createVersionGridOptions = {
+      data: 'versions',
+      selectedItems: $scope.selectedParentVersion,
+      showSelectionCheckbox: true,
+      multiSelect: false,
+      selectWithCheckboxOnly: false,
+      keepLastSelected: false,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Name'
+        }]
+    };
+
+
+    // Tweaks to ensure ng-grid displays on dialogs
+    $scope.triggerResize = () => {
+      setTimeout(function() {
+        $('.dialogGrid').trigger('resize');
+      }, 10);
+
+    };
+
+    $scope.$watch('createProfileDialog', function() {
+      if ($scope.createProfileDialog) {
+        $scope.triggerResize();
+      }
+    });
+
+    $scope.$watch('createVersionDialog', function() {
+      if ($scope.createVersionDialog) {
+        $scope.triggerResize();
+      }
+    });
+
+    // holders for dialog data
+    $scope.newProfileName = '';
+    $scope.newVersionName = '';
+    $scope.selectedParents = [];
+    $scope.selectedParentVersion = [];
+
+
+    // watchers for selection handling
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
         if ($scope.activeVersionId === '') {
           $scope.activeProfileId = '';
+          $scope.profiles = [];
         }
       }
     });
@@ -40,6 +107,7 @@ module Fabric {
     }, true);
 
 
+    // drag/drop handling
     $scope.handleDrop = (event, element) => {
 
       //console.log("event: ", event);
@@ -68,6 +136,64 @@ module Fabric {
       }
 
     };
+
+
+    // create profile dialog action
+    $scope.doCreateProfile = () => {
+      $scope.createProfileDialog = false;
+      var parents = $scope.selectedParents.map(function(profile) {return profile.id});
+      createProfile(jolokia, $scope.activeVersionId, $scope.newProfileName, parents, function() {
+        notification('success', "Created profile " + $scope.newProfileName);
+        $scope.profileIdFilter = $scope.newProfileName;
+        $scope.newProfileName = "";
+        $scope.$apply();
+      }, function(response) {
+        notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
+        $scope.$apply();
+      });
+    };
+
+
+    // create version dialog action
+    $scope.doCreateVersion = () => {
+      $scope.createVersionDialog = false;
+
+      var success = function (response) {
+        notification('success', "Created version " + response.value.id);
+        $scope.newVersionName = '';
+        $scope.$apply();
+      };
+
+      var error = function (response) {
+        var msg = "Error creating new version: " + response.error;
+        if ($scope.newVersionName !== '') {
+          msg = "Error creating " + $scope.newVersionName + " : " + response.error;
+        }
+        notification('error', msg);
+      };
+
+      if ($scope.selectedParentVersion.length > 0 && $scope.newVersionName !== '') {
+        createVersionWithParentAndId(jolokia, $scope.selectedParentVersion[0].id, $scope.newVersionName, success, error);
+      } else if ($scope.newVersionName !== '') {
+        createVersionWithId(jolokia, $scope.newVersionName, success, error);
+      } else {
+        createVersion(jolokia, success, error);
+      }
+    };
+
+
+    // delete version dialog action
+    $scope.deleteVersion = () => {
+
+      deleteVersion(jolokia, $scope.version.id, function() {
+        notification('success', "Deleted version " + $scope.version.id);
+        $scope.$apply();
+      }, function(response) {
+        notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
+        $scope.$apply();
+      });
+    };
+
 
 
     $scope.alterContainer = (targetName, sourceType, sourceName) => {
@@ -205,7 +331,17 @@ module Fabric {
       if (!version) {
         return [];
       }
-      return version.profiles;
+
+      var answer = [];
+
+      version.profiles.each((p) => {
+        answer.push({
+          id: p,
+          versionId: version.id
+        });
+      });
+
+      return answer;
     };
 
 
@@ -317,6 +453,14 @@ module Fabric {
       }
       return '';
     }
+
+    $scope.isSelectedActiveProfile = (activeProfile) => {
+      if ($scope.activeProfileId === activeProfile.id && $scope.activeVersionId === activeProfile.versionId) {
+        return 'selected';
+      }
+      return '';
+    }
+
 
     $scope.isSelectedContainer = (container) => {
       if ($scope.activeContainerId === container.id && 

@@ -5,10 +5,18 @@
     <div class="columns">
 
 
+      <!-- containers -->
       <div id="center" class="column">
-
         <div class="section-header">
-          <a href="" ng-click="setActiveContainer(null)">Clear Selection</a>
+          <div class="section-title">
+            Containers
+          </div>
+          <div class="section-controls">
+
+            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
+            <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
+
+          </div>
         </div>
 
         <div class="canvas">
@@ -36,16 +44,38 @@
       </div>
 
 
+      <!-- versions and profiles -->
       <div id="left" class="column">
         <div class="section-header">
-          <a href="" ng-click="setActiveVersionId('')">Clear Selection</a>
-        </div>
+          <div class="section-title">
+            Versions
+          </div>
+          <div class="section-controls">
 
+            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveVersionId('')"></i>
+
+            <i class="icon-plus clickable" 
+               title="Create new Version"
+               ng-click="createVersionDialog = true"></i>
+
+            <!--
+            <a ng-href="#/wiki/branch/{{version.id}}/view/" ng-show="hasFabricWiki()"
+               title="View, edit or create configuration files for the profiles in this version">
+               <i class="icon-edit"></i>
+             </a>-->
+
+            <i class="icon-minus clickable" 
+              ng-disabled="versionCanBeDeleted()" 
+              ng-click="deleteVersionDialog = true" 
+              title="Delete this Version"></i>
+
+
+          </div>
+        </div>
         <div class="version-section">
           <div class="canvas">
             <div ng-repeat="version in versions">
               <div class="box" ng-class="isSelectedVersion(version.id)" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}" ng-click="setActiveVersionId(version.id)">
-
 
                 {{version.id}} {{containersForVersion(version.id)}}
 
@@ -53,19 +83,37 @@
             </div>
           </div>
         </div>
-
         <div class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
-          <a href="" ng-click="setActiveProfileId('')">Clear Selection</a>
+          <div class="section-title">
+            Profiles
+          </div>
+          <div class="section-controls">
+
+            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveProfileId('')"></i>
+
+            <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
+
+            <!--
+            <a ng-href="#/wiki/branch/{{version.id}}/view/{{selected[0].id}}" class="btn" ng-disabled="selected.length == 0" ng-show="hasFabricWiki()"
+               title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
+             </a>-->
+
+            <i class="icon-minus clickable" title="Delete selected Profiles" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"></i>
+
+          </div>
+          <div class="section-filter">
+            <input type="text" class="search-query" placeholder="Filter..." ng-model="profileIdFilter">
+            <i class="icon-remove clickable" title="Clear Filter" ng-click="profileIdFilter = ''"></i>
+          </div>
         </div>
         <div class="profile-section">
-
           <div class="canvas">
-            <div ng-repeat="profile in profiles">
-              <div class="box" ng-class="isSelectedProfile(profile)" id="profile#{{profile}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
+            <div ng-repeat="profile in profiles" ng-show="profile.id.startsWith(profileIdFilter, 0, false)">
+              <div class="box" ng-class="isSelectedProfile(profile.id)" id="profile#{{profile.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', helper: 'clone'}">
 
                 <div class="box-left">
-                  <div class="profile-select" ng-click="setActiveProfileId(profile)">
-                    {{profile}} {{containersForProfile(profile)}}
+                  <div class="profile-select" ng-click="setActiveProfileId(profile.id)">
+                    {{profile.id}} {{containersForProfile(profile.id)}}
                   </div>
                 </div>
 
@@ -77,28 +125,32 @@
             </div>
           </div>
         </div>
-
       </div>
 
 
-
+      <!-- active profiles -->
       <div id="right" class="column">
         <div class="section-header">
-          <a href="" ng-click="setActiveProfile(null)">Clear Selection</a>
+          <div class="section-title">
+            Active Profiles
+          </div>
+          <div class="section-controls">
+
+            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveProfile(null)"></i>
+
+          </div>
         </div>
         <div class="canvas">
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
-            <div class="box">
+            <div class="box" ng-class="isSelectedActiveProfile(profile)">
 
               <div class="active-profile">
                 <i class="icon-remove clickable" style="display: inline;" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0"></i>
                 
-
                 <div ng-click="setActiveProfile(profile)">
                   {{profile.versionId}} / {{profile.id}} ({{profile.count}})
                 </div>
               </div>
-
             </div>    
           </div>
         </div>
@@ -107,4 +159,64 @@
 
     </div>
   </div>
+
+  <!-- dialogs -->
+  <div hawtio-confirm-dialog="deleteVersionDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
+    <div class="dialog-body">
+      <p>Delete version {{version.id}}?</p>
+    </div>
+  </div>
+
+  <div hawtio-confirm-dialog="deleteProfileDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelected()">
+    <div class="dialog-body">
+      <p>Are you sure you want to delete the selected profiles:</p>
+      <ol>
+        <li ng-repeat="profile in selected">{{profile.id}}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div modal="createProfileDialog">
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile()">
+      <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
+      <div class="modal-body">
+        <label>Profile Name: </label>
+        <input name="id" class="input-xlarge" type="text" ng-model="newProfileName" required ng-pattern="/^[a-zA-Z0-9_-]*$/">
+        <span class="help-block" ng-show="createProfile.id.$error.required">Please enter a name for this profile</span>
+        <span class="help-block" ng-show="createProfile.id.$error.pattern">Name can only contain letters, numbers, '-', and '_'</span>
+
+        <p></p>
+        <label>Select one or more parent profiles as needed: </label>
+        <div class='dialogGrid' style="height: 250px;" ng-grid="createProfileGridOptions"></div>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" value="Create">
+        <input class="btn btn-primary" ng-click="createProfileDialog = false" value="Cancel">
+      </div>
+    </form>
+  </div>
+
+  <div modal="createVersionDialog">
+    <form name="createVersion" class="form-horizontal no-bottom-margin" ng-submit="doCreateVersion()">
+      <div class="modal-header"><h4>Create new Version...</h4></div>
+      <div class="modal-body">
+        <label>Version Name: </label>
+        <input name="id" class="input-xlarge" type="text" ng-model="newVersionName" ng-pattern="/^[.a-zA-Z0-9_-]*$/">
+        <span class="help-block" ng-hide="createVersion.id.$invalid">Leave blank to use the next available version number</span>
+        <span class="help-block" ng-show="createVersion.id.$error.pattern">Name can only contain letters, numbers, '-', '_' and '.'</span>
+        <p></p>
+        <label ng-show="newVersionName != ''">Select a version to derive version {{newVersionName}} from if required, otherwise the highest version number will be the parent of version {{newVersionName}}.</label>
+        <label ng-hide="newVersionName != ''">Select a version to derive the new version from if required, otherwise the highest version number will be the parent of the new version</label>
+        <div class='dialogGrid' style="height: 250px;" ng-grid="createVersionGridOptions"></div>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!createVersion.$valid" type="submit" value="Create">
+        <input class="btn btn-primary" ng-click="createVersionDialog = false" value="Cancel">
+      </div>
+    </form>
+  </div>
+
+
+
+
 </div>
