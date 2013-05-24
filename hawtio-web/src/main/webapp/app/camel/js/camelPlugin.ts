@@ -10,7 +10,8 @@ module Camel {
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
 
 
-  angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'hawtioCore', 'hawtio-ui']).
+  angular.module(pluginName, ['bootstrap', 'ui.bootstrap',
+            'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
@@ -188,7 +189,7 @@ module Camel {
               href: () => "#/camel/sendMessage"
             });
             workspace.subLevelTabs.push({
-              content: '<i class="icon-plus"></i> Create Endpoint',
+              content: '<i class="icon-plus"></i> Endpoint',
               title: "Create a new endpoint",
               isValid: (workspace: Workspace) => workspace.isEndpointsFolder(),
               href: () => "#/camel/createEndpoint"

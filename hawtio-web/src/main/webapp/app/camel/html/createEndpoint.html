@@ -1,8 +1,15 @@
-<form class="form-horizontal" ng-controller="Camel.EndpointController">
-    <div class="control-group">
-        <input class="span12" type="text" size="255" ng-model="endpointName" placeholder="Endpoint URI"/>
-    </div>
-    <div class="control-group">
-        <button type="submit" class="btn btn-info" ng-click="createEndpoint(endpointName)" ng-disabled="!endpointName">Create Endpoint</button>
-    </div>
-</form>
+<div ng-controller="Camel.EndpointController" ng-switch="componentNames">
+  <div ng-switch-when="null">
+    <ng-include src="'app/camel/html/createEndpointURL.html'"></ng-include>
+  </div>
+  <div ng-switch-default="">
+    <tabs>
+      <pane heading="URL">
+        <ng-include src="'app/camel/html/createEndpointURL.html'"></ng-include>
+      </pane>
+      <pane heading="Components" ng-show="componentNames">
+        <ng-include src="'app/camel/html/createEndpointWizard.html'"></ng-include>
+      </pane>
+    </tabs>
+  </div>
+</div>
