@@ -525,7 +525,7 @@ module Camel {
           // look for the Camel 2.11 mbean which we prefer
           var result = tree.navigate(domain, contextId, "tracer");
           if (result && result.children) {
-            var mbean = result.children.find(m => m.title.startsWith("Backlog"));
+            var mbean = result.children.find(m => m.title.startsWith("BacklogTracer"));
             if (mbean) {
               return mbean.objectName;
             }
