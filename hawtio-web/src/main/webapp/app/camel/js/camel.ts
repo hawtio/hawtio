@@ -67,12 +67,57 @@ module Camel {
     };
 
 
+    var postfix = " selected";
+
+    function isSelected(node) {
+      if (node) {
+        var className = node.getAttribute("class");
+        return className && className.endsWith(postfix);
+      }
+      return false;
+    }
+
+    function setSelected(node, flag) {
+      var answer = false;
+      if (node) {
+        var className = node.getAttribute("class");
+        var selected = className && className.endsWith(postfix);
+        if (selected) {
+          className = className.substring(0, className.length - postfix.length);
+        } else {
+          if (!flag) {
+            // no need to change!
+            return answer;
+          }
+          className = className + postfix;
+          answer = true;
+        }
+        node.setAttribute("class", className);
+      }
+      return answer;
+    }
+
     function showGraph(nodes, links) {
       var canvasDiv = $($element);
       var width = getWidth();
       var height = getHeight();
       var svg = canvasDiv.children("svg")[0];
       $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
+
+      var nodes = canvasDiv.find("g.node");
+      nodes.click(function() {
+        var selected = isSelected(this);
+
+        // lets clear all selected flags
+        nodes.each((idx, element) => {
+          setSelected(element, false);
+        });
+
+        if (!selected) {
+          setSelected(this, true);
+        }
+        Core.$apply($scope);
+      });
 
       if ($scope.mbean) {
         Core.register(jolokia, $scope, {
