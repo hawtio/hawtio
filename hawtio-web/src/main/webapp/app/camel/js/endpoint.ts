@@ -103,7 +103,7 @@ module Camel {
     function loadEndpointSchema(componentName) {
       var mbean = Camel.getSelectionCamelContextMBean(workspace);
       if (mbean && componentName) {
-        jolokia.execute(mbean, 'componentParametersJson', componentName, onSuccess(onEndpointSchema, silentOptions));
+        jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
       }
     }
 
