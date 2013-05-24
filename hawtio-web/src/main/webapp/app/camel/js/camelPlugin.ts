@@ -20,6 +20,7 @@ module Camel {
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
+                    when('/camel/debugRoute', {templateUrl: 'app/camel/html/debug.html'}).
                     when('/camel/profileRoute', {templateUrl: 'app/camel/html/profileRoute.html'}).
                     when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
@@ -169,6 +170,12 @@ module Camel {
               title: "Browse the messages on the endpoint",
               isValid: (workspace: Workspace) => workspace.isEndpoint(),
               href: () => "#/camel/browseEndpoint"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-stethoscope"></i> Debug',
+              title: "Debug the Camel route",
+              isValid: (workspace: Workspace) => workspace.isRoute() && Camel.getSelectionCamelDebugMBean(workspace),
+              href: () => "#/camel/debugRoute"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-envelope"></i> Trace',

@@ -116,9 +116,12 @@ module Camel {
           setSelected(element, false);
         });
 
+        var cid = null;
         if (!selected) {
+          cid = this.getAttribute("data-cid");
           setSelected(this, true);
         }
+        $scope.$emit("camel.diagram.selectedNodeId", cid);
         Core.$apply($scope);
       });
 

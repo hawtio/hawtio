@@ -195,6 +195,9 @@ module Core {
             .enter()
             .append("g")
             .attr("class", "node")
+            .attr("data-cid", function (d) {
+              return d.cid;
+            })
             .attr("id", function (d) {
               return "node-" + d.label
             });
