@@ -550,7 +550,6 @@ module Camel {
       if (tree && selection) {
         var domain = selection.domain;
         if (domain && contextId) {
-          // look for the Camel 2.11 mbean which we prefer
           var result = tree.navigate(domain, contextId, "tracer");
           if (result && result.children) {
             var mbean = result.children.find(m => m.title.startsWith("BacklogDebugger"));

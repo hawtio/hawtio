@@ -30,7 +30,7 @@ module Camel {
     });
 
     $scope.addBreakpoint = () => {
-      var mbean = getSelectionCamelTraceMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean && $scope.selectedDiagramNodeId) {
         console.log("adding breakpoint on " + $scope.selectedDiagramNodeId);
         jolokia.execute(mbean, "addBreakpoint", $scope.selectedDiagramNodeId, onSuccess(debuggingChanged));
@@ -38,7 +38,7 @@ module Camel {
     };
 
     $scope.removeBreakpoint = () => {
-      var mbean = getSelectionCamelTraceMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean && $scope.selectedDiagramNodeId) {
         console.log("removing breakpoint on " + $scope.selectedDiagramNodeId);
         jolokia.execute(mbean, "removeBreakpoint", $scope.selectedDiagramNodeId, onSuccess(debuggingChanged));
@@ -70,7 +70,7 @@ module Camel {
     }
 
     function setDebugging(flag:Boolean) {
-      var mbean = getSelectionCamelTraceMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
         var method = flag ? "enableDebugger" : "disableDebugger";
         jolokia.execute(mbean, method, onSuccess(debuggingChanged));
