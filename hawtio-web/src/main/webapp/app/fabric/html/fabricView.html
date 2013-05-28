@@ -27,7 +27,7 @@
           <div class="canvas">
 
             <div ng-repeat="container in containers" ng-show="filterContainer(container)">
-              <div class="box" ng-class="isSelectedContainer(container)" id="container#{{container.id}}" data-drop="true" jqyoui-droppable="{multiple: false, stack: true, onDrop: 'handleDrop', index: $index}">
+              <div class="box" ng-class="getSelectedClass(container)">
 
                 <div class="box-left">
 
@@ -82,7 +82,7 @@
          <div class="version-section">
           <div class="canvas">
             <div ng-repeat="version in versions">
-              <div class="box" ng-class="isSelectedVersion(version.id)" id="version#{{version.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element', scroll: true, helper: 'clone'}" ng-click="setActiveVersionId(version.id)">
+              <div class="box" ng-class="isSelectedVersion(version.id)" ng-click="setActiveVersionId(version.id)">
 
                 {{version.id}} {{containersForVersion(version.id)}}
 
@@ -95,7 +95,7 @@
             Profiles
           </div>
           <div class="section-controls">
-            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveProfileId('')"></i>
+            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="clearSelection(profiles)"></i>
             <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
 
             <!--
@@ -114,14 +114,14 @@
         <div class="profile-section">
           <div class="canvas">
             <div ng-repeat="profile in profiles" ng-show="profile.id.startsWith(profileIdFilter, 0, false)">
-              <div class="box" ng-class="isSelectedProfile(profile.id)" id="profile#{{profile.id}}" data-drag="true" jqyoui-draggable="{animate:false, placeholder: keep, index: $index}" data-jqyoui-options="{revert: 'invalid', appendTo: '.fabric-view', containment: 'element',  scroll: true, helper: 'clone'}">
+              <div class="box" ng-class="getSelectedClass(profile)" id="profile#{{profile.id}}">
 
                 <div class="box-left">
 
                   <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
                   <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
-                  <div class="profile-select" title="{{profile.id}} {{containersForProfile(profile.id)}}" ng-click="setActiveProfileId(profile.id)">
+                  <div class="profile-select" ng-click="profile.selected = true" title="{{profile.id}} {{containersForProfile(profile.id)}}">
                     {{profile.id}} {{containersForProfile(profile.id)}}
                   </div>
                 </div>
@@ -148,14 +148,21 @@
             <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="setActiveProfile(null)"></i>
 
           </div>
+          <div class="section-filter">
+            <input type="text" class="search-query" placeholder="Filter..." ng-model="activeProfileIdFilter">
+            <i class="icon-remove clickable" title="Clear Filter" ng-click="activeProfileIdFilter = ''"></i>
+          </div>
         </div>
         <div class="canvas">
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
-            <div class="box" ng-class="isSelectedActiveProfile(profile)">
+            <div class="box" ng-class="getSelectedClass(profile)">
 
               <div class="active-profile">
                 <i class="icon-remove clickable" style="display: inline;" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0"></i>
-                
+
+                <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
+                <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
+
                 <div ng-click="setActiveProfile(profile)">
                   {{profile.versionId}} / {{profile.id}} ({{profile.count}})
                 </div>

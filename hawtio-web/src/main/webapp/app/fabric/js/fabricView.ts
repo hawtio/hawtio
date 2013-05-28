@@ -13,16 +13,23 @@ module Fabric {
 
 
     $scope.versions = [];
-    $scope.containers = [];
-    $scope.selectedContainers = [];
-    $scope.selectedProfiles = [];
     $scope.profiles = [];
-    $scope.dialogProfiles = [];
+    $scope.containers = [];
     $scope.activeProfiles = [];
 
+    $scope.selectedVersion = {};
+    $scope.selectedContainers = [];
+    $scope.selectedProfiles = [];
+    $scope.selectedActiveProfiles = [];
+
+    $scope.dialogProfiles = [];
+
     $scope.profileIdFilter = '';
+    $scope.activeProfileIdFilter = '';
     $scope.containerIdFilter = '';
 
+    $scope.filterActiveVersion = false;
+    $scope.filterActiveProfile = false;
 
     $scope.deleteVersionDialog = false;
     $scope.deleteProfileDialog = false;
@@ -97,6 +104,7 @@ module Fabric {
       }
     });
 
+
     $scope.$watch('profiles', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         if ($scope.profiles.length === 0) {
@@ -111,6 +119,7 @@ module Fabric {
       }
     }, true);
 
+
     $scope.$watch('containers', (oldValue, newValue) => {
       if (oldValue !== newValue) {
         $scope.selectedContainers = $scope.containers.filter((c) => { return c.selected; });
@@ -120,6 +129,13 @@ module Fabric {
           //$scope.activeVersionId = '';
         }
       }      
+    }, true);
+
+
+    $scope.$watch('activeProfiles', (oldValue, newValue) => {
+      if (oldValue !== newValue) {
+        $scope.selectedActiveProfiles = $scope.activeProfiles.filter((ap) => { return ap.selected; });
+      }
     }, true);
 
 
@@ -291,29 +307,29 @@ module Fabric {
         return false;
       }
 
-      if ($scope.activeVersionId && 
-          $scope.activeVersionId !== '' && 
-          container.versionId !== $scope.activeVersionId) {
-        return false;
-      }
+      if ($scope.selectedActiveProfiles.length > 0) {
 
-      if ($scope.activeProfileId && 
-          $scope.activeProfileId !== '') {
-
-        if (container.profileIds.count((profile) => {
-              return profile === $scope.activeProfileId;
-            }) === 0) {
-
+        if ($scope.selectedActiveProfiles.none( (ap) => {
+          console.log("Checking ap: ", ap, " container: ", container);
+          return ap.versionId === container.versionId && 
+            container.profileIds.some(ap.id);
+        })) {
           return false;
-
         }
       }
+
       return true;
     };
 
 
     $scope.filterActiveProfile = (profile) => {
-      if ($scope.activeVersionId && 
+
+      if (!profile.id.startsWith($scope.activeProfileIdFilter, 0, false)) {
+        return false;
+      }
+
+      if ($scope.filterActiveVersion && 
+          $scope.activeVersionId && 
           $scope.activeVersionId !== '' && 
           profile.versionId !== $scope.activeVersionId ) {
         return false;
@@ -393,7 +409,8 @@ module Fabric {
               id: profile,
               count: 1,
               versionId: container.versionId,
-              containers: [container.id]
+              containers: [container.id],
+              selected: false
             });
           }
         });
@@ -479,55 +496,32 @@ module Fabric {
       return '';
     };
 
-    $scope.isSelectedProfile = (id) => {
-      if ($scope.activeProfileId === id) {
+    $scope.getSelectedClass = (obj) => {
+      if (obj.selected) {
         return 'selected';
       }
       return '';
-    }
-
-    $scope.isSelectedActiveProfile = (activeProfile) => {
-      if ($scope.activeProfileId === activeProfile.id && $scope.activeVersionId === activeProfile.versionId) {
-        return 'selected';
-      }
-      return '';
-    }
-
-
-    $scope.isSelectedContainer = (container) => {
-      if ($scope.activeContainerId === container.id && 
-          $scope.activeContainerVersion === container.versionId) {
-        return 'selected';
-      }
-
-      if (container.selected) {
-        return 'selected';
-      }
-
-      return '';
-    }
-
-
-    $scope.setActiveProfileId = (id) => {
-      $scope.activeProfileId = id;
     };
 
 
     $scope.setActiveVersionId = (id) => {
       $scope.activeVersionId = id;
-      $scope.activeProfileId = '';
+    };
+
+
+    $scope.clearSelection = (group) => {
+      group.each((item) => { item.selected = false; });
     };
 
 
     $scope.setActiveProfile = (profile) => {
+      $scope.clearSelection($scope.activeProfiles);
       if (!profile || profile === null) {
-        $scope.activeProfileId = '';
-        $scope.activeVersionId = '';
         return;
       }
-      $scope.activeProfileId = profile.id;
-      $scope.activeVersionId = profile.versionId;
+      profile.selected = true;
     };
+
 
     $scope.selectAllContainers = () => {
       $scope.containers.each((container) => { 
@@ -535,19 +529,15 @@ module Fabric {
           container.selected = true;
         }
       });
-    }
+    };
 
 
     $scope.setActiveContainer = (container) => {
+      $scope.clearSelection($scope.containers);
       if (!container || container === null) {
-        $scope.activeContainerId = '';
-        $scope.activeContainerVersion = '';
-        $scope.containers.each((c) => {c.selected = false});
         return;
       }
-      $scope.activeContainerId = container.id;
-      $scope.activeContainerVersion = container.versionId;
-      $scope.containers.each((c) => {c.selected = false});
+      container.selected = true;
     };
 
 
@@ -581,7 +571,18 @@ module Fabric {
         });
 
         $scope.containers = newContainers;
+        var activeProfiles = $scope.activeProfiles;
         $scope.activeProfiles = $scope.currentActiveProfiles();
+        $scope.activeProfiles.each((activeProfile) => {
+
+          var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
+          if (ap) {
+            activeProfile['selected'] = ap.selected;
+          } else {
+            activeProfile['selected'] = false;
+          }
+
+        });
         Core.$apply($scope);
       }
     };
