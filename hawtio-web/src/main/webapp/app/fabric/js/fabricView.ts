@@ -139,37 +139,6 @@ module Fabric {
     }, true);
 
 
-    // drag/drop handling
-    $scope.handleDrop = (event, element) => {
-
-      //console.log("event: ", event);
-      //console.log("element: ", element);
-
-      var sourceElement = element.draggable.get(0);
-      var targetElement = event.target;
-
-      //console.log("sourceElement: ", sourceElement);
-      //console.log("targetElement: ", targetElement);
-
-      var temp = targetElement.id.split('#');
-
-      var targetType = temp[0];
-      var targetName = temp[1];
-
-      temp = sourceElement.id.split('#');
-
-      var sourceType = temp[0];
-      var sourceName = temp[1];
-
-      switch(targetType) {
-        case 'container':
-          $scope.alterContainer(targetName, sourceType, sourceName);
-          break;
-      }
-
-    };
-
-
     // create profile dialog action
     $scope.doCreateProfile = () => {
       $scope.createProfileDialog = false;
@@ -217,40 +186,14 @@ module Fabric {
     // delete version dialog action
     $scope.deleteVersion = () => {
 
-      deleteVersion(jolokia, $scope.version.id, function() {
+      deleteVersion(jolokia, $scope.activeVersionId, function() {
         notification('success', "Deleted version " + $scope.version.id);
+        $scope.activeVersionId = '';
         $scope.$apply();
       }, function(response) {
         notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
         $scope.$apply();
       });
-    };
-
-
-
-    $scope.alterContainer = (targetName, sourceType, sourceName) => {
-      switch(sourceType) {
-        case 'profile':
-            if ($scope.selectedContainers.length > 0) {
-              $scope.selectedContainers.each((c) => {
-                $scope.addProfile(c.id, sourceName);
-              });
-            } else {
-              $scope.addProfile(targetName, sourceName);
-            }
-
-          break;
-        case 'version':
-            if ($scope.selectedContainers.length > 0) {
-              $scope.selectedContainers.each((c) => {
-                $scope.migrateVersion(c.id, sourceName);
-              });
-            } else {
-              $scope.migrateVersion(targetName, sourceName);
-            }
-
-          break;
-      }
     };
 
 
@@ -265,13 +208,13 @@ module Fabric {
     }
 
 
-    $scope.addProfile = (targetName, sourceName) => {
-      notification('info', "Adding " + sourceName + " to " + targetName);
+    $scope.addProfiles = (targetName, profiles) => {
+      notification('info', "Adding " + profiles.join(', ') + " to " + targetName);
 
-      addProfilesToContainer(jolokia, targetName, [sourceName], () => {
-        notification('success', "Added " + sourceName + " to " + targetName);
+      addProfilesToContainer(jolokia, targetName, profiles, () => {
+        notification('success', "Added " + profiles.join(', ') + " to " + targetName);
       }, (response) => {
-        notification('error', "Failed to add " + sourceName + " to " + targetName + " due to " + response.error);
+        notification('error', "Failed to add " + profiles.join(', ') + " to " + targetName + " due to " + response.error);
       });
     };
 
@@ -360,6 +303,35 @@ module Fabric {
     };
 
 
+    $scope.showMigrateButton = () => {
+      return $scope.selectedContainers.length > 0 && $scope.activeVersionId && $scope.activeVersionId !== '';
+    };
+
+
+    $scope.applyVersionToContainers = () => {
+      $scope.selectedContainers.each((c) => {
+        $scope.migrateVersion(c.id, $scope.activeVersionId);
+      });
+    };
+
+
+    $scope.showProfileAddButton = () => {
+      return $scope.selectedProfiles.length > 0 && 
+             $scope.selectedContainers.length > 0 && 
+             $scope.selectedContainers.every((c) => { return c.versionId === $scope.activeVersionId });
+    };
+
+
+    $scope.addProfilesToContainers = () => {
+
+      var profileIds = $scope.selectedProfiles.map((p) => { return p.id });
+
+      $scope.selectedContainers.each((c) => {
+        $scope.addProfiles(c.id, profileIds);
+      });
+    }
+
+
     $scope.currentVersionProfiles = (id) => {
       if (id === '') {
         return [];
@@ -446,6 +418,14 @@ module Fabric {
     };
 
 
+    $scope.versionCanBeDeleted = () => {
+      return $scope.containers.none((c) => { return c.versionId === $scope.activeVersionId });
+    };
+
+    $scope.profilesCanBeDeleted = () => {
+      return 
+    }
+
 
     $scope.connect = (row) => {
       if (row) {
@@ -457,7 +437,7 @@ module Fabric {
     };
 
 
-    $scope.getTitle = (container) => {
+    $scope.getStatusTitle = (container) => {
       var answer = 'Alive';
 
       if (!container.alive) {
