@@ -101,7 +101,7 @@
                title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
              </a>-->
 
-             <i class="icon-minus clickable" title="Delete selected Profiles" ng-disabled="selected.length == 0 || selectedHasContainers()" ng-click="deleteProfileDialog = true"></i>
+             <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog = true" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
 
            </div>
            <div class="section-filter">
@@ -181,12 +181,9 @@
     </div>
   </div>
 
-  <div hawtio-confirm-dialog="deleteProfileDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelected()">
+  <div hawtio-confirm-dialog="deleteProfileDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelectedProfiles()">
     <div class="dialog-body">
-      <p>Are you sure you want to delete the selected profiles:</p>
-      <ol>
-        <li ng-repeat="profile in selectedProfiles">{{profile.id}}</li>
-      </ol>
+      <p>Are you sure you want to delete the profiles {{getSelectedProfileIds().join(", ")}}</p>
     </div>
   </div>
 

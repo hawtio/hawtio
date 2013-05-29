@@ -197,6 +197,17 @@ module Fabric {
       });
     };
 
+    $scope.deleteSelectedProfiles = () => {
+      $scope.selectedProfiles.each(function(profile) {
+        deleteProfile(jolokia, $scope.activeVersionId, profile.id, function() {
+          notification('success', "Deleted profile " + profile.id);
+        }, function(response) {
+          notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
+        })
+      });
+    };
+
+
 
     $scope.migrateVersion = (targetName, sourceName) => {
       notification('info', "Moving " + targetName + " to " + sourceName);
@@ -423,9 +434,22 @@ module Fabric {
       return $scope.containers.none((c) => { return c.versionId === $scope.activeVersionId });
     };
 
+
     $scope.profilesCanBeDeleted = () => {
-      return 
-    }
+
+      var possibleMatches = $scope.containers.filter((c) => { return c.versionId === $scope.activeVersionId });
+
+      if (possibleMatches.length === 0) {
+        return true;
+      }
+
+      possibleMatches = possibleMatches.filter( (c) => { return $scope.selectedProfiles.some((p) => { return c.profileIds.some(p.id)})});
+
+      if (possibleMatches.length === 0) {
+        return true;
+      }
+      return false;
+    };
 
 
     $scope.connect = (row) => {
@@ -435,6 +459,11 @@ module Fabric {
         var password = "admin";
         Fabric.connect(row, userName, password, true);
       }
+    };
+
+
+    $scope.getSelectedProfileIds = () => {
+      return $scope.selectedProfiles.map((p) => { return p.id });
     };
 
 
