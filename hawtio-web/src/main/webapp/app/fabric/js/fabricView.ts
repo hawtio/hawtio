@@ -7,10 +7,6 @@ module Fabric {
     $scope.containersOp = 'containers(java.util.List)';
 
     $scope.activeVersionId = $location.search()['cv'];
-    $scope.activeProfileId = $location.search()['cp'];
-    $scope.activeContainerId = $location.search()['ac'];
-    $scope.activeContainerVersion = $location.search()['acv'];
-
 
     $scope.versions = [];
     $scope.profiles = [];
@@ -35,6 +31,7 @@ module Fabric {
     $scope.deleteProfileDialog = false;
     $scope.createProfileDialog = false;
     $scope.createVersionDialog = false;
+
 
     // Data for profile/version creation dialogs
     $scope.createProfileGridOptions = {
@@ -92,6 +89,9 @@ module Fabric {
     $scope.selectedParents = [];
     $scope.selectedParentVersion = [];
 
+    $scope.$on('$routeUpdate', () => {
+      $scope.activeVersionId = $location.search()['cv'];
+    });
 
     // watchers for selection handling
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
@@ -101,6 +101,7 @@ module Fabric {
           $scope.activeProfileId = '';
           $scope.profiles = [];
         }
+      $location.search('cv', $scope.activeVersionId);
       }
     });
 
@@ -253,7 +254,7 @@ module Fabric {
       if ($scope.selectedActiveProfiles.length > 0) {
 
         if ($scope.selectedActiveProfiles.none( (ap) => {
-          console.log("Checking ap: ", ap, " container: ", container);
+          //console.log("Checking ap: ", ap, " container: ", container);
           return ap.versionId === container.versionId && 
             container.profileIds.some(ap.id);
         })) {
@@ -534,6 +535,16 @@ module Fabric {
     };
 
 
+    $scope.showProfile = (profile) => {
+      $location.path('/fabric/profile/' + $scope.activeVersionId + '/' + profile.id);
+    };
+
+
+    $scope.showContainer = (container) => {
+      $location.path('/fabric/container/' + container.id);
+    };
+
+
     $scope.updateContainers = (newContainers) => {
 
       var response = angular.toJson(newContainers);
@@ -585,8 +596,7 @@ module Fabric {
       {type: 'exec', mbean: managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]}
     ], onSuccess($scope.dispatch));
 
+  };
 
 
-
-  }
 }

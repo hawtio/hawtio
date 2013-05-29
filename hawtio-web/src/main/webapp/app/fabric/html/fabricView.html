@@ -41,6 +41,7 @@
 
                 <div class="box-right">
                   <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)"></i>
+                  <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showContainer(container)"></i>
                   <i class="icon1point5x" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)'></i>
                 </div>
 
@@ -124,7 +125,7 @@
                 </div>
 
                 <div class="box-right">
-                  <i class="icon1point5x clickable icon-info-sign" title="Show Details"></i>
+                  <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
                 </div>
 
               </div>
@@ -228,8 +229,5 @@
       </div>
     </form>
   </div>
-
-
-
 
 </div>

@@ -13,7 +13,7 @@ module Fabric {
             when('/fabric/profiles', {templateUrl: 'app/fabric/html/profiles.html'}).
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'}).
-            when('/fabric/view', {templateUrl: 'app/fabric/html/fabricView.html'});
+            when('/fabric/view', { templateUrl: 'app/fabric/html/fabricView.html', reloadOnSearch: false });
   }).
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 
