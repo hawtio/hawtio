@@ -12,17 +12,26 @@
   </div>
 
   <div class="row-fluid">
-    <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
-      <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateContainerChildOptions'>
-        <div simple-form name='create-child-container' data='schema' entity='entity'></div>
-      </div>
-      <div class="tab-pane" title="SSH Container" value='org_fusesource_fabric_api_CreateSshContainerOptions'>
-        <div simple-form name='create-ssh-container' data='schema' entity='entity'></div>
-      </div>
-      <div class="tab-pane" title="Cloud Container" value='org_fusesource_fabric_api_CreateJCloudsContainerOptions'>
-        <div simple-form name='create-cloud-container' data='schema' entity='entity'></div>
+    <div class="span5">
+      <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
+        <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateContainerChildOptions'>
+          <div simple-form name='create-child-container' data='schema' entity='entity'></div>
+
+        </div>
+        <div class="tab-pane" title="SSH Container" value='org_fusesource_fabric_api_CreateSshContainerOptions'>
+          <div simple-form name='create-ssh-container' data='schema' entity='entity'></div>
+
+        </div>
+        <div class="tab-pane" title="Cloud Container" value='org_fusesource_fabric_api_CreateJCloudsContainerOptions'>
+          <div simple-form name='create-cloud-container' data='schema' entity='entity'></div>
+
+        </div>
       </div>
     </div>
+    <div class="span4">
+      <select ng-model="selectedVersion" ng-options="version.id for version in versions"></select>
+    </div>
+
   </div>
 
 

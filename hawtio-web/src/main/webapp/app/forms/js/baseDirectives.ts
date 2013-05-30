@@ -150,6 +150,7 @@ module Forms {
     public getControlGroup(config1, config2, id) {
       var group = super.getControlGroup(config1, config2, id);
       group.css({'display': 'none'});
+      return group;
     }
 
     public getInput(config, arg, id, modelName) {
