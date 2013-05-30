@@ -15,6 +15,14 @@
             <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
             <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
 
+            <i class="icon-plus clickable" title="Create Container" ng-click="createContainer()"></i>
+
+            <i class="icon-minus clickable" title="Delete Container" ng-click="deleteSelectedContainers()" ng-show="selectedContainers.length != 0"></i>
+
+            <i class="icon-play-circle clickable" title="Start Containers" ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"></i>
+
+            <i class="icon-off clickable" title="Stop Containers" ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"></i>
+
           </div>
           <div class="section-filter">
             <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
@@ -161,7 +169,7 @@
                 <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
                 <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
-                <div ng-click="setActiveProfile(profile)">
+                <div title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
                   {{profile.versionId}} / {{profile.id}} ({{profile.count}})
                 </div>
               </div>

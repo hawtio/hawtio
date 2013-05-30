@@ -1420,6 +1420,10 @@ li.stacktrace {
   background: white;
   height: 28px;
 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden;
+
 }
 
 .container-section {
@@ -1501,6 +1505,10 @@ li.stacktrace {
 .box [class^='icon-circle'] {
   position: relative;
   top: -3px;
+}
+
+.box .active-profile [class^='icon-circle'] {
+  top: 0;
 }
 
 .box .box-left {

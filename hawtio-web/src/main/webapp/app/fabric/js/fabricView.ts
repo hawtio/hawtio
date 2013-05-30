@@ -16,6 +16,12 @@ module Fabric {
         $scope.selectedProfileIds = profiles.split(',');
       }
 
+      var containers = $location.search()['sc'];
+      $scope.selectedContainerIds = [];
+      if (containers) {
+        $scope.selectedContainerIds = containers.split(',');
+      }
+
     }
 
     $scope.init();
@@ -105,10 +111,15 @@ module Fabric {
 
     // watchers for selection handling
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
-        $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
-        if ($scope.activeVersionId === '') {
-          $scope.profiles = [];
-        }
+
+      if (!$scope.activeVersionId) {
+        $scope.activeVersionId = '';
+      }
+
+      $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
+      if ($scope.activeVersionId === '') {
+        $scope.profiles = [];
+      }
       $location.search('cv', $scope.activeVersionId);
     });
 
@@ -146,10 +157,18 @@ module Fabric {
 
     $scope.$watch('selectedProfiles', (oldValue, newValue) => {
       if (oldValue !== newValue) {
-        var ids = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
+        var ids = $scope.getSelectedProfileIds().join(',');
         $location.search('sp', ids);
       }
-    });
+    }, true);
+
+
+    $scope.$watch('selectedContainers', (oldValue, newValue) => {
+      if (oldValue !== newValue) {
+        var ids = $scope.getSelectedContainerIds().join(',');
+        $location.search('sc', ids);
+      }
+    }, true);
 
 
     // create profile dialog action
@@ -266,10 +285,14 @@ module Fabric {
       });
     }
 
+    $scope.getFilteredName = (item) => {
+      return item.versionId + " / " + item.id;
+    }
+
 
     $scope.filterContainer = (container) => {
 
-      if (!container.id.startsWith($scope.containerIdFilter, 0, false)) {
+      if (!$scope.getFilteredName(container).has($scope.containerIdFilter)) {
         return false;
       }
 
@@ -290,7 +313,7 @@ module Fabric {
 
     $scope.filterActiveProfile = (profile) => {
 
-      if (!profile.id.startsWith($scope.activeProfileIdFilter, 0, false)) {
+      if (!$scope.getFilteredName(profile).has($scope.activeProfileIdFilter)) {
         return false;
       }
 
@@ -478,8 +501,18 @@ module Fabric {
 
 
     $scope.getSelectedProfileIds = () => {
-      return $scope.selectedProfiles.map((p) => { return p.id });
+      return $scope.getIds($scope.selectedProfiles);
     };
+
+
+    $scope.getSelectedContainerIds = () => {
+      return $scope.getIds($scope.selectedContainers);
+    };
+
+
+    $scope.getIds = (arr) => {
+      return arr.map((o) => { return o.id; });
+    }
 
 
     $scope.getStatusTitle = (container) => {
@@ -566,6 +599,71 @@ module Fabric {
     };
 
 
+    $scope.createContainer = () => {
+      $location.path("/fabric/containers/createContainer");
+    };
+
+
+    $scope.deleteSelectedContainers = () => {
+      $scope.selectedContainers.each((c) => {
+        $scope.deleteContainer(c.id);
+      });
+    };
+
+
+    $scope.startSelectedContainers = () => {
+      $scope.selectedContainers.each((c) => {
+        $scope.startContainer(c.id);
+      });
+    };
+
+
+    $scope.stopSelectedContainers = () => {
+      $scope.selectedContainers.each((c) => {
+        $scope.stopContainer(c.id);
+      });
+    };
+
+
+    $scope.deleteContainer = (name) => {
+      destroyContainer(jolokia, name, () => {
+        notification('success', "Deleted " + name);
+      }, (response) => {
+        notification('error', "Failed to delete " + name + " due to " + response.error);
+      });
+    };
+
+
+    $scope.startContainer = (name) => {
+      startContainer(jolokia, name, () => {
+        notification('success', "Started " + name);
+      }, (response) => {
+        notification('error', "Failed to start " + name + " due to " + response.error);
+      });
+    };
+
+
+    $scope.stopContainer = (name) => {
+      stopContainer(jolokia, name, () => {
+        notification('success', "Stopped " + name);
+      }, (response) => {
+        notification('error', "Failed to stop " + name + " due to " + response.error);
+      });
+    };
+
+
+    $scope.anySelectionAlive = (state) => {
+      var selected = $scope.selectedContainers;
+      return selected.length && selected.any((s) => s.alive === state);
+    };
+
+
+    $scope.everySelectionAlive = (state) => {
+      var selected = $scope.selectedContainers;
+      return selected.length && selected.every((s) => s.alive === state);
+    };
+
+
     $scope.updateVersions = (newVersions) => {
       var response = angular.toJson(newVersions);
       if ($scope.versionsResponse !== response) {
@@ -602,6 +700,9 @@ module Fabric {
             container['selected'] = c.selected;
           } else {
             container['selected'] = false;
+          }
+          if ($scope.selectedContainerIds.any(container.id)) {
+            container.selected = true;
           }
         });
 
