@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function FabricViewController($scope, $location, jolokia) {
+  export function FabricViewController($scope, $location, jolokia, localStorage) {
 
     $scope.containerArgs = ["id", "alive", "profileIds", "versionId", "provisionResult", "jolokiaUrl"];
     $scope.versionsOp = 'versions()';
@@ -42,9 +42,10 @@ module Fabric {
     $scope.activeProfileIdFilter = '';
     $scope.containerIdFilter = '';
 
-    // TODO - Maybe store these in the preferences
-    $scope.userName = '';
-    $scope.password = '';
+    $scope.userName = localStorage['fabric.userName'];
+    // TODO at least obfusicate this
+    $scope.password = localStorage['fabric.password'];
+    $scope.saveCredentials = false;
 
     $scope.filterActiveVersion = false;
     $scope.filterActiveProfile = false;
@@ -504,6 +505,11 @@ module Fabric {
 
     $scope.connect = (row) => {
       Fabric.connect($scope.targetContainer, $scope.userName, $scope.password, true);
+      if ($scope.saveCredentials) {
+        $scope.saveCredentials = false;
+        localStorage['fabric.userName'] = $scope.userName;
+        localStorage['fabric.password'] = $scope.password;
+      }
       $scope.targetContainer = {};
       $scope.connectToContainerDialog = false;
     };
