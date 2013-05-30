@@ -14,7 +14,7 @@ module Fabric {
     if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
-        operation: 'getProfile(java.lang.String,java.lang.String)',
+        operation: 'getProfile(java.lang.String, java.lang.String)',
         arguments: [$scope.versionId, $scope.profileId]
       }, onSuccess(render));
     }

@@ -1,7 +1,8 @@
 <div ng-controller="Fabric.ProfileController">
+
   <div class="row-fluid">
     <div class="pull-left">
-      <h2 style="display: inline;">Version: <a ng-href="#/fabric/profiles?pv={{versionId}}">{{versionId}}</a> / Profile:
+      <h2 style="display: inline;">/ <a ng-href="#/fabric/view?cv={{versionId}}&sp={{row.id}}">{{versionId}}</a> / 
         {{row.id}}</h2>
       &nbsp;
       <a href="#/fabric/containers?cv={{versionId}}&cp={{row.id}}">

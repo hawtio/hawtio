@@ -6,7 +6,19 @@ module Fabric {
     $scope.versionsOp = 'versions()';
     $scope.containersOp = 'containers(java.util.List)';
 
-    $scope.activeVersionId = $location.search()['cv'];
+    $scope.init = () => {
+
+      $scope.activeVersionId = $location.search()['cv'];
+
+      var profiles = $location.search()['sp'];
+      $scope.selectedProfileIds = [];
+      if (profiles) {
+        $scope.selectedProfileIds = profiles.split(',');
+      }
+
+    }
+
+    $scope.init();
 
     $scope.versions = [];
     $scope.profiles = [];
@@ -89,20 +101,15 @@ module Fabric {
     $scope.selectedParents = [];
     $scope.selectedParentVersion = [];
 
-    $scope.$on('$routeUpdate', () => {
-      $scope.activeVersionId = $location.search()['cv'];
-    });
+    $scope.$on('$routeUpdate', $scope.init);
 
     // watchers for selection handling
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
-      if (oldValue !== newValue) {
         $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
         if ($scope.activeVersionId === '') {
-          $scope.activeProfileId = '';
           $scope.profiles = [];
         }
       $location.search('cv', $scope.activeVersionId);
-      }
     });
 
 
@@ -112,9 +119,6 @@ module Fabric {
           $scope.selectedProfiles = [];
         } else {
           $scope.selectedProfiles = $scope.profiles.filter((p) => { return p.selected; });
-          if ($scope.selectedProfiles.length > 0) {
-            $scope.activeProfileId = '';
-          }
         }
 
       }
@@ -138,6 +142,14 @@ module Fabric {
         $scope.selectedActiveProfiles = $scope.activeProfiles.filter((ap) => { return ap.selected; });
       }
     }, true);
+
+
+    $scope.$watch('selectedProfiles', (oldValue, newValue) => {
+      if (oldValue !== newValue) {
+        var ids = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
+        $location.search('sp', ids);
+      }
+    });
 
 
     // create profile dialog action
@@ -241,7 +253,6 @@ module Fabric {
       } else {
         $scope.removeProfile($scope.activeContainerId, profile.id);
       }
-      $scope.activeProfileId = '';
     };
 
 
@@ -362,6 +373,10 @@ module Fabric {
         var selected = false;
         if (profile && profile.version === version.id) {
           selected = profile.selected;
+        }
+
+        if ($scope.selectedProfileIds.any(p)) {
+          selected = true;
         }
 
         answer.push({
