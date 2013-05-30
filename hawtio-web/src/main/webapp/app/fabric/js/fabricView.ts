@@ -42,6 +42,10 @@ module Fabric {
     $scope.activeProfileIdFilter = '';
     $scope.containerIdFilter = '';
 
+    // TODO - Maybe store these in the preferences
+    $scope.userName = '';
+    $scope.password = '';
+
     $scope.filterActiveVersion = false;
     $scope.filterActiveProfile = false;
 
@@ -49,7 +53,9 @@ module Fabric {
     $scope.deleteProfileDialog = false;
     $scope.createProfileDialog = false;
     $scope.createVersionDialog = false;
+    $scope.connectToContainerDialog = false;
 
+    $scope.targetContainer = {};
 
     // Data for profile/version creation dialogs
     $scope.createProfileGridOptions = {
@@ -490,13 +496,16 @@ module Fabric {
     };
 
 
+    $scope.doConnect = (container) => {
+      $scope.targetContainer = container;
+      $scope.connectToContainerDialog = true;
+    }
+
+
     $scope.connect = (row) => {
-      if (row) {
-        // TODO lets find these from somewhere! :)
-        var userName = "admin";
-        var password = "admin";
-        Fabric.connect(row, userName, password, true);
-      }
+      Fabric.connect($scope.targetContainer, $scope.userName, $scope.password, true);
+      $scope.targetContainer = {};
+      $scope.connectToContainerDialog = false;
     };
 
 
@@ -654,13 +663,13 @@ module Fabric {
 
     $scope.anySelectionAlive = (state) => {
       var selected = $scope.selectedContainers;
-      return selected.length && selected.any((s) => s.alive === state);
+      return selected.length > 0 && selected.any((s) => s.alive === state);
     };
 
 
     $scope.everySelectionAlive = (state) => {
       var selected = $scope.selectedContainers;
-      return selected.length && selected.every((s) => s.alive === state);
+      return selected.length > 0 && selected.every((s) => s.alive === state);
     };
 
 

@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="box-right">
-                  <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="connect(container)"></i>
+                  <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
                   <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showContainer(container)"></i>
                   <i class="icon1point5x" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)'></i>
                 </div>
@@ -183,6 +183,25 @@
   </div>
 
   <!-- dialogs -->
+  <div hawtio-confirm-dialog="connectToContainerDialog" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
+    <div class="dialog-body">
+      <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
+        <div class="control-group">
+          <label class="control-label">User Name: </label>
+          <div class="controls">
+            <input name="userName" ng-model="userName" type="text">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Password: </label>
+          <div class="controls">
+            <input name="password" ng-model="password" type="password">
+          </div>
+        </div>
+      <div>
+    </div>
+  </div>
+
   <div hawtio-confirm-dialog="deleteVersionDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
     <div class="dialog-body">
       <p>Delete version {{activeVersionId}}?</p>

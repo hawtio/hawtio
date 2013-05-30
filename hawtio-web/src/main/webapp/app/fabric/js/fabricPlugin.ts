@@ -56,7 +56,7 @@ module Fabric {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
               isValid: isValid,
-              href: () => "#/fabric/profiles",
+              href: () => "#/fabric/view",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
 
