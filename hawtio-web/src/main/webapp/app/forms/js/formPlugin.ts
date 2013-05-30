@@ -18,6 +18,12 @@ module Forms {
           directive('hawtioFormText', function (workspace, $compile) {
             return new Forms.TextInput(workspace, $compile);
           }).
+          directive('hawtioFormPassword', function (workspace, $compile) {
+            return new Forms.PasswordInput(workspace, $compile);
+          }).
+          directive('hawtioFormHidden', function (workspace, $compile) {
+            return new Forms.HiddenText(workspace, $compile);
+          }).
           directive('hawtioFormNumber', function (workspace, $compile) {
             return new Forms.NumberInput(workspace, $compile);
           }).

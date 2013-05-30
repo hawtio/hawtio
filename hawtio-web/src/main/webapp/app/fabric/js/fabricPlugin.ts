@@ -4,7 +4,7 @@ module Fabric {
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop']).config(($routeProvider) => {
     $routeProvider.
             when('/fabric/containers', {templateUrl: 'app/fabric/html/containers.html'}).
-            when('/fabric/containers/createContainer', {templateUrl: 'app/fabric/html/createContainer.html'}).
+            when('/fabric/containers/createContainer', {templateUrl: 'app/fabric/html/createContainer.html' , reloadOnSearch: false }).
             when('/fabric/containers/assignProfiles', {templateUrl: 'app/fabric/html/assignProfiles.html'}).
             when('/fabric/containers/migrateVersions', {templateUrl: 'app/fabric/html/migrateVersions.html'}).
             when('/fabric/map', {templateUrl: 'app/fabric/html/map.html'}).

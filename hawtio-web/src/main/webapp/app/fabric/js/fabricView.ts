@@ -2,7 +2,7 @@ module Fabric {
 
   export function FabricViewController($scope, $location, jolokia, localStorage) {
 
-    $scope.containerArgs = ["id", "alive", "profileIds", "versionId", "provisionResult", "jolokiaUrl"];
+    $scope.containerArgs = ["id", "alive", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
     $scope.versionsOp = 'versions()';
     $scope.containersOp = 'containers(java.util.List)';
 
@@ -615,7 +615,7 @@ module Fabric {
 
 
     $scope.createContainer = () => {
-      $location.path("/fabric/containers/createContainer");
+      $location.url('/fabric/containers/createContainer').search('tab', 'ssh');
     };
 
 
@@ -699,6 +699,11 @@ module Fabric {
 
     $scope.showContainer = (container) => {
       $location.path('/fabric/container/' + container.id);
+    };
+
+
+    $scope.createChildContainer = (container) => {
+      $location.url('/fabric/containers/createContainer').search({ tab: 'child', 'parentId': container.id });
     };
 
 

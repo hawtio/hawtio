@@ -73,7 +73,7 @@ module Forms {
       config.schemaName = attrs["schema"] || "schema";
 
       var id = config.name;
-      var group = Forms.getControlGroup(config, config, id);
+      var group = this.getControlGroup(config, config, id);
 
       var modelName = config.model;
       if (!angular.isDefined(modelName)) {
@@ -95,6 +95,10 @@ module Forms {
       }
     }
 
+    public getControlGroup(config1, config2, id):any {
+      return Forms.getControlGroup(config1, config2, id);      
+    }
+
     public getInput(config, arg, id, modelName) {
       var rc = $('<span class="form-data"></span>');
       if (modelName) {
@@ -114,6 +118,10 @@ module Forms {
       super(workspace, $compile);
     }
 
+    /*public getControlGroup(config1, config2, id) {
+      return super.getControlGroup(config1, config2, id);
+    }*/
+
     public getInput(config, arg, id, modelName) {
       if (config.isReadOnly()) {
         return super.getInput(config, arg, id, modelName);
@@ -129,6 +137,40 @@ module Forms {
       return rc;
     }
   }
+
+
+  export class HiddenText extends TextInput {
+
+    public type = "hidden";
+
+    constructor(private workspace, private $compile) {
+      super(workspace, $compile);
+    }
+
+    public getControlGroup(config1, config2, id) {
+      var group = super.getControlGroup(config1, config2, id);
+      group.css({'display': 'none'});
+    }
+
+    public getInput(config, arg, id, modelName) {
+      var rc = super.getInput(config, arg, id, modelName);
+      rc.attr('readonly', 'true');
+      return rc;
+    }
+
+  }
+
+
+  export class PasswordInput extends TextInput {
+    
+    public type = "password";
+
+    constructor(private workspace, private $compile) {
+      super(workspace, $compile);
+    }
+
+  }
+
 
   export class CustomInput extends InputBase {
 

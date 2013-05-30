@@ -48,6 +48,10 @@ module Forms {
       case "bool":
       case "java.lang.boolean":
         return "hawtio-form-checkbox";
+      case "password":
+        return "hawtio-form-password";
+      case "hidden":
+        return "hawtio-form-hidden";
       default:
         // lets check if this name is an alias to a definition in the schema
         return "hawtio-form-text";
