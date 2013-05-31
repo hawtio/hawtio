@@ -11,6 +11,8 @@ module Fabric {
     $scope.newFileName = '';
     $scope.markedForDeletion = '';
 
+    $scope.newProfileName = '';
+
     if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
@@ -46,6 +48,20 @@ module Fabric {
         notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
       })
     };
+
+    $scope.copyProfile = () => {
+      $scope.copyProfileDialog = false;
+      notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
+
+      copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
+        notification('success', 'Created new profile ' + $scope.newProfileName);
+        $location.url("/fabric/profile/" + $scope.versionId + "/" + $scope.newProfileName);
+        $scope.$apply();
+      }, (response) => {
+        notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
+        $scope.$apply();
+      });
+    }
     
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {

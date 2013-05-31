@@ -52,6 +52,10 @@ module Fabric {
     doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
   }
 
+  export function copyProfile(jolokia, version, sourceName, targetName, force, success, error) {
+    doAction('copyProfile(java.lang.String, java.lang.String, java.lang.String, boolean)', jolokia, [version, sourceName, targetName, force], success, error);
+  }
+
   export function createVersionWithParentAndId(jolokia, base, id, success, error) {
     doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
   }

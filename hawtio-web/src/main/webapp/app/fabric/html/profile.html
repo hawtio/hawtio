@@ -19,7 +19,8 @@
         -->
     </div>
     <div class="pull-right">
-      <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}"><i class="icon-truck"></i> Create Container</a>
+      <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
+      <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
       <a ng-href="#/wiki/branch/{{versionId}}/view/{{row.id}}" class="btn" ng-show="hasFabricWiki()"
          title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Configuration</a>
     </div>
@@ -112,6 +113,14 @@
           <button class="btn" ng-click="newFileDialog = true"><i class="icon-file-alt"></i> New</button>
         </dd>
       </dl>
+    </div>
+  </div>
+
+
+  <div hawtio-confirm-dialog="copyProfileDialog" ok-button-text="Copy" on-ok="copyProfile()">
+    <div class="dialog-body">
+      <p>Enter a new profile name to copy this profile to</p>
+      <input type="text" ng-model="newProfileName">
     </div>
   </div>
 
