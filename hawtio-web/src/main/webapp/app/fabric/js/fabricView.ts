@@ -641,6 +641,7 @@ module Fabric {
 
 
     $scope.deleteContainer = (name) => {
+      notification('info', "Deleting " + name);
       destroyContainer(jolokia, name, () => {
         notification('success', "Deleted " + name);
       }, (response) => {
@@ -650,6 +651,7 @@ module Fabric {
 
 
     $scope.startContainer = (name) => {
+      notification('info', "Starting " + name);
       startContainer(jolokia, name, () => {
         notification('success', "Started " + name);
       }, (response) => {
@@ -659,6 +661,7 @@ module Fabric {
 
 
     $scope.stopContainer = (name) => {
+      notification('info', "Stopping " + name);
       stopContainer(jolokia, name, () => {
         notification('success', "Stopped " + name);
       }, (response) => {

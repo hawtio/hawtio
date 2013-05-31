@@ -5,13 +5,18 @@
       <h2 style="display: inline;">/ <a ng-href="#/fabric/view?cv={{versionId}}&sp={{row.id}}">{{versionId}}</a> / 
         {{row.id}}</h2>
       &nbsp;
+      <!--
+      TODO : add this link back in when the overview supports filtering via active profile in the address bar
       <a href="#/fabric/containers?cv={{versionId}}&cp={{row.id}}">
+      -->
         <ng-pluralize count="row.containerCount"
                       when="{'0': 'No containers running',
                            'one': '1 container is running',
                            'other': '{} containers are running'}">
         </ng-pluralize>
+        <!--
       </a>
+        -->
     </div>
     <div class="pull-right">
       <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}"><i class="icon-truck"></i> Create Container</a>

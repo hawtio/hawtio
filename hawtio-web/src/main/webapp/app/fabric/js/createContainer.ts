@@ -65,18 +65,15 @@ module Fabric {
     $scope.$on('$routeUpdate', $scope.init);
 
     $scope.$watch('versions', (newValue, oldValue) => {
-
       if (newValue !== oldValue) {
         if (!$scope.selectedVersion) {
-          if ($scope.selectedVersionId && $scope.selectedVersionId !== '') {
+          if ($scope.selectedVersionId !== '') {
             $scope.selectedVersion = $scope.versions.find((v) => { return v.id === $scope.selectedVersionId });
           } else {
             $scope.selectedVersion = $scope.versions.find((v) => {return v.defaultVersion });
           }
-          console.log("$scope.selectedVersion: ", $scope.selectedVersion);
         }
       }
-
     });
 
 
@@ -140,16 +137,6 @@ module Fabric {
       if (!Object.equal($scope.response, response.value)) {
         $scope.response = response.value;
         $scope.versions = Object.clone($scope.response);
-
-        if (!Object.equal($scope.selectedVersion, {})) {
-          console.log("versions: ", $scope.versions);
-          if ($scope.selectedVersionId !== '') {
-            $scope.selectedVersion = $scope.versions.find((v) => { return v.defaultVersion === true; });
-          } else {
-            $scope.selectedVersion = $scope.versions.find((v) => { return v.id === $scope.selectedVersionId; });
-          }
-        }
-
         $scope.$apply();
       }
     }
