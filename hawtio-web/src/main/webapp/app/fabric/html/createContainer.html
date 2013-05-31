@@ -13,6 +13,7 @@
 
   <div class="row-fluid">
     <div class="span5">
+      <p>1. Select the container creation method and fill in the relevant details</p>
       <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
         <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateContainerChildOptions'>
           <div simple-form name='create-child-container' data='schema' entity='entity'></div>
@@ -28,11 +29,56 @@
         </div>
       </div>
     </div>
-    <div class="span4">
-      <select ng-model="selectedVersion" ng-options="version.id for version in versions"></select>
+
+    <div class="span5">
+      <p>2. Select the target version and add the required profiles to deploy</p>
+      <form class="form-horizontal no-bottom-margin">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label">Version: </label>
+            <div class="controls">
+              <select ng-model="selectedVersion" ng-options="version.id for version in versions"></select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Profiles: </label>
+            <div class="controls">
+              <p>
+                <input class="search-query" type="text" placeholder="Filter..." ng-model="profileIdFilter">
+              </p>
+              <p>
+                <label class="checkbox" ng-repeat="profile in profiles" ng-show="profile.id.has(profileIdFilter)">
+                  <input type="checkbox" ng-model="profile.selected"> {{profile.id}}
+                </label>
+              </p>
+            </div>
+        </fieldset>
+
+      </form>
     </div>
 
   </div>
+
+
+  <div modal="showAddProfileDialog">
+    <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="addProfile()">
+      <div class="modal-header"><h4>Add profiles to container: {{row.id}}</h4></div>
+      <div class="modal-body">
+        <div class="control-group">
+
+        <label>Select one or more profiles to add to this container: </label>
+          <div class="controls">
+
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value="Add">
+        <input class="btn btn-primary" ng-click="showAddProfileDialog = false" value="Cancel">
+      </div>
+    </form>
+  </div>
+
 
 
 

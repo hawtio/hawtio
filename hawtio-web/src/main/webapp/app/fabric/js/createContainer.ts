@@ -9,12 +9,19 @@ module Fabric {
 
     $scope.schema = {};
     $scope.entity = {};
-    $scope.versions = [];
-    $scope.selectedVersion = {};
-    $scope.selectedProfiles = [];
-    $scope.selectedVersionId = '';
-
     $scope.response = {};
+
+    $scope.versions = [];
+    $scope.profiles = [];
+
+    $scope.selectedVersion = undefined;
+
+    $scope.selectedProfiles = [];
+    $scope.selectedProfileIds = '';
+    $scope.selectedVersionId = '';
+    $scope.profileIdFilter = '';
+
+    $scope.showAddProfileDialog = false;
 
     $scope.init = () => {
 
@@ -45,33 +52,108 @@ module Fabric {
         $scope.selectedVersionId = versionId;
       }
 
+      var profileIds = $location.search()['profileIds'];
+      if (profileIds) {
+        $scope.selectedProfileIds = profileIds;
+      }
+
     }
 
     $scope.init();
 
+
     $scope.$on('$routeUpdate', $scope.init);
 
-    $scope.$watch('selectedVersion', (oldValue, newValue) => {
+    $scope.$watch('versions', (newValue, oldValue) => {
+
+      if (newValue !== oldValue) {
+        if (!$scope.selectedVersion) {
+          if ($scope.selectedVersionId && $scope.selectedVersionId !== '') {
+            $scope.selectedVersion = $scope.versions.find((v) => { return v.id === $scope.selectedVersionId });
+          } else {
+            $scope.selectedVersion = $scope.versions.find((v) => {return v.defaultVersion });
+          }
+          console.log("$scope.selectedVersion: ", $scope.selectedVersion);
+        }
+      }
+
+    });
+
+
+    $scope.$watch('selectedVersion', (newValue, oldValue) => {
       if (oldValue !== newValue) {
         $scope.selectedVersionId = $scope.selectedVersion.id;
+        $scope.profiles = $scope.selectedVersion.profiles.map((p) => { return { id: p }; });
         $location.search('versionId', $scope.selectedVersionId);
       }
+    }, true);
+
+
+    $scope.$watch('profiles', (newValue, oldValue) => {
+
+      if (oldValue !== newValue) {
+        var sp = $scope.selectedProfileIds.split(',');
+        newValue.each((profile) => {
+
+          if(!angular.isDefined(profile.selected)) {
+
+            var selected = false;
+
+            if (oldValue) {
+              var p = oldValue.find((p) => { return p.id === profile.id });
+              if (p) {
+                selected = p.selected;
+              }
+            }
+
+            if (!selected && sp.length > 0) {
+              selected = sp.any(profile.id);
+            }
+
+            profile.selected = selected;
+          }
+        });
+      }
     });
+
+
+    $scope.$watch('profiles', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.selectedProfiles = $scope.profiles.filter((p) => { return p.selected });
+      }
+    }, true);
+
+
+    $scope.$watch('selectedProfiles', (newValue, oldValue) => {
+      if (oldValue !== newValue) {
+        $scope.selectedProfileIds = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
+      }
+    }, true);
+
+
+    $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
+      $location.search('profileIds', $scope.selectedProfileIds);
+    });
+
 
     $scope.render = (response) => {
       if (!Object.equal($scope.response, response.value)) {
         $scope.response = response.value;
         $scope.versions = Object.clone($scope.response);
-        if (Object.equal($scope.selectedVersion, {})) {
+
+        if (!Object.equal($scope.selectedVersion, {})) {
+          console.log("versions: ", $scope.versions);
           if ($scope.selectedVersionId !== '') {
             $scope.selectedVersion = $scope.versions.find((v) => { return v.defaultVersion === true; });
           } else {
             $scope.selectedVersion = $scope.versions.find((v) => { return v.id === $scope.selectedVersionId; });
           }
         }
+
         $scope.$apply();
       }
     }
+
 
     $scope.renderForm = () => {
 
@@ -127,11 +209,17 @@ module Fabric {
         }
     }
 
+
     $scope.onSubmit = (json, form) => {
 
       if ($scope.entity.saveJmxCredentials) {
         localStorage['fabric.userName'] = $scope.entity.jmxUser;
         localStorage['fabric.password'] = $scope.entity.jmxPassword;
+      }
+
+      json['version'] = $scope.selectedVersion.id;
+      if ($scope.selectedProfiles.length > 0) {
+        json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
       }
 
       jolokia.request({
@@ -148,14 +236,16 @@ module Fabric {
           if (!error) {
             notification('success', "Successfully created containers");
           }
+          $scope.$apply();
         },
         error: (response) => {
           notification('error', "Error creating containers: " + response.error);
+          $scope.$apply();
         }
       });
 
       notification('info', "Requesting that new container(s) be created");
-      $location.path('/fabric/view');
+      $location.url('/fabric/view');
     }
 
     $scope.$watch('activeTab', $scope.renderForm);

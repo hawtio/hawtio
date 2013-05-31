@@ -703,7 +703,7 @@ module Fabric {
 
 
     $scope.createChildContainer = (container) => {
-      $location.url('/fabric/containers/createContainer').search({ tab: 'child', 'parentId': container.id });
+      $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
     };
 
 
