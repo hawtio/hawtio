@@ -18,10 +18,8 @@ module Camel {
 
     $scope.$on("camel.diagram.selectedNodeId", (event, value) => {
       $scope.selectedDiagramNodeId = value;
-      console.log("the selected diagram node is now " + $scope.selectedDiagramNodeId);
-
-      // TODO set hasBreakpoint if value is true and it has a breakpoint right now!!!
-      $scope.hasBreakpoint = false;
+      //console.log("the selected diagram node is now " + $scope.selectedDiagramNodeId);
+      updateBreakpointFlag();
     });
 
     $scope.$watch('workspace.selection', function () {
@@ -54,6 +52,7 @@ module Camel {
       if (mbean) {
         $scope.debugging = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
         if ($scope.debugging) {
+          jolokia.execute(mbean, "getBreakpoints", onSuccess(onBreakpoints));
           // get the breakpoints...
           $scope.graphView = "app/camel/html/routes.html";
           //$scope.tableView = "app/camel/html/browseMessages.html";
@@ -64,9 +63,22 @@ module Camel {
       }
     }
 
+    function onBreakpoints(response) {
+      $scope.breakpoints = response;
+      console.log("got breakpoints " + JSON.stringify(response));
+      updateBreakpointFlag();
+      Core.$apply($scope);
+    }
+
+    function updateBreakpointFlag() {
+      var value = $scope.selectedDiagramNodeId;
+      var breakpoints = $scope.breakpoints;
+      $scope.hasBreakpoint = value && breakpoints && breakpoints.some(value);
+    }
+
     function debuggingChanged(response) {
       reloadData();
-      $scope.$apply();
+      Core.$apply($scope);
     }
 
     function setDebugging(flag:Boolean) {
