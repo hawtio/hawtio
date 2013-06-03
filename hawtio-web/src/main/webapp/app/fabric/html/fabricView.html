@@ -8,12 +8,11 @@
       <div id="center" class="column">
         <div class="section-header">
           <div class="section-title">
+            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
+            <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
             Containers
           </div>
           <div class="section-controls">
-
-            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
-            <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
 
             <i class="icon-plus clickable" title="Create Container" ng-click="createContainer()"></i>
 
@@ -68,12 +67,12 @@
       <div id="left" class="column">
         <div class="section-header">
           <div class="section-title">
+            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveVersionId('')"></i>
             Versions
           </div>
           <div class="section-controls">
 
             <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
-            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveVersionId('')"></i>
             <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog = true"></i>
 
             <!--
@@ -100,12 +99,12 @@
         </div>
         <div class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
           <div class="section-title">
+            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="clearSelection(profiles)"></i>
             Profiles
           </div>
           <div class="section-controls">
 
             <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
-            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="clearSelection(profiles)"></i>
             <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
 
             <!--
@@ -151,12 +150,10 @@
       <div id="right" class="column">
         <div class="section-header">
           <div class="section-title">
+            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveProfile(null)"></i>
             Active Profiles
           </div>
           <div class="section-controls">
-
-            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveProfile(null)"></i>
-
           </div>
           <div class="section-filter">
             <input type="text" class="search-query" placeholder="Filter..." ng-model="activeProfileIdFilter">
