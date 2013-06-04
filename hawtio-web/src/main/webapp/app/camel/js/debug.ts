@@ -47,6 +47,30 @@ module Camel {
       }
     };
 
+    $scope.resume = () => {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      if (mbean) {
+        jolokia.execute(mbean, "resumeAll", onSuccess(stepChanged));
+      }
+    };
+
+    $scope.suspend = () => {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      if (mbean) {
+        jolokia.execute(mbean, "suspendAll", onSuccess(stepChanged));
+      }
+    };
+
+    $scope.step = () => {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      // TODO we should use the first stepped node?
+      var stepNode = $scope.selectedDiagramNodeId;
+      if (mbean && stepNode) {
+        console.log("stepping from breakpoint on " + stepNode);
+        jolokia.execute(mbean, "step", stepNode, onSuccess(stepChanged));
+      }
+    };
+
 
     function reloadData() {
       $scope.debugging = false;
@@ -123,6 +147,13 @@ module Camel {
     }
 
     function debuggingChanged(response) {
+      reloadData();
+      Core.$apply($scope);
+    }
+
+    function stepChanged(response) {
+      // TODO lets reload everything, though probably just polling the current
+      // paused state is enough...
       reloadData();
       Core.$apply($scope);
     }
