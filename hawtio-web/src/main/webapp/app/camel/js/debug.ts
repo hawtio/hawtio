@@ -234,8 +234,14 @@ module Camel {
     function updateMessageSelection() {
       $scope.selectRowIndex($scope.rowIndex);
       // close the detail view if we've no message any more
+
       if (!$scope.row) {
+        $scope.lastDetailShow = $scope.messageDialog.show;
         $scope.messageDialog.close();
+      } else {
+        if ($scope.lastDetailShow) {
+          $scope.messageDialog.open();
+        }
       }
     }
 
