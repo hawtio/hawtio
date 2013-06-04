@@ -1,5 +1,5 @@
 module Camel {
-  export function DebugRouteController($scope, workspace:Workspace, jolokia) {
+  export function DebugRouteController($scope, $element, workspace:Workspace, jolokia) {
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
 
@@ -63,19 +63,64 @@ module Camel {
 
     $scope.step = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
-      var stepNodes = $scope.suspendedBreakpoints;
-      if (stepNodes && stepNodes.length) {
-        var stepNode = stepNodes[0];
-        if (stepNodes.length > 1 && isSuspendedAt($scope.selectedDiagramNodeId)) {
-          // TODO should consider we stepping from different nodes based on the call thread or selection?
-          stepNode = $scope.selectedDiagramNodeId;
-        }
-        if (mbean && stepNode) {
+      var stepNode = getStoppedBreakpointId();
+      if (mbean && stepNode) {
           console.log("stepping from breakpoint on " + stepNode);
           jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(stepChanged));
         }
-      }
     };
+
+
+    // TODO refactor into common code with trace.ts?
+    // START
+    $scope.messages = [];
+    $scope.mode = 'text';
+
+    $scope.messageDialog = new Core.Dialog();
+
+    $scope.gridOptions = Camel.createBrowseGridOptions();
+    $scope.gridOptions.selectWithCheckboxOnly = false;
+    $scope.gridOptions.showSelectionCheckbox = false;
+    $scope.gridOptions.afterSelectionChange = onSelectionChanged;
+    $scope.gridOptions.columnDefs.push({
+      field: 'toNode',
+      displayName: 'To Node'
+    });
+
+    function onSelectionChanged() {
+      //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
+/*
+      angular.forEach($scope.gridOptions.selectedItems, (selected) => {
+        if (selected) {
+          var toNode = selected["toNode"];
+          if (toNode) {
+            // lets highlight the node in the diagram
+            var nodes = d3.select("svg").selectAll("g .node");
+
+            // lets clear the selected node first
+            nodes.attr("class", "node");
+
+            nodes.filter(function (item) {
+              if (item) {
+                var cid = item["cid"];
+                var rid = item["rid"];
+                if (cid) {
+                  // we should match cid if defined
+                  return toNode === cid;
+                } else {
+                  return toNode === rid;
+                }
+              }
+              return null;
+            }).attr("class", "node selected");
+          }
+        }
+      });
+*/
+    }
+    // END
+
+
 
 
     function reloadData() {
@@ -87,7 +132,7 @@ module Camel {
           jolokia.execute(mbean, "getBreakpoints", onSuccess(onBreakpoints));
           // get the breakpoints...
           $scope.graphView = "app/camel/html/routes.html";
-          //$scope.tableView = "app/camel/html/browseMessages.html";
+          $scope.tableView = "app/camel/html/browseMessages.html";
 
           Core.register(jolokia, $scope, {
             type: 'exec', mbean: mbean,
@@ -117,7 +162,40 @@ module Camel {
       if (mbean) {
         jolokia.execute(mbean, "getSuspendedBreakpointNodeIds", onSuccess(onSuspendedBreakpointNodeIds));
 
-        // TODO load the current messages!
+        var stopNodeId = getStoppedBreakpointId();
+        if (stopNodeId) {
+          console.log("===== dumping messages for " + stopNodeId);
+          jolokia.execute(mbean, 'dumpTracedMessagesAsXml', stopNodeId, onSuccess(onMessages));
+        }
+      }
+    }
+
+    function onMessages(response) {
+      $scope.messages = [];
+      if (response) {
+        var xml = response;
+        console.log("xml " + xml);
+        if (angular.isString(xml)) {
+          // lets parse the XML DOM here...
+          var doc = $.parseXML(xml);
+          var allMessages = $(doc).find("fabricTracerEventMessage");
+          if (!allMessages || !allMessages.length) {
+            // lets try find another element name
+            allMessages = $(doc).find("backlogTracerEventMessage");
+          }
+
+          allMessages.each((idx, message) => {
+            var messageData = Camel.createMessageFromXml(message);
+            var toNode = $(message).find("toNode").text();
+            if (toNode) {
+              messageData["toNode"] = toNode;
+            }
+            $scope.messages.push(messageData);
+          });
+          Core.$apply($scope);
+        }
+      } else {
+        console.log("onMessages No results!");
       }
     }
 
@@ -134,6 +212,22 @@ module Camel {
       console.log("got suspended " + JSON.stringify(response) + " stopped: " + $scope.stopped);
       updateBreakpointIcons();
       Core.$apply($scope);
+    }
+
+    /**
+     * Return the current node id we are stopped at
+     */
+    function getStoppedBreakpointId() {
+      var stepNode = null;
+      var stepNodes = $scope.suspendedBreakpoints;
+      if (stepNodes && stepNodes.length) {
+        stepNode = stepNodes[0];
+        if (stepNodes.length > 1 && isSuspendedAt($scope.selectedDiagramNodeId)) {
+          // TODO should consider we stepping from different nodes based on the call thread or selection?
+          stepNode = $scope.selectedDiagramNodeId;
+        }
+      }
+      return stepNode;
     }
 
     /**
