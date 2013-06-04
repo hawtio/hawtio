@@ -87,6 +87,30 @@ module Camel {
       displayName: 'To Node'
     });
 
+    $scope.openMessageDialog = (message) => {
+      var idx = Core.pathGet(message, ["rowIndex"]);
+      $scope.selectRowIndex(idx);
+      if ($scope.row) {
+        $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
+        $scope.messageDialog.open();
+      }
+    };
+
+    $scope.selectRowIndex = (idx) => {
+      $scope.rowIndex = idx;
+      var selected = $scope.gridOptions.selectedItems;
+      selected.splice(0, selected.length);
+      if (idx >= 0 && idx < $scope.messages.length) {
+        $scope.row = $scope.messages[idx];
+        if ($scope.row) {
+          selected.push($scope.row);
+        }
+      } else {
+        $scope.row = null;
+      }
+      onSelectionChanged();
+    };
+
     function onSelectionChanged() {
       //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
 /*
