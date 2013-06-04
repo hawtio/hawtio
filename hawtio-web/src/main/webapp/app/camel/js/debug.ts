@@ -23,7 +23,7 @@ module Camel {
     });
 
     $scope.$on("camel.diagram.layoutComplete", (event, value) => {
-      updateBreakpointIcons(getDiagramNodes());
+      updateBreakpointIcons();
     });
 
     $scope.$watch('workspace.selection', function () {
@@ -132,6 +132,7 @@ module Camel {
       $scope.suspendedBreakpoints = response;
       $scope.stopped = response && response.length;
       console.log("got suspended " + JSON.stringify(response) + " stopped: " + $scope.stopped);
+      updateBreakpointIcons();
       Core.$apply($scope);
     }
 
@@ -177,32 +178,39 @@ module Camel {
     }
 
     var breakpointImage = url("/app/camel/img/debug/breakpoint.gif");
+    var suspendedBreakpointImage = url("/app/camel/img/debug/breakpoint-suspended.gif");
 
-    function updateBreakpointIcons(nodes) {
+    function updateBreakpointIcons(nodes = getDiagramNodes()) {
       nodes.each(function (object) {
         // add breakpoint icon
         var nodeId = object.cid;
         var thisNode = d3.select(this);
         var icons = thisNode.selectAll("image.breakpoint");
-        if (isBreakpointSet(nodeId)) {
+        var isSuspended = isSuspendedAt(nodeId);
+        var isBreakpoint = isBreakpointSet(nodeId);
+        if (isBreakpoint || isSuspended) {
+          var imageUrl = isSuspended ? suspendedBreakpointImage : breakpointImage;
           // lets add an icon image if we don't already have one
           if (!icons.length || !icons[0].length) {
             thisNode.append("image")
                     .attr("xlink:href", function (d) {
-                      return breakpointImage;
+                      return imageUrl;
                     })
                     .attr("class", "breakpoint")
                     .attr("x", -12)
                     .attr("y", -20)
                     .attr("height", 24)
                     .attr("width", 24);
+          } else {
+            icons.attr("xlink:href", function (d) {
+              return imageUrl;
+            });
           }
         } else {
           icons.remove();
         }
       });
     }
-
 
 
     function debuggingChanged(response) {
