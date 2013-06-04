@@ -23,12 +23,25 @@ module Camel {
 
     $scope.$on("camel.diagram.layoutComplete", (event, value) => {
       updateBreakpointIcons();
+
+      $($element).find("g.node").dblclick(function (n) {
+        var id = this.getAttribute("data-cid");
+        $scope.toggleBreakpoint(id);
+      });
     });
 
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
       reloadData();
     });
+
+    $scope.toggleBreakpoint = (id) => {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      if (mbean && id) {
+        var method = isBreakpointSet(id) ? "removeBreakpoint" : "addBreakpoint";
+        jolokia.execute(mbean, method, id, onSuccess(breakpointsChanged));
+      }
+    };
 
     $scope.addBreakpoint = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
@@ -109,12 +122,14 @@ module Camel {
     };
 
 
+    // END
+
+
     function onSelectionChanged() {
-      //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
       var toNode = getStoppedBreakpointId();
       if (toNode) {
         // lets highlight the node in the diagram
-        var nodes = d3.select("svg").selectAll("g .node");
+        var nodes = getDiagramNodes();
 
         // lets clear the selected node first
         nodes.attr("class", "node");
@@ -133,38 +148,7 @@ module Camel {
           return null;
         }).attr("class", "node selected");
       }
-      /*
-       angular.forEach($scope.gridOptions.selectedItems, (selected) => {
-       if (selected) {
-       var toNode = selected["toNode"];
-       if (toNode) {
-       // lets highlight the node in the diagram
-       var nodes = d3.select("svg").selectAll("g .node");
-
-       // lets clear the selected node first
-       nodes.attr("class", "node");
-
-       nodes.filter(function (item) {
-       if (item) {
-       var cid = item["cid"];
-       var rid = item["rid"];
-       if (cid) {
-       // we should match cid if defined
-       return toNode === cid;
-       } else {
-       return toNode === rid;
-       }
-       }
-       return null;
-       }).attr("class", "node selected");
-       }
-       }
-       });
-       */
     }
-
-    // END
-
 
     function reloadData() {
       $scope.debugging = false;
