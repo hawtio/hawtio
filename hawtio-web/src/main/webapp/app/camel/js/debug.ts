@@ -221,6 +221,7 @@ module Camel {
       } else {
         console.log("onMessages No results!");
       }
+      updateBreakpointIcons();
     }
 
     function clearStopped() {

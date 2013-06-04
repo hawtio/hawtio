@@ -106,6 +106,10 @@
       <from uri="timer:foo?period=5000"/>
       <setBody><constant>Hello World</constant></setBody>
       <delay><constant>500</constant></delay>
+      <setBody><constant>A Delayed Hello World</constant></setBody>
+      <setHeader headerName="myHeader">
+        <constant>This is a new header value</constant>
+      </setHeader>
       <log message="The message contains ${body}" loggingLevel="DEBUG"/>
       <to uri="activemq:timer.events"/>
     </route>
@@ -137,6 +141,7 @@
       <from uri="direct:b"/>
       <log loggingLevel="INFO" logName="test" message="direct:b"/>
     </route>
+<!--
     <route>
       <from uri="direct:c"/>
       <log loggingLevel="INFO" logName="test" message="direct:c"/>
@@ -149,6 +154,7 @@
       <from uri="direct:e"/>
       <log loggingLevel="INFO" logName="test" message="direct:e"/>
     </route>
+-->
   </camelContext>
 
   <camelContext id="cheese" xmlns="http://camel.apache.org/schema/spring">
