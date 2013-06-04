@@ -50,7 +50,7 @@ module Camel {
     $scope.resume = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "resumeAll", onSuccess(stepChanged));
+        jolokia.execute(mbean, "resumeAll", onSuccess(clearStopped));
       }
     };
 
@@ -63,11 +63,17 @@ module Camel {
 
     $scope.step = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
-      // TODO we should use the first stepped node?
-      var stepNode = $scope.selectedDiagramNodeId;
-      if (mbean && stepNode) {
-        console.log("stepping from breakpoint on " + stepNode);
-        jolokia.execute(mbean, "step", stepNode, onSuccess(stepChanged));
+      var stepNodes = $scope.suspendedBreakpoints;
+      if (stepNodes && stepNodes.length) {
+        var stepNode = stepNodes[0];
+        if (stepNodes.length > 1 && isSuspendedAt($scope.selectedDiagramNodeId)) {
+          // TODO should consider we stepping from different nodes based on the call thread or selection?
+          stepNode = $scope.selectedDiagramNodeId;
+        }
+        if (mbean && stepNode) {
+          console.log("stepping from breakpoint on " + stepNode);
+          jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(stepChanged));
+        }
       }
     };
 
@@ -82,11 +88,58 @@ module Camel {
           // get the breakpoints...
           $scope.graphView = "app/camel/html/routes.html";
           //$scope.tableView = "app/camel/html/browseMessages.html";
+
+          Core.register(jolokia, $scope, {
+            type: 'exec', mbean: mbean,
+            operation: 'getDebugCounter'}, onSuccess(onBreakpointCounter));
         } else {
           $scope.graphView = null;
           $scope.tableView = null;
         }
       }
+    }
+
+    function onBreakpointCounter(response) {
+      var counter = response.value;
+      if (counter && counter !== $scope.breakpointCounter) {
+        console.log("breakpoint counter is now " + counter);
+        $scope.breakpointCounter = counter;
+        loadCurrentStack();
+      }
+    }
+
+    /**
+     * lets load current 'stack' of which breakpoints are active
+     * and what is the current message content
+     */
+    function loadCurrentStack() {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      if (mbean) {
+        jolokia.execute(mbean, "getSuspendedBreakpointNodeIds", onSuccess(onSuspendedBreakpointNodeIds));
+
+        // TODO load the current messages!
+      }
+    }
+
+    function clearStopped() {
+      loadCurrentStack();
+      $scope.suspendedBreakpoints = [];
+      $scope.stopped = false;
+      Core.$apply($scope);
+    }
+
+    function onSuspendedBreakpointNodeIds(response) {
+      $scope.suspendedBreakpoints = response;
+      $scope.stopped = response && response.length;
+      console.log("got suspended " + JSON.stringify(response) + " stopped: " + $scope.stopped);
+      Core.$apply($scope);
+    }
+
+    /**
+     * Returns true if the execution is currently suspended at the given node
+     */
+    function isSuspendedAt(nodeId) {
+      return containsNodeId($scope.suspendedBreakpoints, nodeId);
     }
 
     function onBreakpoints(response) {
@@ -101,6 +154,22 @@ module Camel {
       }
       Core.$apply($scope);
     }
+
+    /**
+     * Returns true if there is a breakpoint set at the given node id
+     */
+    function isBreakpointSet(nodeId) {
+      return containsNodeId($scope.breakpoints, nodeId);
+    }
+
+    function updateBreakpointFlag() {
+      $scope.hasBreakpoint = isBreakpointSet($scope.selectedDiagramNodeId)
+    }
+
+    function containsNodeId(breakpoints, nodeId) {
+      return nodeId && breakpoints && breakpoints.some(nodeId);
+    }
+
 
     function getDiagramNodes() {
       var svg = d3.select("svg");
@@ -134,17 +203,7 @@ module Camel {
       });
     }
 
-    function updateBreakpointFlag() {
-      $scope.hasBreakpoint = isBreakpointSet($scope.selectedDiagramNodeId)
-    }
 
-    /**
-     * Returns true if there is a breakpoint set at the given node id
-     */
-    function isBreakpointSet(nodeId) {
-      var breakpoints = $scope.breakpoints;
-      return nodeId && breakpoints && breakpoints.some(nodeId);
-    }
 
     function debuggingChanged(response) {
       reloadData();
