@@ -16,7 +16,7 @@ module Fabric {
             viewRegistry['fabric'] = "app/fabric/html/layoutFabric.html";
 
             try {
-              var id = jolokia.getAttribute('org.fusesource.fabric:type=Fabric', 'CurrentContainerName');
+              var id = jolokia.getAttribute('org.fusesource.fabric:type=Fabric', 'CurrentContainerName', {timeout: 1});
               if (id) {
                 pageTitle.push(id);
               }
@@ -24,24 +24,15 @@ module Fabric {
               // ignore
             }
 
-
             var isValid = (workspace) => {
               if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
                 try {
-                  var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus');
-
+                  var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus', {timeout: 1});
                   if (status) {
                     return status.clientValid && status.clientConnected;
-                  } else {
-                    return false;
                   }
                 } catch (e) {
-                    try {
-                      var container = workspace.jolokia.execute(managerMBean, 'currentContainer()');
-                      return container;
-                    } catch (e) {
-                      return false;
-                    }
+                  // ignore this
                 }
               }
               return false;
