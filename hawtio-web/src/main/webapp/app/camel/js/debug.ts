@@ -22,6 +22,10 @@ module Camel {
       updateBreakpointFlag();
     });
 
+    $scope.$on("camel.diagram.layoutComplete", (event, value) => {
+      updateBreakpointIcons(getDiagramNodes());
+    });
+
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
       reloadData();
@@ -46,8 +50,6 @@ module Camel {
 
     function reloadData() {
       $scope.debugging = false;
-      // clear any previous polls
-
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
         $scope.debugging = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
@@ -67,13 +69,57 @@ module Camel {
       $scope.breakpoints = response;
       console.log("got breakpoints " + JSON.stringify(response));
       updateBreakpointFlag();
+
+      // update the breakpoint icons...
+      var nodes = getDiagramNodes();
+      if (nodes.length) {
+        updateBreakpointIcons(nodes);
+      }
       Core.$apply($scope);
     }
 
+    function getDiagramNodes() {
+      var svg = d3.select("svg");
+      return svg.selectAll("g .node");
+    }
+
+    var breakpointImage = url("/app/camel/img/debug/breakpoint.gif");
+
+    function updateBreakpointIcons(nodes) {
+      nodes.each(function (object) {
+        // add breakpoint icon
+        var nodeId = object.cid;
+        var thisNode = d3.select(this);
+        var icons = thisNode.selectAll("image.breakpoint");
+        if (isBreakpointSet(nodeId)) {
+          // lets add an icon image if we don't already have one
+          if (!icons.length || !icons[0].length) {
+            thisNode.append("image")
+                    .attr("xlink:href", function (d) {
+                      return breakpointImage;
+                    })
+                    .attr("class", "breakpoint")
+                    .attr("x", -12)
+                    .attr("y", -20)
+                    .attr("height", 24)
+                    .attr("width", 24);
+          }
+        } else {
+          icons.remove();
+        }
+      });
+    }
+
     function updateBreakpointFlag() {
-      var value = $scope.selectedDiagramNodeId;
+      $scope.hasBreakpoint = isBreakpointSet($scope.selectedDiagramNodeId)
+    }
+
+    /**
+     * Returns true if there is a breakpoint set at the given node id
+     */
+    function isBreakpointSet(nodeId) {
       var breakpoints = $scope.breakpoints;
-      $scope.hasBreakpoint = value && breakpoints && breakpoints.some(value);
+      return nodeId && breakpoints && breakpoints.some(nodeId);
     }
 
     function debuggingChanged(response) {

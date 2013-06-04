@@ -133,6 +133,7 @@ module Camel {
           // the dumpRoutesStatsAsXml is not available in all Camel versions so do not barf on errors
         }, onSuccess(statsCallback, {silent: true, error: false}));
       }
+      $scope.$emit("camel.diagram.layoutComplete");
       return width;
     }
 
