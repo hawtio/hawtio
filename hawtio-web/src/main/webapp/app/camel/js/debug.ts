@@ -18,7 +18,6 @@ module Camel {
 
     $scope.$on("camel.diagram.selectedNodeId", (event, value) => {
       $scope.selectedDiagramNodeId = value;
-      //console.log("the selected diagram node is now " + $scope.selectedDiagramNodeId);
       updateBreakpointFlag();
     });
 
@@ -34,30 +33,28 @@ module Camel {
     $scope.addBreakpoint = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean && $scope.selectedDiagramNodeId) {
-        console.log("adding breakpoint on " + $scope.selectedDiagramNodeId);
-        jolokia.execute(mbean, "addBreakpoint", $scope.selectedDiagramNodeId, onSuccess(debuggingChanged));
+        jolokia.execute(mbean, "addBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
       }
     };
 
     $scope.removeBreakpoint = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean && $scope.selectedDiagramNodeId) {
-        console.log("removing breakpoint on " + $scope.selectedDiagramNodeId);
-        jolokia.execute(mbean, "removeBreakpoint", $scope.selectedDiagramNodeId, onSuccess(debuggingChanged));
+        jolokia.execute(mbean, "removeBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
       }
     };
 
     $scope.resume = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "resumeAll", onSuccess(clearStopped));
+        jolokia.execute(mbean, "resumeAll", onSuccess(clearStoppedAndResume));
       }
     };
 
     $scope.suspend = () => {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "suspendAll", onSuccess(stepChanged));
+        jolokia.execute(mbean, "suspendAll", onSuccess(clearStoppedAndResume));
       }
     };
 
@@ -65,9 +62,8 @@ module Camel {
       var mbean = getSelectionCamelDebugMBean(workspace);
       var stepNode = getStoppedBreakpointId();
       if (mbean && stepNode) {
-          console.log("stepping from breakpoint on " + stepNode);
-          jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(stepChanged));
-        }
+        jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(clearStoppedAndResume));
+      }
     };
 
 
@@ -91,7 +87,8 @@ module Camel {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
       if ($scope.row) {
-        $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
+        var body = $scope.row.body;
+        $scope.mode = angular.isString(body) ? CodeEditor.detectTextFormat(body) : "text";
         $scope.messageDialog.open();
       }
     };
@@ -111,40 +108,40 @@ module Camel {
       onSelectionChanged();
     };
 
+
     function onSelectionChanged() {
       //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
-/*
-      angular.forEach($scope.gridOptions.selectedItems, (selected) => {
-        if (selected) {
-          var toNode = selected["toNode"];
-          if (toNode) {
-            // lets highlight the node in the diagram
-            var nodes = d3.select("svg").selectAll("g .node");
+      /*
+       angular.forEach($scope.gridOptions.selectedItems, (selected) => {
+       if (selected) {
+       var toNode = selected["toNode"];
+       if (toNode) {
+       // lets highlight the node in the diagram
+       var nodes = d3.select("svg").selectAll("g .node");
 
-            // lets clear the selected node first
-            nodes.attr("class", "node");
+       // lets clear the selected node first
+       nodes.attr("class", "node");
 
-            nodes.filter(function (item) {
-              if (item) {
-                var cid = item["cid"];
-                var rid = item["rid"];
-                if (cid) {
-                  // we should match cid if defined
-                  return toNode === cid;
-                } else {
-                  return toNode === rid;
-                }
-              }
-              return null;
-            }).attr("class", "node selected");
-          }
-        }
-      });
-*/
+       nodes.filter(function (item) {
+       if (item) {
+       var cid = item["cid"];
+       var rid = item["rid"];
+       if (cid) {
+       // we should match cid if defined
+       return toNode === cid;
+       } else {
+       return toNode === rid;
+       }
+       }
+       return null;
+       }).attr("class", "node selected");
+       }
+       }
+       });
+       */
     }
+
     // END
-
-
 
 
     function reloadData() {
@@ -171,7 +168,6 @@ module Camel {
     function onBreakpointCounter(response) {
       var counter = response.value;
       if (counter && counter !== $scope.breakpointCounter) {
-        console.log("breakpoint counter is now " + counter);
         $scope.breakpointCounter = counter;
         loadCurrentStack();
       }
@@ -184,21 +180,28 @@ module Camel {
     function loadCurrentStack() {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
+        console.log("getting suspended breakpoints!");
         jolokia.execute(mbean, "getSuspendedBreakpointNodeIds", onSuccess(onSuspendedBreakpointNodeIds));
-
-        var stopNodeId = getStoppedBreakpointId();
-        if (stopNodeId) {
-          console.log("===== dumping messages for " + stopNodeId);
-          jolokia.execute(mbean, 'dumpTracedMessagesAsXml', stopNodeId, onSuccess(onMessages));
-        }
       }
     }
 
+    function onSuspendedBreakpointNodeIds(response) {
+      var mbean = getSelectionCamelDebugMBean(workspace);
+      $scope.suspendedBreakpoints = response;
+      $scope.stopped = response && response.length;
+      var stopNodeId = getStoppedBreakpointId();
+      if (mbean && stopNodeId) {
+        jolokia.execute(mbean, 'dumpTracedMessagesAsXml', stopNodeId, onSuccess(onMessages));
+      }
+      updateBreakpointIcons();
+      Core.$apply($scope);
+    }
+
     function onMessages(response) {
+      console.log("onMessage! ");
       $scope.messages = [];
       if (response) {
         var xml = response;
-        console.log("xml " + xml);
         if (angular.isString(xml)) {
           // lets parse the XML DOM here...
           var doc = $.parseXML(xml);
@@ -216,28 +219,35 @@ module Camel {
             }
             $scope.messages.push(messageData);
           });
-          Core.$apply($scope);
         }
       } else {
-        console.log("onMessages No results!");
+        console.log("WARNING: dumpTracedMessagesAsXml() returned no results!");
       }
+
+      // lets update the selection and selected row for the message detail view
+      updateMessageSelection();
+      console.log("has messages " + $scope.messages.length + " selected row " + $scope.row + " index " + $scope.rowIndex);
+      Core.$apply($scope);
       updateBreakpointIcons();
     }
 
-    function clearStopped() {
-      loadCurrentStack();
+    function updateMessageSelection() {
+      $scope.selectRowIndex($scope.rowIndex);
+      // close the detail view if we've no message any more
+      if (!$scope.row) {
+        $scope.messageDialog.close();
+      }
+    }
+
+    function clearStoppedAndResume() {
+      $scope.messages = [];
       $scope.suspendedBreakpoints = [];
       $scope.stopped = false;
+      updateMessageSelection();
       Core.$apply($scope);
+      updateBreakpointIcons();
     }
 
-    function onSuspendedBreakpointNodeIds(response) {
-      $scope.suspendedBreakpoints = response;
-      $scope.stopped = response && response.length;
-      console.log("got suspended " + JSON.stringify(response) + " stopped: " + $scope.stopped);
-      updateBreakpointIcons();
-      Core.$apply($scope);
-    }
 
     /**
      * Return the current node id we are stopped at
@@ -264,7 +274,6 @@ module Camel {
 
     function onBreakpoints(response) {
       $scope.breakpoints = response;
-      console.log("got breakpoints " + JSON.stringify(response));
       updateBreakpointFlag();
 
       // update the breakpoint icons...
@@ -332,14 +341,7 @@ module Camel {
     }
 
 
-    function debuggingChanged(response) {
-      reloadData();
-      Core.$apply($scope);
-    }
-
-    function stepChanged(response) {
-      // TODO lets reload everything, though probably just polling the current
-      // paused state is enough...
+    function breakpointsChanged(response) {
       reloadData();
       Core.$apply($scope);
     }
@@ -348,7 +350,7 @@ module Camel {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
         var method = flag ? "enableDebugger" : "disableDebugger";
-        jolokia.execute(mbean, method, onSuccess(debuggingChanged));
+        jolokia.execute(mbean, method, onSuccess(breakpointsChanged));
       }
     }
   }
