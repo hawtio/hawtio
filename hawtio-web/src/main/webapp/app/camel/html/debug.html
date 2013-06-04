@@ -6,24 +6,32 @@
         </div>
       </div>
       <div class="span2">
-        <div class="row-fluid">
-          <button class="btn pull-right" type="submit" ng-click="stopDebugging()">Stop Debugging</button>
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group">
+            <div ng-switch="hasBreakpoint">
+              <button ng-switch-when="true" class="btn" ng-disabled="!selectedDiagramNodeId"
+                      ng-click="removeBreakpoint()" title="Remove the breakpoint on the selected node"><i
+                      class="icon-remove"></i>
+              </button>
+              <button ng-switch-default="false" class="btn" ng-disabled="!selectedDiagramNodeId"
+                      ng-click="addBreakpoint()" title="Add a breakpoint on the selected node"><i class="icon-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn" type="submit" ng-click="stopDebugging()" title="Stops the debugger">Close
+            </button>
+          </div>
         </div>
-        <div class="row-fluid" ng-switch="hasBreakpoint">
-          <button ng-switch-when="true" class="btn pull-right" ng-disabled="!selectedDiagramNodeId"
-                  ng-click="removeBreakpoint()"><i class="icon-remove"></i> Breakpoint
-          </button>
-          <button ng-switch-default="false" class="btn pull-right" ng-disabled="!selectedDiagramNodeId"
-                  ng-click="addBreakpoint()"><i class="icon-plus"></i> Breakpoint
-          </button>
-        </div>
-        <div class="row-fluid">
-          <button class="btn pull-right" ng-click="step()" ng-disabled="!stopped" title="Step into the next node"><img
-                  ng-src="app/camel/img/debug/step.gif"></button>
-          <button class="btn pull-right" ng-click="resume()" ng-disabled="!stopped" title="Resume running"><img
-                  ng-src="app/camel/img/debug/resume.gif"></button>
-          <button class="btn pull-right" ng-click="suspend()" ng-disabled="stopped"
-                  title="Suspend all threads in this route"><img ng-src="app/camel/img/debug/suspend.gif"></button>
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group">
+            <button class="btn" ng-click="step()" ng-disabled="!stopped" title="Step into the next node"><img
+                    ng-src="app/camel/img/debug/step.gif"></button>
+            <button class="btn" ng-click="resume()" ng-disabled="!stopped" title="Resume running"><img
+                    ng-src="app/camel/img/debug/resume.gif"></button>
+            <button class="btn" ng-click="suspend()" ng-disabled="stopped"
+                    title="Suspend all threads in this route"><img ng-src="app/camel/img/debug/suspend.gif"></button>
+          </div>
         </div>
       </div>
     </div>
