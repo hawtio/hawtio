@@ -111,6 +111,28 @@ module Camel {
 
     function onSelectionChanged() {
       //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
+      var toNode = getStoppedBreakpointId();
+      if (toNode) {
+        // lets highlight the node in the diagram
+        var nodes = d3.select("svg").selectAll("g .node");
+
+        // lets clear the selected node first
+        nodes.attr("class", "node");
+
+        nodes.filter(function (item) {
+          if (item) {
+            var cid = item["cid"];
+            var rid = item["rid"];
+            if (cid) {
+              // we should match cid if defined
+              return toNode === cid;
+            } else {
+              return toNode === rid;
+            }
+          }
+          return null;
+        }).attr("class", "node selected");
+      }
       /*
        angular.forEach($scope.gridOptions.selectedItems, (selected) => {
        if (selected) {
@@ -192,6 +214,9 @@ module Camel {
       var stopNodeId = getStoppedBreakpointId();
       if (mbean && stopNodeId) {
         jolokia.execute(mbean, 'dumpTracedMessagesAsXml', stopNodeId, onSuccess(onMessages));
+
+        // lets update the diagram selection to the newly stopped node
+        $scope.selectedDiagramNodeId = stopNodeId;
       }
       updateBreakpointIcons();
       Core.$apply($scope);
