@@ -42,7 +42,7 @@
                   <i ng-show="container.selected" class="icon-circle clickable" title="Selected" ng-click="container.selected = false"></i>
 
                   <div ng-click="setActiveContainer(container)">
-                    {{container.versionId}} / {{container.id}}
+                    {{container.id}} / {{container.versionId}}
                   </div>
                 </div>
 
@@ -171,7 +171,7 @@
                 <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
                 <div title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
-                  {{profile.versionId}} / {{profile.id}} ({{profile.count}})
+                   {{profile.id}} ({{profile.count}}) / {{profile.versionId}}
                 </div>
               </div>
             </div>    
