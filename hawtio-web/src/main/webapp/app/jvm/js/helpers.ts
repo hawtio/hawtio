@@ -17,7 +17,7 @@ module JVM {
 
     $scope.breadcrumbs = [
       {
-        content: '<i class=" icon-signin"></i> Connect',
+        content: '<i class=" icon-signin"></i> Remote',
         title: "Connect to a remote JVM running Jolokia",
         isValid: (workspace:Workspace) => true,
         href: "#/jvm/connect"

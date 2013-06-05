@@ -14,12 +14,11 @@ module Jvm {
             viewRegistry[pluginName] = layoutFull;
 
             workspace.topLevelTabs.push({
-              content: "JVMs",
+              content: "Connect",
               title: "Connect to other JVMs",
               isValid: (workspace) => true,
               href: () => '#/jvm/connect',
               isActive: (workspace:Workspace) => workspace.isLinkActive("jvm")
-
             });
           });
 
