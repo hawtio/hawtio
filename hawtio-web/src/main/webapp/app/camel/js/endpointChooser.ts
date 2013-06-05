@@ -59,16 +59,39 @@ module Camel {
    *  specify custom label & icon properties for endpoint names
    */
   export var endpointConfigurations = {
-     drools: {
-       icon: "/app/camel/img/endpointQueue24.png"
-     },
-     quartz: {
-       icon: "/app/camel/img/endpointTimer24.png"
-     },
-     timer: {
-       icon: "/app/camel/img/endpointTimer24.png"
-     }
+    drools: {
+      icon: "/app/camel/img/endpointQueue24.png"
+    },
+    quartz: {
+      icon: "/app/camel/img/endpointTimer24.png"
+    },
+    timer: {
+      icon: "/app/camel/img/endpointTimer24.png"
+    }
   };
+
+  /**
+   * Define the default form configurations
+   */
+  export var endpointForms = {
+    file: {
+      tabs: {
+        //'Core': ['key', 'value'],
+        'Options': ['*']
+      }
+    },
+    activemq: {
+      tabs: {
+        'Connection': ['clientId', 'transacted', 'transactedInOut', 'transactionName', 'transactionTimeout' ],
+        'Producer': ['timeToLive', 'priority', 'allowNullBody', 'pubSubNoLocal', 'preserveMessageQos'],
+        'Consumer': ['concurrentConsumers', 'acknowledgementModeName', 'selector', 'receiveTimeout'],
+        'Reply': ['replyToDestination', 'replyToDeliveryPersistent', 'replyToCacheLevelName', 'replyToDestinationSelectorName'],
+        'Options': ['*']
+      }
+    }
+  };
+
+  endpointForms["jms"] = endpointForms.activemq;
 
   angular.forEach(endpointCategories, (category, catKey) => {
     category.id = catKey;
@@ -169,12 +192,24 @@ module Camel {
         try {
           //console.log("got JSON: " + response);
           var json = JSON.parse(response);
+          var endpointName = $scope.selectedComponentName;
+          configureEndpointSchema(endpointName, json);
           $scope.endpointSchema = json;
-          $scope.schema.definitions[$scope.selectedComponentName] = json;
+          $scope.schema.definitions[endpointName] = json;
           Core.$apply($scope);
         } catch (e) {
           console.log("Failed to parse JSON " + e);
           console.log("JSON: " + response);
+        }
+      }
+    }
+
+    function configureEndpointSchema(endpointName, json) {
+      console.log("======== configuring schema for " + endpointName);
+      var config = Camel.endpointForms[endpointName];
+      if (config && json) {
+        if (config.tabs) {
+          json.tabs = config.tabs;
         }
       }
     }
