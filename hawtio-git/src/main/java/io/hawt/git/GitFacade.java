@@ -76,6 +76,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private boolean pullBeforeOperation = false;
     private long pullTimePeriod;
     private Timer timer;
+    private TimerTask task;
     private PersonIdent stashPersonIdent;
     private String defaultBranch;
 
@@ -100,7 +101,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     return null;
                 }
             };
-            TimerTask task = new TimerTask() {
+            task = new TimerTask() {
                 @Override
                 public void run() {
                     gitOperation(getStashPersonIdent(), emptyCallable);
@@ -109,6 +110,14 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             t.schedule(task, timePeriod, timePeriod);
         }
         super.init();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (task != null) {
+            task.cancel();
+        }
+        super.destroy();
     }
 
     public PersonIdent getStashPersonIdent() {
