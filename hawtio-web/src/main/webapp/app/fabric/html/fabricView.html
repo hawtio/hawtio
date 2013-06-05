@@ -154,6 +154,9 @@
             Active Profiles
           </div>
           <div class="section-controls">
+
+           <i class="icon-minus clickable" title="Delete selected active profiles" ng-click="removeActiveProfiles()" ng-show="selectedActiveProfiles.length > 0 && selectedContainers.length > 0"></i>
+
           </div>
           <div class="section-filter">
             <input type="text" class="search-query" placeholder="Filter..." ng-model="activeProfileIdFilter">
@@ -164,16 +167,20 @@
           <div ng-repeat="profile in activeProfiles" ng-show="filterActiveProfile(profile)">
             <div class="box" ng-class="getSelectedClass(profile)">
 
-              <div class="active-profile">
-                <i class="icon-remove clickable" style="display: inline;" ng-click="removeActiveProfiles(profile)" ng-show="(activeContainerId && activeContainerId != '') || selectedContainers.length > 0"></i>
+              <div class="box-left">
 
-                <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
+                <i class="icon-circle-blank clickable" ng-show="!profile.selected" title="Not Selected" ng-click="profile.selected = true"></i>
                 <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
-                <div title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
+                <div class="profile-select" title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
                    {{profile.id}} ({{profile.count}}) / {{profile.versionId}}
                 </div>
               </div>
+
+              <div class="box-right">
+                <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
+              </div>
+
             </div>    
           </div>
         </div>

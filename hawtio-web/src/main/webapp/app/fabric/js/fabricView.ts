@@ -269,7 +269,14 @@ module Fabric {
     };
 
 
-    $scope.removeActiveProfiles = (profile) => {
+    $scope.removeActiveProfiles = () => {
+      $scope.selectedActiveProfiles.each((profile) => {
+        $scope.removeActiveProfile(profile);
+      });
+    };
+
+
+    $scope.removeActiveProfile = (profile) => {
       if ($scope.selectedContainers.length > 0) {
         $scope.selectedContainers.each((container) => {
           if (container.profileIds.some(profile.id) && container.versionId === profile.versionId) {
