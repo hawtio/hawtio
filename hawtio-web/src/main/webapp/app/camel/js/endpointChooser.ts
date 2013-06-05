@@ -100,6 +100,15 @@ module Camel {
     });
   });
 
+  /**
+   * Override the EIP pattern tabs...
+   */
+  var camelModelTabExtensions = {
+    route: {
+      'Overview': ['id', 'description'],
+      'Advanced': ['*']
+    }
+  };
 
   export function getEndpointConfig(endpointName, category) {
     var answer = endpointConfigurations[endpointName];
@@ -123,6 +132,23 @@ module Camel {
   export function getEndpointCategory(endpointName:string) {
     return endpointToCategory[endpointName] || endpointCategories.core;
   }
+
+  export function getConfiguredCamelModel() {
+    var schema = _apacheCamelModel;
+    var definitions = schema["definitions"];
+    if (definitions) {
+      angular.forEach(camelModelTabExtensions, (tabs, name) => {
+        var model = definitions[name];
+        if (model) {
+          if (!model["tabs"]) {
+            model["tabs"] = tabs;
+          }
+        }
+      });
+    }
+    return schema;
+  }
+
 
   export function initEndpointChooserScope($scope, workspace:Workspace, jolokia) {
     $scope.selectedComponentName = null;
