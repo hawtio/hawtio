@@ -104,7 +104,11 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             task = new TimerTask() {
                 @Override
                 public void run() {
-                    gitOperation(getStashPersonIdent(), emptyCallable);
+                    try {
+                        gitOperation(getStashPersonIdent(), emptyCallable);
+                    } catch (Exception e) {
+                        LOG.warn("Failed to pull from remote repo " + e, e);
+                    }
                 }
             };
             t.schedule(task, timePeriod, timePeriod);
