@@ -970,5 +970,4 @@ module Camel {
     }
     return doc;
   }
-
 }

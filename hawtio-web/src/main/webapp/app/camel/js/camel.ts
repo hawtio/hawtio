@@ -66,7 +66,7 @@ module Camel {
       } else {
         console.log("No data from route XML!")
       }
-      $scope.$apply();
+      Core.$apply($scope);
     };
 
 

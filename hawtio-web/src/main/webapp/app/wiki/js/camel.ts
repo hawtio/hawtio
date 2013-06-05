@@ -1,9 +1,12 @@
 module Wiki {
 
-  export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
+  export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
     $scope.schema = _apacheCamelModel;
 
     Wiki.initScope($scope, $routeParams, $location);
+    Camel.initEndpointChooserScope($scope, workspace, jolokia);
+
+    $scope.findProfileCamelContext = true;
 
     $scope.isValid = (nav) => {
       return nav && nav.isValid(workspace);
@@ -22,14 +25,14 @@ module Wiki {
         isValid: (workspace:Workspace) => true,
         href: () => Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId
       },
-/*
-      {
-        content: '<i class="icon-sitemap"></i> Diagram',
-        title: "View a diagram of the route",
-        isValid: (workspace:Workspace) => true,
-        href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
-      },
-*/
+      /*
+       {
+       content: '<i class="icon-sitemap"></i> Diagram',
+       title: "View a diagram of the route",
+       isValid: (workspace:Workspace) => true,
+       href: () => Wiki.startLink($scope.branch) + "/camel/diagram/" + $scope.pageId
+       },
+       */
     ];
 
     var routeModel = _apacheCamelModel.definitions.route;
@@ -39,17 +42,9 @@ module Wiki {
 
     $scope.paletteItemSearch = "";
     $scope.paletteTree = new Folder("Palette");
+    $scope.paletteActivations = ["Routing_aggregate"];
 
-    $scope.$watch('addDialog.show', function() {
-      if ($scope.addDialog.show) {
-        setTimeout(function() {
-          $('#submit').focus();
-        }, 50);
-      }
-    });
-
-    $scope.paletteActivations = ["Endpoints_endpoint"];
-
+    // load $scope.paletteTree
     angular.forEach(_apacheCamelModel.definitions, (value, key) => {
       if (value.group) {
         var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
@@ -67,6 +62,47 @@ module Wiki {
         var tooltip = value["tooltip"] || value["description"] || label;
 
         group.children.push(node);
+      }
+    });
+
+    // load $scope.componentTree
+    $scope.componentTree = new Folder("Endpoints");
+
+    $scope.$watch("componentNames", () => {
+      var componentNames = $scope.componentNames;
+      if (componentNames && componentNames.length) {
+        $scope.componentTree = new Folder("Endpoints");
+        angular.forEach($scope.componentNames, (value) => {
+          // TODO use a mapping of endpoint names to group...
+          var groupName = "Core";
+          var groupKey = groupName;
+          var group = $scope.componentTree.getOrElse(groupName);
+          var key = value;
+          value["_id"] = key;
+          var title = value["title"] || key;
+          var node = new Folder(title);
+          node.key = groupKey + "_" + key;
+          node["nodeModel"] = value;
+          var tooltip = "";
+          var label = "";
+          /*
+           var imageUrl = Camel.getRouteNodeIcon(value);
+           node.icon = imageUrl;
+           */
+          node.tooltip = tooltip;
+          var tooltip = value["tooltip"] || value["description"] || label;
+
+          group.children.push(node);
+        });
+      }
+    });
+    $scope.componentActivations = ["Core_bean"];
+
+    $scope.$watch('addDialog.show', function () {
+      if ($scope.addDialog.show) {
+        setTimeout(function () {
+          $('#submit').focus();
+        }, 50);
       }
     });
 
@@ -88,6 +124,10 @@ module Wiki {
 
     $scope.onPaletteSelect = (node) => {
       $scope.selectedPaletteNode = (node && node["nodeModel"]) ? node : null;
+    };
+
+    $scope.onComponentSelect = (node) => {
+      $scope.selectedComponentNode = (node && node["nodeModel"]) ? node : null;
     };
 
     $scope.addAndCloseDialog = () => {
@@ -243,7 +283,7 @@ module Wiki {
 
     updateView();
 
-    function addNewNode (nodeModel) {
+    function addNewNode(nodeModel) {
       var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
       var key = nodeModel["_id"];
       var beforeNode = null;
@@ -348,6 +388,7 @@ module Wiki {
     }
 
     function updateView() {
+      $scope.loadEndpointNames();
       $scope.pageId = Wiki.pageId($routeParams, $location);
       console.log("Has page id: " + $scope.pageId + " with $routeParams " + JSON.stringify($routeParams));
 
@@ -359,16 +400,16 @@ module Wiki {
 
     function goToView() {
       // TODO lets navigate to the view if we have a separate view one day :)
-/*
-      if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
-        var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
-        console.log("goToView has found view " + viewLink);
-        var path = Core.trimLeading(viewLink, "#");
-        $location.path(path);
-      } else {
-        console.log("goToView has no breadcrumbs!");
-      }
-*/
+      /*
+       if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+       var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+       console.log("goToView has found view " + viewLink);
+       var path = Core.trimLeading(viewLink, "#");
+       $location.path(path);
+       } else {
+       console.log("goToView has no breadcrumbs!");
+       }
+       */
     }
   }
 }

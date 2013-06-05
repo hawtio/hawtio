@@ -1,6 +1,6 @@
 module Wiki {
   var pluginName = 'wiki';
-  angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'hawtioCore', 'tree', 'camel']).
+  angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'tree', 'camel']).
           config(($routeProvider) => {
 
             // allow optional branch paths...

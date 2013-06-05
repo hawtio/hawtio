@@ -776,7 +776,11 @@ module Core {
     if (workspace) {
       var mbeanTypesToDomain = workspace.mbeanTypesToDomain || {};
       var types = mbeanTypesToDomain[typeName] || {};
-      return types[domain];
+      var answer = types[domain];
+      if (angular.isArray(answer) && answer.length) {
+        return answer[0];
+      }
+      return answer;
     }
     return null;
   }

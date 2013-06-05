@@ -99,7 +99,8 @@
                data-placement="bottom">
               <i class="icon-magic"></i> Layout</a></li>
           <li class="pull-right">
-            <a href='' title="Edit the properties for the selected node" ng-disabled="!selectedFolder" ng-click="propertiesDialog.open()"
+            <a href='' title="Edit the properties for the selected node" ng-disabled="!selectedFolder"
+               ng-click="propertiesDialog.open()"
                data-placement="bottom">
               <i class="icon-edit"></i> Properties</a></li>
         </ul>
@@ -108,11 +109,19 @@
           <form class="form-horizontal no-bottom-margin" ng-submit="addAndCloseDialog()">
             <div class="modal-header"><h4>Add Node</h4></div>
             <div class="modal-body">
-              <div hawtio-tree="paletteTree" hideRoot="true" onSelect="onPaletteSelect"
-                   activateNodes="paletteActivations"></div>
+              <tabs>
+                <pane heading="Patterns">
+                  <div hawtio-tree="paletteTree" hideRoot="true" onSelect="onPaletteSelect"
+                       activateNodes="paletteActivations"></div>
+                </pane>
+                <pane heading="Components">
+                  <div hawtio-tree="componentTree" hideRoot="true" onSelect="onComponentSelect"
+                       activateNodes="componentActivations"></div>
+                </pane>
+              </tabs>
             </div>
             <div class="modal-footer">
-              <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode"
+              <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode || !selectedComponentNode"
                      value="Add">
               <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
             </div>
@@ -123,7 +132,8 @@
           <form class="form-horizontal no-bottom-margin" ng-submit="updatePropertiesAndCloseDialog()">
             <div class="modal-header"><h4>Properties</h4></div>
             <div class="modal-body">
-              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema" onsubmit="updatePropertiesAndCloseDialog"></div>
+              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"
+                   onsubmit="updatePropertiesAndCloseDialog"></div>
             </div>
             <div class="modal-footer">
               <input class="btn btn-primary add" type="submit" ng-click="updatePropertiesAndCloseDialog()" value="OK">
