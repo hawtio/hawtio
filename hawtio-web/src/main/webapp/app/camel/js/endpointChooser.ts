@@ -1,5 +1,106 @@
 module Camel {
 
+  /**
+   * Define the default categories for endpoints and map them to endpoint names
+   */
+  export var endpointCategories = {
+    bigdata: {
+      label: "Big Data",
+      endpoints: ["hdfs", "hbase", "lucene", "solr"],
+      endpointIcon: "/app/camel/img/endpointRepository24.png"
+    },
+    database: {
+      label: "Database",
+      endpoints: ["couchdb", "elasticsearch", "hbase", "jdbc", "jpa", "hibernate", "mongodb", "mybatis", "sql"],
+      endpointIcon: "/app/camel/img/endpointRepository24.png"
+    },
+    cloud: {
+      label: "Cloud",
+      endpoints: [
+        "aws-cw", "aws-ddb", "aws-sdb", "aws-ses", "aws-sns", "aws-sqs", "aws-s3",
+        "gauth", "ghhtp", "glogin", "gtask",
+        "jclouds"]
+    },
+    core: {
+      label: "Core",
+      endpoints: ["bean", "direct", "seda"]
+    },
+    messaging: {
+      label: "Messaging",
+      endpoints: ["jms", "activemq", "amqp", "cometd", "mqtt"],
+      endpointIcon: "/app/camel/img/endpointQueue24.png"
+    },
+    mobile: {
+      label: "Mobile",
+      endpoints: ["apns"]
+    },
+    social: {
+      label: "Social",
+      endpoints: ["atom", "irc", "rss", "smpp", "twitter", "weather"]
+    },
+    storage: {
+      label: "Storage",
+      endpointIcon: "/app/camel/img/endpointFolder24.png",
+      endpoints: ["file", "ftp", "sftp", "scp", "jsch"]
+    },
+    template: {
+      label: "Templating",
+      endpoints: ["freemarker", "velocity", "xquery", "xslt", "scalate", "string-template"]
+    }
+  };
+
+  /**
+   * Maps endpoint names to a category object
+   */
+  export var endpointToCategory = {};
+
+  export var endpointIcon = "/app/camel/img/endpoint24.png";
+  /**
+   *  specify custom label & icon properties for endpoint names
+   */
+  export var endpointConfigurations = {
+     drools: {
+       icon: "/app/camel/img/endpointQueue24.png"
+     },
+     quartz: {
+       icon: "/app/camel/img/endpointTimer24.png"
+     },
+     timer: {
+       icon: "/app/camel/img/endpointTimer24.png"
+     }
+  };
+
+  angular.forEach(endpointCategories, (category, catKey) => {
+    category.id = catKey;
+    angular.forEach(category.endpoints, (endpoint) => {
+      endpointToCategory[endpoint] = category;
+    });
+  });
+
+
+  export function getEndpointConfig(endpointName, category) {
+    var answer = endpointConfigurations[endpointName];
+    if (!answer) {
+      answer = {
+      };
+      endpointConfigurations[endpointName] = answer;
+    }
+    if (!answer.label) {
+      answer.label = endpointName;
+    }
+    if (!answer.icon) {
+      answer.icon = category.endpointIcon || endpointIcon;
+    }
+    if (!answer.category) {
+      answer.category = category;
+    }
+    return answer;
+  }
+
+  export function getEndpointCategory(endpointName:string) {
+    return endpointToCategory[endpointName] || endpointCategories.core;
+  }
+
   export function initEndpointChooserScope($scope, workspace:Workspace, jolokia) {
     $scope.selectedComponentName = null;
     $scope.endpointParameters = {};

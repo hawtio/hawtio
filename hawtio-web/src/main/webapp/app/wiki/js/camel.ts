@@ -72,31 +72,28 @@ module Wiki {
       var componentNames = $scope.componentNames;
       if (componentNames && componentNames.length) {
         $scope.componentTree = new Folder("Endpoints");
-        angular.forEach($scope.componentNames, (value) => {
-          // TODO use a mapping of endpoint names to group...
-          var groupName = "Core";
-          var groupKey = groupName;
+        angular.forEach($scope.componentNames, (endpointName) => {
+          var category = Camel.getEndpointCategory(endpointName);
+          var groupName = category.label || "Core";
+          var groupKey = category.id || groupName;
           var group = $scope.componentTree.getOrElse(groupName);
-          var key = value;
-          value["_id"] = key;
-          var title = value["title"] || key;
-          var node = new Folder(title);
+
+          var value = Camel.getEndpointConfig(endpointName, category);
+          var key = endpointName;
+          var label = value["label"] || endpointName;
+          var node = new Folder(label);
           node.key = groupKey + "_" + key;
           node["nodeModel"] = value;
-          var tooltip = "";
-          var label = "";
-          /*
-           var imageUrl = Camel.getRouteNodeIcon(value);
-           node.icon = imageUrl;
-           */
-          node.tooltip = tooltip;
           var tooltip = value["tooltip"] || value["description"] || label;
+          var imageUrl = url(value["icon"] ||  Camel.endpointIcon);
+          node.icon = imageUrl;
+          node.tooltip = tooltip;
 
           group.children.push(node);
         });
       }
     });
-    $scope.componentActivations = ["Core_bean"];
+    $scope.componentActivations = ["core_bean"];
 
     $scope.$watch('addDialog.show', function () {
       if ($scope.addDialog.show) {
