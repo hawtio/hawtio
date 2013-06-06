@@ -89,7 +89,7 @@ module Wiki {
           node.key = groupKey + "_" + key;
           node["nodeModel"] = value;
           var tooltip = value["tooltip"] || value["description"] || label;
-          var imageUrl = url(value["icon"] ||  Camel.endpointIcon);
+          var imageUrl = url(value["icon"] || Camel.endpointIcon);
           node.icon = imageUrl;
           node.tooltip = tooltip;
 
@@ -125,15 +125,34 @@ module Wiki {
 
     $scope.onPaletteSelect = (node) => {
       $scope.selectedPaletteNode = (node && node["nodeModel"]) ? node : null;
+      if ($scope.selectedPaletteNode) {
+        $scope.selectedComponentNode = null;
+      }
+      console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
     };
 
     $scope.onComponentSelect = (node) => {
       $scope.selectedComponentNode = (node && node["nodeModel"]) ? node : null;
+      if ($scope.selectedComponentNode) {
+        $scope.selectedPaletteNode = null;
+      }
+      console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
     };
 
     $scope.addAndCloseDialog = () => {
       if ($scope.selectedPaletteNode) {
-        addNewNode($scope.selectedPaletteNode["nodeModel"]);
+        var nodeModel = null;
+        if ($scope.selectedPaletteNode) {
+          nodeModel = $scope.selectedPaletteNode["nodeModel"];
+        } else if ($scope.selectedComponentNode) {
+          // TODO lest create an endpoint nodeModel and associate
+          // the dummy URL and properties etc...
+        }
+        if (nodeModel) {
+          addNewNode(nodeModel);
+        } else {
+          console.log("WARNING: no nodeModel!");
+        }
       }
       $scope.addDialog.close();
     };
@@ -285,6 +304,7 @@ module Wiki {
     updateView();
 
     function addNewNode(nodeModel) {
+      var doc = $scope.doc || document;
       var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
       var key = nodeModel["_id"];
       var beforeNode = null;
@@ -323,7 +343,7 @@ module Wiki {
           }
         }
         if (treeNode) {
-          var node = document.createElement(key);
+          var node = doc.createElement(key);
           parentFolder = treeNode.data;
           var addedNode = Camel.addRouteChild(parentFolder, node);
           if (addedNode) {

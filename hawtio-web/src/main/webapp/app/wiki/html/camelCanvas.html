@@ -122,7 +122,7 @@
                 </tabs>
               </div>
               <div class="modal-footer">
-                <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode || !selectedComponentNode"
+                <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode && !selectedComponentNode"
                        value="Add">
                 <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
               </div>

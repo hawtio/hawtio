@@ -104,6 +104,7 @@ module Wiki {
     }
 
     function addNewNode(nodeModel) {
+      var doc = $scope.doc || document;
       var parentFolder = $scope.selectedFolder || $scope.rootFolder;
       var key = nodeModel["_id"];
       if (!key) {
@@ -138,7 +139,7 @@ module Wiki {
           }
         }
         if (treeNode) {
-          var node = document.createElement(key);
+          var node = doc.createElement(key);
           parentFolder = treeNode;
           var addedNode = Camel.addRouteChild(parentFolder, node);
           if (key === "route") {
