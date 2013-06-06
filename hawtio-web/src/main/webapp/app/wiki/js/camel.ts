@@ -1,7 +1,7 @@
 module Wiki {
 
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
-    $scope.schema = _apacheCamelModel;
+    $scope.schema = Camel.getConfiguredCamelModel();
 
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, workspace, jolokia);
@@ -39,6 +39,10 @@ module Wiki {
     routeModel["_id"] = "route";
 
     $scope.addDialog = new Core.Dialog();
+
+    // TODO doesn't seem that angular-ui uses these?
+    $scope.addDialog.options["dialogClass"] = "modal-large";
+    $scope.addDialog.options["cssClass"] = "modal-large";
 
     $scope.paletteItemSearch = "";
     $scope.paletteTree = new Folder("Palette");

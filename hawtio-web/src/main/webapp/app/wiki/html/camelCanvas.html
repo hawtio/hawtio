@@ -105,27 +105,29 @@
               <i class="icon-edit"></i> Properties</a></li>
         </ul>
 
-        <div modal="addDialog.show" close="addDialog.close()" ng-options="addDialog.options">
-          <form class="form-horizontal no-bottom-margin" ng-submit="addAndCloseDialog()">
-            <div class="modal-header"><h4>Add Node</h4></div>
-            <div class="modal-body">
-              <tabs>
-                <pane heading="Patterns">
-                  <div hawtio-tree="paletteTree" hideRoot="true" onSelect="onPaletteSelect"
-                       activateNodes="paletteActivations"></div>
-                </pane>
-                <pane heading="Endpoints">
-                  <div hawtio-tree="componentTree" hideRoot="true" onSelect="onComponentSelect"
-                       activateNodes="componentActivations"></div>
-                </pane>
-              </tabs>
-            </div>
-            <div class="modal-footer">
-              <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode || !selectedComponentNode"
-                     value="Add">
-              <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
-            </div>
-          </form>
+        <div class="modal-large">
+          <div modal="addDialog.show" close="addDialog.close()" ng-options="addDialog.options">
+            <form class="form-horizontal no-bottom-margin" ng-submit="addAndCloseDialog()">
+              <div class="modal-header"><h4>Add Node</h4></div>
+              <div class="modal-body">
+                <tabs>
+                  <pane heading="Patterns">
+                    <div hawtio-tree="paletteTree" hideRoot="true" onSelect="onPaletteSelect"
+                         activateNodes="paletteActivations"></div>
+                  </pane>
+                  <pane heading="Endpoints">
+                    <div hawtio-tree="componentTree" hideRoot="true" onSelect="onComponentSelect"
+                         activateNodes="componentActivations"></div>
+                  </pane>
+                </tabs>
+              </div>
+              <div class="modal-footer">
+                <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode || !selectedComponentNode"
+                       value="Add">
+                <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
+              </div>
+            </form>
+          </div>
         </div>
 
         <div modal="propertiesDialog.show" close="propertiesDialog.close()" ng-options="propertiesDialog.options">
