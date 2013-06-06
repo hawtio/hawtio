@@ -18,8 +18,9 @@ module Wiki {
     });
 
     $scope.addAndCloseDialog = () => {
-      if ($scope.selectedPaletteNode) {
-        addNewNode($scope.selectedPaletteNode["nodeModel"]);
+      var nodeModel = $scope.selectedNodeModel();
+      if (nodeModel) {
+        addNewNode(nodeModel);
       }
       $scope.addDialog.close();
     };

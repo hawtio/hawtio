@@ -1,10 +1,9 @@
 module Wiki {
 
   export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
-    $scope.schema = Camel.getConfiguredCamelModel();
-
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, workspace, jolokia);
+    $scope.schema = Camel.getConfiguredCamelModel();
 
     $scope.findProfileCamelContext = true;
 
@@ -53,7 +52,7 @@ module Wiki {
       if (value.group) {
         var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
         if (!group.key) {
-          group.key = value.group;
+          group.key = value.group1;
         }
         value["_id"] = key;
         var title = value["title"] || key;
@@ -87,6 +86,7 @@ module Wiki {
           var label = value["label"] || endpointName;
           var node = new Folder(label);
           node.key = groupKey + "_" + key;
+          node.key = key;
           node["nodeModel"] = value;
           var tooltip = value["tooltip"] || value["description"] || label;
           var imageUrl = url(value["icon"] || Camel.endpointIcon);
@@ -97,7 +97,7 @@ module Wiki {
         });
       }
     });
-    $scope.componentActivations = ["core_bean"];
+    $scope.componentActivations = ["bean"];
 
     $scope.$watch('addDialog.show', function () {
       if ($scope.addDialog.show) {
@@ -135,24 +135,34 @@ module Wiki {
       $scope.selectedComponentNode = (node && node["nodeModel"]) ? node : null;
       if ($scope.selectedComponentNode) {
         $scope.selectedPaletteNode = null;
+        var nodeName = node.key;
+        console.log("loading endpoint schema for node " + nodeName);
+        $scope.loadEndpointSchema(nodeName);
+        $scope.selectedComponentName = nodeName;
       }
       console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
     };
 
-    $scope.addAndCloseDialog = () => {
+    $scope.selectedNodeModel = () => {
+      var nodeModel = null;
       if ($scope.selectedPaletteNode) {
-        var nodeModel = null;
-        if ($scope.selectedPaletteNode) {
-          nodeModel = $scope.selectedPaletteNode["nodeModel"];
-        } else if ($scope.selectedComponentNode) {
-          // TODO lest create an endpoint nodeModel and associate
-          // the dummy URL and properties etc...
-        }
-        if (nodeModel) {
-          addNewNode(nodeModel);
-        } else {
-          console.log("WARNING: no nodeModel!");
-        }
+        nodeModel = $scope.selectedPaletteNode["nodeModel"];
+      } else if ($scope.selectedComponentNode) {
+        // TODO lest create an endpoint nodeModel and associate
+        // the dummy URL and properties etc...
+        var endpointConfig = $scope.selectedComponentNode["nodeModel"];
+        var endpointSchema = $scope.endpointSchema;
+        nodeModel = $scope.schema.definitions.endpoint;
+      }
+      return nodeModel;
+    };
+
+    $scope.addAndCloseDialog = () => {
+      var nodeModel = $scope.selectedNodeModel();
+      if (nodeModel) {
+        addNewNode(nodeModel);
+      } else {
+        console.log("WARNING: no nodeModel!");
       }
       $scope.addDialog.close();
     };

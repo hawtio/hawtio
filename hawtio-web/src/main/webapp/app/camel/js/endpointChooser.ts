@@ -175,7 +175,7 @@ module Camel {
 
     $scope.endpointCompletions = () => {
       var answer = [];
-      var mbean = Camel.getSelectionCamelContextMBean(workspace);
+      var mbean = findCamelContextMBean();
       var componentName = $scope.selectedComponentName;
       var endpointParameters = {};
       var completionText = $scope.endpointPath || "";
@@ -187,16 +187,18 @@ module Camel {
 
     $scope.loadEndpointNames = () => {
       $scope.componentNames = null;
-      var mbean = Camel.getSelectionCamelContextMBean(workspace);
-      if (!mbean && $scope.findProfileCamelContext) {
-        // TODO as a hack for now lets just find any camel context we can
-        var folder = Core.getMBeanTypeFolder(workspace, Camel.jmxDomain, "context");
-        mbean = Core.pathGet(folder, ["objectName"]);
-      }
+      var mbean = findCamelContextMBean();
       if (mbean) {
         jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
       } else {
         console.log("WARNING: No camel context mbean so cannot load component names");
+      }
+    };
+
+    $scope.loadEndpointSchema = (componentName) => {
+      var mbean = findCamelContextMBean();
+      if (mbean && componentName) {
+        jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
       }
     };
 
@@ -205,13 +207,6 @@ module Camel {
       $scope.hasComponentNames = $scope.componentNames ? true : false;
       Core.$apply($scope);
     }
-
-    $scope.loadEndpointSchema = (componentName) => {
-      var mbean = Camel.getSelectionCamelContextMBean(workspace);
-      if (mbean && componentName) {
-        jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
-      }
-    };
 
     function onEndpointSchema(response) {
       if (response) {
@@ -239,5 +234,16 @@ module Camel {
         }
       }
     }
+
+    function findCamelContextMBean() {
+      var mbean = Camel.getSelectionCamelContextMBean(workspace);
+      if (!mbean && $scope.findProfileCamelContext) {
+        // TODO as a hack for now lets just find any camel context we can
+        var folder = Core.getMBeanTypeFolder(workspace, Camel.jmxDomain, "context");
+        mbean = Core.pathGet(folder, ["objectName"]);
+      }
+      return mbean;
+    }
+
   }
 }
