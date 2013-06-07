@@ -703,7 +703,11 @@ module Fabric {
 
 
     $scope.showProfile = (profile) => {
-      $location.path('/fabric/profile/' + $scope.activeVersionId + '/' + profile.id);
+      if (angular.isDefined(profile.versionId)) {
+        $location.path('/fabric/profile/' + profile.versionId + '/' + profile.id);
+      } else {
+        $location.path('/fabric/profile/' + $scope.activeVersionId + '/' + profile.id);
+      }
     };
 
 
