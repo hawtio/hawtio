@@ -84,7 +84,6 @@ module Fabric {
 
     $scope.$watch('selectedRepoJson', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        console.log("selectedRepoJson: ", $scope.selectedRepoJson);
         $scope.selectedRepoName = $scope.selectedRepoJson.name;
         $scope.selectedRepoRepos = $scope.selectedRepoJson.repository;
         $scope.selectedRepoFeatures = $scope.selectedRepoJson.feature;
@@ -180,6 +179,45 @@ module Fabric {
 
       });
 
+    };
+
+
+    $scope.save = () => {
+      jolokia.request({
+        type: 'exec', mbean: managerMBean,
+        operation: 'getConfigurationFile(java.lang.String, java.lang.String, java.lang.String)',
+        arguments: [$scope.versionId, $scope.profileId, 'org.fusesource.fabric.agent.properties']
+      }, onSuccess($scope.doSave));
+    };
+
+
+    $scope.doSave = (response) => {
+      var configFile = response.value.decodeBase64();
+      var lines = configFile.lines();
+
+      if ($scope.deletingFeatures.length > 0) {
+        $scope.deletingFeatures.each((feature) => {
+          lines.remove((line) => {
+            return line.startsWith("feature." + feature.id);
+          });
+        });
+      }
+
+      if ($scope.addingFeatures.length > 0) {
+        $scope.addingFeatures.each((feature) => {
+          lines.add("feature." + feature.id + " = " + feature.id);
+        });
+      }
+
+      configFile = lines.join('\n');
+
+      saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'org.fusesource.fabric.agent.properties', configFile.encodeBase64(), () => {
+          notification('success', "Updated feature definitions...");
+          $scope.$apply();
+        }, (response) => {
+          notification('error', "Failed to save feature definitions due to " + response.error);
+          $scope.$apply();
+        });
     };
 
 
