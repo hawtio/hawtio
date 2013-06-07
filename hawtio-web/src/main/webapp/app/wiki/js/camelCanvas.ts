@@ -143,6 +143,8 @@ module Wiki {
           var node = doc.createElement(key);
           parentFolder = treeNode;
           var addedNode = Camel.addRouteChild(parentFolder, node);
+          // TODO add the schema here for an element??
+          // or default the data or something
           if (key === "route") {
             // lets generate a new routeId and switch to it
             var count = $scope.routeIds.length;
