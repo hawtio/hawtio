@@ -76,6 +76,10 @@ module Fabric {
     doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
   }
 
+  export function profileWebAppURL(jolokia, webAppId, profileId, versionId, success, error) {
+    doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
+  }
+
   export function doAction(action, jolokia, arguments, success, error) {
     jolokia.request(
         {

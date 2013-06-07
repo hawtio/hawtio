@@ -158,6 +158,20 @@ module Camel {
       }
     };
 
+    $scope.jolokia = jolokia;
+
+    // lets see if we need to use a remote jolokia container
+    var versionId = $scope.branch;
+    var profileId = $scope.pageId;
+    if (profileId && versionId) {
+      var idx = profileId.lastIndexOf("/");
+      if (idx) {
+        profileId = profileId.substring(0, idx);
+      }
+      console.log("finding jolokia " + profileId +  " " + versionId);
+      Fabric.profileWebAppURL(jolokia, "org.jolokia", profileId, versionId, onJolokiaUrl, onJolokiaUrl);
+    }
+
     var silentOptions = {silent: true};
 
     $scope.$watch('workspace.selection', function () {
@@ -180,7 +194,7 @@ module Camel {
       var endpointParameters = {};
       var completionText = $scope.endpointPath || "";
       if (mbean && componentName && completionText) {
-        answer = jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
+        answer = $scope.jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
       }
       return answer;
     };
@@ -189,7 +203,13 @@ module Camel {
       $scope.componentNames = null;
       var mbean = findCamelContextMBean();
       if (mbean) {
-        jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
+        //$scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
+        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents));
+/*
+        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {error: function (response) {
+          console.log("FAILED: " + response);
+        }}));
+*/
       } else {
         console.log("WARNING: No camel context mbean so cannot load component names");
       }
@@ -198,12 +218,13 @@ module Camel {
     $scope.loadEndpointSchema = (componentName) => {
       var mbean = findCamelContextMBean();
       if (mbean && componentName) {
-        jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
+        $scope.jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
       }
     };
 
     function onComponents(response) {
       $scope.componentNames = response;
+      console.log("===== onComponents: " + response);
       $scope.hasComponentNames = $scope.componentNames ? true : false;
       Core.$apply($scope);
     }
@@ -236,6 +257,14 @@ module Camel {
     }
 
     function findCamelContextMBean() {
+      // we could be remote to lets query jolokia
+      var results = $scope.jolokia.search("org.apache.camel:*,type=context", onSuccess(null));
+      //var results = $scope.jolokia.search("org.apache.camel:*", onSuccess(null));
+      if (results && results.length) {
+        console.log("===== Got results: " + results);
+        return results[0];
+      }
+
       var mbean = Camel.getSelectionCamelContextMBean(workspace);
       if (!mbean && $scope.findProfileCamelContext) {
         // TODO as a hack for now lets just find any camel context we can
@@ -245,5 +274,19 @@ module Camel {
       return mbean;
     }
 
+    function onJolokiaUrl(response) {
+      if (response) {
+        var url = response.value;
+        console.log("========== onJolokiaURL: " + url);
+        if (url) {
+          var jolokiaParams = {url: url, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
+          // TODO dirty hack!!!
+          jolokiaParams["username"] = "admin";
+          jolokiaParams["password"] = "admin";
+          $scope.jolokia = new Jolokia(jolokiaParams);
+          $scope.loadEndpointNames();
+        }
+      }
+    }
   }
 }
