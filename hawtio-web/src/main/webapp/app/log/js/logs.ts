@@ -99,6 +99,7 @@ module Log {
       data: 'filteredLogs',
       displayFooter: false,
       showFilter: false,
+      sortInfo: { field: 'timestamp', direction: 'DESC'},
       filterOptions: {
         filterText: "searchText"
       },
