@@ -168,6 +168,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         factory('toastr', ($window) => {
           return $window.toastr;
         }).
+        factory('xml2json', ($window) => {
+          var jquery:any = $;
+          return jquery.xml2json;
+        }).
         factory('workspace',($location:ng.ILocationService, jmxTreeLazyLoadRegistry, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
           var answer = new Workspace(jolokia, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
           answer.loadTree();

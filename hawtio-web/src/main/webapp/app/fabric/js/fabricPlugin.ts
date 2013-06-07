@@ -8,6 +8,7 @@ module Fabric {
             when('/fabric/clusters/*page', {templateUrl: 'app/fabric/html/clusters.html'}).
             when('/fabric/container/:containerId', {templateUrl: 'app/fabric/html/container.html'}).
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
+            when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: 'app/fabric/html/editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'}).
             when('/fabric/view', { templateUrl: 'app/fabric/html/fabricView.html', reloadOnSearch: false });
   }).

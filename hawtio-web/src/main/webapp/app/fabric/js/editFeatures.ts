@@ -1,0 +1,140 @@
+module Fabric {
+
+  export function FeatureEditController($scope, $routeParams, $location, jolokia, xml2json) {
+
+    $scope.getProfileFeaturesOp = "getProfileFeatures(java.lang.String, java.lang.String)";
+    $scope.versionId = $routeParams.versionId;
+    $scope.profileId = $routeParams.profileId;
+
+    $scope.response = {};
+
+    $scope.features = [];
+    $scope.repositories = [];
+    $scope.repoIds = [];
+    $scope.selectedRepoId = '';
+    $scope.selectedRepo = {};
+
+    $scope.selectedRepoXML = '';
+    $scope.selectedRepoJson = {};
+    $scope.selectedRepoError = '';
+
+    $scope.selectedRepoRepos = [];
+    $scope.selectedRepoFeatures = [];
+
+    $scope.selectedRepoSelectedFeatures = [];
+
+    $scope.featureGridOptions = {
+      data: 'selectedRepoFeatures',
+      selectedItems: $scope.selectedRepoSelectedFeatures,
+      displayFooter: false,
+      showFilter: false,
+      keepLastSelected: true,
+      filterOptions: {
+        filterText: ''
+      },
+      columnDefs: [
+        {
+          field: 'name',
+          displayName: 'Name'
+        },
+        {
+          field: 'version',
+          displayName: 'Version'
+        }
+      ]
+    }
+
+
+    $scope.$watch('features', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.parentFeatures = $scope.features.filter((f) => { return f.isParentFeature });
+        $scope.profileFeatures = $scope.features.filter((f) => { return !f.isParentFeature });
+      }
+    }, true);
+
+
+    $scope.$watch('selectedRepoXML', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.selectedRepoJson = xml2json($scope.selectedRepoXML);
+      }
+    });
+
+
+    $scope.$watch('selectedRepoId', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if ($scope.selectedRepoId !== '') {
+          $scope.selectedRepo = $scope.repositories.find((repo) => { return $scope.selectedRepoId === repo.id; });
+        } else {
+          $scope.selectedRepo = {};
+        }
+      }
+    });
+
+
+    $scope.$watch('selectedRepoJson', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        console.log("selectedRepoJson: ", $scope.selectedRepoJson);
+        $scope.selectedRepoName = $scope.selectedRepoJson.name;
+        $scope.selectedRepoRepos = $scope.selectedRepoJson.repository;
+        $scope.selectedRepoFeatures = $scope.selectedRepoJson.feature;
+      }
+    });
+
+
+    $scope.$watch('selectedRepo', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (angular.isDefined($scope.selectedRepo.data)) {
+          $scope.selectedRepoXML = $scope.selectedRepo.data;
+        } else {
+          $scope.selectedRepoXML = '';
+        }
+
+        if (angular.isDefined($scope.selectedRepo.errorMessage)) {
+          $scope.selectedRepoError = $scope.selectedRepo.errorMessage;
+        } else {
+          $scope.selectedRepoError = '';
+        }
+      }
+    }, true);
+
+
+    $scope.$watch('repoIds', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if ($scope.repoIds.length > 0) {
+          if ($scope.selectedRepoId === '') {
+            $scope.selectedRepoId = $scope.repoIds[0];
+          }
+        } else {
+          $scope.selectedRepoId = '';
+        }
+      }
+    }, true);
+
+
+    $scope.$watch('repositories', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.repoIds = $scope.repositories.map((repo) => { return repo.id; });
+      }
+    }, true);
+
+
+    $scope.dispatch = (response) => {
+      if (!Object.equal(response.value, $scope.response)) {
+        $scope.response = response.value;
+        $scope.features = Object.clone($scope.response.featureDefinitions);
+        $scope.repositories = Object.clone($scope.response.repositoryDefinitions);
+        $scope.$apply();
+      }
+    }
+
+
+    Core.register(jolokia, $scope, [{
+      type: 'exec', mbean: managerMBean, operation: $scope.getProfileFeaturesOp,
+        arguments: [$scope.versionId, $scope.profileId]
+      }], onSuccess($scope.dispatch));
+
+
+  }
+
+
+}

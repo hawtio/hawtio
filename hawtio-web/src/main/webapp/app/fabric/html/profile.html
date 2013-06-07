@@ -19,6 +19,7 @@
         -->
     </div>
     <div class="pull-right">
+      <a class="btn" ng-href="#/fabric/profile/{{versionId}}/{{profileId}}/editFeatures"><i class="icon-edit"></i> Edit Features</a>
       <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
       <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
       <a ng-href="#/wiki/branch/{{versionId}}/view/{{row.id}}" class="btn" ng-show="hasFabricWiki()"
