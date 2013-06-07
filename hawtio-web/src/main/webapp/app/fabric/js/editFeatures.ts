@@ -21,6 +21,9 @@ module Fabric {
     $scope.selectedRepoRepos = [];
     $scope.selectedRepoFeatures = [];
 
+    $scope.deletingFeatures = [];
+    $scope.addingFeatures = [];
+
     $scope.selectedRepoSelectedFeatures = [];
 
     $scope.featureGridOptions = {
@@ -49,6 +52,14 @@ module Fabric {
       if (newValue !== oldValue) {
         $scope.parentFeatures = $scope.features.filter((f) => { return f.isParentFeature });
         $scope.profileFeatures = $scope.features.filter((f) => { return !f.isParentFeature });
+        $scope.addingFeatures = $scope.features.filter((f) => { return f.adding; });
+        $scope.deletingFeatures = $scope.features.filter((f) => { return f.deleting; });
+      }
+    }, true);
+
+    $scope.$watch('addingFeatures', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+
       }
     }, true);
 
@@ -119,13 +130,57 @@ module Fabric {
 
 
     $scope.dispatch = (response) => {
-      if (!Object.equal(response.value, $scope.response)) {
-        $scope.response = response.value;
-        $scope.features = Object.clone($scope.response.featureDefinitions);
-        $scope.repositories = Object.clone($scope.response.repositoryDefinitions);
+      var responseJson = angular.toJson(response.value);
+      if (responseJson !== $scope.responseJson) {
+        if (angular.isDefined($scope.responseJson)) {
+          notification('info', "Profile feature definitions updated");
+        }
+        $scope.responseJson = responseJson;
+        $scope.features = Object.clone(response.value.featureDefinitions, true);
+        $scope.repositories = Object.clone(response.value.repositoryDefinitions, true);
         $scope.$apply();
       }
-    }
+    };
+
+
+    $scope.getClass = (feature) => {
+      if (feature.adding) {
+        return "adding";
+      }
+      if (feature.deleting) {
+        return "deleting";
+      }
+      return "";
+    };
+
+
+    $scope.removeFeature = (feature) => {
+      if (feature.adding) {
+        $scope.features.remove((f) => { return f.id === feature.id });
+      } else {
+        feature.deleting = !feature.deleting;
+      }
+    };
+
+
+    $scope.addSelectedFeatures = (withVersion) => {
+
+      $scope.selectedRepoSelectedFeatures.each((feature) => {
+
+        var id = feature.name;
+
+        if (withVersion) {
+          id = id + "/" + feature.version;
+        }
+
+        $scope.features.push({
+          id: id,
+          adding: true
+        });
+
+      });
+
+    };
 
 
     Core.register(jolokia, $scope, [{
