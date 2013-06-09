@@ -155,6 +155,7 @@ module Wiki {
         var endpointSchema = $scope.endpointSchema;
         nodeModel = $scope.schema.definitions.endpoint;
         $scope.endpointConfig = {
+          key: $scope.selectedComponentNode.key,
           schema: endpointSchema,
           details: endpointConfig
         };

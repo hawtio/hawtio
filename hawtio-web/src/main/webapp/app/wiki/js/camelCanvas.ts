@@ -145,6 +145,18 @@ module Wiki {
           var addedNode = Camel.addRouteChild(parentFolder, node);
           // TODO add the schema here for an element??
           // or default the data or something
+
+          var nodeData = {
+          };
+          if (key === "endpoint" && $scope.endpointConfig) {
+            var key = $scope.endpointConfig.key;
+            if (key) {
+              nodeData["uri"] = key + ":";
+            }
+          }
+          addedNode["camelNodeData"] = nodeData;
+          addedNode["endpointConfig"] = $scope.endpointConfig;
+
           if (key === "route") {
             // lets generate a new routeId and switch to it
             var count = $scope.routeIds.length;
@@ -156,7 +168,6 @@ module Wiki {
               }
             }
             addedNode["routeXmlNode"].setAttribute("id", nodeId);
-            addedNode["endpointConfig"] = $scope.endpointConfig;
             $scope.selectedRouteId = nodeId;
           }
         }
