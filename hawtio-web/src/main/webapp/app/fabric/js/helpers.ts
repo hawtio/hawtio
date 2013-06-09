@@ -295,7 +295,10 @@ module Fabric {
       if (password) {
         full += "&_pwd=" + password;
       }
-      window.open(full + "/#/jmx/attributes?nid=root-java.lang-Runtime" );
+      // default the osgi view
+      full += "#/osgi/bundle-list";
+      //full += "/#/jmx/attributes?nid=root-java.lang-Runtime";
+      window.open(full);
     }
   }
 }

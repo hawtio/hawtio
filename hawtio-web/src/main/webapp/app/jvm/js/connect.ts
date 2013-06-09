@@ -62,6 +62,9 @@ module JVM {
       if ($scope.password) {
         full += "&_pwd=" + $scope.password;
       }
+      // default the osgi view
+      full += "#/osgi/bundle-list";
+      console.log("Full URL is: " + full);
       window.open(full);
     }
   }
