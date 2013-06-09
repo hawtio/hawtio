@@ -290,7 +290,7 @@ module Wiki {
 
       // Create the layout and get the graph
       dagre.layout()
-              .nodeSep(50)
+              .nodeSep(100)
               .edgeSep(10)
               .rankSep(50)
               .nodes(states)
