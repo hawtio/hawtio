@@ -52,7 +52,7 @@ module Wiki {
       if (value.group) {
         var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
         if (!group.key) {
-          group.key = value.group1;
+          group.key = value.group;
         }
         value["_id"] = key;
         var title = value["title"] || key;
