@@ -427,6 +427,8 @@ module Wiki {
             if (idx > 0) {
               var endpointScheme = uri.substring(0, idx);
               var endpointPath = uri.substring(idx + 1);
+              $scope.endpointPath = endpointPath;
+              // TODO load endpointPath / endpointParameters
               // TODO populate the parameters!
               console.log("===== endpoint " + endpointScheme);
               $scope.loadEndpointSchema(endpointScheme);

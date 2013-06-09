@@ -153,6 +153,8 @@ module Camel {
   export function initEndpointChooserScope($scope, workspace:Workspace, jolokia) {
     $scope.selectedComponentName = null;
     $scope.endpointParameters = {};
+    $scope.endpointPath = "";
+
     $scope.schema = {
       definitions: {
       }
@@ -192,7 +194,9 @@ module Camel {
       var mbean = findCamelContextMBean();
       var componentName = $scope.selectedComponentName;
       var endpointParameters = {};
-      var completionText = $scope.endpointPath || "";
+      console.log("component " + $scope.selectedComponentName + " endpointPath " +  $scope.endpointPath);
+      // TODO bit of a hack here - for scope issues sometimes the endpointPath is defined in a child scope!
+      var completionText = $scope.endpointPath || $scope.$$childHead.endpointPath || "";
       if (mbean && componentName && completionText) {
         answer = $scope.jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
       }
