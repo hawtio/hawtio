@@ -80,6 +80,10 @@ module Fabric {
     doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
   }
 
+  export function containerWebAppURL(jolokia, webAppId, containerId, success, error) {
+    doAction('containerWebAppURL', jolokia, [webAppId, containerId], success, error);
+  }
+
   export function doAction(action, jolokia, arguments, success, error) {
     jolokia.request(
         {

@@ -13,6 +13,9 @@
   <li ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}">Clusters</a>
   </li>
+  <li ng-show="kibanaHref">
+    <a ng-href="{{kibanaHref}}">Logs</a>
+  </li>
   <li ng-class='{active : isActive("#/fabric/map")}'>
     <a ng-href="#/fabric/map{{hash}}">Map</a>
   </li>
