@@ -60,8 +60,14 @@ public class JVMList implements JVMListMBean {
     public void init() {
         try {
 
-            // let's just hit any errors we're going to hit before even creating the mbean
-            listLocalJVMs();
+            try {
+              // let's just hit any errors we're going to hit before even creating the mbean
+              listLocalJVMs();
+            } catch (NoClassDefFoundError e) {
+              // Some JVM's don't support com.sun.tools.attach.VirtualMachine
+              LOG.info("Local JVM discovery disabled due to: "+e);
+              return; 
+            }
 
             if (objectName == null) {
                 objectName = new ObjectName("io.hawt.jvm.local:type=JVMList");
