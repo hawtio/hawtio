@@ -721,6 +721,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 boolean hasHead = true;
                 try {
                     git.log().all().call();
+                    hasHead = git.getRepository().getAllRefs().containsKey("HEAD");
                 } catch (NoHeadException e) {
                     hasHead = false;
                 }
