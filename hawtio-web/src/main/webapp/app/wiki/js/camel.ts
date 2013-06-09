@@ -147,12 +147,17 @@ module Wiki {
       var nodeModel = null;
       if ($scope.selectedPaletteNode) {
         nodeModel = $scope.selectedPaletteNode["nodeModel"];
+        $scope.endpointConfig = null;
       } else if ($scope.selectedComponentNode) {
         // TODO lest create an endpoint nodeModel and associate
         // the dummy URL and properties etc...
         var endpointConfig = $scope.selectedComponentNode["nodeModel"];
         var endpointSchema = $scope.endpointSchema;
         nodeModel = $scope.schema.definitions.endpoint;
+        $scope.endpointConfig = {
+          schema: endpointSchema,
+          details: endpointConfig
+        };
       }
       return nodeModel;
     };

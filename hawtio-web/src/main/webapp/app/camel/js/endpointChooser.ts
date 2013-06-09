@@ -217,7 +217,8 @@ module Camel {
 
     $scope.loadEndpointSchema = (componentName) => {
       var mbean = findCamelContextMBean();
-      if (mbean && componentName) {
+      if (mbean && componentName && componentName !== $scope.loadedEndpointSchema) {
+        $scope.selectedComponentName = componentName;
         $scope.jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
       }
     };
@@ -238,6 +239,7 @@ module Camel {
           configureEndpointSchema(endpointName, json);
           $scope.endpointSchema = json;
           $scope.schema.definitions[endpointName] = json;
+          $scope.loadedEndpointSchema = endpointName;
           Core.$apply($scope);
         } catch (e) {
           console.log("Failed to parse JSON " + e);

@@ -156,6 +156,7 @@ module Wiki {
               }
             }
             addedNode["routeXmlNode"].setAttribute("id", nodeId);
+            addedNode["endpointConfig"] = $scope.endpointConfig;
             $scope.selectedRouteId = nodeId;
           }
         }
@@ -406,6 +407,24 @@ module Wiki {
         $scope.nodeModel = Camel.getCamelSchema(nodeName);
         if ($scope.nodeModel) {
           $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+        }
+        $scope.selectedEndpoint = null;
+        if ("endpoint" === nodeName) {
+          var uri = $scope.nodeData["uri"];
+          if (uri) {
+            var idx = uri.indexOf(":");
+            if (idx > 0) {
+              var endpointScheme = uri.substring(0, idx);
+              var endpointPath = uri.substring(idx + 1);
+              // TODO populate the parameters!
+              console.log("===== endpoint " + endpointScheme);
+              $scope.loadEndpointSchema(endpointScheme);
+              $scope.selectedEndpoint = {
+                endpointPath: endpointPath,
+                parameters: {}
+              };
+            }
+          }
         }
       }
     }

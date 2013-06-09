@@ -134,8 +134,26 @@
           <form class="form-horizontal no-bottom-margin" ng-submit="updatePropertiesAndCloseDialog()">
             <div class="modal-header"><h4>Properties</h4></div>
             <div class="modal-body">
-              <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"
-                   onsubmit="updatePropertiesAndCloseDialog"></div>
+              <div ng-show="!selectedEndpoint">
+                <!-- pattern form -->
+                <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"
+                     onsubmit="updatePropertiesAndCloseDialog"></div>
+              </div>
+              <div ng-show="selectedEndpoint">
+                <!-- endpoint form -->
+                <div class="control-group">
+                  <label class="control-label" for="endpointPath">Endpoint</label>
+
+                  <div class="controls">
+                    <input id="endpointPath" class="span10" type="text" ng-model="selectedEndpoint.endpointPath" placeholder="name"
+                           typeahead="title for title in endpointCompletions() | filter:$viewValue"
+                           typeahead-editable='true'
+                           min-length="1">
+                  </div>
+                </div>
+                <div simple-form name="formEditor" entity='selectedEndpoint.parameters' data='endpointSchema'
+                     schema="schema"></div>
+              </div>
             </div>
             <div class="modal-footer">
               <input class="btn btn-primary add" type="submit" ng-click="updatePropertiesAndCloseDialog()" value="OK">
