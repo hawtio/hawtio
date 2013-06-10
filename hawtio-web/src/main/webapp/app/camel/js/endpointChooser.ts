@@ -36,11 +36,11 @@ module Camel {
     },
     sass: {
       label: "SaaS",
-      endpoints: ["salesforce", "sap-netweaver"]
+      endpoints: ["salesforce", "sap-netweaver", "weather"]
     },
     social: {
       label: "Social",
-      endpoints: ["atom", "irc", "rss", "smpp", "twitter", "weather"]
+      endpoints: ["atom", "irc", "rss", "smpp", "twitter"]
     },
     storage: {
       label: "Storage",
