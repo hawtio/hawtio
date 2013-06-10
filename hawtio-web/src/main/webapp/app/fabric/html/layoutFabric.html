@@ -16,6 +16,9 @@
   <li ng-show="kibanaHref">
     <a ng-href="{{kibanaHref}}">Logs</a>
   </li>
+  <li ng-show="hasMetrics">
+    <a ng-href="#/insight/all">Metrics</a>
+  </li>
   <li ng-class='{active : isActive("#/fabric/map")}'>
     <a ng-href="#/fabric/map{{hash}}">Map</a>
   </li>

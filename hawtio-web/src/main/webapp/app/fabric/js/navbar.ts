@@ -16,6 +16,8 @@ module Fabric {
       var profileId = "kibana";
       var versionId = null;
       Fabric.profileWebAppURL(jolokia, "org.fusesource.insight.insight-kibana3", profileId, versionId, onWebAppUrl, onWebAppUrl);
+
+      $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
     }
 
     function onWebAppUrl(response) {

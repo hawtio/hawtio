@@ -14,6 +14,8 @@ module Insight {
 
         viewRegistry["insight"] = "app/insight/html/layoutInsight.html";
 
+        // instead lets add the Metrics link on the Fabric sub nav bar
+/*
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
           content: "Insight",
@@ -21,6 +23,7 @@ module Insight {
           isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'}),
           href: () => "#/insight/all"
         });
+*/
 
     });
 
