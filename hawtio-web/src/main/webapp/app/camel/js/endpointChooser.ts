@@ -34,6 +34,10 @@ module Camel {
       label: "Mobile",
       endpoints: ["apns"]
     },
+    sass: {
+      label: "SaaS",
+      endpoints: ["salesforce", "sap-netweaver"]
+    },
     social: {
       label: "Social",
       endpoints: ["atom", "irc", "rss", "smpp", "twitter", "weather"]
@@ -65,8 +69,26 @@ module Camel {
     quartz: {
       icon: "/app/camel/img/endpointTimer24.png"
     },
+    facebook: {
+      icon: "/app/camel/img/endpoints/facebook24.jpg"
+    },
+    salesforce: {
+      icon: "/app/camel/img/endpoints/salesForce24.png"
+    },
+    sap: {
+      icon: "/app/camel/img/endpoints/SAPe24.png"
+    },
+    "sap-netweaver": {
+      icon: "/app/camel/img/endpoints/SAPNetweaver24.jpg"
+    },
     timer: {
       icon: "/app/camel/img/endpointTimer24.png"
+    },
+    twitter: {
+      icon: "/app/camel/img/endpoints/twitter24.png"
+    },
+    weather: {
+      icon: "/app/camel/img/endpoints/weather24.jpg"
     }
   };
 
