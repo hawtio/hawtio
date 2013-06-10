@@ -300,7 +300,8 @@ module Fabric {
         full += "&_pwd=" + password;
       }
       // default the osgi view
-      full += "#/osgi/bundle-list";
+      //full += "#/osgi/bundle-list";
+      full += "#/logs";
       //full += "/#/jmx/attributes?nid=root-java.lang-Runtime";
       window.open(full);
     }
