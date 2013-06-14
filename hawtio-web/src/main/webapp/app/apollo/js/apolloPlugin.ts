@@ -4,7 +4,8 @@ module Apollo {
     module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
     config(($routeProvider) => {
       $routeProvider.
-        when('/apollo/*part', {templateUrl: 'app/apollo/html/layout-apollo.html'})
+        // when('/apollo', {templateUrl: 'app/apollo/html/layout-apollo.html'}).
+        otherwise({templateUrl: 'app/apollo/html/layout-apollo.html'})
     }).
     run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
       viewRegistry['apollo'] = "app/apollo/html/layout-apollo.html";
@@ -12,7 +13,7 @@ module Apollo {
         content: "Apollo",
         title: "Manage your Apollo Broker",
         isValid: (workspace) => workspace.treeContainsDomainAndProperties("org.apache.apollo"),
-        href: () => '#/apollo',
+        href: () => '#/apollo/virtual-hosts',
         isActive: (workspace:Workspace) => workspace.isLinkActive("apollo")
       });
     });

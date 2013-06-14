@@ -3,7 +3,7 @@ module Apollo {
     var jolokia = workspace.jolokia;
     $scope.broker = {}
     $scope.online = true
-        
+    $scope.route = ()=> { return $location.path(); }
     $scope.apollo = {
       version:jolokia.getAttribute('org.apache.apollo:type=broker,name="default"', "Version", onSuccess(null)),
       url: jolokia.getAttribute('org.apache.apollo:type=broker,name="default"', "WebAdminUrl", onSuccess(null)),

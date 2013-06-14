@@ -18,6 +18,9 @@
           </li>
         </ul>
         <ng-include ng-if='isActive("#/apollo/virtual-hosts")' src="'app/apollo/html/virtual_hosts.html'"></ng-include>
+        <ng-include ng-if='isActive("#/apollo/connectors")' src="'app/apollo/html/connectors.html'"></ng-include>
+        <ng-include ng-if='isActive("#/apollo/operating-environment")' src="'app/apollo/html/operating-environment.html'"></ng-include>
+        <ng-include ng-if='isActive("#/apollo/configuration")' src="'app/apollo/html/configuration.html'"></ng-include>
       </div>
     </div>
   </div>
