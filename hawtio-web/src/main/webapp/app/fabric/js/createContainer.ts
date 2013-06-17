@@ -160,6 +160,8 @@ module Fabric {
         delete $scope.schema.properties['zookeeperPassword'];
 
         $scope.schema.properties['providerType']['type'] = 'hidden';
+        $scope.schema.properties['profiles']['type'] = 'hidden';
+        $scope.schema.properties['version']['type'] = 'hidden';
 
         switch($scope.activeTab) {
 
@@ -199,21 +201,20 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
 
-      if ($scope.entity.saveJmxCredentials) {
+      if (json.saveJmxCredentials) {
         localStorage['fabric.userName'] = $scope.entity.jmxUser;
         localStorage['fabric.password'] = $scope.entity.jmxPassword;
       }
+
+      delete json.saveJmxCredentials;
 
       json['version'] = $scope.selectedVersion.id;
       if ($scope.selectedProfiles.length > 0) {
         json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
       }
 
-      jolokia.request({
-        type: 'exec', mbean: managerMBean,
-        operation: 'createContainers(java.util.Map)',
-        arguments: [JSON.stringify(json)]
-      }, {
+      jolokia.execute(managerMBean, 'createContainers(java.util.Map)', angular.toJson(json), {
+        method: "post",
         success: (response) => {
           var error = false;
           angular.forEach(response.value, function(value, key) {
