@@ -113,16 +113,23 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         factory('jolokia',($location:ng.ILocationService, localStorage) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
-          // console.log("Jolokia URL is " + jolokiaUrl);
+          console.log("Jolokia URL is " + jolokiaUrl);
           if (jolokiaUrl) {
             var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
+
             var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
             // pass basic auth credentials down to jolokia if set
             var username = null;
             var password = null;
+
+            var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
+
             if (credentials.length === 2) {
               username = credentials[0];
               password = credentials[1];
+            } else if (angular.isDefined(userDetails)) {
+              username = userDetails.userName;
+              password = userDetails.password;
             } else {
               // lets see if they are passed in via request parameter...
               var search = hawtioPluginLoader.parseQueryString();
@@ -131,6 +138,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               if (angular.isArray(username)) username = username[0];
               if (angular.isArray(password)) password = password[0];
             }
+
             if (username && password) {
               jolokiaParams['username'] = username;
               jolokiaParams['password'] = password;

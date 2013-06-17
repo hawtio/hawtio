@@ -39,9 +39,8 @@ module JVM {
       var path = Core.trimLeading($scope.path || "jolokia", "/");
       path = Core.trimTrailing(path, "/");
 
-      host += "/";
       if (port > 0) {
-        host += "" + port;
+        host += ":" + port;
       }
       var url = host + "/" + path;
 
@@ -56,12 +55,22 @@ module JVM {
 
       var full = "?url=" + encodeURIComponent(url);
 
+      var userDetails = {
+        username: null,
+        password: null
+      };
+
       if ($scope.userName) {
-        full += "&_user=" + $scope.userName;
+        //full += "&_user=" + $scope.userName;
+        userDetails.username = $scope.userName;
       }
       if ($scope.password) {
-        full += "&_pwd=" + $scope.password;
+        //full += "&_pwd=" + $scope.password;
+        userDetails.password = $scope.password;
       }
+
+      localStorage[url] = angular.toJson(userDetails);
+
       // default the osgi view
       full += "#/osgi/bundle-list";
       console.log("Full URL is: " + full);
