@@ -4,14 +4,14 @@ module Osgi {
         var dateFilter = $filter('date');
 
         $scope.widget = new TableWidget($scope, workspace, [
-            {
+          <TableColumnConfig> {
                 "mDataProp": null,
                 "sClass": "control center",
                 "sDefaultContent": '<i class="icon-plus"></i>'
             },
-            { "mDataProp": "Identifier" },
-            { "mDataProp": "BundleIdentifier" },
-            { "mDataProp": "objectClass" }
+          <TableColumnConfig> { "mDataProp": "Identifier" },
+          <TableColumnConfig> { "mDataProp": "BundleIdentifier" },
+          <TableColumnConfig> { "mDataProp": "objectClass" }
         ], {
             rowDetailTemplateId: 'osgiServiceTemplate',
             disableAddColumns: true

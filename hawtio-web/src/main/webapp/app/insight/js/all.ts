@@ -99,11 +99,14 @@ module Insight {
             rebuildCharts();
         }
 
-        function onClick(node, event) {
+        function onClick(node:DynaTreeNode, event:Event) {
             // We should not toggle, if target was "checkbox", because this
             // would result in double-toggle (i.e. no toggle)
-            if( node.getEventTargetType(event) === "title" )
+            if( node.getEventTargetType(event) === "title" ) {
                 node.toggleSelect();
+            }
+            return false;
+
         }
 
         function onKeydown(node, event) {

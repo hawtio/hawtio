@@ -185,9 +185,9 @@ module Camel {
             messageData.min = message.getAttribute("minProcessingTime");
             messageData.max = message.getAttribute("maxProcessingTime");
             // total time for processors is pre calculated as accumulated from Camel 2.11 onwards
-            var total = message.getAttribute("accumulatedProcessingTime");
-            if (total) {
-              messageData.total = total;
+            var apt = message.getAttribute("accumulatedProcessingTime");
+            if (apt) {
+              messageData.total = apt;
             } else {
               messageData.total = "0"
             }
@@ -213,7 +213,7 @@ module Camel {
           });
 
           var accTotal = 0;
-          updatedData.reverse().forEach((data, idx) => {
+          updatedData.reverse().forEach((data:any, idx) => {
               // update accTotal with self time
               if (idx < updatedData.length - 1) {
                 // each processor should have the total updated with the accumulated total

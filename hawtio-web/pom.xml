@@ -573,9 +573,6 @@
                 <configuration>
                   <executable>${grunt-executable}</executable>
                   <arguments>
-                    <argument>copy</argument>
-                    <argument>type</argument>
-                    <argument>concat</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
                     <argument>--webapp_port</argument>
@@ -611,11 +608,7 @@
                 <configuration>
                   <executable>${grunt-executable}</executable>
                   <arguments>
-                    <argument>copy</argument>
-                    <argument>type</argument>
-                    <argument>concat</argument>
-                    <argument>reload</argument>
-                    <argument>watch</argument>
+                    <argument>watchSrc</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
                     <argument>--webapp_port</argument>

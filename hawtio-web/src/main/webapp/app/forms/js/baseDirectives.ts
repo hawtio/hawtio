@@ -58,7 +58,7 @@ module Forms {
 
     public link: (scope, element, attrs) => any;
 
-    constructor(private workspace, public $compile) {
+    constructor(public workspace, public $compile) {
       // necessary to ensure 'this' is this object <sigh>
       this.link = (scope, element, attrs) => {
         return this.doLink(scope, element, attrs);
@@ -66,7 +66,7 @@ module Forms {
 
     }
 
-    private doLink(scope, element, attrs) {
+    public doLink(scope, element, attrs) {
       var config = new InputBaseConfig
       config = configure(config, null, attrs);
       config.scope = scope;
@@ -114,7 +114,7 @@ module Forms {
 
     public type = "text";
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -143,7 +143,7 @@ module Forms {
 
     public type = "hidden";
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -166,7 +166,7 @@ module Forms {
     
     public type = "password";
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -175,7 +175,7 @@ module Forms {
 
   export class CustomInput extends InputBase {
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -198,7 +198,7 @@ module Forms {
 
   export class SelectInput extends InputBase {
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -250,7 +250,7 @@ module Forms {
 
   export class NumberInput extends InputBase {
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -286,7 +286,7 @@ module Forms {
 
   export class ArrayInput extends InputBase {
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 
@@ -358,7 +358,7 @@ module Forms {
 
   export class BooleanInput extends InputBase {
 
-    constructor(private workspace, private $compile) {
+    constructor(public workspace, public $compile) {
       super(workspace, $compile);
     }
 

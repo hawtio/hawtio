@@ -335,7 +335,7 @@ module Osgi {
     var str = "";
     var sortedKeys = Object.keys(data).sort();
     for (var i = 0; i < sortedKeys.length; i++) {
-      var da = sortedKeys[i];
+      var da:any = sortedKeys[i];
       var type = da.charAt(0);
 
       var separator = "";
