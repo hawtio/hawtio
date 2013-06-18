@@ -132,6 +132,16 @@ module Camel {
     }
   };
 
+  export function getEndpointIcon(endpointName) {
+    var value = Camel.getEndpointConfig(endpointName, null);
+    var answer = Core.pathGet(value, ["icon"]);
+    if (!answer) {
+      var category = getEndpointCategory(endpointName);
+      answer = Core.pathGet(category, ["endpointIcon"]);
+    }
+    return answer || endpointIcon;
+  }
+
   export function getEndpointConfig(endpointName, category) {
     var answer = endpointConfigurations[endpointName];
     if (!answer) {

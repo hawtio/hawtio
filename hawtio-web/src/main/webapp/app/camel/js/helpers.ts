@@ -827,8 +827,21 @@ module Camel {
         if (uri) {
           label += " " + uri;
         }
-        var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || name;
+        var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
         var imageUrl = getRouteNodeIcon(nodeSettings);
+        if ((nodeId === "from" || nodeId === "to") && uri) {
+          var idx = uri.indexOf(":");
+          if (idx > 0) {
+            var componentScheme = uri.substring(0, idx);
+            //console.log("lets find the endpoint icon for " + componentScheme);
+            if (componentScheme) {
+              var value = Camel.getEndpointIcon(componentScheme);
+              if (value) {
+                imageUrl = url(value);
+              }
+            }
+          }
+        }
 
         //console.log("Image URL is " + imageUrl);
         var cid = route.getAttribute("_cid") || route.getAttribute("id");
