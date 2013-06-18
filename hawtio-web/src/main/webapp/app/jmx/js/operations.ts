@@ -19,8 +19,9 @@ module Jmx {
     export function OperationController($scope, workspace:Workspace, jolokia, $document) {
       $scope.title = $scope.item.humanReadable;
       $scope.desc = $scope.item.desc;
-      $scope.operationResult = "";
+      $scope.operationResult = '';
       $scope.executeIcon = "icon-ok";
+      $scope.mode = "text";
 
       var sanitize = (args) => {
         if (args) {
@@ -41,13 +42,16 @@ module Jmx {
 
       $scope.args = sanitize($scope.item.args);
 
+
       $scope.dump = (data) => {
         console.log(data);
       };
 
+
       $scope.ok = () => {
         $scope.operationResult = '';
       };
+
 
       $scope.reset = () => {
         if ($scope.item.args) {
@@ -58,23 +62,24 @@ module Jmx {
         $scope.ok();
       };
 
-      $scope.resultIsArray = () => {
-        return angular.isArray($scope.operationResult);
-      };
 
-      $scope.resultIsString = () => {
-        return angular.isString($scope.operationResult);
-      };
+      $scope.handleResponse = (response) => {
+        $scope.executeIcon = "icon-ok";
+        $scope.operationStatus = "success";
 
-      $scope.typeOf = (data) => {
-        if (angular.isArray(data)) {
-          return "array";
-        } else if (angular.isObject(data)) {
-          return "object";
+        if (response === null || 'null' === response) {
+          $scope.operationResult = "Operation Succeeded!";
+        } else if (typeof response === 'string') {
+          $scope.operationResult = response;
         } else {
-          return "string";
+          $scope.operationResult = angular.toJson(response, true);
         }
-      };
+
+        $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
+
+        $scope.$apply();
+      }
+
 
       $scope.execute = () => {
 
@@ -90,27 +95,6 @@ module Jmx {
           return;
         }
 
-        var get_response = (response) => {
-          $scope.executeIcon = "icon-ok";
-          $scope.operationStatus = "success";
-
-          if (response === null || 'null' === response) {
-            $scope.operationResult = "Operation Succeeded!";
-          } else {
-            if (typeof response === 'number' || typeof response === 'boolean') {
-              $scope.operationResult = "" + response;
-            } else if (angular.isArray(response) && response.length === 0) {
-              $scope.operationResult = "Operation succeeded and returned an empty array";
-            } else if (angular.isObject(response) && Object.keys(response).length === 0) {
-              $scope.operationResult = "Operation succeeded and returned an empty object";
-            } else {
-              $scope.operationResult = response;
-            }
-          }
-
-          $scope.$apply();
-        };
-
         var args = [objectName, $scope.item.name];
         if ($scope.item.args) {
           $scope.item.args.forEach( function (arg) {
@@ -118,7 +102,7 @@ module Jmx {
           });
         }
 
-        args.push(onSuccess(get_response, {
+        args.push(onSuccess($scope.handleResponse, {
           error: function (response) {
             $scope.executeIcon = "icon-ok";
             $scope.operationStatus = "error";
@@ -136,23 +120,11 @@ module Jmx {
         $scope.executeIcon = "icon-spinner icon-spin";
         var fn = jolokia.execute;
         fn.apply(jolokia, args);
-      };
+       };
+
 
     }
 
-    /*
-    export interface IOperation {
-        [key : string] : { name : string; humanReadable : string; args : string; };
-        [key : string] : any;
-    }
-
-    export interface IOperationsControllerScope extends IMyAppScope {
-        routeParams : ng.IRouteParamsService;
-        workspace : Workspace;
-        sanitize : (value : IOperation) => IOperation;
-        operations : IOperation;
-    }
-    */
 
     export function OperationsController($scope, $routeParams : ng.IRouteParamsService, workspace:Workspace, jolokia) {
 

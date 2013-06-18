@@ -1,40 +1,5 @@
 <div ng-controller="Jmx.OperationsController">
 
-  <script type="text/ng-template" id="array_item.html">
-    <div ng-switch on="typeOf(data)">
-      <div class="tab" ng-switch-when="array">
-        <ol>
-          <li ng-repeat="data in data" ng-include="'array_item.html'"></li>
-        </ol>
-      </div>
-      <div class="tab" ng-switch-when="object">
-        <ul class="unstyled">
-          <li ng-repeat="(key, value) in data" ng-include="'object_item.html'"></li>
-        </ul>
-      </div>
-      <p style="display: inline;" ng-switch-default>{{data}}</p>
-    </div>
-  </script>
-
-  <script type="text/ng-template" id="object_item.html">
-    <div>
-      <strong>{{key}}:</strong>
-      <div style="display: inline;" ng-switch on="typeOf(value)">
-        <div class="tab" ng-switch-when="array">
-          <ol>
-            <li ng-repeat="data in value" ng-include="'array_item.html'"></li>
-          </ol>
-        </div>
-        <div class="tab" ng-switch-when="object">
-          <ul class="unstyled">
-            <li ng-repeat="(key, value) in value" ng-include="'object_item.html'"></li>
-          </ul>
-        </div>
-        <p style="display: inline;" ng-switch-default>{{value}}</p>
-      </div>
-    </div>
-  </script>
-
   <div class="row-fluid" ng-show="isOperationsEmpty()">
     The selected MBean has no JMX operations.
   </div>
@@ -49,18 +14,10 @@
 
           <form class="form-horizontal no-bottom-margin" ng-show="operationResult!=''">
             <fieldset>
-              <div class="alert alert-{{operationStatus}} no-bottom-margin">
+              <div class="no-bottom-margin">
                 <div class="control-group">
 
-                  <div ng-switch on="typeOf(operationResult)">
-                    <ol ng-switch-when="array">
-                      <li ng-repeat="data in operationResult" ng-include="'array_item.html'"></li>
-                    </ol>
-                    <ul class="unstyled" ng-switch-when="object">
-                      <li ng-repeat="(key, value) in operationResult" ng-include="'object_item.html'"></li>
-                    </ul>
-                    <span ng-switch-default>{{operationResult}}</span>
-                  </div>
+                  <div hawtio-editor="operationResult" mode="mode"></div>
 
                 </div>
                 <div class="control-group">
