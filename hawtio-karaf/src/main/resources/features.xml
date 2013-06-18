@@ -32,7 +32,7 @@
   </feature>
 
   <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
-    <details>Adds the hawtio plugin registry and configures the /hawtio context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
+    <details>Adds the hawtio plugin registry and configures the /hawtio-dev context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
 
 
     <config name="hawtiodev-hawtioweb">
