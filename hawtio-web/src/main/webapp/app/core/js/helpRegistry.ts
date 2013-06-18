@@ -9,8 +9,12 @@ module Core {
     private topicNameMappings = {
       activemq: 'ActiveMQ',
       camel: 'Camel',
+      jboss: 'JBoss',
+      jclouds: 'jclouds',
       jmx: 'JMX',
+      jvm: 'JVM',
       log: 'Logs',
+      openejb: 'OpenEJB',
       datatable: 'hawtio-datatable'
     }
 
