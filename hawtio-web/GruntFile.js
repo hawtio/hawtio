@@ -17,7 +17,7 @@ module.exports = function (grunt) {
     port = 8181;
   }
 
-  var appFiles = ['src/main/d.ts/**/*.ts', 'src/main/webapp/app/**/*.ts'];
+  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/app/**/*.ts'];
 
   grunt.initConfig({
     test:{
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
           }
         ],
         options:{
-          sourcemap: true,
+          sourcemap: false,
           target: 'es5',
           //module:'amd',
           style:'eqeqeq;bitwise'
@@ -77,7 +77,8 @@ module.exports = function (grunt) {
     watch: {
       app: {
         files: ["src/main/webapp/**", "target/schema/js/*.js"],
-        tasks: ['type', 'concat', 'copy', 'reload']
+        //tasks: ['type', 'concat', 'copy', 'reload']
+        tasks: ['type']
       }
     }
   });
