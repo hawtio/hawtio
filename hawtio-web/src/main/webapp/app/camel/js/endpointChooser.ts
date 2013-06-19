@@ -153,7 +153,7 @@ module Camel {
       answer.label = endpointName;
     }
     if (!answer.icon) {
-      answer.icon = category.endpointIcon || endpointIcon;
+      answer.icon = Core.pathGet(category, ["endpointIcon"]) || endpointIcon;
     }
     if (!answer.category) {
       answer.category = category;
