@@ -29,7 +29,7 @@ Note, if you are using Ubuntu then you may need to use the `sudo` command:
 
 You can install this by running
 
-    npm install -g grunt
+    npm install -g grunt-cli
 
 ## Using LiveReload
 
