@@ -12,9 +12,17 @@ module.exports = function (grunt) {
 
   // Project configuration.
   var port = grunt.option('webapp_port');
+  var webapp_outdir = grunt.option('webapp_outdir');
+
   if (!port) {
     port = 8181;
   }
+
+  grunt.task.registerTask('clean-appjs', 'Clean up generated app.js file', function() {
+    var file = webapp_outdir + "/app/app.js";
+    grunt.log.writeln("Cleaning up " + file);
+    grunt.file.delete(file, { force: true });
+  });
 
   var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/app/**/*.ts'];
 
@@ -61,14 +69,14 @@ module.exports = function (grunt) {
     },
     concat: {
       main: {
-        src: ["target/schema/js/*.js", "src/main/webapp/app/**/*.js", "<%= grunt.option('webapp_outdir') %>/app/app.js"],
+        src: ["target/schema/js/*.js", "<%= grunt.option('webapp_outdir') %>/app/app.js"],
         dest: "<%= grunt.option('webapp_outdir') %>/app/app.js"
       }
     },
     watch: {
       app: {
         files: ["src/main/webapp/**", "target/schema/js/*.js"],
-        tasks: ['type', 'concat', 'copy:dist'],
+        tasks: ['clean-appjs', 'type', 'concat', 'copy:dist'],
         options: {
           livereload: true
         }
@@ -78,9 +86,9 @@ module.exports = function (grunt) {
 
 
   // Default task.
-  grunt.registerTask('default', ['type', 'concat', 'copy']);
+  grunt.registerTask('default', ['clean-appjs', 'type', 'concat', 'copy']);
 
   // watch source for changes
-  grunt.registerTask('watchSrc', ['type', 'concat', 'copy', 'watch']);
+  grunt.registerTask('watchSrc', ['clean-appjs', 'type', 'concat', 'copy', 'watch']);
 
 };
