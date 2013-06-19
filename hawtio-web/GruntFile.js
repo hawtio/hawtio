@@ -5,7 +5,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-type');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-reload');
 
   /*
    grunt.loadNpmTasks('grunt-typescript');
@@ -66,19 +65,13 @@ module.exports = function (grunt) {
         dest: "<%= grunt.option('webapp_outdir') %>/app/app.js"
       }
     },
-    reload: {
-      port: 35729,
-      liveReload: {},
-      proxy: {
-        host: 'localhost',
-        port: port
-      }
-    },
     watch: {
       app: {
         files: ["src/main/webapp/**", "target/schema/js/*.js"],
-        //tasks: ['type', 'concat', 'copy', 'reload']
-        tasks: ['type']
+        tasks: ['type', 'concat', 'copy:dist'],
+        options: {
+          livereload: true
+        }
       }
     }
   });
@@ -88,6 +81,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['type', 'concat', 'copy']);
 
   // watch source for changes
-  grunt.registerTask('watchSrc', ['type', 'concat', 'copy', 'reload', 'watch']);
+  grunt.registerTask('watchSrc', ['type', 'concat', 'copy', 'watch']);
 
 };
