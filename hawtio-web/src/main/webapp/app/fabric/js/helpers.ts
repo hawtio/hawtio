@@ -20,6 +20,10 @@ module Fabric {
     }
   }
 
+  export function setContainerProperty(jolokia, containerId, property, value, success, error) {
+    doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
+  }
+
   export function deleteConfigFile(jolokia, version, profile, pid, success, error) {
     doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
   }
