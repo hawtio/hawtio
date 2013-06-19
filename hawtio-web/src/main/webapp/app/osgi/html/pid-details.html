@@ -1,20 +1,31 @@
 <div>
-    <table class="overviewSection">
+    <h4>Configuration Admin PID: {{pid}}</h4>
+
+    <table id="configValues" class="table table-hover">
         <tr>
-            <td><strong>Pid:</strong></td>
-            <td class="less-big">{{pid}}
-            </td>
+            <th>Key</th><th>Value</th><th></th>
         </tr>
-        <tr>
-            <td><strong>Configuration:</strong></td>
-            <td class="less-big">
-                <table>
-                    <tr ng-repeat="(Key, Value) in row">
-                        <td><strong>{{Key}}</strong></td>
-                        <td>{{Value.Value}}</td>
-                    </tr>
-                </table>
-            </td>
+
+
+        <tr ng-repeat="(Key, Value) in row">
+            <td id="pid.{{Key}}"><strong>{{Key}}</strong></td>
+            <td onclick="Osgi.editPidValueCell(this)" class="pid-value">{{Value.Value}}</td>
+            <td><button class="btn" ng-click="deletePidProp(this)">Delete</button></td>
         </tr>
     </table>
+
+    <button id="saveButton" class="btn btn-primary" disabled="disabled" ng-click="pidSave()">Save</button>
+
+    <div modal="deleteConfirmDialog.show" close="deleteConfirmDialog.close()" options="deleteConfirmDialog.options">
+        <form class="form-horizontal no-bottom-margin" ng-submit="deleteConfirmDialog.close()">
+            <div class="modal-header"><h4>Delete property '{{deleteKey}}'</h4></div>
+            <div class="modal-body">
+                <p>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <input class="btn" ng-click="editDialog.close()" type="submit" value="Cancel">
+                <input class="btn btn-primary" ng-click="deletePidPropConfirmed(de)" type="submit" value="OK">
+            </div>
+        </form>
+    </div>
 </div>

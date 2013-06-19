@@ -19,7 +19,7 @@ module Osgi {
     };
 
     $scope.executeLoadClass = (clazz) => {
-      var mbean = getHawtioOSGiMBean(workspace);
+      var mbean = getHawtioOSGiToolsMBean(workspace);
       if (mbean) {
         jolokia.request(
                 {type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz]},
@@ -51,7 +51,7 @@ module Osgi {
     };
 
     $scope.executeFindResource = (resource) => {
-      var mbean = getHawtioOSGiMBean(workspace);
+      var mbean = getHawtioOSGiToolsMBean(workspace);
       if (mbean) {
         jolokia.request(
                 {type: 'exec', mbean: mbean, operation: 'getResourceURL', arguments: [$scope.bundleId, resource]},
