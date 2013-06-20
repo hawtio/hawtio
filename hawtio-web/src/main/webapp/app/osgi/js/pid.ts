@@ -1,6 +1,7 @@
 module Osgi {
     export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
         $scope.deleteConfirmDialog = new Core.Dialog();
+        $scope.addPropertyDialog = new Core.Dialog();
         $scope.pid = $routeParams.pid;
 
         updateTableContents();
@@ -29,10 +30,21 @@ module Osgi {
                             notification("error", response.error);
                         },
                         success: function(response) {
+                            enableSave(false);
                             notification("success", "Successfully updated pid: " + $scope.pid);
                         }
                     });
             }
+        }
+
+        $scope.addPropertyConfirmed = function(key, value) {
+            $scope.addPropertyDialog.close();
+            $scope.row[key] = {
+                Key: key,
+                Value: value,
+                Type: "String"
+            };
+            enableSave(true);
         }
 
         $scope.deletePidProp = (e) => {
@@ -41,9 +53,10 @@ module Osgi {
         }
 
         $scope.deletePidPropConfirmed = () => {
+            $scope.deleteConfirmDialog.close();
             var cell : any = document.getElementById("pid." + $scope.deleteKey);
             cell.parentElement.remove();
-            enableSave();
+            enableSave(true);
         }
 
         function jmxError(response) {
@@ -68,11 +81,11 @@ module Osgi {
 
     export function editPidValueCell(e) {
         e.contentEditable = true;
-        enableSave();
+        enableSave(true);
     }
 
-    function enableSave() {
+    function enableSave(enablement : boolean) {
         var saveBtn = document.getElementById("saveButton");
-        saveBtn.disabled = false;
+        saveBtn.disabled = !enablement;
     }
 }
