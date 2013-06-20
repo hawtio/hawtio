@@ -6,7 +6,7 @@ module Osgi {
 
         updateTableContents();
 
-        $scope.pidSave = function() {
+        $scope.pidSave = () => {
             var table = document.getElementById("configValues");
 
             var els : any = table.getElementsByClassName("pid-value");
@@ -37,7 +37,7 @@ module Osgi {
             }
         }
 
-        $scope.addPropertyConfirmed = function(key, value) {
+        $scope.addPropertyConfirmed = (key, value) => {
             $scope.addPropertyDialog.close();
             $scope.row[key] = {
                 Key: key,

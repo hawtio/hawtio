@@ -3,6 +3,9 @@ module Osgi {
     export function ConfigurationsController($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) {
         var dateFilter = $filter('date');
 
+        $scope.addCMPidDialog = new Core.Dialog();
+        $scope.addPidDialog = new Core.Dialog();
+
         $scope.widget = new TableWidget($scope, workspace, [
             { "mDataProp": "PidLink" }
 
@@ -11,6 +14,15 @@ module Osgi {
             disableAddColumns: true
         });
 
+        $scope.xx = () => {
+            alert("hoo");
+            $scope.addCMPidDialog.open();
+        }
+
+        $scope.addPid = () => {
+            $scope.addCMPidDialog.close();
+            alert("hi");
+        }
 
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             // lets do this asynchronously to avoid Error: $digest already in progress
@@ -26,8 +38,6 @@ module Osgi {
             $scope.widget.populateTable(configurations);
             $scope.$apply();
         }
-
-
 
         function updateTableContents() {
             var mbean = getSelectionConfigAdminMBean(workspace);
