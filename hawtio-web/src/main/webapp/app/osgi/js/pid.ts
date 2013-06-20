@@ -1,6 +1,7 @@
 module Osgi {
     export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
-        $scope.deleteConfirmDialog = new Core.Dialog();
+        $scope.deletePropDialog = new Core.Dialog();
+        $scope.deletePidDialog = new Core.Dialog();
         $scope.addPropertyDialog = new Core.Dialog();
         $scope.pid = $routeParams.pid;
 
@@ -49,14 +50,38 @@ module Osgi {
 
         $scope.deletePidProp = (e) => {
             $scope.deleteKey = e.Key;
-            $scope.deleteConfirmDialog.open();
+            $scope.deletePropDialog.open();
         }
 
         $scope.deletePidPropConfirmed = () => {
-            $scope.deleteConfirmDialog.close();
+            $scope.deletePropDialog.close();
             var cell : any = document.getElementById("pid." + $scope.deleteKey);
             cell.parentElement.remove();
             enableSave(true);
+        }
+
+        $scope.deletePidConfirmed = () => {
+            $scope.deletePidDialog.close();
+
+            var mbean = getSelectionConfigAdminMBean(workspace);
+            if (mbean) {
+                var jolokia = workspace.jolokia;
+                jolokia.request({
+                        type: "exec",
+                        mbean: mbean,
+                        operation: 'delete',
+                        arguments: [$scope.pid]
+                    }, {
+                        error: function(response) {
+                            notification("error", response.error);
+                        },
+                        success: function(response) {
+                            notification("success", "Successfully deleted pid: " + $scope.pid);
+                            // Move back to the overview page
+                            window.location.href = "#/osgi/configurations";
+                        }
+                    });
+            }
         }
 
         function jmxError(response) {

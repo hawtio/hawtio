@@ -22,16 +22,18 @@
         </thead>
         <tbody>
     </table>
-    <button class="btn btn-primary" ng-click="addPidDialog.open()" title="Add Pid">Add Pid</button>
+    <button class="btn btn-primary pull-right" ng-click="addPidDialog.open()" title="Add Pid">Add Pid</button>
 
     <div modal="addPidDialog.show" close="addPidDialog.close()" options="addPidDialog.options">
         <form name="addPidDialogForm" class="form-horizontal no-bottom-margin" ng-submit="addPid(newPid)">
             <div class="modal-header"><h4>Add Configuration Admin Pid</h4></div>
             <div class="modal-body">
-                <label class="control-label" for="newPid">New Pid</label>
-                <div class="controls">
-                    <input class="input-xlarge" type="text" id="newPid" ng-model="newPid"/>
-                </div> 
+                <div class="control-group">
+                    <label class="control-label" for="newPid">New Pid</label>
+                    <div class="controls">
+                        <input class="input-xlarge" type="text" id="newPid" ng-model="newPid"/>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <input class="btn btn-success" ng-disabled="!(newPid !== '' && newPid !== undefined)" type="submit" value="Add">

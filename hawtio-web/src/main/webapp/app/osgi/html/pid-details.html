@@ -16,8 +16,9 @@
 
     <button class="btn btn-primary" ng-click="addPropertyDialog.open()">Add</button>
     <button id="saveButton" class="btn btn-primary" disabled="disabled" ng-click="pidSave()">Save</button>
+    <button class="btn btn-danger pull-right" ng-click="deletePidDialog.open()">Delete this Pid</button>
 
-    <div modal="deleteConfirmDialog.show" close="deleteConfirmDialog.close()" options="deleteConfirmDialog.options">
+    <div modal="deletePropDialog.show" close="deletePropDialog.close()" options="deletePropDialog.options">
         <form name="deleteProperty" class="form-horizontal no-bottom-margin" ng-submit="deletePidPropConfirmed()">
             <div class="modal-header"><h4>Delete property '{{deleteKey}}'</h4></div>
             <div class="modal-body">
@@ -25,7 +26,20 @@
             </div>
             <div class="modal-footer">
                 <input class="btn btn-success" type="submit" value="Delete">
-                <input class="btn btn-primary" ng-click="deleteConfirmDialog.close()" type="button" value="Cancel">
+                <input class="btn btn-primary" ng-click="deletePropDialog.close()" type="button" value="Cancel">
+            </div>
+        </form>
+    </div>
+
+    <div modal="deletePidDialog.show" close="deletePidDialog.close()" options="deletePidDialog.options">
+        <form name="deletePid" class="form-horizontal no-bottom-margin" ng-submit="deletePidConfirmed()">
+            <div class="modal-header"><h4>Delete this configuration object '{{pid}}'</h4></div>
+            <div class="modal-body">
+                <p>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <input class="btn btn-success" type="submit" value="Delete">
+                <input class="btn btn-primary" ng-click="deletePidDialog.close()" type="button" value="Cancel">
             </div>
         </form>
     </div>
