@@ -2,6 +2,7 @@ package io.hawt.web;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,9 @@ public class UploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        response.setContentType("text/html");
+        final PrintWriter out = response.getWriter();
+
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
@@ -62,6 +67,22 @@ public class UploadServlet extends HttpServlet {
 
             String targetDirectory = null;
             List<File> files = new ArrayList<File>();
+
+            upload.setProgressListener(new ProgressListener() {
+
+                private long kBytesRead = 0;
+
+                @Override
+                public void update(long pBytesRead, long pContentLength, int pItems) {
+                    long nowkBytesRead = pBytesRead / 1024;
+                    if (nowkBytesRead > kBytesRead) {
+                        kBytesRead = nowkBytesRead;
+                        LOG.debug("On item {}, read {}Kb, total: {}Kb", new Object[]{pItems, kBytesRead, pContentLength / 1024});
+                        out.write("<p>item: " + pItems + " read:" + kBytesRead + "Kb total: " + (pContentLength / 1024) + "Kb</p>");
+                    }
+                }
+            });
+
 
             try {
                 List<FileItem> items = upload.parseRequest(request);
@@ -117,7 +138,6 @@ public class UploadServlet extends HttpServlet {
                     }
                 }
             }
-
 
         } else {
             super.doPost(request, response);
