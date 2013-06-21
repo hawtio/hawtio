@@ -37,6 +37,16 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>file-upload</servlet-name>
+    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>file-upload</servlet-name>
+    <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
@@ -69,6 +79,10 @@
 
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
 
   <welcome-file-list>
