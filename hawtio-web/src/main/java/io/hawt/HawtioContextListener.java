@@ -2,6 +2,7 @@ package io.hawt;
 
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
+import io.hawt.jmx.UploadManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -13,11 +14,13 @@ public class HawtioContextListener implements ServletContextListener {
 
     private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
     private PluginRegistry registry = new PluginRegistry();
+    private UploadManager uploadManager = new UploadManager();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
             treeWatcher.init();
             registry.init();
+            uploadManager.init();
 
         } catch (Exception e) {
             throw createServletException(e);
@@ -28,6 +31,7 @@ public class HawtioContextListener implements ServletContextListener {
         try {
             treeWatcher.destroy();
             registry.destroy();
+            uploadManager.destroy();
         } catch (Exception e) {
             throw createServletException(e);
         }
