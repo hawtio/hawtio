@@ -28,7 +28,7 @@
     </transportConnectors>
 
     <persistenceAdapter>
-      <levelDB directory="target/activemq/broker1/data/leveldb" logSize="107374182"/>
+      <kahaDB directory="target/activemq/broker1/data/kahadb"/>
     </persistenceAdapter>
     <plugins>
       <simpleAuthenticationPlugin>
@@ -48,7 +48,7 @@
     </transportConnectors>
 
     <persistenceAdapter>
-      <levelDB directory="target/activemq/broker2/data/leveldb" logSize="107374182"/>
+      <kahaDB directory="target/activemq/broker2/data/kahadb"/>
     </persistenceAdapter>
     <plugins>
       <simpleAuthenticationPlugin>
