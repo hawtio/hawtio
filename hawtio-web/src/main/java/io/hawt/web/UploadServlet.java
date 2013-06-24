@@ -105,6 +105,11 @@ public class UploadServlet extends HttpServlet {
 
                         LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
 
+                        if (fileName.equals("")) {
+                            LOG.info("Skipping field " + fieldName + " no filename given");
+                            continue;
+                        }
+
                         File target = new File(UPLOAD_DIRECTORY + File.separator + fileName);
 
                         try {
@@ -113,12 +118,12 @@ public class UploadServlet extends HttpServlet {
                             LOG.info("Wrote to file: {}", target.getAbsoluteFile());
                         } catch (Exception e) {
                             LOG.warn("Failed to write to {} due to {}", target, e);
-                            throw new RuntimeException(e);
+                            //throw new RuntimeException(e);
                         }
                     }
                 }
             } catch (FileUploadException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                throw new RuntimeException ("Failed accepting file uploads: ", e);
             }
 
             if (targetDirectory != null) {
