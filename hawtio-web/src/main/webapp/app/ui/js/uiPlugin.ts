@@ -20,9 +20,11 @@ module UI {
       }).
       directive('hawtioEditor', function() {
         return new UI.Editor();
-      }).directive('hawtioColorPicker', [function() {
+      }).directive('hawtioColorPicker', function() {
         return new UI.ColorPicker()
-      }]);
+      }).directive('hawtioFileUpload', () => {
+        return new UI.FileUpload();
+      });
 
   hawtioPluginLoader.addModule(pluginName);
 
