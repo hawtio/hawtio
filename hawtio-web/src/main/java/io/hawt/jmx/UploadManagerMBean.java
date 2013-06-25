@@ -11,4 +11,6 @@ public interface UploadManagerMBean {
 
     List<FileDTO> list(String parent);
 
+    boolean delete(String parent, String filename);
+
 }

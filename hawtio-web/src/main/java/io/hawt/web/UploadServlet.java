@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import io.hawt.util.Strings;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -40,10 +41,6 @@ public class UploadServlet extends HttpServlet {
         DiskFileItemFactory factory = new DiskFileItemFactory(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, repository);
         factory.setFileCleaningTracker(fileCleaningTracker);
         return factory;
-    }
-
-    private static String sanitize(String name) {
-        return name.replaceAll("[^0-9a-zA-Z\\+\\.\\(\\)_\\-]","");
     }
 
     @Override
@@ -101,7 +98,7 @@ public class UploadServlet extends HttpServlet {
                         String contentType = item.getContentType();
                         long sizeInBytes = item.getSize();
 
-                        fileName = sanitize(fileName);
+                        fileName = Strings.sanitize(fileName);
 
                         LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
 
@@ -127,16 +124,16 @@ public class UploadServlet extends HttpServlet {
             }
 
             if (targetDirectory != null) {
-                targetDirectory = sanitize(targetDirectory).replace(".", "");
-                File target = new File(uploadDir.getAbsolutePath() + File.separator + targetDirectory);
+                targetDirectory = Strings.sanitizeDirectory(targetDirectory);
+                File target = new File(uploadDir.getAbsolutePath(), targetDirectory);
                 LOG.info("Putting files in subdirectory: {}", targetDirectory);
                 if (!target.exists()) {
                     if (!target.mkdirs()) {
-                        LOG.warn("Failed to create target directory: {}", target);                                    }
+                        LOG.warn("Failed to create target directory: {}", target);                                         }
                 }
 
                 for (File file : files) {
-                    File dest = new File(target.getAbsolutePath() + File.separator + file.getName());
+                    File dest = new File(target.getAbsolutePath(), file.getName());
                     LOG.info("Renaming {} to {}", file, dest);
                     if (!file.renameTo(dest)) {
                         LOG.warn("Failed to rename {} to {}", file, dest);

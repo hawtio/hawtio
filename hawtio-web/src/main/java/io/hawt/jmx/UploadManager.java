@@ -1,6 +1,9 @@
 package io.hawt.jmx;
 
+import io.hawt.util.Strings;
 import io.hawt.web.UploadServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
@@ -14,6 +17,8 @@ import java.util.List;
  * @author Stan Lewis
  */
 public class UploadManager implements UploadManagerMBean {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(UploadManager.class);
 
     private ObjectName objectName;
     private MBeanServer mBeanServer;
@@ -58,13 +63,7 @@ public class UploadManager implements UploadManagerMBean {
 
     @Override
     public List<FileDTO> list(String parent) {
-        String uploadDir = UploadServlet.UPLOAD_DIRECTORY;
-
-        if (parent != null && !parent.equals("")) {
-            uploadDir = uploadDir + File.separator + parent;
-        }
-
-        File dir = new File(uploadDir);
+        File dir = new File(getTargetDirectory(parent));
         if (!dir.exists()) {
             return null;
         }
@@ -77,6 +76,21 @@ public class UploadManager implements UploadManagerMBean {
             }
         }
         return rc;
+    }
 
+    private String getTargetDirectory(String parent) {
+        parent = Strings.sanitizeDirectory(parent);
+        if (Strings.isNotBlank(parent)) {
+            return  UploadServlet.UPLOAD_DIRECTORY + File.separator + parent;
+        }
+        return UploadServlet.UPLOAD_DIRECTORY;
+    }
+
+    @Override
+    public boolean delete(String parent, String filename) {
+        filename = Strings.sanitize(filename);
+        File targetFile = new File(getTargetDirectory(parent), filename);
+        LOG.info("Deleting {}", targetFile);
+        return targetFile.delete();
     }
 }
