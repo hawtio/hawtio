@@ -1,6 +1,6 @@
-<div>
+<div class="file-upload">
   <ul>
-    <li ng-repeat="file in files">{{file.fileName}}</li>
+    <li ng-repeat="file in files">{{file.fileName}}<span class="clickable red"><i class="icon-remove" title="Delete {{file.filename}}" ng-click="delete(file.fileName)"></i></span></li>
   </ul>
   <form name="file-upload" action="upload" method="post" enctype="multipart/form-data">
     <fieldset>

@@ -30,6 +30,14 @@ module UI {
     $scope.myColor = "#FF887C";
     $scope.showColorDialog = false;
 
+    $scope.files = [];
+
+    $scope.$watch('files', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        console.log("Files: ", $scope.files);
+      }
+    }, true);
+
 
   }
 

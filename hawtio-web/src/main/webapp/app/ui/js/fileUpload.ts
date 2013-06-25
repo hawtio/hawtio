@@ -10,32 +10,54 @@ module UI {
     public templateUrl = UI.templatePath + "fileUpload.html";
 
     public scope = {
-      target: '@hawtioFilePlugin'
+      files: '=hawtioFileUpload',
+      target: '@'
     };
 
 
     public controller = ($scope, $element, $attrs, jolokia) => {
 
-      $scope.files = [];
       $scope.target = '';
+
+      observe($scope, $attrs, 'target', '');
 
       $scope.update = (response) => {
         $scope.files = response.value;
         $scope.$apply();
       }
 
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: fileUploadMBean,
-        operation: 'list(java.lang.String)',
-        arguments: [null]
-      }, onSuccess($scope.update));
+      $scope.delete = (fileName) => {
+        jolokia.request({
+          type: 'exec', mbean: fileUploadMBean,
+          operation: 'delete(java.lang.String, java.lang.String)',
+          arguments: [$scope.target, fileName],
+          success: () => {
+            $scope.$apply();
+          },
+          error: (response) => {
+            notification('error', "Failed to delete " + fileName + " due to: " + response.error);
+            $scope.$apply();
+          }
+        });
+      }
+
+
+      $scope.$watch('target', (newValue, oldValue) => {
+        if (oldValue !== newValue) {
+          Core.unregister(jolokia, $scope);
+        }
+        Core.register(jolokia, $scope, {
+          type: 'exec', mbean: fileUploadMBean,
+          operation: 'list(java.lang.String)',
+          arguments: [$scope.target]
+        }, onSuccess($scope.update));
+
+      });
+
 
       $scope.onFileChange = () => {
-        console.log("File changed!");
         var form:any = $('form[name=file-upload]');
-
         form.ajaxSubmit({});
-
         return false;
       }
 
