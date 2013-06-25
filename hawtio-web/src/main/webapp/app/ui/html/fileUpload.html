@@ -2,4 +2,10 @@
   <ul>
     <li ng-repeat="file in files">{{file.fileName}}</li>
   </ul>
+  <form name="file-upload" action="upload" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <input type="hidden" name="parent" value="{{target}}">
+      <input type="file" name="file">
+    </fieldset>
+  </form>
 </div>
