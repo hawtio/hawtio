@@ -72,7 +72,9 @@ public class UploadManager implements UploadManagerMBean {
         List<FileDTO> rc = new ArrayList<FileDTO>();
 
         for (File file : dir.listFiles()) {
-            rc.add(new FileDTO(file));
+            if (!file.isDirectory()) {
+                rc.add(new FileDTO(file));
+            }
         }
         return rc;
 
