@@ -128,6 +128,9 @@
 <!--
     <slf4j-version>1.6.6</slf4j-version>
 -->
+    <slf4j-api-version>1.6.6</slf4j-api-version>
+    <slf4j-version>1.6.6</slf4j-version>
+
     <spring-version>3.2.3.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
     <wagon-version>2.4</wagon-version>
