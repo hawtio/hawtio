@@ -91,6 +91,9 @@
 
 
   <!-- For Apollo -->
+<!--
+  TODO - disabled Apollo for now to avoid breaking hawtio-web when deployed inside OSGi etc
+
   <filter>
     <filter-name>static</filter-name>
     <filter-class>org.apache.activemq.apollo.web.StaticContentFilter</filter-class>
@@ -116,6 +119,7 @@
     <servlet-name>jersey</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
+-->
 
 </web-app>
 
