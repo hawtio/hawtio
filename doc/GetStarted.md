@@ -10,7 +10,7 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.1/hawtio-default-1.1.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.2-M1/hawtio-default-1.2-M1.war">Download hawtio-default.war</a>
     </td>
     <td>
       <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.2-M1/sample-1.2-M1.war">Download sample.war</a>
