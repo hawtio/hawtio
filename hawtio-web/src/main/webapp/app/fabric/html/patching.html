@@ -1,10 +1,13 @@
 <div ng-controller="Fabric.PatchingController">
 
   <div class="row-fluid">
-
-
-    <div class="span5">
+    <div class="span4">
+      <p>1) Upload 1 or more patch files to apply to this fabric</p>
       <div hawtio-file-upload="files" target="patches"></div>
+    </div>
+    <div class="span4">
+      <p>2) Select what version to derive the new patched version from</p>
+      <div fabric-version-selector="targetVersion"></div>
     </div>
   </div>
 

@@ -31,7 +31,7 @@ module UI {
         if ($scope.responseJson !== responseJson) {
           $scope.responseJson = responseJson;
           $scope.files = response.value;
-          $scope.$apply();
+          Core.$applyNowOrLater($scope);
         }
       }
 

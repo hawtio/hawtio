@@ -25,7 +25,7 @@
   <li ng-show="droolsHref">
     <a ng-href="{{droolsHref}}" target="drools" title="View and manage the rules and workflows in this Fabric">Rules</a>
   </li>
-  <li ng-show="canUpload">
+  <li ng-show="canUpload" ng-class='{active : isActive("#/fabric/patching")}'>
     <a ng-href="#/fabric/patching" title="Upload and apply patches to this fabric">Patching</a>
   </li>
 </ul>
