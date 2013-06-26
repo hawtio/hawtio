@@ -3,6 +3,7 @@
 
   <div>
     File upload
+    <!--
     <div class="row-fluid">
       <form action="upload" method="post" enctype="multipart/form-data">
         <fieldset>
@@ -13,9 +14,13 @@
         </fieldset>
       </form>
     </div>
+    -->
 
     <div class="row-fluid">
+      <p>Showing files</p>
       <div hawtio-file-upload="files" target="test"></div>
+      <p>Not showing files</p>
+      <div hawtio-file-upload="files" target="test" show-files="false"></div>
     </div>
 
   </div>
