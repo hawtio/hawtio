@@ -10,7 +10,8 @@ module Fabric {
             when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
             when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: 'app/fabric/html/editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'}).
-            when('/fabric/view', { templateUrl: 'app/fabric/html/fabricView.html', reloadOnSearch: false });
+            when('/fabric/view', { templateUrl: 'app/fabric/html/fabricView.html', reloadOnSearch: false }).
+            when('/fabric/patching', { templateUrl: 'app/fabric/html/patching.html' });
   }).
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 
