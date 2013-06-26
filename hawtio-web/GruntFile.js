@@ -90,7 +90,7 @@ module.exports = function (grunt) {
     watch: {
       app: {
         files: ["src/main/webapp/**", "target/schema/js/*.js"],
-        tasks: ['clean-appjs', 'type', 'concat', 'copy:dist'],
+        tasks: ['clean-appjs', 'type', 'concat', 'copy:dist', 'less'],
         options: {
           livereload: true
         }
