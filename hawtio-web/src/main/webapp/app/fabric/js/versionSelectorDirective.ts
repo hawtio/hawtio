@@ -15,17 +15,18 @@ module Fabric {
     public controller = ($scope, $element, $attrs, jolokia) => {
       $scope.versions = [];
       $scope.responseJson = '';
+      $scope.selectedVersionId = '';
 
 
       $scope.$watch('versions', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           if (!$scope.selectedVersion) {
-            $scope.selectedVersion = $scope.versions.find((version) => { return version.defaultVersion; });
-          } else {
-            $scope.selectedVersion = $scope.versions.find((version) => { return version.id === $scope.selectedVersion.id; } );
+            if ($scope.selectedVersionId === '') {
+              $scope.selectedVersion = $scope.versions.find((version) => { return version.defaultVersion; });
+            } else {
+              $scope.selectedVersion = $scope.versions.find((version) => { return version.id === $scope.selectedVersion.id; } );
+            }
           }
-          console.log("selectedVersion: ", $scope.selectedVersion);
-
         }
       }, true);
 
@@ -35,7 +36,7 @@ module Fabric {
         if ($scope.responseJson !== responseJson) {
           $scope.responseJson = responseJson;
           $scope.versions = response.value;
-          //$scope.$apply();
+          $scope.$apply();
         }
       }
 

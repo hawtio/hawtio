@@ -94,14 +94,20 @@ module UI {
           },
           success: (response, statusText, xhr, $form) => {
             notification('success', "Uploaded " + fileName);
-            button.prop('disabled', false);
-            $scope.percentComplete = 0;
+            setTimeout( () => {
+              button.prop('disabled', false);
+              $scope.percentComplete = 0;
+              $scope.$apply();
+            }, 1000);
             $scope.$apply();
           },
           error: (response, statusText, xhr, $form) => {
             notification('error', "Failed to upload " + fileName + " due to " + statusText);
-            button.prop('disabled', false);
-            $scope.percentComplete = 0;
+            setTimeout( () => {
+              button.prop('disabled', false);
+              $scope.percentComplete = 0;
+              $scope.$apply();
+            }, 1000);
             $scope.$apply();
           },
           uploadProgress: (event, position, total, percentComplete) => {

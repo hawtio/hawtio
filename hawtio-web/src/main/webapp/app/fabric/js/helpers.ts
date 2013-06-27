@@ -20,6 +20,10 @@ module Fabric {
     }
   }
 
+  export function applyPatches(jolokia, files, targetVersion, newVersionName, proxyUser, proxyPass, success, error) {
+    doAction('applyPatches(java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String)', jolokia, [files, targetVersion, newVersionName, proxyUser, proxyPass], success, error);
+  }
+
   export function setContainerProperty(jolokia, containerId, property, value, success, error) {
     doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
   }
