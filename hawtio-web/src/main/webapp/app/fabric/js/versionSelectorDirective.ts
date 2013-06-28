@@ -20,7 +20,7 @@ module Fabric {
 
       $scope.$watch('versions', (newValue, oldValue) => {
         if (newValue !== oldValue) {
-          if (!$scope.selectedVersion) {
+          if (!$scope.selectedVersion || Object.equal($scope.selectedVersion, {})) {
             if ($scope.selectedVersionId === '') {
               $scope.selectedVersion = $scope.versions.find((version) => { return version.defaultVersion; });
             } else {

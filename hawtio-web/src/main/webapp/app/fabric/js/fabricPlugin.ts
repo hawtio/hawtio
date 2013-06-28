@@ -15,10 +15,15 @@ module Fabric {
             when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
-            when('/fabric/patching', { templateUrl: templatePath + 'patching.html' });
+            when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
+            when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
+
     directive('fabricVersionSelector', function() {
       return new Fabric.VersionSelector();
+    }).
+    directive('fabricProfileSelector', function() {
+      return new Fabric.ProfileSelector();
     }).
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
