@@ -295,11 +295,21 @@ module Osgi {
         return null;
     }
 
-    export function getHawtioOSGiMBean(workspace:Workspace):string {
+    export function getHawtioOSGiToolsMBean(workspace:Workspace):string {
         if (workspace) {
-            var mbeanTypesToDomain = workspace.mbeanTypesToDomain || {};
-            var gitFacades = mbeanTypesToDomain["OSGiTools"] || {};
-            var hawtioFolder = gitFacades["io.hawt.osgi"] || {};
+            var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
+            var toolsFacades = mbeanTypesToDomain["OSGiTools"];
+            var hawtioFolder = toolsFacades["io.hawt.osgi"];
+            return hawtioFolder["objectName"];
+        }
+        return null;
+    }
+
+    export function getHawtioConfigAdminMBean(workspace:Workspace):string {
+        if (workspace) {
+            var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
+            var configAdminFacades = mbeanTypesToDomain["ConfigAdmin"];
+            var hawtioFolder = configAdminFacades["io.hawt.osgi"];
             return hawtioFolder["objectName"];
         }
         return null;

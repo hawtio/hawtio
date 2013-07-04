@@ -48,13 +48,19 @@
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
+      <version>${commons-httpclient-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io-version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.2</version>
+      <version>${commons-fileupload-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -209,12 +215,6 @@
     </dependency>    
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>${activemq-leveldb-artifactid}</artifactId>
-      <version>${activemq-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
@@ -255,6 +255,70 @@
       <version>${insight-log4j.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-broker</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-stomp</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-openwire</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-mqtt</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-amqp</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-leveldb</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-jmx</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-web</artifactId>
+      <classifier>classes</classifier>
+      <version>${apollo-version}</version>
+      <!-- we don't need the html rendering -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.fusesource.scalate</groupId>
+          <artifactId>scalate-core_2.10</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <scope>test</scope>
+      <version>${scala-version}</version>
+    </dependency>
+
   </dependencies>
 
   <repositories>
@@ -573,9 +637,6 @@
                 <configuration>
                   <executable>${grunt-executable}</executable>
                   <arguments>
-                    <argument>copy</argument>
-                    <argument>type</argument>
-                    <argument>concat</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
                     <argument>--webapp_port</argument>
@@ -611,11 +672,7 @@
                 <configuration>
                   <executable>${grunt-executable}</executable>
                   <arguments>
-                    <argument>copy</argument>
-                    <argument>type</argument>
-                    <argument>concat</argument>
-                    <argument>reload</argument>
-                    <argument>watch</argument>
+                    <argument>watchSrc</argument>
                     <argument>--webapp_outdir</argument>
                     <argument>${webapp-outdir}</argument>
                     <argument>--webapp_port</argument>

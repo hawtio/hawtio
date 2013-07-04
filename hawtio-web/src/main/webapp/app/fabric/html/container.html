@@ -87,43 +87,56 @@
       <dl class="dl-horizontal">
         <dt>Location:</dt>
         <dd>
-          {{row.location}}
+          <editable-property ng-model="row" property="location" on-save="updateContainerProperty('location', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Local IP:</dt>
         <dd>
-          {{row.localIp}}
+          <editable-property ng-model="row" property="localIp" on-save="updateContainerProperty('localIp', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Local Hostname:</dt>
         <dd>
-          {{row.localHostName}}
+          <editable-property ng-model="row" property="localHostname" on-save="updateContainerProperty('localHostname', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Public IP:</dt>
         <dd>
-          {{row.publicIp}}
+          <editable-property ng-model="row" property="publicIp" on-save="updateContainerProperty('publicIp', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Public Hostname:</dt>
         <dd>
-          {{row.publicHostname}}
+          <editable-property ng-model="row" property="publicHostname" on-save="updateContainerProperty('publicHostname', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Manual IP:</dt>
         <dd>
-          {{row.manualIp}}
+          <editable-property ng-model="row" property="manualIp" on-save="updateContainerProperty('manualIp', row)"></editable-property>
         </dd>
       </dl>
       <dl class="dl-horizontal">
         <dt>Resolver:</dt>
         <dd>
           {{row.resolver}}
+        </dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Minimum Port:</dt>
+        <dd>
+          <editable-property ng-model="row" property="minimumPort" on-save="updateContainerProperty('minimumPort', row)"></editable-property>
+        </dd>
+      </dl>
+      <dl class="dl-horizontal">
+        <dt>Maximum Port:</dt>
+        <dd>
+          <editable-property ng-model="row" property="maximumPort" on-save="updateContainerProperty('maximumPort', row)"></editable-property>
+
         </dd>
       </dl>
     </div>
@@ -137,7 +150,7 @@
         </div>
       </dl>
       <dl class="dl-horizontal">
-        <div class="gridStyle" ng-grid="profilesGridOptions"></div>
+        <div style="min-height: 300px;" ng-grid="profilesGridOptions"></div>
       </dl>
     </div>
   </div>
@@ -150,6 +163,22 @@
           <ul>
             <li ng-show="row.sshUrl"><strong>SSH: </strong>{{row.sshUrl}}</li>
             <li ng-show="row.jmxUrl"><strong>JMX: </strong>{{row.jmxUrl}}</li>
+            <li ng-show="row.jolokiaUrl"><strong>Jolokia: </strong>{{row.jolokiaUrl}}</li>
+          </ul>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span8">
+      <dl>
+        <dt>Provision List: 
+          <input type="text" class="search-query" placeholder="Filter..." ng-model="provisionListFilter">
+        </dt>
+        <dd>
+          <ul ng-repeat="item in row.provisionList">
+            <li ng-class="getClass(item)">{{item}}</li>
           </ul>
         </dd>
       </dl>

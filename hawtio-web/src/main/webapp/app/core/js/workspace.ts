@@ -253,11 +253,12 @@ class Workspace {
           };
 
           var lastPath = paths.pop();
-          paths.forEach(value => {
-            folder = this.folderGetOrElse(folder, value);
+          var ws = this
+          paths.each((value) => {
+            folder = ws.folderGetOrElse(folder, value);
             if (folder) {
               folderNames.push(value);
-              angular.bind(this, configureFolder, folder, value)();
+              angular.bind(ws, configureFolder, folder, value)();
             }
           });
           var key = rootId + separator + folderNames.join(separator) + separator + lastPath;

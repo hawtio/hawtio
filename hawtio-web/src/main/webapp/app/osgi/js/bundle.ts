@@ -19,7 +19,7 @@ module Osgi {
     };
 
     $scope.executeLoadClass = (clazz) => {
-      var mbean = getHawtioOSGiMBean(workspace);
+      var mbean = getHawtioOSGiToolsMBean(workspace);
       if (mbean) {
         jolokia.request(
                 {type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz]},
@@ -51,7 +51,7 @@ module Osgi {
     };
 
     $scope.executeFindResource = (resource) => {
-      var mbean = getHawtioOSGiMBean(workspace);
+      var mbean = getHawtioOSGiToolsMBean(workspace);
       if (mbean) {
         jolokia.request(
                 {type: 'exec', mbean: mbean, operation: 'getResourceURL', arguments: [$scope.bundleId, resource]},
@@ -335,7 +335,7 @@ module Osgi {
     var str = "";
     var sortedKeys = Object.keys(data).sort();
     for (var i = 0; i < sortedKeys.length; i++) {
-      var da = sortedKeys[i];
+      var da:any = sortedKeys[i];
       var type = da.charAt(0);
 
       var separator = "";

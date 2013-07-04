@@ -21,11 +21,11 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
-      <scope>provided</scope>
-    </dependency>    
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.enterprise</artifactId>
+        <version>${osgi-version}</version>
+        <scope>provided</scope>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -63,6 +63,7 @@
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>io.hawt.osgi.jmx.Activator</Bundle-Activator>
+            <Bundle-Description>Additional JMX APIs into the OSGi Framework, used by hawt.io browser-based client.</Bundle-Description>
             <Export-Package />
           </instructions>
         </configuration>

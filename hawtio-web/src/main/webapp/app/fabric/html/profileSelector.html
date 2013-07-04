@@ -1,0 +1,33 @@
+<div ng-show="profiles.length > 0">
+  <div class="profile-list">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><input id="selector" type="checkbox" ng-model="selectedAll"></th>
+          <th>
+            <!--
+            <div class="control-group pull-left no-bottom-margin">
+              <label class="control-label no-bottom-margin"><strong>Name</strong></label>
+            </div>
+            -->
+            <div class="control-group pull-right">
+              <div class="controls">
+                <input type="text" class="search-query" ng-model="filterText" placeholder="Filter...">
+              </div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="profile in profiles" ng-show="showProfile(profile)">
+          <td>
+            <input type="checkbox" ng-model="profile.selected">
+          </td>
+          <td>
+            {{profile.id}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

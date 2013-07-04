@@ -21,7 +21,7 @@ module Maven {
       {
         field: 'versionNumber',
         displayName: columnTitle,
-        cellTemplate: '<div class="ngCellText">{{row.entity.version}}</div>',
+        cellTemplate: '<div class="ngCellText"><a href="#/maven/artifact/{{row.entity.groupId}}/{{row.entity.artifactId}}/{{row.entity.version}}">{{row.entity.version}}</a></div>',
       }
     ];
 
@@ -48,7 +48,6 @@ module Maven {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
       updateTableContents();
     });
 

@@ -1,0 +1,21 @@
+<div ng-controller="Fabric.TestController">
+
+  <div class="row-fluid">
+    <div class="span3">
+      <div fabric-version-selector='version'></div>
+      <div fabric-profile-selector='selectedProfiles' version-id='versionId'></div>
+    </div>
+    <div class="span3">
+      <p>Selected version: {{version.id}}</p>
+      <p>Selected profiles:
+        <ul>
+          <li ng-repeat="profile in selectedProfiles">{{profile.id}}</li>
+        </ul>
+      </p>
+    </div>
+
+
+  </div>
+
+
+</div>

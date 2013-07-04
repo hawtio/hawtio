@@ -61,8 +61,10 @@ module Wiki {
         node["nodeModel"] = value;
         var imageUrl = Camel.getRouteNodeIcon(value);
         node.icon = imageUrl;
+        // compiler was complaining about 'label' had no idea where it's coming from
+        // var tooltip = value["tooltip"] || value["description"] || label;
+        var tooltip = value["tooltip"] || value["description"] || '';
         node.tooltip = tooltip;
-        var tooltip = value["tooltip"] || value["description"] || label;
 
         group.children.push(node);
       }

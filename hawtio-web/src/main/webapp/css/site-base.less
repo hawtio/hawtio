@@ -1190,6 +1190,7 @@ li.stacktrace {
 
 .color-picker {
   display: inline-block;
+  position: relative;
   margin: 0px;
   line-height: 0px;
 }
@@ -1215,7 +1216,8 @@ li.stacktrace {
 
 .color-picker-popout {
   transition: opacity 0.25s ease-in-out;
-  display: inline-flex;
+  position: absolute;
+  top: 0px;
   overflow: hidden;
   background: white;
   border-radius: 4px;
@@ -1242,18 +1244,6 @@ li.stacktrace {
   padding: 3px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-}
-
-.color-picker div i {
-  margin-top: 0.3em;
-  cursor: pointer;
-  color: @control-border;
-  opacity: .4;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-}
-
-.color-picker div i:hover {
-  opacity: 1;
 }
 
 .color-picker div table tr td {
@@ -1558,4 +1548,31 @@ td.deleting {
 
 td.adding {
   background-color: Aquamarine !important;
+}
+
+.no-match-filter {
+  display: none;
+}
+
+.file-upload div form fieldset .input-prepend .btn {
+  float: left;
+}
+
+@-moz-document url-prefix() {
+  /* hack to get the add button to line up correctly in FF */
+  .input-prepend .btn {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+}
+
+.input-prepend .progress {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  position: relative;
+  left: 1px;
+  top: 0px;
+  min-height: 30px;
+  width: 160px;
 }

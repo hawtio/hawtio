@@ -90,6 +90,27 @@ module Fabric {
       ]
     };
 
+
+    $scope.updateContainerProperty = (propertyName, row) => {
+      setContainerProperty(jolokia, row.id, propertyName, row[propertyName], () => { $
+        $scope.$apply(); 
+      }, (response) => {
+        notification('error', 'Failed to set container property due to : ' + response.error);
+        $scope.$apply(); 
+      });
+    }
+
+
+    $scope.getClass = (item) => {
+      if (!$scope.provisionListFilter) {
+        return 'no-filter';
+      } else if (item.has($scope.provisionListFilter)) {
+        return 'match-filter';
+      } else {
+        return 'no-match-filter';
+      }
+    }
+
     $scope.addProfiles = () => {
       console.log("Adding profiles: " + $scope.addProfileGridOptions.selectedItems);
 

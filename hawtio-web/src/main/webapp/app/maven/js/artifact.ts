@@ -20,7 +20,6 @@ module Maven {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
       updateTableContents();
     });
 

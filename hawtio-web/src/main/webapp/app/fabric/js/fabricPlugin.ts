@@ -1,20 +1,34 @@
 module Fabric {
+
   export var jmxDomain = 'org.fusesource.fabric';
+
+  export var templatePath = 'app/fabric/html/';
+
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop']).config(($routeProvider) => {
     $routeProvider.
-            when('/fabric/containers/createContainer', {templateUrl: 'app/fabric/html/createContainer.html' , reloadOnSearch: false }).
-            when('/fabric/map', {templateUrl: 'app/fabric/html/map.html'}).
-            when('/fabric/clusters/*page', {templateUrl: 'app/fabric/html/clusters.html'}).
-            when('/fabric/container/:containerId', {templateUrl: 'app/fabric/html/container.html'}).
-            when('/fabric/profile/:versionId/:profileId', {templateUrl: 'app/fabric/html/profile.html'}).
-            when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: 'app/fabric/html/editFeatures.html'}).
-            when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: 'app/fabric/html/pid.html'}).
-            when('/fabric/view', { templateUrl: 'app/fabric/html/fabricView.html', reloadOnSearch: false });
+            when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).
+            when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
+            when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
+            when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html'}).
+            when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
+            when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
+            when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
+            when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
+            when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
+            when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
+
+    directive('fabricVersionSelector', function() {
+      return new Fabric.VersionSelector();
+    }).
+    directive('fabricProfileSelector', function() {
+      return new Fabric.ProfileSelector();
+    }).
+
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 
-            viewRegistry['fabric'] = "app/fabric/html/layoutFabric.html";
+            viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
             try {
               var id = jolokia.getAttribute('org.fusesource.fabric:type=Fabric', 'CurrentContainerName', {timeout: 1});

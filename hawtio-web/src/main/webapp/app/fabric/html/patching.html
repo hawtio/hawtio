@@ -1,0 +1,45 @@
+<div ng-controller="Fabric.PatchingController">
+
+  <div class="row-fluid">
+    <div class="span4">
+      <p>1) Upload one or more patch files to apply to this fabric</p>
+      <div hawtio-file-upload="files" target="patches"></div>
+    </div>
+    <div class="span4">
+      <p>2) Select what version to derive the new patched version from</p>
+      <div fabric-version-selector="targetVersion"></div>
+      <p>Enter a name for the new version, or leave blank to use the next available version:</p>
+      <input type="text" ng-model="newVersionName">
+      <p>Enter administrator credentials for fabric</p>
+      <div class="control-group">
+        <label class="control-label">User Name: </label>
+        <div class="controls">
+          <input type="text" ng-model="proxyUser">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Password: </label>
+        <div class="controls">
+          <input type="password" ng-model="proxyPassword">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="saveJmxCredentials">  Save these credentials as the default
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="span1">
+      <p>3) <ng-pluralize count="files.length"
+              when="{'0': 'Upload files to apply',
+                     'one': 'Apply patch',
+                     'other': 'Apply patches'}"
+              ></ng-pluralize></p>
+      <button class="btn btn-success" ng-disabled="!valid()" ng-click="go()"><i class="icon-ok"></i> Apply</button>
+    </div>
+  </div>
+
+
+</div>

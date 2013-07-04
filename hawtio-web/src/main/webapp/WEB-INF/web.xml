@@ -37,6 +37,16 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>file-upload</servlet-name>
+    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>file-upload</servlet-name>
+    <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
@@ -71,9 +81,45 @@
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+
+
+  <!-- For Apollo -->
+<!--
+  TODO - disabled Apollo for now to avoid breaking hawtio-web when deployed inside OSGi etc
+
+  <filter>
+    <filter-name>static</filter-name>
+    <filter-class>org.apache.activemq.apollo.web.StaticContentFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>static</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>ApolloApplication</filter-name>
+    <filter-class>org.apache.activemq.apollo.web.ApolloApplication</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ApolloApplication</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>jersey</servlet-name>
+    <servlet-class>org.apache.activemq.apollo.web.JerseyServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jersey</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+-->
 
 </web-app>
 

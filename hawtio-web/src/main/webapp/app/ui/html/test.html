@@ -1,5 +1,30 @@
 <div ng-controller="UI.UITestController">
 
+
+  <div>
+    File upload
+    <!--
+    <div class="row-fluid">
+      <form action="upload" method="post" enctype="multipart/form-data">
+        <fieldset>
+          <input type="text" name="parent" value="test">
+          <input type="file" name="test-file">
+          <input type="file" name="test-file2">
+          <input type="submit">
+        </fieldset>
+      </form>
+    </div>
+    -->
+
+    <div class="row-fluid">
+      <p>Showing files</p>
+      <div hawtio-file-upload="files" target="patches"></div>
+      <p>Not showing files</p>
+      <div hawtio-file-upload="files" target="test" show-files="false"></div>
+    </div>
+
+  </div>
+
   <div>
     Color picker
     <div class="row-fluid">

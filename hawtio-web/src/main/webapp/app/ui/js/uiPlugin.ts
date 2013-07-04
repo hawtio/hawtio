@@ -5,7 +5,7 @@ module UI {
   export var templatePath = 'app/ui/html/';
 
   angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui', 'ui.bootstrap']).
-      config(function($routeProvider) => {
+      config( ($routeProvider) => {
         $routeProvider.
             when('/ui/test', {templateUrl: templatePath + 'test.html'})
       }).
@@ -20,9 +20,11 @@ module UI {
       }).
       directive('hawtioEditor', function() {
         return new UI.Editor();
-      }).directive('hawtioColorPicker', [function() {
+      }).directive('hawtioColorPicker', function() {
         return new UI.ColorPicker()
-      }]);
+      }).directive('hawtioFileUpload', () => {
+        return new UI.FileUpload();
+      });
 
   hawtioPluginLoader.addModule(pluginName);
 

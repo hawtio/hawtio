@@ -11,16 +11,22 @@
   </li>
 -->
   <li ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
-    <a ng-href="{{clusterLink()}}">Clusters</a>
+    <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>
   </li>
   <li ng-show="kibanaHref">
-    <a ng-href="{{kibanaHref}}">Logs</a>
+    <a ng-href="{{kibanaHref}}" target="kibana" title="View and search all the logs of all containers in this fabric">Logs</a>
   </li>
   <li ng-show="hasMetrics">
-    <a ng-href="#/insight/all">Metrics</a>
+    <a ng-href="#/insight/all" title="View the metrics of the containers in this fabric">Metrics</a>
   </li>
   <li ng-class='{active : isActive("#/fabric/map")}'>
-    <a ng-href="#/fabric/map{{hash}}">Map</a>
+    <a ng-href="#/fabric/map{{hash}}" title="View the containers on a google map">Map</a>
+  </li>
+  <li ng-show="droolsHref">
+    <a ng-href="{{droolsHref}}" target="drools" title="View and manage the rules and workflows in this Fabric">Rules</a>
+  </li>
+  <li ng-show="canUpload" ng-class='{active : isActive("#/fabric/patching")}'>
+    <a ng-href="#/fabric/patching" title="Upload and apply patches to this fabric">Patching</a>
   </li>
 </ul>
 <div class="row-fluid">

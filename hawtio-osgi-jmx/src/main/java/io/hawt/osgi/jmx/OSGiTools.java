@@ -19,7 +19,7 @@ public class OSGiTools implements OSGiToolsMXBean {
         bundleContext = bc;
     }
 
-    public void init() throws Exception {
+    void init() throws Exception {
         if (objectName == null) {
             objectName = new ObjectName("io.hawt.osgi:type=OSGiTools");
         }
@@ -29,7 +29,7 @@ public class OSGiTools implements OSGiToolsMXBean {
         mBeanServer.registerMBean(this, objectName);
     }
 
-    public void destroy() throws Exception {
+    void destroy() throws Exception {
         if (objectName != null && mBeanServer != null) {
             mBeanServer.unregisterMBean(objectName);
         }

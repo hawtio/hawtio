@@ -1,11 +1,8 @@
 package io.hawt.osgi.jmx;
 
-import io.hawt.osgi.jmx.OSGiTools;
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

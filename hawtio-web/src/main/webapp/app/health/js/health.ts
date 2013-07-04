@@ -2,28 +2,28 @@ module Health {
 
     export function HealthController($scope, workspace:Workspace) {
       $scope.widget = new TableWidget($scope, workspace, [
-        {
+        <TableColumnConfig> {
           "mDataProp": null,
           "sClass": "control center",
           "mData": null,
           "sDefaultContent": '<i class="icon-plus"></i>'
         },
-        {
+        <TableColumnConfig> {
           "mDataProp": "level",
           "sDefaultContent": "",
           "mData": null
         },
-        {
+        <TableColumnConfig> {
           "mDataProp": "domain",
           "sDefaultContent": "",
           "mData": null
         },
-        {
+        <TableColumnConfig> {
           "mDataProp": "kind",
           "sDefaultContent": "",
           "mData": null
         },
-        {
+        <TableColumnConfig> {
           "mDataProp": "message",
           "sDefaultContent": "",
           "mData": null,

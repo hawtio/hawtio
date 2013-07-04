@@ -11,7 +11,7 @@ declare var angular: ng.IAngularStatic;
 ///////////////////////////////////////////////////////////////////////////////
 // ng module (angular.js)
 ///////////////////////////////////////////////////////////////////////////////
-module ng {
+declare module ng {
 
     // For the sake of simplicity, let's assume jQuery is always preferred
     interface IJQLiteOrBetter extends JQuery { }
