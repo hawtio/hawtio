@@ -123,11 +123,6 @@
     <osgi-version>4.2.0</osgi-version>
     <servlet-api-version>2.5</servlet-api-version>
 
-    <!-- lets stick to the version that insight-log4j uses for now -->
-    <slf4j-version>1.6.1</slf4j-version>
-<!--
-    <slf4j-version>1.6.6</slf4j-version>
--->
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.6.6</slf4j-version>
 
