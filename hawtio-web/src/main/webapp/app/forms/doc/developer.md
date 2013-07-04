@@ -1,4 +1,4 @@
-# forms plugin
+### Forms
 
 This plugin provides an easy way, given a [JSON Schema](http://json-schema.org/) model of generating a form with 2 way binding to some JSON data.
 
