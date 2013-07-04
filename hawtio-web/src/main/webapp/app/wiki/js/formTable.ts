@@ -4,6 +4,17 @@ module Wiki {
     Wiki.initScope($scope, $routeParams, $location);
     $scope.columnDefs = [];
 
+    $scope.gridOptions = {
+       data: 'list',
+       displayFooter: false,
+       showFilter: false,
+       filterOptions: {
+         filterText: ''
+       },
+       columnDefs: $scope.columnDefs
+     };
+
+
     $scope.viewLink = (row) => {
       return childLink(row, "/view");
     };
@@ -55,7 +66,8 @@ module Wiki {
     }
 
     function updateView() {
-      $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", $scope.gridOptions.filterOptions.filterText, onResults);
+      var filter = Core.pathGet($scope, ["gridOptions", "filterOptions", "filterText"]) || "";
+      $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", filter, onResults);
     }
 
     function onFormData(details) {
@@ -79,16 +91,8 @@ module Wiki {
         });
         columnDefs.push(linksColumn);
 
-        //$scope.gridOptions.columDefs = columnDefs;
-        $scope.gridOptions = {
-          data: 'list',
-          displayFooter: false,
-          showFilter: false,
-          filterOptions: {
-            filterText: ''
-          },
-          columnDefs: columnDefs
-        };
+        $scope.columnDefs = columnDefs;
+        $scope.gridOptions.columnDefs = columnDefs;
 
         // now we have the grid column stuff loaded, lets load the datatable
         $scope.tableView = "app/wiki/html/formTableDatatable.html";
