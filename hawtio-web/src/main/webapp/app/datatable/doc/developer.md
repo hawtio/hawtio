@@ -1,4 +1,4 @@
-# datatable plugin
+### Datatable
 
 This plugin provides a programming API similar to [ng-grid](http://angular-ui.github.com/ng-grid/) for writing table/grids in angularjs but uses [jQuery DataTables](http://datatables.net/) as the underlying implementation.
 
