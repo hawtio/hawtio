@@ -52,7 +52,7 @@ We're not yet using it but these look handy too:
 * [jquery-mobile-angular-adapter](https://github.com/tigbro/jquery-mobile-angular-adapter) for easy interop of jQuery Mobile and AngularJS
 * [breezejs](http://www.breezejs.com/) for easy LINQ / ActiveRecord style database access and synchronization
 
-## Useful information
+## API documentation
 
 If you are interested in working on the code the following references and articles have been really useful so far:
 
