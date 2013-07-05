@@ -1,4 +1,4 @@
-### OpenEJB Metrics View ###
+### OpenEJB
 
 The OpenEJB plugin in [hawtio](http://hawt.io "hawtio") gives a raw view of the underlying OpenEJB JMX metric data.
 

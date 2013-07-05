@@ -1,4 +1,4 @@
-## hawtio dashboard
+### Dashboard
 
 The dashboard plugin lets you view, create and modify dashboards of widgets for displaying real time metrics, diagrams or metrics.
 
@@ -6,7 +6,7 @@ The dashboard plugin lets you view, create and modify dashboards of widgets for 
   <li class="span4">
     <div class="thumbnail">
       <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/dashboard.png" alt="screenshot">
-      <h3>Sample dashboard</h3>
+      <h5>Sample dashboard</h5>
     </div>
   </li>
 </ul>
@@ -20,13 +20,13 @@ The dashboard plugin lets you view, create and modify dashboards of widgets for 
   <li class="span4">
     <div class="thumbnail">
       <img src="https://raw.github.com/hawtio/hawtio/master/website/src/images/screenshots/jmx.png" alt="screenshot">
-      <h3>JMX page</h3>
+      <h5>JMX page</h5>
     </div>
   </li>
 </ul>
 
 
-### Adding your plugin views to the dashboard
+##### Adding your plugin views to the dashboard
 
 Any partial HTML page loaded via the hawtio [plugin mechanism](http://hawt.io/plugins/howPluginsWork.html) should be usable as a widget inside a dashboard.
 
@@ -38,7 +38,7 @@ Here are some developer guides on how to make nicely behaving views for inclusio
 * any questions on how to allow your view to be added to the dashboard or to get it working on a dashboard, [join the community](http://hawt.io/community/index.html) - we'll be glad to help!
 
 
-## How the configuration works
+##### How the configuration works
 
 The default configuration repository for the dashboards is [hawtio-config on github](https://github.com/hawtio/hawtio-config) but you can [configure hawtio](http://hawt.io/configuration/index.html) to use whatever configuration directory or remote git repository you wish.
 

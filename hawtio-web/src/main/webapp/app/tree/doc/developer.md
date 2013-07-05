@@ -1,4 +1,4 @@
-# tree plugin
+### Tree
 
 This plugin provides a simple HTML directive for working with [jQuery DynaTree widgets](http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html) from AngularJS
 

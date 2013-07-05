@@ -14,8 +14,7 @@ module Core {
       jmx: 'JMX',
       jvm: 'JVM',
       log: 'Logs',
-      openejb: 'OpenEJB',
-      datatable: 'hawtio-datatable'
+      openejb: 'OpenEJB'
     }
 
     private subTopicNameMappings = {
