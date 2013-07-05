@@ -15,14 +15,26 @@ You may want to check out:
 * [current list of the available plugins](http://hawt.io/plugins/index.html)
 * [how plugins work](http://hawt.io/plugins/howPluginsWork.html)
 
-## Tools and Libraries
+## Developer Tools
+
+The following are recommended if you want to contribute to the code
+
+* [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
+* [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
+* [AngularJS plugin for IDEA](http://plugins.jetbrains.com/plugin/?id=6971) if you use [IDEA](http://www.jetbrains.com/idea/) then this plugin really helps work with Angular JS
+* [AngularJS plugin for Chrome](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk) which is handy for visualising scopes and performance testing etc.
+* [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
+* [Apache Maven 3.0.3 or later](http://maven.apache.org/)
+* [gruntjs](http://gruntjs.com/) a build tool for JavaScript. See nearly the beginning of this document for details of how to install and use.
+* [Dash.app](http://kapeli.com/) is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery, AngularJS etc.
+
+## JavaScript Libraries
 
 For those interested in [contributing](http://hawt.io/contributing/index.html) or just learning how to build single page applications, here is a list of the various open source libraries used to build hawtio:
 
 * [AngularJS](http://angularjs.org/) is the web framework for performing real time two-way binding of HTML to the model of the UI using simple declarative attributes in the HTML.
 * [jolokia](http://jolokia.org/) is the server side / JVM plugin for exposing JMX as JSON over HTTP. It's awesome and is currently the only server side component of hawtio.
 * [TypeScript](http://typescriptlang.org/) is the language used to implement the console; it compiles to JavaScript and adds classes, modules, type inference & type checking. We recommend [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) for editing TypeScript--especially if you don't use Windows or Visual Studio (though there is a Sublime Text plugin too).
-* [AngularJS plugin for IDEA](http://plugins.jetbrains.com/plugin/?id=6971) if you use [IDEA](http://www.jetbrains.com/idea/) then this plugin really helps work with Angular JS
 * [angular ui](http://angular-ui.github.com/) is a library of AngularJS additions and directives
 * [d3](http://d3js.org/) is the visualization library used to do the force layout graphs (for example the diagram view for ActiveMQ)
 * [cubism](http://square.github.com/cubism/) implements the real-time horizon charts
@@ -91,18 +103,6 @@ The [isValid()](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main
 You can register [subLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16) which are then visible when the [right kind of MBean is selected](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19).
 
 For more detail check out the [plugin documentation](plugins.html).
-
-## Developer Tools
-
-The following are recommended if you want to contribute to the code
-
-* [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
-* [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
-* [AngularJS plugin for Chrome](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk) which is handy for visualising scopes and performance testing etc.
-* [JSONView plugin for Chrome](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) makes it easy to visualise JSON returned by the [REST API of Jolokia](http://jolokia.org/reference/html/protocol.html)
-* [Apache Maven 3.0.3 or later](http://maven.apache.org/)
-* [gruntjs](http://gruntjs.com/) a build tool for JavaScript. See nearly the beginning of this document for details of how to install and use.
-* [Dash.app](http://kapeli.com/) is a handy tool for browsing API documentation for JavaScript, HTML, CSS, jquery, AngularJS etc.
 
 #### Enable Source Maps for Easier Debugging
 
