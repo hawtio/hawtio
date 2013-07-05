@@ -140,45 +140,59 @@ public class IgnorePropertiesBackedByTransientFields implements VisibilityChecke
 
     @Override
     public IgnorePropertiesBackedByTransientFields with(JsonAutoDetect ann) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.with(ann);
+        return castToPropertiesBackedByTransientFields(defaultChecker.with(ann));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields with(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.with(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.with(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withCreatorVisibility(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withCreatorVisibility(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withCreatorVisibility(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withFieldVisibility(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withFieldVisibility(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withFieldVisibility(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withGetterVisibility(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withGetterVisibility(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withGetterVisibility(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withIsGetterVisibility(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withIsGetterVisibility(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withIsGetterVisibility(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withSetterVisibility(JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withSetterVisibility(v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withSetterVisibility(v));
     }
 
     @Override
     public IgnorePropertiesBackedByTransientFields withVisibility(PropertyAccessor method, JsonAutoDetect.Visibility v) {
-        return (IgnorePropertiesBackedByTransientFields) defaultChecker.withVisibility(method, v);
+        return castToPropertiesBackedByTransientFields(defaultChecker.withVisibility(method, v));
     }
 
 
+    protected IgnorePropertiesBackedByTransientFields castToPropertiesBackedByTransientFields(Object value) {
+        if (value instanceof IgnorePropertiesBackedByTransientFields) {
+            return (IgnorePropertiesBackedByTransientFields) value;
+        } else {
+            if (value != null) {
+                if (value instanceof VisibilityChecker<?>) {
+                    return new IgnorePropertiesBackedByTransientFields((VisibilityChecker<?>) value);
+                }
+                //System.out.println("Could not convert value to IgnorePropertiesBackedByTransientFields as was " + value.getClass().getName() + " " + value);
+                LOG.warn("Could not convert value to IgnorePropertiesBackedByTransientFields as was " + value.getClass().getName() + " " + value);
+            }
+            return null;
+        }
+    }
     protected static Field findField(String fieldName, Class<?> declaringClass) {
         try {
             return declaringClass.getDeclaredField(fieldName);
