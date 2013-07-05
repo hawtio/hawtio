@@ -72,7 +72,7 @@ module Forms {
       config.scope = scope;
       config.schemaName = attrs["schema"] || "schema";
 
-      var id = config.name;
+      var id = Forms.safeIdentifier(config.name);
       var group = this.getControlGroup(config, config, id);
 
       var modelName = config.model;

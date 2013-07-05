@@ -125,7 +125,8 @@ module Dozer {
         var name = attr.localName;
         var value = attr.value;
         if (name && !name.startsWith("xmlns")) {
-          object[name] = value;
+          var safeName = Forms.safeIdentifier(name);
+          object[safeName] = value;
         }
       }
     }

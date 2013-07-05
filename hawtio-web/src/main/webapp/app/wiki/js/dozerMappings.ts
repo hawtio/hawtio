@@ -2,6 +2,7 @@ module Wiki {
   export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
     Wiki.initScope($scope, $routeParams, $location);
 
+    $scope.schema = {};
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
 
@@ -97,16 +98,20 @@ module Wiki {
       $scope.selectedFolder = folder;
       $scope.treeNode = treeNode;
       $scope.propertiesTemplate = null;
+      $scope.dozerEntity = null;
       if (folder) {
         var entity = folder.entity;
+        $scope.dozerEntity = entity;
+        var propertiesTemplate = "app/wiki/html/dozerPropertiesEdit.html";
         if (entity instanceof Dozer.Field) {
-          var field: Dozer.Field = entity;
-          console.log("Selected field: " + field);
-          //$scope.propertiesTemplate = "app/wiki/html/dozerFieldProperties.html";
+          //var field: Dozer.Field = entity;
+          $scope.propertiesTemplate = propertiesTemplate;
+          $scope.nodeModel = io_hawt_dozer_schema_Field;
         }
         else if (entity instanceof Dozer.Mapping) {
-          var mapping: Dozer.Mapping = entity;
-          console.log("Selected mapping: " + mapping);
+          //var mapping: Dozer.Mapping = entity;
+          $scope.propertiesTemplate = propertiesTemplate;
+          $scope.nodeModel = io_hawt_dozer_schema_Mapping;
         }
       }
       Core.$apply($scope);

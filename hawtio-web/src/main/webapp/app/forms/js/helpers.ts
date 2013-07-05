@@ -37,6 +37,17 @@ module Forms {
   }
 
   /**
+   * Removes any dodgy characters for a valid identifier in angularjs such as for '-' characters
+   * which are replaced with '_'
+   */
+  export function safeIdentifier(id: string) {
+    if (id) {
+      return id.replace(/-/g, "_");
+    }
+    return id;
+  }
+
+  /**
    * Looks up the given type name in the schemas definitions
    */
   export function lookupDefinition(name, schema) {

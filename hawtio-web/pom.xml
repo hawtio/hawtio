@@ -447,6 +447,9 @@
             <io.hawt.dozer.schema.Mappings>
               ${schema-outdir}/dozerMappings.js
             </io.hawt.dozer.schema.Mappings>
+            <io.hawt.dozer.schema.Mapping>
+              ${schema-outdir}/dozerMapping.js
+            </io.hawt.dozer.schema.Mapping>
             <io.hawt.dozer.schema.Field>
               ${schema-outdir}/dozerField.js
             </io.hawt.dozer.schema.Field>
