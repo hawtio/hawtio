@@ -92,6 +92,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-dozer</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- Camel module -->
 <!--

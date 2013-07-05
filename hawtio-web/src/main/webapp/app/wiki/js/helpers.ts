@@ -4,6 +4,7 @@ module Wiki {
   export var camelNamespaces = ["http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint"];
   export var springNamespaces = ["http://www.springframework.org/schema/beans"];
   export var droolsNamespaces = ["http://drools.org/schema/drools-spring"];
+  export var dozerNamespaces = ["http://dozer.sourceforge.net"];
 
   export function startLink(branch:string) {
     var start = "#/wiki";

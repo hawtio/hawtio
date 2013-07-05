@@ -47,6 +47,8 @@ module Wiki {
         if (xmlNamespaces && xmlNamespaces.length) {
           if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
             prefix = start + "/camel/canvas";
+          } else if (xmlNamespaces.any((ns) => Wiki.dozerNamespaces.any(ns))) {
+            prefix = start + "/dozer/mappings";
           } else {
             console.log("child " + path + " has namespaces " + xmlNamespaces);
           }

@@ -1,0 +1,23 @@
+<div ng-controller="Wiki.DozerMappingsController">
+  <h3>Mappings</h3>
+
+<!--
+<div class="gridStyle" hawtio-datatable="gridOptions"></div>
+  <div class="gridStyle" ng-grid="gridOptions"></div>
+-->
+
+  <div class="row-fluid">
+    <div id="tree-container" class="span3">
+      <div hawtio-tree="mappingTree" onselect="onNodeSelect" onDragEnter="onNodeDragEnter" onDrop="onNodeDrop"
+           onRoot="onRootTreeNode"
+           hideRoot="true"></div>
+    </div>
+
+    <div class="span9">
+<!--
+      <div ng-view></div>
+-->
+    </div>
+  </div>
+
+</div>
