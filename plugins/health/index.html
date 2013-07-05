@@ -53,13 +53,13 @@
 		  <p><div id="content-header">
     <div class="container"></p>
 
-<h1 id = "Health_MBeans">Health MBeans</h1>
+<h3 id = "Health">Health</h3>
 
 <p>It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the <a href="http://dropwizard.codahale.com/getting-started/#creating-a-health-check">dropwizard notes</a> and the <a href="http://metrics.codahale.com/getting-started/#health-checks">metrics library health checks</a>.</p>
 
 <p>This document outlines a Health check MBean convention that if folks adopt its then easier to discover and will be included in the Console's Health tab.</p>
 
-<h2 id = "Health_MBean_Convention">Health MBean Convention</h2>
+<h5 id = "Health_MBean_Convention">Health MBean Convention</h5>
 
 <p>Create at least one MBean and register it with a JMX ObjectName including <code>service=Health</code>.</p>
 
@@ -116,7 +116,7 @@
   </tr>
 </table>
 
-<h2 id = "Examples">Examples</h2>
+<h5 id = "Examples">Examples</h5>
 
 <p>To show you how to implement a Health MBean here are a few examples.</p>
 

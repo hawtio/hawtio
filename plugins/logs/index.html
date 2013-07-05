@@ -53,7 +53,7 @@
 		  <p><div id="content-header">
     <div class="container"></p>
 
-<h1 id = "Hawtio_Logs">Hawtio Logs</h1>
+<h3 id = "Logs">Logs</h3>
 
 <p>When we run middleware we spend an aweful lot of time looking at and searching logs. With <a href="http://hawt.io/">hawtio</a> we don't just do logs, we do <em>hawt logs</em>.</p>
 
@@ -63,7 +63,7 @@
 
 <p>We should try encourage all projects to publish their source code to maven repositories (even if only internally to an internal maven repo for code which is not open source).</p>
 
-<h2 id = "How_to_enable_hawtio_logs">How to enable hawtio logs</h2>
+<h5 id = "How_to_enable_hawtio_logs">How to enable hawtio logs</h5>
 
 <p>Hawtio uses an MBean usually called LogQuery which implements the <a href="https://github.com/fusesource/fuse/blob/master/insight/insight-log-core/src/main/java/org/fusesource/insight/log/support/LogQuerySupportMBean.java#L26">LogQuerySupportMBean interface</a> from either the <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log">insight-log</a> or <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j</a> bundles depending on if you are working inside or outside of OSGi respectively.</p>
 
@@ -77,7 +77,7 @@
       lazy-init="false" scope="singleton"
       init-method="start" destroy-method="stop"/&gt;</code></pre>
 
-<h2 id = "Things_that_could_go_wrong">Things that could go wrong</h2>
+<h5 id = "Things_that_could_go_wrong">Things that could go wrong</h5>
 
 <ul>
 <li>If you have no Logs tab in hawtio, then
@@ -89,7 +89,7 @@
 <li>If links are there but clicking on them cannot find any source code it generally means the maven repository resolver is not working. You maybe need to configure a local maven repository proxy so hawtio can access the source jars? Or maybe you need to start publishing the source jars?</li>
 </ul>
 
-<h2 id = "How_hawtio_logs_work">How hawtio logs work</h2>
+<h5 id = "How_hawtio_logs_work">How hawtio logs work</h5>
 
 <p>To be able to link to the source we need the maven coordinates (group ID, artefact ID, version), the relative file name and line number.</p>
 
@@ -99,7 +99,7 @@
 
 <p>The missing part is to also add maven coordinates to non-stack traces; so all log statements have maven coordinates too. This is then implemented by either the <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log">insight-log</a> or <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j</a> bundles depending on if you are working inside or outside of OSGi respectively.</p>
 
-<h2 id = "The_hawtio_source_plugin">The hawtio source plugin</h2>
+<h5 id = "The_hawtio_source_plugin">The hawtio source plugin</h5>
 
 <p>Once we've figured out the maven coordinates, class <span class="amp">&amp;</span> file name and line number we need to link to the source code from the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/log">log plugin</a>. This is where the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source">source plugin</a> comes in.</p>
 
