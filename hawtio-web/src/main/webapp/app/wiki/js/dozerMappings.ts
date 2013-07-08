@@ -9,6 +9,14 @@ module Wiki {
     $scope.selectedItems = [];
     $scope.mappings = [];
 
+    // lets customize the schemas
+    io_hawt_dozer_schema_Field["tabs"] = {
+      'Fields': ['a.value', 'b.value'],
+      'From Field': ['a\\..*'],
+      'To Field': ['b\\..*'],
+      'Field Configuration': ['*']
+    };
+
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       data: 'mappings',

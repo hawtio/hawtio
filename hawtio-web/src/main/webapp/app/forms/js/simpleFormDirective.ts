@@ -234,8 +234,17 @@ module Forms {
           }
 
           if (tabs.use) {
-            if (tabs.locations[id]) {
-              tabs.elements[tabs.locations[id]].append(input);
+            var tabkey = tabs.locations[id];
+            if (!tabkey) {
+              // lets try find a tab key using regular expressions
+              angular.forEach(tabs.locations, (value, key) => {
+                if (!tabkey && key !== "*" && id.match(key)) {
+                  tabkey = value;
+                }
+              });
+            }
+            if (tabkey) {
+              tabs.elements[tabkey].append(input);
             } else {
               tabs.elements[tabs.locations['*']].append
                       (input);
