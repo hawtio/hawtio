@@ -233,6 +233,12 @@ module Forms {
             input.attr('data', configScopeName);
           }
 
+          // TODO add a title if there is one in the schema
+          var label = property.label;
+          if (label) {
+            input.attr('title', label);
+          }
+
           if (tabs.use) {
             var tabkey = tabs.locations[id];
             if (!tabkey) {

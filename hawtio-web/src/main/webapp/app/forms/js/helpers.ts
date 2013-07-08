@@ -155,8 +155,8 @@ module Forms {
     return rc;
   }
 
-  export function getLabel(config, arg, id) {
-    return $('<label class="' + config.labelclass + '">' + humanizeValue(id) + ': </label>');
+  export function getLabel(config, arg, label) {
+    return $('<label class="' + config.labelclass + '">' + label + ': </label>');
   }
 
   export function getControlDiv(config) {

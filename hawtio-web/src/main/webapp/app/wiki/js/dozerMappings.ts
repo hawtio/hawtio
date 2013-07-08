@@ -22,6 +22,11 @@ module Wiki {
       'To Class': ['class-b\\..*'],
       'Class Configuration': ['*']
     };
+    Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "a", "properties", "value", "label"], "From Field");
+    Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "b", "properties", "value", "label"], "To Field");
+
+    Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-a", "properties", "value", "label"], "From Class");
+    Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-b", "properties", "value", "label"], "To Class");
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
