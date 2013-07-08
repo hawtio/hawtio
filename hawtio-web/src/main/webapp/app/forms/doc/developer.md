@@ -12,10 +12,13 @@ e.g.
         tabs: {
           'Tab One': ['key', 'value'],
           'Tab Two': ['*'],
-          'Tab Three': ['booleanArg']
+          'Tab Three': ['booleanArg'],
+					'Tab Four': ['foo\\..*']
         }
 
 You can use "*" to refer to all the other properties not explicitly configured.
+
+In addition you can use regular expressions to bind properties to a particular tab (e.g. so we match foo.* nested properties to Tab Four above). 
 
 
 ## Using custom controls
