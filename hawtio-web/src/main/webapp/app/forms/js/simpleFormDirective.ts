@@ -196,10 +196,18 @@ module Forms {
         if (!propSchema) {
           propSchema = Forms.lookupDefinition(propTypeName, fullSchema);
         }
-        if (propSchema && Forms.isObjectType(propSchema)) {
-          console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));
 
-          angular.forEach(propSchema.properties, (childProp, childId) => {
+        var nestedProperties = null;
+        if (!propSchema && "object" === propTypeName && property.properties) {
+          // if we've no type name but have nested properties on an object type use those
+          nestedProperties = property.properties;
+        } else if (propSchema && Forms.isObjectType(propSchema)) {
+          // otherwise use the nested properties from the related schema type
+          console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));
+          nestedProperties = propSchema.properties;
+        }
+        if (nestedProperties) {
+          angular.forEach(nestedProperties, (childProp, childId) => {
             var newId = id + "." + childId;
             addProperty(newId, childProp);
           });

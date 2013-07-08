@@ -118,9 +118,10 @@ module Dozer {
   function copyAttributes(object: any, element: Element) {
     var attributeMap = element.attributes;
     for (var i = 0; i < attributeMap.length; i++) {
+      // TODO hacky work around for compiler issue ;)
+      //var attr = attributeMap.item(i);
       var attMap: any = attributeMap;
       var attr = attMap.item(i);
-      //var attr = attributeMap.item(i);
       if (attr) {
         var name = attr.localName;
         var value = attr.value;
