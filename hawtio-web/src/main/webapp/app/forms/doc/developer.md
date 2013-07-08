@@ -21,6 +21,21 @@ You can use "*" to refer to all the other properties not explicitly configured.
 In addition you can use regular expressions to bind properties to a particular tab (e.g. so we match foo.* nested properties to Tab Four above). 
 
 
+## Customizing the labels
+
+If you wish to specify a custom label for a property (as by default it will just humanize the id of the property), you can just specify the 'label' property inside the JSON Schema as follows:
+
+
+    properties: {
+      foo: {
+        type: "string",
+        label: "My Foo Thingy"
+     }
+   }
+
+The **label** is not a JSON Schema property; but an extension like the **tabs** property above.
+
+
 ## Using custom controls
 
 To use a custom control use the **formTemplate** entry on a property to define the AngularJS partial to be used to render the form control. This lets you use any AngularJS directive or widget.
