@@ -16,6 +16,12 @@ module Wiki {
       'To Field': ['b\\..*'],
       'Field Configuration': ['*']
     };
+    io_hawt_dozer_schema_Mapping["tabs"] = {
+      'Classes': ['class-a.value', 'class-b.value'],
+      'From Class': ['class-a\\..*'],
+      'To Class': ['class-b\\..*'],
+      'Class Configuration': ['*']
+    };
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
