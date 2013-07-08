@@ -39,14 +39,14 @@ module Wiki {
       },
       columnDefs: [
         {
-          field: 'classA',
+          field: 'class_a',
           displayName: 'From',
-          cellTemplate: '<div class="ngCellText">{{row.entity.classA.name}}</div>'
+          cellTemplate: '<div class="ngCellText">{{row.entity.class_a.name}}</div>'
         },
         {
-          field: 'classB',
+          field: 'class_b',
           displayName: 'To',
-          cellTemplate: '<div class="ngCellText">{{row.entity.classB.name}}</div>'
+          cellTemplate: '<div class="ngCellText">{{row.entity.class_b.name}}</div>'
         }
       ]
     };

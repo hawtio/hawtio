@@ -80,8 +80,8 @@ module Dozer {
   function createMapping(element) {
     var mapping = new Mapping();
     var elementJQ = $(element);
-    mapping.classA = createMappingClass(elementJQ.children("class-a"));
-    mapping.classB = createMappingClass(elementJQ.children("class-b"));
+    mapping.class_a = createMappingClass(elementJQ.children("class-a"));
+    mapping.class_b = createMappingClass(elementJQ.children("class-b"));
     elementJQ.children("field").each( (idx, fieldElement) => {
       var field = createField(fieldElement);
       mapping.fields.push(field);
@@ -95,7 +95,7 @@ module Dozer {
       var jqe = $(element);
       var a = jqe.children("a").text();
       var b = jqe.children("b").text();
-      var field = new Field(a, b);
+      var field = new Field(new FieldDefinition(a), new FieldDefinition(b));
       copyAttributes(field, element);
       return field;
     }
@@ -139,39 +139,40 @@ module Dozer {
   }
 
   export class Mapping {
-    classA: MappingClass;
-    classB: MappingClass;
+    class_a: MappingClass;
+    class_b: MappingClass;
     fields: Field[] = [];
 
     name() {
-      return className(this.classA) + " -> " + className(this.classB);
+      return nameOf(this.class_a) + " -> " + nameOf(this.class_b);
     }
   }
 
-  function className(mappingClass: MappingClass) {
-    var defaultValue = "?";
-    if (mappingClass) {
-      return mappingClass.name || defaultValue;
+  function nameOf(object: any) {
+    var text = angular.isObject(object) ? object["value"] : null;
+    if (!text && angular.isString(object)) {
+      text = object;
     }
-    return defaultValue;
-  }
-
-  function nameOf(text: string) {
     return text || "?";
   }
 
   export class MappingClass {
-    constructor(public name: string) {
+    constructor(public value: string) {
     }
   }
 
   export class Field {
-    constructor(public a: string, public b: string) {
+    constructor(public a: FieldDefinition, public b: FieldDefinition) {
     }
 
     name() {
       return nameOf(this.a) + " -> " + nameOf(this.b);
     }
 
+  }
+
+  export class FieldDefinition {
+    constructor(public value: string) {
+    }
   }
 }
