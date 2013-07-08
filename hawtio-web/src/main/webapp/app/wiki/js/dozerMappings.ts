@@ -84,6 +84,7 @@ module Wiki {
     };
 
     $scope.save = () => {
+      console.log("Saving the dozer mapping file!");
       // generate the new XML
       /*
        if ($scope.rootFolder) {

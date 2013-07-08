@@ -6,6 +6,8 @@ module Wiki {
   export var droolsNamespaces = ["http://drools.org/schema/drools-spring"];
   export var dozerNamespaces = ["http://dozer.sourceforge.net"];
 
+  export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/properties", "/wiki/dozer/mappings"];
+
   export function startLink(branch:string) {
     var start = "#/wiki";
     if (branch) {

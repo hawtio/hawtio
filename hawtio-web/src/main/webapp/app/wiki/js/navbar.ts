@@ -1,7 +1,6 @@
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 
-    var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/properties"];
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
@@ -11,7 +10,7 @@ module Wiki {
     $scope.sourceLink = () => {
       var path = $location.path();
       var answer = null;
-      angular.forEach(customViewLinks, (link) => {
+      angular.forEach(Wiki.customViewLinks, (link) => {
         if (path.startsWith(link)) {
           answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
         }
@@ -69,7 +68,7 @@ module Wiki {
       var loc = $location.path();
       if ($scope.breadcrumbs.length) {
         var swizzled = false;
-        angular.forEach(customViewLinks, (link) => {
+        angular.forEach(Wiki.customViewLinks, (link) => {
           if (!swizzled && loc.startsWith(link)) {
             // lets swizzle the view to the current link
             switchFromViewToCustomLink($scope.breadcrumbs.last(), Core.trimLeading(link, "/"));
