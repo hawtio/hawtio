@@ -42,6 +42,17 @@ module Dozer {
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlText;
   }
 
+  export function loadModelFromTree(rootTreeNode, oldModel: Mappings): Mappings {
+    oldModel.mappings = [];
+    angular.forEach(rootTreeNode.childList, (treeNode) => {
+      var mapping = Core.pathGet(treeNode, ["data", "entity"]);
+      if (mapping) {
+        oldModel.mappings.push(mapping);
+      }
+    });
+    return oldModel;
+  }
+
   export function createDozerTree(model: Mappings): Folder {
     var id = "mappings";
     var folder = new Folder(id);

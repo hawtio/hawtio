@@ -86,8 +86,13 @@ module Wiki {
     $scope.save = () => {
       console.log("Saving the dozer mapping file!");
       if ($scope.model) {
-        var text = Dozer.saveToXmlText($scope.model);
+        // lets copy the mappings from the tree
+        //var model = $scope.model;
+        var model = Dozer.loadModelFromTree($scope.rootTreeNode, $scope.model);
+        var text = Dozer.saveToXmlText(model);
         if (text) {
+          console.log("saving model " + text);
+
           var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
           wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
             Wiki.onComplete(status);
