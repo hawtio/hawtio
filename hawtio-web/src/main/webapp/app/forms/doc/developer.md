@@ -20,6 +20,24 @@ You can use "*" to refer to all the other properties not explicitly configured.
 
 In addition you can use regular expressions to bind properties to a particular tab (e.g. so we match foo.* nested properties to Tab Four above). 
 
+## Hiding fields
+
+You can add a **hidden** flag on a property in a JSON schema to hide it from the auto-generated forms. Or you can set its type to be **hidden**.
+
+e.g.
+
+    properties: {
+      foo: {
+        type: "string",
+        label: "My Foo Thingy"
+     },
+     bar: {
+        type: "string",
+        hidden: true
+     }
+   }
+
+in the above, the _bar_ property will be hidden from the generated form
 
 ## Customizing the labels
 

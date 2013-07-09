@@ -197,6 +197,10 @@ module Forms {
           propSchema = Forms.lookupDefinition(propTypeName, fullSchema);
         }
 
+        // lets ignore fields marked as hidden from the generated form
+        if (property.hidden) {
+          return;
+        }
         var nestedProperties = null;
         if (!propSchema && "object" === propTypeName && property.properties) {
           // if we've no type name but have nested properties on an object type use those

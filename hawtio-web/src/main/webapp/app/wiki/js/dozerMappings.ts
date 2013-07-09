@@ -22,6 +22,9 @@ module Wiki {
       'To Class': ['class-b\\..*'],
       'Class Configuration': ['*']
     };
+    // hide the fields table from the class configuration tab
+    io_hawt_dozer_schema_Mapping.properties.fieldOrFieldExclude.hidden = true;
+
     Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "a", "properties", "value", "label"], "From Field");
     Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "b", "properties", "value", "label"], "To Field");
 
