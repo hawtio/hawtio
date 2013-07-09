@@ -36,7 +36,8 @@ module Dozer {
   export function saveToXmlText(model: Mappings): string {
     // lets copy the original doc then replace the mapping elements
     var element = model.doc.documentElement.cloneNode(false);
-    appendElement(model.mappings, element);
+    appendElement(model.mappings, element, null, 1);
+    Dozer.addTextNode(element, "\n");
     var xmlText = Core.xmlNodeToString(element);
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlText;
   }
@@ -172,11 +173,11 @@ module Dozer {
    *
    * @returns the last child element created
    */
-  export function appendElement(object: any, element, elementName: string = null) {
+  export function appendElement(object: any, element, elementName: string = null, indentLevel = 0) {
     var answer = null;
     if (angular.isArray(object)) {
       angular.forEach(object, (child) => {
-        answer = appendElement(child, element, elementName);
+        answer = appendElement(child, element, elementName, indentLevel);
       });
     } else if (object) {
       if (!elementName) {
@@ -191,6 +192,10 @@ module Dozer {
         }
       }
       if (elementName) {
+        if (indentLevel) {
+          var text = indentText(indentLevel);
+          Dozer.addTextNode(element, text);
+        }
         var doc = element.ownerDocument || document;
         var child = doc.createElement(elementName);
 
@@ -202,6 +207,12 @@ module Dozer {
           angular.forEach(object, (value, key) => {
             console.log("has key " + key + " value " + value);
           });
+        }
+        // if we have any element children then add newline text node
+        if (child.children && child.children.length) {
+          //var text = indentText(indentLevel - 1);
+          var text = indentText(indentLevel);
+          Dozer.addTextNode(child, text);
         }
         element.appendChild(child);
         answer = child;
@@ -225,5 +236,13 @@ module Dozer {
       var child = doc.createTextNode(text);
       element.appendChild(child);
     }
+  }
+
+  function indentText(indentLevel) {
+    var text = "\n";
+    for (var i = 0; i < indentLevel; i++) {
+      text += "  ";
+    }
+    return text;
   }
 }

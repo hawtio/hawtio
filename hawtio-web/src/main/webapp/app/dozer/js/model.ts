@@ -14,9 +14,9 @@ module Dozer {
     }
 
     saveToElement(element) {
-      appendElement(this.class_a, element, "class-a");
-      appendElement(this.class_b, element, "class-b");
-      appendElement(this.fields, element, "field");
+      appendElement(this.class_a, element, "class-a", 2);
+      appendElement(this.class_b, element, "class-b", 2);
+      appendElement(this.fields, element, "field", 2);
       appendAttributes(this, element, ["class_a", "class_b", "fields"]);
     }
   }
@@ -41,8 +41,8 @@ module Dozer {
     }
 
     saveToElement(element) {
-      appendElement(this.a, element, "a");
-      appendElement(this.b, element, "b");
+      appendElement(this.a, element, "a", 3);
+      appendElement(this.b, element, "b", 3);
       appendAttributes(this, element, ["a", "b"]);
     }
   }
