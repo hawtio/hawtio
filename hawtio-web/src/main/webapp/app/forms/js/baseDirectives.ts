@@ -80,7 +80,16 @@ module Forms {
         // TODO always use 2 way binding?
         modelName = config.getEntity() + "." + id;
       }
-      group.append(Forms.getLabel(config, config, attrs["title"] || humanizeValue(id)));
+
+      // allow the prefix to be trimmed from the label
+      var defaultLabel = id;
+      if ("true" === attrs["ignorePrefixInLabel"]) {
+        var idx = id.lastIndexOf('.');
+        if (idx > 0) {
+          defaultLabel = id.substring(idx + 1);
+        }
+      }
+      group.append(Forms.getLabel(config, config, attrs["title"] || humanizeValue(defaultLabel)));
       var controlDiv = Forms.getControlDiv(config);
       controlDiv.append(this.getInput(config, config, id, modelName));
       controlDiv.append(Forms.getHelpSpan(config, config, id));

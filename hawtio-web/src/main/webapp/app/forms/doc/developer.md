@@ -53,6 +53,32 @@ If you wish to specify a custom label for a property (as by default it will just
 
 The **label** is not a JSON Schema property; but an extension like the **tabs** property above.
 
+### Ignoring prefix of deeply nested properties
+
+If you use nested properties, the labels may include an unnecessary prefix if you use sub-tabs to show related nested properties.
+
+To avoid this add a flag called **ignorePrefixInLabel** to the type which contains the **properties** you wish to ignore the prefixes of.
+
+e.g.
+
+    var myType = {
+      "type" : "object",
+      "properties" : {
+        "foo" : {
+          "properties" : {
+            "value" : {
+              "type" : "string"
+            }
+          }
+        },
+        "bar" : {
+         ...
+        }
+      },
+      ignorePrefixInLabel: true
+    }
+
+In the aboe the label for **foo.value** would jsut show _value_ rather than _foo value_ as the label.
 
 ## Using custom controls
 

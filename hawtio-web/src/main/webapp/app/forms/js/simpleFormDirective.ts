@@ -188,7 +188,7 @@ module Forms {
         $(element).append(compiledNode);
       }
 
-      function addProperty(id, property) {
+      function addProperty(id, property, ignorePrefixInLabel = property.ignorePrefixInLabel) {
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
         var propTypeName = property.type;
@@ -213,7 +213,7 @@ module Forms {
         if (nestedProperties) {
           angular.forEach(nestedProperties, (childProp, childId) => {
             var newId = id + "." + childId;
-            addProperty(newId, childProp);
+            addProperty(newId, childProp, property.ignorePrefixInLabel);
           });
         } else {
           var input = $('<div></div>');
@@ -235,6 +235,10 @@ module Forms {
 
           if (configScopeName) {
             input.attr('data', configScopeName);
+          }
+
+          if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
+            input.attr('ignore-prefix-in-label', true);
           }
 
           // TODO add a title if there is one in the schema
