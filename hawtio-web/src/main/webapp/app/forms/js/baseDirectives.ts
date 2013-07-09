@@ -376,8 +376,23 @@ module Forms {
       if (config.isReadOnly()) {
         rc.attr('readonly', 'true');
       }
+
+      // lets coerce any string values to boolean so that they work properly with the UI
+      var scope = config.scope;
+      if (scope) {
+        function onModelChange() {
+          var value = Core.pathGet(scope, modelName);
+          if (value && "true" === value)  {
+            //console.log("coercing String to boolean for " + modelName);
+            Core.pathSet(scope, modelName, true);
+          }
+        }
+        scope.$watch(modelName, onModelChange);
+        onModelChange();
+      }
       return rc;
     }
+
   }
 
 }
