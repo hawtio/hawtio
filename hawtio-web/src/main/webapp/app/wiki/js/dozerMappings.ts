@@ -85,24 +85,17 @@ module Wiki {
 
     $scope.save = () => {
       console.log("Saving the dozer mapping file!");
-      // generate the new XML
-      /*
-       if ($scope.rootFolder) {
-       var xmlNode = Camel.generateXmlFromFolder($scope.rootFolder);
-       if (xmlNode) {
-       var text = Core.xmlNodeToString(xmlNode);
-       if (text) {
-       // lets save the file...
-       var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-       wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
-       Wiki.onComplete(status);
-       goToView();
-       Core.$apply($scope);
-       });
-       }
-       }
-       }
-       */
+      if ($scope.model) {
+        var text = Dozer.saveToXmlText($scope.model);
+        if (text) {
+          var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+          wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
+            Wiki.onComplete(status);
+            goToView();
+            Core.$apply($scope);
+          });
+        }
+      }
     };
 
     $scope.cancel = () => {
@@ -138,7 +131,6 @@ module Wiki {
     };
 
 
-
     updateView();
 
     function updateView() {
@@ -160,6 +152,20 @@ module Wiki {
         console.log("No XML found for page " + $scope.pageId);
       }
       Core.$applyLater($scope);
+    }
+
+    function goToView() {
+      // TODO lets navigate to the view if we have a separate view one day :)
+      /*
+       if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+       var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+       console.log("goToView has found view " + viewLink);
+       var path = Core.trimLeading(viewLink, "#");
+       $location.path(path);
+       } else {
+       console.log("goToView has no breadcrumbs!");
+       }
+       */
     }
   }
 }

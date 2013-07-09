@@ -3,6 +3,15 @@ module Dozer {
   export var jmxDomain = 'net.sourceforge.dozer';
 
   /**
+   * Lets map the class names to element names
+   */
+  export var elementNameMappings = {
+    "Mapping": "mapping",
+    "MappingClass": "class",
+    "Field": "field"
+  };
+
+  /**
    * Converts the XML string or DOM node to a Dozer model
    */
   export function loadDozerModel(xml, pageId: string): Mappings {
@@ -22,6 +31,14 @@ module Dozer {
     });
 
     return model;
+  }
+
+  export function saveToXmlText(model: Mappings): string {
+    // lets copy the original doc then replace the mapping elements
+    var element = model.doc.documentElement.cloneNode(false);
+    appendElement(model.mappings, element);
+    var xmlText = Core.xmlNodeToString(element);
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlText;
   }
 
   export function createDozerTree(model: Mappings): Folder {
@@ -133,22 +150,67 @@ module Dozer {
     }
   }
 
-  export class Mappings {
-    constructor(public doc: any, public mappings: Mapping[] = []) {
-    }
+
+  export function appendAttributes(object: any, element, ignorePropertyNames: string[]) {
+    angular.forEach(object, (value, key) => {
+      if (ignorePropertyNames.any(key)) {
+        //console.log("Ignored key " + key);
+      } else {
+        // lets add an attribute value
+        if (value) {
+          var text = value.toString();
+          // lets replace any underscores with dashes
+          var name = key.replace(/_/g, '-');
+          element.setAttribute(name, text);
+        }
+      }
+    });
   }
 
-  export class Mapping {
-    class_a: MappingClass;
-    class_b: MappingClass;
-    fields: Field[] = [];
+  /**
+   * Adds a new child element for this mapping to the given element
+   *
+   * @returns the last child element created
+   */
+  export function appendElement(object: any, element, elementName: string = null) {
+    var answer = null;
+    if (angular.isArray(object)) {
+      angular.forEach(object, (child) => {
+        answer = appendElement(child, element, elementName);
+      });
+    } else if (object) {
+      if (!elementName) {
+        var className = Core.pathGet(object, ["constructor", "name"]);
+        if (!className) {
+          console.log("WARNING: no class name for value " + object);
+        } else {
+          elementName = elementNameMappings[className];
+          if (!elementName) {
+            console.log("WARNING: could not map class name " + className + " to an XML element name");
+          }
+        }
+      }
+      if (elementName) {
+        var doc = element.ownerDocument || document;
+        var child = doc.createElement(elementName);
 
-    name() {
-      return nameOf(this.class_a) + " -> " + nameOf(this.class_b);
+        // navigate child properties...
+        var fn = object.saveToElement;
+        if (fn) {
+          fn.apply(object, [child]);
+        } else {
+          angular.forEach(object, (value, key) => {
+            console.log("has key " + key + " value " + value);
+          });
+        }
+        element.appendChild(child);
+        answer = child;
+      }
     }
+    return answer;
   }
 
-  function nameOf(object: any) {
+  export function  nameOf(object: any) {
     var text = angular.isObject(object) ? object["value"] : null;
     if (!text && angular.isString(object)) {
       text = object;
@@ -156,23 +218,12 @@ module Dozer {
     return text || "?";
   }
 
-  export class MappingClass {
-    constructor(public value: string) {
-    }
-  }
 
-  export class Field {
-    constructor(public a: FieldDefinition, public b: FieldDefinition) {
-    }
-
-    name() {
-      return nameOf(this.a) + " -> " + nameOf(this.b);
-    }
-
-  }
-
-  export class FieldDefinition {
-    constructor(public value: string) {
+  export function addTextNode(element, text: string) {
+    if (text) {
+      var doc = element.ownerDocument || document;
+      var child = doc.createTextNode(text);
+      element.appendChild(child);
     }
   }
 }

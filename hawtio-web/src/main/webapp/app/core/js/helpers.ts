@@ -534,8 +534,13 @@ module Core {
     var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
     var value = object;
     angular.forEach(pathArray, (name) => {
-      if (angular.isObject(value)) {
-        value = value[name];
+      if (value) {
+        try {
+          value = value[name];
+        } catch (e) {
+          // ignore errors
+          return null;
+        }
       } else {
         return null;
       }
