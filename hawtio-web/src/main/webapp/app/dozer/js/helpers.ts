@@ -220,7 +220,7 @@ module Dozer {
           });
         }
         // if we have any element children then add newline text node
-        if (child.children && child.children.length) {
+        if ($(child).children().length) {
           //var text = indentText(indentLevel - 1);
           var text = indentText(indentLevel);
           Dozer.addTextNode(child, text);
