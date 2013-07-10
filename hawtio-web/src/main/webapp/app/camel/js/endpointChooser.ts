@@ -221,14 +221,14 @@ module Camel {
       }
     });
 
-    $scope.endpointCompletions = () => {
+    $scope.endpointCompletions = (completionText) => {
       var answer = [];
       var mbean = findCamelContextMBean();
       var componentName = $scope.selectedComponentName;
       var endpointParameters = {};
-      console.log("component " + $scope.selectedComponentName + " endpointPath " +  $scope.endpointPath);
+      console.log("component " + $scope.selectedComponentName + " endpointPath " +  $scope.endpointPath + " completion text: " + completionText);
       // TODO bit of a hack here - for scope issues sometimes the endpointPath is defined in a child scope!
-      var completionText = $scope.endpointPath || $scope.$$childHead.endpointPath || "";
+      //var completionText = $scope.endpointPath || $scope.$$childHead.endpointPath || "";
       if (mbean && componentName && completionText) {
         answer = $scope.jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
       }

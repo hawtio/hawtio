@@ -146,7 +146,7 @@
 
                   <div class="controls">
                     <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="name"
-                           typeahead="title for title in endpointCompletions() | filter:$viewValue"
+                           typeahead="title for title in endpointCompletions($viewValue) | filter:$viewValue"
                            typeahead-editable='true'
                            min-length="1">
                   </div>
