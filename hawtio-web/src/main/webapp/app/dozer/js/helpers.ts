@@ -42,6 +42,44 @@ module Dozer {
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlText;
   }
 
+  export function findUnmappedFields(workspace: Workspace, mapping: Mapping, fn) {
+    // lets find the fields which are unmapped
+    var className = mapping.class_a.value;
+    findProperties(workspace, className, (properties) => {
+      var answer = [];
+      angular.forEach(properties, (property) => {
+        console.log("got property " + JSON.stringify(property, null, "  "));
+        var name = property.name;
+        if (name) {
+          if (mapping.hasFromField(name)) {
+            // ignore this one
+          } else {
+            // TODO auto-detect this property name in the to classes?
+            answer.push({
+              name: name,
+              property: property
+            });
+          }
+        }
+      });
+      fn(answer);
+    })
+  }
+
+  export function findProperties(workspace: Workspace, className: string, fn) {
+    var mbean = getIntrospectorMBean(workspace);
+    if (mbean) {
+      workspace.jolokia.execute(mbean, "getProperties", className, onSuccess(fn));
+    } else {
+      fn([]);
+    }
+  }
+
+
+  export function getIntrospectorMBean(workspace: Workspace) {
+    return Core.getMBeanTypeObjectName(workspace, "io.hawt.introspect", "Introspector");
+  }
+
   export function loadModelFromTree(rootTreeNode, oldModel: Mappings): Mappings {
     oldModel.mappings = [];
     angular.forEach(rootTreeNode.childList, (treeNode) => {

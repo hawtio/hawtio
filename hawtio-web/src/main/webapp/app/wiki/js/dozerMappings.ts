@@ -6,6 +6,7 @@ module Wiki {
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
     $scope.deleteDialog = false;
+    $scope.unmappedFieldsAllEnabled = false;
 
     $scope.selectedItems = [];
     $scope.mappings = [];
@@ -67,6 +68,19 @@ module Wiki {
     });
 
 
+    $scope.addField = () => {
+      if ($scope.selectedMapping) {
+        // lets find all the possible unmapped fields we can map from...
+        Dozer.findUnmappedFields(workspace, $scope.selectedMapping, (data) => {
+          console.log("has unmapped data fields: " + data);
+          $scope.unmappedFields = data;
+          $scope.unmappedFieldsAllEnabled = false;
+          $scope.addDialog.open();
+          Core.$apply($scope);
+        });
+      }
+    };
+
     $scope.addAndCloseDialog = () => {
       /*
        var nodeModel = $scope.selectedNodeModel();
@@ -101,18 +115,15 @@ module Wiki {
     };
 
     $scope.save = () => {
-      console.log("Saving the dozer mapping file!");
       if ($scope.model) {
         // lets copy the mappings from the tree
-        //var model = $scope.model;
         var model = Dozer.loadModelFromTree($scope.rootTreeNode, $scope.model);
         var text = Dozer.saveToXmlText(model);
         if (text) {
-          console.log("saving model " + text);
-
           var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
           wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
             Wiki.onComplete(status);
+            notification("info", "Saved " + $scope.pageId)
             goToView();
             Core.$apply($scope);
           });
@@ -137,7 +148,6 @@ module Wiki {
           added.select(true);
           added.activate(true);
         }
-        console.log("added!");
       }
     };
 
@@ -151,6 +161,7 @@ module Wiki {
       $scope.propertiesTemplate = null;
       $scope.dozerEntity = null;
       $scope.selectedDescription = "";
+      $scope.selectedMapping = null;
       if (folder) {
         var entity = folder.entity;
         $scope.dozerEntity = entity;
@@ -160,17 +171,33 @@ module Wiki {
           $scope.propertiesTemplate = propertiesTemplate;
           $scope.nodeModel = io_hawt_dozer_schema_Field;
           $scope.selectedDescription = "Field Mapping";
+          $scope.selectedMapping = Core.pathGet(folder, ["parent", "entity"]);
         }
         else if (entity instanceof Dozer.Mapping) {
           //var mapping: Dozer.Mapping = entity;
           $scope.propertiesTemplate = propertiesTemplate;
           $scope.nodeModel = io_hawt_dozer_schema_Mapping;
           $scope.selectedDescription = "Class Mapping";
+          $scope.selectedMapping = entity;
         }
       }
       Core.$apply($scope);
     };
 
+
+    $scope.toggleUnmappedFieldEnabled = () => {
+      angular.forEach($scope.unmappedFields, (unmappedField) => {
+        unmappedField.enabled = $scope.unmappedFieldsAllEnabled;
+      });
+    };
+
+    $scope.onChangeUnmappedFieldEnabled = () => {
+      if ($scope.unmappedFields.all(f => f.enabled) && ! $scope.unmappedFieldsAllEnabled) {
+        $scope.unmappedFieldsAllEnabled = true;
+      } else if ($scope.unmappedFields.all(f => !f.enabled) && $scope.unmappedFieldsAllEnabled) {
+        $scope.unmappedFieldsAllEnabled = false;
+      }
+    };
 
     updateView();
 

@@ -13,6 +13,14 @@ module Dozer {
       return nameOf(this.class_a) + " -> " + nameOf(this.class_b);
     }
 
+    hasFromField(name: string) {
+      return this.fields.find(f => name === f.a.value);
+    }
+
+    hasToField(name: string) {
+      return this.fields.find(f => name === f.b.value);
+    }
+
     saveToElement(element) {
       appendElement(this.class_a, element, "class-a", 2);
       appendElement(this.class_b, element, "class-b", 2);
