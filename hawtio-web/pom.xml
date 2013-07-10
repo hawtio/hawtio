@@ -465,6 +465,11 @@
             <version>${fabric-version}</version>
           </dependency>
           <dependency>
+            <groupId>org.fusesource.fabric</groupId>
+            <artifactId>fabric-api</artifactId>
+            <version>${fabric-version}</version>
+          </dependency>
+          <dependency>
             <groupId>io.hawt</groupId>
             <artifactId>hawtio-dozer-schemagen</artifactId>
             <version>${project.version}</version>
