@@ -6,7 +6,6 @@ module Wiki {
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
     $scope.deleteDialog = false;
-    $scope.unmappedFieldsAllEnabled = false;
     $scope.unmappedFieldsHasValid = false;
 
     $scope.selectedItems = [];
@@ -90,7 +89,6 @@ module Wiki {
         Dozer.findUnmappedFields(workspace, $scope.selectedMapping, (data) => {
           console.log("has unmapped data fields: " + data);
           $scope.unmappedFields = data;
-          $scope.unmappedFieldsAllEnabled = false;
           $scope.unmappedFieldsHasValid = false;
           $scope.addDialog.open();
           Core.$apply($scope);
@@ -211,21 +209,6 @@ module Wiki {
     };
 
 
-/*
-    $scope.toggleUnmappedFieldEnabled = () => {
-      angular.forEach($scope.unmappedFields, (unmappedField) => {
-        unmappedField.enabled = $scope.unmappedFieldsAllEnabled;
-      });
-    };
-
-    $scope.onChangeUnmappedFieldEnabled = () => {
-      if ($scope.unmappedFields.all(f => f.enabled) && ! $scope.unmappedFieldsAllEnabled) {
-        $scope.unmappedFieldsAllEnabled = true;
-      } else if ($scope.unmappedFields.all(f => !f.enabled) && $scope.unmappedFieldsAllEnabled) {
-        $scope.unmappedFieldsAllEnabled = false;
-      }
-    };
-*/
 
     $scope.onUnmappedFieldChange = (unmappedField) => {
       unmappedField.valid = unmappedField.toField ? true : false;
