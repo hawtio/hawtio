@@ -156,7 +156,7 @@ module ActiveMQ {
       }
     };
 
-    $scope.queueNames = () => {
+    $scope.queueNames = (completionText) => {
       var queuesFolder = getSelectionQueuesFolder(workspace);
       return (queuesFolder) ? queuesFolder.children.map(n => n.title) : [];
     };
