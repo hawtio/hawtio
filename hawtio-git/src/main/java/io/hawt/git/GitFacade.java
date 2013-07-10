@@ -679,6 +679,16 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     protected void doPull() {
         CredentialsProvider cp = getCredentials();
         try {
+            // if there is no remote URL then don't pull
+            StoredConfig config = git.getRepository().getConfig();
+            String url = config.getString("remote", "origin", "url");
+            if (Strings.isBlank(url)) {
+                LOG.debug("No remove repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                return;
+            } else {
+                LOG.debug("Performing a pull in git repository " + getConfigDirectory().getCanonicalPath() + " on remote URL: " + url);
+            }
+
             git.pull().setCredentialsProvider(cp).setRebase(true).call();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Performed a git pull to update the local configuration repository at " + getConfigDirectory().getCanonicalPath());
@@ -686,7 +696,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         } catch (Throwable e) {
             String credText = "";
             if (cp instanceof UsernamePasswordCredentialsProvider) {
-
             }
             LOG.error("Failed to pull from the remote git repo with credentials " + cp + ". Reason: " + e, e);
         }
