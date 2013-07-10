@@ -33,10 +33,28 @@
     </div>
   </div>
 
-<!--
-<div class="gridStyle" hawtio-datatable="gridOptions"></div>
-  <div class="gridStyle" ng-grid="gridOptions"></div>
--->
+  <div class="row-fluid">
+    <ul class="nav nav-tabs">
+      <li>
+        <a href='' title="Add a new mapping between two classes" ng-click="addMapping()" data-placement="bottom">
+          <i class="icon-plus"></i> Class</a></li>
+      <li>
+        <a href='' title="Add new mappings between fields in these classes" ng-click="addField()" data-placement="bottom">
+          <i class="icon-plus"></i> Field</a></li>
+      <li>
+        <a href='' title="Deletes the selected item" ng-disabled="!canDelete()" ng-click="deleteDialog = true" data-placement="bottom">
+          <i class="icon-remove"></i> Delete</a></li>
+    </ul>
+    <div hawtio-confirm-dialog="deleteDialog"
+         ok-button-text="Delete"
+         on-ok="removeNode()">
+      <div class="dialog-body">
+        <p>You are about to delete the selected {{selectedDescription}}
+        </p>
+        <p>This operation cannot be undone so please be careful.</p>
+      </div>
+    </div>
+  </div>
 
   <div class="row-fluid">
     <div id="tree-container" class="span4">

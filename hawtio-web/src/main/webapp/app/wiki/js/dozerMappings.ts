@@ -5,6 +5,7 @@ module Wiki {
     $scope.schema = {};
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
+    $scope.deleteDialog = false;
 
     $scope.selectedItems = [];
     $scope.mappings = [];
@@ -76,20 +77,18 @@ module Wiki {
       $scope.addDialog.close();
     };
 
+    $scope.canDelete = () => {
+      return $scope.selectedFolder ? true : false;
+    };
+
     $scope.removeNode = () => {
-      /*
-       var folder = getSelectedOrRouteFolder();
-       if (folder) {
-       var nodeName = Camel.getFolderCamelNodeId(folder);
-       folder.detach();
-       if ("route" === nodeName) {
-       // lets also clear the selected route node
-       $scope.selectedRouteId = null;
-       }
-       updateSelection(null);
-       treeModified();
-       }
-       */
+      if ($scope.selectedFolder && $scope.treeNode) {
+        // TODO deal with deleting fields
+        $scope.selectedFolder.detach();
+        $scope.treeNode.remove();
+        $scope.selectedFolder = null;
+        $scope.treeNode = null;
+      }
     };
 
     $scope.save = () => {
@@ -117,6 +116,22 @@ module Wiki {
       // TODO show dialog if folks are about to lose changes...
     };
 
+    $scope.addMapping = () => {
+      var treeNode = $scope.rootTreeNode;
+      if (treeNode) {
+        var parentFolder = treeNode.data;
+        var mapping = new Dozer.Mapping();
+        var addedNode = Dozer.createMappingFolder(mapping, parentFolder);
+        var added = treeNode.addChild(addedNode);
+        if (added) {
+          added.expand(true);
+          added.select(true);
+          added.activate(true);
+        }
+        console.log("added!");
+      }
+    };
+
     $scope.onRootTreeNode = (rootTreeNode) => {
       $scope.rootTreeNode = rootTreeNode;
     };
@@ -126,6 +141,7 @@ module Wiki {
       $scope.treeNode = treeNode;
       $scope.propertiesTemplate = null;
       $scope.dozerEntity = null;
+      $scope.selectedDescription = "";
       if (folder) {
         var entity = folder.entity;
         $scope.dozerEntity = entity;
@@ -134,11 +150,13 @@ module Wiki {
           //var field: Dozer.Field = entity;
           $scope.propertiesTemplate = propertiesTemplate;
           $scope.nodeModel = io_hawt_dozer_schema_Field;
+          $scope.selectedDescription = "Field Mapping";
         }
         else if (entity instanceof Dozer.Mapping) {
           //var mapping: Dozer.Mapping = entity;
           $scope.propertiesTemplate = propertiesTemplate;
           $scope.nodeModel = io_hawt_dozer_schema_Mapping;
+          $scope.selectedDescription = "Class Mapping";
         }
       }
       Core.$apply($scope);

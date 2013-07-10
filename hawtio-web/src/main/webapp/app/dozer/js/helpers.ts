@@ -64,25 +64,27 @@ module Dozer {
     folder.key = Core.toSafeDomID(id);
 
     angular.forEach(model.mappings, (mapping) => {
-      var mappingName = mapping.name();
-      var mappingFolder = new Folder(mappingName);
-      mappingFolder.addClass = "net-sourceforge-dozer-mapping";
-      mappingFolder.typeName = "mapping";
-      mappingFolder.domain = Dozer.jmxDomain;
-      mappingFolder.key = folder.key + "_" + Core.toSafeDomID(mappingName);
-      mappingFolder.parent = folder;
-      mappingFolder.entity = mapping;
-
-/*
-      mappingFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
-      mappingFolder.icon = imageUrl;
-*/
-
+      var mappingFolder = createMappingFolder(mapping, folder);
       folder.children.push(mappingFolder);
-
-      addMappingFields(mappingFolder, mapping);
     });
     return folder;
+  }
+
+  export function createMappingFolder(mapping, parentFolder) {
+    var mappingName = mapping.name();
+    var mappingFolder = new Folder(mappingName);
+    mappingFolder.addClass = "net-sourceforge-dozer-mapping";
+    mappingFolder.typeName = "mapping";
+    mappingFolder.domain = Dozer.jmxDomain;
+    mappingFolder.key = (parentFolder ? parentFolder.key + "_" : "") + Core.toSafeDomID(mappingName);
+    mappingFolder.parent = parentFolder;
+    mappingFolder.entity = mapping;
+    /*
+          mappingFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
+          mappingFolder.icon = imageUrl;
+          */
+    addMappingFields(mappingFolder, mapping);
+    return mappingFolder;
   }
 
   function addMappingFields(folder: Folder, mapping: Mapping) {
