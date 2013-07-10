@@ -18,6 +18,7 @@
 
   <modules>
     <module>example-camel</module>
+    <module>example-dozer-models</module>
     <module>example-infinispan</module>
   </modules>
 

@@ -112,6 +112,12 @@
 
     <dependency>
       <groupId>io.hawt.example.services</groupId>
+      <artifactId>example-dozer-models</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt.example.services</groupId>
       <artifactId>example-infinispan</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
