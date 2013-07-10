@@ -76,20 +76,12 @@
         <div class="modal-body">
           <table class="">
             <tr>
-              <td>
-                <input type="checkbox" ng-model="unmappedFieldsAllEnabled" ng-click="toggleUnmappedFieldEnabled()"
-                       title="Include or exclude all of the fields"/>
-              </td>
               <th>From</th>
               <th></th>
               <th>To</th>
               <th>Exclude</th>
             </tr>
             <tr ng-repeat="unmapped in unmappedFields">
-              <td>
-                <input type="checkbox" ng-model="unmapped.enabled" ng-click="onChangeUnmappedFieldEnabled()"
-                       title="Whether to include this field in the mapping rules"/>
-              </td>
               <td>
                 {{unmapped.name}}
               </td>

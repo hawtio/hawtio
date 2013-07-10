@@ -211,6 +211,7 @@ module Wiki {
     };
 
 
+/*
     $scope.toggleUnmappedFieldEnabled = () => {
       angular.forEach($scope.unmappedFields, (unmappedField) => {
         unmappedField.enabled = $scope.unmappedFieldsAllEnabled;
@@ -224,6 +225,7 @@ module Wiki {
         $scope.unmappedFieldsAllEnabled = false;
       }
     };
+*/
 
     $scope.onUnmappedFieldChange = (unmappedField) => {
       unmappedField.valid = unmappedField.toField ? true : false;
