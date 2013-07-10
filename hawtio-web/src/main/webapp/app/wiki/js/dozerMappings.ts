@@ -7,6 +7,7 @@ module Wiki {
     $scope.propertiesDialog = new Core.Dialog();
     $scope.deleteDialog = false;
     $scope.unmappedFieldsAllEnabled = false;
+    $scope.unmappedFieldsHasValid = false;
 
     $scope.selectedItems = [];
     $scope.mappings = [];
@@ -68,6 +69,21 @@ module Wiki {
     });
 
 
+    $scope.addMapping = () => {
+      var treeNode = $scope.rootTreeNode;
+      if (treeNode) {
+        var parentFolder = treeNode.data;
+        var mapping = new Dozer.Mapping();
+        var addedNode = Dozer.createMappingFolder(mapping, parentFolder);
+        var added = treeNode.addChild(addedNode);
+        if (added) {
+          added.expand(true);
+          added.select(true);
+          added.activate(true);
+        }
+      }
+    };
+
     $scope.addField = () => {
       if ($scope.selectedMapping) {
         // lets find all the possible unmapped fields we can map from...
@@ -75,6 +91,7 @@ module Wiki {
           console.log("has unmapped data fields: " + data);
           $scope.unmappedFields = data;
           $scope.unmappedFieldsAllEnabled = false;
+          $scope.unmappedFieldsHasValid = false;
           $scope.addDialog.open();
           Core.$apply($scope);
         });
@@ -82,12 +99,30 @@ module Wiki {
     };
 
     $scope.addAndCloseDialog = () => {
-      /*
-       var nodeModel = $scope.selectedNodeModel();
-       if (nodeModel) {
-       addNewNode(nodeModel);
-       }
-       */
+      console.log("About to add the unmapped fields " + JSON.stringify($scope.unmappedFields, null, "  "));
+      if ($scope.selectedMapping) {
+        // TODO whats the folder???
+        angular.forEach($scope.unmappedFields, (unmappedField) => {
+          if (unmappedField.valid) {
+            // TODO detect exclude!
+            var field = new Dozer.Field(new Dozer.FieldDefinition(unmappedField.name), new Dozer.FieldDefinition(unmappedField.toField));
+            $scope.selectedMapping.fields.push(field);
+            var treeNode = $scope.selectedMappingTreeNode;
+            var mappingFolder = $scope.selectedMappingFolder;
+            if (treeNode && mappingFolder) {
+              var fieldFolder = Dozer.addMappingFieldFolder(field, mappingFolder);
+              var added = treeNode.addChild(fieldFolder);
+              if (added) {
+                added.expand(true);
+                added.select(true);
+                added.activate(true);
+              }
+            } else {
+              console.log("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
+            }
+          }
+        });
+      }
       $scope.addDialog.close();
     };
 
@@ -136,21 +171,6 @@ module Wiki {
       // TODO show dialog if folks are about to lose changes...
     };
 
-    $scope.addMapping = () => {
-      var treeNode = $scope.rootTreeNode;
-      if (treeNode) {
-        var parentFolder = treeNode.data;
-        var mapping = new Dozer.Mapping();
-        var addedNode = Dozer.createMappingFolder(mapping, parentFolder);
-        var added = treeNode.addChild(addedNode);
-        if (added) {
-          added.expand(true);
-          added.select(true);
-          added.activate(true);
-        }
-      }
-    };
-
     $scope.onRootTreeNode = (rootTreeNode) => {
       $scope.rootTreeNode = rootTreeNode;
     };
@@ -162,6 +182,8 @@ module Wiki {
       $scope.dozerEntity = null;
       $scope.selectedDescription = "";
       $scope.selectedMapping = null;
+      $scope.selectedMappingTreeNode = null;
+      $scope.selectedMappingFolder = null;
       if (folder) {
         var entity = folder.entity;
         $scope.dozerEntity = entity;
@@ -172,6 +194,8 @@ module Wiki {
           $scope.nodeModel = io_hawt_dozer_schema_Field;
           $scope.selectedDescription = "Field Mapping";
           $scope.selectedMapping = Core.pathGet(folder, ["parent", "entity"]);
+          $scope.selectedMappingFolder = folder.parent;
+          $scope.selectedMappingTreeNode = treeNode.parent;
         }
         else if (entity instanceof Dozer.Mapping) {
           //var mapping: Dozer.Mapping = entity;
@@ -179,6 +203,8 @@ module Wiki {
           $scope.nodeModel = io_hawt_dozer_schema_Mapping;
           $scope.selectedDescription = "Class Mapping";
           $scope.selectedMapping = entity;
+          $scope.selectedMappingFolder = folder;
+          $scope.selectedMappingTreeNode = treeNode;
         }
       }
       Core.$apply($scope);
@@ -197,6 +223,11 @@ module Wiki {
       } else if ($scope.unmappedFields.all(f => !f.enabled) && $scope.unmappedFieldsAllEnabled) {
         $scope.unmappedFieldsAllEnabled = false;
       }
+    };
+
+    $scope.onUnmappedFieldChange = (unmappedField) => {
+      unmappedField.valid = unmappedField.toField ? true : false;
+      $scope.unmappedFieldsHasValid = $scope.unmappedFields.find(f => f.valid);
     };
 
     updateView();

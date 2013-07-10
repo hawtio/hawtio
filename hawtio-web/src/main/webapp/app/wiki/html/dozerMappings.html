@@ -83,6 +83,7 @@
               <th>From</th>
               <th></th>
               <th>To</th>
+              <th>Exclude</th>
             </tr>
             <tr ng-repeat="unmapped in unmappedFields">
               <td>
@@ -94,12 +95,18 @@
               </td>
               <td>-></td>
               <td>
+                <input type="text" ng-model="unmapped.toField" ng-change="onUnmappedFieldChange(unmapped)"
+                       title="The field to map to"/>
+              </td>
+              <td>
+                <input type="checkbox" ng-model="unmapped.exclude" ng-click="onUnmappedFieldChange(unmapped)"
+                       title="Whether or not the field should be excluded"/>
               </td>
             </tr>
           </table>
         </div>
         <div class="modal-footer">
-          <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="false"
+          <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!unmappedFieldsHasValid"
                  value="Add">
           <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
         </div>

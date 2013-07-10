@@ -121,29 +121,28 @@ module Dozer {
     /*
           mappingFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
           */
-    addMappingFields(mappingFolder, mapping);
+    angular.forEach(mapping.fields, (field) => {
+      addMappingFieldFolder(field, mappingFolder);
+    });
     return mappingFolder;
   }
 
-  function addMappingFields(folder: Folder, mapping: Mapping) {
+  export function addMappingFieldFolder(field, mappingFolder) {
+    var name = field.name();
+    var fieldFolder = new Folder(name);
+    fieldFolder.addClass = "net-sourceforge-dozer-field";
+    fieldFolder.typeName = "field";
+    fieldFolder.domain = Dozer.jmxDomain;
+    fieldFolder.key = mappingFolder.key + "_" + Core.toSafeDomID(name);
+    fieldFolder.parent = mappingFolder;
+    fieldFolder.entity = field;
+    fieldFolder.icon = url("/app/dozer/img/attribute.gif");
+    /*
+          fieldFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
+          */
 
-    angular.forEach(mapping.fields, (field) => {
-      var name = field.name();
-      var fieldFolder = new Folder(name);
-      fieldFolder.addClass = "net-sourceforge-dozer-field";
-      fieldFolder.typeName = "field";
-      fieldFolder.domain = Dozer.jmxDomain;
-      fieldFolder.key = folder.key + "_" + Core.toSafeDomID(name);
-      fieldFolder.parent = folder;
-      fieldFolder.entity = field;
-      fieldFolder.icon = url("/app/dozer/img/attribute.gif");
-
-/*
-      fieldFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
-*/
-
-      folder.children.push(fieldFolder);
-    });
+    mappingFolder.children.push(fieldFolder);
+    return fieldFolder;
   }
 
   function createMapping(element) {
