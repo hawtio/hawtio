@@ -14,7 +14,7 @@ module Fabric {
     $scope.versions = [];
     $scope.profiles = [];
 
-    $scope.selectedVersion = undefined;
+    $scope.selectedVersion = {};
 
     $scope.selectedProfiles = [];
     $scope.selectedProfileIds = '';
@@ -80,43 +80,7 @@ module Fabric {
     $scope.$watch('selectedVersion', (newValue, oldValue) => {
       if (oldValue !== newValue) {
         $scope.selectedVersionId = $scope.selectedVersion.id;
-        $scope.profiles = $scope.selectedVersion.profiles.map((p) => { return { id: p }; });
         $location.search('versionId', $scope.selectedVersionId);
-      }
-    }, true);
-
-
-    $scope.$watch('profiles', (newValue, oldValue) => {
-
-      if (oldValue !== newValue) {
-        var sp = $scope.selectedProfileIds.split(',');
-        newValue.each((profile) => {
-
-          if(!angular.isDefined(profile.selected)) {
-
-            var selected = false;
-
-            if (oldValue) {
-              var p = oldValue.find((p) => { return p.id === profile.id });
-              if (p) {
-                selected = p.selected;
-              }
-            }
-
-            if (!selected && sp.length > 0) {
-              selected = sp.any(profile.id);
-            }
-
-            profile.selected = selected;
-          }
-        });
-      }
-    });
-
-
-    $scope.$watch('profiles', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        $scope.selectedProfiles = $scope.profiles.filter((p) => { return p.selected });
       }
     }, true);
 
@@ -131,15 +95,6 @@ module Fabric {
     $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
       $location.search('profileIds', $scope.selectedProfileIds);
     });
-
-
-    $scope.render = (response) => {
-      if (!Object.equal($scope.response, response.value)) {
-        $scope.response = response.value;
-        $scope.versions = Object.clone($scope.response);
-        $scope.$apply();
-      }
-    }
 
 
     $scope.renderForm = () => {
@@ -237,10 +192,6 @@ module Fabric {
     }
 
     $scope.$watch('activeTab', $scope.renderForm);
-
-    Core.register(jolokia, $scope, [
-      {type: 'exec', mbean: managerMBean, operation: $scope.versionsOp }
-    ], onSuccess($scope.render));
 
   }
 

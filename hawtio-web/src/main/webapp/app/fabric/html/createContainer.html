@@ -32,29 +32,8 @@
 
     <div class="span5">
       <p>2. Select the target version and add the required profiles to deploy</p>
-      <form class="form-horizontal no-bottom-margin">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Version: </label>
-            <div class="controls">
-              <select ng-model="selectedVersion" ng-options="version.id for version in versions"></select>
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Profiles: </label>
-            <div class="controls">
-              <p>
-                <input class="search-query" type="text" placeholder="Filter..." ng-model="profileIdFilter">
-              </p>
-              <p>
-                <label class="checkbox" ng-repeat="profile in profiles" ng-show="profile.id.has(profileIdFilter)">
-                  <input type="checkbox" ng-model="profile.selected"> {{profile.id}}
-                </label>
-              </p>
-            </div>
-        </fieldset>
-
-      </form>
+      <div fabric-version-selector='selectedVersion'></div>
+      <div fabric-profile-selector='selectedProfiles' version-id='selectedVersion.id'></div>
     </div>
 
   </div>
