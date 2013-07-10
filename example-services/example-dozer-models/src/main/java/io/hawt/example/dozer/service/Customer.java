@@ -14,39 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.example.models.model;
+package io.hawt.example.dozer.service;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Address {
+public class Customer {
 
-    private String zipCode;
-    private String streetName;
+    private String firstName;
 
-    public Address() {
+    private String lastName;
+
+    private String street;
+
+    private String zip;
+
+    public Customer() {
     }
 
-    public Address(String zipCode, String streetName) {
-        this.zipCode = zipCode;
-        this.streetName = streetName;
+    public Customer(String firstName, String lastName, String zip, String street) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.zip = zip;
+        this.street = street;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getStreetName() {
-        return streetName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
     @Override
@@ -63,4 +86,5 @@ public class Address {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

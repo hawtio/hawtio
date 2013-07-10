@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.example.models.service;
+package io.hawt.example.dozer.dto;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Customer {
+import java.io.Serializable;
 
+public class CustomerDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private String firstName;
-
     private String lastName;
+    private AddressDTO address;
 
-    private String street;
-
-    private String zip;
-
-    public Customer() {
-    }
-
-    public Customer(String firstName, String lastName, String zip, String street) {
+    public CustomerDTO(String firstName, String lastName, AddressDTO address) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.zip = zip;
-        this.street = street;
+        this.address = address;
     }
 
     public String getFirstName() {
@@ -56,35 +48,11 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public String getStreet() {
-        return street;
+    public AddressDTO getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setAddress(AddressDTO address) {
+        this.address = address;
     }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
 }
