@@ -79,9 +79,9 @@ module Dozer {
     mappingFolder.key = (parentFolder ? parentFolder.key + "_" : "") + Core.toSafeDomID(mappingName);
     mappingFolder.parent = parentFolder;
     mappingFolder.entity = mapping;
+    mappingFolder.icon = url("/app/dozer/img/class.gif");
     /*
           mappingFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
-          mappingFolder.icon = imageUrl;
           */
     addMappingFields(mappingFolder, mapping);
     return mappingFolder;
@@ -98,10 +98,10 @@ module Dozer {
       fieldFolder.key = folder.key + "_" + Core.toSafeDomID(name);
       fieldFolder.parent = folder;
       fieldFolder.entity = field;
+      fieldFolder.icon = url("/app/dozer/img/attribute.gif");
 
 /*
       fieldFolder.tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || id;
-      fieldFolder.icon = imageUrl;
 */
 
       folder.children.push(fieldFolder);
