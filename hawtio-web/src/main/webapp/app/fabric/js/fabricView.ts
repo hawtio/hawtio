@@ -2,7 +2,7 @@ module Fabric {
 
   export function FabricViewController($scope, $location, jolokia, localStorage) {
 
-    $scope.containerArgs = ["id", "alive", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
+    $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
     $scope.versionsOp = 'versions()';
     $scope.containersOp = 'containers(java.util.List)';
 
@@ -577,10 +577,14 @@ module Fabric {
     };
 
     $scope.getSelectedClass = (obj) => {
+      var answer = [];
       if (obj.selected) {
-        return 'selected';
+        answer.push('selected');
       }
-      return '';
+      if (angular.isDefined(obj['root']) && obj['root'] === false) {
+        answer.push('child-container');
+      }
+      return answer.join(' ');
     };
 
 
@@ -727,6 +731,20 @@ module Fabric {
 
       if ($scope.containersResponse !== response) {
         $scope.containersResponse = response;
+
+        var rootContainers = newContainers.exclude((c) => { return !c.root; });
+        var childContainers = newContainers.exclude((c) => { return c.root; });
+
+        if (childContainers.length > 0) {
+          var tmp = [];
+          rootContainers = rootContainers.sortBy('id');
+          rootContainers.each((c) => {
+            tmp.add(c);
+            var children = childContainers.exclude((child) => { return child.parentId !== c.id });
+            tmp.add(children.sortBy('id'));
+          });
+          newContainers = tmp;
+        }
 
         newContainers.each((container) => {
           var c = $scope.containers.find((c) => { return c.id === container.id; });
