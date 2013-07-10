@@ -103,7 +103,7 @@ module Wiki {
         angular.forEach($scope.unmappedFields, (unmappedField) => {
           if (unmappedField.valid) {
             // TODO detect exclude!
-            var field = new Dozer.Field(new Dozer.FieldDefinition(unmappedField.name), new Dozer.FieldDefinition(unmappedField.toField));
+            var field = new Dozer.Field(new Dozer.FieldDefinition(unmappedField.fromField), new Dozer.FieldDefinition(unmappedField.toField));
             $scope.selectedMapping.fields.push(field);
             var treeNode = $scope.selectedMappingTreeNode;
             var mappingFolder = $scope.selectedMappingFolder;
@@ -213,6 +213,13 @@ module Wiki {
     $scope.onUnmappedFieldChange = (unmappedField) => {
       unmappedField.valid = unmappedField.toField ? true : false;
       $scope.unmappedFieldsHasValid = $scope.unmappedFields.find(f => f.valid);
+    };
+
+    $scope.toFieldNames = (text) => {
+      var toClass = Core.pathGet($scope.selectedMapping, ["class_b", "value"]);
+      console.log("Finding the to field names for expression '" + text + "'  on class " + toClass);
+      var properties = Dozer.findProperties(workspace, toClass, null);
+      return properties.map(p => p.name);
     };
 
     updateView();

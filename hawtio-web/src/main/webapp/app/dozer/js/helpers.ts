@@ -55,10 +55,7 @@ module Dozer {
             // ignore this one
           } else {
             // TODO auto-detect this property name in the to classes?
-            answer.push({
-              name: name,
-              property: property
-            });
+            answer.push(new UnmappedField(name, property));
           }
         }
       });
@@ -69,9 +66,13 @@ module Dozer {
   export function findProperties(workspace: Workspace, className: string, fn) {
     var mbean = getIntrospectorMBean(workspace);
     if (mbean) {
-      workspace.jolokia.execute(mbean, "getProperties", className, onSuccess(fn));
+      return workspace.jolokia.execute(mbean, "getProperties", className, onSuccess(fn));
     } else {
-      fn([]);
+      if (fn) {
+        return fn([]);
+      } else {
+        return [];
+      }
     }
   }
 

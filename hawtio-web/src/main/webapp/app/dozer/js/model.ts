@@ -13,11 +13,11 @@ module Dozer {
       return nameOf(this.class_a) + " -> " + nameOf(this.class_b);
     }
 
-    hasFromField(name: string) {
+    hasFromField(name:string) {
       return this.fields.find(f => name === f.a.value);
     }
 
-    hasToField(name: string) {
+    hasToField(name:string) {
       return this.fields.find(f => name === f.b.value);
     }
 
@@ -28,7 +28,6 @@ module Dozer {
       appendAttributes(this, element, ["class_a", "class_b", "fields"]);
     }
   }
-
 
   export class MappingClass {
     constructor(public value:string) {
@@ -65,4 +64,8 @@ module Dozer {
     }
   }
 
+  export class UnmappedField {
+    constructor(public fromField:string, public property:any, public toField:string = null) {
+    }
+  }
 }

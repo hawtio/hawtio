@@ -83,11 +83,12 @@
             </tr>
             <tr ng-repeat="unmapped in unmappedFields">
               <td>
-                {{unmapped.name}}
+                {{unmapped.fromField}}
               </td>
               <td>-></td>
               <td>
                 <input type="text" ng-model="unmapped.toField" ng-change="onUnmappedFieldChange(unmapped)"
+                       typeahead="title for title in toFieldNames($viewValue) | filter:$viewValue" typeahead-editable='true'
                        title="The field to map to"/>
               </td>
               <td>
