@@ -37,6 +37,11 @@
       <artifactId>example-infinispan</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt.example.services</groupId>
+      <artifactId>example-dozer-models</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
