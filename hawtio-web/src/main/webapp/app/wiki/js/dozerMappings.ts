@@ -84,6 +84,15 @@ module Wiki {
     $scope.removeNode = () => {
       if ($scope.selectedFolder && $scope.treeNode) {
         // TODO deal with deleting fields
+        var folder = $scope.selectedFolder;
+        var entity = folder.entity;
+        if (entity instanceof Dozer.Field) {
+          // lets remove this from the parent mapping
+          var mapping = Core.pathGet(folder, ["parent", "entity"]);
+          if (mapping) {
+            mapping.fields.remove(entity);
+          }
+        }
         $scope.selectedFolder.detach();
         $scope.treeNode.remove();
         $scope.selectedFolder = null;
