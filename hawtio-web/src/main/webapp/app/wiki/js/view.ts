@@ -3,6 +3,10 @@ module Wiki {
   export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
     Wiki.initScope($scope, $routeParams, $location);
 
+    $scope.addDialog = new Core.Dialog();
+    $scope.createDocumentTree = Wiki.createWizardTree();
+    $scope.createDocumentTreeActivations = ["camel-spring.xml"];
+
     $scope.gridOptions = {
       data: 'children',
       displayFooter: false,
@@ -103,6 +107,20 @@ module Wiki {
 
     $scope.onCancel = (form) => {
       notification("success", "Clicked cancel!");
+    };
+
+
+    $scope.onCreateDocumentSelect = (node) => {
+      $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+    };
+
+    $scope.addAndCloseDialog = () => {
+      var template = $scope.selectedCreateDocumentTemplate;
+      if (template) {
+        var exemplar = template.exemplar;
+        console.log("Lets create an instance of template: " + exemplar);
+      }
+      $scope.addDialog.close();
     };
 
     updateView();

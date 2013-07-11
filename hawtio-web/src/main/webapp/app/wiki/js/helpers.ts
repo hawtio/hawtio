@@ -1,4 +1,3 @@
-
 module Wiki {
 
   export var camelNamespaces = ["http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint"];
@@ -8,6 +7,83 @@ module Wiki {
 
   export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/properties", "/wiki/dozer/mappings"];
 
+  /**
+   * The wizard tree for creating new content in the wiki
+   */
+  export var documentTemplates = [
+    {
+      label: "Markdown ReadMe Document",
+      tooltip: "A basic markup document using the Markdown wiki markup",
+      exemplar: "ReadMe.md"
+    },
+    {
+      label: "Integration Flows",
+      tooltip: "Camel routes for defining your integration flows",
+      children: [
+        {
+          label: "Camel XML document",
+          tooltip: "A vanilla Camel XML document for integration flows",
+          icon: "/app/camel/img/camel.png",
+          exemplar: "camel.xml"
+        },
+        {
+          label: "Camel OSGi Blueprint XML document",
+          tooltip: "A vanilla Camel XML document for integration flows when using OSGi Blueprint",
+          icon: "/app/camel/img/camel.png",
+          exemplar: "camel-blueprint.xml"
+        },
+        {
+          label: "Camel Spring XML document",
+          tooltip: "A vanilla Camel XML document for integration flows when using the Spring framework",
+          icon: "/app/camel/img/camel.png",
+          exemplar: "camel-spring.xml"
+        }
+      ]
+    },
+    {
+      label: "Data Mapping Document",
+      tooltip: "Dozer based configuration of mapping documents",
+      icon: "/app/dozer/img/dozer.gif",
+      exemplar: "dozerMapping.xml"
+    }
+  ];
+
+  /**
+   * Returns a new create documnet wizard tree
+   */
+  export function createWizardTree() {
+    var root = new Folder("New Documents");
+    addCreateWizardFolders(root, documentTemplates);
+    return root;
+  }
+
+  export function addCreateWizardFolders(parent: Folder, templates: any[]) {
+    angular.forEach(templates, (template) => {
+      var title = template.label || key;
+      var node = new Folder(title);
+      node.parent = parent;
+      node.entity = template;
+
+      var key = template.exemplar;
+      var parentKey = parent.key || "";
+      node.key = parentKey ? parentKey + "_" + key : key;
+      var icon = template.icon;
+      if (icon) {
+        node.icon = url(icon);
+      }
+      // compiler was complaining about 'label' had no idea where it's coming from
+      // var tooltip = value["tooltip"] || value["description"] || label;
+      var tooltip = template["tooltip"] || template["description"] || '';
+      node.tooltip = tooltip;
+      parent.children.push(node);
+
+      var children = template.children;
+      if (children) {
+        addCreateWizardFolders(node, children);
+      }
+    });
+  }
+
   export function startLink(branch:string) {
     var start = "#/wiki";
     if (branch) {
@@ -16,7 +92,7 @@ module Wiki {
     return start;
   }
 
-  export function viewLink(branch:string, pageId:string, $location, fileName: string = null) {
+  export function viewLink(branch:string, pageId:string, $location, fileName:string = null) {
     var link = null;
     var start = startLink(branch);
     if (pageId) {
@@ -68,7 +144,7 @@ module Wiki {
     return link;
   }
 
-  export function fileFormat(name: string, fileExtensionTypeRegistry) {
+  export function fileFormat(name:string, fileExtensionTypeRegistry) {
     var extension = fileExtension(name);
     var answer = null;
     angular.forEach(fileExtensionTypeRegistry, (array, key) => {
@@ -133,7 +209,7 @@ module Wiki {
     return pageId;
   }
 
-  export function pageIdFromURI(url: string) {
+  export function pageIdFromURI(url:string) {
     var wikiPrefix = "/wiki/";
     if (url && url.startsWith(wikiPrefix)) {
       var idx = url.indexOf("/", wikiPrefix.length + 1);
@@ -157,7 +233,7 @@ module Wiki {
   /**
    * Parses the given JSON text reporting to the user if there is a parse error
    */
-  export function parseJson(text: string) {
+  export function parseJson(text:string) {
     if (text) {
       try {
         return JSON.parse(text);

@@ -9,19 +9,28 @@
         <li class="pull-right">
           <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
              data-placement="bottom">
-            <i class="icon-edit"></i> Edit</a></li>
+            <i class="icon-edit"></i> Edit</a>
+        </li>
         <li class="pull-right">
           <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
              data-placement="bottom">
-            <i class="icon-comments-alt"></i> History</a></li>
+            <i class="icon-comments-alt"></i> History</a>
+        </li>
         <li class="pull-right">
+          <a title="Create new page" ng-click="addDialog.open()"
+             data-placement="bottom">
+            <i class="icon-plus"></i> Create</a>
+<!--
           <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
              data-placement="bottom">
-            <i class="icon-plus"></i> Create</a></li>
+            <i class="icon-plus"></i> Create</a>
+-->
+        </li>
         <li class="pull-right" ng-show="sourceLink()">
           <a ng-href="{{sourceLink()}}" title="View source code"
              data-placement="bottom">
-            <i class="icon-file-alt"></i> Source</a></li>
+            <i class="icon-file-alt"></i> Source</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -38,5 +47,33 @@
     </div>
 
     <div ng-include="sourceView" class="editor-autoresize"></div>
+  </div>
+
+  <div class="modal-large">
+    <div modal="addDialog.show" close="addDialog.close()" ng-options="addDialog.options">
+      <form class="form-horizontal no-bottom-margin" ng-submit="addAndCloseDialog()">
+        <div class="modal-header"><h4>Create New Document</h4></div>
+        <div class="modal-body">
+          <div class="control-group">
+            <div hawtio-tree="createDocumentTree" hideRoot="true" onSelect="onCreateDocumentSelect"
+                 activateNodes="createDocumentTreeActivations"></div>
+          </div>
+
+          <div class="control-group">
+            <label>name: </label>
+            <input name="fileName" type="text" ng-model="newDocumentName"
+                   placeholder="{{selectedCreateDocumentTemplate.exemplar}}"/>
+          </div>
+          <div class="control-group">
+            <p>{{selectedCreateDocumentTemplate.tooltip}}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedCreateDocumentTemplate.exemplar"
+                 value="Create">
+          <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
