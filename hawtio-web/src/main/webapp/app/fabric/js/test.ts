@@ -5,6 +5,10 @@ module Fabric {
     $scope.version = {};
     $scope.versionId = '';
 
+    $scope.osp = [];
+    $scope.vid = '1.0';
+    $scope.someProfiles = ['a-mq', 'aws-ec2'];
+
     $scope.selectedProfiles = [{
       id: '1-dot-0',
       selected: true

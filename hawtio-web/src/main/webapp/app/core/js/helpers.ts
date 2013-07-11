@@ -418,7 +418,7 @@ module Core {
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
    */
   export function $applyNowOrLater($scope) {
-    if ($scope.$$phase) {
+    if ($scope.$$phase || $scope.$root.$$phase) {
       setTimeout(() => {
         Core.$apply($scope);
       }, 50);
@@ -441,7 +441,7 @@ module Core {
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
    */
   export function $apply($scope) {
-    var phase = $scope.$$phase;
+    var phase = $scope.$$phase && !$scope.$root.$$phase;
     if (!phase) {
       $scope.$apply();
     }

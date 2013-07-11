@@ -9,7 +9,9 @@ module Fabric {
     public scope = {
       selectedProfiles: '=fabricProfileSelector',
       versionId: '=',
-      clearOnVersionChange: '@'
+      clearOnVersionChange: '@',
+      excludedProfiles: '=',
+      includedProfiles: '='
     };
 
     public controller = ($scope, $element, $attrs, jolokia) => {
@@ -34,13 +36,34 @@ module Fabric {
           $scope.profiles = response.value.sortBy((profile) => { return profile.id; });
           selected.each((profile) => {
             var p = $scope.profiles.find((p) => { return p.id === profile.id; });
-            if (profile) {
+            if (p && profile) {
               p.selected = profile.selected;
             }
           });
+
+          if ($scope.excludedProfiles) {
+            $scope.profiles = $scope.profiles.exclude((p) => { return $scope.excludedProfiles.some((e) => { return e === p.id; })});
+          }
+
+          if ($scope.includedProfiles) {
+            $scope.profiles = $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
+          }
+
           $scope.$apply();
         }
       }
+
+      $scope.$watch('includedProfiles', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          $scope.init();
+        }
+      }, true);
+
+      $scope.$watch('excludedProfiles', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          $scope.init();
+        }
+      }, true);
 
 
       $scope.selected = () => {
@@ -94,7 +117,7 @@ module Fabric {
 
 
       $scope.$watch('versionId', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
+        if ($scope.versionId && $scope.versionId !== '') {
           $scope.init();
         }
       });

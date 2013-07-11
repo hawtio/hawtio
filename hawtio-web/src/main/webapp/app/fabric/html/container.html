@@ -145,12 +145,12 @@
       <dl class="dl-horizontal">
         <div class="btn-group pull-right">
           <button class="btn" ng-click="addProfileDialog = true" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
-          <button class="btn" ng-click="deleteProfileDialog = true" ng-disabled="profilesGridOptions.selectedItems.length == 0"
+          <button class="btn" ng-click="deleteProfileDialog = true" ng-disabled="selectedProfiles.length == 0"
                   title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
         </div>
       </dl>
       <dl class="dl-horizontal">
-        <div style="min-height: 300px;" ng-grid="profilesGridOptions"></div>
+        <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds"></div>
       </dl>
     </div>
   </div>
@@ -190,25 +190,26 @@
        on-ok="deleteProfiles()">
     <div class="dialog-body">
       <p>You are about to remove
-        <ng-pluralize count="profilesGridOptions.selectedItems.length"
+        <ng-pluralize count="selectedProfiles.length"
                       when="{'1': 'this profile', 'other': 'these {} profiles'}">
         </ng-pluralize>
-        from container {{row.id}}
+        from container {{row.id}}:
       </p>
-      <ul ng-bind-html-unsafe="profileIdHtml"></ul>
+      <ul ng-bind-html-unsafe="selectedProfilesString"></ul>
     </div>
   </div>
 
   <div modal="addProfileDialog">
-    <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="addProfile()">
+    <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="addProfiles()">
       <div class="modal-header"><h4>Add profiles to container: {{row.id}}</h4></div>
-      <div class="modal-body">
+      <div id="dialog-body" class="modal-body">
         <label>Select one or more profiles to add to this container: </label>
 
-        <div class='dialogGrid' style="height: 250px;" ng-grid="addProfileGridOptions"></div>
+        <div fabric-profile-selector="selectedProfilesDialog" version-id="row.versionId" excluded-profiles="row.profileIds"></div>
+
       </div>
       <div class="modal-footer">
-        <input class="btn btn-success" ng-disabled="addProfileGridOptions.selectedItems.length == 0" type="submit"
+        <input class="btn btn-success" ng-disabled="selectedProfilesDialog.length == 0" type="submit"
                value="Add">
         <input class="btn btn-primary" ng-click="addProfileDialog = false" value="Cancel">
       </div>

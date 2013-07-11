@@ -2,9 +2,20 @@ module Fabric {
 
   export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
     $scope.containerId = $routeParams.containerId;
-    $scope.profileQuery = [null, ["id"]];
-    $scope.profiles = [];
-    $scope.addProfileArray = [];
+
+    $scope.selectedProfiles = [];
+    $scope.selectedProfilesDialog = [];
+    $scope.selectedProfilesString = '';
+
+
+    $scope.$watch('selectedProfiles', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.selectedProfilesString = '';
+        $scope.selectedProfiles.each((p) => {
+          $scope.selectedProfilesString += '<li>' + p.id + '</li>\n';
+        });
+      }
+    }, true);
 
     $scope.connect = () => {
       // TODO lets find these from somewhere! :)
@@ -53,43 +64,6 @@ module Fabric {
       return "";
     };
 
-    $scope.profilesGridOptions = {
-      data: 'profileIdArray',
-      selectedItems: [],
-      afterSelectionChange: () => {
-        $scope.profileIdHtml = "";
-        angular.forEach($scope.profilesGridOptions.selectedItems, (object) => {
-          $scope.profileIdHtml += "<li>" + object.id + "</li>";
-        });
-      },
-      showSelectionCheckbox: true,
-      multiSelect: true,
-      selectWithCheckboxOnly: true,
-      keepLastSelected: false,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'Profiles',
-          cellTemplate: '<div class="ngCellText"><a href="#/fabric/profile/{{versionId}}/{{row.entity.id}}{{hash}}">{{row.entity.id}}</a></div>'
-        }
-      ]
-    };
-
-    $scope.addProfileGridOptions = {
-      data: 'addProfileArray',
-      selectedItems: [],
-      showSelectionCheckbox: true,
-      multiSelect: true,
-      selectWithCheckboxOnly: false,
-      keepLastSelected: false,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'Name'
-        }
-      ]
-    };
-
 
     $scope.updateContainerProperty = (propertyName, row) => {
       setContainerProperty(jolokia, row.id, propertyName, row[propertyName], () => { $
@@ -111,44 +85,37 @@ module Fabric {
       }
     }
 
+
     $scope.addProfiles = () => {
-      console.log("Adding profiles: " + $scope.addProfileGridOptions.selectedItems);
-
-      var containerIds = [ $scope.containerId ];
-      var profileIds = $scope.row.profileIds;
-      // remove the selected ones
-      angular.forEach($scope.addProfileGridOptions.selectedItems, (object) => {
-        profileIds.push(object.id);
-      });
-      profileIds = profileIds.unique();
-      var versionId = $scope.versionId;
-      //console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
-
-      var text = Core.maybePlural($scope.addProfileGridOptions.selectedItems.length, "profile");
-      applyProfiles(jolokia, versionId, profileIds, containerIds, () => {
+      $scope.addProfileDialog = false;
+      var addedProfiles = $scope.selectedProfilesDialog.map((p) => { return p.id });
+      var text = Core.maybePlural(addedProfiles.length, "profile");
+      addProfilesToContainer(jolokia, $scope.row.id, addedProfiles, () => {
         notification('success', "Successfully added " + text);
+        $scope.selectedProfilesDialog = [];
+        Core.$apply($scope);
       }, (response) => {
         notification('error', "Failed to add " + text + " due to " + response.error);
+        $scope.selectedProfilesDialog = [];
+        Core.$apply($scope);
       });
     };
+
 
     $scope.deleteProfiles = () => {
-      var containerIds = [ $scope.containerId ];
-      var profileIds = $scope.row.profileIds;
-      // remove the selected ones
-      angular.forEach($scope.profilesGridOptions.selectedItems, (object) => {
-        profileIds = profileIds.remove(object.id);
-      });
-      var versionId = $scope.versionId;
-      //console.log("Remaining profile ids: " + profileIds + " container " + containerIds + " version + " + versionId);
-
-      var text = Core.maybePlural($scope.profilesGridOptions.selectedItems.length, "profile");
-      applyProfiles(jolokia, versionId, profileIds, containerIds, () => {
+      var removedProfiles = $scope.selectedProfiles.map((p) => { return p.id });
+      var text = Core.maybePlural(removedProfiles.length, "profile");
+      removeProfilesFromContainer(jolokia, $scope.row.id, removedProfiles, () => {
         notification('success', "Successfully removed " + text);
+        $scope.selectedProfiles = [];
+        Core.$apply($scope);
       }, (response) => {
         notification('error', "Failed to remove " + text + " due to " + response.error);
+        $scope.selectedProfiles = [];
+        Core.$apply($scope);
       });
     };
+
 
     if (angular.isDefined($scope.containerId)) {
       Core.register(jolokia, $scope, {
@@ -158,48 +125,15 @@ module Fabric {
       }, onSuccess(render));
     }
 
+
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
         if ($scope.row) {
-          var versionId = $scope.row.versionId;
-          if (versionId) {
-            $scope.versionId = versionId;
-            $scope.profileQuery[0] = versionId;
-            if (!$scope.registeredProfiles) {
-              $scope.registeredProfiles = true;
-              Core.register(jolokia, $scope, {
-                type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String, java.util.List)', arguments: $scope.profileQuery
-              }, onSuccess(onProfiles));
-            }
-          }
-          var profileIds = $scope.row.profileIds;
-          $scope.profileIdArray = profileIds ? profileIds.map((value) => {
-            return {id: value, versionId: versionId};
-          }) : [];
           $scope.services = getServiceList($scope.row);
-          updateAddProfiles();
         }
       }
     }
 
-    function onProfiles(response) {
-      if (response.value) {
-        $scope.profiles = response.value;
-      }
-      updateAddProfiles();
-    }
-
-    /**
-     * Lets filter out all the profiles that are not currently in use
-     */
-    function updateAddProfiles() {
-      var newData = $scope.profiles.filter(object => !$scope.profileIdArray.find({id: object.id}));
-      $scope.addProfileArray = newData;
-/*
-      $scope.addProfileArray.splice(0, $scope.addProfileArray.length, newData);
-*/
-      Core.$apply($scope);
-    }
   }
 }
