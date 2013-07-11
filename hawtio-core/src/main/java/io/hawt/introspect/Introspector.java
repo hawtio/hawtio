@@ -8,6 +8,7 @@ import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * A helper bean for working with the introspector.
@@ -18,6 +19,7 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
 
     private String configDir;
     private String version;
+    private ClassScanner classScanner = new ClassScanner();
 
     public static Introspector getSingleton() {
         if (singleton == null) {
@@ -39,11 +41,13 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         return "io.hawt.introspect:type=Introspector";
     }
 
-    public List<String> getClassNames(String search) {
-        // lets find all class names that contain the given search string...
-        List<String> answer = new ArrayList<String>();
-        // TODO use some scanner thingy to find the available packages...
-        return answer;
+    /**
+     * Searches for the available class names given the text search
+     *
+     * @return all the class names found on the current classpath using the given text search filter
+     */
+    public SortedSet<String> findClassNames(String search) {
+        return getClassScanner().findClassNames(search);
     }
 
 
@@ -52,7 +56,7 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
      */
     public List<PropertyDTO> getProperties(String className) throws Exception {
         List<PropertyDTO> answer = new ArrayList<PropertyDTO>();
-        Class<?> aClass = findClass(className);
+        Class<?> aClass = getClassScanner().findClass(className);
         if (aClass != null) {
             BeanInfo beanInfo = java.beans.Introspector.getBeanInfo(aClass);
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -68,17 +72,12 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         return answer;
     }
 
-    protected Class<?> findClass(String className) throws ClassNotFoundException {
-        // TODO we need an OSGI version of this!!!
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-            try {
-                return getClass().getClassLoader().loadClass(className);
-            } catch (ClassNotFoundException e2) {
-                return Class.forName(className);
-            }
-        }
+    public ClassScanner getClassScanner() {
+        return classScanner;
+    }
+
+    public void setClassScanner(ClassScanner classScanner) {
+        this.classScanner = classScanner;
     }
 
 }

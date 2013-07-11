@@ -7,27 +7,28 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertTrue;
 
 public class IntrospectTest {
-    Introspector facade = new Introspector();
+    protected Introspector introspector = new Introspector();
 
     @Before
     public void init() throws Exception {
-        facade.init();
+        introspector.init();
     }
 
     @After
     public void destroy() throws Exception {
-        facade.destroy();
+        introspector.destroy();
     }
 
     @Test
     public void testIntrospects() throws Exception {
-        List<PropertyDTO> properties = facade.getProperties(SomeBean.class.getName());
+        List<PropertyDTO> properties = introspector.getProperties(SomeBean.class.getName());
         assertNotNull("Should have returned a list of properties", properties);
         assertEquals("number of properties " + properties, 4, properties.size());
 
@@ -42,6 +43,21 @@ public class IntrospectTest {
         assertProperty(map.get("readOnly"), "readOnly", "java.util.Date", true, false);
         assertProperty(map.get("writeOnly"), "writeOnly", "java.lang.Long", false, true);
     }
+
+    @Test
+    public void testFindClasses() throws Exception {
+        assertFindClass("io.hawt.introspect.Introspector", "io.hawt.introspect.Introspector", "io", "io.", "Intro");
+    }
+
+    protected void assertFindClass(String expectedClass, String... searchStrings) {
+        for (String searchString : searchStrings) {
+            Set<String> classNames = introspector.findClassNames(searchString);
+            assertTrue("Results for searching for '" + searchString
+                    + "' should contain '" + expectedClass + "' but was " + classNames,
+                    classNames.contains(expectedClass));
+        }
+    }
+
 
     public static void assertProperty(PropertyDTO property, String expectedName, String expectedTypeName, boolean expectedReadable, boolean expectedWriteable) {
         assertNotNull("property should not be null!", property);
