@@ -122,7 +122,7 @@
         </div>
         <div class="profile-section">
           <div class="canvas">
-            <div ng-repeat="profile in profiles" ng-show="profile.id.startsWith(profileIdFilter, 0, false)">
+            <div ng-repeat="profile in profiles" ng-show="profile.id.has(profileIdFilter, 0, false)">
               <div class="box" ng-class="getSelectedClass(profile)" id="profile#{{profile.id}}">
 
                 <div class="box-left">
