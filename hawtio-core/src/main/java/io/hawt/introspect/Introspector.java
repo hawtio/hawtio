@@ -46,8 +46,8 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
      *
      * @return all the class names found on the current classpath using the given text search filter
      */
-    public SortedSet<String> findClassNames(String search) {
-        return getClassScanner().findClassNames(search);
+    public SortedSet<String> findClassNames(String search, Integer limit) {
+        return getClassScanner().findClassNames(search, limit);
     }
 
 

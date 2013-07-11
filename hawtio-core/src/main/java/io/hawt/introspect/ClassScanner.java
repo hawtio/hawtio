@@ -58,20 +58,21 @@ public class ClassScanner {
      *
      * @return all the class names found on the current classpath using the given text search filter
      */
-    public SortedSet<String> findClassNames(String search) {
-        return findClassNamesInPackages(search, Package.getPackages());
+    public SortedSet<String> findClassNames(String search, Integer limit) {
+        return findClassNamesInPackages(search, limit, Package.getPackages());
     }
 
     /**
      * Returns all the class names found on the classpath in the given packages which match the given filter
      */
-    public SortedSet<String> findClassNamesInPackages(String search, Package... packages) {
+    public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Package... packages) {
         SortedSet<String> answer = new TreeSet<String>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
         for (Package aPackage : packages) {
-            List<Class<?>> classes = getClassesForPackage(aPackage, search);
-            for (Class<?> aClass : classes) {
-                answer.add(aClass.getName());
-            }
+            addClassesForPackage(aPackage, search, limit, classes);
+        }
+        for (Class<?> aClass : classes) {
+            answer.add(aClass.getName());
         }
         return answer;
     }
@@ -90,7 +91,7 @@ public class ClassScanner {
     public SortedMap<String, Class<?>> getClassesMap(Package... packages) {
         SortedMap<String, Class<?>> answer = new TreeMap<String, Class<?>>();
         for (Package aPackage : packages) {
-            List<Class<?>> classes = getClassesForPackage(aPackage, null);
+            List<Class<?>> classes = getClassesForPackage(aPackage, null, null);
             for (Class<?> aClass : classes) {
                 answer.put(aClass.getName(), aClass);
             }
@@ -99,23 +100,9 @@ public class ClassScanner {
     }
 
 
-    public List<Class<?>> getClassesForPackage(Package aPackage, String filter) {
+    public List<Class<?>> getClassesForPackage(Package aPackage, String filter, Integer limit) {
         List<Class<?>> classes = new ArrayList<Class<?>>();
-        String packageName = aPackage.getName();
-        String relativePath = getPackageRelativePath(packageName);
-
-        List<URL> resources = getResources(relativePath,
-                Thread.currentThread().getContextClassLoader(),
-                ClassScanner.class.getClassLoader());
-        for (URL resource : resources) {
-            if (resource != null) {
-                if (resource.toString().startsWith("jar:")) {
-                    processJar(resource, packageName, classes, filter);
-                } else {
-                    processDirectory(new File(resource.getPath()), packageName, classes, filter);
-                }
-            }
-        }
+        addClassesForPackage(aPackage, filter, limit, classes);
         return classes;
     }
 
@@ -136,9 +123,30 @@ public class ClassScanner {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void processDirectory(File directory, String packageName, List<Class<?>> classes, String filter) {
+    protected void addClassesForPackage(Package aPackage, String filter, Integer limit, List<Class<?>> classes) {
+        String packageName = aPackage.getName();
+        String relativePath = getPackageRelativePath(packageName);
+
+        List<URL> resources = getResources(relativePath,
+                Thread.currentThread().getContextClassLoader(),
+                ClassScanner.class.getClassLoader());
+        for (URL resource : resources) {
+            if (resource != null && withinLimit(limit, classes)) {
+                if (resource.toString().startsWith("jar:")) {
+                    processJar(resource, packageName, classes, filter, limit);
+                } else {
+                    processDirectory(new File(resource.getPath()), packageName, classes, filter, limit);
+                }
+            }
+        }
+    }
+
+    protected void processDirectory(File directory, String packageName, List<Class<?>> classes, String filter, Integer limit) {
         String[] fileNames = directory.list();
         for (String fileName : fileNames) {
+            if (!withinLimit(limit, classes)) {
+                return;
+            }
             String className = null;
             if (fileName.endsWith(".class")) {
                 className = packageName + '.' + fileName.substring(0, fileName.length() - 6);
@@ -149,12 +157,12 @@ public class ClassScanner {
             }
             File subdir = new File(directory, fileName);
             if (subdir.isDirectory()) {
-                processDirectory(subdir, packageName + '.' + fileName, classes, filter);
+                processDirectory(subdir, packageName + '.' + fileName, classes, filter, limit);
             }
         }
     }
 
-    protected void processJar(URL resource, String packageName, List<Class<?>> classes, String filter) {
+    protected void processJar(URL resource, String packageName, List<Class<?>> classes, String filter, Integer limit) {
         String relativePath = getPackageRelativePath(packageName);
         String resourcePath = resource.getPath();
         String jarPath = resourcePath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
@@ -166,7 +174,7 @@ public class ClassScanner {
             return;
         }
         Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
+        while (entries.hasMoreElements() && withinLimit(limit, classes)) {
             JarEntry entry = entries.nextElement();
             String entryName = entry.getName();
             String className = null;
@@ -220,5 +228,17 @@ public class ClassScanner {
 
     protected String getPackageRelativePath(String packageName) {
         return packageName.replace('.', '/');
+    }
+
+    /**
+     * Returns true if we are within the limit value for the number of found classes
+     */
+    protected boolean withinLimit(Integer limit, List<Class<?>> classes) {
+        if (limit == null) {
+            return true;
+        } else {
+            int value = limit.intValue();
+            return value <= 0 || value > classes.size();
+        }
     }
 }

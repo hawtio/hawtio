@@ -13,7 +13,7 @@ public interface IntrospectorMXBean {
      *
      * @return all the class names found on the current classpath using the given text search filter
      */
-    SortedSet<String> findClassNames(String search);
+    SortedSet<String> findClassNames(String search, Integer limit);
 
     /**
      * Returns a list of properties for the given type name

@@ -39,6 +39,15 @@ module Wiki {
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-a", "ignorePrefixInLabel"], true);
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-b", "ignorePrefixInLabel"], true);
 
+    Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-a", "properties", "value", "formTemplate"], classNameWidget("class_a"));
+    Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-b", "properties", "value", "formTemplate"], classNameWidget("class_b"));
+
+    function classNameWidget(propertyName) {
+      return '<input type="text" ng-model="dozerEntity.' + propertyName + '.value" ' +
+              'typeahead="title for title in classNames($viewValue) | filter:$viewValue" ' +
+            'typeahead-editable="true"  title="The Java class name"/>';
+    }
+
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       data: 'mappings',
@@ -220,6 +229,13 @@ module Wiki {
       console.log("Finding the to field names for expression '" + text + "'  on class " + toClass);
       var properties = Dozer.findProperties(workspace, toClass, null);
       return properties.map(p => p.name);
+    };
+
+    $scope.classNames = (text) => {
+      console.log("searching for class names with filter '" + text + "'");
+      var answer =  Dozer.findClassNames(workspace, text);
+      console.log("Found results: " + answer);
+      return answer;
     };
 
     updateView();

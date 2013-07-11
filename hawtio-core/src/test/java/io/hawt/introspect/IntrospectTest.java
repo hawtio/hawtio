@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -49,9 +50,15 @@ public class IntrospectTest {
         assertFindClass("io.hawt.introspect.Introspector", "io.hawt.introspect.Introspector", "io", "io.", "Intro");
     }
 
+    @Test
+    public void testFindLimitedClasses() throws Exception {
+        SortedSet<String> classNames = introspector.findClassNames("io.", 3);
+        assertEquals("Size of results " + classNames, 3, classNames.size());
+    }
+
     protected void assertFindClass(String expectedClass, String... searchStrings) {
         for (String searchString : searchStrings) {
-            Set<String> classNames = introspector.findClassNames(searchString);
+            Set<String> classNames = introspector.findClassNames(searchString, null);
             assertTrue("Results for searching for '" + searchString
                     + "' should contain '" + expectedClass + "' but was " + classNames,
                     classNames.contains(expectedClass));
