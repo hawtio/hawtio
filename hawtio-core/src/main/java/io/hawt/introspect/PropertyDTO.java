@@ -29,6 +29,7 @@ public class PropertyDTO {
     private boolean writeable = true;
     private String description;
     private String displayName;
+    private transient Class typeClass;
 
     public PropertyDTO() {
     }
@@ -36,7 +37,8 @@ public class PropertyDTO {
     public PropertyDTO(PropertyDescriptor propertyDescriptor) {
         name = propertyDescriptor.getName();
         displayName = propertyDescriptor.getDisplayName();
-        typeName = propertyDescriptor.getPropertyType().getName();
+        typeClass = propertyDescriptor.getPropertyType();
+        typeName = typeClass.getName();
         description = propertyDescriptor.getShortDescription();
         readable = propertyDescriptor.getReadMethod() != null;
         writeable = propertyDescriptor.getWriteMethod() != null;
@@ -93,5 +95,13 @@ public class PropertyDTO {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    Class getTypeClass() {
+        return typeClass;
+    }
+
+    void setTypeClass(Class typeClass) {
+        this.typeClass = typeClass;
     }
 }

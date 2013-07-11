@@ -1,6 +1,7 @@
 package io.hawt.introspect;
 
 import io.hawt.util.MBeanSupport;
+import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +56,12 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
      * Returns a list of properties for the given type name
      */
     public List<PropertyDTO> getProperties(String className) throws Exception {
-        List<PropertyDTO> answer = new ArrayList<PropertyDTO>();
         Class<?> aClass = getClassScanner().findClass(className);
+        return getProperties(aClass);
+    }
+
+    public List<PropertyDTO> getProperties(Class<?> aClass) throws Exception {
+        List<PropertyDTO> answer = new ArrayList<PropertyDTO>();
         if (aClass != null) {
             BeanInfo beanInfo = java.beans.Introspector.getBeanInfo(aClass);
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -72,6 +77,59 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         return answer;
     }
 
+    /**
+     * Returns a list of properties available; supporting the navigation using dot of properties into
+     * nested properties
+     */
+    public List<PropertyDTO> findProperties(String className, String filter) throws Exception {
+        List<PropertyDTO> properties = getProperties(className);
+        if (Strings.isNotBlank(filter)) {
+            String[] propertyPaths = filter.split("\\.");
+            String firstPrefix = "";
+            PropertyDTO lastNavigation = null;
+            // lets try find the first property type and keep navigating
+            int idx = 0;
+            StringBuilder prefixBuilder = new StringBuilder();
+            for (String propertyPath : propertyPaths) {
+                PropertyDTO property = Introspections.findPropertyByName(properties, propertyPath);
+                boolean last = ++idx == propertyPaths.length;
+                if (property == null) {
+                    // if we're the last path don't worry, just filter the results
+                    break;
+                } else {
+                    lastNavigation = property;
+                    List<PropertyDTO> childProperties = getProperties(property.getTypeClass());
+                    if (childProperties.size() > 0) {
+                        properties = childProperties;
+                    } else {
+                        // lets not iterate any more as we've no more properties
+                        break;
+                    }
+                }
+                firstPrefix = prefixBuilder.toString();
+                prefixBuilder.append(propertyPath);
+                prefixBuilder.append(".");
+            }
+            if (lastNavigation != null) {
+                // lets add the last parent object too just in case
+                List<PropertyDTO> answer = new ArrayList<PropertyDTO>();
+                answer.add(lastNavigation);
+                answer.addAll(properties);
+
+                // now add the successful path navigations to the path
+                String nestedPrefix = prefixBuilder.toString();
+                String prefix = firstPrefix;
+                for (PropertyDTO dto : answer) {
+                    dto.setName(prefix + dto.getName());
+                    prefix = nestedPrefix;
+                }
+                return answer;
+            }
+        }
+        return properties;
+    }
+
+
     public ClassScanner getClassScanner() {
         return classScanner;
     }
@@ -79,5 +137,6 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     public void setClassScanner(ClassScanner classScanner) {
         this.classScanner = classScanner;
     }
+
 
 }

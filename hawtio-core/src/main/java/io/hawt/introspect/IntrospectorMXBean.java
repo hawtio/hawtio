@@ -19,4 +19,10 @@ public interface IntrospectorMXBean {
      * Returns a list of properties for the given type name
      */
     List<PropertyDTO> getProperties(String className) throws Exception;
+
+    /**
+     * Returns a list of properties available; supporting the navigation using dot of properties into
+     * nested properties
+     */
+    List<PropertyDTO> findProperties(String className, String filter) throws Exception;
 }

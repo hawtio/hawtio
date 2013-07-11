@@ -1,10 +1,14 @@
 package io.hawt.introspect;
 
+import io.hawt.example.dozer.dto.CustomerDTO;
+import io.hawt.introspect.dummy.Invoice;
 import io.hawt.introspect.dummy.SomeBean;
+import io.hawt.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 public class IntrospectTest {
     protected Introspector introspector = new Introspector();
+    protected boolean verbose = Objects.equals(System.getProperty("verbose", "false"), "true");
 
     @Before
     public void init() throws Exception {
@@ -34,7 +39,7 @@ public class IntrospectTest {
         assertEquals("number of properties " + properties, 4, properties.size());
 
         for (PropertyDTO property : properties) {
-            System.out.println("" + property);
+            log("" + property);
         }
 
         Map<String, PropertyDTO> map = Introspections.getPropertyMap(properties);
@@ -46,14 +51,49 @@ public class IntrospectTest {
     }
 
     @Test
+    public void testIntrospectNestedProperties() throws Exception {
+        String className = CustomerDTO.class.getName();
+
+        assertFindProperties(className, "a", "address", "firstName", "lastName");
+        assertFindProperties(className, "doesNotExist", "address", "firstName", "lastName");
+        assertFindProperties(className, "address", "address", "address.streetName", "address.zipCode");
+        assertFindProperties(className, "address.s", "address", "address.streetName", "address.zipCode");
+        assertFindProperties(className, "address.", "address", "address.streetName", "address.zipCode");
+        assertFindProperties(className, "address.doesNotExist", "address", "address.streetName", "address.zipCode");
+
+        // test 2 levels of nesting...
+        String invoiceClass = Invoice.class.getName();
+        assertFindProperties(invoiceClass, "customer.address", "customer.address", "customer.address.streetName", "customer.address.zipCode");
+        assertFindProperties(invoiceClass, "customer.address.", "customer.address", "customer.address.streetName", "customer.address.zipCode");
+        assertFindProperties(invoiceClass, "customer.address.str", "customer.address", "customer.address.streetName", "customer.address.zipCode");
+        assertFindProperties(invoiceClass, "customer.address.doesNotExist", "customer.address", "customer.address.streetName", "customer.address.zipCode");
+
+    }
+
+    protected void assertFindProperties(String className, String filter, String... expectedNames) throws Exception {
+        List<PropertyDTO> properties = introspector.findProperties(className, filter);
+        log("Searched for " + filter + " for " + Arrays.asList(expectedNames));
+        for (PropertyDTO property : properties) {
+            log("  " + property.getName() + ": " + property.getTypeName());
+        }
+        int idx = 0;
+        for (String expectedName : expectedNames) {
+            assertTrue("Not enough properties returned. No result for " + expectedName, idx < properties.size());
+            PropertyDTO propertyDTO = properties.get(idx);
+            assertEquals("expected name for index " + idx + " " + propertyDTO, expectedName, propertyDTO.getName());
+            idx++;
+        }
+    }
+
+    @Test
     public void testFindClasses() throws Exception {
         assertFindClass("io.hawt.introspect.Introspector", "io.hawt.introspect.Introspector", "io", "io.", "Intro");
     }
 
     @Test
     public void testFindLimitedClasses() throws Exception {
-        SortedSet<String> classNames = introspector.findClassNames("io.", 3);
-        assertEquals("Size of results " + classNames, 3, classNames.size());
+        SortedSet<String> classNames = introspector.findClassNames("io.", 1);
+        assertEquals("Size of results " + classNames, 1, classNames.size());
     }
 
     protected void assertFindClass(String expectedClass, String... searchStrings) {
@@ -65,6 +105,11 @@ public class IntrospectTest {
         }
     }
 
+    public void log(String message) {
+        if (verbose) {
+            System.out.println(message);
+        }
+    }
 
     public static void assertProperty(PropertyDTO property, String expectedName, String expectedTypeName, boolean expectedReadable, boolean expectedWriteable) {
         assertNotNull("property should not be null!", property);
