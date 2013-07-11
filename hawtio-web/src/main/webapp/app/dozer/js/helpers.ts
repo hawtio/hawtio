@@ -45,7 +45,7 @@ module Dozer {
   export function findUnmappedFields(workspace: Workspace, mapping: Mapping, fn) {
     // lets find the fields which are unmapped
     var className = mapping.class_a.value;
-    findProperties(workspace, className, (properties) => {
+    findProperties(workspace, className, null, (properties) => {
       var answer = [];
       angular.forEach(properties, (property) => {
         console.log("got property " + JSON.stringify(property, null, "  "));
@@ -67,10 +67,14 @@ module Dozer {
    * Finds the properties on the given class and returns them; and either invokes the given function
    * or does a sync request and returns them
    */
-  export function findProperties(workspace: Workspace, className: string, fn = null) {
+  export function findProperties(workspace: Workspace, className: string, filter: string = null, fn = null) {
     var mbean = getIntrospectorMBean(workspace);
     if (mbean) {
-      return workspace.jolokia.execute(mbean, "getProperties", className, onSuccess(fn));
+      if (filter) {
+        return workspace.jolokia.execute(mbean, "findProperties", className, filter, onSuccess(fn));
+      } else {
+        return workspace.jolokia.execute(mbean, "getProperties", className, onSuccess(fn));
+      }
     } else {
       if (fn) {
         return fn([]);

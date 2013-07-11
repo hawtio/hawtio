@@ -39,8 +39,18 @@ module Wiki {
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-a", "ignorePrefixInLabel"], true);
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-b", "ignorePrefixInLabel"], true);
 
+    // add custom widgets
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-a", "properties", "value", "formTemplate"], classNameWidget("class_a"));
     Core.pathSet(io_hawt_dozer_schema_Mapping, ["properties", "class-b", "properties", "value", "formTemplate"], classNameWidget("class_b"));
+
+    Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "a", "properties", "value", "formTemplate"],
+            '<input type="text" ng-model="dozerEntity.a.value" ' +
+                  'typeahead="title for title in fromFieldNames($viewValue) | filter:$viewValue" ' +
+                'typeahead-editable="true"  title="The Java class name"/>');
+    Core.pathSet(io_hawt_dozer_schema_Field, ["properties", "b", "properties", "value", "formTemplate"],
+            '<input type="text" ng-model="dozerEntity.b.value" ' +
+                  'typeahead="title for title in toFieldNames($viewValue) | filter:$viewValue" ' +
+                'typeahead-editable="true"  title="The Java class name"/>');
 
     function classNameWidget(propertyName) {
       return '<input type="text" ng-model="dozerEntity.' + propertyName + '.value" ' +
@@ -224,11 +234,20 @@ module Wiki {
       $scope.unmappedFieldsHasValid = $scope.unmappedFields.find(f => f.valid);
     };
 
-    $scope.toFieldNames = (text) => {
-      var toClass = Core.pathGet($scope.selectedMapping, ["class_b", "value"]);
-      console.log("Finding the to field names for expression '" + text + "'  on class " + toClass);
-      var properties = Dozer.findProperties(workspace, toClass, null);
+    function findFieldNames(className, text) {
+      //console.log("Finding the to field names for expression '" + text + "'  on class " + className);
+      var properties = Dozer.findProperties(workspace, className, text, null);
       return properties.map(p => p.name);
+    }
+
+    $scope.fromFieldNames = (text) => {
+      var className = Core.pathGet($scope.selectedMapping, ["class_a", "value"]);
+      return findFieldNames(className, text);
+    };
+
+    $scope.toFieldNames = (text) => {
+      var className = Core.pathGet($scope.selectedMapping, ["class_b", "value"]);
+      return findFieldNames(className, text);
     };
 
     $scope.classNames = (text) => {
