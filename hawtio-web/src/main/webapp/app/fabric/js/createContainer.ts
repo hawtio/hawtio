@@ -163,6 +163,10 @@ module Fabric {
 
       delete json.saveJmxCredentials;
 
+      if ( json.number === 1 ) {
+        delete json.number;
+      }
+
       json['version'] = $scope.selectedVersion.id;
       if ($scope.selectedProfiles.length > 0) {
         json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
