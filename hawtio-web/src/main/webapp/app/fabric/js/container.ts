@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia) {
+  export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia, $location) {
     $scope.containerId = $routeParams.containerId;
 
     $scope.selectedProfiles = [];
@@ -25,30 +25,19 @@ module Fabric {
     };
 
     $scope.stop = () => {
-      // TODO proper notifications
-      stopContainer(jolokia, $scope.containerId, function () {
-        console.log("Stopped!")
-      }, function () {
-        console.log("Failed to stop!")
-      });
+      doStopContainer($scope, jolokia, $scope.containerId);
     };
 
     $scope.delete = () => {
-      // TODO proper notifications
-      destroyContainer(jolokia, $scope.containerId, function () {
-        console.log("Deleted!")
-      }, function () {
-        console.log("Failed to delete!")
+      // avoid any nasty errors that the container doesn't existing anymore
+      Core.unregister(jolokia, $scope);
+      doDeleteContainer($scope, jolokia, $scope.containerId, () => {
+        $location.path('/fabric/view');
       });
     };
 
     $scope.start = () => {
-      // TODO proper notifications
-      startContainer(jolokia, $scope.containerId, function () {
-        console.log("Started!")
-      }, function () {
-        console.log("Failed to start!")
-      });
+      doStartContainer($scope, jolokia, $scope.containerId);
     };
 
     $scope.getType = () => {

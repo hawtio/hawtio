@@ -20,6 +20,43 @@ module Fabric {
     }
   }
 
+  export function doDeleteContainer($scope, jolokia, name, onDelete:() => any = null) {
+    notification('info', "Deleting " + name);
+    destroyContainer(jolokia, name, () => {
+      notification('success', "Deleted " + name);
+      if (onDelete) {
+        onDelete();
+      }
+      Core.$apply($scope);
+    }, (response) => {
+      notification('error', "Failed to delete " + name + " due to " + response.error);
+      Core.$apply($scope);
+    });
+  }
+
+  export function doStartContainer($scope, jolokia, name) {
+    notification('info', "Starting " + name);
+    startContainer(jolokia, name, () => {
+      notification('success', "Started " + name);
+      Core.$apply($scope);
+    }, (response) => {
+      notification('error', "Failed to start " + name + " due to " + response.error);
+      Core.$apply($scope);
+    });
+  }
+
+  export function doStopContainer($scope, jolokia, name) {
+    notification('info', "Stopping " + name);
+    stopContainer(jolokia, name, () => {
+      notification('success', "Stopped " + name);
+      Core.$apply($scope);
+    }, (response) => {
+      notification('error', "Failed to stop " + name + " due to " + response.error);
+      Core.$apply($scope);
+    });
+  }
+
+
   export function applyPatches(jolokia, files, targetVersion, newVersionName, proxyUser, proxyPass, success, error) {
     doAction('applyPatches(java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String)', jolokia, [files, targetVersion, newVersionName, proxyUser, proxyPass], success, error);
   }

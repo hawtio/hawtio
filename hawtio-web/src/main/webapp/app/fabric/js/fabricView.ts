@@ -652,32 +652,17 @@ module Fabric {
 
 
     $scope.deleteContainer = (name) => {
-      notification('info', "Deleting " + name);
-      destroyContainer(jolokia, name, () => {
-        notification('success', "Deleted " + name);
-      }, (response) => {
-        notification('error', "Failed to delete " + name + " due to " + response.error);
-      });
+      doDeleteContainer($scope, jolokia, name);
     };
 
 
     $scope.startContainer = (name) => {
-      notification('info', "Starting " + name);
-      startContainer(jolokia, name, () => {
-        notification('success', "Started " + name);
-      }, (response) => {
-        notification('error', "Failed to start " + name + " due to " + response.error);
-      });
+      doStartContainer($scope, jolokia, name);
     };
 
 
     $scope.stopContainer = (name) => {
-      notification('info', "Stopping " + name);
-      stopContainer(jolokia, name, () => {
-        notification('success', "Stopped " + name);
-      }, (response) => {
-        notification('error', "Failed to stop " + name + " due to " + response.error);
-      });
+      doStopContainer($scope, jolokia, name);
     };
 
 
