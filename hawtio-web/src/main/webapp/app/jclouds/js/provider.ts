@@ -8,7 +8,7 @@ module Jclouds {
         function setProvider(provider) {
             populateTypeForProvider(provider)
             $scope.row = provider;
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

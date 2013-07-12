@@ -134,7 +134,7 @@ module Jmx {
                   // lets update the sizes using jquery as it seems AngularJS doesn't support it
                   $("#attributes").attr("size", Object.size($scope.metrics));
                   $("#mbeans").attr("size", Object.size($scope.mbeans));
-                  $scope.$apply();
+                  Core.$apply($scope);
                 }
               }
             }));

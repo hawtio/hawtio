@@ -48,7 +48,7 @@ module Insight {
                         profileIds: container.profileIds
                     });
                 });
-                $scope.$apply();
+                Core.$apply($scope);
                 rebuildCharts();
             }
         }

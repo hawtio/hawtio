@@ -34,7 +34,7 @@ module Jclouds {
 
         function setContainers(containers) {
             $scope.contents = populatePathAndName(filterContainers(containers, $scope.directory), $scope.directory);
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

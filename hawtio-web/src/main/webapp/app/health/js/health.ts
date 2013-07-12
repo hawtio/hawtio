@@ -95,7 +95,7 @@ module Health {
             onSuccessArray[onSuccessArray.length - 1] = (response) => {
               callback(response, objects.last);
               $scope.widget.populateTable(defaultValues($scope.results));
-              $scope.$apply();
+              Core.$apply($scope);
             };
             jolokia.request(args, onSuccess(onSuccessArray));
           } else {
@@ -106,7 +106,7 @@ module Health {
               }
               var data = defaultValues(values);
               $scope.widget.populateTable(data);
-              $scope.$apply();
+              Core.$apply($scope);
             }
             jolokia.request(
                     asHealthQuery(objects),

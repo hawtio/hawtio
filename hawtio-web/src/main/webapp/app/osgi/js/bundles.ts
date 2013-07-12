@@ -169,7 +169,7 @@ module Osgi {
           $scope.bundles.push(obj);
         });
         $scope.loading = false;
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 

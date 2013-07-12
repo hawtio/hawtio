@@ -149,7 +149,7 @@ module Log {
         }
         if (counter) {
           refilter();
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
     };

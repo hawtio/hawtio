@@ -47,7 +47,7 @@ module Jclouds {
             if (!Object.equal($scope.result, response.value)) {
                 $scope.result = response.value;
                 $scope.containers = $scope.result
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
     }

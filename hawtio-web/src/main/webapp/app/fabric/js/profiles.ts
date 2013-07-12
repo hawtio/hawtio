@@ -178,7 +178,7 @@ module Fabric {
       createProfile(jolokia, $scope.version.id, $scope.newProfileName, parents, function() {
         notification('success', "Created profile " + $scope.newProfileName);
         $scope.newProfileName = "";
-        $scope.$apply();
+        Core.$apply($scope);
       }, function(response) {
         notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
       });
@@ -191,7 +191,7 @@ module Fabric {
         notification('success', "Created version " + response.value.id);
         $scope.newVersionName = '';
         $scope.version = response.value;
-        $scope.$apply();
+        Core.$apply($scope);
       };
 
       var error = function (response) {
@@ -218,11 +218,11 @@ module Fabric {
       deleteVersion(jolokia, $scope.version.id, function() {
         notification('success', "Deleted version " + $scope.version.id);
         $scope.version = $scope.defaultVersion;
-        $scope.$apply();
+        Core.$apply($scope);
       }, function(response) {
         notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
         $scope.version = $scope.defaultVersion;
-        $scope.$apply();
+        Core.$apply($scope);
       });
     };
 
@@ -267,7 +267,7 @@ module Fabric {
           });
           $scope.version = setSelect($scope.version, $scope.versions);
           
-          $scope.$apply();
+          Core.$apply($scope);
         }
         
       } else {
@@ -288,7 +288,7 @@ module Fabric {
           });
 
           $scope.profiles = filterActive($scope.profiles);
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
     }

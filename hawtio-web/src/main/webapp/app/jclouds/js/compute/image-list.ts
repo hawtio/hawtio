@@ -116,7 +116,7 @@ module Jclouds {
                 $scope.result = response.value;
                 $scope.images = $scope.result
                 $scope.operatingSystemFamilies = extractOperatingSystemFamilies($scope.images)
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
 

@@ -44,11 +44,11 @@ module UI {
           arguments: [$scope.target, fileName]}, {
           success: () => {
             //notification('success', 'Deleted ' + fileName);
-            $scope.$apply();
+            Core.$apply($scope);
           },
           error: (response) => {
             notification('error', "Failed to delete " + fileName + " due to: " + response.error);
-            $scope.$apply();
+            Core.$apply($scope);
           }
         });
       }
@@ -90,29 +90,29 @@ module UI {
           beforeSubmit: (arr, $form, options) => {
             notification('info', "Uploading " + fileName);
             $scope.percentComplete = 0;
-            $scope.$apply();
+            Core.$apply($scope);
           },
           success: (response, statusText, xhr, $form) => {
             notification('success', "Uploaded " + fileName);
             setTimeout( () => {
               button.prop('disabled', false);
               $scope.percentComplete = 0;
-              $scope.$apply();
+              Core.$apply($scope);
             }, 1000);
-            $scope.$apply();
+            Core.$apply($scope);
           },
           error: (response, statusText, xhr, $form) => {
             notification('error', "Failed to upload " + fileName + " due to " + statusText);
             setTimeout( () => {
               button.prop('disabled', false);
               $scope.percentComplete = 0;
-              $scope.$apply();
+              Core.$apply($scope);
             }, 1000);
-            $scope.$apply();
+            Core.$apply($scope);
           },
           uploadProgress: (event, position, total, percentComplete) => {
             $scope.percentComplete = percentComplete;
-            $scope.$apply();
+            Core.$apply($scope);
           }
         });
         return false;

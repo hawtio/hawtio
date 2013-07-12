@@ -102,7 +102,7 @@ module ActiveMQ {
         }
 
         Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
-        $scope.$apply();
+        Core.$apply($scope);
       };
 
       var populateNetworks = function (response) {
@@ -118,7 +118,7 @@ module ActiveMQ {
         }
 
         Core.d3ForceGraph($scope, $scope.nodes, $scope.links, $element);
-        $scope.$apply();
+        Core.$apply($scope);
       };
 
       $scope.updateGraph = () => {

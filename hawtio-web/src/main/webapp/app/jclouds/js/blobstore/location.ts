@@ -8,7 +8,7 @@ module Jclouds {
 
         function setLocationProfiles(locationProfiles) {
             $scope.row = findLocationById(locationProfiles, $scope.locationId)
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

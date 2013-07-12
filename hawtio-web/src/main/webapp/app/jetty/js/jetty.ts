@@ -166,7 +166,7 @@ module Jetty {
         var mbean = value;
         jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
       });
-      $scope.$apply();
+      Core.$apply($scope);
     }
   }
 }

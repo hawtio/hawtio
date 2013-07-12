@@ -137,7 +137,7 @@ module Fabric {
         $scope.responseJson = responseJson;
         $scope.features = Object.clone(response.value.featureDefinitions, true);
         $scope.repositories = Object.clone(response.value.repositoryDefinitions, true);
-        $scope.$apply();
+        Core.$apply($scope);
       }
     };
 
@@ -213,10 +213,10 @@ module Fabric {
 
       saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'org.fusesource.fabric.agent.properties', configFile.encodeBase64(), () => {
           notification('success', "Updated feature definitions...");
-          $scope.$apply();
+          Core.$apply($scope);
         }, (response) => {
           notification('error', "Failed to save feature definitions due to " + response.error);
-          $scope.$apply();
+          Core.$apply($scope);
         });
     };
 

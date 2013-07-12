@@ -51,7 +51,7 @@ module Fabric {
       if (response.request.operation === 'versions()') {
         if (!Object.equal($scope.versions, response.value)) {
           $scope.versions = response.value;
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
 
@@ -66,7 +66,7 @@ module Fabric {
               id: container
             });
           });
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
     };

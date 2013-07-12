@@ -249,7 +249,7 @@ module Jmx {
             $scope.selectedItems.splice(0, $scope.selectedItems.length);
             $scope.selectedItems.push.apply($scope.selectedItems, newSelections);
             //console.log("Would have selected " + JSON.stringify($scope.selectedItems));
-            $scope.$apply();
+            Core.$apply($scope);
           }
           // if the last row, then fire an event
         } else {
@@ -280,7 +280,7 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 

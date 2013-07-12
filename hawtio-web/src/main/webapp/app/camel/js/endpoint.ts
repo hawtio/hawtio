@@ -58,7 +58,7 @@ module Camel {
     function operationSuccess() {
       $scope.endpointName = "";
       $scope.workspace.operationCounter += 1;
-      $scope.$apply();
+      Core.$apply($scope);
       notification("success", $scope.message);
     }
 
@@ -71,7 +71,7 @@ module Camel {
         }
       }
       $scope.workspace.operationCounter += 1;
-      $scope.$apply();
+      Core.$apply($scope);
       notification("success", $scope.message);
     }
   }

@@ -171,7 +171,7 @@ module Karaf {
 
         populateFeaturesAndRepos($scope.result, $scope.features, $scope.repositories);
         $scope.repository = setSelect($scope.repository, $scope.repositories);
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 

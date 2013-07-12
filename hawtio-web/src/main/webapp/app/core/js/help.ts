@@ -47,11 +47,11 @@ module Core {
           if (angular.isDefined(data)) {
             $scope.html = marked(data);
           }
-          $scope.$apply();
+          Core.$apply($scope);
         },
         error: function(jqXHR, textStatus, errorThrown) {
           $scope.html = "Unable to download help data for " + $scope.topic;
-          $scope.$apply();
+          Core.$apply($scope);
         }
       })
     }

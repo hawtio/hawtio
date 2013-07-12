@@ -31,11 +31,11 @@ module Fabric {
       deleteConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.markedForDeletion, () => {
         notification('success', 'Deleted file ' + $scope.markedForDeletion);
         $scope.markedForDeletion = '';
-        $scope.$apply();
+        Core.$apply($scope);
       }, (response) => {
         notification('error', 'Failed to delete file ' + $scope.markedForDeletion + ' due to ' + response.error);
         $scope.markedForDeletion = '';
-        $scope.$apply();
+        Core.$apply($scope);
       });
     };
 
@@ -56,17 +56,17 @@ module Fabric {
       copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
         notification('success', 'Created new profile ' + $scope.newProfileName);
         $location.url("/fabric/profile/" + $scope.versionId + "/" + $scope.newProfileName);
-        $scope.$apply();
+        Core.$apply($scope);
       }, (response) => {
         notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
-        $scope.$apply();
+        Core.$apply($scope);
       });
     }
     
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
-        $scope.row = response.value
-        $scope.$apply();
+        $scope.row = response.value;
+        Core.$apply($scope);
       }
     }
   }

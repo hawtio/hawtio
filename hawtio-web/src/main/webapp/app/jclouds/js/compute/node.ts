@@ -8,7 +8,7 @@ module Jclouds {
 
         function setNode(api) {
             $scope.row = api;
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

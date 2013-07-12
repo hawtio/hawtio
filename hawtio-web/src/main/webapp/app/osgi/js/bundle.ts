@@ -152,7 +152,7 @@ module Osgi {
       // now find the row based on the selection ui
       Osgi.defaultBundleValues(workspace, $scope, values);
       $scope.row = Osgi.findBundle($scope.bundleId, values);
-      $scope.$apply();
+      Core.$apply($scope);
 
       // This trick is to ensure that the popover is properly visible if it is
       // smaller than the accordion

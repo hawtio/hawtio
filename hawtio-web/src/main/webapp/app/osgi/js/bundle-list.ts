@@ -34,7 +34,7 @@ module Osgi {
                             if (isFragment) {
                                 notification("success", "Fragment installed succesfully.");
                                 $scope.bundleUrl = "";
-                                $scope.$apply();
+                                Core.$apply($scope);
                             } else {
                                 jolokia.request({
                                     type: 'exec',
@@ -45,7 +45,7 @@ module Osgi {
                                     success: function(response) {
                                         notification("success", "Bundle installed and started successfully.");
                                         $scope.bundleUrl = "";
-                                        $scope.$apply();
+                                        Core.$apply($scope);
                                     },
                                     error: function(response) { notification("error", response.error)}
                                 });

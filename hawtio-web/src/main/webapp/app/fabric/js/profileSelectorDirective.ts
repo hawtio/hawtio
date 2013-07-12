@@ -49,7 +49,7 @@ module Fabric {
             $scope.profiles = $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
           }
 
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
 

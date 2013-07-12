@@ -36,7 +36,7 @@ module Fabric {
         if ($scope.responseJson !== responseJson) {
           $scope.responseJson = responseJson;
           $scope.versions = response.value;
-          $scope.$apply();
+          Core.$apply($scope);
         }
       }
 

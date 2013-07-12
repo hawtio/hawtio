@@ -100,7 +100,7 @@ module Jclouds {
                 $scope.result = response.value;
                 $scope.apis = $scope.result["Apis"];
                 populateTypeForApis($scope.apis)
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
     }

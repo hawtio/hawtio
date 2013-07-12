@@ -48,7 +48,7 @@ module Camel {
         }
       }
       $scope.source = data;
-      $scope.$apply();
+      Core.$apply($scope);
     };
     
     var saveWorked = () => {

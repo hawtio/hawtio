@@ -77,7 +77,7 @@ module Jmx {
 
         $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
 
-        $scope.$apply();
+        Core.$apply($scope);
       }
 
 
@@ -113,7 +113,7 @@ module Jmx {
               //console.log(stacktrace);
               $scope.operationResult = stacktrace;
             }
-            $scope.$apply();
+            Core.$apply($scope);
           }
         }));
 
@@ -196,7 +196,7 @@ module Jmx {
             }
           });
           $scope.operations = sanitize(answer);
-          $scope.$apply();
+          Core.$apply($scope);
         };
 
         jolokia.request(query, onSuccess(update_values, {

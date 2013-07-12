@@ -297,7 +297,7 @@ module Fabric {
         $scope.profiles = activeProfilesForVersion($scope.version.id, $scope.containers);
         $scope.profile = setSelect($scope.profile, $scope.profiles);
 
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 

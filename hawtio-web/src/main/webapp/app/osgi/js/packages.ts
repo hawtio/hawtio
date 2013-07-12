@@ -25,7 +25,7 @@ module Osgi {
         function populateTable(response) {
             var packages = Osgi.defaultPackageValues(workspace, $scope, response.value);
             $scope.widget.populateTable(packages);
-            $scope.$apply();
+            Core.$apply($scope);
         }
 
         function updateTableContents() {

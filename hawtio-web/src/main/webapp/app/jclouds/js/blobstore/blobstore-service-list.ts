@@ -52,7 +52,7 @@ module Jclouds {
                     blobstoreServices.push(findContextByName(workspace, id))
                 });
                 $scope.blobstoreServices = blobstoreServices;
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
     }

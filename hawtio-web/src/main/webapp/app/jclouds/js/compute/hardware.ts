@@ -90,7 +90,7 @@ module Jclouds {
             $scope.row = findHardwareById(hardwareProfiles, $scope.hardwareId)
             $scope.processors = $scope.row["processors"];
             $scope.volumes = $scope.row["volumes"];
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

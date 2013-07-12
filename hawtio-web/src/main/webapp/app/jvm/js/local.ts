@@ -18,7 +18,7 @@
         error: (response) => {
           $scope.data = [];
           $scope.status = 'Could not discover local JVM processes: ' + response.error;
-          $scope.$apply();
+          Core.$apply($scope);
         }
       });
     }
@@ -57,7 +57,7 @@
       if ($scope.data.length === 0) {
         $scope.status = 'Could not discover local JVM processes';
       }
-      $scope.$apply();
+      Core.$apply($scope);
     }
 
     $scope.fetch();

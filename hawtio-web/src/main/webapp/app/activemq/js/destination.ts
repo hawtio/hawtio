@@ -13,7 +13,7 @@ module ActiveMQ {
     function operationSuccess() {
       $scope.destinationName = "";
       $scope.workspace.operationCounter += 1;
-      $scope.$apply();
+      Core.$apply($scope);
       notification("success", $scope.message);
       $scope.workspace.loadTree();
     }
@@ -22,7 +22,7 @@ module ActiveMQ {
       // lets set the selection to the parent
       workspace.removeAndSelectParentNode();
       $scope.workspace.operationCounter += 1;
-      $scope.$apply();
+      Core.$apply($scope);
       notification("success", $scope.message);
       $scope.workspace.loadTree();
     }

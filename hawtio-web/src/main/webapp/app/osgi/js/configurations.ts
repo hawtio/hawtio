@@ -48,7 +48,7 @@ module Osgi {
         function populateTable(response) {
             var configurations = Osgi.defaultConfigurationValues(workspace, $scope, response.value);
             $scope.widget.populateTable(configurations);
-            $scope.$apply();
+            Core.$apply($scope);
         }
 
         function updateTableContents() {

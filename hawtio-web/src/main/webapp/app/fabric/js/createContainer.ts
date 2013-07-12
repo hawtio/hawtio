@@ -183,11 +183,11 @@ module Fabric {
           if (!error) {
             notification('success', "Successfully created containers");
           }
-          $scope.$apply();
+          Core.$apply($scope);
         },
         error: (response) => {
           notification('error', "Error creating containers: " + response.error);
-          $scope.$apply();
+          Core.$apply($scope);
         }
       });
 

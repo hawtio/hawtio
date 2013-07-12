@@ -132,7 +132,7 @@ module Jmx {
           var data = node.data;
           //$scope.select(data);
           workspace.updateSelectionNode(data);
-          $scope.$apply();
+          Core.$apply($scope);
         },
         onLazyRead: function(treeNode) {
           var folder = treeNode.data;

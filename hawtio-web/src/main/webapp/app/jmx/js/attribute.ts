@@ -16,7 +16,7 @@ module Jmx {
     function render(response) {
       if (!Object.equal($scope.data, response.value)) {
         $scope.data = response.value;
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 
@@ -75,7 +75,7 @@ module Jmx {
 
         // let cubism take over at this point...
         Core.unregister(jolokia, $scope);
-        $scope.$apply();
+        Core.$apply($scope);
 
       }
 

@@ -8,7 +8,7 @@ module Jclouds {
 
         function setImage(api) {
             $scope.row = api;
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

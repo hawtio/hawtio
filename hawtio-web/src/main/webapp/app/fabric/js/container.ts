@@ -56,10 +56,10 @@ module Fabric {
 
     $scope.updateContainerProperty = (propertyName, row) => {
       setContainerProperty(jolokia, row.id, propertyName, row[propertyName], () => { $
-        $scope.$apply(); 
+        Core.$apply($scope); 
       }, (response) => {
         notification('error', 'Failed to set container property due to : ' + response.error);
-        $scope.$apply(); 
+        Core.$apply($scope); 
       });
     }
 

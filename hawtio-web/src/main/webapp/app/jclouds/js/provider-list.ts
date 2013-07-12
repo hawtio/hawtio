@@ -100,7 +100,7 @@ module Jclouds {
                 $scope.result = response.value;
                 $scope.providers = $scope.result["Providers"];
                 populateTypeForProviders($scope.providers)
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
     }

@@ -18,7 +18,7 @@ module Karaf {
                     }
                 });
             });
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
         function setBundles(response) {

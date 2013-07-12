@@ -32,10 +32,10 @@ module Fabric {
           () => {
         notification('success', "Successfully applied " + message);
         $location.url("/fabric/view");
-        $scope.$apply();
+        Core.$apply($scope);
       }, (response) => {
         notification('error', "Failed to apply " + message + " due to " + response.error);
-        $scope.$apply();
+        Core.$apply($scope);
       });
 
 

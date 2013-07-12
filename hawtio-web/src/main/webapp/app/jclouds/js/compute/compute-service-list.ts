@@ -52,7 +52,7 @@ module Jclouds {
                     computeServices.push(findContextByName(workspace, id))
                 });
                 $scope.computeServices = computeServices;
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
     }

@@ -140,7 +140,7 @@ module Camel {
 
     function tracingChanged(response) {
       reloadTracingFlag();
-      $scope.$apply();
+      Core.$apply($scope);
     }
 
     function setTracing(flag:Boolean) {

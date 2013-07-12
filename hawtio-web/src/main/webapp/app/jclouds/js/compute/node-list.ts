@@ -135,7 +135,7 @@ module Jclouds {
                 $scope.nodes = $scope.result
                 $scope.locations = extractLocations($scope.nodes)
                 $scope.groups = extractGroups($scope.nodes)
-                $scope.$apply();
+                Core.$apply($scope);
             }
         }
 

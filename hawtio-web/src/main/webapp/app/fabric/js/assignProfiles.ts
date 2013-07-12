@@ -88,7 +88,7 @@ module Fabric {
             });
             $scope.version = setSelect($scope.version, $scope.versions);
 
-            $scope.$apply();
+            Core.$apply($scope);
           }
           break;
 
@@ -103,7 +103,7 @@ module Fabric {
                 });
               });
 
-              $scope.$apply();
+              Core.$apply($scope);
             }
           break;
 
@@ -118,7 +118,7 @@ module Fabric {
               });
             });
 
-            $scope.$apply();
+            Core.$apply($scope);
           }
 
           break;

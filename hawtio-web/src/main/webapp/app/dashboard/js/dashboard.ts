@@ -71,7 +71,7 @@ module Dashboard {
         w.html($compile(div.contents())(scope));
 
         makeResizable();
-        $scope.$apply();
+        Core.$apply($scope);
 
         setTimeout(function() {
           savefunc(widget);
@@ -101,7 +101,7 @@ module Dashboard {
           } else {
             $location.path("/dashboard/edit?tab=dashboard");
           }
-          //$scope.$apply();
+          //Core.$apply($scope);
         });
       }
     }
@@ -182,7 +182,7 @@ module Dashboard {
       getGridster().enable();
 
       if (!$scope.$$phase) {
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
 

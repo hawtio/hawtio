@@ -8,7 +8,7 @@ module Jclouds {
         function setApi(api) {
             populateTypeForApi(api)
             $scope.row = api;
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
 

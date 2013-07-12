@@ -32,7 +32,7 @@ module Osgi {
         var populateTable = function (response) {
             Osgi.defaultServiceValues(workspace, $scope, response.value);
             $scope.widget.populateTable(response.value);
-            $scope.$apply();
+            Core.$apply($scope);
         };
     }
 };

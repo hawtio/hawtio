@@ -186,10 +186,10 @@ module Fabric {
         notification('success', "Created profile " + $scope.newProfileName);
         $scope.profileIdFilter = $scope.newProfileName;
         $scope.newProfileName = "";
-        $scope.$apply();
+        Core.$apply($scope);
       }, function(response) {
         notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
-        $scope.$apply();
+        Core.$apply($scope);
       });
     };
 
@@ -201,7 +201,7 @@ module Fabric {
       var success = function (response) {
         notification('success', "Created version " + response.value.id);
         $scope.newVersionName = '';
-        $scope.$apply();
+        Core.$apply($scope);
       };
 
       var error = function (response) {
@@ -228,10 +228,10 @@ module Fabric {
       deleteVersion(jolokia, $scope.activeVersionId, function() {
         notification('success', "Deleted version " + $scope.version.id);
         $scope.activeVersionId = '';
-        $scope.$apply();
+        Core.$apply($scope);
       }, function(response) {
         notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
-        $scope.$apply();
+        Core.$apply($scope);
       });
     };
 

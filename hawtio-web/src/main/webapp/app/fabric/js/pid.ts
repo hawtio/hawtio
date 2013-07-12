@@ -61,7 +61,7 @@ module Fabric {
         $scope.response = response.value;
         $scope.data = $scope.response.decodeBase64();
         $scope.mode = $scope.getMode();
-        $scope.$apply();
+        Core.$apply($scope);
       }
     }
       

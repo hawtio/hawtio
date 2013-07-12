@@ -44,7 +44,7 @@ module UI {
 
       $scope.element.blur(function() {
         $scope.show = false;
-        $scope.$apply();
+        Core.$apply($scope);
         return false;
       });
 

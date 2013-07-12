@@ -10,7 +10,7 @@ module Jmx {
 
     $scope.select = (node:DynaTreeNode) => {
       $scope.workspace.updateSelectionNode(node);
-      $scope.$apply();
+      Core.$apply($scope);
     };
 
     function updateSelectionFromURL() {

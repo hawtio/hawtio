@@ -48,7 +48,7 @@ module Jmx {
           if (attributes) {
             tidyAttributes(attributes);
             $scope.attributes = attributes;
-            $scope.$apply();
+            Core.$apply($scope);
           } else {
             console.log("Failed to get a response! " + response);
           }
@@ -90,7 +90,7 @@ module Jmx {
                         $scope.attributes = table;
                       }
                       table.setRow(mbean, attributes);
-                      $scope.$apply();
+                      Core.$apply($scope);
                     } else {
                       console.log("no ObjectName in attributes " + Object.keys(attributes));
                     }

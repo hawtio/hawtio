@@ -33,7 +33,7 @@ module Osgi {
         function populatePage(response) {
             $scope.startLevel = response.value.FrameworkStartLevel;
             $scope.initialBundleStartLevel = response.value.InitialBundleStartLevel;
-            $scope.$apply();
+            Core.$apply($scope);
         }
 
         function updateContents() {

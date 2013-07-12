@@ -90,7 +90,7 @@ module Osgi {
 
         function populateTable(response) {
             $scope.row = response.value
-            $scope.$apply();
+            Core.$apply($scope);
         };
 
         function updateTableContents() {
