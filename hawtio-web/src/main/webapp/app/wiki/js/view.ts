@@ -121,68 +121,70 @@ module Wiki {
 
     $scope.addAndCloseDialog = () => {
       var template = $scope.selectedCreateDocumentTemplate;
-      if (template) {
-        var exemplar = template.exemplar;
-        var name = $scope.newDocumentName || exemplar;
+      if (!template) {
+        console.log("No template selected");
+        return;
+      }
+      var exemplar = template.exemplar;
+      var name = $scope.newDocumentName || exemplar;
 
-        if (name.indexOf('.') < 0) {
-          // lets add the file extension from the exemplar
-          var idx = exemplar.lastIndexOf(".");
-          if (idx > 0) {
-            name +=  exemplar.substring(idx);
-          }
+      if (name.indexOf('.') < 0) {
+        // lets add the file extension from the exemplar
+        var idx = exemplar.lastIndexOf(".");
+        if (idx > 0) {
+          name += exemplar.substring(idx);
         }
+      }
 
-        var commitMessage = "Created " + template.label;
-        var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
+      var commitMessage = "Created " + template.label;
+      var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
 
-        var path = $scope.pageId + "/" + name;
-        notification("success", "Creating new document " + name);
+      var path = $scope.pageId + "/" + name;
+      notification("success", "Creating new document " + name);
 
-        $http.get(exemplarUri).success((contents) => {
+      $http.get(exemplarUri).success((contents) => {
 
-          // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
-          wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
-            console.log("Created file " + name);
-            Wiki.onComplete(status);
+        // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
+        wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
+          console.log("Created file " + name);
+          Wiki.onComplete(status);
 
-            // lets deal with directories in the name
-            var folder = $scope.pageId;
-            var fileName = name;
-            var idx = name.lastIndexOf("/");
-            if (idx > 0) {
-              folder += "/" + name.substring(0, idx);
-              name = name.substring(idx + 1);
+          // lets deal with directories in the name
+          var folder = $scope.pageId;
+          var fileName = name;
+          var idx = name.lastIndexOf("/");
+          if (idx > 0) {
+            folder += "/" + name.substring(0, idx);
+            name = name.substring(idx + 1);
+          }
+
+          // lets navigate to the edit link
+          // load the directory and find the child item
+          $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
+            // lets find the child entry so we can calculate its correct edit link
+            var link = null;
+            if (details && details.children) {
+              console.log("Requeried the directory " + details.children.length + " children");
+              var child = details.children.find(c => c.name === fileName);
+              if (child) {
+                link = $scope.childLink(child);
+              } else {
+                console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
+              }
             }
-
-            // lets navigate to the edit link
-            // load the directory and find the child item
-            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
-              // lets find the child entry so we can calculate its correct edit link
-              var link = null;
-              if (details && details.children) {
-                console.log("Requeried the directory " + details.children.length + " children");
-                var child = details.children.find(c => c.name === fileName);
-                if (child) {
-                  link = $scope.childLink(child);
-                } else {
-                  console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
-                }
-              }
-              if (!link) {
-                console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
-                link = Wiki.editLink($scope.branch, path, $location);
-              }
-              var href = Core.trimLeading(link, "#");
-              Core.$apply($scope);
-              $timeout(() => {
-                console.log("About to navigate to: " + href);
-                $location.path(href);
-              }, 400);
-            });
+            if (!link) {
+              console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
+              link = Wiki.editLink($scope.branch, path, $location);
+            }
+            var href = Core.trimLeading(link, "#");
+            Core.$apply($scope);
+            $timeout(() => {
+              console.log("About to navigate to: " + href);
+              $location.path(href);
+            }, 400);
           });
         });
-      }
+      });
       $scope.addDialog.close();
     };
 
