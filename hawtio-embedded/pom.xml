@@ -52,7 +52,7 @@
           <mainClass>io.hawt.embedded.Main</mainClass>
           <classpathScope>test</classpathScope>
           <arguments>
-            <argument>${basedir}/../hawtio-web/target</argument>
+            <argument>${basedir}/../hawtio-default/target</argument>
             <argument>${jettyPort}</argument>
             <argument>${context}</argument>
           </arguments>
