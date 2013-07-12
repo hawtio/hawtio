@@ -138,15 +138,22 @@ module Wiki {
             console.log("Created file " + name);
             Wiki.onComplete(status);
 
+            // lets deal with directories in the name
+            var folder = $scope.pageId;
+            var fileName = name;
+            var idx = name.lastIndexOf("/");
+            if (idx > 0) {
+              folder += "/" + name.substring(0, idx);
+              name = name.substring(idx + 1);
+            }
+
             // lets navigate to the edit link
             // load the directory and find the child item
-            $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, (details) => {
+            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
               // lets find the child entry so we can calculate its correct edit link
               var link = null;
               if (details && details.children) {
                 console.log("Requeried the directory " + details.children.length + " children");
-                var idx = name.lastIndexOf("/");
-                var fileName = (idx > 0) ? name.substring(idx + 1) : name;
                 var child = details.children.find(c => c.name === fileName);
                 if (child) {
                   link = $scope.childLink(child);
