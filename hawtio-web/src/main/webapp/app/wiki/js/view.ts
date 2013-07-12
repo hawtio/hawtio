@@ -5,7 +5,7 @@ module Wiki {
 
     $scope.addDialog = new Core.Dialog();
     $scope.createDocumentTree = Wiki.createWizardTree();
-    $scope.createDocumentTreeActivations = ["camel-spring.xml"];
+    $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
 
     $scope.gridOptions = {
       data: 'children',
