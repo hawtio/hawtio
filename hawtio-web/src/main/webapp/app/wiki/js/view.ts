@@ -125,6 +125,14 @@ module Wiki {
         var exemplar = template.exemplar;
         var name = $scope.newDocumentName || exemplar;
 
+        if (name.indexOf('.') < 0) {
+          // lets add the file extension from the exemplar
+          var idx = exemplar.lastIndexOf(".");
+          if (idx > 0) {
+            name +=  exemplar.substring(idx);
+          }
+        }
+
         var commitMessage = "Created " + template.label;
         var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
 
