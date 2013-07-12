@@ -65,7 +65,7 @@ public class JVMList implements JVMListMBean {
               listLocalJVMs();
             } catch (NoClassDefFoundError e) {
               // Some JVM's don't support com.sun.tools.attach.VirtualMachine
-              LOG.info("Local JVM discovery disabled due to: "+e);
+              LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e);
               return; 
             }
 
