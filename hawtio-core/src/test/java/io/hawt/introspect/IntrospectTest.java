@@ -7,6 +7,8 @@ import io.hawt.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class IntrospectTest {
+    private static final transient Logger LOG = LoggerFactory.getLogger(IntrospectTest.class);
+
     protected Introspector introspector = new Introspector();
     protected boolean verbose = Objects.equals(System.getProperty("verbose", "false"), "true");
 
@@ -87,7 +91,8 @@ public class IntrospectTest {
 
     @Test
     public void testFindClasses() throws Exception {
-        assertFindClass("io.hawt.introspect.Introspector", "io.hawt.introspect.Introspector", "io", "io.", "Intro");
+        assertFindClass("io.hawt.introspect.Introspector", "io", "io.", "Intro", "io.hawt.introspect.Introspector");
+        assertFindClass("io.hawt.example.dozer.dto.CustomerDTO", "Cust", "Custom", "Customer");
     }
 
     @Test

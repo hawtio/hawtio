@@ -641,6 +641,13 @@ module Core {
     return null;
   }
 
+  export function time(message: string, fn) {
+    var start = new Date().getTime();
+    var answer = fn();
+    var elapsed = new Date().getTime() - start;
+    console.log(message + " " + elapsed);
+    return answer;
+  }
   /**
    * Compares the 2 version arrays and returns -1 if v1 is less than v2 or 0 if they are equal or 1 if v1 is greater than v2
    *

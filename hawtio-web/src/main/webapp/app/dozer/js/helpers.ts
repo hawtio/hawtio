@@ -88,7 +88,7 @@ module Dozer {
    * Finds class names matching the given search text and either invokes the function with the results
    * or does a sync request and returns them.
    */
-  export function findClassNames(workspace: Workspace, searchText: string, limit = 20, fn = null) {
+  export function findClassNames(workspace: Workspace, searchText: string, limit = 10, fn = null) {
     var mbean = getIntrospectorMBean(workspace);
     if (mbean) {
       return workspace.jolokia.execute(mbean, "findClassNames", searchText, limit, onSuccess(fn));

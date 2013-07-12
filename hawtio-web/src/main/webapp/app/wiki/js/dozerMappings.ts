@@ -251,10 +251,12 @@ module Wiki {
     };
 
     $scope.classNames = (text) => {
-      console.log("searching for class names with filter '" + text + "'");
-      var answer =  Dozer.findClassNames(workspace, text);
-      console.log("Found results: " + answer);
-      return answer;
+      return Core.time("Time the query of classes", () => {
+        console.log("searching for class names with filter '" + text + "'");
+        var answer =  Dozer.findClassNames(workspace, text);
+        console.log("Found results: " + answer.length);
+        return answer;
+      })
     };
 
     updateView();
