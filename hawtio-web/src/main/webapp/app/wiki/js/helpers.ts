@@ -12,9 +12,14 @@ module Wiki {
    */
   export var documentTemplates = [
     {
-      label: "Markdown ReadMe Document",
-      tooltip: "A basic markup document using the Markdown wiki markup",
+      label: "Markdown Document",
+      tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
       exemplar: "ReadMe.md"
+    },
+    {
+      label: "HTML Document",
+      tooltip: "A HTML document you can edit directly using the HTML markup",
+      exemplar: "document.html"
     },
     {
       label: "Integration Flows",
