@@ -1,6 +1,6 @@
 module Wiki {
 
-  export function ViewController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
+  export function ViewController($scope, $location, $routeParams, $http, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
     Wiki.initScope($scope, $routeParams, $location);
 
     $scope.addDialog = new Core.Dialog();
@@ -90,11 +90,11 @@ module Wiki {
     });
 
     /*
-    // TODO this doesn't work for some reason!
-    $scope.$on('jmxTreeUpdated', function () {
-      console.log("view: jmx tree updated!");
-    });
-    */
+     // TODO this doesn't work for some reason!
+     $scope.$on('jmxTreeUpdated', function () {
+     console.log("view: jmx tree updated!");
+     });
+     */
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -114,11 +114,48 @@ module Wiki {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
     };
 
+    $scope.openAddDialog = () => {
+      $scope.newDocumentName = null;
+      $scope.addDialog.open();
+    };
+
     $scope.addAndCloseDialog = () => {
       var template = $scope.selectedCreateDocumentTemplate;
       if (template) {
         var exemplar = template.exemplar;
-        console.log("Lets create an instance of template: " + exemplar);
+        var name = $scope.newDocumentName || exemplar;
+
+        var commitMessage = "Created " + template.label;
+        var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
+
+        $http.get(exemplarUri).success((contents) => {
+
+          // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
+          var path = $scope.pageId + "/" + name;
+          wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
+            Wiki.onComplete(status);
+
+            // lets navigate to the edit link
+            // load the directory and find the child item
+            $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, (details) => {
+              // lets find the child entry so we can calculate its correct edit link
+              var link = null;
+              if (details && details.children) {
+                var child = details.children.find(c => c.name === name);
+                if (child) {
+                  link = $scope.childLink(child);
+                }
+              }
+              if (!link) {
+                console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                link = Wiki.editLink($scope.branch, path, $location);
+              }
+              $location.path(Core.trimLeading(link, "#"));
+            });
+
+            Core.$apply($scope);
+          });
+        });
       }
       $scope.addDialog.close();
     };
