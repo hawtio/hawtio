@@ -441,14 +441,14 @@ module Core {
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
    */
   export function $apply($scope) {
-    var phase = $scope.$$phase && !$scope.$root.$$phase;
+    var phase = $scope.$$phase || $scope.$root.$$phase;
     if (!phase) {
       $scope.$apply();
     }
   }
 
   export function $digest($scope) {
-    var phase = $scope.$$phase;
+    var phase = $scope.$$phase || $scope.$root.$$phase;
     if (!phase) {
       $scope.$digest();
     }
