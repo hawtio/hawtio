@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-	  <groupId>io.hawt</groupId>
-	  <artifactId>project</artifactId>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
     <version>1.2-SNAPSHOT</version>
   </parent>
 
@@ -30,6 +31,21 @@
       -->
       <type>war</type>
     </dependency>
+
+    <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -123,9 +139,9 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-<!--
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
--->
+          <!--
+                    <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          -->
         </configuration>
       </plugin>
       <plugin>
@@ -138,9 +154,9 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-<!--
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
--->
+          <!--
+                    <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          -->
         </configuration>
       </plugin>
 
