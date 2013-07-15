@@ -252,7 +252,7 @@ module Wiki {
 
     $scope.classNames = (text) => {
       // lets only query if the size is reasonable
-      if (!text || text.length < 3) return [];
+      if (!text || text.length < 2) return [];
       return Core.time("Time the query of classes", () => {
         console.log("searching for class names with filter '" + text + "'");
         var answer =  Dozer.findClassNames(workspace, text);
