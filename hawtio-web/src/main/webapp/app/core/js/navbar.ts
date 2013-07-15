@@ -32,7 +32,7 @@ module Core {
       }else {
         href = nav.href();
       }
-      return createHref($location, href, ['tab']);
+      return createHref($location, href, ['tab', 'nid']);
     };
 
     $scope.fullScreenLink = () => {
