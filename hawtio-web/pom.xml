@@ -441,9 +441,9 @@
         </executions>
         <configuration>
           <classes>
-            <org.fusesource.fabric.api.CreateContainerChildOptions>
+            <org.fusesource.fabric.api.CreateChildContainerOptions>
               ${schema-outdir}/createContainerChildOptions.js
-            </org.fusesource.fabric.api.CreateContainerChildOptions>
+            </org.fusesource.fabric.api.CreateChildContainerOptions>
             <org.fusesource.fabric.api.CreateSshContainerOptions>
               ${schema-outdir}/createSshContainerOptions.js
             </org.fusesource.fabric.api.CreateSshContainerOptions>
