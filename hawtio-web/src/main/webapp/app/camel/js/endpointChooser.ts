@@ -209,7 +209,6 @@ module Camel {
     var silentOptions = {silent: true};
 
     $scope.$watch('workspace.selection', function () {
-      workspace.moveIfViewInvalid();
       $scope.loadEndpointNames();
     });
 
