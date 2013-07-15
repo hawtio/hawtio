@@ -161,6 +161,41 @@ module Wiki {
   }
 
 
+  export function fileIconHtml(row) {
+    var css = null;
+    var icon = null;
+    var name = row.getProperty("name");
+    var extension = fileExtension(name);
+    var directory = row.getProperty("directory");
+
+    // TODO could we use different icons for markdown v xml v html
+    var xmlNamespaces = row.xmlNamespaces || row.entity.xmlNamespaces;
+    if (xmlNamespaces && xmlNamespaces.length) {
+      if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
+        icon = "/app/camel/img/camel.png";
+      } else if (xmlNamespaces.any((ns) => Wiki.dozerNamespaces.any(ns))) {
+        icon = "/app/dozer/img/dozer.gif";
+      } else {
+        console.log("file " + name + " has namespaces " + xmlNamespaces);
+      }
+    }
+
+    if (!icon) {
+      if (directory) {
+        css = "icon-folder-close";
+      } else if ("xml" === extension) {
+        css = "icon-cog";
+      } else {
+        css = "icon-file-alt";
+      }
+    }
+    if (icon) {
+      return "<img src='" + url(icon) + "'>";
+    } else {
+      return "<i class='" + css + "'></i>";
+    }
+  }
+
   export function iconClass(row) {
     var name = row.getProperty("name");
     var extension = fileExtension(name);

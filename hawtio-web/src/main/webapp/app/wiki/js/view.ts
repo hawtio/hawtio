@@ -18,7 +18,7 @@ module Wiki {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
         },
         {
@@ -67,6 +67,10 @@ module Wiki {
       }
       return Core.createHref($location, prefix + path + postFix, ["form"]);
     };
+
+    $scope.fileIconHtml = (entity) => {
+      return Wiki.fileIconHtml(entity);
+    }
 
 
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
