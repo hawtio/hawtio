@@ -5,6 +5,7 @@ module Wiki {
 
     $scope.addDialog = new Core.Dialog();
     $scope.deleteDialog = false;
+    $scope.isFile = false;
     $scope.createDocumentTree = Wiki.createWizardTree();
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
 
@@ -122,7 +123,6 @@ module Wiki {
       $scope.addDialog.open();
     };
 
-
     $scope.addAndCloseDialog = () => {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
@@ -143,7 +143,27 @@ module Wiki {
       var commitMessage = "Created " + template.label;
       var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
 
-      var path = $scope.pageId + "/" + name;
+      // TODO detect if we are a folder or not!
+
+      // lets deal with directories in the name
+      var folder = $scope.pageId;
+      if ($scope.isFile) {
+        // if we are a file lets discard the last part of the path
+        var idx = folder.lastIndexOf("/");
+        if (idx <= 0) {
+          folder = "";
+        } else {
+          folder = folder.substring(0, idx);
+        }
+      }
+      var fileName = name;
+      var idx = name.lastIndexOf("/");
+      if (idx > 0) {
+        folder += "/" + name.substring(0, idx);
+        name = name.substring(idx + 1);
+      }
+      var path = folder + "/" + name;
+      console.log("Creating file " + path);
       notification("success", "Creating new document " + name);
 
       $http.get(exemplarUri).success((contents) => {
@@ -153,22 +173,13 @@ module Wiki {
           console.log("Created file " + name);
           Wiki.onComplete(status);
 
-          // lets deal with directories in the name
-          var folder = $scope.pageId;
-          var fileName = name;
-          var idx = name.lastIndexOf("/");
-          if (idx > 0) {
-            folder += "/" + name.substring(0, idx);
-            name = name.substring(idx + 1);
-          }
-
           // lets navigate to the edit link
           // load the directory and find the child item
           $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
             // lets find the child entry so we can calculate its correct edit link
             var link = null;
             if (details && details.children) {
-              console.log("Requeried the directory " + details.children.length + " children");
+              console.log("scanned the directory " + details.children.length + " children");
               var child = details.children.find(c => c.name === fileName);
               if (child) {
                 link = $scope.childLink(child);
@@ -204,16 +215,15 @@ module Wiki {
 
     $scope.deleteAndCloseDialog = () => {
       var files = $scope.gridOptions.selectedItems;
+      var fileCount = files.length;
       console.log("Deleting selection: " + files);
-      var removed = 0;
       angular.forEach(files, (file, idx) => {
         var path = $scope.pageId + "/" + file.name;
         console.log("About to delete " + path);
         $scope.git = wikiRepository.removePage($scope.branch, path, null, (result) => {
-          removed += 1;
-          if (idx + 1 === files.length) {
-            $scope.gridOptions.selectedItems.splice(0, files.length);
-            var message = Core.maybePlural(removed, "document");
+          if (idx + 1 === fileCount) {
+            $scope.gridOptions.selectedItems.splice(0, fileCount);
+            var message = Core.maybePlural(fileCount, "document");
             notification("success", "Deleted " + message);
             Core.$apply($scope);
             updateView();
@@ -298,6 +308,7 @@ module Wiki {
       $scope.source = null;
       $scope.readMePath = null;
 
+      $scope.isFile = false;
       if ($scope.children) {
         // if we have a readme then lets render it...
         var item = $scope.children.find((info) => {
@@ -315,6 +326,7 @@ module Wiki {
       } else {
         var pageName = $scope.pageId;
         viewContents(pageName, contents);
+        $scope.isFile = true;
       }
       Core.$apply($scope);
     }
