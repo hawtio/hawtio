@@ -27,6 +27,17 @@ import static org.junit.Assert.fail;
 public class GitFacadeTest {
     GitFacade git = createTestGitFacade();
 
+    public static void main(String[] args) {
+        GitFacadeTest test = new GitFacadeTest();
+        try {
+            test.init();
+            test.createFileAndListDirectory();
+            test.destroy();
+        } catch (Throwable e) {
+            System.out.println("FAILED: " + e);
+            e.printStackTrace();
+        }
+    }
     public static File targetDir() {
         String basedir = System.getProperty("basedir", ".");
         return new File(basedir + "/target");
@@ -150,6 +161,16 @@ public class GitFacadeTest {
             }
             System.out.println();
         }
+
+        // now lets try rename a file
+        String newReadMePath = "NewReadMeFile.md";
+        git.rename(this.branch, readMePath, newReadMePath, "Renaming file", authorName, authorEmail);
+        assertReadFileContents(newReadMePath, readMeContent);
+
+        // now lets try move it to a completely different directory
+        String newDirectoryReadMePath = "another/thing/NewReadMeFile.md";
+        git.rename(this.branch, newReadMePath, newDirectoryReadMePath, "Moving file to another directory", authorName, authorEmail);
+        assertReadFileContents(newDirectoryReadMePath, readMeContent);
 
         // now lets make a new git facade to check we can work with existing repos
         GitFacade anotherGit = createTestGitFacade();

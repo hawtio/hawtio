@@ -386,8 +386,30 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         return filePattern;
     }
 
-    public void move(String branch, String oldPath, String newPath) {
-        // TODO
+    public void rename(String branch, final String oldPath, final String newPath, final String commitMessage,
+                       final String authorName, final String authorEmail) {
+        final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
+        gitOperation(personIdent, new Callable<RevCommit>() {
+            public RevCommit call() throws Exception {
+                File file = getFile(oldPath);
+                File newFile = getFile(newPath);
+
+                if (file.exists()) {
+                    File parentFile = newFile.getParentFile();
+                    parentFile.mkdirs();
+                    if (!parentFile.exists()) {
+                        throw new IOException("Could not create directory " + parentFile + " when trying to move " + file + " to " + newFile + ". Maybe a file permission issue?");
+                    }
+                    file.renameTo(newFile);
+                    String filePattern = getFilePattern(newPath);
+                    git.add().addFilepattern(filePattern).call();
+                    CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
+                    return commitThenPush(commit);
+                } else {
+                    return null;
+                }
+            }
+        });
     }
 
     public void remove(final String branch, final String path, final String commitMessage,

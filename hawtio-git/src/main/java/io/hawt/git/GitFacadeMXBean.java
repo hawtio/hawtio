@@ -17,11 +17,14 @@ public interface GitFacadeMXBean {
     void write(String branch, String path, String commitMessage,
                String authorName, String authorEmail, String contents);
 
-    void remove(String branch, String path, String commitMessage,
+    /**
+     * Renames the given oldPath to the newPath location for the given branch, commit message and user
+     */
+    void rename(String branch, String oldPath, String newPath, String commitMessage,
                 String authorName, String authorEmail);
 
-    // TODO
-    // void move(String branch, String oldPath, String newPath);
+    void remove(String branch, String path, String commitMessage,
+                String authorName, String authorEmail);
 
     String getHEAD();
 
