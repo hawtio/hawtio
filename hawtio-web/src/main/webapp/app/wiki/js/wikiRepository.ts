@@ -3,7 +3,7 @@ module Wiki {
   export interface WikiRepository {
     putPage(branch:string, path:string, contents:string, commitMessage:string, fn): void;
 
-    deletePage(path:string, fn): void;
+    removePage(branch:string, path:string, commitMessage:string, fn): void;
   }
 
   export class GitWikiRepository implements WikiRepository {
@@ -78,10 +78,12 @@ module Wiki {
       this.git().revertTo(objectId, fullPath, commitMessage, fn);
     }
 
-    public deletePage(path:string, fn) {
+    public removePage(branch:string, path:string, commitMessage:string, fn) {
       var fullPath = this.getPath(path);
-      var commitMessage = "Removing wiki page " + path;
-      this.git().remove(fullPath, commitMessage, fn);
+      if (!commitMessage) {
+        commitMessage = "Removing page " + path;
+      }
+      this.git().remove(branch, fullPath, commitMessage, fn);
     }
 
     /**

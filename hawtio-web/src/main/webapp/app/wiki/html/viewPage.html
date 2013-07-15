@@ -7,6 +7,12 @@
         </li>
 
         <li class="pull-right">
+          <a ng-click="openDeleteDialog()" ng-disabled="!gridOptions.selectedItems.length"
+             title="Delete the selected document(s)"
+             data-placement="bottom">
+            <i class="icon-remove"></i> Delete</a>
+        </li>
+        <li class="pull-right">
           <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
              data-placement="bottom">
             <i class="icon-edit"></i> Edit</a>
@@ -79,4 +85,21 @@
       </div>
     </div>
   </div>
+
+  <div hawtio-confirm-dialog="deleteDialog"
+       ok-button-text="Delete"
+       on-ok="deleteAndCloseDialog()">
+    <div class="dialog-body">
+      <p>You are about to delete
+        <ng-pluralize count="gridOptions.selectedItems.length"
+                      when="{'1': 'this document!', 'other': 'these {} documents!'}">
+        </ng-pluralize>
+      </p>
+      <div ng-bind-html-unsafe="selectedFileHtml"></div>
+<!--
+      <p>This operation cannot be undone so please be careful.</p>
+-->
+    </div>
+  </div>
+
 </div>

@@ -4,16 +4,19 @@ module Wiki {
     Wiki.initScope($scope, $routeParams, $location);
 
     $scope.addDialog = new Core.Dialog();
+    $scope.deleteDialog = false;
     $scope.createDocumentTree = Wiki.createWizardTree();
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
 
     $scope.gridOptions = {
       data: 'children',
       displayFooter: false,
+      selectedItems: [],
+      showSelectionCheckbox: true,
       columnDefs: [
         {
           field: 'name',
-          displayName: 'Page Name',
+          displayName: 'Name',
           cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
         },
@@ -119,6 +122,7 @@ module Wiki {
       $scope.addDialog.open();
     };
 
+
     $scope.addAndCloseDialog = () => {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
@@ -186,6 +190,37 @@ module Wiki {
         });
       });
       $scope.addDialog.close();
+    };
+
+
+    $scope.openDeleteDialog = () => {
+      if ($scope.gridOptions.selectedItems.length) {
+        $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
+        $scope.deleteDialog = true;
+      } else {
+        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+      }
+    };
+
+    $scope.deleteAndCloseDialog = () => {
+      var files = $scope.gridOptions.selectedItems;
+      console.log("Deleting selection: " + files);
+      var removed = 0;
+      angular.forEach(files, (file, idx) => {
+        var path = $scope.pageId + "/" + file.name;
+        console.log("About to delete " + path);
+        $scope.git = wikiRepository.removePage($scope.branch, path, null, (result) => {
+          removed += 1;
+          if (idx + 1 === files.length) {
+            $scope.gridOptions.selectedItems.splice(0, files.length);
+            var message = Core.maybePlural(removed, "document");
+            notification("success", "Deleted " + message);
+            Core.$apply($scope);
+            updateView();
+          }
+        });
+      });
+      $scope.deleteDialog = false;
     };
 
     updateView();

@@ -24,7 +24,7 @@ module Git {
     /**
      * Removes a file if it exists
      */
-    remove(path:string, commitMessage:string, fn): void;
+    remove(branch:string, path:string, commitMessage:string, fn): void;
 
 
     /**
@@ -84,11 +84,11 @@ module Git {
       this.jolokia.execute(this.mbean, "revertTo", this.branch, objectId, blobPath, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
-    public remove(path:string, commitMessage:string, fn) {
+    public remove(branch:string, path:string, commitMessage:string, fn) {
       var authorName = this.getUserName();
       var authorEmail = this.getUserEmail();
 
-      this.jolokia.execute(this.mbean, "remove", this.branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
+      this.jolokia.execute(this.mbean, "remove", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
     /**

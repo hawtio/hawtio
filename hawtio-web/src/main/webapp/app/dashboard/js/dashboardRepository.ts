@@ -137,7 +137,7 @@ module Dashboard {
       angular.forEach(array, (dash) => {
         var path = this.getDashboardPath(dash);
         var commitMessage = "Removing dashboard " + path;
-        this.git.remove(path, commitMessage, fn);
+        this.git.remove(this.branch, path, commitMessage, fn);
       });
     }
 
