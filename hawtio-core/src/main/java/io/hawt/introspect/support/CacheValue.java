@@ -15,23 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.introspect;
+package io.hawt.introspect.support;
 
-import io.hawt.introspect.support.ClassScanner;
-
-import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
- * Dumps all the classes on the classpath using hte ClassScanner
  */
-public class Main {
+public class CacheValue {
+    private SortedSet<String> classNames = new TreeSet<String>();
 
-    public static void main(String[] args) {
-        ClassScanner scanner = ClassScanner.newInstance();
-        SortedMap<String, Class<?>> answer = scanner.getAllClassesMap();
+    public SortedSet<String> getClassNames() {
+        return classNames;
+    }
 
-        for (Class<?> aClass : answer.values()) {
-            System.out.println(aClass.getName());
-        }
+    public void setClassNames(SortedSet<String> classNames) {
+        this.classNames = classNames;
     }
 }

@@ -1,5 +1,6 @@
 package io.hawt.introspect;
 
+import io.hawt.introspect.support.ClassScanner;
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
@@ -18,8 +19,6 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(Introspector.class);
     private static Introspector singleton;
 
-    private String configDir;
-    private String version;
     private ClassScanner classScanner = new ClassScanner();
 
     public static Introspector getSingleton() {
@@ -33,6 +32,8 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     @Override
     public void init() throws Exception {
         Introspector.singleton = this;
+        // lets force a preload of the class name cache
+        findClassNames("", null);
         super.init();
 
     }

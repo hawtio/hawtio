@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.introspect;
+package io.hawt.introspect.support;
 
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
@@ -36,6 +36,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -48,6 +49,8 @@ public class ClassScanner {
 
     private final ClassLoader[] classLoaders;
 
+    private WeakHashMap<String,CacheValue> cache = new WeakHashMap<String, CacheValue>();
+    private WeakHashMap<Package,CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
 
     public static ClassScanner newInstance() {
         return new ClassScanner(Thread.currentThread().getContextClassLoader(), ClassScanner.class.getClassLoader());
@@ -72,19 +75,44 @@ public class ClassScanner {
      */
     public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Package... packages) {
         SortedSet<String> answer = new TreeSet<String>();
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
+        SortedSet<String> classes = new TreeSet<String>();
+
         for (Package aPackage : packages) {
-            addPackageResources(aPackage, urlSet);
+            CacheValue cacheValue = packageCache.get(aPackage);
+            if (cacheValue == null) {
+                cacheValue = createPackageCacheValue(aPackage);
+                packageCache.put(aPackage, cacheValue);
+            }
+            classes.addAll(cacheValue.getClassNames());
         }
-        for (ClassResource classResource : urlSet.values()) {
-            addClassesForPackage(classResource, search, limit, classes);
+
+/*
+        for (Map.Entry<String, ClassResource> entry : entries) {
+            String key = entry.getKey();
+            ClassResource classResource = entry.getValue();
+            CacheValue cacheValue = cache.get(key);
+            if (cacheValue == null) {
+                cacheValue = createCacheValue(key, classResource);
+                cache.put(key, cacheValue);
+            }
+            classes.addAll(cacheValue.getClassNames());
+            //addClassesForPackage(classResource, search, limit, classes);
         }
-        for (Class<?> aClass : classes) {
-            answer.add(aClass.getName());
+*/
+
+        if (withinLimit(limit, answer)) {
+            for (String aClass : classes) {
+                if (classNameMatches(aClass, search)) {
+                    answer.add(aClass);
+                    if (!withinLimit(limit, answer)) {
+                        break;
+                    }
+                }
+            }
         }
         return answer;
     }
+
 
     /**
      * Returns all the classes found in a sorted map
@@ -148,6 +176,84 @@ public class ClassScanner {
         }
     }
 
+
+    private CacheValue createPackageCacheValue(Package aPackage) {
+        Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
+        addPackageResources(aPackage, urlSet);
+
+        CacheValue answer = new CacheValue();
+        SortedSet<String> classNames = answer.getClassNames();
+        Set<Map.Entry<String, ClassResource>> entries = urlSet.entrySet();
+        for (Map.Entry<String, ClassResource> entry : entries) {
+            String key = entry.getKey();
+            ClassResource classResource = entry.getValue();
+            CacheValue cacheValue = cache.get(key);
+            if (cacheValue == null) {
+                cacheValue = createCacheValue(key, classResource);
+                cache.put(key, cacheValue);
+            }
+            classNames.addAll(cacheValue.getClassNames());
+        }
+        return answer;
+    }
+
+    protected CacheValue createCacheValue(String key, ClassResource classResource) {
+        CacheValue answer = new CacheValue();
+        SortedSet<String> classNames = answer.getClassNames();
+        String packageName = classResource.getPackageName();
+        URL resource = classResource.getResource();
+        if (resource != null) {
+            String resourceText = resource.toString();
+            LOG.debug("Searching resource " + resource);
+            if (resourceText.startsWith("jar:")) {
+                processJarClassNames(classResource, classNames);
+            } else {
+                processDirectoryClassNames(new File(resource.getPath()), packageName, classNames);
+            }
+        }
+        return answer;
+    }
+
+    protected void processDirectoryClassNames(File directory, String packageName, Set<String> classes) {
+        String[] fileNames = directory.list();
+        for (String fileName : fileNames) {
+            String packagePrefix = Strings.isNotBlank(packageName) ? packageName + '.' : packageName;
+            if (fileName.endsWith(".class")) {
+                String className = packagePrefix + fileName.substring(0, fileName.length() - 6);
+                classes.add(className);
+            }
+            File subdir = new File(directory, fileName);
+            if (subdir.isDirectory()) {
+                processDirectoryClassNames(subdir, packagePrefix + fileName, classes);
+            }
+        }
+    }
+
+    protected void processJarClassNames(ClassResource classResource, Set<String> classes) {
+        URL resource = classResource.getResource();
+        String packageName = classResource.getPackageName();
+        String relativePath = getPackageRelativePath(packageName);
+        String jarPath = getJarPath(resource);
+        JarFile jarFile;
+        try {
+            jarFile = new JarFile(jarPath);
+        } catch (IOException e) {
+            LOG.debug("IOException reading JAR '" + jarPath + ". Reason: " + e, e);
+            return;
+        }
+        Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String entryName = entry.getName();
+            if (entryName.endsWith(".class") && entryName.startsWith(relativePath) && entryName.length() > (relativePath.length() + 1)) {
+                String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+                classes.add(className);
+            }
+        }
+    }
+
+
+
     protected void addClassesForPackage(ClassResource classResource, String filter, Integer limit, Set<Class<?>> classes) {
         String packageName = classResource.getPackageName();
         URL resource = classResource.getResource();
@@ -161,6 +267,7 @@ public class ClassScanner {
             }
         }
     }
+
     protected void processDirectory(File directory, String packageName, Set<Class<?>> classes, String filter, Integer limit) {
         String[] fileNames = directory.list();
         for (String fileName : fileNames) {
@@ -268,14 +375,14 @@ public class ClassScanner {
     }
 
     /**
-     * Returns true if we are within the limit value for the number of found classes
+     * Returns true if we are within the limit value for the number of results in the collection
      */
-    protected boolean withinLimit(Integer limit, Collection<Class<?>> classes) {
+    protected boolean withinLimit(Integer limit, Collection<?> collection) {
         if (limit == null) {
             return true;
         } else {
             int value = limit.intValue();
-            return value <= 0 || value > classes.size();
+            return value <= 0 || value > collection.size();
         }
     }
 }
