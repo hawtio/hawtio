@@ -6,21 +6,34 @@
           <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
         </li>
 
-        <li class="pull-right">
-          <a ng-click="openDeleteDialog()" ng-disabled="!gridOptions.selectedItems.length"
-             title="Delete the selected document(s)"
-             data-placement="bottom">
-            <i class="icon-remove"></i> Delete</a>
+        <li class="pull-right dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Actions <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li ng-show="sourceLink()">
+              <a ng-href="{{sourceLink()}}" title="View source code"
+                 data-placement="bottom">
+                <i class="icon-file-alt"></i> Source</a>
+            </li>
+            <li>
+              <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
+                 data-placement="bottom">
+                <i class="icon-comments-alt"></i> History</a>
+            </li>
+            <li class="divider">
+            <li>
+              <a ng-click="openDeleteDialog()" ng-disabled="!gridOptions.selectedItems.length"
+                 title="Delete the selected document(s)"
+                 data-placement="bottom">
+                <i class="icon-remove"></i> Delete</a>
+            </li>
+          </ul>
         </li>
         <li class="pull-right">
           <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
              data-placement="bottom">
             <i class="icon-edit"></i> Edit</a>
-        </li>
-        <li class="pull-right">
-          <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
-             data-placement="bottom">
-            <i class="icon-comments-alt"></i> History</a>
         </li>
         <li class="pull-right">
           <a title="Create new page" ng-click="openAddDialog()"
@@ -31,11 +44,6 @@
                        data-placement="bottom">
                       <i class="icon-plus"></i> Create</a>
           -->
-        </li>
-        <li class="pull-right" ng-show="sourceLink()">
-          <a ng-href="{{sourceLink()}}" title="View source code"
-             data-placement="bottom">
-            <i class="icon-file-alt"></i> Source</a>
         </li>
       </ul>
     </div>
