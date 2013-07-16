@@ -328,46 +328,53 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     /**
      * Provides a file/path completion hook so we can start typing the name of a file or directory
      */
-    public List<String> completePath(String completionText, boolean directoriesOnly) {
-         boolean empty = Strings.isBlank(completionText);
-         String pattern = completionText;
-         File file = getFile(completionText);
-         String prefix = completionText;
-         if (file.exists()) {
-             pattern = "";
-         } else {
-             String startPath = ".";
-             if (!empty) {
-                 int idx = completionText.lastIndexOf('/');
-                 if (idx >= 0) {
-                     startPath = completionText.substring(0, idx);
-                     if (startPath.length() == 0) {
-                         startPath = "/";
-                     }
-                     pattern = completionText.substring(idx + 1);
-                 }
-             }
-             file = getFile(startPath);
-             prefix = startPath;
-         }
-         if (prefix.length() > 0 && !prefix.endsWith("/")) {
-             prefix += "/";
-         }
-         if (prefix.equals("./")) {
-             prefix = "";
-         }
-         File[] list = file.listFiles();
-         List<String> answer = new ArrayList<String>();
-         for (File aFile : list) {
-             String name = aFile.getName();
-             if (pattern.length() == 0 || name.contains(pattern)) {
-                 if (!isIgnoreFile(aFile) && (!directoriesOnly || aFile.isDirectory())) {
-                     answer.add(prefix + name);
-                 }
-             }
-         }
-         return answer;
-     }
+    public List<String> completePath(final String branch, final String completionText, final boolean directoriesOnly) {
+        return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
+            @Override
+            public List<String> call() throws Exception {
+                File rootDir = getConfigDirectory();
+                checkoutBranch(branch);
+                boolean empty = Strings.isBlank(completionText);
+                String pattern = completionText;
+                File file = getFile(completionText);
+                String prefix = completionText;
+                if (file.exists()) {
+                    pattern = "";
+                } else {
+                    String startPath = ".";
+                    if (!empty) {
+                        int idx = completionText.lastIndexOf('/');
+                        if (idx >= 0) {
+                            startPath = completionText.substring(0, idx);
+                            if (startPath.length() == 0) {
+                                startPath = "/";
+                            }
+                            pattern = completionText.substring(idx + 1);
+                        }
+                    }
+                    file = getFile(startPath);
+                    prefix = startPath;
+                }
+                if (prefix.length() > 0 && !prefix.endsWith("/")) {
+                    prefix += "/";
+                }
+                if (prefix.equals("./")) {
+                    prefix = "";
+                }
+                File[] list = file.listFiles();
+                List<String> answer = new ArrayList<String>();
+                for (File aFile : list) {
+                    String name = aFile.getName();
+                    if (pattern.length() == 0 || name.contains(pattern)) {
+                        if (!isIgnoreFile(aFile) && (!directoriesOnly || aFile.isDirectory())) {
+                            answer.add(prefix + name);
+                        }
+                    }
+                }
+                return answer;
+            }
+        });
+    }
 
 
     protected String removeLeadingSlash(String path) {

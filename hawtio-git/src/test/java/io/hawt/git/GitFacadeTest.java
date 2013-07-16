@@ -247,7 +247,7 @@ public class GitFacadeTest {
 
     protected void assertCompletePaths(String completePath, boolean directoriesOnly, String... expected) {
         List<String> expectedList = Arrays.asList(expected);
-        List<String> paths = git.completePath(completePath, directoriesOnly);
+        List<String> paths = git.completePath(this.branch, completePath, directoriesOnly);
         assertEquals("complete paths for '" + completePath + "' and directoriesOnly " + directoriesOnly, expectedList, paths);
     }
 
