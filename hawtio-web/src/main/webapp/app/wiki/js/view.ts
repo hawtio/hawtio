@@ -248,6 +248,9 @@ module Wiki {
       if (name) {
         $scope.fileName = name;
         $scope.renameDialog.open();
+        $timeout(() => {
+            $('#renameFileName').focus();
+        }, 50);
       } else {
         console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
@@ -277,6 +280,9 @@ module Wiki {
       if ($scope.gridOptions.selectedItems.length) {
         $scope.moveFolder = $scope.pageId;
         $scope.moveDialog.open();
+        $timeout(() => {
+            $('#moveFolder').focus();
+        }, 50);
       } else {
         console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
