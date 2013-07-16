@@ -4,6 +4,8 @@ module Wiki {
     Wiki.initScope($scope, $routeParams, $location);
 
     $scope.addDialog = new Core.Dialog();
+    $scope.renameDialog = new Core.Dialog();
+    $scope.moveDialog = new Core.Dialog();
     $scope.deleteDialog = false;
     $scope.isFile = false;
     $scope.createDocumentTree = Wiki.createWizardTree();
@@ -236,6 +238,41 @@ module Wiki {
       });
       $scope.deleteDialog = false;
     };
+
+    $scope.openRenameDialog = () => {
+      var name = null;
+      if ($scope.gridOptions.selectedItems.length) {
+        var selected = $scope.gridOptions.selectedItems[0];
+        name = selected.name;
+      }
+      if (name) {
+        $scope.fileName = name;
+        $scope.renameDialog.open();
+      } else {
+        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+      }
+    };
+
+    $scope.renameAndCloseDialog = () => {
+      if ($scope.gridOptions.selectedItems.length) {
+        var selected = $scope.gridOptions.selectedItems[0];
+        var newName = $scope.fileName;
+        if (selected && newName) {
+          var oldName = selected.name;
+          var oldPath = $scope.pageId + "/" + oldName;
+          var newPath = $scope.pageId + "/" + newName;
+          console.log("About to rename file " + oldPath + " to " + newPath);
+          $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
+            notification("success", "Renamed file to  " + newName);
+            $scope.renameDialog.close();
+            Core.$apply($scope);
+            updateView();
+          });
+        }
+      }
+      $scope.renameDialog.close();
+    };
+
 
     updateView();
 

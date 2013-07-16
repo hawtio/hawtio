@@ -22,6 +22,11 @@ module Git {
     revertTo(objectId:string, blobPath:string, commitMessage:string, fn): void;
 
     /**
+     * Renames a file or moves a file to a new location
+     */
+    rename(branch:string, oldPath:string, newPath:string, commitMessage:string, fn): void;
+
+    /**
      * Removes a file if it exists
      */
     remove(branch:string, path:string, commitMessage:string, fn): void;
@@ -82,6 +87,13 @@ module Git {
       var authorEmail = this.getUserEmail();
 
       this.jolokia.execute(this.mbean, "revertTo", this.branch, objectId, blobPath, commitMessage, authorName, authorEmail, onSuccess(fn));
+    }
+
+    public rename(branch:string, oldPath: string, newPath:string, commitMessage:string, fn) {
+      var authorName = this.getUserName();
+      var authorEmail = this.getUserEmail();
+
+      this.jolokia.execute(this.mbean, "rename", branch, oldPath, newPath, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
     public remove(branch:string, path:string, commitMessage:string, fn) {

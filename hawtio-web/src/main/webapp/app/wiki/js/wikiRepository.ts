@@ -78,6 +78,15 @@ module Wiki {
       this.git().revertTo(objectId, fullPath, commitMessage, fn);
     }
 
+    public rename(branch:string, oldPath:string,  newPath:string, commitMessage:string, fn) {
+      var fullOldPath = this.getPath(oldPath);
+      var fullNewPath = this.getPath(newPath);
+      if (!commitMessage) {
+        commitMessage = "Renaming page " + oldPath + " to " + newPath;
+      }
+      this.git().rename(branch, fullOldPath, fullNewPath, commitMessage, fn);
+    }
+
     public removePage(branch:string, path:string, commitMessage:string, fn) {
       var fullPath = this.getPath(path);
       if (!commitMessage) {

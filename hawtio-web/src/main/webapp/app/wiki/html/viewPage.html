@@ -22,6 +22,21 @@
                 <i class="icon-comments-alt"></i> History</a>
             </li>
             <li class="divider">
+            </li>
+            <li>
+              <a ng-click="openRenameDialog()" ng-disabled="gridOptions.selectedItems.length !== 1"
+                 title="Rename the selected document"
+                 data-placement="bottom">
+                <i class="icon-adjust"></i> Rename</a>
+            </li>
+            <li>
+              <a ng-click="openMoveDialog()" ng-disabled="!gridOptions.selectedItems.length"
+                 title="move the selected documents to a new folder"
+                 data-placement="bottom">
+                <i class="icon-move"></i> Move</a>
+            </li>
+            <li class="divider">
+            </li>
             <li>
               <a ng-click="openDeleteDialog()" ng-disabled="!gridOptions.selectedItems.length"
                  title="Delete the selected document(s)"
@@ -104,10 +119,46 @@
         </ng-pluralize>
       </p>
       <div ng-bind-html-unsafe="selectedFileHtml"></div>
-<!--
-      <p>This operation cannot be undone so please be careful.</p>
--->
     </div>
   </div>
 
+  <div modal="moveDialog.show" close="moveDialog.close()" ng-options="moveDialog.options">
+    <div class="modal-header"><h4>Move Document</h4></div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="moveFolder">Folder</label>
+          <div class="controls">
+            <input type="text" id="moveFolder" ng-model="moveFolder">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <input class="btn btn-primary" type="submit" ng-click="moveAndCloseDialog()"
+             ng-disabled="!moveFolder"
+             value="Move">
+      <button class="btn btn-warning cancel" type="button" ng-click="moveDialog.close()">Cancel</button>
+    </div>
+  </div>
+
+  <div modal="renameDialog.show" close="renameDialog.close()" ng-options="renameDialog.options">
+    <div class="modal-header"><h4>Rename Document</h4></div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="renameFileName">Name</label>
+          <div class="controls">
+            <input type="text" id="renameFileName" ng-model="fileName">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <input class="btn btn-primary" type="submit" ng-click="renameAndCloseDialog()"
+             ng-disabled="!fileName"
+             value="Rename">
+      <button class="btn btn-warning cancel" type="button" ng-click="renameDialog.close()">Cancel</button>
+    </div>
+  </div>
 </div>
