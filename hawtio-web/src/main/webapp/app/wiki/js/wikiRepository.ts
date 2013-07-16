@@ -12,6 +12,15 @@ module Wiki {
     constructor(public factoryMethod:() => Git.GitRepository) {
     }
 
+    public exists(branch:string, path:string, fn) {
+      var fullPath = this.getPath(path);
+      this.git().exists(branch, fullPath, fn);
+    }
+
+    public completePath(branch:string, completionText:string, directoriesOnly:boolean, fn) {
+      return this.git().completePath(branch, completionText, directoriesOnly, fn);
+    }
+
     public getPage(branch:string, path:string, objectId:string, fn) {
       var git = this.git();
       path = path || "/";

@@ -130,7 +130,8 @@
           <label class="control-label" for="moveFolder">Folder</label>
 
           <div class="controls">
-            <input type="text" id="moveFolder" ng-model="moveFolder">
+            <input type="text" id="moveFolder" ng-model="moveFolder"
+                   typeahead="title for title in folderNames($viewValue) | filter:$viewValue" typeahead-editable='true'>
           </div>
         </div>
       </div>

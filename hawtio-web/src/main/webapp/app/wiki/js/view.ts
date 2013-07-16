@@ -292,10 +292,11 @@ module Wiki {
       var files = $scope.gridOptions.selectedItems;
       var fileCount = files.length;
       var moveFolder = $scope.moveFolder;
-      if (moveFolder && fileCount) {
-        console.log("Moveing " + fileCount + " file(s) to " + moveFolder);
+      var oldFolder = $scope.pageId;
+      if (moveFolder && fileCount && moveFolder !== oldFolder) {
+        console.log("Moving " + fileCount + " file(s) to " + moveFolder);
         angular.forEach(files, (file, idx) => {
-          var oldPath = $scope.pageId + "/" + file.name;
+          var oldPath = oldFolder + "/" + file.name;
           var newPath = moveFolder + "/" + file.name;
           console.log("About to move " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
@@ -313,6 +314,9 @@ module Wiki {
       $scope.moveDialog.close();
     };
 
+    $scope.folderNames = (text) => {
+      return wikiRepository.completePath($scope.branch, text, true, null);
+    }
 
     updateView();
 
