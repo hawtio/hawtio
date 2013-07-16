@@ -273,6 +273,40 @@ module Wiki {
       $scope.renameDialog.close();
     };
 
+    $scope.openMoveDialog = () => {
+      if ($scope.gridOptions.selectedItems.length) {
+        $scope.moveFolder = $scope.pageId;
+        $scope.moveDialog.open();
+      } else {
+        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+      }
+    };
+
+    $scope.moveAndCloseDialog = () => {
+      var files = $scope.gridOptions.selectedItems;
+      var fileCount = files.length;
+      var moveFolder = $scope.moveFolder;
+      if (moveFolder && fileCount) {
+        console.log("Moveing " + fileCount + " file(s) to " + moveFolder);
+        angular.forEach(files, (file, idx) => {
+          var oldPath = $scope.pageId + "/" + file.name;
+          var newPath = moveFolder + "/" + file.name;
+          console.log("About to move " + oldPath + " to " + newPath);
+          $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
+            if (idx + 1 === fileCount) {
+              $scope.gridOptions.selectedItems.splice(0, fileCount);
+              var message = Core.maybePlural(fileCount, "document");
+              notification("success", "Moved " + message + " to " + newPath);
+              $scope.moveDialog.close();
+              Core.$apply($scope);
+              updateView();
+            }
+          });
+        });
+      }
+      $scope.moveDialog.close();
+    };
+
 
     updateView();
 
