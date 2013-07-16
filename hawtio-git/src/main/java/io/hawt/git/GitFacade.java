@@ -303,6 +303,59 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         });
     }
 
+    /**
+     * Provides a file/path completion hook so we can start typing the name of a file or directory
+     */
+    public List<String> completePath(String completionText, boolean directoriesOnly) {
+         boolean empty = Strings.isBlank(completionText);
+         String pattern = completionText;
+         File file = getFile(completionText);
+         String prefix = completionText;
+         if (file.exists()) {
+             pattern = "";
+         } else {
+             String startPath = ".";
+             if (!empty) {
+                 int idx = completionText.lastIndexOf('/');
+                 if (idx >= 0) {
+                     startPath = completionText.substring(0, idx);
+                     if (startPath.length() == 0) {
+                         startPath = "/";
+                     }
+                     pattern = completionText.substring(idx + 1);
+                 }
+             }
+             file = getFile(startPath);
+             prefix = startPath;
+         }
+         if (prefix.length() > 0 && !prefix.endsWith("/")) {
+             prefix += "/";
+         }
+         if (prefix.equals("./")) {
+             prefix = "";
+         }
+         File[] list = file.listFiles();
+         List<String> answer = new ArrayList<String>();
+         for (File aFile : list) {
+             String name = aFile.getName();
+             if (pattern.length() == 0 || name.contains(pattern)) {
+                 if (!isIgnoreFile(aFile) && (!directoriesOnly || aFile.isDirectory())) {
+                     answer.add(prefix + name);
+                 }
+             }
+         }
+         return answer;
+     }
+
+
+    protected String removeLeadingSlash(String path) {
+        if (path.startsWith("/")) {
+            return path.substring(1);
+        } else {
+            return path;
+        }
+    }
+
     protected boolean isIgnoreFile(File child) {
         return child.getName().startsWith(".");
     }
@@ -729,7 +782,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      */
     public File getFile(String path) {
         File rootDir = getConfigDirectory();
-        return new File(rootDir, path);
+        return new File(rootDir, removeLeadingSlash(path));
     }
 
 

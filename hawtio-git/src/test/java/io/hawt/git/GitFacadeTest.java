@@ -234,6 +234,21 @@ public class GitFacadeTest {
                 assertTrue("Should contain camel-spring but was " + list, list.contains("http://camel.apache.org/schema/spring"));
             }
         }
+
+
+        // now lets test the completions
+        assertCompletePaths("", true, "another", "foo");
+        assertCompletePaths("/", true, "/another", "/foo");
+        assertCompletePaths("/another", true, "/another/thing");
+        assertCompletePaths("another", true, "another/thing");
+        assertCompletePaths("/foo", false, "/foo/1.json", "/foo/2.json");
+        assertCompletePaths("foo", false, "foo/1.json", "foo/2.json");
+    }
+
+    protected void assertCompletePaths(String completePath, boolean directoriesOnly, String... expected) {
+        List<String> expectedList = Arrays.asList(expected);
+        List<String> paths = git.completePath(completePath, directoriesOnly);
+        assertEquals("complete paths for '" + completePath + "' and directoriesOnly " + directoriesOnly, expectedList, paths);
     }
 
     protected String assertReadFileContents(String path, String expectedContents) throws IOException, GitAPIException {

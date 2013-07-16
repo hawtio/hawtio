@@ -39,6 +39,11 @@ public interface GitFacadeMXBean {
     String getContent(String objectId, String blobPath);
 
     /**
+     * Provides a file/path completion hook so we can start typing the name of a file or directory
+     */
+    List<String> completePath(String completionText, boolean directoriesOnly);
+
+    /**
      * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
      */
     String readJsonChildContent(String branch, String path, String fileNameWildcard, String search) throws IOException;
