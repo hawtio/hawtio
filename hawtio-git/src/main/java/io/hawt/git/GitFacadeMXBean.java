@@ -9,6 +9,14 @@ import java.util.List;
  * The JMX MBean interface for working with git configuration files
  */
 public interface GitFacadeMXBean {
+
+    /**
+     * Checks if the file exists and if so what its file metadata is
+     *
+     * @return the metadata for the given file or null if it does not exist
+     */
+    FileInfo exists(String branch, String pathOrEmpty) throws IOException, GitAPIException;
+
     /**
      * Reads the contents of a file or a directory
      */

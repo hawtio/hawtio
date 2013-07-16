@@ -304,6 +304,28 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
     /**
+     * Checks if the file exists at the given path and returns the file metadata or null if it does not exist
+     *
+     * @return the metadata for the given file or null if it does not exist
+     */
+    @Override
+    public FileInfo exists(final String branch, String pathOrEmpty) throws IOException, GitAPIException {
+        final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        return gitOperation(getStashPersonIdent(), new Callable<FileInfo>() {
+            @Override
+            public FileInfo call() throws Exception {
+                File rootDir = getConfigDirectory();
+                checkoutBranch(branch);
+                File file = getFile(path);
+                if (file.exists()) {
+                    return FileInfo.createFileInfo(rootDir, file);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
      * Provides a file/path completion hook so we can start typing the name of a file or directory
      */
     public List<String> completePath(String completionText, boolean directoriesOnly) {
