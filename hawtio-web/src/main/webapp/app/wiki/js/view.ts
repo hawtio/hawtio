@@ -1,5 +1,13 @@
 module Wiki {
 
+  function goToLink(link, $timeout, $location) {
+    var href = Core.trimLeading(link, "#");
+    $timeout(() => {
+      console.log("About to navigate to: " + href);
+      $location.path(href);
+    }, 100);
+  }
+
   export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -169,43 +177,51 @@ module Wiki {
         name = name.substring(idx + 1);
       }
       var path = folder + "/" + name;
-      console.log("Creating file " + path);
-      notification("success", "Creating new document " + name);
 
-      $http.get(exemplarUri).success((contents) => {
+      if (template.folder) {
+        notification("success", "Creating new folder " + name);
 
-        // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
-        wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
-          console.log("Created file " + name);
-          Wiki.onComplete(status);
+        wikiRepository.createDirectory($scope.branch, path, commitMessage, (status) => {
+          $scope.addDialog.close();
+          Core.$apply($scope);
+          var link = Wiki.viewLink($scope.branch, path, $location);
+          goToLink(link, $timeout, $location);
+        });
+      } else {
+        notification("success", "Creating new document " + name);
 
-          // lets navigate to the edit link
-          // load the directory and find the child item
-          $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
-            // lets find the child entry so we can calculate its correct edit link
-            var link = null;
-            if (details && details.children) {
-              console.log("scanned the directory " + details.children.length + " children");
-              var child = details.children.find(c => c.name === fileName);
-              if (child) {
-                link = $scope.childLink(child);
-              } else {
-                console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
+        $http.get(exemplarUri).success((contents) => {
+
+          // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
+          wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
+            console.log("Created file " + name);
+            Wiki.onComplete(status);
+
+            // lets navigate to the edit link
+            // load the directory and find the child item
+            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
+              // lets find the child entry so we can calculate its correct edit link
+              var link = null;
+              if (details && details.children) {
+                console.log("scanned the directory " + details.children.length + " children");
+                var child = details.children.find(c => c.name === fileName);
+                if (child) {
+                  link = $scope.childLink(child);
+                } else {
+                  console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
+                }
               }
-            }
-            if (!link) {
-              console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
-              link = Wiki.editLink($scope.branch, path, $location);
-            }
-            var href = Core.trimLeading(link, "#");
-            Core.$apply($scope);
-            $timeout(() => {
-              console.log("About to navigate to: " + href);
-              $location.path(href);
-            }, 400);
+              if (!link) {
+                console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                link = Wiki.editLink($scope.branch, path, $location);
+              }
+              $scope.addDialog.close();
+              Core.$apply($scope);
+              goToLink(link, $timeout, $location);
+            });
           });
         });
-      });
+      }
       $scope.addDialog.close();
     };
 

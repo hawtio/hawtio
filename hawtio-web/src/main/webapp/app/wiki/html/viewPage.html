@@ -80,7 +80,7 @@
 
   <div class="modal-large">
     <div modal="addDialog.show" close="addDialog.close()" ng-options="addDialog.options">
-      <div class="modal-header"><h4>Create New Document</h4></div>
+      <div class="modal-header"><h4>Create Document</h4></div>
       <div class="modal-body">
         <div class="control-group">
           <div hawtio-tree="createDocumentTree" hideRoot="true" onSelect="onCreateDocumentSelect"
@@ -88,7 +88,7 @@
         </div>
 
         <form class="form-inline" ng-submit="addAndCloseDialog()">
-          <label class="control-label" for="fileName">Document Name: </label>
+          <label class="control-label" for="fileName">Name: </label>
 
           <input id="fileName" type="text" ng-model="newDocumentName"
                  placeholder="{{selectedCreateDocumentTemplate.exemplar}}"/>

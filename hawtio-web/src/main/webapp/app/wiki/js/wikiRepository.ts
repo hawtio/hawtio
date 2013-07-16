@@ -82,6 +82,11 @@ module Wiki {
       this.git().write(branch, fullPath, commitMessage, contents, fn);
     }
 
+    public createDirectory(branch:string, path:string, commitMessage:string, fn) {
+      var fullPath = this.getPath(path);
+      this.git().createDirectory(branch, fullPath, commitMessage, fn);
+    }
+
     public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {
       var fullPath = this.getLogPath(blobPath);
       this.git().revertTo(objectId, fullPath, commitMessage, fn);

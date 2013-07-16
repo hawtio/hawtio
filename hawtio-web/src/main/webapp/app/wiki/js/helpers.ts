@@ -12,6 +12,13 @@ module Wiki {
    */
   export var documentTemplates = [
     {
+      label: "Folder",
+      tooltip: "Create a new folder to contain documents",
+      folder: true,
+      icon: "/app/wiki/img/folder.gif",
+      exemplar: "New Folder"
+    },
+    {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
       exemplar: "ReadMe.md"
@@ -80,6 +87,9 @@ module Wiki {
       // var tooltip = value["tooltip"] || value["description"] || label;
       var tooltip = template["tooltip"] || template["description"] || '';
       node.tooltip = tooltip;
+      if (template["folder"]) {
+        node.isFolder = () => { return true; };
+      }
       parent.children.push(node);
 
       var children = template.children;

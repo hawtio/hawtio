@@ -325,6 +325,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         });
     }
 
+
     /**
      * Provides a file/path completion hook so we can start typing the name of a file or directory
      */
@@ -433,11 +434,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
 
-    public void write(final String branch, final String path, final String commitMessage,
+    public CommitInfo write(final String branch, final String path, final String commitMessage,
                       final String authorName, final String authorEmail, final String contents) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
-        gitOperation(personIdent, new Callable<RevCommit>() {
-            public RevCommit call() throws Exception {
+        return gitOperation(personIdent, new Callable<CommitInfo>() {
+            public CommitInfo call() throws Exception {
+                checkoutBranch(branch);
                 File file = getFile(path);
                 file.getParentFile().mkdirs();
 
@@ -448,7 +450,39 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 add.call();
 
                 CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                return commitThenPush(commit);
+                RevCommit revCommit = commitThenPush(commit);
+                return createCommitInfo(revCommit);
+            }
+        });
+    }
+
+
+
+    /**
+     * Creates a new file if it doesn't already exist
+     *
+     * @return the commit metadata for the newly created file or null if it already exists
+     */
+    @Override
+    public CommitInfo createDirectory(final String branch, final String path, final String commitMessage,
+                                     final String authorName, final String authorEmail) {
+        final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
+        return gitOperation(personIdent, new Callable<CommitInfo>() {
+            public CommitInfo call() throws Exception {
+                checkoutBranch(branch);
+                File file = getFile(path);
+                if (file.exists()) {
+                    return null;
+
+                }
+                file.mkdirs();
+                String filePattern = getFilePattern(path);
+                AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
+                add.call();
+
+                CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
+                RevCommit revCommit = commitThenPush(commit);
+                return createCommitInfo(revCommit);
             }
         });
     }
@@ -579,19 +613,24 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             List<RevCommit> commits = block.getCommits();
             List<CommitInfo> results = new ArrayList<CommitInfo>();
             for (RevCommit entry : commits) {
-                final Date date = getCommitDate(entry);
-                String author = entry.getAuthorIdent().getName();
-                boolean merge = entry.getParentCount() > 1;
-                String shortMessage = entry.getShortMessage();
-                String trimmedMessage = Strings.trimString(shortMessage, 78);
-                String name = entry.getName();
-                String commitHashText = getShortCommitHash(name);
-                results.add(new CommitInfo(commitHashText, name, author, date, merge, trimmedMessage, shortMessage));
+                CommitInfo commitInfo = createCommitInfo(entry);
+                results.add(commitInfo);
             }
             return results;
         } catch (Exception e) {
             throw new RuntimeIOException(e);
         }
+    }
+
+    public CommitInfo createCommitInfo(RevCommit entry) {
+        final Date date = getCommitDate(entry);
+        String author = entry.getAuthorIdent().getName();
+        boolean merge = entry.getParentCount() > 1;
+        String shortMessage = entry.getShortMessage();
+        String trimmedMessage = Strings.trimString(shortMessage, 78);
+        String name = entry.getName();
+        String commitHashText = getShortCommitHash(name);
+        return new CommitInfo(commitHashText, name, author, date, merge, trimmedMessage, shortMessage);
     }
 
     /**

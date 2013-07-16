@@ -1,6 +1,7 @@
 package io.hawt.git;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +23,17 @@ public interface GitFacadeMXBean {
      */
     FileContents read(String branch, String path) throws IOException, GitAPIException;
 
-    void write(String branch, String path, String commitMessage,
-               String authorName, String authorEmail, String contents);
+    CommitInfo write(String branch, String path, String commitMessage,
+                     String authorName, String authorEmail, String contents);
+
+    /**
+     * Creates a new file if it doesn't already exist
+     *
+     * @return the commit metadata for the newly created file or null if it already exists
+     */
+    CommitInfo createDirectory(String branch, String path, String commitMessage,
+                              String authorName, String authorEmail);
+
 
     /**
      * Renames the given oldPath to the newPath location for the given branch, commit message and user

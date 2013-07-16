@@ -28,6 +28,11 @@ module Git {
     write(branch:string, path:string, commitMessage:string, contents:string, fn);
 
     /**
+     * Creates a new directory of the given name
+     */
+    createDirectory(branch:string, path:string, commitMessage:string, fn);
+
+    /**
      * Reverts to a specific version of the file
      */
     revertTo(objectId:string, blobPath:string, commitMessage:string, fn);
@@ -95,6 +100,13 @@ module Git {
       var authorEmail = this.getUserEmail();
 
       return this.jolokia.execute(this.mbean, "write", this.branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+    }
+
+    public createDirectory(branch:string, path:string, commitMessage:string, fn) {
+      var authorName = this.getUserName();
+      var authorEmail = this.getUserEmail();
+
+      return this.jolokia.execute(this.mbean, "createDirectory", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
     }
 
     public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {
