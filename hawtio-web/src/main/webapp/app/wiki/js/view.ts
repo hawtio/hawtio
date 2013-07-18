@@ -18,6 +18,10 @@ module Wiki {
     $scope.isFile = false;
     $scope.createDocumentTree = Wiki.createWizardTree();
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
+    $scope.fileExists = {
+      exists: false,
+      name: ""
+    };
 
     $scope.gridOptions = {
       data: 'children',
@@ -80,7 +84,7 @@ module Wiki {
 
     $scope.fileIconHtml = (entity) => {
       return Wiki.fileIconHtml(entity);
-    }
+    };
 
 
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
@@ -130,7 +134,12 @@ module Wiki {
 
     $scope.onCreateDocumentSelect = (node) => {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+      checkFileExists(getNewDocumentPath());
     };
+
+    $scope.$watch("newDocumentName", () => {
+      checkFileExists(getNewDocumentPath());
+    });
 
     $scope.openAddDialog = () => {
       $scope.newDocumentName = null;
@@ -139,44 +148,17 @@ module Wiki {
 
     $scope.addAndCloseDialog = () => {
       var template = $scope.selectedCreateDocumentTemplate;
-      if (!template) {
-        console.log("No template selected");
+      var path = getNewDocumentPath();
+      if (!template || !path) {
         return;
       }
+      var name = Wiki.fileName(path);
+      var fileName = name;
+      var folder = Wiki.fileParent(path);
       var exemplar = template.exemplar;
-      var name = $scope.newDocumentName || exemplar;
-
-      if (name.indexOf('.') < 0) {
-        // lets add the file extension from the exemplar
-        var idx = exemplar.lastIndexOf(".");
-        if (idx > 0) {
-          name += exemplar.substring(idx);
-        }
-      }
 
       var commitMessage = "Created " + template.label;
       var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
-
-      // TODO detect if we are a folder or not!
-
-      // lets deal with directories in the name
-      var folder = $scope.pageId;
-      if ($scope.isFile) {
-        // if we are a file lets discard the last part of the path
-        var idx = folder.lastIndexOf("/");
-        if (idx <= 0) {
-          folder = "";
-        } else {
-          folder = folder.substring(0, idx);
-        }
-      }
-      var fileName = name;
-      var idx = name.lastIndexOf("/");
-      if (idx > 0) {
-        folder += "/" + name.substring(0, idx);
-        name = name.substring(idx + 1);
-      }
-      var path = folder + "/" + name;
 
       if (template.folder) {
         notification("success", "Creating new folder " + name);
@@ -255,6 +237,16 @@ module Wiki {
       $scope.deleteDialog = false;
     };
 
+    $scope.$watch("fileName", () => {
+      // ignore errors if the file is the same as the rename file!
+      var path = getRenameFilePath();
+      if ($scope.originalRenameFilePath === path) {
+        $scope.fileExists = { exsits: false, name: null };
+      } else {
+        checkFileExists(path);
+      }
+    });
+
     $scope.openRenameDialog = () => {
       var name = null;
       if ($scope.gridOptions.selectedItems.length) {
@@ -263,9 +255,10 @@ module Wiki {
       }
       if (name) {
         $scope.fileName = name;
+        $scope.originalRenameFilePath = getRenameFilePath();
         $scope.renameDialog.open();
         $timeout(() => {
-            $('#renameFileName').focus();
+          $('#renameFileName').focus();
         }, 50);
       } else {
         console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
@@ -275,11 +268,11 @@ module Wiki {
     $scope.renameAndCloseDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
         var selected = $scope.gridOptions.selectedItems[0];
-        var newName = $scope.fileName;
+        var newPath = getRenameFilePath();
         if (selected && newName) {
           var oldName = selected.name;
+          var newName = Wiki.fileName(newPath);
           var oldPath = $scope.pageId + "/" + oldName;
-          var newPath = $scope.pageId + "/" + newName;
           console.log("About to rename file " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
             notification("success", "Renamed file to  " + newName);
@@ -297,7 +290,7 @@ module Wiki {
         $scope.moveFolder = $scope.pageId;
         $scope.moveDialog.open();
         $timeout(() => {
-            $('#moveFolder').focus();
+          $('#moveFolder').focus();
         }, 50);
       } else {
         console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
@@ -430,6 +423,59 @@ module Wiki {
         $scope.isFile = true;
       }
       Core.$apply($scope);
+    }
+
+    function checkFileExists(path) {
+      if (path) {
+        //console.log("Checking if the file " + path + " exists");
+        wikiRepository.exists($scope.branch, path, (result) => {
+          console.log("for path " + path + " got result " + result);
+          $scope.fileExists.exists = result ? true : false;
+          $scope.fileExists.name = result ? result.name : null;
+          Core.$apply($scope);
+        });
+      }
+    }
+
+    function getNewDocumentPath() {
+      var template = $scope.selectedCreateDocumentTemplate;
+      if (!template) {
+        console.log("No template selected");
+        return null;
+      }
+      var exemplar = template.exemplar;
+      var name = $scope.newDocumentName || exemplar;
+
+      if (name.indexOf('.') < 0) {
+        // lets add the file extension from the exemplar
+        var idx = exemplar.lastIndexOf(".");
+        if (idx > 0) {
+          name += exemplar.substring(idx);
+        }
+      }
+
+      // lets deal with directories in the name
+      var folder = $scope.pageId;
+      if ($scope.isFile) {
+        // if we are a file lets discard the last part of the path
+        var idx = folder.lastIndexOf("/");
+        if (idx <= 0) {
+          folder = "";
+        } else {
+          folder = folder.substring(0, idx);
+        }
+      }
+      var fileName = name;
+      var idx = name.lastIndexOf("/");
+      if (idx > 0) {
+        folder += "/" + name.substring(0, idx);
+        name = name.substring(idx + 1);
+      }
+      return folder + "/" + name;
+    }
+
+    function getRenameFilePath() {
+      return ($scope.pageId && $scope.fileName) ? $scope.pageId + "/" + $scope.fileName : null;
     }
   }
 }

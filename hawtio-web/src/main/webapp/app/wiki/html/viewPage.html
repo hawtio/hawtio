@@ -87,6 +87,12 @@
                activateNodes="createDocumentTreeActivations"></div>
         </div>
 
+        <div class="control-group">
+          <div class="well">
+            {{selectedCreateDocumentTemplate.tooltip}}
+          </div>
+        </div>
+
         <form class="form-inline" ng-submit="addAndCloseDialog()">
           <label class="control-label" for="fileName">Name: </label>
 
@@ -95,14 +101,15 @@
         </form>
 
         <div class="control-group">
-          <div class="well">
-            {{selectedCreateDocumentTemplate.tooltip}}
+          <div ng-show="fileExists.exists" class="alert">
+            Please choose a different name as <b>{{fileExists.name}}</b> already exists
           </div>
         </div>
+
       </div>
       <div class="modal-footer">
         <input id="submit" class="btn btn-primary add" type="submit" ng-click="addAndCloseDialog()"
-               ng-disabled="!selectedCreateDocumentTemplate.exemplar"
+               ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists"
                value="Create">
         <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
       </div>

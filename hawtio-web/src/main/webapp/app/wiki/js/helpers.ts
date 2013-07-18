@@ -170,6 +170,31 @@ module Wiki {
     return answer;
   }
 
+  /**
+   * Returns the file name of the given path; stripping off any directories
+   */
+  export function fileName(path: string) {
+    if (path) {
+       var idx = path.lastIndexOf("/");
+      if (idx > 0) {
+        return path.substring(idx + 1);
+      }
+    }
+    return path;
+  }
+
+  /**
+   * Returns the folder of the given path (everything but the last path name)
+   */
+  export function fileParent(path: string) {
+    if (path) {
+       var idx = path.lastIndexOf("/");
+      if (idx > 0) {
+        return path.substring(0, idx);
+      }
+    }
+    return path;
+  }
 
   export function fileIconHtml(row) {
     var css = null;
