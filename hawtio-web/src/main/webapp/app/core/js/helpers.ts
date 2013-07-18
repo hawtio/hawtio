@@ -312,6 +312,24 @@ module Core {
     return encodeURI(params);
   }
 
+  /**
+   * Parses the given string of x=y&bar=foo into a hash
+   */
+  export function stringToHash(hashAsString: string) {
+    var entries = {};
+    if (hashAsString) {
+        var text = decodeURI(hashAsString);
+        var items = text.split('&');
+        angular.forEach(items, (item) => {
+          var kv = item.split('=');
+          var key = kv[0];
+          var value = kv[1] || key;
+          entries[key] = value;
+        });
+    }
+    return entries;
+  }
+
   /*
    * Register a JMX operation to poll for changes
    */
