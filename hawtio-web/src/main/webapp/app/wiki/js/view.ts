@@ -11,6 +11,7 @@ module Wiki {
   export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
     Wiki.initScope($scope, $routeParams, $location);
 
+    $scope.operationCounter = 1;
     $scope.addDialog = new Core.Dialog();
     $scope.renameDialog = new Core.Dialog();
     $scope.moveDialog = new Core.Dialog();
@@ -426,13 +427,19 @@ module Wiki {
     }
 
     function checkFileExists(path) {
+      $scope.operationCounter += 1;
+      var counter = $scope.operationCounter;
       if (path) {
-        //console.log("Checking if the file " + path + " exists");
         wikiRepository.exists($scope.branch, path, (result) => {
-          console.log("for path " + path + " got result " + result);
-          $scope.fileExists.exists = result ? true : false;
-          $scope.fileExists.name = result ? result.name : null;
-          Core.$apply($scope);
+          // filter old results
+          if ($scope.operationCounter === counter) {
+            console.log("for path " + path + " got result " + result);
+            $scope.fileExists.exists = result ? true : false;
+            $scope.fileExists.name = result ? result.name : null;
+            Core.$apply($scope);
+          } else {
+            console.log("Ignoring old results for " + path);
+          }
         });
       }
     }
