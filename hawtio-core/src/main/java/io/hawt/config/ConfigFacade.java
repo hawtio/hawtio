@@ -1,14 +1,12 @@
 package io.hawt.config;
 
-import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
+import io.hawt.util.Objects;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * A facade for the hawtio configuration features.
@@ -32,7 +30,6 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMXBean {
     public void init() throws Exception {
         ConfigFacade.singleton = this;
         super.init();
-
     }
 
     @Override
@@ -43,33 +40,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMXBean {
     @Override
     public String getVersion() {
         if (version == null) {
-            // lets try find the maven property - as the Java API rarely works :)
-            InputStream is = null;
-            String fileName = "/META-INF/maven/io.hawt/hawtio-core/pom.properties";
-            // try to load from maven properties first
-            try {
-                Properties p = new Properties();
-                is = getClass().getResourceAsStream(fileName);
-                if (is != null) {
-                    p.load(is);
-                    version = p.getProperty("version", "");
-                }
-            } catch (Exception e) {
-                // ignore
-            } finally {
-                if (is != null) {
-                    IOHelper.close(is, fileName, LOG);
-                }
-            }
-        }
-        if (version == null) {
-            Package aPackage = getClass().getPackage();
-            if (aPackage != null) {
-                version = aPackage.getImplementationVersion();
-                if (Strings.isBlank(version)) {
-                    version = aPackage.getSpecificationVersion();
-                }
-            }
+            version = Objects.getVersion(getClass(),"io.hawt",  "hawtio-core");
         }
         return version;
     }

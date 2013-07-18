@@ -1,18 +1,28 @@
 package io.hawt.jmx;
 
+import io.hawt.util.Objects;
+import io.hawt.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.management.*;
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A simple mbean to watch the JMX tree so its easy for clients to know when they should refresh their JMX trees (which typically isn't a cheap operation).
  */
 public class JmxTreeWatcher implements JmxTreeWatcherMBean {
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmxTreeWatcher.class);
+    private static AtomicBoolean logged = new AtomicBoolean();
+
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private AtomicLong counter = new AtomicLong(0);
     private NotificationListener listener;
     private NotificationFilter filter;
+    private String version;
 
     public void init() throws Exception {
         if (objectName == null) {
@@ -39,6 +49,13 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
 
             mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, handback);
         }
+        if (logged.compareAndSet(false, true)) {
+            String text = getVersion();
+            if (Strings.isNotBlank(text)) {
+                text += " ";
+            }
+            LOG.info("Welcome to hawtio " + text + ": http://hawt.io/ : Don't cha wish your console was hawt like me? ;-)");
+        }
     }
 
     public void destroy() throws Exception {
@@ -50,6 +67,16 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
                 mBeanServer.unregisterMBean(objectName);
             }
         }
+    }
+
+    public String getVersion() {
+        if (version == null) {
+            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-web");
+            if (version == null) {
+                version = "";
+            }
+        }
+        return version;
     }
 
     protected ObjectName getObjectName() throws Exception {
