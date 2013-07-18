@@ -270,7 +270,7 @@ module Wiki {
       if ($scope.gridOptions.selectedItems.length) {
         var selected = $scope.gridOptions.selectedItems[0];
         var newPath = getRenameFilePath();
-        if (selected && newName) {
+        if (selected && newPath) {
           var oldName = selected.name;
           var newName = Wiki.fileName(newPath);
           var oldPath = $scope.pageId + "/" + oldName;
@@ -438,7 +438,7 @@ module Wiki {
             $scope.fileExists.name = result ? result.name : null;
             Core.$apply($scope);
           } else {
-            console.log("Ignoring old results for " + path);
+            // console.log("Ignoring old results for " + path);
           }
         });
       }
