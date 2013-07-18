@@ -5,7 +5,7 @@ module Fabric {
 
     $scope.versionsOp = 'versions()';
 
-    $scope.activeTab = 'org_fusesource_fabric_api_CreateContainerChildOptions';
+    $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
 
     $scope.schema = {};
     $scope.entity = {};
@@ -29,7 +29,7 @@ module Fabric {
       if (tab) {
         switch(tab) {
           case 'child':
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateContainerChildOptions';
+            $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
             break;
           case 'ssh':
             $scope.activeTab = 'org_fusesource_fabric_api_CreateSshContainerOptions';
@@ -38,7 +38,7 @@ module Fabric {
             $scope.activeTab = 'org_fusesource_fabric_api_CreateJCloudsContainerOptions';
             break;
           default:
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateContainerChildOptions';
+            $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
         }
       }
 
@@ -120,7 +120,7 @@ module Fabric {
 
         switch($scope.activeTab) {
 
-          case 'org_fusesource_fabric_api_CreateContainerChildOptions':
+          case 'org_fusesource_fabric_api_CreateChildContainerOptions':
             $scope.entity['providerType'] = 'child';
             $scope.entity['jmxUser'] = localStorage['fabric.userName'];
             $scope.entity['jmxPassword'] = localStorage['fabric.password'];

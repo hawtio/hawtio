@@ -5,7 +5,7 @@
       <a class='btn' ng-href="#/fabric/view"><i class='icon-remove'></i> Cancel</a>
     </div>
     <div class="pull-right" ng-switch="activeTab">
-      <button ng-switch-when='org_fusesource_fabric_api_CreateContainerChildOptions' class='btn pull-right' ng-href="" hawtio-submit='create-child-container'><i class="icon-ok"></i> Create Child Container</button>
+      <button ng-switch-when='org_fusesource_fabric_api_CreateChildContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-child-container'><i class="icon-ok"></i> Create Child Container</button>
       <button ng-switch-when='org_fusesource_fabric_api_CreateSshContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-ssh-container'><i class="icon-ok"></i> Create SSH Container</button>
       <button ng-switch-when='org_fusesource_fabric_api_CreateJCloudsContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-cloud-container'><i class="icon-ok"></i> Create JCloud Container</button>
     </div>
@@ -15,7 +15,7 @@
     <div class="span5">
       <p>1. Select the container creation method and fill in the relevant details</p>
       <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
-        <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateContainerChildOptions'>
+        <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateChildContainerOptions'>
           <div simple-form name='create-child-container' data='schema' entity='entity'></div>
 
         </div>
