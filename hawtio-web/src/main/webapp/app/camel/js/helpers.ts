@@ -445,6 +445,11 @@ module Camel {
         // Don't use from/to as it gets odd if you drag/drop and reorder
         // label += " " + uri;
         label = uri;
+        var split = uri.split("?");
+        if (split && split.length > 1) {
+          label = split[0];
+        }
+        tooltip += " " + uri;
       } else {
         var children = $(routeXmlNode).children("*");
         if (children && children.length) {
@@ -825,9 +830,12 @@ module Camel {
         var label = nodeSettings["title"] || nodeId;
         var uri = getRouteNodeUri(route);
         if (uri) {
-          label += " " + uri;
+          label += " " + uri.split("?")[0];
         }
         var tooltip = nodeSettings["tooltip"] || nodeSettings["description"] || label;
+        if (uri) {
+          tooltip += " " + uri;
+        }
         var imageUrl = getRouteNodeIcon(nodeSettings);
         if ((nodeId === "from" || nodeId === "to") && uri) {
           var idx = uri.indexOf(":");

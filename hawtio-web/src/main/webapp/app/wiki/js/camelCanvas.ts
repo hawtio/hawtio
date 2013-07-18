@@ -459,7 +459,7 @@ module Wiki {
               $scope.endpointPath = endpointPath;
               $scope.endpointParameters = endpointParameters;
 
-              console.log("===== endpoint " + endpointScheme + " path " + endpointPath + " and parameters " + JSON.stringify(endpointParameters));
+              console.log("endpoint " + endpointScheme + " path " + endpointPath + " and parameters " + JSON.stringify(endpointParameters));
               $scope.loadEndpointSchema(endpointScheme);
               $scope.selectedEndpoint = {
                 endpointScheme: endpointScheme,
