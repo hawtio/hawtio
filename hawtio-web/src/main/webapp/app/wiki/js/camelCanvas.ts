@@ -47,11 +47,11 @@ module Wiki {
     /**
      * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
      */
-    function createEndpointURI(endpointScheme: string, endpointPath: string, endpointParameters: any) {
+    function createEndpointURI(endpointScheme: string, slashesText: string, endpointPath: string, endpointParameters: any) {
       console.log("scheme " + endpointScheme + " path " + endpointPath + " parameters " + endpointParameters);
       // now lets create the new URI from the path and parameters
       // TODO should we use JMX for this?
-      var uri = ((endpointScheme) ? endpointScheme + ":" : "") + (endpointPath ? endpointPath : "");
+      var uri = ((endpointScheme) ? endpointScheme + ":" + slashesText : "") + (endpointPath ? endpointPath : "");
       var paramText = Core.hashToString(endpointParameters);
       if (paramText) {
         uri += "?" + paramText;
@@ -61,7 +61,7 @@ module Wiki {
 
     $scope.updatePropertiesAndCloseDialog = () => {
       console.log("old URI is " + $scope.nodeData.uri);
-      var uri = createEndpointURI($scope.endpointScheme, $scope.endpointPath, $scope.endpointParameters);
+      var uri = createEndpointURI($scope.endpointScheme, ($scope.endpointPathHasSlashes ? "//" : ""), $scope.endpointPath, $scope.endpointParameters);
       console.log("new URI is " + uri);
       $scope.nodeData.uri = uri;
       var selectedFolder = $scope.selectedFolder;
@@ -447,6 +447,12 @@ module Wiki {
             if (idx > 0) {
               var endpointScheme = uri.substring(0, idx);
               var endpointPath = uri.substring(idx + 1);
+              // for empty paths lets assume we need // on a URI
+              $scope.endpointPathHasSlashes = endpointPath ? false : true;
+              if (endpointPath.startsWith("//")) {
+                endpointPath = endpointPath.substring(2);
+                $scope.endpointPathHasSlashes = true;
+              }
               idx = endpointPath.indexOf("?");
               var endpointParameters = {};
               if (idx > 0) {
