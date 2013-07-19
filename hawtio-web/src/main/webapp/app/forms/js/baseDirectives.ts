@@ -288,6 +288,20 @@ module Forms {
       if (config.isReadOnly()) {
         rc.attr('readonly', 'true');
       }
+
+      // lets coerce any string values to numbers so that they work properly with the UI
+      var scope = config.scope;
+      if (scope) {
+        function onModelChange() {
+          var value = Core.pathGet(scope, modelName);
+          if (value && angular.isString(value))  {
+            var numberValue = Number(value);
+            Core.pathSet(scope, modelName, numberValue);
+          }
+        }
+        scope.$watch(modelName, onModelChange);
+        onModelChange();
+      }
       return rc;
     }
   }
