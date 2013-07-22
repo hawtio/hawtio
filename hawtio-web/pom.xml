@@ -442,7 +442,7 @@
         <configuration>
           <classes>
             <org.fusesource.fabric.api.CreateChildContainerOptions>
-              ${schema-outdir}/createContainerChildOptions.js
+              ${schema-outdir}/createChildContainerOptions.js
             </org.fusesource.fabric.api.CreateChildContainerOptions>
             <org.fusesource.fabric.api.CreateSshContainerOptions>
               ${schema-outdir}/createSshContainerOptions.js
