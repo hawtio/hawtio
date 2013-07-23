@@ -31,7 +31,7 @@ module Wiki {
               "text/x-java": ["java"],
               "text/x-scala": ["scala"],
               "javascript": ["js", "json", "javascript", "jscript", "ecmascript", "form"],
-              "xml": ["xml"],
+              "xml": ["xml", "xsd", "wsdl", "atom"],
               "properties": ["properties"]
             };
           }).
