@@ -13,7 +13,6 @@
   <description>hawtio :: DevServlet Managed Service Factory</description>
 
   <properties>
-    <ops4j-pax-web-version>1.1.9</ops4j-pax-web-version>
 
     <fuse.osgi.export>
       io.hawt.web.dev;-noimport:=true
