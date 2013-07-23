@@ -58,7 +58,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>017</perfectus-number>
+    <perfectus-number>021</perfectus-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
 <!--
     <perfectus-number>024</perfectus-number>
