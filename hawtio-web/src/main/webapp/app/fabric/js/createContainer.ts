@@ -110,9 +110,17 @@ module Fabric {
 
         $scope.entity['number'] = 1;
 
+        // clean up form
         delete $scope.schema.properties['metadataMap'];
         delete $scope.schema.properties['zookeeperUrl'];
         delete $scope.schema.properties['zookeeperPassword'];
+        delete $scope.schema.properties['globalResolver'];
+        delete $scope.schema.properties['zooKeeperServerPort'];
+        delete $scope.schema.properties['agentEnabled'];
+        delete $scope.schema.properties['autoImportEnabled'];
+        delete $scope.schema.properties['importPath'];
+        delete $scope.schema.properties['users'];
+
 
         $scope.schema.properties['providerType']['type'] = 'hidden';
         $scope.schema.properties['profiles']['type'] = 'hidden';
@@ -130,6 +138,7 @@ module Fabric {
               'type': 'boolean'
             };
 
+            delete $scope.schema.properties['manualIp'];
             delete $scope.schema.properties['preferredAddress'];
             delete $scope.schema.properties['resolver'];
             delete $scope.schema.properties['ensembleServer'];
