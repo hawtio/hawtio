@@ -37,6 +37,12 @@
       <version>${jolokia-version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Git module -->
     <dependency>
       <groupId>io.hawt</groupId>
@@ -61,6 +67,12 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>${commons-fileupload-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
     </dependency>
 
     <!-- testing -->

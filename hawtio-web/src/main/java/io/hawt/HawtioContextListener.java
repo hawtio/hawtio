@@ -17,11 +17,19 @@ public class HawtioContextListener implements ServletContextListener {
     private UploadManager uploadManager = new UploadManager();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+
+        String realm = System.getProperty("hawtio.realm", "karaf");
+        String role = System.getProperty("hawtio.role", "admin");
+        Boolean authEnabled = Boolean.valueOf(System.getProperty("hawtio.authenticationEnabled", "true"));
+
+        servletContextEvent.getServletContext().setAttribute("realm", realm);
+        servletContextEvent.getServletContext().setAttribute("role", role);
+        servletContextEvent.getServletContext().setAttribute("authEnabled", authEnabled);
+
         try {
             treeWatcher.init();
             registry.init();
             uploadManager.init();
-
         } catch (Exception e) {
             throw createServletException(e);
         }

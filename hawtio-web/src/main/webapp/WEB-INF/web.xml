@@ -18,11 +18,42 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>AuthenticationFilter</filter-name>
+    <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/jolokia/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/proxy/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/upload/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </filter-mapping>
+
+
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
     <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <init-param>
+      <param-name>mbeanQualifier</param-name>
+      <param-value>qualifier=hawtio</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+
   <servlet-mapping>
     <servlet-name>jolokia-agent</servlet-name>
     <url-pattern>/jolokia/*</url-pattern>
@@ -47,6 +78,35 @@
     <servlet-name>file-upload</servlet-name>
     <url-pattern>/upload/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>authentication</servlet-name>
+    <servlet-class>io.hawt.web.AuthenticationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>authentication</servlet-name>
+    <url-pattern>/auth/*</url-pattern>
+  </servlet-mapping>
+
+
+<!--
+  <servlet>
+    <servlet-name>GitServlet</servlet-name>
+    <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
+    <init-param>
+      <param-name>base-path</param-name>
+      <param-value>/var/hawtio/git</param-value>
+    </init-param>
+    <init-param>
+      <param-name>export-all</param-name>
+      <param-value>0</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
+-->
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
