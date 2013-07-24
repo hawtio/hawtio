@@ -73,7 +73,8 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private boolean updateIndexOnStartup = true;
     private int maximumIndexersPerMachine = 1000;
     private String[] repositories = {
-            "http://repo.fusesource.com/nexus/content/repositories/releases@id=fusesource.release.repo",
+            // TODO seems there is no maven index any more here :(
+            // "http://repo.fusesource.com/nexus/content/repositories/releases@id=fusesource.release.repo",
             "http://repo1.maven.org/maven2@central"
     };
     private String cacheDirName;
