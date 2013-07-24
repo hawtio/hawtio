@@ -141,7 +141,6 @@
       <from uri="direct:b"/>
       <log loggingLevel="INFO" logName="test" message="direct:b"/>
     </route>
-<!--
     <route>
       <from uri="direct:c"/>
       <log loggingLevel="INFO" logName="test" message="direct:c"/>
@@ -154,7 +153,6 @@
       <from uri="direct:e"/>
       <log loggingLevel="INFO" logName="test" message="direct:e"/>
     </route>
--->
   </camelContext>
 
   <camelContext id="cheese" xmlns="http://camel.apache.org/schema/spring">
