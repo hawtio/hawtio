@@ -74,13 +74,15 @@ module ActiveMQ {
           if (children && children.length) {
             var consumerFolder = children[0];
             // lets assume children are consumers ;)
-            loadConsumers(isQueue, $scope.selectionDestinationName, consumerFolder.children);
+            loadConsumers(true, isQueue, $scope.selectionDestinationName, consumerFolder.children);
           }
           if (brokerFolder) {
             angular.forEach(brokerFolder.children, (childFolder) => {
               var title = (childFolder.title || "").toLowerCase();
               if (title.indexOf("producer") >= 0) {
                 loadProducers(isQueue, $scope.selectionDestinationName, childFolder.children);
+              } else if (title.indexOf("subscription") >= 0) {
+                loadConsumers(false, isQueue, $scope.selectionDestinationName, childFolder.children);
               }
             });
           }
@@ -89,7 +91,7 @@ module ActiveMQ {
           if (brokerFolder) {
             angular.forEach(brokerFolder.children, (childFolder) => {
               var title = (childFolder.title || "").toLowerCase();
-              if (title.indexOf("networkconnector") >= 0) {
+              if (title.indexOf("network") >= 0) {
                 loadNetworkConnectors(childFolder.children);
               }
             });
@@ -114,59 +116,63 @@ module ActiveMQ {
     }
 
 
-    function loadConsumers(isQueue, destinationName, folderArray) {
-      angular.forEach(folderArray, (folder) => {
-        var children = folder.children;
-        if (children && children.length) {
-          return loadConsumers(isQueue, destinationName, children);
-        } else {
-          var id = null;
-          if (isQueue) {
-            id = getOrCreate($scope.queues, destinationName, {
-              label: destinationName, imageUrl: url("/app/activemq/img/queue.png") });
-          } else {
-            id = getOrCreate($scope.topics, destinationName, {
-              label: destinationName, imageUrl: url("/app/activemq/img/topic.png") });
+    function loadConsumers(childOfDestination, isQueue, destinationName, folderArray) {
+      Core.forEachLeafFolder(folderArray, (folder) => {
+        var id = null;
+        var valid = childOfDestination;
+        if (!childOfDestination) {
+          var mbean = folder.objectName;
+          if (mbean) {
+            var response = jolokia.request({type: 'read', mbean: mbean}, onSuccess(null));
+            var answer = response.value;
+            var destinationNameAttribute = answer["DestinationName"];
+            var queueConsumer = answer["DestinationQueue"];
+            if (queueConsumer === isQueue && matchesSelection(destinationNameAttribute)) {
+              valid = true;
+            }
           }
-          var entries = folder.entries;
-          if (entries) {
-            var subscriptionKey = entries["consumerId"] || entries["connectionId"] || entries["subcriptionId"];
+        }
+        var entries = folder.entries;
+        if (valid && entries) {
+          var subscriptionKey = entries["consumerId"] || entries["connectionId"] || entries["subcriptionId"];
+          if (subscriptionKey) {
+            if (isQueue) {
+              id = getOrCreate($scope.queues, destinationName, {
+                label: destinationName, imageUrl: url("/app/activemq/img/queue.png") });
+            } else {
+              id = getOrCreate($scope.topics, destinationName, {
+                label: destinationName, imageUrl: url("/app/activemq/img/topic.png") });
+            }
             var subscriptionId = getOrCreate($scope.subscriptions, subscriptionKey, {
               label: subscriptionKey, imageUrl: url("/app/activemq/img/listener.gif")
             });
+            $scope.links.push({ source: id, target: subscriptionId });
           }
-
-          $scope.links.push({ source: id, target: subscriptionId });
         }
       });
     }
 
     function loadProducers(queueProducers, destinationName, folderArray) {
-      angular.forEach(folderArray, (folder) => {
-        var children = folder.children;
-        if (children && children.length) {
-          loadProducers(queueProducers, destinationName, children);
-        } else {
-          var entries = folder.entries;
-          if (entries) {
-            var producerDestinationName = entries["destinationName"] || entries["DestinationName"];
-            if (!producerDestinationName) {
-              // lets query it instead
-              var mbean = folder.objectName;
-              if (mbean) {
-                var response = jolokia.request({type: 'read', mbean: mbean}, onSuccess(null));
-                var answer = response.value;
-                var destinationNameAttribute = answer["DestinationName"];
-                var isQueue = answer["DestinationQueue"];
-                if (queueProducers !== isQueue) {
-                  //console.log("Ignored producer " + JSON.stringify(answer) + " as isQueue " + isQueue + " when wanted queues: " + queueProducers);
-                } else if (matchesSelection(destinationNameAttribute)) {
-                  loadProducer(queueProducers, destinationName, folder);
-                }
+      Core.forEachLeafFolder(folderArray, (folder) => {
+        var entries = folder.entries;
+        if (entries) {
+          var producerDestinationName = entries["destinationName"] || entries["DestinationName"];
+          if (!producerDestinationName) {
+            // lets query it instead
+            var mbean = folder.objectName;
+            if (mbean) {
+              var response = jolokia.request({type: 'read', mbean: mbean}, onSuccess(null));
+              var answer = response.value;
+              var destinationNameAttribute = answer["DestinationName"];
+              var isQueue = answer["DestinationQueue"];
+              if (queueProducers !== isQueue) {
+                //console.log("Ignored producer " + JSON.stringify(answer) + " as isQueue " + isQueue + " when wanted queues: " + queueProducers);
+              } else if (matchesSelection(destinationNameAttribute)) {
+                loadProducer(queueProducers, destinationName, folder);
               }
-            } else if (matchesSelection(producerDestinationName)) {
-              loadProducer(queueProducers, destinationName, folder);
             }
+          } else if (matchesSelection(producerDestinationName)) {
+            loadProducer(queueProducers, destinationName, folder);
           }
         }
       });
@@ -191,27 +197,22 @@ module ActiveMQ {
       }
     }
 
-    function loadNetworkConnectors(folders) {
-      angular.forEach(folders, (folder) => {
-        var children = folder.children;
-        if (children && children.length) {
-          loadNetworkConnectors(children);
-        } else {
-          var mbean = folder.objectName;
-          if (mbean) {
-            var response = jolokia.request({type: 'read', mbean: mbean}, onSuccess(null));
-            var answer = response.value;
-            if (answer) {
-              var localBrokerName = answer["LocalBrokerName"];
-              var remoteBrokerName = answer["RemoteBrokerName"];
-              if (localBrokerName && remoteBrokerName) {
-                var localId = getOrCreate($scope.networks, localBrokerName, {
-                  label: localBrokerName, imageUrl: url("/app/activemq/img/message_broker.png") });
-                var remoteId = getOrCreate($scope.networks, remoteBrokerName, {
-                  label: remoteBrokerName, imageUrl: url("/app/activemq/img/message_broker.png") });
+    function loadNetworkConnectors(folderArray) {
+      Core.forEachLeafFolder(folderArray, (folder) => {
+        var mbean = folder.objectName;
+        if (mbean) {
+          var response = jolokia.request({type: 'read', mbean: mbean}, onSuccess(null));
+          var answer = response.value;
+          if (answer) {
+            var localBrokerName = answer["LocalBrokerName"];
+            var remoteBrokerName = answer["RemoteBrokerName"];
+            if (localBrokerName && remoteBrokerName) {
+              var localId = getOrCreate($scope.networks, localBrokerName, {
+                label: localBrokerName, imageUrl: url("/app/activemq/img/message_broker.png") });
+              var remoteId = getOrCreate($scope.networks, remoteBrokerName, {
+                label: remoteBrokerName, imageUrl: url("/app/activemq/img/message_broker.png") });
 
-                $scope.links.push({ source: localId, target: remoteId });
-              }
+              $scope.links.push({ source: localId, target: remoteId });
             }
           }
         }
@@ -237,14 +238,44 @@ module ActiveMQ {
     function findBrokerFolder(selection) {
       var answer = null;
       if (selection) {
-        if (selection.parent) {
-          answer = findBrokerFolder(selection.parent);
+        var parent = selection.parent;
+        if (parent && isQueueOrTopicFolder(parent)) {
+          parent = parent.parent;
         }
-        if (!answer && selection.typeName === "Broker") {
-          answer = selection;
+        if (parent) {
+          answer = findBrokerFolder(parent);
+        }
+        if (answer) {
+          // on 5.8 we ignore parents without the broker type
+          // if the parent has less children
+          if (!isQueueOrTopicFolder(selection) &&
+                  selection.typeName === "Broker" && parent.typeName !== "Broker" &&
+                  selection.children.length > parent.children.length) {
+            return selection;
+          }
+        } else {
+          if (selection.typeName === "Broker") {
+            if (selection.children.length) {
+              answer = selection;
+            } else if (parent.children.length > 1) {
+              // on ActiveMQ 5.7 then the broker mbean node is often a child of the broker folder
+              // which has all the folders for the consumers / producers / network connectors etc
+              answer = parent;
+            }
+          } else {
+            // in ActiveMQ 5.7 maybe this node has a child which is of type broker
+            if (selection.children.some(n => n.typeName === "Broker")) {
+              return selection;
+            }
+          }
         }
       }
       return answer;
+    }
+
+    function isQueueOrTopicFolder(selection) {
+      var title = Core.pathGet(selection, ["title"]);
+      return title === "Queue" || title === "Topic";
     }
 
     function nodeTypeName(selection) {

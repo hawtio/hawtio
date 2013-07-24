@@ -831,4 +831,18 @@ module Core {
     return text ? text.replace(/(\/|\.)/g, "_") : text;
   }
 
+
+  /**
+   * Invokes the given function on each leaf node in the array of folders
+   */
+  export function forEachLeafFolder(folders, fn) {
+    angular.forEach(folders, (folder) => {
+      var children = folder["children"];
+      if (angular.isArray(children) && children.length > 0) {
+        forEachLeafFolder(children, fn);
+      } else {
+        fn(folder);
+      }
+    });
+  }
 }
