@@ -18,6 +18,9 @@
 package io.hawt.web;
 
 import io.hawt.util.Strings;
+import io.hawt.system.Authenticator;
+import io.hawt.system.AuthInfo;
+import io.hawt.system.ExtractAuthInfoCallback;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -51,14 +54,22 @@ public class ProxyDetails {
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
 
-        // use request params for the user/pwd
-        String userParam = httpServletRequest.getParameter("_user");
-        if (Strings.isNotBlank(userParam)) {
-            userName = userParam;
-        }
-        String pwdParam = httpServletRequest.getParameter("_pwd");
-        if (Strings.isNotBlank(pwdParam)) {
-            password = pwdParam;
+        String authHeader = httpServletRequest.getHeader(Authenticator.HEADER_AUTHORIZATION);
+
+        if (authHeader != null && !authHeader.equals("")) {
+
+          final AuthInfo info = new AuthInfo();
+
+          Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
+            @Override
+            public void getAuthInfo(String userName, String password) {
+              info.username = userName;
+              info.password = password;
+            }
+          });
+
+          userName = info.username;
+          password = info.password;
         }
 
         // lets add the query parameters

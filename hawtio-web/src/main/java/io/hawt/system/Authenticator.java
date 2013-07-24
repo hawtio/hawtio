@@ -22,21 +22,14 @@ public class Authenticator {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(Authenticator.class);
 
-    private static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
 
-    public static boolean authenticate(String realm, String role, HttpServletRequest request) {
-
-        String authHeader = request.getHeader(HEADER_AUTHORIZATION);
-
-        if (authHeader == null || authHeader.equals("")) {
-            return false;
-        }
-
+    public static void extractAuthInfo(String authHeader, ExtractAuthInfoCallback cb) {
         authHeader = authHeader.trim();
         String [] parts = authHeader.split(" ");
         if (parts.length != 2) {
-            return false;
+            return;
         }
 
         String authType = parts[0];
@@ -46,25 +39,49 @@ public class Authenticator {
             String decoded = new String(Base64.decodeBase64(authInfo));
             parts = decoded.split(":");
             if (parts.length != 2) {
-                return false;
+                return;
             }
             String user = parts[0];
             String password = parts[1];
+            cb.getAuthInfo(user, password);
+        }
 
-            Subject subject = doAuthenticate(realm, role, user, password);
+
+    }
+
+    public static boolean authenticate(String realm, String role, HttpServletRequest request) {
+
+        String authHeader = request.getHeader(HEADER_AUTHORIZATION);
+
+        if (authHeader == null || authHeader.equals("")) {
+            return false;
+        }
+  
+        final AuthInfo info = new AuthInfo();
+
+        Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
+          @Override
+          public void getAuthInfo(String userName, String password) {
+            info.username = userName;
+            info.password = password;
+          }
+        });
+
+        if (info.set()) {
+
+            Subject subject = doAuthenticate(realm, role, info.username, info.password);
             if (subject == null) {
                 return false;
             }
-
             /*
             HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
             session.setAttribute("org.osgi.service.http.authentication.remote.user", user);
             session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
             */
-
             return true;
         }
+
 
         return false;
     }
