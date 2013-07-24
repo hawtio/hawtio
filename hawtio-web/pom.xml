@@ -419,7 +419,12 @@
             */debug/**
           </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+<!--
+          TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
+          until we can figure out how to get the war to work inside OSGi again
+
           <archiveClasses>true</archiveClasses>
+-->
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
