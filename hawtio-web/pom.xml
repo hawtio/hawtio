@@ -413,9 +413,11 @@
             */debug/**
           </packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archiveClasses>true</archiveClasses>
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+<!--
           <webResources>
             <resource>
               <filtering>true</filtering>
@@ -425,6 +427,7 @@
               </includes>
             </resource>
           </webResources>
+-->
         </configuration>
       </plugin>
 
