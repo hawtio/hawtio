@@ -313,7 +313,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               $(element.find(".icon-pencil")[0]).hide();
 
               ngModel.$render = function () {
-                scope.text = ngModel.$viewValue[attrs['property']];
+                var propertyName = attrs['property'];
+                if (propertyName && ngModel.$viewValue) {
+                  scope.text = ngModel.$viewValue[ propertyName];
+                }
               };
 
               scope.showEdit = function () {
