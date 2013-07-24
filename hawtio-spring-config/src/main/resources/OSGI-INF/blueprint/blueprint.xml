@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
+
+  <ext:property-placeholder>
+    <ext:default-properties>
+      <ext:property name="hawtio.config.dir" value=""/>
+    </ext:default-properties>
+  </ext:property-placeholder>
+
+  <bean id="springConfigFacade" class="io.hawt.spring.SpringConfigFacade" init-method="init" destroy-method="destroy">
+<!--
+    <property name="wildcards" value="${hawtio.spring.wildcards}"/>
+-->
+    <property name="configDirName" value="${hawtio.config.dir}"/>
+    <property name="gitFacade" ref="gitFacade"/>
+  </bean>
+
+</blueprint>
+

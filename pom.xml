@@ -259,6 +259,7 @@
     <module>hawtio-dozer-schema</module>
     <module>hawtio-dozer</module>
     <module>hawtio-git</module>
+    <module>hawtio-spring-config</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
