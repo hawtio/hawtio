@@ -142,7 +142,7 @@ module ActiveMQ {
     }
 
     function loadProducers(queueProducers, destinationName, folderArray) {
-      angular.forEach(folderArray, (folawtioder) => {
+      angular.forEach(folderArray, (folder) => {
         var children = folder.children;
         if (children && children.length) {
           loadProducers(queueProducers, destinationName, children);
