@@ -15,9 +15,6 @@
   </filter>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
-    <!--<url-pattern>/</url-pattern>
-    <url-pattern>/*.html</url-pattern>
-    -->
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -51,26 +48,6 @@
     <url-pattern>/upload/*</url-pattern>
   </servlet-mapping>
 
-<!--
-  <servlet>
-    <servlet-name>GitServlet</servlet-name>
-    <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
-    <init-param>
-      <param-name>base-path</param-name>
-      <param-value>/var/hawtio/git</param-value>
-    </init-param>
-    <init-param>
-      <param-name>export-all</param-name>
-      <param-value>0</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>GitServlet</servlet-name>
-    <url-pattern>/git/*</url-pattern>
-  </servlet-mapping>
--->
-
-
   <servlet>
     <servlet-name>maven-source</servlet-name>
     <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
@@ -92,38 +69,5 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-
-
-  <!-- For Apollo -->
-<!--
-  TODO - disabled Apollo for now to avoid breaking hawtio-web when deployed inside OSGi etc
-
-  <filter>
-    <filter-name>static</filter-name>
-    <filter-class>org.apache.activemq.apollo.web.StaticContentFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>static</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>ApolloApplication</filter-name>
-    <filter-class>org.apache.activemq.apollo.web.ApolloApplication</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>ApolloApplication</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <servlet>
-    <servlet-name>jersey</servlet-name>
-    <servlet-class>org.apache.activemq.apollo.web.JerseyServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>jersey</servlet-name>
-    <url-pattern>/*</url-pattern>
-  </servlet-mapping>
--->
-
 </web-app>
 
