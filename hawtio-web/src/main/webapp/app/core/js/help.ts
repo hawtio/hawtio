@@ -1,6 +1,13 @@
 module Core {
   export function HelpController($scope, $routeParams, marked, helpRegistry) {
 
+    $scope.topics = helpRegistry.getTopics();
+    $scope.topic = $routeParams.topic;
+    $scope.subTopic = Object.extended($scope.topics[$scope.topic]).keys().at(0);
+    if (angular.isDefined($routeParams.subtopic)) {
+      $scope.subTopic = $routeParams.subtopic
+    }
+
     $scope.$on('hawtioNewHelpTopic', function() {
       $scope.topics = helpRegistry.getTopics();
     });
@@ -10,29 +17,26 @@ module Core {
         return true;
       }
       return false;
-    }
+    };
 
     $scope.isSubTopicActive = function(topic) {
       if (topic === $scope.subTopic) {
         return true;
       }
       return false;
-    }
+    };
+
+    $scope.filterSubTopicc = (topicObject) => {
+
+    };
 
     $scope.mapTopicName = function(topic) {
       return helpRegistry.mapTopicName(topic);
-    }
+    };
 
     $scope.mapSubTopicName = function(topic, subtopic) {
       return helpRegistry.mapSubTopicName(subtopic);
-    }
-
-    $scope.topics = helpRegistry.getTopics();
-    $scope.topic = $routeParams.topic;
-    $scope.subTopic = Object.extended($scope.topics[$scope.topic]).keys().at(0);
-    if (angular.isDefined($routeParams.subtopic)) {
-      $scope.subTopic = $routeParams.subtopic
-    }
+    };
 
     if (!angular.isDefined($scope.topics[$scope.topic])) {
       $scope.html = "Unable to download help data for " + $scope.topic;

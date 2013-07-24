@@ -4,7 +4,7 @@ module Core {
 
     private discoverableDocTypes = {
       user: 'help.md'
-    }
+    };
 
     private topicNameMappings = {
       activemq: 'ActiveMQ',
@@ -15,13 +15,13 @@ module Core {
       jvm: 'JVM',
       log: 'Logs',
       openejb: 'OpenEJB'
-    }
+    };
 
     private subTopicNameMappings = {
       user: 'For Users',
       developer: 'For Developers',
       faq: 'FAQ'
-    }
+    };
 
     private topics = {};
 
