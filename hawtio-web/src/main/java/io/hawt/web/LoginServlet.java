@@ -37,8 +37,8 @@ public class LoginServlet extends HttpServlet {
 
         for (Principal principal : principals) {
             if (principal.getClass().getSimpleName().equals("UserPrincipal")) {
-                LOG.info("Authorizing user " + username);
                 username = principal.getName();
+                LOG.info("Authorizing user " + username);
             }
         }
 

@@ -32,6 +32,7 @@ module Core {
           $scope.$apply();
         },
         error: (xhr, textStatus, error) => {
+          // TODO placeholder for more feedback
           switch(xhr.status) {
             case 401:
               notification('error', 'Failed to log in, ' + error);

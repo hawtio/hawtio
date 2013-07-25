@@ -81,7 +81,6 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
-
     @Override
     public void destroy() {
         LOG.info("Destroying hawtio authentication filter");

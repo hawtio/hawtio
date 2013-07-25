@@ -1,6 +1,6 @@
 module Core {
 
-  export function AppController($scope, $location, workspace, $document, pageTitle, localStorage, userDetails, lastLocation) {
+  export function AppController($scope, $location, workspace, $document, pageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
 
     if (userDetails.username === null) {
       // sigh, hack
@@ -11,6 +11,7 @@ module Core {
     $scope.match = null;
     $scope.pageTitle = pageTitle.exclude('hawtio');
     $scope.userDetails = userDetails;
+    $scope.confirmLogout = false;
 
     $scope.setPageTitle = () => {
       var tab = workspace.getActiveTab();
@@ -43,6 +44,41 @@ module Core {
 
     $scope.loggedIn = () => {
       return userDetails.username !== null && userDetails.username !== 'public';
+    }
+
+    $scope.logout = () => {
+      $scope.confirmLogout = true;
+    }
+
+    $scope.doLogout = () => {
+
+      $scope.confirmLogout = false;
+
+      var url = jolokiaUrl.replace("jolokia", "auth/logout/");
+
+      $.ajax(url, {
+        type: "POST",
+        success: () => {
+          userDetails.username = null;
+          userDetails.password = null;
+          $scope.$apply();
+        },
+        error: (xhr, textStatus, error) => {
+          // TODO, more feedback
+          switch(xhr.status) {
+            case 401:
+              notification('error', 'Failed to log out, ' + error);
+              break;
+            case 403:
+              notification('error', 'Failed to log out, ' + error);
+              break;
+            default:
+              notification('error', 'Failed to log out, ' + error);
+              break;
+          }
+          $scope.$apply();
+        }
+      });
     }
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);

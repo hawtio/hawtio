@@ -97,6 +97,14 @@
     <url-pattern>/auth/login/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>logout</servlet-name>
+    <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
 
 <!--
   <servlet>

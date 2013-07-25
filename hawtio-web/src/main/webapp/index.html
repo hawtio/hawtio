@@ -46,6 +46,23 @@
   }
 </style>
 
+<div class="ng-cloak">
+  <div modal="confirmLogout">
+
+    <form class="form-horizontal no-bottom-margin" ng-submit="doLogout()">
+      <div class="modal-header"></div>
+      <div class="modal-body">
+        <p>Are you sure you want to log out?</p>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value="Yes">
+        <input class="btn btn-primary" ng-click="confirmLogout = false" value="No">
+      </div>
+    </form>
+
+  </div>
+</div>
+
 <!--  navbar-inverse -->
 <div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()" ng-controller="Core.NavBarController">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
@@ -75,6 +92,11 @@
                 <i class="icon-cogs"></i>
               </a>
             </li>
+            <li ng-show="loggedIn()">
+              <a href="" title="Log out" data-placement="bottom" ng-click="logout()">
+                <i class="icon-user"></i>
+              </a>
+            </li>
             <li ng-hide="loggedIn()" ng-class="{active : isActive('#/login')}">
               <a ng-href="{{link('#/login')}}" title="Log in" data-placement="bottom">
                 <i class="icon-user"></i>
@@ -93,7 +115,7 @@
   </div>
 </div>
 
-<div id="main" class="container-fluid" ng-controller="Core.ViewController">
+<div id="main" class="container-fluid ng-cloak" ng-controller="Core.ViewController">
   <div ng-include src="viewPartial"></div>
 </div>
 
@@ -107,7 +129,6 @@
     </ul>
   </div>
 </div>
-
 
 <!-- charts and jolokia for jmx -->
 <script type="text/javascript" src="lib/d3.v3.min.js"></script>
