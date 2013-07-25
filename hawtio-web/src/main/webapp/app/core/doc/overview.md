@@ -1,18 +1,8 @@
 ### Welcome to <img class='no-shadow' src='img/logo.png'>hawtio ###
 
-[hawtio](http://hawt.io "hawtio") is a highly modular single-page javascript application that fetches JMX metric data using [Jolokia](http://jolokia.org).
+Don't cha wish your console was <a href="http://www.youtube.com/watch?v=YNSxNsr4wmA">hawt like me</a>? I'm <i>hawt</i> so you can stay cool!
 
-[hawtio](http://hawt.io "hawtio") contains plugins that support a number of different technologies including:
-
-- [Apache ActiveMQ](http://activemq.apache.org)
-- [Apache Camel](http://camel.apache.org)
-- [Apache Karaf](http://karaf.apache.org)
-- [Apache ServiceMix](http://servicemix.apache.org)
-- [Apache Tomcat](http://tomcat.apache.org)
-- [OSGi](http://osgi.org)
-- [Fuse Fabric](http://fuse.fusesource.org/fabric)
-- [JBoss AS 7](http://www.jboss.org/jbossas)
-- [Jetty](http://www.eclipse.org/jetty/)
+<b>hawtio</b> is a lightweight and <a href="http://hawt.io/plugins/index.html">modular</a> HTML5 web console with <a href="http://hawt.io/plugins/index.html">lots of plugins</a> for managing your Java stuff
 
 ##### General Navigation #####
 Primary navigation in [hawtio](http://hawt.io "hawtio") is via the top navigation bar.
