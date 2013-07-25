@@ -5,9 +5,15 @@
       <a class='btn' ng-href="#/fabric/view"><i class='icon-remove'></i> Cancel</a>
     </div>
     <div class="pull-right" ng-switch="activeTab">
-      <button ng-switch-when='org_fusesource_fabric_api_CreateChildContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-child-container'><i class="icon-ok"></i> Create Child Container</button>
-      <button ng-switch-when='org_fusesource_fabric_api_CreateSshContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-ssh-container'><i class="icon-ok"></i> Create SSH Container</button>
-      <button ng-switch-when='org_fusesource_fabric_api_CreateJCloudsContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create-cloud-container'><i class="icon-ok"></i> Create JCloud Container</button>
+      <button ng-switch-when='org_fusesource_fabric_api_CreateChildContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_child_container'
+              ng-disabled="create_child_container.$invalid">
+        <i class="icon-ok"></i> Create Child Container</button>
+      <button ng-switch-when='org_fusesource_fabric_api_CreateSshContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_ssh_container'
+              ng-disabled="create_ssh_container.$invalid">
+        <i class="icon-ok"></i> Create SSH Container</button>
+      <button ng-switch-when='org_fusesource_fabric_api_CreateJCloudsContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_cloud_container'
+              ng-disabled="create_cloud_container.$invalid">
+        <i class="icon-ok"></i> Create JCloud Container</button>
     </div>
   </div>
 
@@ -16,15 +22,15 @@
       <p>1. Select the container creation method and fill in the relevant details</p>
       <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
         <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateChildContainerOptions'>
-          <div simple-form name='create-child-container' data='schema' entity='entity'></div>
+          <div simple-form name='create_child_container' data='schema' entity='entity'></div>
 
         </div>
         <div class="tab-pane" title="SSH Container" value='org_fusesource_fabric_api_CreateSshContainerOptions'>
-          <div simple-form name='create-ssh-container' data='schema' entity='entity'></div>
+          <div simple-form name='create_ssh_container' data='schema' entity='entity'></div>
 
         </div>
         <div class="tab-pane" title="Cloud Container" value='org_fusesource_fabric_api_CreateJCloudsContainerOptions'>
-          <div simple-form name='create-cloud-container' data='schema' entity='entity'></div>
+          <div simple-form name='create_cloud_container' data='schema' entity='entity'></div>
 
         </div>
       </div>
@@ -45,20 +51,18 @@
       <div class="modal-body">
         <div class="control-group">
 
-        <label>Select one or more profiles to add to this container: </label>
+          <label>Select one or more profiles to add to this container: </label>
+
           <div class="controls">
 
-
           </div>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-success" type="submit" value="Add">
-        <input class="btn btn-primary" ng-click="showAddProfileDialog = false" value="Cancel">
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-success" type="submit" value="Add">
+          <input class="btn btn-primary" ng-click="showAddProfileDialog = false" value="Cancel">
+        </div>
       </div>
     </form>
   </div>
-
-
-
 
 </div>
