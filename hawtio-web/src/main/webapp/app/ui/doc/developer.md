@@ -1,6 +1,6 @@
 ### UI
 
-The **UI** plugin provides a number of [AngularJS](http://angularjs.org/) directives for creating UI components.
+The **UI** plugin provides a number of [AngularJS](http://angularjs.org/) directives for creating a number of UI widgets.
 
 <table class="table">
 <tr>

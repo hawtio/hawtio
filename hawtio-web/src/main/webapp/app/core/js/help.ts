@@ -49,6 +49,7 @@ module Core {
         });
       }
     });
+    $scope.sections = $scope.sections.sortBy("label");
 
     $scope.$on('hawtioNewHelpTopic', function () {
       $scope.topics = helpRegistry.getTopics();
