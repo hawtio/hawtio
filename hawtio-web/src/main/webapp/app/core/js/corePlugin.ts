@@ -54,12 +54,12 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           $routeProvider.
                   when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
                   when('/help', {
-                    redirectTo: '/help/overview'
+                    redirectTo: '/help/index'
                   }).
                   when('/help/:topic/', {templateUrl: 'app/core/html/help.html'}).
                   when('/help/:topic/:subtopic', {templateUrl: 'app/core/html/help.html'}).
 
-                  otherwise({redirectTo: '/help/overview'});
+                  otherwise({redirectTo: '/help/index'});
         }).
         constant('layoutTree', 'app/core/html/layoutTree.html').
         constant('layoutFull', 'app/core/html/layoutFull.html').
@@ -261,8 +261,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           viewRegistry['help'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
 
-          helpRegistry.addUserDoc('overview', 'app/core/doc/overview.md');
-          helpRegistry.addSubTopic('overview', 'faq', 'app/core/doc/faq.md');
+          helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
+          helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/faq.md');
+          helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
         }).

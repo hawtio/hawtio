@@ -8,52 +8,68 @@ module Core {
       $scope.subTopic = $routeParams.subtopic
     }
 
-    $scope.$on('hawtioNewHelpTopic', function() {
-      $scope.topics = helpRegistry.getTopics();
+    // when on the index pages, filter the user subTopic unless on the dev page
+    var isIndex = $scope.topic === "index";
+    var filterSubTopic = $scope.subTopic;
+    if (isIndex && filterSubTopic !== "developer") {
+      filterSubTopic = "user";
+    }
+
+    $scope.breadcrumbs = [
+      {
+        topic: "index",
+        subTopic: "user",
+        label: "User Guide"
+      },
+      {
+        topic: "index",
+        subTopic: "faq",
+        label: "FAQ"
+      },
+      {
+        topic: "index",
+        subTopic: "developer",
+        label: "Developers"
+      }
+    ];
+
+    // lets select the active tab
+    var activeBreadcrumb = $scope.breadcrumbs.find(b => b.topic === $scope.topic && b.subTopic === $scope.subTopic);
+    if (activeBreadcrumb) activeBreadcrumb.active = true;
+
+    $scope.sections = [];
+    angular.forEach($scope.topics, (details, topic) => {
+      // lets hide any index topics or any topics which don't have a filter sub topic
+      if (topic !== "index" && details[filterSubTopic]) {
+        $scope.sections.push({
+          topic: topic,
+          subTopic: filterSubTopic,
+          label: helpRegistry.mapTopicName(topic),
+          active: topic === $scope.topic
+        });
+      }
     });
 
-    $scope.isTopicActive = function(topic) {
-      if (topic === $scope.topic) {
-        return true;
-      }
-      return false;
-    };
-
-    $scope.isSubTopicActive = function(topic) {
-      if (topic === $scope.subTopic) {
-        return true;
-      }
-      return false;
-    };
-
-    $scope.filterSubTopicc = (topicObject) => {
-
-    };
-
-    $scope.mapTopicName = function(topic) {
-      return helpRegistry.mapTopicName(topic);
-    };
-
-    $scope.mapSubTopicName = function(topic, subtopic) {
-      return helpRegistry.mapSubTopicName(subtopic);
-    };
+    $scope.$on('hawtioNewHelpTopic', function () {
+      $scope.topics = helpRegistry.getTopics();
+    });
 
     if (!angular.isDefined($scope.topics[$scope.topic])) {
       $scope.html = "Unable to download help data for " + $scope.topic;
     } else {
-      
+
       $.ajax({
         url: $scope.topics[$scope.topic][$scope.subTopic],
         dataType: 'html',
         cache: false,
-        success: function(data, textStatus, jqXHR) {
+        success: function (data, textStatus, jqXHR) {
           $scope.html = "Unable to download help data for " + $scope.topic;
           if (angular.isDefined(data)) {
             $scope.html = marked(data);
           }
           Core.$apply($scope);
         },
-        error: function(jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
           $scope.html = "Unable to download help data for " + $scope.topic;
           Core.$apply($scope);
         }
