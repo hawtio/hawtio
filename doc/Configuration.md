@@ -13,7 +13,7 @@ If you are using a web container, the easiest way to change these configuration 
 
 Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.
 
-### configuration system properties and environment variables
+### configuration properties
 
 <table class="table">
 <tr>
