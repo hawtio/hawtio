@@ -79,6 +79,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private TimerTask task;
     private PersonIdent stashPersonIdent;
     private String defaultBranch;
+    private boolean firstPull = true;
 
 
     public void init() throws Exception {
@@ -822,28 +823,39 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     protected void doPull() {
         CredentialsProvider cp = getCredentials();
         try {
-            // if there is no remote URL then don't pull
-            StoredConfig config = git.getRepository().getConfig();
+            Repository repository = git.getRepository();
+            StoredConfig config = repository.getConfig();
             String url = config.getString("remote", "origin", "url");
             if (Strings.isBlank(url)) {
-                LOG.debug("No remove repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                logPull("No remove repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
                 return;
-            } else {
-                LOG.debug("Performing a pull in git repository " + getConfigDirectory().getCanonicalPath() + " on remote URL: " + url);
             }
+            String branch = repository.getBranch();
+            String mergeUrl = config.getString("branch", branch, "merge");
+            if (Strings.isBlank(mergeUrl)) {
+                logPull("No merge spec for branch." + branch + ".merge in the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                return;
+            }
+            logPull("Performing a pull in git repository " + getConfigDirectory().getCanonicalPath() + " on remote URL: " + url);
 
             git.pull().setCredentialsProvider(cp).setRebase(true).call();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Performed a git pull to update the local configuration repository at " + getConfigDirectory().getCanonicalPath());
-            }
         } catch (Throwable e) {
             String credText = "";
             if (cp instanceof UsernamePasswordCredentialsProvider) {
             }
             LOG.error("Failed to pull from the remote git repo with credentials " + cp + ". Reason: " + e, e);
+        } finally {
+            firstPull = true;
         }
     }
 
+    protected void logPull(String message) {
+        if (firstPull) {
+            LOG.info(message + ". Subsequent pull attempts will use debug logging");
+        } else {
+            LOG.debug(message);
+        }
+    }
 
     /**
      * Returns the file for the given path
