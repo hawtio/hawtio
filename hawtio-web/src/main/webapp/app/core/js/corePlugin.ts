@@ -262,7 +262,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           viewRegistry['preferences'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
-          helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/faq.md');
+          helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/FAQ.md');
+          helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 

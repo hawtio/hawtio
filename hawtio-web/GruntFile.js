@@ -71,6 +71,16 @@ module.exports = function (grunt) {
           }
         ]
       },
+      docs: {
+        files: [
+          {
+            expand: true,
+            cwd: "..",
+            src: ["./*.md"],
+            dest: "<%= grunt.option('webapp_outdir') %>/app/core/doc/"
+          }
+        ]
+      },
       test: {
         files: [
           {

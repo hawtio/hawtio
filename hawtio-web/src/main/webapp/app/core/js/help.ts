@@ -28,6 +28,11 @@ module Core {
       },
       {
         topic: "index",
+        subTopic: "changes",
+        label: "Changes"
+      },
+      {
+        topic: "index",
         subTopic: "developer",
         label: "Developers"
       }

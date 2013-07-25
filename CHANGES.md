@@ -1,6 +1,6 @@
-# hawtio change log
+### Change Log
 
-# 1.1
+#### 1.1
 
 * Added the following new plugins:
 
@@ -17,13 +17,13 @@
 * Fixes [these 80 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=2&state=closed)
 
 
-# 1.0
+#### 1.0
 
 * First main release of hawtio with [lots of hawt plugins](http://hawt.io/plugins/index.html).
 * Fixes [these 74 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=1&state=closed)
 
 
-# In Progress (1.2)
+#### In Progress (1.2)
 
 * Connectivity
   * New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
