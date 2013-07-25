@@ -228,6 +228,23 @@ module Forms {
           input.attr('entity', config.getEntity());
           input.attr('mode', config.getMode());
 
+          // TODO check for id in the schema["required"] array too!
+          // as required can be specified either via either of these approaches
+          /*
+          var schema = {
+            required: ["foo", "bar"],
+            properties: {
+              something: {
+                required: true,
+                type: "string"
+              }
+            }
+          }
+          */
+          if (property.required) {
+            input.attr('required', 'true');
+          }
+
           var fullSchemaName = config.schemaName;
           if (fullSchemaName) {
             input.attr('schema', fullSchemaName);

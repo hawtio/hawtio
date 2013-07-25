@@ -143,6 +143,10 @@ module Forms {
       if (config.isReadOnly()) {
         rc.attr('readonly', 'true');
       }
+      var required = config.$attr["required"];
+      if (required && required !== "false") {
+        rc.attr('required', 'true');
+      }
       return rc;
     }
   }
