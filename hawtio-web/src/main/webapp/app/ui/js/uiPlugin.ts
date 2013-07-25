@@ -24,6 +24,8 @@ module UI {
         return new UI.ColorPicker()
       }).directive('hawtioFileUpload', () => {
         return new UI.FileUpload();
+      }).run(function (helpRegistry) {
+        helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });
 
   hawtioPluginLoader.addModule(pluginName);

@@ -44,6 +44,8 @@ module Forms {
           }).
           directive('hawtioReset', function() {
             return new Forms.ResetForm();
+          }).run(function (helpRegistry) {
+            helpRegistry.addDevDoc("forms", 'app/forms/doc/developer.md');
           });
 
 
