@@ -3,6 +3,8 @@ module Core {
   export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, $location, lastLocation) {
     jolokia.stop();
 
+    $scope.backstretch = (<any>$).backstretch("img/fire.jpg");
+
     $scope.username = '';
     $scope.password = '';
 
@@ -28,6 +30,7 @@ module Core {
           workspace.loadTree();
 
           $location.url(lastLocation.url);
+          $scope.backstretch.destroy();
 
           $scope.$apply();
         },

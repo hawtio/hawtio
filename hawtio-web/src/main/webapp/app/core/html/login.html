@@ -3,13 +3,32 @@
 
   <div class="login-wrapper">
     <div class="login-form">
-      <form name="login" class="form-inline" ng-submit="doLogin()">
-        <input type="text" class="input-medium" placeholder="User Name" required ng-model="username">
-        <input type="password" class="input-medium" placeholder="Password" required ng-model="password">
-        <label class="checkbox">
-          <input type="checkbox"> Remember me
-        </label>
-        <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"><i class="icon-check"></i> Sign In</button>
+      <form name="login" class="form-horizontal no-bottom-margin" ng-submit="doLogin()">
+        <fieldset>
+          <div class="control-group">
+            <!-- <label class="control-label" for="username">User Name</label> -->
+            <div class="controls">
+              <input id="username" type="text" class="input-medium" placeholder="User Name" required ng-model="username">
+            </div>
+          </div>
+          <div class="control-group">
+            <!-- <label class="control-label" for="password">Password</label> -->
+            <div class="controls">
+              <input id="password" type="password" class="input-medium" placeholder="Password" required ng-model="password">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox"> Remember me
+              </label>
+              <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"><i class="icon-check"></i> Sign In</button>
+            </div>
+          </div>
+
+
+        </fieldset>
       </form>
     </div>
   </div>
