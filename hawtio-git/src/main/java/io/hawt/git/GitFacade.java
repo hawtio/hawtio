@@ -845,7 +845,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             }
             LOG.error("Failed to pull from the remote git repo with credentials " + cp + ". Reason: " + e, e);
         } finally {
-            firstPull = true;
+            firstPull = false;
         }
     }
 
