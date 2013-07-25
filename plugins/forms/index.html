@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Ch-ch-ch-changes!</title>
+    <title>hawtio forms plugin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -50,61 +50,98 @@
       </div>
     </header>
     <div id="main">
-		  <p><div class="container">
-    <div id="content"></p>
+		  <p><div id="content-header">
+    <div class="container"></p>
 
-<h3 id = "Change_Log">Change Log</h3>
+<h3 id = "Forms">Forms</h3>
 
-<h4 id = "1_1">1.1</h4>
+<p>This plugin provides an easy way, given a <a href="http://json-schema.org/">JSON Schema</a> model of generating a form with 2 way binding to some JSON data.</p>
 
-<ul>
-<li><p>Added the following new plugins:</p>
+<p>For an example of it in action, see the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/html/test.html">test.html</a> or run it via <a href="http://localhost:8080/hawtio/#/forms/test">http://localhost:8080/hawtio/#/forms/test</a>.</p>
 
-<ul>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md">forms</a> a developer plugin for automatically creating tables and forms from json-schema models</li>
-<li><a href="http://hawt.io/plugins/infinispan/">infinispan</a> for viewing metrics for your Infinispan caches or using the CLI to query or update them</li>
-<li><a href="http://hawt.io/plugins/jclouds/">jclouds</a> to help make your cloud hawt</li>
-<li><a href="http://hawt.io/plugins/maven/">maven</a> to let you search maven repositories, find versions, view source or javadoc</li>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md">tree</a> a developer plugin to make it easier to work with trees</li>
-</ul></li>
-<li><p>Added a new real time Camel profile view and the first version of a web based wiki based camel editor along with improvements to the diagram rendering</p></li>
-<li><p>Added more flexible documentation system so that plugins are now self documenting for users and developers</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=2&amp;state=closed">these 80 issues and enhancements</a></p></li>
-</ul>
+<h2 id = "Customizing_the_UI_with_tabs">Customizing the UI with tabs</h2>
 
-<h4 id = "1_0">1.0</h4>
+<p>The easiest way to customise the generated form is to specify which order you want the fields to appear; or to move different fields onto different tabs using the <strong>tabs</strong> object on a json schema type.
+e.g.</p>
 
-<ul>
-<li>First main release of hawtio with <a href="http://hawt.io/plugins/index.html">lots of hawt plugins</a>.</li>
-<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=1&amp;state=closed">these 74 issues and enhancements</a></li>
-</ul>
+<pre><code>    tabs: {
+      'Tab One': ['key', 'value'],
+      'Tab Two': ['*'],
+      'Tab Three': ['booleanArg'],
+                'Tab Four': ['foo\\..*']
+    }</code></pre>
 
-<h4 id = "In_Progress__1_2_">In Progress (1.2)</h4>
+<p>You can use &ldquo;*" to refer to all the other properties not explicitly configured.</p>
 
-<ul>
-<li>Connectivity
-<ul>
-<li>New <em>JVMs</em> tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.</li>
-<li>New <em>Connect</em> tab to connect to a remote JVM running jolokia (and its now been removed from the Preferences page)</li>
-</ul></li>
-<li>ActiveMQ gets huge improvements in its tooling
-<ul>
-<li>we can more easily page through messages on a queue</li>
-<li>move messages from one queue to another</li>
-<li>delete messages</li>
-<li>retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)</li>
-<li>purge queues</li>
-</ul></li>
-<li><p>Camel</p>
+<p>In addition you can use regular expressions to bind properties to a particular tab (e.g. so we match foo.* nested properties to Tab Four above). </p>
 
-<ul>
-<li>Neater message tracing; letting you zoom into a message and step through the messages with video player controls</li>
-<li>Can now forward messages on any browseable camel enpdoint to any other Camel endpoints</li>
-</ul></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=open">these  issues and enhancements</a></p></li>
-</ul>
+<h2 id = "Hiding_fields">Hiding fields</h2>
 
-<p></div>
+<p>You can add a <strong>hidden</strong> flag on a property in a JSON schema to hide it from the auto-generated forms. Or you can set its type to be <strong>hidden</strong>.</p>
+
+<p>e.g.</p>
+
+<pre><code>properties: {
+  foo: {
+    type: "string",
+    label: "My Foo Thingy"
+ },
+ bar: {
+    type: "string",
+    hidden: true
+ }</code></pre>
+
+<p>   }</p>
+
+<p>in the above, the <em>bar</em> property will be hidden from the generated form</p>
+
+<h2 id = "Customizing_the_labels">Customizing the labels</h2>
+
+<p>If you wish to specify a custom label for a property (as by default it will just humanize the id of the property), you can just specify the 'label' property inside the JSON Schema as follows:</p>
+
+<pre><code>properties: {
+  foo: {
+    type: "string",
+    label: "My Foo Thingy"
+ }</code></pre>
+
+<p>   }</p>
+
+<p>The <strong>label</strong> is not a JSON Schema property; but an extension like the <strong>tabs</strong> property above.</p>
+
+<h3 id = "Ignoring_prefix_of_deeply_nested_properties">Ignoring prefix of deeply nested properties</h3>
+
+<p>If you use nested properties, the labels may include an unnecessary prefix if you use sub-tabs to show related nested properties.</p>
+
+<p>To avoid this add a flag called <strong>ignorePrefixInLabel</strong> to the type which contains the <strong>properties</strong> you wish to ignore the prefixes of.</p>
+
+<p>e.g.</p>
+
+<pre><code>var myType = {
+  "type" : "object",
+  "properties" : {
+    "foo" : {
+      "properties" : {
+        "value" : {
+          "type" : "string"
+        }
+      }
+    },
+    "bar" : {
+     ...
+    }
+  },
+  ignorePrefixInLabel: true
+}</code></pre>
+
+<p>In the aboe the label for <strong>foo.value</strong> would jsut show <em>value</em> rather than <em>foo value</em> as the label.</p>
+
+<h2 id = "Using_custom_controls">Using custom controls</h2>
+
+<p>To use a custom control use the <strong>formTemplate</strong> entry on a property to define the AngularJS partial to be used to render the form control. This lets you use any AngularJS directive or widget.</p>
+
+<p>For example if you search for <strong>formTemplate</strong> in the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/camel/js/camelModel.js#L120">code generated Camel json schema file</a> you will see how the <strong>description</strong> property uses a <em>textarea</em>
+</div>
   </div></p>
     </div>
     <footer>

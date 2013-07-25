@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Ch-ch-ch-changes!</title>
+    <title>ui plugin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -50,59 +50,55 @@
       </div>
     </header>
     <div id="main">
-		  <p><div class="container">
-    <div id="content"></p>
+		  <p><div id="content-header">
+    <div class="container"></p>
 
-<h3 id = "Change_Log">Change Log</h3>
+<h3 id = "UI">UI</h3>
 
-<h4 id = "1_1">1.1</h4>
+<p>The <strong>UI</strong> plugin provides a number of <a href="http://angularjs.org/">AngularJS</a> directives for creating a number of UI widgets.</p>
 
-<ul>
-<li><p>Added the following new plugins:</p>
+<table class="table">
+<tr>
+<th>Widget</th>
+<th>Example Code</ht>
+</tr>
 
-<ul>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md">forms</a> a developer plugin for automatically creating tables and forms from json-schema models</li>
-<li><a href="http://hawt.io/plugins/infinispan/">infinispan</a> for viewing metrics for your Infinispan caches or using the CLI to query or update them</li>
-<li><a href="http://hawt.io/plugins/jclouds/">jclouds</a> to help make your cloud hawt</li>
-<li><a href="http://hawt.io/plugins/maven/">maven</a> to let you search maven repositories, find versions, view source or javadoc</li>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md">tree</a> a developer plugin to make it easier to work with trees</li>
-</ul></li>
-<li><p>Added a new real time Camel profile view and the first version of a web based wiki based camel editor along with improvements to the diagram rendering</p></li>
-<li><p>Added more flexible documentation system so that plugins are now self documenting for users and developers</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=2&amp;state=closed">these 80 issues and enhancements</a></p></li>
-</ul>
-
-<h4 id = "1_0">1.0</h4>
-
-<ul>
-<li>First main release of hawtio with <a href="http://hawt.io/plugins/index.html">lots of hawt plugins</a>.</li>
-<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=1&amp;state=closed">these 74 issues and enhancements</a></li>
-</ul>
-
-<h4 id = "In_Progress__1_2_">In Progress (1.2)</h4>
-
-<ul>
-<li>Connectivity
-<ul>
-<li>New <em>JVMs</em> tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.</li>
-<li>New <em>Connect</em> tab to connect to a remote JVM running jolokia (and its now been removed from the Preferences page)</li>
-</ul></li>
-<li>ActiveMQ gets huge improvements in its tooling
-<ul>
-<li>we can more easily page through messages on a queue</li>
-<li>move messages from one queue to another</li>
-<li>delete messages</li>
-<li>retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)</li>
-<li>purge queues</li>
-</ul></li>
-<li><p>Camel</p>
-
-<ul>
-<li>Neater message tracing; letting you zoom into a message and step through the messages with video player controls</li>
-<li>Can now forward messages on any browseable camel enpdoint to any other Camel endpoints</li>
-</ul></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=open">these  issues and enhancements</a></p></li>
-</ul>
+<tr>
+  <td>Colour Picker</td>
+  <td>
+     <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/html/test.html#L33" class="btn">View Code</a>
+  </td>
+</tr>
+<tr>
+  <td>Confirm Dialog</td>
+  <td>
+    <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/html/test.html#L45-45" class="btn">View Code</a>
+  </td>
+</tr>
+<tr>
+  <td>Editor</td>
+  <td>
+    <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/html/test.html#L144" class="btn">View Code</a>
+  </td>
+</tr>
+<tr>
+  <td>File Upload</td>
+  <td>
+    <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/html/test.html#L21" class="btn">View Code</a>
+  </td>
+</tr>
+<tr>
+  <td>Pager</td>
+  <td>
+  </td>
+</tr>
+<tr>
+  <td>Slide Out</td>
+  <td>
+    <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/html/test.html#L45-45" class="btn">View Code</a>
+  </td>
+</tr>
+</table>
 
 <p></div>
   </div></p>

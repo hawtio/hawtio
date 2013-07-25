@@ -58,31 +58,35 @@
   <div class="container">
     <div id="content"></p>
 
-<h2 id = "General_Questions">General Questions</h2>
+<h3 id = "General_Questions">General Questions</h3>
 
 <p>General questions on all things hawtio.</p>
 
-<h3 id = "What_is_the_license_">What is the license?</h3>
+<h4 id = "What_is_the_license_">What is the license?</h4>
 
 <p>hawtio uses the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a>.</p>
 
-<h3 id = "What_does_hawtio_do_">What does hawtio do?</h3>
+<h4 id = "What_does_hawtio_do_">What does hawtio do?</h4>
 
 <p>It's a <a href="http://hawt.io/plugins/index.html">pluggable</a> management console for Java stuff which supports any kind of JVM, any kind of container (Tomcat, Jetty, Karaf, JBoss, Fuse Fabric, etc), and any kind of Java technology and middleware.</p>
 
-<h3 id = "How_do_I_install_hawtio_">How do I install hawtio?</h3>
+<h4 id = "How_do_I_install_hawtio_">How do I install hawtio?</h4>
 
 <p>See the <a href="http://hawt.io/getstarted/index.html">Getting Started Guide</a> and the <a href="http://hawt.io/configuration/index.html">Configuration Guide</a></p>
 
-<h3 id = "How_do_I_configure_hawtio_">How do I configure hawtio?</h3>
+<h4 id = "How_do_I_configure_hawtio_">How do I configure hawtio?</h4>
 
 <p>Mostly hawtio just works. However, please check out the <a href="http://hawt.io/configuration/index.html">Configuration Guide</a> to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.</p>
 
-<h3 id = "What_has_changed_lately_">What has changed lately?</h3>
+<h4 id = "What_has_changed_lately_">What has changed lately?</h4>
 
 <p>Try have a look at the <a href="http://hawt.io/changelog.html">change log</a> to see the latest changes in hawtio!</p>
 
-<h3 id = "Why_does_hawtio_have_its_own_wiki_">Why does hawtio have its own wiki?</h3>
+<h4 id = "Why_does_hawtio_log_a_bunch_of_404s_to_the_javascript_console_at_startup_">Why does hawtio log a bunch of 404s to the javascript console at startup?</h4>
+
+<p>The hawtio help registry tries to automatically discover help data for each registered plugin even if plugins haven't specifically registered a help file.</p>
+
+<h4 id = "Why_does_hawtio_have_its_own_wiki_">Why does hawtio have its own wiki?</h4>
 
 <p>At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can be useful to document running systems and link to the various consoles, operational tools and views. Though in addition to being used for documentation, hawtio's wiki also lets you view and edit any text file; such as Camel routes, Fuse Fabric profiles, Spring XML files, Drools rulebases, etc.</p>
 
@@ -96,43 +100,43 @@
 
 <p>So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views&mdash;all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.</p>
 
-<h3 id = "How_do_I_build_the_project_">How do I build the project?</h3>
+<h4 id = "How_do_I_build_the_project_">How do I build the project?</h4>
 
 <p>If you just want to run hawtio in a JVM then please see the <a href="http://hawt.io/getstarted/index.html">Getting Started</a> section.</p>
 
 <p>If you want to hack the source code then check out <a href="http://hawt.io/building/index.html">how to build hawtio</a>.</p>
 
-<h3 id = "What_code_conventions_do_you_have_">What code conventions do you have?</h3>
+<h4 id = "What_code_conventions_do_you_have_">What code conventions do you have?</h4>
 
 <p>Check out the <a href="https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md">Coding Conventions</a> for our recommended approach.</p>
 
-<h2 id = "Plugin_Questions">Plugin Questions</h2>
+<h3 id = "Plugin_Questions">Plugin Questions</h3>
 
 <p>Questions on using the available plugins:</p>
 
-<h3 id = "What_plugins_are_available_">What plugins are available?</h3>
+<h4 id = "What_plugins_are_available_">What plugins are available?</h4>
 
 <p>See the list of <a href="http://hawt.io/plugins/index.html">hawtio plugins</a></p>
 
-<h3 id = "What_is_a_plugin_">What is a plugin?</h3>
+<h4 id = "What_is_a_plugin_">What is a plugin?</h4>
 
 <p>See <a href="http://hawt.io/plugins/howPluginsWork.html">How Plugins Work</a></p>
 
-<h3 id = "Why_does_the_OSGi_tab_not_appear_on_GlassFish_">Why does the OSGi tab not appear on GlassFish?</h3>
+<h4 id = "Why_does_the_OSGi_tab_not_appear_on_GlassFish_">Why does the OSGi tab not appear on GlassFish?</h4>
 
 <p>This is a <a href="https://github.com/hawtio/hawtio/issues/158">reported issue</a>. It turns out that the standard OSGi MBeans (in the osgi.core domain) are not installed by default on GlassFish.</p>
 
 <p>The workaround is to install the <a href="http://www.eclipse.org/gemini/management/">Gemini Management bundle</a> then you should see the MBeans in the osgi.core domain in the JMX tree; then the OSGi tab should appear!</p>
 
-<h2 id = "Developer_Questions">Developer Questions</h2>
+<h3 id = "Developer_Questions">Developer Questions</h3>
 
 <p>Questions on writing new plugins or hacking on existing ones:</p>
 
-<h3 id = "What_can_my_new_plugin_do_">What can my new plugin do?</h3>
+<h4 id = "What_can_my_new_plugin_do_">What can my new plugin do?</h4>
 
 <p>Anything you like :). So long as it runs on a web browser, you're good to go. Please start <a href="http://hawt.io/contributing/index.html">contributing</a>!</p>
 
-<h3 id = "Do_I_have_to_use_TypeScript_">Do I have to use TypeScript?</h3>
+<h4 id = "Do_I_have_to_use_TypeScript_">Do I have to use TypeScript?</h4>
 
 <p>You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and <a href="http://altjs.org/">any language that compiles to JavaScript</a>.</p>
 
@@ -140,7 +144,7 @@
 
 <p>The only real APIs a plugin needs to worry about are AngularJS (if you want to work in the core layout rather than just be an iframe), JSON (for some pretty trivial extension points such as adding new tabs), HTML and CSS.</p>
 
-<h3 id = "How_can_I_add_my_new_plugin_">How can I add my new plugin?</h3>
+<h4 id = "How_can_I_add_my_new_plugin_">How can I add my new plugin?</h4>
 
 <p>Check out <a href="http://hawt.io/plugins/index.html">how plugins work</a>. You can then either:</p>
 
