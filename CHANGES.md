@@ -26,7 +26,7 @@
 #### In Progress (1.2)
 
 * Connectivity
-  * New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.
+  * New _JVMs_ tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly. (Requires tools.jar in the classpath)
   * New _Connect_ tab to connect to a remote JVM running jolokia (and its now been removed from the Preferences page)
 * ActiveMQ gets huge improvements in its tooling
   * we can more easily page through messages on a queue
@@ -37,6 +37,14 @@
 * Camel
   * Neater message tracing; letting you zoom into a message and step through the messages with video player controls
   * Can now forward messages on any browseable camel enpdoint to any other Camel endpoints
+* Fabric
+  * Redesigned fabric view allows quick access to versions, profiles and containers, mass-assignment/removal of profiles to containers
+  * Easier management of features deployed in a profile via the "Edit Features" button.
+  * Several properties now editable on container detail view such as local/public IP and hostname
+* General
+  * Secured embedded jolokia, performs authentication/authorization via JAAS
+  * New login page
+  * Redesigned help pages
 
 * Fixes [these  issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=4&state=open)
 
