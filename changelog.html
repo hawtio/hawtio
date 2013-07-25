@@ -84,7 +84,7 @@
 <ul>
 <li>Connectivity
 <ul>
-<li>New <em>JVMs</em> tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly.</li>
+<li>New <em>JVMs</em> tab lets you connect to remote JVMs on your local machine; which if a JVM does not have jolokia installed it will install it on the fly. (Requires tools.jar in the classpath)</li>
 <li>New <em>Connect</em> tab to connect to a remote JVM running jolokia (and its now been removed from the Preferences page)</li>
 </ul></li>
 <li>ActiveMQ gets huge improvements in its tooling
@@ -95,11 +95,23 @@
 <li>retry messages on a DLQ (in 5.9.x of ActiveMQ onwards)</li>
 <li>purge queues</li>
 </ul></li>
-<li><p>Camel</p>
-
+<li>Camel
 <ul>
 <li>Neater message tracing; letting you zoom into a message and step through the messages with video player controls</li>
 <li>Can now forward messages on any browseable camel enpdoint to any other Camel endpoints</li>
+</ul></li>
+<li>Fabric
+<ul>
+<li>Redesigned fabric view allows quick access to versions, profiles and containers, mass-assignment/removal of profiles to containers</li>
+<li>Easier management of features deployed in a profile via the &ldquo;Edit Features&rdquo; button.</li>
+<li>Several properties now editable on container detail view such as local/public IP and hostname</li>
+</ul></li>
+<li><p>General</p>
+
+<ul>
+<li>Secured embedded jolokia, performs authentication/authorization via JAAS</li>
+<li>New login page</li>
+<li>Redesigned help pages</li>
 </ul></li>
 <li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=open">these  issues and enhancements</a></p></li>
 </ul>
