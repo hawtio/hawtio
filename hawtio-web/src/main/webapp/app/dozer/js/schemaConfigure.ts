@@ -4,7 +4,6 @@ module Dozer {
    * Configures the JSON schemas to improve the UI models
    */
   export function schemaConfigure() {
-        // lets customize the schemas
     io_hawt_dozer_schema_Field["tabs"] = {
       'Fields': ['a.value', 'b.value'],
       'From Field': ['a\\..*'],
@@ -17,6 +16,7 @@ module Dozer {
       'To Class': ['class-b\\..*'],
       'Class Configuration': ['*']
     };
+
     // hide the fields table from the class configuration tab
     io_hawt_dozer_schema_Mapping.properties.fieldOrFieldExclude.hidden = true;
 

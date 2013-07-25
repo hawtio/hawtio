@@ -2,6 +2,7 @@ module Fabric {
 
   export function CreateContainerController($scope, $window, $location, workspace, jolokia, localStorage) {
 
+    Fabric.schemaConfigure();
 
     $scope.versionsOp = 'versions()';
 
