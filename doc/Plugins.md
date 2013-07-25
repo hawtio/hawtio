@@ -2,7 +2,7 @@
 
 **hawtio** is highly modular with lots of plugins (see below), so that hawtio can discover exactly what services are inside a JVM and dyanmically update the console to provide an interface to them as things come and go. So after you have deployed hawtio into a container, as you add and remove new services to your JVM the hawtio console updates in real time.
 
-For more details see [how hawtio plugins work](http://hawt.io/plugins/howPluginsWork.html).
+For more details see the [Configuration Guide](http://hawt.io/configuration/index.html) and [How Plugins Work](http://hawt.io/plugins/howPluginsWork.html).
 
 ## Included Plugins
 
@@ -154,6 +154,12 @@ The following plugins are not intended to be used by users of hawtio, but are th
     <td>This plugin provides a simple HTML directive for working with <a href="http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html">jQuery DynaTree widgets</a> from AngularJS
 </td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/tree">tree</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/doc/developer.md">ui</a></td>
+    <td>Provides various AngularJS directives for custom widgets
+</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/ui">ui</a></td>
   </tr>
 </table>
 
