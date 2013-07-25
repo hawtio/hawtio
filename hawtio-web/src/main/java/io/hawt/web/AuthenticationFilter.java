@@ -1,6 +1,7 @@
 package io.hawt.web;
 
 import io.hawt.system.Authenticator;
+import io.hawt.system.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +17,6 @@ import java.io.IOException;
 public class AuthenticationFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
-
-    private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
 
     private String realm;
     private String role;
@@ -59,34 +58,28 @@ public class AuthenticationFilter implements Filter {
 
         String path = httpRequest.getServletPath();
 
-        boolean doAuthenticate = !(path.startsWith("/jolokia") && path.startsWith("/proxy") && path.startsWith("/upload") && path.startsWith("/javadoc"));
+        boolean doAuthenticate = path.startsWith("/auth") ||
+                                 path.startsWith("/jolokia") ||
+                                 path.startsWith("/upload");
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
-            if (Authenticator.authenticate(realm, role, httpRequest)) {
-                chain.doFilter(request, response);
-            } else {
-                doAuthPrompt((HttpServletResponse)response);
+            switch (Authenticator.authenticate(realm, role, httpRequest)) {
+                case AUTHORIZED:
+                    chain.doFilter(request, response);
+                    break;
+                case NOT_AUTHORIZED:
+                    Helpers.doForbidden((HttpServletResponse) response);
+                    break;
+                case NO_CREDENTIALS:
+                    //doAuthPrompt((HttpServletResponse)response);
+                    Helpers.doForbidden((HttpServletResponse) response);
+                    break;
             }
         } else {
             chain.doFilter(request, response);
         }
     }
-
-
-    public void doAuthPrompt(HttpServletResponse response) {
-        // request authentication
-        try {
-            response.setHeader(HEADER_WWW_AUTHENTICATE, Authenticator.AUTHENTICATION_SCHEME_BASIC + " realm=\"" + this.realm + "\"");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentLength(0);
-            response.flushBuffer();
-        } catch (IOException ioe) {
-            LOG.debug("Failed to send auth response: {}", ioe);
-        }
-
-    }
-
 
 
     @Override

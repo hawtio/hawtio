@@ -1,6 +1,6 @@
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $document, pageTitle, localStorage) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route) {
 
     $scope.hash = null;
 

@@ -1,0 +1,19 @@
+<div ng-controller="Core.LoginController">
+
+
+  <div class="login-wrapper">
+    <div class="login-form">
+      <form name="login" class="form-inline" ng-submit="doLogin()">
+        <input type="text" class="input-medium" placeholder="User Name" required ng-model="username">
+        <input type="password" class="input-medium" placeholder="Password" required ng-model="password">
+        <label class="checkbox">
+          <input type="checkbox"> Remember me
+        </label>
+        <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"><i class="icon-check"></i> Sign In</button>
+      </form>
+    </div>
+  </div>
+
+
+</div>
+

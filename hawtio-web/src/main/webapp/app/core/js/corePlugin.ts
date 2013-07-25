@@ -20,8 +20,12 @@ function getJolokiaUrl() {
 
 if (!jolokiaUrl) {
   jolokiaUrl = jolokiaUrls.find(function (url) {
-    var jqxhr = $.ajax(url, {async: false});
-    return jqxhr.status === 200;
+    var jqxhr = $.ajax(url, {
+      async: false,
+      username: 'public',
+      password: '?'
+    });
+    return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
   });
 }
 
@@ -30,7 +34,6 @@ if (jolokiaUrl) {
   // TODO replace with a jolokia call so we use authentication headers
   //hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
 }
-hawtioPluginLoader.addUrl('/hawtio/test.json');
 
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   lineCount: (value:any) => number;
@@ -52,6 +55,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           });
 
           $routeProvider.
+                  when('/login', {templateUrl: 'app/core/html/login.html'}).
                   when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
                   when('/help', {
                     redirectTo: '/help/index'
@@ -106,11 +110,32 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return {};
         }).
 
+        factory('lastLocation', function () {
+          return {};
+        }).
+
         factory('helpRegistry', function($rootScope) {
           return new Core.HelpRegistry($rootScope);
         }).
 
-        factory('jolokia',($location:ng.ILocationService, localStorage) => {
+        factory('jolokiaUrl', function() {
+          return jolokiaUrl;
+        }).
+
+        factory('userDetails', function(jolokiaUrl, localStorage) {
+          var answer = angular.fromJson(localStorage[jolokiaUrl]);
+          if (!angular.isDefined(answer)) {
+            return {
+              username: '',
+              password: ''
+            };
+          } else {
+            return answer;
+          }
+
+        }).
+
+        factory('jolokia',($location:ng.ILocationService, localStorage, $rootScope, userDetails) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           console.log("Jolokia URL is " + jolokiaUrl);
@@ -122,14 +147,19 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             var username = null;
             var password = null;
 
-            var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
+            //var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
 
             if (credentials.length === 2) {
               username = credentials[0];
               password = credentials[1];
-            } else if (angular.isDefined(userDetails)) {
+
+            } else if (angular.isDefined(userDetails) &&
+                       angular.isDefined(userDetails.userName) &&
+                       angular.isDefined(userDetails.password)) {
+
               username = userDetails.userName;
               password = userDetails.password;
+
             } else {
               // lets see if they are passed in via request parameter...
               var search = hawtioPluginLoader.parseQueryString();
@@ -144,10 +174,22 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               jolokiaParams['password'] = password;
 
               console.log("Using user / pwd " + username + " / " + password);
+
+              userDetails.username = username;
+              userDetails.password = password;
+            }
+
+            jolokiaParams['ajaxError'] = (xhr, textStatus, error) => {
+              if (xhr.status === 401 || xhr.status === 403) {
+                userDetails.username = null;
+                userDetails.password = null;
+                Core.$apply($rootScope);
+              }
             }
 
             var jolokia = new Jolokia(jolokiaParams);
             localStorage['url'] = jolokiaUrl;
+            jolokia.stop();
             return jolokia;
           } else {
             // empty jolokia that returns nothing
@@ -260,6 +302,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           viewRegistry['notree'] = layoutFull;
           viewRegistry['help'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
+          viewRegistry['login'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
           helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/FAQ.md');

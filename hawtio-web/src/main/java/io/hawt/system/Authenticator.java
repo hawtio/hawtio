@@ -49,12 +49,12 @@ public class Authenticator {
 
     }
 
-    public static boolean authenticate(String realm, String role, HttpServletRequest request) {
+    public static AuthenticateResult authenticate(String realm, String role, HttpServletRequest request) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
         if (authHeader == null || authHeader.equals("")) {
-            return false;
+            return AuthenticateResult.NO_CREDENTIALS;
         }
   
         final AuthInfo info = new AuthInfo();
@@ -67,23 +67,30 @@ public class Authenticator {
           }
         });
 
+        if (info.username.equals("public")) {
+            return AuthenticateResult.NO_CREDENTIALS;
+        }
+
         if (info.set()) {
 
             Subject subject = doAuthenticate(realm, role, info.username, info.password);
             if (subject == null) {
-                return false;
+                return AuthenticateResult.NOT_AUTHORIZED;
             }
+
+            SubjectThreadLocal.put(subject);
+
             /*
             HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
             session.setAttribute("org.osgi.service.http.authentication.remote.user", user);
             session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
             */
-            return true;
+            return AuthenticateResult.AUTHORIZED;
         }
 
 
-        return false;
+        return AuthenticateResult.NO_CREDENTIALS;
     }
 
     private static Subject doAuthenticate(String realm, String role, final String username, final String password) {

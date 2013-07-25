@@ -845,4 +845,10 @@ module Core {
       }
     });
   }
+
+  export function getBasicAuthHeader(username, password) {
+    var authInfo = username + ":" + password;
+    authInfo = btoa(authInfo);
+    return "Basic " + authInfo;
+  }
 }

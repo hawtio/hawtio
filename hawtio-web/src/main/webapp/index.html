@@ -60,7 +60,8 @@
 
 
       <div class="nav-collapse collapsed">
-        <ul class="nav">
+
+        <ul ng-show="loggedIn()" class="nav">
           <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
             <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
             </a>
@@ -69,12 +70,17 @@
 
         <div class="pull-right">
           <ul class="nav pull-right">
-            <li ng-class="{active : isActive('#/preferences')}">
+            <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
               <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
                 <i class="icon-cogs"></i>
               </a>
             </li>
-            <li ng-class="{active : isActive('#/help')}">
+            <li ng-hide="loggedIn()" ng-class="{active : isActive('#/login')}">
+              <a ng-href="{{link('#/login')}}" title="Log in" data-placement="bottom">
+                <i class="icon-user"></i>
+              </a>
+            </li>
+            <li ng-show="loggedIn()" ng-class="{active : isActive('#/help')}">
               <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console"
                  data-placement="bottom">
                 <i class="icon-question-sign"></i>

@@ -41,6 +41,7 @@ module Fabric {
 
             var isValid = (workspace) => {
               if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
+                /*
                 try {
                   var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus', {timeout: 1});
                   if (status) {
@@ -49,6 +50,8 @@ module Fabric {
                 } catch (e) {
                   // ignore this
                 }
+                */
+                return true;
               }
               return false;
             };

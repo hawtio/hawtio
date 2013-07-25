@@ -59,7 +59,7 @@ module Core {
       }
       $scope.viewPartial = answer;
 
-      //console.log("Using view partial: " + answer);
+      console.log("Using view partial: " + answer);
       return answer;
     }
   }
