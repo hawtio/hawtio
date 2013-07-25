@@ -7,22 +7,24 @@
       <!-- containers -->
       <div id="center" class="column">
         <div class="section-header">
-          <div class="section-title">
+
+          <div class="selection-controls">
             <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
             <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
+          </div>
+
+          <div class="section-title">
             Containers
           </div>
+
           <div class="section-controls">
-
             <i class="icon-plus clickable" title="Create Container" ng-click="createContainer()"></i>
-
             <i class="icon-minus clickable" title="Delete Container" ng-click="deleteSelectedContainers()" ng-show="selectedContainers.length != 0"></i>
-
             <i class="icon-play-circle clickable" title="Start Containers" ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"></i>
-
             <i class="icon-off clickable" title="Stop Containers" ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"></i>
 
           </div>
+
           <div class="section-filter">
             <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
             <i class="icon-remove clickable" title="Clear Filter" ng-click="containerIdFilter = ''"></i>
@@ -66,15 +68,17 @@
       <!-- versions and profiles -->
       <div id="left" class="column">
         <div class="section-header">
-          <div class="section-title">
+
+          <div class="selection-controls">
             <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveVersionId('')"></i>
+          </div>
+
+          <div class="section-title">
             Versions
           </div>
+
           <div class="section-controls">
-
-            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
             <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog = true"></i>
-
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/" ng-show="hasFabricWiki()"
                title="View, edit or create configuration files for the profiles in this version">
@@ -82,6 +86,8 @@
              </a>-->
 
              <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog = true" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
+
+            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
 
 
            </div>
@@ -98,21 +104,22 @@
           </div>
         </div>
         <div class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
-          <div class="section-title">
+          <div class="selection-controls">
             <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="clearSelection(profiles)"></i>
+          </div>
+
+          <div class="section-title">
             Profiles
           </div>
           <div class="section-controls">
 
-            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
             <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
-
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/{{selected[0].id}}" class="btn" ng-disabled="selected.length == 0" ng-show="hasFabricWiki()"
                title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
              </a>-->
-
-             <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog = true" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
+            <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog = true" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
+            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
 
            </div>
            <div class="section-filter">
@@ -149,8 +156,10 @@
       <!-- active profiles -->
       <div id="right" class="column">
         <div class="section-header">
-          <div class="section-title">
+          <div class="selection-controls">
             <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveProfile(null)"></i>
+          </div>
+          <div class="section-title">
             Active Profiles
           </div>
           <div class="section-controls">

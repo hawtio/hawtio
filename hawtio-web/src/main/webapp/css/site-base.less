@@ -1507,7 +1507,6 @@ li.stacktrace {
   left: 11px;
   bottom: 14%;
   right: 0px;
-  //border: 1px solid black;
 }
 
 .box .box-right {
@@ -1517,16 +1516,44 @@ li.stacktrace {
   bottom: 14%;
 }
 
+.section-header {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.selection-controls {
+  display: inline-block;
+}
+
 .section-title {
+  margin-left: 10px;
   display: inline-block;
 }
 
 .section-controls {
   display: inline-block;
+  float: right;
 }
 
-.section_filter {
+#center .section-header .section-controls {
+  position: relative;
+  top: 5px;
+}
+
+.section-filter {
+  margin-top: 5px;
+}
+
+#center .section-header .section-filter {
+  margin-top: 0px;
+  margin-left: 35px;
   display: inline-block;
+}
+
+.section-filter .icon-remove {
+  position: relative;
+  top: 1px;
+  left: -24px;
 }
 
 .features-toolbar {
