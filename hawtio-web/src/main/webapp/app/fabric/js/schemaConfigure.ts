@@ -7,5 +7,11 @@ module Fabric {
     angular.forEach(["name", "jmxUser", "jmxPassword"], (name) => {
       Core.pathSet(org_fusesource_fabric_api_CreateChildContainerOptions, ["properties", name, "required"], true);
     });
+    angular.forEach(["name", "user", "password"], (name) => {
+      Core.pathSet(org_fusesource_fabric_api_CreateJCloudsContainerOptions, ["properties", name, "required"], true);
+    });
+    angular.forEach(["name", "user", "password"], (name) => {
+      Core.pathSet(org_fusesource_fabric_api_CreateSshContainerOptions, ["properties", name, "required"], true);
+    });
   }
 }
