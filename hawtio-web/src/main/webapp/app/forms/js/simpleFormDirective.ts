@@ -138,9 +138,39 @@ module Forms {
         }
 
         if (schema) {
-          angular.forEach(schema.properties, (property, id) => {
-            addProperty(id, property);
-          });
+          // if we're using tabs lets reorder the properties...
+          if (tabs.use) {
+            var tabKeyToIdPropObject = {};
+            angular.forEach(schema.properties, (property, id) => {
+              var tabkey = findTabOrderValue(id);
+              var array = tabKeyToIdPropObject[tabkey];
+              if (!array) {
+                array = [];
+                tabKeyToIdPropObject[tabkey] = array;
+              }
+              array.push({id: id, property: property});
+            });
+
+            // now lets iterate through each tab...
+            angular.forEach(schema.tabs, function (value, key) {
+              value.forEach(function (val) {
+                var array = tabKeyToIdPropObject[val];
+                if (array) {
+                  angular.forEach(array, (obj) => {
+                    var id = obj.id;
+                    var property = obj.property;
+                    if (id && property) {
+                      addProperty(id, property);
+                    }
+                  });
+                }
+              });
+            });
+          } else {
+            angular.forEach(schema.properties, (property, id) => {
+              addProperty(id, property);
+            });
+          }
         }
 
         if (tabs.use) {
@@ -205,6 +235,37 @@ module Forms {
         $(element).append(compiledNode);
       }
 
+      function findTabKey(id) {
+        var tabkey = tabs.locations[id];
+        if (!tabkey) {
+          // lets try find a tab key using regular expressions
+          angular.forEach(tabs.locations, (value, key) => {
+            if (!tabkey && key !== "*" && id.match(key)) {
+              tabkey = value;
+            }
+          });
+        }
+        if (!tabkey) {
+          tabkey = tabs.locations['*'];
+        }
+        return tabkey;
+      }
+
+      function findTabOrderValue(id) {
+        var answer = null;
+        angular.forEach(schema.tabs, function (value, key) {
+          value.forEach(function (val) {
+            if (!answer && val !== "*" && id.match(val)) {
+              answer = val;
+            }
+          });
+        });
+        if (!answer) {
+          answer = '*'
+        }
+        return answer;
+      }
+
       function addProperty(id, property, ignorePrefixInLabel = property.ignorePrefixInLabel) {
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
@@ -236,21 +297,8 @@ module Forms {
           var input = Forms.createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName);
 
           if (tabs.use) {
-            var tabkey = tabs.locations[id];
-            if (!tabkey) {
-              // lets try find a tab key using regular expressions
-              angular.forEach(tabs.locations, (value, key) => {
-                if (!tabkey && key !== "*" && id.match(key)) {
-                  tabkey = value;
-                }
-              });
-            }
-            if (tabkey) {
-              tabs.elements[tabkey].append(input);
-            } else {
-              tabs.elements[tabs.locations['*']].append
-                      (input);
-            }
+            var tabkey = findTabKey(id);
+            tabs.elements[tabkey].append(input);
           } else {
             fieldset.append(input);
           }

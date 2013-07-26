@@ -13,5 +13,17 @@ module Fabric {
     angular.forEach(["name", "user", "password"], (name) => {
       Core.pathSet(org_fusesource_fabric_api_CreateSshContainerOptions, ["properties", name, "required"], true);
     });
+
+    // use tabs to reorder the fields
+    org_fusesource_fabric_api_CreateChildContainerOptions["tabs"] = {
+      'Default': ['name', '*']
+    };
+    org_fusesource_fabric_api_CreateJCloudsContainerOptions["tabs"] = {
+      'Default': ['name', '*']
+    };
+    org_fusesource_fabric_api_CreateJCloudsContainerOptions["tabs"] = {
+      'Default': ['name', '*']
+    };
+
   }
 }
