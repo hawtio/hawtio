@@ -174,7 +174,16 @@ module Forms {
         }
 
         if (tabs.use) {
-          fieldset.append(tabs['div']);
+          var tabDiv = tabs['div'];
+          var tabCount = Object.keys(tabs.elements).length;
+          if (tabCount < 2) {
+            // if we only have 1 tab lets extract the div contents of the tab
+            angular.forEach(tabDiv.children().children(), (control) => {
+              fieldset.append(control);
+            });
+          } else {
+            fieldset.append(tabDiv);
+          }
         }
 
         var findFunction = function (scope, func) {
