@@ -49,8 +49,8 @@ public class ClassScanner {
 
     private final ClassLoader[] classLoaders;
 
-    private WeakHashMap<String,CacheValue> cache = new WeakHashMap<String, CacheValue>();
-    private WeakHashMap<Package,CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
+    private WeakHashMap<String, CacheValue> cache = new WeakHashMap<String, CacheValue>();
+    private WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
 
     public static ClassScanner newInstance() {
         return new ClassScanner(Thread.currentThread().getContextClassLoader(), ClassScanner.class.getClassLoader());
@@ -216,15 +216,17 @@ public class ClassScanner {
 
     protected void processDirectoryClassNames(File directory, String packageName, Set<String> classes) {
         String[] fileNames = directory.list();
-        for (String fileName : fileNames) {
-            String packagePrefix = Strings.isNotBlank(packageName) ? packageName + '.' : packageName;
-            if (fileName.endsWith(".class")) {
-                String className = packagePrefix + fileName.substring(0, fileName.length() - 6);
-                classes.add(className);
-            }
-            File subdir = new File(directory, fileName);
-            if (subdir.isDirectory()) {
-                processDirectoryClassNames(subdir, packagePrefix + fileName, classes);
+        if (fileNames != null) {
+            for (String fileName : fileNames) {
+                String packagePrefix = Strings.isNotBlank(packageName) ? packageName + '.' : packageName;
+                if (fileName.endsWith(".class")) {
+                    String className = packagePrefix + fileName.substring(0, fileName.length() - 6);
+                    classes.add(className);
+                }
+                File subdir = new File(directory, fileName);
+                if (subdir.isDirectory()) {
+                    processDirectoryClassNames(subdir, packagePrefix + fileName, classes);
+                }
             }
         }
     }
@@ -253,7 +255,6 @@ public class ClassScanner {
     }
 
 
-
     protected void addClassesForPackage(ClassResource classResource, String filter, Integer limit, Set<Class<?>> classes) {
         String packageName = classResource.getPackageName();
         URL resource = classResource.getResource();
@@ -270,22 +271,24 @@ public class ClassScanner {
 
     protected void processDirectory(File directory, String packageName, Set<Class<?>> classes, String filter, Integer limit) {
         String[] fileNames = directory.list();
-        for (String fileName : fileNames) {
-            if (!withinLimit(limit, classes)) {
-                return;
-            }
-            String className = null;
-            String packagePrefix = Strings.isNotBlank(packageName) ? packageName + '.' : packageName;
-            if (fileName.endsWith(".class")) {
-                className = packagePrefix + fileName.substring(0, fileName.length() - 6);
-            }
-            Class<?> aClass = tryFindClass(className, filter);
-            if (aClass != null) {
-                classes.add(aClass);
-            }
-            File subdir = new File(directory, fileName);
-            if (subdir.isDirectory()) {
-                processDirectory(subdir, packagePrefix + fileName, classes, filter, limit);
+        if (fileNames != null) {
+            for (String fileName : fileNames) {
+                if (!withinLimit(limit, classes)) {
+                    return;
+                }
+                String className = null;
+                String packagePrefix = Strings.isNotBlank(packageName) ? packageName + '.' : packageName;
+                if (fileName.endsWith(".class")) {
+                    className = packagePrefix + fileName.substring(0, fileName.length() - 6);
+                }
+                Class<?> aClass = tryFindClass(className, filter);
+                if (aClass != null) {
+                    classes.add(aClass);
+                }
+                File subdir = new File(directory, fileName);
+                if (subdir.isDirectory()) {
+                    processDirectory(subdir, packagePrefix + fileName, classes, filter, limit);
+                }
             }
         }
     }
