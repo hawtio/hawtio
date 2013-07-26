@@ -1641,10 +1641,18 @@ td.adding {
 
 
 /** highlight required fields which have no focus */
-input.ng-invalid-required, textarea.ng-invalid-required, select.ng-invalid-required {
+input.ng-invalid, textarea.ng-invalid, select.ng-invalid {
   border-color: #e5e971;
-  -webkit-box-shadow: 0 0 6px #f3f8bf;
-  -moz-box-shadow: 0 0 6px #f3f8bf;
-  box-shadow: 0 0 6px #f3f8bf;
+  -webkit-box-shadow: 0 0 6px #eff898;
+  -moz-box-shadow: 0 0 6px #eff898;
+  box-shadow: 0 0 6px #eff898;
 }
+
+/** Use bigger and darker border on checkboxes as its hard to see since they already have a shadow */
+input[type="checkbox"].ng-invalid {
+  -webkit-box-shadow: 0 0 12px #e5e971;
+  -moz-box-shadow: 0 0 12px #e5e971;
+  box-shadow: 0 0 12px #e5e971;
+}
+
 
