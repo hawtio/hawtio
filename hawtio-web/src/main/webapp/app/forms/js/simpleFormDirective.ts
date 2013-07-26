@@ -185,6 +185,23 @@ module Forms {
         }
         childScope = scope.$new(false);
         compiledNode = simple.$compile(form)(childScope);
+
+        // now lets expose the form object to the outer scope
+        var formsScopeProperty = "forms";
+        var forms = scope[formsScopeProperty];
+        if (!forms) {
+          forms = {};
+          scope[formsScopeProperty] = forms;
+        }
+        var formName = config.name;
+        if (formName) {
+          var formObject = childScope[formName];
+          if (formObject) {
+            forms[formName] = formObject;
+          }
+          var formScope = formName += "$scope";
+          forms[formScope] = childScope;
+        }
         $(element).append(compiledNode);
       }
 
@@ -216,53 +233,7 @@ module Forms {
             addProperty(newId, childProp, property.ignorePrefixInLabel);
           });
         } else {
-          var input = $('<div></div>');
-          input.attr(Forms.normalize(propTypeName, property, schema), '');
-          angular.forEach(property, function (value, key) {
-            if (angular.isString(value) && key.indexOf("$") < 0) {
-              var html = Core.escapeHtml(value);
-              input.attr(key, html);
-            }
-          });
-          input.attr('name', id);
-          input.attr('entity', config.getEntity());
-          input.attr('mode', config.getMode());
-
-          // TODO check for id in the schema["required"] array too!
-          // as required can be specified either via either of these approaches
-          /*
-          var schema = {
-            required: ["foo", "bar"],
-            properties: {
-              something: {
-                required: true,
-                type: "string"
-              }
-            }
-          }
-          */
-          if (property.required) {
-            input.attr('required', 'true');
-          }
-
-          var fullSchemaName = config.schemaName;
-          if (fullSchemaName) {
-            input.attr('schema', fullSchemaName);
-          }
-
-          if (configScopeName) {
-            input.attr('data', configScopeName);
-          }
-
-          if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-            input.attr('ignore-prefix-in-label', true);
-          }
-
-          // TODO add a title if there is one in the schema
-          var label = property.label;
-          if (label) {
-            input.attr('title', label);
-          }
+          var input = Forms.createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName);
 
           if (tabs.use) {
             var tabkey = tabs.locations[id];
@@ -295,7 +266,7 @@ module Forms {
     }
 
     private createForm(config) {
-      var form = $('<form class="' + config.formclass + '"><fieldset></fieldset></form>');
+      var form = $('<form class="' + config.formclass + '" novalidate><fieldset></fieldset></form>');
       form.attr('name', config.name);
       form.attr('action', config.action);
       form.attr('method', config.method);

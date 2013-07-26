@@ -6,13 +6,13 @@
     </div>
     <div class="pull-right" ng-switch="activeTab">
       <button ng-switch-when='org_fusesource_fabric_api_CreateChildContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_child_container'
-              ng-disabled="create_child_container.$invalid">
+              ng-disabled="!forms.create_child_container.$valid">
         <i class="icon-ok"></i> Create Child Container</button>
       <button ng-switch-when='org_fusesource_fabric_api_CreateSshContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_ssh_container'
-              ng-disabled="create_ssh_container.$invalid">
+              ng-disabled="!forms.create_ssh_container.$valid">
         <i class="icon-ok"></i> Create SSH Container</button>
       <button ng-switch-when='org_fusesource_fabric_api_CreateJCloudsContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_cloud_container'
-              ng-disabled="create_cloud_container.$invalid">
+              ng-disabled="!forms.create_cloud_container.$valid">
         <i class="icon-ok"></i> Create JCloud Container</button>
     </div>
   </div>
@@ -23,15 +23,12 @@
       <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
         <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateChildContainerOptions'>
           <div simple-form name='create_child_container' data='schema' entity='entity'></div>
-
         </div>
         <div class="tab-pane" title="SSH Container" value='org_fusesource_fabric_api_CreateSshContainerOptions'>
           <div simple-form name='create_ssh_container' data='schema' entity='entity'></div>
-
         </div>
         <div class="tab-pane" title="Cloud Container" value='org_fusesource_fabric_api_CreateJCloudsContainerOptions'>
           <div simple-form name='create_cloud_container' data='schema' entity='entity'></div>
-
         </div>
       </div>
     </div>

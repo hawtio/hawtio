@@ -22,6 +22,9 @@ module Fabric {
     $scope.selectedVersionId = '';
     $scope.profileIdFilter = '';
 
+    // holds all the form objects from nested child scopes
+    $scope.forms = {};
+
     $scope.showAddProfileDialog = false;
 
     $scope.init = () => {
