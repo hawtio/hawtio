@@ -31,6 +31,9 @@ module Camel {
           "CamelAggregationCompleteAllGroups": {
             type: "java.lang.String"
           },
+          "CamelAggregationCompleteAllGroupsInclusive": {
+            type: "java.lang.String"
+          },
           "CamelAsyncWait": {
             type: "java.lang.String"
           },
@@ -91,6 +94,9 @@ module Camel {
           "CamelExceptionCaught": {
             type: "java.lang.String"
           },
+          "CamelExceptionHandled": {
+            type: "java.lang.String"
+          },
           "CamelEvaluateExpressionResult": {
             type: "java.lang.String"
           },
@@ -140,6 +146,9 @@ module Camel {
             type: "java.lang.String"
           },
           "CamelFileLockFileAcquired": {
+            type: "java.lang.String"
+          },
+          "CamelFileLockFileName": {
             type: "java.lang.String"
           },
           "CamelGroupedExchange": {
@@ -208,6 +217,9 @@ module Camel {
           "CamelMaximumEndpointCacheSize": {
             type: "java.lang.String"
           },
+          "CamelMessageHistory": {
+            type: "java.lang.String"
+          },
           "CamelMulticastIndex": {
             type: "java.lang.String"
           },
@@ -218,6 +230,9 @@ module Camel {
             type: "java.lang.String"
           },
           "CamelOnCompletion": {
+            type: "java.lang.String"
+          },
+          "CamelOverruleFileName": {
             type: "java.lang.String"
           },
           "CamelParentUnitOfWork": {
