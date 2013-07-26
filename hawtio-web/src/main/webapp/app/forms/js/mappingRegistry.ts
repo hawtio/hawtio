@@ -127,7 +127,12 @@ module Forms {
     }
 */
     if (property.required) {
-      input.attr('required', 'true');
+      // don't mark checkboxes as required
+      if (input[0].localName === "input" && input.attr("type") === "checkbox") {
+        // lets not set required on a checkbox, it doesn't make any sense ;)
+      } else {
+        input.attr('required', 'true');
+      }
     }
     return group ? group : input;
   }
