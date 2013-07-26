@@ -193,7 +193,7 @@ module Dozer {
       copyAttributes(field, element);
       return field;
     }
-    return null;
+    return new Field(new FieldDefinition(""), new FieldDefinition(""));
   }
 
   function createMappingClass(jqElement) {
@@ -206,7 +206,8 @@ module Dozer {
         return mappingClass;
       }
     }
-    return null;
+    // lets create a default empty mapping
+    return new MappingClass("");
   }
 
   function copyAttributes(object: any, element: Element) {
