@@ -10,10 +10,10 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.2-M1/hawtio-default-1.2-M1.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.2-M2/hawtio-default-1.2-M2.war">Download hawtio-default.war</a>
     </td>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.2-M1/sample-1.2-M1.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.2-M2/sample-1.2-M2.war">Download sample.war</a>
     </td>
   </tr>
   <tr>
@@ -31,10 +31,10 @@ Copy the WAR file to your deploy directory in your container.
 
 If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
-Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.2-M1/](http://localhost:8080/hawtio-default-1.2-M1/) or [http://localhost:8080/sample-1.2-M1/](http://localhost:8080/sample-1.2-M1/)  depending on the file name you downloaded.
+Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.2-M2/](http://localhost:8080/hawtio-default-1.2-M2/) or [http://localhost:8080/sample-1.2-M2/](http://localhost:8080/sample-1.2-M2/)  depending on the file name you downloaded.
 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
- <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2-M1/hawtio-default-offline-1.2-M1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
+ <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2-M2/hawtio-default-offline-1.2-M2.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
 To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
 
@@ -46,6 +46,12 @@ If you are using Jetty 8.x then JMX may not enabled by default, so make sure the
 
     etc/jetty-jmx.xml
 
+### If you use JBoss AS 6.x
+
+If you use JBoss AS 7.x or later or use EAP 6.x or later the above should just work.
+
+However for JBoss AS 6.x or earlier there is [an issue with using newer versions of slf4j]() so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2-M2/hawtio-no-slf4j-1.2-M2.war">Download hawtio-no-slf4j.war</a>.
+
 ## Using Fuse, Apache Karaf or Apache Servicemix
 
 If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse) you can run:
@@ -54,7 +60,7 @@ If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse
 
 Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/products/fuse) or a vanilla [Apache Karaf](http://karaf.apache.org/) or [Apache ServiceMix](http://servicemix.apache.org/) then try the following:
 
-    features:addurl mvn:io.hawt/hawtio-karaf/1.2-M1/xml/features
+    features:addurl mvn:io.hawt/hawtio-karaf/1.2-M2/xml/features
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
