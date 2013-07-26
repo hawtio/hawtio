@@ -23,16 +23,20 @@ module Forms {
     var options = {
       valueConverter: null
     };
-    var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options);
+    var safeId = Forms.safeIdentifier(id);
+
+    var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
 
     // Note if for whatever reason we need to go back to the old way of using hawtio directives for standard
     // angularjs directives, just clear inputMarker to null here ;)
+    // inputMarkup = null;
+
     if (inputMarkup) {
       input = $(inputMarkup);
 
       copyAttributes();
 
-      var id = Forms.safeIdentifier(id);
+      var id = safeId;
 
       var modelName = config.model;
       if (!modelName) {
@@ -58,7 +62,7 @@ module Forms {
       // figure out which things to not wrap in a group and label etc...
       if (input.attr("type") !== "hidden") {
         group = this.getControlGroup(config, config, id);
-        group.append(Forms.getLabel(config, config, property.label || humanizeValue(defaultLabel)));
+        group.append(Forms.getLabel(config, config, property.title || property.label || humanizeValue(defaultLabel)));
         var controlDiv = Forms.getControlDiv(config);
         controlDiv.append(input);
         controlDiv.append(Forms.getHelpSpan(config, config, id));
@@ -140,7 +144,7 @@ module Forms {
   /**
    * Lets try create the standard angular JS widgets markup
    */
-  export function createStandardWidgetMarkup(propTypeName, property, schema, config, options) {
+  export function createStandardWidgetMarkup(propTypeName, property, schema, config, options, id) {
     // lets try use standard widgets first...
     var type = Forms.resolveTypeNameAlias(propTypeName, schema);
     if (!type) {
@@ -152,8 +156,34 @@ module Forms {
     }
     var enumValues = Core.pathGet(property, ["enum"]);
     if (enumValues) {
-      // TODO use select?
-      return null;
+      // calculate from input attributes...
+      var required = true;
+      var scope = config.scope;
+      var data = config.data;
+      var attributes = "";
+      if (data && scope) {
+        // this is a big ugly - would be nice to expose this a bit easier...
+        // maybe nested objects should expose the model easily...
+        var fullSchema = scope[config.schemaName];
+        var model = angular.isString(data) ? scope[data] : data;
+        // now we need to keep walking the model to find the enum values
+        var paths = id.split(".");
+        var property = null;
+        angular.forEach(paths, (path) => {
+          property = Core.pathGet(model, ["properties", path]);
+          var typeName = Core.pathGet(property, ["type"]);
+          var alias = Forms.lookupDefinition(typeName, fullSchema);
+          if (alias) {
+            model = alias;
+          }
+        });
+        var values = Core.pathGet(property, ["enum"]);
+        var valuesScopeName = "$values_" + id.replace(/\./g, "_");
+        scope[valuesScopeName] = values;
+        attributes += ' ng-options="value for value in ' + valuesScopeName + '"';
+      }
+      var defaultOption = required ? "" : '<option value=""></option>';
+      return '<select' + attributes + '>' + defaultOption + '</select>';
     }
 
     if (angular.isArray(type)) {
