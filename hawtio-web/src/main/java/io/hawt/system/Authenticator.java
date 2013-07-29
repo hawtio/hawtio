@@ -49,7 +49,7 @@ public class Authenticator {
 
     }
 
-    public static AuthenticateResult authenticate(String realm, String role, HttpServletRequest request) {
+    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, HttpServletRequest request) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
@@ -73,27 +73,19 @@ public class Authenticator {
 
         if (info.set()) {
 
-            Subject subject = doAuthenticate(realm, role, info.username, info.password);
+            Subject subject = doAuthenticate(realm, role, rolePrincipalClasses, info.username, info.password);
             if (subject == null) {
                 return AuthenticateResult.NOT_AUTHORIZED;
             }
 
             SubjectThreadLocal.put(subject);
-
-            /*
-            HttpSession session = request.getSession(true);
-            session.setAttribute("user", user);
-            session.setAttribute("org.osgi.service.http.authentication.remote.user", user);
-            session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
-            */
             return AuthenticateResult.AUTHORIZED;
         }
-
 
         return AuthenticateResult.NO_CREDENTIALS;
     }
 
-    private static Subject doAuthenticate(String realm, String role, final String username, final String password) {
+    private static Subject doAuthenticate(String realm, String role,  String rolePrincipalClasses, final String username, final String password) {
         try {
 
             Subject subject = new Subject();
@@ -113,19 +105,25 @@ public class Authenticator {
             });
             loginContext.login();
 
-            if (role != null && role.length() > 0) {
-                String clazz = "org.apache.karaf.jaas.boot.principal.RolePrincipal";
-                String name = role;
-                int idx = role.indexOf(':');
-                if (idx > 0) {
-                    clazz = role.substring(0, idx);
-                    name = role.substring(idx + 1);
-                }
+            if (role != null && role.length() > 0 && rolePrincipalClasses != null && rolePrincipalClasses.length() > 0) {
+
+                String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
                 boolean found = false;
-                for (Principal p : subject.getPrincipals()) {
-                    if (p.getClass().getName().equals(clazz)
-                            && p.getName().equals(name)) {
-                        found = true;
+                for (String clazz : rolePrincipalClazzes) {
+                    String name = role;
+                    int idx = role.indexOf(':');
+                    if (idx > 0) {
+                        clazz = role.substring(0, idx);
+                        name = role.substring(idx + 1);
+                    }
+                    for (Principal p : subject.getPrincipals()) {
+                        if (p.getClass().getName().equals(clazz.trim())
+                                && p.getName().equals(name)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
                         break;
                     }
                 }

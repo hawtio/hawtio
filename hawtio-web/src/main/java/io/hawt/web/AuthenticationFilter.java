@@ -21,6 +21,7 @@ public class AuthenticationFilter implements Filter {
     private String realm;
     private String role;
     private boolean enabled;
+    private String rolePrincipalClasses;
 
 
     @Override
@@ -28,12 +29,13 @@ public class AuthenticationFilter implements Filter {
 
         realm = (String) filterConfig.getServletContext().getAttribute("realm");
         role = (String) filterConfig.getServletContext().getAttribute("role");
+        rolePrincipalClasses = (String) filterConfig.getServletContext().getAttribute("rolePrincipalClasses");
         enabled = (Boolean) filterConfig.getServletContext().getAttribute("authEnabled");
 
         if (enabled) {
-            LOG.info("Starting hawtio authentication filter, authentication realm: \"" + realm + "\" authorized role: \"" + role + "\"");
+            LOG.info("Starting hawtio authentication filter, JAAS realm: \"" + realm + "\" authorized role: \"" + role + "\"" + " role principal classes: \"" + rolePrincipalClasses + "\"");
         } else {
-            LOG.info("Starting hawtio authentication filter, authentication disabled");
+            LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
 
     }
@@ -64,7 +66,7 @@ public class AuthenticationFilter implements Filter {
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
-            switch (Authenticator.authenticate(realm, role, httpRequest)) {
+            switch (Authenticator.authenticate(realm, role, rolePrincipalClasses, httpRequest)) {
                 case AUTHORIZED:
                     chain.doFilter(request, response);
                     break;
