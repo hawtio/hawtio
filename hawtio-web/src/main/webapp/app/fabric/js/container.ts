@@ -120,6 +120,15 @@ module Fabric {
         $scope.row = response.value;
         if ($scope.row) {
           $scope.services = getServiceList($scope.row);
+          if (angular.isDefined($scope.resolverWatch) && angular.isFunction($scope.resolverWatch)) {
+            $scope.resolverWatch();
+          }
+          $scope.resolverWatch = $scope.$watch('row.resolver', (newValue, oldValue) => {
+            if (newValue !== oldValue) {
+              $scope.updateContainerProperty('resolver', $scope.row);
+            }
+          });
+          Core.$apply($scope);
         }
       }
     }

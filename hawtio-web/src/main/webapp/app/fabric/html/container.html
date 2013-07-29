@@ -1,4 +1,5 @@
-<div ng-controller="Fabric.ContainerController">
+<div class="ng-cloak" ng-controller="Fabric.ContainerController">
+
   <div class="row-fluid">
     <div class="span4">
       <h1>{{row.id}}</h1>
@@ -79,7 +80,7 @@
         </dl>
     </div>
 
-    <div class="span4">
+    <div class="span4 container-settings">
       <dl class="dl-horizontal">
         <dt>Version:</dt>
         <dd>{{row.versionId}}</dd>
@@ -90,40 +91,39 @@
           <editable-property ng-model="row" property="location" on-save="updateContainerProperty('location', row)"></editable-property>
         </dd>
       </dl>
-      <dl class="dl-horizontal">
+      <dl class="dl-horizontal" title="Advertise services using the local IP address">
         <dt>Local IP:</dt>
         <dd>
           <editable-property ng-model="row" property="localIp" on-save="updateContainerProperty('localIp', row)"></editable-property>
+          <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localip">
         </dd>
       </dl>
-      <dl class="dl-horizontal">
+      <dl class="dl-horizontal" title="Advertise services using the local hostname">
         <dt>Local Hostname:</dt>
         <dd>
           <editable-property ng-model="row" property="localHostname" on-save="updateContainerProperty('localHostname', row)"></editable-property>
+          <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localhostname">
         </dd>
       </dl>
-      <dl class="dl-horizontal">
+      <dl class="dl-horizontal" title="Advertise services using the public IP address">
         <dt>Public IP:</dt>
         <dd>
           <editable-property ng-model="row" property="publicIp" on-save="updateContainerProperty('publicIp', row)"></editable-property>
+          <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publicip">
         </dd>
       </dl>
-      <dl class="dl-horizontal">
+      <dl class="dl-horizontal" title="Advertise services using the public hostname">
         <dt>Public Hostname:</dt>
         <dd>
           <editable-property ng-model="row" property="publicHostname" on-save="updateContainerProperty('publicHostname', row)"></editable-property>
+          <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publichostname">
         </dd>
       </dl>
-      <dl class="dl-horizontal">
+      <dl class="dl-horizontal" title="Advertise services using a custom IP address or hostname">
         <dt>Manual IP:</dt>
         <dd>
           <editable-property ng-model="row" property="manualIp" on-save="updateContainerProperty('manualIp', row)"></editable-property>
-        </dd>
-      </dl>
-      <dl class="dl-horizontal">
-        <dt>Resolver:</dt>
-        <dd>
-          {{row.resolver}}
+          <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="manualip">
         </dd>
       </dl>
       <dl class="dl-horizontal">
@@ -173,7 +173,7 @@
   <div class="row-fluid">
     <div class="span8">
       <dl>
-        <dt>Provision List: 
+        <dt>Provision List:
           <input type="text" class="search-query" placeholder="Filter..." ng-model="provisionListFilter">
         </dt>
         <dd>
