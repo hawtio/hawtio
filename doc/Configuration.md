@@ -1,19 +1,55 @@
 ## hawtio configuration
 
-The following table contains the various configuration settings you can set via Java system properties or environment variables.
+### Configuring Security
 
-#### web application configuration
+By default the security in hawtio uses these system properties which you can override:
 
-If you are using a web container, the easiest way to change these configuration values is 
+<table class="buttonTable">
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>
+      hawtio.authenticationEnabled
+    </td>
+    <td>
+      true
+    </td>
+    <td>
+      Whether or not security is enabled
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.role
+    </td>
+    <td>
+      admin
+    </td>
+    <td>
+      The user role required to be able to login to the console
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.realm
+    </td>
+    <td>
+      karaf
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+</table>
 
-* Create your own WAR which depends on the **hawtio-default.war** like the [sample project's pom.xml](https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17) 
-* Create your own [blueprint.properties](https://github.com/hawtio/hawtio/blob/master/sample/src/main/resources/blueprint.properties#L7) file that then can override whatever properties you require
+Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).
 
-#### OSGi configuration
+### Configuration Properties
 
-Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.
-
-### configuration properties
+The following table contains the various configuration settings for the various hawtio plugins.
 
 <table class="table">
 <tr>
@@ -35,3 +71,16 @@ Just update the blueprint configuration values in OSGi config admim as you would
 <td>hawtio.maven.index.dir</td><td>The directory where the maven indexer will use to store its cache and index files</td>
 </tr>
 </table>
+
+#### Web Application configuration
+
+If you are using a web container, the easiest way to change the web app configuration values is:
+
+* Create your own WAR which depends on the **hawtio-default.war** like the [sample project's pom.xml](https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17)
+* Create your own [blueprint.properties](https://github.com/hawtio/hawtio/blob/master/sample/src/main/resources/blueprint.properties#L7) file that then can override whatever properties you require
+
+#### OSGi configuration
+
+Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.
+
+

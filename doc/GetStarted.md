@@ -95,9 +95,9 @@ If you are using Jetty 8.x then JMX may not enabled by default, so make sure the
 
 If you use JBoss AS 7.x or later or use EAP 6.x or later the above should just work.
 
-However for JBoss AS 6.x or earlier there is [an issue with using newer versions of slf4j]() so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2-M2/hawtio-no-slf4j-1.2-M2.war">Download hawtio-no-slf4j.war</a>.
+However for JBoss AS 6.x or earlier there is [an issue with using newer versions of slf4j](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html) so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2-M2/hawtio-no-slf4j-1.2-M2.war">Download hawtio-no-slf4j.war</a>.
 
-To disable security add the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out:
+To disable security [configure the system properties](http://www.mastertheboss.com/jboss-configuration/how-to-inject-system-properties-into-jboss) by adding the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out):
 
     <mbean code="org.jboss.varia.property.SystemPropertiesService"
      name="jboss:type=Service,name=SystemProperties">
