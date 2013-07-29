@@ -70,6 +70,9 @@ module Forms {
 
         var scope = config.scope;
         if (scope && modelName) {
+          var onModelChange = function(newValue) {
+            scope.$emit("hawtio.form.modelChange", modelName, newValue);
+          };
           var fn = onModelChange;
           // allow custom converters
           var converterFn = options.valueConverter;
@@ -81,10 +84,6 @@ module Forms {
             }
           }
           scope.$watch(modelName, fn);
-        }
-
-        function onModelChange(newValue) {
-          scope.$emit("hawtio.form.modelChange", modelName, newValue);
         }
       }
     } else {
