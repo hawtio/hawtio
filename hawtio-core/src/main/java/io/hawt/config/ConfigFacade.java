@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * A facade for the hawtio configuration features.
  */
-public class ConfigFacade extends MBeanSupport implements ConfigFacadeMXBean {
+public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigFacade.class);
     private static ConfigFacade singleton;
 
