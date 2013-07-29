@@ -404,6 +404,9 @@
         </executions>
         <configuration>
           <classes>
+            <org.fusesource.fabric.api.CreateEnsembleOptions>
+              ${schema-outdir}/createEnsembleOptions.js
+            </org.fusesource.fabric.api.CreateEnsembleOptions>
             <org.fusesource.fabric.api.CreateChildContainerOptions>
               ${schema-outdir}/createChildContainerOptions.js
             </org.fusesource.fabric.api.CreateChildContainerOptions>
