@@ -40,6 +40,51 @@ To see whats changed lately check out the [change log](http://hawt.io/changelog.
 
 If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.
 
+### Configuring Security
+
+By default the security in hawtio uses these system properties which you can override:
+
+<table class="buttonTable">
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>
+      hawtio.authenticationEnabled
+    </td>
+    <td>
+      true
+    </td>
+    <td>
+      Whether or not security is enabled
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.role
+    </td>
+    <td>
+      admin
+    </td>
+    <td>
+      The user role required to be able to login to the console
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.realm
+    </td>
+    <td>
+      karaf
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+</table>
+
 ### Enable JMX on Jetty 8.x
 
 If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in **jetty-distribution/start.ini** (you may have to uncomment it to enable JMX).
@@ -51,6 +96,16 @@ If you are using Jetty 8.x then JMX may not enabled by default, so make sure the
 If you use JBoss AS 7.x or later or use EAP 6.x or later the above should just work.
 
 However for JBoss AS 6.x or earlier there is [an issue with using newer versions of slf4j]() so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2-M2/hawtio-no-slf4j-1.2-M2.war">Download hawtio-no-slf4j.war</a>.
+
+To disable security add the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out:
+
+    <mbean code="org.jboss.varia.property.SystemPropertiesService"
+     name="jboss:type=Service,name=SystemProperties">
+
+      <attribute name="Properties">
+            hawtio.authenticationEnabled=false
+      </attribute>
+    </mbean>
 
 ## Using Fuse, Apache Karaf or Apache Servicemix
 
