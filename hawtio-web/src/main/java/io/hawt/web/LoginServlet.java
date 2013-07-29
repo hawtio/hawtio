@@ -1,7 +1,6 @@
 package io.hawt.web;
 
 import io.hawt.system.Helpers;
-import io.hawt.system.SubjectThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.AccessControlContext;
+import java.security.AccessController;
 import java.security.Principal;
 import java.util.GregorianCalendar;
 import java.util.Set;
@@ -26,7 +27,9 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Subject subject = SubjectThreadLocal.take();
+        AccessControlContext acc = AccessController.getContext();
+        Subject subject = Subject.getSubject(acc);
+
         if (subject == null) {
             Helpers.doForbidden(resp);
             return;
@@ -35,14 +38,17 @@ public class LoginServlet extends HttpServlet {
 
         String username = null;
 
-        for (Principal principal : principals) {
-            if (principal.getClass().getSimpleName().equals("UserPrincipal")) {
-                username = principal.getName();
-                LOG.info("Authorizing user " + username);
+        if (principals != null) {
+            for (Principal principal : principals) {
+                if (principal.getClass().getSimpleName().equals("UserPrincipal")) {
+                    username = principal.getName();
+                    LOG.info("Authorizing user " + username);
+                }
             }
         }
 
         HttpSession session = req.getSession(true);
+        session.setAttribute("subject", subject);
         session.setAttribute("user", username);
         session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
         session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);

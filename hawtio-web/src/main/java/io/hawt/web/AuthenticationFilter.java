@@ -2,14 +2,18 @@ package io.hawt.web;
 
 import io.hawt.system.Authenticator;
 import io.hawt.system.Helpers;
+import io.hawt.system.PrivilegedCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.Subject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * @author Stan Lewis
@@ -41,7 +45,7 @@ public class AuthenticationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         if (realm == null || realm.equals("") || !enabled) {
             chain.doFilter(request, response);
@@ -54,8 +58,11 @@ public class AuthenticationFilter implements Filter {
         LOG.debug("Handling request for path {}", httpRequest.getServletPath());
 
         if (session != null) {
-            chain.doFilter(request, response);
-            return;
+            Subject subject = (Subject) session.getAttribute("subject");
+            if (subject != null) {
+                executeAs(request, response, chain, subject);
+                return;
+            }
         }
 
         String path = httpRequest.getServletPath();
@@ -66,9 +73,13 @@ public class AuthenticationFilter implements Filter {
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
-            switch (Authenticator.authenticate(realm, role, rolePrincipalClasses, httpRequest)) {
+            switch (Authenticator.authenticate(realm, role, rolePrincipalClasses, httpRequest, new PrivilegedCallback() {
+                public void execute(Subject subject) throws Exception {
+                    executeAs(request, response, chain, subject);
+                }
+            })) {
                 case AUTHORIZED:
-                    chain.doFilter(request, response);
+                    // request was executed using the authenticated subject, nothing more to do
                     break;
                 case NOT_AUTHORIZED:
                     Helpers.doForbidden((HttpServletResponse) response);
@@ -80,6 +91,20 @@ public class AuthenticationFilter implements Filter {
             }
         } else {
             chain.doFilter(request, response);
+        }
+    }
+
+    private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
+        try {
+            Subject.doAs(subject, new PrivilegedExceptionAction<Object>() {
+                @Override
+                public Object run() throws Exception {
+                    chain.doFilter(request, response);
+                    return null;
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            LOG.info("Failed to invoke action " + ((HttpServletRequest)request).getPathInfo() + " due to:", e);
         }
     }
 

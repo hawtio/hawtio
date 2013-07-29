@@ -49,7 +49,7 @@ public class Authenticator {
 
     }
 
-    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, HttpServletRequest request) {
+    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, HttpServletRequest request, PrivilegedCallback cb) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
@@ -78,7 +78,14 @@ public class Authenticator {
                 return AuthenticateResult.NOT_AUTHORIZED;
             }
 
-            SubjectThreadLocal.put(subject);
+            if (cb != null) {
+                try {
+                    cb.execute(subject);
+                } catch (Exception e) {
+                    LOG.warn("Failed to execute privileged action: ", e);
+                }
+            }
+
             return AuthenticateResult.AUTHORIZED;
         }
 
