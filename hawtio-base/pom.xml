@@ -7,10 +7,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-default</artifactId>
+  <artifactId>hawtio-base</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Default Web Application</description>
+  <description>hawtio :: Base Web Application</description>
 
   <dependencies>
     <dependency>
@@ -22,11 +22,11 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-base</artifactId>
+      <artifactId>hawtio-web</artifactId>
       <version>${project.version}</version>
       <!--
         NOTE this WAR dependency type which enables this WAR to
-        inherit all the plugins and content from the core hawtio-base WAR
+        inherit all the plugins and content from the core hawtio-web WAR
       -->
       <type>war</type>
     </dependency>
@@ -44,17 +44,16 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.web</artifactId>
       <version>${blueprint-web-version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -66,36 +65,6 @@
           <artifactId>slf4j-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <!-- now lets add some components -->
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-maven-indexer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-aether</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-json-schema-mbean</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-local-jvm-mbean</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fusesource.insight</groupId>
-      <artifactId>insight-log4j</artifactId>
-      <version>${insight-log4j.version}</version>
     </dependency>
   </dependencies>
 
