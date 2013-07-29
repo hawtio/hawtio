@@ -10,6 +10,7 @@ module Fabric {
       selectedProfiles: '=fabricProfileSelector',
       versionId: '=',
       clearOnVersionChange: '@',
+      showLinks: '@',
       excludedProfiles: '=',
       includedProfiles: '='
     };
@@ -18,7 +19,8 @@ module Fabric {
       $scope.profiles = [];
       $scope.responseJson = '';
       $scope.filterText = '';
-      $scope.clearOnVersionChange = false
+      $scope.clearOnVersionChange = false;
+      $scope.showLinks = false;
       $scope.selectedAll = false;
       $scope.indeterminate = false;
 

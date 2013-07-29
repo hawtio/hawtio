@@ -24,7 +24,8 @@
             <input type="checkbox" ng-model="profile.selected">
           </td>
           <td>
-            {{profile.id}}
+            <span>{{profile.id}}</span>
+            <a ng-show="showLinks" ng-href="#/fabric/profile/{{versionId}}/{{profile.id}}"><i class="icon-info-sign icon1point5x clickable pull-right" title="Details for {{profile.id}}"></i></a>
           </td>
         </tr>
       </tbody>
