@@ -7,6 +7,7 @@ module Fabric {
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop']).config(($routeProvider) => {
     $routeProvider.
+            when('/fabric/create', {templateUrl: templatePath + 'createFabric.html'}).
             when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
@@ -31,7 +32,7 @@ module Fabric {
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
             try {
-              var id = jolokia.getAttribute('org.fusesource.fabric:type=Fabric', 'CurrentContainerName', {timeout: 1});
+              var id = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
               if (id) {
                 pageTitle.push(id);
               }

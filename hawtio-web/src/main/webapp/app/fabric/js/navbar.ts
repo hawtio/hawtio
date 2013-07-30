@@ -22,6 +22,15 @@ module Fabric {
       Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
       $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
       $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
+      var ensembleContainers = jolokia.getAttribute(Fabric.clusterManagerMBean, "EnsembleContainers");
+      if (!ensembleContainers || ensembleContainers.length == 0) {
+        $scope.hasFabric = false;
+      } else {
+        $scope.hasFabric = true;
+      }
+      if (!$scope.hasFabric) {
+        $location.url("/fabric/create");
+      }
     }
 
     function onKibanaUrl(response) {

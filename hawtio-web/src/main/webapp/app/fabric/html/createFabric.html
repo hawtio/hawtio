@@ -1,0 +1,20 @@
+<div ng-controller="Fabric.CreateFabricController">
+
+
+  <div class="row-fluid">
+
+    <div class="span5">
+      <div simple-form name='create_fabric' data='schema' entity='entity'></div>
+    </div>
+
+    <div class="span5">
+      <h2>No Fabric Detected!</h2>
+      <p>It appears that fabric has not yet been initialized.  Please configure your fabric and click the "Create" button to continue</p>
+      <p class="centered"><button class="btn btn-success" hawtio-submit="create_fabric"><i class="icon-ok" ng-disabled="!forms.create_fabric.$valid"></i> Create Fabric</button></p>
+    </div>
+
+  </div>
+
+
+
+</div>
