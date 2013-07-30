@@ -894,7 +894,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     // lets stash any local changes just in case..
                     git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
                 }
-                if (isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
+                if (isPullOnStartup() && isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
                     doPull();
                 }
                 return callable.call();
