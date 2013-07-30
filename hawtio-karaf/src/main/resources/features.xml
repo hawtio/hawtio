@@ -20,7 +20,7 @@
     <config>
       hawtio.config.dir=./git
       hawtio.config.repo=https://github.com/hawtio/hawtio-config.git
-      hawtio.config.pollOnStartup=true
+      hawtio.config.pullOnStartup=true
       hawtio.config.cloneOnStartup=true
     </config>
 
