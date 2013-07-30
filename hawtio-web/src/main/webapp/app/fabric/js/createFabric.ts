@@ -2,9 +2,7 @@ module Fabric {
 
   export function CreateFabricController($scope, jolokia, $location) {
 
-    Fabric.schemaConfigure();
-
-    $scope.schema = (<any>window).org_fusesource_fabric_api_CreateEnsembleOptions;
+    $scope.schema = Fabric.createEnsembleOptions;
 
     $scope.entity = {
       zooKeeperServerPort: 2181,
@@ -35,8 +33,6 @@ module Fabric {
       });
     }
 
-
-    console.log("window: ", (<any>window).org_fusesource_fabric_api_CreateEnsembleOptions);
   }
 
 }

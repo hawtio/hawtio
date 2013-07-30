@@ -2,8 +2,6 @@ module Fabric {
 
   export function CreateContainerController($scope, $window, $location, workspace, jolokia, localStorage) {
 
-    Fabric.schemaConfigure();
-
     $scope.versionsOp = 'versions()';
 
     $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
@@ -114,53 +112,24 @@ module Fabric {
 
         $scope.entity['number'] = 1;
 
-        // clean up form
-        delete $scope.schema.properties['metadataMap'];
-        delete $scope.schema.properties['zookeeperUrl'];
-        delete $scope.schema.properties['zookeeperPassword'];
-        delete $scope.schema.properties['globalResolver'];
-        delete $scope.schema.properties['zooKeeperServerPort'];
-        delete $scope.schema.properties['agentEnabled'];
-        delete $scope.schema.properties['autoImportEnabled'];
-        delete $scope.schema.properties['importPath'];
-        delete $scope.schema.properties['users'];
-
-
-        $scope.schema.properties['providerType']['type'] = 'hidden';
-        $scope.schema.properties['profiles']['type'] = 'hidden';
-        $scope.schema.properties['version']['type'] = 'hidden';
-
         switch($scope.activeTab) {
 
           case 'org_fusesource_fabric_api_CreateChildContainerOptions':
             $scope.entity['providerType'] = 'child';
             $scope.entity['jmxUser'] = localStorage['fabric.userName'];
             $scope.entity['jmxPassword'] = localStorage['fabric.password'];
-            $scope.schema.properties['jmxPassword']['type'] = 'password';
 
-            $scope.schema.properties['saveJmxCredentials'] = {
-              'type': 'boolean'
-            };
-
-            delete $scope.schema.properties['manualIp'];
-            delete $scope.schema.properties['preferredAddress'];
-            delete $scope.schema.properties['resolver'];
-            delete $scope.schema.properties['ensembleServer'];
-            delete $scope.schema.properties['proxyUri'];
-            delete $scope.schema.properties['adminAccess'];
             $location.search('tab', 'child');
 
             break;
 
           case 'org_fusesource_fabric_api_CreateSshContainerOptions':
             $scope.entity['providerType'] = 'ssh';
-            delete $scope.schema.properties['parent'];
             $location.search('tab', 'ssh');
             break;
 
           case 'org_fusesource_fabric_api_CreateJCloudsContainerOptions':
             $scope.entity['providerType'] = 'jclouds';
-            delete $scope.schema.properties['parent'];
             $location.search('tab', 'cloud');
             break;
         }

@@ -29,7 +29,9 @@ module Fabric {
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
 
-            viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+        Fabric.schemaConfigure();
+
+        viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
             try {
               var id = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
