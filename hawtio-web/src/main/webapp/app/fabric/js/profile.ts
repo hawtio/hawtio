@@ -1,7 +1,10 @@
 module Fabric {
 
-  export function ProfileController($scope, $routeParams, jolokia, $location, workspace:Workspace) {
+  export function ProfileController($scope, $routeParams, jolokia, $location, workspace:Workspace, $q) {
+
     Fabric.initScope($scope, workspace);
+
+    $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
 
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
@@ -24,6 +27,10 @@ module Fabric {
       }, onSuccess(render));
     }
 
+
+    $scope.goto = (location) => {
+      $location.url(location);
+    }
 
     $scope.addNewThing = (title, type, current) => {
       $scope.thingName = title;

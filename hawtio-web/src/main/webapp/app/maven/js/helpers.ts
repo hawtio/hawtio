@@ -32,6 +32,126 @@ module Maven {
     return id;
   }
 
+
+  export function completeMavenUri($q, $scope, workspace, jolokia, query) {
+
+    var mbean = getMavenIndexerMBean(workspace);
+
+    if (mbean === null) {
+      return $q.when([]);
+    }
+
+    var parts = query.split('/');
+    if (parts.length === 1) {
+      // still searching the groupId
+      return Maven.completeGroupId($q, $scope, workspace, jolokia, query, null, null);
+    }
+    if (parts.length === 2) {
+      // have the groupId, guess we're looking for the artifactId
+      return Maven.completeArtifactId($q, $scope, workspace, jolokia, parts[0], parts[1], null, null);
+    }
+    if (parts.length === 3) {
+      // guess we're searching for the version
+      return Maven.completeVersion($q, $scope, workspace, jolokia, parts[0], parts[1], parts[2], null, null);
+    }
+
+    return $q.when([]);
+  }
+
+
+  export function completeVersion($q, $scope, workspace, jolokia, groupId, artifactId, partial, packaging, classifier) {
+
+    /*
+    if (partial.length < 5) {
+      return $q.when([]);
+    }
+    */
+
+    var deferred = $q.defer();
+
+    jolokia.request({
+      type: 'exec',
+      mbean: getMavenIndexerMBean(workspace),
+      operation: 'versionComplete(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)',
+      arguments: [groupId, artifactId, partial, packaging, classifier]
+    }, {
+      method: 'POST',
+      success: (response) => {
+        $scope.$apply(() => {
+          deferred.resolve(response.value.sortBy().first(15));
+        });
+      },
+      error: (response) => {
+        $scope.$apply(() => {
+          console.log("got back an error: ", response);
+          deferred.reject();
+        });
+      }
+    });
+
+    return deferred.promise;
+
+  }
+
+  export function completeArtifactId($q, $scope, workspace, jolokia, groupId, partial, packaging, classifier) {
+
+    var deferred = $q.defer();
+
+    jolokia.request({
+      type: 'exec',
+      mbean: getMavenIndexerMBean(workspace),
+      operation: 'artifactIdComplete(java.lang.String, java.lang.String, java.lang.String, java.lang.String)',
+      arguments: [groupId, partial, packaging, classifier]
+    }, {
+      method: 'POST',
+      success: (response) => {
+        $scope.$apply(() => {
+          deferred.resolve(response.value.sortBy().first(15));
+        });
+      },
+      error: (response) => {
+        $scope.$apply(() => {
+          console.log("got back an error: ", response);
+          deferred.reject();
+        });
+      }
+    });
+
+    return deferred.promise;
+  }
+
+  export function completeGroupId($q, $scope, workspace, jolokia, partial, packaging, classifier) {
+
+    // let's go easy on the indexer
+    if (partial.length < 5) {
+      return $q.when([]);
+    }
+
+    var deferred = $q.defer();
+
+    jolokia.request({
+      type: 'exec',
+      mbean: getMavenIndexerMBean(workspace),
+      operation: 'groupIdComplete(java.lang.String, java.lang.String, java.lang.String)',
+      arguments: [partial, packaging, classifier]
+    }, {
+      method: 'POST',
+      success: (response) => {
+        $scope.$apply(() => {
+          deferred.resolve(response.value.sortBy().first(15));
+        });
+      },
+      error: (response) => {
+        console.log("got back an error: ", response);
+        $scope.$apply(() => {
+          deferred.reject();
+        });
+      }
+    });
+
+    return deferred.promise;
+  }
+
   export function addMavenFunctions($scope, workspace) {
     $scope.detailLink = (row) => {
       var group = row.groupId;
