@@ -57,6 +57,12 @@ module Fabric {
     });
   }
 
+  export var urlResolvers = ['http:', 'ftp:', 'mvn:'];
+
+  export function completeUri ($q, $scope, workspace, jolokia, something) {
+
+
+  }
 
   export function applyPatches(jolokia, files, targetVersion, newVersionName, proxyUser, proxyPass, success, error) {
     doAction('applyPatches(java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String)', jolokia, [files, targetVersion, newVersionName, proxyUser, proxyPass], success, error);

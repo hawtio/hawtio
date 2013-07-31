@@ -1,5 +1,6 @@
 module Fabric {
 
+
   export function TestController($scope, jolokia, $q, workspace) {
 
     $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
@@ -41,9 +42,6 @@ module Fabric {
 
     $scope.$watch('uriParts', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        console.log("oldValue: ", oldValue);
-        console.log("newValue: ", newValue);
-
         if (newValue.length === 1 && newValue.length < oldValue.length) {
           if (oldValue.last() !== '' && newValue.first().has(oldValue.last())) {
             var merged = oldValue.first(oldValue.length - 1).include(newValue.first());
@@ -53,14 +51,12 @@ module Fabric {
       }
     }, true);
 
-    $scope.onSelectCallback = ($item, $model, $label) => {
-      //$scope.uriParts.push($model);
-      //$scope.someUri = $scope.uriParts.join("/");
-      //console.log('item=', $item, 'model=', $model, 'label=', $label);
+    $scope.doCompletionMaven = (something) => {
+      return Maven.completeMavenUri($q, $scope, workspace, jolokia, something);
     }
 
-    $scope.doCompletion = (something) => {
-      return Maven.completeMavenUri($q, $scope, workspace, jolokia, something);
+    $scope.doCompletionFabric = (something) => {
+      return Fabric.completeUri($q, $scope, workspace, jolokia, something);
     }
 
 
