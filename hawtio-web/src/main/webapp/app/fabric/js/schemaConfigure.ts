@@ -76,15 +76,13 @@ module Fabric {
       Core.pathSet(Fabric.createChildContainerOptions, ["properties", name, "required"], true);
     });
 
-    /*
-    angular.forEach(["name", "user", "password"], (name) => {
-      Core.pathSet(CreateJCloudsContainerOptions, ["properties", name, "required"], true);
+    angular.forEach(["name", 'owner', 'credential'], (name) => {
+      Core.pathSet(Fabric.createJCloudsContainerOptions, ["properties", name, "required"], true);
     });
 
-    angular.forEach(["name", "user", "password"], (name) => {
-      Core.pathSet(CreateSshContainerOptions, ["properties", name, "required"], true);
+    angular.forEach(["name", 'host'], (name) => {
+      Core.pathSet(Fabric.createSshContainerOptions, ["properties", name, "required"], true);
     });
-    */
 
     angular.forEach(["username", "password", "role"], (name) => {
       Core.pathSet(Fabric.createEnsembleOptions, ["properties", name, "type"], 'string');
@@ -101,7 +99,7 @@ module Fabric {
       'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number', '*']
     };
     Fabric.createJCloudsContainerOptions["tabs"] = {
-      'Default': ['name', '*']
+      'Default': ['name', 'owner', 'credential', 'imageId', 'hardwareId', 'locationId', 'number', '*']
     };
     Fabric.createSshContainerOptions["tabs"] = {
       'Default': ['name', 'host', 'port', 'userName', 'password', 'privateKeyFile', 'passPhrase', '*']
