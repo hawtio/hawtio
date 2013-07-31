@@ -30,6 +30,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -451,7 +453,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 add.call();
 
                 CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                RevCommit revCommit = commitThenPush(commit);
+                RevCommit revCommit = commitThenPush(commit, branch);
                 return createCommitInfo(revCommit);
             }
         });
@@ -482,7 +484,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                 add.call();
 
                 CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                RevCommit revCommit = commitThenPush(commit);
+                RevCommit revCommit = commitThenPush(commit, branch);
                 return createCommitInfo(revCommit);
             }
         });
@@ -503,7 +505,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         return filePattern;
     }
 
-    public void rename(String branch, final String oldPath, final String newPath, final String commitMessage,
+    public void rename(final String branch, final String oldPath, final String newPath, final String commitMessage,
                        final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
@@ -521,7 +523,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     String filePattern = getFilePattern(newPath);
                     git.add().addFilepattern(filePattern).call();
                     CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                    return commitThenPush(commit);
+                    return commitThenPush(commit, branch);
                 } else {
                     return null;
                 }
@@ -542,7 +544,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
                     String filePattern = getFilePattern(path);
                     git.rm().addFilepattern(filePattern).call();
                     CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                    return commitThenPush(commit);
+                    return commitThenPush(commit, branch);
                 } else {
                     return null;
                 }
@@ -573,16 +575,27 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         });
     }
 
-    protected RevCommit commitThenPush(CommitCommand commit) throws GitAPIException {
+    protected RevCommit commitThenPush(CommitCommand commit, String branch) throws GitAPIException {
         RevCommit answer = commit.call();
-        LOG.info("Committed " + answer);
+        LOG.info("Committed " + answer.getId() + " " + answer.getFullMessage());
         if (isPushOnCommit()) {
             Iterable<PushResult> results = git.push().setCredentialsProvider(getCredentials()).setRemote(getRemote()).call();
             for (PushResult result : results) {
-                LOG.info("Pushed: " + results);
+                LOG.info("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch  +  " updates:  " + toString(result.getRemoteUpdates()));
             }
         }
         return answer;
+    }
+
+    protected String toString(Collection<RemoteRefUpdate> updates) {
+        StringBuilder builder = new StringBuilder();
+        for (RemoteRefUpdate update : updates) {
+            if (builder.length() > 0) {
+                builder.append(" ");
+            }
+            builder.append(update.getMessage() + " " + update.getRemoteName() + " " + update.getNewObjectId());
+        }
+        return builder.toString();
     }
 
     @Override
