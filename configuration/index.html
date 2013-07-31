@@ -107,6 +107,14 @@
 
 <p>Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).</p>
 
+<h4 id = "Configuring_or_disabling_security_in_Karaf__ServiceMix__Fuse">Configuring or disabling security in Karaf, ServiceMix, Fuse</h4>
+
+<p>Edit the file <strong>etc/system.properties</strong> and add something like this to the end of the file:</p>
+
+<pre><code>hawtio.authenticationEnabled = false</code></pre>
+
+<p>this will disable security login. (Or use a different property to change the default role or realm used by security).</p>
+
 <h3 id = "Configuration_Properties">Configuration Properties</h3>
 
 <p>The following table contains the various configuration settings for the various hawtio plugins.</p>
