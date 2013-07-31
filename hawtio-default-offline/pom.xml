@@ -14,14 +14,92 @@
 
   <dependencies>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-default</artifactId>
+      <artifactId>hawtio-base</artifactId>
       <version>${project.version}</version>
       <!--
         NOTE this WAR dependency type which enables this WAR to
-        inherit all the plugins and content from the hawtio-default WAR
+        inherit all the plugins and content from the core hawtio-base WAR
       -->
       <type>war</type>
+    </dependency>
+
+    <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.web</artifactId>
+      <version>${blueprint-web-version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_2.5_spec</artifactId>
+        </exclusion>
+        <!-- ignore old versions -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- now lets add some components -->
+<!--
+    Exclude these as they tend to require internet connectivity
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-maven-indexer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-aether</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-json-schema-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-local-jvm-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fusesource.insight</groupId>
+      <artifactId>insight-log4j</artifactId>
+      <version>${insight-log4j.version}</version>
     </dependency>
   </dependencies>
 
