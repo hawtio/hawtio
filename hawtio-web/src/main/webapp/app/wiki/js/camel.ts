@@ -209,6 +209,7 @@ module Wiki {
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
             wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
+              notification("success", "Saved " + $scope.pageId);
               goToView();
               Core.$apply($scope);
             });

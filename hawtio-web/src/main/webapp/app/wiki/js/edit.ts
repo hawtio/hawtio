@@ -124,6 +124,7 @@ module Wiki {
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
         Wiki.onComplete(status);
+        notification("success", "Saved " + path);
         goToView();
         Core.$apply($scope);
       });
