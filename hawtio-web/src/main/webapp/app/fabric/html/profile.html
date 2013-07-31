@@ -44,6 +44,8 @@
             <li ng-repeat="profile in row.parentIds">
               <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
             </li>
+            <li>
+              <i class="clickable icon-edit" ng-click="newFileDialog = true" title="Edit features"></i>
           </ul>
         </dd>
       </dl>
@@ -66,6 +68,9 @@
             <li ng-repeat="feature in row.features">
               {{feature}}
             </li>
+            <li>
+              <i class="clickable icon-edit" ng-click="newFileDialog = true" title="Edit features"></i>
+            </li>
           </ul>
         </dd>
       </dl>
@@ -74,7 +79,11 @@
         <dd>
           <ul class="unstyled">
             <li ng-repeat="fab in row.fabs">
+              <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
               {{fab}}
+            </li>
+            <li>
+              <i class="clickable icon-plus" ng-click="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)" title="Add Fuse Application Bundle"></i>
             </li>
           </ul>
         </dd>
@@ -84,7 +93,11 @@
         <dd>
           <ul class="unstyled">
             <li ng-repeat="bundle in row.bundles">
+              <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
               {{bundle}}
+            </li>
+            <li>
+              <i class="clickable icon-plus" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
             </li>
           </ul>
         </dd>
@@ -96,24 +109,44 @@
         <dd>
           <ul class="unstyled">
             <li ng-repeat="repository in row.repositories">
+              <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
               {{repository}}
+            </li>
+            <li>
+              <i class="clickable icon-plus" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
             </li>
           </ul>
         </dd>
       </dl>
       <dl>
-        <dt>Configuration Files ({{row.configurations.length}}):</dt>
+        <dt>Configuration Files ({{row.configurations.length}})</dt>
         <dd>
           <ul class="unstyled">
             <li ng-repeat="configuration in row.configurations">
-              <a href="" ng-click="deleteFile(configuration)" title="delete {{configuration}}"><i
-                      class="red icon-remove"></i></a>
+              <i ng-click="deleteFile(configuration)" title="Delete {{configuration}}" class="clickable red icon-remove"></i>
               <a href="#/fabric/profile/{{versionId}}/{{profileId}}/{{configuration}}">{{configuration}}</a>
             </li>
+            <li>
+              <i class="clickable icon-plus" ng-click="newFileDialog = true" title="Create new configuration file"></i>
+            </li>
           </ul>
-          <button class="btn" ng-click="newFileDialog = true"><i class="icon-file-alt"></i> New</button>
         </dd>
       </dl>
+    </div>
+  </div>
+
+
+  <div hawtio-confirm-dialog="deleteThingDialog" ok-button-text="delete" on-ok="doDeleteThing()">
+    <div class="dialog-body">
+      <p>Delete {{currentThingItem}}?</p>
+    </div>
+  </div>
+
+
+  <div hawtio-confirm-dialog="addThingDialog" ok-button-text="Add" on-ok="doAddThing()" title="Add {{thingName}}...">
+    <div class="dialog-body">
+      <p>Enter a new {{thingName}} to add to this profile</p>
+      <input type="text" ng-model="newThingName">
     </div>
   </div>
 

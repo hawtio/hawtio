@@ -12,6 +12,9 @@ module Fabric {
     $scope.markedForDeletion = '';
 
     $scope.newProfileName = '';
+    $scope.addThingDialog = false;
+    $scope.deleteThingDialog = false;
+    $scope.newThingName = '';
 
     if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
       Core.register(jolokia, $scope, {
@@ -20,6 +23,63 @@ module Fabric {
         arguments: [$scope.versionId, $scope.profileId]
       }, onSuccess(render));
     }
+
+
+    $scope.addNewThing = (title, type, current) => {
+      $scope.thingName = title;
+      $scope.currentThing = current;
+      $scope.currentThingType = type;
+      $scope.addThingDialog = true;
+    }
+
+    $scope.deleteThing = (title, type, current, item) => {
+      $scope.thingName = title;
+      $scope.currentThing = current;
+      $scope.currentThingType = type;
+      $scope.currentThingItem = item;
+      $scope.deleteThingDialog = true;
+    }
+
+
+    $scope.callSetProfileThing = function (success, error, thing) {
+      jolokia.request({
+        type: 'exec',
+        mbean: managerMBean,
+        operation: "setProfile" + $scope.currentThingType + "(java.lang.String, java.lang.String, java.util.List)",
+        arguments: [$scope.versionId, $scope.profileId, $scope.currentThing]
+      }, {
+        method: 'POST',
+        success: () => {
+          notification('success', success + ' ' + thing);
+          $scope.newThingName = '';
+          Core.$apply($scope);
+        },
+        error: (response) => {
+          notification('error', 'Failed to ' + error + ' ' + thing + ' due to ' + response.error);
+          Core.$apply($scope);
+        }
+      });
+    };
+
+
+    $scope.doDeleteThing = () => {
+      $scope.currentThing.remove($scope.currentThingItem);
+      $scope.callSetProfileThing('Deleted', 'delete', $scope.currentThingItem);
+    }
+
+
+    $scope.doAddThing = () => {
+      if (!$scope.currentThing.any($scope.newThingName)) {
+
+        $scope.currentThing.push($scope.newThingName);
+        $scope.addThingDialog = false;
+        $scope.callSetProfileThing('Added', 'add', $scope.newThingName);
+
+      } else {
+        notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
+      }
+    }
+
 
     $scope.deleteFile = (file) => {
       $scope.markedForDeletion = file;
