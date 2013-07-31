@@ -10,11 +10,21 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="dozerFacade" class="io.hawt.dozer.DozerFacade" init-method="init" destroy-method="destroy">
+  <bean id="dozerFacade" class="io.hawt.dozer.DozerFacade" init-method="init" destroy-method="destroy" scope="singleton">
 <!--
     <property name="configDirName" value="${hawtio.config.dir}"/>
 -->
   </bean>
+
+  <bean id="classLoaderDiscovery" class="io.hawt.blueprint.ClassLoaderDiscovery" init-method="init" destroy-method="destroy" scope="singleton">
+    <property name="introspector" ref="introspector"/>
+    <property name="blueprintContainer" ref="blueprintContainer" />
+  </bean>
+
+<!--
+  <bean id="introspector" class="io.hawt.introspect.Introspector" init-method="init" destroy-method="destroy">
+  </bean>
+-->
 
 </blueprint>
 

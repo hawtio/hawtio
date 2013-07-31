@@ -12,6 +12,8 @@
   <description>hawtio :: File Watcher Dyanamic JAXB</description>
 
   <properties>
+    <!-- TEMP HACK -->
+    <fabric-version>99-master-SNAPSHOT</fabric-version>
   </properties>
 
   <dependencies>
@@ -47,6 +49,13 @@
     </dependency>
 -->
     <dependency>
+      <groupId>org.fusesource.fabric</groupId>
+      <artifactId>watcher-core</artifactId>
+      <version>${fabric-version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- for some reason this is test scope in cxf-api! :) -->
+    <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-xjc</artifactId>
         <version>${jaxb-version}</version>
@@ -71,6 +80,18 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.web</artifactId>
+      <version>${blueprint-web-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-dozer</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

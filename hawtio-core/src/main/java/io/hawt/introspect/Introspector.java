@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -20,6 +21,7 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     private static Introspector singleton;
 
     private ClassScanner classScanner = new ClassScanner();
+
 
     public static Introspector getSingleton() {
         if (singleton == null) {
@@ -42,6 +44,14 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     protected String getDefaultObjectName() {
         return "io.hawt.introspect:type=Introspector";
     }
+
+    /**
+     * Registers a named class loader provider or removes it if the classLoaderProvider is null
+     */
+    public void setClassLoaderProvider(String id, ClassLoaderProvider classLoaderProvider) {
+        classScanner.setClassLoaderProvider(id, classLoaderProvider);
+    }
+
 
     /**
      * Searches for the available class names given the text search
@@ -138,6 +148,5 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     public void setClassScanner(ClassScanner classScanner) {
         this.classScanner = classScanner;
     }
-
 
 }

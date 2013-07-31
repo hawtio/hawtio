@@ -17,6 +17,7 @@
  */
 package io.hawt.introspect.support;
 
+import io.hawt.introspect.ClassLoaderProvider;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,6 +54,7 @@ public class ClassScanner {
 
     private WeakHashMap<String, CacheValue> cache = new WeakHashMap<String, CacheValue>();
     private WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
+    private Map<String,ClassLoaderProvider> classLoaderProviderMap = new HashMap<String, ClassLoaderProvider>();
 
     public static ClassScanner newInstance() {
         return new ClassScanner(Thread.currentThread().getContextClassLoader(), ClassScanner.class.getClassLoader());
@@ -62,25 +66,47 @@ public class ClassScanner {
 
 
     /**
+     * Registers a named class loader provider or removes it if the classLoaderProvider is null
+     */
+    public void setClassLoaderProvider(String id, ClassLoaderProvider classLoaderProvider) {
+        if (classLoaderProvider != null) {
+            classLoaderProviderMap.put(id, classLoaderProvider);
+        } else {
+            classLoaderProviderMap.remove(id);
+        }
+    }
+
+
+    /**
      * Searches for the available class names given the text search
      *
      * @return all the class names found on the current classpath using the given text search filter
      */
     public SortedSet<String> findClassNames(String search, Integer limit) {
-        return findClassNamesInPackages(search, limit, Package.getPackages());
+        Map<Package, ClassLoader[]> packageMap = Packages.getPackageMap(getClassLoaders());
+        return findClassNamesInPackages(search, limit, packageMap);
     }
 
     /**
      * Returns all the class names found on the classpath in the given packages which match the given filter
      */
+/*
     public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Package... packages) {
+        return findClassNamesInPackages(search, limit, Arrays.asList(packages));
+    }
+*/
+
+    public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Map<Package, ClassLoader[]> packages) {
         SortedSet<String> answer = new TreeSet<String>();
         SortedSet<String> classes = new TreeSet<String>();
 
-        for (Package aPackage : packages) {
+        Set<Map.Entry<Package, ClassLoader[]>> entries = packages.entrySet();
+        for (Map.Entry<Package, ClassLoader[]> entry : entries) {
+            Package aPackage = entry.getKey();
+            ClassLoader[] classLoaders = entry.getValue();
             CacheValue cacheValue = packageCache.get(aPackage);
             if (cacheValue == null) {
-                cacheValue = createPackageCacheValue(aPackage);
+                cacheValue = createPackageCacheValue(aPackage, classLoaders);
                 packageCache.put(aPackage, cacheValue);
             }
             classes.addAll(cacheValue.getClassNames());
@@ -129,7 +155,7 @@ public class ClassScanner {
         SortedMap<String, Class<?>> answer = new TreeMap<String, Class<?>>();
         Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
         for (Package aPackage : packages) {
-            addPackageResources(aPackage, urlSet);
+            addPackageResources(aPackage, urlSet, classLoaders);
         }
         for (ClassResource classResource : urlSet.values()) {
             Set<Class<?>> classes = getClassesForPackage(classResource, null, null);
@@ -152,7 +178,7 @@ public class ClassScanner {
      * Finds a class from its name
      */
     public Class<?> findClass(String className) throws ClassNotFoundException {
-        for (ClassLoader classLoader : classLoaders) {
+        for (ClassLoader classLoader : getClassLoaders()) {
             try {
                 return classLoader.loadClass(className);
             } catch (ClassNotFoundException e) {
@@ -164,12 +190,10 @@ public class ClassScanner {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void addPackageResources(Package aPackage, Map<String, ClassResource> urlSet) {
+    protected void addPackageResources(Package aPackage, Map<String, ClassResource> urlSet, ClassLoader[] classLoaders) {
         String packageName = aPackage.getName();
         String relativePath = getPackageRelativePath(packageName);
-        List<URL> resources = getResources(relativePath,
-                Thread.currentThread().getContextClassLoader(),
-                ClassScanner.class.getClassLoader());
+        List<URL> resources = getResources(relativePath, classLoaders);
         for (URL resource : resources) {
             String key = getJavaResourceKey(resource);
             urlSet.put(key, new ClassResource(packageName, resource));
@@ -177,9 +201,9 @@ public class ClassScanner {
     }
 
 
-    private CacheValue createPackageCacheValue(Package aPackage) {
+    private CacheValue createPackageCacheValue(Package aPackage, ClassLoader[] classLoaders) {
         Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
-        addPackageResources(aPackage, urlSet);
+        addPackageResources(aPackage, urlSet, classLoaders);
 
         CacheValue answer = new CacheValue();
         SortedSet<String> classNames = answer.getClassNames();
@@ -361,6 +385,11 @@ public class ClassScanner {
             } catch (IOException e) {
                 LOG.warn("Failed to load resources for path " + relPath + " from class loader " + classLoader + ". Reason:  " + e, e);
             }
+            // Lets add all the parent class loaders...
+            if (classLoader instanceof URLClassLoader) {
+                URLClassLoader loader = (URLClassLoader) classLoader;
+                answer.addAll(Arrays.asList(loader.getURLs()));
+            }
         }
         return answer;
     }
@@ -387,5 +416,19 @@ public class ClassScanner {
             int value = limit.intValue();
             return value <= 0 || value > collection.size();
         }
+    }
+
+    public List<ClassLoader> getClassLoaders() {
+        List<ClassLoader> answer = new ArrayList<ClassLoader>();
+        answer.addAll(Arrays.asList(classLoaders));
+
+        Collection<ClassLoaderProvider> classLoaderProviders = classLoaderProviderMap.values();
+        for (ClassLoaderProvider classLoaderProvider : classLoaderProviders) {
+            ClassLoader classLoader = classLoaderProvider.getClassLoader();
+            if (classLoader != null) {
+                answer.add(classLoader);
+            }
+        }
+        return answer;
     }
 }
