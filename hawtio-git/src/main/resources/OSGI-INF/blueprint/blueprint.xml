@@ -14,7 +14,7 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy">
+  <bean id="gitFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy" scope="singleton">
     <property name="configDirName" value="${hawtio.config.dir}"/>
     <property name="remoteRepository" value="${hawtio.config.repo}"/>
     <property name="pullOnStartup" value="${hawtio.config.pullOnStartup}"/>

@@ -17,7 +17,7 @@
   </ext:property-placeholder>
 
   <bean id="mavenIndexer" class="io.hawt.maven.indexer.AsyncMavenIndexerFacadeFactory" init-method="init"
-        destroy-method="destroy">
+        destroy-method="destroy" scope="singleton">
     <property name="indexDirectory" value="${hawtio.maven.index.dir}"/>
 <!--
     <property name="repositories" value="${hawtio.maven.index.repos}"/>

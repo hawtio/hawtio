@@ -9,11 +9,11 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="configFacade" class="io.hawt.config.ConfigFacade" init-method="init" destroy-method="destroy">
+  <bean id="configFacade" class="io.hawt.config.ConfigFacade" init-method="init" destroy-method="destroy" scope="singleton">
     <property name="configDir" value="${hawtio.home.dir}"/>
   </bean>
 
-  <bean id="introspector" class="io.hawt.introspect.Introspector" init-method="init" destroy-method="destroy">
+  <bean id="introspector" class="io.hawt.introspect.Introspector" init-method="init" destroy-method="destroy" scope="singleton">
   </bean>
 
 </blueprint>

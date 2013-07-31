@@ -3,7 +3,7 @@
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
 
 
-  <bean id="schemaLookup" class="io.hawt.jsonschema.SchemaLookup" init-method="init" destroy-method="destroy"/>
+  <bean id="schemaLookup" class="io.hawt.jsonschema.SchemaLookup" init-method="init" destroy-method="destroy" scope="singleton"/>
 
 </blueprint>
 
