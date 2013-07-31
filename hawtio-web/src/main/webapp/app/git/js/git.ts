@@ -99,7 +99,7 @@ module Git {
       var authorName = this.getUserName();
       var authorEmail = this.getUserEmail();
 
-      return this.jolokia.execute(this.mbean, "write", this.branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+      return this.jolokia.execute(this.mbean, "write", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
     }
 
     public createDirectory(branch:string, path:string, commitMessage:string, fn) {
