@@ -18,6 +18,12 @@ See the [Getting Started Guide](http://hawt.io/getstarted/index.html) and the [C
 
 Mostly hawtio just works. However, please check out the [Configuration Guide](http://hawt.io/configuration/index.html) to see what kinds of things you can configure via system properties, environment variables, web.xml context-params or dependency injection.
 
+#### How do I disable security?
+
+Since 1.2-M2 of hawtio we enable security by default using the underlying application container's security mechanism.
+
+Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
+
 #### What has changed lately?
 
 Try have a look at the [change log](http://hawt.io/changelog.html) to see the latest changes in hawtio!
