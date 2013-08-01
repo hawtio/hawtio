@@ -179,7 +179,8 @@ module Fabric {
 
 
     // create profile dialog action
-    $scope.doCreateProfile = () => {
+    $scope.doCreateProfile = (newProfileName) => {
+      $scope.newProfileName = newProfileName;
       $scope.createProfileDialog = false;
       var parents = $scope.selectedParents.map(function(profile) {return profile.id});
       createProfile(jolokia, $scope.activeVersionId, $scope.newProfileName, parents, function() {
