@@ -8,6 +8,7 @@ module Wiki {
     $scope.propertiesDialog = new Core.Dialog();
     $scope.deleteDialog = false;
     $scope.unmappedFieldsHasValid = false;
+    $scope.modified = false;
 
     $scope.selectedItems = [];
     $scope.mappings = [];
@@ -52,6 +53,7 @@ module Wiki {
           added.expand(true);
           added.select(true);
           added.activate(true);
+          onTreeModified();
         }
       }
     };
@@ -87,6 +89,7 @@ module Wiki {
                 added.expand(true);
                 added.select(true);
                 added.activate(true);
+                onTreeModified();
               }
             } else {
               console.log("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
@@ -117,6 +120,7 @@ module Wiki {
         $scope.treeNode.remove();
         $scope.selectedFolder = null;
         $scope.treeNode = null;
+        onTreeModified();
       }
     };
 
@@ -129,6 +133,7 @@ module Wiki {
           var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
           wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
             Wiki.onComplete(status);
+            $scope.modified = false;
             notification("success", "Saved " + $scope.pageId)
             goToView();
             Core.$apply($scope);
@@ -155,6 +160,13 @@ module Wiki {
       $scope.selectedMapping = null;
       $scope.selectedMappingTreeNode = null;
       $scope.selectedMappingFolder = null;
+      // now the model is bound, lets add a listener
+      if ($scope.removeModelChangeListener) {
+        console.log("Removing old form listener: " + $scope.removeModelChangeListener())
+        $scope.removeModelChangeListener();
+        $scope.removeModelChangeListener = null;
+      }
+
       if (folder) {
         var entity = folder.entity;
         $scope.dozerEntity = entity;
@@ -177,7 +189,20 @@ module Wiki {
           $scope.selectedMappingFolder = folder;
           $scope.selectedMappingTreeNode = treeNode;
         }
+        if ($scope.selectedMapping && !$scope.removeModelChangeListener) {
+/*
+          TODO problem is we have many forms here so we end up creating lots of change events when really we don't change things!: )
+          // maybe watch the entity instead?
+
+          console.log("Adding onTreeModified form listener");
+          $scope.removeModelChangeListener = $scope.$on("hawtio.form.modelChange", () => {
+            console.log("form modified!");
+            onTreeModified();
+          });
+*/
+        }
       }
+
       Core.$apply($scope);
     };
 
@@ -236,6 +261,11 @@ module Wiki {
         console.log("No XML found for page " + $scope.pageId);
       }
       Core.$applyLater($scope);
+    }
+
+    function onTreeModified() {
+      console.log("tree modified!");
+      $scope.modified = true;
     }
 
     function goToView() {

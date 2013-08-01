@@ -18,6 +18,7 @@ module Wiki {
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+    $scope.modified = false;
 
 
     $scope.isValid = () => $scope.fileName;
@@ -124,6 +125,7 @@ module Wiki {
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
         Wiki.onComplete(status);
+        $scope.modified = false;
         notification("success", "Saved " + path);
         goToView();
         Core.$apply($scope);
