@@ -112,27 +112,23 @@
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-file-dynamic-jaxb</artifactId>
+      <artifactId>hawtio-watcher-spring-context</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-spring-config</artifactId>
+      <artifactId>hawtio-watcher-blueprint-web</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
-
-    <!-- Camel module -->
-<!--
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-camel</artifactId>
+      <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
--->
+
 
     <dependency>
       <groupId>io.hawt.example.services</groupId>
@@ -229,6 +225,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
@@ -789,72 +791,12 @@
     </profile>
 
     <profile>
-      <id>fabric</id>
-
-      <!-- when using the exec:java target this will try to auto-connect to a local fuse fabric -->
-      <properties>
-        <fabricUrl>localhost:2181</fabricUrl>
-<!--
-        <fabric-version>99-master-SNAPSHOT</fabric-version>
--->
-      </properties>
-    </profile>
-
-    <profile>
-      <id>fabricSnapshot</id>
-
-      <!-- when using the exec:java target this will try to auto-connect to a local fuse fabric -->
-      <properties>
-        <fabricUrl>localhost:2181</fabricUrl>
-      </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>io.hawt.example.services</groupId>
-          <artifactId>example-fabric</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.fusesource.fabric</groupId>
-          <artifactId>tooling-fabric-all</artifactId>
-          <version>${fabric-version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.karaf.shell</groupId>
-              <artifactId>org.apache.karaf.shell.console</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.fusesource.fabric</groupId>
-          <artifactId>fabric-zookeeper</artifactId>
-          <version>${fabric-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.linkedin</groupId>
-          <artifactId>org.linkedin.zookeeper-impl</artifactId>
-          <version>${linkedin-zookeeper-version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>com.sun.jdmk</groupId>
-              <artifactId>jmxtools</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>com.sun.jmx</groupId>
-              <artifactId>jmxri</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
       <id>camelSnapshot</id>
       <properties>
         <camel-version>2.12-SNAPSHOT</camel-version>
       </properties>
     </profile>
+
     <profile>
       <id>amq57</id>
       <properties>

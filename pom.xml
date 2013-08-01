@@ -77,7 +77,11 @@
     <dozer-version>5.4.0</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
+    <!-- TEMP HACK -->
+<!--
     <fabric-version>7.3.0.redhat-${perfectus-number}</fabric-version>
+-->
+    <fabric-version>99-master-SNAPSHOT</fabric-version>
     <fmc-version>${fabric-version}</fmc-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
@@ -248,14 +252,15 @@
     <module>hawtio-dozer-schema</module>
     <module>hawtio-dozer</module>
     <module>hawtio-git</module>
-    <module>hawtio-spring-config</module>
+    <module>hawtio-watcher-dynamic-jaxb</module>
+    <module>hawtio-watcher-blueprint-web</module>
+    <module>hawtio-watcher-spring-context</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
-    <module>hawtio-file-dynamic-jaxb</module>
 
     <module>hawtio-web</module>
     <module>hawtio-base</module>
