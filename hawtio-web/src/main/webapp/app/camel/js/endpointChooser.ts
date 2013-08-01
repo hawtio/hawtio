@@ -236,7 +236,7 @@ module Camel {
       var mbean = findCamelContextMBean();
       if (mbean) {
         //$scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
-        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents));
+        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {silent: true}));
 /*
         $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {error: function (response) {
           console.log("FAILED: " + response);
