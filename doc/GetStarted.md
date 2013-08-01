@@ -33,57 +33,52 @@ If you rename the downloaded file to _hawtio.war_ then drop it into your deploy 
 
 Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.2-M3/](http://localhost:8080/hawtio-default-1.2-M3/) or [http://localhost:8080/sample-1.2-M3/](http://localhost:8080/sample-1.2-M3/)  depending on the file name you downloaded.
 
-If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to 
+Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
+
+If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
  <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2-M3/hawtio-default-offline-1.2-M3.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
 To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
 
 If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.
 
-### Configuring Security
+## Using Fuse, Apache Karaf or Apache Servicemix
 
-By default the security in hawtio uses these system properties which you can override:
+If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse) you can run:
 
-<table class="buttonTable">
-  <tr>
-    <th>Name</th>
-    <th>Default</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>
-      hawtio.authenticationEnabled
-    </td>
-    <td>
-      true
-    </td>
-    <td>
-      Whether or not security is enabled
-    </td>
-  </tr>
-  <tr>
-    <td>
-      hawtio.role
-    </td>
-    <td>
-      admin
-    </td>
-    <td>
-      The user role required to be able to login to the console
-    </td>
-  </tr>
-  <tr>
-    <td>
-      hawtio.realm
-    </td>
-    <td>
-      karaf
-    </td>
-    <td>
-      The security realm used to login
-    </td>
-  </tr>
-</table>
+    features:install hawtio
+
+Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/products/fuse) or a vanilla [Apache Karaf](http://karaf.apache.org/) or [Apache ServiceMix](http://servicemix.apache.org/) then try the following:
+
+    features:addurl mvn:io.hawt/hawtio-karaf/1.2-M3/xml/features
+    features:install hawtio
+
+The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
+
+**NOTE** if you are on ServiceMix 4.5 or earlier then hawtio 1.2-M2 or later has security enabled by default. There is a [pending issue with security and ServiceMix](https://github.com/hawtio/hawtio/issues/438); until that is resolved please [disable security](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse)
+
+
+### If you use a HTTP proxy
+
+If you are behind a http proxy; you will need to enable HTTP Proxy support in Fuse / Karaf / ServiceMix to be able to download hawtio from the central maven repository.
+
+There are a few [articles about](http://mpashworth.wordpress.com/2012/09/27/installing-apache-karaf-features-behind-a-firewall/) [this](http://stackoverflow.com/questions/9922467/how-to-setup-a-proxy-for-apache-karaf) which may help. Here are the steps:
+
+Edit the **etc/org.ops4j.pax.url.mvn.cfg** file and make sure the following line is uncommented:
+
+    org.ops4j.pax.url.mvn.proxySupport=true
+
+You may also want **org.ops4j.pax.url.mvn.settings** to point to your Maven settings.xml file. **NOTE** use / in the path, not \.
+
+    org.ops4j.pax.url.mvn.settings=C:/Program Files/MyStuff/apache-maven-3.0.5/conf/settings.xml
+
+Fuse / Karaf / ServiceMix will then use your [maven HTTP proxy settings](http://maven.apache.org/guides/mini/guide-proxies.html) from your **~/.m2/settings.xml** to connect to the maven repositories listed in **etc/org.ops4j.pax.url.mvn.cfg** to download artifacts.
+
+If you're still struggling getting your HTTP proxy to work with Fuse, try jump on the [Fuse Form and ask for more help](https://community.jboss.org/en/jbossfuse).
+
+## Other containers
+
+The following section gives details of other containers
 
 ### Enable JMX on Jetty 8.x
 
@@ -107,36 +102,6 @@ To disable security [configure the system properties](http://www.mastertheboss.c
       </attribute>
     </mbean>
 
-## Using Fuse, Apache Karaf or Apache Servicemix
-
-If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse) you can run:
-
-    features:install hawtio
-
-Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/products/fuse) or a vanilla [Apache Karaf](http://karaf.apache.org/) or [Apache ServiceMix](http://servicemix.apache.org/) then try the following:
-
-    features:addurl mvn:io.hawt/hawtio-karaf/1.2-M3/xml/features
-    features:install hawtio
-
-The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/).
-
-### If you use a HTTP proxy
-
-If you are behind a http proxy; you will need to enable HTTP Proxy support in Fuse / Karaf / ServiceMix to be able to download hawtio from the central maven repository.
-
-There are a few [articles about](http://mpashworth.wordpress.com/2012/09/27/installing-apache-karaf-features-behind-a-firewall/) [this](http://stackoverflow.com/questions/9922467/how-to-setup-a-proxy-for-apache-karaf) which may help. Here are the steps:
-
-Edit the **etc/org.ops4j.pax.url.mvn.cfg** file and make sure the following line is uncommented:
-
-    org.ops4j.pax.url.mvn.proxySupport=true
-
-You may also want **org.ops4j.pax.url.mvn.settings** to point to your Maven settings.xml file. **NOTE** use / in the path, not \.
-
-    org.ops4j.pax.url.mvn.settings=C:/Program Files/MyStuff/apache-maven-3.0.5/conf/settings.xml
-
-Fuse / Karaf / ServiceMix will then use your [maven HTTP proxy settings](http://maven.apache.org/guides/mini/guide-proxies.html) from your **~/.m2/settings.xml** to connect to the maven repositories listed in **etc/org.ops4j.pax.url.mvn.cfg** to download artifacts.
-
-If you're still struggling getting your HTTP proxy to work with Fuse, try jump on the [Fuse Form and ask for more help](https://community.jboss.org/en/jbossfuse).
 
 ## Using hawtio inside a stand alone Java application
 
