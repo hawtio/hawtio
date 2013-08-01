@@ -12,8 +12,6 @@
   <description>hawtio :: File Watcher Dyanamic JAXB</description>
 
   <properties>
-    <!-- TEMP HACK -->
-    <fabric-version>99-master-SNAPSHOT</fabric-version>
   </properties>
 
   <dependencies>
