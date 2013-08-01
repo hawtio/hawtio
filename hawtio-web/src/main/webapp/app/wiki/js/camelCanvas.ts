@@ -2,6 +2,7 @@ module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
+    $scope.modified = false;
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
@@ -95,6 +96,7 @@ module Wiki {
             wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
               notification("success", "Saved " + $scope.pageId);
+              $scope.modified = false;
               goToView();
               Core.$apply($scope);
             });
@@ -203,6 +205,7 @@ module Wiki {
         $scope.rootFolder = tree;
         $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
       }
+      $scope.modified = true;
       reloadRouteIds();
       $scope.doLayout();
       Core.$apply($scope);

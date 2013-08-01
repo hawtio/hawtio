@@ -4,6 +4,7 @@ module Wiki {
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, workspace, jolokia);
     $scope.schema = Camel.getConfiguredCamelModel();
+    $scope.modified = false;
 
     $scope.findProfileCamelContext = true;
 
@@ -210,6 +211,7 @@ module Wiki {
             wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
               notification("success", "Saved " + $scope.pageId);
+              $scope.modified = false;
               goToView();
               Core.$apply($scope);
             });
@@ -396,6 +398,7 @@ module Wiki {
     }
 
     function onNodeDataChanged() {
+      $scope.modified = true;
       var selectedFolder = $scope.selectedFolder;
       if ($scope.treeNode && selectedFolder) {
         var routeXmlNode = getFolderXmlNode($scope.treeNode);
