@@ -42,10 +42,11 @@
         <dd>
           <ul class="unstyled">
             <li ng-repeat="profile in row.parentIds">
+              <i class="red clickable icon-remove" title="Remove parent {{profile}}" ng-click="removeParentProfile(profile)"></i>
               <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
             </li>
             <li>
-              <i class="clickable icon-edit" ng-click="newFileDialog = true" title="Edit features"></i>
+              <i class="clickable icon-edit" ng-click="showChangeParentsDialog()" title="Change parent profiles"></i>
           </ul>
         </dd>
       </dl>
@@ -163,6 +164,19 @@
       <p>Delete file {{markedForDeletion}}?</p>
 
       <p>This operation cannot be undone so please be careful.</p>
+    </div>
+  </div>
+
+  <div hawtio-confirm-dialog="removeParentDialog" ok-button-text="Remove" on-ok="doRemoveParentProfile()">
+    <div class="dialog-body">
+      <p>Remove parent {{markedForDeletion}}?</p>
+    </div>
+  </div>
+
+  <div hawtio-confirm-dialog="changeParentsDialog" title="Change {{row.id}} parent profiles..." ok-button-text="Change Parents" on-ok="doChangeParents()">
+    <div class="dialog-body">
+      <p>Select what profiles this profile should inherit from.</p>
+      <div fabric-profile-selector="selectedParents" version-id="versionId"></div>
     </div>
   </div>
 

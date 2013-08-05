@@ -100,6 +100,10 @@ module Fabric {
     doAction('applyVersionToContainers(java.lang.String, java.util.List)', jolokia, [version, containers], success, error);
   }
 
+  export function changeProfileParents(jolokia, version, id, parents, success, error) {
+    doAction('changeProfileParents(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
+  }
+
   export function createProfile(jolokia, version, id, parents, success, error) {
     doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
   }

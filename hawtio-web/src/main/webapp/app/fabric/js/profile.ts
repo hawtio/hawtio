@@ -17,7 +17,10 @@ module Fabric {
     $scope.newProfileName = '';
     $scope.addThingDialog = false;
     $scope.deleteThingDialog = false;
+    $scope.changeParentsDialog = false;
+    $scope.removeParentDialog = false;
     $scope.newThingName = '';
+    $scope.selectedParents = [];
 
     if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
       Core.register(jolokia, $scope, {
@@ -25,6 +28,48 @@ module Fabric {
         operation: 'getProfile(java.lang.String, java.lang.String)',
         arguments: [$scope.versionId, $scope.profileId]
       }, onSuccess(render));
+    }
+
+    $scope.showChangeParentsDialog = () => {
+      $scope.selectedParents = $scope.row.parentIds.map((parent) => {
+        return {
+          id: parent,
+          selected: true
+        };
+      });
+      $scope.changeParentsDialog = true;
+    }
+
+    $scope.removeParentProfile = (parent) => {
+      $scope.markedForDeletion = parent;
+      $scope.removeParentDialog = true;
+
+    }
+
+    $scope.doRemoveParentProfile = () => {
+      var parents = $scope.row.parentIds.exclude($scope.markedForDeletion);
+      changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
+        notification('success', 'Removed parent profile ' + $scope.markedForDeletion + ' from ' + $scope.profileId);
+        Core.$apply($scope);
+      }, (response) => {
+        notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+        Core.$apply($scope);
+      });
+    }
+
+
+    $scope.doChangeParents = () => {
+      $scope.changeParentsDialog = false;
+      var parents = $scope.selectedParents.map((parent) => {
+        return parent.id;
+      });
+      changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
+        notification('success', 'Successfully changed parent profiles of ' + $scope.profileId);
+        Core.$apply($scope);
+      }, (response) => {
+        notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+        Core.$apply($scope);
+      });
     }
 
 
