@@ -5,6 +5,7 @@ module Fabric {
     $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
     $scope.versionsOp = 'versions()';
     $scope.containersOp = 'containers(java.util.List)';
+    $scope.ensembleContainerIdListOp = 'EnsembleContainers';
 
     $scope.init = () => {
 
@@ -55,6 +56,7 @@ module Fabric {
     $scope.createProfileDialog = false;
     $scope.createVersionDialog = false;
     $scope.connectToContainerDialog = false;
+    $scope.ensembleContainerIds = [];
 
     $scope.targetContainer = {};
 
@@ -349,6 +351,11 @@ module Fabric {
       }
       return true;
     };
+
+
+    $scope.isEnsembleContainer = (containerId) => {
+      return $scope.ensembleContainerIds.any(containerId);
+    }
 
 
     $scope.showMigrateButton = () => {
@@ -749,21 +756,42 @@ module Fabric {
     };
 
 
+    $scope.updateEnsembleContainerIdList = (ids) => {
+      var response = angular.toJson(ids);
+      if ($scope.ensembleContainerIdsResponse !== response) {
+        $scope.ensembleContainerIdsResponse = response;
+        $scope.ensembleContainerIds = ids;
+        console.log("updated to: ", $scope.ensembleContainerIds);
+        Core.$apply($scope);
+      }
+    }
+
+
     $scope.dispatch = (response) => {
       switch (response.request.operation) {
         case($scope.versionsOp):
           $scope.updateVersions(response.value);
-          break;
+          return;
         case($scope.containersOp):
           $scope.updateContainers(response.value);
+          return;
+        default:
+          break;
+      }
+      switch (response.request.attribute) {
+        case($scope.ensembleContainerIdListOp):
+          $scope.updateEnsembleContainerIdList(response.value);
+          return;
+        default:
           break;
       }
     };
 
 
     Core.register(jolokia, $scope, [
-      {type: 'exec', mbean: managerMBean, operation: $scope.versionsOp },
-      {type: 'exec', mbean: managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]}
+      {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.versionsOp },
+      {type: 'exec', mbean: managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]},
+      {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
     ], onSuccess($scope.dispatch));
 
   };
