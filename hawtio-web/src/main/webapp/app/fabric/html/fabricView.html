@@ -239,8 +239,8 @@
   </div>
 
   <div modal="createProfileDialog">
-    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile()">
-      <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile(newProfileName, selectedParents)">
+      <div class="modal-header"><h4>Create new Profile in Version {{activeVersionId}}...</h4></div>
       <div class="modal-body">
         <label>Profile Name: </label>
         <input name="id" class="input-xlarge" type="text" ng-model="newProfileName" required ng-pattern="/^[a-zA-Z0-9_-]*$/">
@@ -249,7 +249,7 @@
 
         <p></p>
         <label>Select one or more parent profiles as needed: </label>
-        <div class='dialogGrid' style="height: 250px;" ng-grid="createProfileGridOptions"></div>
+        <div fabric-profile-selector="selectedParents" version-id="activeVersionId"></div>
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" value="Create">

@@ -31,7 +31,7 @@ module Fabric {
     $scope.containers = [];
     $scope.activeProfiles = [];
 
-    $scope.selectedVersion = {};
+    $scope.activeVersionId = '';
     $scope.selectedContainers = [];
     $scope.selectedProfiles = [];
     $scope.selectedActiveProfiles = [];
@@ -58,21 +58,7 @@ module Fabric {
 
     $scope.targetContainer = {};
 
-    // Data for profile/version creation dialogs
-    $scope.createProfileGridOptions = {
-      data: 'profiles',
-      selectedItems: $scope.selectedParents,
-      showSelectionCheckbox: true,
-      multiSelect: true,
-      selectWithCheckboxOnly: false,
-      keepLastSelected: false,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'Name'
-        }]
-    };
-
+    // Data for version creation dialog
     $scope.createVersionGridOptions = {
       data: 'versions',
       selectedItems: $scope.selectedParentVersion,
@@ -179,9 +165,10 @@ module Fabric {
 
 
     // create profile dialog action
-    $scope.doCreateProfile = () => {
+    $scope.doCreateProfile = (newProfileName, selectedParents) => {
+      $scope.newProfileName = newProfileName;
       $scope.createProfileDialog = false;
-      var parents = $scope.selectedParents.map(function(profile) {return profile.id});
+      var parents = selectedParents.map(function(profile) {return profile.id});
       createProfile(jolokia, $scope.activeVersionId, $scope.newProfileName, parents, function() {
         notification('success', "Created profile " + $scope.newProfileName);
         $scope.profileIdFilter = $scope.newProfileName;
