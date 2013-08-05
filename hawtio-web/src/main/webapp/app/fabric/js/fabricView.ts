@@ -179,8 +179,7 @@ module Fabric {
 
 
     // create profile dialog action
-    $scope.doCreateProfile = (newProfileName) => {
-      $scope.newProfileName = newProfileName;
+    $scope.doCreateProfile = () => {
       $scope.createProfileDialog = false;
       var parents = $scope.selectedParents.map(function(profile) {return profile.id});
       createProfile(jolokia, $scope.activeVersionId, $scope.newProfileName, parents, function() {
@@ -196,8 +195,9 @@ module Fabric {
 
 
     // create version dialog action
-    $scope.doCreateVersion = () => {
+    $scope.doCreateVersion = (newVersionName) => {
       $scope.createVersionDialog = false;
+      $scope.newVersionName = newVersionName;
 
       var success = function (response) {
         notification('success', "Created version " + response.value.id);
