@@ -90,6 +90,85 @@ module Karaf {
     });
   }
 
+    export function createScrComponentsView(workspace, jolokia, components) {
+        var result = [];
+        angular.forEach(components, (component) => {
+
+            result.push({
+                Name: component,
+                State: getComponentStateDescription(getComponentState(workspace, jolokia, component))
+            });
+        });
+        return result;
+    }
+
+    export function getComponentStateDescription(state) {
+        switch (state) {
+            case 2:
+                return "Enabled";
+            case 4:
+                return "Unsatisfied";
+            case 8:
+                return "Activating";
+            case 16:
+                return "Active";
+            case 32:
+                return "Registered";
+            case 64:
+                return "Factory";
+            case 128:
+                return "Deactivating";
+            case 256:
+                return "Destroying";
+            case 1024:
+                return "Disabling";
+            case 2048:
+                return "Disposing";
+
+        }
+        return "Unknown";
+    };
+
+    export function isComponentActive(workspace, jolokia, component) {
+        var response =  jolokia.request(
+            {
+                type: 'exec', mbean: getSelectionScrMBean(workspace),
+                operation: 'isComponentActive(java.lang.String)',
+                arguments: [component]
+            });
+        return response.value;
+    }
+
+    export function getComponentState(workspace, jolokia, component) {
+        var response =  jolokia.request(
+            {
+                type: 'exec', mbean: getSelectionScrMBean(workspace),
+                operation: 'componentState(java.lang.String)',
+                arguments: [component]
+            });
+        return response.value;
+    }
+
+    export function activateComponent(workspace, jolokia, component, success, error) {
+        jolokia.request(
+            {
+                type: 'exec', mbean: getSelectionScrMBean(workspace),
+                operation: 'activateComponent(java.lang.String)',
+                arguments: [component]
+            },
+            onSuccess(success, { error: error }));
+    }
+
+    export function deactivateComponent(workspace, jolokia, component, success, error) {
+        jolokia.request(
+            {
+                type: 'exec', mbean: getSelectionScrMBean(workspace),
+                operation: 'deactiveateComponent(java.lang.String)',
+                arguments: [component]
+            },
+            onSuccess(success, { error: error }));
+    }
+
   export function populateDependencies(attributes, dependencies, features) {
     angular.forEach(dependencies, (feature) => {
       angular.forEach(feature, (entry) => {
@@ -135,4 +214,39 @@ module Karaf {
     }
     return null;
   }
+
+    export function getSelectionScrMBean(workspace:Workspace):string {
+        if (workspace) {
+            var scrStuff = workspace.mbeanTypesToDomain["scr"] || {};
+            var karaf = scrStuff["org.apache.karaf"] || {};
+            var mbean = karaf.objectName;
+            if (mbean) {
+                return mbean;
+            }
+            // lets navigate to the tree item based on paths
+            var folder = workspace.tree.navigate("org.apache.karaf", "scr");
+            if (!folder) {
+                // sometimes the features mbean is inside the 'root' folder
+                folder = workspace.tree.navigate("org.apache.karaf");
+                var children = folder.children;
+                folder = null;
+                angular.forEach(children, (child) => {
+                    if (!folder) {
+                        folder = child.navigate("scr");
+                    }
+                });
+            }
+            if (folder) {
+                var children = folder.children;
+                if (children) {
+                    var node = children[0];
+                    if (node) {
+                        return node.objectName;
+                    }
+                }
+                return folder.objectName;
+            }
+        }
+        return null;
+    }
 }

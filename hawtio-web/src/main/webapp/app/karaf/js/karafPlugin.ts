@@ -4,6 +4,7 @@ module Karaf {
     $routeProvider.
             when('/karaf/server', {templateUrl: 'app/karaf/html/server.html'}).
             when('/karaf/features', {templateUrl: 'app/karaf/html/features.html'}).
+            when('/karaf/scr', {templateUrl: 'app/karaf/html/scr.html'}).
             when('/karaf/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html'})
   }).
       run((workspace:Workspace, viewRegistry) => {

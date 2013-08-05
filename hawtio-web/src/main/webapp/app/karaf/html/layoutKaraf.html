@@ -6,6 +6,9 @@
     <li ng-class='{active : isActive("#/karaf/features")}' ng-show="isFeaturesEnabled">
       <a ng-href="#/karaf/features{{hash}}">Features</a>
     </li>
+    <li ng-class='{active : isActive("#/karaf/scr")}' ng-show="isScrEnabled">
+          <a ng-href="#/karaf/scr{{hash}}">Declarative Services</a>
+    </li>
   </ul>
 </div>
 <div class="row-fluid">
