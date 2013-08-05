@@ -1384,53 +1384,21 @@ li.stacktrace {
 
 .canvas {
   height: 91%;
-  padding: 3px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0,1);
 }
 
 .box {
-
   background: none repeat scroll 0 0 white;
   border-bottom: 1px solid #D4D4D4;
   cursor: pointer;
   height: 20px;
   line-height: 2em;
-  margin-bottom: 5px;
-  margin-top: 5px;
   overflow: hidden;
   padding: 10px;
   position: relative;
   text-overflow: ellipsis;
   transition: all 0.2s ease 0s;
   white-space: nowrap;
-
-  /*
-  border: 1px solid @control-border;
-  border-radius: 1em;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-
-        
-  position: relative;
-  
-
-  transition: all .2s;
-  line-height: 2em;
-
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.1),
-              inset 0px 0px 3px rgba(0, 0, 0, 0.2);
-
-  cursor: pointer;
-
-  background: white;
-  height: 20px;
-
-  white-space: nowrap; 
-  text-overflow: ellipsis; 
-  overflow: hidden;
-  */
-
 }
 
 .container-section {
@@ -1589,6 +1557,10 @@ li.stacktrace {
 .features-toolbar {
   position: relative;
   margin-bottom: 0.5em;
+}
+
+.version-section .canvas div .box {
+  line-height: inherit;
 }
 
 span.remove {
