@@ -32,6 +32,7 @@ module Fabric {
       displayFooter: false,
       showFilter: false,
       keepLastSelected: true,
+      showSelectionCheckbox: true,
       filterOptions: {
         filterText: ''
       },
