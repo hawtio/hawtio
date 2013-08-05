@@ -49,13 +49,13 @@
                 </div>
 
                 <div class="box-right">
-                  <i class="icon1point5x icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
+                  <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
 
-                  <i class="icon1point5x clickable" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="showContainer(container)"></i>
+                  <i class="clickable" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="showContainer(container)"></i>
 
-                  <i class="icon1point5x icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
+                  <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
 
-                  <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showContainer(container)"></i>
+                  <i class="clickable icon-info-sign" title="Show Details" ng-click="showContainer(container)"></i>
                 </div>
 
               </div>
@@ -143,7 +143,7 @@
                 </div>
 
                 <div class="box-right">
-                  <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
+                  <i class="clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
                 </div>
 
               </div>
@@ -187,7 +187,7 @@
               </div>
 
               <div class="box-right">
-                <i class="icon1point5x clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
+                <i class="clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
               </div>
 
             </div>    
@@ -239,7 +239,7 @@
   </div>
 
   <div modal="createProfileDialog">
-    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile(newProfileName)">
+    <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile()">
       <div class="modal-header"><h4>Create new Profile in Version {{version.id}}...</h4></div>
       <div class="modal-body">
         <label>Profile Name: </label>
