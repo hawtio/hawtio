@@ -7,6 +7,11 @@ module Fabric {
     $scope.selectedProfilesDialog = [];
     $scope.selectedProfilesString = '';
 
+    $scope.userName = localStorage['fabric.userName'];
+    // TODO at least obfusicate this
+    $scope.password = localStorage['fabric.password'];
+
+
 
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -17,11 +22,20 @@ module Fabric {
       }
     }, true);
 
+    $scope.doConnect = (container) => {
+      $scope.connectToContainerDialog = true;
+    }
+
+
     $scope.connect = () => {
       // TODO lets find these from somewhere! :)
-      var userName = "admin";
-      var password = "admin";
-      Fabric.connect($scope.row, userName, password, true);
+      if ($scope.saveCredentials) {
+        $scope.saveCredentials = false;
+        localStorage['fabric.userName'] = $scope.userName;
+        localStorage['fabric.password'] = $scope.password;
+      }
+      Fabric.connect($scope.row, $scope.userName, $scope.password, true);
+      $scope.connectToContainerDialog = false;
     };
 
     $scope.stop = () => {

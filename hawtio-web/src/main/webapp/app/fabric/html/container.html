@@ -1,20 +1,16 @@
 <div class="ng-cloak" ng-controller="Fabric.ContainerController">
 
-  <div class="row-fluid">
+  <div class="container-title row-fluid">
     <div class="span4">
       <h1>{{row.id}}</h1>
     </div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="btn-group">
-      <button class="btn" ng-show="row.jolokiaUrl" ng-click="connect()"><i class="icon-signin"></i> Connect</button>
+    <div class="pull-right">
+      <button class="btn" ng-show="row.jolokiaUrl" ng-click="doConnect(container)"><i class="icon-signin"></i> Connect</button>
       <button class="btn" ng-show="row.alive" ng-click="stop()"><i class="icon-off"></i> Stop</button>
       <button class="btn" ng-hide="row.alive" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
       <button class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
     </div>
   </div>
-
   <div class="row-fluid">
     <div class="span4">
         <dl class="dl-horizontal">
@@ -184,6 +180,32 @@
       </dl>
     </div>
   </div>
+
+  <div hawtio-confirm-dialog="connectToContainerDialog" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
+    <div class="dialog-body">
+      <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
+      <div class="control-group">
+        <label class="control-label">User Name: </label>
+        <div class="controls">
+          <input name="userName" ng-model="userName" type="text">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Password: </label>
+        <div class="controls">
+          <input name="password" ng-model="password" type="password">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="saveCredentials"> Save these credentials as the default
+          </label>
+        </div>
+      </div>
+      <div>
+      </div>
+    </div>
 
   <div hawtio-confirm-dialog="deleteProfileDialog"
        ok-button-text="Delete"
