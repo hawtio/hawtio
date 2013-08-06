@@ -28,7 +28,6 @@ module Fabric {
 
 
     $scope.connect = () => {
-      // TODO lets find these from somewhere! :)
       if ($scope.saveCredentials) {
         $scope.saveCredentials = false;
         localStorage['fabric.userName'] = $scope.userName;
@@ -128,11 +127,25 @@ module Fabric {
       }, onSuccess(render));
     }
 
+    $scope.formatStackTrace = (exception) => {
+      if (!exception) {
+        return '';
+      }
+      var answer = '<ul class="unstyled">\n';
+      exception.each((line) => {
+        answer += "<li>" + Log.formatStackLine(line) + "</li>\n"
+      });
+      answer += "</ul>\n";
+      return answer;
+    }
 
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
         if ($scope.row) {
+          if ($scope.row.provisionException !== null) {
+            $scope.row.provisionExceptionArray = $scope.row.provisionException.lines();
+          }
           $scope.services = getServiceList($scope.row);
           if (angular.isDefined($scope.resolverWatch) && angular.isFunction($scope.resolverWatch)) {
             $scope.resolverWatch();

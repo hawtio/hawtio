@@ -151,6 +151,17 @@
     </div>
   </div>
 
+  <div ng-show="row.provisionExceptionArray" class="row-fluid">
+    <div class="span8">
+      <dl>
+        <dt>Provision Exception</dt>
+        <dd>
+          <div ng-bind-html-unsafe="formatStackTrace(row.provisionExceptionArray)"></div>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
   <div class="row-fluid">
     <div class="span8">
       <dl>

@@ -51,10 +51,10 @@ module Log {
         console.log("mvnCoords: " + mvnCoords);
         console.log("Matched " + JSON.stringify(match));
 */
-        return "at <a href='" + link + "'>" + classAndMethod + "</a>(<span class='fileName'>" + fileName + "</span>:<span class='lineNumber'>" + line + "</span>)[<span class='mavenCoords'>" + mvnCoords + "</span>]";
+        return "<div class='stack-line'>  at <a href='" + link + "'>" + classAndMethod + "</a>(<span class='fileName'>" + fileName + "</span>:<span class='lineNumber'>" + line + "</span>)[<span class='mavenCoords'>" + mvnCoords + "</span>]</div>";
       }
     }
-    return line;
+    return '<pre class="stack-line">' + line + '</pre>';
   }
 
   export function getLogCacheSize(localStorage) {

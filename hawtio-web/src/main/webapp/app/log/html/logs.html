@@ -53,7 +53,8 @@
     <dl ng-hide="!row.exception">
       <dt>Stack Trace:</dt>
       <dd>
-        <ul ng-repeat="line in row.exception">
+        <ul class="unstyled" ng-repeat="line in row.exception">
+
           <li class="stacktrace" ng-bind-html-unsafe="formatException(line)"></li>
         </ul>
       </dd>
