@@ -50,23 +50,6 @@
   }
 </style>
 
-<div class="ng-cloak">
-  <div modal="confirmLogout">
-
-    <form class="form-horizontal no-bottom-margin" ng-submit="doLogout()">
-      <div class="modal-header"></div>
-      <div class="modal-body">
-        <p>Are you sure you want to log out?</p>
-      </div>
-      <div class="modal-footer">
-        <input class="btn btn-success" type="submit" value="Yes">
-        <input class="btn btn-primary" ng-click="confirmLogout = false" value="No">
-      </div>
-    </form>
-
-  </div>
-</div>
-
 <!--  navbar-inverse -->
 <div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()" ng-controller="Core.NavBarController">
   <div class="navbar-inner" ng-cloak class="ng-cloak">
@@ -131,6 +114,23 @@
     <ul class='unstyled inline'>
       <li ng-repeat='title in pageTitle'>{{title}}</li>
     </ul>
+  </div>
+</div>
+
+<div class="ng-cloak">
+  <div modal="confirmLogout">
+
+    <form class="form-horizontal no-bottom-margin" ng-submit="doLogout()">
+      <div class="modal-header"></div>
+      <div class="modal-body">
+        <p>Are you sure you want to log out?</p>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value="Yes">
+        <input class="btn btn-primary" ng-click="confirmLogout = false" value="No">
+      </div>
+    </form>
+
   </div>
 </div>
 

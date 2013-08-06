@@ -1,6 +1,6 @@
 module Core {
 
-  export function AppController($scope, $location, workspace, $document, pageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
+  export function AppController($scope, $location, workspace, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
 
     if (userDetails.username === null) {
       // sigh, hack
@@ -9,15 +9,15 @@ module Core {
 
     $scope.collapse = '';
     $scope.match = null;
-    $scope.pageTitle = pageTitle.exclude('hawtio');
+    $scope.pageTitle = [];
     $scope.userDetails = userDetails;
     $scope.confirmLogout = false;
 
     $scope.setPageTitle = () => {
+      $scope.pageTitle = pageTitle.getTitleArrayExcluding(['hawtio']);
       var tab = workspace.getActiveTab();
       if (tab && tab.content) {
-        var foo:any = Array;
-        setPageTitle($document, foo.create(pageTitle, tab.content));
+        setPageTitleWithTab($document, pageTitle, tab.content);
       } else {
         setPageTitle($document, pageTitle);
       }
@@ -87,7 +87,7 @@ module Core {
       if (userDetails.username === null) {
         lastLocation.url = $location.url('/login');
       }
-      console.log("userDetails: ", userDetails);
+      //console.log("userDetails: ", userDetails);
     }, true);
 
     $scope.$on('$routeChangeStart', function() {

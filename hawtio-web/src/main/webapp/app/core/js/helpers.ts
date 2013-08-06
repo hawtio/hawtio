@@ -795,8 +795,12 @@ module Core {
     return entries;
   }
 
-  export function setPageTitle($document, title) {
-    document.title = title.join(' : ');
+  export function setPageTitle($document, title:Core.PageTitle) {
+    $document.attr('title', title.getTitleWithSeparator(' : '));
+  }
+
+  export function setPageTitleWithTab($document, title:Core.PageTitle, tab:string) {
+    $document.attr('title', title.getTitleWithSeparator(' : ') + ' : ' + tab);
   }
 
   /**

@@ -103,7 +103,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         }).
 
         factory('pageTitle', function () {
-          return ['hawtio'];
+          var answer = new Core.PageTitle();
+          answer.addTitleElement(() => { return 'hawtio'; });
+          return answer;
         }).
 
         factory('viewRegistry',function () {

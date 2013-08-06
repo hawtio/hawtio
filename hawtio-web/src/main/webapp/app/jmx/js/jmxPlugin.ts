@@ -13,19 +13,21 @@ module Jmx {
             return Jmx.lazyLoaders;
           }).
 
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle) => {
 
             viewRegistry['jmx'] = layoutTree;
 
 
-            try {
-              var id = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
-              if (id) {
-                pageTitle.push(id);
+            pageTitle.addTitleElement(():string => {
+              var id = ''
+              try {
+                id = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
+              } catch (e) {
+                // ignore
               }
-            } catch (e) {
-              // ignore
-            }
+              return id;
+            });
+
 
             workspace.topLevelTabs.push( {
               content: "JMX",

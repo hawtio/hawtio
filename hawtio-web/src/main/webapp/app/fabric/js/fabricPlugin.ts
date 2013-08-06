@@ -27,43 +27,26 @@ module Fabric {
       return new Fabric.ProfileSelector();
     }).
 
-          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle) => {
+          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle) => {
 
-        Fabric.schemaConfigure();
+            Fabric.schemaConfigure();
 
-        viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+            viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
-            try {
-              var id = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
-              if (id) {
-                pageTitle.push(id);
+            pageTitle.addTitleElement( ():string => {
+              var id = '';
+              try {
+                id = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
+              } catch (e) {
+                // ignore
               }
-            } catch (e) {
-              // ignore
-            }
-
-            var isValid = (workspace) => {
-              if (workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'})) {
-                /*
-                try {
-                  var status = workspace.jolokia.getAttribute(managerMBean, 'FabricServiceStatus', {timeout: 1});
-                  if (status) {
-                    return status.clientValid && status.clientConnected;
-                  }
-                } catch (e) {
-                  // ignore this
-                }
-                */
-                return true;
-              }
-              return false;
-            };
-
+              return id;
+            });
 
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
-              isValid: isValid,
+              isValid: workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'}),
               href: () => "#/fabric/view",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
