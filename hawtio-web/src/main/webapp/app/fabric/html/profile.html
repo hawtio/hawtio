@@ -19,15 +19,14 @@
         -->
     </div>
     <div class="pull-right">
-      <a class="btn" ng-href="#/fabric/profile/{{versionId}}/{{profileId}}/editFeatures"><i class="icon-edit"></i> Edit Features</a>
       <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
       <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
       <a ng-href="#/wiki/branch/{{versionId}}/view/{{row.id}}" class="btn" ng-show="hasFabricWiki()"
-         title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Configuration</a>
+         title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Advanced</a>
     </div>
   </div>
 
-  <div class="row-fluid">
+  <div class="row-fluid profile-details">
     <div class="span2">
       <ul class="unstyled">
         <li>
@@ -111,7 +110,7 @@
           <ul class="unstyled">
             <li ng-repeat="repository in row.repositories">
               <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
-              {{repository}}
+              <editable-property ng-model="repository"></editable-property>
             </li>
             <li>
               <i class="clickable icon-plus" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
