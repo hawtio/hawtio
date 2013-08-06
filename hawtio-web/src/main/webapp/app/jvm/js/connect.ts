@@ -34,47 +34,15 @@ module JVM {
     });
 
     $scope.gotoServer = () => {
-      var host = $scope.host || "localhost";
-      var port = $scope.port;
-      var path = Core.trimLeading($scope.path || "jolokia", "/");
-      path = Core.trimTrailing(path, "/");
+      var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+      options.host = $scope.host || 'localhost';
+      options.port = $scope.port;
+      options.path = $scope.path;
+      options.userName = $scope.userName;
+      options.password = $scope.password;
+      options.useProxy = $scope.useProxy;
 
-      if (port > 0) {
-        host += ":" + port;
-      }
-      var url = host + "/" + path;
-
-      if ($scope.useProxy) {
-        url = "/hawtio/proxy/" + url;
-      } else {
-        if (url.indexOf("://") < 0) {
-          url = "http://" + url;
-        }
-      }
-      console.log("going to server: " + url + " as user " + $scope.userName);
-
-      var full = "?url=" + encodeURIComponent(url);
-
-      var userDetails = {
-        username: null,
-        password: null
-      };
-
-      if ($scope.userName) {
-        //full += "&_user=" + $scope.userName;
-        userDetails.username = $scope.userName;
-      }
-      if ($scope.password) {
-        //full += "&_pwd=" + $scope.password;
-        userDetails.password = $scope.password;
-      }
-
-      localStorage[url] = angular.toJson(userDetails);
-
-      // default the osgi view
-      full += "#/osgi/bundle-list";
-      console.log("Full URL is: " + full);
-      window.open(full);
+      Core.connectToServer(localStorage, options);
     }
   }
 }

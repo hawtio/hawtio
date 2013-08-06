@@ -327,39 +327,14 @@ module Fabric {
   /**
    * Opens a window connecting to the given container row details if the jolokiaUrl is available
    */
-  export function connect(row, userName = "", password = "", useProxy = true) {
-    var url = row.jolokiaUrl;
-    if (url) {
-      if (useProxy) {
-        // lets remove the http stuff
-        var idx = url.indexOf("://");
-        if (idx > 0) {
-          url = url.substring(idx + 3);
-        }
-        // lets replace the : with a /
-        url = url.replace(":", "/");
-        url = Core.trimLeading(url, "/");
-        url = Core.trimTrailing(url, "/");
-        url = "/hawtio/proxy/" + url;
-      } else {
-        if (url.indexOf("://") < 0) {
-          url = "http://" + url;
-        }
-      }
-      console.log("going to server: " + url + " as user " + userName);
+  export function connect(localStorage, row, userName = "", password = "", useProxy = true) {
+    var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+    options.jolokiaUrl = row.jolokiaUrl;
+    options.userName = userName;
+    options.password = password;
+    options.useProxy = useProxy;
 
-      var full = "?url=" + encodeURIComponent(url);
-      if (userName) {
-        full += "&_user=" + userName;
-      }
-      if (password) {
-        full += "&_pwd=" + password;
-      }
-      // default the osgi view
-      //full += "#/osgi/bundle-list";
-      full += "#/logs";
-      //full += "/#/jmx/attributes?nid=root-java.lang-Runtime";
-      window.open(full);
-    }
+    Core.connectToServer(localStorage, options);
+
   }
 }

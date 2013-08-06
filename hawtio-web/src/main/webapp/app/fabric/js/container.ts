@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function ContainerController($scope, workspace:Workspace, $routeParams, jolokia, $location) {
+  export function ContainerController($scope, localStorage, $routeParams, jolokia, $location) {
     $scope.containerId = $routeParams.containerId;
 
     $scope.selectedProfiles = [];
@@ -33,7 +33,7 @@ module Fabric {
         localStorage['fabric.userName'] = $scope.userName;
         localStorage['fabric.password'] = $scope.password;
       }
-      Fabric.connect($scope.row, $scope.userName, $scope.password, true);
+      Fabric.connect(localStorage, $scope.row, $scope.userName, $scope.password, true);
       $scope.connectToContainerDialog = false;
     };
 

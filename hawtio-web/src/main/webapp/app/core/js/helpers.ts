@@ -855,4 +855,90 @@ module Core {
     authInfo = btoa(authInfo);
     return "Basic " + authInfo;
   }
+
+  export class ConnectToServerOptions {
+    public host:string;
+    public port:number;
+    public path:string;
+    public useProxy:boolean = true;
+    public jolokiaUrl:string;
+    public userName:string;
+    public password:string;
+  }
+
+  export function connectToServer(localSturage, options:ConnectToServerOptions) {
+    var url = options.jolokiaUrl;
+
+    var userDetails = {
+      username: null,
+      password: null
+    };
+
+    if (options.userName) {
+      //full += "&_user=" + $scope.userName;
+      userDetails.username = options.userName;
+    }
+    if (options.password) {
+      //full += "&_pwd=" + $scope.password;
+      userDetails.password = options.password;
+    }
+
+    localStorage[url] = angular.toJson(userDetails);
+
+    if (url) {
+
+      if (options.useProxy) {
+        // lets remove the http stuff
+        var idx = url.indexOf("://");
+        if (idx > 0) {
+          url = url.substring(idx + 3);
+        }
+        // lets replace the : with a /
+        url = url.replace(":", "/");
+        url = Core.trimLeading(url, "/");
+        url = Core.trimTrailing(url, "/");
+        url = "/hawtio/proxy/" + url;
+      } else {
+        if (url.indexOf("://") < 0) {
+          url = "http://" + url;
+        }
+      }
+      console.log("going to server: " + url + " as user " + options.userName);
+
+      var full = "?url=" + encodeURIComponent(url);
+
+      full += "#/logs";
+      window.open(full);
+    } else {
+
+      var host = options.host || "localhost";
+      var port = options.port;
+      var path = Core.trimLeading(options.path || "jolokia", "/");
+      path = Core.trimTrailing(path, "/");
+
+      if (port > 0) {
+        host += ":" + port;
+      }
+      var url = host + "/" + path;
+
+      if (options.useProxy) {
+        url = "/hawtio/proxy/" + url;
+      } else {
+        if (url.indexOf("://") < 0) {
+          url = "http://" + url;
+        }
+      }
+      console.log("going to server: " + url + " as user " + options.userName);
+
+      var full = "?url=" + encodeURIComponent(url);
+
+      // default the osgi view
+      full += "#/osgi/bundle-list";
+      console.log("Full URL is: " + full);
+      window.open(full);
+    }
+
+  }
+
+
 }

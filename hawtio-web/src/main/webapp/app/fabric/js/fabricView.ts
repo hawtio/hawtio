@@ -506,12 +506,12 @@ module Fabric {
 
 
     $scope.connect = (row) => {
-      Fabric.connect($scope.targetContainer, $scope.userName, $scope.password, true);
       if ($scope.saveCredentials) {
         $scope.saveCredentials = false;
         localStorage['fabric.userName'] = $scope.userName;
         localStorage['fabric.password'] = $scope.password;
       }
+      Fabric.connect(localStorage, $scope.targetContainer, $scope.userName, $scope.password, true);
       $scope.targetContainer = {};
       $scope.connectToContainerDialog = false;
     };
