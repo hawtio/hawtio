@@ -1,4 +1,7 @@
-<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+<ul class="nav nav-tabs" ng-controller="Karaf.NavBarController">
+    <li ng-class='{active : isActive("#/osgi/server")}'>
+      <a ng-href="#/osgi/server{{hash}}">Server</a>
+    </li>
     <li ng-class='{active : isActive("#/osgi/bundle")}'>
         <a ng-href="#/osgi/bundle-list{{hash}}">Bundles</a>
     </li>
@@ -8,8 +11,14 @@
     <li ng-class='{active : isActive("#/osgi/service")}'>
         <a ng-href="#/osgi/services{{hash}}">Services</a>
     </li>
+    <li ng-class='{active : isActive("#/osgi/features")}' ng-show="isFeaturesEnabled">
+      <a ng-href="#/osgi/features{{hash}}">Features</a>
+    </li>
     <li ng-class='{active : isActive("#/osgi/configuration")}'>
         <a ng-href="#/osgi/configurations{{hash}}">Configuration</a>
+    </li>
+    <li ng-class='{active : isActive("#/osgi/scr")}' ng-show="isScrEnabled">
+      <a ng-href="#/osgi/scr{{hash}}">Declarative Services</a>
     </li>
     <li ng-class='{active : isActive("#/osgi/fwk")}'>
         <a ng-href="#/osgi/fwk{{hash}}">Framework</a>
