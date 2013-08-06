@@ -140,7 +140,9 @@ module Fabric {
     }
 
     function render(response) {
-      if (!Object.equal($scope.row, response.value)) {
+      var responseJson = angular.toJson(response.value);
+      if ($scope.responseJson !== responseJson) {
+        $scope.responseJson = responseJson;
         $scope.row = response.value;
         if ($scope.row) {
           if ($scope.row.provisionException !== null) {
@@ -155,8 +157,8 @@ module Fabric {
               $scope.updateContainerProperty('resolver', $scope.row);
             }
           });
-          Core.$apply($scope);
         }
+        Core.$apply($scope);
       }
     }
 
