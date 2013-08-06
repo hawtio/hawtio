@@ -80,14 +80,20 @@
           </div>
 
           <div class="section-controls">
+
+            <i class="icon-plus clickable" title="Apply patch to Version" ng-show="activeVersionId && activeVersionId != ''"></i>
+
             <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog = true"></i>
+
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/" ng-show="hasFabricWiki()"
                title="View, edit or create configuration files for the profiles in this version">
                <i class="icon-edit"></i>
              </a>-->
 
-             <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog = true" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
+
+
+            <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog = true" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
 
             <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
 

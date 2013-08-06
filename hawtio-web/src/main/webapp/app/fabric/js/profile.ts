@@ -92,6 +92,12 @@ module Fabric {
       $scope.deleteThingDialog = true;
     }
 
+    $scope.updateThing = (title, type, current) => {
+      $scope.thingName = title;
+      $scope.currentThing = current;
+      $scope.currentThingType = type;
+      $scope.callSetProfileThing("Changed", "change", title);
+    }
 
     $scope.callSetProfileThing = function (success, error, thing) {
       jolokia.request({

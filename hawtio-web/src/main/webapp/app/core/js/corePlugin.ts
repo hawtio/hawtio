@@ -387,7 +387,11 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               scope.saveEdit = function () {
                 var value = $(element.find(":input[type=text]")[0]).val();
                 var obj = ngModel.$viewValue;
-                obj[attrs['property']] = value;
+                if (angular.isDefined(attrs['property'])) {
+                  obj[attrs['property']] = value;
+                } else {
+                  obj = value;
+                }
                 ngModel.$setViewValue(obj);
                 ngModel.$render();
                 scope.editing = false;
