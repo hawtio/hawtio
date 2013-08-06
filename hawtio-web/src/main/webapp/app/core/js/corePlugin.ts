@@ -75,8 +75,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
                         '<form class="form-inline no-bottom-margin" ng-submit="saveEdit()">' +
                         '<fieldset>' +
                         '<input type="text" value="{{text}}">' +
-                        '<i class="green icon-ok" title="Save changes" ng-click="saveEdit()"></i>' +
-                        '<i class="red icon-remove" title="Discard changes" ng-click="stopEdit()"></i>' +
+                        '<i class="green clickable icon-ok icon1point5x" title="Save changes" ng-click="saveEdit()"></i>' +
+                        '<i class="red clickable icon-remove icon1point5x" title="Discard changes" ng-click="stopEdit()"></i>' +
                         '</fieldset>' +
                         '</form>' +
                         '</div>').
@@ -362,7 +362,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               ngModel.$render = function () {
                 var propertyName = attrs['property'];
                 if (propertyName && ngModel.$viewValue) {
-                  scope.text = ngModel.$viewValue[ propertyName];
+                  scope.text = ngModel.$viewValue[propertyName];
+                } else {
+                  scope.text = ngModel.$viewValue;
                 }
               };
 
