@@ -2,8 +2,8 @@ module Fabric {
 
 
   export var createChildContainerOptions = (<any>window).org_fusesource_fabric_api_CreateChildContainerOptions;
-  export var createJCloudsContainerOptions = (<any>window).org_fusesource_fabric_api_CreateJCloudsContainerOptions;
-  export var createSshContainerOptions = (<any>window).org_fusesource_fabric_api_CreateSshContainerOptions;
+  export var createJCloudsContainerOptions = (<any>window).org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions;
+  export var createSshContainerOptions = (<any>window).org_fusesource_fabric_service_ssh_CreateSshContainerOptions;
   export var createEnsembleOptions = (<any>window).org_fusesource_fabric_api_CreateEnsembleOptions;
   
   export var createContainerSchemas:any = [Fabric.createChildContainerOptions, Fabric.createJCloudsContainerOptions, Fabric.createSshContainerOptions];

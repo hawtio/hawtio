@@ -34,10 +34,10 @@ module Fabric {
             $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
             break;
           case 'ssh':
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateSshContainerOptions';
+            $scope.activeTab = 'org_fusesource_fabric_service_ssh_CreateSshContainerOptions';
             break;
           case 'cloud':
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateJCloudsContainerOptions';
+            $scope.activeTab = 'org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions';
             break;
           default:
             $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
@@ -123,12 +123,12 @@ module Fabric {
 
             break;
 
-          case 'org_fusesource_fabric_api_CreateSshContainerOptions':
+          case 'org_fusesource_fabric_service_ssh_CreateSshContainerOptions':
             $scope.entity['providerType'] = 'ssh';
             $location.search('tab', 'ssh');
             break;
 
-          case 'org_fusesource_fabric_api_CreateJCloudsContainerOptions':
+          case 'org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions':
             $scope.entity['providerType'] = 'jclouds';
             $location.search('tab', 'cloud');
             break;

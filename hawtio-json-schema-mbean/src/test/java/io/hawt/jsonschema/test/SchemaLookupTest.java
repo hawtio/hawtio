@@ -19,7 +19,7 @@ public class SchemaLookupTest {
     @Test
     public void testLookupMoreInterestingSchema() throws Exception {
         SchemaLookup lookup = createSchemaLookup();
-        String result = lookup.getSchemaForClass("org.fusesource.fabric.api.CreateSshContainerOptions");
+        String result = lookup.getSchemaForClass("org.fusesource.fabric.service.ssh.CreateSshContainerOptions");
         System.out.println("testLookupMoreInterestingSchema - Got: \n\n" + result + "\n\n");
     }
 
