@@ -58,7 +58,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>030</perfectus-number>
+    <perfectus-number>033</perfectus-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
@@ -77,10 +77,10 @@
     <dozer-version>5.4.0</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
-    <!--
     <fabric-version>7.3.0.redhat-${perfectus-number}</fabric-version>
-    -->
+    <!--
     <fabric-version>99-master-SNAPSHOT</fabric-version>
+    -->
     <fmc-version>${fabric-version}</fmc-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
