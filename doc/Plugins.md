@@ -1,6 +1,6 @@
 # hawtio Plugins
 
-**hawtio** is highly modular with lots of plugins (see below), so that hawtio can discover exactly what services are inside a JVM and dyanmically update the console to provide an interface to them as things come and go. So after you have deployed hawtio into a container, as you add and remove new services to your JVM the hawtio console updates in real time.
+**hawtio** is highly modular with lots of plugins (see below), so that hawtio can discover exactly what services are inside a JVM and dynamically update the console to provide an interface to them as things come and go. So after you have deployed hawtio into a container, as you add and remove new services to your JVM the hawtio console updates in real time.
 
 For more details see the [Configuration Guide](http://hawt.io/configuration/index.html) and [How Plugins Work](http://hawt.io/plugins/howPluginsWork.html).
 
