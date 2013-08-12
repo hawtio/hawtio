@@ -76,6 +76,16 @@ This is a [reported issue](https://github.com/hawtio/hawtio/issues/158). It turn
 The workaround is to install the [Gemini Management bundle](http://www.eclipse.org/gemini/management/) then you should see the MBeans in the osgi.core domain in the JMX tree; then the OSGi tab should appear!
 
 
+### Camel Questions
+
+Questions on using [Apache Camel](http://camel.apache.org/) and hawtio.
+
+#### Why does the Debug or Trace tab not appear for my Camel route?
+
+The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release you use.
+
+* the Debug tab requires at least version 2.12.x or later of your Camel library to be running
+* the Trace tab requires either a 2.12.x or later distro of Camel or a Fuse distro of Camel from about 2.8 or later
 
 ### Developer Questions
 
