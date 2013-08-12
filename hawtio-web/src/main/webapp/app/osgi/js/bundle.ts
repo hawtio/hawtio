@@ -85,9 +85,11 @@ module Osgi {
 
 
     $scope.mavenLink = (row) => {
-      var loc = row.Location;
-      if (loc && loc.startsWith("mvn:")) {
-        return "#/maven/artifact/" + loc.substring(4);
+      if (angular.isObject(row)) {
+        var loc = row.Location;
+        if (loc && loc.startsWith("mvn:")) {
+          return "#/maven/artifact/" + loc.substring(4);
+        }
       }
       // TODO try using the LogQuery mbean to find the mvn coords for a bundle id?
       return "";
