@@ -44,7 +44,7 @@
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-spring-config</artifactId>
+      <artifactId>hawtio-watcher-spring-context</artifactId>
       <version>${project.version}</version>
     </dependency>
 
