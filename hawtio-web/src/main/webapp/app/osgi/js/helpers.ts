@@ -49,7 +49,7 @@ module Osgi {
                 angular.forEach(version, (packageEntry) => {
                     var name = packageEntry["Name"];
                     var version = packageEntry["Version"];
-                    if (!name.startsWith("#")) {
+                    if (name && !name.startsWith("#")) {
                         packageEntry["VersionLink"] = "<a href='" + url("#/osgi/package/" + name +"/"+ version + workspace.hash()) + "'>" + version + "</a>";
                         packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
                         packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
