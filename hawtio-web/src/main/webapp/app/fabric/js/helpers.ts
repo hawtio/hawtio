@@ -337,4 +337,27 @@ module Fabric {
     Core.connectToServer(localStorage, options);
 
   }
+
+  export function registeredProviders(jolokia) {
+    var providers = jolokia.execute(Fabric.managerMBean, 'registeredProviders()');
+    var answer = {};
+    angular.forEach(providers, (value, key) => {
+      answer[key] = {
+        id: key,
+        className: value
+      };
+    });
+    return answer;
+  }
+
+  export function getSchema(id, className, jolokia, cb) {
+    jolokia.execute('io.hawt.jsonschema:type=SchemaLookup', 'getSchemaForClass(java.lang.String)', className, {
+      success: (value) => {
+        cb(Fabric.customizeSchema(id, angular.fromJson(value)));
+      }
+    });
+  }
+
+
+
 }

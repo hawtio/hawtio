@@ -5,35 +5,22 @@
       <a class='btn' ng-href="#/fabric/view"><i class='icon-remove'></i> Cancel</a>
     </div>
     <div class="pull-right" ng-switch="activeTab">
-      <button ng-switch-when='org_fusesource_fabric_api_CreateChildContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_child_container'
-              ng-disabled="!forms.create_child_container.$valid">
-        <i class="icon-ok"></i> Create Child Container</button>
-      <button ng-switch-when='org_fusesource_fabric_service_ssh_CreateSshContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_ssh_container'
-              ng-disabled="!forms.create_ssh_container.$valid">
-        <i class="icon-ok"></i> Create SSH Container</button>
-      <button ng-switch-when='org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions' class='btn pull-right' ng-href="" hawtio-submit='create_cloud_container'
-              ng-disabled="!forms.create_cloud_container.$valid">
-        <i class="icon-ok"></i> Create JCloud Container</button>
+      <button class='btn pull-right' hawtio-submit='create_container'
+              ng-disabled="!forms.create_container.$valid">
+        <i class="icon-ok"></i> Create Container</button>
     </div>
   </div>
 
   <div class="row-fluid">
-    <div class="span5">
-      <p>1. Select the container creation method and fill in the relevant details</p>
-      <div class="tabbable hawtio-form-tabs" ng-model=activeTab>
-        <div class="tab-pane" title="Child Container" value='org_fusesource_fabric_api_CreateChildContainerOptions'>
-          <div simple-form name='create_child_container' data='schema' entity='entity'></div>
-        </div>
-        <div class="tab-pane" title="SSH Container" value='org_fusesource_fabric_service_ssh_CreateSshContainerOptions'>
-          <div simple-form name='create_ssh_container' data='schema' entity='entity'></div>
-        </div>
-        <div class="tab-pane" title="Cloud Container" value='org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions'>
-          <div simple-form name='create_cloud_container' data='schema' entity='entity'></div>
-        </div>
+    <div class="span6">
+      Method of container creation:
+      <select ng-model="selectedProvider" ng-options="key for (key, value) in providers"></select>
+      <div id="create-form">
+        <div simple-form name="create_container" data="schema" entity="entity"></div>
       </div>
     </div>
 
-    <div class="span5">
+    <div class="span6">
       <p>2. Select the target version and add the required profiles to deploy</p>
       <div fabric-version-selector='selectedVersion'></div>
       <div fabric-profile-selector='selectedProfiles' version-id='selectedVersion.id'></div>

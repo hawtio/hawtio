@@ -415,15 +415,6 @@
             <org.fusesource.fabric.api.CreateEnsembleOptions>
               ${schema-outdir}/createEnsembleOptions.js
             </org.fusesource.fabric.api.CreateEnsembleOptions>
-            <org.fusesource.fabric.api.CreateChildContainerOptions>
-              ${schema-outdir}/createChildContainerOptions.js
-            </org.fusesource.fabric.api.CreateChildContainerOptions>
-            <org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
-              ${schema-outdir}/createSshContainerOptions.js
-            </org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
-            <org.fusesource.fabric.service.jclouds.CreateJCloudsContainerOptions>
-              ${schema-outdir}/createJcloudsContainerOptions.js
-            </org.fusesource.fabric.service.jclouds.CreateJCloudsContainerOptions>
             <io.hawt.dozer.schema.Mappings>
               ${schema-outdir}/dozerMappings.js
             </io.hawt.dozer.schema.Mappings>
@@ -439,18 +430,6 @@
           </classes>
         </configuration>
         <dependencies>
-          <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-core-agent-ssh</artifactId>
-            <version>${fabric-version}</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-core-agent-jclouds</artifactId>
-            <version>${fabric-version}</version>
-            <scope>compile</scope>
-          </dependency>
           <dependency>
             <groupId>org.fusesource.fabric</groupId>
             <artifactId>fabric-core</artifactId>

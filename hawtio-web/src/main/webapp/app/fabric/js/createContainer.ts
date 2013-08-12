@@ -1,13 +1,50 @@
 module Fabric {
 
-  export function CreateContainerController($scope, $window, $location, workspace, jolokia, localStorage) {
+  export function CreateContainerController($scope, $element, $compile, $location, workspace, jolokia, localStorage) {
 
     $scope.versionsOp = 'versions()';
 
-    $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
-
+    $scope.providers = Fabric.registeredProviders(jolokia);
+    $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
     $scope.schema = {};
-    $scope.entity = {};
+
+    $scope.entity = {
+      number: 1
+    };
+
+    $scope.$watch('selectedProvider', (newValue, oldValue) => {
+      if (newValue) {
+        console.log("Selected provider: ", $scope.selectedProvider);
+        Fabric.getSchema($scope.selectedProvider.id, $scope.selectedProvider.className, jolokia, (schema) => {
+          $scope.schema = schema;
+          Core.$apply($scope);
+        });
+      }
+
+    }, true);
+
+    $scope.$watch('schema', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+
+        $scope.entity['providerType'] = $scope.selectedProvider.id;
+        $location.search('tab', $scope.selectedProvider.id);
+
+        switch($scope.selectedProvider.id) {
+
+          case 'child':
+            $scope.entity['jmxUser'] = localStorage['fabric.userName'];
+            $scope.entity['jmxPassword'] = localStorage['fabric.password'];
+            break;
+
+          case 'ssh':
+            break;
+
+          case 'jcloud':
+            break;
+        }
+      }
+    }, true);
+
     $scope.response = {};
 
     $scope.versions = [];
@@ -28,21 +65,7 @@ module Fabric {
     $scope.init = () => {
 
       var tab = $location.search()['tab'];
-      if (tab) {
-        switch(tab) {
-          case 'child':
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
-            break;
-          case 'ssh':
-            $scope.activeTab = 'org_fusesource_fabric_service_ssh_CreateSshContainerOptions';
-            break;
-          case 'cloud':
-            $scope.activeTab = 'org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions';
-            break;
-          default:
-            $scope.activeTab = 'org_fusesource_fabric_api_CreateChildContainerOptions';
-        }
-      }
+      $scope.selectedProvider = $scope.providers[tab];
 
       var parentId = $location.search()['parentId'];
       if (parentId) {
@@ -99,43 +122,6 @@ module Fabric {
     });
 
 
-    $scope.renderForm = () => {
-
-        $scope.schema = Object.extended($window[$scope.activeTab]).clone();
-        $scope.schema.description = '';
-        
-        angular.forEach($scope.schema.properties, (value, key) => {
-          if (!value) {
-            delete $scope.schema.properties[key];
-          }
-        });
-
-        $scope.entity['number'] = 1;
-
-        switch($scope.activeTab) {
-
-          case 'org_fusesource_fabric_api_CreateChildContainerOptions':
-            $scope.entity['providerType'] = 'child';
-            $scope.entity['jmxUser'] = localStorage['fabric.userName'];
-            $scope.entity['jmxPassword'] = localStorage['fabric.password'];
-
-            $location.search('tab', 'child');
-
-            break;
-
-          case 'org_fusesource_fabric_service_ssh_CreateSshContainerOptions':
-            $scope.entity['providerType'] = 'ssh';
-            $location.search('tab', 'ssh');
-            break;
-
-          case 'org_fusesource_fabric_service_jclouds_CreateJCloudsContainerOptions':
-            $scope.entity['providerType'] = 'jclouds';
-            $location.search('tab', 'cloud');
-            break;
-        }
-    }
-
-
     $scope.onSubmit = (json, form) => {
 
       if (json.saveJmxCredentials) {
@@ -176,8 +162,6 @@ module Fabric {
       notification('info', "Requesting that new container(s) be created");
       $location.url('/fabric/view');
     }
-
-    $scope.$watch('activeTab', $scope.renderForm);
 
   }
 
