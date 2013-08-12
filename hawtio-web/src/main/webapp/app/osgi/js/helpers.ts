@@ -44,19 +44,31 @@ module Osgi {
 
     export function defaultPackageValues(workspace:Workspace, $scope, values) {
         var packages = [];
+
+        function onPackageEntry(packageEntry, row) {
+          if (!row) row = packageEntry;
+          var name = packageEntry["Name"];
+          var version = packageEntry["Version"];
+          if (name && !name.startsWith("#")) {
+            packageEntry["VersionLink"] = "<a href='" + url("#/osgi/package/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
+            var importingBundles = row["ImportingBundles"] || packageEntry["ImportingBundles"];
+            var exportingBundles = row["ExportingBundles"] || packageEntry["ExportingBundles"];
+            packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, importingBundles);
+            packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, importingBundles);
+            packageEntry["ExportingBundleLinks"] = bundleLinks(workspace, exportingBundles);
+            packages.push(packageEntry);
+          }
+        }
+
+        // the values could contain a child 'values' array of objects so use those directly
+        var childValues = values.values;
+        if (childValues) {
+          angular.forEach(childValues, onPackageEntry);
+        }
         angular.forEach(values, (row) => {
             angular.forEach(row, (version) => {
                 angular.forEach(version, (packageEntry) => {
-                    var name = packageEntry["Name"];
-                    var version = packageEntry["Version"];
-                    if (name && !name.startsWith("#")) {
-                        packageEntry["VersionLink"] = "<a href='" + url("#/osgi/package/" + name +"/"+ version + workspace.hash()) + "'>" + version + "</a>";
-                        packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
-                        packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, row["ImportingBundles"]);
-                        packageEntry["ExportingBundleLinks"] = bundleLinks(workspace, row["ExportingBundles"]);
-                        packages.push(packageEntry);
-                    }
-
+                  onPackageEntry(packageEntry, row)
                 });
             });
         });
