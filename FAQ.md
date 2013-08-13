@@ -24,6 +24,32 @@ Since 1.2-M2 of hawtio we enable security by default using the underlying applic
 
 Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
 
+#### How do I connect to my remote JVM?
+
+All thats required for hawtio to connect to any remove JVM is that a [jolokia agent](http://jolokia.org/agent.html) can be added to it. This can be done in various ways.
+
+Firstly if you are using [Fuse](http://www.jboss.org/products/fuse) or [Apache ActiveMQ 5.9.x or later](http://activemq.apache.org/) then you already have jolokia enabled by default.
+
+If a JVM has no jolokia agent, you can use the **Local** tab of the **Connect** menu (in 1.2.x or later of **hawtio-default.war**). The Local tab lists all local Java processes on the same machine (just like JConsole does).
+
+For JVMs not running a jolokia agent already, there's a start button (on the right) which will dynamically add the [jolokia JVM agent](http://jolokia.org/agent/jvm.html) into the selected JVM process. You can then click on the Agent URL link to connect into it.
+
+Note that the Local plugin only works when the JVM running hawtio has the **hawtio-local-jvm-mbean** plugin installed (which depends on the JVM finding the com.sun.tools.attach.VirtualMachine API that jconsole uses and is included in the hawtio-default.war). BTW if you don't see a **Local** tab inside the **Conect** menu in your hawtio application; check the log of your hawtio JVM; there might be a warning around com.sun.tools.attach.VirtualMachine not being available on the classpath).
+
+Note also that the **Local** tab only works when the process is on the same machine as the JVM running hawtio. So a safer option is just to make sure there's a jolokia agent running in each JVM you want to manage with hawtio.
+
+There are a [few different agents you can use](http://jolokia.org/agent.html):
+
+* [WAR agent](http://jolokia.org/agent/war.html) if you are using a servlet / EE container
+* [OSGi agent](http://jolokia.org/agent/osgi.html) if you are using OSGi (note that Jolokia is enabled by default in [Fuse](http://www.jboss.org/products/fuse) so you don't have to worry)
+* [JVM agent](http://jolokia.org/agent/jvm.html) if you are using a stand alone Java process
+
+So once you've got a jolokia agent in your JVM you can test it by accessing http://host:port/jolokia in a browser to see if you can view the JSON returned for the version information of the jolokia agent.
+
+Assuming you have jolokia working in your JVM, then you can use the **Remote** tab on the **Connect** menu in hawtio to connect; just enter the host, port, jolokia path and user/password.
+
+After trying the above if you have problems connecting to your JVM, please [let us know](http://hawt.io/community/index.html) by [raising an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll try to help.
+
 #### What has changed lately?
 
 Try have a look at the [change log](http://hawt.io/changelog.html) to see the latest changes in hawtio!
