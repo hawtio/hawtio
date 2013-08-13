@@ -17,6 +17,7 @@ public class Main {
     private String contextPath = "/hawtio";
     private int port = 8080;
     private String war;
+    private String warLocation;
     private String[] warPaths;
 
     public static void main(String[] args) {
@@ -41,6 +42,10 @@ public class Main {
         if (args.length > 2) {
             main.setContextPath(args[2]);
         }
+        doRun(main);
+    }
+
+    public static void doRun(Main main) {
         try {
             main.run();
         } catch (Exception e) {
@@ -55,7 +60,11 @@ public class Main {
 
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(contextPath);
-        String war = findWar(getWar());
+
+        String war = getWarLocation();
+        if (war == null) {
+            war = findWar(getWar());
+        }
         if (war == null) {
             war = findWar(getWarPaths());
         }
@@ -71,7 +80,7 @@ public class Main {
         System.out.println("About to start war " + war);
         server.start();
 
-        System.out.println("Connect via: http://localhost:" + port + contextPath);
+        System.out.println("hawtio started! connect via: http://localhost:" + port + contextPath);
         server.join();
     }
 
@@ -140,6 +149,14 @@ public class Main {
 
     public String[] getWarPaths() {
         return warPaths;
+    }
+
+    public String getWarLocation() {
+        return warLocation;
+    }
+
+    public void setWarLocation(String warLocation) {
+        this.warLocation = warLocation;
     }
 
     /**

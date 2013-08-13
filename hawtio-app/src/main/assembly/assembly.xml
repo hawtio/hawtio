@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+  <id>hawtio-app</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>embedded.properties</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory></outputDirectory>
+      <unpack>true</unpack>
+      <outputFileNameMapping></outputFileNameMapping>
+      <includes>
+        <include>io.hawt:hawtio-app</include>
+        <include>io.hawt:hawtio-embedded</include>
+        <include>org.eclipse.jetty:*</include>
+        <include>org.eclipse.jetty.aggregate:*</include>
+        <include>org.eclipse.jetty.orbit:*</include>
+        <include>org.slf4j:*</include>
+        <include>log4j:log4j</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping>hawtio.war</outputFileNameMapping>
+      <includes>
+        <include>io.hawt:hawtio-default</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

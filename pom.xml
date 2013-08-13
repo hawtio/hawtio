@@ -267,6 +267,7 @@
     <module>hawtio-default-offline</module>
     <module>hawtio-no-slf4j</module>
     <module>hawtio-embedded</module>
+    <module>hawtio-app</module>
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-examples</module>
