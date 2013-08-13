@@ -84,6 +84,34 @@
 
 <p>Here's how to <a href="https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse">disable security</a> if you wish to remove the need to login to hawtio.</p>
 
+<h4 id = "How_do_I_connect_to_my_remote_JVM_">How do I connect to my remote JVM?</h4>
+
+<p>All thats required for hawtio to connect to any remove JVM is that a <a href="http://jolokia.org/agent.html">jolokia agent</a> can be added to it. This can be done in various ways.</p>
+
+<p>Firstly if you are using <a href="http://www.jboss.org/products/fuse">Fuse</a> or <a href="http://activemq.apache.org/">Apache ActiveMQ 5.9.x or later</a> then you already have jolokia enabled by default.</p>
+
+<p>If a JVM has no jolokia agent, you can use the <strong>Local</strong> tab of the <strong>Connect</strong> menu (in 1.2.x or later of <strong>hawtio-default.war</strong>). The Local tab lists all local Java processes on the same machine (just like JConsole does).</p>
+
+<p>For JVMs not running a jolokia agent already, there's a start button (on the right) which will dynamically add the <a href="http://jolokia.org/agent/jvm.html">jolokia JVM agent</a> into the selected JVM process. You can then click on the Agent URL link to connect into it.</p>
+
+<p>Note that the Local plugin only works when the JVM running hawtio has the <strong>hawtio-local-jvm-mbean</strong> plugin installed (which depends on the JVM finding the com.sun.tools.attach.VirtualMachine API that jconsole uses and is included in the hawtio-default.war). BTW if you don't see a <strong>Local</strong> tab inside the <strong>Conect</strong> menu in your hawtio application; check the log of your hawtio JVM; there might be a warning around com.sun.tools.attach.VirtualMachine not being available on the classpath).</p>
+
+<p>Note also that the <strong>Local</strong> tab only works when the process is on the same machine as the JVM running hawtio. So a safer option is just to make sure there's a jolokia agent running in each JVM you want to manage with hawtio.</p>
+
+<p>There are a <a href="http://jolokia.org/agent.html">few different agents you can use</a>:</p>
+
+<ul>
+<li><a href="http://jolokia.org/agent/war.html">WAR agent</a> if you are using a servlet / EE container</li>
+<li><a href="http://jolokia.org/agent/osgi.html">OSGi agent</a> if you are using OSGi (note that Jolokia is enabled by default in <a href="http://www.jboss.org/products/fuse">Fuse</a> so you don't have to worry)</li>
+<li><a href="http://jolokia.org/agent/jvm.html">JVM agent</a> if you are using a stand alone Java process</li>
+</ul>
+
+<p>So once you've got a jolokia agent in your JVM you can test it by accessing http://host:port/jolokia in a browser to see if you can view the JSON returned for the version information of the jolokia agent.</p>
+
+<p>Assuming you have jolokia working in your JVM, then you can use the <strong>Remote</strong> tab on the <strong>Connect</strong> menu in hawtio to connect; just enter the host, port, jolokia path and user/password.</p>
+
+<p>After trying the above if you have problems connecting to your JVM, please <a href="http://hawt.io/community/index.html">let us know</a> by <a href="https://github.com/hawtio/hawtio/issues?state=open">raising an issue</a> and we'll try to help.</p>
+
 <h4 id = "What_has_changed_lately_">What has changed lately?</h4>
 
 <p>Try have a look at the <a href="http://hawt.io/changelog.html">change log</a> to see the latest changes in hawtio!</p>
