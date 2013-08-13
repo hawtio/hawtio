@@ -840,7 +840,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             StoredConfig config = repository.getConfig();
             String url = config.getString("remote", "origin", "url");
             if (Strings.isBlank(url)) {
-                logPull("No remove repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                logPull("No remote repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
                 return;
             }
             String branch = repository.getBranch();
