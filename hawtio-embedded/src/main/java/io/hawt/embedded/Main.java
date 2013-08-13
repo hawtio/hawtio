@@ -19,6 +19,7 @@ public class Main {
     private String war;
     private String warLocation;
     private String[] warPaths;
+    private String extraClassPath;
 
     public static void main(String[] args) {
         if (args.length <= 0) {
@@ -73,6 +74,10 @@ public class Main {
         }
         webapp.setWar(war);
         webapp.setParentLoaderPriority(true);
+        webapp.setLogUrlOnStart(true);
+        if (extraClassPath != null) {
+            webapp.setExtraClasspath(extraClassPath);
+        }
 
         Server server = new Server(port);
         server.setHandler(webapp);
@@ -80,7 +85,12 @@ public class Main {
         System.out.println("About to start war " + war);
         server.start();
 
-        System.out.println("hawtio started! connect via: http://localhost:" + port + contextPath);
+        System.out.println();
+        System.out.println("hawtio: Don't cha wish your console was hawt like me!");
+        System.out.println("=====================================================");
+        System.out.println();
+        System.out.println("http://localhost:" + port + contextPath);
+        System.out.println();
         server.join();
     }
 
@@ -165,5 +175,13 @@ public class Main {
      */
     public void setWarPaths(String... warPaths) {
         this.warPaths = warPaths;
+    }
+
+    public String getExtraClassPath() {
+        return extraClassPath;
+    }
+
+    public void setExtraClassPath(String extraClassPath) {
+        this.extraClassPath = extraClassPath;
     }
 }

@@ -35,6 +35,26 @@ public class App {
     public static void main(String[] args) {
         Main main = new Main();
         try {
+            String virtualMachineClass = "com.sun.tools.attach.VirtualMachine";
+            try {
+                Class<?> aClass = loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
+                //System.out.println("Found " + aClass + " on the classpath!");
+            } catch (Exception e) {
+                // lets try find the tools.jar instead
+                String path = System.getProperty("java.home", ".");
+                String jreSuffix = "/jre";
+                if (path.endsWith(jreSuffix)) {
+                    path = path.substring(0, path.length() - jreSuffix.length());
+                }
+                File file = new File(path, "lib/tools.jar");
+                if (file.exists()) {
+                    //System.out.println("Found tools.jar at " + file);
+                    main.setExtraClassPath("file://" + file.getCanonicalPath());
+                } else {
+                    System.out.println("Failed to load class " + virtualMachineClass + " and find tools.jar at " + file + ". " + e);
+                }
+            }
+
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL resource = classLoader.getResource(WAR_FILENAME);
             if (resource == null) {
@@ -42,7 +62,7 @@ public class App {
                 System.exit(1);
             }
             File warFile = File.createTempFile("hawtio-", ".war");
-            System.out.println("Extracting " + WAR_FILENAME + " to " + warFile + " ...");
+            //System.out.println("Extracting " + WAR_FILENAME + " to " + warFile + " ...");
             writeStreamTo(resource.openStream(), new FileOutputStream(warFile), 64 * KB);
 
             String warPath = warFile.getCanonicalPath();
@@ -70,6 +90,17 @@ public class App {
             System.out.println("Failed to create hawtio: " + e);
             e.printStackTrace();
         }
+    }
+
+    private static Class<?> loadClass(String name, ClassLoader... classLoaders) throws ClassNotFoundException {
+        for (ClassLoader classLoader : classLoaders) {
+            try {
+                return classLoader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+        }
+        return Class.forName(name);
     }
 
     public static int writeStreamTo(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
