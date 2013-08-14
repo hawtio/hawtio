@@ -6,6 +6,7 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Hawtio & Apache Jclouds](http://iocanel.blogspot.co.uk/2013/07/hawtio-apache-jclouds.html) by [Ioannis Canellos](http://iocanel.blogspot.co.uk/)
 * [Apache Camel web dashboard with hawtio](http://www.davsclaus.com/2013/04/apache-camel-web-dashboard-with-hawtio.html) by [Claus Ibsen](http://www.davsclaus.com)
 * [introducing the Apache Camel based open source iPaaS](http://macstrac.blogspot.co.uk/2013/06/introducing-apache-camel-based-open.html) by [James Strachan](http://macstrac.blogspot.co.uk/)
+* [Monitoring Camel Application](http://bushorn.com/monitoring-camel-application/) by [Gnanaguru](http://bushorn.com/author/gnanagurus/)
 
 ## Demos
 
