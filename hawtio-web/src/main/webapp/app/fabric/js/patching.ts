@@ -2,14 +2,18 @@ module Fabric {
   export function PatchingController($scope, jolokia, localStorage, $location) {
 
     $scope.files = [];
-    $scope.targetVersion = null;
+    $scope.targetVersion = $location.search()['versionId'];
     $scope.newVersionName = '';
     $scope.proxyUser = localStorage['fabric.userName'];
     $scope.proxyPassword = localStorage['fabric.password'];
     $scope.saveJmxCredentials = false;
 
+    $scope.cancel = () => {
+      $location.url('/fabric/view').search({cv: $scope.targetVersion});
+    }
+
     $scope.valid = () => {
-      return $scope.files.length > 0 && $scope.targetVersion !== null && $scope.proxyUser && $scope.proxyPassword;
+      return $scope.files && $scope.files.length > 0 && $scope.targetVersion !== null && $scope.proxyUser && $scope.proxyPassword;
     }
 
     $scope.go = () => {

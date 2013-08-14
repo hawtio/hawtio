@@ -235,6 +235,9 @@ module Fabric {
       });
     };
 
+    $scope.patchVersion = (versionId) => {
+      $location.url('/fabric/patching').search({versionId: versionId});
+    }
 
 
     $scope.migrateVersion = (targetName, sourceName) => {

@@ -81,9 +81,7 @@
 
           <div class="section-controls">
 
-            <!--
-            <i class="icon-plus clickable" title="Apply patch to Version" ng-show="activeVersionId && activeVersionId != ''"></i>
-            -->
+            <i class="icon-dropbox clickable" title="Apply patch to Version" ng-show="activeVersionId && activeVersionId != ''" ng-click="patchVersion(activeVersionId)" title="Upload and apply patches to the selected version"></i>
 
             <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog = true"></i>
 
