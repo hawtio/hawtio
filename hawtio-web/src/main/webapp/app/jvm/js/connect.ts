@@ -3,8 +3,6 @@ module JVM {
 
     JVM.configureScope($scope, $location, workspace);
 
-    $scope.host = "localhost";
-    $scope.path = "jolokia";
     $scope.useProxy = true;
 
     // lets load the local storage configuration
@@ -18,12 +16,14 @@ module JVM {
         // ignore
       }
     }
+    $scope.host = config["host"] || "localhost";
+    $scope.path = config["path"] || "jolokia";
     $scope.port = config["port"] || 8181;
     $scope.userName = config["userName"];
     $scope.password = config["password"];
 
     // replicate changes to local storage
-    angular.forEach(["userName", "password", "port"], (name) => {
+    angular.forEach(["userName", "password", "port", "path", "host"], (name) => {
       $scope.$watch(name, () => {
         var value = $scope[name];
         if (value) {
