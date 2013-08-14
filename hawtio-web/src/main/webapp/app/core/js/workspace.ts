@@ -24,9 +24,9 @@ class Workspace {
   public treeWatchRegisterHandle = null;
   public treeWatcherCounter = null;
   public treeElement = null;
-  public connectFailure = null;
 
   constructor(public jolokia,
+              public jolokiaStatus,
               public jmxTreeLazyLoadRegistry,
               public $location,
               public $compile:ng.ICompileService,
@@ -40,7 +40,8 @@ class Workspace {
    * Creates a shallow copy child workspace with its own selection and location
    */
   public createChildWorkspace(location): Workspace {
-    var child = new Workspace(this.jolokia, this.jmxTreeLazyLoadRegistry, this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope);
+    var child = new Workspace(this.jolokia, this.jolokiaStatus, this.jmxTreeLazyLoadRegistry,
+            this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope);
     // lets copy across all the properties just in case
     angular.forEach(this, (value, key) => child[key] = value);
     child.$location = location;
@@ -58,18 +59,12 @@ class Workspace {
   public loadTree() {
     // Make an initial blocking call to ensure the JMX tree is populated while the
     // app is initializing...
-    var initialLoadError = (response) => {
-      console.log("Initial load failed: " + response);
-      this.connectFailure = response;
-      Core.$apply(this.$rootScope);
-    };
-
     //var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
-    var flags = {maxDepth: 2};
+    var flags = {ignoreErrors: true, maxDepth: 2};
     var data = this.jolokia.list(null, onSuccess(null, flags));
 
     if (data) {
-      this.connectFailure = null;
+      this.jolokiaStatus.xhr = null;
     }
     this.populateTree({
       value: data

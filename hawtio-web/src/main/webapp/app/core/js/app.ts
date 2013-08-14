@@ -1,6 +1,6 @@
 module Core {
 
-  export function AppController($scope, $location, workspace, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
+  export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
 
     if (userDetails.username === null) {
       // sigh, hack
@@ -15,8 +15,8 @@ module Core {
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
 
-    $scope.$watch('workspace.connectFailure', function () {
-      var failure = workspace.connectFailure;
+    $scope.$watch('jolokiaStatus.xhr', function () {
+      var failure = jolokiaStatus.xhr;
       $scope.connectionFailed = failure ? true : false;
       $scope.connectFailure.summaryMessage = null;
       if ($scope.connectionFailed) {

@@ -124,6 +124,12 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return jolokiaUrl;
         }).
 
+        factory('jolokiaStatus', function() {
+          return {
+            xhr: null
+          };
+        }).
+
         factory('userDetails', function(jolokiaUrl, localStorage) {
           var answer = angular.fromJson(localStorage[jolokiaUrl]);
           if (!angular.isDefined(answer)) {
@@ -137,7 +143,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
         }).
 
-        factory('jolokia',($location:ng.ILocationService, localStorage, $rootScope, userDetails) => {
+        factory('jolokia',($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           console.log("Jolokia URL is " + jolokiaUrl);
@@ -185,9 +191,11 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               if (xhr.status === 401 || xhr.status === 403) {
                 userDetails.username = null;
                 userDetails.password = null;
-                Core.$apply($rootScope);
+              } else {
+                jolokiaStatus.xhr = xhr;
               }
-            }
+              Core.$apply($rootScope);
+            };
 
             var jolokia = new Jolokia(jolokiaParams);
             localStorage['url'] = jolokiaUrl;
@@ -224,8 +232,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           var jquery:any = $;
           return jquery.xml2json;
         }).
-        factory('workspace',($location:ng.ILocationService, jmxTreeLazyLoadRegistry, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, $rootScope) => {
-          var answer = new Workspace(jolokia, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
+        factory('workspace',($location:ng.ILocationService, jmxTreeLazyLoadRegistry, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope) => {
+          var answer = new Workspace(jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
           answer.loadTree();
           return answer;
         }).
