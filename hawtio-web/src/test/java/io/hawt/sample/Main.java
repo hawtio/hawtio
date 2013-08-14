@@ -43,11 +43,12 @@ public class Main {
             Log.setLog(new Slf4jLog("jetty"));
             int port = Integer.parseInt(System.getProperty("jettyPort", "8080"));
             String contextPath = System.getProperty("context", "/hawtio");
+            if (!contextPath.startsWith("/")) {
+                contextPath = "/" + contextPath;
+            }
             String path = System.getProperty("webapp-outdir", "target/hawtio-web-1.2-SNAPSHOT");
             String webXml = path + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
-
-            println("Connect via http://localhost:" + port + contextPath + " using web app source path: " + path);
 
             String pathSeparator = File.pathSeparator;
 
@@ -156,6 +157,11 @@ public class Main {
 
 
             // lets connect to fabric
+            println("");
+            println("");
+            println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + path);
+            println("");
+            println("");
 
             LOG.info("starting jetty");
             server.start();
