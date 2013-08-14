@@ -24,6 +24,7 @@ class Workspace {
   public treeWatchRegisterHandle = null;
   public treeWatcherCounter = null;
   public treeElement = null;
+  public connectFailure = null;
 
   constructor(public jolokia,
               public jmxTreeLazyLoadRegistry,
@@ -57,14 +58,25 @@ class Workspace {
   public loadTree() {
     // Make an initial blocking call to ensure the JMX tree is populated while the
     // app is initializing...
-    var options = onSuccess(null, {ignoreErrors: true, maxDepth: 2});
-    var data = this.jolokia.list(null, options);
+    var initialLoadError = (response) => {
+      console.log("Initial load failed: " + response);
+      this.connectFailure = response;
+      Core.$apply(this.$rootScope);
+    };
+
+    var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
+    var data = this.jolokia.list(null, onSuccess(null, flags));
+
+    if (data) {
+      this.connectFailure = null;
+    }
     this.populateTree({
       value: data
     });
     // we now only reload the tree if the TreeWatcher mbean is present...
     // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
   }
+
 
   /**
    * Adds a post processor of the tree to swizzle the tree metadata after loading

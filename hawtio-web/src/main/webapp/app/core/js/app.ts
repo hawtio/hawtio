@@ -12,6 +12,47 @@ module Core {
     $scope.pageTitle = [];
     $scope.userDetails = userDetails;
     $scope.confirmLogout = false;
+    $scope.connectionFailed = false;
+    $scope.connectFailure = {};
+
+    $scope.$watch('workspace.connectFailure', function () {
+      var failure = workspace.connectFailure;
+      $scope.connectionFailed = failure ? true : false;
+      $scope.connectFailure.summaryMessage = null;
+      if ($scope.connectionFailed) {
+        $scope.connectFailure.status = failure.status;
+        $scope.connectFailure.statusText = failure.statusText;
+        var text = failure.responseText;
+        if (text) {
+          // lets try parse and return the body contents as HTML
+          try {
+            var html = $(text);
+            var markup = html.find("body");
+            if (markup && markup.length) {
+              html = markup;
+            }
+            // lets tone down the size of the headers
+            html.each((idx, e) => {
+              var name = e.localName;
+              if (name && name.startsWith("h")) {
+                $(e).addClass("ajaxError");
+              }
+            });
+            var container = $("<div></div>");
+            container.append(html);
+            $scope.connectFailure.summaryMessage = container.html();
+            console.log("Found HTML: " + $scope.connectFailure.summaryMessage);
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+    });
+
+    $scope.confirmConnectionFailed = () => {
+      // I guess we should close the window now?
+      window.close();
+    };
 
     $scope.setPageTitle = () => {
       $scope.pageTitle = pageTitle.getTitleArrayExcluding(['hawtio']);
@@ -21,7 +62,7 @@ module Core {
       } else {
         setPageTitle($document, pageTitle);
       }
-    }
+    };
 
     $scope.setRegexIndicator = () => {
       try {
@@ -40,15 +81,15 @@ module Core {
       } catch (e) {
         // ignore
       }
-    }
+    };
 
     $scope.loggedIn = () => {
       return userDetails.username !== null && userDetails.username !== 'public';
-    }
+    };
 
     $scope.logout = () => {
       $scope.confirmLogout = true;
-    }
+    };
 
     $scope.doLogout = () => {
 
@@ -79,7 +120,7 @@ module Core {
           $scope.$apply();
         }
       });
-    }
+    };
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
 

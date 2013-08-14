@@ -134,6 +134,26 @@
   </div>
 </div>
 
+<div class="ng-cloak">
+  <div modal="connectionFailed">
+    <form class="form-horizontal no-bottom-margin" ng-submit="confirmConnectionFailed()">
+      <div class="modal-header">
+        <h2 title="Status Code: {{connectFailure.status}}">Cannot Connect: {{connectFailure.statusText}}</h2>
+      </div>
+
+      <div class="modal-body">
+        <p>Cannot connect to Jolokia to access this Java process</p>
+
+        <div class="ajaxError" ng-bind-html-unsafe="connectFailure.summaryMessage"/>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value="Close This Window">
+      </div>
+    </form>
+
+  </div>
+</div>
+
 <!-- charts and jolokia for jmx -->
 <script type="text/javascript" src="lib/d3.v3.min.js"></script>
 
