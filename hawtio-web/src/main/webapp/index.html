@@ -144,7 +144,14 @@
       <div class="modal-body">
         <p>Cannot connect to Jolokia to access this Java process</p>
 
-        <div class="ajaxError" ng-bind-html-unsafe="connectFailure.summaryMessage"/>
+        <div class="expandable closed">
+          <div title="Headers" class="title">
+            <i class="expandable-indicator"></i> Error Details
+          </div>
+          <div class="expandable-body well">
+            <div class="ajaxError" ng-bind-html-unsafe="connectFailure.summaryMessage"/>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" type="submit" value="Close This Window">
