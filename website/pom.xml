@@ -15,6 +15,7 @@
   <description>The hawt.io Website and Documentation</description>
 
   <properties>
+    <jettyPort>8000</jettyPort>
     <scala-version>2.9.0</scala-version>
 <!--
     TODO lets not use 2.10 scala yet as it seems the 1.6.1 distro of scalate borks the scalate plugin
