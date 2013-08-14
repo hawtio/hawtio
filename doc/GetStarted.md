@@ -3,6 +3,18 @@ You can use hawtio in many different containers - or outside a container. Below 
 The out of the box defaults try to do the right thing for most folks but you may want to check out [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things.
 
 
+## Using the executable jar
+
+You can startup hawtio on your machine using the hawtio-app executable jar.
+
+<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.2-M5/hawtio-app-1.2-M5.jar">Download the executable hawtio-app-1.2-M5.jar</a>
+
+Once you have downloaded it, just run this from the command line:
+
+    java -jar hawtio-app-1.2-M5.jar
+
+ And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
+
 ## Using a Servlet Engine or Application Server
 
 If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:
