@@ -64,7 +64,8 @@ class Workspace {
       Core.$apply(this.$rootScope);
     };
 
-    var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
+    //var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
+    var flags = {maxDepth: 2};
     var data = this.jolokia.list(null, onSuccess(null, flags));
 
     if (data) {
