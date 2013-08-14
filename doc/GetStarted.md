@@ -149,3 +149,10 @@ From a git clone you should be able to run the a sample hawtio console as follow
 Then opening [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) should show hawtio with a sample web application with some ActiveMQ and Camel inside to interact with.
 
 A good MBean for real time values and charts is `java.lang/OperatingSystem`. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.
+
+## Further Reading
+
+* [Articles and Demos](http://hawt.io/articles/index.html)
+* [FAQ](http://hawt.io/faq/index.html)
+* [How to contribute](http://hawt.io/contributing/index.html)
+* [Join the hawtio community](http://hawt.io/community/index.html)

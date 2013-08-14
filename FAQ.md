@@ -54,6 +54,10 @@ After trying the above if you have problems connecting to your JVM, please [let 
 
 Try have a look at the [change log](http://hawt.io/changelog.html) to see the latest changes in hawtio!
 
+#### Where can I find more information?
+
+Try have a look at the [articles and demos](http://hawt.io/articles/index.html) to see what other folks are saying about hawtio.
+
 #### Why does hawtio log a bunch of 404s to the javascript console at startup?
 
 The hawtio help registry tries to automatically discover help data for each registered plugin even if plugins haven't specifically registered a help file.

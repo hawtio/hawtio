@@ -1,0 +1,11 @@
+---
+title: whats hawt on the internet?
+--- pipeline:ssp,markdown
+  <div class="container">
+    <div id="content">
+
+${unescape(loadText(new FileInputStream("../doc/Articles.md")))}
+
+</div>
+  </div>
+

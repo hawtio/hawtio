@@ -80,7 +80,8 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 We love [contributions](http://hawt.io/contributing/index.html)!
 
-* [hawtio FAQ](http://hawt.io/faq/index.html)
+* [articles and demos](http://hawt.io/articles/index.html)
+* [FAQ](http://hawt.io/faq/index.html)
 * [How to contribute](http://hawt.io/contributing/index.html)
 * [How to build the code](http://hawt.io/building/index.html)
 * [How to get started working on the code](http://hawt.io/developers/index.html)
