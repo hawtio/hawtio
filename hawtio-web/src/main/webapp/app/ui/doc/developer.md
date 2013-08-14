@@ -1,6 +1,8 @@
 ### UI
 
-The **UI** plugin provides a number of [AngularJS](http://angularjs.org/) directives for creating a number of UI widgets.
+The **UI** plugin provides a number of [AngularJS](http://angularjs.org/) directives for creating a number of UI widgets.  The following examples can be edited and are re-compiled on the fly.
+
+<div ng-include="'app/ui/html/test.html'"></div>
 
 <table class="table">
 <tr>
