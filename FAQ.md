@@ -34,7 +34,7 @@ If a JVM has no jolokia agent, you can use the **Local** tab of the **Connect** 
 
 For JVMs not running a jolokia agent already, there's a start button (on the right) which will dynamically add the [jolokia JVM agent](http://jolokia.org/agent/jvm.html) into the selected JVM process. You can then click on the Agent URL link to connect into it.
 
-Note that the Local plugin only works when the JVM running hawtio has the **hawtio-local-jvm-mbean** plugin installed (which depends on the JVM finding the com.sun.tools.attach.VirtualMachine API that jconsole uses and is included in the hawtio-default.war). BTW if you don't see a **Local** tab inside the **Conect** menu in your hawtio application; check the log of your hawtio JVM; there might be a warning around com.sun.tools.attach.VirtualMachine not being available on the classpath).
+Note that the Local plugin only works when the JVM running hawtio has the **hawtio-local-jvm-mbean** plugin installed (which depends on the JVM finding the com.sun.tools.attach.VirtualMachine API that jconsole uses and is included in the hawtio-default.war). BTW if you don't see a **Local** tab inside the **Conect** menu in your hawtio application; check the log of your hawtio JVM; there might be a warning around com.sun.tools.attach.VirtualMachine not being available on the classpath. Or you could just try using the [exectuable jar](http://hawt.io/getstarted/index.html) to run hawtio which seems to work on most platforms.
 
 Note also that the **Local** tab only works when the process is on the same machine as the JVM running hawtio. So a safer option is just to make sure there's a jolokia agent running in each JVM you want to manage with hawtio.
 
