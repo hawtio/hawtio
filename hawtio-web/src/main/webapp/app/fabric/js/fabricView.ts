@@ -51,11 +51,12 @@ module Fabric {
     $scope.filterActiveVersion = false;
     $scope.filterActiveProfile = false;
 
-    $scope.deleteVersionDialog = false;
-    $scope.deleteProfileDialog = false;
-    $scope.createProfileDialog = false;
-    $scope.createVersionDialog = false;
-    $scope.connectToContainerDialog = false;
+    $scope.deleteVersionDialog = new Core.Dialog();
+    $scope.deleteProfileDialog = new Core.Dialog();
+    $scope.createProfileDialog = new Core.Dialog();
+    $scope.createVersionDialog = new Core.Dialog();
+
+    $scope.connectToContainerDialog = new Core.Dialog();
     $scope.ensembleContainerIds = [];
 
     $scope.targetContainer = {};
@@ -169,7 +170,7 @@ module Fabric {
     // create profile dialog action
     $scope.doCreateProfile = (newProfileName, selectedParents) => {
       $scope.newProfileName = newProfileName;
-      $scope.createProfileDialog = false;
+      $scope.createProfileDialog.close();
       var parents = selectedParents.map(function(profile) {return profile.id});
       createProfile(jolokia, $scope.activeVersionId, $scope.newProfileName, parents, function() {
         notification('success', "Created profile " + $scope.newProfileName);
@@ -185,7 +186,7 @@ module Fabric {
 
     // create version dialog action
     $scope.doCreateVersion = (newVersionName) => {
-      $scope.createVersionDialog = false;
+      $scope.createVersionDialog.close();
       $scope.newVersionName = newVersionName;
 
       var success = function (response) {
@@ -504,7 +505,7 @@ module Fabric {
 
     $scope.doConnect = (container) => {
       $scope.targetContainer = container;
-      $scope.connectToContainerDialog = true;
+      $scope.connectToContainerDialog.open();
     }
 
 
@@ -516,7 +517,7 @@ module Fabric {
       }
       Fabric.connect(localStorage, $scope.targetContainer, $scope.userName, $scope.password, true);
       $scope.targetContainer = {};
-      $scope.connectToContainerDialog = false;
+      $scope.connectToContainerDialog.close();
     };
 
 

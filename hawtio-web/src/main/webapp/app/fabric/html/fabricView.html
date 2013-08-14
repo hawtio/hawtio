@@ -83,7 +83,7 @@
 
             <i class="icon-dropbox clickable" title="Apply patch to Version" ng-show="activeVersionId && activeVersionId != ''" ng-click="patchVersion(activeVersionId)" title="Upload and apply patches to the selected version"></i>
 
-            <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog = true"></i>
+            <i class="icon-plus clickable" title="Create new Version" ng-click="createVersionDialog.open()"></i>
 
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/" ng-show="hasFabricWiki()"
@@ -93,7 +93,7 @@
 
 
 
-            <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog = true" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
+            <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog.open()" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
 
             <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
 
@@ -121,12 +121,12 @@
           </div>
           <div class="section-controls">
 
-            <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog = true"></i>
+            <i class="icon-plus clickable" title="Create new Profile" ng-click="createProfileDialog.open()"></i>
             <!--
             <a ng-href="#/wiki/branch/{{version.id}}/view/{{selected[0].id}}" class="btn" ng-disabled="selected.length == 0" ng-show="hasFabricWiki()"
                title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
              </a>-->
-            <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog = true" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
+            <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog.open()" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
             <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
 
            </div>
@@ -208,7 +208,7 @@
   </div>
 
   <!-- dialogs -->
-  <div hawtio-confirm-dialog="connectToContainerDialog" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
+  <div hawtio-confirm-dialog="connectToContainerDialog.show" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
     <div class="dialog-body">
       <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
         <div class="control-group">
@@ -234,19 +234,19 @@
     </div>
   </div>
 
-  <div hawtio-confirm-dialog="deleteVersionDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
+  <div hawtio-confirm-dialog="deleteVersionDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
     <div class="dialog-body">
       <p>Delete version {{activeVersionId}}?</p>
     </div>
   </div>
 
-  <div hawtio-confirm-dialog="deleteProfileDialog" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelectedProfiles()">
+  <div hawtio-confirm-dialog="deleteProfileDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSelectedProfiles()">
     <div class="dialog-body">
       <p>Are you sure you want to delete the profiles {{getSelectedProfileIds().join(", ")}}</p>
     </div>
   </div>
 
-  <div modal="createProfileDialog">
+  <div modal="createProfileDialog.show">
     <form name="createProfile" class="form-horizontal no-bottom-margin" ng-submit="doCreateProfile(newProfileName, selectedParents)">
       <div class="modal-header"><h4>Create new Profile in Version {{activeVersionId}}...</h4></div>
       <div class="modal-body">
@@ -261,12 +261,12 @@
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createProfile.$valid" type="submit" value="Create">
-        <input class="btn btn-primary" ng-click="createProfileDialog = false" value="Cancel">
+        <input class="btn btn-primary" ng-click="createProfileDialog.close()" value="Cancel">
       </div>
     </form>
   </div>
 
-  <div modal="createVersionDialog">
+  <div modal="createVersionDialog.show">
     <form name="createVersion" class="form-horizontal no-bottom-margin" ng-submit="doCreateVersion(newVersionName)">
       <div class="modal-header"><h4>Create new Version...</h4></div>
       <div class="modal-body">
@@ -281,7 +281,7 @@
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createVersion.$valid" type="submit" value="Create">
-        <input class="btn btn-primary" ng-click="createVersionDialog = false" value="Cancel">
+        <input class="btn btn-primary" ng-click="createVersionDialog.close()" value="Cancel">
       </div>
     </form>
   </div>

@@ -14,7 +14,7 @@ module UI {
       onCancel: '&',
       onOk: '&',
       onClose: '&'
-    }
+    };
 
     public controller = ($scope, $element, $attrs, $transclude, $compile) => {
 
