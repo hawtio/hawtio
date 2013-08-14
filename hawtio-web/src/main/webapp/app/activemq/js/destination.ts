@@ -2,9 +2,20 @@ module ActiveMQ {
   export function DestinationController($scope, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
     $scope.message = "";
+    $scope.queueType = 'true';
 
     $scope.deleteDialog = false;
     $scope.purgeDialog = false;
+
+    updateQueueType();
+
+    function updateQueueType() {
+      $scope.destinationTypeName = $scope.queueType ? "Queue" : "Topic";
+    }
+
+    $scope.$watch('queueType', function () {
+      updateQueueType();
+    });
 
     $scope.$watch('workspace.selection', function () {
       workspace.moveIfViewInvalid();

@@ -6,6 +6,7 @@ module ActiveMQ {
     $routeProvider.
             when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html'}).
             when('/activemq/subscribers', {templateUrl: 'app/activemq/html/subscribers.html'}).
+            when('/activemq/createDestination', {templateUrl: 'app/activemq/html/createDestination.html'}).
             when('/activemq/createQueue', {templateUrl: 'app/activemq/html/createQueue.html'}).
             when('/activemq/createTopic', {templateUrl: 'app/activemq/html/createTopic.html'}).
             when('/activemq/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html'}).
@@ -101,14 +102,20 @@ module ActiveMQ {
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-plus"></i> Create',
+              title: "Create a new destination",
+              isValid: (workspace:Workspace) => isBroker(workspace),
+              href: () => "#/activemq/createDestination"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-plus"></i> Create',
               title: "Create a new queue",
-              isValid: (workspace:Workspace) => isQueuesFolder(workspace) || isBroker(workspace),
+              isValid: (workspace:Workspace) => isQueuesFolder(workspace),
               href: () => "#/activemq/createQueue"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-plus"></i> Create',
               title: "Create a new topic",
-              isValid: (workspace:Workspace) => isTopicsFolder(workspace) || isBroker(workspace),
+              isValid: (workspace:Workspace) => isTopicsFolder(workspace),
               href: () => "#/activemq/createTopic"
             });
             workspace.subLevelTabs.push({
