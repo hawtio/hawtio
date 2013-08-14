@@ -43,7 +43,10 @@ module Core {
             $scope.connectFailure.summaryMessage = container.html();
             console.log("Found HTML: " + $scope.connectFailure.summaryMessage);
           } catch (e) {
-            // ignore
+            if (text.indexOf('<') < 0) {
+              // lets assume its not html markup if it doesn't have a tag in it
+              $scope.connectFailure.summaryMessage = "<p>" + text + "</p>";
+            }
           }
         }
       }

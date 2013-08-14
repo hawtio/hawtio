@@ -193,6 +193,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
                 userDetails.password = null;
               } else {
                 jolokiaStatus.xhr = xhr;
+                if (!xhr.responseText && error) {
+                  xhr.responseText = error.stack;
+                }
               }
               Core.$apply($rootScope);
             };
