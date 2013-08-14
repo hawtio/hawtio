@@ -6,6 +6,7 @@ module Wiki {
             // allow optional branch paths...
             angular.forEach(["", "/branch/:branch"], (path) => {
               $routeProvider.
+                      when('/wiki' + path + '/view', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki' + path + '/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
                       when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
@@ -53,7 +54,7 @@ module Wiki {
               content: "Wiki",
               title: "View and edit wiki pages",
               isValid: (workspace:Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
-              href: () => "#/wiki/view/wiki",
+              href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki")
             });
           });
