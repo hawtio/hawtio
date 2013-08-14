@@ -867,7 +867,7 @@ module Core {
   }
 
   export function connectToServer(localSturage, options:ConnectToServerOptions) {
-    var url = options.jolokiaUrl;
+    var connectUrl = options.jolokiaUrl;
 
     var userDetails = {
       username: null,
@@ -883,29 +883,29 @@ module Core {
       userDetails.password = options.password;
     }
 
-    localStorage[url] = angular.toJson(userDetails);
+    localStorage[connectUrl] = angular.toJson(userDetails);
 
-    if (url) {
+    if (connectUrl) {
 
       if (options.useProxy) {
         // lets remove the http stuff
-        var idx = url.indexOf("://");
+        var idx = connectUrl.indexOf("://");
         if (idx > 0) {
-          url = url.substring(idx + 3);
+          connectUrl = connectUrl.substring(idx + 3);
         }
         // lets replace the : with a /
-        url = url.replace(":", "/");
-        url = Core.trimLeading(url, "/");
-        url = Core.trimTrailing(url, "/");
-        url = "/hawtio/proxy/" + url;
+        connectUrl = connectUrl.replace(":", "/");
+        connectUrl = Core.trimLeading(connectUrl, "/");
+        connectUrl = Core.trimTrailing(connectUrl, "/");
+        connectUrl = url("/proxy/" + connectUrl);
       } else {
-        if (url.indexOf("://") < 0) {
-          url = "http://" + url;
+        if (connectUrl.indexOf("://") < 0) {
+          connectUrl = "http://" + connectUrl;
         }
       }
-      console.log("going to server: " + url + " as user " + options.userName);
+      console.log("going to server: " + connectUrl + " as user " + options.userName);
 
-      var full = "?url=" + encodeURIComponent(url);
+      var full = "?connectUrl=" + encodeURIComponent(connectUrl);
 
       full += "#/logs";
       window.open(full);
@@ -919,18 +919,18 @@ module Core {
       if (port > 0) {
         host += ":" + port;
       }
-      var url = host + "/" + path;
+      var connectUrl = host + "/" + path;
 
       if (options.useProxy) {
-        url = "/hawtio/proxy/" + url;
+        connectUrl = url("/proxy/" + connectUrl);
       } else {
-        if (url.indexOf("://") < 0) {
-          url = "http://" + url;
+        if (connectUrl.indexOf("://") < 0) {
+          connectUrl = "http://" + connectUrl;
         }
       }
-      console.log("going to server: " + url + " as user " + options.userName);
+      console.log("going to server: " + connectUrl + " as user " + options.userName);
 
-      var full = "?url=" + encodeURIComponent(url);
+      var full = "?connectUrl=" + encodeURIComponent(connectUrl);
 
       // default the osgi view
       full += "#/osgi/bundle-list";

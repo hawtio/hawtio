@@ -2,13 +2,13 @@ module JBoss {
 
   export function DmrController($scope, $location, workspace:Workspace) {
     var search = $location.search();
-    var url = "/hawtio/proxy/localhost/9990/management";
+    var connectUrl = url("/proxy/localhost/9990/management");
     var user = search["_user"] || "";
     var pwd = search["_pwd"] || "";
     if (user) {
-      url += "?_user=" + user;
+      connectUrl += "?_user=" + user;
       if (pwd) {
-        url += "&_pwd=" + pwd;
+        connectUrl += "&_pwd=" + pwd;
       }
     }
 
@@ -41,7 +41,7 @@ module JBoss {
     console.log("Using dmr: " + isDmr + " with content type: " + format + " and data " + data);
 
     $.ajax({
-      url: url,
+      url: connectUrl,
       data: data,
       processData: false,
       type: "POST",
