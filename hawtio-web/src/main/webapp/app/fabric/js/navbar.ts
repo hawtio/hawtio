@@ -10,28 +10,25 @@ module Fabric {
       return Core.createHref($location, "#/fabric/clusters/fabric/registry/clusters", ["cv", "cp", "pv"]);
     };
 
-    $scope.$on('jmxTreeUpdated', function () {
-      reloadData();
-    });
-
-    reloadData();
-
     function reloadData() {
       var containerId = null;
       Fabric.containerWebAppURL(jolokia, "org.fusesource.insight.insight-kibana3", containerId, onKibanaUrl, onKibanaUrl);
       Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
       $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
       $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
-      var ensembleContainers = jolokia.getAttribute(Fabric.clusterManagerMBean, "EnsembleContainers");
-      if (!ensembleContainers || ensembleContainers.length == 0) {
-        $scope.hasFabric = false;
-      } else {
+      var ensembleContainers = jolokia.getAttribute(Fabric.clusterManagerMBean, "EnsembleContainers", {method: "GET"});
+      if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
         $scope.hasFabric = true;
+      } else {
+        $scope.hasFabric = false;
       }
       if (!$scope.hasFabric) {
         $location.url("/fabric/create");
       }
+
     }
+
+    reloadData();
 
     function onKibanaUrl(response) {
       var url = response ? response.value : null;

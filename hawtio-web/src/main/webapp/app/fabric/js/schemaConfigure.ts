@@ -97,8 +97,10 @@ module Fabric {
     });
     
     configureResolverSchema();
-    
-    Core.pathSet(Fabric.createEnsembleOptions, ['properties', 'password', 'password'], true);
+
+    Core.pathSet(Fabric.createEnsembleOptions, ["properties", "profiles", "type"], "hidden");
+    Core.pathSet(Fabric.createEnsembleOptions, ['properties', 'password', 'type'], "password");
+    Core.pathSet(Fabric.createEnsembleOptions, ['properties', 'zookeeperPassword', 'type'], "password");
     delete Fabric.createEnsembleOptions['properties']['users'];
 
     Fabric.createEnsembleOptions['tabs'] = {

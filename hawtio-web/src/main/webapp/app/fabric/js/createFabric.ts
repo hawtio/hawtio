@@ -1,6 +1,12 @@
 module Fabric {
 
-  export function CreateFabricController($scope, jolokia, $location) {
+  export function CreateFabricController($scope, jolokia, $location, workspace:Workspace) {
+
+    $scope.$on('$routeChangeSuccess', () => {
+      if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
+        $location.url("/fabric/view");
+      }
+    });
 
     $scope.schema = Fabric.createEnsembleOptions;
 
@@ -23,7 +29,7 @@ module Fabric {
         method: 'post',
         success: (response) => {
           notification('success', "Created fabric!");
-          $location.url("/fabric/overview");
+          $location.url("/fabric/view");
           Core.$apply($scope);
         },
         error: (response) => {
