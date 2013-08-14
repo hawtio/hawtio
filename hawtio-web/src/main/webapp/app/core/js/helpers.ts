@@ -905,7 +905,7 @@ module Core {
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
 
-      var full = "?connectUrl=" + encodeURIComponent(connectUrl);
+      var full = "?url=" + encodeURIComponent(connectUrl);
 
       full += "#/logs";
       window.open(full);
@@ -930,7 +930,7 @@ module Core {
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
 
-      var full = "?connectUrl=" + encodeURIComponent(connectUrl);
+      var full = "?url=" + encodeURIComponent(connectUrl);
 
       // default the osgi view
       full += "#/osgi/bundle-list";
