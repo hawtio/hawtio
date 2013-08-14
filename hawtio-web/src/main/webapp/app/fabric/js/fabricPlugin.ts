@@ -46,7 +46,7 @@ module Fabric {
             workspace.topLevelTabs.push( {
               content: "Fabric",
               title: "Manage your containers and middleware in a fabric",
-              isValid: (workspace) => workspace.treeContainsDomainAndProperties(jmxDomain, {type: 'Fabric'}),
+              isValid: (workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
               href: () => "#/fabric/view",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
