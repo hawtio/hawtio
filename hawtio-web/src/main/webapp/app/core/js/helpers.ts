@@ -933,7 +933,7 @@ module Core {
       var full = "?url=" + encodeURIComponent(connectUrl);
 
       // default the osgi view
-      full += "#/osgi/bundle-list";
+      //full += "#/osgi/bundle-list";
       console.log("Full URL is: " + full);
       window.open(full);
     }
