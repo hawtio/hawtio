@@ -24,6 +24,8 @@ module UI {
         return new UI.ColorPicker()
       }).directive('hawtioFileUpload', () => {
         return new UI.FileUpload();
+      }).directive('expandable', () => {
+        return new UI.Expandable();
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });

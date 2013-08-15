@@ -2,6 +2,16 @@ module UI {
 
   export function UITestController($scope, workspace) {
 
+    $scope.expandableEx = '' +
+        '<div class="expandable closed">\n' +
+        '   <div title="The title" class="title">\n' +
+        '     <i class="expandable-indicator"></i> Expandable title\n' +
+        '   </div>\n' +
+        '   <div class="expandable-body well">\n' +
+        '     This is the expandable content...  Note that adding the "well" class isn\'t necessary but makes for a nice inset look\n' +
+        '   </div>\n' +
+        '</div>'
+
     $scope.showDeleteOne = new Core.Dialog();
     $scope.showDeleteTwo = new Core.Dialog();
 
