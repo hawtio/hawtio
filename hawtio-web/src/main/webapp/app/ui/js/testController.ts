@@ -12,6 +12,13 @@ module UI {
         '   </div>\n' +
         '</div>'
 
+
+    $scope.editablePropertyEx1 = '<editable-property ng-model="editablePropertyModelEx1" property="property"></editable-property>';
+
+    $scope.editablePropertyModelEx1 = {
+      property: "This is editable (hover to edit)"
+    };
+
     $scope.showDeleteOne = new Core.Dialog();
     $scope.showDeleteTwo = new Core.Dialog();
 

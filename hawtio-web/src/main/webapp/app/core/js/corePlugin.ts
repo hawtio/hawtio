@@ -67,20 +67,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         }).
         constant('layoutTree', 'app/core/html/layoutTree.html').
         constant('layoutFull', 'app/core/html/layoutFull.html').
-        constant('editablePropertyTemplate',
-                '<div ng-mouseenter="showEdit()" ng-mouseleave="hideEdit()" class="ep" ng-hide="editing">' +
-                        '{{text}}&nbsp;<i class="ep-edit icon-pencil" title="Edit this item" ng-click="doEdit()"></i>' +
-                        '</div>' +
-                        '<div class="ep" ng-show="editing">' +
-                        '<form class="form-inline no-bottom-margin" ng-submit="saveEdit()">' +
-                        '<fieldset>' +
-                        '<input type="text" value="{{text}}">' +
-                        '<i class="green clickable icon-ok icon1point5x" title="Save changes" ng-click="saveEdit()"></i>' +
-                        '<i class="red clickable icon-remove icon1point5x" title="Discard changes" ng-click="stopEdit()"></i>' +
-                        '</fieldset>' +
-                        '</form>' +
-                        '</div>').
-
         service('localStorage',function () {
           // TODO Create correct implementation of windowLocalStorage
           var storage:WindowLocalStorage = window.localStorage || <any> (function () {
@@ -344,60 +330,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
                 }
             );
           };
-        }]).
-        directive('editableProperty', ['$compile', 'editablePropertyTemplate', function ($compile, editablePropertyTemplate) {
-          var editableProperty = {
-            restrict: 'E',
-            scope: true,
-            template: editablePropertyTemplate,
-            require: 'ngModel',
-            link: function (scope, element, attrs, ngModel) {
-
-              scope.editing = false;
-              $(element.find(".icon-pencil")[0]).hide();
-
-              ngModel.$render = function () {
-                var propertyName = attrs['property'];
-                if (propertyName && ngModel.$viewValue) {
-                  scope.text = ngModel.$viewValue[propertyName];
-                } else {
-                  scope.text = ngModel.$viewValue;
-                }
-              };
-
-              scope.showEdit = function () {
-                $(element.find(".icon-pencil")[0]).show();
-              };
-
-              scope.hideEdit = function () {
-                $(element.find(".icon-pencil")[0]).hide();
-              };
-
-              scope.doEdit = function () {
-                scope.editing = true;
-              };
-
-              scope.stopEdit = function () {
-                scope.editing = false;
-              };
-
-              scope.saveEdit = function () {
-                var value = $(element.find(":input[type=text]")[0]).val();
-                var obj = ngModel.$viewValue;
-                if (angular.isDefined(attrs['property'])) {
-                  obj[attrs['property']] = value;
-                } else {
-                  obj = value;
-                }
-                ngModel.$setViewValue(obj);
-                ngModel.$render();
-                scope.editing = false;
-                scope.$parent.$eval(attrs['onSave']);
-              }
-
-            }
-          };
-          return editableProperty;
         }]).
         directive('gridStyle', function($window) {
           return new Core.GridStyle($window);

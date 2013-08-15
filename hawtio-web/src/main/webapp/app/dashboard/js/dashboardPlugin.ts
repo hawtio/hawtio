@@ -1,6 +1,6 @@
 module Dashboard {
   var pluginName = 'dashboard';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
           config(($routeProvider) => {
 
             $routeProvider.
