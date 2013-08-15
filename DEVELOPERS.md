@@ -14,6 +14,7 @@ You may want to check out:
 
 * [current list of the available plugins](http://hawt.io/plugins/index.html)
 * [how plugins work](http://hawt.io/plugins/howPluginsWork.html)
+* [available AngularJS Directives](http://hawt.io/developers/directives.html)
 
 ## Developer Tools
 
@@ -56,6 +57,7 @@ We're not yet using it but these look handy too:
 
 If you are interested in working on the code the following references and articles have been really useful so far:
 
+* [available AngularJS Directives](http://hawt.io/developers/directives.html)
 * [angularjs API](http://docs.angularjs.org/api/)
 * [bootstrap API](http://twitter.github.com/bootstrap/base-css.html)
 * [cubism API](https://github.com/square/cubism/wiki/API-Reference)
