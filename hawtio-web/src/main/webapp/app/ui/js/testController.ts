@@ -5,8 +5,8 @@ module UI {
     $scope.showDeleteOne = new Core.Dialog();
     $scope.showDeleteTwo = new Core.Dialog();
 
-    $scope.fileUploadEx1 = '<div hawtio-file-upload="files" target="patches"></div>';
-    $scope.fileUploadEx2 = '<div hawtio-file-upload="files" target="test" show-files="false"></div>';
+    $scope.fileUploadEx1 = '<div hawtio-file-upload="files" target="test1"></div>';
+    $scope.fileUploadEx2 = '<div hawtio-file-upload="files" target="test2" show-files="false"></div>';
     $scope.fileUploadExMode = 'text/html';
 
     $scope.colorPickerEx = 'My Color ({{myColor}}): <div hawtio-color-picker="myColor"></div>';
@@ -40,6 +40,39 @@ module UI {
         '    </p>\n' +
         '  </div>\n' +
         '</div>';
+
+
+    $scope.sliderEx1 = '' +
+        '<button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show Slideout Right</button>\n' +
+        '<div hawtio-slideout="showSlideoutRight" title="Hey look a slider!">\n' +
+        '   <div class="dialog-body">\n' +
+        '     <div>\n' +
+        '       Here is some content or whatever {{transcludedValue}}\n' +
+        '     </div>\n' +
+        '   </div>\n' +
+        '</div>';
+
+    $scope.sliderEx2 = '' +
+        '<button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show Slideout Left</button>\n' +
+        '<div hawtio-slideout="showSlideoutLeft" direction="left" title="Hey, another slider!">\n' +
+        '   <div class="dialog-body">\n' +
+        '     <div hawtio-editor="someText" mode="javascript"></div>\n' +
+        '   </div>\n' +
+        '</div>\n';
+
+    $scope.editorEx1 = '' +
+        'Instance 1\n' +
+        '<div class="row-fluid">\n' +
+        '   <div hawtio-editor="someText" mode="mode" dirty="dirty"></div>\n' +
+        '   <div>Text : {{someText}}</div>\n' +
+        '</div>\n' +
+        '\n' +
+        'Instance 2 (readonly)\n' +
+        '<div class="row-fluid">\n' +
+        '   <div hawtio-editor="someText" read-only="true" mode="mode" dirty="dirty"></div>\n' +
+        '   <div>Text : {{someText}}</div>\n' +
+        '</div>';
+
 
 
     $scope.transcludedValue = "and this is transcluded";

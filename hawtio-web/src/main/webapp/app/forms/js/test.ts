@@ -4,6 +4,17 @@ module Forms {
 
     $scope.editing = false;
 
+    $scope.html = "text/html"
+    $scope.javascript = "javascript"
+
+    $scope.basicFormEx1Entity = {
+      'key': 'Some key',
+      'value': 'Some value'
+    };
+    $scope.basicFormEx1EntityString = angular.toJson($scope.basicFormEx1Entity, true);
+
+    $scope.basicFormEx1Result = '';
+
     $scope.toggleEdit = function() {
       $scope.editing = !$scope.editing;
     };
@@ -15,44 +26,75 @@ module Forms {
       return "edit";
     }
 
-    $scope.setVMOption = {
-      properties: {
-        'key': {
-          description: 'Argument key',
-          type: 'java.lang.String'
-        },
-        'value': {
-          description: 'Argument Value',
-          type: 'java.lang.String'
-        },
-        'longArg': {
-          description: 'Long argument',
-          type: 'Long',
-          minimum: '5',
-          maximum: '10'
-        },
-        'intArg': {
-          description: 'Int argument',
-          type: 'Integer'
-        },
-        'objectArg': {
-          description: 'some object',
-          type: 'object'
-        },
-        'booleanArg': {
-          description: 'Some boolean value',
-          type: 'java.lang.Boolean'
-        }
-        // TODO - add more types, above is what I remember from jolokia
-      },
-      description: 'Show some stuff in a form',
-      type: 'java.lang.String',
-      tabs: {
-        'Tab One': ['key', 'value'],
-        'Tab Two': ['*'],
-        'Tab Three': ['booleanArg']
-      }
-    };
+    $scope.basicFormEx1 = '<div simple-form name="some-form" action="#/forms/test" method="post" data="basicFormEx1SchemaObject" entity="basicFormEx1Entity" onSubmit="callThis()"></div>';
+
+    $scope.toObject = (str) => {
+      return angular.fromJson(str.replace("'", "\""));
+    }
+
+    $scope.fromObject = (str) => {
+      return angular.toJson($scope[str], true);
+    }
+
+    //TODO - I totally did this backwards :-/
+    $scope.basicFormEx1Schema = '' +
+        '{\n' +
+        '   "properties": {\n' +
+        '     "key": {\n' +
+        '       "description": "Argument key",\n' +
+        '       "type": "java.lang.String"\n' +
+        '     },\n' +
+        '     "value": {\n' +
+        '       "description": "Argument Value",\n' +
+        '       "type": "java.lang.String"\n' +
+        '     },\n' +
+        '     "longArg": {\n' +
+        '       "description": "Long argument",\n' +
+        '       "type": "Long",\n' +
+        '       "minimum": "5",\n' +
+        '       "maximum": "10"\n' +
+        '     },\n' +
+        '     "intArg": {\n' +
+        '       "description": "Int argument",\n' +
+        '       "type": "Integer"\n' +
+        '     },\n' +
+        '     "objectArg": {\n' +
+        '       "description": "some object",\n' +
+        '       "type": "object"\n' +
+        '     },\n' +
+        '     "booleanArg": {\n' +
+        '       "description": "Some boolean value",\n' +
+        '       "type": "java.lang.Boolean"\n' +
+        '     }\n' +
+        '   },\n' +
+        '   "description": "Show some stuff in a form",\n' +
+        '   "type": "java.lang.String",\n' +
+        '   "tabs": {\n' +
+        '     "Tab One": ["key", "value"],\n' +
+        '     "Tab Two": ["*"],\n' +
+        '     "Tab Three": ["booleanArg"]\n' +
+        '   }\n' +
+        '}';
+
+    $scope.basicFormEx1SchemaObject = $scope.toObject($scope.basicFormEx1Schema);
+
+    $scope.updateSchema = () => {
+      $scope.basicFormEx1SchemaObject = $scope.toObject($scope.basicFormEx1Schema);
+    }
+
+    $scope.updateEntity = () => {
+      $scope.basicFormEx1Entity = angular.fromJson($scope.basicFormEx1EntityString);
+    }
+
+    $scope.hawtioResetEx = '<a class="btn" href="" hawtio-reset="some-form"><i class="icon-refresh"></i> Clear</a>';
+
+    $scope.hawtioSubmitEx = '      <a class="btn" href="" hawtio-submit="some-form"><i class="icon-save"></i> Save</a>';
+
+    $scope.callThis = (json, form) => {
+      $scope.basicFormEx1Result = angular.toJson(json, true);
+      notification('success', 'Form "' + form.get(0).name + '" submitted...');
+      Core.$apply($scope);
+    }
 
     $scope.config = {
       name: 'form-with-config-object',

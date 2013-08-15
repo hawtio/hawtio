@@ -4,7 +4,6 @@
     <div class="row-fluid">
       <h3>File upload</h3>
       <p>Use to upload files to the hawtio webapp backend.  Files are stored in a temporary directory and managed via the UploadManager JMX MBean</p>
-      <hr>
       <p>Showing files:</p>
       <div hawtio-editor="fileUploadEx1" mode="fileUploadExMode"></div>
       <div class="directive-example">
@@ -50,20 +49,14 @@
     <h3>Slideout</h3>
     <p>Displays a panel that slides out from either the left or right and immediately disappears when closed</p>
 
-    <button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show Slideout Left</button>
-    <div hawtio-slideout="showSlideoutRight" title="foobar mcgee">
-      <div class="dialog-body">
-        <div>
-          Here is some content or whatever {{transcludedValue}}
-        </div>
-      </div>
+    <div hawtio-editor="sliderEx1" mode="fileUploadExMode"></div>
+    <div class="directive-example">
+      <div compile="sliderEx1"></div>
     </div>
 
-    <button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show Slideout Right</button>
-    <div hawtio-slideout="showSlideoutLeft" direction="left" title="I like pastry">
-      <div class="dialog-body">
-        <div hawtio-editor="someText" mode="javascript"></div>
-      </div>
+    <div hawtio-editor="sliderEx2" mode="fileUploadExMode"></div>
+    <div class="directive-example">
+      <div compile="sliderEx2"></div>
     </div>
     <hr>
   </div>
@@ -76,17 +69,10 @@
 
   <div class="row-fluid">
     <h3>CodeMirror</h3>
-
-    Instance 1
-    <div class="row-fluid">
-      <div hawtio-editor="someText" mode="mode" dirty="dirty"></div>
-      <div>Text : {{someText}}</div>
-    </div>
-
-    Instance 2 (readonly)
-    <div class="row-fluid">
-      <div hawtio-editor="someText" read-only="true" mode="mode" dirty="dirty"></div>
-      <div>Text : {{someText}}</div>
+    <p>A directive that wraps the codeMirror editor.</p>
+    <div hawtio-editor="editorEx1" mode="fileUploadExMode"></div>
+    <div class="directive-example">
+      <div compile="editorEx1"></div>
     </div>
   </div>
 
