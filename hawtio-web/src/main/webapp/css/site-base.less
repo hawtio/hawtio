@@ -1741,3 +1741,60 @@ h3.ajaxError, h4.ajaxError {
   border-radius: 4px;
 
 }
+
+/** allow nav bar items to have highlights like btn-primary etc */
+/*
+.nav-warning.active,
+.nav-danger.active,
+.nav-success.active,
+.nav-info.active,
+.nav-inverse.active {
+ */
+div#main div ul.nav li a.nav-primary.active {
+  color: rgba(255, 255, 255, 0.75);
+}
+div#main div ul.nav li a.nav-primary {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #006dcc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+  background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #0044cc;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+div#main div ul.nav li a.nav-primary:hover,
+div#main div ul.nav li a.nav-primary:active,
+div#main div ul.nav li a.nav-primary.active,
+div#main div ul.nav li a.nav-primary.disabled,
+div#main div ul.nav li a.nav-primary[disabled] {
+  color: #ffffff;
+  background-color: #0044cc;
+  *background-color: #003bb3;
+}
+div#main div ul.nav li a.nav-primary:active,
+div#main div ul.nav li a.nav-primary.active {
+  background-color: #003399 \9;
+}
+
+/*
+.nav-warning .caret,
+.nav-danger .caret,
+.nav-info .caret,
+.nav-success .caret,
+.nav-inverse .caret,
+*/
+div#main div ul.nav li a.nav-primary .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+
