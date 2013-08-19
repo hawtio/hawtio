@@ -3,6 +3,10 @@ module Fabric {
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
 
+  export function hasFabric(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
+  }
+
   export function initScope($scope, workspace) {
     $scope.hasFabricWiki = () => {
       return Git.isGitMBeanFabric(workspace);

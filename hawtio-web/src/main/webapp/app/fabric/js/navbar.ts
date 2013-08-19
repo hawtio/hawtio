@@ -17,11 +17,7 @@ module Fabric {
       $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
       $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
       var ensembleContainers = jolokia.getAttribute(Fabric.clusterManagerMBean, "EnsembleContainers", {method: "GET"});
-      if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
-        $scope.hasFabric = true;
-      } else {
-        $scope.hasFabric = false;
-      }
+      $scope.hasFabric = Fabric.hasFabric(workspace);
       if (!$scope.hasFabric) {
         $location.url("/fabric/create");
       }

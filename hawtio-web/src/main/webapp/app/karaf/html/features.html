@@ -5,10 +5,10 @@
         <fieldset>
           <div class="control-group inline-block">
             <div class="btn-group">
-              <button ng-disabled="selectedFeatures.length == 0" class="btn" ng-click="install()"><i
+              <button ng-disabled="hasFabric || selectedFeatures.length == 0" class="btn" ng-click="install()"><i
                       class="icon-play-circle"></i> Start
               </button>
-              <button ng-disabled="selectedFeatures.length == 0" class="btn" ng-click="uninstall()"><i
+              <button ng-disabled="hasFabric || selectedFeatures.length == 0" class="btn" ng-click="uninstall()"><i
                       class="icon-off"></i> Stop
               </button>
             </div>
@@ -17,6 +17,11 @@
           <div class="control-group inline-block">
             <label for="repositories">Repositories: </label>
             <select id="repositories" ng-model="repository" ng-options="v.id for v in repositories"></select>
+          </div>
+          &nbsp;
+          <div class="control-group inline-block">
+            <label for="installedOnly" title="Only show installed features">Installed only: </label>
+            <input type="checkbox" id="installedOnly" name="installedOnly" ng-model="installedOnly">
           </div>
         </fieldset>
       </form>

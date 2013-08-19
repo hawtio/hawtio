@@ -1,13 +1,21 @@
 module Karaf {
 
-  export function FeaturesController($scope, $location, workspace, jolokia) {
+  export function FeaturesController($scope, $location, workspace, jolokia, $parse) {
 
     $scope.feature = empty();
+    $scope.installedOnly = true;
+    $scope.hasFabric = Fabric.hasFabric(workspace);
 
     var key = $location.search()['repo'];
     if (key) {
       $scope.repository = { id: key };
     }
+    /*
+    var installed = $location.search()['installedOnly'];
+    if (installed) {
+      $parse(installed)($scope);
+    }
+    */
 
     // caches last jolokia result
     $scope.result = [];
@@ -20,64 +28,73 @@ module Karaf {
     $scope.selectedFeatures = [];
 
 
-    /*
-     var SearchProvider = function (scope, location) {
-     var self = this;
-     self.scope = scope;
-     self.location = location;
+    var SearchProvider = function (scope, location) {
+      var self = this;
+      self.scope = scope;
+      self.location = location;
 
-     self.callback = function (newValue, oldValue) {
-     if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-     // if for some reason we do not have a values
-     return
-     }
+      self.callback = function (newValue, oldValue) {
+        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
+          // if for some reason we do not have a values
+          return
+        }
 
-     // if we have an old value to quick compare against
-     if (angular.isDefined(oldValue)) {
-     if (newValue === oldValue) {
-     return;
-     }
-     if (newValue.id === oldValue.id) {
-     return;
-     }
-     }
-     self.scope.features = featuresOfRepo(self.scope.repository.id, self.scope.features);
-     self.scope.feature = setSelect(self.scope.repository, self.scope.repositories);
+        // if we have an old value to quick compare against
+        if (angular.isDefined(oldValue)) {
+          if (newValue === oldValue) {
+            return;
+          }
+          if (newValue.id === oldValue.id) {
+            return;
+          }
+        }
+        self.scope.features = featuresOfRepo(self.scope.repository.id, self.scope.features);
+        self.scope.feature = setSelect(self.scope.repository, self.scope.repositories);
 
-     var q = location.search();
-     q['repo'] = self.scope.repository.id;
-     location.search(q);
-     self.evalFilter();
-     };
+        var q = location.search();
+        q['repo'] = self.scope.repository.id;
+        location.search(q);
+        self.evalFilter();
+      };
 
-     self.scope.$watch('repository', self.callback);
+      self.scope.$watch('repository', self.callback);
 
-     self.init = function (childScope, grid) {
-     self.grid = grid;
-     self.childScope = childScope;
-     grid.searchProvider = self;
-     };
+      self.scope.$watch('installedOnly', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          self.evalFilter();
+        }
+      });
 
-     self.evalFilter = function () {
-     var byRepo = self.grid.sortedData;
-     if (angular.isDefined(self.scope.repository)) {
-     if (self.scope.repository.id !== "") {
-     byRepo = self.grid.sortedData.findAll(function (item) {
-     return item.Repository === self.scope.repository.id
-     });
-     }
-     }
-     self.grid.filteredData = byRepo;
-     self.grid.rowFactory.filteredDataChanged();
-     };
+      self.init = function (childScope, grid) {
+        self.grid = grid;
+        self.childScope = childScope;
+        grid.searchProvider = self;
+      };
 
-     }
+      self.evalFilter = function () {
+        var byRepo = self.grid.rowCache;
+        if (angular.isDefined(self.scope.repository)) {
+          if (self.scope.repository.id !== "") {
+            byRepo = self.grid.rowCache.findAll((item) => {
+              return item.entity.RepositoryName === self.scope.repository.id;
+            });
+          }
+        }
+        if (self.scope.installedOnly) {
+          byRepo = byRepo.findAll((item) => {
+            return item.entity.Installed;
+          });
+        }
+        self.grid.filteredRows = byRepo;
+        self.grid.rowFactory.filteredRowsChanged();
+      };
 
-     var searchProvider = new SearchProvider($scope, $location);
-     */
+    }
+
+    var searchProvider = new SearchProvider($scope, $location);
 
     $scope.featureOptions = {
-      //plugins: [searchProvider],
+      plugins: [searchProvider],
       data: 'features',
       showFilter: false,
       showColumnMenu: false,
@@ -86,11 +103,14 @@ module Karaf {
       },
       selectedItems: $scope.selectedFeatures,
       rowHeight: 32,
+      enableRowSelection: !$scope.hasFabric,
       selectWithCheckboxOnly: true,
+      keepLastSelected: true,
+      showSelectionCheckbox: !$scope.hasFabric,
       columnDefs: [
         {
           field: 'Name',
-          displayName: 'Name',
+          displayName: 'Feature Name',
           cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
           width: 200
         },
@@ -101,10 +121,18 @@ module Karaf {
           width: 200
         },
         {
+          field: 'RepositoryName',
+          displayName: 'Repository'
+        },
+        {
           field: 'Installed',
           displayName: 'Installed'
         }
-      ]
+      ],
+      sortInfo: {
+        fields: ['Installed', 'RepositoryName'],
+        directions: ['asc', 'asc']
+      }
     };
 
     var featuresMBean = Karaf.getSelectionFeaturesMBean(workspace);
