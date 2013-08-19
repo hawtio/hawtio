@@ -97,8 +97,12 @@ module Karaf {
         {
           field: 'Version',
           displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a href="#/karaf/feature/{{row.entity.Name}}/{{row.entity.Version}}">{{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="#/osgi/feature/{{row.entity.Name}}/{{row.entity.Version}}">{{row.getProperty(col.field)}}</a></div>',
           width: 200
+        },
+        {
+          field: 'Installed',
+          displayName: 'Installed'
         }
       ]
     };
@@ -162,15 +166,22 @@ module Karaf {
       ];
     }
 
+    $scope.javascript = 'javascript';
+
     function render(response) {
       if (!Object.equal($scope.result, response.value)) {
         $scope.result = response.value;
+        //$scope.resultString = angular.toJson($scope.result, true);
 
         $scope.features = [];
         $scope.repositories = empty();
 
         populateFeaturesAndRepos($scope.result, $scope.features, $scope.repositories);
         $scope.repository = setSelect($scope.repository, $scope.repositories);
+
+        //$scope.featuresString = angular.toJson($scope.features, true);
+        //$scope.repositoriesString = angular.toJson($scope.repositories, true);
+
         Core.$apply($scope);
       }
     }

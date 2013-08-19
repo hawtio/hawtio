@@ -69,6 +69,7 @@ module Karaf {
   }
 
   export function populateFeaturesAndRepos(attributes, features, repositories) {
+    var fullFeatures = attributes["Features"];
     angular.forEach(attributes["Repositories"], (repo) => {
 
       repositories.push({
@@ -77,15 +78,18 @@ module Karaf {
       });
 
       angular.forEach(repo["Features"], (feature) => {
+
         angular.forEach(feature, (entry) => {
-          var f = {};
+          var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
           f["Id"] = entry["Name"] + "/" + entry["Version"];
+          /*
           f["Name"] = entry["Name"];
           f["Version"] = entry["Version"];
           f["Installed"] = entry["Installed"];
-          f["Repository"] = repo["Name"];
+          f["Repository"] = repo["Name"];*/
           features.push(f);
         });
+
       });
     });
   }
