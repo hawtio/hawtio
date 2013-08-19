@@ -11,6 +11,7 @@ module Karaf {
       $scope.repository = { id: key };
     }
     /*
+    //TODO to add this we should disable page refreshing when $location is updated
     var installed = $location.search()['installedOnly'];
     if (installed) {
       $parse(installed)($scope);
@@ -145,9 +146,9 @@ module Karaf {
     $scope.install = () => {
       $scope.selectedFeatures.forEach(function (feature) {
         installFeature(workspace, jolokia, feature.name, feature.version, function () {
-          console.log("Installed!")
-        }, function () {
-          console.log("Failed to install!")
+          notification('success', 'Installed feature ' + feature.name);
+        }, function (response) {
+          notification('error', 'Failed to install feature ' + feature.name + ' due to ' + response.error);
         });
       });
     };
@@ -155,9 +156,9 @@ module Karaf {
     $scope.uninstall = () => {
       $scope.selectedFeatures.forEach(function (feature) {
         uninstallFeature(workspace, jolokia, feature.name, feature.version, function () {
-          console.log("Uninstalled!")
-        }, function () {
-          console.log("Failed to uninstall!")
+          notification('success', 'Uninstalled feature ' + feature.name);
+        }, function (response) {
+          notification('error', 'Failed to uninstall feature ' + feature.name + ' due to ' + response.error);
         });
       });
     };

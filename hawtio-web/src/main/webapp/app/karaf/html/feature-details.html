@@ -1,31 +1,36 @@
 <div>
     <table class="overviewSection">
-        <tr>
+        <tr ng-hide="hasFabric">
             <td></td>
             <td class="less-big">
                 <div class="btn-group">
-                    <button ng-click="uninstallFeature(name,version)" class="icon-off" title="uninstall"></button>
-                    <button ng-click="installFeature(name,version)" class="icon-play-circle" title="install"></button>
+                    <button ng-click="uninstall(name,version)" class="btn icon-off" title="uninstall"></button>
+                    <button ng-click="install(name,version)" class="btn icon-play-circle" title="install"></button>
                 </div>
             </td>
         </tr>
         <tr>
-            <td><strong>Name:</strong></td>
+            <td class="pull-right"><strong>Name:</strong></td>
             <td class="less-big">{{row.Name}}
             </td>
         </tr>
         <tr>
-            <td><strong>Version:</strong></td>
+            <td class="pull-right"><strong>Version:</strong></td>
             <td class="less-big">{{row.Version}}
             </td>
         </tr>
         <tr>
-            <td><strong>Repository:</strong></td>
-            <td class="less-big">{{row.Repository}}
+            <td class="pull-right"><strong>Repository:</strong></td>
+            <td class="less-big">{{row.RepositoryName}}
             </td>
         </tr>
         <tr>
-            <td><strong>State:</strong></td>
+          <td class="pull-right"><strong>Repository URI:</strong></td>
+          <td class="less-big">{{row.RepositoryURI}}
+          </td>
+        </tr>
+        <tr>
+            <td class="pull-right"><strong>State:</strong></td>
             <td class="wrap">
                 <div ng-switch="row.Installed">
                     <p style="display: inline;" ng-switch-when="true">Installed</p>
@@ -46,11 +51,10 @@
                                 Features
                             </a>
                         </div>
-                        <div id="collapseFeatures" class="accordion-body collapse out">
+                        <div id="collapseFeatures" class="accordion-body collapse in">
                             <ul class="accordion-inner">
                                 <li ng-repeat="feature in row.Dependencies">
-                                    <a href='#/karaf/feature/{{feature.Name}}/{{feature.Version}}{{hash}}'>{{feature.Name}}
-                                        {{feature.Version}}</a>
+                                    <a href='#/osgi/feature/{{feature.Name}}/{{feature.Version}}{{hash}}'>{{feature.Name}}/{{feature.Version}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -70,7 +74,7 @@
                                 Bundles
                             </a>
                         </div>
-                        <div id="collapseBundles" class="accordion-body collapse out">
+                        <div id="collapseBundles" class="accordion-body collapse in">
                             <ul class="accordion-inner">
                                 <li ng-repeat="bundle in row.BundleDetails">
                                     <div ng-switch="bundle.Installed">
@@ -98,10 +102,12 @@
                                 Configurations
                             </a>
                         </div>
-                        <div id="collapsConfigurations" class="accordion-body collapse out">
+                        <div id="collapsConfigurations" class="accordion-body collapse in">
                             <table class="accordion-inner">
-                                <tr ng-repeat="(pid) in row.Configurations">
-                                    <td>{{pid}}</td>
+                                <tr ng-repeat="(pid, value) in row.Configurations">
+                                    <td>
+                                      <p>{{value.Pid}}</p>
+                                      <div hawtio-editor="toProperties(value.Elements)" mode="props"></div></td>
                                 </tr>
                             </table>
                         </div>
@@ -121,7 +127,7 @@
                                 Configuration Files
                             </a>
                         </div>
-                        <div id="collapsConfigurationFiles" class="accordion-body collapse out">
+                        <div id="collapsConfigurationFiles" class="accordion-body collapse in">
                             <table class="accordion-inner">
                                 <tr ng-repeat="file in row.Files">
                                     <td>{{file.Files}}</td>

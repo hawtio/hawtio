@@ -1,25 +1,59 @@
 module Karaf {
 
-    export function FeatureController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    export function FeatureController($scope, jolokia, workspace:Workspace, $routeParams) {
+        $scope.hasFabric = Fabric.hasFabric(workspace);
         $scope.name = $routeParams.name;
         $scope.version = $routeParams.version;
         $scope.bundlesByLocation = {};
+        $scope.props = "properties";
 
         updateTableContents();
 
-        function populateTable(response) {
-            angular.forEach(response.value["Features"], (feature) => {
-                angular.forEach(feature, (entry) => {
+        $scope.install = () => {
+          installFeature(workspace, jolokia, $scope.name, $scope.version, function () {
+            notification('success', 'Installed feature ' + $scope.name);
+          }, function (response) {
+            notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
+          });
+        }
 
-                    if (entry["Name"] === $scope.name && entry["Version"] === $scope.version) {
-                        //$scope.row = entry;
-                        $scope.row = extractFeature(response.value, entry["Name"], entry["Version"])
-                        addBundleDetails($scope.row);
-                    }
+        $scope.uninstall = () => {
+          uninstallFeature(workspace, jolokia, $scope.name, $scope.version, function () {
+            notification('success', 'Uninstalled feature ' + $scope.name);
+          }, function (response) {
+            notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
+          });
+        }
+
+        $scope.toProperties = (elements) => {
+          var answer = '';
+          angular.forEach(elements, (value, name) => {
+            answer += value['Key'] + " = " + value['Value'] + "\n";
+          });
+          return answer.trim();
+        }
+
+
+        function populateTable(response) {
+          $scope.row = extractFeature(response.value, $scope.name, $scope.version);
+          if ($scope.row) {
+            addBundleDetails($scope.row);
+            var dependencies = [];
+            //TODO - if the version isn't set or is 0.0.0 then maybe we show the highest available?
+            angular.forEach($scope.row.Dependencies, (version, name) => {
+              angular.forEach(version, (data, version) => {
+                dependencies.push({
+                  Name: name,
+                  Version: version
                 });
+              });
             });
-            Core.$apply($scope);
-        };
+            $scope.row.Dependencies = dependencies;
+          }
+          //console.log("row: ", $scope.row);
+          Core.$apply($scope);
+
+        }
 
         function setBundles(response) {
             var bundleMap = {};

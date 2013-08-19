@@ -48,6 +48,13 @@ module Karaf {
   }
 
   export function extractFeature(attributes, name, version) {
+    var features = [];
+    var repos = [];
+    populateFeaturesAndRepos(attributes, features, repos);
+    return features.find((feature) => {
+      return feature.Name == name && feature.Version == version;
+    });
+    /*
     var f = {};
     angular.forEach(attributes["Features"], (feature) => {
       angular.forEach(feature, (entry) => {
@@ -66,6 +73,7 @@ module Karaf {
       });
     });
     return f;
+    */
   }
 
   export function populateFeaturesAndRepos(attributes, features, repositories) {
