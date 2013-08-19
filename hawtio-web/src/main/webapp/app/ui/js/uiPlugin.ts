@@ -26,8 +26,8 @@ module UI {
         return new UI.FileUpload();
       }).directive('expandable', () => {
         return new UI.Expandable();
-      }).directive('editableProperty', () => {
-        return new UI.EditableProperty();
+      }).directive('editableProperty', ($parse) => {
+        return new UI.EditableProperty($parse);
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });

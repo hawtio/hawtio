@@ -67,7 +67,7 @@
           <ul class="unstyled">
             <li ng-repeat="feature in row.features">
               <i class="red clickable icon-remove" title="Delete {{feature}}" ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
-              <editable-property ng-model="row.features" property="{{$index}}" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
+              <editable-property ng-model="row.features" property="$index" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
             </li>
             <li>
               <i class="clickable icon-edit" ng-click="goto('/fabric/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
@@ -81,7 +81,7 @@
           <ul class="unstyled">
             <li ng-repeat="fab in row.fabs">
               <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
-              <editable-property ng-model="row.fabs" property="{{$index}}" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
+              <editable-property ng-model="row.fabs" property="$index" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
 
             </li>
             <li>
@@ -96,7 +96,7 @@
           <ul class="unstyled">
             <li ng-repeat="bundle in row.bundles">
               <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-              <editable-property ng-model="row.bundles" property="{{$index}}" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+              <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
             </li>
             <li>
               <i class="clickable icon-plus" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
@@ -112,7 +112,7 @@
           <ul class="unstyled">
             <li ng-repeat="repository in row.repositories">
               <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
-              <editable-property ng-model="row.repositories" property="{{$index}}" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
+              <editable-property ng-model="row.repositories" property="$index" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
             </li>
             <li>
               <i class="clickable icon-plus" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
