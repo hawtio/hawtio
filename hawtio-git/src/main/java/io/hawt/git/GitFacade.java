@@ -1,19 +1,13 @@
 package io.hawt.git;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.util.FileFilters;
-import io.hawt.util.IOHelper;
-import io.hawt.util.MBeanSupport;
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
-import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
@@ -30,36 +24,25 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.gitective.core.BlobUtils;
-import org.gitective.core.CommitFinder;
 import org.gitective.core.CommitUtils;
-import org.gitective.core.PathFilterUtils;
-import org.gitective.core.filter.commit.CommitLimitFilter;
-import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 /**
  * A git bean to create a local git repo for configuration data which if configured will push/pull
  * from some central repo
  */
-public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
+public class GitFacade extends GitFacadeSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
 
     private String configDirName;
@@ -67,7 +50,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     private String remoteRepository;
     private Git git;
     private Object lock = new Object();
-    private int shortCommitIdLength = 6;
     private String remote = "origin";
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
     private boolean cloneRemoteRepoOnStartup = true;
@@ -136,11 +118,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     public void setStashPersonIdent(PersonIdent stashPersonIdent) {
         this.stashPersonIdent = stashPersonIdent;
-    }
-
-    @Override
-    protected String getDefaultObjectName() {
-        return "io.hawt.git:type=GitFacade";
     }
 
     public String getRemoteRepository() {
@@ -269,9 +246,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     @Override
     public String getContent(String objectId, String blobPath) {
-        objectId = defaultObjectId(objectId);
-        Repository r = git.getRepository();
-        return BlobUtils.getContent(r, objectId, blobPath);
+        return doGetContent(git, objectId, blobPath);
     }
 
     /**
@@ -279,29 +254,11 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      *
      * @return
      */
-    public FileContents read(final String branch, String pathOrEmpty) throws IOException, GitAPIException {
-        final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+    public FileContents read(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
             @Override
             public FileContents call() throws Exception {
-                File rootDir = getConfigDirectory();
-                checkoutBranch(branch);
-                File file = getFile(path);
-                if (file.isFile()) {
-                    String contents = IOHelper.readFully(file);
-                    return new FileContents(false, contents, null);
-                } else {
-                    List<FileInfo> children = new ArrayList<FileInfo>();
-                    if (file.exists()) {
-                        File[] files = file.listFiles();
-                        for (File child : files) {
-                            if (!isIgnoreFile(child)) {
-                                children.add(FileInfo.createFileInfo(rootDir, child));
-                            }
-                        }
-                    }
-                    return new FileContents(file.isDirectory(), null, children);
-                }
+                return doRead(git, getRootGitDirectory(), branch, pathOrEmpty);
             }
         });
     }
@@ -312,18 +269,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
      * @return the metadata for the given file or null if it does not exist
      */
     @Override
-    public FileInfo exists(final String branch, String pathOrEmpty) throws IOException, GitAPIException {
-        final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+    public FileInfo exists(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileInfo>() {
             @Override
             public FileInfo call() throws Exception {
-                File rootDir = getConfigDirectory();
-                checkoutBranch(branch);
-                File file = getFile(path);
-                if (file.exists()) {
-                    return FileInfo.createFileInfo(rootDir, file);
-                }
-                return null;
+                File rootDir = getRootGitDirectory();
+                return doExists(git, rootDir, branch, pathOrEmpty);
             }
         });
     }
@@ -336,62 +287,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
             @Override
             public List<String> call() throws Exception {
-                File rootDir = getConfigDirectory();
-                checkoutBranch(branch);
-                boolean empty = Strings.isBlank(completionText);
-                String pattern = completionText;
-                File file = getFile(completionText);
-                String prefix = completionText;
-                if (file.exists()) {
-                    pattern = "";
-                } else {
-                    String startPath = ".";
-                    if (!empty) {
-                        int idx = completionText.lastIndexOf('/');
-                        if (idx >= 0) {
-                            startPath = completionText.substring(0, idx);
-                            if (startPath.length() == 0) {
-                                startPath = "/";
-                            }
-                            pattern = completionText.substring(idx + 1);
-                        }
-                    }
-                    file = getFile(startPath);
-                    prefix = startPath;
-                }
-                if (prefix.length() > 0 && !prefix.endsWith("/")) {
-                    prefix += "/";
-                }
-                if (prefix.equals("./")) {
-                    prefix = "";
-                }
-                File[] list = file.listFiles();
-                List<String> answer = new ArrayList<String>();
-                for (File aFile : list) {
-                    String name = aFile.getName();
-                    if (pattern.length() == 0 || name.contains(pattern)) {
-                        if (!isIgnoreFile(aFile) && (!directoriesOnly || aFile.isDirectory())) {
-                            answer.add(prefix + name);
-                        }
-                    }
-                }
-                return answer;
+                File rootDir = getRootGitDirectory();
+                return doCompletePath(git, rootDir, branch, completionText, directoriesOnly);
             }
         });
     }
 
-
-    protected String removeLeadingSlash(String path) {
-        if (path.startsWith("/")) {
-            return path.substring(1);
-        } else {
-            return path;
-        }
-    }
-
-    protected boolean isIgnoreFile(File child) {
-        return child.getName().startsWith(".");
-    }
 
     /**
      * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
@@ -402,36 +303,8 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         return gitOperation(getStashPersonIdent(), new Callable<String>() {
             @Override
             public String call() throws Exception {
-                File rootDir = getConfigDirectory();
-                File file = getFile(path);
-                FileFilter filter = FileFilters.createFileFilter(fileNameWildcard);
-                boolean first = true;
-                StringBuilder buffer = new StringBuilder("{\n");
-                List<FileInfo> children = new ArrayList<FileInfo>();
-                if (file.isDirectory()) {
-                    if (file.exists()) {
-                        File[] files = file.listFiles();
-                        for (File child : files) {
-                            if (!isIgnoreFile(child) && child.isFile()) {
-                                String text = IOHelper.readFully(child);
-                                if (!Strings.isNotBlank(search) || text.contains(search)) {
-                                    if (first) {
-                                        first = false;
-                                    } else {
-                                        buffer.append(",\n");
-                                    }
-                                    buffer.append("\"");
-                                    buffer.append(child.getName());
-                                    buffer.append("\": ");
-                                    buffer.append(text);
-                                    children.add(FileInfo.createFileInfo(rootDir, child));
-                                }
-                            }
-                        }
-                    }
-                }
-                buffer.append("\n}");
-                return buffer.toString();
+                File rootDir = getRootGitDirectory();
+                return doReadJsonChildContent(git, rootDir, branch, path, fileNameWildcard, search);
             }
         });
     }
@@ -442,23 +315,12 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
             public CommitInfo call() throws Exception {
-                checkoutBranch(branch);
-                File file = getFile(path);
-                file.getParentFile().mkdirs();
-
-                IOHelper.write(file, contents);
-
-                String filePattern = getFilePattern(path);
-                AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
-                add.call();
-
-                CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                RevCommit revCommit = commitThenPush(commit, branch);
-                return createCommitInfo(revCommit);
+                checkoutBranch(git, branch);
+                File rootDir = getRootGitDirectory();
+                return doWrite(git, rootDir, branch, path, contents, personIdent, commitMessage);
             }
         });
     }
-
 
 
     /**
@@ -472,20 +334,9 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
             public CommitInfo call() throws Exception {
-                checkoutBranch(branch);
-                File file = getFile(path);
-                if (file.exists()) {
-                    return null;
-
-                }
-                file.mkdirs();
-                String filePattern = getFilePattern(path);
-                AddCommand add = git.add().addFilepattern(filePattern).addFilepattern(".");
-                add.call();
-
-                CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                RevCommit revCommit = commitThenPush(commit, branch);
-                return createCommitInfo(revCommit);
+                checkoutBranch(git, branch);
+                File rootDir = getRootGitDirectory();
+                return doCreateDirectory(git, rootDir, branch, path, personIdent, commitMessage);
             }
         });
     }
@@ -493,16 +344,15 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     @Override
     public void revertTo(final String branch, final String objectId, final String blobPath, final String commitMessage,
                          final String authorName, final String authorEmail) {
-        String contents = getContent(objectId, blobPath);
-        if (contents != null) {
-            write(branch, blobPath, commitMessage, authorName, authorEmail, contents);
-        }
-    }
-
-    protected static String getFilePattern(String path) {
-        String filePattern = path;
-        if (filePattern.startsWith("/")) filePattern = filePattern.substring(1);
-        return filePattern;
+        final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
+        gitOperation(personIdent, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                Git aGit = git;
+                File rootDir = getRootGitDirectory();
+                return doRevert(aGit, rootDir, branch, objectId, blobPath, commitMessage, personIdent);
+            }
+        });
     }
 
     public void rename(final String branch, final String oldPath, final String newPath, final String commitMessage,
@@ -510,23 +360,8 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
             public RevCommit call() throws Exception {
-                File file = getFile(oldPath);
-                File newFile = getFile(newPath);
-
-                if (file.exists()) {
-                    File parentFile = newFile.getParentFile();
-                    parentFile.mkdirs();
-                    if (!parentFile.exists()) {
-                        throw new IOException("Could not create directory " + parentFile + " when trying to move " + file + " to " + newFile + ". Maybe a file permission issue?");
-                    }
-                    file.renameTo(newFile);
-                    String filePattern = getFilePattern(newPath);
-                    git.add().addFilepattern(filePattern).call();
-                    CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                    return commitThenPush(commit, branch);
-                } else {
-                    return null;
-                }
+                File rootDir = getRootGitDirectory();
+                return doRename(git, rootDir, branch, oldPath, newPath, commitMessage, personIdent);
             }
         });
     }
@@ -536,18 +371,9 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
             public RevCommit call() throws Exception {
-                File file = getFile(path);
-
-                if (file.exists()) {
-                    file.delete();
-
-                    String filePattern = getFilePattern(path);
-                    git.rm().addFilepattern(filePattern).call();
-                    CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
-                    return commitThenPush(commit, branch);
-                } else {
-                    return null;
-                }
+                Git aGit = git;
+                File rootDir = getRootGitDirectory();
+                return doRemove(aGit, rootDir, branch, path, commitMessage, personIdent);
             }
         });
     }
@@ -557,94 +383,28 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
             @Override
             public List<String> call() throws Exception {
-                SortedSet<String> names = new TreeSet<String>();
-
-                List<Ref> call = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
-                for (Ref ref : call) {
-                    String name = ref.getName();
-                    int idx = name.lastIndexOf('/');
-                    if (idx >= 0) {
-                        name = name.substring(idx + 1);
-                    }
-                    if (name.length() > 0) {
-                        names.add(name);
-                    }
-                }
-                return new ArrayList<String>(names);
+                return doListBranches(git);
             }
         });
     }
 
-    protected RevCommit commitThenPush(CommitCommand commit, String branch) throws GitAPIException {
-        RevCommit answer = commit.call();
-        LOG.info("Committed " + answer.getId() + " " + answer.getFullMessage());
-        if (isPushOnCommit()) {
-            Iterable<PushResult> results = git.push().setCredentialsProvider(getCredentials()).setRemote(getRemote()).call();
-            for (PushResult result : results) {
-                LOG.info("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch  +  " updates:  " + toString(result.getRemoteUpdates()));
-            }
-        }
-        return answer;
-    }
-
-    protected String toString(Collection<RemoteRefUpdate> updates) {
-        StringBuilder builder = new StringBuilder();
-        for (RemoteRefUpdate update : updates) {
-            if (builder.length() > 0) {
-                builder.append(" ");
-            }
-            builder.append(update.getMessage() + " " + update.getRemoteName() + " " + update.getNewObjectId());
-        }
-        return builder.toString();
+    @Override
+    protected Iterable<PushResult> doPush(Git git) throws Exception {
+        return this.git.push().setCredentialsProvider(getCredentials()).setRemote(getRemote()).call();
     }
 
     @Override
     public String getHEAD() {
-        RevCommit commit = CommitUtils.getHead(git.getRepository());
-        return commit.getName();
+        return doGetHead(git);
     }
 
     @Override
     public List<CommitInfo> history(String objectId, String path, int limit) {
         try {
-            Repository r = git.getRepository();
-
-            CommitFinder finder = new CommitFinder(r);
-            CommitListFilter block = new CommitListFilter();
-            if (Strings.isNotBlank(path)) {
-                finder.setFilter(PathFilterUtils.and(path));
-            }
-            finder.setFilter(block);
-
-            if (limit > 0) {
-                finder.setFilter(new CommitLimitFilter(100).setStop(true));
-            }
-            if (Strings.isNotBlank(objectId)) {
-                finder.findFrom(objectId);
-            } else {
-                finder.find();
-            }
-            List<RevCommit> commits = block.getCommits();
-            List<CommitInfo> results = new ArrayList<CommitInfo>();
-            for (RevCommit entry : commits) {
-                CommitInfo commitInfo = createCommitInfo(entry);
-                results.add(commitInfo);
-            }
-            return results;
+            return doHistory(git, objectId, path, limit);
         } catch (Exception e) {
             throw new RuntimeIOException(e);
         }
-    }
-
-    public CommitInfo createCommitInfo(RevCommit entry) {
-        final Date date = getCommitDate(entry);
-        String author = entry.getAuthorIdent().getName();
-        boolean merge = entry.getParentCount() > 1;
-        String shortMessage = entry.getShortMessage();
-        String trimmedMessage = Strings.trimString(shortMessage, 78);
-        String name = entry.getName();
-        String commitHashText = getShortCommitHash(name);
-        return new CommitInfo(commitHashText, name, author, date, merge, trimmedMessage, shortMessage);
     }
 
     /**
@@ -662,101 +422,10 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
 
     @Override
     public String diff(String objectId, String baseObjectId, String path) {
-        Repository r = git.getRepository();
-/*
-        RevCommit commit = JGitUtils.getCommit(r, objectId);
-
-        ObjectId current;
-        if (isNotBlank(objectId)) {
-            current = BlobUtils.getId(r, objectId, blobPath);
-        } else {
-            current = CommitUtils.getHead(r).getId();
-        }
-        ObjectId previous;
-        if (isNotBlank(baseObjectId)) {
-            previous = BlobUtils.getId(r, baseObjectId, blobPath);
-        } else {
-            RevCommit revCommit = CommitUtils.getCommit(r, current);
-            RevCommit[] parents = revCommit.getParents();
-            if (parents.length == 0) {
-                throw new IllegalArgumentException("No parent commits!");
-            } else {
-                previous = parents[0];
-            }
-        }
-        Collection<Edit> changes = BlobUtils.diff(r, previous, current);
-
-        // no idea how to format Collection<Edit> :)
-
-*/
-
-        RevCommit commit;
-        if (Strings.isNotBlank(objectId)) {
-            commit = CommitUtils.getCommit(r, objectId);
-        } else {
-            commit = CommitUtils.getHead(r);
-        }
-        RevCommit baseCommit = null;
-        if (Strings.isNotBlank(baseObjectId)) {
-            baseCommit = CommitUtils.getCommit(r, baseObjectId);
-        }
-
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        RawTextComparator cmp = RawTextComparator.DEFAULT;
-        DiffFormatter formatter = new DiffFormatter(buffer);
-        formatter.setRepository(r);
-        formatter.setDiffComparator(cmp);
-        formatter.setDetectRenames(true);
-
-        RevTree commitTree = commit.getTree();
-        RevTree baseTree;
-        try {
-            if (baseCommit == null) {
-                if (commit.getParentCount() > 0) {
-                    final RevWalk rw = new RevWalk(r);
-                    RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
-                    rw.dispose();
-                    baseTree = parent.getTree();
-                } else {
-                    // FIXME initial commit. no parent?!
-                    baseTree = commitTree;
-                }
-            } else {
-                baseTree = baseCommit.getTree();
-            }
-
-            List<DiffEntry> diffEntries = formatter.scan(baseTree, commitTree);
-            if (path != null && path.length() > 0) {
-                for (DiffEntry diffEntry : diffEntries) {
-                    if (diffEntry.getNewPath().equalsIgnoreCase(path)) {
-                        formatter.format(diffEntry);
-                        break;
-                    }
-                }
-            } else {
-                formatter.format(diffEntries);
-            }
-            formatter.flush();
-            return buffer.toString();
-        } catch (IOException e) {
-            throw new RuntimeIOException(e);
-        }
+        return doDiff(git, objectId, baseObjectId, path);
     }
 
-    protected String defaultObjectId(String objectId) {
-        if (objectId == null || objectId.trim().length() == 0) {
-            objectId = getHEAD();
-        }
-        return objectId;
-    }
-
-    protected String getShortCommitHash(String name) {
-        final int hashLen = shortCommitIdLength;
-        return name.substring(0, hashLen);
-    }
-
-    public File getConfigDirectory() {
+    public File getRootGitDirectory() {
         if (configDirectory == null) {
             try {
                 String name = getConfigDirName();
@@ -790,7 +459,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
     }
 
     public void initialiseGitRepo() throws IOException, GitAPIException {
-        File confDir = getConfigDirectory();
+        File confDir = getRootGitDirectory();
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         File gitDir = new File(confDir, ".git");
         if (!gitDir.exists()) {
@@ -840,16 +509,16 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
             StoredConfig config = repository.getConfig();
             String url = config.getString("remote", "origin", "url");
             if (Strings.isBlank(url)) {
-                logPull("No remote repository defined for the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                logPull("No remote repository defined for the git repository at " + getRootGitDirectory().getCanonicalPath() + " so not doing a pull");
                 return;
             }
             String branch = repository.getBranch();
             String mergeUrl = config.getString("branch", branch, "merge");
             if (Strings.isBlank(mergeUrl)) {
-                logPull("No merge spec for branch." + branch + ".merge in the git repository at " + getConfigDirectory().getCanonicalPath() + " so not doing a pull");
+                logPull("No merge spec for branch." + branch + ".merge in the git repository at " + getRootGitDirectory().getCanonicalPath() + " so not doing a pull");
                 return;
             }
-            logPull("Performing a pull in git repository " + getConfigDirectory().getCanonicalPath() + " on remote URL: " + url);
+            logPull("Performing a pull in git repository " + getRootGitDirectory().getCanonicalPath() + " on remote URL: " + url);
 
             git.pull().setCredentialsProvider(cp).setRebase(true).call();
         } catch (Throwable e) {
@@ -868,14 +537,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         } else {
             LOG.debug(message);
         }
-    }
-
-    /**
-     * Returns the file for the given path
-     */
-    public File getFile(String path) {
-        File rootDir = getConfigDirectory();
-        return new File(rootDir, removeLeadingSlash(path));
     }
 
 
@@ -926,7 +587,7 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
     }
 
-    protected void checkoutBranch(String branch) throws GitAPIException {
+    protected void checkoutBranch(Git git, String branch) throws GitAPIException {
         String current = currentBranch();
         if (defaultBranch == null) {
             defaultBranch = current;
@@ -981,5 +642,6 @@ public class GitFacade extends MBeanSupport implements GitFacadeMXBean {
         }
         return localBranchExists;
     }
+
 
 }

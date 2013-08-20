@@ -5,7 +5,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.management.ObjectName;
 import java.io.File;
@@ -175,7 +174,7 @@ public class GitFacadeTest {
         // now lets make a new git facade to check we can work with existing repos
         GitFacade anotherGit = createTestGitFacade();
         anotherGit.setObjectName(new ObjectName("io.hawt.git:type=GitFacadePart2"));
-        anotherGit.setConfigDirectory(git.getConfigDirectory());
+        anotherGit.setConfigDirectory(git.getRootGitDirectory());
         anotherGit.init();
 
         String path = trimLeadingSlash(anotherPath);
@@ -290,7 +289,7 @@ public class GitFacadeTest {
     }
 
     public static File assertConfigDirectoryExists(GitFacade helper) throws IOException {
-        File confDir = helper.getConfigDirectory();
+        File confDir = helper.getRootGitDirectory();
         System.out.println("Config directory is " + confDir);
         // lets assert the directory exists
         assertTrue("Should have a configDirectory", confDir != null);
