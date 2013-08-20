@@ -14,9 +14,21 @@ module UI {
         scope.editing = false;
         $(element.find(".icon-pencil")[0]).hide();
 
-        ngModel.$render = function () {
+        scope.getPropertyName = () => {
           var propertyName = $parse(attrs['property'])(scope);
-          scope.text = ngModel.$viewValue[propertyName];
+          if (!propertyName && propertyName !== 0) {
+            propertyName = attrs['property'];
+          }
+          return propertyName;
+        }
+
+        scope.propertyName = scope.getPropertyName();
+
+        ngModel.$render = function () {
+          if (!ngModel.$viewValue) {
+            return;
+          }
+          scope.text = ngModel.$viewValue[scope.propertyName];
         };
 
         scope.showEdit = function () {
@@ -39,7 +51,7 @@ module UI {
           var value = $(element.find(":input[type=text]")[0]).val();
           var obj = ngModel.$viewValue;
 
-          obj[$parse(attrs['property'])(scope)] = value;
+          obj[scope.propertyName] = value;
 
           ngModel.$setViewValue(obj);
           ngModel.$render();
