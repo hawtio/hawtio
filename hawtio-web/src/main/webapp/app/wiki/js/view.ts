@@ -478,7 +478,8 @@ module Wiki {
         folder += "/" + name.substring(0, idx);
         name = name.substring(idx + 1);
       }
-      return folder + "/" + name;
+      folder = Core.trimLeading(folder, "/");
+      return folder + (folder ? "/" : "") + name;
     }
 
     function getRenameFilePath() {
