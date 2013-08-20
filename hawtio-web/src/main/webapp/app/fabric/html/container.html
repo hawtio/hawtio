@@ -140,8 +140,8 @@
     <div class="span4">
       <dl class="dl-horizontal">
         <div class="btn-group pull-right">
-          <button class="btn" ng-click="addProfileDialog = true" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
-          <button class="btn" ng-click="deleteProfileDialog = true" ng-disabled="selectedProfiles.length == 0"
+          <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
+          <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
                   title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
         </div>
       </dl>
@@ -192,7 +192,7 @@
     </div>
   </div>
 
-  <div hawtio-confirm-dialog="connectToContainerDialog" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
+  <div hawtio-confirm-dialog="connectToContainerDialog.show" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
     <div class="dialog-body">
       <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
       <div class="control-group">
@@ -218,7 +218,7 @@
       </div>
     </div>
 
-  <div hawtio-confirm-dialog="deleteProfileDialog"
+  <div hawtio-confirm-dialog="deleteProfileDialog.show"
        ok-button-text="Delete"
        on-ok="deleteProfiles()">
     <div class="dialog-body">
@@ -232,19 +232,19 @@
     </div>
   </div>
 
-  <div modal="addProfileDialog">
+  <div modal="addProfileDialog.show">
     <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="addProfiles()">
       <div class="modal-header"><h4>Add profiles to container: {{row.id}}</h4></div>
       <div id="dialog-body" class="modal-body">
         <label>Select one or more profiles to add to this container: </label>
 
-        <div fabric-profile-selector="selectedProfilesDialog" version-id="row.versionId" excluded-profiles="row.profileIds"></div>
+        <div fabric-profile-selector="$parent.selectedProfilesDialog" version-id="row.versionId" excluded-profiles="row.profileIds"></div>
 
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="selectedProfilesDialog.length == 0" type="submit"
                value="Add">
-        <input class="btn btn-primary" ng-click="addProfileDialog = false" value="Cancel">
+        <input class="btn btn-primary" ng-click="addProfileDialog.close()" value="Cancel">
       </div>
     </form>
   </div>

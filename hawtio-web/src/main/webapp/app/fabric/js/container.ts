@@ -11,7 +11,9 @@ module Fabric {
     // TODO at least obfusicate this
     $scope.password = localStorage['fabric.password'];
 
-
+    $scope.addProfileDialog = new Core.Dialog();
+    $scope.connectToContainerDialog = new Core.Dialog();
+    $scope.deleteProfileDialog = new Core.Dialog();
 
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -23,7 +25,7 @@ module Fabric {
     }, true);
 
     $scope.doConnect = (container) => {
-      $scope.connectToContainerDialog = true;
+      $scope.connectToContainerDialog.open();
     }
 
 
@@ -34,7 +36,7 @@ module Fabric {
         localStorage['fabric.password'] = $scope.password;
       }
       Fabric.connect(localStorage, $scope.row, $scope.userName, $scope.password, true);
-      $scope.connectToContainerDialog = false;
+      $scope.connectToContainerDialog.close();
     };
 
     $scope.stop = () => {
@@ -87,9 +89,14 @@ module Fabric {
       }
     }
 
+    $scope.$watch('selectedProfilesDialog', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        console.log("Selected profiles: ", $scope.selectedProfilesDialog);
+      }
+    }, true);
 
     $scope.addProfiles = () => {
-      $scope.addProfileDialog = false;
+      $scope.addProfileDialog.close();
       var addedProfiles = $scope.selectedProfilesDialog.map((p) => { return p.id });
       var text = Core.maybePlural(addedProfiles.length, "profile");
       addProfilesToContainer(jolokia, $scope.row.id, addedProfiles, () => {
@@ -105,6 +112,7 @@ module Fabric {
 
 
     $scope.deleteProfiles = () => {
+      $scope.deleteProfileDialog.close();
       var removedProfiles = $scope.selectedProfiles.map((p) => { return p.id });
       var text = Core.maybePlural(removedProfiles.length, "profile");
       removeProfilesFromContainer(jolokia, $scope.row.id, removedProfiles, () => {
