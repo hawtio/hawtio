@@ -193,7 +193,8 @@ module Wiki {
         return path.substring(0, idx);
       }
     }
-    return path;
+    // lets return the root directory
+    return "";
   }
 
   export function fileIconHtml(row) {
