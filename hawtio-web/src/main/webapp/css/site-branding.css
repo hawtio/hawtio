@@ -1,0 +1,69 @@
+#main-nav .navbar-inner {
+  background-color: #3e4d60;
+  background-image: none;
+  border-top: 3px solid #d30c10;
+  border-bottom: 1px solid #52575C;
+}
+
+#main-nav .navbar-inner .container .brand {
+  display: block !important;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+#main-nav .navbar-inner .container div .nav li a {
+  color: #ffffff;
+  text-shadow: none;
+}
+
+#main-nav .navbar-inner .container div .nav li.active a {
+  color: #ffffff;
+  text-shadow: none;
+  background-color: #676D71;
+}
+
+#main.container-fluid {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+#main.container-fluid div .nav {
+  border-radius: 0;
+  line-height: 18px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#main.container-fluid div .nav li {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+#main.container-fluid div .nav li a {
+  padding-top: 8px;
+  border-radius: 0;
+}
+
+#main.container-fluid div .nav li a:hover {
+  padding-top: 8px;
+  border-radius: 0;
+}
+
+#main.container-fluid div .nav li.active a {
+  border-radius: 0;
+  background-color: inherit;
+  background-image: none;
+  color: #15B5D9;
+  box-shadow: none;
+  border-bottom: 2px solid #15B5D9;
+}
+
+#main.container-fluid div .nav li.active a:hover {
+  padding-top: 8px;
+  border-radius: 0;
+  background-color: inherit;
+  background-image: none;
+  color: #15B5D9;
+  box-shadow: none;
+  border-bottom: 2px solid #15B5D9;
+}
