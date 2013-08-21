@@ -184,6 +184,12 @@ module Fabric {
     function render(response) {
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
+        var id = $scope.row.id;
+        var version = $scope.row.version;
+        $scope.configFolderLink = null;
+        if ($scope.hasFabricWiki() && id && version) {
+          $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + id;
+        }
         Core.$apply($scope);
       }
     }
