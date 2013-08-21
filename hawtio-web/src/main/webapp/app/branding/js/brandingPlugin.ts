@@ -6,7 +6,7 @@ module Branding {
   export var wantedStrings = ['redhat', 'fuse'];
 
   angular.module(pluginName, ['hawtioCore']).
-      run((jolokia) => {
+      run((jolokia, helpRegistry) => {
 
         jolokia.request({
           type: 'read',
@@ -46,6 +46,7 @@ module Branding {
             }
           }
         });
+        helpRegistry.addDevDoc("branding", 'app/branding/doc/developer.md');
       });
 
   hawtioPluginLoader.addModule(pluginName);
