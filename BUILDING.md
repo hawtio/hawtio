@@ -47,7 +47,7 @@ Run the web application (or deploy it inside your container using the hawtio-dev
 
 On OS X and linux the _mvn compile_ command above is unnecessary but folks have found on windows there can be timing issues with grunt and maven that make this extra step a requirement (see [issue #203 for more details](https://github.com/hawtio/hawtio/issues/203#issuecomment-15808516))
 
-Incrementally build the project using a separate shell:
+Now incrementally build the project and run the live reload server using a *separate shell* while keeping the above shell running:
 
 
     cd hawtio-web
