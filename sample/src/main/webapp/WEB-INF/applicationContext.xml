@@ -68,6 +68,8 @@
 
 
   <!-- infinispan demo -->
+<!--
   <bean id="infinispanFactory" class="io.hawt.example.infinispan.InfinispanDemo" init-method="init" lazy-init="false"/>
+-->
 
 </beans>
