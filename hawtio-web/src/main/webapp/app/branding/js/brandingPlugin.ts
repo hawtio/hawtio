@@ -25,9 +25,9 @@ module Branding {
             var property = propertiesToCheck.find((property) => { return response.value[property]; });
 
             if (property) {
-              var found = wantedStrings.any((item) => {
+              found = wantedStrings.any((item) => {
                 return response.value[property].has(item);
-              })
+              });
             }
 
             if (found) {
@@ -44,8 +44,6 @@ module Branding {
             } else {
               console.log("not enabling branding");
             }
-
-
           }
         });
       });

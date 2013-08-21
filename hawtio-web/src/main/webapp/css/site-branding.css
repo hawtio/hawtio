@@ -67,3 +67,8 @@
   box-shadow: none;
   border-bottom: 2px solid #15B5D9;
 }
+
+#main.container-fluid div div.row-fluid div[ng-view] {
+  padding-left: 10px;
+  padding-right: 10px;
+}
