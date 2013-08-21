@@ -1,8 +1,37 @@
+* {
+  font-family: "Open Sans", sans-serif;
+}
+
+html, body {
+  min-height: 800px;
+  min-width: 850px;
+  font-size: 13.5px;
+  height: 100%;
+}
+
+small {
+  font-size: 11.5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -1px;
+  font-weight: normal;
+  font-family: "Overpass", sans-serif;
+}
+
+a {
+  color: #0099d3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 #main-nav .navbar-inner {
-  background-color: #3e4d60;
-  background-image: none;
-  border-top: 3px solid #d30c10;
-  border-bottom: 1px solid #52575C;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #3f4349 0%, #464c51 100%);
+  border-top: 3px solid #CC0000;
 }
 
 #main-nav .navbar-inner .container .brand {
@@ -14,12 +43,26 @@
 #main-nav .navbar-inner .container div .nav li a {
   color: #ffffff;
   text-shadow: none;
+  border-top: 1px solid #53565b;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #3f4349 0%, #464c51 100%);
 }
+
+#main-nav .navbar-inner .container div .nav li a:hover {
+  color: #ffffff;
+  border-top: 1px solid #949699;
+  text-shadow: none;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #5c6165, #4b5053 100%);
+}
+
 
 #main-nav .navbar-inner .container div .nav li.active a {
   color: #ffffff;
   text-shadow: none;
-  background-color: #676D71;
+  border-top: 1px solid #949699;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #72757a 0%, #64686C 100%);
 }
 
 #main.container-fluid {
@@ -40,6 +83,7 @@
 }
 
 #main.container-fluid div .nav li a {
+  color: #4d5258;
   padding-top: 8px;
   border-radius: 0;
 }
@@ -53,9 +97,9 @@
   border-radius: 0;
   background-color: inherit;
   background-image: none;
-  color: #15B5D9;
+  color: #2289ba;
   box-shadow: none;
-  border-bottom: 2px solid #15B5D9;
+  border-bottom: 1px solid #2289ba;
 }
 
 #main.container-fluid div .nav li.active a:hover {
@@ -63,9 +107,9 @@
   border-radius: 0;
   background-color: inherit;
   background-image: none;
-  color: #15B5D9;
+  color: #2289ba;
   box-shadow: none;
-  border-bottom: 2px solid #15B5D9;
+  border-bottom: 1px solid #2289ba;
 }
 
 #main.container-fluid div div.row-fluid div[ng-view] {
