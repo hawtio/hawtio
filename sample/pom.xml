@@ -24,6 +24,20 @@
       <type>war</type>
     </dependency>
 
+    <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-core</artifactId>
@@ -42,11 +56,13 @@
       <artifactId>example-dozer-models</artifactId>
       <version>${project.version}</version>
     </dependency>
+<!--
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-watcher-spring-context</artifactId>
       <version>${project.version}</version>
     </dependency>
+-->
 
     <dependency>
       <groupId>org.apache.camel</groupId>
