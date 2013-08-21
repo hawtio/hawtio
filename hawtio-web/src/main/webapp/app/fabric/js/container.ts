@@ -1,6 +1,9 @@
 module Fabric {
 
   export function ContainerController($scope, localStorage, $routeParams, jolokia, $location) {
+
+    $scope.loading = true;
+
     $scope.containerId = $routeParams.containerId;
 
     $scope.selectedProfiles = [];
@@ -148,6 +151,9 @@ module Fabric {
     }
 
     function render(response) {
+      if (!angular.isDefined($scope.responseJson)) {
+        $scope.loading = false;
+      }
       var responseJson = angular.toJson(response.value);
       if ($scope.responseJson !== responseJson) {
         $scope.responseJson = responseJson;

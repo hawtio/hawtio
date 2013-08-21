@@ -4,6 +4,8 @@ module Fabric {
 
     Fabric.initScope($scope, workspace);
 
+    $scope.loading = true;
+
     $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
 
     $scope.versionId = $routeParams.versionId;
@@ -182,6 +184,9 @@ module Fabric {
     }
     
     function render(response) {
+      if (!angular.isDefined($scope.row)) {
+        $scope.loading = false;
+      }
       if (!Object.equal($scope.row, response.value)) {
         $scope.row = response.value;
         var id = $scope.row.id;

@@ -1,142 +1,148 @@
 <div ng-controller="Fabric.ProfileController">
 
-  <div class="row-fluid">
-    <div class="pull-left">
-      <h2 style="display: inline;">/ <a ng-href="#/fabric/view?cv={{versionId}}&sp={{row.id}}">{{versionId}}</a> / 
-        {{row.id}}</h2>
-      &nbsp;
-      <!--
-      TODO : add this link back in when the overview supports filtering via active profile in the address bar
-      <a href="#/fabric/containers?cv={{versionId}}&cp={{row.id}}">
-      -->
-        <ng-pluralize count="row.containerCount"
-                      when="{'0': 'No containers running',
-                           'one': '1 container is running',
-                           'other': '{} containers are running'}">
-        </ng-pluralize>
-        <!--
-      </a>
-        -->
-    </div>
-    <div class="pull-right">
-      <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
-      <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
-      <a ng-href="{{configFolderLink}}" class="btn" ng-show="configFolderLink"
-         title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Advanced</a>
-    </div>
+  <div ng-show="loading">
+    Please wait, loading profile details...
   </div>
-
-  <div class="row-fluid profile-details">
-    <div class="span2">
-      <ul class="unstyled">
-        <li>
-          <strong>Abstract:</strong> {{row.abstractProfile}}
-        </li>
-        <li>
-          <strong>Locked:</strong> {{row.locked}}
-        </li>
-      </ul>
-      <dl ng-show="row.parentIds.length > 0">
-        <dt>Parents:</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="profile in row.parentIds">
-              <i class="red clickable icon-remove" title="Remove parent {{profile}}" ng-click="removeParentProfile(profile)"></i>
-              <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
-            </li>
-            <li>
-              <i class="clickable icon-edit" ng-click="showChangeParentsDialog()" title="Change parent profiles"></i>
-          </ul>
-        </dd>
-      </dl>
-      <dl ng-show="row.childIds.length > 0">
-        <dt>Children:</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="profile in row.childIds">
-              <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
-            </li>
-          </ul>
-        </dd>
-      </dl>
+  <div ng-hide="loading">
+    <div class="container-title row-fluid">
+      <div class="pull-left">
+        <h1 class="inline"+>Profile: {{row.id}}</h1>
+        &nbsp;
+        in version: <a ng-href="#/fabric/view?cv={{versionId}}&sp={{row.id}}">{{versionId}}</a>
+        &nbsp;
+        <!--
+        TODO : add this link back in when the overview supports filtering via active profile in the address bar
+        <a href="#/fabric/containers?cv={{versionId}}&cp={{row.id}}">
+        -->
+          <ng-pluralize count="row.containerCount"
+                        when="{'0': 'Not assigned to any containers',
+                             'one': 'Assigned to 1 container',
+                             'other': 'Assigned to {} containers'}">
+          </ng-pluralize>
+          <!--
+        </a>
+          -->
+      </div>
+      <div class="pull-right">
+        <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
+        <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
+        <a ng-href="{{configFolderLink}}" class="btn" ng-show="configFolderLink"
+           title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Advanced</a>
+      </div>
     </div>
-    <div class="span4">
-      <dl>
-        <dt>Features ({{row.features.length}}):</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="feature in row.features">
-              <i class="red clickable icon-remove" title="Delete {{feature}}" ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
-              <editable-property ng-model="row.features" property="$index" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
-            </li>
-            <li>
-              <i class="clickable icon-edit" ng-click="goto('/fabric/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
-            </li>
-          </ul>
-        </dd>
-      </dl>
-      <dl>
-        <dt>Fuse Application Bundles ({{row.fabs.length}}):</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="fab in row.fabs">
-              <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
-              <editable-property ng-model="row.fabs" property="$index" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
 
-            </li>
-            <li>
-              <i class="clickable icon-plus" ng-click="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)" title="Add Fuse Application Bundle"></i>
-            </li>
-          </ul>
-        </dd>
-      </dl>
-      <dl>
-        <dt>Bundles ({{row.bundles.length}}):</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="bundle in row.bundles">
-              <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-              <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
-            </li>
-            <li>
-              <i class="clickable icon-plus" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
-            </li>
-          </ul>
-        </dd>
-      </dl>
-    </div>
-    <div class="span4">
-      <dl>
-        <dt>Feature Repositories ({{row.repositories.length}}):</dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="repository in row.repositories">
-              <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
-              <editable-property ng-model="row.repositories" property="$index" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
-            </li>
-            <li>
-              <i class="clickable icon-plus" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
-            </li>
-          </ul>
-        </dd>
-      </dl>
-      <dl>
-        <dt>
-          <span ng-hide="configFolderLink">Configuration Files ({{row.configurations.length}})</span>
-          <a ng-hide="!configFolderLink" ng-href="configFolderLink">Configuration Files ({{row.configurations.length}})</a>
-        </dt>
-        <dd>
-          <ul class="unstyled">
-            <li ng-repeat="configuration in row.configurations">
-              <i ng-click="deleteFile(configuration)" title="Delete {{configuration}}" class="clickable red icon-remove"></i>
-              <a href="#/fabric/profile/{{versionId}}/{{profileId}}/{{configuration}}">{{configuration}}</a>
-            </li>
-            <li>
-              <i class="clickable icon-plus" ng-click="newFileDialog = true" title="Create new configuration file"></i>
-            </li>
-          </ul>
-        </dd>
-      </dl>
+    <div class="row-fluid profile-details">
+      <div class="span2">
+        <ul class="unstyled">
+          <li>
+            <strong>Abstract:</strong> {{row.abstractProfile}}
+          </li>
+          <li>
+            <strong>Locked:</strong> {{row.locked}}
+          </li>
+        </ul>
+        <dl ng-show="row.parentIds.length > 0">
+          <dt>Parents:</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="profile in row.parentIds">
+                <i class="red clickable icon-remove" title="Remove parent {{profile}}" ng-click="removeParentProfile(profile)"></i>
+                <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
+              </li>
+              <li>
+                <i class="clickable icon-edit" ng-click="showChangeParentsDialog()" title="Change parent profiles"></i>
+            </ul>
+          </dd>
+        </dl>
+        <dl ng-show="row.childIds.length > 0">
+          <dt>Children:</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="profile in row.childIds">
+                <a href="#/fabric/profile/{{versionId}}/{{profile}}{{hash}}">{{profile}}</a>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="span4">
+        <dl>
+          <dt>Features ({{row.features.length}}):</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="feature in row.features">
+                <i class="red clickable icon-remove" title="Delete {{feature}}" ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
+                <editable-property ng-model="row.features" property="$index" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
+              </li>
+              <li>
+                <i class="clickable icon-edit" ng-click="goto('/fabric/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+        <dl>
+          <dt>Fuse Application Bundles ({{row.fabs.length}}):</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="fab in row.fabs">
+                <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
+                <editable-property ng-model="row.fabs" property="$index" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
+
+              </li>
+              <li>
+                <i class="clickable icon-plus" ng-click="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)" title="Add Fuse Application Bundle"></i>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+        <dl>
+          <dt>Bundles ({{row.bundles.length}}):</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="bundle in row.bundles">
+                <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
+                <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+              </li>
+              <li>
+                <i class="clickable icon-plus" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="span4">
+        <dl>
+          <dt>Feature Repositories ({{row.repositories.length}}):</dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="repository in row.repositories">
+                <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
+                <editable-property ng-model="row.repositories" property="$index" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
+              </li>
+              <li>
+                <i class="clickable icon-plus" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+        <dl>
+          <dt>
+            <span ng-hide="configFolderLink">Configuration Files ({{row.configurations.length}})</span>
+            <a ng-hide="!configFolderLink" ng-href="{{configFolderLink}}" title="Go to folder view">Configuration Files ({{row.configurations.length}})</a>
+          </dt>
+          <dd>
+            <ul class="unstyled">
+              <li ng-repeat="configuration in row.configurations">
+                <i ng-click="deleteFile(configuration)" title="Delete {{configuration}}" class="clickable red icon-remove"></i>
+                <a href="#/fabric/profile/{{versionId}}/{{profileId}}/{{configuration}}">{{configuration}}</a>
+              </li>
+              <li>
+                <i class="clickable icon-plus" ng-click="newFileDialog = true" title="Create new configuration file"></i>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
     </div>
   </div>
 
