@@ -991,4 +991,74 @@ module Camel {
     }
     return doc;
   }
+
+  /**
+   * Returns an object of all the CamelContext MBeans keyed by their id
+   */
+  export function camelContextMBeansById(workspace:Workspace) {
+    var answer = {};
+    var tree = workspace.tree;
+    if (tree) {
+      var camelTree = tree.navigate(Camel.jmxDomain);
+      angular.forEach(camelTree.children, (contextsFolder) => {
+        var contextFolder = contextsFolder.navigate("context");
+        if (contextFolder && contextFolder.children && contextFolder.children.length) {
+          var contextItem = contextFolder.children[0];
+          var id = Core.pathGet(contextItem, ["entries", "name"]) || contextItem.key;
+          if (id) {
+            answer[id] = {
+              folder: contextItem,
+              mbean: contextItem.objectName
+            }
+          }
+        }
+      });
+    }
+    return answer;
+  }
+
+
+  /**
+   * Returns an object of all the CamelContext MBeans keyed by the component name
+   */
+  export function camelContextMBeansByComponentName(workspace:Workspace) {
+    return camelContextMBeansByRouteOrComponentId(workspace, "components")
+  }
+
+  /**
+   * Returns an object of all the CamelContext MBeans keyed by the route ID
+   */
+  export function camelContextMBeansByRouteId(workspace:Workspace) {
+    return camelContextMBeansByRouteOrComponentId(workspace, "routes")
+  }
+
+  function camelContextMBeansByRouteOrComponentId(workspace:Workspace, componentsOrRoutes: string) {
+    var answer = {};
+    var tree = workspace.tree;
+    if (tree) {
+      var camelTree = tree.navigate(Camel.jmxDomain);
+      angular.forEach(camelTree.children, (contextsFolder) => {
+        var contextFolder = contextsFolder.navigate("context");
+        var componentsFolder = contextsFolder.navigate(componentsOrRoutes);
+        if (contextFolder && componentsFolder && contextFolder.children && contextFolder.children.length) {
+          var contextItem = contextFolder.children[0];
+          var mbean = contextItem.objectName;
+          if (mbean) {
+            var contextValues = {
+              folder: contextItem,
+              mbean: mbean
+            };
+            angular.forEach(componentsFolder.children, (componentFolder) => {
+              var id = componentFolder.title;
+              if (id) {
+                answer[id] = contextValues;
+              }
+            });
+          }
+        }
+      });
+    }
+    return answer;
+  }
+
 }

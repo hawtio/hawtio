@@ -214,7 +214,9 @@ module Wiki {
 
     function reloadRouteIds() {
       $scope.routeIds = [];
-      $($scope.doc).find("route").each((idx, route) => {
+      var doc = $($scope.doc);
+      $scope.camelSelectionDetails.selectedCamelContextId = doc.find("camelContext").attr("id");
+      doc.find("route").each((idx, route) => {
         var id = route.getAttribute("id");
         if (id) {
           $scope.routeIds.push(id);
@@ -237,6 +239,7 @@ module Wiki {
           showGraph(nodes, links);
           $scope.drawnRouteId = $scope.selectedRouteId;
         }
+        $scope.camelSelectionDetails.selectedRouteId = $scope.selectedRouteId;
       }
     }
 

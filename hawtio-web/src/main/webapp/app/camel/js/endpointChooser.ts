@@ -291,6 +291,45 @@ module Camel {
     }
 
     function findCamelContextMBean() {
+      // TODO we need to find the MBean for the CamelContext / Route we are editing!
+      var componentName = $scope.selectedComponentName;
+      var selectedCamelContextId = $scope.camelSelectionDetails.selectedCamelContextId;
+      var selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
+
+      console.log("==== componentName " + componentName +
+              " selectedCamelContextId: " + selectedCamelContextId +
+              " selectedRouteId: " + selectedRouteId);
+
+      var contextsById = Camel.camelContextMBeansById(workspace);
+      if (selectedCamelContextId) {
+        var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
+        if (mbean) {
+          return mbean;
+        }
+      }
+      if (selectedRouteId) {
+        var map = Camel.camelContextMBeansByRouteId(workspace);
+        var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
+        if (mbean) {
+          return mbean;
+        }
+      }
+      if (componentName) {
+        var map = Camel.camelContextMBeansByComponentName(workspace);
+        var mbean = Core.pathGet(map, [componentName, "mbean"]);
+        if (mbean) {
+          return mbean;
+        }
+      }
+
+      // NOTE we don't really know which camel context to pick, so lets just find the first one?
+      var answer = null;
+      angular.forEach(contextsById, (id, details) => {
+        var mbean = details.mbean;
+        if (!answer && mbean) answer = mbean;
+      });
+      return answer;
+/*
       // we could be remote to lets query jolokia
       var results = $scope.jolokia.search("org.apache.camel:*,type=context", onSuccess(null));
       //var results = $scope.jolokia.search("org.apache.camel:*", onSuccess(null));
@@ -306,6 +345,7 @@ module Camel {
         mbean = Core.pathGet(folder, ["objectName"]);
       }
       return mbean;
+*/
     }
 
     function onJolokiaUrl(response) {

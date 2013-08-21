@@ -7,6 +7,10 @@ module Wiki {
     $scope.modified = false;
 
     $scope.findProfileCamelContext = true;
+    $scope.camelSelectionDetails = {
+      selectedCamelContextId: null,
+      selectedRouteId: null
+    };
 
     $scope.isValid = (nav) => {
       return nav && nav.isValid(workspace);
