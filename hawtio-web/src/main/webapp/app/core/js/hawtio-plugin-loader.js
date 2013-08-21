@@ -78,69 +78,77 @@
 
     var plugins = {};
 
-    var regex = new RegExp(/^jolokia:/);
+    var urlsToLoad = hawtioPluginLoader.urls.length;
 
-    $.each(hawtioPluginLoader.urls, function(index, url) {
+    var loadScripts = function() {
 
-      if (regex.test(url)) {
-        var parts = url.split(':');
-        parts = parts.reverse();
-        parts.pop();
+      // keep track of when scripts are loaded so we can execute the callback
+      var loaded = $.map(plugins, function(n, i) { return i; }).length;
 
-        var url = parts.pop();
-        var attribute = parts.reverse().join(':');
-        var jolokia = new Jolokia(url);
-
-        try { 
-          var data = jolokia.getAttribute(attribute, null);
-          $.extend(plugins, data);
-        } catch (Exception) {
-          // console.error("Error fetching data: " + Exception);
+      var scriptLoaded = function() {
+        loaded = loaded - 1;
+        if (loaded == 0) {
+          callback();
         }
+      };
 
-      } else {
-        try {
-          var data = $.get(url);
-          var obj = $.parseJSON(data);
-          $.extend(plugins, obj);
-        } catch (Exception) {
-          // console.error("Error fetching data: " + Exception);
-        }
-      }
-    });
+      if (loaded > 0) {
+        $.each(plugins, function(key, data) {
 
-    // keep track of when scripts are loaded so we can execute the callback
-    var loaded = $.map(plugins, function(n, i) { return i; }).length;
-
-    var scriptLoaded = function() {
-      loaded = loaded - 1;
-      if (loaded == 0) {
-        callback();
-      }
-    };
-
-    if (loaded > 0) {
-      $.each(plugins, function(key, data) {
-
-        data.Scripts.forEach( function(script) {
-          var scriptName = data.Context + "/" + script;
-
-          $.getScript(scriptName)
-          .done(function(script, textStatus) {
-            scriptLoaded();
-          }).fail(function(jqxhr, settings, exception) {
-            // Can maybe let other scripts run still.
-            scriptLoaded();
-            // TODO - something else
-            // console.error("Failed to load " + script + " exception: " + exception);
+          data.Scripts.forEach( function(script) {
+            //console.log("Loading plugin: ", data.Name);
+            var scriptName = data.Context + "/" + script;
+            $.getScript(scriptName).always(scriptLoaded);
           });
         });
-      });
-    } else {
-      // no scripts to load, so just do the callback
-      callback();
+      } else {
+        // no scripts to load, so just do the callback
+        callback();
+      }
     }
 
+    if (urlsToLoad == 0) {
+      loadScripts();
+    } else {
+
+      var urlLoaded = function () {
+        urlsToLoad = urlsToLoad - 1;
+        if (urlsToLoad == 0) {
+          loadScripts();
+        }
+      }
+
+      var regex = new RegExp(/^jolokia:/);
+
+      $.each(hawtioPluginLoader.urls, function(index, url) {
+
+        if (regex.test(url)) {
+          var parts = url.split(':');
+          parts = parts.reverse();
+          parts.pop();
+
+          var url = parts.pop();
+          var attribute = parts.reverse().join(':');
+          var jolokia = new Jolokia(url);
+
+          try {
+            var data = jolokia.getAttribute(attribute, null);
+            $.extend(plugins, data);
+          } catch (Exception) {
+            // console.error("Error fetching data: " + Exception);
+          }
+          urlLoaded();
+        } else {
+          // console.log("Trying url: ", url);
+          $.get(url, function (data) {
+                // console.log("got data: ", data);
+                $.extend(plugins, data);
+              }).always(function() {
+                urlLoaded();
+              });
+        }
+      });
+    }
   };
 
   hawtioPluginLoader.debug = function() {
