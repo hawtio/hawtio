@@ -15,6 +15,11 @@ module Branding {
         }, {
           success: (response) => {
 
+            if (response.value['hawtio.disableBranding']) {
+              console.log("not enabling branding");
+              return;
+            }
+
             var found = false;
 
             var property = propertiesToCheck.find((property) => { return response.value[property]; });
