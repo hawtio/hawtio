@@ -3,7 +3,6 @@ module Core {
   export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
 
     if (userDetails.username === null) {
-      // sigh, hack
       $location.url('/help');
     }
 
@@ -105,7 +104,7 @@ module Core {
         success: () => {
           userDetails.username = null;
           userDetails.password = null;
-          $scope.$apply();
+          Core.$apply($scope);
         },
         error: (xhr, textStatus, error) => {
           // TODO, more feedback
@@ -120,24 +119,37 @@ module Core {
               notification('error', 'Failed to log out, ' + error);
               break;
           }
-          $scope.$apply();
+          Core.$apply($scope);
         }
       });
     };
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
 
-    $scope.$watch('userDetails', (newValue, oldValue) => {
+    $scope.maybeRedirect = () => {
       if (userDetails.username === null) {
-        lastLocation.url = $location.url('/login');
+        var currentUrl = $location.url();
+        if (!currentUrl.startsWith('/login')) {
+          lastLocation.url = currentUrl;
+          $location.url('/login');
+        }
+      } else {
+        if ($location.url().startsWith('/login')) {
+          var url:Object = '/help';
+          if (angular.isDefined(lastLocation.url)) {
+            url = lastLocation.url;
+          }
+          $location.url(url);
+        }
       }
-      //console.log("userDetails: ", userDetails);
+    }
+
+    $scope.$watch('userDetails', (newValue, oldValue) => {
+      $scope.maybeRedirect();
     }, true);
 
     $scope.$on('$routeChangeStart', function() {
-      if (userDetails.username === null) {
-        lastLocation.url = $location.url('/login');
-      }
+      $scope.maybeRedirect();
     });
 
     $scope.$on('$routeChangeSuccess', function() {

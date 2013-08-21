@@ -1,14 +1,24 @@
 module Core {
 
-  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, $location, lastLocation) {
+  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, $location, lastLocation, localStorage, $rootScope) {
     jolokia.stop();
 
     $scope.backstretch = (<any>$).backstretch("img/fire.jpg");
 
     $scope.username = '';
     $scope.password = '';
-
     $scope.rememberMe = false;
+
+    var details = angular.fromJson(localStorage[jolokiaUrl]);
+    if (details) {
+      $scope.username = details['username'];
+      $scope.password = details['password'];
+      $scope.rememberMe = details['rememberMe'];
+    }
+
+    $scope.$on('$routeChangeStart', function() {
+      $scope.backstretch.destroy();
+    });
 
     $scope.doLogin = () => {
 
@@ -19,20 +29,18 @@ module Core {
         success: () => {
           userDetails.username = $scope.username;
           userDetails.password = $scope.password;
+          userDetails.rememberMe = $scope.rememberMe;
 
           if ($scope.rememberMe) {
             localStorage[jolokiaUrl] = angular.toJson(userDetails);
+          } else {
+            delete localStorage[jolokiaUrl];
           }
-
-          //$.ajaxSetup(userDetails);
 
           jolokia.start();
           workspace.loadTree();
 
-          $location.url(lastLocation.url);
-          $scope.backstretch.destroy();
-
-          $scope.$apply();
+          Core.$apply($scope);
         },
         error: (xhr, textStatus, error) => {
           // TODO placeholder for more feedback
@@ -47,7 +55,7 @@ module Core {
               notification('error', 'Failed to log in, ' + error);
               break;
           }
-          $scope.$apply();
+          Core.$apply($scope);
         },
         beforeSend: (xhr) => {
           xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.username, $scope.password));
