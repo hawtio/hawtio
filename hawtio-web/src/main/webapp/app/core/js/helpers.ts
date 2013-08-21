@@ -51,7 +51,17 @@ function url(path: string): string {
 function humanizeValue(value:any):string {
   if (value) {
     var text = value.toString();
-    return trimQuotes(text.underscore().humanize());
+    try {
+      text = text.underscore();
+    } catch (e) {
+      // ignore
+    }
+    try {
+      text = text.humanize();
+    } catch (e) {
+      // ignore
+    }
+    return trimQuotes(text);
   }
   return value;
 }
