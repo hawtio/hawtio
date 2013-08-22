@@ -32,27 +32,91 @@ a:hover {
   text-decoration: underline;
 }
 
+#main-nav .main-nav-upper .nav {
+  max-height: 25px !important;
+}
+
+#main-nav .main-nav-upper .nav li {
+  max-height: 25px !important;
+}
+
+#main-nav .main-nav-upper .nav li a {
+  max-height: 25px !important;
+}
+
 #main-nav .navbar-inner {
   background-color: inherit;
   background-image: linear-gradient(to bottom, #3f4349 0%, #464c51 100%);
-  border-top: 3px solid #CC0000;
 }
 
-#main-nav .navbar-inner .container .brand {
+.navbar-inner {
+  height: auto;
+  min-height: 0;
+}
+
+.main-nav-upper {
+  height: auto;
+  min-height: 0;
+}
+
+#main-nav .navbar-inner.main-nav-upper {
+  border-top: 3px solid #CC0000;
+  background-color: #393F45;
+  background-image: none;
+  border-bottom: none;
+  height: 25px !important;
+  min-height: 25px: !important;
+  box-shadow: none;
+}
+
+#main-nav .navbar-inner.main-nav-lower {
+  border-top: 1px solid #53565b;
+  box-shadow: none;
+  background: #3f4349;
+
+  background: -moz-linear-gradient(top, #3f4349 0%, #464c51 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3f4349), color-stop(100%,#464c51));
+  background: -webkit-linear-gradient(top, #3f4349 0%,#464c51 100%);
+  background: -o-linear-gradient(top, #3f4349 0%,#464c51 100%);
+  background: -ms-linear-gradient(top, #3f4349 0%,#464c51 100%);
+  background: linear-gradient(to bottom, #3f4349 0%,#464c51 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f4349', endColorstr='#464c51',GradientType=0 );
+
+  padding: 0px;
+  height: 42px;
+  max-height: 42px;
+  min-height: 42px;
+  border-bottom: none;
+
+}
+
+.prefs {
+  margin-top: 14px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .container .brand {
   display: block !important;
   color: #ffffff;
   text-shadow: none;
 }
 
-#main-nav .navbar-inner .container div .nav li a {
-  color: #ffffff;
-  text-shadow: none;
-  border-top: 1px solid #53565b;
-  background-color: inherit;
-  background-image: linear-gradient(to bottom, #3f4349 0%, #464c51 100%);
+#main-nav .navbar-inner.main-nav-lower .nav {
+  width: 100%;
+  float: none;
+  position: relative;
+  top: -1px;
+  height: 42px;
 }
 
-#main-nav .navbar-inner .container div .nav li a:hover {
+#main-nav .navbar-inner .nav li a {
+  border-top: 1px solid #53565B;
+  color: #ffffff;
+  text-shadow: none;
+  height: 32px;
+  padding-bottom: 0px;
+}
+
+#main-nav .navbar-inner .nav li a:hover {
   color: #ffffff;
   border-top: 1px solid #949699;
   text-shadow: none;
@@ -61,12 +125,26 @@ a:hover {
 }
 
 
-#main-nav .navbar-inner .container div .nav li.active a {
+#main-nav .navbar-inner .nav li.active a {
   color: #ffffff;
   text-shadow: none;
   border-top: 1px solid #949699;
   background-color: inherit;
   background-image: linear-gradient(to bottom, #72757a 0%, #64686C 100%);
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li a {
+  height: 24px;
+  padding-top: 1px;
+  border-top: none;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li.active a {
+  border-top: none;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li a:hover {
+  border-top: none;
 }
 
 #main.container-fluid {
@@ -153,7 +231,7 @@ div[ng-controller='Core.LoginController']:after {
   font-weight: 200;
   font-size: 22px;
   font-size: 22px;
-  content: 'Management Console';
+  content: 'Red Hat JBoss Fuse';
   color: #FFFFFF;
 }
 
@@ -252,8 +330,8 @@ div[ng-controller='Core.LoginController']:after {
 .login-wrapper form fieldset input[type="text"],
 .login-wrapper form fieldset input[type="password"] {
   color: #ffffff;
-  background-color:
-  margin: 4px 0;
+  background-color: inherit;
+  margin: 4px 0px;
   margin-bottom: 14px;
   width: 282px;
 }

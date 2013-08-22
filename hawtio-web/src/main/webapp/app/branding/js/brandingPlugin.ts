@@ -5,6 +5,8 @@ module Branding {
   $.get('/hawtio/branding', (enabled) => {
     Branding.enabled = enabled;
 
+    // Branding.enabled = false;
+
     if (Branding.enabled) {
       // pull in branding stylesheet
       var link = $("<link>");
@@ -31,7 +33,7 @@ module Branding {
 
         if (Branding.enabled) {
           console.log("enabled branding");
-          branding.appName = 'Management Console';
+          branding.appName = 'Red Hat JBoss Fuse';
           branding.appLogo = '';
           branding.loginBg = 'img/branding/login-screen-background.jpg';
           branding.fullscreenLogin = true;

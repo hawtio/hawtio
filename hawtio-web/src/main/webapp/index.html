@@ -52,18 +52,58 @@
 
 <!--  navbar-inverse -->
 <div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()" ng-controller="Core.NavBarController">
-  <div class="navbar-inner" ng-cloak class="ng-cloak">
+
+  <div class="navbar-inner main-nav-upper" ng-cloak class="ng-cloak">
+
     <div class="container">
+      <div class="pull-left">
+        <a class="brand" href="#">
+          <img ng-show="appLogo" ng-src="{{appLogo}}"/>
+          <strong>{{appName}}</strong>
+        </a>
+      </div>
+
+      <div class="pull-right">
+        <ul class="nav pull-right">
+          <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
+            <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
+              <i class="icon-cogs"></i>
+            </a>
+          </li>
+          <li ng-show="loggedIn()">
+            <a href="" title="Log out" data-placement="bottom" ng-click="logout()">
+              <i class="icon-signout"></i>
+            </a>
+          </li>
+          <li ng-hide="loggedIn()" ng-class="{active : isActive('#/login')}">
+            <a ng-href="{{link('#/login')}}" title="Log in" data-placement="bottom">
+              <i class="icon-user"></i>
+            </a>
+          </li>
+          <li ng-show="loggedIn()" ng-class="{active : isActive('#/help')}">
+            <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console"
+               data-placement="bottom">
+              <i class="icon-question-sign"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="navbar-inner main-nav-lower" ng-cloak class="ng-cloak" ng-show="!login()">
+    <div class="container">
+      <!--
       <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
         <span>{{activeLink()}}</span>
       </a>
-      <a class="brand" href="#">
-        <img ng-show="appLogo" ng-src="{{appLogo}}"/>
-        {{appName}}
-      </a>
+      -->
 
-
+      <!--
       <div class="nav-collapse collapsed">
+      -->
 
         <ul ng-show="loggedIn()" class="nav">
           <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
@@ -72,32 +112,9 @@
           </li>
         </ul>
 
-        <div class="pull-right">
-          <ul class="nav pull-right">
-            <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
-              <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
-                <i class="icon-cogs"></i>
-              </a>
-            </li>
-            <li ng-show="loggedIn()">
-              <a href="" title="Log out" data-placement="bottom" ng-click="logout()">
-                <i class="icon-signout"></i>
-              </a>
-            </li>
-            <li ng-hide="loggedIn()" ng-class="{active : isActive('#/login')}">
-              <a ng-href="{{link('#/login')}}" title="Log in" data-placement="bottom">
-                <i class="icon-user"></i>
-              </a>
-            </li>
-            <li ng-show="loggedIn()" ng-class="{active : isActive('#/help')}">
-              <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console"
-                 data-placement="bottom">
-                <i class="icon-question-sign"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+      <!--
       </div>
+      -->
     </div>
   </div>
 </div>

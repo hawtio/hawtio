@@ -738,7 +738,7 @@ div#main div ul.nav li a:hover {
   background: white;
   position: fixed;
   width: 87%;
-  top: 40px;
+  top: 70px;
   left: 5%;
   border-bottom: 1px solid @control-border;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
@@ -792,10 +792,6 @@ div#main div ul.nav li a:hover {
 
 .no-log {
   margin-top: 55px;
-}
-
-.prefs {
-  margin-top: 1.5em;
 }
 
 .control i {
@@ -1795,6 +1791,71 @@ div#main div ul.nav li a.nav-primary.active {
 div#main div ul.nav li a.nav-primary .caret {
   border-top-color: #ffffff;
   border-bottom-color: #ffffff;
+}
+
+.main-nav-upper .container:before {
+  display: none
+}
+
+.main-nav-upper .container:after {
+  display: none
+}
+
+.main-nav-upper .container {
+  width: auto;
+  line-height: 11px;
+}
+
+
+.main-nav-lower .container:before {
+  display: none
+}
+
+.main-nav-lower .container:after {
+  display: none
+}
+
+.main-nav-lower .container {
+  width: auto;
+}
+
+.navbar-inner {
+  height: auto;
+  min-height: 0;
+}
+
+.main-nav-upper {
+  background-image: none;
+  background-color: white;
+  height: 28px;
+  min-height: 28px;
+  font-size: 11px;
+}
+
+.main-nav-upper .brand {
+  font-size: 13px;
+  margin-left: 0px;
+  padding: 0px;
+  padding-top: 7px;
+  font-weight: normal;
+  margin-left: 20px;
+}
+
+.main-nav-upper .nav.pull-right {
+  // margin-right: 10px;
+}
+
+.main-nav-upper .nav li a {
+  padding-top: 4px;
+  padding-bottom: 5px;
+}
+
+#main-nav {
+  max-height: 70px;
+}
+
+#main {
+  margin-top: 70px !important;
 }
 
 

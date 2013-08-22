@@ -171,6 +171,10 @@ module Core {
       return false;
     }
 
+    $scope.login = () => {
+      return $location.url().startsWith("/login");
+    }
+
   }
 
 }
