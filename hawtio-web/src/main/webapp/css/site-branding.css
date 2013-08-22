@@ -114,6 +114,8 @@ a:hover {
   text-shadow: none;
   height: 32px;
   padding-bottom: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 #main-nav .navbar-inner .nav li a:hover {
@@ -131,6 +133,7 @@ a:hover {
   border-top: 1px solid #949699;
   background-color: inherit;
   background-image: linear-gradient(to bottom, #72757a 0%, #64686C 100%);
+  font-weight: bold;
 }
 
 #main-nav .navbar-inner.main-nav-upper .nav li a {
@@ -153,26 +156,40 @@ a:hover {
 }
 
 #main.container-fluid div .nav {
+  background-image: none;
+  background: #f6f6f6;
   border-radius: 0;
   line-height: 18px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 0;
+  max-height: 31px;
+  min-height: 31px;
+  border-top: none;
+  border-bottom: 1px solid #cecdcd;
 }
 
 #main.container-fluid div .nav li {
   margin-bottom: 0px;
   margin-top: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 #main.container-fluid div .nav li a {
+  background-image: none;
+  background: #f6f6f6;
   color: #4d5258;
-  padding-top: 8px;
   border-radius: 0;
+  border: 1px solid inherit;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 5px;
+  padding-bottom: 6px;
 }
 
 #main.container-fluid div .nav li a:hover {
-  padding-top: 8px;
   border-radius: 0;
+  padding-top: 5px;
+  padding-bottom: 6px;
 }
 
 #main.container-fluid div .nav li.active a {
@@ -185,13 +202,14 @@ a:hover {
 }
 
 #main.container-fluid div .nav li.active a:hover {
-  padding-top: 8px;
   border-radius: 0;
   background-color: inherit;
   background-image: none;
   color: #2289ba;
   box-shadow: none;
   border-bottom: 1px solid #2289ba;
+  padding-top: 5px;
+  padding-bottom: 6px;
 }
 
 #main.container-fluid div div.row-fluid div[ng-view] {
