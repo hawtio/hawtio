@@ -121,7 +121,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return {
             appName: 'hawtio',
             appLogo: 'img/logo-16px.png',
-            loginBg: 'img/fire.jpg'
+            loginBg: 'img/fire.jpg',
+            fullscreenLogin: false
           }
 
         }).

@@ -34,6 +34,7 @@ module Branding {
           branding.appName = 'Management Console';
           branding.appLogo = '';
           branding.loginBg = 'img/branding/login-screen-background.jpg';
+          branding.fullscreenLogin = true;
         }
 
       });

@@ -161,6 +161,9 @@ module Core {
     });
 
     $scope.fullScreen = () => {
+      if ($location.url().startsWith("/login")) {
+        return branding.fullscreenLogin;
+      }
       var tab = $location.search()['tab'];
       if (tab) {
         return tab === "fullscreen";
