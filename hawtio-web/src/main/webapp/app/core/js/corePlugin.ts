@@ -92,7 +92,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
         factory('pageTitle', function () {
           var answer = new Core.PageTitle();
-          answer.addTitleElement(() => { return 'hawtio'; });
           return answer;
         }).
 
@@ -116,6 +115,15 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           return {
             xhr: null
           };
+        }).
+
+        factory('branding', function() {
+          return {
+            appName: 'hawtio',
+            appLogo: 'img/logo-16px.png',
+            loginBg: 'img/fire.jpg'
+          }
+
         }).
 
         factory('userDetails', function(jolokiaUrl, localStorage) {
@@ -232,9 +240,13 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         filter("valueToHtml", () => Core.valueToHtml).
         filter('humanize',() => humanizeValue).
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry) => {
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding) => {
 
           $.support.cors = true;
+
+          pageTitle.addTitleElement(() => {
+            return branding.appName;
+          });
 
           /**
            * Count the number of lines in the given text

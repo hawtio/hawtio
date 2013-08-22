@@ -1,6 +1,6 @@
 module Core {
 
-  export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl) {
+  export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
 
     if (userDetails.username === null) {
       $location.url('/help');
@@ -13,6 +13,9 @@ module Core {
     $scope.confirmLogout = false;
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
+
+    $scope.appName = branding.appName;
+    $scope.appLogo = branding.appLogo;
 
     $scope.$watch('jolokiaStatus.xhr', function () {
       var failure = jolokiaStatus.xhr;

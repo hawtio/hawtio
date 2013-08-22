@@ -1,9 +1,9 @@
 module Core {
 
-  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, $location, lastLocation, localStorage, $rootScope) {
+  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding) {
     jolokia.stop();
 
-    $scope.backstretch = (<any>$).backstretch("img/fire.jpg");
+    $scope.backstretch = (<any>$).backstretch(branding.loginBg);
 
     $scope.username = '';
     $scope.password = '';
@@ -17,7 +17,9 @@ module Core {
     }
 
     $scope.$on('$routeChangeStart', function() {
-      $scope.backstretch.destroy();
+      if ($scope.backstretch) {
+        $scope.backstretch.destroy();
+      }
     });
 
     $scope.doLogin = () => {
