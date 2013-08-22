@@ -107,6 +107,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>branding</servlet-name>
+    <servlet-class>io.hawt.web.BrandingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>branding</servlet-name>
+    <url-pattern>/branding/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>logout</servlet-name>
     <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
   </servlet>
