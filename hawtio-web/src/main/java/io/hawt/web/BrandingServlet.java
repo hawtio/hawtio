@@ -53,7 +53,6 @@ public class BrandingServlet extends HttpServlet {
         }
 
         Properties systemProperties = System.getProperties();
-        System.out.println("System properties: " + systemProperties);
         List<String> hits = new ArrayList<String>();
 
         for (String property : propertiesToCheck) {
