@@ -359,4 +359,36 @@ div[ng-controller='Core.LoginController']:after {
   margin-top: 12px;
 }
 
+.logbar {
+  width: 100%;
+  left: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: none repeat scroll 0 0 #F6F6F6;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.wiki.logbar-container {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+div#main div ul.nav li a.nav-primary:hover, div#main div ul.nav li a.nav-primary:active, div#main div ul.nav li a.nav-primary.active, div#main div ul.nav li a.nav-primary.disabled, div#main div ul.nav li a.nav-primary[disabled] {
+  background-color: inherit;
+  color: #0044CC;
+}
+
+div#main div ul.nav li a.nav-primary {
+  background-color: inherit;
+  background-image: inherit;
+  background-repeat: repeat-x;
+  border-color: inherit;
+  color: #0044CC;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
 
