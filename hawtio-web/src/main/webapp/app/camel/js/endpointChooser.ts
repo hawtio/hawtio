@@ -324,7 +324,7 @@ module Camel {
 
       // NOTE we don't really know which camel context to pick, so lets just find the first one?
       var answer = null;
-      angular.forEach(contextsById, (id, details) => {
+      angular.forEach(contextsById, (details, id) => {
         var mbean = details.mbean;
         if (!answer && mbean) answer = mbean;
       });
