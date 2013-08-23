@@ -625,7 +625,18 @@ module Fabric {
 
 
     $scope.createContainer = () => {
-      $location.url('/fabric/containers/createContainer').search('tab', 'ssh');
+      var kind = null;
+      // lets see if there is an openshift option
+      var providers = registeredProviders(jolokia);
+      angular.forEach(["openshift", "jclouds"], (value) => {
+        if (!kind && providers[value]) {
+          kind = value;
+        }
+      });
+      if (!kind) {
+        kind = 'ssh';
+      }
+      $location.url('/fabric/containers/createContainer').search('tab', kind);
     };
 
 
