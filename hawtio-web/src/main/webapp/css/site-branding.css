@@ -106,6 +106,9 @@ a:hover {
   position: relative;
   top: -1px;
   height: 42px;
+  background: inherit;
+  background-color: inherit;
+  background-image: inherit;
 }
 
 #main-nav .navbar-inner .nav li a {
@@ -215,6 +218,10 @@ a:hover {
 #main.container-fluid div div.row-fluid div[ng-view] {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.nav li a {
+  cursor: pointer;
 }
 
 
@@ -404,4 +411,83 @@ div#main div ul.nav li a.nav-primary {
 
 .nav.help-sidebar li:first-child {
   padding-top: 3px;
+}
+
+.nav-tabs .dropdown-menu {
+  border-radius: 0;
+}
+
+.dropdown-menu {
+  border: 1px solid #b6b6b6;
+  border-top: 0;
+  margin-top: 1px;
+  padding: 0;
+  background-color: white;
+}
+
+.dropdown-menu .divider {
+  margin: 0 !important;
+  border: 0;
+  color: #E5E5E5;;
+}
+
+.dropdown-menu li > a {
+  background: inherit !important;
+  text-shadow: none;
+  line-height: 22px;
+  font-size: 11px;
+  border: 0 !important;
+  padding: 0 !important;
+  max-height: 22px;
+}
+
+.dropdown-menu .divider:hover {
+
+}
+
+.dropdown-menu li:hover {
+  color: #ffffff !important;
+  border-top: 1px solid #2289ba;
+  background-image: linear-gradient(to bottom, #40a0ce 0%, #3890ba 100%) !important;
+  cursor: pointer;
+}
+
+.dropdown-menu .divider:hover {
+  border-top: 0;
+  background-image: none !important;
+}
+
+.dropdown-menu li:hover > a {
+  color: #ffffff !important;
+  text-shadow: none !important;
+  font-weight: bold;
+}
+
+.dropdown-menu li {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  line-height: 22px !important;
+  border-top: 1px solid;
+  border-color: white;
+  max-height: 22px;
+}
+
+li.dropdown.open a.dropdown-toggle {
+  color: #2289ba !important;
+  border-bottom: 1px solid #2289ba !important;
+}
+
+.caret {
+  border: 0;
+}
+
+.caret:before {
+  border: 0;
+  content: "\f078";
+  font-size: 11px;
+  display: block;
+  color: #53595f;
+  position: relative;
+  top: -7px;
+  left: 1px;
 }
