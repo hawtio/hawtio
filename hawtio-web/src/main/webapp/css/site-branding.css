@@ -392,3 +392,16 @@ div#main div ul.nav li a.nav-primary {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
+.nav.help-sidebar {
+  /*
+  background: none;
+  border-bottom: 0;
+  */
+  max-height: inherit !important;
+  position: relative;
+  left: -10px;
+}
+
+.nav.help-sidebar li:first-child {
+  padding-top: 3px;
+}
