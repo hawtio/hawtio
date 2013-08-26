@@ -22,6 +22,7 @@ module Wiki {
     };
 
     $scope.isActive = (href) => {
+      console.log("href: ", href);
       var tidy = Core.trimLeading(href, "#");
       var loc = $location.path();
       if (loc === tidy) return true;
@@ -50,9 +51,9 @@ module Wiki {
 
     function loadBreadcrumbs() {
       var start = Wiki.startLink($scope.branch);
-      var href = start + "/view/";
+      var href = start + "/view";
       $scope.breadcrumbs = [
-        {href: href, name: "/"}
+        {href: href, name: "root"}
       ];
       var path = Wiki.pageId($routeParams, $location);
       var array = path ? path.split("/") : [];
@@ -61,7 +62,9 @@ module Wiki {
           href += "/";
         }
         href += name;
-        $scope.breadcrumbs.push({href: href, name: name});
+        if (!name.isBlank()) {
+          $scope.breadcrumbs.push({href: href, name: name});
+        }
       });
       // lets swizzle the last one or two to be formTable views if the last or 2nd to last
 

@@ -428,7 +428,7 @@ div#main div ul.nav li a.nav-primary {
 .dropdown-menu .divider {
   margin: 0 !important;
   border: 0;
-  color: #E5E5E5;;
+  color: #E5E5E5;
 }
 
 .dropdown-menu li > a {
@@ -491,3 +491,22 @@ li.dropdown.open a.dropdown-toggle {
   top: -7px;
   left: 1px;
 }
+
+li[ng-repeat='link in breadcrumbs'] {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  white-space: nowrap;
+}
+
+li[ng-repeat='link in breadcrumbs'] a {
+  display: inline-block;
+}
+
+li[ng-repeat='link in breadcrumbs']:after {
+  content: '/';
+}
+
+li[ng-repeat='link in breadcrumbs'].active:after {
+  content: '';
+}
+
