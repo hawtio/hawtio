@@ -5,162 +5,260 @@ module ES {
         return $.isEmptyObject(value);
     }
 
-
     // Search Angular Controller used by ES
     export function SearchCtrl($scope, $location, $log, ejsResource) {
 
         // Retrieve by default parameters from config.js
         //var defaultEsServer = $scope.defaultEsServer = "http://localhost:9200";
-        var defaultEsServer = $scope.defaultEsServer = config["elasticsearch"];
+        var esServer = $scope.esServer = config["elasticsearch"];
         var query = $scope.queryTerm = config["query"];
+        var facetField = $scope.facetField = "tags";
+        var facetType = $scope.facetType = "terms";
         var index = $scope.indice = config["indice"];
         var type = $scope.docType = config["doctype"];
-        var ejs = ejsResource(defaultEsServer);
+        var ejs;
+        var request;
         $scope.log = $log;
 
-        // setup the indices and types to search across
-        var request;
-
-        $scope.parse_error = function(data) {
-            var _error = data.match("nested: (.*?);");
-            return _error == null ? data : _error[1];
-        };
-
-        // define our search function that will be called when a user
-        // submits a search
+        /* Define search function that will be called when a user
+         submits a Query String search
+         Query syntax : *
+         Query syntax : field: 'value'
+         Query syntax : field: 'value' AND field: 'value'
+         Query syntax : field: 'value' OR field: 'value'
+         where value corresponds to text to search ortext + * symbol
+         */
         $scope.search = function () {
 
-            console.log("Search button called");
-            console.log("ES Server = " + $scope.defaultEsServer);
-            console.log("Indice value = " + $scope.indice);
-            console.log("Indice = " + index);
-            console.log("Type value = " + $scope.docType);
-            console.log("Type = " + type);
-
-            if (!isEmptyObject($scope.indice)) {
-                index = $scope.indice;
-            } else {
-                index = 'twitter';
+            if (isEmptyObject(ejs)) {
+                console.log("Init EJS server");
+                ejs = initElasticsearchServer(esServer);
             }
 
-            if (!isEmptyObject($scope.docType)) {
-                type = $scope.docType;
-            } else {
-                type = 'tweet';
-            }
+            // Initialize ES Server to send request
+            setupEsRequest();
 
-            // Call ES server
-            var ejs = ejsResource($scope.defaultEsServer);
-
-            // Define Request to call ES
-            var request = ejs.Request()
-                    .indices(index)
-                    .types(type);
-
-            // Setup query
+            // Setup Query String
             request = request
                     .query(ejs.QueryStringQuery(query));
 
             // Run query
             var results = request.doSearch();
 
-            results.then(function(results) {
+            console.log("Do Elastic Search");
+
+            results.then(function (results) {
 
                 //$location.path("/elasticjs");
 
-                // Reset fields after search
+                // Reset field after search
                 $scope.queryTerm = "";
-                $scope.indice = "";
-                $scope.docType = "";
 
                 if (typeof results.error != 'undefined') {
 
                     // Message should be displayed in the web page as a modal window
-                    console.error("Cannot connect to the ES Server");
+                    console.error("ES error : " + results.error);
 
                     // Solution proposed by kibana3
                     // $scope.panel.error = $scope.parse_error(results.error);
                     return;
                 }
 
-                console.log( results.length + " : results retrieved");
+                console.log(results.hits.total + " : results retrieved");
                 $scope.results = results;
 
             });
 
         };
 
-        // index the sample documents
-        $scope.indexSampleDocs = function () {
+        $scope.facetTermsSearch = function() {
 
-            // our example documents
-            var docs = [
-                ejs.Document(index, type, '1').source({
-                    user: 'mrweber',
-                    postedDate: '2013-08-22T18:30:00',
-                    message: 'Elastic.js - a Javascript implementation of the ElasticSearch Query DSL and Core API'}),
+            if (isEmptyObject(ejs)) {
+                console.log("Init EJS server");
+                ejs = initElasticsearchServer(esServer);
+            }
 
-                ejs.Document(index, type, '2').source({
-                    user: 'egaumer',
-                    postedDate: '2013-08-22T18:25:00',
-                    message: 'FullScale Labs just released Elastic.js go check it out!'
-                }),
+            // Initialize ES Server to send request
+            setupEsRequest();
 
-                ejs.Document(index, type, '3').source({
-                    user: 'dataintensive',
-                    postedDate: '2013-08-22T18:10:00',
-                    message: 'We are pleased to announce Elastic.js an implementation of the #elasticsearch query dsl'
-                }),
+            if (!isEmptyObject($scope.facetField)) {
+                facetField = $scope.facetField;
+            }
 
-                ejs.Document(index, type, '4').source({
-                    user: 'kimchy',
-                    postedDate: '2013-08-22T18:10:00',
-                    message: 'The FullScale Labs team are awesome!  Go check out Elastic.js'
-                }),
+            if (!isEmptyObject($scope.facetType)) {
+                facetType = $scope.facetType;
+            }
 
-                ejs.Document(index, type, '5').source({
-                    user: 'egaumer',
-                    postedDate: '2013-08-22T18:05:00',
-                    message: 'Use elastic.js to write a complex query and translate it to json with our query translator'
-                }),
+            // Setup QueryString and Facets
+            request = request
+                    .query(ejs.QueryStringQuery(query))
+                    .facet(
+                        ejs.TermsFacet("termFacet")
+                            .field(facetField)
+                            .size(50)
+                    )
+            ;
 
-                ejs.Document(index, type, '6').source({
-                    user: 'cmoulliard',
-                    postedDate: '2013-08-22T18:30:00',
-                    message: 'Elastic.js - a Javascript implementation of the ElasticSearch Query DSL and Core API'}),
+            // Run query
+            var results = request.doSearch();
 
-                ejs.Document(index, type, '7').source({
-                    user: 'cmoulliard',
-                    postedDate: '2013-08-22T18:25:00',
-                    message: 'FullScale Labs just released Elastic.js go check it out!'
-                }),
+            console.log("Do Elastic Search");
 
-                ejs.Document(index, type, '8').source({
-                    user: 'jstrachan',
-                    postedDate: '2013-08-22T18:10:00',
-                    message: 'We are pleased to announce Elastic.js an implementation of the #elasticsearch query dsl'
-                }),
+            results.then(function (results) {
 
-                ejs.Document(index, type, '9').source({
-                    user: 'davclaus',
-                    postedDate: '2013-08-22T18:10:00',
-                    message: 'The FullScale Labs team are awesome!  Go check out Elastic.js'
-                }),
+                //$location.path("/elasticjs");
 
-                ejs.Document(index, type, '10').source({
-                    user: 'egaumer',
-                    postedDate: '2013-08-22T18:05:00',
-                    message: 'Use elastic.js to write a complex query and translate it to json with our query translator'
-                })
-            ];
+                // Reset field after search
+                $scope.queryTerm = "";
 
-            // Using sugarjs & ECMA5 forEach
-            var doSearch = ( $scope.search ).after(docs.length);
-            docs.forEach(function (doc) {
-                doc.refresh(true).doIndex(doSearch);
+                if (typeof results.error != 'undefined') {
+
+                    // Message should be displayed in the web page as a modal window
+                    console.error("ES error : " + results.error);
+
+                    // Solution proposed by kibana3
+                    // $scope.panel.error = $scope.parse_error(results.error);
+                    return;
+                }
+
+                console.log(results.hits.total + " : results retrieved");
+                $scope.results = results;
+
             });
 
         };
 
-    };
+        $scope.facetDateHistogramSearch = function() {
+
+            if (isEmptyObject(ejs)) {
+                console.log("Init EJS server");
+                ejs = initElasticsearchServer(esServer);
+            }
+
+            // Initialize ES Server to send request
+            setupEsRequest();
+
+            if (!isEmptyObject($scope.facetField)) {
+                facetField = $scope.facetField;
+            }
+
+            if (!isEmptyObject($scope.facetType)) {
+                facetType = $scope.facetType;
+            }
+
+            // Setup QueryString and Facets
+            request = request
+                    .query(ejs.QueryStringQuery(query))
+                    .facet(
+                            ejs.DateHistogramFacet("dateHistoFacet")
+                                    .field(facetField)
+                                    .interval("minute")
+                    )
+            ;
+
+            // Run query
+            var results = request.doSearch();
+
+            console.log("Do Elastic Search");
+
+            results.then(function (results) {
+
+                //$location.path("/elasticjs");
+
+                // Reset field after search
+                $scope.queryTerm = "";
+
+                if (typeof results.error != 'undefined') {
+
+                    // Message should be displayed in the web page as a modal window
+                    console.error("ES error : " + results.error);
+
+                    // Solution proposed by kibana3
+                    // $scope.panel.error = $scope.parse_error(results.error);
+                    return;
+                }
+
+                console.log(results.hits.total + " : results retrieved");
+                $scope.results = results;
+
+            });
+
+        };
+
+        // index the sample documents using data
+        // coming from json file
+        $scope.indexSampleDocs = function () {
+
+            var host = "http://" + location.host;
+
+            if (isEmptyObject(ejs)) {
+                console.log("EJS object is not defined - create it - setupEsRequest");
+                ejs = initElasticsearchServer(esServer);
+            }
+
+            // Load json records from JSON file
+            // & create elastcsearch document
+            var docs = [];
+            $.getJSON(host + "/hawtio/app/elasticsearch/js/data.json", function (result) {
+                $.each(result, function (i, field) {
+                    console.log("Field : " + field);
+                    docs[i] = ejs.Document(index, type, i).source(field)
+                    docs[i].refresh(true).doIndex();
+                });
+            });
+
+            // Using sugarjs & ECMA5 forEach
+            /*
+             var doSearch = ( $scope.search ).after(docs.length);
+             docs.forEach(function (doc) {
+             console.log("Do Index called");
+             doc.refresh(true).doIndex(doSearch);
+             });
+             */
+
+        };
+
+        function setupEsRequest(){
+
+            console.log("ES Server = " + $scope.esServer);
+            console.log("Indice = " + $scope.indice);
+            console.log("Type = " + $scope.docType);
+            console.log("Query = " + $scope.queryTerm);
+
+            if (!isEmptyObject($scope.indice)) {
+                index = $scope.indice;
+            }
+
+            if (!isEmptyObject($scope.esServer)) {
+                esServer = $scope.esServer;
+            }
+
+            if (!isEmptyObject($scope.docType)) {
+                type = $scope.docType;
+            }
+
+            if (!isEmptyObject($scope.queryTerm)) {
+                query = $scope.queryTerm;
+            }
+
+            var ejs = ejsResource($scope.esServer);
+
+            // Define Request to call ES
+            request = ejs.Request()
+                    .indices(index)
+                    .types(type);
+
+            console.log("Request to call ElasticSearch defined");
+        }
+
+        function initElasticsearchServer(esServer) {
+            return ejsResource(esServer);
+        }
+
+        $scope.parse_error = function (data) {
+            var _error = data.match("nested: (.*?);");
+            return _error == null ? data : _error[1];
+        };
+
+    }
 }
