@@ -4,7 +4,8 @@ module Karaf {
     $routeProvider.
             when('/osgi/server', {templateUrl: 'app/karaf/html/server.html'}).
             when('/osgi/features', {templateUrl: 'app/karaf/html/features.html'}).
-            when('/osgi/scr', {templateUrl: 'app/karaf/html/scr.html'}).
+            when('/osgi/scr-components', {templateUrl: 'app/karaf/html/scr-components.html'}).
+            when('/osgi/scr-component/:name', {templateUrl: 'app/karaf/html/scr-component.html'}).
             when('/osgi/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html'})
   }).
       run((workspace:Workspace, viewRegistry) => {

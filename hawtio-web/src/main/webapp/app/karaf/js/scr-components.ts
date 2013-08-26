@@ -1,6 +1,6 @@
 module Karaf {
 
-    export function ScrController($scope, $location, workspace, jolokia) {
+    export function ScrComponentsController($scope, $location, workspace, jolokia) {
 
         $scope.component = empty();
 
@@ -29,7 +29,7 @@ module Karaf {
                 {
                     field: 'Name',
                     displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}">{{row.getProperty(col.field)}}</a></div>',
                     width: 400
                 },
                 {
@@ -43,9 +43,7 @@ module Karaf {
 
         var scrMBean = Karaf.getSelectionScrMBean(workspace);
         if (scrMBean) {
-            Core.register(jolokia, $scope, {
-                type: 'exec', mbean: scrMBean, operation: 'listComponents()'
-            }, onSuccess(render));
+            render(getAllComponents(workspace, jolokia))
         }
 
         $scope.activate = () => {
@@ -76,9 +74,9 @@ module Karaf {
             ];
         }
 
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.components = Karaf.createScrComponentsView(workspace, jolokia, response.value);
+        function render(components) {
+            if (!Object.equal($scope.result, components)) {
+                $scope.components = components
                 $scope.result = $scope.components;
                 Core.$apply($scope);
             }

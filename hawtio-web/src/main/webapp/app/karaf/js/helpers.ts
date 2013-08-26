@@ -138,6 +138,33 @@ module Karaf {
         return "Unknown";
     };
 
+    export function getAllComponents(workspace, jolokia) {
+        var scrMBean = getSelectionScrMBean(workspace)
+        var response = jolokia.request(
+            {
+                type: 'read', mbean: scrMBean,
+                arguments: []
+            });
+
+        //Check if the MBean provides the Components attribute.
+        if (!('Components' in response.value)) {
+            response = jolokia.request(
+                {
+                    type: 'exec', mbean: scrMBean, operation: 'listComponents()'
+                });
+            return createScrComponentsView(workspace, jolokia, response.value);
+        }
+        return response.value['Components'].values;
+    }
+
+    export function getComponentByName(workspace, jolokia, componentName) {
+        var components = getAllComponents(workspace, jolokia)
+        return components.find((c) => {
+            return c.Name == componentName;
+        });
+
+    }
+
     export function isComponentActive(workspace, jolokia, component) {
         var response =  jolokia.request(
             {
