@@ -1,6 +1,6 @@
-<div ng-controller="Wiki.DozerMappingsController">
-  <div class="row-fluid" ng-controller="Wiki.NavBarController">
-    <div class="">
+<div class="wiki-fixed" ng-controller="Wiki.DozerMappingsController">
+  <div class="logbar" ng-controller="Wiki.NavBarController">
+    <div class="wiki logbar-container">
       <ul class="nav nav-tabs connected">
         <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
           <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>

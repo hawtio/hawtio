@@ -230,7 +230,7 @@ a:hover {
   padding-bottom: 6px;
 }
 
-#main.container-fluid div div.row-fluid div[ng-view] {
+div[ng-include][src='viewPartial'] {
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -554,4 +554,12 @@ li[ng-repeat='link in breadcrumbs'].active:after {
 
 .no-bottom-margin .control-group {
   margin-bottom: 10px;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li:first-child {
+  margin-left: 3px;
+}
+
+div.hawtio-form-tabs ul.nav-tabs li.active:first-child {
+  margin-left: 3px;
 }
