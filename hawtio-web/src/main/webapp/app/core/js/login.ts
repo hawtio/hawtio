@@ -8,6 +8,7 @@ module Core {
     $scope.username = '';
     $scope.password = '';
     $scope.rememberMe = false;
+    $scope.branding = branding;
 
     var details = angular.fromJson(localStorage[jolokiaUrl]);
     if (details) {

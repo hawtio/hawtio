@@ -98,6 +98,21 @@ a:hover {
   display: block !important;
   color: #ffffff;
   text-shadow: none;
+  padding-top: 6px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .container .brand img {
+  position: relative;
+  left: -3px;
+  height: 11px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .container .brand strong {
+  font-weight: normal;
+  font-size: 11px;
+  position: relative;
+  top: 1px;
+  left: 0;
 }
 
 #main-nav .navbar-inner.main-nav-lower .nav {
@@ -247,18 +262,6 @@ div[ng-controller='Core.LoginController']:after {
   content: url('../img/branding/login-screen-logo.png');
 }
 
-.login-wrapper:before {
-  position: absolute;
-  top: -38px;
-  left: 104px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 200;
-  font-size: 22px;
-  font-size: 22px;
-  content: 'Red Hat JBoss Fuse';
-  color: #FFFFFF;
-}
 
 .login-wrapper {
   top: inherit;
@@ -267,13 +270,27 @@ div[ng-controller='Core.LoginController']:after {
   left: 0;
   position: absolute;
   bottom: 15%;
-  padding-left: 100px;
+  padding-left: 0;
   width: 100%;
   min-width: 850px;
   border-top: 1px rgba(255, 255, 255, 0.05) solid;
   border-bottom: 1px rgba(255, 255, 255, 0.05) solid;
   background-color: rgba(0, 0, 0, 0.3);
 
+}
+
+.login-logo {
+  top: -55px;
+  /* with no app title */
+  /* left: 183px; */
+  left: 45px;
+}
+
+.login-logo span {
+  position: relative;
+  top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .login-wrapper form {
@@ -288,6 +305,10 @@ div[ng-controller='Core.LoginController']:after {
   padding-top: 40px;
   padding-bottom: 40px;
   width: 344px;
+}
+
+.login-wrapper form fieldset .control-group label {
+  padding-top: 12px;
 }
 
 .login-wrapper form fieldset input[type="text"],
@@ -312,7 +333,15 @@ div[ng-controller='Core.LoginController']:after {
   box-shadow: #62afdb 0 0 5px;
 }
 
+.login-wrapper form fieldset .control-group .controls .checkbox {
+  position: absolute;
+  top: 185px;
+  left: 181px;
+}
+
 .login-wrapper form fieldset button[type="submit"] {
+  position: relative;
+  left: 39px;
   padding: 4px 14px;
   border: 1px #21799e solid;
   border-radius: 2px;

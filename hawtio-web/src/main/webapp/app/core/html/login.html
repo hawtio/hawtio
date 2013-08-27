@@ -5,25 +5,29 @@
     <div class="login-form">
       <form name="login" class="form-horizontal no-bottom-margin" ng-submit="doLogin()">
         <fieldset>
+          <div class="login-logo">
+            <img ng-src="{{branding.appLogo}}" ng-show="branding.appLogo">
+            <span ng-show="branding.appName">{{branding.appName}}</span>
+          </div>
           <div class="control-group">
-            <!-- <label class="control-label" for="username">User Name</label> -->
+            <label class="control-label" for="username">Username </label>
             <div class="controls">
-              <input id="username" type="text" class="input-medium" placeholder="User Name" required ng-model="username">
+              <input id="username" type="text" class="input-medium" required ng-model="username">
             </div>
           </div>
           <div class="control-group">
-            <!-- <label class="control-label" for="password">Password</label> -->
+            <label class="control-label" for="password">Password </label>
             <div class="controls">
-              <input id="password" type="password" class="input-medium" placeholder="Password" required ng-model="password">
+              <input id="password" type="password" class="input-medium" required ng-model="password">
             </div>
           </div>
 
           <div class="control-group">
             <div class="controls">
-              <label class="checkbox">
-                <input type="checkbox" ng-model="rememberMe"> Remember me
+              <label class="checkbox" for="rememberMe">
+                <input id="rememberMe" type="checkbox" ng-model="rememberMe"> Remember me
               </label>
-              <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"><i class="icon-check"></i> Sign In</button>
+              <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"></i> Log In</button>
             </div>
           </div>
 

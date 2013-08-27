@@ -6,6 +6,7 @@ module Branding {
     Branding.enabled = enabled;
 
     // Branding.enabled = false;
+    // Branding.enabled = true;
 
     if (Branding.enabled) {
       // pull in branding stylesheet
@@ -33,8 +34,8 @@ module Branding {
 
         if (Branding.enabled) {
           console.log("enabled branding");
-          branding.appName = 'Red Hat JBoss Fuse';
-          branding.appLogo = '';
+          branding.appName = 'Management Console';
+          branding.appLogo = 'img/branding/RHJB_Fuse_UXlogotype_0513LL_white.svg';
           branding.loginBg = 'img/branding/login-screen-background.jpg';
           branding.fullscreenLogin = true;
         }

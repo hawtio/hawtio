@@ -1629,28 +1629,57 @@ td.adding {
 
 .login-wrapper {
   position: absolute;
-  left: 88px;
+  left: 0;
   top: 350px;
-  padding: 2px;
-  background-color: rgb(255, 168, 27);
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 0;
+  padding-right: 0;
+  background-color: rgba(255, 168, 27, 0.3);
   line-height: 0;
-  border-radius: 4px;
   box-shadow: rgba(255, 168, 27, 0.2) 0 0 30px 10px;
+  width: 100%
 }
 
 .login-wrapper form {
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.2);
   margin-bottom: 0px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 52px;
+  padding-bottom: 7px;
   padding-right: 40px;
   padding-left: 40px;
-  border-radius: 4px;
   box-shadow: inset rgba(255, 168, 27, 0.2) 0 0 30px 10px;
 }
 
-.login-wrapper form .controls {
-  margin-left: 0px;
+.login-wrapper form fieldset {
+  width: 413px;
+}
+
+.login-form form fieldset .control-group {
+  margin-bottom: 15px;
+  margin-left: 5px;
+}
+
+.login-form form fieldset .control-group label {
+  color: white;
+}
+
+.login-form form fieldset .control-group button[type='submit'] {
+  float: right;
+}
+
+.login-logo {
+  display: block;
+  position: absolute;
+
+  letter-spacing: 5px;
+
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  left: 233px;
+  top: 9px;
+
 }
 
 
