@@ -597,3 +597,24 @@ div.hawtio-form-tabs ul.nav-tabs li.active:first-child {
   padding-top: 3px;
   box-shadow: none;
 }
+
+ng-include[src="'app/jmx/html/subLevelTabs.html'"] .nav.nav-tabs {
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+}
+
+div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs {
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: inherit !important;
+  border-bottom: 1px solid #cecdcd !important;
+  position: relative;
+  top: -8px;
+  margin-bottom: 0px !important;
+}
+
+div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
+  background: inherit !important;
+}

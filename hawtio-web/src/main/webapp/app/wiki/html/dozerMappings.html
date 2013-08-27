@@ -35,17 +35,19 @@
   </div>
 
   <div class="row-fluid">
-    <ul class="nav nav-tabs">
-      <li>
-        <a href='' title="Add a new mapping between two classes" ng-click="addMapping()" data-placement="bottom">
-          <i class="icon-plus"></i> Class</a></li>
-      <li>
-        <a href='' title="Add new mappings between fields in these classes" ng-disable="!selectedMapping" ng-click="addField()" data-placement="bottom">
-          <i class="icon-plus"></i> Field</a></li>
-      <li>
-        <a href='' title="Deletes the selected item" ng-disabled="!canDelete()" ng-click="deleteDialog = true" data-placement="bottom">
-          <i class="icon-remove"></i> Delete</a></li>
-    </ul>
+    <div class="span12">
+      <ul class="nav nav-tabs">
+        <li>
+          <a href='' title="Add a new mapping between two classes" ng-click="addMapping()" data-placement="bottom">
+            <i class="icon-plus"></i> Class</a></li>
+        <li>
+          <a href='' title="Add new mappings between fields in these classes" ng-disable="!selectedMapping" ng-click="addField()" data-placement="bottom">
+            <i class="icon-plus"></i> Field</a></li>
+        <li>
+          <a href='' title="Deletes the selected item" ng-disabled="!canDelete()" ng-click="deleteDialog = true" data-placement="bottom">
+            <i class="icon-remove"></i> Delete</a></li>
+      </ul>
+    </div>
   </div>
 
   <div class="row-fluid">
