@@ -604,6 +604,14 @@
               <key>karaf.data</key>
               <value>${project.build.directory}/karaf-data</value>
             </systemProperty>
+            <systemProperty>
+              <key>hawtio.authenticationEnabled</key>
+              <value>false</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.forceBranding</key>
+              <value>false</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>

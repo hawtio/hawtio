@@ -38,7 +38,6 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            System.setProperty("hawtio.authenticationEnabled", "false");
             System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
             Log.setLog(new Slf4jLog("jetty"));
             int port = Integer.parseInt(System.getProperty("jettyPort", "8080"));
