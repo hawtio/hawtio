@@ -164,9 +164,9 @@ module Forms {
   }
 
   export function getHelpSpan(config, arg, id) {
-    var rc = $('<span class="help-block"></span>');
+    var rc:any = '';
     if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
-      rc.append('Type: ' + arg.type);
+      $('<span class="help-block">Type: ' + arg.type + '</span>');
     }
     return rc;
   }

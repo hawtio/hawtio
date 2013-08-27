@@ -522,3 +522,7 @@ li[ng-repeat='link in breadcrumbs'].active:after {
 .tabbable li.active a {
   border-bottom: 0 !important;
 }
+
+.no-bottom-margin .control-group {
+  margin-bottom: 10px;
+}
