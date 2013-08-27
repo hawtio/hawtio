@@ -7,10 +7,14 @@ input, button, select, textarea {
 }
 
 html, body {
+  /*
   min-height: 800px;
+  */
   min-width: 850px;
   font-size: 13.5px;
+  /*
   height: 100%;
+  */
 }
 
 small {
@@ -200,14 +204,14 @@ a:hover {
   border: 1px solid inherit;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 5px;
-  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 5px;
 }
 
 #main.container-fluid div .nav li a:hover {
   border-radius: 0;
-  padding-top: 5px;
-  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 5px;
 }
 
 #main.container-fluid div .nav li.active a {
@@ -226,14 +230,17 @@ a:hover {
   color: #2289ba;
   box-shadow: none;
   border-bottom: 1px solid #2289ba;
-  padding-top: 5px;
-  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 5px;
 }
 
-div[ng-include][src='viewPartial'] {
+/*
+div[ng-include][src='viewPartial'] .row-fluid {
   padding-left: 10px;
   padding-right: 10px;
+  width: auto;
 }
+*/
 
 .nav li a {
   cursor: pointer;
@@ -407,11 +414,26 @@ div[ng-controller='Core.LoginController']:after {
   padding-right: 0;
 }
 
+.logbar-container .control-group {
+  margin-bottom: 0;
+}
+
+.logbar-container .control-group:first-child {
+  padding-left: 20px;
+}
+
+.logbar-container .control-group:last-child {
+  padding-right: 20px;
+}
+
+.logbar-container {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
 .wiki.logbar-container {
   margin-top: 0;
   margin-bottom: 0;
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 div#main div ul.nav li a.nav-primary:hover, div#main div ul.nav li a.nav-primary:active, div#main div ul.nav li a.nav-primary.active, div#main div ul.nav li a.nav-primary.disabled, div#main div ul.nav li a.nav-primary[disabled] {
@@ -521,21 +543,25 @@ li.dropdown.open a.dropdown-toggle {
   left: 1px;
 }
 
-li[ng-repeat='link in breadcrumbs'] {
+.wiki ul li[ng-repeat='link in breadcrumbs']:first-child {
+  padding-left: 20px !important;
+}
+
+.wiki ul li[ng-repeat='link in breadcrumbs'] {
   padding-left: 5px !important;
   padding-right: 5px !important;
   white-space: nowrap;
 }
 
-li[ng-repeat='link in breadcrumbs'] a {
+.wiki ul li[ng-repeat='link in breadcrumbs'] a {
   display: inline-block;
 }
 
-li[ng-repeat='link in breadcrumbs']:after {
+.wiki ul li[ng-repeat='link in breadcrumbs']:after {
   content: '/';
 }
 
-li[ng-repeat='link in breadcrumbs'].active:after {
+.wiki ul li[ng-repeat='link in breadcrumbs'].active:after {
   content: '';
 }
 
@@ -562,4 +588,12 @@ div.hawtio-form-tabs ul.nav-tabs li:first-child {
 
 div.hawtio-form-tabs ul.nav-tabs li.active:first-child {
   margin-left: 3px;
+}
+
+.instance-name {
+  border-top-left-radius: 0;
+  padding: 0;
+  padding-left: 3px;
+  padding-top: 3px;
+  box-shadow: none;
 }

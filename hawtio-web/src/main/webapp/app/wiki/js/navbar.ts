@@ -22,7 +22,6 @@ module Wiki {
     };
 
     $scope.isActive = (href) => {
-      console.log("href: ", href);
       var tidy = Core.trimLeading(href, "#");
       var loc = $location.path();
       if (loc === tidy) return true;

@@ -1,20 +1,19 @@
 <!-- TODO Should we split this page into partials, and just just allow plugins to register their configurable preferences to this page? -->
 <div ng-controller="JVM.ConnectController">
-  <div class="logbar">
-    <div class="wiki logbar-container">
-      <ul class="nav nav-tabs">
-        <li ng-repeat="link in breadcrumbs" ng-show="isValid(link)" ng-class='{active : isActive(link.href)}'>
-          <a ng-href="{{link.href}}{{hash}}" ng-bind-html-unsafe="link.content"></a>
-        </li>
-        <li class="pull-right">
-          <a href='' ng-click="fetch()"><i class="icon-refresh"></i> Refresh</a>
-        </li>
-      </ul>
-    </div>
+
+
+  <div>
+    <ul class="nav nav-tabs connected">
+      <li ng-repeat="link in breadcrumbs" ng-show="isValid(link)" ng-class='{active : isActive(link.href)}'>
+        <a ng-href="{{link.href}}{{hash}}" ng-bind-html-unsafe="link.content"></a>
+      </li>
+      <li class="pull-right">
+        <a href='' ng-click="fetch()"><i class="icon-refresh"></i> Refresh</a>
+      </li>
+    </ul>
   </div>
 
-
-  <div class="wiki-fixed row-fluid">
+  <div class="row-fluid">
     <form class="form-horizontal">
       <div class="control-group">
         <label class="control-label" for="host" title="The host name used to connect over HTTP">host name</label>

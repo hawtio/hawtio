@@ -1,23 +1,21 @@
 <div ng-controller="JVM.JVMsController">
 
-  <div class="logbar">
-    <div class="wiki logbar-container">
-      <ul class="nav nav-tabs">
-        <li ng-repeat="link in breadcrumbs" ng-show="isValid(link)" ng-class='{active : isActive(link.href)}'>
-          <a ng-href="{{link.href}}{{hash}}" ng-bind-html-unsafe="link.content"></a>
-        </li>
-        <li class="pull-right">
-          <a href='' ng-click="fetch()"><i class="icon-refresh"></i> Refresh</a>
-        </li>
-      </ul>
-    </div>
+  <div>
+    <ul class="nav nav-tabs connected">
+      <li ng-repeat="link in breadcrumbs" ng-show="isValid(link)" ng-class='{active : isActive(link.href)}'>
+        <a ng-href="{{link.href}}{{hash}}" ng-bind-html-unsafe="link.content"></a>
+      </li>
+      <li class="pull-right">
+        <a href='' ng-click="fetch()"><i class="icon-refresh"></i> Refresh</a>
+      </li>
+    </ul>
   </div>
 
-  <div ng-hide='data.length > 0' class='wiki-fixed row-fluid'>
+  <div ng-hide='data.length > 0' class='row-fluid'>
     {{status}}
   </div>
 
-  <div ng-show='data.length > 0' class="wiki-fixed row-fluid">
+  <div ng-show='data.length > 0' class="row-fluid">
     <table class='centered table table-bordered table-condensed table-striped'>
       <thead>
       <tr>
