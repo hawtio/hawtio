@@ -2,7 +2,7 @@ module Fabric {
 
   export function customizeSchema(id, schema) {
 
-    console.log("Schema: ", schema);
+    // console.log("Schema: ", schema);
 
     Core.pathSet(schema, ["properties", "name", "required"], true);
 

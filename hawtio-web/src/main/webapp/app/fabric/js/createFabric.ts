@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function CreateFabricController($scope, jolokia, $location, workspace:Workspace) {
+  export function CreateFabricController($scope, jolokia, $location, workspace:Workspace, branding) {
 
     $scope.$on('$routeChangeSuccess', () => {
       if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
@@ -23,6 +23,12 @@ module Fabric {
       maximumPort: 65535,
       profiles: ['fabric', 'hawtio']
     };
+
+    if (branding.profile) {
+      $scope.entity.profiles.push(branding.profile);
+    }
+
+    // console.log("entity: ", $scope.entity);
 
     $scope.forms = {};
 

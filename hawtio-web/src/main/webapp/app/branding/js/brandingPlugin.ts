@@ -1,14 +1,16 @@
 module Branding {
 
   export var enabled = false;
+  export var profile = null;
 
-  $.get('/hawtio/branding', (enabled) => {
-    Branding.enabled = enabled;
+  $.get('/hawtio/branding', (response) => {
+    Branding.enabled = response.enable;
 
     // Branding.enabled = false;
     // Branding.enabled = true;
 
     if (Branding.enabled) {
+      Branding.profile = response.profile;
       // pull in branding stylesheet
       var link = $("<link>");
       $("head").append(link);
@@ -38,6 +40,7 @@ module Branding {
           branding.appLogo = 'img/branding/RHJB_Fuse_UXlogotype_0513LL_white.svg';
           branding.loginBg = 'img/branding/login-screen-background.jpg';
           branding.fullscreenLogin = true;
+          branding.profile = Branding.profile;
         }
 
       });
