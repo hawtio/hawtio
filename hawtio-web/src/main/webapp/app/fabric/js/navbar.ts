@@ -16,7 +16,7 @@ module Fabric {
       Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
       $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
       $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
-      var ensembleContainers = jolokia.getAttribute(Fabric.clusterManagerMBean, "EnsembleContainers", {method: "GET"});
+
       $scope.hasFabric = Fabric.hasFabric(workspace);
       if (!$scope.hasFabric) {
         $location.url("/fabric/create");
