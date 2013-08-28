@@ -618,3 +618,8 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs {
 div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
   background: inherit !important;
 }
+
+.controller-section {
+  padding-left: 20px;
+  padding-right: 20px;
+}
