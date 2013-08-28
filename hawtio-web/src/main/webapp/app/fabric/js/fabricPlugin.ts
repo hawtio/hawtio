@@ -29,8 +29,6 @@ module Fabric {
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle) => {
 
-            Fabric.schemaConfigure();
-
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
             pageTitle.addTitleElement( ():string => {

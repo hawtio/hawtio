@@ -8,7 +8,10 @@ module Fabric {
       }
     });
 
-    $scope.schema = Fabric.createEnsembleOptions;
+    Fabric.getSchema('createEnsemble', 'org.fusesource.fabric.api.CreateEnsembleOptions', jolokia, (schema) => {
+      $scope.schema = schema;
+      Core.$apply($scope);
+    });
 
     $scope.entity = {
       zooKeeperServerPort: 2181,

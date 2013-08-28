@@ -2,6 +2,8 @@ module Fabric {
 
   export function customizeSchema(id, schema) {
 
+    console.log("Schema: ", schema);
+
     Core.pathSet(schema, ["properties", "name", "required"], true);
 
     delete schema.properties['metadataMap'];
@@ -39,6 +41,7 @@ module Fabric {
           'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number', '*']
         };
         break;
+
       case 'ssh':
         delete schema.properties['parent'];
 
@@ -47,6 +50,7 @@ module Fabric {
           'Default': ['name', 'host', 'port', 'userName', 'password', 'privateKeyFile', 'passPhrase', '*']
         };
         break;
+
       case 'jcloud':
         delete schema.properties['parent'];
 
@@ -55,6 +59,28 @@ module Fabric {
           'Default': ['name', 'owner', 'credential', 'imageId', 'hardwareId', 'locationId', 'number', '*']
         };
         break;
+
+      case 'createEnsemble':
+        delete schema['properties']['name'];
+        angular.forEach(["username", "password", "role"], (name) => {
+          Core.pathSet(schema, ["properties", name, "type"], 'string');
+          Core.pathSet(schema, ["properties", name, "required"], true);
+        });
+
+        setGlobalResolverEnum(schema);
+        setResolverEnum(schema);
+
+        Core.pathSet(schema, ["properties", "profiles", "type"], "hidden");
+        Core.pathSet(schema, ['properties', 'password', 'type'], "password");
+        Core.pathSet(schema, ['properties', 'zookeeperPassword', 'type'], "password");
+
+        delete schema['properties']['users'];
+
+        schema['tabs'] = {
+          'Basic': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
+          'Advanced': ['*']
+        };
+
       default:
     }
 
@@ -68,8 +94,6 @@ module Fabric {
     })
   }
 
-  export var createEnsembleOptions = (<any>window).org_fusesource_fabric_api_CreateEnsembleOptions;
-
   function setGlobalResolverEnum(schema) {
     var globalResolverEnum = ['localip', 'localhostname', 'publicip', 'publichostname'];
     Core.pathSet(schema, ['properties', 'globalResolver', 'enum'], globalResolverEnum);
@@ -80,33 +104,4 @@ module Fabric {
     Core.pathSet(schema, ['properties', 'resolver', 'enum'], resolverEnum);
   }
   
-  
-  function configureResolverSchema() {
-    setGlobalResolverEnum(createEnsembleOptions);
-    setResolverEnum(createEnsembleOptions);
-  }
-
-  /**
-   * Configures the JSON schemas to improve the UI models
-   */
-  export function schemaConfigure() {
-
-    angular.forEach(["username", "password", "role"], (name) => {
-      Core.pathSet(Fabric.createEnsembleOptions, ["properties", name, "type"], 'string');
-      Core.pathSet(Fabric.createEnsembleOptions, ["properties", name, "required"], true);
-    });
-    
-    configureResolverSchema();
-
-    Core.pathSet(Fabric.createEnsembleOptions, ["properties", "profiles", "type"], "hidden");
-    Core.pathSet(Fabric.createEnsembleOptions, ['properties', 'password', 'type'], "password");
-    Core.pathSet(Fabric.createEnsembleOptions, ['properties', 'zookeeperPassword', 'type'], "password");
-    delete Fabric.createEnsembleOptions['properties']['users'];
-
-    Fabric.createEnsembleOptions['tabs'] = {
-      'Basic': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
-      'Advanced': ['*']
-    };
-
-  }
 }
