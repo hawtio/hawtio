@@ -623,3 +623,19 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
   padding-left: 20px;
   padding-right: 20px;
 }
+
+#jmxtree {
+  margin-left: 20px;
+}
+
+#activemqtree {
+  margin-left: 20px;
+}
+
+#cameltree {
+  margin-left: 20px;
+}
+
+.span9 #properties {
+  margin-right: 20px;
+}
