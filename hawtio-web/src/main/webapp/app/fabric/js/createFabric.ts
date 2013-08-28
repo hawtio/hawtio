@@ -25,7 +25,7 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
 
-      jolokia.execute(Fabric.clusterManagerMBean, 'createCluster(java.util.List, java.util.Map)', null, angular.toJson(json), {
+      jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
         method: 'post',
         success: (response) => {
           notification('success', "Created fabric!");

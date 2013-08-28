@@ -2,6 +2,7 @@ module Fabric {
   
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
+  export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
 
   export function hasFabric(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
