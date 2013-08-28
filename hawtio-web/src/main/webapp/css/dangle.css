@@ -44,13 +44,22 @@
 /* histogram styles */
 .histo.rect { fill: #058dc7; }
 
-.bar.rect {
-    fill: #058dc7;
-    stroke: none;
-}
-
 .bar.text {
     fill: #000;
     stroke: none;
     font-size: 12px;
+}
+
+
+/*
+.bar.rect {
+    fill: #058dc7;
+    stroke: none;
+}*/
+
+.bar.rect {
+    fill: #E68A00;
+    stroke: none;
+    fill-opacity: '0.5';
+    stroke-opacity: '0.8'
 }
