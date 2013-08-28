@@ -15,7 +15,10 @@
 
   <modules>
     <module>hawtio-json-schema-generator-plugin</module>
+    <!--
+    Not really a test but a POC, not required for build...
     <module>hawtio-json-schema-generator-test</module>
+    -->
   </modules>
 
 
