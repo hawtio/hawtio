@@ -18,7 +18,7 @@
     <plugin-context>/hawtio/simple-plugin</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
-    <plugin-scripts>app/js/simplePlugin.ts</plugin-scripts>
+    <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
       *;resolution:=optional
