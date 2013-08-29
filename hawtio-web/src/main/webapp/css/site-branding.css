@@ -533,6 +533,7 @@ li.dropdown.open a.dropdown-toggle {
 }
 
 .caret:before {
+  font-family: 'FontAwesome';
   border: 0;
   content: "\f078";
   font-size: 11px;
@@ -563,6 +564,10 @@ li.dropdown.open a.dropdown-toggle {
 
 .wiki ul li[ng-repeat='link in breadcrumbs'].active:after {
   content: '';
+}
+
+.wiki ul li.pull-right.dropdown {
+  padding-right: 20px;
 }
 
 .tabbable .nav-tabs {
@@ -637,5 +642,10 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
 }
 
 .span9 #properties {
+  margin-right: 20px;
+}
+
+.wiki-fixed {
+  margin-left: 20px;
   margin-right: 20px;
 }
