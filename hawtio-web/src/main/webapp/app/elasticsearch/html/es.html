@@ -2,77 +2,105 @@
     <div class="">
         <div class="">
             <div class="container-fluid">
-                <span class="brand">Elastic.js Angular Example</span>
                 <button ng-click="indexSampleDocs()" class="btn btn-inverse pull-right">Index Sample Docs</button>
             </div>
             <br/>
             <!--<a href="#/search"> <i class="icon-search"></i> Return to Search</a>-->
-            <div class="row-fluid">
-                <form class="form-horizontal">
-                    <div class="control-group">
-                        <label class="control-label" for="esServer" title="Default ES Server">ES Server</label>
+            <table>
+                <tr>
+                    <!-- Form -->
+                    <td>
+                        <div class="row-fluid">
+                            <form class="form-horizontal">
+                                <div class="control-group">
+                                    <label class="control-label" for="esServer" title="Default ES Server">ES Server</label>
 
-                        <div class="controls">
-                            <input id="esServer" name="esServer" type="text" ng-model="esServer"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="QueryTerm" title="Enter a term to query. Could be *">Query Term</label>
+                                    <div class="controls">
+                                        <input id="esServer" name="esServer" type="text" ng-model="esServer"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="QueryTerm" title="Enter a term to query. Could be *">Query Term</label>
 
-                        <div class="controls">
-                            <input id="QueryTerm" name="QueryTerm" type="text" ng-model="queryTerm"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="facetField" title="Enter facet field.">Facet Field</label>
+                                    <div class="controls">
+                                        <input id="QueryTerm" name="QueryTerm" type="text" ng-model="queryTerm"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="facetField" title="Enter facet field.">Facet Field</label>
 
-                        <div class="controls">
-                            <input id="facetField" name="facetField" type="text" ng-model="facetField"/>
-                        </div>
-                    </div>
+                                    <div class="controls">
+                                        <input id="facetField" name="facetField" type="text" ng-model="facetField"/>
+                                    </div>
+                                </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="facetType" title="Facet Type (terms, date histogram)">Facet Type</label>
+                                <div class="control-group">
+                                    <label class="control-label" for="facetType" title="Facet Type (table, date histogram)">Facet Type</label>
 
-                        <div class="controls">
-                            <select id="facetType" ng-model="facetType">
-                                <option value="terms">Terms</option>
-                                <option value="histogram">Histogram</option>
-                                <option value="date_histogram">Date Histogram</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="indice" title="Enter an index. By example - 'twitter'">Indice to be searched</label>
+                                    <div class="controls">
+                                        <select id="facetType" ng-model="facetType">
+                                            <option selected value="terms">Table</option>
+                                            <option value="histogram">Histogram</option>
+                                            <option value="date_histogram">Date Histogram</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="indice" title="Enter an index. By example - 'twitter'">Indice to be searched</label>
 
-                        <div class="controls">
-                            <input id="indice" name="indice" type="text" ng-model="indice"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="docType" title="Enter a document type. By example - 'tweet'">Document Type</label>
+                                    <div class="controls">
+                                        <input id="indice" name="indice" type="text" ng-model="indice"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="docType" title="Enter a document type. By example - 'tweet'">Document Type</label>
 
-                        <div class="controls">
-                            <input id="docType" name="docType" type="text" ng-model="docType"/>
+                                    <div class="controls">
+                                        <input id="docType" name="docType" type="text" ng-model="docType"/>
+                                    </div>
+                                </div>
+                                <div class="control-group" ng-show="facetType == 'terms'">
+                                    <div class="controls">
+                                        <input type="submit" value="ES Search" class="btn" ng-click="search()"/>
+                                    </div>
+                                </div>
+                                <div class="control-group" ng-show="facetType == 'histogram'">
+                                    <div class="controls">
+                                        <input type="submit" value="ES Histogram Facet Search" class="btn" ng-click="facetTermsSearch()"/>
+                                    </div>
+                                </div>
+                                <div class="control-group" ng-show="facetType == 'date_histogram'">
+                                    <div class="controls">
+                                        <input type="submit" value="ES Date Histogram Facet Search" class="btn" ng-click="facetDateHistogramSearch()"/>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <input type="submit" value="ES Search" class="btn" ng-click="search()"/>
+                    </td>
+                    <!-- Histogram -->
+                    <td ng-show="facetType == 'histogram'">
+                        <div class="span10" style="height:350px">
+                            <span class="title">Histogram</span>
+                            <fs:bar
+                                    width="900"
+                                    height="175"
+                                    duration="750"
+                                    bind="results.facets.termFacet"
+                                    />
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <input type="submit" value="ES Facet Search" class="btn" ng-click="facetTermsSearch()"/>
+                    </td>
+                    <td ng-show="facetType == 'date_histogram'">
+                        <div class="span8" style="height:350px">
+                            <span class="title">Date Histogram</span>
+                            <fs:date-histo
+                                    duration="750"
+                                    interval="minute"
+                                    bind="results.facets.dateHistoFacet"
+                                    />
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <input type="submit" value="ES Date Histogram Facet Search" class="btn" ng-click="facetDateHistogramSearch()"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="row-fluid">
             <div>
@@ -96,31 +124,6 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- Dangle Histogram -->
-
-        <div class="row-fluid">
-            <div><strong>Histogram Example</strong></div>
-            <div class="span10" style="height:200px">
-                <fs:bar
-                        width="900"
-                        height="175"
-                        duration="750"
-                        bind="results.facets.termFacet"
-                        />
-            </div>
-        </div>
-
-        <div class="row-fluid">
-            <div><strong>Date Histogram Example</strong></div>
-            <div class="span10" style="height:200px">
-                <fs:date-histo
-                        duration="750"
-                        interval="minute"
-                        bind="results.facets.dateHistoFacet"
-                        />
             </div>
         </div>
 

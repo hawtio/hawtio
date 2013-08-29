@@ -4,7 +4,7 @@ module ES {
     var base_url = 'app/elasticsearch/html';
 
     /* Application level module which depends on filters, controllers, and services */
-    angular.module(pluginEsName, ['bootstrap','ngResource','elasticjs.service','dangle'])
+    angular.module(pluginEsName, ['bootstrap', 'ngResource', 'elasticjs.service', 'dangle'])
 
             .config(['$routeProvider', function ($routeProvider) {
                 $routeProvider
@@ -18,14 +18,16 @@ module ES {
                 // Use Full Layout of Hawtio
                 viewRegistry['elasticjs'] = 'app/elasticsearch/html/es.html';
 
-                // Set up top-level link to our plugin
-                workspace.topLevelTabs.push({
-                    content: "ElasticJs",
-                    title: "ElasticJs plugin loaded dynamically",
-                    isValid: (workspace) => true,
-                    href: () => '#/elasticjs',
-                    isActive: (workspace:Workspace) => workspace.isLinkActive("elasticjs")
-                });
+                /*
+                 // Set up top-level link to our plugin
+                 workspace.topLevelTabs.push({
+                 content: "ElasticJs",
+                 title: "ElasticJs plugin loaded dynamically",
+                 isValid: (workspace) => true,
+                 href: () => '#/elasticjs',
+                 isActive: (workspace:Workspace) => workspace.isLinkActive("elasticjs")
+                 });
+                 */
 
             });
 
