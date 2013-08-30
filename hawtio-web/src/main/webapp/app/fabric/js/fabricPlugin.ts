@@ -5,7 +5,7 @@ module Fabric {
   export var templatePath = 'app/fabric/html/';
 
 
-  angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop']).config(($routeProvider) => {
+  angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
     $routeProvider.
             when('/fabric/create', {templateUrl: templatePath + 'createFabric.html'}).
             when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).

@@ -6,7 +6,7 @@
   <div ng-hide="loading">
     <div class="container-title row-fluid">
       <div class="pull-left">
-        <h1 class="inline"+>Profile: {{row.id}}</h1>
+        <h1 class="inline">Profile: {{row.id}}</h1>
         &nbsp;
         in version: <a ng-href="#/fabric/view?cv={{versionId}}&sp={{row.id}}">{{versionId}}</a>
         &nbsp;
@@ -26,8 +26,6 @@
       <div class="pull-right">
         <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
         <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
-        <a ng-href="{{configFolderLink}}" class="btn" ng-show="configFolderLink"
-           title="View, edit or create configuration files in this profile"><i class="icon-edit"></i> Advanced</a>
       </div>
     </div>
 
@@ -110,7 +108,7 @@
           </dd>
         </dl>
       </div>
-      <div class="span4">
+      <div class="span6">
         <dl>
           <dt>Feature Repositories ({{row.repositories.length}}):</dt>
           <dd>
@@ -126,11 +124,10 @@
           </dd>
         </dl>
         <dl>
-          <dt>
-            <span ng-hide="configFolderLink">Configuration Files ({{row.configurations.length}})</span>
-            <a ng-hide="!configFolderLink" ng-href="{{configFolderLink}}" title="Go to folder view">Configuration Files ({{row.configurations.length}})</a>
+          <dt ng-hide="configFolderLink">
+            Configuration Files ({{row.configurations.length}})
           </dt>
-          <dd>
+          <dd ng-hide="configFolderLink">
             <ul class="unstyled">
               <li ng-repeat="configuration in row.configurations">
                 <i ng-click="deleteFile(configuration)" title="Delete {{configuration}}" class="clickable red icon-remove"></i>
@@ -140,6 +137,9 @@
                 <i class="clickable icon-plus" ng-click="newFileDialog = true" title="Create new configuration file"></i>
               </li>
             </ul>
+          </dd>
+          <dd ng-show="configFolderLink" class="file-list">
+            <div wiki-file-list branch="{{versionId}}" page-id="/fabric/profiles/{{row.id}}" caption="Configuration Files ({{row.configurations.length}}):"></div>
           </dd>
         </dl>
       </div>

@@ -19,6 +19,11 @@ module Wiki {
       exemplar: "New Folder"
     },
     {
+      label: "Properties File",
+      tooltip: "A properties file typically used to configure Java classes",
+      exemplar: "properties-file.properties"
+    },
+    {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
       exemplar: "ReadMe.md"
@@ -27,6 +32,11 @@ module Wiki {
       label: "HTML Document",
       tooltip: "A HTML document you can edit directly using the HTML markup",
       exemplar: "document.html"
+    },
+    {
+      label: "XML Document",
+      tooltip: "An empty XML document",
+      exemplar: "document.xml"
     },
     {
       label: "Integration Flows",

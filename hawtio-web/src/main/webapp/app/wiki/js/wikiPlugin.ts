@@ -1,5 +1,9 @@
 module Wiki {
+
   var pluginName = 'wiki';
+
+  export var templatePath = 'app/wiki/html/';
+
   angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'tree', 'camel']).
           config(($routeProvider) => {
 
@@ -37,6 +41,9 @@ module Wiki {
             };
           }).
           filter('fileIconClass',() => iconClass).
+          directive('wikiFileList', () => {
+            return new Wiki.FileList();
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
 
 /*

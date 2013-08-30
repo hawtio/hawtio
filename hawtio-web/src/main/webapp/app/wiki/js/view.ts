@@ -4,7 +4,7 @@ module Wiki {
     var href = Core.trimLeading(link, "#");
     $timeout(() => {
       console.log("About to navigate to: " + href);
-      $location.path(href);
+      $location.url(href);
     }, 100);
   }
 
@@ -35,19 +35,22 @@ module Wiki {
           displayName: 'Name',
           cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
-        },
-        {
-          field: 'lastModified',
-          displayName: 'Modified',
-          cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
-        },
-        {
-          field: 'length',
-          displayName: 'Size',
-          cellFilter: "number"
         }
       ]
     };
+
+    if (!$scope.nameOnly) {
+      $scope.gridOptions.columnDefs.push({
+        field: 'lastModified',
+        displayName: 'Modified',
+        cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
+      });
+      $scope.gridOptions.columnDefs.push({
+        field: 'length',
+        displayName: 'Size',
+        cellFilter: "number"
+      });
+    }
 
     $scope.childLink = (child) => {
       var start = startLink($scope.branch);
@@ -339,6 +342,8 @@ module Wiki {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
     }
+
+    $scope.updateView = updateView;
 
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
