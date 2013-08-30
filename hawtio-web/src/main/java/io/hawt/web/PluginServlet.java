@@ -40,12 +40,6 @@ public class PluginServlet extends HttpServlet {
         super.init();
     }
 
-    private void writeEmpty(PrintWriter out) {
-        out.write("{}");
-        out.flush();
-        out.close();
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -55,9 +49,8 @@ public class PluginServlet extends HttpServlet {
         Set<ObjectInstance> objectInstances = mBeanServer.queryMBeans(pluginQuery, null);
 
         if (objectInstances.size() == 0) {
-            writeEmpty(out);
+            ServletHelpers.writeEmpty(out);
             return;
-
         }
 
         Map<String, Map<Object, Object>> answer = new HashMap<String, Map<Object, Object>>();
@@ -84,21 +77,8 @@ public class PluginServlet extends HttpServlet {
                 answer.put((String)pluginDefinition.get("Name"), pluginDefinition);
             }
 
-            Object result = null;
-
-            try {
-                result = converters.getToJsonConverter().convertToJson(answer, null, options);
-            } catch (AttributeNotFoundException e) {
-                LOG.warn("Failed to convert plugin list to json", e);
-            }
-
-            if (result != null) {
-                out.write(result.toString());
-                out.flush();
-                out.close();
-            } else {
-                writeEmpty(out);
-            }
+            ServletHelpers.writeObject(converters, options, out, answer);
         }
     }
+
 }

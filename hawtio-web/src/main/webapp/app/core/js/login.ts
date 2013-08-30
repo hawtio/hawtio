@@ -29,10 +29,11 @@ module Core {
 
       $.ajax(url, {
         type: "POST",
-        success: () => {
+        success: (response) => {
           userDetails.username = $scope.username;
           userDetails.password = $scope.password;
           userDetails.rememberMe = $scope.rememberMe;
+          userDetails.loginDetails = response;
 
           if ($scope.rememberMe) {
             localStorage[jolokiaUrl] = angular.toJson(userDetails);
