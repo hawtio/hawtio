@@ -4,24 +4,41 @@ module Fabric {
 
     $scope.versionsOp = 'versions()';
 
-    $scope.providers = Fabric.registeredProviders(jolokia);
-    $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
-    $scope.schema = {};
-
     $scope.entity = {
       number: 1
     };
 
+    $scope.providers = Fabric.registeredProviders(jolokia);
+    console.log("providers: ", $scope.providers);
+    $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
+    $scope.schema = {};
+
+    $scope.response = {};
+
+    $scope.versions = [];
+    $scope.profiles = [];
+
+    $scope.selectedVersion = {};
+
+    $scope.selectedProfiles = [];
+    $scope.selectedProfileIds = '';
+    $scope.selectedVersionId = '';
+    $scope.profileIdFilter = '';
+
+    // holds all the form objects from nested child scopes
+    $scope.forms = {};
+
+    $scope.showAddProfileDialog = false;
+
     $scope.$watch('selectedProvider', (newValue, oldValue) => {
-      if (newValue) {
-        console.log("Selected provider: ", $scope.selectedProvider);
+      if ($scope.selectedProvider) {
         Fabric.getSchema($scope.selectedProvider.id, $scope.selectedProvider.className, jolokia, (schema) => {
           $scope.schema = schema;
           Core.$apply($scope);
         });
       }
-
     }, true);
+
 
     $scope.$watch('schema', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -45,49 +62,6 @@ module Fabric {
       }
     }, true);
 
-    $scope.response = {};
-
-    $scope.versions = [];
-    $scope.profiles = [];
-
-    $scope.selectedVersion = {};
-
-    $scope.selectedProfiles = [];
-    $scope.selectedProfileIds = '';
-    $scope.selectedVersionId = '';
-    $scope.profileIdFilter = '';
-
-    // holds all the form objects from nested child scopes
-    $scope.forms = {};
-
-    $scope.showAddProfileDialog = false;
-
-    $scope.init = () => {
-
-      var tab = $location.search()['tab'];
-      $scope.selectedProvider = $scope.providers[tab];
-
-      var parentId = $location.search()['parentId'];
-      if (parentId) {
-        $scope.entity['parent'] = parentId;
-      }
-
-      var versionId = $location.search()['versionId'];
-      if (versionId) {
-        $scope.selectedVersionId = versionId;
-      }
-
-      var profileIds = $location.search()['profileIds'];
-      if (profileIds) {
-        $scope.selectedProfileIds = profileIds;
-      }
-
-    }
-
-    $scope.init();
-
-
-    $scope.$on('$routeUpdate', $scope.init);
 
     $scope.$watch('versions', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -118,8 +92,40 @@ module Fabric {
 
 
     $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
-      $location.search('profileIds', $scope.selectedProfileIds);
+      if (newValue !== oldValue) {
+        $location.search('profileIds', $scope.selectedProfileIds);
+      }
     });
+
+
+    $scope.init = () => {
+
+      var tab = $location.search()['tab'];
+      if (tab) {
+        $scope.selectedProvider = $scope.providers[tab];
+      }
+
+      var parentId = $location.search()['parentId'];
+      if (parentId) {
+        $scope.entity['parent'] = parentId;
+      }
+
+      var versionId = $location.search()['versionId'];
+      if (versionId) {
+        $scope.selectedVersionId = versionId;
+      }
+
+      var profileIds = $location.search()['profileIds'];
+      if (profileIds) {
+        $scope.selectedProfileIds = profileIds;
+      }
+
+    }
+
+    $scope.init();
+
+
+    $scope.$on('$routeUpdate', $scope.init);
 
 
     $scope.onSubmit = (json, form) => {
