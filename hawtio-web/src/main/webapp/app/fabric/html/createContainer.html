@@ -1,17 +1,23 @@
 <div class="controller-section" ng-controller="Fabric.CreateContainerController">
 
-  <div class="row-fluid">
+  <div class="fabric-page-header row-fluid">
+    <div class="span4">
+      <h2>Create New Container</h2>
+    </div>
+    <!--
     <div class="pull-left">
       <a class='btn' ng-href="#/fabric/view"><i class='icon-remove'></i> Cancel</a>
     </div>
-    <div class="pull-right" ng-switch="activeTab">
-      <button class='btn pull-right' hawtio-submit='create_container'
+    -->
+    <div class="pull-right">
+      <button class='btn' hawtio-submit='create_container'
               ng-disabled="!forms.create_container.$valid">
-        <i class="icon-ok"></i> Create Container</button>
+        <i class="icon-ok"></i> Create Container
+      </button>
     </div>
   </div>
 
-  <div class="row-fluid">
+  <div class="create-container-body row-fluid">
     <div class="span5 offset1">
       <p>1. Select the method of container creation:</p>
       <form id="container-create-form" class="form-horizontal">
@@ -30,7 +36,7 @@
     </div>
 
     <div class="span5">
-      <p>2. Select the target version and add the required profiles to deploy</p>
+      <p>2. Select the target version and add the required profiles to deploy:</p>
       <div fabric-version-selector='selectedVersion'></div>
       <div fabric-profile-selector='selectedProfiles' version-id='selectedVersion.id'></div>
     </div>
