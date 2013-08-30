@@ -92,9 +92,16 @@ module Fabric {
 
 
     $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        $location.search('profileIds', $scope.selectedProfileIds);
-      }
+      var profileIds = $scope.selectedProfileIds.split(',');
+      var selected = [];
+      profileIds.each((id) => {
+        selected.push({
+          id: id,
+          selected: true
+        });
+      });
+      $scope.selectedProfiles = selected;
+      $location.search('profileIds', $scope.selectedProfileIds);
     });
 
 
