@@ -28,23 +28,15 @@
     </div>
 
     <div class="pull-right">
+      <form class="form-inline no-bottom-margin">
+        <fieldset>
+          <div class="pull-right control-group inline-block">
+            <input type="text" class="search-query" placeholder="Filter..." ng-model="filter">
+          </div>
+        </fieldset>
+      </form>
     </div>
   </div>
-
-
-<!--
-  <div class="row-fluid">
-    <div hawtio-editor="repositoriesString" mode="javascript"></div>
-  </div>
-
-  <div class="row-fluid">
-    <div hawtio-editor="featuresString" mode="javascript"></div>
-  </div>
-
-  <div class="row-fluid">
-    <div hawtio-editor="resultString" mode="javascript"></div>
-  </div>
-  -->
 
   <div class="row-fluid">
     <div class="gridStyle" ng-grid="featureOptions"></div>

@@ -66,6 +66,12 @@ module Karaf {
         }
       });
 
+      self.scope.$watch('filter', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          self.evalFilter();
+        }
+      });
+
       self.init = function (childScope, grid) {
         self.grid = grid;
         self.childScope = childScope;
@@ -84,6 +90,11 @@ module Karaf {
         if (self.scope.installedOnly) {
           byRepo = byRepo.findAll((item) => {
             return item.entity.Installed;
+          });
+        }
+        if (self.scope.filter) {
+          byRepo = byRepo.findAll((item) => {
+            return item.entity.Name.has(self.scope.filter) || item.entity.Version.has(self.scope.filter) || item.entity.RepositoryName.has(self.scope.filter);
           });
         }
         self.grid.filteredRows = byRepo;
