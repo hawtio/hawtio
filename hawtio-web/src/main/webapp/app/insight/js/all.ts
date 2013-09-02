@@ -105,7 +105,7 @@ module Insight {
             if( node.getEventTargetType(event) === "title" ) {
                 node.toggleSelect();
             }
-            return false;
+            return true;
 
         }
 
