@@ -264,9 +264,14 @@ module Jmx {
             if (showAllAttributes || includePropertyValue(key, value)) {
               // always skip keys which start with _
               if (!key.startsWith("_")) {
-                // lets format the ObjectName nicely
+                // lets format the ObjectName nicely dealing with objects with
+                // nested object names or arrays of object names
                 if (key === "ObjectName") {
                   value = unwrapObjectName(value);
+                }
+                // lets unwrap any arrays of object names
+                if (angular.isArray(value)) {
+                  value = value.map((v) => { return unwrapObjectName(v); });
                 }
                 var data = {key: key, name: humanizeValue(key), value: value};
 
