@@ -132,7 +132,7 @@
             <i class="icon-remove clickable" title="Clear Filter" ng-click="profileIdFilter = ''"></i>
           </div>
         </div>
-        <div class="profile-section" hawtio-viewport="#profile-section" containing-div="#left" height-adjust="-11">
+        <div class="profile-section" hawtio-viewport="#profile-section" containing-div="#left" height-adjust="-12">
           <div class="canvas">
             <div fabric-profile-selector='selectedProfiles'
                  version-id='activeVersion.id'
@@ -175,7 +175,7 @@
                 <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
                 <div class="profile-select" title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
-                   {{profile.id}} ({{profile.count}}) / {{profile.versionId}}
+                  {{profile.versionId}} / {{profile.id}} ({{profile.count}})
                 </div>
               </div>
 
