@@ -318,6 +318,15 @@ module Jmx {
         var text = value;
         data.summary = "" + text + "";
         data.detailHtml = "<pre>" + text + "</pre>";
+        if (angular.isArray(value)) {
+          var html = "<ul>";
+          angular.forEach(value, (item) => {
+            html += "<li>" + item + "</li>";
+          });
+          html += "</ul>";
+          data.detailHtml = html;
+        }
+
       }
     }
 
