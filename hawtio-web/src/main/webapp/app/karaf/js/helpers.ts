@@ -229,13 +229,15 @@ module Karaf {
       if (!folder) {
         // sometimes the features mbean is inside the 'root' folder
         folder = workspace.tree.navigate("org.apache.karaf");
-        var children = folder.children;
-        folder = null;
-        angular.forEach(children, (child) => {
-          if (!folder) {
-            folder = child.navigate("features");
-          }
-        });
+        if (folder) {
+          var children = folder.children;
+          folder = null;
+          angular.forEach(children, (child) => {
+            if (!folder) {
+              folder = child.navigate("features");
+            }
+          });        
+        }
       }
       if (folder) {
         var children = folder.children;
@@ -264,13 +266,15 @@ module Karaf {
             if (!folder) {
                 // sometimes the features mbean is inside the 'root' folder
                 folder = workspace.tree.navigate("org.apache.karaf");
-                var children = folder.children;
-                folder = null;
-                angular.forEach(children, (child) => {
-                    if (!folder) {
-                        folder = child.navigate("scr");
-                    }
-                });
+                if (folder) {
+                  var children = folder.children;
+                  folder = null;
+                  angular.forEach(children, (child) => {
+                      if (!folder) {
+                          folder = child.navigate("scr");
+                      }
+                  });
+                }
             }
             if (folder) {
                 var children = folder.children;
