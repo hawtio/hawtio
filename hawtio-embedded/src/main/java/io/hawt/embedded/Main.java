@@ -20,6 +20,7 @@ public class Main {
     private String warLocation;
     private String[] warPaths;
     private String extraClassPath;
+    private boolean joinServerThread = true;
 
     public static void main(String[] args) {
         if (args.length <= 0) {
@@ -56,6 +57,10 @@ public class Main {
     }
 
     public void run() throws Exception {
+        run(isJoinServerThread());
+
+    }
+    public void run(boolean join) throws Exception {
         System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
         Log.setLog(new Slf4jLog("jetty"));
 
@@ -91,7 +96,10 @@ public class Main {
         System.out.println();
         System.out.println("http://localhost:" + port + contextPath);
         System.out.println();
-        server.join();
+        if (join) {
+            System.out.println("Joining the Jetty server thread");
+            server.join();
+        }
     }
 
     /**
@@ -183,5 +191,13 @@ public class Main {
 
     public void setExtraClassPath(String extraClassPath) {
         this.extraClassPath = extraClassPath;
+    }
+
+    public boolean isJoinServerThread() {
+        return joinServerThread;
+    }
+
+    public void setJoinServerThread(boolean joinServerThread) {
+        this.joinServerThread = joinServerThread;
     }
 }
