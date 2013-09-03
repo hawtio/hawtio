@@ -60,6 +60,36 @@ module Fabric {
         };
         break;
 
+      case 'openshift':
+        delete schema.properties['parent'];
+        delete schema.properties['manualIp'];
+        delete schema.properties['preferredAddress'];
+        delete schema.properties['resolver'];
+        delete schema.properties['ensembleServer'];
+        delete schema.properties['proxyUri'];
+        delete schema.properties['adminAccess'];
+        delete schema.properties['path'];
+        delete schema.properties['bindAddress'];
+        delete schema.properties['hostNameContext'];
+
+        schema.properties['password']['type'] = 'password';
+
+        bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
+        schema['tabs'] = {
+          'Default': ['name', 'serverUrl', 'login', 'password', 'domain'],
+          'Advanced': ['gearProfile', 'number', 'environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+        };
+
+/*
+        // add some defaults...
+        // TODO this should be easier!
+        Core.pathSet(schema, ["properties", "serverUrl", "formTemplate"],
+                '<input type="text" ng-model="entity.serverUrl" value="">');
+*/
+        break;
+
+
+
       case 'createEnsemble':
         delete schema['properties']['name'];
         angular.forEach(["username", "password", "role"], (name) => {
