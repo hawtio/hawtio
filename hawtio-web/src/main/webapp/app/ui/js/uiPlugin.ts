@@ -28,6 +28,8 @@ module UI {
         return new UI.Expandable();
       }).directive('editableProperty', ($parse) => {
         return new UI.EditableProperty($parse);
+      }).directive('hawtioViewport', () => {
+        return new UI.ViewportHeight();
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });

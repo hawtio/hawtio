@@ -1,7 +1,7 @@
 <div class="ng-cloak">
   <div class="profile-list">
     <table class="table table-striped">
-      <thead>
+      <thead ng-show="showFilter">
         <tr>
           <th><input id="selector" type="checkbox" ng-model="selectedAll"></th>
           <th>
@@ -21,11 +21,16 @@
       <tbody>
         <tr ng-repeat="profile in profiles" ng-show="showProfile(profile)">
           <td>
-            <input type="checkbox" ng-model="profile.selected">
+            <input ng-hide="useCircles" type="checkbox" ng-model="profile.selected">
+            <div ng-show="useCircles">
+              <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
+              <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
+            </div>
+
           </td>
-          <td>
+          <td ng-class="getSelectedClass(profile)">
             <span>{{profile.id}}</span>
-            <a ng-show="showLinks" ng-href="#/fabric/profile/{{versionId}}/{{profile.id}}"><i class="icon-info-sign icon1point5x clickable pull-right" title="Details for {{profile.id}}"></i></a>
+            <a ng-show="showLinks" ng-href="#/fabric/profile/{{versionId}}/{{profile.id}}"><i class="icon-info-sign clickable pull-right" title="Details for {{profile.id}}"></i></a>
           </td>
         </tr>
       </tbody>

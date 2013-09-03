@@ -9,7 +9,10 @@ module Fabric {
 
     $scope.init = () => {
 
-      $scope.activeVersionId = $location.search()['cv'];
+      var activeVersionId = $location.search()['cv'];
+      if (activeVersionId) {
+        $scope.activeVersionId = activeVersionId;
+      }
 
       var profiles = $location.search()['sp'];
       $scope.selectedProfileIds = [];
@@ -23,15 +26,14 @@ module Fabric {
         $scope.selectedContainerIds = containers.split(',');
       }
 
-    }
-
-    $scope.init();
+    };
 
     $scope.versions = [];
     $scope.profiles = [];
     $scope.containers = [];
     $scope.activeProfiles = [];
 
+    $scope.activeVersion = {};
     $scope.activeVersionId = '';
     $scope.selectedContainers = [];
     $scope.selectedProfiles = [];
@@ -58,6 +60,7 @@ module Fabric {
 
     $scope.connectToContainerDialog = new Core.Dialog();
     $scope.ensembleContainerIds = [];
+    $scope.profileSelectedAll = false;
 
     $scope.targetContainer = {};
 
@@ -109,7 +112,7 @@ module Fabric {
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
 
       if (!$scope.activeVersionId) {
-        $scope.activeVersionId = '';
+        return;
       }
 
       $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
@@ -117,6 +120,13 @@ module Fabric {
         $scope.profiles = [];
       }
       $location.search('cv', $scope.activeVersionId);
+    });
+
+
+    $scope.$watch('activeVersion', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.activeVersionId = $scope.activeVersion.id;
+      }
     });
 
 
@@ -165,6 +175,10 @@ module Fabric {
         $location.search('sc', ids);
       }
     }, true);
+
+
+    // initialize the scope after we set all our watches
+    $scope.init();
 
 
     // create profile dialog action
