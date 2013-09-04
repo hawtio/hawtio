@@ -92,6 +92,10 @@ module Core {
       return userDetails.username !== null && userDetails.username !== 'public';
     };
 
+    $scope.showLogout = () => {
+      return $scope.loggedIn() && userDetails.username !== '';
+    }
+
     $scope.logout = () => {
       $scope.confirmLogout = true;
     };
