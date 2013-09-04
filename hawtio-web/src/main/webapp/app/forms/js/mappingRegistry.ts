@@ -192,6 +192,31 @@ module Forms {
     if (!angular.isString(type)) {
       return null;
     }
+    var defaultValueConverter = null;
+    var defaultValue = property.default;
+    if (defaultValue) {
+        // lets add a default value
+        defaultValueConverter = function (scope, modelName) {
+          var value = Core.pathGet(scope, modelName);
+          if (!value)  {
+            Core.pathSet(scope, modelName, property.default);
+          }
+        };
+        options.valueConverter = defaultValueConverter;
+    }
+
+    function getModelValueOrDefault(scope, modelName) {
+      var value = Core.pathGet(scope, modelName);
+      if (!value) {
+        var defaultValue = property.default;
+        if (defaultValue) {
+          value = defaultValue;
+          Core.pathSet(scope, modelName, value);
+        }
+      }
+      return value;
+    }
+
     switch (type.toLowerCase()) {
       case "int":
       case "integer":
@@ -205,7 +230,7 @@ module Forms {
       case "java.lang.double":
         // lets add a value conversion watcher...
         options.valueConverter = function (scope, modelName) {
-          var value = Core.pathGet(scope, modelName);
+          var value = getModelValueOrDefault(scope, modelName);
           if (value && angular.isString(value))  {
             var numberValue = Number(value);
             Core.pathSet(scope, modelName, numberValue);
@@ -236,7 +261,7 @@ module Forms {
       case "java.lang.boolean":
         // lets add a value conversion watcher...
         options.valueConverter = function (scope, modelName) {
-          var value = Core.pathGet(scope, modelName);
+          var value = getModelValueOrDefault(scope, modelName);
           if (value && "true" === value)  {
             //console.log("coercing String to boolean for " + modelName);
             Core.pathSet(scope, modelName, true);
