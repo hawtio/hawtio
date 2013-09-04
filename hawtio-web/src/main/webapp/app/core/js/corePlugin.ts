@@ -158,6 +158,15 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
               username = credentials[0];
               password = credentials[1];
 
+              // TODO we should try avoid both permutations of username / userName :)
+
+            } else if (angular.isDefined(userDetails) &&
+                       angular.isDefined(userDetails.username) &&
+                       angular.isDefined(userDetails.password)) {
+
+              username = userDetails.username;
+              password = userDetails.password;
+
             } else if (angular.isDefined(userDetails) &&
                        angular.isDefined(userDetails.userName) &&
                        angular.isDefined(userDetails.password)) {
