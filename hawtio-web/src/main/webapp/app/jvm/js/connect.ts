@@ -35,7 +35,20 @@ module JVM {
 
     $scope.gotoServer = () => {
       var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
-      options.host = $scope.host || 'localhost';
+      var host = $scope.host || 'localhost';
+
+      // lets trim any http:// prefix or / postfix
+      var idx = host.indexOf("://");
+      if (idx >= 0) {
+        host = host.substring(idx + 3);
+      }
+      idx = host.indexOf("/");
+      if (idx >= 0) {
+        host = host.substring(0, idx);
+      }
+
+      console.log("using host name: " + host);
+      options.host = host;
       options.port = $scope.port;
       options.path = $scope.path;
       options.userName = $scope.userName;
