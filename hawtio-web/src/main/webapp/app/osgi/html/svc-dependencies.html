@@ -1,3 +1,8 @@
-<div ng-controller="Osgi.ServiceDependenciesController">
-    <h2>OSGi Service dependencies</h2>
+<div ng-controller="Osgi.ServiceDependencyController">
+
+    <h2>I was here !</h2>
+
+    <ul>
+      <li ng-repeat="bundle in bundles">{{ bundle.name }}</li>
+    </ul>
 </div>

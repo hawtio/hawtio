@@ -25,6 +25,9 @@ module Osgi {
               isActive: (workspace: Workspace) => workspace.isLinkActive("osgi")
             });
 
+      })
+      .factory('osgiDataService',function () {
+        return new OsgiDataService();
       });
 
   hawtioPluginLoader.addModule(pluginName);
