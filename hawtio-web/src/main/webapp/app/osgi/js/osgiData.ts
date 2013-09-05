@@ -9,7 +9,7 @@ module Osgi {
         private workspace : Workspace;
         private callback;
 
-        constructor (workspace: Workspace) {
+        constructor (workspace: Workspace, jolokia) {
 
             var svc :OsgiDataService = this
 
