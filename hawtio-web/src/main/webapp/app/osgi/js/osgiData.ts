@@ -9,7 +9,7 @@ module Osgi {
         private workspace : Workspace;
         private callback;
 
-        constructor (workspace: Workspace, jolokia, callback) {
+        constructor (workspace: Workspace) {
 
             var svc :OsgiDataService = this
 
@@ -75,8 +75,8 @@ module Osgi {
 
                 svc.bundles = newBundles
 
-                if (callback) {
-                    callback()
+                if (svc.callback) {
+                    svc.callback()
                 }
             }
        }
