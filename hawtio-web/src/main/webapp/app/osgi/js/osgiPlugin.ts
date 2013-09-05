@@ -26,8 +26,8 @@ module Osgi {
             });
 
       })
-      .factory('osgiDataService',function () {
-        return new OsgiDataService();
+      .factory('osgiDataService', function (workspace: Workspace, jolokia) {
+        return new OsgiDataService(workspace, jolokia);
       });
 
   hawtioPluginLoader.addModule(pluginName);
