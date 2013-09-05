@@ -3,12 +3,13 @@ module Osgi {
     export class OsgiDataService {
 
         private result = {};
-        public bundles = [];
+        private bundles = [];
 
         private jolokia;
         private workspace : Workspace;
+        private callback;
 
-        constructor (workspace: Workspace, jolokia) {
+        constructor (workspace: Workspace, jolokia, callback) {
 
             var svc :OsgiDataService = this
 
@@ -21,6 +22,14 @@ module Osgi {
             }, onSuccess(function(response) {
                 svc.processResponse(response)
             }));
+        }
+
+        public register(callback) {
+            this.callback = callback;
+        }
+
+        public getBundles() {
+            return this.bundles;
         }
 
         private processResponse(response) {
@@ -65,6 +74,10 @@ module Osgi {
                 }
 
                 svc.bundles = newBundles
+
+                if (callback) {
+                    callback()
+                }
             }
        }
     }
