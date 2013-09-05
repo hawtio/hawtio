@@ -27,9 +27,9 @@ module Osgi {
 
             var svc = this;
 
-            var newBundles = [];
-
             if (!Object.equal(svc.result, response.value)) {
+                var newBundles = [];
+
                 svc.result = response.value;
 
                 angular.forEach(svc.result, function (value, key) {
@@ -63,9 +63,9 @@ module Osgi {
                         }
                     }(b)));
                 }
-            }
 
-            svc.bundles = newBundles
-        }
+                svc.bundles = newBundles
+            }
+       }
     }
 }
