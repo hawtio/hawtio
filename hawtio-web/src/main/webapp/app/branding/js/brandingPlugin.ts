@@ -1,10 +1,47 @@
+module Core {
+
+  /**
+   * Ensure whatever value is passed in is converted to a boolean
+   * Added here because it's needed for the below stuff...
+   */
+  export function parseBooleanValue(value):boolean {
+    if (!angular.isDefined(value)) {
+      return false;
+    }
+
+    if (value.constructor === Boolean) {
+      return <boolean>value;
+    }
+
+    if (angular.isString(value)) {
+      switch(value.toLowerCase()) {
+        case "true":
+        case "1":
+        case "yes":
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    if (angular.isNumber(value)) {
+      return value !== 0;
+    }
+
+    throw new Error("Can't convert value " + value + " to boolean");
+
+  }
+
+}
+
 module Branding {
 
   export var enabled = false;
   export var profile = null;
 
   $.get('/hawtio/branding', (response) => {
-    Branding.enabled = response.enable;
+
+    Branding.enabled = Core.parseBooleanValue(response.enable);
 
     // Branding.enabled = false;
     // Branding.enabled = true;

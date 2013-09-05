@@ -72,7 +72,7 @@
         <div class="section-header">
 
           <div class="selection-controls">
-            <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveVersionId('')"></i>
+
           </div>
 
           <div class="section-title">
@@ -101,19 +101,16 @@
            </div>
          </div>
          <div class="version-section">
-          <div class="canvas">
-            <div ng-repeat="version in versions">
-              <div class="box" ng-class="isSelectedVersion(version.id)" ng-click="setActiveVersionId(version.id)">
-
-                {{version.id}} {{containersForVersion(version.id)}}
-
-              </div>
-            </div>
-          </div>
+           <div fabric-version-selector='activeVersion'></div>
         </div>
-        <div class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
+
+
+        <div id="profile-section" class="section-header" ng-show="activeVersionId && activeVersionId !== ''">
           <div class="selection-controls">
-            <i class="icon-circle-blank clickable" tytpe="Clear Selection" ng-click="clearSelection(profiles)"></i>
+            <i ng-show="profileNoneSelected" class="icon-circle-blank clickable" title="Select All" ng-click="profileSelectAll()"></i>
+            <i ng-show="profileSomeSelected" class="icon-adjust clickable" title="Clear Selection" ng-click="profileSelectNone()"></i>
+            <i ng-show="profileAllSelected" class="icon-circle clickable" title="Clear Selection" ng-click="profileSelectNone()"></i>
+
           </div>
 
           <div class="section-title">
@@ -135,27 +132,15 @@
             <i class="icon-remove clickable" title="Clear Filter" ng-click="profileIdFilter = ''"></i>
           </div>
         </div>
-        <div class="profile-section">
+        <div class="profile-section" hawtio-viewport="#profile-section" containing-div="#left" height-adjust="-12">
           <div class="canvas">
-            <div ng-repeat="profile in profiles" ng-show="profile.id.has(profileIdFilter, 0, false)">
-              <div class="box" ng-class="getSelectedClass(profile)" id="profile#{{profile.id}}">
-
-                <div class="box-left">
-
-                  <i ng-show="!profile.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="profile.selected = true"></i>
-                  <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
-
-                  <div class="profile-select" ng-click="profile.selected = true" title="{{profile.id}} {{containersForProfile(profile.id)}}">
-                    {{profile.id}} {{containersForProfile(profile.id)}}
-                  </div>
-                </div>
-
-                <div class="box-right">
-                  <i class="clickable icon-info-sign" title="Show Details" ng-click="showProfile(profile)"></i>
-                </div>
-
-              </div>
-            </div>
+            <div fabric-profile-selector='selectedProfiles'
+                 version-id='activeVersion.id'
+                 show-links="true"
+                 clear-on-version-change="true"
+                 filter-watch="profileIdFilter"
+                 show-header="false"
+                 use-circles="true"></div>
           </div>
         </div>
       </div>
@@ -190,7 +175,7 @@
                 <i ng-show="profile.selected" class="icon-circle clickable" title="Selected" ng-click="profile.selected = false"></i>
 
                 <div class="profile-select" title="{{profile.versionId}} / {{profile.id}} ({{profile.count}})" ng-click="setActiveProfile(profile)">
-                   {{profile.id}} ({{profile.count}}) / {{profile.versionId}}
+                  {{profile.versionId}} / {{profile.id}} ({{profile.count}})
                 </div>
               </div>
 

@@ -3,13 +3,15 @@ module Fabric {
   export function FabricViewController($scope, $location, jolokia, localStorage) {
 
     $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
-    $scope.versionsOp = 'versions()';
     $scope.containersOp = 'containers(java.util.List)';
     $scope.ensembleContainerIdListOp = 'EnsembleContainers';
 
     $scope.init = () => {
 
-      $scope.activeVersionId = $location.search()['cv'];
+      var activeVersionId = $location.search()['cv'];
+      if (activeVersionId) {
+        $scope.activeVersionId = activeVersionId;
+      }
 
       var profiles = $location.search()['sp'];
       $scope.selectedProfileIds = [];
@@ -23,15 +25,14 @@ module Fabric {
         $scope.selectedContainerIds = containers.split(',');
       }
 
-    }
-
-    $scope.init();
+    };
 
     $scope.versions = [];
     $scope.profiles = [];
     $scope.containers = [];
     $scope.activeProfiles = [];
 
+    $scope.activeVersion = {};
     $scope.activeVersionId = '';
     $scope.selectedContainers = [];
     $scope.selectedProfiles = [];
@@ -58,6 +59,7 @@ module Fabric {
 
     $scope.connectToContainerDialog = new Core.Dialog();
     $scope.ensembleContainerIds = [];
+    $scope.profileSelectedAll = false;
 
     $scope.targetContainer = {};
 
@@ -107,29 +109,15 @@ module Fabric {
 
     // watchers for selection handling
     $scope.$watch('activeVersionId', (oldValue, newValue) => {
-
-      if (!$scope.activeVersionId) {
-        $scope.activeVersionId = '';
-      }
-
-      $scope.profiles = $scope.currentVersionProfiles($scope.activeVersionId);
-      if ($scope.activeVersionId === '') {
-        $scope.profiles = [];
-      }
       $location.search('cv', $scope.activeVersionId);
     });
 
 
-    $scope.$watch('profiles', (oldValue, newValue) => {
-      if (oldValue !== newValue) {
-        if ($scope.profiles.length === 0) {
-          $scope.selectedProfiles = [];
-        } else {
-          $scope.selectedProfiles = $scope.profiles.filter((p) => { return p.selected; });
-        }
-
+    $scope.$watch('activeVersion', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.activeVersionId = $scope.activeVersion.id;
       }
-    }, true);
+    });
 
 
     $scope.$watch('containers', (oldValue, newValue) => {
@@ -165,6 +153,10 @@ module Fabric {
         $location.search('sc', ids);
       }
     }, true);
+
+
+    // initialize the scope after we set all our watches
+    $scope.init();
 
 
     // create profile dialog action
@@ -389,43 +381,6 @@ module Fabric {
         $scope.addProfiles(c.id, profileIds);
       });
     }
-
-
-    $scope.currentVersionProfiles = (id) => {
-      if (id === '') {
-        return [];
-      }
-      var version = $scope.versions.find((version) => { return version.id === $scope.activeVersionId });
-      if (!version) {
-        return [];
-      }
-
-      var answer = [];
-
-      version.profiles.each((p) => {
-
-        var profile = $scope.profiles.find((prof) => { return p === prof.id });
-
-        var selected = false;
-        if (profile && profile.version === version.id) {
-          selected = profile.selected;
-        }
-
-        if ($scope.selectedProfileIds.any(p)) {
-          selected = true;
-        }
-
-        answer.push({
-          id: p,
-          versionId: version.id,
-          selected: selected
-        });
-      });
-
-
-
-      return answer;
-    };
 
 
     $scope.currentActiveProfiles = () => {
@@ -688,19 +643,6 @@ module Fabric {
     };
 
 
-    $scope.updateVersions = (newVersions) => {
-      var response = angular.toJson(newVersions);
-      if ($scope.versionsResponse !== response) {
-        $scope.versionsResponse = response;
-        $scope.versions = newVersions;
-        if ($scope.activeVersion !== '') {
-          $scope.profiles = $scope.currentVersionProfiles($scope.activeVersion);
-        }
-        Core.$apply($scope);
-      }
-    };
-
-
     $scope.showProfile = (profile) => {
       if (angular.isDefined(profile.versionId)) {
         $location.path('/fabric/profile/' + profile.versionId + '/' + profile.id);
@@ -784,9 +726,6 @@ module Fabric {
 
     $scope.dispatch = (response) => {
       switch (response.request.operation) {
-        case($scope.versionsOp):
-          $scope.updateVersions(response.value);
-          return;
         case($scope.containersOp):
           $scope.updateContainers(response.value);
           return;
@@ -804,7 +743,6 @@ module Fabric {
 
 
     Core.register(jolokia, $scope, [
-      {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.versionsOp },
       {type: 'exec', mbean: managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]},
       {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
     ], onSuccess($scope.dispatch));

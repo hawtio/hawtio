@@ -9,8 +9,12 @@ module Fabric {
     public scope = {
       selectedProfiles: '=fabricProfileSelector',
       versionId: '=',
+      filterWatch: '@',
+      selectedWatch: '@',
       clearOnVersionChange: '@',
       showLinks: '@',
+      showHeader: '@',
+      useCircles: '@',
       excludedProfiles: '=',
       includedProfiles: '='
     };
@@ -23,6 +27,8 @@ module Fabric {
       $scope.showLinks = false;
       $scope.selectedAll = false;
       $scope.indeterminate = false;
+      $scope.showFilter = true;
+      $scope.useCircles = false;
 
 
       $scope.showProfile = (profile) => {
@@ -80,6 +86,17 @@ module Fabric {
         $scope.profiles.each((profile) => { delete profile.selected; });
       }
 
+      $scope.$parent.profileSelectAll = $scope.selectAll;
+      $scope.$parent.profileSelectNone = $scope.selectNone;
+
+
+      $scope.getSelectedClass = (profile) => {
+        if (profile.selected) {
+          return "selected";
+        }
+        return "";
+      }
+
 
       $scope.$watch('selectedAll', (newValue, oldValue) => {
         if (newValue !== oldValue) {
@@ -126,9 +143,24 @@ module Fabric {
 
     };
 
+
     public link = ($scope, $element, $attrs) => {
 
       var selector = $element.find('#selector');
+
+      if (!angular.isDefined($attrs['showHeader'])) {
+        $scope.showFilter = true;
+      } else {
+        $scope.showFilter = $attrs['showHeader'];
+      }
+
+      if (angular.isDefined($attrs['filterWatch'])) {
+        $scope.$parent.$watch($attrs['filterWatch'], (newValue, oldValue) => {
+          if (newValue !== oldValue) {
+            $scope.filterText = newValue;
+          }
+        });
+      }
 
       $scope.$watch('indeterminate', (newValue, oldValue) => {
          if (newValue !== oldValue) {
@@ -142,13 +174,27 @@ module Fabric {
             if ($scope.selectedProfiles.length !== $scope.profiles.length) {
               $scope.indeterminate = true;
               $scope.selectedAll = false;
+
+              $scope.$parent.profileSomeSelected = true;
+              $scope.$parent.profileNoneSelected = false;
+              $scope.$parent.profileAllSelected = false;
             } else {
               $scope.indeterminate = false;
               $scope.selectedAll = true;
+
+              $scope.$parent.profileSomeSelected = false;
+              $scope.$parent.profileNoneSelected = false;
+              $scope.$parent.profileAllSelected = true;
+
             }
           } else {
             $scope.indeterminate = false;
             $scope.selectedAll = false;
+
+            $scope.$parent.profileSomeSelected = false;
+            $scope.$parent.profileNoneSelected = true;
+            $scope.$parent.profileAllSelected = false;
+
           }
         }
       }, true);

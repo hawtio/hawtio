@@ -893,8 +893,9 @@ module Core {
       userDetails.password = options.password;
     }
 
-    localStorage[connectUrl] = angular.toJson(userDetails);
+    // TODO we should replace this and just store the real, final connectUrl!
 
+    localStorage[connectUrl] = angular.toJson(userDetails);
     if (connectUrl) {
 
       if (options.useProxy) {
@@ -914,6 +915,7 @@ module Core {
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
+      localStorage[connectUrl] = angular.toJson(userDetails);
 
       var full = "?url=" + encodeURIComponent(connectUrl);
 
@@ -939,6 +941,7 @@ module Core {
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
+      localStorage[connectUrl] = angular.toJson(userDetails);
 
       var full = "?url=" + encodeURIComponent(connectUrl);
 

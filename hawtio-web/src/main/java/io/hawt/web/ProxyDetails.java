@@ -49,7 +49,10 @@ public class ProxyDetails {
     private  String host;
     private int port = 80;
 
-    private static Set<String> ignoreHeaderNames = new HashSet<String>(Arrays.asList("_user", "_pwd", "_url", "url"));
+    public static final String USER_PARAM = "_user";
+    public static final String PWD_PARAM = "_pwd";
+
+    private static Set<String> ignoreHeaderNames = new HashSet<String>(Arrays.asList(USER_PARAM, PWD_PARAM, "_url", "url"));
 
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
@@ -138,6 +141,7 @@ public class ProxyDetails {
                 stringProxyURL += "?" + URIUtil.encodeQuery(httpServletRequest.getQueryString());
             }
 */
+            LOG.info("Proxying to " + stringProxyURL + " as user: " + userName);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Proxying to " + stringProxyURL);
             }
