@@ -17,10 +17,10 @@
  */
 package io.hawt.web;
 
-import io.hawt.util.Strings;
-import io.hawt.system.Authenticator;
 import io.hawt.system.AuthInfo;
+import io.hawt.system.Authenticator;
 import io.hawt.system.ExtractAuthInfoCallback;
+import io.hawt.util.Strings;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -46,7 +46,7 @@ public class ProxyDetails {
     private String path = "";
     private String userName;
     private String password;
-    private  String host;
+    private String host;
     private int port = 80;
 
     public static final String USER_PARAM = "_user";
@@ -61,18 +61,18 @@ public class ProxyDetails {
 
         if (authHeader != null && !authHeader.equals("")) {
 
-          final AuthInfo info = new AuthInfo();
+            final AuthInfo info = new AuthInfo();
 
-          Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-            @Override
-            public void getAuthInfo(String userName, String password) {
-              info.username = userName;
-              info.password = password;
-            }
-          });
+            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
+                @Override
+                public void getAuthInfo(String userName, String password) {
+                    info.username = userName;
+                    info.password = password;
+                }
+            });
 
-          userName = info.username;
-          password = info.password;
+            userName = info.username;
+            password = info.password;
         }
 
         // lets add the query parameters
