@@ -17,7 +17,12 @@ import java.io.PrintWriter;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stan Lewis
@@ -99,7 +104,7 @@ public class LoginServlet extends HttpServlet {
             data.put("credential", credential);
         }
 
-        answer.put("principals",principals);
+        answer.put("principals", principals);
         answer.put("credentials", credentials);
 
         ServletHelpers.writeObject(converters, options, out, answer);

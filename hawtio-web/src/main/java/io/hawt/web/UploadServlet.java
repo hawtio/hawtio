@@ -84,7 +84,7 @@ public class UploadServlet extends HttpServlet {
             try {
                 List<FileItem> items = upload.parseRequest(request);
 
-                for(FileItem item : items) {
+                for (FileItem item : items) {
                     if (item.isFormField()) {
                         String name = item.getFieldName();
                         String value = item.getString();
@@ -120,7 +120,7 @@ public class UploadServlet extends HttpServlet {
                     }
                 }
             } catch (FileUploadException e) {
-                throw new RuntimeException ("Failed accepting file uploads: ", e);
+                throw new RuntimeException("Failed accepting file uploads: ", e);
             }
 
             if (targetDirectory != null) {
@@ -129,7 +129,8 @@ public class UploadServlet extends HttpServlet {
                 LOG.info("Putting files in subdirectory: {}", targetDirectory);
                 if (!target.exists()) {
                     if (!target.mkdirs()) {
-                        LOG.warn("Failed to create target directory: {}", target);                                         }
+                        LOG.warn("Failed to create target directory: {}", target);
+                    }
                 }
 
                 for (File file : files) {

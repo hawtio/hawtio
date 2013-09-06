@@ -5,7 +5,14 @@ import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stan Lewis
@@ -27,7 +36,7 @@ public class PluginServlet extends HttpServlet {
     Converters converters = new Converters();
     JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
-    String attributes[] = { "Context", "Domain", "Name", "Scripts" };
+    String attributes[] = {"Context", "Domain", "Name", "Scripts"};
 
     @Override
     public void init() throws ServletException {
@@ -74,7 +83,7 @@ public class PluginServlet extends HttpServlet {
                 for (Attribute attribute : attributeList.asList()) {
                     pluginDefinition.put(attribute.getName(), attribute.getValue());
                 }
-                answer.put((String)pluginDefinition.get("Name"), pluginDefinition);
+                answer.put((String) pluginDefinition.get("Name"), pluginDefinition);
             }
 
             ServletHelpers.writeObject(converters, options, out, answer);
