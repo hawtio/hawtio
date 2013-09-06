@@ -25,6 +25,9 @@ module Osgi {
         }
 
         public register(callback) {
+            this.result = {};
+            this.bundles = [];
+
             this.callback = callback;
         }
 
@@ -51,7 +54,9 @@ module Osgi {
                         Version: value.Version,
                         LastModified: new Date(Number(value.LastModified)),
                         Location: value.Location,
-                        StartLevel: undefined
+                        StartLevel: undefined,
+                        RegisteredServices: value.RegisteredServices,
+                        ServicesInUse: value.ServicesInUse
                     };
                     if (value.Headers['Bundle-Name']) {
                         obj.Name = value.Headers['Bundle-Name']['Value'];
