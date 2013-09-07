@@ -5,7 +5,11 @@ module Fabric {
   export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
 
   export function hasFabric(workspace) {
-    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
+    // lets make sure we only have a fabric if we have the ClusterBootstrapManager available
+    // so that we hide Fabric for 6.0 or earlier of JBoss Fuse which doesn't have the necessary
+    // mbeans for hawtio awesomeness
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})
+            && workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
   }
 
   export function initScope($scope, workspace) {
