@@ -8,20 +8,30 @@ module Fabric {
       number: 1
     };
 
-    // the properties stored in local storage...
+    // the form properties stored in local storage
+    // which we then default when creating a new container
     var localStorageProperties = {
       child: {
-            jmxUser: 'fabric.userName',
-            jmxPassword: 'fabric.password'
-          },
+        jmxUser: 'fabric.userName',
+        jmxPassword: 'fabric.password'
+      },
       openshift: {
-            serverUrl: 'openshift.serverUrl',
-            login: 'openshift.login',
-            password: 'openshift.password',
-            domain: 'openshift.domain',
-            gearProfile: 'openshift.gearProfile'
-          }
-
+        serverUrl: 'openshift.serverUrl',
+        login: 'openshift.login',
+        password: 'openshift.password',
+        domain: 'openshift.domain',
+        gearProfile: 'openshift.gearProfile'
+      },
+      jclouds: {
+        owner: 'jclouds.owner',
+        credential: 'jclouds.credential',
+        providerName: 'jclouds.providerName',
+        imageId: 'jclouds.imageId',
+        hardwareId: 'jclouds.hardwareId',
+        locationId: 'jclouds.locationId',
+        group: 'jclouds.group',
+        instanceType: 'jclouds.instanceType'
+      }
     };
 
     $scope.providers = Fabric.registeredProviders(jolokia);
