@@ -8,6 +8,22 @@ module Fabric {
       number: 1
     };
 
+    // the properties stored in local storage...
+    var localStorageProperties = {
+      child: {
+            jmxUser: 'fabric.userName',
+            jmxPassword: 'fabric.password'
+          },
+      openshift: {
+            serverUrl: 'openshift.serverUrl',
+            login: 'openshift.login',
+            password: 'openshift.password',
+            domain: 'openshift.domain',
+            gearProfile: 'openshift.gearProfile'
+          }
+
+    };
+
     $scope.providers = Fabric.registeredProviders(jolokia);
     console.log("providers: ", $scope.providers);
     $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
@@ -39,26 +55,26 @@ module Fabric {
       }
     }, true);
 
-
     $scope.$watch('schema', (newValue, oldValue) => {
       if (newValue !== oldValue) {
 
         $scope.entity['providerType'] = $scope.selectedProvider.id;
         $location.search('tab', $scope.selectedProvider.id);
 
-        switch($scope.selectedProvider.id) {
+        var providerId = $scope.entity['providerType'];
+        var properties = localStorageProperties[providerId];
 
-          case 'child':
-            $scope.entity['jmxUser'] = localStorage['fabric.userName'];
-            $scope.entity['jmxPassword'] = localStorage['fabric.password'];
-            break;
+        // e.g. key = jmxUser, value = fabric.userName
+        //
+        //    $scope.entity['jmxUser'] = localStorage['fabric.userName'];
+        //    $scope.entity['jmxPassword'] = localStorage['fabric.password'];
 
-          case 'ssh':
-            break;
-
-          case 'jcloud':
-            break;
-        }
+        angular.forEach(properties, (value, key) => {
+          var localValue = localStorage[value];
+          if (localValue) {
+            $scope.entity[key] = localValue;
+          }
+        });
       }
     }, true);
 
@@ -127,7 +143,7 @@ module Fabric {
         $scope.selectedProfileIds = profileIds;
       }
 
-    }
+    };
 
     $scope.init();
 
@@ -137,9 +153,20 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
 
-      if (json.saveJmxCredentials) {
-        localStorage['fabric.userName'] = $scope.entity.jmxUser;
-        localStorage['fabric.password'] = $scope.entity.jmxPassword;
+      var providerId = $scope.entity['providerType'];
+      if (json.saveJmxCredentials || 'child' !== providerId) {
+        // e.g. key = jmxUser, value = fabric.userName
+        //    localStorage['fabric.userName'] = $scope.entity.jmxUser;
+        //    localStorage['fabric.password'] = $scope.entity.jmxPassword;
+        var properties = localStorageProperties[providerId];
+
+        angular.forEach(properties, (value, key) => {
+          var entityValue = $scope.entity[key];
+          if (entityValue) {
+            localStorage[value] = entityValue;
+          }
+        });
+
       }
 
       delete json.saveJmxCredentials;
