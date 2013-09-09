@@ -108,7 +108,7 @@
       -->
 
         <ul ng-show="loggedIn()" class="nav">
-          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
+          <li ng-repeat="nav in topLevelTabs" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
             <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
             </a>
           </li>
