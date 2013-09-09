@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- j * You may obtain a copy of the License at
+ * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -45,7 +45,8 @@
 
         // Processing parameters which are added to the
         // URL as query parameters if given as options
-        var PROCESSING_PARAMS = ["maxDepth", "maxCollectionSize", "maxObjects", "ignoreErrors", "canonicalNaming"];
+        var PROCESSING_PARAMS = ["maxDepth", "maxCollectionSize", "maxObjects", "ignoreErrors", "canonicalNaming",
+                                 "serializeException", "includeStackTrace", "ifModifiedSince"];
 
         /**
          * Constructor for creating a client to the Jolokia agent.
@@ -64,7 +65,7 @@
             }
 
             // Jolokia Javascript Client version
-            this.CLIENT_VERSION = "1.1.0";
+            this.CLIENT_VERSION = "1.1.3";
 
             // Registered requests for fetching periodically
             var jobs = [];
@@ -176,6 +177,29 @@
                     }
                 });
 
+                if (ajaxParams['username'] && ajaxParams['password']) {
+                    // If we have btoa() then we set the authentication preemptively,
+
+                    // Otherwise (e.g. for IE < 10) an extra roundtrip might be necessary
+                    // when using 'username' and 'password' in xhr.open(..)
+                    // See http://stackoverflow.com/questions/5507234/how-to-use-basic-auth-and-jquery-and-ajax
+                    // for details
+                    if (window.btoa) {
+                        ajaxParams.beforeSend = function (xhr) {
+                            var tok = ajaxParams['username'] + ':' + ajaxParams['password'];
+                            xhr.setRequestHeader('Authorization', "Basic " + window.btoa(tok));
+                        };
+                    }
+
+                    // Add appropriate field for CORS access
+                    ajaxParams.xhrFields = {
+                        // Please note that for CORS access with credentials, the request
+                        // must be asynchronous (see https://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html#the-withcredentials-attribute)
+                        // It works synchronously in Chrome nevertheless, but fails in Firefox.
+                        withCredentials: true
+                    };
+                }
+
                 if (extractMethod(request, opts) === "post") {
                     $.extend(ajaxParams, POST_AJAX_PARAMS);
                     ajaxParams.data = JSON.stringify(request);
@@ -235,16 +259,25 @@
              * Register one or more requests for periodically polling the agent along with a callback to call on receipt
              * of the response.
              *
-             * @param callback either a function which will be called on a successful performed request or an object
-             *        with the two attributes <code>success</code> and <code>error</code> for two callbacks, one for a
-             *        successful call, one in case on an error. If given only a single callback function, then this
-             *        function is called with all responses received as argument, regardless whether the response indicates
-             *        a success or error state. For the second case, when an object with an success and error function is
-             *        given, these callback are called with with a single response object as argument. If multiple requests
-             *        have been registered along with this callback object, the callback is called multiple times, one for
-             *        each request in the same order as the request are given.
-             *        As second argument, the handle which is returned by this method is given and as third argument the index
-             *        within the list of requests.
+             * The first argument can be either an object or a function. The remaining arguments are interpreted
+             * as Jolokia request objects
+             *
+             * If a function is given or an object with an attribute <code>callback</code> holding a function, then
+             * this function is called with all responses received as argument, regardless whether the individual response
+             * indicates a success or error state.
+             *
+             * If the first argument is an object with two callback attributes <code>success</code> and <code>error</code>,
+             * these functions are called for <em>each</em> response separately, depending whether the response
+             * indicates success or an error state. If multiple requests have been registered along with this callback object,
+             * the callback is called multiple times, one for each request in the same order as the request are given.
+             * As second argument, the handle which is returned by this method is given and as third argument the index
+             * within the list of requests.
+             *
+             * If the first argument is an object, an additional 'config' attribute with processing parameters can
+             * be given which is used as default for the registered requests.
+             * Request with a 'config' section take precedence.
+             *
+             * @param callback and options specification.
              * @param request, request, .... One or more requests to be registered for this single callback
              * @return handle which can be used for unregistering the request again or for correlation purposes in the callbacks
              */
@@ -256,12 +289,25 @@
                     requests = Array.prototype.slice.call(arguments,1),
                     job;
                 if (typeof callback === 'object') {
-                    job = {
-                        success: callback.success,
-                        error: callback.error,
-                        callback: null
-                    };
+                    if (callback.success && callback.error) {
+                        job = {
+                            success: callback.success,
+                            error: callback.error
+                        };
+                    } else if (callback.callback) {
+                        job = {
+                            callback: callback.callback
+                        };
+                    } else {
+                        throw "Either 'callback' or ('success' and 'error') callback must be provided " +
+                              "when registering a Jolokia job";
+                    }
+                    job = $.extend(job,{
+                        config: callback.config,
+                        onlyIfModified: callback.onlyIfModified
+                    });
                 } else if (typeof callback === 'function') {
+                    // Simplest version without config possibility
                     job = {
                         success: null,
                         error: null,
@@ -270,6 +316,9 @@
                 } else {
                     throw "First argument must be either a callback func " +
                           "or an object with 'success' and 'error' attributes";
+                }
+                if (!requests) {
+                    throw "No requests given";
                 }
                 job.requests = requests;
                 var idx = jobs.length;
@@ -363,42 +412,44 @@
             return function() {
                 var errorCbs = [],
                     successCbs = [],
-                    reqs,
                     i, j,
                     len = jobs.length;
                 var requests = [];
                 for (i = 0; i < len; i++) {
                     var job = jobs[i];
-                    if (!job) {
-                        continue;
-                    }
-                    reqs = job != null ? job.requests : void 0;
-                    var reqsLen = reqs.length;
+                    // Can happen when job has been deleted
+                    // TODO: Can be probably optimized so that only the existing keys of jobs can be visited
+                    if (!job) { continue;  }
+                    var reqsLen = job.requests.length;
                     if (job.success) {
-                        // Success/error pair of callbacks
-                        var successCb = cbSuccessErrorClosure("success",job,i);
-                        var errorCb = cbSuccessErrorClosure("error",job,i);
+                        // Success/error pair of callbacks. For multiple request,
+                        // these callback will be called multiple times
+                        var successCb = cbSuccessClosure(job,i);
+                        var errorCb = cbErrorClosure(job,i);
                         for (j = 0; j < reqsLen; j++) {
-                            requests.push(reqs[j]);
+                            requests.push(prepareRequest(job,j));
                             successCbs.push(successCb);
                             errorCbs.push(errorCb);
                         }
                     } else {
-                        // Pure callback getting all requests at once
-                        var dCb = cbCallbackClosure(job,jolokia);
+                        // Job should have a single callback (job.callback) which will be
+                        // called once with all responses at once as an array
+                        var callback = cbCallbackClosure(job,jolokia);
                         // Add callbacks which collect the responses
                         for (j = 0; j < reqsLen - 1; j++) {
-                            requests.push(reqs[j]);
-                            successCbs.push(dCb.cb);
-                            errorCbs.push(dCb.cb);
+                            requests.push(prepareRequest(job,j));
+                            successCbs.push(callback.cb);
+                            errorCbs.push(callback.cb);
                         }
-                        // Add final callback which calls the last method
-                        requests.push(reqs[reqsLen-1]);
-                        successCbs.push(dCb.lcb);
-                        errorCbs.push(dCb.lcb);
+                        // Add final callback which finally will call the job.callback with all
+                        // collected responses.
+                        requests.push(prepareRequest(job,reqsLen-1));
+                        successCbs.push(callback.lcb);
+                        errorCbs.push(callback.lcb);
                     }
                 }
                 var opts = {
+                    // Dispatch to the build up callbacks, request by request
                     success: function(resp, j) {
                         return successCbs[j].apply(jolokia, [resp, j]);
                     },
@@ -410,27 +461,71 @@
             };
         }
 
+        // Prepare a request with the proper configuration
+        function prepareRequest(job,idx) {
+            var request = job.requests[idx],
+                config = job.config || {},
+                // Add the proper ifModifiedSince parameter if already called at least once
+                extra = job.onlyIfModified && job.lastModified ? { ifModifiedSince: job.lastModified } : {};
+
+            request.config = $.extend({}, config, request.config, extra);
+            return request;
+        }
+
         // Closure for a full callback which stores the responses in an (closed) array
+        // which the finally is feed in to the callback as array
         function cbCallbackClosure(job,jolokia) {
             var responses = [],
-                callback = job.callback;
+                callback = job.callback,
+                lastModified = 0;
 
             return {
-                cb : function(resp,j) {
-                    responses.push(resp);
-                },
+                cb : addResponse,
                 lcb : function(resp,j) {
-                    responses.push(resp);
-                    callback.apply(jolokia,responses);
+                    addResponse(resp);
+                    // Callback is called only if at least one non-cached response
+                    // is obtained. Update job's timestamp internally
+                    if (responses.length > 0) {
+                        job.lastModified = lastModified;
+                        callback.apply(jolokia,responses);
+                    }
                 }
             };
+
+            function addResponse(resp,j) {
+                // Only remember responses with values and remember lowest timetamp, too.
+                if (resp.status != 304) {
+                    if (lastModified == 0 || resp.timestamp < lastModified ) {
+                        lastModified = resp.timestamp;
+                    }
+                    responses.push(resp);
+                }
+            }
         }
 
         // Own function for creating a closure to avoid reference to mutable state in the loop
-        function cbSuccessErrorClosure(type, job, i) {
+        function cbErrorClosure(job, i) {
+            var callback = job.error;
             return function(resp,j) {
-                if (job[type]) {
-                    job[type](resp,i,j)
+                // If we get a "304 - Not Modified" 'error', we do nothing
+                if (resp.status == 304) {
+                    return;
+                }
+                if (callback) {
+                    callback(resp,i,j)
+                }
+            }
+        }
+
+        function cbSuccessClosure(job, i) {
+            var callback = job.success;
+            return function(resp,j) {
+                if (callback) {
+                    // Remember last success callback
+                    if (job.onlyIfModified) {
+                        job.lastModified = resp.timestamp;
+                    }
+                    callback(resp,i,j)
                 }
             }
         }
@@ -440,7 +535,7 @@
         function constructCallbackDispatcher(callback) {
             if (callback == null) {
                 return function (response) {
-                    console.log("Ignoring response " + JSON.stringify(response));
+                    console.warn("Ignoring response " + JSON.stringify(response));
                 };
             } else if (callback === "ignore") {
                 // Ignore the return value
@@ -470,11 +565,15 @@
                     if (request.target) {
                         throw new Error("Cannot use GET request with proxy mode");
                     }
+                    if (request.config) {
+                        throw new Error("Cannot use GET with request specific config");
+                    }
                 }
                 method = methodGiven;
             } else {
                 // Determine method dynamically
                 method = $.isArray(request) ||
+                         request.config ||
                          (request.type.toLowerCase() === "read" && $.isArray(request.attribute)) ||
                          request.target ?
                         "post" : "get";
