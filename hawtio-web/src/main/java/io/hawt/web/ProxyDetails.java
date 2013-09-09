@@ -141,9 +141,8 @@ public class ProxyDetails {
                 stringProxyURL += "?" + URIUtil.encodeQuery(httpServletRequest.getQueryString());
             }
 */
-            LOG.info("Proxying to " + stringProxyURL + " as user: " + userName);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Proxying to " + stringProxyURL);
+                LOG.debug("Proxying to " + stringProxyURL + " as user: " + userName);
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
