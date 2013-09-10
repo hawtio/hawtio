@@ -1,6 +1,6 @@
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {
 
     $scope.hash = null;
     $scope.topLevelTabs = [];
@@ -86,7 +86,7 @@ module Core {
     };
 
     function reloadPerspective() {
-      $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace);
+      $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
     }
 
     reloadPerspective();
