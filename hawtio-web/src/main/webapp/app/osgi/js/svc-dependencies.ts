@@ -22,7 +22,7 @@ module Osgi {
 
             $scope.bundles.forEach((bundle) => {
 
-               if (bundle.RegisteredServices.length > 0) {
+               if (bundle.RegisteredServices.length > 0 || bundle.ServicesInUse.length > 0) {
 
                    var node = {
                        id: "Bundle-" + bundle.Identifier,
@@ -40,6 +40,13 @@ module Osgi {
                        transitions.push({
                            source: "Bundle-" + bundle.Identifier,
                            target: "Service-" + sid
+                       });
+                   });
+
+                   bundle.ServicesInUse.forEach((sid) => {
+                       transitions.push({
+                           source: "Service-" + sid,
+                           target: "Bundle-" + bundle.Identifier
                        });
                    });
 
