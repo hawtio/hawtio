@@ -59,6 +59,11 @@ module Git {
     getContent(objectId:string, blobPath:string, fn);
 
     /**
+     * Get the list of branches
+     */
+    branches(fn);
+
+    /**
      * Get the JSON contents of children in a directory matching a name wildcard and content search
      */
     readJsonChildContent(path:string, nameWildcard:string, search:string, fn);
@@ -166,6 +171,9 @@ module Git {
       return this.jolokia.execute(this.mbean, "readJsonChildContent", this.branch, path, nameWildcard, search, onSuccess(fn));
     }
 
+    public branches(fn) {
+      return this.jolokia.execute(this.mbean, "branches", onSuccess(fn));
+    }
 
     // TODO move...
 
