@@ -24,9 +24,11 @@ module Core {
 
     $scope.$watch('perspectiveDetails.perspective', function() {
       var perspective = $scope.perspectiveDetails.perspective;
-      console.log("Changed the perspective to " + JSON.stringify(perspective));
-      $location.search(Perspective.perspectiveSearchId, perspective.id);
-      reloadPerspective();
+      if (perspective) {
+        console.log("Changed the perspective to " + JSON.stringify(perspective));
+        $location.search(Perspective.perspectiveSearchId, perspective.id);
+        reloadPerspective();
+      }
     });
 
     // when we change the view/selection lets update the hash so links have the latest stuff
