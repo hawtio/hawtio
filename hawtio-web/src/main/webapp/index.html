@@ -76,7 +76,7 @@
               <span ng-bind-html-unsafe=" perspectiveDetails.perspective.label || 'Perspective'"></span> <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li ng-repeat="perspective in perspectives" ng-class="{active : perspectiveDetails.perspective.id === perspective.id}">
+              <li ng-repeat="perspective in perspectives">
                 <a ng-click="perspectiveDetails.perspective = perspective"
                    ng-hide="perspectiveDetails.perspective.id === perspective.id"
                    title="Switch to the {{perspective.label}} perspective"
