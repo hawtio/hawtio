@@ -10,7 +10,7 @@ module Fabric {
 
     };
 
-    public controller = ($scope, $element, $attrs, jolokia, $location) => {
+    public controller = ($scope, $element, $attrs, jolokia, $location, $templateCache) => {
 
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
       $scope.containersOp = 'containers(java.util.List)';
@@ -22,7 +22,6 @@ module Fabric {
       $scope.selectedContainerIds = [];
       $scope.connectToContainerDialog = new Core.Dialog();
       $scope.targetContainer = {};
-
 
 
       $scope.updateContainers = (newContainers) => {
@@ -59,18 +58,6 @@ module Fabric {
           });
 
           $scope.containers = newContainers;
-          var activeProfiles = $scope.activeProfiles;
-          $scope.activeProfiles = $scope.currentActiveProfiles();
-          $scope.activeProfiles.each((activeProfile) => {
-
-            var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
-            if (ap) {
-              activeProfile['selected'] = ap.selected;
-            } else {
-              activeProfile['selected'] = false;
-            }
-
-          });
           Core.$apply($scope);
         }
       };
@@ -118,7 +105,10 @@ module Fabric {
 
 
       $scope.isEnsembleContainer = (containerId) => {
-        return $scope.ensembleContainerIds.any(containerId);
+        if ($scope.ensembleContainerIds) {
+          return $scope.ensembleContainerIds.any(containerId);
+        }
+        return false;
       }
 
 
@@ -139,40 +129,11 @@ module Fabric {
       };
 
 
-
-      $scope.currentActiveProfiles = () => {
-        var answer = [];
-
-        $scope.containers.each((container) => {
-          container.profileIds.each((profile) => {
-
-            var activeProfile = answer.find((o) => { return o.versionId === container.versionId && o.id === profile });
-
-            if (activeProfile) {
-              activeProfile.count++;
-              activeProfile.containers = activeProfile.containers.include(container.id).unique();
-            } else {
-              answer.push({
-                id: profile,
-                count: 1,
-                versionId: container.versionId,
-                containers: [container.id],
-                selected: false
-              });
-            }
-          });
-        });
-
-        return answer;
-      };
-
-
       $scope.updateEnsembleContainerIdList = (ids) => {
         var response = angular.toJson(ids);
         if ($scope.ensembleContainerIdsResponse !== response) {
           $scope.ensembleContainerIdsResponse = response;
           $scope.ensembleContainerIds = ids;
-          console.log("updated to: ", $scope.ensembleContainerIds);
           Core.$apply($scope);
         }
       }

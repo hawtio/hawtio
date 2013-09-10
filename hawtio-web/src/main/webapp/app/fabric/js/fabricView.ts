@@ -718,7 +718,6 @@ module Fabric {
       if ($scope.ensembleContainerIdsResponse !== response) {
         $scope.ensembleContainerIdsResponse = response;
         $scope.ensembleContainerIds = ids;
-        console.log("updated to: ", $scope.ensembleContainerIds);
         Core.$apply($scope);
       }
     }

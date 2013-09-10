@@ -193,31 +193,7 @@
   </div>
 
   <!-- dialogs -->
-  <div hawtio-confirm-dialog="connectToContainerDialog.show" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
-    <div class="dialog-body">
-      <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
-        <div class="control-group">
-          <label class="control-label">User Name: </label>
-          <div class="controls">
-            <input name="userName" ng-model="userName" type="text">
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label">Password: </label>
-          <div class="controls">
-            <input name="password" ng-model="password" type="password">
-          </div>
-        </div>
-        <div class="control-group">
-          <div class="controls">
-            <label class="checkbox">
-              <input type="checkbox" ng-model="saveCredentials"> Save these credentials as the default
-            </label>
-          </div>
-        </div>            
-      <div>
-    </div>
-  </div>
+  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
 
   <div hawtio-confirm-dialog="deleteVersionDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
     <div class="dialog-body">
