@@ -341,6 +341,7 @@ module Wiki {
       } else {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
+      wikiRepository.branches(onBranches);
     }
 
     $scope.updateView = updateView;
@@ -376,6 +377,10 @@ module Wiki {
         }
       }
       Core.$apply($scope);
+    }
+
+    function onBranches(response) {
+      $scope.branches = response;
     }
 
     function onFormSchema(json) {

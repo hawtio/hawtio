@@ -145,6 +145,17 @@ module Wiki {
       return git;
     }
 
+    /**
+     * Get the list of branches
+     */
+    public branches(fn) {
+      var git = this.git();
+      if (git) {
+        git.branches(fn);
+      }
+      return git;
+    }
+
 
     /**
      * Get the JSON contents of the path with optional name wildcard and search
