@@ -1,1 +1,32 @@
-<div>Hi!</div>
+<div>
+
+  <div ng-repeat="container in containers">
+    <div class="box" ng-class="getSelectedClass(container)">
+
+      <div class="box-left">
+
+        <i ng-show="!container.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="container.selected = true"></i>
+        <i ng-show="container.selected" class="icon-circle clickable" title="Selected" ng-click="container.selected = false"></i>
+
+        <div ng-click="setActiveContainer(container)">
+          {{container.id}} / {{container.versionId}}
+        </div>
+      </div>
+
+      <div class="box-right">
+
+        <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
+
+        <i class="icon-cloud clickable" title="Ensemble member" ng-click="showContainer(container)" ng-show="isEnsembleContainer(container.id)"></i>
+
+        <i class="clickable" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="showContainer(container)"></i>
+
+        <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
+
+        <i class="clickable icon-info-sign" title="Show Details" ng-click="showContainer(container)"></i>
+      </div>
+
+    </div>
+  </div>
+
+</div>
