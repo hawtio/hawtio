@@ -48,17 +48,21 @@ module Perspective {
    * Returns the default page after figuring out what the current perspective is
    */
   export function defaultPage($location, workspace) {
+    var answer = null;
     console.log("====== HEY - function with " + $location + " and workspace " + workspace);
     if ($location && workspace) {
       var topLevelTabs = Perspective.topLevelTabs($location, workspace);
-      if (topLevelTabs && topLevelTabs.length) {
-        var tab = topLevelTabs[0];
+      angular.forEach(topLevelTabs, (tab) => {
         var href = tab.href();
-        if (href) {
-          return Core.trimLeading(href, "#");
+        if (href && !answer) {
+          // exclude invalid tabs
+          var validFn = tab.isValid;
+          if (!validFn || validFn(workspace)) {
+            answer =  Core.trimLeading(href, "#");
+          }
         }
-      }
+      });
     }
-    return '/help/index';
+    return answer || '/help/index';
   }
 }
