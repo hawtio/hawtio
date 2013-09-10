@@ -388,6 +388,10 @@ module Wiki {
 
     function onBranches(response) {
       $scope.branches = response;
+      // default the branch name if we have 'master'
+      if (!$scope.branch && $scope.branches.find("master")) {
+        $scope.branch = "master";
+      }
     }
 
     function onFormSchema(json) {

@@ -2,7 +2,7 @@
   <div class="logbar" ng-controller="Wiki.NavBarController">
     <div class="wiki logbar-container">
       <ul class="nav nav-tabs">
-        <li ng-show="branches.length" class="dropdown">
+        <li ng-show="branches.length || branch" class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                   title="The branch to view">
             {{branch || 'branch'}}
