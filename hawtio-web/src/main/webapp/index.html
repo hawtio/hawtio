@@ -70,21 +70,18 @@
 
       <div class="pull-right">
         <ul class="nav nav-tabs pull-right">
-<!--
-          <li ng-show="loggedIn()">
-            <select ng-model="perspectiveDetails.perspective" ng-options="p.label for p in perspectives"></select>
-          </li>
--->
           <li ng-show="loggedIn()" class="pull-right dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Perspective <span class="caret"></span>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    title="The current perspective">
+              <span ng-bind-html-unsafe=" perspectiveDetails.perspective.label || 'Perspective'"></span> <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li ng-repeat="perspective in perspectives" ng-class="{active : perspectiveDetails.perspective.id === perspective.id}">
                 <a ng-click="perspectiveDetails.perspective = perspective"
-                   title="{{perspective.title}}"
+                   ng-hide="perspectiveDetails.perspective.id === perspective.id"
+                   title="Switch to the {{perspective.label}} perspective"
                    data-placement="bottom">
-                  <i ng-show="perspectiveDetails.perspective.id === perspective.id" class="icon-ok"></i> {{perspective.label}}</a>
+                  {{perspective.label}}</a>
               </li>
             </ul>
           </li>

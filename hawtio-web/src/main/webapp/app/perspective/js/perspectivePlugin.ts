@@ -5,6 +5,9 @@ module Perspective {
             $routeProvider.
                     when('/perspective/defaultPage', {templateUrl: 'app/perspective/html/defaultPage.html',
                       controller: Perspective.DefaultPageController});
+          }).
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+            viewRegistry['perspective'] = layoutFull;
           });
 
   hawtioPluginLoader.addModule(pluginName);

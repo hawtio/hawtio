@@ -2,6 +2,7 @@ module Perspective {
 
   export var metadata = {
     fabric: {
+      label: "Fabric",
       topLevelTabs: {
         includes: [
           {
@@ -14,6 +15,7 @@ module Perspective {
       }
     },
     local: {
+      label: "Local JVM",
       topLevelTabs: {
         excludes: [
           {
