@@ -96,17 +96,8 @@ module Core {
     };
 
     function reloadPerspective() {
-      $scope.perspectives = [];
-      angular.forEach(Perspective.metadata, (perspective, key) => {
-        if (!perspective.label) {
-          perspective.label = key;
-        }
-        if (!perspective.title) {
-          perspective.title = perspective.label;
-        }
-        perspective.id = key;
-        $scope.perspectives.push(perspective);
-      });
+      $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+
       console.log("Current perspectives " + JSON.stringify($scope.perspectives));
       var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
       $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});

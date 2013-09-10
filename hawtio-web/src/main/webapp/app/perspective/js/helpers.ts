@@ -18,11 +18,29 @@ module Perspective {
   }
 
   /**
-   * Returns the top level tabs for the given perspective
+   * Returns an array of all the active perspectives
    */
-  export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
-    var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
-    console.log("perspective: " + perspective);
+  export function getPerspectives($location, workspace, jolokia, localStorage) {
+    var perspectives = [];
+    angular.forEach(Perspective.metadata, (perspective, key) => {
+      if (isValidFunction(workspace, perspective.isValid)) {
+        if (!perspective.label) {
+          perspective.label = key;
+        }
+        if (!perspective.title) {
+          perspective.title = perspective.label;
+        }
+        perspective.id = key;
+        perspectives.push(perspective);
+      }
+    });
+    return perspectives;
+  }
+
+  /**
+   * Returns the top level tabs for the given perspectiveId
+   */
+  function topLevelTabsForPerspectiveId(workspace, perspective) {
     var data = perspective ? Perspective.metadata[perspective] : null;
     var answer = [];
     if (!data) {
@@ -52,6 +70,15 @@ module Perspective {
   }
 
   /**
+   * Returns the top level tabs for the given perspective
+   */
+  export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
+    var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
+    //console.log("perspective: " + perspective);
+    return topLevelTabsForPerspectiveId(workspace, perspective);
+  }
+
+  /**
    * Returns the perspective we should be using right now since none is specified
    */
   export function choosePerspective($location, workspace: Workspace, jolokia, localStorage) {
@@ -76,8 +103,7 @@ module Perspective {
         var href = tab.href();
         if (href && !answer) {
           // exclude invalid tabs
-          var validFn = tab.isValid;
-          if (!validFn || validFn(workspace)) {
+          if (isValidFunction(workspace, tab.isValid)) {
             answer =  Core.trimLeading(href, "#");
           }
         }
@@ -85,4 +111,13 @@ module Perspective {
     }
     return answer || '/help/index';
   }
+
+  /**
+   * Returns true if there is no validFn defined or if its defined
+   * then the function returns true
+   */
+  function isValidFunction(workspace, validFn) {
+    return !validFn || validFn(workspace);
+  }
+
 }
