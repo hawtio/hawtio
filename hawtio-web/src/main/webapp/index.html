@@ -67,6 +67,9 @@
 
       <div class="pull-right">
         <ul class="nav pull-right">
+          <li ng-show="loggedIn()">
+            <select ng-model="perspective" ng-options="{label for value in perspectives}"></select>
+          </li>
           <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
             <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
               <i class="icon-cogs"></i>
