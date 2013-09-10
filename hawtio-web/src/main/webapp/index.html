@@ -31,12 +31,15 @@
   <link rel='stylesheet' href='css/codemirror/themes/vibrant-ink.css' type='text/css'>
   <link rel='stylesheet' href='css/codemirror/themes/xq-dark.css' type='text/css'>
   <link rel='stylesheet' href='css/toastr.css' type='text/css'>
+  <link rel="stylesheet" href="css/dangle.css">
+
 
   <link rel='stylesheet' href='css/site-base.css' type='text/css'>
+  <!--
   <link rel='stylesheet' media='screen and (min-width: 980px)' href='css/site-wide.css' type='text/css'>
   <link rel='stylesheet' media='screen and (max-width: 979px)' href='css/site-narrow.css' type='text/css'>
+  -->
 
-  <link rel="stylesheet" href="css/dangle.css">
 
   <link rel='icon' type='image/ico' href='favicon.ico'>
   
@@ -66,7 +69,22 @@
       </div>
 
       <div class="pull-right">
-        <ul class="nav pull-right">
+        <ul class="nav nav-tabs pull-right">
+          <li ng-show="loggedIn() && perspectives.length > 1" class="pull-right dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    title="The current perspective">
+              <span ng-bind-html-unsafe=" perspectiveDetails.perspective.label || 'Perspective'"></span> <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li ng-repeat="perspective in perspectives" ng-class="{active : perspectiveDetails.perspective.id === perspective.id}">
+                <a ng-click="perspectiveDetails.perspective = perspective"
+                   ng-hide="perspectiveDetails.perspective.id === perspective.id"
+                   title="Switch to the {{perspective.label}} perspective"
+                   data-placement="bottom">
+                  {{perspective.label}}</a>
+              </li>
+            </ul>
+          </li>
           <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
             <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
               <i class="icon-cogs"></i>
@@ -108,7 +126,7 @@
       -->
 
         <ul ng-show="loggedIn()" class="nav">
-          <li ng-repeat="nav in topLevelTabs()" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
+          <li ng-repeat="nav in topLevelTabs" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
             <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
             </a>
           </li>

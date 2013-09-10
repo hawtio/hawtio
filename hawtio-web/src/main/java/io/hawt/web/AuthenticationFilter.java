@@ -7,7 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -52,7 +57,7 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        HttpServletRequest httpRequest = (HttpServletRequest)request;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession(false);
 
         LOG.debug("Handling request for path {}", httpRequest.getServletPath());
@@ -68,8 +73,8 @@ public class AuthenticationFilter implements Filter {
         String path = httpRequest.getServletPath();
 
         boolean doAuthenticate = path.startsWith("/auth") ||
-                                 path.startsWith("/jolokia") ||
-                                 path.startsWith("/upload");
+                path.startsWith("/jolokia") ||
+                path.startsWith("/upload");
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
@@ -104,7 +109,7 @@ public class AuthenticationFilter implements Filter {
                 }
             });
         } catch (PrivilegedActionException e) {
-            LOG.info("Failed to invoke action " + ((HttpServletRequest)request).getPathInfo() + " due to:", e);
+            LOG.info("Failed to invoke action " + ((HttpServletRequest) request).getPathInfo() + " due to:", e);
         }
     }
 

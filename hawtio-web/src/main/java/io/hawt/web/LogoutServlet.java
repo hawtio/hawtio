@@ -26,7 +26,7 @@ public class LogoutServlet extends HttpServlet {
             return;
         }
 
-        String username = (String)session.getAttribute("user");
+        String username = (String) session.getAttribute("user");
 
         LOG.info("Logging out user: {}", username);
         session.invalidate();

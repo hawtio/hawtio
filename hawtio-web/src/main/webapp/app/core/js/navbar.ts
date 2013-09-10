@@ -1,10 +1,20 @@
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route) {
+  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {
 
     $scope.hash = null;
+    $scope.topLevelTabs = [];
+    $scope.perspectiveDetails = {
+      perspective: null
+    };
 
-    $scope.topLevelTabs = () => workspace.topLevelTabs;
+    $scope.topLevelTabs = () => {
+      reloadPerspective();
+      // TODO transform the top level tabs based on the current perspective
+
+      // TODO watch for changes to workspace.topLevelTabs and for the current perspective
+      return workspace.topLevelTabs;
+    };
 
     $scope.subLevelTabs = () => workspace.subLevelTabs;
 
@@ -12,9 +22,18 @@ module Core {
 
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
+    $scope.$watch('perspectiveDetails.perspective', function() {
+      var perspective = $scope.perspectiveDetails.perspective;
+      console.log("Changed the perspective to " + JSON.stringify(perspective));
+      $location.search(Perspective.perspectiveSearchId, perspective.id);
+      reloadPerspective();
+    });
+
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
+
+      reloadPerspective();
     });
 
     /*
@@ -76,5 +95,16 @@ module Core {
       return tab ? tab['content'] : "";
     };
 
+    function reloadPerspective() {
+      $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+
+      console.log("Current perspectives " + JSON.stringify($scope.perspectives));
+      var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
+      $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
+      console.log("Current perspective ID: " + currentId + " perspective: " + $scope.perspective);
+      $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+    }
+
+    reloadPerspective();
   }
 }

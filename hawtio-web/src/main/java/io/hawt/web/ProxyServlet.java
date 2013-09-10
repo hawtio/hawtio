@@ -35,6 +35,8 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +105,11 @@ public class ProxyServlet extends HttpServlet {
      */
     public void init(ServletConfig servletConfig) {
 
+        OpenShiftProtocolSocketFactory socketFactory = OpenShiftProtocolSocketFactory.getSocketFactory();
+        Protocol http = new Protocol("http", socketFactory, 80);
+        Protocol.registerProtocol("http", http);
+
+        LOG.info("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
     }
 
     /**
@@ -266,7 +273,6 @@ public class ProxyServlet extends HttpServlet {
     /**
      * Executes the {@link HttpMethod} passed in and sends the proxy response
      * back to the client via the given {@link HttpServletResponse}
-     *
      *
      * @param proxyDetails
      * @param httpMethodProxyRequest An object representing the proxy request to be made

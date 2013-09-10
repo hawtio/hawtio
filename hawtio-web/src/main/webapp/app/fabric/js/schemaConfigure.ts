@@ -51,12 +51,13 @@ module Fabric {
         };
         break;
 
-      case 'jcloud':
+      case 'jclouds':
         delete schema.properties['parent'];
 
-        bulkSet(schema, ['owner', 'credential'], 'required', true);
+        bulkSet(schema, ['owner', 'credential', 'providerName'], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'owner', 'credential', 'imageId', 'hardwareId', 'locationId', 'number', '*']
+          'Default': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
+          'Advanced': ['*']
         };
         break;
 
@@ -80,13 +81,6 @@ module Fabric {
           'Default': ['name', 'serverUrl', 'login', 'password', 'domain'],
           'Advanced': ['gearProfile', 'number', 'environmentalVariables', 'systemProperties', 'jvmOpts', '*']
         };
-
-/*
-        // add some defaults...
-        // TODO this should be easier!
-        Core.pathSet(schema, ["properties", "serverUrl", "formTemplate"],
-                '<input type="text" ng-model="entity.serverUrl" value="">');
-*/
         break;
 
 

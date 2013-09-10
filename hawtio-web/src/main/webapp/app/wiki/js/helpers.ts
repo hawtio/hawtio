@@ -70,6 +70,9 @@ module Wiki {
     }
   ];
 
+  export function isWikiEnabled(workspace:Workspace, jolokia, localStorage) {
+    return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
+  }
   /**
    * Returns a new create documnet wizard tree
    */

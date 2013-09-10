@@ -60,7 +60,7 @@ module Wiki {
             workspace.topLevelTabs.push({
               content: "Wiki",
               title: "View and edit wiki pages",
-              isValid: (workspace:Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
+              isValid: (workspace:Workspace) => Wiki.isWikiEnabled(workspace, jolokia, localStorage),
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki")
             });

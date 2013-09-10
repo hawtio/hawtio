@@ -65,7 +65,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
                   when('/help/:topic/', {templateUrl: 'app/core/html/help.html'}).
                   when('/help/:topic/:subtopic', {templateUrl: 'app/core/html/help.html'}).
 
-                  otherwise({redirectTo: '/help/index'});
+                  otherwise({redirectTo: '/perspective/defaultPage'});
         }).
         constant('layoutTree', 'app/core/html/layoutTree.html').
         constant('layoutFull', 'app/core/html/layoutFull.html').
@@ -184,13 +184,35 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             }
 
             if (username && password) {
+
+              /*
+              TODO can't use this, sets the username/password in the URL on every request, plus jolokia passes them on to $.ajax() which causes a fatal exception in firefox
               jolokiaParams['username'] = username;
               jolokiaParams['password'] = password;
+              */
 
-              console.log("Using user / pwd " + username + " / " + password);
+              //console.log("Using user / pwd " + username + " / " + password);
 
               userDetails.username = username;
               userDetails.password = password;
+
+              $.ajaxSetup({
+                beforeSend: (xhr) => {
+                  xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(userDetails.username, userDetails.password));
+                }
+              });
+
+              var loginUrl = jolokiaUrl.replace("jolokia", "auth/login/");
+              $.ajax(loginUrl, {
+                type: "POST",
+                success: (response) => {
+                  userDetails.loginDetails = response;
+                },
+                error: (xhr, textStatus, error) => {
+                  // silently ignore, we could be using the proxy
+                }
+              });
+
             }
 
             jolokiaParams['ajaxError'] = (xhr, textStatus, error) => {

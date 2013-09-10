@@ -9,14 +9,16 @@ module Source {
 
   export function createBreadcrumbLinks(mavenCoords: string, pathName: string) {
     var linkPrefix = "#/source/index/" + mavenCoords;
-    var answer = [{href: linkPrefix, name: "/"}];
+    var answer = [{href: linkPrefix, name: "root"}];
     if (pathName) {
       var pathNames = pathName.split("/");
       var fullPath = "";
       angular.forEach(pathNames, (path) => {
         fullPath += "/" + path;
         var href = linkPrefix + fullPath;
-        answer.push({href: href, name: path || "/", fileName: "/" + fullPath});
+        if (!path.isBlank()) {
+          answer.push({href: href, name: path || "/", fileName: "/" + fullPath});
+        }
       });
     }
     return answer;

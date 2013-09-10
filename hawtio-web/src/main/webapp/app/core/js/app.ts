@@ -93,7 +93,7 @@ module Core {
     };
 
     $scope.showLogout = () => {
-      return $scope.loggedIn() && userDetails.username !== '';
+      return $scope.loggedIn() && angular.isDefined(userDetails.loginDetails);
     }
 
     $scope.logout = () => {
@@ -111,6 +111,9 @@ module Core {
         success: () => {
           userDetails.username = null;
           userDetails.password = null;
+          userDetails.loginDetails = null;
+          userDetails.rememberMe = false;
+          localStorage[jolokiaUrl] = angular.toJson(userDetails);
           Core.$apply($scope);
         },
         error: (xhr, textStatus, error) => {

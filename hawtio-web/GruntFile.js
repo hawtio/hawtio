@@ -5,7 +5,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-type');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-less');
 
   /*
    grunt.loadNpmTasks('grunt-typescript');
@@ -47,19 +46,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    less: {
-      options: {
-        paths: ['src/main/webapp/css']
-      },
-      src: {
-        expand: true,
-        cwd: 'src/main/webapp/css',
-        src: '*.less',
-        ext: '.css',
-        dest: "<%= grunt.option('webapp_outdir') %>/css"
-      }
-
-    },
     copy:{
       dist: {
         files: [
@@ -100,7 +86,7 @@ module.exports = function (grunt) {
     watch: {
       app: {
         files: ["src/main/webapp/**", "target/schema/js/*.js"],
-        tasks: ['clean-appjs', 'type', 'concat', 'copy:dist', 'less'],
+        tasks: ['clean-appjs', 'type', 'concat', 'copy:dist'],
         options: {
           livereload: true
         }
@@ -110,9 +96,9 @@ module.exports = function (grunt) {
 
 
   // Default task.
-  grunt.registerTask('default', ['clean-appjs', 'type', 'concat', 'copy', 'less']);
+  grunt.registerTask('default', ['clean-appjs', 'type', 'concat', 'copy']);
 
   // watch source for changes
-  grunt.registerTask('watchSrc', ['clean-appjs', 'type', 'concat', 'copy', 'less', 'watch']);
+  grunt.registerTask('watchSrc', ['clean-appjs', 'type', 'concat', 'copy', 'watch']);
 
 };
