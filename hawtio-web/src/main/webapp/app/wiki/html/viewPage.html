@@ -43,6 +43,27 @@
                  data-placement="bottom">
                 <i class="icon-remove"></i> Delete</a>
             </li>
+            <li class="divider">
+            </li>
+            <li ng-show="branches.length" class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                      title="The branch to view">
+                Branch: {{currentBranch}}
+                <i class="icon-arrow-right"></i>
+<!--
+                <span class="caret"></span>
+-->
+              </a>
+              <ul class="dropdown-submenu">
+                <li ng-repeat="branch in branches">
+                  <a ng-href="{{branchLink(branch)}}"
+                     ng-hide="currentBranch === branch"
+                     title="Switch to the {{branch}} branch"
+                     data-placement="bottom">
+                    {{branch}}</a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li class="pull-right">

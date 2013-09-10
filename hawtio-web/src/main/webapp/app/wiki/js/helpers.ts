@@ -139,6 +139,9 @@ module Wiki {
     return link;
   }
 
+  export function branchLink(branch:string, pageId: string, $location, fileName:string = null) {
+    return viewLink(branch, pageId, $location, fileName);
+  }
 
   export function editLink(branch:string, pageId:string, $location) {
     var link = null;

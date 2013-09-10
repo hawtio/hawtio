@@ -105,6 +105,13 @@ module Wiki {
       return (pageName) ? Wiki.editLink($scope.branch, pageName, $location) : null;
     };
 
+    $scope.branchLink = (branch) => {
+      if (branch) {
+        return Wiki.branchLink(branch, $scope.pageId, $location);
+      }
+      return null
+    }
+
     $scope.historyLink = "#/wiki/history/" + $scope.pageId;
 
     $scope.$watch('workspace.tree', function () {
