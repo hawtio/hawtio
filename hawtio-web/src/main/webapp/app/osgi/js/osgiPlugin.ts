@@ -10,7 +10,8 @@ module Osgi {
             when('/osgi/package/:package/:version', {templateUrl: 'app/osgi/html/package.html'}).
             when('/osgi/configurations', {templateUrl: 'app/osgi/html/configurations.html'}).
             when('/osgi/pid/:pid', {templateUrl: 'app/osgi/html/pid.html'}).
-            when('/osgi/fwk', {templateUrl: 'app/osgi/html/framework.html'})
+            when('/osgi/fwk', {templateUrl: 'app/osgi/html/framework.html'}).
+            when('/osgi/dependencies', {templateUrl: 'app/osgi/html/svc-dependencies.html'})
   }).
           run((workspace:Workspace, viewRegistry) => {
 
@@ -24,6 +25,9 @@ module Osgi {
               isActive: (workspace: Workspace) => workspace.isLinkActive("osgi")
             });
 
+      })
+      .factory('osgiDataService', function (workspace: Workspace, jolokia) {
+        return new OsgiDataService(workspace, jolokia);
       });
 
   hawtioPluginLoader.addModule(pluginName);
