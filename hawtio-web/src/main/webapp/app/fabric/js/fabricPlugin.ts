@@ -26,8 +26,11 @@ module Fabric {
     directive('fabricProfileSelector', function() {
       return new Fabric.ProfileSelector();
     }).
+    directive('fabricContainerList', () => {
+      return new Fabric.ContainerList();
+    }).
 
-          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle) => {
+          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
@@ -48,6 +51,8 @@ module Fabric {
               href: () => "#/fabric/view",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
+
+            helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
 
           });
 

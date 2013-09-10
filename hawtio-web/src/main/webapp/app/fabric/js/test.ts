@@ -1,14 +1,21 @@
 module Fabric {
 
 
-  export function TestController($scope, jolokia, $q, workspace) {
+  export function TestController($scope, jolokia, $q, workspace, $templateCache) {
 
     $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
+
+    $scope.html = "text/html";
+    $scope.versionSelector = $templateCache.get("versionSelectorTemplate");
+    $scope.profileIncludes = $templateCache.get("profile-includes");
+    $scope.profileExcludes = $templateCache.get("profile-excludes");
 
     $scope.version = {};
     $scope.versionId = '';
     $scope.someUri = '';
     $scope.uriParts = [];
+
+    $scope.version = {};
 
     $scope.osp = [];
     $scope.vid = '1.0';
@@ -22,6 +29,8 @@ module Fabric {
       selected: true
     }];
 
+    $scope.selectedProfilesString = "";
+
     $scope.$watch('version', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         if ($scope.version && !Object.equal($scope.version, {})) {
@@ -30,8 +39,8 @@ module Fabric {
       }
     });
 
-    $scope.$watch('selectedProfiles', (newValue, oldValue) => {
-
+    $scope.$watch('osp', (newValue, oldValue) => {
+      $scope.selectedProfilesString = angular.toJson($scope.osp);
     });
 
     $scope.$watch('someUri', (newValue, oldValue) => {
