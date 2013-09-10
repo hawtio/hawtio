@@ -161,15 +161,63 @@ a:hover {
 #main-nav .navbar-inner.main-nav-upper .nav li a {
   height: 24px;
   padding-top: 1px;
-  border-top: none;
+  border-radius: 0;
+  border: none;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li a i:before {
+  position: relative;
+  top: 2px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li.dropdown a.dropdown-toggle span:not(.caret) {
+  display: inline-block;
+  margin-top: 2px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav li.dropdown a.dropdown-toggle span.caret {
+  margin-top: 10px;
+  margin-left: 1px;
+}
+
+#main-nav .main-nav-upper .nav li.dropdown.open a.dropdown-toggle {
+  color: #ffffff !important;
+  text-shadow: none;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #72757a 0%, #64686C 100%);
+  border-bottom-color: inherit !important;
+}
+
+#main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li {
+  border: none !important;
+}
+
+#main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li a {
+  color: #4D5258;
+  border: none !important;
+  padding-top: 2px !important;
+  height: 22px;
+}
+
+#main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li a:hover {
+  border: none;
 }
 
 #main-nav .navbar-inner.main-nav-upper .nav li.active a {
   border-top: none;
 }
 
+.navbar .nav > li > .dropdown-menu:before {
+  display: none;
+}
+
+.navbar .nav > li > .dropdown-menu:after {
+  display: none;
+}
+
 #main-nav .navbar-inner.main-nav-upper .nav li a:hover {
-  border-top: none;
+  border-radius: 0;
+  border: none;
 }
 
 #main.container-fluid {
@@ -554,6 +602,10 @@ li.dropdown.open a.dropdown-toggle {
   position: relative;
   top: -7px;
   left: 1px;
+}
+
+.main-nav-upper .container .pull-right .nav.nav-tabs .dropdown .caret:before {
+  color: white !important;
 }
 
 .wiki ul li[ng-repeat='link in breadcrumbs']:first-child {
