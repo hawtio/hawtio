@@ -399,9 +399,9 @@ public class GitFacade extends GitFacadeSupport {
     }
 
     @Override
-    public List<CommitInfo> history(String objectId, String path, int limit) {
+    public List<CommitInfo> history(String branch, String objectId, String path, int limit) {
         try {
-            return doHistory(git, objectId, path, limit);
+            return doHistory(git, branch, objectId, path, limit);
         } catch (Exception e) {
             throw new RuntimeIOException(e);
         }

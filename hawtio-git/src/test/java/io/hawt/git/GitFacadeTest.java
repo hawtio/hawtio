@@ -137,7 +137,7 @@ public class GitFacadeTest {
         System.out.println();
 
         // now lets try find the history and revert to the first version
-        List<CommitInfo> readMeHistory = git.history(null, blobPath, 0);
+        List<CommitInfo> readMeHistory = git.history(branch, null, blobPath, 0);
         assertTrue("Should have at least 2 items in the history but got " + readMeHistory.size(), readMeHistory.size() >= 2);
         String objectId = readMeHistory.get(readMeHistory.size() - 1).getName();
         git.revertTo(this.branch, objectId, blobPath, "Reverting to first version " + objectId, authorName, authorEmail);
@@ -148,7 +148,7 @@ public class GitFacadeTest {
         String[] paths = {null, readMePath, anotherPath};
         for (String path : paths) {
             String name = trimLeadingSlash(path);
-            List<CommitInfo> log = git.history(null, name, 0);
+            List<CommitInfo> log = git.history(branch, null, name, 0);
             System.out.println("Showing commits for path " + name);
             for (CommitInfo info : log) {
                 System.out.println("  " + info);
@@ -178,7 +178,7 @@ public class GitFacadeTest {
         anotherGit.init();
 
         String path = trimLeadingSlash(anotherPath);
-        List<CommitInfo> log = git.history(null, path, 0);
+        List<CommitInfo> log = git.history(branch, null, path, 0);
         assertTrue("should have more than one commit info", log.size() > 0);
 
         System.out.println("Using existing repo and showing commits for path " + path);

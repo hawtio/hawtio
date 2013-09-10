@@ -14,6 +14,7 @@ import static io.hawt.git.GitFacadeTest.createTestGitFacade;
 public class HistoryDemo {
     private final File directory;
     private GitFacade git = createTestGitFacade();
+    private String branch = "master";
 
     public static void main(String[] args) {
         if (args.length <= 0) {
@@ -53,7 +54,7 @@ public class HistoryDemo {
     }
 
     public void printHistory(String path) throws IOException, GitAPIException {
-        List<CommitInfo> log = git.history(null, path, 0);
+        List<CommitInfo> log = git.history(branch, null, path, 0);
         System.out.println("Showing history for path " + path);
         for (CommitInfo info : log) {
             System.out.println("  " + info);

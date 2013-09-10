@@ -49,7 +49,7 @@ public interface GitFacadeMXBean {
     /**
      * Return the history of the repository or a specific directory or file path
      */
-    List<CommitInfo> history(String objectId, String path, int limit);
+    List<CommitInfo> history(String branch, String objectId, String path, int limit);
 
     /**
      * Get the contents of a blobPath for a given commit objectId

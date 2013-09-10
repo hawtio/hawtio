@@ -232,7 +232,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return commit.getName();
     }
 
-    protected List<CommitInfo> doHistory(Git git, String objectId, String path, int limit) {
+    protected List<CommitInfo> doHistory(Git git, String branch, String objectId, String path, int limit) {
         Repository r = git.getRepository();
 
         CommitFinder finder = new CommitFinder(r);
@@ -248,7 +248,12 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         if (Strings.isNotBlank(objectId)) {
             finder.findFrom(objectId);
         } else {
-            finder.find();
+            if (Strings.isNotBlank(branch)) {
+                RevCommit base = CommitUtils.getBase(r, branch);
+                finder.findFrom(base);
+            } else {
+                finder.find();
+            }
         }
         List<RevCommit> commits = block.getCommits();
         List<CommitInfo> results = new ArrayList<CommitInfo>();
