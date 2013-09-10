@@ -1,13 +1,27 @@
 module Perspective {
 
   /**
-   * Returns the top level tabs for the given perspective
+   * The location search parameter for specifying the perspective to view
    */
-  export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
-    var perspective = $location.search()["_p"];
+  export var perspectiveSearchId = "p";
+
+  /**
+   * Returns the current perspective ID based on the query parameter or the current
+   * discovered perspective
+   */
+  export function currentPerspectiveId($location, workspace, jolokia, localStorage) {
+    var perspective = $location.search()[perspectiveSearchId];
     if (!perspective) {
       perspective = Perspective.choosePerspective($location, workspace, jolokia, localStorage);
     }
+    return perspective;
+  }
+
+  /**
+   * Returns the top level tabs for the given perspective
+   */
+  export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
+    var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
     console.log("perspective: " + perspective);
     var data = perspective ? Perspective.metadata[perspective] : null;
     var answer = [];

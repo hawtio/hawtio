@@ -4,6 +4,9 @@ module Core {
 
     $scope.hash = null;
     $scope.topLevelTabs = [];
+    $scope.perspectiveDetails = {
+      perspective: null
+    };
 
     $scope.topLevelTabs = () => {
       reloadPerspective();
@@ -18,6 +21,13 @@ module Core {
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
+
+    $scope.$watch('perspectiveDetails.perspective', function() {
+      var perspective = $scope.perspectiveDetails.perspective;
+      console.log("Changed the perspective to " + JSON.stringify(perspective));
+      $location.search(Perspective.perspectiveSearchId, perspective.id);
+      reloadPerspective();
+    });
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
@@ -86,6 +96,21 @@ module Core {
     };
 
     function reloadPerspective() {
+      $scope.perspectives = [];
+      angular.forEach(Perspective.metadata, (perspective, key) => {
+        if (!perspective.label) {
+          perspective.label = key;
+        }
+        if (!perspective.title) {
+          perspective.title = perspective.label;
+        }
+        perspective.id = key;
+        $scope.perspectives.push(perspective);
+      });
+      console.log("Current perspectives " + JSON.stringify($scope.perspectives));
+      var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
+      $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
+      console.log("Current perspective ID: " + currentId + " perspective: " + $scope.perspective);
       $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
     }
 
