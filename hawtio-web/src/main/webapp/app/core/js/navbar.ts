@@ -86,36 +86,7 @@ module Core {
     };
 
     function reloadPerspective() {
-      var perspective = $location.search()["_p"];
-      if (!perspective) {
-        perspective = Perspective.choosePerspective($location, workspace);
-      }
-      console.log("perspective: " + perspective);
-      var data = perspective ? Perspective.metadata[perspective] : null;
-      if (!data) {
-        $scope.topLevelTabs = workspace.topLevelTabs;
-      } else {
-        $scope.topLevelTabs = [];
-        // lets iterate through the available tabs in the perspective
-        var topLevelTabs = data.topLevelTabs;
-        var list = topLevelTabs.includes || topLevelTabs.excludes;
-        angular.forEach(list, (tabSpec) => {
-          var href = tabSpec.href;
-          if (href) {
-            var tab = workspace.topLevelTabs.find((t) => {
-              var thref = t.href();
-              return thref && thref.startsWith(href);
-            });
-            if (tab) {
-              $scope.topLevelTabs.push(tab);
-            }
-          }
-        });
-        if (!topLevelTabs.includes) {
-          // lets exclude the matched tabs
-          $scope.topLevelTabs = workspace.topLevelTabs.subtract($scope.topLevelTabs);
-        }
-      }
+      $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace);
     }
 
     reloadPerspective();

@@ -65,7 +65,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
                   when('/help/:topic/', {templateUrl: 'app/core/html/help.html'}).
                   when('/help/:topic/:subtopic', {templateUrl: 'app/core/html/help.html'}).
 
-                  otherwise({redirectTo: '/help/index'});
+                  otherwise({redirectTo: '/perspective/defaultPage'});
         }).
         constant('layoutTree', 'app/core/html/layoutTree.html').
         constant('layoutFull', 'app/core/html/layoutFull.html').
