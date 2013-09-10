@@ -51,7 +51,7 @@ module Git {
     /**
      * returns the commit history of a directory or file
      */
-    history(objectId:string, path:string, limit:number, fn);
+    history(branch:string, objectId:string, path:string, limit:number, fn);
 
     /**
      * Get the contents of a blobPath for a given commit objectId
@@ -145,8 +145,8 @@ module Git {
     /**
      * Return the history of the repository or a specific directory or file path
      */
-    public history(objectId:string, path:string, limit:number, fn) {
-      return this.jolokia.execute(this.mbean, "history", objectId, path, limit, onSuccess(fn));
+    public history(branch:string, objectId:string, path:string, limit:number, fn) {
+      return this.jolokia.execute(this.mbean, "history", branch, objectId, path, limit, onSuccess(fn));
     }
 
     /**

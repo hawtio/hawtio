@@ -124,11 +124,11 @@ module Wiki {
     /**
      * Return the history of the repository or a specific directory or file path
      */
-    public history(objectId:string, path:string, limit:number, fn) {
+    public history(branch:string, objectId:string, path:string, limit:number, fn) {
       var fullPath = this.getLogPath(path);
       var git = this.git();
       if (git) {
-          git.history(objectId, fullPath, limit, fn);
+          git.history(branch, objectId, fullPath, limit, fn);
       }
       return git;
     }

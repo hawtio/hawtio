@@ -110,9 +110,9 @@ module Wiki {
         return Wiki.branchLink(branch, $scope.pageId, $location);
       }
       return null
-    }
+    };
 
-    $scope.historyLink = "#/wiki/history/" + $scope.pageId;
+    $scope.historyLink = "#/wiki" + ($scope.branch ? "/branch/" + $scope.branch : "") + "/history/" + $scope.pageId;
 
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {

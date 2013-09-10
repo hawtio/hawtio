@@ -2,7 +2,7 @@ module Wiki {
 
   export function HistoryController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
-    $scope.pageId = Wiki.pageId($routeParams, $location);
+    Wiki.initScope($scope, $routeParams, $location);
     $scope.selectedItems = [];
 
     // TODO we could configure this?
@@ -90,7 +90,7 @@ module Wiki {
       var objectId = "";
       var limit = 0;
 
-      $scope.git = wikiRepository.history(objectId, $scope.pageId, limit, (logArray) => {
+      $scope.git = wikiRepository.history($scope.branch, objectId, $scope.pageId, limit, (logArray) => {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
