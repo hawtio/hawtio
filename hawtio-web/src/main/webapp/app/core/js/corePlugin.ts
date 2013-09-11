@@ -355,6 +355,12 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
+          var opts = localStorage['CodeMirrorOptions'];
+          if (opts) {
+            opts = angular.fromJson(opts);
+            CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
+          }
+
         }).
         directive('compile', ['$compile', function ($compile) {
           return function(scope, element, attrs) {
