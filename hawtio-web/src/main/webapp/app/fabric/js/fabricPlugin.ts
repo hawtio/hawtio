@@ -45,11 +45,20 @@ module Fabric {
             });
 
             workspace.topLevelTabs.push( {
-              content: "Fabric",
-              title: "Manage your containers and middleware in a fabric",
+              content: "Runtime",
+              title: "Manage your containers in this fabric",
               isValid: (workspace) => Fabric.hasFabric(workspace),
               href: () => "#/fabric/view",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
+            });
+            workspace.topLevelTabs.push( {
+              content: "Configuration",
+              title: "Manage the configuration of your profiles in Fabric",
+              isValid: (workspace) => Fabric.hasFabric(workspace),
+              href: () => {
+                return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/";
+              },
+              isActive: (workspace: Workspace) => workspace.isLinkActive("wiki")
             });
 
             helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');

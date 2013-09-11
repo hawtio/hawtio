@@ -10,6 +10,9 @@ module Perspective {
             href: "#/fabric"
           },
           {
+            href: "#/wiki/branch/"
+          },
+          {
             href: "#/dashboard"
           }
         ]

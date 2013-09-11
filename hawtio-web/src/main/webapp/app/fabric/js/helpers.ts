@@ -137,6 +137,11 @@ module Fabric {
     doAction('deleteVersion(java.lang.String)', jolokia, [id], success, error);
   }
 
+  // TODO cache the current active version? Then clear the cached value if we delete it
+  export function activeVersion($location) {
+    return $location.search()['cv'] || "1.0";
+  }
+
   export function deleteProfile(jolokia, version, id, success, error) {
     doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
   }
