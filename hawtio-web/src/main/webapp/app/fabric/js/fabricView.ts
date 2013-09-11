@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function FabricViewController($scope, $location, jolokia, localStorage) {
+  export function FabricViewController($scope, $location, jolokia, localStorage, workspace) {
 
     $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
     $scope.containersOp = 'containers(java.util.List)';
@@ -472,9 +472,9 @@ module Fabric {
 
     $scope.showProfile = (profile) => {
       if (angular.isDefined(profile.versionId)) {
-        $location.path('/fabric/profile/' + profile.versionId + '/' + profile.id);
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, profile.versionId, profile);
       } else {
-        $location.path('/fabric/profile/' + $scope.activeVersionId + '/' + profile.id);
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.activeVersionId, profile);
       }
     };
 

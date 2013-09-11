@@ -18,6 +18,14 @@ module Fabric {
     }
   }
 
+  export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
+    if (Wiki.isWikiEnabled(workspace, jolokia, localStorage)) {
+      $location.url("/wiki/branch/" + versionId + "/view/fabric/profiles/" + profile.id);
+    } else {
+      $location.url("/fabric/profile/" + versionId + "/" + profile.id);
+    }
+  }
+
   export function setSelect(selection, group) {
     if (!angular.isDefined(selection)) {
       return group[0];

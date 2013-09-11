@@ -19,7 +19,7 @@ module Fabric {
       includedProfiles: '='
     };
 
-    public controller = ($scope, $element, $attrs, jolokia) => {
+    public controller = ($scope, $element, $attrs, workspace, jolokia, localStorage, $location) => {
       $scope.profiles = [];
       $scope.responseJson = '';
       $scope.filterText = '';
@@ -33,7 +33,11 @@ module Fabric {
 
       $scope.showProfile = (profile) => {
         return $scope.filterText.isBlank() || profile.id.has($scope.filterText);
-      }
+      };
+
+      $scope.goto = (profile) => {
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.versionId, profile);
+      };
 
 
       $scope.render = (response) => {
@@ -59,7 +63,7 @@ module Fabric {
 
           Core.$apply($scope);
         }
-      }
+      };
 
       $scope.$watch('includedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
@@ -76,15 +80,15 @@ module Fabric {
 
       $scope.selected = () => {
         return $scope.profiles.filter((profile) => { return profile['selected']; });
-      }
+      };
 
       $scope.selectAll = () => {
         $scope.profiles.each((profile) => { profile.selected = true; });
-      }
+      };
 
       $scope.selectNone = () => {
         $scope.profiles.each((profile) => { delete profile.selected; });
-      }
+      };
 
       $scope.$parent.profileSelectAll = $scope.selectAll;
       $scope.$parent.profileSelectNone = $scope.selectNone;
@@ -95,7 +99,7 @@ module Fabric {
           return "selected";
         }
         return "";
-      }
+      };
 
 
       $scope.$watch('selectedAll', (newValue, oldValue) => {
@@ -132,7 +136,7 @@ module Fabric {
             arguments: [$scope.versionId, ['id']]
           }, onSuccess($scope.render));
         }
-      }
+      };
 
 
       $scope.$watch('versionId', (newValue, oldValue) => {
