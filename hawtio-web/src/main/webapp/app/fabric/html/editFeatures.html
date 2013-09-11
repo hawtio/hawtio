@@ -3,8 +3,7 @@
   <div class="row-fluid">
     <div class="span12">
       <div class="pull-left">
-        <h2 style="display: inline;">/ <a ng-href="#/fabric/view?cv={{versionId}}&sp={{profileId}}">{{versionId}}</a> /
-          <a ng-href="#/fabric/profile/{{versionId}}/{{profileId}}">{{profileId}}</a> / Features</h2>
+        <h2>Features in profile "{{profileId}}"</h2>
       </div>
       <div class="pull-right">
         <a class="btn" ng-disabled="deletingFeatures.length == 0 && addingFeatures.length == 0" href="" ng-click="save()"><i class="icon-save"></i> Save</a>

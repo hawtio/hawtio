@@ -8,8 +8,12 @@ module Fabric {
 
     $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
 
-    $scope.versionId = $routeParams.versionId;
-    $scope.profileId = $routeParams.profileId;
+    if (!angular.isDefined($scope.versionId)) {
+      $scope.versionId = $routeParams.versionId;
+    }
+    if (!angular.isDefined($scope.profileId)) {
+      $scope.profileId = $routeParams.profileId;
+    }
 
     $scope.newFileDialog = false;
     $scope.deleteFileDialog = false;
@@ -24,13 +28,29 @@ module Fabric {
     $scope.newThingName = '';
     $scope.selectedParents = [];
 
-    if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: managerMBean,
-        operation: 'getProfile(java.lang.String, java.lang.String)',
-        arguments: [$scope.versionId, $scope.profileId]
-      }, onSuccess(render));
-    }
+    $scope.$watch('versionId', (newValue, oldValue) => {
+      Core.unregister(jolokia, $scope);
+      if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
+        $scope.doRegister();
+      }
+    });
+
+    $scope.$watch('profileId', (newValue, oldValue) => {
+      Core.unregister(jolokia, $scope);
+      if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
+        $scope.doRegister();
+      }
+    });
+
+    $scope.doRegister = () => {
+      if (!$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
+        Core.register(jolokia, $scope, {
+          type: 'exec', mbean: managerMBean,
+          operation: 'getProfile(java.lang.String, java.lang.String)',
+          arguments: [$scope.versionId, $scope.profileId]
+        }, onSuccess(render));
+      }
+    };
 
     $scope.showChangeParentsDialog = () => {
       $scope.selectedParents = $scope.row.parentIds.map((parent) => {
@@ -175,7 +195,7 @@ module Fabric {
 
       copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
         notification('success', 'Created new profile ' + $scope.newProfileName);
-        $location.url("/fabric/profile/" + $scope.versionId + "/" + $scope.newProfileName);
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.versionId, {id: $scope.newProfileName });
         Core.$apply($scope);
       }, (response) => {
         notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);

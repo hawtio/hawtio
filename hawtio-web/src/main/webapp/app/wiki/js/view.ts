@@ -9,7 +9,24 @@ module Wiki {
   }
 
   export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
+
     Wiki.initScope($scope, $routeParams, $location);
+
+    $scope.fabricTopLevel = "fabric/profiles/";
+
+    $scope.versionId = $scope.branch;
+
+    console.log("pageId: ", $scope.pageId);
+
+    $scope.profile = false;
+
+    if ($scope.pageId.has($scope.fabricTopLevel) && $scope.pageId !== $scope.fabricTopLevel) {
+      var profileId = $scope.pageId.remove($scope.fabricTopLevel);
+      if (!profileId.has("/")) {
+        $scope.profileId = profileId;
+        $scope.profile = true;
+      }
+    }
 
     $scope.operationCounter = 1;
     $scope.addDialog = new Core.Dialog();

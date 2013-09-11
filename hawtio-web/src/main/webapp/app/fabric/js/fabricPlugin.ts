@@ -30,6 +30,9 @@ module Fabric {
     directive('fabricContainerList', () => {
       return new Fabric.ContainerList();
     }).
+    directive('fabricProfileDetails', () => {
+        return new Fabric.ProfileDetails();
+    }).
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry) => {
 

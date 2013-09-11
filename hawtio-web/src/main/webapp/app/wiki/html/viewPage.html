@@ -81,6 +81,13 @@
   </div>
 
   <div class="wiki-fixed form-horizontal">
+
+    <div ng-hide="!profile">
+      <div class="row-fluid">
+        <div fabric-profile-details version-id="versionId" profile-id="profileId"></div>
+      </div>
+    </div>
+
     <div ng-hide="!children">
       <div class="row-fluid">
         <div class="wikiGridStyle" ng-grid="gridOptions"></div>
