@@ -1,0 +1,36 @@
+<div ng-controller="Fabric.ContainersController">
+
+  <div class="row-fluid">
+    <div class="span12 page-padded">
+
+      <div class="section-header">
+
+        <div class="selection-controls">
+          <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
+          <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
+        </div>
+
+        <div class="section-title">
+          Containers
+        </div>
+
+        <div class="section-controls">
+          <i class="icon-plus clickable" title="Create Container" ng-click="createContainer()"></i>
+          <i class="icon-minus clickable" title="Delete Container" ng-click="deleteSelectedContainers()" ng-show="selectedContainers.length != 0"></i>
+          <i class="icon-play-circle clickable" title="Start Containers" ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"></i>
+          <i class="icon-off clickable" title="Stop Containers" ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"></i>
+
+        </div>
+
+        <div class="section-filter">
+          <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
+          <i class="icon-remove clickable" title="Clear Filter" ng-click="containerIdFilter = ''"></i>
+        </div>
+      </div>
+
+      <div fabric-container-list></div>
+    </div>
+  </div>
+
+
+</div>

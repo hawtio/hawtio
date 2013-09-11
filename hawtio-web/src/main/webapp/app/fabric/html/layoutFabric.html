@@ -2,8 +2,11 @@
   <li ng-hide="hasFabric" ng-class='{active : isActive("#/fabric/create")}'>
     <a ng-href="#/fabric/create{{hash}}">Create Fabric</a>
   </li>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'>
+    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
+  </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'>
-    <a ng-href="#/fabric/view{{hash}}">Overview</a>
+    <a ng-href="#/fabric/view{{hash}}">Migration</a>
   </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>

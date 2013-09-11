@@ -5,11 +5,11 @@
 
       <div class="box-left">
 
-        <i ng-show="!container.selected" class="icon-circle-blank clickable" title="Not Selected" ng-click="container.selected = true"></i>
-        <i ng-show="container.selected" class="icon-circle clickable" title="Selected" ng-click="container.selected = false"></i>
+        <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable" title="Not Selected" ng-click="container.selected = true"></i>
+        <i ng-show="container.selected && showSelect" class="icon-circle clickable" title="Selected" ng-click="container.selected = false"></i>
 
         <div ng-click="setActiveContainer(container)">
-          {{container.id}} / {{container.versionId}}
+          {{container.versionId}} / {{container.id}}
         </div>
       </div>
 

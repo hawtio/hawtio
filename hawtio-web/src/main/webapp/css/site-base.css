@@ -1271,20 +1271,26 @@ li.stacktrace {
   top: 5px;
 }
 .section-filter {
+  position: relative;
   margin-top: 5px;
+  display: inline-block;
+  margin-left: 12px;
 }
 #center .section-header .section-filter {
   margin-top: 0px;
-  margin-left: 35px;
-  display: inline-block;
 }
+
+#right .section-header .section-filter {
+  margin-left: 8px;
+}
+
 #right .canvas {
   height: 80%;
 }
 .section-filter .icon-remove {
-  position: relative;
-  top: 1px;
-  left: -24px;
+  position: absolute;
+  top: 7px;
+  right: 9px;
 }
 .features-toolbar {
   position: relative;
@@ -1601,4 +1607,9 @@ dd.file-list {
 .file-icon img {
   width: 16px;
   height: 16px;
+}
+
+.page-padded {
+  padding-left: 20px;
+  padding-right: 20px;
 }

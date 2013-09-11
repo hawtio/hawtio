@@ -11,6 +11,7 @@ module Fabric {
             when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
+            when('/fabric/containers', {templateUrl: templatePath + 'containers.html'}).
             when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html'}).
             when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
             when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
@@ -48,7 +49,7 @@ module Fabric {
               content: "Runtime",
               title: "Manage your containers in this fabric",
               isValid: (workspace) => Fabric.hasFabric(workspace),
-              href: () => "#/fabric/view",
+              href: () => "#/fabric/containers",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
             workspace.topLevelTabs.push( {

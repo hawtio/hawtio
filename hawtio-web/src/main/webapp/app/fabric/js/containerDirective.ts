@@ -6,9 +6,7 @@ module Fabric {
     public replace = true;
     public templateUrl = Fabric.templatePath + "containerList.html";
 
-    public scope = {
-
-    };
+    public scope = false;
 
     public controller = ($scope, $element, $attrs, jolokia, $location, $templateCache) => {
 
@@ -22,6 +20,7 @@ module Fabric {
       $scope.selectedContainerIds = [];
       $scope.connectToContainerDialog = new Core.Dialog();
       $scope.targetContainer = {};
+      $scope.showSelect = true;
 
 
       $scope.updateContainers = (newContainers) => {
@@ -58,8 +57,49 @@ module Fabric {
           });
 
           $scope.containers = newContainers;
+
+          var activeProfiles = $scope.activeProfiles;
+          $scope.activeProfiles = $scope.currentActiveProfiles();
+          $scope.activeProfiles.each((activeProfile) => {
+
+            var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
+            if (ap) {
+              activeProfile['selected'] = ap.selected;
+            } else {
+              activeProfile['selected'] = false;
+            }
+
+          });
+
           Core.$apply($scope);
         }
+      };
+
+
+      $scope.currentActiveProfiles = () => {
+        var answer = [];
+
+        $scope.containers.each((container) => {
+          container.profileIds.each((profile) => {
+
+            var activeProfile = answer.find((o) => { return o.versionId === container.versionId && o.id === profile });
+
+            if (activeProfile) {
+              activeProfile.count++;
+              activeProfile.containers = activeProfile.containers.include(container.id).unique();
+            } else {
+              answer.push({
+                id: profile,
+                count: 1,
+                versionId: container.versionId,
+                containers: [container.id],
+                selected: false
+              });
+            }
+          });
+        });
+
+        return answer;
       };
 
 
@@ -139,6 +179,18 @@ module Fabric {
       }
 
 
+      $scope.getSelectedClass = (obj) => {
+        var answer = [];
+        if (obj.selected) {
+          answer.push('selected');
+        }
+        if (angular.isDefined(obj['root']) && obj['root'] === false) {
+          answer.push('child-container');
+        }
+        return answer.join(' ');
+      };
+
+
       $scope.dispatch = (response) => {
         switch (response.request.operation) {
           case($scope.containersOp):
@@ -152,16 +204,113 @@ module Fabric {
         }
       };
 
+      $scope.clearSelection = (group) => {
+        group.each((item) => { item.selected = false; });
+      };
+
+
+      $scope.setActiveProfile = (profile) => {
+        $scope.clearSelection($scope.activeProfiles);
+        if (!profile || profile === null) {
+          return;
+        }
+        profile.selected = true;
+      };
+
+
+      $scope.selectAllContainers = () => {
+        $scope.containers.each((container) => {
+          if ($scope.filterContainer(container)) {
+            container.selected = true;
+          }
+        });
+      };
+
+
+      $scope.setActiveContainer = (container) => {
+        $scope.clearSelection($scope.containers);
+        if (!container || container === null) {
+          return;
+        }
+        container.selected = true;
+      };
+
+
+      $scope.createContainer = () => {
+        var kind = null;
+        // lets see if there is an openshift option
+        var providers = registeredProviders(jolokia);
+        angular.forEach(["openshift", "jclouds"], (value) => {
+          if (!kind && providers[value]) {
+            kind = value;
+          }
+        });
+        if (!kind) {
+          kind = 'ssh';
+        }
+        $location.url('/fabric/containers/createContainer').search('tab', kind);
+      };
+
+
+      $scope.deleteSelectedContainers = () => {
+        $scope.selectedContainers.each((c) => {
+          $scope.deleteContainer(c.id);
+        });
+      };
+
+
+      $scope.startSelectedContainers = () => {
+        $scope.selectedContainers.each((c) => {
+          $scope.startContainer(c.id);
+        });
+      };
+
+
+      $scope.stopSelectedContainers = () => {
+        $scope.selectedContainers.each((c) => {
+          $scope.stopContainer(c.id);
+        });
+      };
+
+
+      $scope.deleteContainer = (name) => {
+        doDeleteContainer($scope, jolokia, name);
+      };
+
+
+      $scope.startContainer = (name) => {
+        doStartContainer($scope, jolokia, name);
+      };
+
+
+      $scope.stopContainer = (name) => {
+        doStopContainer($scope, jolokia, name);
+      };
+
+
+      $scope.anySelectionAlive = (state) => {
+        var selected = $scope.selectedContainers;
+        return selected.length > 0 && selected.any((s) => s.alive === state);
+      };
+
+
+      $scope.everySelectionAlive = (state) => {
+        var selected = $scope.selectedContainers;
+        return selected.length > 0 && selected.every((s) => s.alive === state);
+      };
+
 
       Core.register(jolokia, $scope, [
         {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
       ], onSuccess($scope.dispatch));
 
+    };
 
-
-
-
+    public link = ($scope, $element, $attrs) => {
+      if (angular.isDefined($attrs['showSelect'])) {
+        $scope.showSelect = Core.parseBooleanValue($attrs['showSelect']);
+      }
     };
 
   }
