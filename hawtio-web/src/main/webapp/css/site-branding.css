@@ -713,3 +713,10 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
   margin-left: 20px;
   margin-right: 20px;
 }
+
+.CodeMirror * {
+  font-family: monospace;
+}
+
+
+
