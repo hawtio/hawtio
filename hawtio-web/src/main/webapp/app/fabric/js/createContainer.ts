@@ -210,7 +210,7 @@ module Fabric {
       });
 
       notification('info', "Requesting that new container(s) be created");
-      $location.url('/fabric/view');
+      $location.url('/fabric/containers');
     }
 
   }
