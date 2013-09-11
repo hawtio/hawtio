@@ -56,7 +56,7 @@ module Fabric {
               title: "Manage the configuration of your profiles in Fabric",
               isValid: (workspace) => Fabric.hasFabric(workspace),
               href: () => {
-                return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/";
+                return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
               },
               isActive: (workspace: Workspace) => workspace.isLinkActive("wiki")
             });
