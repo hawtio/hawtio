@@ -236,7 +236,7 @@ module ActiveMQ {
 
     function moveSuccess() {
         operationSuccess();
-        $scope.workspace.loadTree();
+        workspace.loadTree();
     }
   }
 }
