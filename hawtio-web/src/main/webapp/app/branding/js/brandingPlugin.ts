@@ -39,6 +39,9 @@ module Branding {
   export var enabled = false;
   export var profile = null;
 
+  // just in case we'll check for all of these...
+  export var mqProfiles = ["mq", "a-mq", "a-mq-openshift", "mq-replicated"];
+
   $.get('/hawtio/branding', (response) => {
 
     Branding.enabled = Core.parseBooleanValue(response.enable);
@@ -78,6 +81,10 @@ module Branding {
           branding.loginBg = 'img/branding/login-screen-background.jpg';
           branding.fullscreenLogin = true;
           branding.profile = Branding.profile;
+
+          if (Branding.mqProfiles.any(branding.profile)) {
+            branding.appLogo = 'img/branding/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
+          }
         }
 
       });
