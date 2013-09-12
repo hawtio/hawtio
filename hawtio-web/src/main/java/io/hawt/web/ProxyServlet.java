@@ -109,7 +109,9 @@ public class ProxyServlet extends HttpServlet {
         Protocol http = new Protocol("http", socketFactory, 80);
         Protocol.registerProtocol("http", http);
 
-        LOG.info("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
+        if (LOG.isDebugEnabled())  {
+            LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
+        }
     }
 
     /**
