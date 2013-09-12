@@ -18,15 +18,8 @@ module Wiki {
 
     console.log("pageId: ", $scope.pageId);
 
-    $scope.profile = false;
-
-    if ($scope.pageId.has($scope.fabricTopLevel) && $scope.pageId !== $scope.fabricTopLevel) {
-      var profileId = $scope.pageId.remove($scope.fabricTopLevel);
-      if (!profileId.has("/")) {
-        $scope.profileId = profileId;
-        $scope.profile = true;
-      }
-    }
+    $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
+    $scope.profile = $scope.profileId? true: false;
 
     $scope.operationCounter = 1;
     $scope.addDialog = new Core.Dialog();

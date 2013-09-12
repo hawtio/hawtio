@@ -4,12 +4,33 @@ module Fabric {
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
   export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
 
+  export var useDirectoriesInGit = true;
+  var fabricTopLevel = "fabric/profiles/";
+  var profileSuffix = ".profile";
+
   export function hasFabric(workspace) {
     // lets make sure we only have a fabric if we have the ClusterBootstrapManager available
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse which doesn't have the necessary
     // mbeans for hawtio awesomeness
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})
             && workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
+  }
+
+  /**
+   * Converts the given path from the wiki into a profile ID
+   */
+  export function pagePathToProfileId(pageId): string {
+    var answer = null;
+    if (pageId.has(fabricTopLevel) && pageId !== fabricTopLevel) {
+      var profileId = pageId.remove(fabricTopLevel);
+      if (!profileId.has("/") && (!Fabric.useDirectoriesInGit || profileId.endsWith(profileSuffix))) {
+        if (Fabric.useDirectoriesInGit) {
+          profileId = Core.trimTrailing(profileId, profileSuffix);
+        }
+        answer = profileId;
+      }
+    }
+    return answer;
   }
 
   export function initScope($scope, workspace) {
