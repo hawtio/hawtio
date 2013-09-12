@@ -43,7 +43,7 @@ module Wiki {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{fileName(row.entity)}}</a></div>',
           cellFilter: ""
         }
       ]
@@ -94,6 +94,16 @@ module Wiki {
         }
       }
       return Core.createHref($location, prefix + path + postFix, ["form"]);
+    };
+
+    $scope.fileName = (entity) => {
+      var name = entity.name;
+      angular.forEach(Wiki.hideExtentions, (extension) => {
+         if (name.endsWith(extension)) {
+           name = name.substring(0, name.length - extension.length);
+         }
+      });
+      return name;
     };
 
     $scope.fileIconHtml = (entity) => {

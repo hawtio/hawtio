@@ -8,6 +8,11 @@ module Wiki {
   export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/canvas", "/wiki/camel/properties", "/wiki/dozer/mappings"];
 
   /**
+   * Which extensions do we wish to hide in the wiki file listing
+   */
+  export var hideExtentions = [".profile"];
+
+  /**
    * The wizard tree for creating new content in the wiki
    */
   export var documentTemplates = [
@@ -234,7 +239,11 @@ module Wiki {
 
     if (!icon) {
       if (directory) {
-        css = "icon-folder-close";
+        if ("profile" === extension) {
+          css = "icon-book";
+        } else {
+          css = "icon-folder-close";
+        }
       } else if ("xml" === extension) {
         css = "icon-cog";
       } else {
