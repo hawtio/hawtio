@@ -28,6 +28,8 @@ module Fabric {
     $scope.newThingName = '';
     $scope.selectedParents = [];
 
+    $scope.profilePath = Fabric.profilePath;
+
     $scope.$watch('versionId', (newValue, oldValue) => {
       Core.unregister(jolokia, $scope);
       if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
@@ -213,7 +215,7 @@ module Fabric {
         var version = $scope.row.version;
         $scope.configFolderLink = null;
         if ($scope.hasFabricWiki() && id && version) {
-          $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + id;
+          $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + Fabric.profilePath(id);
         }
         Core.$apply($scope);
       }

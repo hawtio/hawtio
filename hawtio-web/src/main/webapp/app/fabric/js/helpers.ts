@@ -23,14 +23,19 @@ module Fabric {
     var answer = null;
     if (pageId.has(fabricTopLevel) && pageId !== fabricTopLevel) {
       var profileId = pageId.remove(fabricTopLevel);
-      if (!profileId.has("/") && (!Fabric.useDirectoriesInGit || profileId.endsWith(profileSuffix))) {
+      if ((Fabric.useDirectoriesInGit || !profileId.has("/")) && (!Fabric.useDirectoriesInGit || profileId.endsWith(profileSuffix))) {
         if (Fabric.useDirectoriesInGit) {
           profileId = Core.trimTrailing(profileId, profileSuffix);
+          profileId = profileId.replace(/\//g, "-");
         }
         answer = profileId;
       }
     }
     return answer;
+  }
+
+  export function profilePath(profileId) {
+    return profileId.replace(/-/g, "/") + profileSuffix;
   }
 
   export function initScope($scope, workspace) {
@@ -41,7 +46,7 @@ module Fabric {
 
   export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
     if (Wiki.isWikiEnabled(workspace, jolokia, localStorage)) {
-      $location.url("/wiki/branch/" + versionId + "/view/fabric/profiles/" + profile.id);
+      $location.url("/wiki/branch/" + versionId + "/view/fabric/profiles/" + Fabric.profilePath(profile.id));
     } else {
       $location.url("/fabric/profile/" + versionId + "/" + profile.id);
     }
