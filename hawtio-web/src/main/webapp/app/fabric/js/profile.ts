@@ -43,7 +43,7 @@ module Fabric {
     });
 
     $scope.doRegister = () => {
-      if (!$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
+      if ($scope.versionId && $scope.profileId && !$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
         Core.register(jolokia, $scope, {
           type: 'exec', mbean: managerMBean,
           operation: 'getProfile(java.lang.String, java.lang.String)',
