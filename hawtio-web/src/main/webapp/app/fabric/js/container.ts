@@ -2,6 +2,15 @@ module Fabric {
 
   export function ContainerController($scope, localStorage, $routeParams, jolokia, $location) {
 
+    /*
+    // handy for working around any randomly added fields that won't marshal
+    $scope.fields = jolokia.execute(Fabric.managerMBean, 'getFields(java.lang.String)', 'org.fusesource.fabric.api.Container');
+    $scope.fields.remove('fabricService');
+    $scope.operation = 'getContainer(java.lang.String, java.util.List)'
+    */
+
+    $scope.operation = 'getContainer(java.lang.String)';
+
     $scope.loading = true;
 
     $scope.containerId = $routeParams.containerId;
@@ -92,11 +101,13 @@ module Fabric {
       }
     }
 
+    /*
     $scope.$watch('selectedProfilesDialog', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         console.log("Selected profiles: ", $scope.selectedProfilesDialog);
       }
     }, true);
+    */
 
     $scope.addProfiles = () => {
       $scope.addProfileDialog.close();
@@ -105,6 +116,7 @@ module Fabric {
       addProfilesToContainer(jolokia, $scope.row.id, addedProfiles, () => {
         notification('success', "Successfully added " + text);
         $scope.selectedProfilesDialog = [];
+        $scope.$broadcast('fabricProfileRefresh');
         Core.$apply($scope);
       }, (response) => {
         notification('error', "Failed to add " + text + " due to " + response.error);
@@ -121,6 +133,7 @@ module Fabric {
       removeProfilesFromContainer(jolokia, $scope.row.id, removedProfiles, () => {
         notification('success', "Successfully removed " + text);
         $scope.selectedProfiles = [];
+        $scope.$broadcast('fabricProfileRefresh');
         Core.$apply($scope);
       }, (response) => {
         notification('error', "Failed to remove " + text + " due to " + response.error);
@@ -129,11 +142,25 @@ module Fabric {
       });
     };
 
+    $scope.$on("fabricProfileRefresh", () => {
+      setTimeout( () => {
+        jolokia.request({
+              type: 'exec', mbean: Fabric.managerMBean,
+              operation: 'getContainer(java.lang.String)',
+              arguments: [$scope.containerId]
+            },
+            {
+              method: 'POST',
+              success: (response) => { render(response); }
+            });
+      }, 500);
+    });
+
 
     if (angular.isDefined($scope.containerId)) {
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
-        operation: 'getContainer(java.lang.String)',
+        operation: $scope.operation,
         arguments: [$scope.containerId]
       }, onSuccess(render));
     }

@@ -123,7 +123,21 @@ module Fabric {
       }, true);
 
 
+      $scope.$on("fabricProfileRefresh", () => {
+        jolokia.request({
+          type: 'exec', mbean: Fabric.managerMBean,
+          operation: 'getProfiles(java.lang.String, java.util.List)',
+          arguments: [$scope.versionId, ['id']]
+        },
+        {
+          method: 'POST',
+          success: (response) => { $scope.render(response); }
+        })
+      });
+
+
       $scope.init = () => {
+        $scope.responseJson = null;
         Core.unregister(jolokia, $scope);
         if( $scope.versionId !== '' ) {
           if ($scope.clearOnVersionChange) {
