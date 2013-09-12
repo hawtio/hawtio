@@ -66,9 +66,12 @@ module Wiki {
         }
       });
       // lets swizzle the last one or two to be formTable views if the last or 2nd to last
-
       var loc = $location.path();
       if ($scope.breadcrumbs.length) {
+        var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
+        // possibly trim any required file extensions
+        last.name = Wiki.hideFineNameExtensions(last.name);
+
         var swizzled = false;
         angular.forEach(Wiki.customViewLinks, (link) => {
           if (!swizzled && loc.startsWith(link)) {

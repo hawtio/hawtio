@@ -97,13 +97,7 @@ module Wiki {
     };
 
     $scope.fileName = (entity) => {
-      var name = entity.name;
-      angular.forEach(Wiki.hideExtentions, (extension) => {
-         if (name.endsWith(extension)) {
-           name = name.substring(0, name.length - extension.length);
-         }
-      });
-      return name;
+      return Wiki.hideFineNameExtensions(entity.name);
     };
 
     $scope.fileIconHtml = (entity) => {

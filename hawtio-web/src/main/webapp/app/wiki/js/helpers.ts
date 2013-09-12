@@ -218,6 +218,20 @@ module Wiki {
     return "";
   }
 
+  /**
+   * Returns the file name for the given name; we hide some extensions
+   */
+  export function hideFineNameExtensions(name) {
+    if (name) {
+      angular.forEach(Wiki.hideExtentions, (extension) => {
+        if (name.endsWith(extension)) {
+          name = name.substring(0, name.length - extension.length);
+        }
+      });
+    }
+    return name;
+  }
+
   export function fileIconHtml(row) {
     var css = null;
     var icon = null;
