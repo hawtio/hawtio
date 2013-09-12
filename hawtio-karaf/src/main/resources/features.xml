@@ -51,4 +51,14 @@
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
   </feature>
 
+  <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
+    <details>A terminal plugin for hawtio when installed in Karaf</details>
+    <bundle>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle>mvn:commons-fileupload/commons-fileupload/${commons-fileupload-version}</bundle>
+    <bundle>wrap:mvn:org.json/json/${org-json-version}</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.webconsole/${felix-webconsole-version}</bundle>
+    <bundle>mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/${karaf-version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
+  </feature>
+
 </features>

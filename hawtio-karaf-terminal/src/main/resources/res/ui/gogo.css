@@ -1,0 +1,91 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Based on http://antony.lesuisse.org/software/ajaxterm/
+ *  Public Domain License
+ */
+
+div#console {
+    font-size: 12px;
+    margin: 12px;
+}
+
+div#term {
+    display: inline-block;
+}
+
+pre.stat {
+	margin: 0px;
+	padding: 4px;
+	display: block;
+	font-family: monospace;
+	white-space: pre;
+	background-color: black;
+	border-top: 1px solid black;
+	color: white;
+}
+pre.stat span {
+	padding: 0px;
+}
+pre.stat .on {
+	background-color: #080;
+	font-weight: bold;
+	color: white;
+	cursor: pointer;
+}
+pre.stat .off {
+	background-color: #888;
+	font-weight: bold;
+	color: white;
+	cursor: pointer;
+}
+pre.term {
+	margin: 0px;
+	padding: 4px;
+	display: block;
+	font-family: monospace;
+	white-space: pre;
+    background:#000;
+	border-top: 1px solid white;
+	color: #eee;
+}
+pre.term span.f0  { color: #000000; }
+pre.term span.f1  { color: #c00006; }
+pre.term span.f2  { color: #1bc806; }
+pre.term span.f3  { color: #c3c609; }
+pre.term span.f4  { color: #0000c2; }
+pre.term span.f5  { color: #bf00c2; }
+pre.term span.f6  { color: #19c4c2; }
+pre.term span.f7  { color: #f2f2f2; }
+pre.term span.f12 { color: transparent; }
+pre.term span.f14 { color: #000000; }
+pre.term span.f15 { color: #bbbbbb; }
+pre.term span.b0  { background-color: #000000; }
+pre.term span.b1  { background-color: #cc2300; }
+pre.term span.b2  { background-color: #00cc00; }
+pre.term span.b3  { background-color: #cccc00; }
+pre.term span.b4  { background-color: #0e2acc; }
+pre.term span.b5  { background-color: #cc34cc; }
+pre.term span.b6  { background-color: #00cccc; }
+pre.term span.b7  { background-color: #f5f5f5; }
+pre.term span.b12 { background-color: #555555; }
+pre.term span.b14 { background-color: transparent; }
+pre.term span.b15 { background-color: #ffffff; }
+pre.term span.ul  { text-decoration: underline; }
+pre.term span.b   { font-weight:900; }
+

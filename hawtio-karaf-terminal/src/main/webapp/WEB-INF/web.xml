@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	      version="2.4">
+
+  <description>hawtio</description>
+  <display-name>hawtio Karaf terminal plugin</display-name>
+
+  <servlet>
+    <servlet-name>TerminalServlet</servlet-name>
+    <servlet-class>io.hawt.web.plugin.karaf.terminal.TerminalServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TerminalServlet</servlet-name>
+    <url-pattern>/term/*</url-pattern>
+    <url-pattern>/term/gogo</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ResourceServlet</servlet-name>
+    <servlet-class>io.hawt.web.plugin.karaf.terminal.ResourceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResourceServlet</servlet-name>
+    <url-pattern>/term/gogo/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+
