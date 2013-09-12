@@ -1268,8 +1268,24 @@ li.stacktrace {
 }
 #center .section-header .section-controls {
   position: relative;
-  top: 5px;
+  top: 7px;
+  left: -2px;
 }
+
+.page-padded .section-header {
+  /* height: 22px; */
+}
+
+.page-padded .section-header .section-controls {
+  position: relative;
+  top: 7px;
+  left: -3px;
+}
+
+.page-padded .section-header .section-filter {
+  margin-top: 0px;
+}
+
 .section-filter {
   position: relative;
   margin-top: 5px;
