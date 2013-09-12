@@ -29,7 +29,7 @@
 
           </td>
           <td ng-class="getSelectedClass(profile)">
-            <span>{{profile.id}}</span>
+            <a ng-click="goto(profile)">{{profile.id}}</a>
             <a href="" ng-show="showLinks" ng-click="goto(profile)"><i class="icon-info-sign clickable pull-right" title="Details for {{profile.id}}"></i></a>
           </td>
         </tr>
