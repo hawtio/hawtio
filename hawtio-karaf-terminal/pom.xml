@@ -21,7 +21,7 @@
     <plugin-context>/hawtio/hawtio-karaf-terminal</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
-    <plugin-scripts>app/js/gogoPlugin.js</plugin-scripts>
+    <plugin-scripts>app/js/gogoPlugin.js,app/js/gogo.js</plugin-scripts>
 
     <fuse.osgi.import>
       javax.servlet.*,
@@ -52,16 +52,45 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.karaf.webconsole</groupId>
-      <artifactId>org.apache.karaf.webconsole.gogo</artifactId>
-      <version>${karaf-version}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.webconsole</artifactId>
-      <version>${felix-webconsole-version}</version>
+      <artifactId>org.apache.felix.gogo.runtime</artifactId>
+      <version>${felix.gogo.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.karaf.shell</groupId>
+      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <version>${karaf-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <version>${jline.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>${osgi-version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -107,11 +136,20 @@
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
             <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
+            <Export-Package></Export-Package>
 
             <Import-Package>
+              org.osgi.service.blueprint,
+              org.apache.felix.service.command,
               javax.servlet,
               javax.servlet.http,
-              org.apache.karaf.webconsole.gogo,
+              org.ops4j.pax.web.service,
+              org.osgi.service.blueprint.container,
+              org.osgi.service.http,
+              jline,
+              org.apache.karaf.shell.console.jline,
+              org.osgi.framework,
+              javax.management,
               *;resolution:=optional
             </Import-Package>
             <DynamicImport-Package>*</DynamicImport-Package>

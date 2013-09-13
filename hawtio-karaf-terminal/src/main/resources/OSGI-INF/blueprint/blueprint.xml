@@ -14,14 +14,12 @@
   ~ permissions and limitations under the License.
   -->
 
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <reference id="commandProcessor" interface="org.apache.felix.service.command.CommandProcessor" />
+  <reference id="commandProcessor" interface="org.apache.felix.service.command.CommandProcessor" availability="mandatory"/>
 
-  <bean id="gogoPlugin" class="io.hawt.web.plugin.karaf.terminal.TerminalServlet" init-method="start" destroy-method="stop">
+  <bean id="commandProcessorHolder" class="io.hawt.web.plugin.karaf.terminal.CommandProcessorHolder">
     <property name="commandProcessor" ref="commandProcessor" />
-    <property name="bundleContext" ref="blueprintBundleContext" />
   </bean>
 
   <bean id="plugin" class="io.hawt.web.plugin.HawtioPlugin" init-method="init" destroy-method="destroy">

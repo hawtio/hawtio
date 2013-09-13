@@ -62,7 +62,7 @@ gogo.Terminal_ctor = function(div, width, height) {
                query = query + "&f=1";
                force = 0;
            }
-           r.open("POST", "gogo", true);
+           r.open("POST", "hawtio-karaf-terminal/term", true);
            r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
            r.onreadystatechange = function () {
                if (r.readyState == 4) {
