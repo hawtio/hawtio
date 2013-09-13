@@ -73,7 +73,9 @@ module Fabric {
         delete schema.properties['bindAddress'];
         delete schema.properties['hostNameContext'];
 
+
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
+        schema.properties['resolver']['default'] = 'publichostname';
         schema.properties['password']['type'] = 'password';
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
