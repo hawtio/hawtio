@@ -1182,11 +1182,6 @@ li.stacktrace {
 .box.selected {
   color: #0066cc;
   text-shadow: rgba(0, 51, 102, 0.3) 0 -1px 0, #b3d9ff 0 2px 1px, #99ddff 0 0 5px, rgba(0, 127, 255, 0.6) 0 0 20px;
-  /*
-  box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.1),
-              inset 1px 1px 5px rgba(0, 0, 0, 0.4);
-              */
-
 }
 .box.selected .box-right i {
   text-shadow: none;
@@ -1201,7 +1196,7 @@ li.stacktrace {
 }
 .box .box-left .profile-select {
   display: inline-block;
-  top: 13px;
+  top: 14px;
   max-width: 210px;
   width: 210px;
   overflow: hidden;
@@ -1225,13 +1220,11 @@ li.stacktrace {
   left: 12px;
   right: 0px;
 }
-.box [class^='icon-circle'] {
-  position: relative;
-  top: -1px;
-}
+
 .box .active-profile [class^='icon-circle'] {
   top: 0;
 }
+
 .box .box-left {
   display: inline-block;
   position: absolute;
@@ -1286,10 +1279,20 @@ li.stacktrace {
   margin-left: 12px;
   margin-right: 12px;
   color: #4d5258;
+  cursor: pointer;
+}
+
+.section-controls a:hover {
+  text-decoration: none;
+  text-shadow: rgba(0, 0, 0, 0.6) 0 0 20px;
 }
 
 .section-controls a.nav-danger {
   color: IndianRed !important;
+}
+
+.section-controls a.nav-danger:hover {
+  text-shadow: rgba(205, 92, 92, 0.6) 0 0 20px !important;
 }
 
 .page-padded .section-header .section-filter {
