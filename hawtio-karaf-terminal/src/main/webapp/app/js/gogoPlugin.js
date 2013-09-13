@@ -12,10 +12,14 @@ var simplePlugin = angular.module(pluginName, ['hawtioCore'])
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
-        console.log("element: ", element);
-        console.log("here, gogo: ", gogo);
         gogo.Terminal(element.get(0), 120, 39);
-        }
+
+        scope.$on("$destroy", function(e) {
+          document.onkeypress = null;
+          document.onkeydown = null;
+        });
+
+      }
     };
   }).run(function(workspace, viewRegistry, layoutFull) {
 
