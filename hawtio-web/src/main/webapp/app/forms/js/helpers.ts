@@ -1,5 +1,21 @@
 module Forms {
 
+
+  /**
+   * Default any values in the schema on the entity if they are not already present
+   */
+  export function defaultValues(entity, schema) {
+    if (entity && schema) {
+      angular.forEach(schema.properties, (property, key) => {
+        var defaultValue = property.default;
+        if (defaultValue && !entity[key]) {
+          console.log("===== defaulting value "  + defaultValue + " into entity[" + key + "]");
+          entity[key] = defaultValue;
+        }
+      })
+    }
+  }
+
   /**
    * If the type name refers to an alias in the schemas defintions then perform the lookup and return the real type name
    */

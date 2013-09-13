@@ -75,7 +75,7 @@ module Fabric {
 
 
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
-        schema.properties['resolver']['default'] = 'publichostname';
+        Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
         schema.properties['password']['type'] = 'password';
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);

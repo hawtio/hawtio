@@ -85,6 +85,8 @@ module Fabric {
             $scope.entity[key] = localValue;
           }
         });
+
+        Forms.defaultValues($scope.entity, $scope.schema);
       }
     }, true);
 
