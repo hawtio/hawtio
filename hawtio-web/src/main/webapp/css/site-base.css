@@ -1282,6 +1282,16 @@ li.stacktrace {
   left: -3px;
 }
 
+.section-controls a {
+  margin-left: 12px;
+  margin-right: 12px;
+  color: #4d5258;
+}
+
+.section-controls a.nav-danger {
+  color: IndianRed !important;
+}
+
 .page-padded .section-header .section-filter {
   margin-top: 0px;
 }
