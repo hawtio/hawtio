@@ -4,6 +4,7 @@
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio war file, an MBean helper for OSGi and an MBean helper to get JSON Schema out of Java objects</details>
     <feature>war</feature>
+    <feature>hawtio-karaf-terminal</feature>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
@@ -53,13 +54,6 @@
 
   <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
     <details>A terminal plugin for hawtio when installed in Karaf</details>
-    <!--
-    <bundle>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle>mvn:commons-fileupload/commons-fileupload/${commons-fileupload-version}</bundle>
-    <bundle>wrap:mvn:org.json/json/${org-json-version}</bundle>
-    <bundle>mvn:org.apache.felix/org.apache.felix.webconsole/${felix-webconsole-version}</bundle>
-    <bundle>mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/${karaf-version}</bundle>
-    -->
     <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
   </feature>
 
