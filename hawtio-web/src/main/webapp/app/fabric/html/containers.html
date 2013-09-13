@@ -13,20 +13,20 @@
         <div class="section-title"></div>
 
         <div class="section-controls">
-          <a class="btn" ng-click="createContainer()" title="Create new containers">
+          <a class="" ng-click="createContainer()" title="Create new containers">
             <i class="icon-plus"></i> Create
           </a>
-          <a class="btn" ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"
+          <a class="" ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"
              title="Start Containers">
             <i class="icon-play-circle clickable"></i>
             Start
           </a>
-          <a class="btn" ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"
+          <a class="" ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"
              title="Stop Containers">
             <i class="icon-off"></i>
             Stop
           </a>
-          <a class="btn btn-danger" ng-click="deleteSelectedContainers()" ng-show="selectedContainers.length != 0"
+          <a class="nav-danger" ng-click="deleteSelectedContainers()" ng-show="selectedContainers.length != 0"
              title="Delete Container">
             <i class="icon-minus"></i> Delete
           </a>
