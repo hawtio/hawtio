@@ -52,8 +52,7 @@ public class TerminalServlet extends HttpServlet {
                     gzos.write(dump.getBytes());
                     gzos.close();
                 } catch (IOException ie) {
-                    // handle the error here
-                    ie.printStackTrace();
+                    LOG.info("Exception writing response: ", ie);
                 }
             } else {
                 response.getOutputStream().write(dump.getBytes());
@@ -91,10 +90,10 @@ public class TerminalServlet extends HttpServlet {
                 session.put("COLUMNS", Integer.toString(TERM_WIDTH));
                 session.put("LINES", Integer.toString(TERM_HEIGHT));
             } catch (IOException e) {
-                //e.printStackTrace();
+                LOG.info("Exception attaching to console", e);
                 throw e;
             } catch (Exception e) {
-                //e.printStackTrace();
+                LOG.info("Exception attaching to console", e);
                 throw (IOException) new IOException().initCause(e);
             }
             new Thread(console).start();
@@ -151,7 +150,6 @@ public class TerminalServlet extends HttpServlet {
                 }
             } catch (IOException e) {
                 closed = true;
-                e.printStackTrace();
             }
         }
 
