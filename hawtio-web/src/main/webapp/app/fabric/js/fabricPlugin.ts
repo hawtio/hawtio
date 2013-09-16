@@ -7,7 +7,7 @@ module Fabric {
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
     $routeProvider.
-            when('/fabric/create', {templateUrl: templatePath + 'createFabric.html'}).
+            when('/createFabric', {templateUrl: templatePath + 'createFabric.html'}).
             when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
@@ -52,8 +52,8 @@ module Fabric {
               content: "Create Fabric",
               title: "Create a fabric starting with this container",
               isValid: (workspace) => !Fabric.hasFabric(workspace),
-              href: () => "#/fabric/create",
-              isActive: (workspace) => workspace.isLinkActive("fabric/create")
+              href: () => "#/createFabric",
+              isActive: (workspace) => workspace.isLinkActive("createFabric")
             });
             workspace.topLevelTabs.push( {
               content: "Runtime",
