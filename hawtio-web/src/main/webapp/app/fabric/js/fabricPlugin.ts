@@ -34,9 +34,10 @@ module Fabric {
         return new Fabric.ProfileDetails();
     }).
 
-          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry) => {
+          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, layoutFull) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+            viewRegistry['createFabric'] = layoutFull;
 
             pageTitle.addTitleElement( ():string => {
               var id = '';
