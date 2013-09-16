@@ -637,7 +637,18 @@ class Workspace {
       if (folder) {
         if (properties) {
           var children = folder.children || [];
-          return children.some((node) => this.matchesProperties(node.entries, properties));
+          var checkProperties = (node)  => {
+            if (!this.matchesProperties(node.entries, properties)) {
+              if (node.domain === domainName && node.children && node.children.length > 0) {
+                return node.children.some(checkProperties);
+              } else {
+                return false;
+              }
+            } else {
+              return true;
+            }
+          };
+          return children.some(checkProperties);
         }
         return true;
       } else {

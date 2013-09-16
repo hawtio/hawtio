@@ -31,7 +31,7 @@ var simplePlugin = angular.module(pluginName, ['hawtioCore'])
     workspace.topLevelTabs.push({
       content: "Terminal",
       title: "Open a terminal to the server",
-      isValid: function() { return true; },
+      isValid: function () { return workspace.treeContainsDomainAndProperties("hawtio", {type: "plugin", name: "hawtio-karaf-terminal"}) },
       href: function() { return "#/gogo"; },
       isActive: function() { return workspace.isLinkActive("gogo"); }
     });
