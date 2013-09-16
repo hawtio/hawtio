@@ -155,21 +155,29 @@ module Karaf {
     }
 
     $scope.install = () => {
-      $scope.selectedFeatures.forEach(function (feature) {
-        installFeature(workspace, jolokia, feature.name, feature.version, function () {
-          notification('success', 'Installed feature ' + feature.name);
-        }, function (response) {
-          notification('error', 'Failed to install feature ' + feature.name + ' due to ' + response.error);
+      $scope.selectedFeatures.each((feature) => {
+
+        var feature = feature;
+        installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
+          notification('success', 'Installed feature ' + feature.Name);
+          Core.$apply($scope);
+        }, (response) => {
+          notification('error', 'Failed to install feature ' + feature.Name + ' due to ' + response.error);
+          Core.$apply($scope);
         });
       });
     };
 
     $scope.uninstall = () => {
-      $scope.selectedFeatures.forEach(function (feature) {
-        uninstallFeature(workspace, jolokia, feature.name, feature.version, function () {
-          notification('success', 'Uninstalled feature ' + feature.name);
-        }, function (response) {
-          notification('error', 'Failed to uninstall feature ' + feature.name + ' due to ' + response.error);
+      $scope.selectedFeatures.each((feature) => {
+
+        var feature = feature;
+        uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
+          notification('success', 'Uninstalled feature ' + feature.Name);
+          Core.$apply($scope);
+        }, (response) => {
+          notification('error', 'Failed to uninstall feature ' + feature.Name + ' due to ' + response.error);
+          Core.$apply($scope);
         });
       });
     };
