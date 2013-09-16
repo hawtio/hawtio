@@ -192,24 +192,27 @@ module Fabric {
         json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
       }
 
-      jolokia.execute(managerMBean, 'createContainers(java.util.Map)', angular.toJson(json), {
-        method: "post",
-        success: (response) => {
-          var error = false;
-          angular.forEach(response.value, function(value, key) {
-            error = true;
-            notification('error', "Creating container " + key + " failed: " + value);
-          });
-          if (!error) {
-            notification('success', "Successfully created containers");
+      setTimeout(() => {
+        jolokia.execute(managerMBean, 'createContainers(java.util.Map)', angular.toJson(json), {
+          method: "post",
+          success: (response) => {
+            var error = false;
+            angular.forEach(response.value, function(value, key) {
+              error = true;
+              notification('error', "Creating container " + key + " failed: " + value);
+            });
+            if (!error) {
+              notification('success', "Successfully created containers");
+            }
+            Core.$apply($scope);
+          },
+          error: (response) => {
+            notification('error', "Error creating containers: " + response.error);
+            Core.$apply($scope);
           }
-          Core.$apply($scope);
-        },
-        error: (response) => {
-          notification('error', "Error creating containers: " + response.error);
-          Core.$apply($scope);
-        }
-      });
+        });
+        Core.$apply($scope);
+      }, 10);
 
       notification('info', "Requesting that new container(s) be created");
       $location.url('/fabric/containers');
