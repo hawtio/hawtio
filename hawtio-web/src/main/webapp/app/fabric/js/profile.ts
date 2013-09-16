@@ -45,11 +45,14 @@ module Fabric {
     $scope.doRegister = () => {
       Core.unregister(jolokia, $scope);
       if ($scope.versionId && $scope.profileId && !$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
-        Core.register(jolokia, $scope, {
-          type: 'exec', mbean: managerMBean,
-          operation: 'getProfile(java.lang.String, java.lang.String)',
-          arguments: [$scope.versionId, $scope.profileId]
-        }, onSuccess(render));
+
+        if (jolokia.execute(Fabric.managerMBean, "versions()").some((version) => { return version.id === $scope.versionId })) {
+          Core.register(jolokia, $scope, {
+            type: 'exec', mbean: managerMBean,
+            operation: 'getProfile(java.lang.String, java.lang.String)',
+            arguments: [$scope.versionId, $scope.profileId]
+          }, onSuccess(render));
+        }
       }
     };
 
