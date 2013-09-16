@@ -1,7 +1,4 @@
 <ul class="nav nav-tabs" ng-controller="Fabric.NavBarController">
-  <li ng-hide="hasFabric" ng-class='{active : isActive("#/fabric/create")}'>
-    <a ng-href="#/fabric/create{{hash}}">Create Fabric</a>
-  </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'>
     <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>

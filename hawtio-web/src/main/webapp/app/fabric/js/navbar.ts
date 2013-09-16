@@ -23,9 +23,7 @@ module Fabric {
       // TODO should probably load the default version here
       reloadVersion();
       $scope.hasFabric = Fabric.hasFabric(workspace);
-      if (!$scope.hasFabric) {
-        $location.url("/fabric/create");
-      } else {
+      if ($scope.hasFabric) {
         var containerId = null;
         Fabric.containerWebAppURL(jolokia, "org.fusesource.insight.insight-kibana3", containerId, onKibanaUrl, onKibanaUrl);
         Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);

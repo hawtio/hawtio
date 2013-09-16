@@ -49,6 +49,13 @@ module Fabric {
             });
 
             workspace.topLevelTabs.push( {
+              content: "Create Fabric",
+              title: "Create a fabric starting with this container",
+              isValid: (workspace) => !Fabric.hasFabric(workspace),
+              href: () => "#/fabric/create",
+              isActive: (workspace) => workspace.isLinkActive("fabric/create")
+            });
+            workspace.topLevelTabs.push( {
               content: "Runtime",
               title: "Manage your containers in this fabric",
               isValid: (workspace) => Fabric.hasFabric(workspace),
