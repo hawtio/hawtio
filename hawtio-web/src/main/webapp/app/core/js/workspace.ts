@@ -375,6 +375,19 @@ class Workspace {
     });
   }
 
+  private getStrippedPathName():String {
+    var pathName = Core.trimLeading((this.$location.path() || '/'), "#");
+    pathName = Core.trimLeading(pathName, "/");
+    return pathName;
+  }
+
+  public linkContains(...words:String[]):bool {
+    var pathName = this.getStrippedPathName();
+    return words.all((word) => {
+      return pathName.has(word);
+    });
+  }
+
   /**
    * Returns true if the given link is active. The link can omit the leading # or / if necessary.
    * The query parameters of the URL are ignored in the comparison.
@@ -384,8 +397,7 @@ class Workspace {
    */
   public isLinkActive(href:string):bool {
     // lets trim the leading slash
-    var pathName = Core.trimLeading((this.$location.path() || '/'), "#");
-    pathName = Core.trimLeading(pathName, "/");
+    var pathName = this.getStrippedPathName();
 
     var link = Core.trimLeading(href, "#");
     link = Core.trimLeading(link, "/");
@@ -400,6 +412,7 @@ class Workspace {
       return pathName.startsWith(link);
     }
   }
+
 
   /**
    * Returns true if the tab query parameter is active or the URL starts with the given path

@@ -63,7 +63,7 @@ module Wiki {
               title: "View and edit wiki pages",
               isValid: (workspace:Workspace) => Wiki.isWikiEnabled(workspace, jolokia, localStorage),
               href: () => "#/wiki/view",
-              isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki")
+              isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles")
             });
           });
 

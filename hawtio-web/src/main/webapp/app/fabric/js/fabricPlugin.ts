@@ -69,7 +69,7 @@ module Fabric {
               href: () => {
                 return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
               },
-              isActive: (workspace: Workspace) => workspace.isLinkActive("wiki")
+              isActive: (workspace: Workspace) => workspace.isLinkActive("wiki") && workspace.linkContains("fabric", "profiles")
             });
 
             helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
