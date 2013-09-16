@@ -1392,9 +1392,11 @@ public class Terminal {
                 }
             } else {
                 o += c;
+                /* Seems like this adds an extra newline...
                 if (vt100_mode_lfnewline && c == 13) {
                     o += (char) 10;
                 }
+                */
             }
         }
         return o;
