@@ -155,7 +155,13 @@ module Fabric {
 
       $scope.$watch('versionId', (newValue, oldValue) => {
         if ($scope.versionId && $scope.versionId !== '') {
-          $scope.init();
+          if (jolokia.execute(Fabric.managerMBean, "versions()").some((version) => { return version.id === newValue })) {
+            $scope.init();
+          } else {
+            Core.unregister(jolokia, $scope);
+          }
+        } else {
+          Core.unregister(jolokia, $scope);
         }
       });
 

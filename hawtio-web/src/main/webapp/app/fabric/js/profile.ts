@@ -31,20 +31,19 @@ module Fabric {
     $scope.profilePath = Fabric.profilePath;
 
     $scope.$watch('versionId', (newValue, oldValue) => {
-      Core.unregister(jolokia, $scope);
       if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
         $scope.doRegister();
       }
     });
 
     $scope.$watch('profileId', (newValue, oldValue) => {
-      Core.unregister(jolokia, $scope);
       if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
         $scope.doRegister();
       }
     });
 
     $scope.doRegister = () => {
+      Core.unregister(jolokia, $scope);
       if ($scope.versionId && $scope.profileId && !$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
         Core.register(jolokia, $scope, {
           type: 'exec', mbean: managerMBean,
