@@ -41,7 +41,7 @@ module Wiki {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{fileName(row.entity)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-class="fileClass(row.entity)" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{fileName(row.entity)}}</a></div>',
           cellFilter: ""
         }
       ]
@@ -96,6 +96,13 @@ module Wiki {
 
     $scope.fileName = (entity) => {
       return Wiki.hideFineNameExtensions(entity.name);
+    };
+
+    $scope.fileClass = (entity) => {
+      if (entity.name.has(".profile")) {
+        return "green";
+      }
+      return "";
     };
 
     $scope.fileIconHtml = (entity) => {
