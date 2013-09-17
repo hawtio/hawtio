@@ -45,7 +45,7 @@ module Insight {
         var jreq = { type: 'exec',
                      mbean: 'org.elasticsearch:service=restjmx',
                      operation: 'exec',
-                     arguments: [ 'GET', '/_all/_mapping', null ] };
+                     arguments: [ 'GET', '/_all/_mapping', '' ] };
 
         jolokia.request(jreq, { success: function(response) {
             var data = jQuery.parseJSON(response.value);
