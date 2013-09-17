@@ -15,6 +15,12 @@ module Fabric {
 
     $scope.containerId = $routeParams.containerId;
 
+    $scope.addToDashboardLink = () => {
+      var href = "#/fabric/container/:containerId";
+      var routeParams = angular.toJson($routeParams);
+      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams);
+    };
+
     $scope.selectedProfiles = [];
     $scope.selectedProfilesDialog = [];
     $scope.selectedProfilesString = '';
@@ -38,7 +44,7 @@ module Fabric {
 
     $scope.doConnect = (container) => {
       $scope.connectToContainerDialog.open();
-    }
+    };
 
 
     $scope.connect = () => {
@@ -59,12 +65,16 @@ module Fabric {
       // avoid any nasty errors that the container doesn't existing anymore
       Core.unregister(jolokia, $scope);
       doDeleteContainer($scope, jolokia, $scope.containerId, () => {
-        $location.path('/fabric/view');
+        $location.path('/fabric/containers');
       });
     };
 
     $scope.start = () => {
       doStartContainer($scope, jolokia, $scope.containerId);
+    };
+
+    $scope.statusIcon = () => {
+      return Fabric.statusIcon($scope.row);
     };
 
     $scope.getType = () => {

@@ -372,6 +372,31 @@ module Fabric {
     return Core.pathGet(folder, "objectName");
   }
 
+  export function statusIcon(row) {
+    if (row) {
+      if (row.alive) {
+        switch(row.provisionResult) {
+          case 'success':
+            return "green icon-play-circle";
+          case 'downloading':
+            return "icon-download-alt";
+          case 'installing':
+            return "icon-hdd";
+          case 'analyzing':
+          case 'finalizing':
+            return "icon-refresh icon-spin";
+          case 'resolving':
+            return "icon-sitemap";
+          case 'error':
+            return "red icon-warning-sign";
+        }
+      } else {
+        return "orange icon-off";
+      }
+    }
+    return "icon-refresh icon-spin";
+  }
+
   /**
    * Opens a window connecting to the given container row details if the jolokiaUrl is available
    */

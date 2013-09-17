@@ -1077,6 +1077,7 @@ li.stacktrace {
   border-top-left-radius: 4px;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.12);
   line-height: 16px !important;
+  z-index: 9999;
 }
 .instance-name .collapse-target ul {
   margin: 0;
@@ -1641,4 +1642,29 @@ dd.file-list {
 .page-padded {
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.fabric-page-header .span4 h2 i {
+  margin-right: 13px;
+}
+
+.controller-section-widget {
+  padding: 3px;
+}
+
+.container-status-dashboard {
+  text-align: center;
+}
+
+.container-status-dashboard i {
+  font-size: 95px;
+}
+
+.status-icon {
+  text-decoration: none;
+  color: inherit;
+}
+
+.status-icon:hover {
+  text-decoration: none;
 }

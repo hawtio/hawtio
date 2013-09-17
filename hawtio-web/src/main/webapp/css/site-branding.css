@@ -718,5 +718,6 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
   font-family: monospace;
 }
 
-
-
+.fabric-page-header .span4 h2 {
+  margin-top: 0px;
+}

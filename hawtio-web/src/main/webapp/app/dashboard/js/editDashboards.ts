@@ -61,7 +61,7 @@ module Dashboard {
         var query = null;
         if (text) {
           var idx = text.indexOf('?');
-          if (idx) {
+          if (idx && idx > 0) {
             query = text.substring(idx + 1);
             text = text.substring(0, idx);
           }
@@ -106,12 +106,20 @@ module Dashboard {
               }
               var nextNumber = selectedItem.widgets.length + 1;
               var widget = {
-                id: "w" + nextNumber, title: "Untitled" + nextNumber, row: nextNumber, col: 1,
+                id: "w" + nextNumber, title: "", row: nextNumber, col: 1,
                 path: Core.trimLeading(text, "/"),
                 include: templateUrl,
                 search: search,
                 hash: ""
               };
+
+              if ($scope.routeParams) {
+                widget['routeParams'] = $scope.routeParams;
+              }
+              if ($scope.preferredSize) {
+                widget['size_x'] = $scope.preferredSize['size_x'];
+                widget['size_y'] = $scope.preferredSize['size_y'];
+              }
               selectedItem.widgets.push(widget);
 
               if (!nextHref && selectedItem.id) {
@@ -182,6 +190,15 @@ module Dashboard {
         $scope.url = decodeURIComponent(url);
       }
 
+      var routeParams = $routeParams["routeParams"];
+      if (routeParams) {
+        $scope.routeParams = decodeURIComponent(routeParams);
+      }
+      var size = $routeParams["size"];
+      if (size) {
+        var size = decodeURIComponent(size);
+        $scope.preferredSize = angular.fromJson(size);
+      }
       // TODO can we avoid reloading these on startup from the navbar.ts as well?
       dashboardRepository.getDashboards(dashboardLoaded);
     }

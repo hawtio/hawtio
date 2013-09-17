@@ -11,6 +11,12 @@ module Fabric {
       return item.versionId + " / " + item.id;
     }
 
+    $scope.addToDashboardLink = () => {
+      var href = "#/fabric/containers";
+
+      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(angular.toJson({size_y:1, size_x: 4}));
+    };
+
     $scope.filterContainer = (container) => {
       if (!$scope.getFilteredName(container).has($scope.containerIdFilter)) {
         return false;
