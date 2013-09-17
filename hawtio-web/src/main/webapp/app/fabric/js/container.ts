@@ -2,14 +2,18 @@ module Fabric {
 
   export function ContainerController($scope, localStorage, $routeParams, jolokia, $location) {
 
+    if ($scope.inDashboard) {
+      $scope.operation = 'getContainer(java.lang.String, java.util.List)';
+    } else {
+      $scope.operation = 'getContainer(java.lang.String)';
+    }
+
     /*
     // handy for working around any randomly added fields that won't marshal
     $scope.fields = jolokia.execute(Fabric.managerMBean, 'getFields(java.lang.String)', 'org.fusesource.fabric.api.Container');
     $scope.fields.remove('fabricService');
     $scope.operation = 'getContainer(java.lang.String, java.util.List)'
     */
-
-    $scope.operation = 'getContainer(java.lang.String)';
 
     $scope.loading = true;
 
@@ -135,6 +139,13 @@ module Fabric {
       });
     };
 
+    $scope.getArguments = () => {
+      if ($scope.inDashboard) {
+        return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive']];
+      }
+      return [$scope.containerId];
+    };
+
 
     $scope.deleteProfiles = () => {
       $scope.deleteProfileDialog.close();
@@ -156,8 +167,8 @@ module Fabric {
       setTimeout( () => {
         jolokia.request({
               type: 'exec', mbean: Fabric.managerMBean,
-              operation: 'getContainer(java.lang.String)',
-              arguments: [$scope.containerId]
+              operation: $scope.operation,
+              arguments: $scope.getArguments()
             },
             {
               method: 'POST',
@@ -171,7 +182,7 @@ module Fabric {
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
         operation: $scope.operation,
-        arguments: [$scope.containerId]
+        arguments: $scope.getArguments()
       }, onSuccess(render));
     }
 
