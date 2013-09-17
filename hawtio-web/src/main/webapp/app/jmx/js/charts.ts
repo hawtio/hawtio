@@ -1,14 +1,19 @@
 module Jmx {
-  export function ChartController($scope, $element, $location, workspace:Workspace, jolokia, localStorage) {
+  export function ChartController($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) {
+
 
     $scope.metrics = [];
-    $scope.updateRate = parseInt(localStorage['updateRate']);
+    $scope.updateRate = 1000; //parseInt(localStorage['updateRate']);
+
+    var jolokia = new Jolokia(jolokiaParams);
+    jolokia.start($scope.updateRate);
 
     // lets disable as it causes 2 events which
     // cause double charts
     var watchRouteChange = false;
 
     $scope.$on('$destroy', function () {
+      jolokia = null;
       if (watchRouteChange) {
         $scope.deregRouteChange();
       }

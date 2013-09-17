@@ -116,6 +116,14 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             xhr: null
           };
         }).
+        factory('jolokiaParams', function(jolokiaUrl) {
+          return {
+            url: jolokiaUrl,
+            canonicalNaming: false,
+            ignoreErrors: true,
+            mimeType: 'application/json'
+          };
+        }).
 
         factory('branding', function() {
           return {
@@ -140,12 +148,11 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
         }).
 
-        factory('jolokia',($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails) => {
+        factory('jolokia',($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails, jolokiaParams) => {
           // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
           // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
           console.log("Jolokia URL is " + jolokiaUrl);
           if (jolokiaUrl) {
-            var jolokiaParams = {url: jolokiaUrl, canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'};
 
             var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
             // pass basic auth credentials down to jolokia if set
