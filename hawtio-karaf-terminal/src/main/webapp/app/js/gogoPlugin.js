@@ -47,7 +47,15 @@ var simplePlugin = angular.module(pluginName, ['hawtioCore'])
 
   });
 
+var GogoController = function($scope) {
 
+  $scope.addToDashboardLink = function() {
+    var href = "#/gogo";
+    var size = angular.toJson({size_y: 4, size_x: 4});
+    return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(size);
+  };
+
+};
 // tell the hawtio plugin loader about our plugin so it can be
 // bootstrapped with the rest of angular
 hawtioPluginLoader.addModule(pluginName);
