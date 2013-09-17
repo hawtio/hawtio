@@ -39,7 +39,10 @@ public class AuthenticationFilter implements Filter {
         realm = (String) filterConfig.getServletContext().getAttribute("realm");
         role = (String) filterConfig.getServletContext().getAttribute("role");
         rolePrincipalClasses = (String) filterConfig.getServletContext().getAttribute("rolePrincipalClasses");
-        enabled = (Boolean) filterConfig.getServletContext().getAttribute("authEnabled");
+        Object authEnabledValue = filterConfig.getServletContext().getAttribute("authEnabled");
+        if (authEnabledValue instanceof Boolean) {
+            enabled = (Boolean) authEnabledValue;
+        }
 
         if (enabled) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"" + realm + "\" authorized role: \"" + role + "\"" + " role principal classes: \"" + rolePrincipalClasses + "\"");
