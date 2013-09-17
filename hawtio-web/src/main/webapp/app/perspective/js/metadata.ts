@@ -13,6 +13,9 @@ module Perspective {
             href: "#/wiki/branch/"
           },
           {
+            href: "#/wiki/profile"
+          },
+          {
             href: "#/dashboard"
           }
         ]

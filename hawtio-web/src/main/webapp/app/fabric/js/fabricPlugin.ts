@@ -14,7 +14,7 @@ module Fabric {
             when('/fabric/containers', {templateUrl: templatePath + 'containers.html'}).
             when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html'}).
             when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
-            when('/fabric/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
+            when('/wiki/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
@@ -70,7 +70,7 @@ module Fabric {
               href: () => {
                 return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
               },
-              isActive: (workspace: Workspace) => workspace.isLinkActive("wiki") && workspace.linkContains("fabric", "profiles")
+              isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
             });
 
             helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
