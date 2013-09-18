@@ -2,97 +2,89 @@ module Dashboard {
 
 
   export class FabricDashboardRepository implements DashboardRepository {
-    public git = null;
 
-    public branch: string = null;
-    public profilePaths = [];
+    private details;
 
     constructor(public workspace, public jolokia, public localStorage) {
-      this.git = Git.createGitRepository(this.workspace, this.jolokia, this.localStorage);
+      this.details = this.getBranchAndProfiles();
+    }
 
-      var container = Fabric.getCurrentContainer(this.jolokia, ['id', 'versionId', 'profileIds']);
-      this.branch = container.versionId;
-      var profileIds = "default";
-      if (container.profileIds) {
-        profileIds = container.profileIds.unique().sortBy('');
+    public getBranchAndProfiles() {
+
+      var container = Fabric.getCurrentContainer(this.jolokia, ['id', 'versionId', 'profiles']);
+      var profiles = [];
+      if (container.profiles) {
+        profiles = container.profiles.unique();
+        profiles = Fabric.filterProfiles(this.jolokia, container.versionId, profiles);
       }
-      profileIds.each((profileId) => {
-        this.profilePaths.push({
-          profileId: profileId,
-          path: "/fabric/profiles/" + profileId.split("-").join("/") + ".profile"
-        });
-      });
 
-      // pre-create empty dashboard files
-      this.profilePaths.forEach((path) => {
-        this.git.read(this.branch, path.path, (details) => {
-          var files = details.children;
-          var dashboardExists = false;
-          files.forEach((file) => {
-            var path = file.path;
-            if (!file.directory && path.endsWith("dashboard.json")) {
-              dashboardExists = true;
-            }
-          });
-          if (!dashboardExists) {
-            this.putDashboards([{
-              id: Core.getUUID(),
-              title: path.profileId,
-              group: "Fabric",
-              widgets: []
-            }], "Adding new dashboard for profile " + path.profileId, () => {
-              notification('info', "Created dashboard for " + path.profileId);
-            });
-          }
-        });
-      });
-
+      return {
+        branch: container.versionId,
+        profiles: profiles
+      }
     }
 
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {
-      angular.forEach(array, (dash) => {
-        var path = this.getDashboardPath(dash);
-        var contents = angular.toJson(dash);
-        this.git.write(this.branch, path, commitMessage, contents, fn);
+      var jolokia = this.jolokia;
+      var details = this.details;
+      array.forEach((dashboard) => {
+        var data = angular.toJson(dashboard, true);
+        var profileId = dashboard.profileId;
+        if (!profileId) {
+          // TODO maybe not just pick the first one :-)
+          profileId = details.profiles.first();
+        }
+        var fileName = dashboard.fileName;
+        if (!fileName) {
+          fileName = Core.getUUID() + ".dashboard";
+        }
+        Fabric.saveConfigFile(jolokia, details.branch, profileId, fileName, data.encodeBase64(), () => {
+          //notification('success', "Saved dashboard " + dashboard.title);
+        }, (response) => {
+          notification('error', "Failed to save dashboard " + dashboard.title + " due to " + response.error);
+        });
       });
     }
 
     public deleteDashboards(array:Dashboard[], fn) {
-
-      angular.forEach(array, (dash) => {
-        var path = this.getDashboardPath(dash);
-        var commitMessage = "Removing dashboard " + path;
-        this.git.remove(this.branch, path, commitMessage, fn);
+      var jolokia = this.jolokia;
+      var details = this.details;
+      array.forEach((dashboard) => {
+        var profileId = dashboard.profileId;
+        var fileName = dashboard.fileName;
+        if (profileId && fileName) {
+          Fabric.deleteConfigFile(jolokia, details.branch, profileId, fileName, () => {
+            notification('success', "Deleted dashboard " + dashboard.title);
+          }, (response) => {
+            notification('error', "Failed to delete dashboard " + dashboard.title + " due to " + response.error);
+          })
+        }
       });
-    }
-
-    public getDashboardPath(dash) {
-      var path = this.profilePaths.find((path) => { return path.profileId === dash.title });
-      path = path.path + "/dashboard.json";
-      return path;
     }
 
     public getDashboards(fn) {
 
-      var index = this.profilePaths.length;
+      var jolokia = this.jolokia;
+      var details = this.details;
       var dashboards = [];
 
-      this.profilePaths.forEach((path) => {
-
-        var dashboard = path.path + '/dashboard.json';
-        this.git.read(this.branch, dashboard, (details) => {
-          index = index - 1;
-          var content = details.text;
-          if (content) {
-            var json = angular.fromJson(content);
-            json.uri = dashboard;
-            dashboards.push(json);
-          }
-          if (index === 0) {
-            fn(dashboards.sortBy((dash) => { return dash.title; }));
+      details.profiles.forEach((profile) => {
+        var data = Fabric.getProfileData(jolokia, details.branch, profile, ['configurations']);
+        data.configurations.forEach((configuration) => {
+          if (configuration.endsWith(".dashboard")) {
+            var file = Fabric.getConfigFile(jolokia, details.branch, profile, configuration);
+            if (file) {
+              var dashboard = angular.fromJson(file);
+              dashboard['versionId'] = details.branch;
+              dashboard['profileId'] = profile;
+              dashboard['fileName'] = configuration;
+              dashboards.push(dashboard);
+            }
           }
         });
       });
+
+      fn(dashboards);
     }
 
     public getDashboard(id:string, fn) {

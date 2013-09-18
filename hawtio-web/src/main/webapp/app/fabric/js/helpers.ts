@@ -446,5 +446,31 @@ module Fabric {
   }
 
 
+  export function filterProfiles(jolokia, versionId, profileIds) {
+    var profiles = jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String, java.util.List)", versionId, ['id', 'hidden', 'abstract'], { method: 'POST' });
+
+    profiles = profiles.filter((profile) => {
+      return profileIds.some((id) => { return profile.id === id });
+    });
+    profiles = profiles.filter((profile => {
+      return !profile.abstract && !profile.hidden;
+    }));
+
+    return profiles.map((p) => { return p.id; });
+  }
+
+  export function getProfileData(jolokia, versionId, profileId, fields) {
+    return jolokia.execute(Fabric.managerMBean, "getProfile(java.lang.String, java.lang.String, java.util.List)", versionId, profileId, fields, { method: 'POST' });
+  }
+
+  export function getConfigFile(jolokia, versionId, profileId, fileName) {
+    var answer = jolokia.execute(Fabric.managerMBean, "getConfigurationFile(java.lang.String, java.lang.String, java.lang.String)", versionId, profileId, fileName)
+    if (answer) {
+      return answer.decodeBase64();
+    }
+    return null;
+  }
+
+
 
 }
