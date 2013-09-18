@@ -440,5 +440,11 @@ module Fabric {
   }
 
 
+  export function getCurrentContainer(jolokia, fields) {
+    var name = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', { method: 'POST' });
+    return jolokia.execute(Fabric.managerMBean, "getContainer(java.lang.String, java.util.List)", name, fields, { method: 'POST' });
+  }
+
+
 
 }

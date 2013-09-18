@@ -27,6 +27,8 @@ module Dashboard {
       },
       data: 'repository.dashboards',
       selectWithCheckboxOnly: true,
+      multiSelect: false,
+      showSelectionCheckbox: true,
       columnDefs: [
         {
           field: 'title',

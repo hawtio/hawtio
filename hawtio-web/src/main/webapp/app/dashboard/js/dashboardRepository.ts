@@ -50,6 +50,9 @@ module Dashboard {
      * Looks up the MBean in the JMX tree
      */
     public getRepository():DashboardRepository {
+      if (Fabric.hasFabric(this.workspace)) {
+        return new FabricDashboardRepository(this.workspace, this.jolokia, this.localStorage);
+      }
       var git = Git.createGitRepository(this.workspace, this.jolokia, this.localStorage);
       if (git) {
         return new GitDashboardRepository(git);
