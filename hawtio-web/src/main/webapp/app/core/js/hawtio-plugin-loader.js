@@ -86,6 +86,7 @@
       var loaded = $.map(plugins, function(n, i) { return i; }).length;
 
       var scriptLoaded = function() {
+        $.ajaxSetup({async:true});
         loaded = loaded - 1;
         if (loaded == 0) {
           callback();
@@ -98,11 +99,13 @@
           data.Scripts.forEach( function(script) {
             //console.log("Loading plugin: ", data.Name);
             var scriptName = data.Context + "/" + script;
+            $.ajaxSetup({async:false});
             $.getScript(scriptName).always(scriptLoaded);
           });
         });
       } else {
         // no scripts to load, so just do the callback
+        $.ajaxSetup({async:true});
         callback();
       }
     }
@@ -116,7 +119,7 @@
         if (urlsToLoad == 0) {
           loadScripts();
         }
-      }
+      };
 
       var regex = new RegExp(/^jolokia:/);
 

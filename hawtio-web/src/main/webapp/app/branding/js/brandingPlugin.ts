@@ -42,6 +42,7 @@ module Branding {
   // just in case we'll check for all of these...
   export var mqProfiles = ["mq", "a-mq", "a-mq-openshift", "mq-replicated"];
 
+  $.ajaxSetup({async:true});
   $.get('/hawtio/branding', (response) => {
 
     Branding.enabled = Core.parseBooleanValue(response.enable);
