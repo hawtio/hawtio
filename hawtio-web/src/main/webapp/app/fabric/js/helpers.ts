@@ -217,7 +217,7 @@ module Fabric {
   
   export function getServiceList(container) {
     var answer = [];
-    if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains)) {
+    if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
 
       container.jmxDomains.forEach((domain) => {
         if (domain === "org.fusesource.insight") {
