@@ -53,14 +53,22 @@ module Core {
 
     $scope.$watch('hosts', (oldValue, newValue) => {
       if (!Object.equal(oldValue, newValue)) {
-        localStorage['regexs'] = angular.toJson($scope.hosts);
+        if (angular.isDefined($scope.hosts)) {
+          localStorage['regexs'] = angular.toJson($scope.hosts);
+        } else {
+          delete localStorage['regexs'];
+        }
       } else {
-        $scope.hosts = angular.fromJson(localStorage['regexs']);
+        $scope.hosts = {};
+        if (angular.isDefined(localStorage['regexs'])) {
+          $scope.hosts = angular.fromJson(localStorage['regexs']);
+        }
       }
     }, true);
 
     var defaults = {
-      logCacheSize: 1000
+      logCacheSize: 1000,
+      fabricEnableMaps: true
     };
 
     var converters = {
@@ -79,21 +87,22 @@ module Core {
       localStorage['autoRefresh'] = $scope.autoRefresh;
     });
 
-    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "logCacheSize"];
+    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "logCacheSize", "fabricEnableMaps"];
 
     angular.forEach(names, (name) => {
-      $scope[name] = localStorage[name];
-      var converter = converters[name];
-      if (converter) {
-        $scope[name] = converter($scope[name]);
-      }
-      if (!$scope[name]) {
+      if (angular.isDefined(localStorage[name])) {
+        $scope[name] = localStorage[name];
+        var converter = converters[name];
+        if (converter) {
+          $scope[name] = converter($scope[name]);
+        }
+      } else {
         $scope[name] = defaults[name] || "";
       }
 
       $scope.$watch(name, () => {
         var value = $scope[name];
-        if (value) {
+        if (angular.isDefined(value)) {
           localStorage[name] = value;
         }
       });

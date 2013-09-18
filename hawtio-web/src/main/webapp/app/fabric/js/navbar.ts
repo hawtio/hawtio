@@ -1,7 +1,9 @@
 module Fabric {
-  export function NavBarController($scope, $location, jolokia, workspace:Workspace) {
+  export function NavBarController($scope, $location, jolokia, workspace:Workspace, localStorage) {
 
     $scope.activeVersion = "1.0";
+
+    $scope.mapsEnabled = localStorage['fabricEnableMaps'];
 
     // update the active version whenever query parameters change
     $scope.$on('$routeUpdate', reloadVersion);

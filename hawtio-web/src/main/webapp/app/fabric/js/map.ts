@@ -1,21 +1,32 @@
 module Fabric {
 
-  export function MapController($scope, workspace:Workspace, $routeParams, jolokia) {
+  export var startMaps = () => {};
+
+  export function MapController($scope, $templateCache, jolokia) {
     $scope.myMarkers = [];
     $scope.containers = {};
+    $scope.template = "";
 
-    $scope.mapOptions = {
-      center: new google.maps.LatLng(35.784, -78.670),
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+    $scope.start = () => {
+
+      $scope.mapOptions = {
+        center: new google.maps.LatLng(35.784, -78.670),
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+
+      Core.register(jolokia, $scope, {
+        type: 'exec', mbean: managerMBean,
+        operation: 'containers()',
+        arguments: []
+      }, onSuccess(render));
+
+      $scope.template = $templateCache.get("pageTemplate");
     };
 
-    Core.register(jolokia, $scope, {
-      type: 'exec', mbean: managerMBean,
-      operation: 'containers()',
-      arguments: []
-    }, onSuccess(render));
+    Fabric.startMaps = $scope.start
 
+    $('body').append('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&async=2&callback=Fabric.startMaps"></script>');
 
     $scope.addMarker = function ($event) {
       $scope.myMarkers.push(new google.maps.Marker({

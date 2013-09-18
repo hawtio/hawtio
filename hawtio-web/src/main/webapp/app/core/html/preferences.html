@@ -117,6 +117,18 @@
         </div>
       </form>
 
+      <strong>Fabric</strong>
+      <form class="form-horizontal">
+        <label class="control-label">Enable Maps</label>
+        <div class="control-group">
+          <div class="controls">
+            <input type="checkbox" ng-model="fabricEnableMaps">
+            <span class="help-block">Enable the "Map" tab in Fabric view, requires network access to maps.google.com</span>
+          </div>
+        </div>
+      </form>
+
+
       <!-- TODO Split into its file and include as a partial -->
       <div ng-controller="CodeEditor.PreferencesController">
         <strong>Editor</strong>
