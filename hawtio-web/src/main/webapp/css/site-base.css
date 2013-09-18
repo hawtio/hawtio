@@ -135,12 +135,21 @@ i.expandable-indicator {
 }
 .expandable.opened i.expandable-indicator:before {
   font-family: FontAwesome;
-  content: "\f078";
+  content: "\f078" !important;
 }
 .expandable.closed i.expandable-indicator:before {
   font-family: FontAwesome;
   content: "\f054";
 }
+.expandable.opened i.expandable-indicator.folder:before {
+  font-family: FontAwesome;
+  content: "\F07C" !important;
+}
+.expandable.closed i.expandable-indicator.folder:before {
+  font-family: FontAwesome;
+  content: "\F07B";
+}
+
 .expandable.opened .expandable-body {
   display: inline-block;
   margin-bottom: 3px;
@@ -1704,3 +1713,35 @@ dd.file-list {
   opacity: 1.0;
 }
 
+.no-list {
+  list-style-type: none;
+}
+
+.profile-selector-item {
+  display: table;
+}
+
+.profile-selector-checkbox {
+  display: table-cell;
+  padding-right: 5px;
+}
+
+.profile-selector-name {
+  display: table-cell;
+  position: relative;
+  width: 100%;
+}
+
+.profile-info {
+  position: absolute;
+  right: 3px;
+}
+
+.profile-list ul {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+.profile-list ul li .expandable .expandable-body {
+  margin-left: 16px;
+}

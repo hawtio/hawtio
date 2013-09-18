@@ -15,6 +15,7 @@ module Fabric {
       showLinks: '@',
       showHeader: '@',
       useCircles: '@',
+      expanded: '@',
       excludedProfiles: '=',
       includedProfiles: '='
     };
@@ -29,10 +30,15 @@ module Fabric {
       $scope.indeterminate = false;
       $scope.showFilter = true;
       $scope.useCircles = false;
-
+      $scope.expanded = false;
+      $scope.tree = [];
 
       $scope.showProfile = (profile) => {
         return $scope.filterText.isBlank() || profile.id.has($scope.filterText);
+      };
+
+      $scope.showBranch = (branch) => {
+        return $scope.filterText.isBlank() || branch.profiles.some((profile) => { return profile.id.has($scope.filterText) });
       };
 
       $scope.goto = (profile) => {
@@ -61,9 +67,50 @@ module Fabric {
             $scope.profiles = $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
           }
 
+          var paths = [];
+
+          $scope.profiles.each((profile) => {
+            var path = profile.id.split('-');
+            profile.name = path.last();
+            profile.path = path.exclude(profile.name).join(' / ');
+            paths.push(profile.path);
+          });
+
+          paths = paths.unique().sortBy('length').sortBy((n) => { return n; });
+          var tree = [];
+          paths.forEach((path) => {
+            var branch = {
+              expanded: $scope.expanded,
+              path: path,
+              profiles: $scope.profiles.filter((profile) => { return profile.path === path; })
+            };
+            tree.push(branch);
+          });
+          $scope.tree = tree;
+
           Core.$apply($scope);
         }
       };
+
+
+      $scope.isOpen = (branch) => {
+        if ($scope.filterText !== '') {
+          return "opened";
+        }
+        if (branch.expanded) {
+          return "opened";
+        }
+        return "closed";
+      };
+
+
+      $scope.isOpenIcon = (branch) => {
+        if (branch.expanded) {
+          return "icon-folder-open";
+        }
+        return "icon-folder-closed";
+      };
+
 
       $scope.$watch('includedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
