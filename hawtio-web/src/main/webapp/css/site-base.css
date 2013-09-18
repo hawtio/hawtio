@@ -1677,15 +1677,41 @@ dd.file-list {
   padding: 3px;
 }
 
+.container-dashboard-controls {
+  position: relative;
+  z-index: 10;
+}
+
+.container-dashboard-controls .pull-right .btn {
+  opacity: 0.5;
+  transition: opacity 1s;
+}
+
+.container-dashboard-controls .pull-right .btn:hover {
+  opacity: 0.9;
+}
+
+.container-dashboard-status-table {
+  position: relative;
+  top: -34px;
+  display: table;
+  max-width: 278px;
+  z-index: 9;
+}
 .container-status-dashboard {
   text-align: center;
+  display: table-cell;
+  min-width: 139px;
 }
 
 .container-status-dashboard i {
-  font-size: 95px;
+  position: relative;
+  left: -2px;
+  font-size: 127px;
 }
 
 .status-icon {
+  display: inline-block;
   text-decoration: none;
   color: inherit;
 }
@@ -1695,22 +1721,15 @@ dd.file-list {
 }
 
 .dashboard-service-list {
-  position: relative;
+  display: table-cell;
+  min-width: 139px;
+  vertical-align: middle;
 }
 
-.dashboard-service-list ul.inline {
-  position: absolute;
-  top: 25px;
-  z-index: 10;
-}
-
-.dashboard-service-list ul.inline li {
-  opacity: 0.5;
-  transition: opacity 1s;
-}
-
-.dashboard-service-list ul.inline li:hover {
-  opacity: 1.0;
+.container-dashboard-profile-controls {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
 }
 
 .no-list {

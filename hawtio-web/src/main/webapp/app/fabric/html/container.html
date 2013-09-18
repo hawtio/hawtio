@@ -202,7 +202,7 @@
 
   <div ng-show="inDashboard">
     <div class="controller-section-widget">
-      <div class="row-fluid">
+      <div class="row-fluid container-dashboard-controls">
         <div class="pull-left">
           <a ng-href="#/fabric/container/{{containerId}}">{{row.id}}</a>
         </div>
@@ -212,22 +212,24 @@
           <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start"><i class="icon-play-circle"></i></button>
         </div>
       </div>
-      <div class="row-fluid dashboard-service-list">
-        <ul class="inline">
-          <li ng-repeat="service in services" ng-switch="service.type">
-            <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
-            <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
-          </li>
-          <li ng-show="row.ensembleServer"><i class="icon-cloud" title="Fabric Ensemble Server"></i></li>
-        </ul>
-      </div>
-      <div class="row-fluid container-status-dashboard" ng-click="gotoDetails()">
+      <div class="row-fluid container-dashboard-status-table">
+        <div class="container-status-dashboard" ng-click="gotoDetails()">
         <a class="status-icon" ng-href="#/fabric/container/{{containerId}}">
           <i ng-class="statusIcon()"></i>
         </a>
+        </div>
+        <div class="dashboard-service-list">
+          <ul class="inline">
+            <li ng-repeat="service in services" ng-switch="service.type">
+              <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+              <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+            </li>
+            <li ng-show="row.ensembleServer"><i class="icon-cloud" title="Fabric Ensemble Server"></i></li>
+          </ul>
+        </div>
       </div>
-      <div class="row-fluid centered">
-        <div class="btn-group inline-block">
+      <div class="row-fluid">
+        <div class="btn-group container-dashboard-profile-controls">
           <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i></button>
           <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
                   title="Removes the selected profiles from this container"><i class="icon-minus"></i></button>
