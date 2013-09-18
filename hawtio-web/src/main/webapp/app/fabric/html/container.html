@@ -212,6 +212,15 @@
           <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start"><i class="icon-play-circle"></i></button>
         </div>
       </div>
+      <div class="row-fluid dashboard-service-list">
+        <ul class="inline">
+          <li ng-repeat="service in services" ng-switch="service.type">
+            <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+            <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+          </li>
+          <li ng-show="row.ensembleServer"><i class="icon-cloud" title="Fabric Ensemble Server"></i></li>
+        </ul>
+      </div>
       <div class="row-fluid container-status-dashboard" ng-click="gotoDetails()">
         <a class="status-icon" ng-href="#/fabric/container/{{containerId}}">
           <i ng-class="statusIcon()"></i>

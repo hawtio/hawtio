@@ -1231,7 +1231,6 @@ li.stacktrace {
   position: absolute;
   left: 11px;
   bottom: 14%;
-  right: 0px;
 }
 .box .box-right {
   display: inline-block;
@@ -1239,6 +1238,23 @@ li.stacktrace {
   right: 11px;
   bottom: 14%;
 }
+.box .box-middle {
+  display: inline-block;
+  position: absolute;
+  right: 60px;
+  bottom: 14%;
+}
+
+.box-middle ul.inline li {
+  opacity: 0.5;
+  transition: opacity 0.5s;
+}
+
+.box-middle ul.inline li:hover{
+  opacity: 1;
+}
+
+
 .section-header {
   background-color: #FAFAFA;
   background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
@@ -1668,3 +1684,23 @@ dd.file-list {
 .status-icon:hover {
   text-decoration: none;
 }
+
+.dashboard-service-list {
+  position: relative;
+}
+
+.dashboard-service-list ul.inline {
+  position: absolute;
+  top: 25px;
+  z-index: 10;
+}
+
+.dashboard-service-list ul.inline li {
+  opacity: 0.5;
+  transition: opacity 1s;
+}
+
+.dashboard-service-list ul.inline li:hover {
+  opacity: 1.0;
+}
+

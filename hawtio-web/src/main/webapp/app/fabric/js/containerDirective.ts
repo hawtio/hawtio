@@ -10,7 +10,7 @@ module Fabric {
 
     public controller = ($scope, $element, $attrs, jolokia, $location, $templateCache) => {
 
-      $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
+      $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
       $scope.containersOp = 'containers(java.util.List)';
       $scope.ensembleContainerIdListOp = 'EnsembleContainers';
 
@@ -45,6 +45,7 @@ module Fabric {
           }
 
           newContainers.each((container) => {
+            container.services = getServiceList(container);
             var c = $scope.containers.find((c) => { return c.id === container.id; });
             if (c) {
               container['selected'] = c.selected;

@@ -220,6 +220,13 @@ module Fabric {
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains)) {
 
       container.jmxDomains.forEach((domain) => {
+        if (domain === "org.fusesource.insight") {
+          answer.push({
+            title: "Fuse Insight",
+            type: "icon",
+            src: "icon-eye-open"
+          })
+        }
         if (domain === "org.apache.activemq") {
           answer.push({
             title: "Apache ActiveMQ",

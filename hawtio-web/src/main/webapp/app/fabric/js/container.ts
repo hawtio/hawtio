@@ -141,7 +141,7 @@ module Fabric {
 
     $scope.getArguments = () => {
       if ($scope.inDashboard) {
-        return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive']];
+        return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer']];
       }
       return [$scope.containerId];
     };
@@ -207,7 +207,7 @@ module Fabric {
         $scope.responseJson = responseJson;
         $scope.row = response.value;
         if ($scope.row) {
-          if ($scope.row.provisionException !== null) {
+          if (angular.isDefined($scope.row.provisionException) && angular.isString($scope.row.provisionException)) {
             $scope.row.provisionExceptionArray = $scope.row.provisionException.lines();
           }
           $scope.services = getServiceList($scope.row);
