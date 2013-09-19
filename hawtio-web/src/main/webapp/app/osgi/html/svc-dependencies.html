@@ -1,36 +1,44 @@
 <style>
-    .node rect {
-        stroke-width: 1px;
-        stroke: #ccc;
-        fill: url(#rect-gradient);
-    }
-
-    .node:hover {
-        cursor: pointer;
-        opacity: 0.6;
-    }
-
-    .node.selected rect {
-        fill: url(#rect-select-gradient);
-    }
-
-    path.edge {
+    path.link {
         fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+    }
+
+    marker#licensing {
+        fill: green;
+    }
+
+    path.link.licensing {
+        stroke: green;
+    }
+
+    path.link.resolved {
+        stroke-dasharray: 0,2 1;
+    }
+
+    circle {
+        fill: #ccc;
         stroke: #333;
-        stroke-width: 1px;
+        stroke-width: 1.5px;
     }
 
-    .edge:hover {
-        cursor: pointer;
-        opacity: 0.4;
+    text {
+        font: 10px sans-serif;
+        pointer-events: none;
     }
 
-    text.counter {
-        stroke: #f88;
-    }
+    text.shadow {
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-opacity: .8;
 </style>
+
 <div ng-controller="Osgi.ServiceDependencyController">
 
+    <hawtio-force-graph>Andreas</hawtio-force-graph>
+
+<!--
     <div class="row-fluid">
         <div class="span12">
             <div id="canvas" >
@@ -66,5 +74,6 @@
             </div>
         </div>
     </div>
+-->
 
 </div>
