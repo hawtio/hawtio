@@ -18,7 +18,7 @@ module Dashboard {
       try {
         json = JSON.parse($scope.source);
       } catch (e) {
-        notification("ERROR", "Could not parse the JSON\n" + e);
+        notification("error", "Could not parse the JSON\n" + e);
         json = [];
       }
       var array = [];
@@ -31,16 +31,7 @@ module Dashboard {
       if (array.length) {
         // lets ensure we have some valid ids and stuff...
         angular.forEach(array, (dash, index) => {
-          var counter = index + 1;
-          if (!dash.id) {
-            dash.id = "imported" + counter;
-          }
-          if (!dash.title) {
-            dash.title = "Imported" + counter;
-          }
-          if (!dash.group) {
-            dash.group = "Personal";
-          }
+          angular.copy(dash, dashboardRepository.createDashboard(dash));
         });
         dashboardRepository.putDashboards(array, "Imported dashboard JSON", Dashboard.onOperationComplete);
         $location.path("/dashboard/edit");

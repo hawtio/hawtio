@@ -27,7 +27,6 @@ module Dashboard {
       },
       data: 'repository.dashboards',
       selectWithCheckboxOnly: true,
-      multiSelect: false,
       showSelectionCheckbox: true,
       columnDefs: [
         {
@@ -41,6 +40,34 @@ module Dashboard {
         }
       ]
     };
+
+    // helpers so we can enable/disable parts of the UI depending on how
+    // dashboard data is stored
+    $scope.usingGit = () => {
+      return dashboardRepository.getType() === 'git';
+    };
+
+    $scope.usingFabric = () => {
+      return dashboardRepository.getType() === 'fabric';
+    };
+
+    $scope.usingLocal = () => {
+      return dashboardRepository.getType() === 'local';
+    };
+
+    if ($scope.usingFabric()) {
+      $scope.gridOptions.columnDefs.add([{
+        field: 'versionId',
+        displayName: 'Version'
+      }, {
+        field: 'profileId',
+        displayName: 'Profile'
+      }, {
+        field: 'fileName',
+        displayName: 'File Name'
+      }]);
+    }
+
 
     // Okay, now this is needed :-)
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -148,9 +175,8 @@ module Dashboard {
 
     $scope.create = () => {
       var counter = dashboards().length + 1;
-      var id = Core.getUUID();
       var title = "Untitled" + counter;
-      var newDash = {id: id, title: title, group: "Personal", widgets: []};
+      var newDash = dashboardRepository.createDashboard({title: title});
 
       // TODO how to really add??
       addDashboard(newDash, "Created new dashboard " + title);
@@ -160,11 +186,8 @@ module Dashboard {
       angular.forEach($scope.selectedItems, (item, idx) => {
         // lets unselect this item
         $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
-        var counter = dashboards().length + 1;
-        var id = Core.getUUID();
-        var widgets = item.widgets || [];
         var commitMessage = "Duplicated dashboard " + item.title;
-        var newDash = {id: id, title: item.title + " Copy", group: item.group, widgets: widgets };
+        var newDash = dashboardRepository.cloneDashboard(item);
         addDashboard(newDash, commitMessage);
       });
     };

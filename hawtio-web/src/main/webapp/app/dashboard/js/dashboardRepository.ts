@@ -10,6 +10,12 @@ module Dashboard {
 
     getDashboard: (id:string, fn) => any;
 
+    createDashboard: (options:any) => any;
+
+    cloneDashboard:(dashboard:any) => any;
+
+    getType:() => string;
+
   }
 
   /**
@@ -46,6 +52,19 @@ module Dashboard {
       this.getRepository().getDashboard(id, onLoad);
     }
 
+
+    public createDashboard(options:any) {
+      return this.getRepository().createDashboard(options);
+    }
+
+    public cloneDashboard(dashboard:any) {
+      return this.getRepository().cloneDashboard(dashboard);
+    }
+
+    public getType() {
+      return this.getRepository().getType();
+    }
+
     /**
      * Looks up the MBean in the JMX tree
      */
@@ -67,12 +86,16 @@ module Dashboard {
         id: "m1", title: "Monitor", group: "Personal",
         widgets: [
           { id: "w1", title: "Operating System", row: 1, col: 1,
+            size_x: 3,
+            size_y: 4,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-java.lang-OperatingSystem"},
             hash: ""
           },
-          { id: "w2", title: "Broker", row: 1, col: 2,
+          { id: "w2", title: "Broker", row: 1, col: 4,
+            size_x: 3,
+            size_y: 4,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-org.apache.activemq-broker1-Broker"},
@@ -84,6 +107,8 @@ module Dashboard {
         id: "t1", title: "Threading", group: "Admin",
         widgets: [
           { id: "w1", title: "Operating System", row: 1, col: 1,
+            size_x: 3,
+            size_y: 4,
             path: "jmx/attributes",
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-java.lang-OperatingSystem"},
@@ -120,6 +145,28 @@ module Dashboard {
       var dashboard = this.dashboards.find({id: id});
       onLoad(dashboard);
     }
+
+    public createDashboard(options:any) {
+      var answer ={
+        title: "New Dashboard",
+        group: "Personal",
+        widgets: []
+      };
+      answer = angular.extend(answer, options);
+      answer['id'] = Core.getUUID();
+      return answer;
+    }
+
+    public cloneDashboard(dashboard:any) {
+      var newDashboard = Object.clone(dashboard);
+      newDashboard['id'] = Core.getUUID();
+      newDashboard['title'] = "Copy of " + dashboard.title;
+      return newDashboard;
+    }
+
+    public getType() {
+      return 'local';
+    }
   }
 
   export class GitDashboardRepository implements DashboardRepository {
@@ -144,6 +191,27 @@ module Dashboard {
       });
     }
 
+    public createDashboard(options:any) {
+      var answer ={
+        title: "New Dashboard",
+        group: "Personal",
+        widgets: []
+      };
+      answer = angular.extend(answer, options);
+      answer['id'] = Core.getUUID();
+      return answer;
+    }
+
+    public cloneDashboard(dashboard:any) {
+      var newDashboard = Object.clone(dashboard);
+      newDashboard['id'] = Core.getUUID();
+      newDashboard['title'] = "Copy of " + dashboard.title;
+      return newDashboard;
+    }
+
+    public getType() {
+      return 'git';
+    }
 
     public getDashboardPath(dash) {
       // TODO assume a user dashboard for now

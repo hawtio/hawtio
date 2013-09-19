@@ -28,6 +28,7 @@ module Dashboard {
       var jolokia = this.jolokia;
       var details = this.details;
       array.forEach((dashboard) => {
+        // console.log("Saving dash: ", dashboard);
         var data = angular.toJson(dashboard, true);
         var profileId = dashboard.profileId;
         if (!profileId) {
@@ -62,6 +63,34 @@ module Dashboard {
       });
     }
 
+    public createDashboard(options:any) {
+      var answer ={
+        title: "New Dashboard",
+        group: "Fabric",
+        versionId: this.details.branch,
+        profileId: this.details.profiles.first(),
+        widgets: []
+      };
+      answer = angular.extend(answer, options);
+      var uuid = Core.getUUID();
+      answer['id'] = uuid;
+      answer['fileName'] = uuid + ".dashboard";
+      return answer;
+    }
+
+    public cloneDashboard(dashboard:any) {
+      var newDashboard = Object.clone(dashboard);
+      var uuid = Core.getUUID();
+      newDashboard['id'] = uuid;
+      newDashboard['fileName'] = uuid + ".dashboard";
+      newDashboard['title'] = "Copy of " + dashboard.title;
+      return newDashboard;
+    }
+
+    public getType() {
+      return 'fabric';
+    }
+
     public getDashboards(fn) {
 
       var jolokia = this.jolokia;
@@ -78,11 +107,17 @@ module Dashboard {
               dashboard['versionId'] = details.branch;
               dashboard['profileId'] = profile;
               dashboard['fileName'] = configuration;
+
+              //console.log("Loading dashboard: ", dashboard);
               dashboards.push(dashboard);
             }
           }
         });
       });
+
+      if (dashboards.isEmpty()) {
+        dashboards.push(this.createDashboard({}));
+      }
 
       fn(dashboards);
     }
