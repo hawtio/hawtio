@@ -13,7 +13,11 @@ Once you have downloaded it, just run this from the command line:
 
     java -jar hawtio-app-1.2-M10.jar
 
- And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
+And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
+
+You can specify the port number to use, for example to use port 8090 run from the command line:
+
+    java -jar hawtio-app-1.2-M10.jar 8090
 
 ## Using a Servlet Engine or Application Server
 
