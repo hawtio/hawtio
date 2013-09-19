@@ -355,6 +355,28 @@ li.attr-column {
   left: 41%;
   bottom: 5px;
 }
+
+editable-property {
+  position: relative;
+}
+
+.ep[ng-show=editing] {
+  position: absolute;
+  top: -20px;
+  padding: 0;
+  background: white;
+  border-bottom: 1px solid #d4d4d4;
+  z-index: 10000;
+  width: 278px;
+  border: 1px solid #cecdcd;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ep[ng-show=editing] form fieldset i {
+  position: relative;
+  top: 2px;
+}
+
 .ep > i {
   cursor: pointer;
   opacity: .25;
@@ -362,16 +384,22 @@ li.attr-column {
   -moz-transition: opacity 0.25s ease-in-out;
   -webkit-transition: opacity 0.25s ease-in-out;
 }
+
+.ep form fieldset input {
+  border: 0;
+}
+
 .ep > i:hover {
   opacity: 1;
 }
+
 .ep form fieldset i {
   cursor: pointer;
   padding-left: 5px;
 }
+
 .ep form.no-bottom-margin {
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin: 0;
 }
 .ngFooterPanel {
   background: inherit;

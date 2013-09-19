@@ -1,8 +1,10 @@
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DefaultDashboardRepository) {
+  export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DefaultDashboardRepository, jolokia) {
     $scope.selectedItems = [];
     $scope.repository = dashboardRepository;
+    $scope.duplicateDashboards = new Core.Dialog();
+    $scope.selectedProfilesDialog = [];
 
     // TODO for case where we navigate to the add view
     // for some reason the route update event isn't enough...
@@ -32,7 +34,7 @@ module Dashboard {
         {
           field: 'title',
           displayName: 'Dashboard',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>'
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></a></div>'
         },
         {
           field: 'group',
@@ -40,6 +42,18 @@ module Dashboard {
         }
       ]
     };
+
+    $scope.onDashRenamed = (dash) => {
+      dashboardRepository.putDashboards([dash], "Renamed dashboard", Dashboard.onOperationComplete);
+      var d = $scope.dashboards.find((d) => {
+        return d.id === dash.id;
+      });
+      if (d) {
+        d.title = dash.title;
+      }
+      setTimeout(updateData, 50);
+    };
+
 
     // helpers so we can enable/disable parts of the UI depending on how
     // dashboard data is stored
@@ -56,6 +70,9 @@ module Dashboard {
     };
 
     if ($scope.usingFabric()) {
+
+      $scope.container = Fabric.getCurrentContainer(jolokia, ['versionId', 'profileIds']);
+
       $scope.gridOptions.columnDefs.add([{
         field: 'versionId',
         displayName: 'Version'
@@ -75,11 +92,47 @@ module Dashboard {
       setTimeout(updateData, 50);
     });
 
+
     $scope.goBack = () => {
       var href = Core.trimLeading($scope.url, "#");
       if (href) {
         $location.url(href);
       }
+    };
+
+
+    $scope.duplicateToProfiles = () => {
+      $scope.duplicateDashboards.open();
+    };
+
+
+    $scope.doDuplicateToProfiles = () => {
+      $scope.duplicateDashboards.close();
+
+      var newDashboards = [];
+
+      $scope.selectedItems.forEach((dashboard) => {
+        $scope.selectedProfilesDialog.forEach((profile) => {
+          var newDash = dashboardRepository.cloneDashboard(dashboard);
+          newDash['profileId'] = profile.id;
+          newDash['title'] = dashboard.title;
+          newDashboards.push(newDash);
+        });
+      });
+
+      var commitMessage = "Duplicating " + $scope.selectedItems.length + " dashboards to " + $scope.selectedProfilesDialog.length + " profiles";
+
+      dashboardRepository.putDashboards(newDashboards, commitMessage, Dashboard.onOperationComplete);
+
+      newDashboards.forEach((newDash) => {
+        console.log("Checking: ", newDash.profileId);
+        console.log("Dash: ", newDash);
+        if ($scope.container.profileIds.any(newDash.profileId)) {
+          dashboards().push(newDash);
+          //$scope.selectedItems.push(newDash);
+        }
+      });
+
     };
 
     $scope.addViewToDashboard = () => {
@@ -226,6 +279,8 @@ module Dashboard {
       }
       // TODO can we avoid reloading these on startup from the navbar.ts as well?
       dashboardRepository.getDashboards(dashboardLoaded);
+
+      Core.$apply($scope);
     }
 
     function dashboardLoaded(dashboards) {

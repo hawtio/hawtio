@@ -10,6 +10,9 @@
                 title="Create a copy of the selected dashboard(s)" data-placement="bottom">
           <i class="icon-copy"></i> Duplicate
         </button>
+        <button class="btn" ng-show="usingFabric()" ng-disabled="hasSelection()" ng-click="duplicateToProfiles()" title="Copy selected dashboards to another profile">
+          <i class="icon-copy"></i> Duplicate to profiles
+        </button>
         <button class="btn" ng-disabled="hasSelection()" ng-click="delete()"><i
                 class="icon-remove"></i> Delete
         </button>
@@ -41,4 +44,26 @@
       <div class="gridStyle" ng-grid="gridOptions"></div>
     </div>
   </div>
+
+
+  <div modal="duplicateDashboards.show">
+    <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="doDuplicateToProfiles()">
+      <div class="modal-header"><h4>Copy dashboards</h4></div>
+      <div id="dialog-body" class="modal-body">
+        <label>Select one or more profiles to copy the dashboards to: </label>
+
+        <div fabric-profile-selector="selectedProfilesDialog" version-id="container.versionId"></div>
+
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="selectedProfilesDialog.length == 0" type="submit"
+               value="Copy">
+        <input class="btn btn-primary" ng-click="duplicateDashboards.close()" value="Cancel">
+      </div>
+    </form>
+  </div>
+
+
+
+
 </div>

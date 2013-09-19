@@ -39,6 +39,14 @@ module UI {
           $(element.find(".icon-pencil")[0]).hide();
         };
 
+        scope.$watch('editing', (newValue, oldValue) => {
+          if (newValue !== oldValue) {
+            if (newValue) {
+              $(element.find('input[type=text]')).focus();
+            }
+          }
+        });
+
         scope.doEdit = function () {
           scope.editing = true;
         };

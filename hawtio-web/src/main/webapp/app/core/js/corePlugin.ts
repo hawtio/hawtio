@@ -390,6 +390,13 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             );
           };
         }]).
+        directive('noClick', () => {
+          return function($scope, $element, $attrs) {
+            $element.click((event) => {
+              event.preventDefault();
+            });
+          }
+        }).
         directive('gridStyle', function($window) {
           return new Core.GridStyle($window);
         });
