@@ -1325,8 +1325,13 @@ li.stacktrace {
 
 .page-padded .section-header .section-controls {
   position: relative;
-  top: 7px;
+  top: 6px;
   left: -3px;
+}
+
+.page-padded .section-header .selection-controls {
+  position: relative;
+  top: 1px;
 }
 
 .section-controls a {
