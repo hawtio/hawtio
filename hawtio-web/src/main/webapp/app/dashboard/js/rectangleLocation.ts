@@ -17,7 +17,7 @@ module Dashboard {
 
     hash(newHash:string = null) {
       if (newHash) {
-        return this.delegate.hash(newHash);
+        return this.delegate.hash(newHash).search('tab', null);;
         //this._hash = newHash;
       }
       return this._hash;
@@ -29,7 +29,7 @@ module Dashboard {
 
     path(newPath:string = null) {
       if (newPath) {
-        return this.delegate.path(newPath);
+        return this.delegate.path(newPath).search('tab', null);
       }
       return this._path;
     }
@@ -63,7 +63,7 @@ module Dashboard {
 
     url(newValue: string = null) {
       if (newValue) {
-        return this.delegate.url(newValue);
+        return this.delegate.url(newValue).search('tab', null);
       }
       return this.absUrl();
     }
