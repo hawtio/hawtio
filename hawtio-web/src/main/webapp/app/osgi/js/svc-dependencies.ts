@@ -3,12 +3,11 @@ module Osgi {
 
         osgiDataService.register(function() {
             $scope.$apply(function() {
-                createGraph();
-                //$scope.bundles = osgiDataService.getBundles();
+                //createGraph();
             });
         });
 
-        createGraph();
+        //createGraph();
 
         function createGraph() {
 
