@@ -202,7 +202,7 @@ module Dashboard {
         var gridster = getGridster();
         if (gridster) {
           var data = gridster.serialize();
-          console.log("got data: " + JSON.stringify(data));
+          //console.log("got data: " + JSON.stringify(data));
 
           var widgets = $scope.dashboard.widgets || [];
           // console.log("Widgets: ", widgets);

@@ -177,10 +177,6 @@ module Dashboard {
         if ($route && $route.routes) {
           var value = $route.routes[text];
           if (value) {
-            /*
-             angular.forEach($route.routes, (value, key) => {
-             if (key === text) {
-             */
             var templateUrl = value["templateUrl"];
             if (templateUrl) {
               if (!selectedItem.widgets) {
@@ -188,19 +184,83 @@ module Dashboard {
               }
               var nextNumber = selectedItem.widgets.length + 1;
               var widget = {
-                id: "w" + nextNumber, title: "", row: nextNumber, col: 1,
+                id: "w" + nextNumber, title: "",
+                row: 1,
+                col: 1,
+                size_x: 1,
+                size_y: 1,
                 path: Core.trimLeading(text, "/"),
                 include: templateUrl,
                 search: search,
                 hash: ""
               };
 
+              // figure out the width of the dash
+              var gridWidth = 0;
+
+              selectedItem.widgets.forEach((w) => {
+                var rightSide = w.col + w.size_x;
+                if (rightSide > gridWidth) {
+                  gridWidth = rightSide;
+                }
+              });
+
+              if ($scope.preferredSize) {
+                widget.size_x = parseInt($scope.preferredSize['size_x']);
+                widget.size_y = parseInt($scope.preferredSize['size_y']);
+              }
+
+              var found = false;
+
+              var left = (w) => {
+                return w.col;
+              };
+
+              var right = (w)  => {
+                return w.col + w.size_x - 1;
+              };
+
+              var top = (w) => {
+                return w.row;
+              };
+
+              var bottom = (w) => {
+                return w.row + w.size_y - 1;
+              };
+
+              var collision = (w1, w2) => {
+                return !( left(w2) > right(w1) ||
+                          right(w2) < left(w1) ||
+                          top(w2) > bottom(w1) ||
+                          bottom(w2) < top(w1));
+              };
+
+              if (selectedItem.widgets.isEmpty()) {
+                found = true;
+              }
+
+              while (!found) {
+                widget.col = 1;
+                for (; (widget.col + widget.size_x) <= gridWidth; widget.col++) {
+                  if (!selectedItem.widgets.any((w) => {
+                    var c = collision(w, widget);
+                    return c
+                  })) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  widget.row = widget.row + 1
+                }
+                // just in case, keep the script from running away...
+                if (widget.row > 50) {
+                  found = true;
+                }
+              }
+
               if ($scope.routeParams) {
                 widget['routeParams'] = $scope.routeParams;
-              }
-              if ($scope.preferredSize) {
-                widget['size_x'] = $scope.preferredSize['size_x'];
-                widget['size_y'] = $scope.preferredSize['size_y'];
               }
               selectedItem.widgets.push(widget);
 
