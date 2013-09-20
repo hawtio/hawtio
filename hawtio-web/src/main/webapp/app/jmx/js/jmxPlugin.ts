@@ -7,8 +7,9 @@ module Jmx {
             when('/jmx/operations', {templateUrl: 'app/jmx/html/operations.html'}).
             when('/jmx/charts', {templateUrl: 'app/jmx/html/charts.html'}).
             when('/jmx/chartEdit', {templateUrl: 'app/jmx/html/chartEdit.html'}).
-            when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html'})
-  }).
+            when('/jmx/help/:tabName', {templateUrl: 'app/core/html/help.html'}).
+            when('/jmx/widget/donut', {templateUrl: 'app/jmx/html/donutChart.html'});
+          }).
           factory('jmxTreeLazyLoadRegistry',function () {
             return Jmx.lazyLoaders;
           }).
