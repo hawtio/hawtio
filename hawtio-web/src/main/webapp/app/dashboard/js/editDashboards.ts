@@ -195,6 +195,10 @@ module Dashboard {
                 hash: ""
               };
 
+              if ($scope.widgetTitle) {
+                widget.title = $scope.widgetTitle;
+              }
+
               // figure out the width of the dash
               var gridWidth = 0;
 
@@ -336,6 +340,11 @@ module Dashboard {
       if (size) {
         var size = decodeURIComponent(size);
         $scope.preferredSize = angular.fromJson(size);
+      }
+      var title = $routeParams["title"];
+      if (title) {
+        var title = decodeURIComponent(title);
+        $scope.widgetTitle = title;
       }
       // TODO can we avoid reloading these on startup from the navbar.ts as well?
       dashboardRepository.getDashboards(dashboardLoaded);

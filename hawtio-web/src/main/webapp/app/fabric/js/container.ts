@@ -22,7 +22,8 @@ module Fabric {
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/container/:containerId";
       var routeParams = angular.toJson($routeParams);
-      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams);
+      var title = $scope.containerId;
+      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&title=" + encodeURIComponent(title);
     };
 
     $scope.selectedProfiles = [];
