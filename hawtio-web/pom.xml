@@ -349,10 +349,16 @@
               !org.apache.log*,
 
               !com.jcraft.jzlib,
+              !keypairgen,
+              !signature,
+              !userauth,
               !com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
               !org.apache.commons.io*,
               *
             </Import-Package>
+            <Private-Package>
+              javaewah
+            </Private-Package>
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
