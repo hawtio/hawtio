@@ -77,7 +77,7 @@ module Jmx {
     */
 
     $scope.render = (response) => {
-      console.log("got: ", response);
+      //console.log("got: ", response);
 
       var freeTerm = $scope.data.terms.find((term) => {
         return term.term === $scope.remainder;
