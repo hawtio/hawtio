@@ -13,7 +13,12 @@ module Jmx {
           factory('jmxTreeLazyLoadRegistry',function () {
             return Jmx.lazyLoaders;
           }).
-
+          factory('jmxWidgetTypes', () => {
+            return Jmx.jmxWidgetTypes;
+          }).
+          factory('jmxWidgets', () => {
+            return Jmx.jmxWidgets;
+          }).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle) => {
 
             viewRegistry['jmx'] = layoutTree;

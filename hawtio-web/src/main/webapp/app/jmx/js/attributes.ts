@@ -1,7 +1,8 @@
 module Jmx {
 
   export var propertiesColumnDefs = [
-    {field: 'name', displayName: 'Property', width: "27%"},
+    {field: 'name', displayName: 'Property', width: "27%",
+      cellTemplate: '<div class="ngCellText"><div class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
     {field: 'value', displayName: 'Value',  width: "70%",
       cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
@@ -12,7 +13,7 @@ module Jmx {
       cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
     }];
 
-  export function AttributesController($scope, $location, workspace:Workspace, jolokia) {
+  export function AttributesController($scope, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
     $scope.searchText = '';
     $scope.columnDefs = [];
     $scope.selectedItems = [];
@@ -50,6 +51,64 @@ module Jmx {
       }
       updateTableContents();
     });
+
+    $scope.hasWidget = (row) => {
+      console.log("Row: ", row);
+      return true;
+    };
+
+    $scope.getDashboardWidgets = (row) => {
+      var mbean = workspace.getSelectedMBeanName();
+      if (!mbean) {
+        return '';
+      }
+      var potentialCandidates = jmxWidgets.filter((widget) => {
+        return mbean === widget.mbean;
+      });
+
+      if (potentialCandidates.isEmpty()) {
+        return '';
+      }
+
+      potentialCandidates = potentialCandidates.filter((widget) => {
+        return widget.attribute === row.key || widget.total === row.key;
+      });
+
+      if (potentialCandidates.isEmpty()) {
+        return '';
+      }
+
+      var rc = [];
+      potentialCandidates.forEach((widget) => {
+        var widgetType = Jmx.getWidgetType(widget);
+        rc.push("<i class=\"" + widgetType.icon + " clickable\" title=\"" + widgetType.title + "\" ng-click=\"addChartToDashboard(row.entity, '" + widgetType.type + "')\"></i>");
+
+      });
+      return rc.join() + "&nbsp;";
+    };
+
+    $scope.addChartToDashboard = (row, widgetType) => {
+      var mbean = workspace.getSelectedMBeanName();
+      var candidates = jmxWidgets.filter((widget) => {
+        return mbean === widget.mbean;
+      });
+
+      candidates = candidates.filter((widget) => {
+        return widget.attribute === row.key || widget.total === row.key;
+      });
+
+      candidates = candidates.filter((widget) => {
+        return widget.type === widgetType;
+      });
+
+      // hmmm, we really should only have one result...
+      var widget = candidates.first();
+      var type = getWidgetType(widget);
+
+      //console.log("widgetType: ", type, " widget: ", widget);
+
+      $location.url(Jmx.createDashboardLink(type, widget));
+    };
 
     /**
      * Returns the toolBar template HTML to use for the current selection
