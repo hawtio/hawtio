@@ -374,16 +374,17 @@ module Wiki {
 
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
-      if ("markdown" === $scope.format) {
+      var format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
+      if ("markdown" === format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
         $scope.html = $compile($scope.html)($scope);
-      } else if ($scope.format && $scope.format.startsWith("html")) {
+      } else if (format && format.startsWith("html")) {
         $scope.html = contents;
         $compile($scope.html)($scope);
       } else {
         var form = null;
-        if ($scope.format && $scope.format === "javascript") {
+        if (format && format === "javascript") {
           form = $location.search()["form"];
         }
         $scope.source = contents;
