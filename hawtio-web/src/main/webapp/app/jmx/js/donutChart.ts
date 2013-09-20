@@ -6,13 +6,23 @@ module Jmx {
     console.log("routeParams: ", $routeParams);
 
 
+    // using multiple attributes
     $scope.mbean = "java.lang:type=OperatingSystem";
     $scope.total = "MaxFileDescriptorCount";
     $scope.terms = "OpenFileDescriptorCount";
     */
 
+    // using a single attribute with multiple paths
+    /*
+     $scope.mbean = "java.lang:type=Memory";
+     $scope.total = "Max";
+     $scope.attribute = "HeapMemoryUsage";
+     $scope.terms = "Used";
+     */
+
     $scope.mbean = $routeParams['mbean'];
     $scope.total = $routeParams['total'];
+    $scope.attribute = $routeParams['attribute'];
     $scope.terms = $routeParams['terms'];
 
     $scope.remainder = "Remaining";
@@ -25,15 +35,28 @@ module Jmx {
       terms: []
     };
 
-    $scope.reqs = [{type: 'read', mbean: $scope.mbean, attribute: $scope.total}];
+    if (!$scope.attribute) {
+      $scope.reqs = [{type: 'read', mbean: $scope.mbean, attribute: $scope.total}];
 
-    $scope.termsArray.forEach((term) => {
-      $scope.reqs.push({type: 'read', mbean: $scope.mbean, attribute: term});
-      $scope.data.terms.push({
-        term: term,
-        count: 0
+      $scope.termsArray.forEach((term) => {
+        $scope.reqs.push({type: 'read', mbean: $scope.mbean, attribute: term});
+        $scope.data.terms.push({
+          term: term,
+          count: 0
+        });
       });
-    });
+    } else {
+
+      var terms = $scope.termsArray.include($scope.total);
+      $scope.reqs = [{type: 'read', mbean: $scope.mbean, attribute: $scope.attribute, paths: terms.join(",")}];
+
+      $scope.termsArray.forEach((term) => {
+        $scope.data.terms.push({
+          term: term,
+          count: 0
+        });
+      });
+    }
 
     $scope.data.terms.push({
       term: $scope.remainder,
@@ -54,24 +77,47 @@ module Jmx {
     */
 
     $scope.render = (response) => {
-      if (response.request.attribute === $scope.total) {
-        $scope.data.total = response.value;
-      } else {
-        var term = $scope.data.terms.find((term) => {
-          return term.term === response.request.attribute;
-        });
-        if (term) {
-          term.count = response.value;
-        }
-        var freeTerm = $scope.data.terms.find((term) => {
-          return term.term === $scope.remainder;
-        });
-        freeTerm.count = $scope.data.total;
-        $scope.data.terms.forEach((term) => {
-          if (term.term !== $scope.remainder) {
-            freeTerm.count = freeTerm.count - term.count;
+      console.log("got: ", response);
+
+      var freeTerm = $scope.data.terms.find((term) => {
+        return term.term === $scope.remainder;
+      });
+
+      if (!$scope.attribute) {
+        if (response.request.attribute === $scope.total) {
+          $scope.data.total = response.value;
+        } else {
+          var term = $scope.data.terms.find((term) => {
+            return term.term === response.request.attribute;
+          });
+          if (term) {
+            term.count = response.value;
           }
-        });
+
+          freeTerm.count = $scope.data.total;
+          $scope.data.terms.forEach((term) => {
+            if (term.term !== $scope.remainder) {
+              freeTerm.count = freeTerm.count - term.count;
+            }
+          });
+        }
+      } else {
+        if (response.request.attribute === $scope.attribute) {
+          $scope.data.total = response.value[$scope.total.toLowerCase()];
+
+          $scope.data.terms.forEach((term) => {
+            if (term.term !== $scope.remainder) {
+              term.count = response.value[term.term.toLowerCase()];
+            }
+          });
+
+          freeTerm.count = $scope.data.total;
+          $scope.data.terms.forEach((term) => {
+            if (term.term !== $scope.remainder) {
+              freeTerm.count = freeTerm.count - term.count;
+            }
+          });
+        }
       }
       if ($scope.template === "") {
         $scope.template = $templateCache.get("donut");
