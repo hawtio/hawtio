@@ -26,7 +26,7 @@ module Fabric {
 
     Fabric.startMaps = $scope.start
 
-    $('body').append('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&async=2&callback=Fabric.startMaps"></script>');
+    $('body').append('<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false&async=2&callback=Fabric.startMaps"></script>');
 
     $scope.addMarker = function ($event) {
       $scope.myMarkers.push(new google.maps.Marker({
