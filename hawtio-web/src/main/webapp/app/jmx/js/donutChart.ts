@@ -25,7 +25,7 @@ module Jmx {
     $scope.attribute = $routeParams['attribute'];
     $scope.terms = $routeParams['terms'];
 
-    $scope.remainder = "Remaining";
+    $scope.remainder = $routeParams['remaining'];
 
     $scope.template = "";
     $scope.termsArray = $scope.terms.split(",");
@@ -58,10 +58,12 @@ module Jmx {
       });
     }
 
-    $scope.data.terms.push({
-      term: $scope.remainder,
-      count: 0
-    });
+    if ($scope.remainder && $scope.remainder !== "-") {
+      $scope.data.terms.push({
+        term: $scope.remainder,
+        count: 0
+      });
+    }
 
     /*
     $scope.data = {
@@ -79,9 +81,12 @@ module Jmx {
     $scope.render = (response) => {
       //console.log("got: ", response);
 
-      var freeTerm = $scope.data.terms.find((term) => {
-        return term.term === $scope.remainder;
-      });
+      var freeTerm = null;
+      if ($scope.remainder && $scope.remainder !== "-") {
+        freeTerm = $scope.data.terms.find((term) => {
+          return term.term === $scope.remainder;
+        });
+      }
 
       if (!$scope.attribute) {
         if (response.request.attribute === $scope.total) {
@@ -94,12 +99,14 @@ module Jmx {
             term.count = response.value;
           }
 
-          freeTerm.count = $scope.data.total;
-          $scope.data.terms.forEach((term) => {
-            if (term.term !== $scope.remainder) {
-              freeTerm.count = freeTerm.count - term.count;
-            }
-          });
+          if (freeTerm) {
+            freeTerm.count = $scope.data.total;
+            $scope.data.terms.forEach((term) => {
+              if (term.term !== $scope.remainder) {
+                freeTerm.count = freeTerm.count - term.count;
+              }
+            });
+          }
         }
       } else {
         if (response.request.attribute === $scope.attribute) {
@@ -111,12 +118,14 @@ module Jmx {
             }
           });
 
-          freeTerm.count = $scope.data.total;
-          $scope.data.terms.forEach((term) => {
-            if (term.term !== $scope.remainder) {
-              freeTerm.count = freeTerm.count - term.count;
-            }
-          });
+          if (freeTerm) {
+            freeTerm.count = $scope.data.total;
+            $scope.data.terms.forEach((term) => {
+              if (term.term !== $scope.remainder) {
+                freeTerm.count = freeTerm.count - term.count;
+              }
+            });
+          }
         }
       }
       if ($scope.template === "") {

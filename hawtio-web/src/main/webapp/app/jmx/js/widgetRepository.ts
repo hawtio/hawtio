@@ -40,7 +40,8 @@ module Jmx {
       mbean: "java.lang:type=Memory",
       attribute: "HeapMemoryUsage",
       total: "Max",
-      terms: "Used"
+      terms: "Used",
+      remaining: "Free"
     },
     {
       type: "donut",
@@ -48,35 +49,32 @@ module Jmx {
       mbean: "java.lang:type=Memory",
       attribute: "NonHeapMemoryUsage",
       total: "Max",
-      terms: "Used"
+      terms: "Used",
+      remaining: "Free"
     },
     {
       type: "donut",
       title: "File Descriptor Usage",
       mbean: "java.lang:type=OperatingSystem",
       total: "MaxFileDescriptorCount",
-      terms: "OpenFileDescriptorCount"
+      terms: "OpenFileDescriptorCount",
+      remaining: "Free"
     },
     {
       type: "donut",
       title: "Loaded Clases",
       mbean: "java.lang:type=ClassLoading",
       total: "TotalLoadedClassCount",
-      terms: "LoadedClassCount,UnloadedClassCount"
-    },
-    {
-      type: "donut",
-      title: "Free Memory",
-      mbean: "java.lang:type=OperatingSystem",
-      total: "TotalPhysicalMemorySize",
-      terms: "FreePhysicalMemorySize"
+      terms: "LoadedClassCount,UnloadedClassCount",
+      remaining: "-"
     },
     {
       type: "donut",
       title: "Swap Size",
       mbean: "java.lang:type=OperatingSystem",
       total: "TotalSwapSpaceSize",
-      terms: "FreeSwapSpaceSize"
+      terms: "FreeSwapSpaceSize",
+      remaining: "Used Swap"
     }
   ];
 
