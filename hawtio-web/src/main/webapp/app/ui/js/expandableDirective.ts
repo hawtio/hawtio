@@ -24,11 +24,13 @@ module UI {
           expandable.find('.expandable-body').slideUp(400, function() {
             expandable.toggleClass('opened');
             expandable.toggleClass('closed');
+            Core.$apply(scope);
           });
         } else {
           expandable.find('.expandable-body').slideDown(400, function() {
             expandable.toggleClass('opened');
             expandable.toggleClass('closed');
+            Core.$apply(scope);
           });
         }
         return false;

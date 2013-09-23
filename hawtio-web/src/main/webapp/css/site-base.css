@@ -1797,3 +1797,100 @@ dd.file-list {
 .profile-list ul li .expandable .expandable-body {
   margin-left: 16px;
 }
+
+.active-profile-titles {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 40px;
+}
+
+.active-profile-list .expandable {
+  padding: 0;
+}
+
+.active-profile-titles.section-header {
+  padding: 0;
+}
+
+.active-profile-titles div:not(.active-profile-filter) {
+  display: inline-block;
+  font-weight: bold;
+  top: 10px;
+}
+
+.active-profile-row {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  line-height: 22px;
+  height: 22px;
+}
+
+.active-profile-row div {
+  display: inline-block;
+}
+
+.active-profile-list .expandable .expandable-body {
+  width: 100%;
+}
+
+.active-profile-list .expandable .expandable-body ul li .box {
+  background: inherit;
+}
+
+.active-profile-expander {
+  position: absolute;
+  left: 0;
+}
+
+.active-profile-actions {
+  position: absolute;
+  right: 10px;
+}
+
+.active-profile-count {
+  position: absolute;
+  right: 250px;
+}
+
+.active-profile-name {
+  position: absolute;
+  left: 15px;
+}
+
+.active-profile-filter {
+  position: absolute;
+  left: 80px;
+  top: -10px;
+}
+
+.active-profile-main {
+  min-width: 754px;
+}
+
+.dashboard-link-row {
+  width: 100%;
+  position: relative;
+}
+
+a.dashboard-link {
+  line-height: 15px;
+  font-color: black;
+  font-weight: normal;
+}
+
+a.dashboard-link:hover {
+  text-decoration: none;
+}
+
+.dashboard-link {
+  position: absolute;
+  top: 14px;
+  right: 80px;
+  z-index: 500;
+}
+
+.container-list-main {
+  min-width: 592px;
+}

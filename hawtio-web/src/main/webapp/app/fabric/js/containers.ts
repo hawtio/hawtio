@@ -13,8 +13,13 @@ module Fabric {
 
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/containers";
+      var title = "Containers";
+      var size = angular.toJson({size_y:1, size_x: 4});
 
-      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(angular.toJson({size_y:1, size_x: 4}));
+      return "#/dashboard/add?tab=dashboard" +
+          "&href=" + encodeURIComponent(href) +
+          "&size=" + encodeURIComponent(size) +
+          "&title=" + encodeURIComponent(title);
     };
 
     $scope.filterContainer = (container) => {

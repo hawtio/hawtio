@@ -2,6 +2,9 @@
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'>
     <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/activeProfiles")}'>
+    <a ng-href="#/fabric/activeProfiles{{hash}}">Active Profiles</a>
+  </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'>
     <a ng-href="#/fabric/view{{hash}}">Migration</a>
   </li>

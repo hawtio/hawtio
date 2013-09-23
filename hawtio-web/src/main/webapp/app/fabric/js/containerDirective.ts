@@ -8,7 +8,7 @@ module Fabric {
 
     public scope = false;
 
-    public controller = ($scope, $element, $attrs, jolokia, $location, $templateCache) => {
+    public controller($scope, $element, $attrs, jolokia, $location, workspace) {
 
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
       $scope.containersOp = 'containers(java.util.List)';
@@ -285,7 +285,7 @@ module Fabric {
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
       ], onSuccess($scope.dispatch));
 
-    };
+    }
 
     public link = ($scope, $element, $attrs) => {
       if (angular.isDefined($attrs['showSelect'])) {
@@ -296,6 +296,49 @@ module Fabric {
   }
 
 
+  export class ActiveProfileList extends Fabric.ContainerList {
 
+    public templateUrl = Fabric.templatePath + "activeProfileList.html";
+
+    public controller($scope, $element, $attrs, jolokia, $location, workspace) {
+
+      super.controller($scope, $element, $attrs, jolokia, $location, workspace);
+
+      $scope.searchFilter = '';
+
+      $scope.isOpen = (profile) => {
+        if ($scope.searchFilter !== '') {
+          return "opened";
+        }
+        return "closed";
+      };
+
+      $scope.containersForProfile = (id) => {
+        return $scope.containers.filter((container) => {
+          return container.profileIds.some(id);
+        });
+      };
+
+      $scope.showProfile = (profile) => {
+        if (angular.isDefined(profile.versionId)) {
+          Fabric.gotoProfile(workspace, jolokia, localStorage, $location, profile.versionId, profile);
+        } else {
+          Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.activeVersionId, profile);
+        }
+      };
+
+      $scope.profileMatchesFilter = (profile) => {
+        return profile.id.has($scope.searchFilter) || !profile.containers.filter((id) => { return id.has($scope.searchFilter); }).isEmpty();
+      }
+
+      $scope.containerMatchesFilter = (container) => {
+        return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
+      }
+
+    }
+
+
+
+  }
 
 }
