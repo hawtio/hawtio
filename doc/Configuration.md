@@ -55,6 +55,10 @@ Edit the file **etc/system.properties** and add something like this to the end o
 
 this will disable security login. (Or use a different property to change the default role or realm used by security).
 
+Or if you are running hawtio stand alone try:
+
+    java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2-M16.jar
+
 ### Configuration Properties
 
 The following table contains the various configuration settings for the various hawtio plugins.
