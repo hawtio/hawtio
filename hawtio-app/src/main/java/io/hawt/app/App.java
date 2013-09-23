@@ -42,7 +42,7 @@ public class App {
             } catch (Exception e) {
                 // lets try find the tools.jar instead
                 String path = System.getProperty("java.home", ".");
-                String jreSuffix = "/jre";
+                String jreSuffix = File.separator + "jre";
                 if (path.endsWith(jreSuffix)) {
                     path = path.substring(0, path.length() - jreSuffix.length());
                 }
