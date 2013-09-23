@@ -115,6 +115,12 @@
 
 <p>this will disable security login. (Or use a different property to change the default role or realm used by security).</p>
 
+<p>Or if you are running hawtio stand alone try:</p>
+
+<pre><code>java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2-M16.jar</code></pre>
+
+<p>If you are using containers like Tomcat you can pass in system property values via the <strong>CATALINA_OPTS</strong> environment variable instead.</p>
+
 <h3 id = "Configuration_Properties">Configuration Properties</h3>
 
 <p>The following table contains the various configuration settings for the various hawtio plugins.</p>
