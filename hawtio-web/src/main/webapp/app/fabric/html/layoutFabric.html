@@ -1,12 +1,15 @@
 <ul class="nav nav-tabs" ng-controller="Fabric.NavBarController">
-  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'
+          title="View the running containers in this Fabric">
     <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>
-  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/activeProfiles")}'>
-    <a ng-href="#/fabric/activeProfiles{{hash}}">Active Profiles</a>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/activeProfiles")}'
+          title="View the different profiles (kinds of container)">
+    <a ng-href="#/fabric/activeProfiles{{hash}}">Profiles</a>
   </li>
-  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'>
-    <a ng-href="#/fabric/view{{hash}}">Migration</a>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'
+          title="Migrate containers to use different versions of profiles">
+    <a ng-href="#/fabric/view{{hash}}">Migrate</a>
   </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>
