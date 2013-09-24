@@ -14,12 +14,6 @@
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>
   </li>
-  <li ng-show="kibanaHref">
-    <a ng-href="{{kibanaHref}}" target="kibana" title="View and search all the logs of all containers in this fabric">Logs</a>
-  </li>
-  <li ng-show="hasMetrics">
-    <a ng-href="#/insight/all" title="View the metrics of the containers in this fabric">Metrics</a>
-  </li>
   <li ng-show="hasFabric && mapsEnabled" ng-class='{active : isActive("#/fabric/map")}'>
     <a ng-href="#/fabric/map{{hash}}" title="View the containers on a Google map">Map</a>
   </li>

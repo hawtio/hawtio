@@ -21,13 +21,39 @@ module Perspective {
         ]
       }
     },
+    insight: {
+      label: "Insight",
+      isValid: (workspace) => workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'}),
+      topLevelTabs: {
+        includes: [
+          {
+            href: "#/insight"
+          },
+          {
+            href: "#/camin"
+          },
+          {
+            rhref: ".*kibana.*"
+          },
+          {
+            rhref: ".*eshead.*"
+          },
+        ]
+      }
+    },
     local: {
       label: "Local JVM",
       topLevelTabs: {
         excludes: [
           {
             href: "#/fabric"
-          }
+          },
+          {
+            href: "#/insight"
+          },
+          {
+            href: "#/camin"
+          },
         ]
       }
     }

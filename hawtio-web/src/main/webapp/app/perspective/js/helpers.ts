@@ -51,10 +51,19 @@ module Perspective {
       var list = topLevelTabs.includes || topLevelTabs.excludes;
       angular.forEach(list, (tabSpec) => {
         var href = tabSpec.href;
+        var rhref = tabSpec.rhref;
         if (href) {
           var tab = workspace.topLevelTabs.find((t) => {
             var thref = t.href();
             return thref && thref.startsWith(href);
+          });
+          if (tab) {
+            answer.push(tab);
+          }
+        } else if (rhref) {
+          var tab = workspace.topLevelTabs.find((t) => {
+            var thref = t.href();
+            return thref && thref.match(rhref);
           });
           if (tab) {
             answer.push(tab);

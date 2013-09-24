@@ -27,21 +27,12 @@ module Fabric {
       $scope.hasFabric = Fabric.hasFabric(workspace);
       if ($scope.hasFabric) {
         var containerId = null;
-        Fabric.containerWebAppURL(jolokia, "org.fusesource.insight.insight-kibana3", containerId, onKibanaUrl, onKibanaUrl);
         Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
-        $scope.hasMetrics = workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
         $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
       }
     }
 
     reloadData();
-
-    function onKibanaUrl(response) {
-      var url = response ? response.value : null;
-      console.log("========== onKibanaUrl: " + url);
-      $scope.kibanaHref = url;
-      Core.$apply($scope);
-    }
 
     function onDroolsUrl(response) {
       var url = response ? response.value : null;

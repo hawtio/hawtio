@@ -10,7 +10,7 @@ module Camin {
         viewRegistry["camin"] = "app/camin/html/layoutCamin.html";
 
         workspace.topLevelTabs.push( {
-          content: "Camin",
+          content: "Camel",
           title: "Insight into Camel",
           isValid: (workspace) => Fabric.hasFabric(workspace),
           href: () => "#/camin",

@@ -10,20 +10,42 @@ module Insight {
     });
 
 
-    insightPlugin.run(function(workspace, viewRegistry, layoutFull) {
+    insightPlugin.run(function(workspace, viewRegistry, jolokia, layoutFull) {
 
         viewRegistry["insight"] = "app/insight/html/layoutInsight.html";
 
         // instead lets add the Metrics link on the Fabric sub nav bar
-/*
+
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
-          content: "Insight",
+          content: "Metrics",
           title: "View Insight metrics",
-          isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'}),
           href: () => "#/insight/all"
         });
-*/
+
+        var containerId = null;
+        Fabric.containerWebAppURL(jolokia, "org.fusesource.insight.insight-kibana3", containerId, onKibanaUrl, onKibanaUrl);
+        Fabric.containerWebAppURL(jolokia, "org.fusesource.insight.insight-eshead", containerId, onEsHeadUrl, onEsHeadUrl);
+
+        function onKibanaUrl(response) {
+          var url = response ? response.value : null;
+          console.log("========== onKibanaUrl: " + url);
+          workspace.topLevelTabs.push({
+              content: "Logs",
+              title: "View Insight logs",
+              href: () => url
+          })
+        }
+
+        function onEsHeadUrl(response) {
+          var url = response ? response.value : null;
+          console.log("========== onEsHeadUrl: " + url);
+          workspace.topLevelTabs.push({
+              content: "ElasticSearch",
+              title: "View ElasticSearch raw data",
+              href: () => url
+          })
+        }
 
     });
 
