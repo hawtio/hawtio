@@ -1,68 +1,58 @@
 module Osgi {
-    export function ServiceDependencyController($scope, $element, workspace:Workspace, osgiDataService: OsgiDataService) {
+    export function ServiceDependencyController($scope, workspace:Workspace, osgiDataService: OsgiDataService) {
 
         osgiDataService.register(function() {
-            $scope.$apply(function() {
-                //createGraph();
-            });
+            createGraph();
+            Core.$apply($scope);
         });
 
-        //createGraph();
+        $scope.graph = {
+            nodes: {},
+            links: []
+        }
 
         function createGraph() {
 
-            var canvasDiv = $element;
-            var svg = canvasDiv.children("svg")[0];
+            var graphBuilder = new ForceGraph.GraphBuilder();
 
-            var nodes = [];
-            var transitions = [];
+            var bundles = osgiDataService.getBundles();
 
-            $scope.bundles = osgiDataService.getBundles();
-
-            $scope.bundles.forEach((bundle) => {
+            bundles.forEach((bundle) => {
 
                if (bundle.RegisteredServices.length > 0 || bundle.ServicesInUse.length > 0) {
 
-                   var node = {
-                       id: "Bundle-" + bundle.Identifier,
-                       label: bundle.SymbolicName
-                   };
+                   var bundleNodeId = "Bundle-" + bundle.Identifier;
+                   var bundleNode = {
+                       id: bundleNodeId,
+                       name: bundle.SymbolicName
+                   }
 
                    bundle.RegisteredServices.forEach((sid) => {
+
+                       var svcNodeId = "Service-" + sid;
                        var svcNode = {
-                           id: "Service-" + sid,
-                           label: "" + sid
+                           id: svcNodeId,
+                           name: "" + sid
                        };
 
-                       nodes.push(svcNode);
-
-                       transitions.push({
-                           source: "Bundle-" + bundle.Identifier,
-                           target: "Service-" + sid
-                       });
+                       graphBuilder.addLink(bundleNode, svcNode, "registered");
                    });
 
                    bundle.ServicesInUse.forEach((sid) => {
-                       transitions.push({
-                           source: "Service-" + sid,
-                           target: "Bundle-" + bundle.Identifier
-                       });
+
+                       var svcNodeId = "Service-" + sid;
+                       var svcNode = {
+                           id: svcNodeId,
+                           name: "" + sid
+                       };
+
+                       graphBuilder.addLink(bundleNode, svcNode, "inuse");
                    });
-
-                   nodes.push(node);
                }
-
             });
 
-            Core.dagreLayoutGraph(nodes, transitions, 400, 400, svg);
-        }
+            $scope.graph = graphBuilder.buildGraph();
 
-        function getHeight() {
-            return $($element).height();
-        }
-
-        function getWidth() {
-            return $($element).width();
         }
     }
 

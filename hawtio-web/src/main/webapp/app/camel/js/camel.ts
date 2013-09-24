@@ -162,7 +162,7 @@ module Camel {
           addTooltipToNode(false, stat);
         });
 
-        // now lets try update the graph
+        // now lets try update the buildGraph
         Core.dagreUpdateGraphData($scope.graphData);
       }
 

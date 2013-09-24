@@ -1,5 +1,5 @@
 
-// Class for a multi-value time series graph
+// Class for a multi-value time series buildGraph
 
 function MultiTimeSeries(cssClass, dataPointWidth, height, leftMargin, rightMargin, topMargin, bottomMargin, dataPoints, period, hAxisTicks) {
 
@@ -62,7 +62,7 @@ function MultiTimeSeries(cssClass, dataPointWidth, height, leftMargin, rightMarg
 }
 
 
-// Class for a line graph
+// Class for a line buildGraph
 
 function Line (cssClass, getData, min, max, axis, vAxisTicks) {
 
@@ -114,7 +114,7 @@ function Line (cssClass, getData, min, max, axis, vAxisTicks) {
 }
 
 
-// Class for a bar graph
+// Class for a bar buildGraph
 
 function Bar (cssClass, getData, min, max, axis, vAxisTicks, dataPointWidth) {
 

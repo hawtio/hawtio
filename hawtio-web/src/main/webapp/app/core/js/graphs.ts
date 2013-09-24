@@ -1,7 +1,7 @@
 module Core {
 
   export function d3ForceGraph(scope, nodes, links, canvasElement) {
-    // lets remove the old graph first
+    // lets remove the old buildGraph first
     if (scope.graphForce) {
       scope.graphForce.stop();
     }
@@ -300,7 +300,7 @@ module Core {
       return w / 2;
     });
 
-    // Create the layout and get the graph
+    // Create the layout and get the buildGraph
     dagre.layout()
             .nodeSep(50)
             .edgeSep(10)
