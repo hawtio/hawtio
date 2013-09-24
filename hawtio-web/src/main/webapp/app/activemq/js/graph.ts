@@ -32,7 +32,7 @@ module ActiveMQ {
     };
 
     // TODO I don't think this does what we need? maybe this code should be replaced by watching the
-    // size of the $element instead so it can re-layout the buildGraph when the window size changes?
+    // size of the $element instead so it can re-layout the graph when the window size changes?
     $scope.$watch($scope.updateGraph);
 
     $scope.$watch('workspace.selection', function (newValue) {
@@ -42,7 +42,7 @@ module ActiveMQ {
 
     function reloadData() {
       var selection = workspace.selection;
-      console.log("loading buildGraph data for selection " + selection);
+      console.log("loading graph data for selection " + selection);
       $scope.nodes = [];
       $scope.links = [];
       var isQueue = false;
