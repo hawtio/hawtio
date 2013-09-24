@@ -23,13 +23,13 @@ THE SOFTWARE.
   dagre = {};
 dagre.version = "0.0.5";
 /*
- * Directed multi-graph used during layout.
+ * Directed multi-buildGraph used during layout.
  */
 dagre.graph = {};
 
 /*
- * Creates a new directed multi-graph. This should be invoked with
- * `var g = dagre.graph()` and _not_ `var g = new dagre.graph()`.
+ * Creates a new directed multi-buildGraph. This should be invoked with
+ * `var g = dagre.buildGraph()` and _not_ `var g = new dagre.buildGraph()`.
  */
 dagre.graph = function() {
   var nodes = {},
@@ -225,7 +225,7 @@ dagre.graph = function() {
   function strictGetNode(u) {
     var node = nodes[u];
     if (!(u in nodes)) {
-      throw new Error("Node '" + u + "' is not in graph:\n" + graph.toString());
+      throw new Error("Node '" + u + "' is not in buildGraph:\n" + graph.toString());
     }
     return node;
   }
@@ -233,7 +233,7 @@ dagre.graph = function() {
   function strictGetEdge(e) {
     var edge = edges[e];
     if (!edge) {
-      throw new Error("Edge '" + e + "' is not in graph:\n" + graph.toString());
+      throw new Error("Edge '" + e + "' is not in buildGraph:\n" + graph.toString());
     }
     return edge;
   }
@@ -286,7 +286,7 @@ dagre.layout = function() {
 
   return self;
 
-  // Build graph and save mapping of generated ids to original nodes and edges
+  // Build buildGraph and save mapping of generated ids to original nodes and edges
   function init() {
     var g = dagre.graph();
     var nextId = 0;
@@ -336,7 +336,7 @@ dagre.layout = function() {
         return;
       }
 
-      // Build internal graph
+      // Build internal buildGraph
       var g = init();
 
       // Make space for edge labels
@@ -345,7 +345,7 @@ dagre.layout = function() {
       });
       self.rankSep(rankSep / 2);
 
-      // Reverse edges to get an acyclic graph, we keep the graph in an acyclic
+      // Reverse edges to get an acyclic buildGraph, we keep the buildGraph in an acyclic
       // state until the very end.
       acyclic.run(g);
 
@@ -353,7 +353,7 @@ dagre.layout = function() {
       // above nodes of higher rank.
       rank.run(g);
 
-      // Normalize the graph by ensuring that every edge is proper (each edge has
+      // Normalize the buildGraph by ensuring that every edge is proper (each edge has
       // a length of 1). We achieve this by adding dummy nodes to long edges,
       // thus shortening them.
       normalize(g);
@@ -361,17 +361,17 @@ dagre.layout = function() {
       // Order the nodes so that edge crossings are minimized.
       order.run(g);
 
-      // Find the x and y coordinates for every node in the graph.
+      // Find the x and y coordinates for every node in the buildGraph.
       position.run(g);
 
-      // De-normalize the graph by removing dummy nodes and augmenting the
+      // De-normalize the buildGraph by removing dummy nodes and augmenting the
       // original long edges with coordinate information.
       undoNormalize(g);
 
       // Reverses points for edges that are in a reversed state.
       fixupEdgePoints(g);
 
-      // Reverse edges that were revered previously to get an acyclic graph.
+      // Reverse edges that were revered previously to get an acyclic buildGraph.
       acyclic.undo(g);
     } finally {
       self.rankSep(rankSep);
@@ -380,7 +380,7 @@ dagre.layout = function() {
     return self;
   }
 
-  // Assumes input graph has no self-loops and is otherwise acyclic.
+  // Assumes input buildGraph has no self-loops and is otherwise acyclic.
   function normalize(g) {
     var dummyCount = 0;
     g.eachEdge(function(e, s, t, a) {
@@ -535,7 +535,7 @@ dagre.layout.rank = function() {
     while (pq.size() > 0) {
       var minId = pq.min();
       if (pq.priority(minId) > 0) {
-        throw new Error("Input graph is not acyclic: " + g.toString());
+        throw new Error("Input buildGraph is not acyclic: " + g.toString());
       }
       pq.removeMin();
 
@@ -676,7 +676,7 @@ dagre.layout.order = function() {
   }
 
   /*
-   * Given a fixed layer and a movable layer in a graph this function will
+   * Given a fixed layer and a movable layer in a buildGraph this function will
    * attempt to find an improved ordering for the movable layer such that
    * edge crossings may be reduced.
    *
@@ -698,7 +698,7 @@ dagre.layout.order = function() {
   }
 
   /*
-   * Given a fixed layer and a movable layer in a graph, this function will
+   * Given a fixed layer and a movable layer in a buildGraph, this function will
    * return weights for the movable layer that can be used to reorder the layer
    * for potentially reduced edge crossings.
    */
@@ -742,7 +742,7 @@ var crossCount = dagre.layout.order.crossCount = function(g, layering) {
 }
 
 /*
- * This function searches through a ranked and ordered graph and counts the
+ * This function searches through a ranked and ordered buildGraph and counts the
  * number of edges that cross. This algorithm is derived from:
  *
  *    W. Barth et al., Bilayer Cross Counting, JGAA, 8(2) 179–194 (2004)
@@ -1225,7 +1225,7 @@ function union(arrays) {
 }
 
 /*
- * Returns all components in the graph using undirected navigation.
+ * Returns all components in the buildGraph using undirected navigation.
  */
 var components = dagre.util.components = function(g) {
   var results = [];
@@ -1283,7 +1283,7 @@ var prim = dagre.util.prim = function(g, weight) {
       result[u].push(parent[u]);
       result[parent[u]].push(u);
     } else if (init) {
-      throw new Error("Input graph is not connected:\n" + g.toString());
+      throw new Error("Input buildGraph is not connected:\n" + g.toString());
     } else {
       init = true;
     }
@@ -1482,7 +1482,7 @@ dagre.dot = {};
 dagre.dot.toGraph = function(str) {
   var parseTree = dot_parser.parse(str);
   var g = dagre.graph();
-  var undir = parseTree.type === "graph";
+  var undir = parseTree.type === "buildGraph";
 
   function createNode(id, attrs) {
     if (!(g.hasNode(id))) {
@@ -3549,13 +3549,13 @@ dot_parser = (function(){
         var pos0;
         
         pos0 = pos;
-        if (input.substr(pos, 5).toLowerCase() === "graph") {
+        if (input.substr(pos, 5).toLowerCase() === "buildGraph") {
           result0 = input.substr(pos, 5);
           pos += 5;
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("\"graph\"");
+            matchFailed("\"buildGraph\"");
           }
         }
         if (result0 !== null) {
