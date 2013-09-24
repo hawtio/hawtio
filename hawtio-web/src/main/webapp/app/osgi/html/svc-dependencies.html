@@ -5,16 +5,16 @@
         stroke-width: 1.5px;
     }
 
+    path.link.registered {
+        stroke: #444;
+    }
+
+    path.link.inuse {
+        stroke-dasharray: 0,2 1;
+    }
+
     marker#licensing {
         fill: green;
-    }
-
-    path.link.licensing {
-        stroke: green;
-    }
-
-    path.link.resolved {
-        stroke-dasharray: 0,2 1;
     }
 
     circle {
@@ -35,8 +35,10 @@
 </style>
 
 <div ng-controller="Osgi.ServiceDependencyController">
-
-    <hawtio-force-graph>Andreas</hawtio-force-graph>
+  
+  <div id="canvas">
+    <div hawtio-force-graph graph="graph"></div>
+  </div>
 
 <!--
     <div class="row-fluid">

@@ -326,7 +326,7 @@ module Wiki {
         }
       });
 
-      // Create the layout and get the graph
+      // Create the layout and get the buildGraph
       dagre.layout()
               .nodeSep(100)
               .edgeSep(10)
