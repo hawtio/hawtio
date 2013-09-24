@@ -5,9 +5,14 @@ module ForceGraph {
         public restrict = 'A';
         public replace = true;
         public transclude = false;
+
         public scope = {
-          graph : '=graph'
+          graph : '=graph',
+          nodesize : '@',
+          linkDistance : '@',
+          charge : '@'
         };
+
 
         public link = ($scope, $element, $attrs) => {
 
@@ -15,6 +20,7 @@ module ForceGraph {
 
                 var canvas = $($element);
 
+                // TODO: determine the canvas size dynamically
                 var h = 800;
                 var w = 1024;
 
@@ -25,6 +31,10 @@ module ForceGraph {
                     .attr("height", h);
 
                 if ($scope.graph) {
+
+                    if ($scope.force) {
+                        $scope.force.stop();
+                    }
 
                     var tick = () => {
                         path.attr("d", (d) => {
@@ -43,18 +53,19 @@ module ForceGraph {
                         });
                     };
 
-                    var force = d3.layout.force()
+                    $scope.force = d3.layout.force()
                         .nodes($scope.graph.nodes)
                         .links($scope.graph.links)
                         .size([w, h])
-                        .linkDistance(60)
-                        .charge(-300)
-                        .on("tick", tick)
-                        .start();
+                        .linkDistance($scope.linkDistance)
+                        .charge($scope.charge)
+                        .on("tick", tick);
+
+                    $scope.force.start();
 
                     // Per-type markers, as they don't inherit styles.
                     svg.append("svg:defs").selectAll("marker")
-                        .data(["registered", "inuse"])
+                        .data($scope.graph.linktypes)
                         .enter().append("svg:marker")
                         .attr("id", String)
                         .attr("viewBox", "0 -5 10 10")
@@ -67,19 +78,36 @@ module ForceGraph {
                         .attr("d", "M0,-5L10,0L0,5");
 
                     var path = svg.append("svg:g").selectAll("path")
-                        .data(force.links())
+                        .data($scope.force.links())
                         .enter().append("svg:path")
-                        .attr("class", function(d) { return "link " + d.type; })
-                        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+                        .attr("class", (d) => { return "link " + d.type; })
+                        .attr("marker-end", (d) => { return "url(#" + d.type + ")"; });
 
                     var circle = svg.append("svg:g").selectAll("circle")
-                        .data(force.nodes())
-                        .enter().append("svg:circle")
-                        .attr("r", 6)
-                        .call(force.drag);
+                        .data($scope.force.nodes())
+                        .enter()
+                        .append("a")
+                        .attr("xlink:href", (d) => { return d.navUrl; });
+
+                    // Add the images if they are set
+                    circle.filter((d) => { return d.image != null; })
+                        .append("image")
+                        .attr("xlink:href", (d) => { return d.image.url; })
+                        .attr("x", (d) => { return -(d.image.width / 2); })
+                        .attr("y", (d) => { return -(d.image.height / 2); })
+                        .attr("width", (d) => { return d.image.width; })
+                        .attr("height", (d) => { return d.image.height; });
+
+                    // if we don't have an image add a circle
+                    circle.filter((d) => { return d.image == null; })
+                        .append("circle")
+                        .attr("class", (d) => { return d.type; })
+                        .attr("r", $scope.nodesize);
+
+                    circle.call($scope.force.drag);
 
                     var text = svg.append("svg:g").selectAll("g")
-                        .data(force.nodes())
+                        .data($scope.force.nodes())
                         .enter().append("svg:g");
 
                     // A copy of the text with a thick white stroke for legibility.

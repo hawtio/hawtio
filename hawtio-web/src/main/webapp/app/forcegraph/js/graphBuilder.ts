@@ -4,6 +4,7 @@ module ForceGraph {
 
         private nodes = {};
         private links = [];
+        private linkTypes = {};
 
         public addNode(node) {
             if(!this.nodes[node.id]) {
@@ -20,11 +21,18 @@ module ForceGraph {
                 target: targetNode,
                 type: linkType
             });
+
+            if (!this.linkTypes[linkType]) {
+                this.linkTypes[linkType] = {
+                    used: true
+                }
+            };
         }
 
         public buildGraph() {
 
             var graphNodes = d3.values(this.nodes);
+            var linktypes  = d3.keys(this.linkTypes);
             var graphLinks = [];
 
             var nodeIndex = (id, nodes) => {
@@ -52,7 +60,8 @@ module ForceGraph {
 
             return {
                 nodes: graphNodes,
-                links: graphLinks
+                links: graphLinks,
+                linktypes: linktypes
             }
         }
     }
