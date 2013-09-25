@@ -106,7 +106,14 @@
             var scriptName = data.Context + "/" + script;
             console.log("Fetching script: ", scriptName);
             $.ajaxSetup({async:false});
-            $.getScript(scriptName).always(scriptLoaded);
+            $.getScript(scriptName)
+                .done(function(textStatus) {
+                  console.log("Loaded script: ", scriptName);
+                })
+                .fail(function(jqxhr, settings, exception) {
+                  console.log("Failed loading script: ", exception);
+                })
+                .always(scriptLoaded);
           });
         });
       } else {
