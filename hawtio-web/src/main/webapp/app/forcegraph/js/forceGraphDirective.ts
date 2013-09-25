@@ -16,6 +16,20 @@ module ForceGraph {
 
         public link = ($scope, $element, $attrs) => {
 
+            $scope.trans = [0,0];
+            $scope.scale = 1;
+
+            $scope.$watch('graph', (oldVal, newVal) => {
+                updateGraph();
+            });
+
+            $scope.redraw = () => {
+                $scope.trans = d3.event.translate;
+                $scope.scale = d3.event.scale;
+
+                $scope.svg.attr("transform", "translate(" + $scope.trans + ")" + " scale(" + $scope.scale + ")");
+            };
+
             var updateGraph = () => {
 
                 var canvas = $($element);
@@ -26,9 +40,29 @@ module ForceGraph {
 
                 canvas.children("svg").remove();
 
-                var svg = d3.select(canvas[0]).append("svg")
+                $scope.svg = d3.select(canvas[0]).append("svg")
                     .attr("width", w)
-                    .attr("height", h);
+                    .attr("height", h)
+                    .attr("pointer-events", "all");
+
+                $scope.svg.append("svg:defs").selectAll("marker")
+                    .data($scope.graph.linktypes)
+                    .enter().append("svg:marker")
+                    .attr("id", String)
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 15)
+                    .attr("refY", -1.5)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("svg:path")
+                    .attr("d", "M0,-5L10,0L0,5");
+
+                $scope.svg.append("svg:g")
+                    .append("svg:rect")
+                    .attr("class", "graphbox")
+                    .attr('width', w)
+                    .attr('height', h);
 
                 if ($scope.graph) {
 
@@ -63,27 +97,13 @@ module ForceGraph {
 
                     $scope.force.start();
 
-                    // Per-type markers, as they don't inherit styles.
-                    svg.append("svg:defs").selectAll("marker")
-                        .data($scope.graph.linktypes)
-                        .enter().append("svg:marker")
-                        .attr("id", String)
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 15)
-                        .attr("refY", -1.5)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
-                        .attr("orient", "auto")
-                        .append("svg:path")
-                        .attr("d", "M0,-5L10,0L0,5");
-
-                    var path = svg.append("svg:g").selectAll("path")
+                    var path = $scope.svg.append("svg:g").selectAll("path")
                         .data($scope.force.links())
                         .enter().append("svg:path")
                         .attr("class", (d) => { return "link " + d.type; })
                         .attr("marker-end", (d) => { return "url(#" + d.type + ")"; });
 
-                    var circle = svg.append("svg:g").selectAll("circle")
+                    var circle = $scope.svg.append("svg:g").selectAll("circle")
                         .data($scope.force.nodes())
                         .enter()
                         .append("a")
@@ -104,9 +124,9 @@ module ForceGraph {
                         .attr("class", (d) => { return d.type; })
                         .attr("r", $scope.nodesize);
 
-                    circle.call($scope.force.drag);
+                    // circle.call($scope.force.drag);
 
-                    var text = svg.append("svg:g").selectAll("g")
+                    var text = $scope.svg.append("svg:g").selectAll("g")
                         .data($scope.force.nodes())
                         .enter().append("svg:g");
 
@@ -124,9 +144,6 @@ module ForceGraph {
                 }
             }
 
-            $scope.$watch('graph', (oldVal, newVal) => {
-                updateGraph();
-            });
         };
 
     };
