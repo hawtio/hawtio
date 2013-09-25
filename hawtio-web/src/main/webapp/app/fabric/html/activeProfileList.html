@@ -18,7 +18,7 @@
           <i class="expandable-indicator"></i>
         </div>
         <div class="title active-profile-name">
-          {{profile.id}} / {{profile.versionId}}
+          <a ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
         </div>
         <div class="active-profile-count">
           {{profile.count}}
@@ -27,7 +27,6 @@
         <div class="active-profile-actions">
           <i class="icon-minus clickable" title="Scale Down (not implemented yet)"></i>
           <i class="icon-plus clickable" title="Scale Up (not implemented yet)"></i>
-          <i class="icon-info-sign clickable" title="Profile Details" ng-click="showProfile(profile)"></i>
         </div>
 
       </div>
