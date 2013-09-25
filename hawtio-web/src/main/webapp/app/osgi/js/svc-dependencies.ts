@@ -6,10 +6,7 @@ module Osgi {
             Core.$apply($scope);
         });
 
-        $scope.graph = {
-            nodes: {},
-            links: []
-        }
+        createGraph()
 
         function createGraph() {
 
@@ -24,7 +21,9 @@ module Osgi {
                    var bundleNodeId = "Bundle-" + bundle.Identifier;
                    var bundleNode = {
                        id: bundleNodeId,
-                       name: bundle.SymbolicName
+                       name: bundle.SymbolicName,
+                       type: "bundle",
+                       navUrl: "#/osgi/bundle/" + bundle.Identifier
                    }
 
                    bundle.RegisteredServices.forEach((sid) => {
@@ -32,7 +31,8 @@ module Osgi {
                        var svcNodeId = "Service-" + sid;
                        var svcNode = {
                            id: svcNodeId,
-                           name: "" + sid
+                           name: "" + sid,
+                           type: "service"
                        };
 
                        graphBuilder.addLink(bundleNode, svcNode, "registered");
@@ -43,7 +43,9 @@ module Osgi {
                        var svcNodeId = "Service-" + sid;
                        var svcNode = {
                            id: svcNodeId,
-                           name: "" + sid
+                           name: "" + sid,
+                           type: "service",
+                           image: null
                        };
 
                        graphBuilder.addLink(bundleNode, svcNode, "inuse");
@@ -52,7 +54,6 @@ module Osgi {
             });
 
             $scope.graph = graphBuilder.buildGraph();
-
         }
     }
 
