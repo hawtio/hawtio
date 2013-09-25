@@ -10,12 +10,12 @@
   };
 
   hawtioPluginLoader.addModule = function(module) {
-    // console.log("Adding module: " + module);
+    console.log("Adding module: " + module);
     hawtioPluginLoader.modules.push(module);
   };
 
   hawtioPluginLoader.addUrl = function(url) {
-    // console.log("Adding URL: " + url);
+    console.log("Adding URL: " + url);
     hawtioPluginLoader.urls.push(url);
   };
 
@@ -83,7 +83,10 @@
     var loadScripts = function() {
 
       // keep track of when scripts are loaded so we can execute the callback
-      var loaded = $.map(plugins, function(n, i) { return i; }).length;
+      var loaded = 0;
+      $.each(plugins, function(key, data) {
+        loaded = loaded + data.Scripts.length;
+      });
 
       var scriptLoaded = function() {
         $.ajaxSetup({async:true});
@@ -97,8 +100,11 @@
         $.each(plugins, function(key, data) {
 
           data.Scripts.forEach( function(script) {
-            //console.log("Loading plugin: ", data.Name);
+
+            // console.log("Loading script: ", data.Name + " script: " + script);
+
             var scriptName = data.Context + "/" + script;
+            console.log("Fetching script: ", scriptName);
             $.ajaxSetup({async:false});
             $.getScript(scriptName).always(scriptLoaded);
           });
@@ -142,7 +148,9 @@
           }
           urlLoaded();
         } else {
-          // console.log("Trying url: ", url);
+
+          console.log("Trying url: ", url);
+
           $.get(url, function (data) {
                 // console.log("got data: ", data);
                 $.extend(plugins, data);
