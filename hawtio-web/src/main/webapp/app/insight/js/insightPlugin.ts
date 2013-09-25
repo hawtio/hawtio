@@ -20,7 +20,8 @@ module Insight {
         workspace.topLevelTabs.push({
           content: "Metrics",
           title: "View Insight metrics",
-          href: () => "#/insight/all"
+          href: () => "#/insight/all",
+          isValid: (workspace:Workspace) => { return true; }
         });
 
         var containerId = null;
@@ -33,7 +34,8 @@ module Insight {
           workspace.topLevelTabs.push({
               content: "Logs",
               title: "View Insight logs",
-              href: () => url
+              href: () => url,
+              isValid: (workspace:Workspace) => { return true; }
           })
         }
 
@@ -43,7 +45,8 @@ module Insight {
           workspace.topLevelTabs.push({
               content: "ElasticSearch",
               title: "View ElasticSearch raw data",
-              href: () => url
+              href: () => url,
+              isValid: (workspace:Workspace) => { return true; }
           })
         }
 
