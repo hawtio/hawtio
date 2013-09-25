@@ -44,11 +44,39 @@
         stroke: #fff;
         stroke-width: 3px;
         stroke-opacity: .8;
+
+    div#pop-up {
+        display: none;
+        position:absolute;
+        color: white;
+        font-size: 14px;
+        background: rgba(0,0,0,0.5);
+        padding: 5px 10px 5px 10px;
+        -moz-border-radius: 8px 8px;
+        border-radius: 8px 8px;
+    }
+
 </style>
 
 <div ng-controller="Osgi.ServiceDependencyController">
-  
-  <div id="canvas">
+
+    <div id="pop-up">
+        <div id="pop-up-title"></div>
+        <div id="pop-up-content">
+            <table>
+                <tr>
+                    <td>
+                        <div id="pop-img"></div>
+                    </td>
+                    <td>
+                        <div id="pop-desc"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="canvas">
     <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10"></div>
   </div>
 
