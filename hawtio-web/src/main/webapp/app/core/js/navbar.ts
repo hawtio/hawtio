@@ -63,7 +63,19 @@ module Core {
 
     $scope.addToDashboardLink = () => {
       var href = "#" + $location.path() + workspace.hash();
-      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href);
+
+      var answer =  "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href);
+
+      if ($location.url().has("/jmx/charts")) {
+        var size = {
+          size_x: 4,
+          size_y: 3
+        }
+
+        answer += "&size=" + encodeURIComponent(angular.toJson(size));
+      }
+
+      return answer;
     };
 
     $scope.isActive = (nav) => {
