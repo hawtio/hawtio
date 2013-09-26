@@ -1491,8 +1491,7 @@ input[type="checkbox"].ng-invalid {
   box-shadow: 0 0 12px #e5e971;
 }
 .container-settings {
-  border-right: 1px solid #d4d4d4;
-  padding-right: 30px;
+
 }
 .container-settings dd .ep {
   display: inline-block;
