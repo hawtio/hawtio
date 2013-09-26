@@ -878,10 +878,12 @@ div.hawtio-form-tabs ul.nav-tabs li.active {
   background-color: white;
   box-shadow: 0 -10px 10px -10px rgba(0, 0, 0, 0.1) !important;
 }
+
 div.hawtio-form-tabs ul.nav-tabs li.active a {
   box-shadow: none !important;
   text-shadow: none !important;
   background-color: inherit !important;
+  font-weight: bold;
 }
 .popover-inner .popover-title {
   overflow: hidden;
@@ -1939,4 +1941,36 @@ a.dashboard-link:hover {
 #dialog-body div .profile-list {
   max-height: 327px;
   overflow-y: auto;
+}
+
+@media (max-width: 979px) {
+  .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
+    padding: 0;
+  }
+
+  .navbar-fixed-top, .navbar-fixed-bottom {
+    position: fixed;
+  }
+
+}
+
+.provision-list {
+  margin-left: 0px;
+}
+
+.provision-list ul {
+  margin-left: 0px;
+}
+
+.provision-list ul li {
+  list-style-type: none;
+  padding: 7px;
+}
+
+.provision-list ul li:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.container-profile-settings span.folder-title {
+  font-weight: bold;
 }

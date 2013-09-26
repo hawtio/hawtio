@@ -82,6 +82,10 @@ module Fabric {
       return Fabric.statusIcon($scope.row);
     };
 
+    $scope.getGitURL = (jolokiaUrl) => {
+      return jolokiaUrl.replace("jolokia", "git/fabric");
+    }
+
     $scope.getType = () => {
       if ($scope.row) {
         if ($scope.row.ensembleServer) {

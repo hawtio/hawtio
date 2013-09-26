@@ -20,7 +20,7 @@
       <div class="row-fluid">
 
 
-        <div class="span4 container-profile-settings">
+        <div class="span5 container-profile-settings">
           <dl class="dl-horizontal container-detail-profiles">
             <div class="btn-group pull-right container-detail-profile-buttons">
               <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
@@ -33,7 +33,7 @@
           </dl>
         </div>
 
-        <div class="span3 container-settings">
+        <div class="span6 container-settings">
           <div class="tabbable hawtio-form-tabs">
 
             <div class="tab-pane" title="Status">
@@ -161,9 +161,41 @@
               </dl>
             </div>
 
+            <div class="tab-pane" title="URLs">
+              <dl class="dl-horizontal">
+                <dt>Git:</dt>
+                <dd>{{getGitURL(row.jolokiaUrl)}}</dd>
+              </dl>
+              <dl class="dl-horizontal">
+                <dt>SSH:</dt>
+                <dd>{{row.sshUrl}}</dd>
+              </dl>
+              <dl class="dl-horizontal">
+                <dt>JMX:</dt>
+                <dd>{{row.jmxUrl}}</dd>
+              </dl>
+              <dl class="dl-horizontal">
+                <dt>Jolokia:</dt>
+                <dd>{{row.jolokiaUrl}}</dd>
+              </dl>
+            </div>
+
+
+            <div class="tab-pane" title="Provision List">
+              <dl>
+                <dt class="provision-list-title">
+                  <input id="provision-list-filter" type="text" class="search-query" placeholder="Filter..." ng-model="provisionListFilter">
+                </dt>
+                <dd class="provision-list">
+                  <ul>
+                    <li ng-repeat="item in row.provisionList" ng-class="getClass(item)">{{item}}</li>
+                  </ul>
+                </dd>
+              </dl>
+            </div>
+
+
           </div>
-
-
       </div>
 
       <div ng-show="row.provisionExceptionArray" class="row-fluid">
@@ -177,35 +209,6 @@
         </div>
       </div>
 
-      <div class="row-fluid">
-        <div class="span8">
-          <dl>
-            <dt>URLs:</dt>
-            <dd>
-              <ul>
-                <li ng-show="row.sshUrl"><strong>SSH: </strong>{{row.sshUrl}}</li>
-                <li ng-show="row.jmxUrl"><strong>JMX: </strong>{{row.jmxUrl}}</li>
-                <li ng-show="row.jolokiaUrl"><strong>Jolokia: </strong>{{row.jolokiaUrl}}</li>
-              </ul>
-            </dd>
-          </dl>
-        </div>
-      </div>
-
-      <div class="row-fluid">
-        <div class="span8">
-          <dl>
-            <dt>Provision List:
-              <input type="text" class="search-query" placeholder="Filter..." ng-model="provisionListFilter">
-            </dt>
-            <dd>
-              <ul ng-repeat="item in row.provisionList">
-                <li ng-class="getClass(item)">{{item}}</li>
-              </ul>
-            </dd>
-          </dl>
-        </div>
-      </div>
     </div>
   </div>
 
