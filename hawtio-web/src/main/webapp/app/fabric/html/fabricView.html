@@ -68,7 +68,7 @@
 
             <i class="icon-minus clickable" title="Delete this Version" ng-click="deleteVersionDialog.open()" ng-show="activeVersionId && activeVersionId != '' && versionCanBeDeleted()"></i>
 
-            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
+            <i class="icon-chevron-sign-right clickable green" title="Apply to selected containers" ng-click="applyVersionToContainers()" ng-show="showMigrateButton()"></i>
 
 
            </div>
@@ -97,7 +97,7 @@
                title="View, edit or create configuration files for the profiles in this version"><i class="icon-edit"></i>
              </a>-->
             <i class="icon-minus clickable" title="Delete selected Profiles" ng-click="deleteProfileDialog.open()" ng-show="selectedProfiles.length > 0 && profilesCanBeDeleted()"></i>
-            <i class="icon-chevron-sign-right clickable" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
+            <i class="icon-chevron-sign-right clickable green" title="Apply to selected containers" ng-click="addProfilesToContainers()" ng-show="showProfileAddButton()"></i>
 
            </div>
            <div class="section-filter">

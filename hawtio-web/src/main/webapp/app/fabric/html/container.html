@@ -18,71 +18,22 @@
         </div>
       </div>
       <div class="row-fluid">
+
+
         <div class="span4">
-            <dl class="dl-horizontal">
-              <dt>Server Status:</dt>
-              <dd>
-                <div ng-switch="row.alive">
-                  <p style="display: inline;" ng-switch-when="true">Running</p>
-                  <p style="display: inline;" ng-switch-default>Not Running</p>
-                </div>
-              </dd>
-            </dl>
-            <dl class="dl-horizontal">
-              <dt>Server Type:</dt>
-              <dd>{{row.type}}</dd>
-            </dl>
-            <dl class="dl-horizontal">
-              <dt>Type:</dt>
-              <dd>{{getType()}}</dd>
-            </dl>
-            <dl class="dl-horizontal">
-              <dt>Provision Status:</dt>
-              <dd>{{row.provisionStatus}}</dd>
-            </dl>
-            <dl class="dl-horizontal">
-              <dt>Root Container:</dt>
-              <dd ng-show="row.root">yes</dd>
-              <dd ng-hide="row.root">no</dd>
-            </dl>
-            <dl class="dl-horizontal" ng-show="row.parentId">
-              <dt>Parent:</dt>
-              <dd>
-                <a href="#/fabric/container/{{row.parentId}}{{hash}}">{{row.parentId}}</a>
-              </dd>
-            </dl>
-            <dl class="dl-horizontal" ng-show="row.childrenIds.length > 0">
-              <dt>Children:</dt>
-              <dd>
-                <ul class="unstyled">
-                  <li ng-repeat="child in row.childrenIds">
-                    <a href="#/fabric/container/{{child}}{{hash}}">{{child}}</a>
-                  </li>
-                </ul>
-              </dd>
-            </dl>
-            <dl class="dl-horizontal" ng-show="services.length > 0">
-              <dt>Services:</dt>
-              <dd>
-                <ul class="inline">
-                  <li ng-repeat="service in services" ng-switch="service.type">
-                    <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
-                    <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
-                  </li>
-                </ul>
-              </dd>
-            </dl>
-            <dl class="dl-horizontal" ng-show="row.jmxDomains.length > 0">
-              <dt>JMX Domains:</dt>
-              <dd>
-                <ul class="unstyled">
-                  <li ng-repeat="domain in row.jmxDomains">{{domain}}</li>
-                </ul>
-              </dd>
-            </dl>
+          <dl class="dl-horizontal">
+            <div class="btn-group pull-right">
+              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
+              <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
+                      title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
+            </div>
+          </dl>
+          <dl class="dl-horizontal">
+            <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
+          </dl>
         </div>
 
-        <div class="span4 container-settings">
+        <div class="span3 container-settings">
           <dl class="dl-horizontal">
             <dt>Version:</dt>
             <dd>{{row.versionId}}</dd>
@@ -143,18 +94,70 @@
           </dl>
         </div>
 
-        <div class="span4">
+        <div class="span3">
           <dl class="dl-horizontal">
-            <div class="btn-group pull-right">
-              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
-              <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
-                      title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
-            </div>
+            <dt>Server Status:</dt>
+            <dd>
+              <div ng-switch="row.alive">
+                <p style="display: inline;" ng-switch-when="true">Running</p>
+                <p style="display: inline;" ng-switch-default>Not Running</p>
+              </div>
+            </dd>
           </dl>
           <dl class="dl-horizontal">
-            <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
+            <dt>Server Type:</dt>
+            <dd>{{row.type}}</dd>
+          </dl>
+          <dl class="dl-horizontal">
+            <dt>Type:</dt>
+            <dd>{{getType()}}</dd>
+          </dl>
+          <dl class="dl-horizontal">
+            <dt>Provision Status:</dt>
+            <dd>{{row.provisionStatus}}</dd>
+          </dl>
+          <dl class="dl-horizontal">
+            <dt>Root Container:</dt>
+            <dd ng-show="row.root">yes</dd>
+            <dd ng-hide="row.root">no</dd>
+          </dl>
+          <dl class="dl-horizontal" ng-show="row.parentId">
+            <dt>Parent:</dt>
+            <dd>
+              <a href="#/fabric/container/{{row.parentId}}{{hash}}">{{row.parentId}}</a>
+            </dd>
+          </dl>
+          <dl class="dl-horizontal" ng-show="row.childrenIds.length > 0">
+            <dt>Children:</dt>
+            <dd>
+              <ul class="unstyled">
+                <li ng-repeat="child in row.childrenIds">
+                  <a href="#/fabric/container/{{child}}{{hash}}">{{child}}</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+          <dl class="dl-horizontal" ng-show="services.length > 0">
+            <dt>Services:</dt>
+            <dd>
+              <ul class="inline">
+                <li ng-repeat="service in services" ng-switch="service.type">
+                  <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+                  <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+                </li>
+              </ul>
+            </dd>
+          </dl>
+          <dl class="dl-horizontal" ng-show="row.jmxDomains.length > 0">
+            <dt>JMX Domains:</dt>
+            <dd>
+              <ul class="unstyled">
+                <li ng-repeat="domain in row.jmxDomains">{{domain}}</li>
+              </ul>
+            </dd>
           </dl>
         </div>
+
       </div>
 
       <div ng-show="row.provisionExceptionArray" class="row-fluid">
