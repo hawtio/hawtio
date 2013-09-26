@@ -27,17 +27,20 @@ module Perspective {
       topLevelTabs: {
         includes: [
           {
+            href: "#/kibanalogs"
+          },
+          {
             href: "#/insight"
+          },
+          {
+            href: "#/kibanacamel"
           },
           {
             href: "#/camin"
           },
           {
-            rhref: ".*kibana.*"
-          },
-          {
-            rhref: ".*eshead.*"
-          },
+            href: "#/eshead"
+          }
         ]
       }
     },
@@ -54,6 +57,15 @@ module Perspective {
           {
             href: "#/camin"
           },
+          {
+            href: "#/kibanalogs"
+          },
+          {
+            href: "#/kibanacamel"
+          },
+          {
+            href: "#/eshead"
+          }
         ]
       }
     }
