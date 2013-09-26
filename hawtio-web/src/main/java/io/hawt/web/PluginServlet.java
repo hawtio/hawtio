@@ -86,8 +86,8 @@ public class PluginServlet extends HttpServlet {
                 answer.put((String) pluginDefinition.get("Name"), pluginDefinition);
             }
 
-            ServletHelpers.writeObject(converters, options, out, answer);
         }
+        ServletHelpers.writeObject(converters, options, out, answer);
     }
 
 }
