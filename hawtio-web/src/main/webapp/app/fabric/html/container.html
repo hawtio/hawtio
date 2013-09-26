@@ -21,8 +21,8 @@
 
 
         <div class="span4">
-          <dl class="dl-horizontal">
-            <div class="btn-group pull-right">
+          <dl class="dl-horizontal container-detail-profiles">
+            <div class="btn-group pull-right container-detail-profile-buttons">
               <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
               <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
                       title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
@@ -34,7 +34,7 @@
         </div>
 
         <div class="span5 container-settings">
-          <div class="tabbable  hawtio-form-tabs">
+          <div class="tabbable hawtio-form-tabs">
 
             <div class="tab-pane" title="Status">
               <dl class="dl-horizontal">

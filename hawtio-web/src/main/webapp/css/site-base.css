@@ -210,6 +210,10 @@ ol.inline > li {
 .green {
   color: green !important;
 }
+.blue {
+  color: dodgerblue !important;
+}
+
 .icon1point5x {
   font-size: 1.5em;
 }
@@ -1913,4 +1917,15 @@ a.dashboard-link:hover {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.container-detail-profiles {
+  position: relative;
+  margin-top: 2px;
+}
+
+.container-detail-profile-buttons {
+  position: absolute;
+  right: 0;
+  top: 19px;
 }
