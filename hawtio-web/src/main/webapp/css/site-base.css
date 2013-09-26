@@ -1494,8 +1494,13 @@ input[type="checkbox"].ng-invalid {
   -moz-box-shadow: 0 0 12px #e5e971;
   box-shadow: 0 0 12px #e5e971;
 }
-.container-settings {
 
+.container-profile-settings {
+  min-width: 360px;
+}
+
+.container-settings {
+  min-width: 360px;
 }
 
 .bold {
@@ -1927,5 +1932,11 @@ a.dashboard-link:hover {
 .container-detail-profile-buttons {
   position: absolute;
   right: 0;
-  top: 19px;
+  z-index: 50;
+  top: 20px;
+}
+
+#dialog-body div .profile-list {
+  max-height: 327px;
+  overflow-y: auto;
 }
