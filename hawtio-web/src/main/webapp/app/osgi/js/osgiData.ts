@@ -4,6 +4,7 @@ module Osgi {
 
         private result = {};
         private bundles = [];
+        private services = {};
 
         private jolokia;
         private workspace : Workspace;
@@ -20,7 +21,7 @@ module Osgi {
                 type: 'exec', mbean: getSelectionBundleMBean(workspace),
                 operation: 'listBundles()'
             }, onSuccess(function(response) {
-                svc.processResponse(response)
+                svc.processBundles(response)
             }));
         }
 
@@ -35,12 +36,33 @@ module Osgi {
             return this.bundles;
         }
 
-        private processResponse(response) {
+        public getServices() {
+            return this.services;
+        }
+
+        private loadServices(svc) {
+
+            var response = svc.jolokia.request({
+                type: 'exec',
+                mbean: getSelectionServiceMBean(svc.workspace),
+                operation: 'listServices()'
+            }, onSuccess(null));
+
+            var answer = response.value;
+            svc.services = {};
+
+            angular.forEach(answer, function (value, key) {
+              svc.services[value.Identifier] = value;
+            });
+        }
+
+        private processBundles(response) {
 
             var svc = this;
 
             if (!Object.equal(svc.result, response.value)) {
                 var newBundles = [];
+                svc.loadServices(svc);
 
                 svc.result = response.value;
 

@@ -50,6 +50,38 @@ module ForceGraph {
                 });
             };
 
+            $scope.mover = (d) => {
+                if (d.popup != null) {
+                    $("#pop-up").fadeOut(100,function () {
+
+                        // Popup content
+                        if (d.popup.title != null) {
+                            $("#pop-up-title").html(d.popup.title);
+                        } else {
+                            $("#pop-up-title").html("");
+                        }
+
+                        if (d.popup.content != null) {
+                            $("#pop-up-content").html(d.popup.content);
+                        } else {
+                            $("#pop-up-content").html("");
+                        }
+
+                        // Popup position
+                        var popLeft = (d.x * $scope.scale) + $scope.trans[0] + 20;
+                        var popTop = (d.y * $scope.scale) + $scope.trans[1]+20;
+
+                        $("#pop-up").css({"left":popLeft,"top":popTop});
+                        $("#pop-up").fadeIn(100);
+                    });
+                }
+            }
+
+            $scope.mout = (d) => {
+                $("#pop-up").fadeOut(50);
+                //d3.select(this).attr("fill","url(#ten1)");
+            }
+
             var updateGraph = () => {
 
                 var canvas = $($element);
@@ -158,7 +190,10 @@ module ForceGraph {
                     // animate, then stop
                     $scope.force.start();
 
-                    $scope.graphNodes.call($scope.force.drag);
+                    $scope.graphNodes
+                        .call($scope.force.drag)
+                        .on("mouseover", $scope.mover)
+                        .on("mouseout", $scope.mout);
 
                 }
             }

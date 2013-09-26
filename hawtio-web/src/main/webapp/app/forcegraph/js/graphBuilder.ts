@@ -12,21 +12,21 @@ module ForceGraph {
             }
         }
 
-        public addLink (srcNode, targetNode, linkType) {
-            this.addNode(srcNode);
-            this.addNode(targetNode);
+        public addLink (srcId, targetId, linkType) {
 
-            this.links.push({
-                source: srcNode,
-                target: targetNode,
-                type: linkType
-            });
+            if ((this.nodes[srcId] != null) && (this.nodes[targetId] != null)) {
+                this.links.push({
+                    source: this.nodes[srcId],
+                    target: this.nodes[targetId],
+                    type: linkType
+                });
 
-            if (!this.linkTypes[linkType]) {
-                this.linkTypes[linkType] = {
-                    used: true
-                }
-            };
+                if (!this.linkTypes[linkType]) {
+                    this.linkTypes[linkType] = {
+                        used: true
+                    }
+                };
+            }
         }
 
         public buildGraph() {

@@ -1,4 +1,25 @@
-<style>
+<style type="text/css">
+
+    div#pop-up {
+        display: none;
+        position:absolute;
+        color: white;
+        font-size: 14px;
+        background: rgba(0,0,0,0.6);
+        padding: 5px 10px 5px 10px;
+        -moz-border-radius: 8px 8px;
+        border-radius: 8px 8px;
+    }
+
+    div#pop-up-title {
+        font-size: 15px;
+        width:200px;
+        margin-bottom: 4px;
+        font-weight: bolder;
+    }
+    div#pop-up-content {
+        font-size: 12px;
+    }
 
     rect.graphbox {
         fill: #DDD;
@@ -44,11 +65,18 @@
         stroke: #fff;
         stroke-width: 3px;
         stroke-opacity: .8;
+    }
+
 </style>
 
 <div ng-controller="Osgi.ServiceDependencyController">
-  
-  <div id="canvas">
+
+    <div id="pop-up">
+        <div id="pop-up-title"></div>
+        <div id="pop-up-content"></div>
+    </div>
+
+    <div id="canvas">
     <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10"></div>
   </div>
 
