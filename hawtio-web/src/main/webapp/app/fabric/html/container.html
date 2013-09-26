@@ -45,8 +45,8 @@
                 <dt>Server Status:</dt>
                 <dd>
                   <div ng-switch="row.alive">
-                    <p style="display: inline;" ng-switch-when="true" class="green">Running</p>
-                    <p style="display: inline;" ng-switch-default class="red">Not Running</p>
+                    <p style="display: inline;" ng-switch-when="true" class="green bold">Running</p>
+                    <p style="display: inline;" ng-switch-default class="red bold">Not Running</p>
                   </div>
                 </dd>
               </dl>
@@ -60,7 +60,7 @@
               </dl>
               <dl class="dl-horizontal">
                 <dt>Provision Status:</dt>
-                <dd>{{row.provisionStatus}}</dd>
+                <dd><i ng-class="statusIcon()"></i> {{row.provisionStatus}}</dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Root Container:</dt>

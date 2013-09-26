@@ -1493,6 +1493,11 @@ input[type="checkbox"].ng-invalid {
 .container-settings {
 
 }
+
+.bold {
+  font-weight: bold;
+}
+
 .container-settings dd .ep {
   display: inline-block;
 }
