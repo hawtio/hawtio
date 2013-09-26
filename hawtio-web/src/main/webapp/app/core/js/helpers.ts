@@ -810,7 +810,7 @@ module Core {
   }
 
   export function setPageTitleWithTab($document, title:Core.PageTitle, tab:string) {
-    $document.attr('title', title.getTitleWithSeparator(' : ') + ' : ' + tab);
+    $document.attr('title', tab + ' : ' + title.getTitleWithSeparator(' : '));
   }
 
   /**
