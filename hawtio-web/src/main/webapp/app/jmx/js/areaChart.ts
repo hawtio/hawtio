@@ -4,6 +4,7 @@ module Jmx {
 
     $scope.mbean = $routeParams['mbean'];
     $scope.attribute = $routeParams['attribute'];
+    $scope.duration = localStorage['updateRate'];
 
     $scope.template = "";
 
@@ -13,15 +14,11 @@ module Jmx {
       entries: $scope.entries
     };
 
-    $scope.count = 0;
-
     $scope.req = [{type: 'read', mbean: $scope.mbean, attribute: $scope.attribute}];
 
 
 
     $scope.render = (response) => {
-
-      $scope.count = $scope.count + localStorage['updateRate'];
 
       $scope.entries.push({
         time: response.timestamp,
