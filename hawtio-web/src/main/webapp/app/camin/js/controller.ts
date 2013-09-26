@@ -1,11 +1,10 @@
 module Camin {
 
-    export function Controller($scope, jolokia, localStorage) {
+    export function Controller($scope, jolokia, localStorage, $routeParams) {
 
         $scope.query = "";
         $scope.result = "";
         $scope.breadcrumbs = [ ];
-
 
         $scope.onQueryChange = function() {
             $scope.result = "Querying exchanges related to " + $scope.query;
@@ -529,6 +528,10 @@ module Camin {
               .attr('y2', function(l) { return yt(l.taskA) + ht(l.taskA) + arrowWidth; });
         }
 
+        if ($routeParams["exchangeId"]) {
+            $scope.query = $routeParams["exchangeId"];
+            $scope.onQueryChange();
+        }
 
     }
 }

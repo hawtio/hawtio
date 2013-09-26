@@ -3,7 +3,8 @@ module Camin {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).
       config(($routeProvider) => {
         $routeProvider.
-          when('/camin', {templateUrl: 'app/camin/html/camin.html'})
+          when('/camin', {templateUrl: 'app/camin/html/camin.html'}).
+          when('/camin/:exchangeId', {templateUrl: 'app/camin/html/camin.html'})
       }).
       run((workspace:Workspace, viewRegistry) => {
 
