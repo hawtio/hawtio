@@ -27,9 +27,17 @@ module Jmx {
       type: "donut",
       icon: "icon-smile",
       route: "/jmx/widget/donut",
-      size_x: 1,
-      size_y: 1,
+      size_x: 2,
+      size_y: 2,
       title: "Add Donut chart to Dashboard"
+    },
+    {
+      type: "area",
+      icon: "icon-bar-chart",
+      route: "/jmx/widget/area",
+      size_x: 4,
+      size_y: 2,
+      title: "Add Area chart to Dashboard"
     }
   ];
 
@@ -75,6 +83,30 @@ module Jmx {
       total: "TotalSwapSpaceSize",
       terms: "FreeSwapSpaceSize",
       remaining: "Used Swap"
+    },
+    {
+      type: "area",
+      title: "Process CPU Time",
+      mbean: "java.lang:type=OperatingSystem",
+      attribute: "ProcessCpuTime"
+    },
+    {
+      type: "area",
+      title: "Process CPU Load",
+      mbean: "java.lang:type=OperatingSystem",
+      attribute: "ProcessCpuLoad"
+    },
+    {
+      type: "area",
+      title: "System CPU Load",
+      mbean: "java.lang:type=OperatingSystem",
+      attribute: "SystemCpuLoad"
+    },
+    {
+      type: "area",
+      title: "System CPU Time",
+      mbean: "java.lang:type=OperatingSystem",
+      attribute: "SystemCpuTime"
     }
   ];
 
