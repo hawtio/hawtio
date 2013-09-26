@@ -7,7 +7,7 @@ module Insight {
     export function createCharts($scope, chartsDef, element, jolokia) {
 
         var chartsDiv = $(element);
-        var width = chartsDiv.width();
+        var width = chartsDiv.width() - 80;
 
         var context = cubism.context()
               .serverDelay(interval_to_seconds('1m') * 1000)   // insight only gather stats every minute
