@@ -22,21 +22,25 @@ module Core {
 
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
-    $scope.$watch('perspectiveDetails.perspective', function() {
-      var perspective = $scope.perspectiveDetails.perspective;
-      if (perspective) {
-        console.log("Changed the perspective to " + JSON.stringify(perspective));
-        $location.search(Perspective.perspectiveSearchId, perspective.id);
-        reloadPerspective();
+    $scope.$watch('perspectiveDetails.perspective', (newValue, oldValue) => {
+      if (angular.toJson(newValue) !== angular.toJson(oldValue)) {
+        var perspective = $scope.perspectiveDetails.perspective;
+        if (perspective) {
+          console.log("Changed the perspective to " + JSON.stringify(perspective));
+          $location.search(Perspective.perspectiveSearchId, perspective.id);
+          reloadPerspective();
+          $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+        }
       }
     });
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
-
       reloadPerspective();
     });
+
+
 
     /*
     $scope.$watch('hash', function() {
@@ -110,15 +114,21 @@ module Core {
     };
 
     function reloadPerspective() {
-      $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
 
-      console.log("Current perspectives " + JSON.stringify($scope.perspectives));
-      var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
-      $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
-      console.log("Current perspective ID: " + currentId + " perspective: " + $scope.perspective);
-      $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+      var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+
+      if (angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+        $scope.perspectives = perspectives;
+
+        console.log("Current perspectives " + JSON.stringify($scope.perspectives));
+        var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
+        $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
+        console.log("Current perspective ID: " + currentId + " perspective: " + $scope.perspective);
+        $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+
+      }
     }
 
-    reloadPerspective();
+    //reloadPerspective();
   }
 }
