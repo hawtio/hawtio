@@ -860,6 +860,22 @@ module Core {
     });
   }
 
+
+  export function extractHashURL(url:string) {
+    var parts = url.split('#');
+    if (parts.length === 0) {
+      return url;
+    }
+    var answer:string = parts[1];
+    if (parts.length > 1) {
+      var remaining = parts.last(parts.length - 2);
+      remaining.forEach((part) => {
+        answer = answer + "#" + part;
+      });
+    }
+    return answer;
+  }
+
   export function getBasicAuthHeader(username, password) {
     var authInfo = username + ":" + password;
     authInfo = btoa(authInfo);
