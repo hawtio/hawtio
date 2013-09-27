@@ -48,7 +48,7 @@ module Core {
       if (!answer) {
         var path = $location.path();
         if (path) {
-          if (path.startsWith("")) {
+          if (path.startsWith("/")) {
             path = path.substring(1);
           }
           answer = searchRegistry(path);
