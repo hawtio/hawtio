@@ -17,11 +17,12 @@
     <jackson-module-jaxb-annotations-version>2.1.3</jackson-module-jaxb-annotations-version>
     <reflections-version>0.9.9-RC1</reflections-version>
     <fuse.osgi.export>
-      io.hawt.jsonschema
+      io.hawt.jsonschema,
+      io.hawt.introspect,
     </fuse.osgi.export>
     <fuse.osgi.import>
-      io.hawt.jsonschema
-      *;resolution:=optional
+      io.hawt.jsonschema*;resolution:=optional,
+      io.hawt.introspect*;resolution:=optional,
     </fuse.osgi.import>
   </properties>
 
