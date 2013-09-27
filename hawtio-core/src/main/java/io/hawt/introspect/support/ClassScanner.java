@@ -64,6 +64,11 @@ public class ClassScanner {
         this.classLoaders = classLoaders;
     }
 
+    public void clearCache() {
+        cache.clear();
+        packageCache.clear();
+        classLoaderProviderMap.clear();
+    }
 
     /**
      * Registers a named class loader provider or removes it if the classLoaderProvider is null

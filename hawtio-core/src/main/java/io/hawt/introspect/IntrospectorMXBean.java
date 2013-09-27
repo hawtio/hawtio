@@ -25,4 +25,9 @@ public interface IntrospectorMXBean {
      * nested properties
      */
     List<PropertyDTO> findProperties(String className, String filter) throws Exception;
+
+    /**
+     * Clears the cache
+     */
+    void clearCache();
 }

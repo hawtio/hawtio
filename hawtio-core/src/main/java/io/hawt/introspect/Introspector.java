@@ -140,6 +140,10 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         return properties;
     }
 
+    @Override
+    public void clearCache() {
+        getClassScanner().clearCache();
+    }
 
     public ClassScanner getClassScanner() {
         return classScanner;
