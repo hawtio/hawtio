@@ -30,6 +30,12 @@ module Core {
           $location.search(Perspective.perspectiveSearchId, perspective.id);
           reloadPerspective();
           $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+          if (oldValue) {
+            oldValue.lastPage = $location.url();
+            if (newValue.lastPage) {
+              $location.url(Core.trimLeading(newValue.lastPage, "#"));
+            }
+          }
         }
       }
     });
