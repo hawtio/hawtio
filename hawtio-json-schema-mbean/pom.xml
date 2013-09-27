@@ -70,6 +70,13 @@
       <version>${jackson-version}</version>
     </dependency>
 
+    <!-- testing -->
+    <dependency>
+      <groupId>io.hawt.example.services</groupId>
+      <artifactId>example-dozer-models</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
