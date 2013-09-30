@@ -70,14 +70,19 @@
 </style>
 
 <div ng-controller="Osgi.ServiceDependencyController">
+  <div ng-hide="inDashboard" class="add-link">
+    <a ng-href="{{addToDashboardLink()}}" title="Add this view to a Dashboard"><i class="icon-share"></i></a>
+  </div>
 
     <div id="pop-up">
         <div id="pop-up-title"></div>
         <div id="pop-up-content"></div>
     </div>
 
-    <div id="canvas">
-    <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10"></div>
+  <div class="row-fluid">
+    <div class="span12 canvas">
+      <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10" style="min-height: 800px"></div>
+    </div>
   </div>
 
 </div>

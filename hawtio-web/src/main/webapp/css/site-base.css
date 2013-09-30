@@ -1995,3 +1995,16 @@ a.dashboard-link:hover {
   font-weight: bold;
   font-size: 20px;
 }
+
+.add-link {
+  position: absolute;
+  right: 20px;
+  top: 130px;
+  background: white;
+  border-radius: 4px;
+  width: 22px;
+  height: 19px;
+  border: 1px solid #d4d4d4;
+  text-align: center;
+
+}

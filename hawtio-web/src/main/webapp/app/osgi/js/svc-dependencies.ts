@@ -6,6 +6,19 @@ module Osgi {
             Core.$apply($scope);
         });
 
+        $scope.addToDashboardLink = () => {
+          var href="#/osgi/dependencies";
+          var title="OSGi Dependencies";
+          var size = angular.toJson({
+            size_x: 2,
+            size_y: 2
+          });
+          return "#/dashboard/add?tab=dashboard" +
+              "&href=" + encodeURIComponent(href) +
+              "&size=" + encodeURIComponent(size) +
+              "&title=" + encodeURIComponent(title);
+        };
+
         createGraph()
 
         function createGraph() {
