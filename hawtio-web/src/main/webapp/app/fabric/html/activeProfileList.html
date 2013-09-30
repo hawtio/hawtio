@@ -9,7 +9,9 @@
     </div>
 
     <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
-    <div class="active-profile-requirements" title="The required number of instances of each profile">Require</div>
+    <div class="active-profile-requirements" title="The required number of instances of each profile">
+      <a ng-click="editRequirementsDialog.open()">Require</a>
+    </div>
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
     <div class="expandable" ng-class="isOpen(profile)">
@@ -21,15 +23,19 @@
           <a ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
         </div>
         <div class="active-profile-count" title="Current number of instances. Click to create new containers">
-          <span class="badge {{profile.requireStyle}}" ng-click="createRequiredContainers(profile)">
-            {{profile.count}}
-          </span>
+          <a ng-click="createRequiredContainers(profile)">
+            <span class="badge {{profile.requireStyle}}" >
+              {{profile.count}}
+            </span>
+          </a>
         </div>
 
         <div class="active-profile-requirements">
+          <a ng-click="editRequirementsDialog.open()">
           <span ng-show="profile.requirements.minimumInstances" class="badge">
             {{profile.requirements.minimumInstances}}
           </span>
+          </a>
         </div>
 
       </div>
@@ -75,4 +81,34 @@
       </div>
     </div>
   </div>
+  <div modal="editRequirementsDialog.show">
+    <form name="requirementsForm" class="form-inline no-bottom-margin" ng-submit="updateRequirements(requirements)">
+      <div class="modal-header"><h4>Edit Requirements</h4></div>
+      <div class="modal-body">
+        <table>
+          <thead>
+            <th>Profile</th>
+            <th title="Minimum number of instances which should be running">Minimum</th>
+            <th title="Maixmum number of instances">Maximum</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="requirement in requirements.profileRequirements">
+              <td class="property-name">{{requirement.profile}}</td>
+              <td>
+                <input name="minimumInstances" type="number" ng-model="requirement.minimumInstances" ng-required="false" class="input-small">
+              </td>
+              <td>
+                <input name="maximumInstances" type="number" ng-model="requirement.maximumInstances" ng-required="false" class="input-small">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!requirementsForm.$valid" type="submit" value="Update">
+        <input class="btn btn-primary" ng-click="editRequirementsDialog.close()" value="Cancel">
+      </div>
+    </form>
+  </div>
+
 </div>

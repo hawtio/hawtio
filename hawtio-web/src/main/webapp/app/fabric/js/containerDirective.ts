@@ -23,6 +23,8 @@ module Fabric {
       $scope.showSelect = true;
       $scope.requirements = null;
 
+      $scope.editRequirementsDialog = new Core.Dialog();
+
 
       $scope.updateActiveContainers = () => {
         var activeProfiles = $scope.activeProfiles;
@@ -397,6 +399,19 @@ module Fabric {
 
       $scope.containerMatchesFilter = (container) => {
         return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
+      };
+
+      $scope.updateRequirements = (requirements) => {
+        function onRequirementsSaved(response) {
+          notification("success", "Updated the requirements");
+          Core.$apply($scope);
+        };
+
+        if (requirements) {
+          var json = JSON.stringify(requirements);
+          jolokia.execute(Fabric.managerMBean, "requirementsJson",
+                  json, onSuccess(onRequirementsSaved));
+        }
       };
 
       function onRequirements(response) {
