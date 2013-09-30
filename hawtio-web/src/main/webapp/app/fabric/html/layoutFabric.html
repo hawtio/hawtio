@@ -1,11 +1,11 @@
 <ul class="nav nav-tabs" ng-controller="Fabric.NavBarController">
-  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'
-          title="View the running containers in this Fabric">
-    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
-  </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/activeProfiles")}'
           title="View the different profiles (kinds of container)">
     <a ng-href="#/fabric/activeProfiles{{hash}}">Profiles</a>
+  </li>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/containers")}'
+          title="View the running containers in this Fabric">
+    <a ng-href="#/fabric/containers{{hash}}">Containers</a>
   </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'
           title="Migrate containers to use different versions of profiles">
