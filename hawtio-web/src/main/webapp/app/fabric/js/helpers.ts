@@ -8,12 +8,21 @@ module Fabric {
   var fabricTopLevel = "fabric/profiles/";
   var profileSuffix = ".profile";
 
+
+  export function fabricCreated(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
+  }
+
+  export function canBootstrapFabric(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
+  }
+
+
   export function hasFabric(workspace) {
     // lets make sure we only have a fabric if we have the ClusterBootstrapManager available
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse which doesn't have the necessary
     // mbeans for hawtio awesomeness
-    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})
-            && workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
+    return fabricCreated(workspace) && canBootstrapFabric(workspace);
   }
 
   /**

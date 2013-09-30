@@ -56,7 +56,7 @@ module Fabric {
             workspace.topLevelTabs.push( {
               content: "Create Fabric",
               title: "Create a fabric starting with this container",
-              isValid: (workspace) => !Fabric.hasFabric(workspace),
+              isValid: (workspace) => Fabric.canBootstrapFabric(workspace) && !Fabric.fabricCreated(workspace),
               href: () => "#/createFabric",
               isActive: (workspace) => workspace.isLinkActive("createFabric")
             });
