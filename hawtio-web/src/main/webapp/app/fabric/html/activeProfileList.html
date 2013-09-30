@@ -10,7 +10,7 @@
 
     <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
     <div class="active-profile-requirements" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
-      <a ng-click="editRequirementsDialog.open()">
+      <a href="" ng-click="editRequirementsDialog.open()">
         <i class="icon-resize-vertical"></i>
         Scale
       </a>
@@ -23,10 +23,10 @@
           <i class="expandable-indicator" ng-show="profile.count"></i>
         </div>
         <div class="title active-profile-name">
-          <a ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
+          <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
         </div>
         <div class="active-profile-count" title="Current number of instances. Click to create new containers">
-          <a ng-click="createRequiredContainers(profile)">
+          <a href="" ng-click="createRequiredContainers(profile)">
             <span class="badge {{profile.requireStyle}}" >
               {{profile.count}}
             </span>
