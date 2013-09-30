@@ -48,7 +48,9 @@ public class OpenShiftProtocolSocketFactory extends DefaultProtocolSocketFactory
 
     @Override
     public Socket createSocket(String host, int port, InetAddress localAddress, int localPort) throws IOException, UnknownHostException {
-        LOG.info("Creating OpenShift socket on " + host + ":" + port);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating OpenShift socket on " + host + ":" + port);
+        }
         return new Socket(host, port);
     }
 
