@@ -329,16 +329,47 @@ module Fabric {
 
       $scope.profileMatchesFilter = (profile) => {
         return profile.id.has($scope.searchFilter) || !profile.containers.filter((id) => { return id.has($scope.searchFilter); }).isEmpty();
-      }
+      };
 
       $scope.containerMatchesFilter = (container) => {
         return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
+      };
+
+      $scope.minimumInstances = (profileId) => {
+        var profileRequirements = $scope.profileRequirements(profileId);
+        return profileRequirements ? profileRequirements.minimumInstances : null;
+      };
+
+      $scope.requirementStyle = (profile) => {
+        var min = $scope.minimumInstances(profile.id);
+        if (min) {
+          var count = profile.count;
+          if (!count) {
+            return "badge-important";
+          } else if (min > count) {
+            return "badge-warning";
+          }
+        }
+        return "";
+      };
+
+      $scope.profileRequirements = (profileId) => {
+        if ($scope.requirements) {
+          var profileRequirements = $scope.requirements.profileRequirements;
+          if (profileRequirements) {
+            return profileRequirements.find({profile: profileId});
+          }
+        }
+        return null;
+      };
+
+      function onRequirements(response) {
+        if (response) {
+          $scope.requirements = response.value;
+        }
       }
 
+      Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.managerMBean, operation: "requirements()"}, onSuccess(onRequirements));
     }
-
-
-
   }
-
 }

@@ -1859,14 +1859,14 @@ dd.file-list {
   left: 0;
 }
 
-.active-profile-actions {
+.active-profile-requirements {
   position: absolute;
-  right: 10px;
+  right: 150px;
 }
 
 .active-profile-count {
   position: absolute;
-  right: 250px;
+  right: 10px;
 }
 
 .active-profile-name {
