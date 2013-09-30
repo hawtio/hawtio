@@ -117,7 +117,7 @@ module Fabric {
                   if (!profile || !profile.count) {
                     return "badge-important";
                   } else {
-                    return "badge-warning";
+                    return min <= profile.count ? "badge-success" : "badge-warning";
                   }
                 }
                 return "";
@@ -404,10 +404,13 @@ module Fabric {
       $scope.updateRequirements = (requirements) => {
         function onRequirementsSaved(response) {
           notification("success", "Updated the requirements");
+          $scope.updateActiveContainers();
           Core.$apply($scope);
         };
 
         if (requirements) {
+          $scope.editRequirementsDialog.close();
+
           var json = JSON.stringify(requirements);
           jolokia.execute(Fabric.managerMBean, "requirementsJson",
                   json, onSuccess(onRequirementsSaved));

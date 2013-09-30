@@ -9,8 +9,11 @@
     </div>
 
     <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
-    <div class="active-profile-requirements" title="The required number of instances of each profile">
-      <a ng-click="editRequirementsDialog.open()">Require</a>
+    <div class="active-profile-requirements" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
+      <a ng-click="editRequirementsDialog.open()">
+        <i class="icon-resize-vertical"></i>
+        Scale
+      </a>
     </div>
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
