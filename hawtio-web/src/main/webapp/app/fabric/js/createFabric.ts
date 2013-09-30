@@ -13,6 +13,8 @@ module Fabric {
       Core.$apply($scope);
     });
 
+    $scope.creating = false;
+
     $scope.entity = {
       zooKeeperServerPort: 2181,
       globalResolver: 'localhostname',
@@ -34,18 +36,27 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
 
-      jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
-        method: 'post',
-        success: (response) => {
-          notification('success', "Created fabric!");
-          $location.url("/fabric/view");
-          Core.$apply($scope);
-        },
-        error: (response) => {
-          notification('error', "Error creating fabric: " + response.error);
-          Core.$apply($scope);
-        }
-      });
+      setTimeout(() => {
+
+        jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
+          method: 'post',
+          success: (response) => {
+            notification('success', "Created fabric!");
+            $location.url("/fabric/activeProfiles");
+            Core.$apply($scope);
+          },
+          error: (response) => {
+            notification('error', "Error creating fabric: " + response.error);
+            $scope.creating = false;
+            Core.$apply($scope);
+          }
+        });
+        notification('info', "Creating fabric, please wait...");
+        $scope.creating = true;
+
+        Core.$apply($scope);
+      }, 30);
+
     }
 
   }

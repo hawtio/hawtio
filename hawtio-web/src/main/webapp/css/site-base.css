@@ -220,6 +220,7 @@ ol.inline > li {
 .centered {
   margin-left: auto !important;
   margin-right: auto !important;
+  text-align: center;
 }
 .inline {
   display: inline;
@@ -1982,4 +1983,15 @@ a.dashboard-link:hover {
 
 .widget-title div div editable-property .ep {
   top: -1px;
+}
+
+.loading {
+  position: relative;
+  top: 140px;
+}
+
+.loading p {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 20px;
 }
