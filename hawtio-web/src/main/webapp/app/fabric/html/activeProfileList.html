@@ -9,26 +9,26 @@
     </div>
 
     <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
-    <div class="active-profile-requirements" title="The required number of instances of each profile">Requirements</div>
+    <div class="active-profile-requirements" title="The required number of instances of each profile">Require</div>
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
     <div class="expandable" ng-class="isOpen(profile)">
       <div class="active-profile-row">
         <div class="title active-profile-expander">
-          <i class="expandable-indicator"></i>
+          <i class="expandable-indicator" ng-show="profile.count"></i>
         </div>
         <div class="title active-profile-name">
           <a ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
         </div>
         <div class="active-profile-count">
-          <span class="badge {{requirementStyle(profile)}}">
+          <span class="badge {{profile.requireStyle}}">
             {{profile.count}}
           </span>
         </div>
 
         <div class="active-profile-requirements">
-          <span ng-show="minimumInstances(profile.id)" class="badge">
-            {{minimumInstances(profile.id)}}
+          <span ng-show="profile.requirements.minimumInstances" class="badge">
+            {{profile.requirements.minimumInstances}}
           </span>
         </div>
 

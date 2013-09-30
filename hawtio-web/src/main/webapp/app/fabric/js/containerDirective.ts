@@ -21,12 +21,26 @@ module Fabric {
       $scope.connectToContainerDialog = new Core.Dialog();
       $scope.targetContainer = {};
       $scope.showSelect = true;
+      $scope.requirements = null;
 
+
+      $scope.updateActiveContainers = () => {
+        var activeProfiles = $scope.activeProfiles;
+        $scope.activeProfiles = $scope.currentActiveProfiles();
+        $scope.activeProfiles.each((activeProfile) => {
+
+          var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
+          if (ap) {
+            activeProfile['selected'] = ap.selected;
+          } else {
+            activeProfile['selected'] = false;
+          }
+        });
+      };
 
       $scope.updateContainers = (newContainers) => {
 
         var response = angular.toJson(newContainers);
-
         if ($scope.containersResponse !== response) {
           $scope.containersResponse = response;
 
@@ -58,20 +72,7 @@ module Fabric {
           });
 
           $scope.containers = newContainers;
-
-          var activeProfiles = $scope.activeProfiles;
-          $scope.activeProfiles = $scope.currentActiveProfiles();
-          $scope.activeProfiles.each((activeProfile) => {
-
-            var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
-            if (ap) {
-              activeProfile['selected'] = ap.selected;
-            } else {
-              activeProfile['selected'] = false;
-            }
-
-          });
-
+          $scope.updateActiveContainers();
           Core.$apply($scope);
         }
       };
@@ -94,11 +95,51 @@ module Fabric {
                 count: 1,
                 versionId: container.versionId,
                 containers: [container.id],
-                selected: false
+                selected: false,
+                requirements: null,
+                requireStyle: null
               });
             }
           });
         });
+
+        if ($scope.requirements) {
+          angular.forEach($scope.requirements.profileRequirements, (profileRequirement) => {
+            var id = profileRequirement.profile;
+            var min = profileRequirement.minimumInstances;
+            if (id) {
+              var profile = answer.find({id: id});
+
+              function requireStyle() {
+                if (min) {
+                  if (!profile || !profile.count) {
+                    return "badge-important";
+                  } else {
+                    return "badge-warning";
+                  }
+                }
+                return "";
+              }
+
+              if (profile) {
+                profile["requirements"] = profileRequirement;
+                profile["requireStyle"] = requireStyle();
+              } else {
+                // lets add the profile with no containers
+                answer.push({
+                  id: id,
+                  count: 0,
+                  // TODO how to define the version of the current profile?
+                  // versionId: container.versionId,
+                  containers: [],
+                  selected: false,
+                  requirements: profileRequirement,
+                  requireStyle: requireStyle()
+                });
+              }
+            }
+          });
+        }
 
         return answer;
       };
@@ -335,37 +376,11 @@ module Fabric {
         return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
       };
 
-      $scope.minimumInstances = (profileId) => {
-        var profileRequirements = $scope.profileRequirements(profileId);
-        return profileRequirements ? profileRequirements.minimumInstances : null;
-      };
-
-      $scope.requirementStyle = (profile) => {
-        var min = $scope.minimumInstances(profile.id);
-        if (min) {
-          var count = profile.count;
-          if (!count) {
-            return "badge-important";
-          } else if (min > count) {
-            return "badge-warning";
-          }
-        }
-        return "";
-      };
-
-      $scope.profileRequirements = (profileId) => {
-        if ($scope.requirements) {
-          var profileRequirements = $scope.requirements.profileRequirements;
-          if (profileRequirements) {
-            return profileRequirements.find({profile: profileId});
-          }
-        }
-        return null;
-      };
-
       function onRequirements(response) {
         if (response) {
           $scope.requirements = response.value;
+          $scope.updateActiveContainers();
+          Core.$apply($scope);
         }
       }
 
