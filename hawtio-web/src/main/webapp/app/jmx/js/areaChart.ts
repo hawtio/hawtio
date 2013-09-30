@@ -1,10 +1,13 @@
 module Jmx {
 
-  export function AreaChartController($scope, $routeParams, jolokia, $templateCache, localStorage) {
+  export function AreaChartController($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
 
     $scope.mbean = $routeParams['mbean'];
     $scope.attribute = $routeParams['attribute'];
     $scope.duration = localStorage['updateRate'];
+
+    $scope.width = 308;
+    $scope.height = 296;
 
     $scope.template = "";
 
@@ -38,7 +41,7 @@ module Jmx {
 
       Core.$apply($scope);
 
-    }
+    };
 
     Core.register(jolokia, $scope, $scope.req, onSuccess($scope.render));
 
