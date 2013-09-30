@@ -20,8 +20,8 @@
         <div class="title active-profile-name">
           <a ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
         </div>
-        <div class="active-profile-count">
-          <span class="badge {{profile.requireStyle}}">
+        <div class="active-profile-count" title="Current number of instances. Click to create new containers">
+          <span class="badge {{profile.requireStyle}}" ng-click="createRequiredContainers(profile)">
             {{profile.count}}
           </span>
         </div>

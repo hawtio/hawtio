@@ -155,6 +155,11 @@ module Fabric {
         $scope.selectedProfileIds = profileIds;
       }
 
+      var count = $location.search()['number'];
+      if (count) {
+        $scope.entity.number = count;
+      }
+
     };
 
     $scope.init();

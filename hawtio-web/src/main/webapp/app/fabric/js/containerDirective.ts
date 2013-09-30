@@ -150,6 +150,29 @@ module Fabric {
       };
 
 
+      $scope.createRequiredContainers = (profile) => {
+        var profileId = profile.id;
+        var args = {};
+        if (profileId) {
+          args["profileIds"] = profileId;
+        }
+        var versionId = profile.versionId;
+        if (versionId) {
+          args["versionId"] = versionId;
+        }
+        var requirements = profile.requirements;
+        if (requirements) {
+          var min = requirements.minimumInstances;
+          if (min) {
+            var delta = min - (profile.count || 0);
+            if (delta > 1) {
+              args["number"] = delta;
+            }
+          }
+        }
+        $location.url('/fabric/containers/createContainer').search(args);
+      };
+
       $scope.createChildContainer = (container) => {
         $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
       };
