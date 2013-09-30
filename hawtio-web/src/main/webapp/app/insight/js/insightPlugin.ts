@@ -21,7 +21,7 @@ module Insight {
           content: "Metrics",
           title: "View Insight metrics",
           href: () => "#/insight/all",
-          isValid: (workspace:Workspace) => { return true; }
+          isValid: (workspace:Workspace) => { return Fabric.hasFabric(workspace) && workspace.treeContainsDomainAndProperties("org.elasticsearch", { service: "restjmx"}); }
         });
 
     });
