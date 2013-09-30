@@ -55,6 +55,7 @@ public class ClassScanner {
     private WeakHashMap<String, CacheValue> cache = new WeakHashMap<String, CacheValue>();
     private WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
     private Map<String,ClassLoaderProvider> classLoaderProviderMap = new HashMap<String, ClassLoaderProvider>();
+    private Set<String> ignorePackages = new HashSet<String>(Arrays.asList("sun.reflect.misc"));
 
     public static ClassScanner newInstance() {
         return new ClassScanner(Thread.currentThread().getContextClassLoader(), ClassScanner.class.getClassLoader());
@@ -88,7 +89,7 @@ public class ClassScanner {
      * @return all the class names found on the current classpath using the given text search filter
      */
     public SortedSet<String> findClassNames(String search, Integer limit) {
-        Map<Package, ClassLoader[]> packageMap = Packages.getPackageMap(getClassLoaders());
+        Map<Package, ClassLoader[]> packageMap = Packages.getPackageMap(getClassLoaders(), ignorePackages);
         return findClassNamesInPackages(search, limit, packageMap);
     }
 
@@ -191,6 +192,14 @@ public class ClassScanner {
             }
         }
         return Class.forName(className);
+    }
+
+    public Set<String> getIgnorePackages() {
+        return ignorePackages;
+    }
+
+    public void setIgnorePackages(Set<String> ignorePackages) {
+        this.ignorePackages = ignorePackages;
     }
 
     // Implementation methods

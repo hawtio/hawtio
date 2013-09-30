@@ -57,21 +57,21 @@ public class Packages {
     }
 */
 
-    public static Map<Package, ClassLoader[]> getPackageMap(List<ClassLoader> classLoaders) {
+    public static Map<Package, ClassLoader[]> getPackageMap(List<ClassLoader> classLoaders, Set<String> ignorePackages) {
         Map<Package, ClassLoader[]> answer = new HashMap<Package, ClassLoader[]>();
 
         ClassLoader[] globalClassLoaders = {Thread.currentThread().getContextClassLoader(),
                 ClassScanner.class.getClassLoader()};
 
         Set<Package> packages = new HashSet<Package>();
-        add(answer, Package.getPackages(), globalClassLoaders);
+        add(answer, Package.getPackages(), globalClassLoaders, ignorePackages);
 
         ClassLoader[] classLoaderArray = new ClassLoader[classLoaders.size()];
         classLoaders.toArray(classLoaderArray);
 
         for (ClassLoader classLoader : classLoaders) {
             Package[] loaderPackages = findPackagesForClassLoader(classLoader);
-            add(answer, loaderPackages, classLoaderArray);
+            add(answer, loaderPackages, classLoaderArray, ignorePackages);
         }
         SortedSet<String> names = new TreeSet<String>();
         for (Package aPackage : packages) {
@@ -83,10 +83,13 @@ public class Packages {
         return answer;
     }
 
-    protected static void add(Map<Package, ClassLoader[]> answer, Package[] packages, ClassLoader[] classLoaders) {
+    protected static void add(Map<Package, ClassLoader[]> answer, Package[] packages, ClassLoader[] classLoaders, Set<String> ignorePackages) {
         if (packages != null) {
             for (Package aPackage : packages) {
-                answer.put(aPackage, classLoaders);
+                String name = aPackage.getName();
+                if (!ignorePackages.contains(name)) {
+                    answer.put(aPackage, classLoaders);
+                }
             }
         }
     }
