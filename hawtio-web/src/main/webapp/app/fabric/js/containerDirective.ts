@@ -418,7 +418,10 @@ module Fabric {
       };
 
       function onRequirements(response) {
-        if (response) {
+        var responseJson = angular.toJson(response.value);
+
+        if (responseJson !== $scope.requirementsResponse) {
+          $scope.requirementsResponse = responseJson;
           $scope.requirements = response.value;
           $scope.updateActiveContainers();
           Core.$apply($scope);
