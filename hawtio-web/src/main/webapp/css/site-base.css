@@ -1511,6 +1511,7 @@ input[type="checkbox"].ng-invalid {
 
 .container-settings dd .ep {
   display: inline-block;
+  top: -5px;
 }
 .profile-details div dl dd ul li {
   white-space: nowrap;
@@ -1977,4 +1978,8 @@ a.dashboard-link:hover {
 
 .widget-body div div .wiki-fixed {
   margin: 3px;
+}
+
+.widget-title div div editable-property .ep {
+  top: -1px;
 }
