@@ -21,10 +21,8 @@
     <property name="blueprintContainer" ref="blueprintContainer" />
   </bean>
 
-<!--
   <bean id="introspector" class="io.hawt.introspect.Introspector" init-method="init" destroy-method="destroy">
   </bean>
--->
 
 </blueprint>
 

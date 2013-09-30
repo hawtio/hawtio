@@ -3,8 +3,5 @@
 
   <bean id="schemaLookup" class="io.hawt.jsonschema.SchemaLookup" init-method="init" destroy-method="destroy" scope="singleton"/>
 
-  <bean id="introspector" class="io.hawt.introspect.Introspector" init-method="init" destroy-method="destroy" scope="singleton">
-  </bean>
-
 </blueprint>
 
