@@ -1974,3 +1974,7 @@ a.dashboard-link:hover {
 .container-profile-settings span.folder-title {
   font-weight: bold;
 }
+
+.widget-body div div .wiki-fixed {
+  margin: 3px;
+}

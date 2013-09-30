@@ -60,6 +60,21 @@ module Wiki {
       });
     }
 
+    $scope.createDashboardLink = () => {
+      var href = '/wiki/branch/:branch/view/*page';
+      var title = $routeParams['page'].split("/").last();
+      var size = angular.toJson({
+        size_x: 2,
+        size_y: 2
+      });
+
+      return "#/dashboard/add?tab=dashboard" +
+          "&href=" + encodeURIComponent(href) +
+          "&size=" + encodeURIComponent(size) +
+          "&title=" + encodeURIComponent(title) +
+          "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
+    };
+
     $scope.childLink = (child) => {
       var start = startLink($scope.branch);
       var prefix = start + "/view";

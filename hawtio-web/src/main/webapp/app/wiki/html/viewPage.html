@@ -1,5 +1,5 @@
 <div ng-controller="Wiki.ViewController">
-  <div class="logbar" ng-controller="Wiki.NavBarController">
+  <div ng-hide="inDashboard" class="logbar" ng-controller="Wiki.NavBarController">
     <div class="wiki logbar-container">
       <ul class="nav nav-tabs">
         <li ng-show="branches.length || branch" class="dropdown">
@@ -75,6 +75,11 @@
                        data-placement="bottom">
                       <i class="icon-plus"></i> Create</a>
           -->
+        </li>
+        <li class="pull-right">
+          <a ng-hide="children || profile" title="Add to dashboard" ng-href="{{createDashboardLink()}}" data-placement="bottom">
+            <i class="icon-share"></i>
+          </a>
         </li>
       </ul>
     </div>
