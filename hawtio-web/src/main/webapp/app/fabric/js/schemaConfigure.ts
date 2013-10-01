@@ -100,7 +100,11 @@ module Fabric {
 
         Core.pathSet(schema.properties, ['domain', 'label'], 'OpenShift Domain');
         Core.pathSet(schema.properties, ['domain', 'tooltip'], 'What is your unique domain name used for applications you create on OpenShift. Often this is your own user name or group name');
+        Core.pathSet(schema.properties, ['domain', 'enumModel'], "openShiftDomains");
+
         Core.pathSet(schema.properties, ['gearProfile', 'tooltip'], 'Which kind of gear to create');
+        Core.pathSet(schema.properties, ['gearProfile', 'enumModel'], "openShiftGearProfiles");
+
         Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
 
 

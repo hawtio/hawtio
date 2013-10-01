@@ -3,6 +3,7 @@ module Fabric {
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
   export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
+  export var openShiftFabricMBean = "org.fusesource.fabric:type=OpenShift";
 
   export var useDirectoriesInGit = true;
   var fabricTopLevel = "fabric/profiles/";
@@ -15,6 +16,10 @@ module Fabric {
 
   export function canBootstrapFabric(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
+  }
+
+  export function hasOpenShiftFabric(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "OpenShift"});
   }
 
 
@@ -459,6 +464,28 @@ module Fabric {
     var fields = ["id", "root"];
     var answer = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
     return answer.filter({root: true}).map(v => v["id"]);
+  }
+
+  export function getOpenShiftDomains(workspace ,jolokia, serverUrl, login, password, fn = null) {
+    if (hasOpenShiftFabric(workspace) && serverUrl && login && password) {
+      return jolokia.execute(Fabric.openShiftFabricMBean, "getDomains", serverUrl, login, password, onSuccess(fn));
+    } else {
+      if (fn) {
+        fn([]);
+      }
+      return [];
+    }
+  }
+
+  export function getOpenShiftGearProfiles(workspace ,jolokia, serverUrl, login, password, fn = null) {
+    if (hasOpenShiftFabric(workspace) && serverUrl && login && password) {
+      return jolokia.execute(Fabric.openShiftFabricMBean, "getGearProfiles", serverUrl, login, password, onSuccess(fn));
+    } else {
+      if (fn) {
+        fn([]);
+      }
+      return [];
+    }
   }
 
 

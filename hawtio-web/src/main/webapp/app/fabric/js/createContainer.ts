@@ -8,6 +8,7 @@ module Fabric {
       number: 1
     };
 
+
     // the form properties stored in local storage
     // which we then default when creating a new container
     var localStorageProperties = {
@@ -50,6 +51,9 @@ module Fabric {
     $scope.selectedProfileIds = '';
     $scope.selectedVersionId = '';
     $scope.profileIdFilter = '';
+
+    $scope.openShiftDomains = [];
+    $scope.openShiftGearProfiles = [];
 
     // holds all the form objects from nested child scopes
     $scope.forms = {};
@@ -143,6 +147,36 @@ module Fabric {
 
     $scope.rootContainers = () => {
       return Fabric.getRootContainers(jolokia);
+    };
+
+    function updateOpenShift() {
+      var serverUrl = Core.pathGet($scope.entity, ["serverUrl"]) || "openshift.redhat.com";
+      var login = Core.pathGet($scope.entity, ["login"]);
+      var password = Core.pathGet($scope.entity, ["password"]);
+
+      var params = [serverUrl, login, password];
+      if (!Object.equal(params, $scope.openShiftParams)) {
+        $scope.openShiftParams = params;
+
+        Fabric.getOpenShiftDomains(workspace, jolokia, serverUrl, login, password, (results) => {
+          $scope.openShiftDomains = results;
+          console.log("found openshift domains: " + $scope.openShiftDomains);
+        });
+        Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
+          $scope.openShiftGearProfiles = results;
+          console.log("found openshift gears: " + $scope.openShiftGearProfiles);
+        });
+      }
+    }
+
+    $scope.$watch('entity.serverUrl', updateOpenShift);
+    $scope.$watch('entity.login', updateOpenShift);
+    $scope.$watch('entity.password', updateOpenShift);
+
+    $scope.openShiftDomains = () => {
+    };
+
+    $scope.openShiftGearProfiles = () => {
     };
 
     $scope.init = () => {

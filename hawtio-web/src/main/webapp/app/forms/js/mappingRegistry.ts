@@ -166,32 +166,38 @@ module Forms {
     if (custom) {
       return null;
     }
+    var enumModelValues = Core.pathGet(property, ["enumModel"]);
     var enumValues = Core.pathGet(property, ["enum"]);
-    if (enumValues) {
-      // calculate from input attributes...
+    if (enumValues || enumModelValues) {
       var required = true;
-      var scope = config.scope;
-      var data = config.data;
+      var valuesScopeName = enumModelValues;
       var attributes = "";
-      if (data && scope) {
-        // this is a big ugly - would be nice to expose this a bit easier...
-        // maybe nested objects should expose the model easily...
-        var fullSchema = scope[config.schemaName];
-        var model = angular.isString(data) ? scope[data] : data;
-        // now we need to keep walking the model to find the enum values
-        var paths = id.split(".");
-        var property = null;
-        angular.forEach(paths, (path) => {
-          property = Core.pathGet(model, ["properties", path]);
-          var typeName = Core.pathGet(property, ["type"]);
-          var alias = Forms.lookupDefinition(typeName, fullSchema);
-          if (alias) {
-            model = alias;
-          }
-        });
-        var values = Core.pathGet(property, ["enum"]);
-        var valuesScopeName = "$values_" + id.replace(/\./g, "_");
-        scope[valuesScopeName] = values;
+      if (enumValues) {
+        // calculate from input attributes...
+        var scope = config.scope;
+        var data = config.data;
+        if (data && scope) {
+          // this is a big ugly - would be nice to expose this a bit easier...
+          // maybe nested objects should expose the model easily...
+          var fullSchema = scope[config.schemaName];
+          var model = angular.isString(data) ? scope[data] : data;
+          // now we need to keep walking the model to find the enum values
+          var paths = id.split(".");
+          var property = null;
+          angular.forEach(paths, (path) => {
+            property = Core.pathGet(model, ["properties", path]);
+            var typeName = Core.pathGet(property, ["type"]);
+            var alias = Forms.lookupDefinition(typeName, fullSchema);
+            if (alias) {
+              model = alias;
+            }
+          });
+          var values = Core.pathGet(property, ["enum"]);
+          var valuesScopeName = "$values_" + id.replace(/\./g, "_");
+          scope[valuesScopeName] = values;
+        }
+      }
+      if (valuesScopeName) {
         attributes += ' ng-options="value for value in ' + valuesScopeName + '"';
       }
       var defaultOption = required ? "" : '<option value=""></option>';
