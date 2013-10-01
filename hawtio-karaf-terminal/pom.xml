@@ -63,10 +63,11 @@
       <scope>provided</scope>
     </dependency>
 
+
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <version>2.3.2</version>
       <scope>provided</scope>
     </dependency>
 
@@ -138,7 +139,7 @@
 
             <Import-Package>
               org.osgi.service.blueprint,
-              org.apache.felix.service.command,
+              org.apache.felix.service.command;resolution:=optional,
               javax.servlet,
               javax.servlet.http,
               org.ops4j.pax.web.service,

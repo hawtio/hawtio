@@ -82,7 +82,7 @@
     <fabric-version>99-master-SNAPSHOT</fabric-version>
     -->
     <fmc-version>${fabric-version}</fmc-version>
-    <felix.gogo.version>0.11.0.${perfectus-build}</felix.gogo.version>
+    <felix.gogo.version>0.10.0</felix.gogo.version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
