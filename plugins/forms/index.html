@@ -95,19 +95,37 @@ e.g.</p>
 
 <p>in the above, the <em>bar</em> property will be hidden from the generated form</p>
 
-<h2 id = "Customizing_the_labels">Customizing the labels</h2>
+<h2 id = "Customizing_the_labels_and_tooltips">Customizing the labels and tooltips</h2>
 
 <p>If you wish to specify a custom label for a property (as by default it will just humanize the id of the property), you can just specify the 'label' property inside the JSON Schema as follows:</p>
 
 <pre><code>properties: {
   foo: {
     type: "string",
-    label: "My Foo Thingy"
+    label: "My Foo Thingy",
+    tooltip: "My tool tip thingy"
  }</code></pre>
 
 <p>   }</p>
 
-<p>The <strong>label</strong> is not a JSON Schema property; but an extension like the <strong>tabs</strong> property above.</p>
+<p>The <strong>label</strong> and <strong>tooltip</strong> properties are not part of JSON Schema; but an extension like the <strong>tabs</strong> property above.</p>
+
+<h2 id = "Adding_custom_directive_attributes_to_the_control">Adding custom directive attributes to the control</h2>
+
+<p>There are various extra directives you can add to <input> controls like ng-hide and so forth which you can do using a nested <strong>input-attributes</strong> object.</p>
+
+<pre><code>properties: {
+  foo: {
+    type: "string",
+
+    input-attributes: {
+      typeahead: "title for title in myQuery($viewValue) | filter:$viewValue"
+    }
+ }</code></pre>
+
+<p>   }</p>
+
+<p>The above would use the typehead directive to present a pick list of possible values; passing the current text field value so we can more efficiently filter results back from any remote method invocation.</p>
 
 <h3 id = "Ignoring_prefix_of_deeply_nested_properties">Ignoring prefix of deeply nested properties</h3>
 
