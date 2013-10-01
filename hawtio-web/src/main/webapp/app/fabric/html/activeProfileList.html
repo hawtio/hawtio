@@ -8,18 +8,18 @@
       </div>
     </div>
 
-    <div class="active-profile-create" title="Create a new container">
-      <a ng-click="createContainer()">
+    <div class="section-controls">
+      <a href="" title="Create a new container" ng-click="createContainer()">
         <i class="icon-plus"></i> Create
       </a>
-    </div>
-    <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
-    <div class="active-profile-requirements" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
-      <a href="" ng-click="editRequirementsDialog.open()">
+      <a href="" ng-click="editRequirementsDialog.open()" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
         <i class="icon-resize-vertical"></i>
         Scale
       </a>
     </div>
+
+    <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">Count</div>
+
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
     <div class="expandable" ng-class="isOpen(profile)">

@@ -1876,6 +1876,17 @@ dd.file-list {
   right: 10px;
 }
 
+.active-profile-titles .section-controls {
+  position: absolute;
+  top: 9px !important;
+  right: 62px;
+}
+
+.active-profile-titles .section-controls a {
+  font-weight: normal;
+}
+
+
 .active-profile-name {
   position: absolute;
   left: 15px;
@@ -1909,7 +1920,7 @@ a.dashboard-link:hover {
 .dashboard-link {
   position: absolute;
   top: 14px;
-  right: 80px;
+  right: 225px;
   z-index: 500;
 }
 
