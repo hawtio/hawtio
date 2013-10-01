@@ -292,7 +292,7 @@ module Fabric {
           }
         });
         if (!kind) {
-          kind = 'ssh';
+          kind = 'child';
         }
         $location.url('/fabric/containers/createContainer').search('tab', kind);
       };
