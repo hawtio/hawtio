@@ -46,7 +46,8 @@ module Fabric {
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number', '*']
+          'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
+          'Advanced': ['*']
         };
         break;
 
