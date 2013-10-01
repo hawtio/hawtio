@@ -21,6 +21,9 @@ module Fabric {
     Core.pathSet(schema, ['properties','profiles', 'type'], 'hidden');
     Core.pathSet(schema, ['properties','version', 'type'], 'hidden');
 
+    Core.pathSet(schema.properties, ['name', 'label'], 'Container Name');
+    Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
+
     setResolverEnum(schema);
 
     switch (id) {
@@ -79,7 +82,8 @@ module Fabric {
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
         Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
 
-        Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker URL of the PaaS instance to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL');
+        Core.pathSet(schema.properties, ['serverUrl', 'label'], 'OpenShift Broker');
+        Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker host name of the cloud to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL: openshift.redhat.com');
 
 
         Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
