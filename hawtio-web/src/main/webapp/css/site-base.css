@@ -1514,13 +1514,21 @@ input[type="checkbox"].ng-invalid {
   display: inline-block;
   top: -5px;
 }
-.profile-details div dl dd ul li {
+.profile-details div .tab-pane ul li i {
+  display: inline-block;
   white-space: nowrap;
 }
-.profile-details div dl dd editable-property {
+.profile-details div .tab-pane ul li {
+  white-space: nowrap;
+  padding: 7px;
+}
+.profile-details div .tab-pane ul li:nth-child(even):not(.add) {
+  background-color: #f3f3f3;
+}
+.profile-details div .tab-pane ul li editable-property {
   display: inline-block;
 }
-.profile-details div dl dd .ep {
+.profile-details div .tab-pane ul li .ep {
   display: inline-block;
 }
 .container-settings dd input[type=radio] {

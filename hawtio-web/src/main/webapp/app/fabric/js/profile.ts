@@ -21,7 +21,6 @@ module Fabric {
     $scope.markedForDeletion = '';
 
     $scope.newProfileName = '';
-    $scope.addThingDialog = false;
     $scope.deleteThingDialog = false;
     $scope.changeParentsDialog = false;
     $scope.removeParentDialog = false;
@@ -29,6 +28,12 @@ module Fabric {
     $scope.selectedParents = [];
 
     $scope.profilePath = Fabric.profilePath;
+
+    $scope.$watch('activeTab', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.newThingName = '';
+      }
+    });
 
     $scope.$watch('versionId', (newValue, oldValue) => {
       if (angular.isDefined($scope.versionId) && angular.isDefined($scope.profileId)) {
@@ -41,6 +46,52 @@ module Fabric {
         $scope.doRegister();
       }
     });
+
+    // TODO, should complete URL handlers too
+    $scope.doCompletionFabric = (something) => {
+      if (something.startsWith("mvn:")) {
+        $scope.prefix = "mvn:";
+        return Maven.completeMavenUri($q, $scope, workspace, jolokia, something.from(4));
+      }
+      $scope.prefix = "";
+      return $q.when([]);
+    };
+
+    $scope.uriParts = [];
+
+    $scope.$watch('newThingName', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.uriParts = newValue.split("/");
+      }
+    });
+
+    $scope.$watch('uriParts', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (!$scope.prefix || $scope.prefix === '') {
+          return;
+        }
+        if (newValue && newValue.length > 0 && !newValue.first().startsWith($scope.prefix)) {
+          /*
+           console.log("newValue: ", newValue);
+           console.log("oldValue: ", oldValue);
+           console.log("prefix: ", $scope.prefix);
+           */
+          if (newValue.first() === "" || newValue.first().length < $scope.prefix.length) {
+            return;
+          }
+          if (oldValue.length === 0) {
+            return;
+          }
+          // a completion occurred...
+          if (oldValue.length === 1) {
+            $scope.newThingName = $scope.prefix + newValue.first();
+          } else {
+            var merged = oldValue.first(oldValue.length - 1).include(newValue.first());
+            $scope.newThingName = merged.join('/');
+          }
+        }
+      }
+    }, true);
 
     $scope.doRegister = () => {
       Core.unregister(jolokia, $scope);
@@ -107,7 +158,7 @@ module Fabric {
       $scope.thingName = title;
       $scope.currentThing = current;
       $scope.currentThingType = type;
-      $scope.addThingDialog = true;
+      $scope.doAddThing();
     }
 
     $scope.deleteThing = (title, type, current, item) => {
@@ -212,6 +263,9 @@ module Fabric {
         $scope.loading = false;
       }
       if (!Object.equal($scope.row, response.value)) {
+        if (!$scope.activeTab) {
+          $scope.activeTab = "features";
+        }
         $scope.row = response.value;
         var id = $scope.row.id;
         var version = $scope.row.version;

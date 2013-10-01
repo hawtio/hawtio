@@ -12,9 +12,10 @@ module Maven {
                     when('/maven/dependencies/:group/:artifact/:version/:classifier', {templateUrl: 'app/maven/html/dependencies.html'}).
                     when('/maven/dependencies/:group/:artifact/:version', {templateUrl: 'app/maven/html/dependencies.html'}).
                     when('/maven/versions/:group/:artifact/:classifier/:packaging', {templateUrl: 'app/maven/html/versions.html'}).
-                    when('/maven/view/:group/:artifact/:version/:classifier/:packaging', {templateUrl: 'app/maven/html/view.html'});
+                    when('/maven/view/:group/:artifact/:version/:classifier/:packaging', {templateUrl: 'app/maven/html/view.html'}).
+                    when('/maven/test', { templateUrl: 'app/maven/html/test.html'});
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['maven'] = "app/maven/html/layoutMaven.html";
 
@@ -25,6 +26,9 @@ module Maven {
               href: () => "#/maven/search",
               isActive: (workspace: Workspace) => workspace.isLinkActive("/maven")
             });
+
+            helpRegistry.addDevDoc("maven", 'app/maven/doc/developer.md');
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

@@ -14,7 +14,7 @@ module Fabric {
 
       $scope.inDirective = true;
 
-      return Fabric.ProfileController($scope, $routeParams, jolokia, $location, workspace, $q);
+      Fabric.ProfileController($scope, $routeParams, jolokia, $location, workspace, $q);
     };
 
   }
