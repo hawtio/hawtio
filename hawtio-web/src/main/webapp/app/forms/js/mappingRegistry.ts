@@ -62,7 +62,11 @@ module Forms {
       // figure out which things to not wrap in a group and label etc...
       if (input.attr("type") !== "hidden") {
         group = this.getControlGroup(config, config, id);
-        group.append(Forms.getLabel(config, config, property.title || property.label || humanizeValue(defaultLabel)));
+        var labelElement = Forms.getLabel(config, config, property.title || property.label || humanizeValue(defaultLabel));
+        if (title) {
+          labelElement.attr('title', title);
+        }
+        group.append(labelElement);
         var controlDiv = Forms.getControlDiv(config);
         controlDiv.append(input);
         controlDiv.append(Forms.getHelpSpan(config, config, id));

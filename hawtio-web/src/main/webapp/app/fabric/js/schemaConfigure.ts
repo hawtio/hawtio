@@ -46,6 +46,8 @@ module Fabric {
         delete schema.properties['parent'];
 
         bulkSet(schema, ['host'], 'required', true);
+        Core.pathSet(schema.properties, ['password', 'type'], 'password');
+
         schema['tabs'] = {
           'Default': ['name', 'host', 'port', 'userName', 'password', 'privateKeyFile', 'passPhrase', '*']
         };
@@ -76,12 +78,26 @@ module Fabric {
 
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
         Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
-        schema.properties['password']['type'] = 'password';
+
+        Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker URL of the PaaS instance to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL');
+
+
+        Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
+        Core.pathSet(schema.properties, ['login', 'tooltip'], 'Your personal login to the OpenShift portal');
+        Core.pathSet(schema.properties, ['password', 'label'], 'OpenShift Password');
+        Core.pathSet(schema.properties, ['password', 'tooltip'], 'Your personal password on the OpenShift portal');
+        Core.pathSet(schema.properties, ['password', 'type'], 'password');
+
+        Core.pathSet(schema.properties, ['domain', 'label'], 'OpenShift Domain');
+        Core.pathSet(schema.properties, ['domain', 'tooltip'], 'What is your unique domain name used for applications you create on OpenShift. Often this is your own user name or group name');
+        Core.pathSet(schema.properties, ['gearProfile', 'tooltip'], 'Which kind of gear to create');
+        Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
+
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'serverUrl', 'login', 'password', 'domain'],
-          'Advanced': ['gearProfile', 'number', 'environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+          'Default': ['name', 'serverUrl', 'login', 'password', 'domain', 'gearProfile', 'number'],
+          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
         };
         break;
 
