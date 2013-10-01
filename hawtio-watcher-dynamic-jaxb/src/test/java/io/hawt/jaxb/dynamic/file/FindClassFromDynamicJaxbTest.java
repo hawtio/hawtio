@@ -33,8 +33,7 @@ import static org.junit.Assert.assertTrue;
 public class FindClassFromDynamicJaxbTest extends BlueprintTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(FindClassFromDynamicJaxbTest.class);
 
-    // TODO figure this out later! :)
-    @Ignore
+    @Test
     public void testFindClass() throws Exception {
         // Lets wait for the async compile of the JAXB classes to work so we have it on the class loader when we search
         Thread.sleep(10000);
