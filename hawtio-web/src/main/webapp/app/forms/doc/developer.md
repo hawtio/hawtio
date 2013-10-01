@@ -39,7 +39,7 @@ e.g.
 
 in the above, the _bar_ property will be hidden from the generated form
 
-## Customizing the labels
+## Customizing the labels and tooltips
 
 If you wish to specify a custom label for a property (as by default it will just humanize the id of the property), you can just specify the 'label' property inside the JSON Schema as follows:
 
@@ -47,11 +47,28 @@ If you wish to specify a custom label for a property (as by default it will just
     properties: {
       foo: {
         type: "string",
-        label: "My Foo Thingy"
+        label: "My Foo Thingy",
+        tooltip: "My tool tip thingy"
      }
    }
 
-The **label** is not a JSON Schema property; but an extension like the **tabs** property above.
+The **label** and **tooltip** properties are not part of JSON Schema; but an extension like the **tabs** property above.
+
+## Adding custom directive attributes to the control
+
+There are various extra directives you can add to <input> controls like ng-hide and so forth which you can do using a nested **input-attributes** object.
+
+    properties: {
+      foo: {
+        type: "string",
+
+        input-attributes: {
+          typeahead: "title for title in myQuery($viewValue) | filter:$viewValue"
+        }
+     }
+   }
+
+The above would use the typehead directive to present a pick list of possible values; passing the current text field value so we can more efficiently filter results back from any remote method invocation.
 
 ### Ignoring prefix of deeply nested properties
 
