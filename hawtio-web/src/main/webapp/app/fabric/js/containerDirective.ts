@@ -11,7 +11,8 @@ module Fabric {
     public controller($scope, $element, $attrs, jolokia, $location, workspace) {
 
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
-      $scope.containersOp = 'containers(java.util.List)';
+      $scope.profileFields = ["id", "hidden"];
+      $scope.containersOp = 'containers(java.util.List, java.util.List)';
       $scope.ensembleContainerIdListOp = 'EnsembleContainers';
 
       $scope.containers = [];
@@ -85,6 +86,11 @@ module Fabric {
 
         $scope.containers.each((container) => {
           container.profileIds.each((profile) => {
+
+            var p = container.profiles.find((p) => { return p.id === profile; });
+            if (p && p.hidden) {
+              return;
+            }
 
             var activeProfile = answer.find((o) => { return o.versionId === container.versionId && o.id === profile });
 
@@ -347,7 +353,7 @@ module Fabric {
 
 
       Core.register(jolokia, $scope, [
-        {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs]},
+        {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs, $scope.profileFields]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
       ], onSuccess($scope.dispatch));
 

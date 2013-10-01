@@ -59,6 +59,8 @@ module Fabric {
             }
           });
 
+          $scope.profiles = $scope.profiles.exclude((p) => { return p.hidden; });
+
           if ($scope.excludedProfiles) {
             $scope.profiles = $scope.profiles.exclude((p) => { return $scope.excludedProfiles.some((e) => { return e === p.id; })});
           }
@@ -174,7 +176,7 @@ module Fabric {
         jolokia.request({
           type: 'exec', mbean: Fabric.managerMBean,
           operation: 'getProfiles(java.lang.String, java.util.List)',
-          arguments: [$scope.versionId, ['id']]
+          arguments: [$scope.versionId, ['id', 'hidden']]
         },
         {
           method: 'POST',
@@ -194,7 +196,7 @@ module Fabric {
             type: 'exec',
             mbean: managerMBean,
             operation: 'getProfiles(java.lang.String, java.util.List)',
-            arguments: [$scope.versionId, ['id']]
+            arguments: [$scope.versionId, ['id', 'hidden']]
           }, onSuccess($scope.render));
         }
       };
