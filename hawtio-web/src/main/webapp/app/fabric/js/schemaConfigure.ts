@@ -39,6 +39,11 @@ module Fabric {
           'type': 'boolean'
         };
 
+        Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
+        Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
+        Core.pathSet(schema.properties, ['parent', 'input-attributes', 'typeahead'], "title for title in rootContainers() | filter:$viewValue");
+        Core.pathSet(schema.properties, ['parent', 'input-attributes', 'typeahead-editable'], "false");
+
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
           'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number', '*']

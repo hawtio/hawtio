@@ -455,6 +455,13 @@ module Fabric {
   }
 
 
+  export function getRootContainers(jolokia) {
+    var fields = ["id", "root"];
+    var answer = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
+    return answer.filter({root: true}).map(v => v["id"]);
+  }
+
+
   export function filterProfiles(jolokia, versionId, profileIds) {
     var profiles = jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String, java.util.List)", versionId, ['id', 'hidden', 'abstract'], { method: 'POST' });
 

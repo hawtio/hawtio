@@ -10,6 +10,15 @@ module Forms {
     var group = null;
 
     function copyAttributes() {
+      var propertyAttributes = property["input-attributes"];
+      if (propertyAttributes) {
+        angular.forEach(propertyAttributes, function (value, key) {
+          if (angular.isString(value)) {
+            var html = Core.escapeHtml(value);
+            input.attr(key, html);
+          }
+        });
+      }
       angular.forEach(property, function (value, key) {
         if (angular.isString(value) && key.indexOf("$") < 0 && key !== "type") {
           var html = Core.escapeHtml(value);

@@ -87,6 +87,14 @@ module Fabric {
         });
 
         Forms.defaultValues($scope.entity, $scope.schema);
+
+        if ($scope.selectedProvider.id === 'child' && !$scope.entity["parent"]) {
+          // lets default a parent container if we have a single root container
+          var rootContainers = $scope.rootContainers();
+          if (rootContainers && rootContainers.length === 1) {
+            $scope.entity["parent"] = rootContainers[0];
+          }
+        }
       }
     }, true);
 
@@ -132,6 +140,10 @@ module Fabric {
       $location.search('profileIds', $scope.selectedProfileIds);
     });
 
+
+    $scope.rootContainers = () => {
+      return Fabric.getRootContainers(jolokia);
+    };
 
     $scope.init = () => {
 
