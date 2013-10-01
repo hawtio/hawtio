@@ -1866,6 +1866,11 @@ dd.file-list {
   right: 130px;
 }
 
+.active-profile-create {
+  position: absolute;
+  right: 210px;
+}
+
 .active-profile-count {
   position: absolute;
   right: 10px;
