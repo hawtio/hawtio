@@ -12,7 +12,7 @@
       <a href="" title="Create a new container" ng-click="createContainer()">
         <i class="icon-plus"></i> Create
       </a>
-      <a href="" ng-click="editRequirementsDialog.open()" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
+      <a href="" ng-click="editRequirementsDialogOpen(null)" title="Configure the required number of instances of each profile which are then either created by an auto-scaler or created manually">
         <i class="icon-resize-vertical"></i>
         Scale
       </a>
@@ -42,7 +42,7 @@
         </div>
 
         <div class="active-profile-requirements">
-          <a ng-click="editRequirementsDialog.open()">
+          <a ng-click="editRequirementsDialogOpen(profile)">
           <span ng-show="profile.requirements.minimumInstances" class="badge">
             {{profile.requirements.minimumInstances}}
           </span>
@@ -93,7 +93,7 @@
     </div>
   </div>
   <div modal="editRequirementsDialog.show">
-    <form name="requirementsForm" class="form-inline no-bottom-margin" ng-submit="updateRequirements(requirements)">
+    <form name="requirementsForm" class="form-inline no-bottom-margin" ng-submit="updateRequirements(editRequirementsEntity)">
       <div class="modal-header"><h4>Edit Requirements</h4></div>
       <div class="modal-body">
         <table>
@@ -103,7 +103,7 @@
             <th title="Maixmum number of instances">Maximum</th>
           </thead>
           <tbody>
-            <tr ng-repeat="requirement in requirements.profileRequirements">
+            <tr ng-repeat="requirement in editRequirementsEntity.profileRequirements">
               <td class="property-name">{{requirement.profile}}</td>
               <td>
                 <input name="minimumInstances" type="number" ng-model="requirement.minimumInstances" ng-required="false" class="input-small">

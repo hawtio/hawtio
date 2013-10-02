@@ -407,8 +407,34 @@ module Fabric {
         return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
       };
 
+      $scope.editRequirementsDialogOpen = (profile) => {
+        // lets make sure the requirements are pre-populated with values
+        var editRequirementsEntity = {
+          profileRequirements: []
+        };
+        if ($scope.requirements) {
+          angular.copy($scope.requirements, editRequirementsEntity);
+        }
+        var profileRequirements = editRequirementsEntity.profileRequirements;
+        if (profileRequirements) {
+          angular.forEach($scope.activeProfiles, (profile) => {
+            var currentRequirements = profile.requirements;
+            if (!currentRequirements) {
+              currentRequirements = {
+                profile: profile.id
+              };
+              profile.requirements = currentRequirements;
+              profileRequirements.push(currentRequirements);
+            }
+          });
+        }
+        $scope.editRequirementsEntity = editRequirementsEntity;
+        $scope.editRequirementsDialog.open();
+      };
+
       $scope.updateRequirements = (requirements) => {
         function onRequirementsSaved(response) {
+          $scope.requirements = requirements;
           notification("success", "Updated the requirements");
           $scope.updateActiveContainers();
           Core.$apply($scope);
