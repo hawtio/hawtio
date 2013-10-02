@@ -24,7 +24,106 @@ module Fabric {
       $scope.showSelect = true;
       $scope.requirements = null;
 
-      $scope.editRequirementsDialog = new Core.Dialog();
+      // for editing container requirements
+      $scope.editRequirements = {
+        dialog:  new Core.Dialog(),
+
+        excludeProfiles: [],
+        selectedProfiles: [],
+
+        excludeDependentProfiles: [],
+        selectedDependentProfiles: [],
+
+        addDependentProfileDialog:  new Core.Dialog(),
+        versionId: null,
+        addProfileSelectShow: false,
+
+        dialogOpen: (profile) => {
+          // lets make sure the requirements are pre-populated with values
+          var editRequirementsEntity = {
+            profileRequirements: []
+          };
+          if ($scope.requirements) {
+            angular.copy($scope.requirements, editRequirementsEntity);
+          }
+          var profileRequirements = editRequirementsEntity.profileRequirements;
+          if (profileRequirements) {
+            angular.forEach($scope.activeProfiles, (profile) => {
+              var currentRequirements = profile.requirements;
+              if (!currentRequirements) {
+                currentRequirements = {
+                  profile: profile.id
+                };
+                profile.requirements = currentRequirements;
+                profileRequirements.push(currentRequirements);
+              }
+            });
+          }
+          if (!profile && $scope.activeProfiles.length) {
+            // lets pick the first one - its just to default a version
+            profile = $scope.activeProfiles[0];
+          }
+          if (profile) {
+            $scope.editRequirements.versionId = profile.versionId;
+          }
+          $scope.editRequirements.entity = editRequirementsEntity;
+          $scope.editRequirements.dialog.open();
+        },
+
+        // show / hide the new dependent profiles on a profile requirement
+        addDependentProfileDialogOpen: (requirement) => {
+          $scope.editRequirements.addDependentProfileDialogProfile = requirement.profile;
+          $scope.editRequirements.selectedDependentProfiles.splice(0, $scope.editRequirements.selectedDependentProfiles.length);
+          $scope.editRequirements.excludeDependentProfiles = [requirement.profile].concat(requirement.dependentProfiles || []);
+          $scope.editRequirements.addDependentProfilesToRequirement = requirement;
+          $scope.editRequirements.addDependentProfileDialogShow = true;
+        },
+
+        addDependentProfileDialogHide: () => {
+          $scope.editRequirements.addDependentProfileDialogShow = false;
+        },
+
+        addDependentProfileDialogApply: () => {
+          var requirement = $scope.editRequirements.addDependentProfilesToRequirement;
+          angular.forEach($scope.editRequirements.selectedDependentProfiles, (profile) => {
+            var id = profile.id;
+            if (id && requirement) {
+              if (!requirement.dependentProfiles) requirement.dependentProfiles = [];
+              if (!requirement.dependentProfiles.find(id)) {
+                requirement.dependentProfiles.push(id);
+              }
+            }
+          });
+          $scope.editRequirements.addDependentProfileDialogHide();
+        },
+
+        // how / hide / add a requirement on new profile
+        addProfileRequirementOpen: () => {
+          $scope.editRequirements.selectedProfiles.splice(0, $scope.editRequirements.selectedProfiles.length);
+          $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map(p => p.id) || [];
+          $scope.editRequirements.addProfileRequirementShow = true;
+        },
+
+        addProfileRequirementHide: () => {
+          $scope.editRequirements.addProfileRequirementShow = false;
+        },
+
+        addProfileRequirementApply: () => {
+          var entity = $scope.editRequirements.entity;
+          var profileRequirements = entity.profileRequirements;
+          if (!profileRequirements) {
+            profileRequirements = [];
+            entity.profileRequirements = profileRequirements;
+          }
+          angular.forEach($scope.editRequirements.selectedProfiles, (profile) => {
+            var id = profile.id;
+            if (id) {
+              profileRequirements.push({profile: id});
+            }
+          });
+          $scope.editRequirements.addProfileRequirementHide();
+        }
+      };
 
 
       $scope.updateActiveContainers = () => {
@@ -409,13 +508,14 @@ module Fabric {
 
       $scope.updateRequirements = (requirements) => {
         function onRequirementsSaved(response) {
+          $scope.requirements = requirements;
           notification("success", "Updated the requirements");
           $scope.updateActiveContainers();
           Core.$apply($scope);
         };
 
         if (requirements) {
-          $scope.editRequirementsDialog.close();
+          $scope.editRequirements.dialog.close();
 
           var json = JSON.stringify(requirements);
           jolokia.execute(Fabric.managerMBean, "requirementsJson",

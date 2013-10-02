@@ -5,6 +5,7 @@
     <details>Installs the main hawtio war file, an MBean helper for OSGi and an MBean helper to get JSON Schema out of Java objects</details>
     <feature>war</feature>
     <feature>hawtio-karaf-terminal</feature>
+    <feature>hawtio-maven-indexer</feature>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>

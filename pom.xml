@@ -100,9 +100,9 @@
 <!--
     <jetty-version>8.1.3.v20120416</jetty-version>
 -->
-    <jetty-version>7.6.8.v20121106</jetty-version>
+    <jetty-version>7.6.9.v20130131</jetty-version>
     <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
-    <jetty-plugin-version>7.6.8.v20121106</jetty-plugin-version>
+    <jetty-plugin-version>7.6.9.v20130131</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <jgit-version>3.0.0.201306101825-r</jgit-version>
@@ -126,7 +126,7 @@
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.6.6</slf4j-version>
 
-    <spring-version>3.2.3.RELEASE</spring-version>
+    <spring-version>3.2.4.RELEASE</spring-version>
     <xbean-version>3.12</xbean-version>
     <wagon-version>2.4</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>

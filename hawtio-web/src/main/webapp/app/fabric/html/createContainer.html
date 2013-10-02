@@ -19,16 +19,9 @@
 
   <div class="create-container-body row-fluid">
     <div class="span5 offset1">
-      <p>1. Select the method of container creation:</p>
-      <form id="container-create-form" class="form-horizontal">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Creation Method: </label>
-            <div class="controls">
-              <select ng-model="selectedProvider" ng-options="key for (key, value) in providers"></select>
-            </div>
-          </div>
-        </fieldset>
+      <form id="container-create-form" class="form-inline">
+        <label class="control-label">Container Type: </label>
+        <select ng-model="selectedProvider" ng-options="key for (key, value) in providers"></select>
       </form>
       <div id="create-form">
         <div simple-form name="create_container" data="schema" entity="entity"></div>
@@ -36,9 +29,19 @@
     </div>
 
     <div class="span5">
-      <p>2. Select the target version and add the required profiles to deploy:</p>
-      <div fabric-version-selector='selectedVersion'></div>
-      <div fabric-profile-selector='selectedProfiles' version-id='selectedVersion.id'></div>
+      <div class="control-group">
+        <form class="form-inline">
+          <label class="control-label">Version: </label>
+          <div fabric-version-selector='selectedVersion'></div>
+        </form>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Profiles: </label>
+        <div class="controls">
+          <div fabric-profile-selector='selectedProfiles' version-id='selectedVersion.id'></div>
+        </div>
+      </div>
     </div>
 
   </div>
