@@ -39,6 +39,10 @@ have an effect.
 
 The div with the id `pop-up` is used to style the tooltips for the nodes.
 
+The image below shows the force graph directive being used to render the service / bundle dependencies within an OSGI container.
+
+![Force Graph in Action](../img/dependencies.png)
+
 #### Building a Graph
 
 The best way to build a graph is using an instace of `GraphBuilder`. This is a convenience object that will collect the information about
