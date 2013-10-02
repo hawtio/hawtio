@@ -166,11 +166,14 @@ module Forms {
     if (custom) {
       return null;
     }
-    var enumModelValues = Core.pathGet(property, ["enumModel"]);
+    var inputElement = Core.pathGet(property, ["input-element"]);
+    if (inputElement) {
+      return "<" + inputElement + "></" + inputElement + ">";
+    }
     var enumValues = Core.pathGet(property, ["enum"]);
-    if (enumValues || enumModelValues) {
+    if (enumValues) {
       var required = true;
-      var valuesScopeName = enumModelValues;
+      var valuesScopeName = null;
       var attributes = "";
       if (enumValues) {
         // calculate from input attributes...

@@ -54,9 +54,9 @@ If you wish to specify a custom label for a property (as by default it will just
 
 The **label** and **tooltip** properties are not part of JSON Schema; but an extension like the **tabs** property above.
 
-## Adding custom directive attributes to the control
+## Customising the element or attributes of the control
 
-There are various extra directives you can add to <input> controls like ng-hide and so forth which you can do using a nested **input-attributes** object.
+There are various extra directives you can add to &lt;input&gt; controls like [ng-hide](http://docs.angularjs.org/api/ng.directive:ngHide), [typeahead](http://angular-ui.github.io/bootstrap/#/typeahead) and so forth which you can do using a nested **input-attributes** object.
 
     properties: {
       foo: {
@@ -70,7 +70,27 @@ There are various extra directives you can add to <input> controls like ng-hide 
 
 The above would use the typehead directive to present a pick list of possible values; passing the current text field value so we can more efficiently filter results back from any remote method invocation.
 
+To define a custom [select widget](http://docs.angularjs.org/api/ng.directive:select) you can use the **input-element** value to specify a different element name to 'input' such as 'select':
+
+    properties: {
+      foo: {
+        type: "string",
+
+        input-element: "select"
+        input-attributes: {
+          ng-options: "c.name for c in colors"
+        }
+     }
+   }
+
+The above would generate HTML like this...
+
+```
+     <select ng-options="c.name for c in colors" ng-model="..." title="..."></select>
+```
+
 ### Ignoring prefix of deeply nested properties
+
 
 If you use nested properties, the labels may include an unnecessary prefix if you use sub-tabs to show related nested properties.
 

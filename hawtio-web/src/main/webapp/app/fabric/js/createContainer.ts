@@ -52,8 +52,22 @@ module Fabric {
     $scope.selectedVersionId = '';
     $scope.profileIdFilter = '';
 
-    $scope.openShiftDomains = [];
-    $scope.openShiftGearProfiles = [];
+    // referenced static data for child
+    $scope.child = {
+      rootContainers: []
+    };
+
+
+    // referenced static data for openshift
+    $scope.openShift = {
+      params: null,
+      domains: [],
+      gearProfiles: []
+    };
+
+    // referenced static data for jclouds
+    $scope.jclouds = {
+    };
 
     // holds all the form objects from nested child scopes
     $scope.forms = {};
@@ -92,10 +106,11 @@ module Fabric {
 
         Forms.defaultValues($scope.entity, $scope.schema);
 
-        if ($scope.selectedProvider.id === 'child' && !$scope.entity["parent"]) {
-          // lets default a parent container if we have a single root container
-          var rootContainers = $scope.rootContainers();
-          if (rootContainers && rootContainers.length === 1) {
+        if ($scope.selectedProvider.id === 'child') {
+          // load the root containers and default the parent if its not set
+          var rootContainers = Fabric.getRootContainers(jolokia);
+          $scope.child.rootContainers = rootContainers;
+          if (rootContainers && rootContainers.length === 1 && !$scope.entity["parent"]) {
             $scope.entity["parent"] = rootContainers[0];
           }
         }
@@ -155,16 +170,18 @@ module Fabric {
       var password = Core.pathGet($scope.entity, ["password"]);
 
       var params = [serverUrl, login, password];
-      if (!Object.equal(params, $scope.openShiftParams)) {
-        $scope.openShiftParams = params;
+      if (!Object.equal(params, $scope.openShift.params)) {
+        $scope.openShift.params = params;
 
         Fabric.getOpenShiftDomains(workspace, jolokia, serverUrl, login, password, (results) => {
-          $scope.openShiftDomains = results;
-          console.log("found openshift domains: " + $scope.openShiftDomains);
+          $scope.openShift.domains = results;
+          console.log("found openshift domains: " + $scope.openShift.domains);
+          Core.$apply($scope);
         });
         Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
-          $scope.openShiftGearProfiles = results;
-          console.log("found openshift gears: " + $scope.openShiftGearProfiles);
+          $scope.openShift.gearProfiles = results;
+          console.log("found openshift gears: " + $scope.openShift.gearProfiles);
+          Core.$apply($scope);
         });
       }
     }
@@ -172,12 +189,6 @@ module Fabric {
     $scope.$watch('entity.serverUrl', updateOpenShift);
     $scope.$watch('entity.login', updateOpenShift);
     $scope.$watch('entity.password', updateOpenShift);
-
-    $scope.openShiftDomains = () => {
-    };
-
-    $scope.openShiftGearProfiles = () => {
-    };
 
     $scope.init = () => {
 

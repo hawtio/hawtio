@@ -41,8 +41,8 @@ module Fabric {
 
         Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
         Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
-        Core.pathSet(schema.properties, ['parent', 'input-attributes', 'typeahead'], "title for title in rootContainers() | filter:$viewValue");
-        Core.pathSet(schema.properties, ['parent', 'input-attributes', 'typeahead-editable'], "false");
+        Core.pathSet(schema.properties, ['parent', 'input-element'], "select");
+        Core.pathSet(schema.properties, ['parent', 'input-attributes', "ng-options"], "c for c in child.rootContainers");
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
@@ -100,10 +100,12 @@ module Fabric {
 
         Core.pathSet(schema.properties, ['domain', 'label'], 'OpenShift Domain');
         Core.pathSet(schema.properties, ['domain', 'tooltip'], 'What is your unique domain name used for applications you create on OpenShift. Often this is your own user name or group name');
-        Core.pathSet(schema.properties, ['domain', 'enumModel'], "openShiftDomains");
+        Core.pathSet(schema.properties, ['domain', 'input-element'], "select");
+        Core.pathSet(schema.properties, ['domain', 'input-attributes', "ng-options"], "c for c in openShift.domains");
 
         Core.pathSet(schema.properties, ['gearProfile', 'tooltip'], 'Which kind of gear to create');
-        Core.pathSet(schema.properties, ['gearProfile', 'enumModel'], "openShiftGearProfiles");
+        Core.pathSet(schema.properties, ['gearProfile', 'input-element'], "select");
+        Core.pathSet(schema.properties, ['gearProfile', 'input-attributes', "ng-options"], "c for c in openShift.gearProfiles");
 
         Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
 
