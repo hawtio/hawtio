@@ -24,6 +24,8 @@ module Fabric {
     Core.pathSet(schema.properties, ['name', 'label'], 'Container Name');
     Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
 
+    Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
+
     setResolverEnum(schema);
 
     switch (id) {
@@ -58,7 +60,8 @@ module Fabric {
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
 
         schema['tabs'] = {
-          'Default': ['name', 'host', 'port', 'userName', 'password', 'privateKeyFile', 'passPhrase', '*']
+          'Default': ['name', 'host', 'port', 'username', 'password', 'privateKeyFile', 'passPhrase'],
+          'Advanced': ['*']
         };
         break;
 
@@ -107,7 +110,6 @@ module Fabric {
         Core.pathSet(schema.properties, ['gearProfile', 'input-element'], "select");
         Core.pathSet(schema.properties, ['gearProfile', 'input-attributes', "ng-options"], "c for c in openShift.gearProfiles");
 
-        Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
 
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
