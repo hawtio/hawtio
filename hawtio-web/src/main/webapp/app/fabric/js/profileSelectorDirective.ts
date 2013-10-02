@@ -52,7 +52,7 @@ module Fabric {
           $scope.responseJson = responseJson;
           var selected = $scope.selectedProfiles;
           $scope.profiles = response.value.sortBy((profile) => { return profile.id; });
-          selected.each((profile) => {
+          angular.forEach(selected, (profile) => {
             var p = $scope.profiles.find((p) => { return p.id === profile.id; });
             if (p && profile) {
               p.selected = profile.selected;
