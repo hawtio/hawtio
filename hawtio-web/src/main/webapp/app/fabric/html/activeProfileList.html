@@ -94,9 +94,14 @@
   </div>
   <div modal="editRequirements.dialog.show">
     <form name="requirementsForm" class="form-inline no-bottom-margin">
-      <div class="modal-header"><h4>Edit Requirements</h4></div>
+      <div class="modal-header">
+        <h4>Edit Requirements
+          <button class="btn pull-right requirement-profile-add" ng-click="editRequirements.addProfileRequirementOpen()"
+                  title="Add requirements for a new profile which does not currently have any containers running"><i class="icon-plus"></i>  Profile</button>
+        </h4>
+      </div>
       <div class="modal-body">
-        <table>
+        <table ng-hide="editRequirements.addProfileRequirementShow">
           <thead>
             <th>Profile</th>
             <th title="Minimum number of instances which should be running">Minimum</th>
@@ -105,7 +110,10 @@
           </thead>
           <tbody>
             <tr ng-repeat="requirement in editRequirements.entity.profileRequirements">
-              <td class="property-name">{{requirement.profile}}</td>
+              <td class="property-name">
+                <i class="red clickable icon-remove" title="Removes this dependent profile"
+                   ng-click="editRequirements.entity.profileRequirements.remove(requirement)"></i>
+                {{requirement.profile}}</td>
               <td>
                 <input name="minimumInstances" type="number" ng-model="requirement.minimumInstances" ng-required="false" class="input-small">
               </td>
@@ -119,27 +127,43 @@
                        ng-click="requirement.dependentProfiles.remove(dependentProfile)"></i>
                     <span class="dependent-profile">{{dependentProfile}}</span>
                   </div>
-                  <i class="clickable icon-edit green" ng-click="editRequirements.addProfileDialogShow(requirement)"
+                  <i class="clickable icon-edit green" ng-click="editRequirements.addDependentProfileDialogOpen(requirement)"
                      title="Add new dependent profiles to this profile"></i>
                 </div>
 
                 <div ng-show="editRequirements.addDependentDialogProfile == requirement.profile">
                   <div class="btn-group">
                     <button class="btn" ng-disabled="editRequirements.selectedDependentProfiles.length == 0"
-                            ng-click="editRequirements.addSelectedDependentProfiles(requirement)">
+                            ng-click="editRequirements.addDependentProfileDialogApply(requirement)"
+                            title="Add the selected profiles as dependencies of this profile requirement">
                       <i class="icon-plus"></i> Add
                     </button>
-                    <button class="btn" ng-click="editRequirements.addProfileDialogHide()">Cancel</button>
+                    <button class="btn" ng-click="editRequirements.addDependentProfileDialogHide()"
+                            title="Closes this profile selection panel">Cancel</button>
                   </div>
 
                   <div fabric-profile-selector="editRequirements.selectedDependentProfiles"
                        version-id="editRequirements.versionId"
-                       excluded-profiles="editRequirements.excludeProfiles"></div>
+                       excluded-profiles="editRequirements.excludeDependentProfiles"></div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
+        <div ng-show="editRequirements.addProfileRequirementShow">
+          <div class="btn-group">
+            <button class="btn" ng-disabled="editRequirements.selectedProfiles.length == 0"
+                    ng-click="editRequirements.addProfileRequirementApply()"
+                    title="Adds the selected profiles as new requirements">
+              <i class="icon-plus"></i> Add
+            </button>
+            <button class="btn" ng-click="editRequirements.addProfileRequirementHide()"
+                    title="Closes this profile selection panel">Cancel</button>
+          </div>
+          <div fabric-profile-selector="editRequirements.selectedProfiles"
+               version-id="editRequirements.versionId"
+               excluded-profiles="editRequirements.excludeProfiles"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!requirementsForm.$valid" ng-click="updateRequirements(editRequirements.entity)" value="Update">
