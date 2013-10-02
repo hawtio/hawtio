@@ -1897,6 +1897,11 @@ dd.file-list {
 
 .active-profile-name {
   position: absolute;
+  left: 35px;
+}
+
+.active-profile-icon {
+  position: absolute;
   left: 15px;
 }
 
