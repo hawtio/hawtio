@@ -23,12 +23,7 @@ module Osgi {
 
         function createGraph() {
 
-            var graphBuilder = new ForceGraph.GraphBuilder();
-
-            var bundles = osgiDataService.getBundles();
-            var services = osgiDataService.getServices();
-
-            d3.values(services).forEach((service) => {
+            var buildSvcNode = (service) => {
                 var svcNode = {
                     id: "Service-" + service.Identifier,
                     name: "" + service.Identifier,
@@ -58,42 +53,57 @@ module Osgi {
                     }
                 }
 
-                graphBuilder.addNode(svcNode);
-            })
+                return svcNode;
+            };
+
+            var buildBundleNode = (bundle) => {
+
+                var bundleNodeId = "Bundle-" + bundle.Identifier;
+
+                var bundleNode = {
+                    id: bundleNodeId,
+                    name: bundle.SymbolicName,
+                    type: "bundle",
+                    navUrl: "#/osgi/bundle/" + bundle.Identifier,
+                    image: {
+                        url: "/hawtio/app/osgi/img/bundle.png",
+                        width: 32,
+                        height:32
+                    },
+                    popup : {
+                        title: "Bundle [" + bundle.Identifier + "]",
+                        content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
+                    }
+                }
+
+                return bundleNode;
+
+            }
+
+            var graphBuilder = new ForceGraph.GraphBuilder();
+
+            var bundles = osgiDataService.getBundles();
+            var services = osgiDataService.getServices();
+
+            d3.values(services).forEach((service) => { graphBuilder.addNode(buildSvcNode(service)); })
 
             bundles.forEach((bundle) => {
 
                if (bundle.RegisteredServices.length > 0 || bundle.ServicesInUse.length > 0) {
 
-                   var bundleNodeId = "Bundle-" + bundle.Identifier;
-                   var bundleNode = {
-                       id: bundleNodeId,
-                       name: bundle.SymbolicName,
-                       type: "bundle",
-                       navUrl: "#/osgi/bundle/" + bundle.Identifier,
-                       image: {
-                           url: "/hawtio/app/osgi/img/bundle.png",
-                           width: 32,
-                           height:32
-                       },
-                       popup : {
-                           title: "Bundle [" + bundle.Identifier + "]",
-                           content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
-                       }
-
-                   }
+                   var bundleNode = buildBundleNode(bundle);
 
                    graphBuilder.addNode(bundleNode);
 
                    bundle.RegisteredServices.forEach((sid) => {
                        var svcNodeId = "Service-" + sid;
-                       graphBuilder.addLink(bundleNodeId, svcNodeId, "registered");
+                       graphBuilder.addLink(bundleNode.id, svcNodeId, "registered");
                    });
 
                    bundle.ServicesInUse.forEach((sid) => {
 
                        var svcNodeId = "Service-" + sid;
-                       graphBuilder.addLink(bundleNodeId, svcNodeId, "inuse");
+                       graphBuilder.addLink(bundleNode.id, svcNodeId, "inuse");
                    });
                }
             });
