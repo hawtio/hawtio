@@ -83,8 +83,8 @@ module Fabric {
     };
 
     $scope.getGitURL = (jolokiaUrl) => {
-      return jolokiaUrl.replace("jolokia", "git/fabric");
-    }
+      return jolokiaUrl ? jolokiaUrl.replace("jolokia", "git/fabric") : null;
+    };
 
     $scope.getType = () => {
       if ($scope.row) {
