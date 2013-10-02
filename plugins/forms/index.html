@@ -110,9 +110,9 @@ e.g.</p>
 
 <p>The <strong>label</strong> and <strong>tooltip</strong> properties are not part of JSON Schema; but an extension like the <strong>tabs</strong> property above.</p>
 
-<h2 id = "Adding_custom_directive_attributes_to_the_control">Adding custom directive attributes to the control</h2>
+<h2 id = "Customising_the_element_or_attributes_of_the_control">Customising the element or attributes of the control</h2>
 
-<p>There are various extra directives you can add to <input> controls like ng-hide and so forth which you can do using a nested <strong>input-attributes</strong> object.</p>
+<p>There are various extra directives you can add to &lt;input&gt; controls like <a href="http://docs.angularjs.org/api/ng.directive:ngHide">ng-hide</a>, <a href="http://angular-ui.github.io/bootstrap/#/typeahead">typeahead</a> and so forth which you can do using a nested <strong>input-attributes</strong> object.</p>
 
 <pre><code>properties: {
   foo: {
@@ -126,6 +126,26 @@ e.g.</p>
 <p>   }</p>
 
 <p>The above would use the typehead directive to present a pick list of possible values; passing the current text field value so we can more efficiently filter results back from any remote method invocation.</p>
+
+<p>To define a custom <a href="http://docs.angularjs.org/api/ng.directive:select">select widget</a> you can use the <strong>input-element</strong> value to specify a different element name to 'input' such as 'select':</p>
+
+<pre><code>properties: {
+  foo: {
+    type: "string",
+
+    input-element: "select"
+    input-attributes: {
+      ng-options: "c.name for c in colors"
+    }
+ }</code></pre>
+
+<p>   }</p>
+
+<p>The above would generate HTML like this&hellip;</p>
+
+<p>```
+     <select ng-options="c.name for c in colors" ng-model="..." title="..."></select>
+```</p>
 
 <h3 id = "Ignoring_prefix_of_deeply_nested_properties">Ignoring prefix of deeply nested properties</h3>
 
