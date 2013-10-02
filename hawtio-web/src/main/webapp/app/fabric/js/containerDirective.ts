@@ -72,16 +72,19 @@ module Fabric {
 
         // show / hide the new dependent profiles on a profile requirement
         addDependentProfileDialogOpen: (requirement) => {
-          $scope.editRequirements.selectedDependentProfiles = [];
+          $scope.editRequirements.addDependentProfileDialogProfile = requirement.profile;
+          $scope.editRequirements.selectedDependentProfiles.splice(0, $scope.editRequirements.selectedDependentProfiles.length);
           $scope.editRequirements.excludeDependentProfiles = [requirement.profile].concat(requirement.dependentProfiles || []);
-          $scope.editRequirements.addDependentDialogProfile = requirement.profile;
+          $scope.editRequirements.addDependentProfilesToRequirement = requirement;
+          $scope.editRequirements.addDependentProfileDialogShow = true;
         },
 
         addDependentProfileDialogHide: () => {
-          $scope.editRequirements.addDependentDialogProfile =  null;
+          $scope.editRequirements.addDependentProfileDialogShow = false;
         },
 
-        addDependentProfileDialogApply: (requirement) => {
+        addDependentProfileDialogApply: () => {
+          var requirement = $scope.editRequirements.addDependentProfilesToRequirement;
           angular.forEach($scope.editRequirements.selectedDependentProfiles, (profile) => {
             var id = profile.id;
             if (id && requirement) {
@@ -96,7 +99,7 @@ module Fabric {
 
         // how / hide / add a requirement on new profile
         addProfileRequirementOpen: () => {
-          $scope.editRequirements.selectedProfiles = [];
+          $scope.editRequirements.selectedProfiles.splice(0, $scope.editRequirements.selectedProfiles.length);
           $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map(p => p.id) || [];
           $scope.editRequirements.addProfileRequirementShow = true;
         },
