@@ -806,11 +806,11 @@ module Core {
   }
 
   export function setPageTitle($document, title:Core.PageTitle) {
-    $document.attr('title', title.getTitleWithSeparator(' : '));
+    $document.attr('title', title.getTitleWithSeparator(' '));
   }
 
   export function setPageTitleWithTab($document, title:Core.PageTitle, tab:string) {
-    $document.attr('title', tab + ' : ' + title.getTitleWithSeparator(' : '));
+    $document.attr('title', title.getTitleWithSeparator(' ') + " " + tab);
   }
 
   /**

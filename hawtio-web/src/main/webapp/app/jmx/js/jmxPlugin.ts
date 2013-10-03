@@ -32,6 +32,9 @@ module Jmx {
               } catch (e) {
                 // ignore
               }
+              if (id && id.has("@")) {
+                id = "pid:" + id.split("@")[0];
+              }
               return id;
             });
 

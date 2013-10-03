@@ -60,7 +60,7 @@ module Core {
     };
 
     $scope.setPageTitle = () => {
-      $scope.pageTitle = pageTitle.getTitleArrayExcluding(['hawtio']);
+      $scope.pageTitle = pageTitle.getTitleArrayExcluding([branding.appName]);
       var tab = workspace.getActiveTab();
       if (tab && tab.content) {
         setPageTitleWithTab($document, pageTitle, tab.content);

@@ -283,10 +283,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
           $.support.cors = true;
 
-          pageTitle.addTitleElement(() => {
-            return branding.appName;
-          });
-
           /**
            * Count the number of lines in the given text
            */
