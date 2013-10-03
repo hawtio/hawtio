@@ -62,11 +62,11 @@ module Fabric {
           $scope.profiles = $scope.profiles.exclude((p) => { return p.hidden; });
 
           if ($scope.excludedProfiles) {
-            $scope.profiles = $scope.profiles.exclude((p) => { return $scope.excludedProfiles.some((e) => { return e === p.id; })});
+            $scope.profiles = $scope.excluded();
           }
 
           if ($scope.includedProfiles) {
-            $scope.profiles = $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
+            $scope.profiles = $scope.included();
           }
 
           var paths = [];
@@ -94,6 +94,14 @@ module Fabric {
         }
       };
 
+      $scope.excluded = () => {
+        return $scope.profiles.exclude((p) => { return $scope.excludedProfiles.some((e) => { return e === p.id; })});
+      };
+
+      $scope.included = () => {
+        return $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
+      }
+
 
       $scope.isOpen = (branch) => {
         if ($scope.filterText !== '') {
@@ -116,13 +124,13 @@ module Fabric {
 
       $scope.$watch('includedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
-          $scope.init();
+          $scope.profiles = $scope.included();
         }
       }, true);
 
       $scope.$watch('excludedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
-          $scope.init();
+          $scope.profiles = $scope.excluded();
         }
       }, true);
 

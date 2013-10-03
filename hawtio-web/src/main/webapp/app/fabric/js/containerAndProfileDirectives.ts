@@ -8,7 +8,7 @@ module Fabric {
 
     public scope = false;
 
-    public controller($scope, $element, $attrs, jolokia, $location, workspace) {
+    public controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
 
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
       $scope.profileFields = ["id", "hidden"];
@@ -23,6 +23,8 @@ module Fabric {
       $scope.targetContainer = {};
       $scope.showSelect = true;
       $scope.requirements = null;
+
+      $scope.currentPage = $templateCache.get("addProfileRequirements");
 
       // for editing container requirements
       $scope.editRequirements = {
@@ -100,7 +102,7 @@ module Fabric {
         // how / hide / add a requirement on new profile
         addProfileRequirementOpen: () => {
           $scope.editRequirements.selectedProfiles.splice(0, $scope.editRequirements.selectedProfiles.length);
-          $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map(p => p.id) || [];
+          $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map((p) => { return p.id; });
           $scope.editRequirements.addProfileRequirementShow = true;
         },
 
@@ -124,6 +126,26 @@ module Fabric {
           $scope.editRequirements.addProfileRequirementHide();
         }
       };
+
+      $scope.$watch('editRequirements.addDependentProfileDialogShow', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          if (newValue) {
+            $scope.currentPage = $templateCache.get("addDependentProfile");
+          } else {
+            $scope.currentPage = $templateCache.get("addProfileRequirements");
+          }
+        }
+      });
+
+      $scope.$watch('editRequirements.addProfileRequirementShow', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          if (newValue) {
+            $scope.currentPage = $templateCache.get("addProfileRequirement")
+          } else {
+            $scope.currentPage = $templateCache.get("addProfileRequirements");
+          }
+        }
+      })
 
 
       $scope.updateActiveContainers = () => {
@@ -470,9 +492,9 @@ module Fabric {
 
     public templateUrl = Fabric.templatePath + "activeProfileList.html";
 
-    public controller($scope, $element, $attrs, jolokia, $location, workspace) {
+    public controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
 
-      super.controller($scope, $element, $attrs, jolokia, $location, workspace);
+      super.controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache);
 
       $scope.searchFilter = '';
 

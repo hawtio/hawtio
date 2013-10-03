@@ -104,8 +104,9 @@
       </div>
     </div>
   </div>
-  <div modal="editRequirements.dialog.show">
-    <div ng-show="editRequirements.addProfileRequirementShow">
+
+  <script type="text/ng-template" id="addProfileRequirement">
+    <div>
       <div class="modal-header">
         <h4>Add New Profile Requirements
         </h4>
@@ -126,7 +127,11 @@
         </button>
       </div>
     </div>
-    <div ng-show="editRequirements.addDependentProfileDialogShow">
+  </script>
+
+
+  <script type="text/ng-template" id="addDependentProfile">
+    <div>
       <div class="modal-header">
         <h4>Add Dependencies to Profile: <b>{{editRequirements.addDependentProfileDialogProfile}}</b>
         </h4>
@@ -147,7 +152,11 @@
         </button>
       </div>
     </div>
-    <div ng-hide="editRequirements.addProfileRequirementShow || editRequirements.addDependentProfileDialogShow">
+  </script>
+
+
+  <script type="text/ng-template" id="addProfileRequirements">
+    <div>
       <form name="requirementsForm" class="form-inline no-bottom-margin">
         <div class="modal-header">
           <h4>Edit Requirements
@@ -202,5 +211,11 @@
         </div>
       </form>
     </div>
+
+  </script>
+
+  <div modal="editRequirements.dialog.show">
+    <div compile="currentPage"></div>
   </div>
+
 </div>
