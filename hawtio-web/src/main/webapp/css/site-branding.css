@@ -681,7 +681,7 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs {
   border-bottom: 1px solid #cecdcd !important;
   position: relative;
   top: -8px;
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
 
 div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
@@ -721,3 +721,16 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
 .fabric-page-header .span4 h2 {
   margin-top: 0px;
 }
+
+div[ng-controller="Log.LogController"] .logbar {
+
+}
+
+div[ng-controller="Log.LogController"] .logbar .logbar-container {
+  background: white;
+  margin :0px;
+  padding-top: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #cecdcd !important;
+}
+
