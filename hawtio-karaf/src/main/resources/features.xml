@@ -13,7 +13,7 @@
 
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
     <details>Installs the hawtio maven indexer service as a separate bundle</details>
-    <bundle>fab:mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-git" version="${project.version}" resolver="(obr)">

@@ -10,8 +10,14 @@
   <artifactId>hawtio-maven-indexer</artifactId>
   <name>${project.artifactId}</name>
   <description>hawtio :: hawtio-maven-indexer</description>
+  <packaging>bundle</packaging>
 
   <properties>
+    <fuse.osgi.export>
+    </fuse.osgi.export>
+    <fuse.osgi.import>
+      *;resolution:=optional
+    </fuse.osgi.import>
   </properties>
 
   <dependencies>
@@ -20,6 +26,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
@@ -87,6 +94,37 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+            <Embed-Directory>lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+            <Bundle-ClassPath>.</Bundle-ClassPath>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Implementation-Title>hawtio</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
