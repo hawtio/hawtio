@@ -2037,3 +2037,103 @@ a.dashboard-link:hover {
   text-align: center;
 
 }
+
+.log-table li {
+  position: relative;
+  list-style-type: none;
+  min-height: 32px;
+  max-width: 100%;
+  padding: 0;
+}
+
+.log-table .table-head div div {
+  font-weight: bold;
+  text-align: center !important;
+  direction: ltr !important;
+}
+
+.log-table .table-head div div:nth-child(4) {
+  font-weight: bold;
+  left: 225px;
+  width: 326px;
+  text-align: center !important;
+  direction: ltr !important;
+}
+
+
+.log-table li div div {
+  position: absolute;
+  display: inline-block;
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+  font-family: monospace;
+  font-size: 12px;
+  min-height: 28px;
+  overflow-x: hidden;
+  padding: 3px;
+  padding-top: 6px;
+  width: auto;
+}
+
+.log-table {
+  margin: 0;
+}
+
+.log-table li:nth-child(odd) div div {
+  background-color: white;
+}
+
+
+.log-table li:nth-child(even) div div {
+  background-color: #f3f3f3;
+}
+
+
+.log-table li div div:nth-child(1) {
+  border-right: 1px solid #d4d4d4;
+  left: 0;
+  width: 11px;
+  z-index: 5;
+}
+
+.log-table li div div:nth-child(2) {
+  border-right: 1px solid #d4d4d4;
+  left: 18px;
+  width: 143px;
+  z-index: 5;
+}
+
+.log-table li div div:nth-child(3) {
+  border-right: 1px solid #d4d4d4;
+  left: 168px;
+  width: 50px;
+  z-index: 5;
+}
+
+.log-table li div div:nth-child(4) {
+  padding-right: 5px;
+  border-right: 1px solid #d4d4d4;
+  text-align: right;
+  direction: rtl;
+  z-index: 3;
+  left: 0;
+  width: 551px;
+}
+
+.log-table li div div:nth-child(5) {
+  left: 558px;
+  right: 0;
+  padding-left: 5px;
+}
+
+.log-table li div div:nth-child(6) {
+  background: white;
+  position: static;
+  margin-top: 43px;
+  /*top: 20px; */
+  white-space: normal;
+  display: block;
+}
+
+

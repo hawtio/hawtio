@@ -39,7 +39,48 @@
   </div>
 
   <div class="controller-section log-main" ng-show="logs.length > 0">
+
     <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+
+    <!--
+    <ul class="log-table">
+      <li class="table-head">
+        <div>
+          <div></div>
+          <div>Timestamp</div>
+          <div>Level</div>
+          <div>Logger</div>
+          <div>Message</div>
+        </div>
+      </li>
+      <li class="table-row" ng-repeat="log in logs">
+        <div class="expandable closed" model="log">
+          <div class="title">
+            <i class="expandable-indicator"></i>
+          </div>
+          <div class="title">{{log.timestamp | logDateFilter}}</div>
+          <div class="title"><span class="text-{{logClass(log)}}"><i class="{{logIcon(log)}}"></i> {{log.level}}</span></div>
+          <div class="title" title="{{log.logger}}">{{log.logger}}</div>
+          <div class="title">{{log.message}}</div>
+          <div class="expandable-body well">
+
+            {{log.message}}
+
+            <dl ng-hide="!row.exception">
+              <dt>Stack Trace:</dt>
+              <dd>
+                <ul class="unstyled" ng-repeat="line in log.exception">
+                  <li class="stacktrace" ng-bind-html-unsafe="formatException(line)"></li>
+                </ul>
+              </dd>
+            </dl>
+
+          </div>
+        </div>
+      </li>
+    </ul>
+    -->
+
   </div>
   <div class="controller-section no-log" ng-show="logs.length == 0">
     Loading...
