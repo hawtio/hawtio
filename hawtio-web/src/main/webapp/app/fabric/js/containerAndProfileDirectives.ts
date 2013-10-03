@@ -145,7 +145,7 @@ module Fabric {
             $scope.currentPage = $templateCache.get("addProfileRequirements");
           }
         }
-      })
+      });
 
 
       $scope.updateActiveContainers = () => {
@@ -156,8 +156,10 @@ module Fabric {
           var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
           if (ap) {
             activeProfile['selected'] = ap.selected;
+            activeProfile['expanded'] = ap.expanded;
           } else {
             activeProfile['selected'] = false;
+            activeProfile['expanded'] = false;
           }
         });
       };

@@ -25,7 +25,7 @@
 
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
-    <div class="expandable" ng-class="isOpen(profile)">
+    <div class="expandable" model="profile">
       <div class="active-profile-row">
         <div class="title active-profile-expander">
           <i class="expandable-indicator" ng-show="profile.count"></i>
