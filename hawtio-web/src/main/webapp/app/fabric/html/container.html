@@ -226,7 +226,6 @@
               </dl>
             </div>
 
-
             <div class="tab-pane" title="Provision List">
               <dl>
                 <dt class="provision-list-title">
@@ -257,6 +256,7 @@
 
     </div>
   </div>
+
 
   <div hawtio-confirm-dialog="connectToContainerDialog.show" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
     <div class="dialog-body">
@@ -305,7 +305,7 @@
       <div id="dialog-body" class="modal-body">
         <label>Select one or more profiles to add to this container: </label>
 
-        <div fabric-profile-selector="$parent.selectedProfilesDialog" version-id="row.versionId" excluded-profiles="row.profileIds"></div>
+        <div fabric-profile-selector="selectedProfilesDialog" version-id="row.versionId" excluded-profiles="row.profileIds"></div>
 
       </div>
       <div class="modal-footer">
@@ -317,4 +317,5 @@
   </div>
 
 </div>
+
 

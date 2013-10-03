@@ -100,7 +100,7 @@ module Fabric {
 
       $scope.included = () => {
         return $scope.profiles.exclude((p) => { return $scope.includedProfiles.none((e) => { return e === p.id; })});
-      }
+      };
 
 
       $scope.isOpen = (branch) => {
@@ -124,13 +124,13 @@ module Fabric {
 
       $scope.$watch('includedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
-          $scope.profiles = $scope.included();
+          $scope.init();
         }
       }, true);
 
       $scope.$watch('excludedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
-          $scope.profiles = $scope.excluded();
+          $scope.init();
         }
       }, true);
 
