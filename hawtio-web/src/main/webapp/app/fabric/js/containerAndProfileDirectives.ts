@@ -236,8 +236,7 @@ module Fabric {
                 answer.push({
                   id: id,
                   count: 0,
-                  // TODO how to define the version of the current profile?
-                  // versionId: container.versionId,
+                  versionId: $scope.requirements.version || "1.0",
                   containers: [],
                   selected: false,
                   requirements: profileRequirement,
