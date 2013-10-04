@@ -4,6 +4,13 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    $scope.maps = {
+      group: {},
+      profile: {},
+      broker: {},
+      container: {}
+    };
+
     $scope.groupMatchesFilter = (group) => {
       return true;
       // return group.id.has($scope.searchFilter) || !group.profiles.find((profile) => $scope.profileMatchesFilter(profile));
@@ -33,19 +40,26 @@ module Fabric {
         var brokers = response.value;
         console.log("Got response: " + brokers);
 
-        function findByIdOrCreate(collection, id, fn) {
+        function findByIdOrCreate(collection, id, map, fn) {
           var value = collection.find({"id": id});
           if (!value) {
             value = fn();
             value["id"] = id;
-            // TODO causes CSS issues ;)
-            //value["expanded"] = true;
             collection.push(value);
+
+            var old = map[id];
+            if (old) {
+              // copy any view related across
+              value["expanded"] = old["expanded"];
+            }
+            map[id] = value;
           }
           return value;
         }
 
         $scope.groups = [];
+        var maps = $scope.maps;
+
         angular.forEach(brokers, (brokerStatus) => {
           var groupId = brokerStatus.group || "Unknown";
           var profileId = brokerStatus.profile || "Unknown";
@@ -53,24 +67,24 @@ module Fabric {
           var containerId = brokerStatus.container || "Unknown";
           var versionId = brokerStatus.version || "1.0";
 
-          var group = findByIdOrCreate($scope.groups, groupId, () => {
+          var group = findByIdOrCreate($scope.groups, groupId, maps.group, () => {
             return {
               profiles: []
             };
           });
-          var profile = findByIdOrCreate(group.profiles, profileId, () => {
+          var profile = findByIdOrCreate(group.profiles, profileId, maps.profile, () => {
             return {
               version: versionId,
               brokers: []
             };
           });
-          var broker = findByIdOrCreate(profile.brokers, brokerId, () => {
+          var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
             return {
               //expanded: true,
               containers: []
             };
           });
-          var container = findByIdOrCreate(broker.containers, containerId, () => {
+          var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
             return brokerStatus;
           });
         });
