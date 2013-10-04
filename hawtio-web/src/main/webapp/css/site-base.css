@@ -2097,17 +2097,17 @@ a.dashboard-link:hover {
   margin: 0;
 }
 
-.log-table li:nth-child(odd) div div {
+.log-table li:nth-child(odd) div div:not(.stack-line) {
   background-color: white;
 }
 
 
-.log-table li:nth-child(even) div div {
+.log-table li:nth-child(even) div div:not(.stack-line) {
   background-color: #f3f3f3;
 }
 
 
-.log-table li div div:nth-child(1) {
+.log-table li div div:nth-child(1):not(.stack-line) {
   left: 0;
   width: 11px;
   z-index: 5;

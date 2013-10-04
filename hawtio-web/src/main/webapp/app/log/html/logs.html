@@ -54,7 +54,7 @@
           <div>Message</div>
         </div>
       </li>
-      <li class="table-row" ng-repeat="log in logs">
+      <li class="table-row" ng-repeat="log in logs" ng-show="filterLogMessage(log)">
         <div class="expandable closed" model="log">
           <div class="title">
             <i class="expandable-indicator"></i>
@@ -67,16 +67,10 @@
           </div>
           <div class="title">{{log.message}}</div>
           <div class="expandable-body well">
-
             {{log.message}}
-
             <dl ng-hide="!log.exception">
               <dt>Stack Trace:</dt>
-              <dd>
-                <ul class="unstyled" ng-repeat="line in log.exception">
-                  <li class="stacktrace" ng-bind-html-unsafe="formatException(line)"></li>
-                </ul>
-              </dd>
+              <dd ng-bind-html-unsafe="formatStackTrace(log.exception)"></dd>
             </dl>
 
           </div>

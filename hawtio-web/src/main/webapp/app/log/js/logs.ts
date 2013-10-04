@@ -115,33 +115,32 @@ module Log {
       checkIfFilterChanged();
     });
 
-    function getDocHeight() {
-      var D = document;
-      return Math.max(
-          Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
-          Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
-          Math.max(D.body.clientHeight, D.documentElement.clientHeight)
-      );
-    }
+    $scope.filterLogMessage = (log) => {
+      return true;
+    };
+
+    $scope.formatStackTrace = (exception) => {
+      if (!exception) {
+        return "";
+      }
+      var answer = '<ul class="unstyled">\n';
+      exception.forEach((line) => {
+        answer = answer + '<li>' + $scope.formatException(line) + '</li>';
+      });
+      answer += '\n</ul>';
+      return answer;
+    };
 
     var updateValues = function (response) {
       var scrollToBottom = false;
       var window = $($window);
-
-      //console.log("ScrollTop: ", $document.scrollTop());
-      //console.log("documentHeight: ", $document.height());
 
       if ($scope.logs.length === 0) {
         // initial page load, let's scroll to the bottom
         scrollToBottom = true;
       }
 
-      //console.log("window.scrollTop() + window.height()", window.scrollTop() + window.height());
-
-      //console.log("getDocHeight() - 100: ", getDocHeight() - 100);
-
-      if ( (window.scrollTop() + window.height()) > (getDocHeight() - 100) ) {
-        //console.log("Scrolling to bottom...");
+      if ( (window.scrollTop() + window.height()) > (Core.getDocHeight() - 100) ) {
         // page is scrolled near the bottom
         scrollToBottom = true;
       }
