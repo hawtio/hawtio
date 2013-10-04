@@ -21,7 +21,7 @@
     </div>
     <div class="mq-group-list" ng-repeat="group in groups" ng-show="groupMatchesFilter(profile)">
       <div class="expandable" model="group">
-        <div class="mq-group-row">
+        <div class="mq-group-row" title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
           <span class="title mq-group-expander">
             <i class="expandable-indicator" ng-show="group.profiles.length"></i>
           </span>
@@ -36,7 +36,7 @@
           <div class="mq-profile-list" ng-repeat="profile in group.profiles"
                ng-show="profileMatchesFilter(profile)">
             <div class="expandable" model="profile">
-              <div class="mq-profile-row">
+              <div class="mq-profile-row" title="Profile for running one or more logical brokers">
                   <span class="title mq-profile-expander">
                     <i class="expandable-indicator" ng-show="profile.brokers.length"></i>
                   </span>
@@ -51,7 +51,7 @@
                 <div class="mq-broker-list" ng-repeat="broker in profile.brokers"
                      ng-show="brokerMatchesFilter(broker)">
                   <div class="expandable" model="broker">
-                    <div class="mq-broker-row">
+                    <div class="mq-broker-row" title="Logical broker inside this profile">
                         <span class="title mq-broker-expander">
                           <i class="expandable-indicator" ng-show="broker.containers.length"></i>
                         </span>
@@ -66,7 +66,7 @@
                       <ul>
                         <li class="no-list" ng-repeat="container in broker.containers"
                             ng-show="containerMatchesFilter(container)">
-                          <div class="mq-container-row">
+                          <div class="mq-container-row" title="A container (JVM) which implements one or more logical brokers within this profile">
                             <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
                                title="Not Selected"
                                ng-click="container.selected = true"></i>

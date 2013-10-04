@@ -94,11 +94,8 @@ module Fabric {
     };
 
     $scope.showProfile = (profile) => {
-      if (angular.isDefined(profile.versionId)) {
-        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, profile.versionId, profile);
-      } else {
-        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.activeVersionId, profile);
-      }
+      var version = profile.versionId || profile.version || $scope.activeVersionId;
+      Fabric.gotoProfile(workspace, jolokia, localStorage, $location, version, profile);
     };
 
     $scope.getSelectedClass = (obj) => {
@@ -180,12 +177,19 @@ module Fabric {
     return profileId.replace(/-/g, "/") + profileSuffix;
   }
 
-  export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
+  export function profileLink(workspace, jolokia, localStorage, versionId, profileId) {
+    var path;
     if (Wiki.isWikiEnabled(workspace, jolokia, localStorage)) {
-      $location.url("/wiki/branch/" + versionId + "/view/fabric/profiles/" + Fabric.profilePath(profile.id));
+      path = "/wiki/branch/" + versionId + "/view/fabric/profiles/" + Fabric.profilePath(profileId);
     } else {
-      $location.url("/fabric/profile/" + versionId + "/" + profile.id);
+      path = "/fabric/profile/" + versionId + "/" + profileId;
     }
+    return path;
+  }
+
+  export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
+    var path = profileLink(workspace, jolokia, localStorage, versionId, profile.id);
+    $location.url(path);
   }
 
   export function setSelect(selection, group) {

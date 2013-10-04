@@ -11,6 +11,13 @@ module Fabric {
       container: {}
     };
 
+    $scope.showBroker = (broker) => {
+      var path = Fabric.profileLink(workspace, jolokia, localStorage, broker.version, broker.profile);
+      path += "/org.fusesource.mq.fabric.server-" + broker.id + ".properties";
+      $location.path(path);
+    };
+
+
     $scope.groupMatchesFilter = (group) => {
       return true;
       // return group.id.has($scope.searchFilter) || !group.profiles.find((profile) => $scope.profileMatchesFilter(profile));
@@ -61,7 +68,7 @@ module Fabric {
           var groupId = brokerStatus.group || "Unknown";
           var profileId = brokerStatus.profile || "Unknown";
           var brokerId = brokerStatus.brokerName || "Unknown";
-          var containerId = brokerStatus.container || "Unknown";
+          var containerId = brokerStatus.container;
           var versionId = brokerStatus.version || "1.0";
 
           var group = findByIdOrCreate($scope.groups, groupId, maps.group, () => {
@@ -77,12 +84,16 @@ module Fabric {
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
             return {
+              profile: profileId,
+              version: versionId,
               containers: []
             };
           });
-          var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
-            return brokerStatus;
-          });
+          if (containerId) {
+            var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
+              return brokerStatus;
+            });
+          }
         });
         Core.$apply($scope);
       }
