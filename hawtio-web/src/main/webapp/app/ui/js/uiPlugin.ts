@@ -26,6 +26,8 @@ module UI {
         return new UI.FileUpload();
       }).directive('expandable', () => {
         return new UI.Expandable();
+      }).directive('gridster', () => {
+        return new UI.GridsterDirective();
       }).directive('editableProperty', ($parse) => {
         return new UI.EditableProperty($parse);
       }).directive('hawtioViewport', () => {

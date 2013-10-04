@@ -1,5 +1,107 @@
 <div ng-controller="Fabric.FabricBrokersController">
+
+<script type="text/ng-template" id="widgetTemplate">
+  <div  style="height: 100%">
+    <div class="widget-area mq-group" style="height: 100%; position: relative;">
+
+      <div class="widget-title" title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
+        <div class="row-fluid">
+          <span class="title mq-group-icon">
+            <i class="icon-group"></i>
+          </span>
+          <span class="title mq-group-name">
+            Broker Group "{{group.id}}"
+          </span>
+        </div>
+      </div>
+
+      <div class="widget-body" style="position: absolute; top: 20px; bottom: 0; right: 0; left: 0; padding: 0;">
+    <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
+         title="Profile for running one or more logical brokers" ng-show="profileMatchesFilter(profile)">
+
+      <div class="mq-profile-rectangle-label">
+        <span class="title mq-profile-icon">
+          <i class="icon-book"></i>
+        </span>
+        <span class="title mq-profile-name">
+          <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.version}}
+        </span>
+      </div>
+
+      <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
+           ng-show="brokerMatchesFilter(broker)"
+           title="Logical broker inside this profile">
+
+        <div class="mq-broker-rectangle-label">
+            <span class="title mq-broker-expander">
+              <i class="expandable-indicator" ng-show="broker.containers.length"></i>
+            </span>
+            <span class="title mq-broker-icon">
+              <img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
+            </span>
+            <span class="title mq-broker-name">
+              <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
+            </span>
+        </div>
+
+        <ul>
+          <li ng-repeat="container in broker.containers">
+            <i title="{{getStatusTitle(container)}}"
+               ng-class='statusIcon(container)'></i>
+            <img ng-show="container.master" title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
+            <a href="" ng-click="showContainer(container)">{{container.id}}</a> / {{container.version}}
+            <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
+               title="Open a new window and connect to this broker"
+               ng-click="doConnect(container)"></i>
+          </li>
+        </ul>
+            <!--
+          <div class="mq-container-rectangle" ng-class="{master : container.master}"
+               ng-repeat="container in broker.containers"
+               ng-show="containerMatchesFilter(container)"
+               title="A container (JVM) which implements one or more logical brokers within this profile">
+            <div class="mq-container-rectangle-label" ng-class="{master : container.master}">
+              <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
+                 title="Not Selected"
+                 ng-click="container.selected = true"></i>
+              <i ng-show="container.selected && showSelect" class="icon-circle clickable"
+                 title="Status of the container" ng-click="container.selected = false"></i>
+
+              <i class="clickable" title="{{getStatusTitle(container)}}"
+                 ng-class='statusIcon(container)'
+                 ng-click="container.selected = !container.selected"></i>
+
+              <span ng-click="container.selected = !container.selected">
+                <a ng-click="showContainer(container)">{{container.id}}</a> /
+                {{container.version}}
+              </span>
+
+              <i class="icon-cloud clickable" title="Ensemble member"
+                 ng-click="showContainer(container)"
+                 ng-show="isEnsembleContainer(container.id)"></i>
+
+              <i class="icon-plus clickable" ng-show="container.root && container.alive"
+                 title="Create a new child container"
+                 ng-click="createChildContainer(container)"></i>
+
+              <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
+                 title="Open a new window and connect to this broker"
+                 ng-click="doConnect(container)"></i>
+
+              <i class="icon-star mq-master" title="Master broker" ng-show="container.master"></i>
+            </div>
+          </div>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</script>
+
 <div class="tabbable hawtio-form-tabs">
+
 <div class="tab-pane" title="Diagram">
   <div>
     <div class="mq-titles section-header">
@@ -106,6 +208,13 @@
     </div>
   </div>
 </div>
+
+<!--
+<div class="tab-pane gridster" title="Gridster">
+  <div gridster grid-size="300" dimensions="300"></div>
+</div>
+-->
+
 
 <div class="tab-pane" title="Tree">
   <div>

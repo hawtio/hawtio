@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function FabricBrokersController($scope, localStorage, $routeParams, $location, jolokia, workspace) {
+  export function FabricBrokersController($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -43,7 +43,16 @@ module Fabric {
     }
 
     function onBrokerData(response) {
+
       if (response) {
+
+        var responseJson = angular.toJson(response.value);
+        if ($scope.responseJson === responseJson) {
+          return;
+        }
+
+        $scope.responseJson = responseJson;
+
         var brokers = response.value;
 
         function findByIdOrCreate(collection, id, map, fn) {
@@ -95,6 +104,33 @@ module Fabric {
             });
           }
         });
+
+
+        // add a new gridster rectangle if we don't already have one
+        /*
+        if (!$scope.widgets) {
+          $scope.widgets = [];
+        }
+
+        $scope.groups.forEach((group) => {
+          if (!$scope.widgets.any((g) => { return g.id === group.id })) {
+
+            var outer = $('<li style="list-style-type: none; position: absolute"></li>');
+            var child = $scope.$new();
+            child.group = group;
+
+            outer.html($compile($templateCache.get("widgetTemplate"))(child));
+
+            $scope.widgets.push({
+              id: group.id,
+              scope: child,
+              group: group,
+              widget: $scope.gridster.add_widget(outer, 2, 2)
+            });
+          }
+        });
+        */
+
         Core.$apply($scope);
       }
     }
