@@ -8,20 +8,65 @@ module Log {
     level: string;
   }
 
-  export function LogController($scope, $location, localStorage, workspace:Workspace, $window, $document) {
+  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document) {
     $scope.logs = [];
-    $scope.filteredLogs = [];
-    $scope.selectedItems = [];
-    $scope.searchText = "";
-    $scope.filter = {
-      // The default logging level to show, empty string => show all
-      logLevelQuery: "",
-      // The default value of the exact match logging filter
-      logLevelExactMatch: false
+
+
+    $scope.init = () => {
+      $scope.searchText = $routeParams['s'];
+
+      if (!angular.isDefined($scope.searchText)){
+        $scope.searchText = '';
+      }
+
+      $scope.filter = {
+        // The default logging level to show, empty string => show all
+        logLevelQuery: $routeParams['l'],
+        // The default value of the exact match logging filter
+        logLevelExactMatch: Core.parseBooleanValue($routeParams['e'])
+      };
+
+      if (!angular.isDefined($scope.filter.logLevelQuery)) {
+        $scope.filter.logLevelQuery = '';
+      }
+      if (!angular.isDefined($scope.filter.logLevelExactMatch)) {
+        $scope.filter.logLevelExactMatch = false;
+      }
     };
+
+    $scope.$on('$routeUpdate', $scope.init);
+
+    $scope.$watch('searchText', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search('s', newValue);
+      }
+    });
+
+    $scope.$watch('filter.logLevelQuery', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search('l', newValue);
+      }
+    });
+
+    $scope.$watch('filter.logLevelExactMatch', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search('e', newValue);
+      }
+    });
+
+    $scope.init();
+
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
 
+
+    $scope.logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
+    $scope.logLevelMap = {};
+
+    angular.forEach($scope.logLevels, (name, idx) => {
+      $scope.logLevelMap[name] = idx;
+      $scope.logLevelMap[name.toLowerCase()] = idx;
+    });
 
     $scope.logClass = (log) => {
       return logLevelClass(log['level']);
@@ -54,70 +99,47 @@ module Log {
     };
 
     $scope.getSupport = () => {
-      if ($scope.selectedItems.length) {
-        var log = $scope.selectedItems[0];
-        var text = log["message"];
-        var uri = "https://access.redhat.com/knowledge/solutions?logger=" + log["logger"] + "&text=" + text;
-        window.location.href = uri;
+      var uri =  "https://access.redhat.com/knowledge/solutions"
+      var expanded = $scope.logs.filter((log) => { return log.expanded; });
+      if (expanded.length > 0) {
+        // guess we'll take the most recent expanded event
+        var last = expanded.last();
+        var text = last.message;
+        var logger = last.logger;
+        uri = uri + "?logger=" + logger + "&text=" + text;
       }
+      window.location.href = uri;
     };
 
-    var columnDefs:any[] = [
-      {
-        field: 'timestamp',
-        displayName: 'Timestamp',
-        cellFilter: "logDateFilter",
-        width: 146
-      },
-      {
-        field: 'level',
-        displayName: 'Level',
-        cellTemplate: '<div class="ngCellText"><span class="text-{{logClass(row.entity)}}"><i class="{{logIcon(row.entity)}}"></i> {{row.entity.level}}</span></div>',
-        cellFilter: null,
-        width: 74,
-        resizable: false
-      },
-      {
-        field: 'logger',
-        displayName: 'Logger',
-        cellTemplate: '<div class="ngCellText" ng-switch="hasLogSourceHref(row)" title="{{row.entity.logger}}"><a ng-href="{{logSourceHref(row)}}" ng-switch-when="true">{{row.entity.logger}}</a><div ng-switch-default>{{row.entity.logger}}</div></div>',
-        cellFilter: null,
-        //width: "**"
-        width: "20%"
-      },
-      {
-        field: 'message',
-        displayName: 'Message',
-        //width: "****"
-        width: "60%"
-      }
-    ];
-
-
-    $scope.gridOptions = {
-      selectedItems: $scope.selectedItems,
-      data: 'filteredLogs',
-      displayFooter: false,
-      showFilter: false,
-      sortInfo: { field: 'timestamp', direction: 'DESC'},
-      filterOptions: {
-        filterText: "searchText"
-      },
-      columnDefs: columnDefs,
-      rowDetailTemplateId: "logDetailTemplate"
-      //rowTemplate: '<div ng-style="{\'cursor\': row.cursor}" ng-repeat="col in visibleColumns()" class="{{logClass(row.entity)}} ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>'
-    };
-
-    $scope.$watch('filter.logLevelExactMatch', function () {
-      checkIfFilterChanged();
-    });
-    $scope.$watch('filter.logLevelQuery', function () {
-      checkIfFilterChanged();
-    });
 
     $scope.filterLogMessage = (log) => {
-      return true;
+
+      if ($scope.filter.logLevelQuery !== "") {
+        var logLevelExactMatch = $scope.filter.logLevelExactMatch;
+        var logLevelQuery = $scope.filter.logLevelQuery;
+        var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : $scope.logLevelMap[logLevelQuery];
+
+        if (logLevelExactMatch) {
+          if (log.level !== logLevelQuery) {
+            return false;
+          }
+        } else {
+          var idx = $scope.logLevelMap[log.level];
+          if ( !(idx >= logLevelQueryOrdinal || idx < 0) ) {
+            return false;
+          }
+        }
+      }
+
+      if ($scope.searchText.startsWith("l=")) {
+        return log.logger.has($scope.searchText.last($scope.searchText.length - 2));
+      }
+      if ($scope.searchText.startsWith("m=")) {
+        return log.message.has($scope.searchText.last($scope.searchText.length - 2));
+      }
+      return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
     };
+
 
     $scope.formatStackTrace = (exception) => {
       if (!exception) {
@@ -130,6 +152,7 @@ module Log {
       answer += '\n</ul>';
       return answer;
     };
+
 
     var updateValues = function (response) {
       var scrollToBottom = false;
@@ -177,7 +200,6 @@ module Log {
           }
         }
         if (counter) {
-          refilter();
           if (scrollToBottom) {
             setTimeout(() => {
               $document.scrollTop( $document.height() - window.height());
@@ -187,6 +209,7 @@ module Log {
         }
       }
     };
+
 
     var jolokia = workspace.jolokia;
     jolokia.execute(logQueryMBean, "allLogResults", onSuccess(updateValues));
@@ -210,41 +233,5 @@ module Log {
 
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
 
-    var logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
-    var logLevelMap = {};
-    angular.forEach(logLevels, (name, idx) => {
-      logLevelMap[name] = idx;
-      logLevelMap[name.toLowerCase()] = idx;
-    });
-
-    function checkIfFilterChanged() {
-      if ($scope.logLevelExactMatch !== $scope.filter.logLevelExactMatch ||
-              $scope.logLevelQuery !== $scope.filter.logLevelExactMatch) {
-        refilter();
-      }
-    }
-
-    function refilter() {
-      //console.log("refilter logs");
-      var logLevelExactMatch = $scope.filter.logLevelExactMatch;
-      var logLevelQuery = $scope.filter.logLevelQuery;
-      var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : logLevelMap[logLevelQuery];
-
-      $scope.logLevelExactMatch = logLevelExactMatch;
-      $scope.logLevelQuery = logLevelQuery;
-
-      $scope.filteredLogs = $scope.logs.filter((log) => {
-        if (logLevelQuery) {
-          if (logLevelExactMatch) {
-            return log.level === logLevelQuery;
-          } else {
-            var idx = logLevelMap[log.level];
-            return idx >= logLevelQueryOrdinal || idx < 0;
-          }
-        }
-        return true;
-      });
-      Core.$apply($scope);
-    }
   }
 }

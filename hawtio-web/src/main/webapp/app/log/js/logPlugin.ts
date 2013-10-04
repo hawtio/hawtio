@@ -3,7 +3,7 @@ module Log {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/logs', {templateUrl: 'app/log/html/logs.html'})
+                    when('/logs', {templateUrl: 'app/log/html/logs.html', reloadOnSearch: false})
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
 
