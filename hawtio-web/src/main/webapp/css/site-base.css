@@ -2108,7 +2108,6 @@ a.dashboard-link:hover {
 
 
 .log-table li div div:nth-child(1) {
-  border-right: 1px solid #d4d4d4;
   left: 0;
   width: 11px;
   z-index: 5;
@@ -2124,8 +2123,9 @@ a.dashboard-link:hover {
 .log-table li div div:nth-child(3) {
   border-right: 1px solid #d4d4d4;
   left: 168px;
-  width: 50px;
+  width: 60px;
   z-index: 5;
+  text-align: center;
 }
 
 .log-table li div div:nth-child(4) {

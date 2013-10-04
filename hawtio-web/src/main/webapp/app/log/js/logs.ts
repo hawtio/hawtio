@@ -8,7 +8,7 @@ module Log {
     level: string;
   }
 
-  export function LogController($scope, $location, localStorage, workspace:Workspace) {
+  export function LogController($scope, $location, localStorage, workspace:Workspace, $window, $document) {
     $scope.logs = [];
     $scope.filteredLogs = [];
     $scope.selectedItems = [];
@@ -44,7 +44,7 @@ module Log {
     $scope.logSourceHref = Log.logSourceHref;
 
     $scope.hasLogSourceHref = (row) => {
-      return Log.logSourceHref(row) ? true : false;
+      return Log.hasLogSourceHref(row);
     };
 
     $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
@@ -115,7 +115,37 @@ module Log {
       checkIfFilterChanged();
     });
 
+    function getDocHeight() {
+      var D = document;
+      return Math.max(
+          Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+          Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+          Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+      );
+    }
+
     var updateValues = function (response) {
+      var scrollToBottom = false;
+      var window = $($window);
+
+      //console.log("ScrollTop: ", $document.scrollTop());
+      //console.log("documentHeight: ", $document.height());
+
+      if ($scope.logs.length === 0) {
+        // initial page load, let's scroll to the bottom
+        scrollToBottom = true;
+      }
+
+      //console.log("window.scrollTop() + window.height()", window.scrollTop() + window.height());
+
+      //console.log("getDocHeight() - 100: ", getDocHeight() - 100);
+
+      if ( (window.scrollTop() + window.height()) > (getDocHeight() - 100) ) {
+        //console.log("Scrolling to bottom...");
+        // page is scrolled near the bottom
+        scrollToBottom = true;
+      }
+
       var logs = response.events;
       var toTime = response.toTimestamp;
       if (toTime && angular.isNumber(toTime)) {
@@ -149,6 +179,11 @@ module Log {
         }
         if (counter) {
           refilter();
+          if (scrollToBottom) {
+            setTimeout(() => {
+              $document.scrollTop( $document.height() - window.height());
+            }, 20);
+          }
           Core.$apply($scope);
         }
       }

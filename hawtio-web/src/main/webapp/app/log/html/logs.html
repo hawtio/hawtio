@@ -40,9 +40,10 @@
 
   <div class="controller-section log-main" ng-show="logs.length > 0">
 
-    <div class="gridStyle" hawtio-datatable="gridOptions"></div>
-
     <!--
+    <div class="gridStyle" hawtio-datatable="gridOptions"></div>
+    -->
+
     <ul class="log-table">
       <li class="table-head">
         <div>
@@ -60,13 +61,16 @@
           </div>
           <div class="title">{{log.timestamp | logDateFilter}}</div>
           <div class="title"><span class="text-{{logClass(log)}}"><i class="{{logIcon(log)}}"></i> {{log.level}}</span></div>
-          <div class="title" title="{{log.logger}}">{{log.logger}}</div>
+          <div title="{{log.logger}}" ng-switch="hasLogSourceHref(log)">
+            <a ng-href="{{logSourceHref(log)}}" ng-switch-when="true">{{log.logger}}</a>
+            <span ng-switch-default>{{log.logger}}</span>
+          </div>
           <div class="title">{{log.message}}</div>
           <div class="expandable-body well">
 
             {{log.message}}
 
-            <dl ng-hide="!row.exception">
+            <dl ng-hide="!log.exception">
               <dt>Stack Trace:</dt>
               <dd>
                 <ul class="unstyled" ng-repeat="line in log.exception">
@@ -79,9 +83,9 @@
         </div>
       </li>
     </ul>
-    -->
 
   </div>
+
   <div class="controller-section no-log" ng-show="logs.length == 0">
     Loading...
   </div>

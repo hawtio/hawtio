@@ -1,6 +1,17 @@
 module Log {
   export function logSourceHref(row) {
+    if (!row) {
+      return "";
+    }
     var log = row.entity;
+    if (log) {
+      return logSourceHrefEntity(log);
+    } else {
+      return logSourceHrefEntity(row);
+    }
+  }
+
+  export function logSourceHrefEntity(log) {
     var fileName = Log.removeQuestion(log.fileName);
     var className = Log.removeQuestion(log.className);
     var properties = log.properties;
@@ -18,6 +29,18 @@ module Log {
     } else {
       return "";
     }
+  }
+
+  export function hasLogSourceHref(log) {
+    var properties = log.properties;
+    if (!properties) {
+      return false;
+    }
+    var mavenCoords = "";
+    if (properties) {
+      mavenCoords = properties["maven.coordinates"];
+    }
+    return angular.isDefined(mavenCoords) && mavenCoords !== "";
   }
 
   export function removeQuestion(text: string): string {
