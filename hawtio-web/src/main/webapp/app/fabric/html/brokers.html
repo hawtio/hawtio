@@ -22,44 +22,44 @@
     <div class="mq-group-list" ng-repeat="group in groups" ng-show="groupMatchesFilter(profile)">
       <div class="expandable" model="group">
         <div class="mq-group-row">
-          <div class="title mq-group-expander">
+          <span class="title mq-group-expander">
             <i class="expandable-indicator" ng-show="group.profiles.length"></i>
-          </div>
-          <div class="title mq-group-icon">
+          </span>
+          <span class="title mq-group-icon">
             <i class="icon-group"></i>
-          </div>
-          <div class="title mq-group-name">
+          </span>
+          <span class="title mq-group-name">
             {{group.id}}
-          </div>
+          </span>
           <div class="expandable-body">
             <div class="mq-profile-list" ng-repeat="profile in group.profiles"
                  ng-show="profileMatchesFilter(profile)">
               <div class="expandable" model="profile">
                 <div class="mq-profile-row">
-                  <div class="title mq-profile-expander">
+                  <span class="title mq-profile-expander">
                     <i class="expandable-indicator" ng-show="profile.brokers.length"></i>
-                  </div>
-                  <div class="title mq-profile-icon">
+                  </span>
+                  <span class="title mq-profile-icon">
                     <i class="icon-book"></i>
-                  </div>
-                  <div class="title mq-profile-name">
+                  </span>
+                  <span class="title mq-profile-name">
                     <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.version}}
-                  </div>
+                  </span>
                 </div>
                 <div class="expandable-body">
                   <div class="mq-profile-list" ng-repeat="broker in profile.brokers"
                        ng-show="brokerMatchesFilter(broker)">
                     <div class="expandable" model="broker">
                       <div class="mq-profile-row">
-                        <div class="title mq-profile-expander">
+                        <span class="title mq-profile-expander">
                           <i class="expandable-indicator" ng-show="broker.containers.length"></i>
-                        </div>
-                        <div class="title mq-profile-icon">
+                        </span>
+                        <span class="title mq-profile-icon">
                           <img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
-                        </div>
-                        <div class="title mq-profile-name">
+                        </span>
+                        <span class="title mq-profile-name">
                           <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
-                        </div>
+                        </span>
                       </div>
                       <div class="expandable-body">
                         <ul>
