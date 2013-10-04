@@ -1904,6 +1904,7 @@ dd.file-list {
 .active-profile-icon {
   position: absolute;
   left: 15px;
+  color: green !important;
 }
 
 .active-profile-filter {
@@ -1918,23 +1919,42 @@ dd.file-list {
 
 
 /** fabric brokers page */
-.mq-group-name {
+.mq-group-expander {
+/*
   position: absolute;
-  left: 35px;
+  left: 0px;
+*/
 }
-
 .mq-group-icon {
+/*
   position: absolute;
   left: 15px;
-}
-
-/*
-.mq-profile-expander {
-  position: absolute;
-  left: 75px;
-}
 */
+}
+.mq-group-name {
+/*
+  position: absolute;
+  left: 35px;
+*/
+}
 
+.mq-profile-expander {
+/*
+  position: absolute;
+  left: 55px;
+*/
+}
+.mq-profile-icon {
+/*
+  position: absolute;
+  left: 80px;
+*/
+  color: green !important;
+}
+
+i.mq-master {
+  color: orange;
+}
 
 /** dashboard */
 .dashboard-link-row {
