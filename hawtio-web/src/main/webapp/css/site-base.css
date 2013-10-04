@@ -1919,37 +1919,12 @@ dd.file-list {
 
 
 /** fabric brokers page */
-.mq-group-expander {
-/*
-  position: absolute;
-  left: 0px;
-*/
-}
-.mq-group-icon {
-/*
-  position: absolute;
-  left: 15px;
-*/
-}
-.mq-group-name {
-/*
-  position: absolute;
-  left: 35px;
-*/
+.mq-profile-icon {
+  color: green !important;
 }
 
-.mq-profile-expander {
-/*
-  position: absolute;
-  left: 55px;
-*/
-}
-.mq-profile-icon {
-/*
-  position: absolute;
-  left: 80px;
-*/
-  color: green !important;
+.mq-profile-list, .mq-broker-list, .mq-container-list {
+  margin-left: 15px;
 }
 
 i.mq-master {
