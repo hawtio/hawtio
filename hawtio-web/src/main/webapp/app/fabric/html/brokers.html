@@ -1,0 +1,135 @@
+<div ng-controller="Fabric.FabricBrokersController">
+  <div>
+    <div class="mq-titles section-header">
+      <div class="mq-filter">
+        <div class="section-filter">
+          <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
+          <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+        </div>
+      </div>
+
+      <div class="section-controls">
+        <a href="" title="Create a new container" ng-click="createContainer()">
+          <i class="icon-plus"></i> Create Container
+        </a>
+        <a href="" ng-click="editRequirements.dialogOpen(null)"
+           title="Configure the minimum number of required instances for each profile. If you are on OpenShift or using an Auto Scaler they are then created automatically; otherwise click on the count button to manually provision required containers">
+          <i class="icon-resize-vertical"></i>
+          Scale
+        </a>
+      </div>
+    </div>
+    <div class="mq-group-list" ng-repeat="group in groups" ng-show="groupMatchesFilter(profile)">
+      <div class="expandable" model="group">
+        <div class="mq-group-row">
+          <div class="title mq-group-expander">
+            <i class="expandable-indicator"></i>
+          </div>
+          <div class="title mq-group-icon">
+            <i class="icon-group"></i>
+          </div>
+          <div class="title mq-group-name">
+            {{group.id}}
+          </div>
+          <div class="expandable-body">
+            <div class="mq-profile-list" ng-repeat="profile in group.profiles"
+                 ng-show="profileMatchesFilter(profile)">
+              <div class="expandable" model="profile">
+                <div class="mq-profile-row">
+                  <div class="title mq-profile-expander">
+                    <i class="expandable-indicator" ng-show="profile.brokers.length"></i>
+                  </div>
+                  <div class="title mq-profile-icon">
+                    <i class="icon-book"></i>
+                  </div>
+                  <div class="title mq-profile-name">
+                    <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
+                  </div>
+                  <div class="mq-profile-count"
+                       title="Current number of instances of this profile. Click to create more containers">
+                    <a href="" ng-click="createRequiredContainers(profile)">
+            <span class="badge {{profile.requireStyle}}">
+              {{profile.count}}
+            </span>
+                    </a>
+                  </div>
+                </div>
+                <div class="expandable-body">
+                  <div class="mq-profile-list" ng-repeat="broker in profile.brokers"
+                       ng-show="brokerMatchesFilter(broker)">
+                    <div class="expandable" model="profile">
+                      <div class="mq-profile-row">
+                        <div class="title mq-profile-expander">
+                          <i class="expandable-indicator" ng-show="broker.containers.length"></i>
+                        </div>
+                        <div class="title mq-profile-icon">
+                          <img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
+                        </div>
+                        <div class="title mq-profile-name">
+                          <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
+                        </div>
+                      </div>
+                      <div class="expandable-body">
+                        <ul>
+                          <li class="no-list" ng-repeat="container in broker.containers"
+                              ng-show="containerMatchesFilter(container)">
+
+                            <div class="box" ng-class="getSelectedClass(container)">
+
+                              <div class="box-left">
+
+                                <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
+                                   title="Not Selected"
+                                   ng-click="container.selected = true"></i>
+                                <i ng-show="container.selected && showSelect" class="icon-circle clickable"
+                                   title="Status of the container" ng-click="container.selected = false"></i>
+
+                                <i class="clickable" title="{{getStatusTitle(container)}}"
+                                   ng-class='statusIcon(container)'
+                                   ng-click="container.selected = !container.selected"></i>
+
+                                <div ng-click="container.selected = !container.selected">
+                                  <a ng-click="showContainer(container)">{{container.id}}</a> /
+                                  {{container.versionId}}
+                                </div>
+
+                                <i class="icon-cloud clickable" title="Ensemble member"
+                                   ng-click="showContainer(container)"
+                                   ng-show="isEnsembleContainer(container.id)"></i>
+                              </div>
+
+                              <div class="box-middle">
+                                <ul class="inline">
+                                  <li ng-repeat="service in container.services" ng-switch="service.type">
+                                    <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+                                    <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+                                  </li>
+                                </ul>
+                              </div>
+
+                              <div class="box-right">
+
+                                <i class="icon-plus clickable" ng-show="container.root && container.alive"
+                                   title="Create a new child container"
+                                   ng-click="createChildContainer(container)"></i>
+
+                                <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
+                                   title="Open a new window and connect to this container"
+                                   ng-click="doConnect(container)"></i>
+                              </div>
+
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@ module Fabric {
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
   export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
   export var openShiftFabricMBean = "org.fusesource.fabric:type=OpenShift";
+  export var mqManagerMBean = "org.fusesource.fabric:type=MQManager";
 
   export var useDirectoriesInGit = true;
   var fabricTopLevel = "fabric/profiles/";
@@ -22,6 +23,9 @@ module Fabric {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "OpenShift"});
   }
 
+  export function hasMQManager(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "MQManager"});
+  }
 
   export function hasFabric(workspace) {
     // lets make sure we only have a fabric if we have the ClusterBootstrapManager available

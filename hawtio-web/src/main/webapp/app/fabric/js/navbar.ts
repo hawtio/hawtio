@@ -25,6 +25,7 @@ module Fabric {
       // TODO should probably load the default version here
       reloadVersion();
       $scope.hasFabric = Fabric.hasFabric(workspace);
+      $scope.hasMQManager = Fabric.hasMQManager(workspace);
       if ($scope.hasFabric) {
         var containerId = null;
         Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
