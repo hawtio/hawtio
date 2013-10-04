@@ -38,7 +38,6 @@ module Fabric {
     function onBrokerData(response) {
       if (response) {
         var brokers = response.value;
-        console.log("Got response: " + brokers);
 
         function findByIdOrCreate(collection, id, map, fn) {
           var value = collection.find({"id": id});
@@ -48,10 +47,8 @@ module Fabric {
             collection.push(value);
 
             var old = map[id];
-            if (old) {
-              // copy any view related across
-              value["expanded"] = old["expanded"];
-            }
+            // copy any view related across
+            value["expanded"] = old ? old["expanded"] : true;
             map[id] = value;
           }
           return value;
@@ -80,7 +77,6 @@ module Fabric {
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
             return {
-              //expanded: true,
               containers: []
             };
           });
