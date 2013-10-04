@@ -2,7 +2,7 @@ module Fabric {
 
   export function ProfileController($scope, $routeParams, jolokia, $location, workspace:Workspace, $q) {
 
-    Fabric.initScope($scope, workspace);
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.loading = true;
 

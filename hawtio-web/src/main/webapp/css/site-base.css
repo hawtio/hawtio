@@ -1823,6 +1823,7 @@ dd.file-list {
   margin-left: 16px;
 }
 
+/** fabric active profiles */
 .active-profile-titles {
   position: relative;
   display: inline-block;
@@ -1915,6 +1916,27 @@ dd.file-list {
   min-width: 754px;
 }
 
+
+/** fabric brokers page */
+.mq-group-name {
+  position: absolute;
+  left: 35px;
+}
+
+.mq-group-icon {
+  position: absolute;
+  left: 15px;
+}
+
+/*
+.mq-profile-expander {
+  position: absolute;
+  left: 75px;
+}
+*/
+
+
+/** dashboard */
 .dashboard-link-row {
   width: 100%;
   position: relative;

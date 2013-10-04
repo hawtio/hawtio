@@ -1,6 +1,8 @@
 module Fabric {
 
-  export function ContainerController($scope, localStorage, $routeParams, jolokia, $location) {
+  export function ContainerController($scope, $routeParams, $location, localStorage, jolokia, workspace) {
+
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     if ($scope.inDashboard) {
       $scope.operation = 'getContainer(java.lang.String, java.util.List)';
@@ -30,12 +32,7 @@ module Fabric {
     $scope.selectedProfilesDialog = [];
     $scope.selectedProfilesString = '';
 
-    $scope.userName = localStorage['fabric.userName'];
-    // TODO at least obfusicate this
-    $scope.password = localStorage['fabric.password'];
-
     $scope.addProfileDialog = new Core.Dialog();
-    $scope.connectToContainerDialog = new Core.Dialog();
     $scope.deleteProfileDialog = new Core.Dialog();
 
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
@@ -46,21 +43,6 @@ module Fabric {
         });
       }
     }, true);
-
-    $scope.doConnect = (container) => {
-      $scope.connectToContainerDialog.open();
-    };
-
-
-    $scope.connect = () => {
-      if ($scope.saveCredentials) {
-        $scope.saveCredentials = false;
-        localStorage['fabric.userName'] = $scope.userName;
-        localStorage['fabric.password'] = $scope.password;
-      }
-      Fabric.connect(localStorage, $scope.row, $scope.userName, $scope.password, true);
-      $scope.connectToContainerDialog.close();
-    };
 
     $scope.stop = () => {
       doStopContainer($scope, jolokia, $scope.containerId);

@@ -2,6 +2,8 @@ module Fabric {
 
   export function FabricViewController($scope, $location, jolokia, localStorage, workspace) {
 
+    Fabric.initScope($scope, $location, jolokia, workspace);
+
     $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root"];
     $scope.containersOp = 'containers(java.util.List)';
     $scope.ensembleContainerIdListOp = 'EnsembleContainers';
@@ -44,11 +46,6 @@ module Fabric {
     $scope.activeProfileIdFilter = '';
     $scope.containerIdFilter = '';
 
-    $scope.userName = localStorage['fabric.userName'];
-    // TODO at least obfusicate this
-    $scope.password = localStorage['fabric.password'];
-    $scope.saveCredentials = false;
-
     $scope.filterActiveVersion = false;
     $scope.filterActiveProfile = false;
 
@@ -57,7 +54,6 @@ module Fabric {
     $scope.createProfileDialog = new Core.Dialog();
     $scope.createVersionDialog = new Core.Dialog();
 
-    $scope.connectToContainerDialog = new Core.Dialog();
     $scope.ensembleContainerIds = [];
     $scope.profileSelectedAll = false;
 

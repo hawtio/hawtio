@@ -1,7 +1,7 @@
 module Fabric {
   
   export function ProfilesController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
-    Fabric.initScope($scope, workspace);
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.defaultVersion = jolokia.execute(managerMBean, "defaultVersion()");
     $scope.version = { id: $scope.defaultVersion.id };

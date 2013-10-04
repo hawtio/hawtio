@@ -1,22 +1,22 @@
-<div hawtio-confirm-dialog="connectToContainerDialog.show" title="Connect to {{targetContainer.id}}?" ok-button-text="Connect" on-ok="connect()">
+<div hawtio-confirm-dialog="connect.dialog.show" title="Connect to {{connect.container.id}}?" ok-button-text="Connect" on-ok="connect.onOK()">
   <div class="dialog-body">
-    <p>Please enter the JMX user name and password for {{targetContainer.id}}:</p>
+    <p>Please enter the JMX user name and password for {{connect.container.id}}:</p>
     <div class="control-group">
       <label class="control-label">User Name: </label>
       <div class="controls">
-        <input name="userName" ng-model="userName" type="text">
+        <input name="userName" ng-model="connect.userName" type="text">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label">Password: </label>
       <div class="controls">
-        <input name="password" ng-model="password" type="password">
+        <input name="password" ng-model="connect.password" type="password">
       </div>
     </div>
     <div class="control-group">
       <div class="controls">
         <label class="checkbox">
-          <input type="checkbox" ng-model="saveCredentials"> Save these credentials as the default
+          <input type="checkbox" ng-model="connect.saveCredentials"> Save these credentials as the default
         </label>
       </div>
     </div>

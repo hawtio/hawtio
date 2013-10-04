@@ -1,6 +1,8 @@
 module Fabric {
 
-  export function FabricBrokersController($scope, localStorage, $routeParams, jolokia, $location) {
+  export function FabricBrokersController($scope, localStorage, $routeParams, $location, jolokia, workspace) {
+
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.groupMatchesFilter = (group) => {
       return true;
@@ -36,6 +38,8 @@ module Fabric {
           if (!value) {
             value = fn();
             value["id"] = id;
+            // TODO causes CSS issues ;)
+            //value["expanded"] = true;
             collection.push(value);
           }
           return value;
@@ -62,13 +66,12 @@ module Fabric {
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, () => {
             return {
+              //expanded: true,
               containers: []
             };
           });
           var container = findByIdOrCreate(broker.containers, containerId, () => {
-            return {
-              status: brokerStatus
-            };
+            return brokerStatus;
           });
         });
         Core.$apply($scope);

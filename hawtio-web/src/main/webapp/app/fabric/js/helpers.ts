@@ -35,6 +35,130 @@ module Fabric {
   }
 
   /**
+   * Adds a bunch of common helper functions to the given scope
+   */
+  export function initScope($scope, $location, jolokia, workspace) {
+    $scope.hasFabricWiki = () => {
+      return Git.isGitMBeanFabric(workspace);
+    };
+
+    $scope.showContainer = (container) => {
+      $location.path('/fabric/container/' + container.id);
+    };
+
+    $scope.createRequiredContainers = (profile) => {
+      var profileId = profile.id;
+      var args = {};
+      if (profileId) {
+        args["profileIds"] = profileId;
+      }
+      var versionId = profile.versionId;
+      if (versionId) {
+        args["versionId"] = versionId;
+      }
+      var requirements = profile.requirements;
+      if (requirements) {
+        var min = requirements.minimumInstances;
+        if (min) {
+          var delta = min - (profile.count || 0);
+          if (delta > 1) {
+            args["number"] = delta;
+          }
+        }
+      }
+      $location.url('/fabric/containers/createContainer').search(args);
+    };
+
+    $scope.createContainer = () => {
+      var kind = null;
+      // lets see if there is an openshift option
+      var providers = registeredProviders(jolokia);
+      angular.forEach(["openshift", "jclouds"], (value) => {
+        if (!kind && providers[value]) {
+          kind = value;
+        }
+      });
+      if (!kind) {
+        kind = 'child';
+      }
+      $location.url('/fabric/containers/createContainer').search('tab', kind);
+    };
+
+    $scope.createChildContainer = (container) => {
+      $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
+    };
+
+
+    $scope.createChildContainer = (container) => {
+      $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
+    };
+
+    $scope.showProfile = (profile) => {
+      if (angular.isDefined(profile.versionId)) {
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, profile.versionId, profile);
+      } else {
+        Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.activeVersionId, profile);
+      }
+    };
+
+    $scope.getSelectedClass = (obj) => {
+      var answer = [];
+      if (obj.selected) {
+        answer.push('selected');
+      }
+      if (angular.isDefined(obj['root']) && obj['root'] === false) {
+        answer.push('child-container');
+      }
+      return answer.join(' ');
+    };
+
+    $scope.statusIcon = (row) => {
+      return Fabric.statusIcon(row);
+    };
+
+
+    $scope.isEnsembleContainer = (containerId) => {
+      if ($scope.ensembleContainerIds) {
+        return $scope.ensembleContainerIds.any(containerId);
+      }
+      return false;
+    };
+
+
+    // for connection dialog
+    $scope.connect = {
+      dialog: new Core.Dialog(),
+      saveCredentials: false,
+      userName: null,
+      password: null,
+      container: null,
+      onOK: () => {
+        var userName = $scope.connect.userName;
+        var password = $scope.connect.password;
+        var container = $scope.connect.container;
+        if ($scope.connect.saveCredentials) {
+          $scope.connect.saveCredentials = false;
+          localStorage['fabric.userName'] = userName;
+          localStorage['fabric.password'] = password;
+        }
+        console.log("Connecting as user " + userName);
+        Fabric.connect(localStorage, container, userName, password, true);
+        $scope.connect.container = {};
+        $scope.connect.dialog.close();
+      }
+    };
+
+    $scope.doConnect = (container) => {
+      // TODO at least obfusicate this
+      $scope.connect.userName = localStorage['fabric.userName']
+      $scope.connect.password = localStorage['fabric.password']
+      $scope.connect.container = container;
+      $scope.connect.dialog.open();
+    };
+
+  }
+
+  /**
    * Converts the given path from the wiki into a profile ID
    */
   export function pagePathToProfileId(pageId): string {
@@ -54,12 +178,6 @@ module Fabric {
 
   export function profilePath(profileId) {
     return profileId.replace(/-/g, "/") + profileSuffix;
-  }
-
-  export function initScope($scope, workspace) {
-    $scope.hasFabricWiki = () => {
-      return Git.isGitMBeanFabric(workspace);
-    }
   }
 
   export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {

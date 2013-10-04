@@ -3,9 +3,6 @@ module Fabric {
   export function ContainersController($scope) {
 
     $scope.containerIdFilter = '';
-    $scope.userName = localStorage['fabric.userName'];
-    $scope.password = localStorage['fabric.password'];
-    $scope.saveCredentials = false;
 
     $scope.getFilteredName = (item) => {
       return item.versionId + " / " + item.id;

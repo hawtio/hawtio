@@ -19,10 +19,10 @@ module Fabric {
       $scope.activeProfiles = [];
       $scope.selectedContainers = [];
       $scope.selectedContainerIds = [];
-      $scope.connectToContainerDialog = new Core.Dialog();
-      $scope.targetContainer = {};
       $scope.showSelect = true;
       $scope.requirements = null;
+
+      Fabric.initScope($scope, $location, jolokia, workspace);
 
       $scope.currentPage = $templateCache.get("addProfileRequirements");
 
@@ -275,74 +275,6 @@ module Fabric {
       };
 
 
-      $scope.showContainer = (container) => {
-        $location.path('/fabric/container/' + container.id);
-      };
-
-
-      $scope.createRequiredContainers = (profile) => {
-        var profileId = profile.id;
-        var args = {};
-        if (profileId) {
-          args["profileIds"] = profileId;
-        }
-        var versionId = profile.versionId;
-        if (versionId) {
-          args["versionId"] = versionId;
-        }
-        var requirements = profile.requirements;
-        if (requirements) {
-          var min = requirements.minimumInstances;
-          if (min) {
-            var delta = min - (profile.count || 0);
-            if (delta > 1) {
-              args["number"] = delta;
-            }
-          }
-        }
-        $location.url('/fabric/containers/createContainer').search(args);
-      };
-
-      $scope.createChildContainer = (container) => {
-        $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
-      };
-
-
-      $scope.createChildContainer = (container) => {
-        $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
-      };
-
-
-      $scope.statusIcon = (row) => {
-        return Fabric.statusIcon(row);
-      };
-
-
-      $scope.isEnsembleContainer = (containerId) => {
-        if ($scope.ensembleContainerIds) {
-          return $scope.ensembleContainerIds.any(containerId);
-        }
-        return false;
-      }
-
-
-      $scope.doConnect = (container) => {
-        $scope.targetContainer = container;
-        $scope.connectToContainerDialog.open();
-      }
-
-      $scope.connect = (row) => {
-        if ($scope.saveCredentials) {
-          $scope.saveCredentials = false;
-          localStorage['fabric.userName'] = $scope.userName;
-          localStorage['fabric.password'] = $scope.password;
-        }
-        Fabric.connect(localStorage, $scope.targetContainer, $scope.userName, $scope.password, true);
-        $scope.targetContainer = {};
-        $scope.connectToContainerDialog.close();
-      };
-
-
       $scope.updateEnsembleContainerIdList = (ids) => {
         var response = angular.toJson(ids);
         if ($scope.ensembleContainerIdsResponse !== response) {
@@ -350,18 +282,6 @@ module Fabric {
           $scope.ensembleContainerIds = ids;
           Core.$apply($scope);
         }
-      }
-
-
-      $scope.getSelectedClass = (obj) => {
-        var answer = [];
-        if (obj.selected) {
-          answer.push('selected');
-        }
-        if (angular.isDefined(obj['root']) && obj['root'] === false) {
-          answer.push('child-container');
-        }
-        return answer.join(' ');
       };
 
 
@@ -407,22 +327,6 @@ module Fabric {
           return;
         }
         container.selected = true;
-      };
-
-
-      $scope.createContainer = () => {
-        var kind = null;
-        // lets see if there is an openshift option
-        var providers = registeredProviders(jolokia);
-        angular.forEach(["openshift", "jclouds"], (value) => {
-          if (!kind && providers[value]) {
-            kind = value;
-          }
-        });
-        if (!kind) {
-          kind = 'child';
-        }
-        $location.url('/fabric/containers/createContainer').search('tab', kind);
       };
 
 
@@ -511,14 +415,6 @@ module Fabric {
         return $scope.containers.filter((container) => {
           return container.profileIds.some(id);
         });
-      };
-
-      $scope.showProfile = (profile) => {
-        if (angular.isDefined(profile.versionId)) {
-          Fabric.gotoProfile(workspace, jolokia, localStorage, $location, profile.versionId, profile);
-        } else {
-          Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.activeVersionId, profile);
-        }
       };
 
       $scope.profileMatchesFilter = (profile) => {

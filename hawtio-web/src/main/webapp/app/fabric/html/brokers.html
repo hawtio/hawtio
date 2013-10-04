@@ -23,7 +23,7 @@
       <div class="expandable" model="group">
         <div class="mq-group-row">
           <div class="title mq-group-expander">
-            <i class="expandable-indicator"></i>
+            <i class="expandable-indicator" ng-show="group.profiles.length"></i>
           </div>
           <div class="title mq-group-icon">
             <i class="icon-group"></i>
@@ -43,21 +43,13 @@
                     <i class="icon-book"></i>
                   </div>
                   <div class="title mq-profile-name">
-                    <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.versionId}}
-                  </div>
-                  <div class="mq-profile-count"
-                       title="Current number of instances of this profile. Click to create more containers">
-                    <a href="" ng-click="createRequiredContainers(profile)">
-            <span class="badge {{profile.requireStyle}}">
-              {{profile.count}}
-            </span>
-                    </a>
+                    <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.version}}
                   </div>
                 </div>
                 <div class="expandable-body">
                   <div class="mq-profile-list" ng-repeat="broker in profile.brokers"
                        ng-show="brokerMatchesFilter(broker)">
-                    <div class="expandable" model="profile">
+                    <div class="expandable" model="broker">
                       <div class="mq-profile-row">
                         <div class="title mq-profile-expander">
                           <i class="expandable-indicator" ng-show="broker.containers.length"></i>
@@ -90,12 +82,14 @@
 
                                 <div ng-click="container.selected = !container.selected">
                                   <a ng-click="showContainer(container)">{{container.id}}</a> /
-                                  {{container.versionId}}
+                                  {{container.version}}
                                 </div>
 
                                 <i class="icon-cloud clickable" title="Ensemble member"
                                    ng-click="showContainer(container)"
                                    ng-show="isEnsembleContainer(container.id)"></i>
+
+                                <i class="icon-star mq-master" title="Master broker" ng-show="container.master"></i>
                               </div>
 
                               <div class="box-middle">
@@ -132,4 +126,5 @@
       </div>
     </div>
   </div>
+  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
 </div>
