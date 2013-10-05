@@ -15,11 +15,11 @@
       <a href="" ng-click="editRequirements.dialogOpen(null)"
          title="Configure the minimum number of required instances for each profile. If you are on OpenShift or using an Auto Scaler they are then created automatically; otherwise click on the count button to manually provision required containers">
         <i class="icon-resize-vertical"></i>
-        Scale
+        Target
       </a>
     </div>
 
-    <div class="active-profile-count" title="The actual number of instances of each profile that are currently running">
+    <div class="active-profile-count-title" title="The actual number of instances of each profile that are currently running">
       Count
     </div>
 
@@ -42,6 +42,7 @@
             <span class="badge {{profile.requireStyle}}">
               {{profile.count}}
             </span>
+            <i class="icon-plus" title="Create more containers of this profile"></i>
           </a>
         </div>
 

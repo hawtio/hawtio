@@ -1875,6 +1875,11 @@ dd.file-list {
   right: 75px;
 }
 
+.active-profile-requirements-title {
+  position: absolute;
+  right: 75px;
+}
+
 .active-profile-create {
   position: absolute;
   right: 210px;
@@ -1882,7 +1887,12 @@ dd.file-list {
 
 .active-profile-count {
   position: absolute;
-  right: 10px;
+  right: 0px;
+}
+
+.active-profile-count-title {
+  position: absolute;
+  right: 18px;
 }
 
 .active-profile-titles .section-controls {
