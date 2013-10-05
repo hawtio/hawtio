@@ -17,29 +17,32 @@ module Fabric {
       $location.path(path);
     };
 
+    function matchesFilter(text) {
+      var filter = $scope.searchFilter;
+      return !filter || (text && text.has(filter));
+    }
 
     $scope.groupMatchesFilter = (group) => {
-      return !$scope.searchFilter || group.id.has($scope.searchFilter)
-              || group.profiles.find((item) => $scope.profileMatchesFilter(item));
+      return matchesFilter(group.id) ||
+              group.profiles.find((item) => $scope.profileMatchesFilter(item));
     };
 
     $scope.profileMatchesFilter = (profile) => {
-      return !$scope.searchFilter || profile.id.has($scope.searchFilter) || profile.group.has($scope.searchFilter)
-              || profile.brokers.find((item) => $scope.brokerMatchesFilter(item));
+      return matchesFilter(profile.id) || matchesFilter(profile.group) ||
+              matchesFilter(profile.version) ||
+              profile.brokers.find((item) => $scope.brokerMatchesFilter(item));
     };
 
     $scope.brokerMatchesFilter = (broker) => {
-      return !$scope.searchFilter || broker.id.has($scope.searchFilter) || broker.group.has($scope.searchFilter)
-              || broker.containers.find((item) => $scope.containerMatchesFilter(item));
+      return matchesFilter(broker.id) || matchesFilter(broker.group) ||
+              matchesFilter(broker.version) ||
+              broker.containers.find((item) => $scope.containerMatchesFilter(item));
     };
 
     $scope.containerMatchesFilter = (container) => {
-      var filter = $scope.searchFilter;
-      if (filter) {
-        var text = container.id + " " + container.profile + " " + container.version + " " + container.brokerName + " " + container.group;
-        return text.has(filter);
-      }
-      return true;
+      return matchesFilter(container.id) || matchesFilter(container.group) ||
+              matchesFilter(container.profile) || matchesFilter(container.version) || matchesFilter(container.brokerName) ||
+              (container.master && $scope.searchFilter && $scope.searchFilter.has("master"));
     };
 
     if (Fabric.hasMQManager) {
@@ -114,28 +117,28 @@ module Fabric {
 
         // add a new gridster rectangle if we don't already have one
         /*
-        if (!$scope.widgets) {
-          $scope.widgets = [];
-        }
+         if (!$scope.widgets) {
+         $scope.widgets = [];
+         }
 
-        $scope.groups.forEach((group) => {
-          if (!$scope.widgets.any((g) => { return g.id === group.id })) {
+         $scope.groups.forEach((group) => {
+         if (!$scope.widgets.any((g) => { return g.id === group.id })) {
 
-            var outer = $('<li style="list-style-type: none; position: absolute"></li>');
-            var child = $scope.$new();
-            child.group = group;
+         var outer = $('<li style="list-style-type: none; position: absolute"></li>');
+         var child = $scope.$new();
+         child.group = group;
 
-            outer.html($compile($templateCache.get("widgetTemplate"))(child));
+         outer.html($compile($templateCache.get("widgetTemplate"))(child));
 
-            $scope.widgets.push({
-              id: group.id,
-              scope: child,
-              group: group,
-              widget: $scope.gridster.add_widget(outer, 2, 2)
-            });
-          }
-        });
-        */
+         $scope.widgets.push({
+         id: group.id,
+         scope: child,
+         group: group,
+         widget: $scope.gridster.add_widget(outer, 2, 2)
+         });
+         }
+         });
+         */
 
         Core.$apply($scope);
       }
