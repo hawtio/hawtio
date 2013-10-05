@@ -19,23 +19,27 @@ module Fabric {
 
 
     $scope.groupMatchesFilter = (group) => {
-      return true;
-      // return group.id.has($scope.searchFilter) || !group.profiles.find((profile) => $scope.profileMatchesFilter(profile));
+      return !$scope.searchFilter || group.id.has($scope.searchFilter)
+              || group.profiles.find((item) => $scope.profileMatchesFilter(item));
     };
 
     $scope.profileMatchesFilter = (profile) => {
-      return true;
-      //return profile.id.has($scope.searchFilter) || !profile.containers.filter((id) => { return id.has($scope.searchFilter); }).isEmpty();
+      return !$scope.searchFilter || profile.id.has($scope.searchFilter) || profile.group.has($scope.searchFilter)
+              || profile.brokers.find((item) => $scope.brokerMatchesFilter(item));
     };
 
     $scope.brokerMatchesFilter = (broker) => {
-      return true;
-      //return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
+      return !$scope.searchFilter || broker.id.has($scope.searchFilter) || broker.group.has($scope.searchFilter)
+              || broker.containers.find((item) => $scope.containerMatchesFilter(item));
     };
 
     $scope.containerMatchesFilter = (container) => {
+      var filter = $scope.searchFilter;
+      if (filter) {
+        var text = container.id + " " + container.profile + " " + container.version + " " + container.brokerName + " " + container.group;
+        return text.has(filter);
+      }
       return true;
-      //return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
     };
 
     if (Fabric.hasMQManager) {
@@ -87,12 +91,14 @@ module Fabric {
           });
           var profile = findByIdOrCreate(group.profiles, profileId, maps.profile, () => {
             return {
+              group: groupId,
               version: versionId,
               brokers: []
             };
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
             return {
+              group: groupId,
               profile: profileId,
               version: versionId,
               containers: []
