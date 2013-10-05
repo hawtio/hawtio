@@ -242,14 +242,7 @@ module Fabric {
               var profile = answer.find({id: id});
 
               function requireStyle() {
-                if (min) {
-                  if (!profile || !profile.count) {
-                    return "badge-important";
-                  } else {
-                    return min <= profile.count ? "badge-success" : "badge-warning";
-                  }
-                }
-                return "";
+                return Fabric.containerCountBadgeStyle(min, (profile ? profile.count : 0));
               }
 
               if (profile) {

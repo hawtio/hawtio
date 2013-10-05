@@ -52,7 +52,7 @@ module Fabric {
       if (profileId) {
         args["profileIds"] = profileId;
       }
-      var versionId = profile.versionId;
+      var versionId = profile.versionId || profile.version;
       if (versionId) {
         args["versionId"] = versionId;
       }
@@ -185,6 +185,23 @@ module Fabric {
       path = "/fabric/profile/" + versionId + "/" + profileId;
     }
     return path;
+  }
+
+  /**
+   * Returns the CSS style for the number of containers badge
+   * @param min
+   * @param count
+   * @returns {string}
+   */
+  export function containerCountBadgeStyle(min, count) {
+    if (min) {
+      if (!count) {
+        return "badge-important";
+      } else {
+        return min <= count ? "badge-success" : "badge-warning";
+      }
+    }
+    return "";
   }
 
   export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {

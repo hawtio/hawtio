@@ -96,7 +96,11 @@ module Fabric {
             return {
               group: groupId,
               version: versionId,
-              brokers: []
+              requirements: {
+                minimumInstances: brokerStatus.minimumInstances
+              },
+              brokers: [],
+              containers: []
             };
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
@@ -111,7 +115,17 @@ module Fabric {
             var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
               return brokerStatus;
             });
+            profile.containers.push(container);
           }
+        });
+
+        // update the stats
+        angular.forEach($scope.groups, (group) => {
+          angular.forEach(group.profiles, (profile) => {
+            var count = profile.containers.length;
+            profile.requireStyle = Fabric.containerCountBadgeStyle(profile.requirements.minimumInstances, count);
+            profile.count = count;
+          });
         });
 
 

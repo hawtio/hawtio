@@ -150,6 +150,12 @@
                   <span class="title mq-profile-name">
                     <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.version}}
                   </span>
+                  <a href="" ng-click="createRequiredContainers(profile)">
+                    <span class="badge {{profile.requireStyle}}">
+                      {{profile.count}}
+                    </span>
+                    <i class="icon-plus" title="Create more containers of this profile"></i>
+                  </a>
         </div>
 
         <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
