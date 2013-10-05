@@ -124,6 +124,11 @@
       </div>
     </div>
 
+    <div class="hero-unit" ng-show="groups.length < 1">
+      <p>There are no brokers configured in this Fabric.</p>
+
+      <button class="btn btn-primary btn-large" ng-click="createBroker(null)">Create Broker Configuration</button>
+    </div>
 
     <div class="mq-group-rectangle" ng-repeat="group in groups" ng-show="groupMatchesFilter(group)"
          title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
@@ -223,13 +228,6 @@
   <div gridster grid-size="300" dimensions="300"></div>
 </div>
 -->
-
-
-<div ng-show="groups.length === 0">
-  <p>There are no brokers configured in this Fabric.</p>
-
-  <button class="btn btn-primary btn-large" ng-click="createBroker(null)">Create Broker Configuration</button>
-</div>
 
 
 <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
