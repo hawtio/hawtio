@@ -11,6 +11,7 @@ module Log {
   export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document) {
     $scope.logs = [];
 
+    $scope.branding = Branding.enabled;
 
     $scope.init = () => {
       $scope.searchText = $routeParams['s'];
