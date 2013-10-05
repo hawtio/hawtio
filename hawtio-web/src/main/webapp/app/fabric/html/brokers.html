@@ -132,6 +132,9 @@
           <span class="title mq-group-name">
             {{group.id}}
           </span>
+          <a ng-click="createBroker(group)" title="Create another broker configuration in this group">
+            <i class="icon-plus"></i>
+          </a>
       </div>
 
       <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
@@ -212,6 +215,12 @@
 </div>
 -->
 
+
+<div ng-show="groups.length === 0">
+  <p>There are no brokers configured in this Fabric.</p>
+
+  <button class="btn btn-primary btn-large" ng-click="createBroker(null)">Create Broker Configuration</button>
+</div>
 
 
 <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
