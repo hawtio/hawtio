@@ -104,8 +104,10 @@ public class Authenticator {
                         if (callback instanceof NameCallback) {
                             ((NameCallback)callback).setName(username);
                         } else if (callback instanceof PasswordCallback) {
-                            ((PasswordCallback)callback).setPassword(password.toCharArray());                                } else {
-                            throw new UnsupportedCallbackException(callback);
+                            ((PasswordCallback)callback).setPassword(password.toCharArray());
+                        } else {
+                          LOG.warn("Unsupported callback class [" + callback.getClass().getName() + "]");
+                            // throw new UnsupportedCallbackException(callback);
                         }
                     }
                 }
