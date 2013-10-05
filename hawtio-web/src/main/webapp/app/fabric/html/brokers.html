@@ -110,13 +110,16 @@
       </div>
 
       <div class="section-controls">
+        <a href="" title="Create a new broker configuration" ng-click="createBroker(null)">
+          <i class="icon-plus"></i> Broker
+        </a>
         <a href="" title="Create a new container" ng-click="createContainer()">
-          <i class="icon-plus"></i> Create Container
+          <i class="icon-plus"></i> Container
         </a>
         <a href="" ng-click="editRequirements.dialogOpen(null)"
            title="Configure the minimum number of required instances for each profile. If you are on OpenShift or using an Auto Scaler they are then created automatically; otherwise click on the count button to manually provision required containers">
           <i class="icon-resize-vertical"></i>
-          Scale
+          Targets
         </a>
       </div>
     </div>

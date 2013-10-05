@@ -1919,7 +1919,7 @@ dd.file-list {
 
 .active-profile-filter {
   position: absolute;
-  left: 80px;
+  left: 0px;
   top: -10px;
 }
 
@@ -1929,6 +1929,28 @@ dd.file-list {
 
 
 /** fabric brokers page */
+.mq-titles {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 40px;
+}
+
+.mq-titles.section-header {
+  padding: 0;
+}
+
+.mq-titles .section-controls {
+  position: absolute;
+  top: 9px !important;
+  right: 40px;
+}
+
+.mq-titles .section-controls a {
+  font-weight: normal;
+}
+
+
 .mq-profile-icon {
   color: green !important;
 }
