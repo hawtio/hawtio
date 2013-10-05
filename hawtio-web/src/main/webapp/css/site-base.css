@@ -1943,7 +1943,7 @@ dd.file-list {
 .mq-titles .section-controls {
   position: absolute;
   top: 9px !important;
-  right: 40px;
+  right: 0px;
 }
 
 .mq-titles .section-controls a {
