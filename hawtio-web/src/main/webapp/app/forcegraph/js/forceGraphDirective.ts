@@ -87,8 +87,8 @@ module ForceGraph {
                 var canvas = $($element);
 
                 // TODO: determine the canvas size dynamically
-                var h = canvas.height();
-                var w = canvas.width();
+                var h = $($element).parent().height();
+                var w = $($element).parent().width();
                 var i = 0;
 
                 canvas.children("svg").remove();
@@ -96,8 +96,8 @@ module ForceGraph {
                 // First we create the top level SVG object
                 // TODO maybe pass in the width/height
                 $scope.svg = d3.select(canvas[0]).append("svg")
-                    .attr("width", "100%")
-                    .attr("height", "90%");
+                    .attr("width", w)
+                    .attr("height", h);
 
                 // The we add the markers for the arrow tips
                 $scope.svg.append("svg:defs").selectAll("marker")

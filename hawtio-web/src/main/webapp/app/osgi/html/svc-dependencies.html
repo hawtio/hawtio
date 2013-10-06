@@ -70,6 +70,33 @@
 </style>
 
 <div ng-controller="Osgi.ServiceDependencyController">
+
+    <div class="pull-left">
+        <form class="form-inline no-bottom-margin">
+            <fieldset>
+                <div class="control-group inline-block">
+                    <input type="text" class="search-query" placeholder="Filter Bundle Symbolic Name..." ng-model="bundleFilter">
+                    <input type="text" class="search-query" placeholder="Filter Package Name..." ng-model="packageFilter">
+                    <label class="checkbox" for="showServices">
+                        <input id="showServices" type="checkbox" ng-model="showServices"> Show Services
+                    </label>
+                    <label class="checkbox" for="showPackages">
+                        <input id="showPackages" type="checkbox" ng-model="showPackages"> Show Packages
+                    </label>
+                    <label class="checkbox" for="hideUnused">
+                        <input id="hideUnused" type="checkbox" ng-model="hideUnused"> Hide Unused
+                    </label>
+                    <button class="btn btn-primary" ng-click="updateGraph()" title="Apply the selected criteria to the Graph.">Apply</button>
+                </div>
+            </fieldset>
+        </form>
+        <p>{{bundleFilter}}</p>
+        <p>{{packageFilter}}</p>
+        <p>{{showServices}}</p>
+        <p>{{showPackages}}</p>
+        <p>{{hideUnused}}</p>
+    </div>
+
   <div ng-hide="inDashboard" class="add-link">
     <a ng-href="{{addToDashboardLink()}}" title="Add this view to a Dashboard"><i class="icon-share"></i></a>
   </div>
@@ -80,8 +107,8 @@
     </div>
 
   <div class="row-fluid">
-    <div class="span12 canvas">
-      <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10" style="min-height: 800px"></div>
+    <div class="span12 canvas" style="min-height: 800px">
+      <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10"></div>
     </div>
   </div>
 
