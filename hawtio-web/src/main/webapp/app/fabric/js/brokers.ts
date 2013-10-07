@@ -17,6 +17,21 @@ module Fabric {
       $location.path(path);
     };
 
+    $scope.createBroker = (group) => {
+      var args = {};
+      if (group) {
+        var profileId = group["profile"];
+        if (profileId) {
+          args["profile"] = profileId;
+        }
+        var groupId = group["id"];
+        if (groupId) {
+          args["group"] = groupId;
+        }
+      }
+      $location.url("/fabric/createBroker").search(args);
+    };
+
     function matchesFilter(text) {
       var filter = $scope.searchFilter;
       return !filter || (text && text.has(filter));

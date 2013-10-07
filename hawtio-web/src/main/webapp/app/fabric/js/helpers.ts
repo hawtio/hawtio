@@ -596,6 +596,15 @@ module Fabric {
     });
   }
 
+  export function getDtoSchema(id, className, jolokia, cb) {
+    jolokia.execute('io.hawt.jsonschema:type=SchemaLookup', 'getSchemaForClass(java.lang.String)', className, {
+      method: 'POST',
+      success: (value) => {
+        cb(angular.fromJson(value));
+      }
+    });
+  }
+
 
   export function getCurrentContainer(jolokia, fields) {
     var name = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', { method: 'POST' });

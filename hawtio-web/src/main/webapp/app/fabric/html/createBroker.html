@@ -1,0 +1,19 @@
+<div ng-controller="Fabric.CreateBrokerController">
+
+  <form name="create_broker" ng-submit="onSubmit()">
+    <div class="row-fluid">
+      <div class="pull-right">
+        <button type="submit" class='btn btn-primary' ng-disabled="!forms.create_broker.$valid">
+          <i class="icon-ok"></i> Create Broker
+        </button>
+      </div>
+    </div>
+
+    <div class="create-broker-body row-fluid">
+      <div id="create-form">
+        <div simple-form name="create_broker" data="schema" entity="entity"></div>
+      </div>
+    </div>
+  </form>
+
+</div>

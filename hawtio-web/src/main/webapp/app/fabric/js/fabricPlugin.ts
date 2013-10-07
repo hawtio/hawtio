@@ -20,6 +20,7 @@ module Fabric {
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/brokers', { templateUrl: templatePath + 'brokers.html' }).
+            when('/fabric/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
 
