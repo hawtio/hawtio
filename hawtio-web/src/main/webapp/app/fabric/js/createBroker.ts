@@ -64,6 +64,8 @@ module Fabric {
       Core.pathSet(schema.properties, ['replicas', 'control-group-attributes', "ng-show"], isReplicated);
       Core.pathSet(schema.properties, ['minimumInstances', 'control-group-attributes', "ng-hide"], isReplicated);
 
+      Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
+
       schema['tabs'] = {
         'Default': ['group', 'kind', 'brokerName', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
         'Advanced': ['*']
