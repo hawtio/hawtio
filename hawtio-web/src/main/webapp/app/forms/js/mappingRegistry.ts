@@ -14,8 +14,7 @@ module Forms {
       if (propertyAttributes) {
         angular.forEach(propertyAttributes, function (value, key) {
           if (angular.isString(value)) {
-            var html = Core.escapeHtml(value);
-            input.attr(key, html);
+            input.attr(key, value);
           }
         });
       }
