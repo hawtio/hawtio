@@ -6,6 +6,7 @@ module Fabric {
 
     $scope.groups = [];
     $scope.profiles = [];
+    $scope.parentProfiles = [];
     $scope.entity = {};
     $scope.defaultGroup = "default";
     $scope.defaultBrokerName = "brokerName";
@@ -18,6 +19,11 @@ module Fabric {
       notification("info", "Creating broker " + $scope.message);
       var json = JSON.stringify($scope.entity, null, '  ');
       jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", json, onSuccess(onSave));
+    };
+
+    $scope.brokerNameExists = () => {
+      var name = $scope.entity.brokerName;
+      return name && $scope.brokerNames.indexOf(name) >= 0;
     };
 
     // default parameters from the URL
@@ -44,13 +50,19 @@ module Fabric {
 
       Core.pathSet(schema.properties, ['group', 'required'], true);
       Core.pathSet(schema.properties, ['group', 'tooltip'], 'The peer group name of message brokers. The group is name is used by messaging clients to connect to a broker; so it represents a peer group of brokers used for load balancing.');
+      Core.pathSet(schema.properties, ['group', 'input-attributes', 'typeahead'], 'title for title in groups | filter:$viewValue');
+      Core.pathSet(schema.properties, ['group', 'input-attributes', 'typeahead-editable'], 'true');
 
       Core.pathSet(schema.properties, ['brokerName', 'required'], true);
       Core.pathSet(schema.properties, ['brokerName', 'tooltip'], 'The name of the broker.');
 
       Core.pathSet(schema.properties, ['profile', 'tooltip'], 'The name of the profile for this broker. If left blank it will be created from the group and broker names.');
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead'], 'title for title in profiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead-editable'], 'true');
 
       Core.pathSet(schema.properties, ['parentProfile', 'tooltip'], 'The profile used to define the version of A-MQ which will run, the features and the configuration of the broker.');
+      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead'], 'title for title in parentProfiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead-editable'], 'false');
 
 
       Core.pathSet(schema.properties, ['profile', 'input-attributes', "placeholder"], "mq-{{entity.group || 'default'}}-{{entity.brokerName || 'brokerName'}}");
@@ -72,25 +84,11 @@ module Fabric {
       };
     }
 
-    function onBrokerData(response) {
-      if (response) {
-        var brokerStatuses = response.value;
-        var groupIds = {};
-        var profileIds = {};
-        angular.forEach(brokerStatuses, (status) => {
-          var group = status.group;
-          if (group) {
-            groupIds[group] = group;
-          }
-          var profile = status.profile;
-          if (profile) {
-            profileIds[profile] = profile;
-          }
-        });
-        $scope.groups = Object.values(groupIds).sortBy(null);
-        $scope.profiles = Object.values(profileIds).sortBy(null);
-        Core.$apply($scope);
-      }
+    function onBrokerData(brokerStatuses) {
+      $scope.groups = brokerStatuses.map(s => s.group).unique().sort();
+      $scope.profiles = brokerStatuses.map(s => s.profile).unique().sort();
+      $scope.brokerNames = brokerStatuses.map(s => s.brokerName).unique().sort();
+      Core.$apply($scope);
     }
 
     function onSave(response) {
