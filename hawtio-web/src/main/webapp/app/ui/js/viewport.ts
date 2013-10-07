@@ -3,14 +3,6 @@ module UI {
   export class ViewportHeight {
     public restrict = 'A';
 
-    /*
-    public scope = {
-      targetId: '@hawtioViewport',
-      containingDiv: '@',
-      heightAdjust: '@'
-    };
-    */
-
     public link = ($scope, $element, $attrs) => {
 
       var lastHeight = 0;
@@ -48,9 +40,25 @@ module UI {
         Core.$apply($scope);
         return false;
       })
-
-
     };
-
   }
+
+  export class HorizontalViewport {
+    public restrict = 'A';
+
+    public link = ($scope, $element, $attrs) => {
+
+      var adjustParent = angular.isDefined($attrs['adjustParent']) && Core.parseBooleanValue($attrs['adjustParent']);
+
+      $element.get(0).addEventListener("DOMNodeInserted", () => {
+        var canvas = $element.children();
+        $element.height(canvas.outerHeight(true));
+        if (adjustParent) {
+          $element.parent().height($element.outerHeight(true) + UI.getScrollbarWidth());
+        }
+      });
+    };
+  }
+
+
 }

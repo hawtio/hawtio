@@ -32,6 +32,10 @@ module UI {
         return new UI.EditableProperty($parse);
       }).directive('hawtioViewport', () => {
         return new UI.ViewportHeight();
+      }).directive('hawtioHorizontalViewport', () => {
+        return new UI.HorizontalViewport();
+      }).directive('hawtioRow', () => {
+        return new UI.DivRow();
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });
