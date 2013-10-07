@@ -7,6 +7,8 @@ module Fabric {
     $scope.groups = [];
     $scope.profiles = [];
     $scope.entity = {};
+    $scope.defaultGroup = "default";
+    $scope.defaultBrokerName = "brokerName";
 
     // holds all the form objects from nested child scopes
     $scope.forms = {};
@@ -34,11 +36,6 @@ module Fabric {
     });
 
     function configureSchema(schema) {
-/*
-      Core.pathSet(schema.properties, ['name', 'label'], 'Container Name');
-      Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
-*/
-
       delete schema.properties['username'];
       delete schema.properties['password'];
 
@@ -51,8 +48,24 @@ module Fabric {
       Core.pathSet(schema.properties, ['brokerName', 'required'], true);
       Core.pathSet(schema.properties, ['brokerName', 'tooltip'], 'The name of the broker.');
 
+      Core.pathSet(schema.properties, ['profile', 'tooltip'], 'The name of the profile for this broker. If left blank it will be created from the group and broker names.');
+
+      Core.pathSet(schema.properties, ['parentProfile', 'tooltip'], 'The profile used to define the version of A-MQ which will run, the features and the configuration of the broker.');
+
+
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', "placeholder"], "mq-{{entity.group || 'default'}}-{{entity.brokerName || 'brokerName'}}");
+
+      var isReplicated = "entity.kind == 'replicated'";
+
+      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "{{" + isReplicated + " ? 'mq-replicated' : 'mq-base'}}");
+      Core.pathSet(schema.properties, ['data', 'input-attributes', "placeholder"], "${karaf.base}/data/{{entity.brokerName || 'brokerName'}}");
+      Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
+
+      Core.pathSet(schema.properties, ['replicas', 'control-group-attributes', "ng-show"], isReplicated);
+      Core.pathSet(schema.properties, ['minimumInstances', 'control-group-attributes', "ng-hide"], isReplicated);
+
       schema['tabs'] = {
-        'Default': ['group', 'brokerName', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
+        'Default': ['group', 'kind', 'brokerName', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
         'Advanced': ['*']
       };
     }
