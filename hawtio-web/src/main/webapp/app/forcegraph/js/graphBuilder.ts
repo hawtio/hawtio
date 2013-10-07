@@ -12,6 +12,23 @@ module ForceGraph {
             }
         }
 
+        public getNode(id) {
+            return this.nodes[id];
+        }
+
+        public hasLinks(id) {
+
+            var result = false;
+
+            this.links.forEach( (link) => {
+                if (
+                    link.source.id == id || link.target.id == id) {
+                    result = this.nodes[link.source.id] != null && this.nodes[link.target.id] != null;
+                }
+            })
+            return result;
+        }
+
         public addLink (srcId, targetId, linkType) {
 
             if ((this.nodes[srcId] != null) && (this.nodes[targetId] != null)) {
@@ -29,33 +46,58 @@ module ForceGraph {
             }
         }
 
+        nodeIndex(id, nodes) {
+            var result = -1;
+            var index = 0;
+
+            for(index = 0; index < nodes.length; index++) {
+                var node = nodes[index];
+                if (node.id == id) {
+                    result = index;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        public filterNodes( filter ) {
+            var filteredNodes = {}
+
+            d3.values(this.nodes).forEach( (node) => {
+                if (filter(node)) {
+                    filteredNodes[node.id] = node;
+                }
+            })
+
+            this.nodes = filteredNodes;
+        }
+
         public buildGraph() {
 
-            var graphNodes = d3.values(this.nodes);
+            var graphNodes = [];
             var linktypes  = d3.keys(this.linkTypes);
             var graphLinks = [];
 
-            var nodeIndex = (id, nodes) => {
-                var result = -1;
-                var index = 0;
-
-                for(index = 0; index < nodes.length; index++) {
-                    var node = nodes[index];
-                    if (node.id == id) {
-                        result = index;
-                        break;
-                    }
+            d3.values(this.nodes).forEach( (node) => {
+                if (node.includeInGraph == null || node.includeInGraph) {
+                    node.includeInGraph = true;
+                    graphNodes.push(node);
                 }
-
-                return result;
-            };
+            })
 
             this.links.forEach((link) => {
-               graphLinks.push({
-                   source: nodeIndex(link.source.id, graphNodes),
-                   target: nodeIndex(link.target.id, graphNodes),
-                   type: link.type
-               });
+               if (
+                   this.nodes[link.source.id] != null
+                   && this.nodes[link.target.id] != null
+                   && this.nodes[link.source.id].includeInGraph
+                   && this.nodes[link.target.id].includeInGraph) {
+                   graphLinks.push({
+                       source: this.nodeIndex(link.source.id, graphNodes),
+                       target: this.nodeIndex(link.target.id, graphNodes),
+                       type: link.type
+                   });
+               }
             });
 
             return {

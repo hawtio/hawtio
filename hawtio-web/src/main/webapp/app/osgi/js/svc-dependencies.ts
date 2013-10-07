@@ -3,14 +3,10 @@ module Osgi {
     export function ServiceDependencyController($scope, workspace:Workspace, osgiDataService: OsgiDataService) {
 
         $scope.bundleFilter  = "";
-        $scope.packageFilter = ""
-        $scope.showServices  = "true";
-        $scope.showPackages  = "false";
-        $scope.hideUnused    = "false";
-
-        osgiDataService.register(function() {
-            $scope.updateGraph();
-        });
+        $scope.packageFilter = "";
+        $scope.showServices  = true;
+        $scope.showPackages  = false;
+        $scope.hideUnused    = false;
 
         $scope.addToDashboardLink = () => {
           var href="#/osgi/dependencies";
@@ -31,16 +27,15 @@ module Osgi {
               osgiDataService,
               $scope.bundleFilter,
               $scope.packageFilter,
-              $scope.showServices == "true",
-              $scope.showPackages == "true",
-              $scope.hideUnused == "true"
+              $scope.showServices,
+              $scope.showPackages,
+              $scope.hideUnused
             );
 
             $scope.graph = graphBuilder.buildGraph();
             Core.$apply($scope);
-        }
+        };
 
         $scope.updateGraph();
     }
-
 }
