@@ -33,6 +33,9 @@ module Fabric {
         $scope.entity[param] = value;
       }
     });
+    if (!$scope.entity.kind) {
+      $scope.entity.kind = "MasterSlave";
+    }
 
     Fabric.getDtoSchema("brokerConfig", "org.fusesource.fabric.api.jmx.MQBrokerConfigDTO", jolokia, (schema) => {
       $scope.schema = schema;
@@ -67,19 +70,22 @@ module Fabric {
 
       Core.pathSet(schema.properties, ['profile', 'input-attributes', "placeholder"], "mq-{{entity.group || 'default'}}-{{entity.brokerName || 'brokerName'}}");
 
-      var isReplicated = "entity.kind == 'replicated'";
+      var isReplicated = "entity.kind == 'Replicated'";
+      var isStandalone = "entity.kind == 'StandAlone'";
 
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "{{" + isReplicated + " ? 'mq-replicated' : 'mq-base'}}");
       Core.pathSet(schema.properties, ['data', 'input-attributes', "placeholder"], "${karaf.base}/data/{{entity.brokerName || 'brokerName'}}");
       Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
 
       Core.pathSet(schema.properties, ['replicas', 'control-group-attributes', "ng-show"], isReplicated);
+      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "placeholder"], "3");
       Core.pathSet(schema.properties, ['minimumInstances', 'control-group-attributes', "ng-hide"], isReplicated);
+      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
 
       schema['tabs'] = {
-        'Default': ['group', 'kind', 'brokerName', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
+        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
         'Advanced': ['*']
       };
     }
