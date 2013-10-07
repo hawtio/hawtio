@@ -9,15 +9,19 @@ module Forms {
     var input = null;
     var group = null;
 
-    function copyAttributes() {
-      var propertyAttributes = property["input-attributes"];
+    function copyElementAttributes(element, propertyName) {
+      var propertyAttributes = property[propertyName];
       if (propertyAttributes) {
         angular.forEach(propertyAttributes, function (value, key) {
           if (angular.isString(value)) {
-            input.attr(key, value);
+            element.attr(key, value);
           }
         });
       }
+
+    }
+    function copyAttributes() {
+      copyElementAttributes(input, "input-attributes");
       angular.forEach(property, function (value, key) {
         if (angular.isString(value) && key.indexOf("$") < 0 && key !== "type") {
           var html = Core.escapeHtml(value);
@@ -78,7 +82,12 @@ module Forms {
         var controlDiv = Forms.getControlDiv(config);
         controlDiv.append(input);
         controlDiv.append(Forms.getHelpSpan(config, config, id));
+
         group.append(controlDiv);
+
+        // allow control level directives, such as ng-show / ng-hide
+        copyElementAttributes(controlDiv, "control-attributes");
+        copyElementAttributes(group, "control-group-attributes");
 
         var scope = config.scope;
         if (scope && modelName) {
