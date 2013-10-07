@@ -78,11 +78,11 @@ module Osgi {
                 name: "" + service.Identifier,
                 type: "service",
                 used: false,
-                image: {
-                    url: "/hawtio/app/osgi/img/service.png",
-                    width: 32,
-                    height:32
-                },
+//                image: {
+//                    url: "/hawtio/app/osgi/img/service.png",
+//                    width: 32,
+//                    height:32
+//                },
                 popup : {
                     title: "Service [" + service.Identifier + "]",
                     content: (() => {
@@ -113,11 +113,11 @@ module Osgi {
                 type: "bundle",
                 used: false,
                 navUrl: "#/osgi/bundle/" + bundle.Identifier,
-                image: {
-                    url: "/hawtio/app/osgi/img/bundle.png",
-                    width: 32,
-                    height:32
-                },
+//                image: {
+//                    url: "/hawtio/app/osgi/img/bundle.png",
+//                    width: 32,
+//                    height:32
+//                },
                 popup : {
                     title: "Bundle [" + bundle.Identifier + "]",
                     content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
