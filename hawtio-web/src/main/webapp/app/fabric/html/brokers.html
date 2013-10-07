@@ -1,12 +1,11 @@
-<div ng-controller="Fabric.FabricBrokersController">
+<div class="row-fluid" ng-controller="Fabric.FabricBrokersController">
 
-  <div>
-    <div class="mq-titles section-header">
-      <div class="mq-filter">
-        <div class="section-filter">
-          <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
-          <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
-        </div>
+  <div class="span12 page-padded">
+    <div class="section-header">
+
+      <div class="section-filter">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
+        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
       </div>
 
       <div class="section-controls">
@@ -22,33 +21,35 @@
           Targets
         </a>
       </div>
+
     </div>
+  </div>
 
-    <div class="hero-unit" ng-show="groups.length < 1">
-      <p>There are no brokers configured in this Fabric.</p>
+  <div class="hero-unit" ng-show="groups.length < 1">
+    <p>There are no brokers configured in this Fabric.</p>
 
-      <button class="btn btn-primary btn-large" ng-click="createBroker(null)">Create Broker Configuration</button>
-    </div>
+    <button class="btn btn-primary btn-large" ng-click="createBroker(null)">Create Broker Configuration</button>
+  </div>
 
-    <div class="mq-group-rectangle" ng-repeat="group in groups" ng-show="groupMatchesFilter(group)"
-         title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
+  <div class="mq-group-rectangle" ng-repeat="group in groups" ng-show="groupMatchesFilter(group)"
+       title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
 
-      <div class="mq-group-rectangle-label">
+    <div class="mq-group-rectangle-label">
           <span class="title mq-group-icon">
             <i class="icon-group"></i>
           </span>
           <span class="title mq-group-name">
             {{group.id}}
           </span>
-          <a ng-click="createBroker(group)" title="Create another broker configuration in this group">
-            <i class="icon-plus"></i>
-          </a>
-      </div>
+      <a ng-click="createBroker(group)" title="Create another broker configuration in this group">
+        <i class="icon-plus"></i>
+      </a>
+    </div>
 
-      <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
-           title="Profile for running one or more logical brokers" ng-show="profileMatchesFilter(profile)">
+    <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
+         title="Profile for running one or more logical brokers" ng-show="profileMatchesFilter(profile)">
 
-        <div class="mq-profile-rectangle-label">
+      <div class="mq-profile-rectangle-label">
                   <span class="title mq-profile-expander">
                     <i class="expandable-indicator" ng-show="profile.brokers.length"></i>
                   </span>
@@ -58,19 +59,19 @@
                   <span class="title mq-profile-name">
                     <a href="" ng-click="showProfile(profile)">{{profile.id}}</a> / {{profile.version}}
                   </span>
-                  <a href="" ng-click="createRequiredContainers(profile)">
+        <a href="" ng-click="createRequiredContainers(profile)">
                     <span class="badge {{profile.requireStyle}}">
                       {{profile.count}}
                     </span>
-                    <i class="icon-plus" title="Create more containers of this profile"></i>
-                  </a>
-        </div>
+          <i class="icon-plus" title="Create more containers of this profile"></i>
+        </a>
+      </div>
 
-        <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
-             ng-show="brokerMatchesFilter(broker)"
-             title="Logical broker inside this profile">
+      <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
+           ng-show="brokerMatchesFilter(broker)"
+           title="Logical broker inside this profile">
 
-          <div class="mq-broker-rectangle-label">
+        <div class="mq-broker-rectangle-label">
               <span class="title mq-broker-expander">
                 <i class="expandable-indicator" ng-show="broker.containers.length"></i>
               </span>
@@ -80,48 +81,49 @@
               <span class="title mq-broker-name">
                 <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
               </span>
-          </div>
+        </div>
 
-          <div class="mq-container-rectangle" ng-class="{master : container.master}"
-               ng-repeat="container in broker.containers"
-               ng-show="containerMatchesFilter(container)"
-               title="A container (JVM) which implements one or more logical brokers within this profile">
-            <div class="mq-container-rectangle-label" ng-class="{master : container.master}">
-              <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
-                 title="Not Selected"
-                 ng-click="container.selected = true"></i>
-              <i ng-show="container.selected && showSelect" class="icon-circle clickable"
-                 title="Status of the container" ng-click="container.selected = false"></i>
+        <div class="mq-container-rectangle" ng-class="{master : container.master}"
+             ng-repeat="container in broker.containers"
+             ng-show="containerMatchesFilter(container)"
+             title="A container (JVM) which implements one or more logical brokers within this profile">
+          <div class="mq-container-rectangle-label" ng-class="{master : container.master}">
+            <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
+               title="Not Selected"
+               ng-click="container.selected = true"></i>
+            <i ng-show="container.selected && showSelect" class="icon-circle clickable"
+               title="Status of the container" ng-click="container.selected = false"></i>
 
-              <i class="clickable" title="{{getStatusTitle(container)}}"
-                 ng-class='statusIcon(container)'
-                 ng-click="container.selected = !container.selected"></i>
+            <i class="clickable" title="{{getStatusTitle(container)}}"
+               ng-class='statusIcon(container)'
+               ng-click="container.selected = !container.selected"></i>
 
               <span ng-click="container.selected = !container.selected">
                 <a ng-click="showContainer(container)">{{container.id}}</a> /
                 {{container.version}}
               </span>
 
-              <i class="icon-cloud clickable" title="Ensemble member"
-                 ng-click="showContainer(container)"
-                 ng-show="isEnsembleContainer(container.id)"></i>
+            <i class="icon-cloud clickable" title="Ensemble member"
+               ng-click="showContainer(container)"
+               ng-show="isEnsembleContainer(container.id)"></i>
 
-              <i class="icon-plus clickable" ng-show="container.root && container.alive"
-                 title="Create a new child container"
-                 ng-click="createChildContainer(container)"></i>
+            <i class="icon-plus clickable" ng-show="container.root && container.alive"
+               title="Create a new child container"
+               ng-click="createChildContainer(container)"></i>
 
-              <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
-                 title="Open a new window and connect to this broker"
-                 ng-click="doConnect(container)"></i>
+            <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
+               title="Open a new window and connect to this broker"
+               ng-click="doConnect(container)"></i>
 
-              <i class="icon-star mq-master" title="Master broker" ng-show="container.master"></i>
-            </div>
+            <i class="icon-star mq-master" title="Master broker" ng-show="container.master"></i>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
+
 </div>
 
-<div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
-</div>
+
