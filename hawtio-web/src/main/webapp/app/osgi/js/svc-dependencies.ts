@@ -4,9 +4,9 @@ module Osgi {
 
         $scope.bundleFilter  = "";
         $scope.packageFilter = "";
-        $scope.showServices  = true;
-        $scope.showPackages  = false;
-        $scope.hideUnused    = false;
+        $scope.selectView    = "services";
+        $scope.hideUnused    = true;
+        $scope.disablePkg    = true;
 
         $scope.addToDashboardLink = () => {
           var href="#/osgi/dependencies";
@@ -27,14 +27,23 @@ module Osgi {
               osgiDataService,
               $scope.bundleFilter,
               $scope.packageFilter,
-              $scope.showServices,
-              $scope.showPackages,
+              $scope.selectView == "services",
+              $scope.selectView == "packages",
               $scope.hideUnused
             );
 
             $scope.graph = graphBuilder.buildGraph();
             Core.$apply($scope);
         };
+
+        $scope.updatePkgFilter = () => {
+            if ($scope.packageFilter == null || $scope.packageFilter == "") {
+                $scope.selectView = "services";
+                $scope.disablePkg = true;
+            } else {
+                $scope.disablePkg = false;
+            }
+        }
 
         $scope.updateGraph();
     }

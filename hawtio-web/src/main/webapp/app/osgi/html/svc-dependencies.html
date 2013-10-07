@@ -13,7 +13,6 @@
 
     div#pop-up-title {
         font-size: 15px;
-        width:200px;
         margin-bottom: 4px;
         font-weight: bolder;
     }
@@ -80,12 +79,12 @@
             <fieldset>
                 <div class="control-group inline-block">
                     <input type="text" class="search-query" placeholder="Filter Bundle Symbolic Name..." ng-model="bundleFilter">
-                    <input type="text" class="search-query" placeholder="Filter Package Name..." ng-model="packageFilter">
-                    <label class="checkbox" for="showServices">
-                        <input id="showServices" type="checkbox" ng-model="showServices"> Show Services
+                    <input type="text" class="search-query" placeholder="Filter Package Name..." ng-model="packageFilter" ng-change="updatePkgFilter()">
+                    <label class="radio" for="showServices">
+                        <input id="showServices" type="radio" value="services" ng-model="selectView"> Show Services
                     </label>
-                    <label class="checkbox" for="showPackages">
-                        <input id="showPackages" type="checkbox" ng-model="showPackages"> Show Packages
+                    <label class="radio" for="showPackages">
+                        <input id="showPackages" type="radio" value="packages" ng-model="selectView" ng-disabled="disablePkg"> Show Packages
                     </label>
                     <label class="checkbox" for="hideUnused">
                         <input id="hideUnused" type="checkbox" ng-model="hideUnused"> Hide Unused
