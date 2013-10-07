@@ -136,38 +136,22 @@ module Fabric {
 
         // update the stats
         angular.forEach($scope.groups, (group) => {
+
           angular.forEach(group.profiles, (profile) => {
+
+            angular.forEach(profile.brokers, (broker) => {
+              broker.containers = broker.containers.sortBy((c) => {
+                return c.id;
+              });
+            });
+
+            profile.containers = profile.containers.sortBy((c) => { return c.id; });
+
             var count = profile.containers.length;
             profile.requireStyle = Fabric.containerCountBadgeStyle(profile.requirements.minimumInstances, count);
             profile.count = count;
           });
         });
-
-
-        // add a new gridster rectangle if we don't already have one
-        /*
-         if (!$scope.widgets) {
-         $scope.widgets = [];
-         }
-
-         $scope.groups.forEach((group) => {
-         if (!$scope.widgets.any((g) => { return g.id === group.id })) {
-
-         var outer = $('<li style="list-style-type: none; position: absolute"></li>');
-         var child = $scope.$new();
-         child.group = group;
-
-         outer.html($compile($templateCache.get("widgetTemplate"))(child));
-
-         $scope.widgets.push({
-         id: group.id,
-         scope: child,
-         group: group,
-         widget: $scope.gridster.add_widget(outer, 2, 2)
-         });
-         }
-         });
-         */
 
         Core.$apply($scope);
       }
