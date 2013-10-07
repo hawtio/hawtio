@@ -62,5 +62,24 @@ module Osgi {
             return services;
         }
 
+        public getPackages() {
+
+            var packages = {};
+
+            var response = this.jolokia.request({
+                type: 'exec',
+                mbean: getSelectionPackageMBean(this.workspace),
+                operation: 'listPackages()'
+            }, onSuccess(null));
+
+            var answer = response.value.values;
+
+            answer.forEach( (value) => {
+                packages[value.Name + "-" + value.Version] = value;
+            })
+
+            return packages;
+        }
+
     }
 }

@@ -10,9 +10,14 @@ module Osgi {
         private hideUnused   : boolean;
         private graphBuilder : ForceGraph.GraphBuilder;
 
+        private filteredBundles = {};
         private bundles = null;
         private services = null;
         private packages = null;
+
+        private PREFIX_BUNDLE = "Bundle-";
+        private PREFIX_SVC    = "Service-";
+        private PREFIX_PKG    = "Package-";
 
         constructor(
             osgiDataService: OsgiDataService,
@@ -46,11 +51,30 @@ module Osgi {
             return this.services;
         }
 
+        getPackages() {
+            if (this.packages == null) {
+                this.packages = this.osgiDataService.getPackages();
+            }
+            return this.packages;
+        }
+
+        bundleNodeId(bundle) {
+            return this.PREFIX_BUNDLE + bundle.Identifier;
+        }
+
+        serviceNodeId(service) {
+            return this.PREFIX_SVC + service.Identifier;
+        }
+
+        pkgNodeId(pkg) {
+            return this.PREFIX_PKG + pkg.Name + "-" + pkg.Version;
+        }
+
         // Create a service node from a given service
         buildSvcNode(service) {
 
-            var svcNode = {
-                id: "Service-" + service.Identifier,
+            return {
+                id: this.serviceNodeId(service),
                 name: "" + service.Identifier,
                 type: "service",
                 used: false,
@@ -78,17 +102,13 @@ module Osgi {
                     })
                 }
             }
-
-            return svcNode;
         }
 
         // Create a bundle node for a given bundle
         buildBundleNode(bundle) {
 
-            var bundleNodeId = "Bundle-" + bundle.Identifier;
-
-            var bundleNode = {
-                id: bundleNodeId,
+            return {
+                id: this.bundleNodeId(bundle),
                 name: bundle.SymbolicName,
                 type: "bundle",
                 used: false,
@@ -103,8 +123,32 @@ module Osgi {
                     content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
                 }
             }
+        }
 
-            return bundleNode;
+        buildPackageNode(pkg) {
+
+            return {
+                id: this.pkgNodeId(pkg),
+                name: pkg.Name,
+                type: "package",
+                used: false,
+                popup: {
+                    title: "Package [" + pkg.Name + "]",
+                    content: "<p>" + pkg.Version + "</p>"
+                }
+            }
+        }
+
+        exportingBundle(pkg) {
+
+            var result = null;
+
+            pkg.ExportingBundles.forEach( (bundleId) => {
+                if (this.filteredBundles[this.PREFIX_BUNDLE + bundleId] != null) {
+                    result = bundleId;
+                }
+            })
+            return result;
         }
 
         addFilteredBundles() {
@@ -113,6 +157,9 @@ module Osgi {
 
                 if (this.bundleFilter == null || this.bundleFilter == "" || bundle.SymbolicName.startsWith(this.bundleFilter)) {
                     var bundleNode = this.buildBundleNode(bundle);
+
+                    this.filteredBundles[bundleNode.id] = bundle;
+
                     bundleNode.used = true;
 
                     this.graphBuilder.addNode(bundleNode);
@@ -130,31 +177,74 @@ module Osgi {
             })
         }
 
-        public buildGraph() {
-
-            this.addFilteredBundles();
-
+        addFilteredServices() {
             if (this.showServices) {
                 d3.values(this.getBundles()).forEach( (bundle) => {
-                    var bundleNode = this.buildBundleNode(bundle);
 
                     bundle.ServicesInUse.forEach( (sid) => {
-                        var svcNode = this.buildSvcNode((this.getServices())[sid]);
 
-                        if (this.graphBuilder.getNode(svcNode.id) != null) {
+                        var svcNodeId = this.PREFIX_SVC + sid;
 
-                            this.graphBuilder.getNode(svcNode.id).used = true;
+                        if (this.graphBuilder.getNode(svcNodeId) != null) {
+
+                            this.graphBuilder.getNode(svcNodeId).used = true;
+
+                            var bundleNode = this.graphBuilder.getNode(this.bundleNodeId(bundle)) || this.buildBundleNode(bundle);
                             bundleNode.used = true;
 
                             this.graphBuilder.addNode(bundleNode);
-                            this.graphBuilder.addLink(bundleNode.id, svcNode.id, "inuse");
+                            this.graphBuilder.addLink(svcNodeId, bundleNode.id, "inuse");
                         }
                     })
                 })
             }
+        }
+
+        addFilteredPackages() {
+
+            if (this.showPackages) {
+                d3.values(this.getPackages()).forEach( (pkg) => {
+
+                    if (this.packageFilter == null || this.packageFilter == "" || pkg.Name.startsWith(this.packageFilter)) {
+                        var exportingId = this.exportingBundle(pkg);
+
+                        if (exportingId != null) {
+
+                            var bundleNode = this.graphBuilder.getNode(this.PREFIX_BUNDLE + exportingId);
+                            bundleNode.used = true;
+
+                            var pkgNode = this.buildPackageNode(pkg);
+
+                            this.graphBuilder.addNode(pkgNode);
+                            this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "registered");
+
+                            pkg.ImportingBundles.forEach( (bundleId) => {
+
+                                var bundleNode = this.graphBuilder.getNode(this.PREFIX_BUNDLE  + bundleId) || this.buildBundleNode(this.getBundles()[bundleId]);
+                                bundleNode.used = true;
+                                pkgNode.used = true;
+
+                                this.graphBuilder.addNode(bundleNode);
+                                this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "inuse");
+                            })
+                        }
+                    }
+                })
+            }
+        }
+
+        public buildGraph() {
+
+            this.addFilteredBundles();
+            this.addFilteredServices();
+            this.addFilteredPackages();
 
             if (this.hideUnused) {
+
+                // this will filter out all nodes that are not marked as used in our data model
                 this.graphBuilder.filterNodes( (node) => { return node.used; });
+
+                // this will remove all nodes that do not have connections after filtering the unused nodes
                 this.graphBuilder.filterNodes( (node) => { return this.graphBuilder.hasLinks(node.id); });
             }
 

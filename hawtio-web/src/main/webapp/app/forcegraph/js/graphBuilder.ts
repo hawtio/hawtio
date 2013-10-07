@@ -23,7 +23,7 @@ module ForceGraph {
             this.links.forEach( (link) => {
                 if (
                     link.source.id == id || link.target.id == id) {
-                    result = this.nodes[link.source.id] != null && this.nodes[link.target.id] != null;
+                    result = result || (this.nodes[link.source.id] != null && this.nodes[link.target.id] != null);
                 }
             })
             return result;
@@ -62,7 +62,8 @@ module ForceGraph {
         }
 
         public filterNodes( filter ) {
-            var filteredNodes = {}
+            var filteredNodes = {};
+            var newLinks = [];
 
             d3.values(this.nodes).forEach( (node) => {
                 if (filter(node)) {
@@ -70,7 +71,14 @@ module ForceGraph {
                 }
             })
 
+            this.links.forEach( (link) => {
+                if (filteredNodes[link.source.id] && filteredNodes[link.target.id]) {
+                    newLinks.push(link);
+                }
+            })
+
             this.nodes = filteredNodes;
+            this.links = newLinks;
         }
 
         public buildGraph() {
