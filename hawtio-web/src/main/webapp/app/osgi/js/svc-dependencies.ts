@@ -42,11 +42,14 @@ module Osgi {
                 size_x: 2,
                 size_y: 2
             });
-            return "#/dashboard/add?tab=dashboard" +
+
+            var addLink = "#/dashboard/add?tab=dashboard" +
                 "&href=" + encodeURIComponent(href) +
                 "&routeParams=" + encodeURIComponent(routeParams) +
                 "&size=" + encodeURIComponent(size) +
                 "&title=" + encodeURIComponent(title);
+
+            return addLink;
         };
 
         $scope.$on('$routeUpdate', () => {
@@ -64,6 +67,11 @@ module Osgi {
               $scope.selectView == "packages",
               $scope.hideUnused
             );
+
+            $routeParams["bundleFilter"]  = $scope.bundleFilter;
+            $routeParams["packageFilter"] = $scope.packageFilter;
+            $routeParams["hideUnused"]    = $scope.hideUnused ? "true" : "false";
+            $routeParams["view"]          = $scope.selectView;
 
             $scope.graph = graphBuilder.buildGraph();
             Core.$apply($scope);
