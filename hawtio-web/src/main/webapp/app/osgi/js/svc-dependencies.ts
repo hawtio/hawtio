@@ -1,25 +1,58 @@
 module Osgi {
 
-    export function ServiceDependencyController($scope, workspace:Workspace, osgiDataService: OsgiDataService) {
+    export function ServiceDependencyController($scope, $routeParams, workspace:Workspace, osgiDataService: OsgiDataService) {
 
-        $scope.bundleFilter  = "";
-        $scope.packageFilter = "";
-        $scope.selectView    = "services";
-        $scope.hideUnused    = true;
-        $scope.disablePkg    = true;
+        $scope.init = () => {
+
+            if ($routeParams["bundleFilter"]) {
+                $scope = $routeParams["bundleFilter"];
+            } else {
+                $scope.bundleFilter = "";
+            }
+
+            if ($routeParams["pkgFilter"]) {
+                $scope.packageFilter = $routeParams["pkgFilter"];
+            } else {
+                $scope.packageFilter = "";
+            }
+
+            if ($routeParams["view"] == "packages") {
+                $scope.selectView = "packages";
+            } else {
+                $scope.selectView = "services";
+            }
+
+            if ($routeParams['hideUnused']) {
+                $scope.hideUnused = $routeParams['hideUnused'] == "true";
+            } else {
+                $scope.hideUnused = true;
+            }
+
+            $scope.updatePkgFilter();
+        }
 
         $scope.addToDashboardLink = () => {
-          var href="#/osgi/dependencies";
-          var title="OSGi Dependencies";
-          var size = angular.toJson({
-            size_x: 2,
-            size_y: 2
-          });
-          return "#/dashboard/add?tab=dashboard" +
-              "&href=" + encodeURIComponent(href) +
-              "&size=" + encodeURIComponent(size) +
-              "&title=" + encodeURIComponent(title);
+
+            var routeParams = angular.toJson($routeParams);
+
+            var href="#/osgi/dependencies";
+            var title="OSGi Dependencies";
+
+            var size = angular.toJson({
+                size_x: 2,
+                size_y: 2
+            });
+            return "#/dashboard/add?tab=dashboard" +
+                "&href=" + encodeURIComponent(href) +
+                "&routeParams=" + encodeURIComponent(routeParams) +
+                "&size=" + encodeURIComponent(size) +
+                "&title=" + encodeURIComponent(title);
         };
+
+        $scope.$on('$routeUpdate', () => {
+            $scope.init();
+            $scope.updateGraph();
+        });
 
         $scope.updateGraph = () => {
 
@@ -45,6 +78,7 @@ module Osgi {
             }
         }
 
+        $scope.init();
         $scope.updateGraph();
     }
 }
