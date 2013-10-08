@@ -49,10 +49,10 @@
       <div class="mq-profiles" hawtio-horizontal-viewport adjust-parent="true">
         <div class="mq-profile-canvas" hawtio-row>
           <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
-               title="Profile for running one or more logical brokers" ng-show="profileMatchesFilter(profile)">
+               title="profile: {{profile.id}} version: {{ profile.version}}" ng-show="profileMatchesFilter(profile)">
 
             <div class="mq-profile-rectangle-label">
-              <span class="mq-profile-name" title="profile: {{profile.id}} version: {{ profile.version}}">
+              <span class="mq-profile-name">
                 <i class="icon-book green"></i>
                 <a href="" ng-click="showProfile(profile)">{{profile.id}}</a>
                 <a href="" ng-click="createRequiredContainers(profile)" title="{{profile.requiredToolTip}}">
