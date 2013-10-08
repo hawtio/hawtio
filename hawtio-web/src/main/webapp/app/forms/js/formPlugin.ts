@@ -33,6 +33,9 @@ module Forms {
           directive('hawtioFormArray', function(workspace, $compile) {
             return new Forms.ArrayInput(workspace, $compile);
           }).
+          directive('hawtioFormStringArray', function(workspace, $compile) {
+            return new Forms.StringArrayInput(workspace, $compile);
+          }).
           directive('hawtioFormCheckbox', function(workspace, $compile) {
             return new Forms.BooleanInput(workspace, $compile);
           }).

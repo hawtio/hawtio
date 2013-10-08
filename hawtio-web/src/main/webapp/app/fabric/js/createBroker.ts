@@ -85,8 +85,8 @@ module Fabric {
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
 
       schema['tabs'] = {
-        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances'],
-        'Advanced': ['*']
+        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networks'],
+        'Advanced': ['networksUserName', 'networksPassword', '*']
       };
     }
 

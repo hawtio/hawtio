@@ -5,7 +5,7 @@ module Forms {
    *
    * This will include either the standard AngularJS widgets or custom widgets
    */
-  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName) {
+  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true) {
     var input = null;
     var group = null;
 
@@ -72,7 +72,7 @@ module Forms {
         }
       }
       // figure out which things to not wrap in a group and label etc...
-      if (input.attr("type") !== "hidden") {
+      if (input.attr("type") !== "hidden" && wrapInGroup) {
         group = this.getControlGroup(config, config, id);
         var labelElement = Forms.getLabel(config, config, property.title || property.label || humanizeValue(defaultLabel));
         if (title) {
@@ -365,6 +365,13 @@ module Forms {
          case "object":
          case "java.lang.object":
          */
+        var items = property.items;
+        if (items) {
+          var typeName = items.type;
+          if (typeName && typeName === "string") {
+            return "hawtio-form-string-array";
+          }
+        }
         return "hawtio-form-array";
       case "boolean":
       case "bool":

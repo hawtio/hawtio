@@ -311,6 +311,57 @@ module Forms {
   }
 
 
+  /**
+   * Generates a list of strings which can be added / editted / removed
+   */
+  export class StringArrayInput extends InputBase {
+
+    constructor(public workspace, public $compile) {
+      super(workspace, $compile);
+    }
+
+    public getInput(config, arg, id, modelName) {
+      var rowScopeName = "_" + id;
+      var ngRepeat = rowScopeName + ' in ' + modelName;
+
+      var readOnlyWidget = '{{' + rowScopeName + '}}';
+      if (config.isReadOnly()) {
+        return $('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' +
+                readOnlyWidget +
+                '</li></ul>');
+      } else {
+        // TODO there should be an easier way to find the property / schema!
+        var scope = config.scope;
+        var schema = scope[config.schemaName] || {};
+        var properties = schema.properties || {};
+        var arrayProperty = properties[id] || {};
+
+        // lets refer to the property of the item, rather than the array
+        var property = arrayProperty["items"] || {};
+        var propTypeName = property.type;
+        var ignorePrefixInLabel = true;
+        var configScopeName = null;
+
+        // lets avoid passing in the config as it tends to use "entity.id" then
+        // whereas we are editing an inscope variable called rowScopeName here:
+        var itemsConfig = {
+          model: rowScopeName
+        };
+        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, rowScopeName, ignorePrefixInLabel, configScopeName, false);
+        if (!widget) {
+          widget = $(readOnlyWidget);
+        }
+        // TODO delete button, add button
+        var markup = $('<div ng-repeat="' + rowScopeName + ' in ' + modelName + '"></div>');
+        markup.append(widget);
+        markup.append($('<a ng-click="' + modelName + '.remove(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
+        markup.after($('<a ng-click="' + modelName + '.push(\'\')" title="Add a new value"><i class="green icon-edit"></i></a>'));
+        return markup;
+      }
+
+    }
+  }
+
   export class ArrayInput extends InputBase {
 
     constructor(public workspace, public $compile) {
@@ -378,7 +429,6 @@ module Forms {
       $(element).append(this.$compile(table)(scope));
 
     }
-
   }
 
 
