@@ -2140,6 +2140,8 @@ i.mq-master {
   position: relative;
   top: 11px;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .mq-container-rectangle {
