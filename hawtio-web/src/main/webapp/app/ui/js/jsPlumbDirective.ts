@@ -20,35 +20,43 @@ module UI {
 
         var nodes = [];
         var transitions = [];
+        var nodesById = {};
 
         var nodeEls = $element.find('.jsplumb-node');
-        angular.forEach(nodeEls, (node) => {
 
-          var el = $(node);
+        angular.forEach(nodeEls, (nodeEl) => {
 
-          nodes.push({
+          var el = $(nodeEl);
+          var id = el.attr('id')
+
+          var node = {
+            id: id,
+            label: 'node ' + id,
             el: el,
-            width: el.width(),
-            height: el.height()
-          });
-          $scope.jsPlumb.addEndpoint(el);
-          $scope.jsPlumb.draggable(el, {
-            containment: $element
-          });
+            width: el.outerWidth(),
+            height: el.outerHeight(),
+            edges: []
+          };
+          console.log("Adding node: ", node);
+          nodes.push(node);
+          nodesById[id] = node;
         });
 
-        angular.forEach(nodes, (node) => {
-          var targets:any = node.el.attr('connect-to');
+        angular.forEach(nodes, (sourceNode) => {
+          var targets:any = sourceNode.el.attr('connect-to');
           if (targets) {
             targets = targets.split(',');
             angular.forEach(targets, (target) => {
-              var targetEl = $element.find(target);
-              var transition = {
-                source: node.el,
-                target: targetEl
-              };
-              $scope.jsPlumb.connect(transition);
-              transitions.push(transition);
+              var targetNode = nodesById[target.trim()];
+              if (targetNode) {
+                var edge = {
+                  source: sourceNode,
+                  target: targetNode
+                };
+                transitions.push(edge);
+                sourceNode.edges.push(edge);
+                targetNode.edges.push(edge);
+              }
             });
           }
         });
@@ -56,17 +64,31 @@ module UI {
         $scope.jsPlumbNodes = nodes;
         $scope.jsPlumbTransitions = transitions;
 
-        setTimeout(() => {
-          $scope.layout = dagre.layout()
-              .nodeSep(100)
-              .edgeSep(10)
-              .rankSep(50)
-              .nodes(nodes)
-              .transitions(transitions)
-              .debugLevel(1)
-              .run();
-          Core.$apply($scope);
-        }, 50);
+        $scope.layout = dagre.layout()
+            .nodeSep(50)
+            .edgeSep(10)
+            .rankSep(50)
+            .nodes(nodes)
+            .edges(transitions)
+            .debugLevel(1)
+            .run();
+
+        angular.forEach($scope.jsPlumbNodes, (node) => {
+          node.el.css({top: node.dagre.y, left: node.dagre.x});
+          $scope.jsPlumb.addEndpoint(node.el);
+          $scope.jsPlumb.draggable(node.el, {
+            containment: $element
+          });
+        });
+
+        angular.forEach($scope.jsPlumbTransitions, (edge) => {
+          $scope.jsPlumb.connect({
+            source: edge.source.el,
+            target: edge.target.el
+          });
+        });
+
+        Core.$apply($scope);
       }, 50);
 
 

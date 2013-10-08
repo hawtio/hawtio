@@ -6,33 +6,47 @@
       <h3>JSPlumb</h3>
       <p>Use to create an instance of JSPlumb</p>
       <script type="text/ng-template" id="jsplumbTemplate">
-        <div class="ex-node-container" hawtio-jsplumb>
-          <div id="node1" class="jsplumb-node ex-node">Node 1</div>
-          <div id="node2" connect-to="#node4" class="jsplumb-node ex-node">Node 2</div>
-          <div id="node3" class="jsplumb-node ex-node">Node 3</div>
-          <div id="node4" class="jsplumb-node ex-node">Node 4</div>
-          <div id="node5" class="jsplumb-node ex-node" connect-to="#node6,#node1">Node 5</div>
-          <div id="node6" class="jsplumb-node ex-node">Node 6</div>
-        </div>
+<div>
+  <!--
+  <script type="text/javascript>
+    $scope.nodes = ["node1", "node2"];
+    $scope.otherNodes =["node4", "node5", "node6"];
+  </script>
+  -->
+  <div class="ex-node-container" hawtio-jsplumb>
+    <!-- Nodes just need to have an ID and the jsplumb-node class -->
+    <div ng-repeat="node in nodes"
+         id="{{node}}"
+         class="jsplumb-node ex-node">Node: {{node}}</div>
+    <!-- You can specify a connect-to attribute and a comma separated list of IDs to connect nodes -->
+    <div id="node3"
+         class="jsplumb-node ex-node"
+         connect-to="node1,node2">Node 3</div>
+    <!-- Expressions and stuff will work too -->
+    <div ng-repeat="node in otherNodes"
+         id="{{node}}"
+         class="jsplumb-node ex-node"
+         connect-to="{{otherNodes[$index - 1]}}">Node: {{node}}</div>
+  </div>
+
+  <!--
+  <div class="ex-node-container" hawtio-jsplumb>
+    <div id="node1" class="jsplumb-node ex-node">Node 1</div>
+    <div id="node2" connect-to="node4" class="jsplumb-node ex-node">Node 2</div>
+    <div id="node3" class="jsplumb-node ex-node">Node 3</div>
+    <div id="node4" class="jsplumb-node ex-node">Node 4</div>
+    <div id="node5" class="jsplumb-node ex-node" connect-to="node6,node1">Node 5</div>
+    <div id="node6" class="jsplumb-node ex-node">Node 6</div>
+  </div>
+  -->
+
+</div>
       </script>
       <div hawtio-editor="jsplumbEx" mode="fileUploadExMode"></div>
 
       <div class="directive-example">
         <div compile="jsplumbEx"></div>
       </div>
-      <!--
-      <div class="directive-example">
-        <div hawtio-jsplumb>
-          <div id="node1" class="jsplumb-node ex-node">Node 1</div>
-          <div id="node2" connect-to="#node4" class="jsplumb-node ex-node">Node 2</div>
-          <div id="node3" class="jsplumb-node ex-node">Node 3</div>
-          <div id="node4" class="jsplumb-node ex-node">Node 4</div>
-          <div id="node5" class="jsplumb-node ex-node" connect-to="#node6,#node1">Node 5</div>
-          <div id="node6" class="jsplumb-node ex-node">Node 6</div>
-        </div>
-      </div>
-      -->
-
     </div>
 
 

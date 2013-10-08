@@ -4,6 +4,9 @@ module UI {
 
     $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
 
+    $scope.nodes = ["node1", "node2"];
+    $scope.otherNodes =["node4", "node5", "node6"];
+
     $scope.expandableEx = '' +
         '<div class="expandable closed">\n' +
         '   <div title="The title" class="title">\n' +
