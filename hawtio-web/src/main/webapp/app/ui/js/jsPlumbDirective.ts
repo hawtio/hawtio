@@ -14,8 +14,29 @@ module UI {
           Container: $element
         });
 
+
+        var endpointStyle:any[] = ["Dot", {radius: 4}];
+        var labelStyles:any[] = [ "Label" ];
+        var arrowStyles:any[] = [ "Arrow", {
+          location: 1,
+          id: "arrow",
+          length: 8,
+          width: 8,
+          foldback: 0.8
+        } ];
+
+        var connectorStyle:any[] = [ "Flowchart", { cornerRadius: 4, gap: 5 } ];
+
         $scope.jsPlumb.importDefaults({
-          DragOptions : { cursor: "pointer", zIndex:2000 }
+          Anchor: "AutoDefault",
+          DragOptions : { cursor: "pointer", zIndex:2000 },
+          Endpoint: endpointStyle,
+          PaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
+          HoverPaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
+          ConnectionOverlays: [
+            arrowStyles,
+            labelStyles
+          ]
         });
 
         var nodes = [];
@@ -37,12 +58,12 @@ module UI {
             height: el.outerHeight(),
             edges: []
           };
-          console.log("Adding node: ", node);
           nodes.push(node);
           nodesById[id] = node;
         });
 
         angular.forEach(nodes, (sourceNode) => {
+
           var targets:any = sourceNode.el.attr('connect-to');
           if (targets) {
             targets = targets.split(',');
@@ -59,11 +80,16 @@ module UI {
               }
             });
           }
+
         });
 
         $scope.jsPlumbNodes = nodes;
         $scope.jsPlumbTransitions = transitions;
+        $scope.jsPlumbEndpoints = {};
+        $scope.jsPlumbConnections = [];
 
+        // First we'll lay out the graph and then later apply jsplumb to all
+        // of the nodes and connections
         $scope.layout = dagre.layout()
             .nodeSep(50)
             .edgeSep(10)
@@ -75,17 +101,24 @@ module UI {
 
         angular.forEach($scope.jsPlumbNodes, (node) => {
           node.el.css({top: node.dagre.y, left: node.dagre.x});
-          $scope.jsPlumb.addEndpoint(node.el);
+          var endpoint = $scope.jsPlumb.addEndpoint(node.el);
+          $scope.jsPlumbEndpoints[node.id] = endpoint
           $scope.jsPlumb.draggable(node.el, {
             containment: $element
           });
         });
 
         angular.forEach($scope.jsPlumbTransitions, (edge) => {
-          $scope.jsPlumb.connect({
+          var connection = $scope.jsPlumb.connect({
             source: edge.source.el,
             target: edge.target.el
+          }, {
+            anchor: "Continuous",
+            connector: connectorStyle,
+            connectorStyle: { strokeStyle: "#666", lineWidth: 2 },
+            maxConnections: -1
           });
+          $scope.jsPlumbConnections.push(connection);
         });
 
         Core.$apply($scope);
