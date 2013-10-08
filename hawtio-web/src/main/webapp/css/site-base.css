@@ -1865,6 +1865,10 @@ dd.file-list {
   background: inherit;
 }
 
+.active-profile-list .expandable .expandable-body ul li .child-container {
+  margin-left: 0;
+}
+
 .active-profile-expander {
   position: absolute;
   left: 0;
