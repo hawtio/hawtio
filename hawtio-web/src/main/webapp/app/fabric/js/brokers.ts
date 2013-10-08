@@ -17,6 +17,12 @@ module Fabric {
       $location.path(path);
     };
 
+    $scope.connectToBroker = (container, broker) => {
+      var view = "/jmx/attributes?tab=activemq";
+      $scope.doConnect(container, view);
+    };
+
+
     $scope.createBroker = (group) => {
       var args = {};
       if (group) {

@@ -890,6 +890,7 @@ module Core {
     public jolokiaUrl:string;
     public userName:string;
     public password:string;
+    public view:string;
   }
 
   export function getDocHeight() {
@@ -901,7 +902,7 @@ module Core {
     );
   }
 
-  export function connectToServer(localSturage, options:ConnectToServerOptions) {
+  export function connectToServer(localStorage, options:ConnectToServerOptions) {
     var connectUrl = options.jolokiaUrl;
 
     var userDetails = {
@@ -921,6 +922,7 @@ module Core {
     // TODO we should replace this and just store the real, final connectUrl!
 
     localStorage[connectUrl] = angular.toJson(userDetails);
+    var view = options.view;
     if (connectUrl) {
 
       if (options.useProxy) {
@@ -944,7 +946,9 @@ module Core {
 
       var full = "?url=" + encodeURIComponent(connectUrl);
 
-      full += "#/logs";
+      if (view) {
+        full += "#" + view;
+      }
       window.open(full);
     } else {
 
@@ -969,9 +973,9 @@ module Core {
       localStorage[connectUrl] = angular.toJson(userDetails);
 
       var full = "?url=" + encodeURIComponent(connectUrl);
-
-      // default the osgi view
-      //full += "#/osgi/bundle-list";
+      if (view) {
+        full += "#" + view;
+      }
       console.log("Full URL is: " + full);
       window.open(full);
     }

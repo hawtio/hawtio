@@ -129,6 +129,8 @@ module Fabric {
       userName: null,
       password: null,
       container: null,
+      view: null,
+
       onOK: () => {
         var userName = $scope.connect.userName;
         var password = $scope.connect.password;
@@ -139,17 +141,20 @@ module Fabric {
           localStorage['fabric.password'] = password;
         }
         console.log("Connecting as user " + userName);
-        Fabric.connect(localStorage, container, userName, password, true);
+        var options =  new Core.ConnectToServerOptions();
+        options.view = $scope.connect.view;
+        Fabric.connect(localStorage, container, userName, password, true, options);
         $scope.connect.container = {};
         $scope.connect.dialog.close();
       }
     };
 
-    $scope.doConnect = (container) => {
+    $scope.doConnect = (container, view) => {
       // TODO at least obfusicate this
-      $scope.connect.userName = localStorage['fabric.userName']
-      $scope.connect.password = localStorage['fabric.password']
+      $scope.connect.userName = localStorage['fabric.userName'];
+      $scope.connect.password = localStorage['fabric.password'];
       $scope.connect.container = container;
+      $scope.connect.view = view || "/logs";
       $scope.connect.dialog.open();
     };
 
@@ -564,8 +569,7 @@ module Fabric {
   /**
    * Opens a window connecting to the given container row details if the jolokiaUrl is available
    */
-  export function connect(localStorage, row, userName = "", password = "", useProxy = true) {
-    var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+  export function connect(localStorage, row, userName = "", password = "", useProxy = true, options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions()) {
     options.jolokiaUrl = row.jolokiaUrl;
     options.userName = userName;
     options.password = password;
