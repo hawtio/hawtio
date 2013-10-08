@@ -151,8 +151,14 @@ module Fabric {
               });
             });
             var count = Object.values(profile.containers).length;
-            profile.requireStyle = Fabric.containerCountBadgeStyle(profile.requirements.minimumInstances, count);
+            var required = profile.requirements.minimumInstances || 0;
+            profile.requireStyle = Fabric.containerCountBadgeStyle(required, count);
             profile.count = count;
+            profile.requiredToolTip = "this profile requires " + Core.maybePlural(required, "container")
+                    + " to be running but is currently running " + Core.maybePlural(count, "container");
+            if (required > count) {
+              profile.requiredToolTip += ". click here to create more containers";
+            }
           });
         });
 

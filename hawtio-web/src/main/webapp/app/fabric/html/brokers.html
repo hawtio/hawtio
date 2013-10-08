@@ -56,7 +56,7 @@
                 <i class="icon-book green"></i>
                 <a href="" ng-click="showProfile(profile)" title="{{profile.id}} / {{ profile.version}}">{{profile.id}}</a> / {{profile.version}}
               </span>
-              <a class="mq-profile-create-container" href="" ng-click="createRequiredContainers(profile)" title="Create more containers of this profile">
+              <a class="mq-profile-create-container" href="" ng-click="createRequiredContainers(profile)" title="{{profile.requiredToolTip}}">
                 <span class="badge {{profile.requireStyle}}">{{profile.count}}</span>
                 <i class="icon-plus"></i>
               </a>
