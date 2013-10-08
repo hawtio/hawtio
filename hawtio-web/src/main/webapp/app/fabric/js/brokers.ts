@@ -23,16 +23,18 @@ module Fabric {
     };
 
 
-    $scope.createBroker = (group) => {
+    $scope.createBroker = (group, profile) => {
       var args = {};
       if (group) {
-        var profileId = group["profile"];
-        if (profileId) {
-          args["profile"] = profileId;
-        }
         var groupId = group["id"];
         if (groupId) {
           args["group"] = groupId;
+        }
+      }
+      if (profile) {
+        var profileId = profile["id"];
+        if (profileId) {
+          args["profile"] = profileId;
         }
       }
       $location.url("/fabric/createBroker").search(args);
