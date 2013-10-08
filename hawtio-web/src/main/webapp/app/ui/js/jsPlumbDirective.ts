@@ -122,34 +122,7 @@ module UI {
         });
 
         Core.$apply($scope);
-      }, 50);
-
-
-    };
-  }
-
-  export class JSPlumbConnection {
-    public restrict = 'A';
-
-    public link = ($scope, $element, $attrs) => {
-      if (!angular.isDefined($scope.jsPlumb)) {
-        return;
-      }
-
-      console.log("here!");
-
-      var targets = $attrs['connectTo'].split(',');
-
-      angular.forEach(targets, (target) => {
-
-        var targetEl = $element.parent().find(target);
-
-        $scope.jsPlumb.connect({
-          source: $element,
-          target: targetEl
-        });
-      });
-
+      }, 10);
     };
   }
 }
