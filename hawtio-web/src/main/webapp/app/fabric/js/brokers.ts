@@ -115,7 +115,7 @@ module Fabric {
                 minimumInstances: brokerStatus.minimumInstances
               },
               brokers: [],
-              containers: []
+              containers: {}
             };
           });
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
@@ -130,7 +130,7 @@ module Fabric {
             var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
               return brokerStatus;
             });
-            profile.containers.push(container);
+            profile.containers[containerId] = container;
           }
         });
 
@@ -144,10 +144,7 @@ module Fabric {
                 return c.id;
               });
             });
-
-            profile.containers = profile.containers.sortBy((c) => { return c.id; });
-
-            var count = profile.containers.length;
+            var count = Object.values(profile.containers).length;
             profile.requireStyle = Fabric.containerCountBadgeStyle(profile.requirements.minimumInstances, count);
             profile.count = count;
           });
