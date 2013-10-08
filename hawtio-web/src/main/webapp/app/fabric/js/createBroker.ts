@@ -64,7 +64,7 @@ module Fabric {
       Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead-editable'], 'true');
 
       Core.pathSet(schema.properties, ['parentProfile', 'tooltip'], 'The profile used to define the version of A-MQ which will run, the features and the configuration of the broker.');
-      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead'], 'title for title in parentProfiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead'], 'p.id for p in parentProfiles | filter:$viewValue');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead-editable'], 'false');
 
 
@@ -94,7 +94,16 @@ module Fabric {
       $scope.groups = brokerStatuses.map(s => s.group).unique().sort();
       $scope.profiles = brokerStatuses.map(s => s.profile).unique().sort();
       $scope.brokerNames = brokerStatuses.map(s => s.brokerName).unique().sort();
+
+      var version = brokerStatuses.map(s => s.version).find(s => s) || "1.0";
+      jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String,java.util.List)", version, ["id", "abstract"], onSuccess(onProfileData));
       Core.$apply($scope);
+    }
+
+    function onProfileData(profileData) {
+      if (profileData) {
+        $scope.parentProfiles = profileData.filter(p => !p.abstract).sortBy("id");
+      }
     }
 
     function onSave(response) {
