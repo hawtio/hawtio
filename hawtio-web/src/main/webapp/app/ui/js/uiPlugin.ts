@@ -36,6 +36,10 @@ module UI {
         return new UI.HorizontalViewport();
       }).directive('hawtioRow', () => {
         return new UI.DivRow();
+      }).directive('hawtioJsplumb', () => {
+        return new UI.JSPlumb();
+      //}).directive('connectTo', () => {
+      //  return new UI.JSPlumbConnection();
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });

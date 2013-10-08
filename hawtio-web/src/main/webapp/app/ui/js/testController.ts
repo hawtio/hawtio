@@ -1,6 +1,8 @@
 module UI {
 
-  export function UITestController($scope, workspace) {
+  export function UITestController($scope, workspace, $templateCache) {
+
+    $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
 
     $scope.expandableEx = '' +
         '<div class="expandable closed">\n' +
