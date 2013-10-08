@@ -15,7 +15,7 @@ module UI {
         });
 
 
-        var endpointStyle:any[] = ["Dot", {radius: 4}];
+        var endpointStyle:any[] = ["Dot", { radius: 10, cssClass: 'jsplumb-circle', hoverClass: 'jsplumb-circle-hover' }];
         var labelStyles:any[] = [ "Label" ];
         var arrowStyles:any[] = [ "Arrow", {
           location: 1,
@@ -25,10 +25,12 @@ module UI {
           foldback: 0.8
         } ];
 
-        var connectorStyle:any[] = [ "Flowchart", { cornerRadius: 4, gap: 5 } ];
+        var connectorStyle:any[] = [ "Flowchart", { cornerRadius: 4, gap: 8 } ];
 
         $scope.jsPlumb.importDefaults({
           Anchor: "AutoDefault",
+          Connector: "Flowchart",
+          ConnectorStyle: connectorStyle,
           DragOptions : { cursor: "pointer", zIndex:2000 },
           Endpoint: endpointStyle,
           PaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
@@ -48,7 +50,13 @@ module UI {
         angular.forEach(nodeEls, (nodeEl) => {
 
           var el = $(nodeEl);
-          var id = el.attr('id')
+          var id = el.attr('id');
+          var anchors:any = el.attr('anchors');
+          if (anchors) {
+            anchors = anchors.split(',').map((anchor) => { return anchor.trim()});
+          } else {
+            anchors = ["Top"];
+          }
 
           var node = {
             id: id,
@@ -56,14 +64,16 @@ module UI {
             el: el,
             width: el.outerWidth(),
             height: el.outerHeight(),
-            edges: []
+            edges: [],
+            connections: [],
+            endpoints: [],
+            anchors: anchors
           };
           nodes.push(node);
           nodesById[id] = node;
         });
 
         angular.forEach(nodes, (sourceNode) => {
-
           var targets:any = sourceNode.el.attr('connect-to');
           if (targets) {
             targets = targets.split(',');
@@ -80,13 +90,13 @@ module UI {
               }
             });
           }
-
         });
 
         $scope.jsPlumbNodes = nodes;
+        $scope.jsPlumbNodesById = nodesById;
         $scope.jsPlumbTransitions = transitions;
-        $scope.jsPlumbEndpoints = {};
-        $scope.jsPlumbConnections = [];
+        //$scope.jsPlumbEndpoints = {};
+        //$scope.jsPlumbConnections = [];
 
         // First we'll lay out the graph and then later apply jsplumb to all
         // of the nodes and connections
@@ -101,8 +111,15 @@ module UI {
 
         angular.forEach($scope.jsPlumbNodes, (node) => {
           node.el.css({top: node.dagre.y, left: node.dagre.x});
-          var endpoint = $scope.jsPlumb.addEndpoint(node.el);
-          $scope.jsPlumbEndpoints[node.id] = endpoint
+          var endpoint = $scope.jsPlumb.addEndpoint(node.el, {
+            isSource: true,
+            isTarget: true,
+            anchor: node.anchors,
+            connector: connectorStyle,
+            maxConnections: -1
+          });
+          node.endpoints.push(endpoint);
+          //$scope.jsPlumbEndpoints[node.id] = endpoint
           $scope.jsPlumb.draggable(node.el, {
             containment: $element
           });
@@ -113,12 +130,12 @@ module UI {
             source: edge.source.el,
             target: edge.target.el
           }, {
-            anchor: "Continuous",
             connector: connectorStyle,
-            connectorStyle: { strokeStyle: "#666", lineWidth: 2 },
             maxConnections: -1
           });
-          $scope.jsPlumbConnections.push(connection);
+          edge.source.connections.push(connection);
+          edge.target.connections.push(connection);
+          //$scope.jsPlumbConnections.push(connection);
         });
 
         Core.$apply($scope);

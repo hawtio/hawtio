@@ -17,16 +17,23 @@
     <!-- Nodes just need to have an ID and the jsplumb-node class -->
     <div ng-repeat="node in nodes"
          id="{{node}}"
-         class="jsplumb-node ex-node">Node: {{node}}</div>
+         anchors="AutoDefault"
+         class="jsplumb-node ex-node">
+      <i class="icon-plus clickable" ng-click="createEndpoint(node)"></i> Node: {{node}}
+    </div>
     <!-- You can specify a connect-to attribute and a comma separated list of IDs to connect nodes -->
     <div id="node3"
          class="jsplumb-node ex-node"
-         connect-to="node1,node2">Node 3</div>
+         anchors="Left,Right"
+         connect-to="node1,node2">
+      <i class="icon-plus clickable" ng-click="createEndpoint('node3')"></i> Node 3
+    </div>
     <!-- Expressions and stuff will work too -->
     <div ng-repeat="node in otherNodes"
          id="{{node}}"
          class="jsplumb-node ex-node"
-         connect-to="{{otherNodes[$index - 1]}}">Node: {{node}}</div>
+         anchors="Continuous"
+         connect-to="{{otherNodes[$index - 1]}}"><i class="icon-plus clickable" ng-click="createEndpoint(node)"></i> Node: {{node}}</div>
   </div>
 
   <!--

@@ -7,6 +7,27 @@ module UI {
     $scope.nodes = ["node1", "node2"];
     $scope.otherNodes =["node4", "node5", "node6"];
 
+    $scope.anchors = ["Top", "Right", "Bottom", "Left"];
+
+    $scope.createEndpoint = (nodeId) => {
+      var node = $scope.jsPlumbNodesById[nodeId]
+      if (node) {
+
+        var anchors = $scope.anchors.subtract(node.anchors);
+        console.log("anchors: ", anchors);
+        if (anchors && anchors.length > 0) {
+          var anchor = anchors.first();
+          node.anchors.push(anchor);
+          node.endpoints.push($scope.jsPlumb.addEndpoint(node.el, {
+            anchor: anchor,
+            isSource: true,
+            isTarget: true,
+            maxConnections: -1
+          }));
+        }
+      }
+    };
+
     $scope.expandableEx = '' +
         '<div class="expandable closed">\n' +
         '   <div title="The title" class="title">\n' +
