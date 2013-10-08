@@ -138,6 +138,9 @@ module Fabric {
             var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
               return brokerStatus;
             });
+            if (container.master) {
+              container.masterTooltip = " is the master for broker: " + brokerId;
+            }
             profile.containers[containerId] = container;
           }
         });

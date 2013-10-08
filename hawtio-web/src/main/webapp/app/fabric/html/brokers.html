@@ -91,7 +91,7 @@
                   <div class="mq-container-rectangle" ng-class="{master : container.master}"
                        ng-repeat="container in broker.containers"
                        ng-show="containerMatchesFilter(container)"
-                       title="Container: {{container.id}}">
+                       title="Container: {{container.id}}{{container.masterTooltip}}">
 
                     <div class="mq-container-rectangle-label" ng-class="{master : container.master}">
                       <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
