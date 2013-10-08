@@ -342,6 +342,12 @@ module Forms {
         var ignorePrefixInLabel = true;
         var configScopeName = null;
 
+        // lets create an empty array if its not yet set
+        var value = Core.pathGet(scope, modelName);
+        if (!value)  {
+          Core.pathSet(scope, modelName, []);
+        }
+
         // lets avoid passing in the config as it tends to use "entity.id" then
         // whereas we are editing an inscope variable called rowScopeName here:
         var itemsConfig = {
