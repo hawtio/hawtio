@@ -20,18 +20,6 @@
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
     <plugin-scripts>app/js/gogoPlugin.js,app/js/gogo.js</plugin-scripts>
-
-    <fuse.osgi.import>
-      javax.servlet.*,
-      javax.servlet.http.*,
-      org.apache.karaf.webconsole.gogo,
-      *;resolution:=optional
-    </fuse.osgi.import>
-    <!--
-    <fuse.osgi.export>
-      io.hawt.web.plugin
-    </fuse.osgi.export>
-    -->
   </properties>
 
   <dependencies>
@@ -146,7 +134,7 @@
               org.osgi.service.blueprint.container,
               org.osgi.service.http,
               jline,
-              org.apache.karaf.shell.console.jline,
+              org.apache.karaf.shell.console.jline;version="[2.2,3.0)",
               org.osgi.framework,
               javax.management,
               *;resolution:=optional
