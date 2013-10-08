@@ -123,7 +123,7 @@ module Fabric {
 
       case 'createEnsemble':
         delete schema['properties']['name'];
-        angular.forEach(["username", "password", "role"], (name) => {
+        angular.forEach(["username", "password", "role", "zookeeperPassword"], (name) => {
           Core.pathSet(schema, ["properties", name, "type"], 'string');
           Core.pathSet(schema, ["properties", name, "required"], true);
         });
