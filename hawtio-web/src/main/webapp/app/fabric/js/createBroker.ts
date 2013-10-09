@@ -58,8 +58,8 @@ module Fabric {
 
       Core.pathSet(schema.properties, ['brokerName', 'required'], true);
       Core.pathSet(schema.properties, ['brokerName', 'tooltip'], 'The name of the broker.');
+      Core.pathSet(schema.properties, ['brokerName', 'input-attributes', 'autofocus'], 'true');
 
-      Core.pathSet(schema.properties, ['profile', 'tooltip'], 'The name of the profile for this broker. If left blank it will be created from the group and broker names.');
       Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead'], 'title for title in profiles | filter:$viewValue');
       Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead-editable'], 'true');
 
@@ -83,6 +83,8 @@ module Fabric {
       Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
+      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead'], 'title for title in groups | filter:$viewValue');
+      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
 
       schema['tabs'] = {
         'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networks'],
