@@ -2163,16 +2163,16 @@ i.mq-master {
 
 
 .mq-container-rectangle.master {
-  background-color: #faa732;
-  background-image: -moz-linear-gradient(top, #fbb450, #f89406);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
-  background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
-  background-image: -o-linear-gradient(top, #fbb450, #f89406);
-  background-image: linear-gradient(to bottom, #fbb450, #f89406);
+  background-color: #DFFFB9;
+  background-image: -moz-linear-gradient(top, #efffdd, #CCFF99);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#efffdd), to(#CCFF99));
+  background-image: -webkit-linear-gradient(top, #efffdd, #CCFF99);
+  background-image: -o-linear-gradient(top, #efffdd, #CCFF99);
+  background-image: linear-gradient(to bottom, #efffdd, #CCFF99);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffbb450', endColorstr='#fff89406', GradientType=0);
-  border-color: #f89406 #f89406 #ad6704;
-  *background-color: #f89406;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffefffdd', endColorstr='#ffCCFF99', GradientType=0);
+  border-color: #CCFF99 #CCFF99 #CCFF99;
+  *background-color: #CCFF99;
 }
 
 .mq-broker-rectangle {
