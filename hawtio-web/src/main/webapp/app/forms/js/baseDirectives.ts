@@ -348,20 +348,48 @@ module Forms {
           Core.pathSet(scope, modelName, []);
         }
 
-        // lets avoid passing in the config as it tends to use "entity.id" then
-        // whereas we are editing an inscope variable called rowScopeName here:
-        var itemsConfig = {
-          model: rowScopeName
+        var methodPrefix = "_form_stringArray" + rowScopeName + "_";
+        var itemKeys = methodPrefix + "keys";
+        var addMethod = methodPrefix + "add";
+        var removeMethod = methodPrefix + "remove";
+
+        // we maintain a separate object of all the keys (indices) of the array
+        // and use that to lookup the values
+        function updateKeys() {
+          var value = Core.pathGet(scope, modelName) || [];
+          scope[itemKeys] = Object.keys(value);
+        }
+
+        updateKeys();
+
+        scope[addMethod] = () => {
+          var value = Core.pathGet(scope, modelName) || [];
+          value.push("");
+          Core.pathSet(scope, modelName, value);
+          updateKeys();
         };
-        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, rowScopeName, ignorePrefixInLabel, configScopeName, false);
+        scope[removeMethod] = (idx) => {
+          var value = Core.pathGet(scope, modelName) || [];
+          if (idx < value.length) {
+            value.splice(idx, 1);
+          }
+          Core.pathSet(scope, modelName, value);
+          updateKeys();
+        };
+
+        // the expression for an item value
+        var itemId = modelName + "[" + rowScopeName + "]";
+        var itemsConfig = {
+          model: itemId
+        };
+        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, false);
         if (!widget) {
           widget = $(readOnlyWidget);
         }
-        // TODO delete button, add button
-        var markup = $('<div ng-repeat="' + rowScopeName + ' in ' + modelName + '"></div>');
+        var markup = $('<div ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
         markup.append(widget);
-        markup.append($('<a ng-click="' + modelName + '.remove(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
-        markup.after($('<a ng-click="' + modelName + '.push(\'\')" title="Add a new value"><i class="green icon-edit"></i></a>'));
+        markup.append($('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
+        markup.after($('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
         return markup;
       }
 
