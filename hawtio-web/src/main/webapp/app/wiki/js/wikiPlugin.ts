@@ -4,7 +4,7 @@ module Wiki {
 
   export var templatePath = 'app/wiki/html/';
 
-  angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'tree', 'camel']).
+  angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']).
           config(($routeProvider) => {
 
             // allow optional branch paths...

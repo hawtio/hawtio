@@ -45,17 +45,17 @@ module Wiki {
 
     $scope.$watch('selectedMapping.class_a.value', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        $scope.fetchProperties(newValue, $scope.selectedMapping.class_a);
+        $scope.fetchProperties(newValue, $scope.selectedMapping.class_a, 'Right');
       }
     });
 
     $scope.$watch('selectedMapping.class_b.value', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        $scope.fetchProperties(newValue, $scope.selectedMapping.class_b);
+        $scope.fetchProperties(newValue, $scope.selectedMapping.class_b, 'Left');
       }
     });
 
-    $scope.fetchProperties = (className, target) => {
+    $scope.fetchProperties = (className, target, anchor) => {
       jolokia.request({
         type: 'exec',
         mbean: Dozer.getIntrospectorMBean(workspace),
@@ -66,9 +66,11 @@ module Wiki {
           target.error = null;
           target.properties = response.value;
           angular.forEach(target.properties, (property) => {
+            property.id = Core.getUUID();
+            property.anchor = anchor;
             var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
             if (lookup) {
-              $scope.fetchProperties(property.typeName, property);
+              $scope.fetchProperties(property.typeName, property, anchor);
             }
           });
           console.log("got: ", response);
