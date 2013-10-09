@@ -15,10 +15,13 @@
 
 
   <div class="create-broker-body row-fluid">
-    <div class="span10 offset1">
+    <div class="span6 offset1">
       <div id="create-form">
         <div simple-form name="create_broker" data="schema" entity="entity"></div>
       </div>
+    </div>
+    <div class="span4">
+      <div ng-include="'app/fabric/html/help/kind' + entity.kind + '.html'"></div>
     </div>
   </div>
 
