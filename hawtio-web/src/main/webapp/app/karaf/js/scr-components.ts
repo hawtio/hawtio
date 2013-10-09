@@ -20,7 +20,7 @@ module Karaf {
             showFilter: false,
             showColumnMenu: false,
             filterOptions: {
-                useExternalFilter: true
+                useExternalFilter: false
             },
             selectedItems: $scope.selectedComponents,
             rowHeight: 32,
