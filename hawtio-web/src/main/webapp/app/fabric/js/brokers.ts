@@ -37,7 +37,7 @@ module Fabric {
           args["profile"] = profileId;
         }
       }
-      $location.url("/fabric/createBroker").search(args);
+      $location.url("/fabric/mq/createBroker").search(args);
     };
 
     function matchesFilter(text) {
@@ -126,12 +126,14 @@ module Fabric {
               containers: {}
             };
           });
+          var connectTo = (brokerStatus.networks || []).join(",");
           var broker = findByIdOrCreate(profile.brokers, brokerId, maps.broker, () => {
             return {
               group: groupId,
               profile: profileId,
               version: versionId,
-              containers: []
+              containers: [],
+              connectTo: connectTo
             };
           });
           if (containerId) {

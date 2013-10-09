@@ -19,8 +19,9 @@ module Fabric {
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
-            when('/fabric/brokers', { templateUrl: templatePath + 'brokers.html' }).
-            when('/fabric/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
+            when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
+            when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
+            when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
 

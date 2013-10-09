@@ -11,8 +11,8 @@
           title="Migrate containers to use different versions of profiles">
     <a ng-href="#/fabric/view{{hash}}">Migrate</a>
   </li>
-  <li ng-show="hasMQManager" ng-class='{active : isActive("#/fabric/brokers")}'>
-    <a ng-href="#/fabric/brokers{{hash}}" title="View the Fabric based MQ brokers">MQ</a>
+  <li ng-show="hasMQManager" ng-class='{active : isActive("#/fabric/mq")}'>
+    <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the Fabric based MQ brokers">MQ</a>
   </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>

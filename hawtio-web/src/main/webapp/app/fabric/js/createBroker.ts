@@ -111,7 +111,7 @@ module Fabric {
     function onSave(response) {
       notification("success", "Created broker " + $scope.message);
       // now lets switch to the brokers view
-      $location.path("/fabric/brokers");
+      $location.path("/fabric/mq/brokers");
       Core.$apply($scope);
     }
   }
