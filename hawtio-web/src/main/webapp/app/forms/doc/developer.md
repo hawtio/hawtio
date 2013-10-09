@@ -94,6 +94,7 @@ The above would generate HTML like this...
 You can pass in the [autofocus attribute](http://davidwalsh.name/autofocus) on one of the fields so the browse will auto-focus on one field on startup via
 
 ```
+# lets customise an existing schema
 Core.pathSet(schema.properties, ['myField', 'input-attributes', 'autofocus'], 'true');
 ```
 

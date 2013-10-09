@@ -84,6 +84,8 @@ module Forms {
       var schema = null;
       var configScopeName = attrs[this.attributeName] || attrs["data"];
 
+      var firstControl = null;
+
       var simple = this;
       scope.$watch(configScopeName, onWidgetDataChange);
 
@@ -136,6 +138,7 @@ module Forms {
         if (!tabs.use) {
           fieldset.append('<div class="spacer"></div>');
         }
+
 
         if (schema) {
           // if we're using tabs lets reorder the properties...
@@ -216,6 +219,19 @@ module Forms {
 
         fieldset.append('<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">');
 
+        // now lets try default an autofocus element onto the first item if we don't find any elements with an auto-focus
+        var autoFocus = form.find("*[autofocus]");
+        if (!autoFocus || !autoFocus.length) {
+          if (firstControl) {
+            console.log("No autofocus element, so lets add one!");
+            var input = firstControl.find("input").first() || firstControl.find("select").first();
+            if (input) {
+              input.attr("autofocus", "true");
+            }
+          }
+        }
+
+
         if (compiledNode) {
           $(compiledNode).remove();
         }
@@ -223,6 +239,8 @@ module Forms {
           childScope.$destroy();
         }
         childScope = scope.$new(false);
+
+
         compiledNode = simple.$compile(form)(childScope);
 
         // now lets expose the form object to the outer scope
@@ -242,6 +260,8 @@ module Forms {
           forms[formScope] = childScope;
         }
         $(element).append(compiledNode);
+
+
       }
 
       function findTabKey(id) {
@@ -310,6 +330,9 @@ module Forms {
             tabs.elements[tabkey].append(input);
           } else {
             fieldset.append(input);
+          }
+          if (!firstControl) {
+            firstControl = input;
           }
         }
       }
