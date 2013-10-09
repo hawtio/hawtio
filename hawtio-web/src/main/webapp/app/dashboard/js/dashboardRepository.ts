@@ -92,14 +92,6 @@ module Dashboard {
             include: "app/jmx/html/attributes.html",
             search: {nid: "root-java.lang-OperatingSystem"},
             hash: ""
-          },
-          { id: "w2", title: "Broker", row: 1, col: 4,
-            size_x: 3,
-            size_y: 4,
-            path: "jmx/attributes",
-            include: "app/jmx/html/attributes.html",
-            search: {nid: "root-org.apache.activemq-broker1-Broker"},
-            hash: ""
           }
         ]
       },
