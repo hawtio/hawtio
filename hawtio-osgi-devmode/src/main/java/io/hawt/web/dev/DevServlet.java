@@ -77,7 +77,7 @@ public class DevServlet extends HttpServlet {
             type = "application/octet-stream";
         }
 
-        LOG.info("Serving file: " + file.getAbsolutePath() + " of type " + type);
+        LOG.debug("Serving file: " + file.getAbsolutePath() + " of type " + type);
 
         resp.reset();
         resp.setBufferSize(DEFAULT_BUFFER_SIZE);
