@@ -23,7 +23,7 @@ if (!jolokiaUrl) {
     var jqxhr = $.ajax(url, {
       async: false,
       username: 'public',
-      password: '?'
+      password: 'biscuit'
     });
     return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
   });
