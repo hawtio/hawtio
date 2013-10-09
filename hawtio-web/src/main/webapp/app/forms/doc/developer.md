@@ -89,6 +89,26 @@ The above would generate HTML like this...
      <select ng-options="c.name for c in colors" ng-model="..." title="..."></select>
 ```
 
+### Autofocus on a field
+
+You can pass in the [autofocus attribute](http://davidwalsh.name/autofocus) on one of the fields so the browse will auto-focus on one field on startup via
+
+```
+Core.pathSet(schema.properties, ['myField', 'input-attributes', 'autofocus'], 'true');
+```
+
+or explicitly via
+
+    properties: {
+      foo: {
+        type: "string",
+        input-attributes: {
+          autofocus: "true"
+        }
+     }
+   }
+
+
 ### Showing or hiding controls dynamically
 
 Use the **control-group-attributes** or **control-attributes** object to add ng-hide / ng-show expressions to controls to dynamically show/hide them based on the entity's values. e.g. to conditionally hide the entire control-group div with label and control use this:
