@@ -3,6 +3,14 @@ module Dozer {
   export var jmxDomain = 'net.sourceforge.dozer';
 
   /**
+   * Don't try and load properties for these types
+   * @type {Array}
+   */
+  export var excludedPackages = [
+    'java.lang'
+  ];
+
+  /**
    * Lets map the class names to element names
    */
   export var elementNameMappings = {
@@ -88,7 +96,7 @@ module Dozer {
    * Finds class names matching the given search text and either invokes the function with the results
    * or does a sync request and returns them.
    */
-  export function findClassNames(workspace: Workspace, searchText: string, limit = 10, fn = null) {
+  export function findClassNames(workspace: Workspace, searchText: string, limit = 20, fn = null) {
     var mbean = getIntrospectorMBean(workspace);
     if (mbean) {
       return workspace.jolokia.execute(mbean, "findClassNames", searchText, limit, onSuccess(fn));

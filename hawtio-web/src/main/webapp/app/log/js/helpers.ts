@@ -49,6 +49,24 @@ module Log {
 
   var _stackRegex = /\s*at\s+([\w\.$_]+(\.([\w$_]+))*)\((.*)?:(\d+)\).*\[(.*)\]/
 
+  export function formatStackTrace(exception:any) {
+    if (!exception) {
+      return '';
+    }
+    if (!angular.isArray(exception) && angular.isString(exception)) {
+      exception = exception.split('\n');
+    } else {
+      return '';
+    }
+
+    var answer = '<ul class="unstyled">\n';
+    exception.each((line) => {
+      answer += "<li>" + Log.formatStackLine(line) + "</li>\n"
+    });
+    answer += "</ul>\n";
+    return answer;
+  }
+
   export function formatStackLine(line: string): string {
     var match = _stackRegex.exec(line);
     if (match && match.length > 6) {

@@ -5,9 +5,16 @@ module Dozer {
   }
 
   export class Mapping {
+    map_id:string;
     class_a:MappingClass;
     class_b:MappingClass;
     fields:Field[] = [];
+
+    constructor() {
+      this.map_id = Core.getUUID();
+      this.class_a = new MappingClass('');
+      this.class_b = new MappingClass('');
+    }
 
     name() {
       return nameOf(this.class_a) + " -> " + nameOf(this.class_b);

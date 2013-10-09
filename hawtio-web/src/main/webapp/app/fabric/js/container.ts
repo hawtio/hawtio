@@ -174,16 +174,8 @@ module Fabric {
     }
 
     $scope.formatStackTrace = (exception) => {
-      if (!exception) {
-        return '';
-      }
-      var answer = '<ul class="unstyled">\n';
-      exception.each((line) => {
-        answer += "<li>" + Log.formatStackLine(line) + "</li>\n"
-      });
-      answer += "</ul>\n";
-      return answer;
-    }
+      return Log.formatStackTrace(exception);
+    };
 
     function render(response) {
       if (!angular.isDefined($scope.responseJson)) {

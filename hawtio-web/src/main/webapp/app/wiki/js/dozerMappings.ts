@@ -12,6 +12,8 @@ module Wiki {
 
     $scope.selectedItems = [];
     $scope.mappings = [];
+    $scope.schemas = [];
+    $scope.selectedMapping = {};
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -41,6 +43,53 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    $scope.$watch('selectedMapping.class_a.value', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.fetchProperties(newValue, $scope.selectedMapping.class_a);
+      }
+    });
+
+    $scope.$watch('selectedMapping.class_b.value', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.fetchProperties(newValue, $scope.selectedMapping.class_b);
+      }
+    });
+
+    $scope.fetchProperties = (className, target) => {
+      jolokia.request({
+        type: 'exec',
+        mbean: Dozer.getIntrospectorMBean(workspace),
+        operation: 'getProperties(java.lang.String)',
+        arguments: [className]
+      }, {
+        success: (response) => {
+          target.error = null;
+          target.properties = response.value;
+          angular.forEach(target.properties, (property) => {
+            var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
+            if (lookup) {
+              $scope.fetchProperties(property.typeName, property);
+            }
+          });
+          console.log("got: ", response);
+          Core.$apply($scope);
+        },
+        error: (response) => {
+          target.properties = null;
+          target.error = {
+            'type': response.error_type,
+            'stackTrace': response.error
+          };
+          console.log("got error: ", response);
+          Core.$apply($scope);
+        }
+      })
+    };
+
+    $scope.formatStackTrace = (exception) => {
+      return Log.formatStackTrace(exception);
+    };
+
 
     $scope.addMapping = () => {
       var treeNode = $scope.rootTreeNode;
@@ -55,6 +104,8 @@ module Wiki {
           added.activate(true);
           onTreeModified();
         }
+        $scope.mappings.push(mapping);
+        $scope.selectedMapping = mapping;
       }
     };
 
@@ -254,13 +305,20 @@ module Wiki {
       if (text) {
         // lets remove any dodgy characters so we can use it as a DOM id
         $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
+        console.log("Model:", $scope.model);
+
         $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
+
+        console.log("Mappings: ", $scope.mappings);
         //console.log("Has mappings " + JSON.stringify($scope.mappings, null, '  '));
         $scope.mappingTree = Dozer.createDozerTree($scope.model);
+        if (Object.equal($scope.selectedMapping, {})) {
+          $scope.selectedMapping = $scope.mappings.first();
+        }
       } else {
         console.log("No XML found for page " + $scope.pageId);
       }
-      Core.$applyLater($scope);
+      Core.$apply($scope);
     }
 
     function onTreeModified() {

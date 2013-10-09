@@ -229,7 +229,7 @@ ol.inline > li {
   display: inline-block;
 }
 .no-bottom-margin {
-  margin-bottom: 0em;
+  margin-bottom: 0 !important;
 }
 .no-bottom-margin .control-group {
   margin-bottom: 4px;
