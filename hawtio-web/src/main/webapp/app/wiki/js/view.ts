@@ -62,17 +62,20 @@ module Wiki {
 
     $scope.createDashboardLink = () => {
       var href = '/wiki/branch/:branch/view/*page';
-      var title = $routeParams['page'].split("/").last();
+      var page = $routeParams['page'];
+      var title = page ? page.split("/").last() : null;
       var size = angular.toJson({
         size_x: 2,
         size_y: 2
       });
-
-      return "#/dashboard/add?tab=dashboard" +
+      var answer = "#/dashboard/add?tab=dashboard" +
           "&href=" + encodeURIComponent(href) +
           "&size=" + encodeURIComponent(size) +
-          "&title=" + encodeURIComponent(title) +
           "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
+      if (title) {
+        answer += "&title=" + encodeURIComponent(title);
+      }
+      return answer;
     };
 
     $scope.childLink = (child) => {
