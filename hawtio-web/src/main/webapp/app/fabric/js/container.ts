@@ -185,6 +185,7 @@ module Fabric {
       if ($scope.responseJson !== responseJson) {
         $scope.responseJson = responseJson;
         $scope.row = response.value;
+        $scope.container = $scope.row;
         if ($scope.row) {
           if (angular.isDefined($scope.row.provisionException) && angular.isString($scope.row.provisionException)) {
             $scope.row.provisionExceptionArray = $scope.row.provisionException.lines();
