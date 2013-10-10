@@ -18,6 +18,21 @@ module Maven {
     } else return null;
   }
 
+  export function mavenLink(url) {
+    var path = null;
+    if (url) {
+      if (url.startsWith("mvn:")) {
+        path = url.substring(4);
+      } else {
+        var idx = url.indexOf(":mvn:");
+        if (idx > 0) {
+          path = url.substring(idx + 5);
+        }
+      }
+    }
+    return path ? "#/maven/artifact/" + path : null;
+  }
+
   export function getName(row) {
     var id = (row.group || row.groupId) + "/" + (row.artifact || row.artifactId);
     if (row.version) {

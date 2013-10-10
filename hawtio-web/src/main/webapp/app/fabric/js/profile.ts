@@ -176,6 +176,11 @@ module Fabric {
       $scope.callSetProfileThing("Changed", "change", title);
     }
 
+    $scope.mavenLink = (url) => {
+      return Maven.mavenLink(url);
+    };
+
+
     $scope.callSetProfileThing = function (success, error, thing) {
       jolokia.request({
         type: 'exec',

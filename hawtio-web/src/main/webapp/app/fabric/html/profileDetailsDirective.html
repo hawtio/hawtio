@@ -98,7 +98,9 @@
             <ul class="unstyled">
               <li ng-repeat="bundle in row.bundles">
                 <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-                <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+                <a ng-href="{{mavenLink(bundle)}}">
+                  <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+                </a>
               </li>
               <li class="add">
                 <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
