@@ -29,12 +29,13 @@
   </div>
 
 
-  <div class="mq-networks hawtio-jsplumb">
+  <div class="mq-networks ex-node-container" hawtio-jsplumb>
 
-    <div class="mq-group-rectangle" ng-repeat="group in groups" ng-show="groupMatchesFilter(group)"
-         title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers" >
+    <div class="mq-network-group-rectangle" ng-repeat="group in groups" ng-show="groupMatchesFilter(group)"
+         title="A group of message brokers; used by messaging clients to connect to one of a cluster of message brokers">
 
-      <div class="mq-group-rectangle-label" id="{{group.id}}">
+      <div class="jsplumb-node mq-network-group-rectangle-label"
+           anchors="AutoDefault" id="{{group.id}}">
         <span class="mq-group-name" title="Group: {{group.id}}">
           <i class="icon-group"></i> {{group.id}}
         </span>
@@ -43,26 +44,23 @@
         </a>
       </div>
 
-          <div class="mq-network-profile-rectangle" ng-repeat="profile in group.profiles"
-               title="profile: {{profile.id}} version: {{ profile.version}}" ng-show="profileMatchesFilter(profile)">
+      <div class="mq-network-profile-rectangle" ng-repeat="profile in group.profiles"
+           title="profile: {{profile.id}} version: {{ profile.version}}" ng-show="profileMatchesFilter(profile)">
 
-              <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
-                   ng-show="brokerMatchesFilter(broker)"
-                   title="Logical broker inside this profile">
+        <div class="mq-network-broker-rectangle" ng-repeat="broker in profile.brokers"
+             ng-show="brokerMatchesFilter(broker)"
+             title="Logical broker inside this profile">
 
-                <div class="mq-broker-rectangle-label jsplumb-node ex-node"
-                     id="broker-{{broker.id}}"
-                     anchors="AutoDefault"
-                     connect-to="{{broker.connectTo}}">
+          <div class="mq-network-broker-rectangle-label jsplumb-node"
+               id="broker-{{broker.id}}"
+               anchors="AutoDefault"
+               connect-to="{{broker.connectTo}}">
                   <span class="title mq-broker-icon">
                     <img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
                   </span>
                   <span class="title mq-broker-name">
                     <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
                   </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
