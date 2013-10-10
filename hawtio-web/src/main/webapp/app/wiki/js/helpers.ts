@@ -7,6 +7,9 @@ module Wiki {
 
   export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/canvas", "/wiki/camel/properties", "/wiki/dozer/mappings"];
 
+
+  export var excludeAdjustmentPrefixes = ["http://", "https://", "#"];
+
   /**
    * Which extensions do we wish to hide in the wiki file listing
    */

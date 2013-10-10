@@ -45,6 +45,55 @@ module Wiki {
           directive('wikiFileList', () => {
             return new Wiki.FileList();
           }).
+          directive('wikiHrefAdjuster', ($location) => {
+            return {
+              restrict: 'A',
+              link: ($scope, $element, $attr) => {
+
+                $element.bind('DOMNodeInserted', (event) => {
+                  var ays = $element.find('a');
+
+                  angular.forEach(ays, (a) => {
+                    if (a.hasAttribute('no-adjust')) {
+                      return;
+                    }
+
+                    a = $(a);
+
+                    var href = a.attr('href').trim();
+
+                    // Deal with relative URLs first...
+                    if (href.startsWith('../')) {
+                      var path = $location.path();
+                      var parts = href.split('/');
+                      var pathParts = path.split('/');
+                      var parents = parts.filter((part) => { return part === ".."; });
+                      parts = parts.last(parts.length - parents.length);
+                      pathParts = pathParts.first(pathParts.length - parents.length);
+
+                      a.attr('href', '#' + pathParts.join('/') + '/' + parts.join('/') + $location.hash());
+                      Core.$apply($scope);
+                      return;
+                    }
+
+                    // Turn an absolute link into a wiki link...
+                    if (href.startsWith('/')) {
+                      a.attr('href', Wiki.branchLink($scope.branch, href, $location));
+                      return;
+                    }
+
+                    if (!Wiki.excludeAdjustmentPrefixes.any((exclude) => {
+                      return href.startsWith(exclude);
+                    })) {
+                      a.attr('href', '#' + $location.path() + "/" + href + $location.hash());
+                      Core.$apply($scope);
+                      return;
+                    }
+                  });
+                })
+              }
+            }
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
 
 /*
