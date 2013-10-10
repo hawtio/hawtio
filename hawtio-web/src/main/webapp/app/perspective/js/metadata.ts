@@ -44,8 +44,8 @@ module Perspective {
         ]
       }
     },
-    local: {
-      label: "Local JVM",
+    container: {
+      label: "Container",
       topLevelTabs: {
         excludes: [
           {
