@@ -113,12 +113,32 @@ module Dashboard {
 
       function onDashboardLoad(dashboard) {
         $scope.dashboard = dashboard;
+        var widgets = ((dashboard) ? dashboard.widgets : null) || [];
+
+        var minHeight = 10;
+        var minWidth = 6;
+
+        angular.forEach(widgets, (widget) => {
+          if (angular.isDefined(widget.row) && minHeight < widget.row) {
+            minHeight = widget.row + 1;
+          }
+          if (angular.isDefined(widget.size_x
+              && angular.isDefined(widget.col))) {
+            var rightEdge = widget.col + widget.size_x;
+            if (rightEdge > minWidth) {
+              minWidth = rightEdge + 1;
+            }
+          }
+
+        });
 
         var gridster = $element.gridster({
           widget_margins: [gridMargin, gridMargin],
           widget_base_dimensions: [$scope.gridX, $scope.gridY],
-          extra_rows: 10,
-          extra_cols: 6,
+          extra_rows: minHeight,
+          extra_cols: minWidth,
+          max_size_x: minWidth,
+          max_size_y: minHeight,
           draggable: {
             stop: (event, ui) => {
               if (serializeDashboard()) {
@@ -129,7 +149,6 @@ module Dashboard {
         }).data('gridster');
 
         var template = $templateCache.get("widgetTemplate");
-        var widgets = ((dashboard) ? dashboard.widgets : null) || [];
         angular.forEach(widgets, (widget) => {
           var childScope = $scope.$new(false);
           childScope.widget = widget;
