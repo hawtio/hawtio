@@ -1,6 +1,31 @@
 <div ng-controller="Fabric.TestController">
 
   <div class="row-fluid">
+    <h3>Profile Link</h3>
+    <p>A simple widget that automatically links to a profile given just the profile name, or can link to a file inside a profile</p>
+    <script type="text/ng-template" id="profileLinkTemplate">
+      <ul>
+        <li>
+          <a fabric-profile-link="default">Click me! (use the back button to get back)</a>
+        </li>
+        <li>
+          <a fabric-profile-link="default" file="org.fusesource.fabric.agent.properties">Me too!</a>
+        </li>
+        <li>
+          <a href="http://www.google.com" fabric-profile-link="hawtio">Hey, this link's been overwritten!</a>
+        </li>
+      </ul>
+    </script>
+    <div hawtio-editor="profileLink" mode="html"></div>
+    <div class="directive-example">
+      <div compile="profileLink"></div>
+    </div>
+
+
+  </div>
+
+
+  <div class="row-fluid">
     <h3>Container List</h3>
     <p>A widget to display a list of containers</p>
     <script type="text/ng-template" id="containerListTemplate">

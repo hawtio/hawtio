@@ -10,6 +10,7 @@ module Fabric {
     $scope.profileIncludes = $templateCache.get("profile-includes");
     $scope.profileExcludes = $templateCache.get("profile-excludes");
     $scope.containerList = $templateCache.get("containerListTemplate");
+    $scope.profileLink = $templateCache.get("profileLinkTemplate");
 
     $scope.version = {};
     $scope.versionId = '';

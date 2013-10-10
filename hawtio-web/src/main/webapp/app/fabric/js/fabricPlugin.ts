@@ -40,6 +40,27 @@ module Fabric {
     directive('fabricActiveProfileList', () => {
       return new Fabric.ActiveProfileList();
     }).
+    directive('fabricProfileLink', (workspace, jolokia, localStorage) => {
+        return {
+            restrict: 'A',
+            link: ($scope, $element, $attrs) => {
+            var profileId = $attrs['fabricProfileLink'];
+
+            if (profileId && !profileId.isBlank()) {
+              var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
+              var versionId = container['versionId'];
+              if (versionId && !versionId.isBlank()) {
+                var url = '#' + Fabric.profileLink(workspace, jolokia, localStorage, versionId, profileId);
+                if (angular.isDefined($attrs['file'])) {
+                  url = url + "/" + $attrs['file'];
+                }
+
+                $element.attr('href', url);
+              }
+            }
+          }
+        }
+    }).
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, layoutFull) => {
 
