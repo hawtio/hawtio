@@ -113,6 +113,38 @@ module Log {
     };
 
 
+    $scope.addToDashboardLink = () => {
+      var href = "#/logs"
+      var routeParams = angular.toJson($routeParams)
+      var size = angular.toJson({
+        size_x: 8,
+        size_y: 1
+      });
+      var title = "Logs";
+      if ($scope.filter.logLevelQuery !== "") {
+        title = title + " LogLevel: " + $scope.filter.logLevelQuery;
+      }
+      if ($scope.filter.logLevelExactMatch) {
+        title = title + " Exact Match";
+      }
+      if ($scope.searchText !== "") {
+        title = title + " Filter: " + $scope.searchText;
+      }
+      return "#/dashboard/add?tab=dashboard" +
+          "&href=" + encodeURIComponent(href) +
+          "&routeParams=" + encodeURIComponent(routeParams) +
+          "&title=" + encodeURIComponent(title) +
+          "&size=" + encodeURIComponent(size);
+    };
+
+    $scope.isInDashboardClass = () => {
+      if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
+        return "log-table-dashboard";
+      }
+      return "";
+    };
+
+
     $scope.filterLogMessage = (log) => {
 
       if ($scope.filter.logLevelQuery !== "") {
@@ -157,16 +189,18 @@ module Log {
 
     var updateValues = function (response) {
       var scrollToBottom = false;
-      var window = $($window);
+      if (!$scope.inDashboard) {
+        var window = $($window);
 
-      if ($scope.logs.length === 0) {
-        // initial page load, let's scroll to the bottom
-        scrollToBottom = true;
-      }
+        if ($scope.logs.length === 0) {
+          // initial page load, let's scroll to the bottom
+          scrollToBottom = true;
+        }
 
-      if ( (window.scrollTop() + window.height()) > (Core.getDocHeight() - 100) ) {
-        // page is scrolled near the bottom
-        scrollToBottom = true;
+        if ( (window.scrollTop() + window.height()) > (Core.getDocHeight() - 100) ) {
+          // page is scrolled near the bottom
+          scrollToBottom = true;
+        }
       }
 
       var logs = response.events;
@@ -182,6 +216,10 @@ module Log {
       }
       if (logs) {
         var maxSize = getLogCacheSize(localStorage);
+        //don't really need many logs in a widget...
+        if ($scope.inDashboard) {
+          maxSize = 10;
+        }
         var counter = 0;
         logs.forEach((log:ILog) => {
           if (log) {

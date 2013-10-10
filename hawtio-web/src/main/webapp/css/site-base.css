@@ -274,6 +274,13 @@ li.attr-column {
   border: 1px solid #d4d4d4;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.1) inset;
 }
+
+.widget-area {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
 .widget-title {
   margin: 0;
   padding-left: 5px;
@@ -291,6 +298,11 @@ li.attr-column {
   text-shadow: 0 1px 0 #FFFFFF;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  z-index: 6000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .widget-title:hover {
   cursor: move;
@@ -315,9 +327,15 @@ li.attr-column {
   -webkit-transition: opacity 0.25s ease-in-out;
   opacity: 1;
 }
+
 .widget-body {
-  padding: 2px;
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
+
 .height-controls a {
   float: left;
   display: block;
@@ -2411,6 +2429,13 @@ a.dashboard-link:hover {
   /*top: 20px; */
   white-space: normal;
   display: block;
+}
+
+.log-table-dashboard {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .ex-node-container {
