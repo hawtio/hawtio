@@ -173,6 +173,11 @@ module ActiveMQ {
                     //console.log("Setting the typeName on " + parent.title + " to " + endpoint);
                     parent.typeName = endpoint;
                   }
+                  var connectorName = entries["connectorName"];
+                  if (connectorName && !node.icon) {
+                    // lets default a connector icon
+                    node.icon = url("/app/activemq/img/connector.png");
+                  }
                 }
                 angular.forEach(node.children, (child) => setConsumerType(child));
               }
