@@ -5,6 +5,7 @@ module Fabric {
     Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.groups = [];
+    $scope.possibleNetworks = [];
     $scope.profiles = [];
     $scope.parentProfiles = [];
     $scope.entity = {};
@@ -25,6 +26,18 @@ module Fabric {
       var name = $scope.entity.brokerName;
       return name && $scope.brokerNames.indexOf(name) >= 0;
     };
+
+
+    function updatePossibleNetworks() {
+      var group = $scope.entity.group;
+      $scope.possibleNetworks = [].concat($scope.groups);
+      if (group) {
+        $scope.possibleNetworks = $scope.possibleNetworks.remove(group);
+      }
+    }
+
+    $scope.$watch("entity.group", updatePossibleNetworks);
+
 
     // default parameters from the URL
     angular.forEach(["group", "profile"], (param) => {
@@ -83,7 +96,7 @@ module Fabric {
       Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
-      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead'], 'title for title in groups | filter:$viewValue');
+      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead'], 'title for title in possibleNetworks | filter:$viewValue');
       Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
 
       schema['tabs'] = {
@@ -93,9 +106,14 @@ module Fabric {
     }
 
     function onBrokerData(brokerStatuses) {
-      $scope.groups = brokerStatuses.map(s => s.group).unique().sort();
+      var networkNames = brokerStatuses.map(s => s.networks).flatten().unique();
+      var groups = brokerStatuses.map(s => s.group).unique();
+
+      $scope.groups = networkNames.concat(groups).unique().sort();
       $scope.profiles = brokerStatuses.map(s => s.profile).unique().sort();
       $scope.brokerNames = brokerStatuses.map(s => s.brokerName).unique().sort();
+
+      updatePossibleNetworks();
 
       var version = brokerStatuses.map(s => s.version).find(s => s) || "1.0";
       jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String,java.util.List)", version, ["id", "abstract"], onSuccess(onProfileData));
