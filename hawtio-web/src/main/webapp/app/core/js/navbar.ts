@@ -17,6 +17,11 @@ module Core {
       return workspace.topLevelTabs;
     };
 
+
+    $scope.$on('jmxTreeUpdated', function () {
+      reloadPerspective();
+    });
+
     $scope.subLevelTabs = () => workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
