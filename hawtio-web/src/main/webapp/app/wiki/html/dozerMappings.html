@@ -116,7 +116,7 @@
               id="{{field.id}}"
               anchors="{{field.anchor}}"
               field-path="{{field.path}}">
-          {{field.displayName}} : {{field.typeName}}
+          <strong>{{field.displayName}}</strong> : <span class="typeName">{{field.typeName}}</span>
         </span>
         <ul>
           <li ng-repeat="field in field.properties"
@@ -126,7 +126,7 @@
 
 
       <script type="text/ng-template" id="pageTemplate.html">
-        <div hawtio-jsplumb draggable="false" layout="false" timeout="300">
+        <div hawtio-jsplumb draggable="false" layout="false" timeout="500">
 
           <!-- "from" class -->
           <div class="span6">

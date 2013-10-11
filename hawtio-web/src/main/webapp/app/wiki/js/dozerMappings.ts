@@ -50,7 +50,7 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
-    $scope.triggerRefresh = (timeout = 50) => {
+    $scope.triggerRefresh = (timeout = 500) => {
       $scope.main = "";
       setTimeout(() => {
         $scope.main = $templateCache.get("pageTemplate.html");
@@ -65,7 +65,7 @@ module Wiki {
     $scope.doReload = () => {
       $scope.selectedMapping.class_a.value = $scope.aName;
       $scope.selectedMapping.class_b.value = $scope.bName;
-      $scope.triggerRefresh(150);
+      $scope.triggerRefresh();
     };
 
     $scope.$watch('selectedMapping', (newValue, oldValue) => {
@@ -109,10 +109,14 @@ module Wiki {
             property.id = Core.getUUID();
             property.path = parentId + '/' + property.displayName;
             property.anchor = anchor;
+
+            // TODO - Let's see if we need to do this...
+            /*
             var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
             if (lookup) {
               $scope.fetchProperties(property.typeName, property, anchor);
             }
+            */
           });
           Core.$apply($scope);
         },
@@ -155,9 +159,17 @@ module Wiki {
       });
     }
 
+    function getPaintStyle() {
+      return {
+        strokeStyle: UI.colors.sample(),
+        lineWidth: 4
+      };
+    }
+
     $scope.jsPlumbCallback = (jsplumb, nodes, nodesById, connections) => {
 
       // Set up any connections loaded from the XML
+      // TODO - currently we actually are only looking at the top-level properties
       angular.forEach($scope.selectedMapping.fields, (field) => {
         var a_property = extractProperty($scope.selectedMapping.class_a, field.a.value);
         var b_property = extractProperty($scope.selectedMapping.class_b, field.b.value);
@@ -171,7 +183,8 @@ module Wiki {
             target: b_node.el
           }, {
             connector: $scope.connectorStyle,
-            maxConnections: -1
+            maxConnections: 1,
+            paintStyle: getPaintStyle()
           });
 
           //Ensure loaded connections can also be removed
@@ -187,6 +200,7 @@ module Wiki {
 
         // Add a handler so we can click on a connection to make it go away
         addConnectionClickHandler(info.connection, jsplumb);
+        info.connection.setPaintStyle(getPaintStyle());
 
         var newMapping = $scope.getSourceAndTarget(info);
 
