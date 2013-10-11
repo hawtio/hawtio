@@ -14,6 +14,9 @@ module Wiki {
     $scope.mappings = [];
     $scope.schemas = [];
 
+    $scope.aName = '';
+    $scope.bName = '';
+
     $scope.connectorStyle = [ "Bezier" ];
 
     $scope.main = "";
@@ -47,23 +50,40 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    $scope.triggerRefresh = (timeout = 50) => {
+      $scope.main = "";
+      setTimeout(() => {
+        $scope.main = $templateCache.get("pageTemplate.html");
+        Core.$apply($scope);
+      }, timeout);
+    };
+
+    $scope.disableReload = () => {
+      return $scope.selectedMapping.class_a.value === $scope.aName && $scope.selectedMapping.class_b.value === $scope.bName;
+    }
+
+    $scope.doReload = () => {
+      $scope.selectedMapping.class_a.value = $scope.aName;
+      $scope.selectedMapping.class_b.value = $scope.bName;
+      $scope.triggerRefresh(150);
+    };
+
     $scope.$watch('selectedMapping', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        $scope.main = "";
-        setTimeout(() => {
-          $scope.main = $templateCache.get("pageTemplate.html");
-        }, 50);
+        $scope.aName = newValue.class_a.value;
+        $scope.bName = newValue.class_b.value;
+        $scope.triggerRefresh();
       }
     });
 
     $scope.$watch('selectedMapping.class_a.value', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
+      if (newValue !== oldValue && newValue !== '') {
         $scope.fetchProperties(newValue, $scope.selectedMapping.class_a, 'Right');
       }
     });
 
     $scope.$watch('selectedMapping.class_b.value', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
+      if (newValue !== oldValue && newValue !== '') {
         $scope.fetchProperties(newValue, $scope.selectedMapping.class_b, 'Left');
       }
     });
@@ -94,7 +114,6 @@ module Wiki {
               $scope.fetchProperties(property.typeName, property, anchor);
             }
           });
-          console.log("got: ", response);
           Core.$apply($scope);
         },
         error: (response) => {
@@ -123,15 +142,51 @@ module Wiki {
     };
 
 
+    function extractProperty(clazz, prop) {
+      return clazz.properties.find((property) => {
+        return property.path.endsWith('/' + prop);
+      });
+    }
+
+    // The jsPlumb directive will call this after it's done it's thing...
+    function addConnectionClickHandler(connection, jsplumb) {
+      connection.bind('click', (connection) => {
+        jsplumb.detach(connection);
+      });
+    }
 
     $scope.jsPlumbCallback = (jsplumb, nodes, nodesById, connections) => {
 
-      jsplumb.bind('connection', (info) => {
-        console.log("connection event: ", info);
+      // Set up any connections loaded from the XML
+      angular.forEach($scope.selectedMapping.fields, (field) => {
+        var a_property = extractProperty($scope.selectedMapping.class_a, field.a.value);
+        var b_property = extractProperty($scope.selectedMapping.class_b, field.b.value);
 
-        info.connection.bind('click', (connection) => {
-          jsplumb.detach(connection);
-        });
+        if (a_property && b_property) {
+          var a_node = nodesById[a_property.id];
+          var b_node = nodesById[b_property.id];
+
+          var connection = $scope.jsPlumb.connect({
+            source: a_node.el,
+            target: b_node.el
+          }, {
+            connector: $scope.connectorStyle,
+            maxConnections: -1
+          });
+
+          //Ensure loaded connections can also be removed
+          addConnectionClickHandler(connection, jsplumb);
+          a_node.connections.push(connection);
+          b_node.connections.push(connection);
+        }
+      });
+
+
+      // Handle new connection events...
+      jsplumb.bind('connection', (info) => {
+
+        // Add a handler so we can click on a connection to make it go away
+        addConnectionClickHandler(info.connection, jsplumb);
 
         var newMapping = $scope.getSourceAndTarget(info);
 
@@ -141,19 +196,14 @@ module Wiki {
         Core.$apply($scope);
       });
 
+      // Handle connection detach events...
       jsplumb.bind('connectionDetached', (info) => {
-        console.log("connectionDetached event: ", info);
         var toDetach = $scope.getSourceAndTarget(info);
         var field = new Dozer.Field(new Dozer.FieldDefinition(toDetach.from), new Dozer.FieldDefinition(toDetach.to));
-        console.log("Mappings: ", $scope.selectedMapping.fields.remove(field));
+        $scope.selectedMapping.fields.remove(field);
+        $scope.modified = true;
         Core.$apply($scope);
       });
-
-      console.log("nodes: ", nodes);
-      console.log("Selected Mapping: ", $scope.selectedMapping);
-
-
-      console.log("jsplumb callback called...");
     };
 
 
