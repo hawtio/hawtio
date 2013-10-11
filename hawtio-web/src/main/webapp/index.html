@@ -64,7 +64,7 @@
       <div class="pull-left">
         <a class="brand" href="#">
           <img ng-show="appLogo" ng-src="{{appLogo}}"/>
-          <strong>{{appName}}</strong>
+          <strong ng-bind-html-unsafe="appName"></strong>
         </a>
       </div>
 
