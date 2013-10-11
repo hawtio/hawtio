@@ -4,6 +4,7 @@ module Wiki {
   export var springNamespaces = ["http://www.springframework.org/schema/beans"];
   export var droolsNamespaces = ["http://drools.org/schema/drools-spring"];
   export var dozerNamespaces = ["http://dozer.sourceforge.net"];
+  export var activemqNamespaces = ["http://activemq.apache.org/schema/core"];
 
   export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/canvas", "/wiki/camel/properties", "/wiki/dozer/mappings"];
 
@@ -249,6 +250,8 @@ module Wiki {
         icon = "/app/camel/img/camel.png";
       } else if (xmlNamespaces.any((ns) => Wiki.dozerNamespaces.any(ns))) {
         icon = "/app/dozer/img/dozer.gif";
+      } else if (xmlNamespaces.any((ns) => Wiki.activemqNamespaces.any(ns))) {
+        icon = "/app/activemq/img/message_broker.png";
       } else {
         console.log("file " + name + " has namespaces " + xmlNamespaces);
       }
@@ -262,7 +265,7 @@ module Wiki {
           css = "icon-folder-close";
         }
       } else if ("xml" === extension) {
-        css = "icon-cog";
+        css = "icon-file-text";
       } else {
         css = "icon-file-alt";
       }

@@ -563,6 +563,26 @@ div#main div ul.nav li a.nav-primary {
   cursor: pointer;
 }
 
+.ngRow.selected {
+  color: #ffffff !important;
+  background-color: #40a0ce !important;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.ngRow.selected .ngCell {
+  color: #ffffff !important;
+  background-color: #40a0ce !important;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+
+.ngRow.selected .ngCellText a {
+  color: #ffffff !important;
+  background-color: #40a0ce !important;
+}
+
+
+
 .dropdown-menu .divider:hover {
   border-top: 0;
   background-image: none !important;

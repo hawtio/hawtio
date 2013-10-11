@@ -42,9 +42,6 @@ module Wiki {
             };
           }).
           filter('fileIconClass',() => iconClass).
-          directive('wikiFileList', () => {
-            return new Wiki.FileList();
-          }).
           directive('wikiHrefAdjuster', ($location) => {
             return {
               restrict: 'A',

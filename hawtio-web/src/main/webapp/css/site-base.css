@@ -2477,3 +2477,16 @@ a.dashboard-link:hover {
 .dozer-mappings span {
   width: 500px;
 }
+
+.wiki-grid {
+  border-right: 1px solid #d4d4d4;
+}
+
+.wiki-file-list-up {
+  color: black;
+}
+
+.wiki-file-list-up:hover {
+  text-decoration: none;
+
+}

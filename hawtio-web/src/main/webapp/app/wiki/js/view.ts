@@ -8,7 +8,7 @@ module Wiki {
     }, 100);
   }
 
-  export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile) {
+  export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache) {
 
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -37,16 +37,19 @@ module Wiki {
       displayFooter: false,
       selectedItems: [],
       showSelectionCheckbox: true,
+      enableSorting: false,
+      useExternalSorting: true,
       columnDefs: [
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><span class="file-icon" ng-class="fileClass(row.entity)" ng-bind-html-unsafe="fileIconHtml(row)"></span> {{fileName(row.entity)}}</a></div>',
-          cellFilter: ""
+          cellTemplate: $templateCache.get('fileCellTemplate.html'),
+          headerCellTemplate: $templateCache.get('fileColumnTemplate.html')
         }
       ]
     };
 
+    /*
     if (!$scope.nameOnly) {
       $scope.gridOptions.columnDefs.push({
         field: 'lastModified',
@@ -59,6 +62,7 @@ module Wiki {
         cellFilter: "number"
       });
     }
+    */
 
     $scope.createDashboardLink = () => {
       var href = '/wiki/branch/:branch/view/*page';
@@ -77,6 +81,25 @@ module Wiki {
       }
       return answer;
     };
+
+    $scope.displayClass = () => {
+      if (!$scope.children || $scope.children.length ===0) {
+        return "";
+      }
+      return "span9";
+    };
+
+    $scope.parentLink = () => {
+      var start = startLink($scope.branch);
+      var prefix = start + "/view";
+      //console.log("pageId: ", $scope.pageId)
+      var parts = $scope.pageId.split("/");
+      //console.log("parts: ", parts);
+      var path = "/" + parts.first(parts.length - 1).join("/");
+      //console.log("path: ", path);
+      return Core.createHref($location, prefix + path, []);
+    };
+
 
     $scope.childLink = (child) => {
       var start = startLink($scope.branch);
@@ -453,10 +476,24 @@ module Wiki {
       $scope.codeMirrorOptions.mode.name = $scope.format;
       //console.log("format is '" + $scope.format + "'");
 
-      $scope.children = details.children;
-      if (!details.directory) {
-        $scope.childen = null;
+      $scope.children = null;
+
+      if (details.directory) {
+
+        var directories = details.children.filter((dir) => { return dir.directory && !dir.name.has(".profile")});
+        var profiles = details.children.filter((dir) => { return dir.directory && dir.name.has(".profile")});
+        var files = details.children.filter((file) => { return !file.directory; });
+
+        directories = directories.sortBy((dir) => { return dir.name; });
+        profiles = profiles.sortBy((dir) => { return dir.name; });
+
+        files = files.sortBy((file) => { return file.name; })
+                     .sortBy((file) => { return file.name.split('.').last(); });
+
+
+        $scope.children = (<any>Array).create(directories, profiles, files);
       }
+
 
       $scope.html = null;
       $scope.source = null;
