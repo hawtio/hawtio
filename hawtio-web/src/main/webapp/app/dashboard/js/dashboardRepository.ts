@@ -157,7 +157,7 @@ module Dashboard {
     }
 
     public getType() {
-      return 'local';
+      return 'container';
     }
   }
 

@@ -96,7 +96,7 @@ module Perspective {
     if (inFabric && hasGit) {
       return "fabric";
     } else if (inFabric) {
-      return "local";
+      return "container";
     }
     return null;
   }

@@ -66,7 +66,7 @@ module Dashboard {
     };
 
     $scope.usingLocal = () => {
-      return dashboardRepository.getType() === 'local';
+      return dashboardRepository.getType() === 'container';
     };
 
     if ($scope.usingFabric()) {
