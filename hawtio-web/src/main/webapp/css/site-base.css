@@ -2470,3 +2470,10 @@ a.dashboard-link:hover {
   list-style-type: none;
 }
 
+.dozer-mappings ul {
+  margin-left: 50px;
+}
+
+.dozer-mappings span {
+  width: 500px;
+}

@@ -34,7 +34,7 @@
     </div>
   </div>
 
-  <div class="tabbable hawtio-form-tabs">
+  <div class="tabbable hawtio-form-tabs" ng-model="tab">
 
     <div class="tab-pane" title="Draggy Droppy">
 
@@ -61,7 +61,8 @@
       <script type="text/ng-template" id="property.html">
         <span class="jsplumb-node dozer-mapping-node"
               id="{{field.id}}"
-              anchors="{{field.anchor}}">
+              anchors="{{field.anchor}}"
+              field-path="{{field.path}}">
           {{field.displayName}} : {{field.typeName}}
         </span>
         <ul>
@@ -75,7 +76,7 @@
         <div hawtio-jsplumb draggable="false" layout="false" timeout="300">
 
           <!-- "from" class -->
-          <div class="span5">
+          <div class="span6">
             <div class="row-fluid">
               <input type="text" class="span12"
                      ng-model="selectedMapping.class_a.value"
@@ -106,7 +107,7 @@
 
 
           <!-- "to" class -->
-          <div class="span5 offset2">
+          <div class="span6">
             <div class="row-fluid">
               <input type="text" class="span12"
                      ng-model="selectedMapping.class_b.value"

@@ -17,6 +17,7 @@ module Wiki {
     $scope.connectorStyle = [ "Bezier" ];
 
     $scope.main = "";
+    $scope.tab = "Draggy Droppy";
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -77,8 +78,16 @@ module Wiki {
         success: (response) => {
           target.error = null;
           target.properties = response.value;
+          var parentId = '';
+          if (angular.isDefined(target.value)) {
+            parentId = target.value;
+          } else {
+            parentId = target.path;
+          }
+
           angular.forEach(target.properties, (property) => {
             property.id = Core.getUUID();
+            property.path = parentId + '/' + property.displayName;
             property.anchor = anchor;
             var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
             if (lookup) {
@@ -100,8 +109,50 @@ module Wiki {
       });
     };
 
+    $scope.getSourceAndTarget = (info) => {
+      var sourcePath = info.source.attr('field-path');
+      var targetPath = info.target.attr('field-path');
+
+      var sourceField = sourcePath.split('/').last();
+      var targetField = sourcePath.split('/').last();
+
+      return {
+        from: sourceField,
+        to: targetField
+      };
+    };
+
+
 
     $scope.jsPlumbCallback = (jsplumb, nodes, nodesById, connections) => {
+
+      jsplumb.bind('connection', (info) => {
+        console.log("connection event: ", info);
+
+        info.connection.bind('click', (connection) => {
+          jsplumb.detach(connection);
+        });
+
+        var newMapping = $scope.getSourceAndTarget(info);
+
+        var field = new Dozer.Field(new Dozer.FieldDefinition(newMapping.from), new Dozer.FieldDefinition(newMapping.to));
+        $scope.selectedMapping.fields.push(field);
+        $scope.modified = true;
+        Core.$apply($scope);
+      });
+
+      jsplumb.bind('connectionDetached', (info) => {
+        console.log("connectionDetached event: ", info);
+        var toDetach = $scope.getSourceAndTarget(info);
+        var field = new Dozer.Field(new Dozer.FieldDefinition(toDetach.from), new Dozer.FieldDefinition(toDetach.to));
+        console.log("Mappings: ", $scope.selectedMapping.fields.remove(field));
+        Core.$apply($scope);
+      });
+
+      console.log("nodes: ", nodes);
+      console.log("Selected Mapping: ", $scope.selectedMapping);
+
+
       console.log("jsplumb callback called...");
     };
 
@@ -195,7 +246,26 @@ module Wiki {
       }
     };
 
+    $scope.saveMappings = () => {
+      $scope.model.mappings = $scope.mappings;
+      var text = Dozer.saveToXmlText($scope.model);
+      if (text) {
+        var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+        wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
+          Wiki.onComplete(status);
+          $scope.modified = false;
+          notification("success", "Saved " + $scope.pageId)
+          goToView();
+          Core.$apply($scope);
+        });
+      }
+    };
+
     $scope.save = () => {
+      if ($scope.tab === "Draggy Droppy") {
+        $scope.saveMappings();
+        return;
+      }
       if ($scope.model) {
         // lets copy the mappings from the tree
         var model = Dozer.loadModelFromTree($scope.rootTreeNode, $scope.model);
