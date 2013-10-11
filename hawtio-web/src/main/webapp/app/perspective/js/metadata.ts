@@ -4,6 +4,7 @@ module Perspective {
     fabric: {
       label: "Fabric",
       isValid: (workspace) => Fabric.hasFabric(workspace),
+      lastPage: "#/fabric/activeProfiles",
       topLevelTabs: {
         includes: [
           {
@@ -49,6 +50,7 @@ module Perspective {
     },
     container: {
       label: "Container",
+      lastPage: "#/logs",
       topLevelTabs: {
         excludes: [
           {
