@@ -2490,3 +2490,8 @@ a.dashboard-link:hover {
   text-decoration: none;
 
 }
+
+.fabric-page-header.features {
+  margin-top: 10px;
+}
+

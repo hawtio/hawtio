@@ -132,7 +132,29 @@ module Fabric {
         notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
         Core.$apply($scope);
       });
-    }
+    };
+
+
+    $scope.changeAttribute = (attribute, value) => {
+      jolokia.request({
+        type: 'exec',
+        method: 'post',
+        mbean: Fabric.managerMBean,
+        operation: 'setProfileAttribute',
+        arguments: [$scope.versionId, $scope.profileId, attribute, value]
+      }, {
+        success: () => {
+          // TODO - we're secretly hiding that the ng-click event is firing twice...
+          // notification('success', "Set attribute " + attribute + " to " + value);
+          Core.$apply($scope);
+        },
+        error: (response) => {
+          console.log("Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
+          // notification('error', "Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
+          Core.$apply($scope);
+        }
+      });
+    };
 
 
     $scope.doChangeParents = () => {
