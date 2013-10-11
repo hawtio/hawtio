@@ -4,6 +4,10 @@ module Insight {
 
     export var allContainers = { id: '-- all --' };
 
+    export function hasInsight(workspace) {
+      return workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
+    }
+
     export function createCharts($scope, chartsDef, element, jolokia) {
 
         var chartsDiv = $(element);

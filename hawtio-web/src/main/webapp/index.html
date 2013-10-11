@@ -77,7 +77,7 @@
             </a>
             <ul class="dropdown-menu">
               <li ng-repeat="perspective in perspectives">
-                <a ng-click="perspectiveDetails.perspective = perspective"
+                <a ng-click="switchPerspective(perspective)"
                    ng-hide="perspectiveDetails.perspective.id === perspective.id"
                    title="Switch to the {{perspective.label}} perspective"
                    data-placement="bottom">

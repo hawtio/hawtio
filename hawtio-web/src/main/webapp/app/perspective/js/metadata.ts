@@ -17,13 +17,16 @@ module Perspective {
           },
           {
             href: "#/dashboard"
+          },
+          {
+            id: "fabric.insight"
           }
         ]
       }
     },
     insight: {
       label: "Insight",
-      isValid: (workspace) => workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'}),
+      isValid: (workspace) => Insight.hasInsight(workspace),
       topLevelTabs: {
         includes: [
           {

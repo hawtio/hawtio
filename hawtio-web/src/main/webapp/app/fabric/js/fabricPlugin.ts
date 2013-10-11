@@ -100,6 +100,18 @@ module Fabric {
               },
               isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
             });
+            workspace.topLevelTabs.push( {
+              id: "fabric.insight",
+              content: "Insight",
+              title: "View insight into your fabric looking at logs, metrics and messages across the fabric",
+              isValid: (workspace) => {
+                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace)
+              },
+              href: () => {
+                return "#/insight/all?p=insight";
+              },
+              isActive: (workspace:Workspace) => workspace.isLinkActive("/insight")
+            });
 
             helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
 

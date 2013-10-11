@@ -4,6 +4,7 @@ module Core {
 
     $scope.hash = null;
     $scope.topLevelTabs = [];
+    $scope.currentPerspective = null;
     $scope.perspectiveDetails = {
       perspective: null
     };
@@ -22,39 +23,38 @@ module Core {
 
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
-    $scope.$watch('perspectiveDetails.perspective', (newValue, oldValue) => {
-      if (angular.toJson(newValue) !== angular.toJson(oldValue)) {
-        var perspective = $scope.perspectiveDetails.perspective;
-        if (perspective) {
-          console.log("Changed the perspective to " + JSON.stringify(perspective));
-          $location.search(Perspective.perspectiveSearchId, perspective.id);
-          reloadPerspective();
-          $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
-          if (oldValue) {
-            oldValue.lastPage = $location.url();
-            if (newValue.lastPage) {
-              $location.url(Core.trimLeading(newValue.lastPage, "#"));
-            }
+    $scope.switchPerspective = (perspective) => {
+      var searchPerspectiveId = $location.search()[Perspective.perspectiveSearchId];
+      if (perspective && ($scope.currentPerspective !== perspective ||  perspective.id !== searchPerspectiveId)) {
+        console.log("Changed the perspective to " + JSON.stringify(perspective) + " from search id " + searchPerspectiveId);
+        if ($scope.currentPerspective) {
+          $scope.currentPerspective.lastPage = $location.url();
+        }
+        var pid = perspective.id;
+        $location.search(Perspective.perspectiveSearchId, pid);
+        console.log("Setting perspective to " + pid);
+        $scope.currentPerspective = perspective;
+        reloadPerspective();
+        $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+        if (perspective.lastPage) {
+          var path = Core.trimLeading(perspective.lastPage, "#");
+          // lets avoid any old paths with ?p=" inside
+          var idx = path.indexOf("?p=") || path.indexOf("&p=");
+          if (idx > 0) {
+            path = path.substring(0, idx);
           }
+          var sep = (path.indexOf("?") >= 0) ? "&" : "?";
+          path += sep + "p=" + pid;
+          $location.url(path);
         }
       }
-    });
+    };
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {
       $scope.hash = workspace.hash();
       reloadPerspective();
     });
-
-
-
-    /*
-    $scope.$watch('hash', function() {
-      console.log("$scope.hash: ", $scope.hash);
-      console.log("$location:", $location);
-      console.log("viewRegistry:", viewRegistry);
-    });
-    */
 
     $scope.link = (nav) => {
       var href;
@@ -63,7 +63,11 @@ module Core {
       }else {
         href = nav.href();
       }
-      return createHref($location, href, ['tab', 'nid']);
+      var removeParams = ['tab', 'nid'];
+      if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
+        removeParams.push("p");
+      }
+      return createHref($location, href, removeParams);
     };
 
     $scope.fullScreenLink = () => {
@@ -120,18 +124,17 @@ module Core {
     };
 
     function reloadPerspective() {
-
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+      var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
 
-      if (angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+      console.log("reloading perspectives for " + currentId);
+
+      if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+        $scope.perspectiveId = currentId;
         $scope.perspectives = perspectives;
-
-        console.log("Current perspectives " + JSON.stringify($scope.perspectives));
-        var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
         $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
-        console.log("Current perspective ID: " + currentId + " perspective: " + $scope.perspective);
+        console.log("Current perspective ID: " + currentId);
         $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
-
       }
     }
 
