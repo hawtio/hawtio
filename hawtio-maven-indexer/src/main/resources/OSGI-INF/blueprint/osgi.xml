@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0">
+
+  <bean id="mavenIndexer" class="io.hawt.maven.indexer.AsyncMavenIndexerFacadeFactory" init-method="init"
+        destroy-method="destroy" scope="singleton">
+    <property name="indexDirectory" value="${indexDir}"/>
+<!--
+    <property name="repositories" value="${hawtio.maven.index.repos}"/>
+-->
+  </bean>
+
+  <!-- OSGi specific Config Admin -->
+  <ext:property-placeholder placeholder-prefix="$[" placeholder-suffix="]" />
+
+  <cm:property-placeholder persistent-id="io.hawt.hawtio-maven-indexer" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="indexDir" value="$[karaf.data]/mavenIndexer"/>
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+</blueprint>
