@@ -7,7 +7,10 @@ module Dozer {
    * @type {Array}
    */
   export var excludedPackages = [
-    'java.lang'
+    'java.lang',
+    'int',
+    'double',
+    'long'
   ];
 
   /**

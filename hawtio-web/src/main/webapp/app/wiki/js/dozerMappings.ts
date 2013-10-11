@@ -1,5 +1,5 @@
 module Wiki {
-  export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
+  export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) {
     Wiki.initScope($scope, $routeParams, $location);
     Dozer.schemaConfigure();
 
@@ -13,9 +13,10 @@ module Wiki {
     $scope.selectedItems = [];
     $scope.mappings = [];
     $scope.schemas = [];
-    $scope.selectedMapping = {};
 
     $scope.connectorStyle = [ "Bezier" ];
+
+    $scope.main = "";
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -45,6 +46,15 @@ module Wiki {
       setTimeout(updateView, 50);
     });
 
+    $scope.$watch('selectedMapping', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.main = "";
+        setTimeout(() => {
+          $scope.main = $templateCache.get("pageTemplate.html");
+        }, 50);
+      }
+    });
+
     $scope.$watch('selectedMapping.class_a.value', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.fetchProperties(newValue, $scope.selectedMapping.class_a, 'Right');
@@ -58,18 +68,36 @@ module Wiki {
     });
 
     $scope.fetchProperties = (className, target, anchor) => {
-
-      var properties = jolokia.execute(Dozer.getIntrospectorMBean(workspace), 'getProperties', [className]);
-      angular.forEach(properties, (property) => {
-        property.id = Core.getUUID();
-        property.anchor = anchor;
-        var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
-        if (lookup) {
-          $scope.fetchProperties(property.typeName, property, anchor);
+      jolokia.request({
+        type: 'exec',
+        mbean: Dozer.getIntrospectorMBean(workspace),
+        operation: 'getProperties(java.lang.String)',
+        arguments: [className]
+      }, {
+        success: (response) => {
+          target.error = null;
+          target.properties = response.value;
+          angular.forEach(target.properties, (property) => {
+            property.id = Core.getUUID();
+            property.anchor = anchor;
+            var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
+            if (lookup) {
+              $scope.fetchProperties(property.typeName, property, anchor);
+            }
+          });
+          console.log("got: ", response);
+          Core.$apply($scope);
+        },
+        error: (response) => {
+          target.properties = null;
+          target.error = {
+            'type': response.error_type,
+            'stackTrace': response.error
+          };
+          console.log("got error: ", response);
+          Core.$apply($scope);
         }
       });
-
-      target.properties = properties;
     };
 
 
@@ -294,7 +322,8 @@ module Wiki {
 
     function onResults(response) {
       var text = response.text;
-      if (text) {
+      if (text && $scope.responseText !== text) {
+        $scope.responseText = text;
         // lets remove any dodgy characters so we can use it as a DOM id
         $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
         console.log("Model:", $scope.model);
@@ -304,9 +333,11 @@ module Wiki {
         console.log("Mappings: ", $scope.mappings);
         //console.log("Has mappings " + JSON.stringify($scope.mappings, null, '  '));
         $scope.mappingTree = Dozer.createDozerTree($scope.model);
-        if (Object.equal($scope.selectedMapping, {})) {
+        if (!angular.isDefined($scope.selectedMapping)) {
           $scope.selectedMapping = $scope.mappings.first();
         }
+
+        $scope.main = $templateCache.get("pageTemplate.html");
       } else {
         console.log("No XML found for page " + $scope.pageId);
       }

@@ -32,7 +32,7 @@ module Dozer {
       appendElement(this.class_a, element, "class-a", 2);
       appendElement(this.class_b, element, "class-b", 2);
       appendElement(this.fields, element, "field", 2);
-      appendAttributes(this, element, ["class_a", "class_b", "fields", "map_id"]);
+      appendAttributes(this, element, ["class_a", "class_b", "fields"]);
     }
   }
 
@@ -42,7 +42,7 @@ module Dozer {
 
     saveToElement(element) {
       Dozer.addTextNode(element, this.value);
-      appendAttributes(this, element, ["value"]);
+      appendAttributes(this, element, ["value", "properties", "error"]);
     }
   }
 
@@ -67,7 +67,7 @@ module Dozer {
 
     saveToElement(element) {
       Dozer.addTextNode(element, this.value);
-      appendAttributes(this, element, ["value"]);
+      appendAttributes(this, element, ["value", "properties", "error"]);
     }
   }
 
