@@ -6,7 +6,7 @@ describe("Dozer", function () {
     var savedXmlText = null;
     var expectedXml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">\n' +
-    '  <mapping>\n' +
+    '  <mapping map-id="1234">\n' +
     '    <class-a>org.dozer.vo.copybyreference.TestA</class-a>\n' +
     '    <class-b>org.dozer.vo.copybyreference.TestB</class-b>\n' +
     '    <field>\n' +
