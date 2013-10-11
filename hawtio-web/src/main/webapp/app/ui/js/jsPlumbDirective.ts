@@ -16,6 +16,11 @@ module UI {
         useLayout = Core.parseBooleanValue($attrs['layout']);
       }
 
+      var timeout = 100;
+      if (angular.isDefined($attrs['timeout'])) {
+        timeout = Core.parseIntValue($attrs['timeout'], "timeout");
+      }
+
       var endpointStyle:any[] = ["Dot", { radius: 10, cssClass: 'jsplumb-circle', hoverClass: 'jsplumb-circle-hover' }];
       var labelStyles:any[] = [ "Label" ];
       var arrowStyles:any[] = [ "Arrow", {
@@ -27,6 +32,10 @@ module UI {
       } ];
 
       var connectorStyle:any[] = [ "Flowchart", { cornerRadius: 4, gap: 8 } ];
+
+      if (angular.isDefined($scope.connectorStyle)) {
+        connectorStyle = $scope.connectorStyle;
+      }
 
 
       // Given an element, create a node data structure
@@ -116,19 +125,19 @@ module UI {
 
       };
 
-
+      /*
       $element.bind('DOMNodeInserted', (event) => {
         if ($scope.jsPlumb) {
           if (angular.isString(event.target.className)
               && !event.target.className.has("_jsPlumb_endpoint_anchor_")
               && event.target.className.has("jsplumb-node")) {
             // TODO - handle added nodes here, like from ng-repeat for example
-            console.log("DOMNodeInserted: ", event);
+            //console.log("DOMNodeInserted: ", event);
             gatherElements();
             var newNodes = nodes.filter((node) => { return node.endpoints.isEmpty(); });
             if (newNodes && newNodes.length) {
               angular.forEach(newNodes, (node) => {
-                console.log("Adding node: ", node.id);
+                //console.log("Adding node: ", node.id);
                 createEndpoint($scope.jsPlumb, node);
               });
               $scope.jsPlumb.repaintEverything();
@@ -137,6 +146,7 @@ module UI {
           }
         }
       });
+      */
 
 
       // Kick off the initial layout of elements in the container
@@ -200,8 +210,15 @@ module UI {
           //$scope.jsPlumbConnections.push(connection);
         });
 
+        $scope.jsPlumb.recalculateOffsets($element);
+        $scope.jsPlumb.repaintEverything();
+
+        if (angular.isDefined($scope.jsPlumbCallback) && angular.isFunction($scope.jsPlumbCallback)) {
+          $scope.jsPlumbCallback($scope.jsPlumb, $scope.jsPlumbNodes, $scope.jsPlumbNodesById, $scope.jsPlumbTransitions);
+        }
+
         Core.$apply($scope);
-      }, 10);
+      }, timeout);
     };
   }
 }

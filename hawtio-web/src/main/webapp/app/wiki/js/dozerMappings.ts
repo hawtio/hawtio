@@ -15,6 +15,8 @@ module Wiki {
     $scope.schemas = [];
     $scope.selectedMapping = {};
 
+    $scope.connectorStyle = [ "Bezier" ];
+
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
       data: 'mappings',
@@ -56,37 +58,25 @@ module Wiki {
     });
 
     $scope.fetchProperties = (className, target, anchor) => {
-      jolokia.request({
-        type: 'exec',
-        mbean: Dozer.getIntrospectorMBean(workspace),
-        operation: 'getProperties(java.lang.String)',
-        arguments: [className]
-      }, {
-        success: (response) => {
-          target.error = null;
-          target.properties = response.value;
-          angular.forEach(target.properties, (property) => {
-            property.id = Core.getUUID();
-            property.anchor = anchor;
-            var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
-            if (lookup) {
-              $scope.fetchProperties(property.typeName, property, anchor);
-            }
-          });
-          console.log("got: ", response);
-          Core.$apply($scope);
-        },
-        error: (response) => {
-          target.properties = null;
-          target.error = {
-            'type': response.error_type,
-            'stackTrace': response.error
-          };
-          console.log("got error: ", response);
-          Core.$apply($scope);
+
+      var properties = jolokia.execute(Dozer.getIntrospectorMBean(workspace), 'getProperties', [className]);
+      angular.forEach(properties, (property) => {
+        property.id = Core.getUUID();
+        property.anchor = anchor;
+        var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
+        if (lookup) {
+          $scope.fetchProperties(property.typeName, property, anchor);
         }
-      })
+      });
+
+      target.properties = properties;
     };
+
+
+    $scope.jsPlumbCallback = (jsplumb, nodes, nodesById, connections) => {
+      console.log("jsplumb callback called...");
+    };
+
 
     $scope.formatStackTrace = (exception) => {
       return Log.formatStackTrace(exception);

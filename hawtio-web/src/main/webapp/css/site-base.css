@@ -2456,4 +2456,17 @@ a.dashboard-link:hover {
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
+.dozer-mapping-node {
+  border: 1px solid #f3f3f3;
+  border-radius: 4px;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dozer-mappings li {
+  list-style-type: none;
+}
 
