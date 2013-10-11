@@ -9,6 +9,9 @@ module Fabric {
     $scope.profiles = [];
     $scope.parentProfiles = [];
     $scope.entity = {};
+    $scope.otherEntity = {
+      networkConnectAll: false
+    };
     $scope.defaultGroup = "default";
     $scope.defaultBrokerName = "brokerName";
 
@@ -37,6 +40,11 @@ module Fabric {
     }
 
     $scope.$watch("entity.group", updatePossibleNetworks);
+    $scope.$watch("otherEntity.networkConnectAll", () => {
+      if ($scope.otherEntity.networkConnectAll) {
+        $scope.entity.networks = $scope.possibleNetworks;
+      }
+    });
 
 
     // default parameters from the URL
@@ -96,11 +104,19 @@ module Fabric {
       Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
-      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead'], 'title for title in possibleNetworks | filter:$viewValue');
       Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
+      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
+      Core.pathSet(schema.properties, ['networks', 'input-attributes', "ng-hide"], "otherEntity.networkConnectAll");
+      Core.pathSet(schema.properties, ['networks', 'tooltip'], 'The broker groups to create a store and forward network to');
+
+      // add an extra property to make it easy to connect to all / none
+      Core.pathSet(schema.properties, ['networkConnectAll', 'type'], 'boolean');
+      Core.pathSet(schema.properties, ['networkConnectAll', 'input-attributes', 'ng-model'], "otherEntity.networkConnectAll");
+      Core.pathSet(schema.properties, ['networkConnectAll', 'label'], 'Network to all groups');
+      Core.pathSet(schema.properties, ['networkConnectAll', 'tooltip'], 'Should this broker create a store and forward network to all the known groups of brokers');
 
       schema['tabs'] = {
-        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networks'],
+        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networkConnectAll', 'networks'],
         'Advanced': ['networksUserName', 'networksPassword', '*']
       };
     }

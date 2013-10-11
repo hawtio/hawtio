@@ -42,7 +42,7 @@ module Forms {
     // Note if for whatever reason we need to go back to the old way of using hawtio directives for standard
     // angularjs directives, just clear inputMarker to null here ;)
     // inputMarkup = null;
-
+                                 id
     if (inputMarkup) {
       input = $(inputMarkup);
 
@@ -50,7 +50,7 @@ module Forms {
 
       var id = safeId;
 
-      var modelName = config.model;
+      var modelName = config.model || Core.pathGet(property, ["input-attributes", "ng-model"]);
       if (!modelName) {
         modelName = config.getEntity() + "." + id;
       }
