@@ -2583,7 +2583,7 @@ i.expandable-indicator.folder {
   }
 }
 
-@media(min-width: 600px) {
+@media(max-width: 849px) {
   .wiki-fixed {
     margin-left: 0 !important;
     margin-right: 0 !important;
