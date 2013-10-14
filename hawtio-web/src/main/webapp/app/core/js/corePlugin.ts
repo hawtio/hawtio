@@ -364,6 +364,10 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
           }
 
+          setTimeout(() => {
+            $("#main-body").fadeIn(2000);
+          }, 500);
+
         }).
         directive('compile', ['$compile', function ($compile) {
           return function(scope, element, attrs) {
@@ -406,8 +410,8 @@ $(function () {
 });
 
 var adjustHeight = function () {
-  var windowHeight = $(window).height()
-  var headerHeight = $("#main-nav").height()
+  var windowHeight = $(window).height();
+  var headerHeight = $("#main-nav").height();
   var containerHeight = windowHeight - headerHeight;
   $("#main").css("min-height", "" + containerHeight + "px");
 }
@@ -420,10 +424,6 @@ $(function () {
     $(document.documentElement).attr('ng-app', 'hawtioCore');
     adjustHeight();
     $(window).resize(adjustHeight);
-
-    // var tmp:any = window;
-    // tmp.less.watch();
-
   });
 });
 

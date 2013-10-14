@@ -74,11 +74,23 @@
     return [];
   };
 
+
+  hawtioPluginLoader.loaderCallback = null;
+
+  hawtioPluginLoader.setLoaderCallback = function(cb) {
+    hawtioPluginLoader.loaderCallback = cb;
+    console.log("Setting callback to : ", hawtioPluginLoader.loaderCallback);
+  };
+
+
   hawtioPluginLoader.loadPlugins = function(callback) {
+
+    var lcb = hawtioPluginLoader.loaderCallback;
 
     var plugins = {};
 
     var urlsToLoad = hawtioPluginLoader.urls.length;
+    var totalUrls = urlsToLoad;
 
     var loadScripts = function() {
 
@@ -88,9 +100,14 @@
         loaded = loaded + data.Scripts.length;
       });
 
+      var totalScripts = loaded;
+
       var scriptLoaded = function() {
         $.ajaxSetup({async:true});
         loaded = loaded - 1;
+        if (lcb) {
+          lcb.scriptLoaderCallback(lcb, totalScripts, loaded + 1);
+        }
         if (loaded == 0) {
           callback();
         }
@@ -129,6 +146,9 @@
 
       var urlLoaded = function () {
         urlsToLoad = urlsToLoad - 1;
+        if (lcb) {
+          lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
+        }
         if (urlsToLoad == 0) {
           loadScripts();
         }

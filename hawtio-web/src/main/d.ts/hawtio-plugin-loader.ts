@@ -11,6 +11,8 @@ module Hawtio {
 
     getModules():String[];
 
+    setLoaderCallback(callback:any);
+
     loadPlugins(callback: () => void);
     debug();
 
