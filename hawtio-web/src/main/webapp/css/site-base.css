@@ -2555,3 +2555,20 @@ i.expandable-indicator.folder {
   height: 45px;
 }
 
+[class^="dynatree-folder icon-"], [class*=" dynatree-folder icon-"] {
+
+}
+
+[class^="dynatree-folder icon-"]:before, [class*=" dynatree-folder icon-"]:before {
+  font-size: 17px;
+  margin-left: 18px;
+}
+
+
+[class^="dynatree-folder icon-"], [class*=" dynatree-folder icon-"] .dynatree-connector {
+  display: none;
+}
+
+[class^="dynatree-folder icon-"], [class*=" dynatree-folder icon-"] .dynatree-icon {
+  display: none;
+}

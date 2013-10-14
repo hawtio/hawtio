@@ -69,24 +69,28 @@
                  data-placement="bottom">
                 <i class="icon-comments-alt"></i> History</a>
             </li>
+            <!--
             <li class="divider">
             </li>
-            <li>
-              <a ng-click="openRenameDialog()" ng-disabled="gridOptions.selectedItems.length !== 1"
+            -->
+            <li ng-hide="gridOptions.selectedItems.length !== 1">
+              <a ng-click="openRenameDialog()"
                  title="Rename the selected document"
                  data-placement="bottom">
                 <i class="icon-adjust"></i> Rename</a>
             </li>
-            <li>
-              <a ng-click="openMoveDialog()" ng-disabled="!gridOptions.selectedItems.length"
+            <li ng-hide="!gridOptions.selectedItems.length">
+              <a ng-click="openMoveDialog()"
                  title="move the selected documents to a new folder"
                  data-placement="bottom">
                 <i class="icon-move"></i> Move</a>
             </li>
+            <!--
             <li class="divider">
             </li>
-            <li>
-              <a ng-click="openDeleteDialog()" ng-disabled="!gridOptions.selectedItems.length"
+            -->
+            <li ng-hide="!gridOptions.selectedItems.length">
+              <a ng-click="openDeleteDialog()"
                  title="Delete the selected document(s)"
                  data-placement="bottom">
                 <i class="icon-remove"></i> Delete</a>

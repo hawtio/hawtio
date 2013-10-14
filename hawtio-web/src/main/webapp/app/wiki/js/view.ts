@@ -240,6 +240,47 @@ module Wiki {
           var link = Wiki.viewLink($scope.branch, path, $location);
           goToLink(link, $timeout, $location);
         });
+      } else if (template.profile) {
+
+        if (name.endsWith(".profile")) {
+          name = name.replace(".profile", '');
+        }
+
+        Fabric.createProfile(workspace.jolokia, $scope.branch, name, ['default'], () => {
+
+          $scope.addDialog.close();
+          notification('success', 'Created profile ' + name);
+
+          Fabric.newConfigFile(workspace.jolokia, $scope.branch, name, 'ReadMe.md', () => {
+
+            notification('info', 'Created empty Readme.md in profile ' + name);
+            Core.$apply($scope);
+
+            var contents = "Here's an empty ReadMe.md for '" + name + "', please update!";
+
+            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, name, 'ReadMe.md', contents.encodeBase64(), () => {
+              notification('info', 'Updated Readme.md in profile ' + name);
+
+              Core.$apply($scope);
+
+              var link = Wiki.viewLink($scope.branch, path + '.profile', $location);
+              goToLink(link, $timeout, $location);
+
+            }, (response) => {
+              notification('error', 'Failed to set ReadMe.md data in profile ' + name + ' due to ' + response.error);
+              Core.$apply($scope);
+            });
+          }, (response) => {
+            notification('error', 'Failed to create ReadMe.md in profile ' + name + ' due to ' + response.error);
+            Core.$apply($scope);
+          });
+
+        }, (response) => {
+          notification('error', 'Failed to create profile ' + name + ' due to ' + response.error);
+          Core.$apply($scope);
+        })
+
+
       } else {
         notification("success", "Creating new document " + name);
 

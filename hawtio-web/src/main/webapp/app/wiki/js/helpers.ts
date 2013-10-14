@@ -28,6 +28,13 @@ module Wiki {
       exemplar: "New Folder"
     },
     {
+      label: "Fabric Profile",
+      tooltip: "Create a new empty Fabric profile.  Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
+      profile: true,
+      addClass: "icon-book green",
+      exemplar: "user-profile"
+    },
+    {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
       exemplar: "properties-file.properties"
@@ -97,6 +104,11 @@ module Wiki {
       var node = new Folder(title);
       node.parent = parent;
       node.entity = template;
+
+      var addClass = template.addClass;
+      if (addClass) {
+        node.addClass = addClass;
+      }
 
       var key = template.exemplar;
       var parentKey = parent.key || "";
