@@ -7,14 +7,7 @@ input, button, select, textarea {
 }
 
 html, body {
-  /*
-  min-height: 800px;
-  */
-  min-width: 850px;
   font-size: 13.5px;
-  /*
-  height: 100%;
-  */
 }
 
 small {
@@ -711,6 +704,14 @@ div.wiki-fixed[ng-controller] .row-fluid .span12 .nav.nav-tabs li a {
 .controller-section {
   padding-left: 20px;
   padding-right: 20px;
+}
+
+@media(max-width: 849px) {
+  .controller-section {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
 }
 
 #jmxtree {
