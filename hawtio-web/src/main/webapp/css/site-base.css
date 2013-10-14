@@ -162,6 +162,9 @@ span.dynatree-expander {
   color: #728271;
 }
 span.dynatree-icon {
+  position: relative;
+  top: -2px;
+  font-size: 17px;
   color: #EECA7C;
 }
 span:not(.dynatree-has-children) .dynatree-icon:before {
@@ -1721,19 +1724,27 @@ dd.file-list {
   padding-bottom: 5px;
   padding-left: 0 !important;
 }
+
 .file-icon {
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
   display: inline-block;
   width: 16px;
   height: 16px;
+  margin-right: 6px;
 }
+
+.file-icon i.icon-folder-close {
+  color: #EECA7C;
+}
+
 .file-icon i {
   width: 16px;
   height: 16px;
   font-size: 17px;
   position: relative;
   left: 2px;
+  top: 2px;
 }
 .file-icon img {
   width: 16px;
@@ -1935,8 +1946,13 @@ dd.file-list {
 
 .active-profile-icon {
   position: absolute;
+  top: 1px;
   left: 15px;
   color: green !important;
+}
+
+.active-profile-icon i {
+  font-size: 17px;
 }
 
 .active-profile-filter {
@@ -1949,6 +1965,14 @@ dd.file-list {
   min-width: 754px;
 }
 
+.active-profile-count a .icon-plus {
+  position: relative;
+  top: 1px;
+}
+
+.active-profile-count a:hover {
+  text-decoration: none;
+}
 
 /** fabric brokers page */
 .mq-titles {
@@ -2493,5 +2517,41 @@ a.dashboard-link:hover {
 
 .fabric-page-header.features {
   margin-top: 10px;
+}
+
+.profile-selector-name a:not(.profile-info) {
+  color: #333333;
+}
+
+.profile-selector-name a:hover {
+  text-decoration: none;
+}
+
+.file-name {
+  color: #333333;
+}
+
+.file-name:hover {
+  text-decoration: none;
+}
+
+i.expandable-indicator.folder {
+  color: #EECA7C;
+  font-size: 17px;
+}
+
+.switches li {
+  width: 215px;
+}
+
+.switch-light.switch-ios {
+  width: 100px;
+}
+
+.switch-container {
+  position: static;
+  padding-top: 5px;
+  width: 215px;
+  height: 45px;
 }
 

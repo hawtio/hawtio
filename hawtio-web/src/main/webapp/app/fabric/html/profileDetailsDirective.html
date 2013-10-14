@@ -23,32 +23,32 @@
 
     <div class="row-fluid profile-details">
 
-      <div class="span3">
+      <div class="span4">
 
-        <ul class="unstyled">
+        <ul class="unstyled switches">
           <li>
-            <p></p>
-            <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
-              <input type="checkbox" ng-checked="row.abstract">
-              <span>Abstract
-                <span>No</span>
-                <span>Yes</span>
-              </span>
-              <a></a>
-            </label>
-
+            <div class="switch-container">
+              <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
+                <input type="checkbox" ng-checked="row.abstract">
+                <span>Abstract
+                  <span>No</span>
+                  <span>Yes</span>
+                </span>
+                <a></a>
+              </label>
+            </div>
           </li>
           <li>
-            <p></p>
-            <label class="switch-light switch-ios" ng-click="changeAttribute('locked', !row.locked)">
-              <input type="checkbox" ng-checked="row.locked">
-              <span>Locked
-                <span>No</span>
-                <span>Yes</span>
-              </span>
-              <a></a>
-            </label>
-
+            <div class="switch-container">
+              <label class="switch-light switch-ios" ng-click="changeAttribute('locked', !row.locked)">
+                <input type="checkbox" ng-checked="row.locked">
+                <span>Locked
+                  <span>No</span>
+                  <span>Yes</span>
+                </span>
+                <a></a>
+              </label>
+            </div>
           </li>
         </ul>
 
@@ -79,7 +79,7 @@
       </div>
 
 
-      <div class="span9">
+      <div class="span8">
 
         <div class="tabbable hawtio-form-tabs" ng-model="activeTab">
 
