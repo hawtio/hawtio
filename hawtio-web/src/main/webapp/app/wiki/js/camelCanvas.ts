@@ -393,14 +393,9 @@ module Wiki {
         });
       });
 
-      jsPlumb.draggable(nodes);
-      /*
-       TODO containment within the canvas div doesn't seem to work?
-
-       jsPlumb.draggable(nodes, {
-       containment: containerElement
-       });
-       */
+      jsPlumb.draggable(nodes, {
+        containment: '.camel-canvas'
+      });
 
       // double click on any connection
       jsPlumb.bind("dblclick", function (connection, originalEvent) {
