@@ -49,6 +49,8 @@ module Wiki {
       ]
     };
 
+    $scope.childActions = [];
+
     /*
     if (!$scope.nameOnly) {
       $scope.gridOptions.columnDefs.push({

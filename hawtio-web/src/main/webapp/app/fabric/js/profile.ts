@@ -29,6 +29,41 @@ module Fabric {
 
     $scope.profilePath = Fabric.profilePath;
 
+    if ($scope.inDirective &&
+        angular.isDefined($scope.$parent.childActions) &&
+        $scope.versionId &&
+        $scope.profileId) {
+      var actions = $scope.$parent.childActions;
+      actions.push({
+        doAction: () => { $scope.showChangeParentsDialog(); },
+        title: "Edit parent profiles",
+        icon: "icon-edit",
+        name: "Change Parents"
+      });
+      actions.push({
+        doAction: () => { $scope.copyProfileDialog = true; },
+        title: "Copy Profile",
+        icon: "icon-copy",
+        name: "Copy Profile"
+      });
+      actions.push({
+        doAction: () => { $scope.goto('/wiki/profile/' + $scope.versionId + '/' + $scope.profileId + '/editFeatures'); },
+        title: "Edit the features defined in this profile",
+        icon: "icon-edit",
+        name: "Edit Features"
+      });
+      actions.push({
+        doAction: () => {
+          $location.url('/fabric/containers/createContainer').search({
+          versionId: $scope.versionId,
+          profileIds: $scope.profileId
+        }); },
+        title: "Create Container",
+        icon: "icon-truck",
+        name: "Create Container"
+      });
+    }
+
     $scope.$watch('activeTab', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.newThingName = '';

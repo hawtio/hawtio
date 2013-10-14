@@ -95,6 +95,14 @@
                  data-placement="bottom">
                 <i class="icon-remove"></i> Delete</a>
             </li>
+            <li class="divider" ng-show="childActions.length">
+            </li>
+            <li ng-repeat="childAction in childActions">
+              <a ng-click="childAction.doAction()"
+                 title="((childAction.title))"
+                 data-placement="bottom">
+                <i class="{{childAction.icon}}"></i> {{childAction.name}}</a>
+            </li>
           </ul>
         </li>
         <li class="pull-right">

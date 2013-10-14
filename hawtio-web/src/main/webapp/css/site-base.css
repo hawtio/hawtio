@@ -2572,3 +2572,20 @@ i.expandable-indicator.folder {
 [class^="dynatree-folder icon-"], [class*=" dynatree-folder icon-"] .dynatree-icon {
   display: none;
 }
+
+@media(max-width: 1400px) {
+  .profile-details > [class^="span"] {
+    width: 100%;
+    float: inherit;
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}
+
+@media(min-width: 600px) {
+  .wiki-fixed {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
