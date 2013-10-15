@@ -212,13 +212,28 @@ module Fabric {
 
       $scope.$watch('versionId', (newValue, oldValue) => {
         if ($scope.versionId && $scope.versionId !== '') {
-          if (jolokia.execute(Fabric.managerMBean, "versions()").some((version) => { return version.id === newValue })) {
-            $scope.init();
-          } else {
-            Core.unregister(jolokia, $scope);
-          }
-        } else {
-          Core.unregister(jolokia, $scope);
+          jolokia.request({
+            type: 'exec',
+            mbean: Fabric.managerMBean,
+            operation: 'versions()',
+            arguments: []
+          }, {
+            method: 'POST',
+            success: (response) => {
+              if (response.value.some((version) => {
+                return version.id === newValue;
+              })) {
+                $scope.init();
+              } else {
+                Core.unregister(jolokia, $scope);
+              }
+              Core.$apply($scope);
+            },
+            error: (response) => {
+              Core.unregister(jolokia, $scope);
+              Core.$apply($scope);
+            }
+          });
         }
       });
 

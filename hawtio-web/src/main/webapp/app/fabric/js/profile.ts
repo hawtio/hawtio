@@ -132,13 +132,11 @@ module Fabric {
       Core.unregister(jolokia, $scope);
       if ($scope.versionId && $scope.profileId && !$scope.versionId.isBlank() && !$scope.profileId.isBlank()) {
 
-        if (jolokia.execute(Fabric.managerMBean, "versions()").some((version) => { return version.id === $scope.versionId })) {
-          Core.register(jolokia, $scope, {
-            type: 'exec', mbean: managerMBean,
-            operation: 'getProfile(java.lang.String, java.lang.String)',
-            arguments: [$scope.versionId, $scope.profileId]
-          }, onSuccess(render));
-        }
+        Core.register(jolokia, $scope, {
+          type: 'exec', mbean: managerMBean,
+          operation: 'getProfile(java.lang.String, java.lang.String)',
+          arguments: [$scope.versionId, $scope.profileId]
+        }, onSuccess(render));
       }
     };
 
@@ -324,10 +322,13 @@ module Fabric {
       if (!angular.isDefined($scope.row)) {
         $scope.loading = false;
       }
-      if (!Object.equal($scope.row, response.value)) {
+      var responseJson = angular.toJson(response.value);
+
+      if ($scope.profileResponseJson !== responseJson) {
         if (!$scope.activeTab) {
           $scope.activeTab = "features";
         }
+        $scope.profileResponseJson = responseJson;
         $scope.row = response.value;
         var id = $scope.row.id;
         var version = $scope.row.version;
