@@ -105,14 +105,13 @@ module Dashboard {
       }, {
         method: 'POST',
         success: (response) => {
-          console.log("got: ", response.value);
+
           angular.forEach(response.value, (value, profile) => {
             angular.forEach(value, (value, fileName) => {
               var dashboard = angular.fromJson(value.decodeBase64());
               dashboard['versionId'] = details.branch;
               dashboard['profileId'] = profile;
               dashboard['fileName'] = fileName;
-              console.log("Loading dashboard: ", dashboard);
               dashboards.push(dashboard);
             });
           });
@@ -125,8 +124,8 @@ module Dashboard {
 
         },
         error: (response) => {
-          console.log("Got error: ", response);
-
+          notification('error', "Failed to load dashboard data due to: " + response.error);
+          fn([]);
         }
       });
     }
