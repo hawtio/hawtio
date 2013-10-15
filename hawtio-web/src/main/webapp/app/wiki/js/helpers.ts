@@ -145,7 +145,7 @@ module Wiki {
     var link = null;
     var start = startLink(branch);
     if (pageId) {
-      link = start + "/view/" + pageId;
+      link = start + "/view/" + Core.trimLeading(pageId, "/");
     } else {
       // lets use the current path
       var path = $location.path();
