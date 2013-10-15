@@ -17,7 +17,7 @@ module Dashboard {
     };
 
     $scope.hasSelection = () => {
-      return !$scope.selectedItems.length;
+      return $scope.selectedItems.length !== 0;
     };
 
     $scope.gridOptions = {
@@ -102,7 +102,9 @@ module Dashboard {
 
 
     $scope.duplicateToProfiles = () => {
-      $scope.duplicateDashboards.open();
+      if ($scope.hasSelection()) {
+        $scope.duplicateDashboards.open();
+      }
     };
 
 
@@ -310,12 +312,14 @@ module Dashboard {
     };
 
     $scope.delete = () => {
-      dashboardRepository.deleteDashboards($scope.selectedItems, Dashboard.onOperationComplete);
+      if ($scope.hasSelection()) {
+        dashboardRepository.deleteDashboards($scope.selectedItems, Dashboard.onOperationComplete);
 
-      angular.forEach($scope.selectedItems, (item) => {
-        dashboards().remove(item);
-      });
-      $scope.selectedItems.splice(0, $scope.selectedItems.length);
+        angular.forEach($scope.selectedItems, (item) => {
+          dashboards().remove(item);
+        });
+        $scope.selectedItems.splice(0, $scope.selectedItems.length);
+      }
     };
 
 

@@ -1,41 +1,57 @@
 <div class="controller-section" ng-controller="Dashboard.EditDashboardsController">
   <div class="row-fluid">
-    <div class="span4">
-      <div class="control-group">
-        <button class="btn" ng-click="create()"
-                title="Create a new empty dashboard" data-placement="bottom">
-          <i class="icon-plus"></i> Create
-        </button>
-        <button class="btn" ng-disabled="hasSelection()" ng-click="duplicate()"
-                title="Create a copy of the selected dashboard(s)" data-placement="bottom">
-          <i class="icon-copy"></i> Duplicate
-        </button>
-        <button class="btn" ng-show="usingFabric()" ng-disabled="hasSelection()" ng-click="duplicateToProfiles()" title="Copy selected dashboards to another profile">
-          <i class="icon-copy"></i> Duplicate to profiles
-        </button>
-        <button class="btn" ng-disabled="hasSelection()" ng-click="delete()"><i
-                class="icon-remove"></i> Delete
-        </button>
-      </div>
-    </div>
-    <div class="span4">
-      <div class="control-group">
-        <button class="btn" ng-disabled="hasSelection()" ng-click="gist()"
-                title="Creates a JSON gist of the selected dashboards so you can share with others"
-                data-placement="bottom">
-          <i class="icon-cloud-upload"></i> Share
-        </button>
-        <a class="btn" href="#/dashboard/import"
-                title="Imports a JSON dashboard configuration from github or some other URL"
-                data-placement="bottom">
-          <i class="icon-cloud-download"></i> Import
-        </a>
-      </div>
-    </div>
-    <div class="span4">
-      <div class="control-group">
-        <input type="text" class="span12 search-query" ng-model="searchText" placeholder="search">
-      </div>
+
+    <div class="span12">
+      <ul class="nav nav-tabs">
+        <li>
+          <a href=""
+             ng-click="create()"
+             title="Create a new empty dashboard"
+             data-placement="bottom">
+            <i class="icon-plus"></i> Create</a>
+        </li>
+        <li>
+          <a href=""
+             ng-disabled="!hasSelection()"
+             ng-click="duplicate()"
+                  title="Create a copy of the selected dashboard(s)" data-placement="bottom">
+            <i class="icon-copy"></i> Duplicate
+          </a>
+        </li>
+        <li>
+          <a href=""
+             ng-show="usingFabric()"
+             ng-disabled="!hasSelection()"
+             ng-click="duplicateToProfiles()"
+             title="Copy selected dashboards to another profile">
+            <i class="icon-copy"></i> Duplicate to profiles
+          </a>
+        </li>
+        <li>
+          <a href=""
+             ng-disabled="!hasSelection()"
+             ng-click="delete()"><i
+                  class="icon-remove"></i> Delete
+          </a>
+        </li>
+        <li class="pull-right">
+          <a href="#/dashboard/import"
+             title="Imports a JSON dashboard configuration from github or some other URL"
+             data-placement="bottom">
+            <i class="icon-cloud-download"></i> Import
+          </a>
+
+        </li>
+        <li class="pull-right">
+          <a ng-disabled="!hasSelection()"
+             ng-click="gist()"
+             title="Creates a JSON gist of the selected dashboards so you can share with others"
+             data-placement="bottom">
+            <i class="icon-cloud-upload"></i> Share
+          </a>
+
+        </li>
+      </ul>
     </div>
   </div>
 

@@ -1647,10 +1647,17 @@ div#main div ul.nav li a.nav-primary[disabled] {
   background-color: #0044cc;
   *background-color: #003bb3;
 }
+
 div#main div ul.nav li a.nav-primary:active,
 div#main div ul.nav li a.nav-primary.active {
   background-color: #003399 \9;
 }
+
+.nav.nav-tabs li a[disabled] {
+  cursor: pointer;
+  opacity: 0.3;
+}
+
 /*
 .nav-warning .caret,
 .nav-danger .caret,
