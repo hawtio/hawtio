@@ -26,6 +26,7 @@ module Dashboard {
     }
 
     public dashboards = [];
+    public repository:DashboardRepository = null;
 
     public putDashboards(array:any[], commitMessage:string, fn) {
       this.getRepository().putDashboards(array, commitMessage, fn);
@@ -69,14 +70,20 @@ module Dashboard {
      * Looks up the MBean in the JMX tree
      */
     public getRepository():DashboardRepository {
+      if (this.repository) {
+        return this.repository;
+      }
       if (Fabric.hasFabric(this.workspace)) {
-        return new FabricDashboardRepository(this.workspace, this.jolokia, this.localStorage);
+        this.repository =  new FabricDashboardRepository(this.workspace, this.jolokia, this.localStorage);
+        return this.repository;
       }
       var git = Git.createGitRepository(this.workspace, this.jolokia, this.localStorage);
       if (git) {
-        return new GitDashboardRepository(git);
+        this.repository =   new GitDashboardRepository(git);
+        return this.repository;
       }
-      return new LocalDashboardRepository();
+      this.repository =  new LocalDashboardRepository();
+      return this.repository;
     }
   }
 

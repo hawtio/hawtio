@@ -97,38 +97,44 @@ module Dashboard {
       var details = this.details;
       var dashboards = [];
 
-      details.profiles.forEach((profile) => {
-        var data = Fabric.getProfileData(jolokia, details.branch, profile, ['configurations']);
-        data.configurations.forEach((configuration) => {
-          if (configuration.endsWith(".dashboard")) {
-            var file = Fabric.getConfigFile(jolokia, details.branch, profile, configuration);
-            if (file) {
-              var dashboard = angular.fromJson(file);
+      jolokia.request({
+        type: 'exec',
+        mbean: Fabric.managerMBean,
+        operation: 'getConfigurationFiles',
+        arguments: [details.branch, details.profiles, ".*\\.dashboard"]
+      }, {
+        method: 'POST',
+        success: (response) => {
+          console.log("got: ", response.value);
+          angular.forEach(response.value, (value, profile) => {
+            angular.forEach(value, (value, fileName) => {
+              var dashboard = angular.fromJson(value.decodeBase64());
               dashboard['versionId'] = details.branch;
               dashboard['profileId'] = profile;
-              dashboard['fileName'] = configuration;
-
-              //console.log("Loading dashboard: ", dashboard);
+              dashboard['fileName'] = fileName;
+              console.log("Loading dashboard: ", dashboard);
               dashboards.push(dashboard);
-            }
+            });
+          });
+
+          if (dashboards.isEmpty()) {
+            dashboards.push(this.createDashboard({}));
           }
-        });
+
+          fn(dashboards);
+
+        },
+        error: (response) => {
+          console.log("Got error: ", response);
+
+        }
       });
-
-      if (dashboards.isEmpty()) {
-        dashboards.push(this.createDashboard({}));
-      }
-
-      fn(dashboards);
     }
 
     public getDashboard(id:string, fn) {
       this.getDashboards((dashboards) => {
-        dashboards.find((dashboard) => {
-          if (dashboard.id === id) {
-            fn(dashboard);
-          }
-        });
+        var dashboard = dashboards.find((dashboard) => { return dashboard.id === id; });
+        fn(dashboard);
       });
     }
   }
