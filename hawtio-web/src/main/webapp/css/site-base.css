@@ -2587,7 +2587,7 @@ i.expandable-indicator.folder {
 }
 
 
-@media(max-width: 1400px) {
+@media(max-width: 1134px) {
   .profile-details > [class^="span"] {
     width: 100%;
     float: inherit;
