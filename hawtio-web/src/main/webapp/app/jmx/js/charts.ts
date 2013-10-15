@@ -13,7 +13,8 @@ module Jmx {
     var watchRouteChange = false;
 
     $scope.$on('$destroy', function () {
-      jolokia = null;
+      jolokia.stop();
+      delete jolokia;
       if (watchRouteChange) {
         $scope.deregRouteChange();
       }
