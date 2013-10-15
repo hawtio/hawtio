@@ -4,6 +4,8 @@ module Fabric {
 
   export var templatePath = 'app/fabric/html/';
 
+  export var currentContainerId = '';
+
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
     $routeProvider.
@@ -85,13 +87,14 @@ module Fabric {
             viewRegistry['createFabric'] = layoutFull;
 
             pageTitle.addTitleElement( ():string => {
-              var id = '';
-              try {
-                id = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
-              } catch (e) {
-                // ignore
+              if (Fabric.currentContainerId === '') {
+                try {
+                  Fabric.currentContainerId = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
+                } catch (e) {
+                  // ignore
+                }
               }
-              return id;
+              return Fabric.currentContainerId;
             });
 
             workspace.topLevelTabs.push( {

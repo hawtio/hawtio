@@ -1,6 +1,8 @@
 module Jmx {
   var pluginName = 'jmx';
 
+  export var currentProcessId = '';
+
   angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {
     $routeProvider.
             when('/jmx/attributes', {templateUrl: 'app/jmx/html/attributes.html'}).
@@ -26,16 +28,17 @@ module Jmx {
 
 
             pageTitle.addTitleElement(():string => {
-              var id = ''
-              try {
-                id = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
-              } catch (e) {
-                // ignore
+              if (Jmx.currentProcessId === '') {
+                try {
+                  Jmx.currentProcessId = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
+                } catch (e) {
+                  // ignore
+                }
+                if ( Jmx.currentProcessId &&  Jmx.currentProcessId.has("@")) {
+                  Jmx.currentProcessId = "pid:" +  Jmx.currentProcessId.split("@")[0];
+                }
               }
-              if (id && id.has("@")) {
-                id = "pid:" + id.split("@")[0];
-              }
-              return id;
+              return  Jmx.currentProcessId;
             });
 
 
