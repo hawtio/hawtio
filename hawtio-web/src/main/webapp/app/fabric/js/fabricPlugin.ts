@@ -61,6 +61,23 @@ module Fabric {
           }
         }
     }).
+    directive('fabricVersionLink', (workspace, jolokia, localStorage) => {
+        return {
+            restrict: 'A',
+            link: ($scope, $element, $attrs) => {
+            var versionLink = $attrs['fabricVersionLink'];
+
+            if (versionLink && !versionLink.isBlank()) {
+              var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
+              var versionId = container['versionId'] || "1.0";
+              if (versionId && !versionId.isBlank()) {
+                var url = "#/wiki/branch/" + versionId + "/" + Core.trimLeading(versionLink, "/");
+                $element.attr('href', url);
+              }
+            }
+          }
+        }
+    }).
 
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, layoutFull) => {
 
