@@ -1,14 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <features name='hawtio-${project.version}'>
 
+  <feature name="hawtio-core" version="${project.version}" resolver="(obr)">
+    <details>Installs the core hawtio war file with minimal extensions</details>
+    <feature>war</feature>
+    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
+  </feature>
+
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio war file, an MBean helper for OSGi and an MBean helper to get JSON Schema out of Java objects</details>
-    <feature>war</feature>
+    <feature>hawtio-core</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
   </feature>
 
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
