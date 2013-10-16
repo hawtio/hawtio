@@ -16,6 +16,9 @@
     <fuse.osgi.export>
     </fuse.osgi.export>
     <fuse.osgi.import>
+      !org.apache.avalon.*,
+      !org.apache.xerces.*,
+      !org.apache.log4j.*,
       *;resolution:=optional
     </fuse.osgi.import>
   </properties>
