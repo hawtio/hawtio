@@ -40,6 +40,8 @@ module UI {
         return new UI.JSPlumb();
       //}).directive('connectTo', () => {
       //  return new UI.JSPlumbConnection();
+      }).directive('zeroClipboard', () => {
+        return new UI.ZeroClipboardDirective();
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });

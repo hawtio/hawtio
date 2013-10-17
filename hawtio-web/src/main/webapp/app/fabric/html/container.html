@@ -79,7 +79,7 @@
         </div>
 
         <div class="span5 offset1 container-settings">
-          <div class="tabbable hawtio-form-tabs">
+          <div class="tabbable hawtio-form-tabs" ng-model="tab">
 
             <div class="tab-pane" title="Status">
               <dl class="dl-horizontal">
@@ -209,19 +209,59 @@
             <div class="tab-pane" title="URLs">
               <dl class="dl-horizontal">
                 <dt>Git:</dt>
-                <dd>{{getGitURL(row.jolokiaUrl)}}</dd>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{getGitURL(row.jolokiaUrl)}}">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
+                          title="Click to copy this command to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>SSH:</dt>
-                <dd>{{row.sshUrl}}</dd>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{getSshURL(row.sshUrl)}}">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{getSshURL(row.sshUrl)}}"
+                          title="Click to copy this command to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>JMX:</dt>
-                <dd>{{row.jmxUrl}}</dd>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{getJmxURL(row.jmxUrl)}}">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{getJmxURL(row.jmxUrl)}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Jolokia:</dt>
-                <dd>{{row.jolokiaUrl}}</dd>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.jolokiaUrl}}">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.jolokiaUrl}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
               </dl>
             </div>
 

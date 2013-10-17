@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function ContainerController($scope, $routeParams, $location, localStorage, jolokia, workspace) {
+  export function ContainerController($scope, $routeParams, $location, localStorage, jolokia, workspace, userDetails) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -9,6 +9,22 @@ module Fabric {
     } else {
       $scope.operation = 'getContainer(java.lang.String)';
     }
+
+    $scope.username = userDetails.username;
+    $scope.password = userDetails.password;
+
+    $scope.tab = $routeParams['tab'];
+    if (!$scope.tab) {
+      $scope.tab = 'Status';
+    }
+
+
+    $scope.$watch('tab', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search({tab: newValue});
+      }
+    });
+
 
     /*
     // handy for working around any randomly added fields that won't marshal
@@ -65,8 +81,33 @@ module Fabric {
     };
 
     $scope.getGitURL = (jolokiaUrl) => {
-      return jolokiaUrl ? jolokiaUrl.replace("jolokia", "git/fabric") : null;
+      var answer = jolokiaUrl ? jolokiaUrl.replace("jolokia", "git/fabric") : null;
+      if (answer !== null) {
+        var command = "git clone -b 1.0 " + answer;
+        if ($scope.username !== null && $scope.password !== null) {
+          command = command.replace("://", "://" + $scope.username + ":" + $scope.password + "@");          }
+        answer = command;
+      }
+      return answer;
     };
+
+
+    $scope.getSshURL = (sshUrl) => {
+      var answer = sshUrl;
+      if ($scope.username !== null && $scope.password !== null) {
+        var parts = sshUrl.split(":");
+        if (parts.length === 2) {
+          answer = "ssh -p " + parts[1] + " " + $scope.username + "@" + parts[0];
+        }
+      }
+      return answer;
+    };
+
+
+    $scope.getJmxURL = (jmxUrl) => {
+      return jmxUrl;
+    };
+
 
     $scope.getType = () => {
       if ($scope.row) {
