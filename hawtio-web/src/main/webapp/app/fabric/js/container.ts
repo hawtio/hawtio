@@ -21,7 +21,7 @@ module Fabric {
 
     $scope.$watch('tab', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        $location.search({tab: newValue});
+        $location.search({tab: newValue}).replace();
       }
     });
 

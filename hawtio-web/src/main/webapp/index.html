@@ -124,10 +124,14 @@
             <div class="nav-collapse collapsed">
             -->
 
-              <ul ng-show="loggedIn()" class="nav">
+              <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
                 <li ng-repeat="nav in topLevelTabs" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
                   <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
                   </a>
+                </li>
+                <li class="dropdown overflow" style="float: right !important; visibility: hidden;">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
+                  <ul class="dropdown-menu right"></ul>
                 </li>
               </ul>
 

@@ -42,6 +42,8 @@ module UI {
       //  return new UI.JSPlumbConnection();
       }).directive('zeroClipboard', () => {
         return new UI.ZeroClipboardDirective();
+      }).directive('hawtioAutoDropdown', () => {
+        return UI.AutoDropDown;
       }).run(function (helpRegistry) {
         helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
       });
