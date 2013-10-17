@@ -72,6 +72,10 @@ module Fabric {
       // avoid the properties field for now as we don't yet have a generated UI for key/value pairs...
       delete schema.properties['properties'];
 
+      var isReplicated = "entity.kind == 'Replicated'";
+      var isStandalone = "entity.kind == 'StandAlone'";
+
+
       Core.pathSet(schema.properties, ['group', 'required'], true);
       Core.pathSet(schema.properties, ['group', 'tooltip'], 'The peer group name of message brokers. The group is name is used by messaging clients to connect to a broker; so it represents a peer group of brokers used for load balancing.');
       Core.pathSet(schema.properties, ['group', 'input-attributes', 'typeahead'], 'title for title in groups | filter:$viewValue');
@@ -81,20 +85,28 @@ module Fabric {
       Core.pathSet(schema.properties, ['brokerName', 'tooltip'], 'The name of the broker.');
       Core.pathSet(schema.properties, ['brokerName', 'input-attributes', 'autofocus'], 'true');
 
-      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead'], 'title for title in profiles | filter:$viewValue');
-      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead-editable'], 'true');
-
-      Core.pathSet(schema.properties, ['parentProfile', 'tooltip'], 'The profile used to define the version of A-MQ which will run, the features and the configuration of the broker.');
+      Core.pathSet(schema.properties, ['parentProfile', 'tooltip'], 'The parent profile used by the profile.');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead'], 'p.id for p in parentProfiles | filter:$viewValue');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', 'typeahead-editable'], 'false');
-
-
-      Core.pathSet(schema.properties, ['profile', 'input-attributes', "placeholder"], "mq-{{entity.group || 'default'}}-{{entity.brokerName || 'brokerName'}}");
-
-      var isReplicated = "entity.kind == 'Replicated'";
-      var isStandalone = "entity.kind == 'StandAlone'";
-
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "{{" + isReplicated + " ? 'mq-replicated' : 'mq-base'}}");
+
+      Core.pathSet(schema.properties, ['profile', 'tooltip'], 'The profile to create instances of this broker.');
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead'], 'title for title in profiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', 'typeahead-editable'], 'true');
+      Core.pathSet(schema.properties, ['profile', 'input-attributes', "placeholder"], "mq-broker-{{entity.group || 'default'}}.{{entity.brokerName || 'brokerName'}}");
+
+      Core.pathSet(schema.properties, ['clientProfile', 'tooltip'], 'The profile used by messaging clients to connect to this group of brokers.');
+      Core.pathSet(schema.properties, ['clientProfile', 'input-attributes', 'typeahead'], 'title for title in profiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['clientProfile', 'input-attributes', 'typeahead-editable'], 'true');
+      Core.pathSet(schema.properties, ['clientProfile', 'input-attributes', "placeholder"], "mq-client-{{entity.group || 'default'}}");
+
+      Core.pathSet(schema.properties, ['clientParentProfile', 'tooltip'], 'The parent profile used by the client profile.');
+      Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead'], 'p.id for p in parentProfiles | filter:$viewValue');
+      Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead-editable'], 'false');
+      Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "default");
+
+
+
       Core.pathSet(schema.properties, ['data', 'input-attributes', "placeholder"], "${karaf.base}/data/{{entity.brokerName || 'brokerName'}}");
       Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
 
@@ -116,8 +128,8 @@ module Fabric {
       Core.pathSet(schema.properties, ['networkConnectAll', 'tooltip'], 'Should this broker create a store and forward network to all the known groups of brokers');
 
       schema['tabs'] = {
-        'Default': ['group', 'brokerName', 'kind', 'profile', 'parentProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networkConnectAll', 'networks'],
-        'Advanced': ['networksUserName', 'networksPassword', '*']
+        'Default': ['group', 'brokerName', 'kind', 'profile', 'clientProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networkConnectAll', 'networks'],
+        'Advanced': ['parentProfile', 'clientParentProfile', 'networksUserName', 'networksPassword', '*']
       };
     }
 
