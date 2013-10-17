@@ -2244,6 +2244,7 @@ i.mq-master {
 }
 
 .mq-group-rectangle-label, .mq-profile-rectangle-label, .mq-broker-rectangle-label, .mq-container-rectangle-label {
+  white-space:nowrap;
 }
 
 /** dashboard */
