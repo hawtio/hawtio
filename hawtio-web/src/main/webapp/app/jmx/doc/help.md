@@ -57,7 +57,7 @@ The Chart view displays charts of numeric metric values updated in realtime usin
 
 When the Chart view is selected from the JMX toolbar an additional "<i class='icon-cog'></i> Edit Chart" option is enabled allowing customization of which JMX metrics are displayed on the chart.
 
-<i class='red icon-warning-sign'></i> TODO - Get screenshot of Edit Chart page when it's not broken.
+![Edit Chart View](app/jmx/doc/img/edit-chart.png "Edit Chart")
 
 ###### <i class='icon-share'></i> (Add this view to a dashboard) ######
 
