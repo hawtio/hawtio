@@ -26,7 +26,7 @@ Available sub-topics for each plugin can be selected via the secondary navigatio
 Click the Preferences icon (<i class='icon-cogs'></i>) in the main navigation bar to access the [Preferences](#/preferences) page.  Available configuration options include, but not limited to:
 
 ###### Behaviour ######
-- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5, 10 and 30 seconds.
+- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5, 10, and 30 seconds.
 
   <i class='yellow text-shadowed icon-warning-sign'></i> **Note:** Setting this to "No Refreshes" will disable charting, as charting requires fetching periodic metric updates.
 - **Auto Refresh** - Automatically refresh the browser window if [hawtio](http://hawt.io "hawtio") detects a change in available plugins.

@@ -1,10 +1,10 @@
 ### Logs
 
-When we run middleware we spend an aweful lot of time looking at and searching logs. With [hawtio](http://hawt.io/) we don't just do logs, we do _hawt logs_.
+When we run middleware we spend an awful lot of time looking at and searching logs. With [hawtio](http://hawt.io/) we don't just do logs, we do _hawt logs_.
 
 Sure logs are nicely coloured and easily filtered as you'd expect. But with hawtio we try to link all log statements and exception stack traces to the actual lines of code which generated them; so if a log statement or line of exception doesn't make sense - just click the link and view the source code! Thats _hawt_!
 
-We can't guarrentee to always be able to do download the source code; we need to find the maven coordinates (group ID, artefact ID, version) of each log statement or line of stack trace to be able to do this. So awesomeness is not guarrenteed, but it should work for projects which have published their source code to either the global or your local maven repository.
+We can't guarantee to always be able to do download the source code; we need to find the maven coordinates (group ID, artifact ID, version) of each log statement or line of stack trace to be able to do this. So awesomeness is not guaranteed, but it should work for projects which have published their source code to either the global or your local maven repository.
 
 We should try encourage all projects to publish their source code to maven repositories (even if only internally to an internal maven repo for code which is not open source).
 
@@ -32,7 +32,7 @@ Then you need to ensure that the LogQuery bean is instantiated in whatever depen
 
 ##### How hawtio logs work
 
-To be able to link to the source we need the maven coordinates (group ID, artefact ID, version), the relative file name and line number.
+To be able to link to the source we need the maven coordinates (group ID, artifact ID, version), the relative file name and line number.
 
 Most logging frameworks generate the className and/or file name along with the line number; the maven coordinates are unfortunately not yet common.
 

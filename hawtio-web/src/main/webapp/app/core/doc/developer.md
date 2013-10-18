@@ -4,7 +4,7 @@
 
 For more background on how to build your own plugins for **hawtio** check out the [developer help](http://hawt.io/developers/index.html)
 
-**hawtio** also includes a number of developer focussed plugins to help developers create even better plugins.
+**hawtio** also includes a number of developer focused plugins to help developers create even better plugins.
 
 Click on the links on the left to see more!
 
