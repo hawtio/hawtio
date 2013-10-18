@@ -137,6 +137,14 @@ module Camel {
               {field: 'TaskCount', displayName: 'Task #'},
               {field: 'CompletedTaskCount', displayName: 'Completed Task #'}
             ];
+            attributes[jmxDomain + "/errorhandlers/folder"] = [
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'DeadLetterChannel', displayName: 'Dead Letter'},
+              {field: 'DeadLetterChannelEndpointUri', displayName: 'Endpoint URI', width: "**", resizable: true},
+              {field: 'MaximumRedeliveries', displayName: 'Max Redeliveries'},
+              {field: 'RedeliveryDelay', displayName: 'Redelivery Delay'},
+              {field: 'MaximumRedeliveryDelay', displayName: 'Max Redeliveries Delay'}
+            ];
 
             workspace.topLevelTabs.push({
               content: "Camel",
