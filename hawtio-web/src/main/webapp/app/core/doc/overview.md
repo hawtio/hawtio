@@ -23,22 +23,29 @@ Available sub-topics for each plugin can be selected via the secondary navigatio
 ![Help Sub-Topic Navigation Bar](app/core/doc/img/help-subtopic-nav.png "Help Sub-Topic Navigation Bar")
 
 ##### Preferences #####
-Click the Preferences icon (<i class='icon-cogs'></i>) in the main navigation bar to access the [Preferences](#/preferences) page.  Available configuration options are:
+Click the Preferences icon (<i class='icon-cogs'></i>) in the main navigation bar to access the [Preferences](#/preferences) page.  Available configuration options include, but not limited to:
 
-###### General ######
-- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5 and 30 seconds.
+###### Behaviour ######
+- **Update Rate** - How often [hawtio](http://hawt.io "hawtio") polls the [Jolokia](http://jolokia.org) backend for JMX metrics.  Can be set to "No Refreshes" and intervals of 1, 2, 5, 10 and 30 seconds.
 
   <i class='yellow text-shadowed icon-warning-sign'></i> **Note:** Setting this to "No Refreshes" will disable charting, as charting requires fetching periodic metric updates.
-- **Go to server** - Connect this [hawtio](http://hawt.io "hawtio") frontend instance to a different [Jolokia](http://jolokia.org) backend.
 - **Auto Refresh** - Automatically refresh the browser window if [hawtio](http://hawt.io "hawtio") detects a change in available plugins.
+- **Host Identification** - To associate a label and colour to host(s) when [connecting](#/help/jvm) to containers.
 
-###### git ######
+###### Logs ######
+- **Log cache size** - How many log lines to cache in the [Logs](#/help/log) plugin.
+
+###### Git ######
 - **User Name** - The git username to use when committing updates to the [Dashboard](#/help/dashboard/) or [Wiki](#/help/wiki).
 - **Email address** - The e-mail address to associate with git commits.
 
-###### Code Editor ######
+###### ActiveMQ ######
+- **User Name** - The username to use when connecting to the [ActiveMQ](#/help/activemq/) broker.
+- **Password** - The password for the username.
+
+###### Editor ######
 - **Theme** - The theme to be used by the CodeMirror code editor
-- **Tab Size** - The tabstop size to be used by the CodeMirror code editor.
+- **Tab Size** - The tab stop size to be used by the CodeMirror code editor.
 
 
 ##### Further Reading #####
