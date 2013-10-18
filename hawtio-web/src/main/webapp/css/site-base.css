@@ -2342,6 +2342,26 @@ a.dashboard-link:hover {
   background-color: #f3f3f3;
 }
 
+.zebra-list {
+  margin-left: 0;
+}
+
+.zebra-list li {
+  padding: 7px;
+}
+
+ul.zebra-list li {
+  list-style-type: none;
+}
+
+.zebra-list li:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
 .container-profile-settings span.folder-title {
   font-weight: bold;
 }

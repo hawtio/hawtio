@@ -139,8 +139,15 @@ module Fabric {
     }, true);
 
 
+    $scope.deselect = (profile) => {
+      profile.selected = false;
+      $scope.selectedProfiles.remove((p) => { return p.id === profile.id; });
+    };
+
+
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (oldValue !== newValue) {
+        console.log("selectedProfiles: ", $scope.selectedProfiles);
         $scope.selectedProfileIds = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
       }
     }, true);

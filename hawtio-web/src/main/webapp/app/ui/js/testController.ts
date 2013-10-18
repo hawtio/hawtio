@@ -2,6 +2,8 @@ module UI {
 
     export function UITestController2($scope, workspace, $templateCache) {
 
+      $scope.fileUploadExMode = 'text/html';
+
       $scope.menuItems = [];
 
       for (var i = 0; i < 20; i++) {
