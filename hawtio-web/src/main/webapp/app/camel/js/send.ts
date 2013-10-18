@@ -1,8 +1,17 @@
 module Camel {
-  export function SendMessageController($scope, workspace:Workspace, localStorage) {
+  export function SendMessageController($scope, workspace:Workspace, localStorage, $location) {
+
+    $scope.noCredentials = false;
+
+    if ($location.path().has('activemq')) {
+      if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
+        $scope.noCredentials = true;
+      }
+    }
+
     var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
     var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
-    $scope.message = "";
+    $scope.message = "\n\n\n\n";
     // TODO Remove this if possible
     $scope.codeMirror = undefined;
     var options = {

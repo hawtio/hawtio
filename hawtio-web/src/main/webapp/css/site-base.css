@@ -237,6 +237,10 @@ ol.inline > li {
 .no-bottom-margin .control-group {
   margin-bottom: 4px;
 }
+.bottom-margin {
+  margin-bottom: 20px;
+}
+
 li.attr-column {
   width: 1em;
 }
@@ -2323,6 +2327,19 @@ a.dashboard-link:hover {
     position: fixed;
   }
 
+}
+
+.header-list li {
+  vertical-align: top;
+  height: 30px;
+}
+
+.header-list li div {
+  height: 30px;
+}
+
+#addHeaderButton {
+  margin-right: 52px;
 }
 
 .provision-list {
