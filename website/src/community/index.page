@@ -18,37 +18,23 @@ title: join the hawtio community!
 
 <div id="section">
 <h2 class="icon github"><img src="../images/octocat_social.png"/> Issue Tracker</h2>
-<!--
-<div class="screenshot"><img src="/images/screenshot-hawtio-jira.png" alt="" /></div>
--->
 <p>The project tracks bugs, feature requests, and other issues through the Github issue tracking system.</p>
 <p><a class="btn btn-primary btn-large" href="${project_issue_url}">hawtio issue tracker</a></p>
 <p>To file new issues or comment on existing issues you need to register for a <a href="http://github.com/">Github account</a> which is quick and easy!
 </p>
 </div>
 
-<!--
 <div id="section">
-<h2 class="icon forum">Forums and Wiki</h2>
-<div class="screenshot"><img src="/images/screenshot-hawtio-forums.png" alt="" /></div>
-<p>You&#8217;ll find two discussion forums in the <a href="http://community.jboss.org/en/hawtio">hawtio space</a> on the JBoss Community site.</p>
-<dl>
-	<dt><a href="http://community.jboss.org/en/hawtio?view=discussions">User discussions</a></dt>
-	<dd>The top-level space hosts discussions for developers using hawtio in their project.</dd>
-	<dt><a href="http://community.jboss.org/en/hawtio/dev?view=discussions">Development discussions</a></dt>
-	<dd>The development sub-space is reserved for discussions about contributing to hawtio.</dd>
-</dl>
-<p>These spaces also host community-edited information about hawtio, under the Articles tab. The information that goes here is anything you want to share about the project that doesn&#8217;t fit somewhere else, or you want to share quickly. It may be tips, guides, or even full articles.</p>
+<h2 class="icon forum">Mailing List</h2>
+<p>We prefer to use the <a href="${project_issue_url}">issue tracker</a> for dealing with ideas and issues, but if you just want to chat about all things hawtio please join us on the mailing list.
+Its pretty low volume though as we love <a href="${project_issue_url}">github issues</a></p>
+
+<p><a class="btn btn-primary btn-large" href="https://groups.google.com/forum/#!forum/hawtio">hawtio mailing list</a></p>
+
 </div>
--->
 
 <div id="section">
 <h2 class="icon chat">Chat (IRC)</h2>
-<!--
-<div class="screenshot">
-	<img src="/images/screenshot-hawtio-irc.png" alt="" />
-</div>
--->
 <p>We invite you to join us in the <b>#hawtio</b> channel on <b>irc.freenode.net</b> to chat about hawtio</p>
 
 <p>This channel is logged to <a class="btn" href="http://transcripts.jboss.org/channel/irc.freenode.org/%23hawtio/2013/index.html">transcripts.jboss.org</a> by JBossBot. The JBossBot is also present to expand issue numbers from the issue tracker.</p>
@@ -56,10 +42,11 @@ title: join the hawtio community!
 
 <div id="section">
 <h2 class="h2"><img src="../images/octocat_social.png"/> Source Repository</h2>
-<!--
-<div class="screenshot"><img src="/images/screenshot-hawtio-github.png" alt="" /></div>
--->
-<p>All the hawtio source code is managed using the distributed version system <a href="http://git-scm.com">git</a> and hosted at <a class="btn" href="http://github.com/hawtio/hawtio">hawtio/hawtio</a> on Github.</p>
+<p>All the hawtio source code is managed using the distributed version system <a href="http://git-scm.com">git</a> and hosted on <a href="http://github.com/">github</a.</p>
+
+<p><a class="btn btn-primary btn-large" href="http://github.com/hawtio/hawtio">hawtio @ github</a></p>
+
+
 <p>Both git and Github are awesome for collaboration! To make improvements or bug fixes to the hawtio project, simply fork the project, commit your changes, and send a pull request.</p>
 </div>
 </div>
