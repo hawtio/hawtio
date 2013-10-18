@@ -133,7 +133,9 @@ module Fabric {
               isActive: (workspace:Workspace) => workspace.isLinkActive("/insight")
             });
 
-            helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
+            if (Fabric.hasFabric(workspace)) {
+              helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
+            }
 
           });
 
