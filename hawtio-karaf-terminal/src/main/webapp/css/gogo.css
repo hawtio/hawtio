@@ -38,6 +38,7 @@ pre.stat {
 	background-color: black;
 	border-top: 1px solid black;
 	color: white;
+  text-align: left;
 }
 pre.stat span {
 	padding: 0px;
@@ -90,6 +91,8 @@ pre.term span.ul  { text-decoration: underline; }
 pre.term span.b   { font-weight:900; }
 
 .terminal {
+  margin-left: 10px;
+  margin-right: 10px;
   margin-top: 22px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }

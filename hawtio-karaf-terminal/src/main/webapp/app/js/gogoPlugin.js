@@ -8,11 +8,47 @@ var simplePlugin = angular.module(pluginName, ['hawtioCore'])
       when('/gogo', {
           templateUrl: 'hawtio-karaf-terminal/app/html/gogo.html'
         });
-  }).directive('gogoTerminal', function() {
+  }).directive('gogoTerminal', function($document) {
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
-        gogo.Terminal(element.get(0), 120, 39);
+
+        var width = 120;
+        var height = 39;
+
+        var div = $('<div class="terminal">_</div>').css({
+          position: 'absolute',
+          left: -1000,
+          top: -1000,
+          display: 'none',
+          padding: 0,
+          margin: 0
+        }).appendTo($('body'));
+
+        var charWidth = div.width();
+        var charHeight = div.height();
+
+        div.remove();
+
+        // compensate for internal horizontal padding
+        var cssWidth = width * charWidth + 10;
+        // Add an extra line for the status bar and divider
+        var cssHeight = (height * charHeight) + charHeight + 2;
+
+        /*
+        console.log("width: ", width, " height: ", height);
+        console.log("charWidth: ", charWidth, " charHeight: ", charHeight);
+        console.log("cssWidth: ", cssWidth, " cssHeight: ", cssHeight);
+        */
+
+        element.css({
+          width: cssWidth,
+          height: cssHeight,
+          'min-width': cssWidth,
+          'min-height': cssHeight
+        });
+
+        gogo.Terminal(element.get(0), width, height);
 
         scope.$on("$destroy", function(e) {
           document.onkeypress = null;
