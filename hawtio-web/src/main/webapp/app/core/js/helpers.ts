@@ -66,6 +66,14 @@ function humanizeValue(value:any):string {
   return value;
 }
 
+function safeNull(value:any):string {
+  if (value) {
+    return value;
+  } else {
+    return "";
+  }
+}
+
 function trimQuotes(text:string) {
   while (text.endsWith('"') || text.endsWith("'")) {
     text = text.substring(0, text.length - 1);

@@ -332,7 +332,7 @@ module Jmx {
                 if (angular.isArray(value)) {
                   value = value.map((v) => { return unwrapObjectName(v); });
                 }
-                var data = {key: key, name: humanizeValue(key), value: value};
+                var data = {key: key, name: humanizeValue(key), value: safeNull(value)};
 
                 generateSummaryAndDetail(data);
                 properties.push(data);

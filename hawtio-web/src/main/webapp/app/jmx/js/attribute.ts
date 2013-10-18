@@ -15,7 +15,7 @@ module Jmx {
 
     function render(response) {
       if (!Object.equal($scope.data, response.value)) {
-        $scope.data = response.value;
+        $scope.data = safeNull(response.value);
         Core.$apply($scope);
       }
     }
