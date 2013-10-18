@@ -47,13 +47,11 @@ module Fabric {
           },
           error: (response) => {
             notification('error', "Error creating fabric: " + response.error);
-            $scope.creating = false;
             Core.$apply($scope);
           }
         });
         notification('info', "Creating fabric, please wait...");
-        $scope.creating = true;
-
+        $location.url("/logs");
         Core.$apply($scope);
       }, 30);
 
