@@ -1,6 +1,24 @@
 module UI {
 
-  export function UITestController($scope, workspace, $templateCache) {
+    export function UITestController2($scope, workspace, $templateCache) {
+
+      $scope.menuItems = [];
+
+      for (var i = 0; i < 20; i++) {
+        $scope.menuItems.push("Some Item " + i);
+      }
+
+
+      $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
+
+      $scope.zeroClipboard = $templateCache.get("zeroClipboardTemplate");
+
+
+    }
+
+
+    export function UITestController1($scope, workspace, $templateCache) {
+
 
     $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
 

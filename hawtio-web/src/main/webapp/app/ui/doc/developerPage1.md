@@ -5,7 +5,7 @@ The **UI** plugin provides a number of [AngularJS](http://angularjs.org/) direct
 For details on form widgets take a look at the [Form documentation](index.html#/help/forms/developer)
 
 ## General UI widgets
-<div ng-include="'app/ui/html/test.html'"></div>
+<div ng-include="'app/ui/html/test1.html'"></div>
 
 
 

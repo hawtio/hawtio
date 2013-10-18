@@ -45,7 +45,9 @@ module UI {
       }).directive('hawtioAutoDropdown', () => {
         return UI.AutoDropDown;
       }).run(function (helpRegistry) {
-        helpRegistry.addDevDoc("ui", 'app/ui/doc/developer.md');
+
+        helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
+        helpRegistry.addDevDoc("ui2", 'app/ui/doc/developerPage2.md');
       });
 
   hawtioPluginLoader.addModule(pluginName);

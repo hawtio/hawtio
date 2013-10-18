@@ -16,7 +16,7 @@ module UI {
 
         var overflowEl = $($element.find('.overflow'));
         var overflowMenu = $(overflowEl.find('ul.dropdown-menu'));
-        var availableWidth = $element.innerWidth() - ($element.innerWidth() - overflowEl.offset().left);
+        var availableWidth = $element.innerWidth() - overflowEl.outerWidth(true);
 
         $element.children('li').each(function(index) {
           var self = $(this);
@@ -25,7 +25,7 @@ module UI {
             return;
           }
 
-          availableWidth = availableWidth - self.outerWidth();
+          availableWidth = availableWidth - self.outerWidth(true);
           if (availableWidth < 0) {
             self.detach();
             overflowMenu.append(self);
