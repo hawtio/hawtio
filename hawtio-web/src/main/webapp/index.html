@@ -303,7 +303,7 @@
           if (isArrayOrObject(message)) {
             text = text + JSON.stringify(message);
           } else {
-            text = text + " " + message;
+            text = text + message;
           }
         }
 
@@ -326,6 +326,13 @@
         }
 
       });
+
+      // Catch uncaught exceptions and stuff so we can log them 
+      window.onerror = function(msg, url, line) {
+        Logger.error(msg, " (url:", url, ", line:", line, ")");
+        // supress error alert
+        return true;
+      }
 
       // sneaky hack to redirect console.log !
       window.console = {
