@@ -253,7 +253,32 @@
         }
       }
 
-      var MyConsole = window.console;
+      var consoleLogger = null; 
+
+      if ('console' in window) {
+
+        var MyConsole = window.console;
+        consoleLogger = function(messages, context) {
+          var hdlr = MyConsole.log;
+
+          // Prepend the logger's name to the log message for easy identification.
+          if (context.name) {
+            messages[0] = "[" + context.name + "] " + messages[0];
+          }
+
+          // Delegate through to custom warn/error loggers if present on the console.
+          if (context.level === Logger.WARN && MyConsole.warn) {
+            hdlr = MyConsole.warn;
+          } else if (context.level === Logger.ERROR && MyConsole.error) {
+            hdlr = MyConsole.error;
+          } else if (context.level === Logger.INFO && MyConsole.info) {
+            hdlr = MyConsole.info;
+          }
+
+          hdlr.apply(MyConsole, messages);
+        };
+      }
+
 
       Logger.setHandler(function(messages, context) {
         // MyConsole.log("context: ", context);
@@ -278,7 +303,7 @@
           }
         }
 
-        node.innerHTML = text;
+        node.textContent = text;
         node.className = context.level.name;
         panel.appendChild(node);
         if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
@@ -292,30 +317,11 @@
         if (panel.scrollTop > panel.scrollHeight - container.scrollHeight - 100) {
           panel.scrollTop = panel.scrollHeight;
         }
-
-      });
-
-      /*
-      Logger.setHandler(function(messages, context) {
-        var hdlr = MyConsole.log;
-
-        // Prepend the logger's name to the log message for easy identification.
-        if (context.name) {
-          messages[0] = "[" + context.name + "] " + messages[0];
+        if (consoleLogger) {
+          consoleLogger(messages, context);
         }
 
-        // Delegate through to custom warn/error loggers if present on the console.
-        if (context.level === Logger.WARN && MyConsole.warn) {
-          hdlr = MyConsole.warn;
-        } else if (context.level === Logger.ERROR && MyConsole.error) {
-          hdlr = MyConsole.error;
-        } else if (context.level === Logger.INFO && MyConsole.info) {
-          hdlr = MyConsole.info;
-        }
-
-        hdlr.apply(MyConsole, messages);
       });
-      */
 
       // sneaky hack to redirect console.log !
       window.console = {
