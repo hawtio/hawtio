@@ -283,6 +283,7 @@
         return (!!o) && (o.constructor === Array || o.constructor === Object);
       };
 
+      window['logInterceptors'] = [];
 
       Logger.setHandler(function(messages, context) {
         // MyConsole.log("context: ", context);
@@ -293,10 +294,6 @@
         var node = document.createElement("li");
 
         var text = ""
-        if (context.name) {
-          messages[0] = "[" + context.name + "] " + messages[0];
-        }
-
 
         for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
@@ -305,6 +302,10 @@
           } else {
             text = text + message;
           }
+        }
+
+        if (context.name) {
+          text = "[" + context.name + "] " + text;
         }
 
         node.textContent = text;
@@ -318,11 +319,16 @@
           panel.scrollTop = panel.scrollHeight;
         }
 
-        if (panel.scrollTop > panel.scrollHeight - container.scrollHeight - 100) {
+        if (panel.scrollTop > (panel.scrollHeight - container.scrollHeight - 200)) {
           panel.scrollTop = panel.scrollHeight;
         }
         if (consoleLogger) {
           consoleLogger(messages, context);
+        }
+        var interceptors = window['logInterceptors'];
+
+        for (var i = 0; i < interceptors.length; i++) {
+          interceptors[i](context.level.name, text);
         }
 
       });

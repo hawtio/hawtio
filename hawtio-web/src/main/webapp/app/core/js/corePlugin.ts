@@ -364,6 +364,16 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
           }
 
+          window['logInterceptors'].push((level, message) => {
+              if (level === "WARN") {
+                notification('warning', message);
+              }
+              if (level === "ERROR") {
+                notification('error', message);
+              }
+
+          });
+
           setTimeout(() => {
             $("#main-body").fadeIn(2000).after(() => {
               Logger.get('Core').info("Hawtio started!");
@@ -408,7 +418,6 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             link: ($scope, $element, $attr) => {
               $element.click(() => {
                 var log = $("#log-panel");
-                Logger.debug("height: ", log.height());
                 if (log.height() !== 0) {
                   localStorage['showLog'] = 'false';
                   log.css({'bottom': '110%'});
