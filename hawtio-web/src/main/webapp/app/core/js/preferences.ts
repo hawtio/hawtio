@@ -85,7 +85,8 @@ module Core {
     };
 
     var converters = {
-      logCacheSize: parseInt
+      logCacheSize: parseInt,
+      fabricEnableMaps: parseBooleanValue
     };
 
     $scope.$watch('updateRate', () => {
