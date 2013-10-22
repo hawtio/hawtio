@@ -8,10 +8,22 @@ module Core {
 
     $scope.localStorage = localStorage;
 
+    $scope.logBuffer = 0;
+    if ('logBuffer' in localStorage) {
+      $scope.logBuffer = parseInt(localStorage['logBuffer']);
+    }
+
     $scope.$watch('localStorage.logLevel', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         var level = JSON.parse(newValue);
         Logger.setLevel(level);
+      }
+    });
+
+    $scope.$watch('logBuffer', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        localStorage['logBuffer'] = newValue;
+        window['LogBuffer'] = newValue;
       }
     });
 

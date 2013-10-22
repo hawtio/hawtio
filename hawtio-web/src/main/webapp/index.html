@@ -53,6 +53,15 @@
 
   <body>
 
+    <div id="log-panel" style="bottom: 110%">
+      <div>
+        <ul id="log-panel-statements"></ul>
+        <div id="close" log-toggler>
+          <i class="icon-chevron-up"></i>
+        </div>
+      </div>
+    </div>
+
     <div id="main-body" ng-controller="Core.AppController" style="display: none;">
       <!--  navbar-inverse -->
       <div id="main-nav" class="navbar navbar-fixed-top" ng-show="!fullScreen()" ng-controller="Core.NavBarController">
@@ -83,6 +92,11 @@
                         {{perspective.label}}</a>
                     </li>
                   </ul>
+                </li>
+                <li ng-show="loggedIn()" title="Show the logging console">
+                  <a href="" log-toggler>
+                    <i class="icon-file-text"></i>
+                  </a>
                 </li>
                 <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
                   <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
@@ -211,6 +225,9 @@
     <script type="text/javascript">
 
       Logger.setLevel(Logger.INFO);
+      // we'll default to 100 statements I guess...
+      // TODO - make configurable...
+      window['LogBuffer'] = 100;
 
       if ('localStorage' in window) {
         if ('logLevel' in window.localStorage) {
@@ -218,41 +235,95 @@
           // console.log("Using log level: ", logLevel);
           Logger.setLevel(logLevel);
         }
+
+        if ('showLog' in window.localStorage) {
+          var showLog = window.localStorage['showLog'];
+          // console.log("showLog: ", showLog);
+          if (showLog === 'true') {
+            var container = document.getElementById("log-panel");
+            container.setAttribute("style", "bottom: 50%;");
+          }
+        }
+
+        if ('logBuffer' in window.localStorage) {
+          var logBuffer = window.localStorage['logBuffer'];
+          window['LogBuffer'] = parseInt(logBuffer);
+        } else {
+          window.localStorage['logBuffer'] = window['LogBuffer'];
+        }
       }
 
-      if ('console' in window) {
+      var MyConsole = window.console;
 
-        var MyConsole = window.console;
-        // sneaky hack to redirect console.log !
-        Logger.setHandler(function(messages, context) {
-          var hdlr = MyConsole.log;
+      Logger.setHandler(function(messages, context) {
+        // MyConsole.log("context: ", context);
+        // MyConsole.log("messages: ", messages);
+        var container = document.getElementById("log-panel");
+        var panel = document.getElementById("log-panel-statements");
 
-          // Prepend the logger's name to the log message for easy identification.
-          if (context.name) {
-            messages[0] = "[" + context.name + "] " + messages[0];
-          }
+        var node = document.createElement("li");
 
-          // Delegate through to custom warn/error loggers if present on the console.
-          if (context.level === Logger.WARN && MyConsole.warn) {
-            hdlr = MyConsole.warn;
-          } else if (context.level === Logger.ERROR && MyConsole.error) {
-            hdlr = MyConsole.error;
-          } else if (context.level === Logger.INFO && MyConsole.info) {
-            hdlr = MyConsole.info;
-          }
+        var text = ""
 
-          hdlr.apply(MyConsole, messages);
-        });
-
-        window.console = {
-          log: Logger.debug,
-          warn: Logger.warn,
-          error: Logger.error,
-          info: Logger.info
+        var isArrayOrObject = function(o) {
+          return (!!o) && (o.constructor === Array || o.constructor === Object);
         };
-      }
 
+        for (var i = 0; i < messages.length; i++) {
+          var message = messages[i];
+          if (isArrayOrObject(message)) {
+            text = text + JSON.stringify(message);
+          } else {
+            text = text + " " + message;
+          }
+        }
 
+        node.innerHTML = text;
+        node.className = context.level.name;
+        panel.appendChild(node);
+        if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
+          panel.firstChild.remove();
+        }
+
+        if (container.scrollHeight = 0) {
+          panel.scrollTop = panel.scrollHeight;
+        }
+
+        if (panel.scrollTop > panel.scrollHeight - container.scrollHeight - 100) {
+          panel.scrollTop = panel.scrollHeight;
+        }
+
+      });
+
+      /*
+      Logger.setHandler(function(messages, context) {
+        var hdlr = MyConsole.log;
+
+        // Prepend the logger's name to the log message for easy identification.
+        if (context.name) {
+          messages[0] = "[" + context.name + "] " + messages[0];
+        }
+
+        // Delegate through to custom warn/error loggers if present on the console.
+        if (context.level === Logger.WARN && MyConsole.warn) {
+          hdlr = MyConsole.warn;
+        } else if (context.level === Logger.ERROR && MyConsole.error) {
+          hdlr = MyConsole.error;
+        } else if (context.level === Logger.INFO && MyConsole.info) {
+          hdlr = MyConsole.info;
+        }
+
+        hdlr.apply(MyConsole, messages);
+      });
+      */
+
+      // sneaky hack to redirect console.log !
+      window.console = {
+        log: Logger.debug,
+        warn: Logger.warn,
+        error: Logger.error,
+        info: Logger.info
+      };
     </script>
 
 

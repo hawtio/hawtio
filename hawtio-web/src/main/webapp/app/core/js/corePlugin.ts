@@ -401,6 +401,26 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         }).
         directive('gridStyle', function($window) {
           return new Core.GridStyle($window);
+        }).
+        directive('logToggler', function(localStorage) {
+          return {
+            restrict: 'A',
+            link: ($scope, $element, $attr) => {
+              $element.click(() => {
+                var log = $("#log-panel");
+                Logger.debug("height: ", log.height());
+                if (log.height() !== 0) {
+                  localStorage['showLog'] = 'false';
+                  log.css({'bottom': '110%'});
+                } else {
+                  localStorage['showLog'] = 'true';
+                  log.css({'bottom': '50%'});
+                }
+                return false;
+              });
+            }
+          };
+
         });
 
 // enable bootstrap tooltips
