@@ -2,6 +2,19 @@ module Core {
 
   export function PreferencesController($scope, localStorage) {
 
+    if (!angular.isDefined(localStorage['logLevel'])) {
+      localStorage['logLevel'] = '{"value": 2, "name": "INFO"}';
+    }
+
+    $scope.localStorage = localStorage;
+
+    $scope.$watch('localStorage.logLevel', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        var level = JSON.parse(newValue);
+        Logger.setLevel(level);
+      }
+    });
+
     $scope.updateRate = localStorage['updateRate'];
     $scope.url = localStorage['url'];
     $scope.autoRefresh = localStorage['autoRefresh'] === "true";

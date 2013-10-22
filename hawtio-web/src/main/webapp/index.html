@@ -202,7 +202,61 @@
       </div>
     </div>
 
+    <!--
+      Configure logging first thing...
+    -->
+    <script type="text/javascript" src="lib/logger.min.js"></script>
+    <script type="text/javascript" src="lib/json2-min.js"></script>
 
+    <script type="text/javascript">
+
+      Logger.setLevel(Logger.INFO);
+
+      if ('localStorage' in window) {
+        if ('logLevel' in window.localStorage) {
+          var logLevel = JSON.parse(window.localStorage['logLevel']);
+          // console.log("Using log level: ", logLevel);
+          Logger.setLevel(logLevel);
+        }
+      }
+
+      if ('console' in window) {
+
+        var MyConsole = window.console;
+        // sneaky hack to redirect console.log !
+        Logger.setHandler(function(messages, context) {
+          var hdlr = MyConsole.log;
+
+          // Prepend the logger's name to the log message for easy identification.
+          if (context.name) {
+            messages[0] = "[" + context.name + "] " + messages[0];
+          }
+
+          // Delegate through to custom warn/error loggers if present on the console.
+          if (context.level === Logger.WARN && MyConsole.warn) {
+            hdlr = MyConsole.warn;
+          } else if (context.level === Logger.ERROR && MyConsole.error) {
+            hdlr = MyConsole.error;
+          } else if (context.level === Logger.INFO && MyConsole.info) {
+            hdlr = MyConsole.info;
+          }
+
+          hdlr.apply(MyConsole, messages);
+        });
+
+        window.console = {
+          log: Logger.debug,
+          warn: Logger.warn,
+          error: Logger.error,
+          info: Logger.info
+        };
+      }
+
+
+    </script>
+
+
+    <!-- Now load and set up the plugin loader -->
     <script type="text/javascript" src="app/core/js/hawtio-plugin-loader.js"></script>
 
     <script type="text/javascript">
@@ -216,8 +270,6 @@
       });
     </script>
 
-
-
     <!-- charts and jolokia for jmx -->
     <script type="text/javascript" src="lib/d3.v3.min.js"></script>
 
@@ -227,7 +279,6 @@
     <script type="text/javascript" src="lib/cubism.v1.min.js"></script>
     <script type="text/javascript" src="lib/jolokia-cubism-min.js"></script>
     <script type="text/javascript" src="lib/jolokia-simple-min.js"></script>
-    <script type="text/javascript" src="lib/json2-min.js"></script>
 
     <!-- UI framework -->
     <script type="text/javascript" src="lib/bootstrap.min.js"></script>

@@ -6,8 +6,9 @@
 
       <strong>Behaviour</strong>
       <form class="form-horizontal">
+
         <div class="control-group">
-          <label class="control-label" for="updateRate" title="How frequently the data is updated in the browser">Update Rate</label>
+          <label class="control-label" for="updateRate">Update Rate</label>
 
           <div class="controls">
             <select id="updateRate" ng-model="updateRate">
@@ -18,7 +19,23 @@
               <option value="10000">10 seconds</option>
               <option value="30000">30 seconds</option>
             </select>
+            <span class="help-block">How frequently the data is updated in the browser</span>
           </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="logLevel">Log Level</label>
+          <div class="controls">
+            <select id="logLevel" ng-model="localStorage.logLevel">
+              <option value='{"value": 99, "name": "OFF"}'>Off</option>
+              <option value='{"value": 8, "name": "ERROR"}'>Error</option>
+              <option value='{"value": 4, "name": "WARN"}'>Warn</option>
+              <option value='{"value": 2, "name": "INFO"}'>Info</option>
+              <option value='{"value": 1, "name": "DEBUG"}'>Debug</option>
+            </select>
+            <span class="help-block">Level of logging for the web console frontend</span>
+          </div>
+
         </div>
 
         <div class="control-group">
