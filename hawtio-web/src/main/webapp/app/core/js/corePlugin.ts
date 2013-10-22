@@ -366,7 +366,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
           setTimeout(() => {
             $("#main-body").fadeIn(2000).after(() => {
-              Logger.info("Hawtio started!");
+              Logger.get('Core').info("Hawtio started!");
             });
           }, 500);
 

@@ -279,6 +279,10 @@
         };
       }
 
+      var isArrayOrObject = function(o) {
+        return (!!o) && (o.constructor === Array || o.constructor === Object);
+      };
+
 
       Logger.setHandler(function(messages, context) {
         // MyConsole.log("context: ", context);
@@ -289,10 +293,10 @@
         var node = document.createElement("li");
 
         var text = ""
+        if (context.name) {
+          messages[0] = "[" + context.name + "] " + messages[0];
+        }
 
-        var isArrayOrObject = function(o) {
-          return (!!o) && (o.constructor === Array || o.constructor === Object);
-        };
 
         for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
