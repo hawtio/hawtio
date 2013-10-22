@@ -5,6 +5,9 @@ module ForceGraph {
 
         directive('hawtioForceGraph', function () {
             return new ForceGraph.ForceGraphDirective();
+        })
+        .run((helpRegistry) => {
+          helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
         });
 
     hawtioPluginLoader.addModule(pluginName);

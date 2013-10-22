@@ -41,7 +41,7 @@ The div with the id `pop-up` is used to style the tooltips for the nodes.
 
 The image below shows the force graph directive being used to render the service / bundle dependencies within an OSGI container.
 
-![Force Graph in Action](../img/dependencies.png)
+![Force Graph in Action](app/forcegraph/doc/img/dependencies.png)
 
 #### Building a Graph
 

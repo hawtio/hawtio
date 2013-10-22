@@ -23,6 +23,28 @@ module Core {
       faq: 'FAQ'
     };
 
+    // map plugin names to their path in the app
+    private pluginNameMappings = {
+      hawtioCore: 'core',
+      'hawtio-branding': 'branding',
+      forceGraph: 'forcegraph',
+      'hawtio-ui': 'ui',
+      'hawtio-forms': 'forms',
+      elasticjs: 'elasticsearch'
+    };
+
+    // let's not auto-discover help files in these plugins
+    private ignoredPlugins = [
+      'core',
+      'branding',
+      'datatable',
+      'forcegraph',
+      'forms',
+      'perspective',
+      'tree',
+      'ui'
+    ];
+
     private topics = {};
 
     constructor(public $rootScope) {
@@ -67,24 +89,45 @@ module Core {
       return this.topics;
     }
 
+    public disableAutodiscover(name) {
+      this.ignoredPlugins.push(name);
+    }
+
     public discoverHelpFiles(plugins) {
-      var self = this;
+      var self:HelpRegistry = this;
+
+      console.log("Ignored plugins: ", self.ignoredPlugins);
+
       plugins.forEach(function(plugin) {
-        angular.forEach(self.discoverableDocTypes, (value, key) => {
-          var target = 'app/' + plugin + '/doc/' + value;
-          // avoid trying to discover these if plugins register them
-          if (!angular.isDefined(self['plugin'])
-              || !angular.isDefined(self['plugin'][key])) {
-            $.ajax(target, {
-              type: 'HEAD',
-              statusCode: {
-                200: function() {
-                  self.getOrCreateTopic(plugin)[key] = target
+
+        var pluginName = self.pluginNameMappings[plugin];
+        if (!angular.isDefined(pluginName)) {
+          pluginName = plugin;
+        }
+
+        if (!self.ignoredPlugins.any((p) => { return p === pluginName; })) {
+
+          angular.forEach(self.discoverableDocTypes, (value, key) => {
+            // avoid trying to discover these if plugins register them
+            if (!angular.isDefined(self[pluginName]) ||
+                !angular.isDefined(self[pluginName][key])) {
+
+              var target = 'app/' + pluginName + '/doc/' + value;
+              console.log("checking: ", target);
+
+              $.ajax(target, {
+                type: 'HEAD',
+                statusCode: {
+                  200: function() {
+                    self.getOrCreateTopic(plugin)[key] = target
+                  }
                 }
-              }
-            });
-          }
-        });
+              });
+            }
+          });
+
+        }
+
       });
     }
 
