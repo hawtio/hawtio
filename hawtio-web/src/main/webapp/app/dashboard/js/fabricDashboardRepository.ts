@@ -91,6 +91,10 @@ module Dashboard {
       return 'fabric';
     }
 
+    public isValid() {
+      return Fabric.hasFabric(this.workspace);
+    }
+
     public getDashboards(fn) {
 
       var jolokia = this.jolokia;

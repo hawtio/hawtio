@@ -27,7 +27,7 @@ module Fabric {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "MQManager"});
   }
 
-  export function hasFabric(workspace) {
+  export function hasFabric(workspace):bool {
     // lets make sure we only have a fabric if we have the ClusterBootstrapManager available
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse which doesn't have the necessary
     // mbeans for hawtio awesomeness

@@ -12,6 +12,10 @@ module Git {
   export var jmxDomain = "io.hawt.git";
   export var mbeanType = "GitFacade";
 
+  export function hasGit(workspace:Workspace) {
+    return getGitMBean(workspace) !== null;
+  }
+
   /**
    * Returns the JMX ObjectName of the git mbean
    */
