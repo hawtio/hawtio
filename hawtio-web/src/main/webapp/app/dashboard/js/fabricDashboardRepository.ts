@@ -101,7 +101,7 @@ module Dashboard {
         type: 'exec',
         mbean: Fabric.managerMBean,
         operation: 'getConfigurationFiles',
-        arguments: [details.branch, details.profiles, ".*\\.dashboard"]
+        arguments: [details.branch, details.profiles, ".*dashboard"]
       }, {
         method: 'POST',
         success: (response) => {
