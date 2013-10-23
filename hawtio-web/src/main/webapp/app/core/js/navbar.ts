@@ -4,6 +4,7 @@ module Core {
 
     $scope.hash = null;
     $scope.topLevelTabs = [];
+    $scope.subLevelTabs = workspace.subLevelTabs;
     $scope.currentPerspective = null;
     $scope.perspectiveDetails = {
       perspective: null
@@ -22,7 +23,7 @@ module Core {
       reloadPerspective();
     });
 
-    $scope.subLevelTabs = () => workspace.subLevelTabs;
+    //$scope.subLevelTabs = () => workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
@@ -31,13 +32,13 @@ module Core {
     $scope.switchPerspective = (perspective) => {
       var searchPerspectiveId = $location.search()[Perspective.perspectiveSearchId];
       if (perspective && ($scope.currentPerspective !== perspective ||  perspective.id !== searchPerspectiveId)) {
-        console.log("Changed the perspective to " + JSON.stringify(perspective) + " from search id " + searchPerspectiveId);
+        Logger.debug("Changed the perspective to " + JSON.stringify(perspective) + " from search id " + searchPerspectiveId);
         if ($scope.currentPerspective) {
           $scope.currentPerspective.lastPage = $location.url();
         }
         var pid = perspective.id;
         $location.search(Perspective.perspectiveSearchId, pid);
-        console.log("Setting perspective to " + pid);
+        Logger.debug("Setting perspective to " + pid);
         $scope.currentPerspective = perspective;
         reloadPerspective();
         $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);

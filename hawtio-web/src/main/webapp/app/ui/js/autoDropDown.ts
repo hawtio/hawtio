@@ -16,19 +16,22 @@ module UI {
 
         var overflowEl = $($element.find('.overflow'));
         var overflowMenu = $(overflowEl.find('ul.dropdown-menu'));
-        var availableWidth = $element.innerWidth() - overflowEl.outerWidth(true);
+        /*
+        Logger.info("element inner width: ", $element.innerWidth());
+        Logger.info("element position: ", $element.position());
+        Logger.info("element offset: ", $element.offset());
+        Logger.info("overflowEl offset: ", overflowEl.offset());
+        Logger.info("overflowEl position: ", overflowEl.position());
+        */
+        var margin = overflowEl.outerWidth() - overflowEl.innerWidth();
+        var availableWidth = overflowEl.position().left - $element.position().left - 50;
 
-        $element.children('li').each(function(index) {
+        $element.children('li:not(.overflow):not(.pull-right):not(:hidden)').each(function() {
           var self = $(this);
-          var cssClass = self.attr('class')
-          if ( (cssClass && cssClass.has("overflow")) || self.css('display') === 'none') {
-            return;
-          }
-
           availableWidth = availableWidth - self.outerWidth(true);
           if (availableWidth < 0) {
             self.detach();
-            overflowMenu.append(self);
+            self.prependTo(overflowMenu);
           }
         });
 
@@ -37,17 +40,23 @@ module UI {
         }
 
         if (availableWidth > 130) {
-          overflowMenu.children('li').each(function(index) {
-            var self = $(this);
-            var cssClass = self.attr('class')
-            if ((cssClass && cssClass.has("overflow")) || self.css('display') === 'none') {
+
+          var noSpace = false;
+
+          overflowMenu.children('li:not(.overflow):not(.pull-right)').filter(function() {
+            return $(this).css('display') !== 'none';
+          }).each(function() {
+            if (noSpace) {
               return;
             }
+            var self = $(this);
 
             if (availableWidth > self.outerWidth()) {
               availableWidth = availableWidth - self.outerWidth();
               self.detach();
-              $element.append(self);
+              self.insertBefore(overflowEl);
+            } else {
+              noSpace = true;
             }
           });
         }
