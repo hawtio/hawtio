@@ -223,9 +223,38 @@ function escapeTreeCssStyles(text:string) {
  * @param type which is usually "success" or "error" and matches css alert-* css styles
  * @param message the text to display
  */
-function notification (type:string, message:string) {
+
+function showLogPanel() {
+  var log = $("#log-panel");
+  var body = $('body');
+  localStorage['showLog'] = 'true';
+  log.css({'bottom': '50%'});
+  body.css({
+      'overflow-y': 'hidden'
+      });
+}
+
+function notification (type:string, message:string, options:any = null) {
   var w:any = window;
-  w.toastr[type](message);
+
+  if (options === null) {
+    options = {};
+  }
+
+  if (type === 'error' || type === 'warning') {
+    var oldOnClick = options.onclick;
+    options = angular.extend(options, {
+      onclick: () => {
+        showLogPanel();
+        if (oldOnClick) {
+          setTimeout(oldOnClick, 50);
+        }
+      }
+    });
+  }
+
+  w.toastr[type](message, '', options);
+
 }
 
 /**

@@ -9,7 +9,19 @@ notification('error', 'Oh no!');
 notification('warning', 'Better watch out!');
 ```
 
-The available levels are 'info', 'success', 'warning' and 'error'.
+The available levels are 'info', 'success', 'warning' and 'error'.  It's also possible to supply an options object as the last argument, a good way to use this is to provide an onClick handler, for example:
+
+```
+notification('error', 'Help me!', { onclick: function() { Logger.info('hey!'); } });
+```
+
+onHidden can be another good way to trigger something when the notification disappears:
+
+```
+notification('info', 'Did Stuff!', { onHIdden: function() { Logger.info('message hidden!') } });
+```
+
+By default for warning or error notifications clicking on the notification will show hawtio's log console, but it will also still execute the onclick afterwards if passed.
 
 
 #### Logging
