@@ -418,12 +418,19 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             link: ($scope, $element, $attr) => {
               $element.click(() => {
                 var log = $("#log-panel");
+                var body = $('body');
                 if (log.height() !== 0) {
                   localStorage['showLog'] = 'false';
                   log.css({'bottom': '110%'});
+                  body.css({
+                    'overflow-y': 'auto'
+                    });
                 } else {
                   localStorage['showLog'] = 'true';
                   log.css({'bottom': '50%'});
+                  body.css({
+                    'overflow-y': 'hidden'
+                    });
                 }
                 return false;
               });
