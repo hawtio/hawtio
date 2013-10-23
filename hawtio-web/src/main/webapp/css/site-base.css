@@ -49,6 +49,11 @@ a:focus {
   font-family: monospace;
   margin-left: 3px;
   margin-right: 3px;
+  transition: background .25s ease-in-out;
+}
+
+#log-panel-statements li:hover {
+  background: #111111;
 }
 
 #log-panel-statements li.DEBUG {
@@ -66,7 +71,6 @@ a:focus {
 #log-panel-statements li.ERROR {
   color: red;
 }
-
 
 #log-panel #close {
   text-align: center;

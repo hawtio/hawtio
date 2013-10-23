@@ -356,6 +356,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
           helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/FAQ.md');
           helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
+          helpRegistry.addDevDoc('Core', 'app/core/doc/coreDeveloper.md');
           helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
           var opts = localStorage['CodeMirrorOptions'];
