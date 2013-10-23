@@ -242,15 +242,9 @@ function notification (type:string, message:string, options:any = null) {
   }
 
   if (type === 'error' || type === 'warning') {
-    var oldOnClick = options.onclick;
-    options = angular.extend(options, {
-      onclick: () => {
-        showLogPanel();
-        if (oldOnClick) {
-          setTimeout(oldOnClick, 50);
-        }
-      }
-    });
+    if (!angular.isDefined(options.onclick)) {
+      options.onclick = showLogPanel;
+    }
   }
 
   w.toastr[type](message, '', options);

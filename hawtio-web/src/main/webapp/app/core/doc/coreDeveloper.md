@@ -21,7 +21,7 @@ onHidden can be another good way to trigger something when the notification disa
 notification('info', 'Did Stuff!', { onHIdden: function() { Logger.info('message hidden!') } });
 ```
 
-By default for warning or error notifications clicking on the notification will show hawtio's log console, but it will also still execute the onclick afterwards if passed.
+By default for warning or error notifications clicking on the notification will show hawtio's log console, but it will also still execute the onclick afterwards if passed.  If some other behavior is desired or if it wouldn't make sense to open the console just pass an options object with a do-nothing onclick function.
 
 
 #### Logging
