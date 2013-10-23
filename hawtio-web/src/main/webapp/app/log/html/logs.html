@@ -71,7 +71,7 @@
           <div class="title">{{log.message}}</div>
           <div class="expandable-body well">
             {{log.message}}
-            <dl ng-hide="!log.exception">
+            <dl class="log-stack-trace" ng-hide="!log.exception">
               <dt>Stack Trace:</dt>
               <dd ng-bind-html-unsafe="formatStackTrace(log.exception)"></dd>
             </dl>

@@ -1649,21 +1649,52 @@ input[type="checkbox"].ng-invalid {
 .create-container-body {
   margin-top: 10px;
 }
+
+.log-stack-trace dd {
+  margin-left: 0;
+}
+
+.log-stack-trace dd ul li {
+  line-height: 12px;
+}
+
+.log-stack-trace dd ul li:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.log-stack-trace dd ul li:nth-child(odd) {
+  background: white;
+}
+
+.log-stack-trace dd ul li .stack-line * {
+  font-family: monospace;
+}
+
+.log-stack-trace dd ul li > div.stack-line > a {
+  font-weight: bold;
+}
+
+.log-stack-trace dd ul li > pre.stack-line {
+  font-weight: bold;
+}
+
 pre.stack-line {
+  font-family: monospace;
   padding: 0px;
   margin: 0px;
   background: inherit;
   border: none;
   border-radius: 0;
-  line-height: inherit;
+  line-height: 14px;
   font-size: 12px;
 }
 div.stack-line {
-  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  font-family: monospace;
   font-size: 12px;
   white-space: pre-wrap;
   word-break: break-all;
   word-wrap: break-word;
+  line-height: 14px;
 }
 #container-create-form {
   margin-bottom: 14px;
@@ -2489,7 +2520,7 @@ ul.zebra-list li {
 
 }
 
-.log-table li {
+.log-table > li {
   position: relative;
   list-style-type: none;
   min-height: 32px;
@@ -2512,7 +2543,7 @@ ul.zebra-list li {
 }
 
 
-.log-table li div div {
+.log-table > li > div > div {
   position: absolute;
   display: inline-block;
   white-space: nowrap;
