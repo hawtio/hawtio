@@ -93,6 +93,9 @@ module Fabric {
 
 
     $scope.getSshURL = (sshUrl) => {
+      if (!sshUrl) {
+        return '';
+      }
       var answer = sshUrl;
       if ($scope.username !== null && $scope.password !== null) {
         var parts = sshUrl.split(":");
