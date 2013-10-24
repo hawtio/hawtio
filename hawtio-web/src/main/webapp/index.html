@@ -314,29 +314,33 @@
 
         node.innerHTML = text;
         node.className = context.level.name;
-        Rainbow.color(node, function() {
-          panel.appendChild(node);
-        });
-        //panel.appendChild(node);
-        if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
-          panel.firstChild.remove();
-        }
 
+        var scroll = false;
         if (container.scrollHeight = 0) {
-          panel.scrollTop = panel.scrollHeight;
+          scroll = true;
         }
 
         if (panel.scrollTop > (panel.scrollHeight - container.scrollHeight - 200)) {
-          panel.scrollTop = panel.scrollHeight;
+          scroll = true;
         }
-        if (consoleLogger) {
-          consoleLogger(messages, context);
-        }
-        var interceptors = window['logInterceptors'];
 
-        for (var i = 0; i < interceptors.length; i++) {
-          interceptors[i](context.level.name, text);
-        }
+        Rainbow.color(node, function() {
+          panel.appendChild(node);
+          if (scroll) {
+            panel.scrollTop = panel.scrollHeight;
+          }
+          if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
+            panel.firstChild.remove();
+          }
+          if (consoleLogger) {
+            consoleLogger(messages, context);
+          }
+          var interceptors = window['logInterceptors'];
+
+          for (var i = 0; i < interceptors.length; i++) {
+            interceptors[i](context.level.name, text);
+          }
+        });
 
       });
 
