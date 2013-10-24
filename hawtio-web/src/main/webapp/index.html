@@ -15,6 +15,7 @@
     <link rel='stylesheet' href='css/angular-ui.css' type='text/css'>
     <link rel='stylesheet' href='css/ng-grid.css' type='text/css'>
     <link rel='stylesheet' href='css/jquery.gridster.css' type='text/css'>
+    <link rel='stylesheet' href='css/twilight.css' type='text/css'>
     <link rel='stylesheet' href='css/codemirror/themes/ambiance.css' type='text/css'>
     <link rel='stylesheet' href='css/codemirror/themes/blackboard.css' type='text/css'>
     <link rel='stylesheet' href='css/codemirror/themes/cobalt.css' type='text/css'>
@@ -219,6 +220,9 @@
     <!--
       Configure logging first thing...
     -->
+    <script type="text/javascript" src="lib/rainbow.js"></script>
+    <script type="text/javascript" src="lib/language/javascript.js"></script>
+    <script type="text/javascript" src="lib/language/generic.js"></script>
     <script type="text/javascript" src="lib/logger.min.js"></script>
     <script type="text/javascript" src="lib/json2-min.js"></script>
 
@@ -298,7 +302,7 @@
         for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
           if (isArrayOrObject(message)) {
-            text = text + '<pre>' + JSON.stringify(message, null, 2) + '</pre>';
+            text = text + '<pre data-language="javascript">' + JSON.stringify(message, null, 2) + '</pre>';
           } else {
             text = text + message;
           }
@@ -310,7 +314,10 @@
 
         node.innerHTML = text;
         node.className = context.level.name;
-        panel.appendChild(node);
+        Rainbow.color(node, function() {
+          panel.appendChild(node);
+        });
+        //panel.appendChild(node);
         if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
           panel.firstChild.remove();
         }

@@ -60,6 +60,9 @@ a:focus {
   font-size: 11px;
 }
 
+#log-panel-statements li pre span {
+  font-family: monospace;
+}
 
 #log-panel-statements li:hover {
   background: #111111;

@@ -94,6 +94,7 @@ module Health {
             // update the last result callback to update the UI
             onSuccessArray[onSuccessArray.length - 1] = (response) => {
               callback(response, objects.last);
+              console.log("$scope.results: ", $scope.results);
               $scope.widget.populateTable(defaultValues($scope.results));
               Core.$apply($scope);
             };
