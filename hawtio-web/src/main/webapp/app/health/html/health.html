@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="healthEventTemplate">
   <table class="table table-striped">
       <tbody>
-      <tr ng-repeat="(key, value) in row">
+      <tr ng-repeat="(key, value) in row track by $index">
         <td class="property-name">{{key | humanize}}</td>
         <td class="property-value">{{value}}</td>
       </tr>
