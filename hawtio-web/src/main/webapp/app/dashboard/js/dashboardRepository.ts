@@ -16,6 +16,8 @@ module Dashboard {
 
     getType:() => string;
 
+    isValid: () => bool;
+
   }
 
   /**
@@ -66,11 +68,15 @@ module Dashboard {
       return this.getRepository().getType();
     }
 
+    public isValid() {
+      return this.getRepository().isValid();
+    }
+
     /**
      * Looks up the MBean in the JMX tree
      */
     public getRepository():DashboardRepository {
-      if (this.repository) {
+      if (this.repository && this.repository.isValid()) {
         return this.repository;
       }
       if (Fabric.hasFabric(this.workspace)) {
@@ -79,10 +85,10 @@ module Dashboard {
       }
       var git = Git.createGitRepository(this.workspace, this.jolokia, this.localStorage);
       if (git) {
-        this.repository =   new GitDashboardRepository(git);
+        this.repository =   new GitDashboardRepository(this.workspace, git);
         return this.repository;
       }
-      this.repository =  new LocalDashboardRepository();
+      this.repository =  new LocalDashboardRepository(this.workspace);
       return this.repository;
     }
   }
@@ -116,6 +122,10 @@ module Dashboard {
         ]
       }
     ];
+
+    constructor(public workspace:Workspace) {
+
+    }
 
     public putDashboards(array:any[], commitMessage:string, fn) {
       this.dashboards = this.dashboards.concat(array);
@@ -166,10 +176,14 @@ module Dashboard {
     public getType() {
       return 'container';
     }
+
+    public isValid() {
+      return !Fabric.hasFabric(this.workspace) && !Git.hasGit(this.workspace);
+    }
   }
 
   export class GitDashboardRepository implements DashboardRepository {
-    constructor(public git:Git.GitRepository) {
+    constructor(public workspace:Workspace, public git:Git.GitRepository) {
     }
 
     public branch: string = null;
@@ -210,6 +224,10 @@ module Dashboard {
 
     public getType() {
       return 'git';
+    }
+
+    public isValid() {
+      return Git.hasGit(this.workspace);
     }
 
     public getDashboardPath(dash) {

@@ -796,3 +796,18 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   border-bottom: 1px solid #cecdcd !important;
 }
 
+.help-header {
+  background-color: #393F45;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 4px;
+}
+
+.help-header img {
+  position: relative;
+  margin-right: 7px;
+  margin-left: 3px;
+  height: 22px;
+  top: -2px;
+}

@@ -91,6 +91,10 @@ module Dashboard {
       return 'fabric';
     }
 
+    public isValid() {
+      return Fabric.hasFabric(this.workspace);
+    }
+
     public getDashboards(fn) {
 
       var jolokia = this.jolokia;
@@ -101,7 +105,7 @@ module Dashboard {
         type: 'exec',
         mbean: Fabric.managerMBean,
         operation: 'getConfigurationFiles',
-        arguments: [details.branch, details.profiles, ".*\\.dashboard"]
+        arguments: [details.branch, details.profiles, ".*dashboard"]
       }, {
         method: 'POST',
         success: (response) => {

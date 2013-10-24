@@ -1,5 +1,7 @@
 module Core {
-  export function HelpController($scope, $routeParams, marked, helpRegistry) {
+  export function HelpController($scope, $routeParams, marked, helpRegistry, branding) {
+
+    $scope.branding = branding;
 
     $scope.topics = helpRegistry.getTopics();
     $scope.topic = $routeParams.topic;
