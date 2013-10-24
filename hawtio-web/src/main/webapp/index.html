@@ -298,17 +298,17 @@
         for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
           if (isArrayOrObject(message)) {
-            text = text + JSON.stringify(message);
+            text = text + '<pre>' + JSON.stringify(message, null, 2) + '</pre>';
           } else {
             text = text + message;
           }
         }
 
         if (context.name) {
-          text = "[" + context.name + "] " + text;
+          text = '[<span class="green">' + context.name + '</span>] ' + text;
         }
 
-        node.textContent = text;
+        node.innerHTML = text;
         node.className = context.level.name;
         panel.appendChild(node);
         if (panel.childNodes.length > parseInt(window['LogBuffer'])) {

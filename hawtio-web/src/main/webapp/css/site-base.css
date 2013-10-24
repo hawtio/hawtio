@@ -52,6 +52,15 @@ a:focus {
   transition: background .25s ease-in-out;
 }
 
+#log-panel-statements li pre {
+  border-radius: 0;
+  color: white;
+  background-color: inherit;
+  border: none;
+  font-size: 11px;
+}
+
+
 #log-panel-statements li:hover {
   background: #111111;
 }
