@@ -302,7 +302,15 @@
         for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
           if (isArrayOrObject(message)) {
-            text = text + '<pre data-language="javascript">' + JSON.stringify(message, null, 2) + '</pre>';
+
+            var obj = "" ;
+            try {
+              obj = '<pre data-language="javascript">' + JSON.stringify(message, null, 2) + '</pre>';
+            } catch (error) {
+              obj = message + " (failed to convert) ";
+              // silently ignore, could be a circular object...
+            }
+            text = text + obj;
           } else {
             text = text + message;
           }
