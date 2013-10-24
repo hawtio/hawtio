@@ -34,7 +34,7 @@
       <p ng-show="selectedRepoRepos && selectedRepoRepos.length > 0">
         <h6>Feature Repositories</h6>
         <ul>
-          <li style="display: block" ng-repeat="repo in selectedRepoRepos">{{repo}}</li>
+          <li style="display: block" ng-repeat="repo in selectedRepoRepos track by $index">{{repo}}</li>
         </ul>
 
       </p>

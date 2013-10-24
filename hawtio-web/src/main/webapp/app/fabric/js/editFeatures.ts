@@ -87,7 +87,14 @@ module Fabric {
       if (newValue !== oldValue) {
         $scope.selectedRepoName = $scope.selectedRepoJson.name;
         $scope.selectedRepoRepos = $scope.selectedRepoJson.repository;
+        if (!angular.isArray($scope.selectedRepoRepos)) {
+          $scope.selectedRepoRepos = [$scope.selectedRepoRepos];
+        }
+        Logger.info("selectedRepoRepos: ", $scope.selectedRepoRepos);
         $scope.selectedRepoFeatures = $scope.selectedRepoJson.feature;
+        if (!angular.isArray($scope.selectedRepoFeatures)) {
+          $scope.selectedRepoFeatures = [$scope.selectedRepoFeatures];
+        }
       }
     });
 
