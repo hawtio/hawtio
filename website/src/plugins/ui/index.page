@@ -3,6 +3,6 @@ title: ui plugin
 --- pipeline:ssp,markdown
   <div id="content-header">
     <div class="container">
-${unescape(loadText(new FileInputStream(app_dir + "/ui/doc/developer.md")))}
+${unescape(loadText(new FileInputStream(app_dir + "/ui/doc/developerPage1.md")))}
 </div>
   </div>
