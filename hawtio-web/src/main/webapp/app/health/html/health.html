@@ -1,3 +1,5 @@
+
+
 <script type="text/ng-template" id="healthEventTemplate">
   <table class="table table-striped">
       <tbody>
@@ -10,6 +12,20 @@
 </script>
 
 <div class="controller-section" ng-controller="Health.HealthController">
+
+  <div class="inline-block health-displays" ng-repeat="display in displays">
+    <div class="health-display-title">{{display.mbean}}</div>
+    <div ng-repeat="value in display.values" class="health-display inline-block {{value.level}}" >
+      <div class="health-title centered">{{getTitle(value)}}</div>
+      <div class="health-chart" title="{{value.message}}">
+        <fs-donut bind="value.data" color-map="value.colorMap" outer-radius="200" inner-radius="75" duration="250"></fs-donut>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!--
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
          id="grid">
@@ -24,5 +40,10 @@
     </thead>
     <tbody>
   </table>
+  -->
+
+  <div class="inline-block" ng-repeat="result in results">
+    <h6>result.</h6>
+  </div>
 
 </div>

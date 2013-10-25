@@ -1,4 +1,7 @@
 module Health {
+
+  export var log:Logging.Logger = Logger.get("Health");
+
   export var healthDomains = {
     "org.apache.activemq": "ActiveMQ",
     "org.apache.camel": "Camel",

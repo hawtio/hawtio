@@ -163,7 +163,7 @@ class Workspace {
       try {
         return folder.getOrElse(value);
       } catch (e) {
-        console.log("Failed to find value " + value + " on folder " + folder);
+        Core.log.warn("Failed to find value " + value + " on folder " + folder);
       }
     }
     return null;
@@ -172,7 +172,7 @@ class Workspace {
   public populateTree(response) {
     if (!Object.equal(this.treeResponse, response.value)) {
       this.treeResponse = response.value;
-      console.log("JMX tree has been loaded!");
+      Core.log.debug("JMX tree has been loaded!");
 
       var rootId = 'root';
       var separator = '-';
@@ -312,7 +312,7 @@ class Workspace {
               }
             }
           } else {
-            console.log("No folder found for lastPath: " + lastPath);
+            Core.log.info("No folder found for lastPath: " + lastPath);
           }
         }
       }
@@ -463,7 +463,7 @@ class Workspace {
       var validFn = tab.isValid;
       return !angular.isDefined(validFn) || validFn(workspace);
     } else {
-      console.log("Could not find tab for " + uri);
+      Core.log.info("Could not find tab for " + uri);
       return false;
     }
 /*
@@ -551,7 +551,7 @@ class Workspace {
         this.setLocalStorage(key, uri);
         return false;
       } else {
-        console.log("the uri '" + uri + "' is not valid for this selection");
+        Core.log.info("the uri '" + uri + "' is not valid for this selection");
         // lets look up the previous preferred value for this type
         var defaultPath = this.getLocalStorage(key);
         if (!defaultPath || !this.validSelection(defaultPath)) {
@@ -567,7 +567,7 @@ class Workspace {
         if (!defaultPath) {
           defaultPath = "#/jmx/help";
         }
-        console.log("moving the URL to be " + defaultPath);
+        Core.log.info("moving the URL to be " + defaultPath);
         if (defaultPath.startsWith("#")) {
           defaultPath = defaultPath.substring(1);
         }

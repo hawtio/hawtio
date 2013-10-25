@@ -295,6 +295,12 @@ if (!Object.keys) {
 module Core {
 
   /**
+   * A named logger for our module...
+   * @type {Logger}
+   */
+  export var log:Logging.Logger = Logger.get("Core");
+
+  /**
    * Creates a link by appending the current $location.search() hash to the given href link,
    * removing any required parameters from the link
    *
