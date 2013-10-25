@@ -1,49 +1,55 @@
 
-
-<script type="text/ng-template" id="healthEventTemplate">
-  <table class="table table-striped">
-      <tbody>
-      <tr ng-repeat="(key, value) in row track by $index">
-        <td class="property-name">{{key | humanize}}</td>
-        <td class="property-value">{{value}}</td>
-      </tr>
-      </tbody>
-  </table>
-</script>
-
 <div class="controller-section" ng-controller="Health.HealthController">
 
-  <div class="inline-block health-displays" ng-repeat="display in displays">
-    <div class="health-display-title">{{display.mbean}}</div>
-    <div ng-repeat="value in display.values" class="health-display inline-block {{value.level}}" >
-      <div class="health-title centered">{{getTitle(value)}}</div>
-      <div class="health-chart" title="{{value.message}}">
-        <fs-donut bind="value.data" color-map="value.colorMap" outer-radius="200" inner-radius="75" duration="250"></fs-donut>
-      </div>
-    </div>
+  <div class="row-fluid">
+    <input type="text" class="input span12" ng-model="pageFilter" placeholder="Filter...">
   </div>
 
+  <div class="row-fluid">
+    <div class="inline-block health-displays"
+         ng-repeat="display in displays"
+         ng-show="filterValues(display)">
+      <div class="health-display-title">{{display.mbean}}</div>
+      <div ng-show="display.values.length === 0">No displays to show...</div>
+      <div ng-repeat="value in display.values"
+           class="health-display {{value.level}}"
+           ng-show="filterValues(value)"
+           ng-init="showDetails = false">
 
-
-  <!--
-
-  <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover"
-         id="grid">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Level</th>
-      <th>Domain</th>
-      <th>Kind</th>
-      <th>Message</th>
-    </tr>
-    </thead>
-    <tbody>
-  </table>
-  -->
-
-  <div class="inline-block" ng-repeat="result in results">
-    <h6>result.</h6>
+        <div class="health-title centered"
+             ng-bind-html-unsafe="getTitle(value)"></div>
+        <div class="health-chart">
+          <fs-donut bind="value.data"
+                    color-map="value.colorMap"
+                    outer-radius="200"
+                    inner-radius="75"
+                    duration="250"></fs-donut>
+        </div>
+        <div class="health-status" hawtio-message-panel="50%" speed="0.5s">
+          <div class="health-message-wrap">
+            <span class="health-message">{{value.message}}</span>
+          </div>
+        </div>
+        <div class="health-details-toggle"
+             ng-click="showDetails = !showDetails"
+             title="Show detail panel">
+          <i class="icon-info-sign clickable"></i>
+          </div>
+        <div class="health-details"
+             hawtio-info-panel="left"
+             speed="0.5s"
+             toggle="showDetails">
+          <div class="health-details-wrap">
+            <dl class="dl-horizontal"
+                ng-repeat="(key, value) in value track by $index"
+                ng-show="showKey(key)">
+              <dt>{{key | humanize}}:</dt>
+              <dd title="{{value}}">{{value}}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>

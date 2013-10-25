@@ -1,6 +1,6 @@
 module Health {
   var pluginName = 'health';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {
     $routeProvider.
             when('/health', {templateUrl: 'app/health/html/health.html'})
   }).

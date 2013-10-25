@@ -44,6 +44,10 @@ module UI {
         return new UI.ZeroClipboardDirective();
       }).directive('hawtioAutoDropdown', () => {
         return UI.AutoDropDown;
+      }).directive('hawtioMessagePanel', () => {
+        return new UI.MessagePanel();
+      }).directive('hawtioInfoPanel', () => {
+        return new UI.InfoPanel();
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');

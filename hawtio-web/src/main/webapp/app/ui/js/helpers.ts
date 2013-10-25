@@ -1,5 +1,7 @@
 module UI {
 
+  export var log:Logging.Logger = Logger.get("UI");
+
   export var scrollBarWidth:number = null;
 
   /*

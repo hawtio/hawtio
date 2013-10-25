@@ -2868,12 +2868,89 @@ fs-donut svg g text.units {
 }
 
 .health-displays .health-display {
+  position: relative;
   border-radius: 4px;
   border: 1px solid #d4d4d4;
   display: inline-block;
   width: 300px;
+  height: 300px;
   margin-left: 10px;
   margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.health-details {
+  top: 0;
+  bottom: 0;
+  z-index: 40;
+  background: white;
+}
+
+.health-status {
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  background: white;
+  overflow: hidden;
+  left: 0;
+  right: 0;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  z-index: 20;
+}
+
+.health-message-wrap {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #d4d4d4;
+  width: 100%;
+  height: 100%;
+}
+
+.health-message {
+  display: block;
+  margin: 10px;
+}
+
+.health-details-toggle {
+  position: absolute;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  right: 2px;
+  top: 20px;
+}
+
+.health-details-wrap {
+  width: 300px;
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.health-details-wrap dl {
+  margin-top: 5px;
+  margin-bottom: 2px;
+  margin-left: 0;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.health-details-wrap dl:before {
+  display: none;
+}
+
+.health-details-wrap dl:after {
+  display: none;
+}
+
+.health-details-wrap dl dt {
+  white-space: normal;
+  width: 113px;
+}
+
+.health-details-wrap dl dd {
+  margin-left: 123px;
+
 }
 
 .health-display-title {
@@ -2897,5 +2974,3 @@ fs-donut svg g text.units {
   width: 300px;
   height: 300px;
 }
-
-

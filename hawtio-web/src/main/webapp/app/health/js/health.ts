@@ -2,51 +2,10 @@ module Health {
 
     export function HealthController($scope, jolokia, workspace:Workspace, $templateCache) {
 
-      $scope.widget = new TableWidget($scope, workspace, [
-        <TableColumnConfig> {
-          "mDataProp": null,
-          "sClass": "control center",
-          "mData": null,
-          "sDefaultContent": '<i class="icon-plus"></i>'
-        },
-        <TableColumnConfig> {
-          "mDataProp": "level",
-          "sDefaultContent": "",
-          "mData": null
-        },
-        <TableColumnConfig> {
-          "mDataProp": "domain",
-          "sDefaultContent": "",
-          "mData": null
-        },
-        <TableColumnConfig> {
-          "mDataProp": "kind",
-          "sDefaultContent": "",
-          "mData": null
-        },
-        <TableColumnConfig> {
-          "mDataProp": "message",
-          "sDefaultContent": "",
-          "mData": null,
-          "sWidth": "60%"
-        }
-      ], {
-        rowDetailTemplateId: 'healthEventTemplate',
-        disableAddColumns: true
-      });
-
-      $scope.widget.dataTableConfig["fnRowCallback"] = (nRow, aData, iDisplayIndex, iDisplayIndexFull) => {
-        var level = aData["level"];
-        var style = logLevelClass(level);
-        if (style) {
-          $(nRow).addClass(style);
-        }
-      };
-
       $scope.levelSorting = {
         'ERROR': 0,
         'WARNING': 1,
-        'INFO': 2,
+        'INFO': 2
       };
 
       $scope.colorMaps = {
@@ -62,20 +21,19 @@ module Health {
           'Health': '#33cc00',
           'Remaining': '#00cc33'
         }
-      }
+      };
 
       $scope.results = [];
-
       $scope.responses = {};
-
       $scope.mbeans = [];
-
       $scope.displays = [];
       $scope.page = '';
 
+      $scope.pageFilter = '';
+
       $scope.render = (response) => {
         //log.debug("Got response: ", response);
-        var mbean = response.request.mbean;
+        var mbean = response.request['mbean'];
         var values = response.value;
 
         var responseJson = angular.toJson(values);
@@ -104,10 +62,10 @@ module Health {
               total: 1,
               terms: [{
                 term: 'Health',
-                count: value.healthPercent
+                count: (<number>(value.healthPercent)).round(3)
               }, {
                 term: 'Remaining',
-                count: 1 - value.healthPercent
+                count: (<number>(1 - value.healthPercent)).round(3)
               }]
             };
             value.colorMap = $scope.colorMaps[value.level];
@@ -122,7 +80,7 @@ module Health {
           display.values = values;
         }
 
-        log.debug("Display: ", $scope.displays);
+        //log.debug("Display: ", $scope.displays);
         if ($scope.page === '') {
           $scope.page = $templateCache.get('pageTemplate');
         }
@@ -130,9 +88,12 @@ module Health {
         Core.$apply($scope);
       };
 
-      $scope.$watch('mbeans', (newValue, oldValue) => {
-        log.debug("Mbeans: ", $scope.mbeans);
+      $scope.filterValues = (value) => {
+        var json = angular.toJson(value);
+        return json.has($scope.pageFilter);
+      };
 
+      $scope.$watch('mbeans', (newValue, oldValue) => {
         Core.unregister(jolokia, $scope);
         $scope.mbeans.forEach((mbean) => {
           Core.register(jolokia, $scope, {
@@ -150,7 +111,7 @@ module Health {
 
       $scope.getMBeans = () => {
         var healthMap = getHealthMBeans(workspace);
-        log.debug("HealthMap: ", healthMap);
+        //log.debug("HealthMap: ", healthMap);
         if (healthMap) {
           if (!angular.isArray(healthMap)) {
             return [healthMap.objectName];
@@ -162,86 +123,21 @@ module Health {
         }
       };
 
+      $scope.showKey = (key) => {
+        if ( key === "colorMap" || key === "data") {
+          return false;
+        }
+        return true;
+      };
+
       $scope.getTitle = (value) => {
         if (value['healthId'].endsWith('profileHealth')) {
-          return 'Profile: ' + value['profile'];
+          return 'Profile: <strong>' + value['profile'] + '</strong>';
         }
-        return 'HealthID: ' + value['healthId'];
+        return 'HealthID: <strong>' + value['healthId'] + '</strong>';
       };
 
       $scope.mbeans = $scope.getMBeans();
-
-      $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-        // lets do this asynchronously to avoid Error: $digest already in progress
-        //setTimeout(updateTableContents, 50);
-      });
-
-      $scope.$watch('workspace.selection', function () {
-        //if (workspace.moveIfViewInvalid()) return;
-        //updateTableContents();
-      });
-
-      function updateTableContents() {
-        var objects = getHealthMBeans(workspace);
-        if (objects) {
-          var jolokia = workspace.jolokia;
-          $scope.firstResult = true;
-          if (angular.isArray(objects)) {
-            var args = [];
-            var onSuccessArray = [];
-
-            function callback(response, object) {
-              if ($scope.firstResult) {
-                $scope.results = [];
-                $scope.firstResult = false;
-              }
-              var value = response.value;
-              if (value) {
-                // TODO this smells like a standard function :)
-                if (angular.isArray(value)) {
-                  if (value.length > 0) {
-                    angular.forEach(value, (item) => {
-                      $scope.results.push(item);
-                    });
-                  } else {
-                    $scope.results.push(createOKStatus(object));
-                  }
-                } else {
-                  $scope.results.push(value);
-                }
-              } else {
-                $scope.results.push(createOKStatus(object));
-              }
-            }
-
-            angular.forEach(objects, (mbean) => {
-              args.push(asHealthQuery(mbean));
-              onSuccessArray.push((response) => callback(response, mbean));
-            });
-            // update the last result callback to update the UI
-            onSuccessArray[onSuccessArray.length - 1] = (response) => {
-              callback(response, objects.last);
-              console.log("$scope.results: ", $scope.results);
-              $scope.widget.populateTable(defaultValues($scope.results));
-              Core.$apply($scope);
-            };
-            jolokia.request(args, onSuccess(onSuccessArray));
-          } else {
-            function populateTable(response) {
-              var values = response.value;
-              if (!values || values.length === 0) {
-                values = [createOKStatus(objects)];
-              }
-              var data = defaultValues(values);
-              $scope.widget.populateTable(data);
-              Core.$apply($scope);
-            }
-            jolokia.request(
-                    asHealthQuery(objects),
-                    onSuccess(populateTable));
-          }
-        }
-      }
 
       /**
        * Default the values that are missing in the returned JSON
@@ -270,12 +166,6 @@ module Health {
           }
         });
         return values;
-      }
-
-
-      function asHealthQuery(meanInfo: any) {
-        // TODO we may use custom operations for different mbeans...
-        return {type: 'exec', mbean: meanInfo.objectName, operation: 'healthList()'};
       }
 
       function createOKStatus(object) {
