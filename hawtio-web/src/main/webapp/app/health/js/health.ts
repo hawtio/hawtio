@@ -123,6 +123,17 @@ module Health {
         }
       };
 
+      $scope.sanitize = (value) => {
+        var answer = {};
+        Object.extended(value).keys().forEach((key) => {
+          if ($scope.showKey(key) && value[key]) {
+            answer[key] = value[key];
+          }
+        });
+        return answer;
+      };
+
+
       $scope.showKey = (key) => {
         if ( key === "colorMap" || key === "data") {
           return false;

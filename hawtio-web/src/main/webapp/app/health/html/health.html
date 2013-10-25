@@ -42,12 +42,14 @@
              speed="0.5s"
              toggle="showDetails">
           <div class="health-details-wrap">
-            <dl class="dl-horizontal"
-                ng-repeat="(key, value) in value track by $index"
-                ng-show="showKey(key)">
-              <dt>{{key | humanize}}:</dt>
-              <dd title="{{value}}">{{value}}</dd>
-            </dl>
+            <table class="zebra-list">
+              <body>
+                <tr ng-repeat="(k, v) in sanitize(value) track by $index">
+                  <td>{{k | humanize}}</td>
+                  <td title="{{v}}">{{v}}</td>
+                </tr>
+              </body>
+            </table>
           </div>
         </div>
       </div>
