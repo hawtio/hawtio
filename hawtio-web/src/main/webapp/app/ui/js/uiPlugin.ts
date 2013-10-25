@@ -48,6 +48,8 @@ module UI {
         return new UI.MessagePanel();
       }).directive('hawtioInfoPanel', () => {
         return new UI.InfoPanel();
+      }).directive('hawtioAutoColumns', () => {
+        return new UI.AutoColumns();
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');

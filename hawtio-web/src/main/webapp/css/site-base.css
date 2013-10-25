@@ -2875,7 +2875,8 @@ fs-donut svg g text.units {
   display: inline-block;
   width: 300px;
   height: 300px;
-  margin-left: 10px;
+  margin-left: 0;
+  margin-right: 0;
   margin-bottom: 10px;
   overflow: hidden;
 }

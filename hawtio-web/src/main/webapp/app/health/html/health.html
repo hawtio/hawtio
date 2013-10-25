@@ -8,9 +8,10 @@
   </div>
 
   <div class="row-fluid">
-    <div class="inline-block health-displays"
+    <div class="health-displays"
          ng-repeat="display in displays"
-         ng-show="filterValues(display)">
+         ng-show="filterValues(display)"
+         hawtio-auto-columns=".health-display">
       <div class="health-display-title">{{display.mbean}}</div>
       <div ng-show="display.values.length === 0">No displays to show...</div>
       <div ng-repeat="value in display.values"

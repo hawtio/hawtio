@@ -4,6 +4,17 @@ module UI {
 
   export var scrollBarWidth:number = null;
 
+  export function getIfSet(attribute, $attr, def) {
+    if (attribute in $attr) {
+      var wantedAnswer = $attr[attribute];
+      if (wantedAnswer && !wantedAnswer.isBlank()) {
+        return wantedAnswer;
+      }
+    }
+    return def;
+  }
+
+
   /*
    * Helper function to ensure a directive attribute has some default value
    */
