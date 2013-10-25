@@ -100,6 +100,14 @@ module Core {
       $scope.confirmLogout = true;
     };
 
+    $scope.getUsername = () => {
+      if (userDetails.username && !userDetails.username.isBlank()) {
+        return userDetails.username;
+      } else {
+        return 'user';
+      }
+    };
+
     $scope.doLogout = () => {
 
       $scope.confirmLogout = false;

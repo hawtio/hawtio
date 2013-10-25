@@ -99,25 +99,39 @@
                     <i class="icon-desktop"></i>
                   </a>
                 </li>
-                <li ng-show="loggedIn()" ng-class="{active : isActive('#/preferences')}">
-                  <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
-                    <i class="icon-cogs"></i>
+                <li ng-show="loggedIn()" ng-class="{active : isActive('#/help')}">
+                  <a ng-href="{{link('#/help')}}"
+                     title="Read the help about how to use this console"
+                     data-placement="bottom">
+                    <i class="icon-question-sign"></i>
                   </a>
                 </li>
-                <li ng-show="showLogout()">
-                  <a href="" title="Log out" data-placement="bottom" ng-click="logout()">
-                    <i class="icon-signout"></i>
+
+                <li ng-show="loggedIn()" class="dropdown">
+                  <a href="#"
+                     class="dropdown-toggle"
+                     data-toggle="dropdown">
+                    <i class="icon-user fixme"></i>&nbsp;<span>{{getUsername()}}</span>&nbsp;<span class="caret"></span>
                   </a>
+                  <ul class="dropdown-menu right">
+                    <li>
+                      <a ng-href="{{link('#/preferences')}}" title="Edit your preferences" data-placement="bottom">
+                        <i class="icon-cogs fixme"></i> Preferences
+                      </a>
+                    </li>
+
+                    <li ng-show="showLogout()">
+                      <a href="" title="Log out" data-placement="bottom" ng-click="logout()">
+                        <i class="icon-signout fixme"></i> Log Out
+                      </a>
+                    </li>
+
+                  </ul>
                 </li>
+
                 <li ng-hide="loggedIn()" ng-class="{active : isActive('#/login')}">
                   <a ng-href="{{link('#/login')}}" title="Log in" data-placement="bottom">
                     <i class="icon-user"></i>
-                  </a>
-                </li>
-                <li ng-show="loggedIn()" ng-class="{active : isActive('#/help')}">
-                  <a ng-href="{{link('#/help')}}" title="Read the help about how to use this console"
-                     data-placement="bottom">
-                    <i class="icon-question-sign"></i>
                   </a>
                 </li>
               </ul>

@@ -1840,8 +1840,9 @@ div#main div ul.nav li a.nav-primary .caret {
   margin-left: 20px;
 }
 .main-nav-upper .nav li a {
-  padding-top: 4px;
+  padding-top: 2px;
   padding-bottom: 5px;
+  border-radius: 0;
 }
 #main-nav {
   max-height: 70px;

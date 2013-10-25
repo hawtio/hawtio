@@ -41,6 +41,11 @@ a:hover {
   max-height: 25px !important;
 }
 
+#main-nav .main-nav-upper .nav li a i.fixme:before {
+  top: 0 !important;
+}
+
+
 #main-nav .navbar-inner {
   background-color: inherit;
   background-image: linear-gradient(to bottom, #3f4349 0%, #464c51 100%);
