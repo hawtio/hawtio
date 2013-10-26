@@ -47,8 +47,8 @@ module UI {
 
       };
 
-      //$scope.$watch(go);
-      setTimeout(go, 300);
+      $scope.$watch(go);
+      //setTimeout(go, 300);
       $(window).resize(go);
 
     };

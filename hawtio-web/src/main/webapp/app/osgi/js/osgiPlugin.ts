@@ -1,6 +1,6 @@
 module Osgi {
   var pluginName = 'osgi';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {
     $routeProvider.
             when('/osgi/bundle-list', {templateUrl: 'app/osgi/html/bundle-list.html'}).
             when('/osgi/bundles', {templateUrl: 'app/osgi/html/bundles.html'}).

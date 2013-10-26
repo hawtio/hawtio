@@ -1,16 +1,25 @@
 <div class="controller-section" ng-controller="Osgi.BundlesController">
-    <div class="row-fluid">
-        <div class="btn-group pull-right" data-toggle="buttons-radio">
-            <button onclick="location.href='#/osgi/bundle-list'" type="button" class="btn" title="List view"><i class="icon-list"></i></button>
-            <button onclick="location.href='#/osgi/bundles'" type="button" class="btn active" title="Table view"><i class="icon-table"></i></button>
-        </div>
-    </div>
-
-    <p/>
-    <div class="row-fluid">
+  <div class="row-fluid">
     <div class="pull-left">
+
       <form class="form-inline no-bottom-margin">
         <fieldset>
+
+          <div class="btn-group inline-block">
+            <button onclick="location.href='#/osgi/bundle-list'"
+                    type="button"
+                    class="btn"
+                    title="List view">
+              <i class="icon-list"></i>
+            </button>
+            <button onclick="location.href='#/osgi/bundles'"
+                    type="button"
+                    class="btn active"
+                    title="Table view">
+              <i class="icon-table"></i>
+            </button>
+          </div>
+
           <div class="controls control-group inline-block controls-row">
             <div class="btn-group">
               <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()" title="Stop"><i class="icon-off"></i></button>
@@ -33,10 +42,14 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="control-group inline-block">
-            <input type="text" class="search-query" placeholder="Filter..." ng-model="gridOptions.filterOptions.filterText">
+            <input type="text"
+                   class="input-large search-query"
+                   placeholder="Filter..."
+                   ng-model="gridOptions.filterOptions.filterText">
           </div>
         </fieldset>
       </form>
+
     </div>
   </div>
   

@@ -23,20 +23,24 @@ module UI {
 
       $element.css({
         position: 'absolute',
+        bottom: 0,
         height: 0,
+        'min-height': 0,
         transition: 'all ' + speed + ' ease-in-out'
       });
 
 
       $element.parent().mouseover(() => {
         $element.css({
-          height: height
+          height: height,
+          'min-height': 'auto'
         });
       });
 
       $element.parent().mouseout(() => {
         $element.css({
-          height: 0
+          height: 0,
+          'min-height': 0
         });
       })
     };

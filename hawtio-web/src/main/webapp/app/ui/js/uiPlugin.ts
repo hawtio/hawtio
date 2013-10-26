@@ -50,6 +50,8 @@ module UI {
         return new UI.InfoPanel();
       }).directive('hawtioAutoColumns', () => {
         return new UI.AutoColumns();
+      }).directive('hawtioTemplatePopover', ($templateCache, $compile, $document) => {
+        return UI.TemplatePopover($templateCache, $compile, $document);
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
