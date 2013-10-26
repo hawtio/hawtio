@@ -34,6 +34,8 @@ public class App {
 
     public static void main(String[] args) {
         Main main = new Main();
+        main.showWelcome(true);
+
         try {
             String virtualMachineClass = "com.sun.tools.attach.VirtualMachine";
             try {
@@ -67,28 +69,21 @@ public class App {
 
             String warPath = warFile.getCanonicalPath();
             main.setWarLocation(warPath);
-
-            if (args.length > 0) {
-                String portText = args[0].toLowerCase();
-                if (portText.startsWith("?") || portText.startsWith("-h") || portText.startsWith("--h")) {
-                    System.out.println("Usage: [portName] [contextPath]");
-                    return;
-                }
-                try {
-                    int port = Integer.parseInt(portText);
-                    main.setPort(port);
-                } catch (NumberFormatException e) {
-                    System.out.println("Failed to parse port number '" + portText + "'. " + e);
-                    return;
-                }
-            }
-            if (args.length > 1) {
-                main.setContextPath(args[1]);
-            }
-            Main.doRun(main);
         } catch (Exception e) {
-            System.out.println("Failed to create hawtio: " + e);
+            System.out.println("Failed to create hawtio: " + e.getMessage());
             e.printStackTrace();
+            return;
+        }
+
+        if (!main.parseArguments(args) || main.isHelp()) {
+            main.showOptions();
+        } else {
+            try {
+                main.run();
+            } catch (Exception e) {
+                System.out.println("Failed running hawtio: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 

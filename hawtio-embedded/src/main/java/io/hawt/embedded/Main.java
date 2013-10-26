@@ -1,50 +1,43 @@
 package io.hawt.embedded;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import javax.management.MBeanServer;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.lang.management.ManagementFactory;
-
 /**
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
  */
 public class Main {
-    private String contextPath = "/hawtio";
-    private int port = 8080;
-    private String war;
-    private String warLocation;
-    private String[] warPaths;
-    private String extraClassPath;
-    private boolean joinServerThread = true;
+    private Options options;
+    private final boolean joinServerThread = true;
+    private boolean welcome = true;
+
+    public Main() {
+        options = new Options();
+        options.init();
+    }
 
     public static void main(String[] args) {
-        if (args.length <= 0) {
-            System.out.println("Usage: locationOfHawtioWar portName contextPath");
+        Main main = new Main();
+
+        if (!main.parseArguments(args) || main.isHelp()) {
+            main.showOptions();
             return;
         }
-        Main main = new Main();
-        if (args.length > 0) {
-            main.setWar(args[0]);
-        }
-        if (args.length > 1) {
-            String portText = args[1];
-            try {
-                int port = Integer.parseInt(portText);
-                main.setPort(port);
-            } catch (NumberFormatException e) {
-                System.out.println("Failed to parse port number '" + portText + "'. " + e);
-                return;
-            }
-        }
-        if (args.length > 2) {
-            main.setContextPath(args[2]);
-        }
+
         doRun(main);
+    }
+
+    public boolean parseArguments(String[] args) {
+        return options.parseArguments(args);
+    }
+
+    public void showOptions() {
+        options.showOptions();
     }
 
     public static void doRun(Main main) {
@@ -57,22 +50,20 @@ public class Main {
     }
 
     public void run() throws Exception {
-        run(isJoinServerThread());
+        run(joinServerThread);
 
     }
     public void run(boolean join) throws Exception {
         System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
-        Log.setLog(new Slf4jLog("jetty"));
+        Slf4jLog log = new Slf4jLog("jetty");
+        Log.setLog(log);
 
         WebAppContext webapp = new WebAppContext();
-        webapp.setContextPath(contextPath);
+        webapp.setContextPath(options.getContextPath());
 
-        String war = getWarLocation();
+        String war = findWar(options.getWarLocation());
         if (war == null) {
-            war = findWar(getWar());
-        }
-        if (war == null) {
-            war = findWar(getWarPaths());
+            war = findWar(options.getWarFileName());
         }
         if (war == null) {
             throw new IllegalArgumentException("No war property set!");
@@ -80,24 +71,32 @@ public class Main {
         webapp.setWar(war);
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
-        if (extraClassPath != null) {
-            webapp.setExtraClasspath(extraClassPath);
-        }
+        webapp.setExtraClasspath(options.getExtraClassPath());
 
-        Server server = new Server(port);
+        Server server = new Server(options.getPort());
         server.setHandler(webapp);
+
+        if (welcome) {
+            System.out.println("Embedded hawtio: You can use --help to show usage");
+            System.out.println(options.usedOptionsSummary());
+        }
 
         System.out.println("About to start war " + war);
         server.start();
 
-        System.out.println();
-        System.out.println("hawtio: Don't cha wish your console was hawt like me!");
-        System.out.println("=====================================================");
-        System.out.println();
-        System.out.println("http://localhost:" + port + contextPath);
-        System.out.println();
+        if (welcome) {
+            System.out.println();
+            System.out.println("hawtio: Don't cha wish your console was hawt like me!");
+            System.out.println("=====================================================");
+            System.out.println();
+            System.out.println("http://localhost:" + options.getPort() + options.getContextPath());
+            System.out.println();
+        }
+
         if (join) {
-            System.out.println("Joining the Jetty server thread");
+            if (welcome) {
+                System.out.println("Joining the Jetty server thread");
+            }
             server.join();
         }
     }
@@ -139,65 +138,51 @@ public class Main {
         return name.toLowerCase().endsWith(".war");
     }
 
-    // Properties
-    //-------------------------------------------------------------------------
-    public String getContextPath() {
-        return contextPath;
+    public String getWarFileName() {
+        return options.getWarFileName();
     }
 
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getWar() {
-        return war;
-    }
-
-    public void setWar(String war) {
-        this.war = war;
-    }
-
-    public String[] getWarPaths() {
-        return warPaths;
+    public void setWarFileName(String warFileName) {
+        options.setWarFileName(warFileName);
     }
 
     public String getWarLocation() {
-        return warLocation;
+        return options.getWarLocation();
     }
 
     public void setWarLocation(String warLocation) {
-        this.warLocation = warLocation;
+        options.setWarLocation(warLocation);
     }
 
-    /**
-     * Sets a list of paths searched for to find the war if no war property is specified
-     * via {@link #setWar(String)}
-     */
-    public void setWarPaths(String... warPaths) {
-        this.warPaths = warPaths;
+    public String getContextPath() {
+        return options.getContextPath();
+    }
+
+    public void setContextPath(String contextPath) {
+        options.setContextPath(contextPath);
+    }
+
+    public Integer getPort() {
+        return options.getPort();
+    }
+
+    public void setPort(Integer port) {
+        options.setPort(port);
     }
 
     public String getExtraClassPath() {
-        return extraClassPath;
+        return options.getExtraClassPath();
     }
 
     public void setExtraClassPath(String extraClassPath) {
-        this.extraClassPath = extraClassPath;
+        options.setExtraClassPath(extraClassPath);
     }
 
-    public boolean isJoinServerThread() {
-        return joinServerThread;
+    public boolean isHelp() {
+        return options.isHelp();
     }
 
-    public void setJoinServerThread(boolean joinServerThread) {
-        this.joinServerThread = joinServerThread;
+    public void showWelcome(boolean welcome) {
+        this.welcome = welcome;
     }
 }
