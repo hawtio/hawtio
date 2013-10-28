@@ -1,7 +1,11 @@
 <ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
-  <li ng-repeat="dash in dashboards()" ng-class='{active : isActive(dash)}'>
+  <li ng-repeat="dash in _dashboards track by $index"
+      ng-class='{active : isActive(dash)}'>
     <a ng-href="#/dashboard/id/{{dash.id}}{{hash}}">
-      <editable-property class="inline-block" on-save="onTabRenamed(dash)" property="title" ng-model="dash"></editable-property>
+      <editable-property class="inline-block"
+                         on-save="onTabRenamed(dash)"
+                         property="title"
+                         ng-model="dash"></editable-property>
     </a>
   </li>
   <li class="pull-right" ng-class='{active : isEditing()}'>

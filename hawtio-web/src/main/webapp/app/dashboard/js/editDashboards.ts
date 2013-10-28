@@ -1,16 +1,13 @@
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $route, $location, workspace:Workspace, dashboardRepository:DefaultDashboardRepository, jolokia) {
+  export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia) {
     $scope.selectedItems = [];
     $scope.repository = dashboardRepository;
     $scope.duplicateDashboards = new Core.Dialog();
     $scope.selectedProfilesDialog = [];
+    $scope._dashboards = [];
 
-    // TODO for case where we navigate to the add view
-    // for some reason the route update event isn't enough...
-    // and we need to do this async to avoid the size calculation being wrong
-    // bit of a hack - would love to remove! :)
-    setTimeout(updateData, 100);
+    $rootScope.$on('dashboardsUpdated', dashboardLoaded);
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
@@ -27,7 +24,7 @@ module Dashboard {
       filterOptions: {
         filterText: ''
       },
-      data: 'repository.dashboards',
+      data: '_dashboards',
       selectWithCheckboxOnly: true,
       showSelectionCheckbox: true,
       columnDefs: [
@@ -44,16 +41,10 @@ module Dashboard {
     };
 
     $scope.onDashRenamed = (dash) => {
-      dashboardRepository.putDashboards([dash], "Renamed dashboard", Dashboard.onOperationComplete);
-      var d = $scope.dashboards.find((d) => {
-        return d.id === dash.id;
+      dashboardRepository.putDashboards([dash], "Renamed dashboard", (dashboards) => {
+        dashboardLoaded(null, dashboards);
       });
-      if (d) {
-        d.title = dash.title;
-      }
-      setTimeout(updateData, 50);
     };
-
 
     // helpers so we can enable/disable parts of the UI depending on how
     // dashboard data is stored
@@ -86,10 +77,9 @@ module Dashboard {
     }
 
 
-    // Okay, now this is needed :-)
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateData, 50);
+      setTimeout(updateData, 100);
     });
 
 
@@ -124,15 +114,8 @@ module Dashboard {
 
       var commitMessage = "Duplicating " + $scope.selectedItems.length + " dashboards to " + $scope.selectedProfilesDialog.length + " profiles";
 
-      dashboardRepository.putDashboards(newDashboards, commitMessage, Dashboard.onOperationComplete);
-
-      newDashboards.forEach((newDash) => {
-        console.log("Checking: ", newDash.profileId);
-        console.log("Dash: ", newDash);
-        if ($scope.container.profileIds.any(newDash.profileId)) {
-          dashboards().push(newDash);
-          //$scope.selectedItems.push(newDash);
-        }
+      dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
+        dashboardLoaded(null, dashboards);
       });
 
     };
@@ -283,13 +266,15 @@ module Dashboard {
 
       // now lets update the actual dashboard config
       var commitMessage = "Add widget";
-      dashboardRepository.putDashboards($scope.selectedItems, commitMessage, Dashboard.onOperationComplete);
+      dashboardRepository.putDashboards($scope.selectedItems, commitMessage, function(dashboards) {
+        if (nextHref) {
+          // remove any dodgy query
+          delete $location.search()["href"];
+          $location.path(nextHref);
+          Core.$apply($scope);
+        }
+      });
 
-      if (nextHref) {
-        // remove any dodgy query
-        delete $location.search()["href"];
-        $location.path(nextHref);
-      }
     };
 
     $scope.create = () => {
@@ -297,31 +282,40 @@ module Dashboard {
       var title = "Untitled" + counter;
       var newDash = dashboardRepository.createDashboard({title: title});
 
-      // TODO how to really add??
-      addDashboard(newDash, "Created new dashboard " + title);
+      dashboardRepository.putDashboards([newDash], "Created new dashboard: " + title, (dashboards) => {
+        $scope.selectedItems.push(newDash);
+        dashboardLoaded(null, dashboards);
+      });
+
     };
 
     $scope.duplicate = () => {
+      var newDashboards = [];
+      var commitMessage = "Duplicated dashboard(s) ";
       angular.forEach($scope.selectedItems, (item, idx) => {
         // lets unselect this item
-        $scope.selectedItems = $scope.selectedItems.splice(idx, 1);
         var commitMessage = "Duplicated dashboard " + item.title;
         var newDash = dashboardRepository.cloneDashboard(item);
-        addDashboard(newDash, commitMessage);
+        newDashboards.push(newDash);
+      });
+
+      // let's just be safe and ensure there's no selections
+      $scope.selectedItems = [];
+
+      commitMessage = commitMessage + newDashboards.map((d) => { return d.title }).join(',');
+      dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
+        dashboardLoaded(null, dashboards);
       });
     };
 
     $scope.delete = () => {
       if ($scope.hasSelection()) {
-        dashboardRepository.deleteDashboards($scope.selectedItems, Dashboard.onOperationComplete);
-
-        angular.forEach($scope.selectedItems, (item) => {
-          dashboards().remove(item);
+        dashboardRepository.deleteDashboards($scope.selectedItems, (dashboards) => {
+          $scope.selectedItems = [];
+          dashboardLoaded(null, dashboards);
         });
-        $scope.selectedItems.splice(0, $scope.selectedItems.length);
       }
     };
-
 
     $scope.gist = () => {
       if ($scope.selectedItems.length > 0) {
@@ -350,25 +344,32 @@ module Dashboard {
         var title = decodeURIComponent(title);
         $scope.widgetTitle = title;
       }
-      // TODO can we avoid reloading these on startup from the navbar.ts as well?
-      dashboardRepository.getDashboards(dashboardLoaded);
 
-      Core.$apply($scope);
+      dashboardRepository.getDashboards((dashboards) => {
+        dashboardLoaded(null, dashboards);
+      });
     }
 
-    function dashboardLoaded(dashboards) {
-      $scope.dashboards = dashboards;
+    function dashboardLoaded(event, dashboards) {
+      $scope._dashboards = dashboards;
+      if (event === null) {
+        $scope.$emit('dashboardsUpdated', dashboards);
+      }
       Core.$apply($scope);
-    }
-
-    function addDashboard(newDash, commitMessage) {
-      dashboardRepository.putDashboards([newDash], commitMessage, Dashboard.onOperationComplete);
-      dashboards().push(newDash);
-      $scope.selectedItems.push(newDash);
     }
 
     function dashboards() {
-      return dashboardRepository.dashboards;
+      return $scope._dashboards;
     }
+
+    updateData();
+
+    /*
+     // TODO for case where we navigate to the add view
+     // for some reason the route update event isn't enough...
+     // and we need to do this async to avoid the size calculation being wrong
+     // bit of a hack - would love to remove! :)
+     setTimeout(updateData, 100);
+   */
   }
 }

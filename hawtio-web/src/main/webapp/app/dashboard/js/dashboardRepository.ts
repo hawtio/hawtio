@@ -1,5 +1,101 @@
 module Dashboard {
 
+  var defaultDashboards = [
+
+    {
+      "title": "Monitor",
+      "group": "Personal",
+      "widgets": [
+        {
+          "id": "w1",
+          "title": "",
+          "row": 1,
+          "col": 1,
+          "size_x": 3,
+          "size_y": 4,
+          "path": "jmx/attributes",
+          "include": "app/jmx/html/attributes.html",
+          "search": {
+            "nid": "root-java.lang-OperatingSystem"
+          },
+          "hash": ""
+        },
+        {
+          "id": "w3",
+          "title": "Logs",
+          "row": 5,
+          "col": 1,
+          "size_x": 8,
+          "size_y": 1,
+          "path": "logs",
+          "include": "app/log/html/logs.html",
+          "search": {},
+          "hash": "",
+          "routeParams": "{}"
+        },
+        {
+          "id": "w3",
+          "title": "Java Heap Memory",
+          "row": 1,
+          "col": 6,
+          "size_x": 2,
+          "size_y": 2,
+          "path": "jmx/widget/donut",
+          "include": "app/jmx/html/donutChart.html",
+          "search": {},
+          "hash": "",
+          "routeParams": "{\"type\":\"donut\",\"title\":\"Java Heap Memory\",\"mbean\":\"java.lang:type=Memory\",\"attribute\":\"HeapMemoryUsage\",\"total\":\"Max\",\"terms\":\"Used\",\"remaining\":\"Free\"}"
+        },
+        {
+          "id": "w4",
+          "title": "Java Non Heap Memory",
+          "row": 1,
+          "col": 8,
+          "size_x": 2,
+          "size_y": 2,
+          "path": "jmx/widget/donut",
+          "include": "app/jmx/html/donutChart.html",
+          "search": {},
+          "hash": "",
+          "routeParams": "{\"type\":\"donut\",\"title\":\"Java Non Heap Memory\",\"mbean\":\"java.lang:type=Memory\",\"attribute\":\"NonHeapMemoryUsage\",\"total\":\"Max\",\"terms\":\"Used\",\"remaining\":\"Free\"}"
+        },
+        {
+          "id": "w5",
+          "title": "",
+          "row": 3,
+          "col": 4,
+          "size_x": 6,
+          "size_y": 2,
+          "path": "jmx/charts",
+          "include": "app/jmx/html/charts.html",
+          "search": {
+            "size": "%7B%22size_x%22%3A2%2C%22size_y%22%3A2%7D",
+            "title": "Java%20Non%20Heap%20Memory",
+            "routeParams": "%7B%22type%22%3A%22donut%22%2C%22title%22%3A%22Java%20Non%20Heap%20Memory%22%2C%22mbean%22%3A%22java.lang%3Atype",
+            "nid": "root-java.lang-Threading"
+          },
+          "hash": ""
+        },
+        {
+          "id": "w6",
+          "title": "System CPU Load",
+          "row": 1,
+          "col": 4,
+          "size_x": 2,
+          "size_y": 2,
+          "path": "jmx/widget/area",
+          "include": "app/jmx/html/areaChart.html",
+          "search": {},
+          "hash": "",
+          "routeParams": "{\"type\":\"area\",\"title\":\"System CPU Load\",\"mbean\":\"java.lang:type=OperatingSystem\",\"attribute\":\"SystemCpuLoad\"}"
+        }
+      ],
+      "id": "4e9d116173ca41767e"
+    }
+
+  ];
+
+
   export interface DashboardRepository {
     putDashboards: (array:any[], commitMessage:string, fn) => any;
 
@@ -27,7 +123,6 @@ module Dashboard {
     constructor(public workspace:Workspace, public jolokia, public localStorage) {
     }
 
-    public dashboards = [];
     public repository:DashboardRepository = null;
 
     public putDashboards(array:any[], commitMessage:string, fn) {
@@ -43,7 +138,6 @@ module Dashboard {
      */
     public getDashboards(fn) {
       this.getRepository().getDashboards((values) => {
-        this.dashboards = values;
         fn(values);
       });
     }
@@ -94,65 +188,68 @@ module Dashboard {
   }
 
   export class LocalDashboardRepository implements DashboardRepository {
-    dashboards = [
-      {
-        id: "m1", title: "Monitor", group: "Personal",
-        widgets: [
-          { id: "w1", title: "Operating System", row: 1, col: 1,
-            size_x: 3,
-            size_y: 4,
-            path: "jmx/attributes",
-            include: "app/jmx/html/attributes.html",
-            search: {nid: "root-java.lang-OperatingSystem"},
-            hash: ""
-          }
-        ]
-      },
-      {
-        id: "t1", title: "Threading", group: "Admin",
-        widgets: [
-          { id: "w1", title: "Operating System", row: 1, col: 1,
-            size_x: 3,
-            size_y: 4,
-            path: "jmx/attributes",
-            include: "app/jmx/html/attributes.html",
-            search: {nid: "root-java.lang-OperatingSystem"},
-            hash: ""
-          }
-        ]
-      }
-    ];
+
+    private localStorage:WindowLocalStorage = null;
 
     constructor(public workspace:Workspace) {
+      this.localStorage = workspace.localStorage;
 
+      if ('userDashboards' in this.localStorage) {
+        // log.info("Found previously saved dashboards");
+      } else {
+        this.storeDashboards(defaultDashboards);
+      }
+    }
+
+    private loadDashboards() {
+      var answer = angular.fromJson(localStorage['userDashboards']);
+      log.debug("returning dashboards: ", answer);
+      return answer;
+    }
+
+    private storeDashboards(dashboards:any[]) {
+      log.debug("storing dashboards: ", dashboards);
+      localStorage['userDashboards'] = angular.toJson(dashboards);
+      return this.loadDashboards();
     }
 
     public putDashboards(array:any[], commitMessage:string, fn) {
-      this.dashboards = this.dashboards.concat(array);
-      fn(null);
+
+      var dashboards = this.loadDashboards();
+
+      array.forEach((dash) => {
+        var existing = dashboards.findIndex((d) => { return d.id === dash.id; });
+        if (existing >= 0) {
+          dashboards[existing] = dash;
+        } else {
+          dashboards.push(dash);
+        }
+      });
+      fn(this.storeDashboards(dashboards));
     }
 
     public deleteDashboards(array:any[], fn) {
+      var dashboards = this.loadDashboards();
       angular.forEach(array, (item) => {
-        this.dashboards.remove(item);
+        dashboards.remove((i) => { return i.id === item.id; });
       });
-      fn(null);
+      fn(this.storeDashboards(dashboards));
     }
 
     /**
      * Loads the dashboards then asynchronously calls the function with the data
      */
     public getDashboards(fn) {
-      // TODO lets load the table of dashboards from some storage
-      fn(this.dashboards);
+      fn(this.loadDashboards());
     }
 
     /**
      * Loads the given dashboard and invokes the given function with the result
      */
-    public getDashboard(id:string, onLoad) {
-      var dashboard = this.dashboards.find({id: id});
-      onLoad(dashboard);
+    public getDashboard(id:string, fn) {
+      var dashboards = this.loadDashboards();
+      var dashboard = dashboards.find({id: id});
+      fn(dashboard);
     }
 
     public createDashboard(options:any) {
@@ -189,18 +286,37 @@ module Dashboard {
     public branch: string = null;
 
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {
+      var toPut = array.length;
+      var maybeCallback = () => {
+        toPut = toPut - 1;
+        if (toPut === 0) {
+          this.getDashboards(fn);
+        }
+      };
+
       angular.forEach(array, (dash) => {
         var path = this.getDashboardPath(dash);
         var contents = JSON.stringify(dash, null, "  ");
-        this.git.write(this.branch, path, commitMessage, contents, fn);
+        this.git.write(this.branch, path, commitMessage, contents, () => {
+          maybeCallback();
+        });
       });
     }
 
     public deleteDashboards(array:Dashboard[], fn) {
+      var toDelete = array.length;
+      var maybeCallback = () => {
+        toDelete = toDelete - 1;
+        if (toDelete === 0) {
+          this.getDashboards(fn);
+        }
+      };
       angular.forEach(array, (dash) => {
         var path = this.getDashboardPath(dash);
         var commitMessage = "Removing dashboard " + path;
-        this.git.remove(this.branch, path, commitMessage, fn);
+        this.git.remove(this.branch, path, commitMessage, () => {
+          maybeCallback();
+        });
       });
     }
 
@@ -245,6 +361,16 @@ module Dashboard {
       var dashboards = [];
       this.git.read(this.branch, path, (details) => {
         var files = details.children;
+
+        var toRead = files.length;
+
+        var maybeCallback = () => {
+          toRead = toRead - 1;
+          if (toRead === 0) {
+            fn(dashboards);
+          }
+        };
+
         // we now have all the files we need; lets read all their contents
         angular.forEach(files, (file, idx) => {
           var path = file.path;
@@ -261,10 +387,8 @@ module Dashboard {
                   console.log("Failed to parse: " + content + " due to: " + e);
                 }
               }
-              if (idx + 1 === files.length) {
-                // we have now completed the list of files
-                fn(dashboards);
-              }
+              log.debug("git - read ", idx, " files, total: ", files.length);
+              maybeCallback();
             });
           }
         });

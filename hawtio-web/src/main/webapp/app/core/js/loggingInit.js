@@ -32,8 +32,9 @@ var consoleLogger = null;
 
 if ('console' in window) {
 
-  var MyConsole = window.console;
+  window['JSConsole'] = window.console;
   consoleLogger = function(messages, context) {
+    var MyConsole = window['JSConsole'];
     var hdlr = MyConsole.log;
 
     // Prepend the logger's name to the log message for easy identification.
@@ -42,15 +43,19 @@ if ('console' in window) {
     }
 
     // Delegate through to custom warn/error loggers if present on the console.
-    if (context.level === Logger.WARN && MyConsole.warn) {
+    if (context.level === Logger.WARN && 'warn' in MyConsole) {
       hdlr = MyConsole.warn;
-    } else if (context.level === Logger.ERROR && MyConsole.error) {
+    } else if (context.level === Logger.ERROR && 'error' in MyConsole) {
       hdlr = MyConsole.error;
-    } else if (context.level === Logger.INFO && MyConsole.info) {
+    } else if (context.level === Logger.INFO && 'info' in MyConsole) {
       hdlr = MyConsole.info;
     }
 
-    hdlr.apply(MyConsole, messages);
+    try {
+      hdlr.apply(MyConsole, messages);
+    } catch (e) {
+      MyConsole.log(messages);
+    }
   };
 }
 
@@ -103,13 +108,13 @@ Logger.setHandler(function(messages, context) {
     scroll = true;
   }
 
-  Rainbow.color(node, function() {
+  function onAdd() {
     panel.appendChild(node);
-    if (scroll) {
-      panel.scrollTop = panel.scrollHeight;
-    }
     if (panel.childNodes.length > parseInt(window['LogBuffer'])) {
       panel.firstChild.remove();
+    }
+    if (scroll) {
+      panel.scrollTop = panel.scrollHeight;
     }
     if (consoleLogger) {
       consoleLogger(messages, context);
@@ -119,7 +124,19 @@ Logger.setHandler(function(messages, context) {
     for (var i = 0; i < interceptors.length; i++) {
       interceptors[i](context.level.name, text);
     }
-  });
+  }
+
+  onAdd();
+
+  /*
+  try {
+    Rainbow.color(node, onAdd);
+  } catch (e) {
+    // in case rainbow hits an error...
+    onAdd();
+  }
+  */
+
 
 });
 
@@ -128,7 +145,7 @@ window.onerror = function(msg, url, line) {
   Logger.error(msg, " (url:", url, ", line:", line, ")");
   // supress error alert
   return true;
-}
+};
 
 // sneaky hack to redirect console.log !
 window.console = {
