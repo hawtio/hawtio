@@ -13,8 +13,8 @@
   <description>hawtio :: ${project.artifactId}</description>
 
   <properties>
-    <jackson-module-jsonSchema-version>2.1.2</jackson-module-jsonSchema-version>
-    <jackson-module-jaxb-annotations-version>2.1.3</jackson-module-jaxb-annotations-version>
+    <jackson-module-jsonSchema-version>${jackson-version}</jackson-module-jsonSchema-version>
+    <jackson-module-jaxb-annotations-version>${jackson-version}</jackson-module-jaxb-annotations-version>
     <reflections-version>0.9.9-RC1</reflections-version>
     <fuse.osgi.export>
       io.hawt.jsonschema,
