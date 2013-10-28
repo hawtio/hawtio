@@ -24,7 +24,6 @@ module Dashboard {
 
       updateWidgets();
 
-
       $scope.removeWidget = function(widget) {
         var gridster = getGridster();
         var widgetElem = null;
@@ -92,9 +91,12 @@ module Dashboard {
         $scope.id = $routeParams["dashboardId"];
         $scope.idx = $routeParams["dashboardIndex"];
         if ($scope.id) {
+          $scope.$emit('loadDashboards');
           dashboardRepository.getDashboard($scope.id, onDashboardLoad);
         } else {
           dashboardRepository.getDashboards((dashboards) => {
+            $scope.$emit('dashboardsUpdated', dashboards);
+
             var idx = $scope.idx ? parseInt($scope.idx) : 0;
             var id = null;
             if (dashboards.length > 0) {
@@ -106,7 +108,7 @@ module Dashboard {
             } else {
               $location.path("/dashboard/edit?tab=dashboard");
             }
-            //Core.$apply($scope);
+            Core.$apply($scope);
           });
         }
       }

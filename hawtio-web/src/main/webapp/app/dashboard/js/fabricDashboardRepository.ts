@@ -27,6 +27,16 @@ module Dashboard {
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {
       var jolokia = this.jolokia;
       var details = this.details;
+
+      var toPut = array.length;
+
+      var maybeCallback = () => {
+        toPut = toPut - 1;
+        if (toPut === 0) {
+          this.getDashboards(fn);
+        }
+      };
+
       array.forEach((dashboard) => {
         // console.log("Saving dash: ", dashboard);
         var data = angular.toJson(dashboard, true);
@@ -40,24 +50,41 @@ module Dashboard {
           fileName = Core.getUUID() + ".dashboard";
         }
         Fabric.saveConfigFile(jolokia, details.branch, profileId, fileName, data.encodeBase64(), () => {
+          maybeCallback();
           //notification('success', "Saved dashboard " + dashboard.title);
         }, (response) => {
-          notification('error', "Failed to save dashboard " + dashboard.title + " due to " + response.error);
+
+          log.error("Failed to store dashboard: ", dashboard.title, " due to: ", response.error, " stack trace: ", response.stacktrace);
+          maybeCallback();
         });
       });
+
+
     }
 
     public deleteDashboards(array:Dashboard[], fn) {
       var jolokia = this.jolokia;
       var details = this.details;
+
+      var toDelete = array.length;
+
+      var maybeCallback = () => {
+        toDelete = toDelete - 1;
+        if (toDelete === 0) {
+          this.getDashboards(fn);
+        }
+      };
+
       array.forEach((dashboard) => {
         var profileId = dashboard.profileId;
         var fileName = dashboard.fileName;
         if (profileId && fileName) {
           Fabric.deleteConfigFile(jolokia, details.branch, profileId, fileName, () => {
-            notification('success', "Deleted dashboard " + dashboard.title);
+            maybeCallback();
           }, (response) => {
-            notification('error', "Failed to delete dashboard " + dashboard.title + " due to " + response.error);
+
+            log.error("Failed to delete dashboard: ", dashboard.title, " due to: ", response.error, " stack trace: ", response.stacktrace);
+            maybeCallback();
           })
         }
       });
@@ -128,7 +155,7 @@ module Dashboard {
 
         },
         error: (response) => {
-          notification('error', "Failed to load dashboard data due to: " + response.error);
+          log.error("Failed to load dashboard data: error: ", response.error, " stack trace: ", response.stacktrace);
           fn([]);
         }
       });

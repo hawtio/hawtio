@@ -1,4 +1,6 @@
 module Dashboard {
+
+  export var log:Logging.Logger = Logger.get('Dashboard');
   /**
    * Returns the cleaned up version of the dashboard data without any UI selection state
    */

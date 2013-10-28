@@ -1,16 +1,13 @@
 <div class="controller-section" ng-controller="Dashboard.EditDashboardsController">
   <div class="row-fluid">
+    <div class="span10 offset1 well">
+      Select a dashboard (or multiple dashboards) in the table below and click "Add View To Dashboard" to add the view to a dashboard.  You can also create a new dashboard using the "Create" button, select it and then click the "Add View To Dashboard" to add the view to a new dashboard.
+    </div>
+  </div>
+  <div class="row-fluid">
 
     <div class="span12">
       <ul class="nav nav-tabs">
-
-        <li>
-          <a href="" ng-click="goBack()"
-                  title="Go back to the previous view" data-placement="bottom">
-            <i class="icon-backward"></i> Back
-          </a>
-        </li>
-
         <li>
           <a href="" ng-disabled="!hasSelection()" ng-click="addViewToDashboard()"
                     title="Adds the current view to the selected dashboard(s)" data-placement="bottom">
