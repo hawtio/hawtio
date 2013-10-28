@@ -80,10 +80,10 @@ public class Main {
 
         String war = findWar(options.getWarLocation());
         if (war == null) {
-            war = findWar(options.getWarFileName());
+            war = options.getWar();
         }
         if (war == null) {
-            throw new IllegalArgumentException("No war property set!");
+            throw new IllegalArgumentException("No war or warLocation options set!");
         }
         webapp.setWar(war);
         webapp.setParentLoaderPriority(true);
@@ -155,20 +155,20 @@ public class Main {
         return name.toLowerCase().endsWith(".war");
     }
 
-    public String getWarFileName() {
-        return options.getWarFileName();
-    }
-
-    public void setWarFileName(String warFileName) {
-        options.setWarFileName(warFileName);
-    }
-
     public String getWarLocation() {
         return options.getWarLocation();
     }
 
     public void setWarLocation(String warLocation) {
         options.setWarLocation(warLocation);
+    }
+
+    public String getWar() {
+        return options.getWar();
+    }
+
+    public void setWar(String war) {
+        options.setWar(war);
     }
 
     public String getContextPath() {

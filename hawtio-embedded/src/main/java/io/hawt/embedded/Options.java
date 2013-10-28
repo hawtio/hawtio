@@ -25,8 +25,8 @@ import java.util.List;
 public class Options {
 
     private final List<Option> options = new ArrayList<Option>();
-    private String warFileName;
     private String warLocation;
+    private String war;
     private String contextPath = "/hawtio";
     private Integer port = 8080;
     private String extraClassPath;
@@ -71,11 +71,9 @@ public class Options {
     }
 
     private abstract class ParameterOption extends Option {
-        private String parameterName;
 
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+        protected ParameterOption(String abbreviation, String fullName, String description) {
             super(abbreviation, fullName, description);
-            this.parameterName = parameterName;
         }
 
         protected void doProcess(String arg, LinkedList<String> remainingArgs) {
@@ -89,8 +87,7 @@ public class Options {
         }
 
         public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName()
-                    + " <" + parameterName + "> = " + getDescription();
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
         }
 
         protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
@@ -103,19 +100,19 @@ public class Options {
             }
         });
 
-        addOption(new ParameterOption("f", "warFileName", "Filename of the WAR file", "file") {
+        addOption(new ParameterOption("w", "war", "War file or directory of the hawtio web application") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                warFileName = parameter;
+                war = parameter;
             }
         });
 
-        addOption(new ParameterOption("l", "warLocation", "Directory of the location of the exploded WAR application", "location") {
+        addOption(new ParameterOption("l", "warLocation", "Director to search for .war files") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 warLocation = parameter;
             }
         });
 
-        addOption(new ParameterOption("c", "contextPath", "Context path", "contextPath") {
+        addOption(new ParameterOption("c", "contextPath", "Context path") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 // must have leading slash
                 if (!parameter.startsWith("/")) {
@@ -126,7 +123,7 @@ public class Options {
             }
         });
 
-        addOption(new ParameterOption("p", "port", "Port number", "port") {
+        addOption(new ParameterOption("p", "port", "Port number") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 try {
                     port = Integer.parseInt(parameter);
@@ -136,7 +133,7 @@ public class Options {
             }
         });
 
-        addOption(new ParameterOption("ecp", "extraClassPath", "Extra classpath", "ecp") {
+        addOption(new ParameterOption("ecp", "extraClassPath", "Extra classpath") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 extraClassPath = parameter;
             }
@@ -161,8 +158,8 @@ public class Options {
     public String usedOptionsSummary() {
         StringBuilder sb = new StringBuilder();
         sb.append("Using options [");
-        if (warFileName != null) {
-            sb.append("\n\twarFileName=").append(warFileName);
+        if (war != null) {
+            sb.append("\n\twar=").append(war);
         }
         if (warLocation != null) {
             sb.append("\n\twarLocation=").append(warLocation);
@@ -205,12 +202,12 @@ public class Options {
         return valid;
     }
 
-    public String getWarFileName() {
-        return warFileName;
+    public String getWar() {
+        return war;
     }
 
-    public void setWarFileName(String warFileName) {
-        this.warFileName = warFileName;
+    public void setWar(String war) {
+        this.war = war;
     }
 
     public String getWarLocation() {

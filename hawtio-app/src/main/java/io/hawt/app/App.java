@@ -68,7 +68,7 @@ public class App {
             writeStreamTo(resource.openStream(), new FileOutputStream(warFile), 64 * KB);
 
             String warPath = warFile.getCanonicalPath();
-            main.setWarLocation(warPath);
+            main.setWar(warPath);
         } catch (Exception e) {
             System.out.println("Failed to create hawtio: " + e.getMessage());
             e.printStackTrace();
