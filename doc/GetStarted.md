@@ -17,7 +17,11 @@ And the console should show you which URL to open to view hawtio; which by defau
 
 You can specify the port number to use, for example to use port 8090 run from the command line:
 
-    java -jar hawtio-app-1.2-M25.jar 8090
+    java -jar hawtio-app-1.2-M25.jar --port 8090
+
+hawtio supports other options which you can get listed by running from command line:
+
+    java -jar hawtio-app-1.2-M25.jar --help
 
 ## Using a Servlet Engine or Application Server
 
