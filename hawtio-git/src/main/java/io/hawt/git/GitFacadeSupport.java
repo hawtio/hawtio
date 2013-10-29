@@ -417,11 +417,15 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
 
     protected RevCommit commitThenPush(Git git, String branch, CommitCommand commit) throws Exception {
         RevCommit answer = commit.call();
-        LOG.info("Committed " + answer.getId() + " " + answer.getFullMessage());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Committed " + answer.getId() + " " + answer.getFullMessage());
+        }
         if (isPushOnCommit()) {
             Iterable<PushResult> results = doPush(git);
             for (PushResult result : results) {
-                LOG.info("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch  +  " updates:  " + toString(result.getRemoteUpdates()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch  +  " updates: " + toString(result.getRemoteUpdates()));
+                }
             }
         }
         return answer;
