@@ -27,6 +27,9 @@ module Maven {
               isActive: (workspace: Workspace) => workspace.isLinkActive("/maven")
             });
 
+            helpRegistry.addUserDoc('maven', 'app/maven/doc/help.md', () => {
+              return Maven.getMavenIndexerMBean(workspace) !== null;
+            });
             helpRegistry.addDevDoc("maven", 'app/maven/doc/developer.md');
 
           });

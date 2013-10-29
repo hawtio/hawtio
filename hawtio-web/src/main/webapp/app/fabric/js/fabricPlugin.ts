@@ -133,9 +133,11 @@ module Fabric {
               isActive: (workspace:Workspace) => workspace.isLinkActive("/insight")
             });
 
-            if (Fabric.hasFabric(workspace)) {
-              helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
-            }
+            helpRegistry.addUserDoc('fabric', 'app/fabric/doc/help.md', () => {
+              return Fabric.hasFabric(workspace);
+            });
+            // don't need to pass the isValid parameter in subsequent calls...
+            helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');
 
           });
 

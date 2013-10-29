@@ -9,9 +9,10 @@ module Jvm {
                     when('/jvm/local', {templateUrl: 'app/jvm/html/local.html'});
           }).
           constant('mbeanName', 'io.hawt.jvm.local:type=JVMList').
-          run(($location, workspace, viewRegistry, layoutFull) => {
+          run(($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry[pluginName] = layoutFull;
+            helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
 
             workspace.topLevelTabs.push({
               content: "Connect",

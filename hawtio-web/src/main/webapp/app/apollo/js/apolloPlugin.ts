@@ -7,8 +7,14 @@ module Apollo {
         when('/apollo', {templateUrl: 'app/apollo/html/layout-apollo.html'})
         //otherwise({templateUrl: 'app/apollo/html/layout-apollo.html'})
     }).
-    run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+    run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
+
       viewRegistry['apollo'] = "app/apollo/html/layout-apollo.html";
+      helpRegistry.addUserDoc('apollo', 'app/apollo/doc/help.md', () => {
+        return workspace.treeContainsDomainAndProperties("org.apache.apollo");
+      });
+
+
       workspace.topLevelTabs.push( {
         content: "Apollo",
         title: "Manage your Apollo Broker",

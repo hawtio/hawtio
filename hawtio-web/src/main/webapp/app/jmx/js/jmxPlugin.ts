@@ -22,10 +22,10 @@ module Jmx {
           factory('jmxWidgets', () => {
             return Jmx.jmxWidgets;
           }).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle, helpRegistry) => {
 
             viewRegistry['jmx'] = layoutTree;
-
+            helpRegistry.addUserDoc('jmx', 'app/jmx/doc/help.md');
 
             pageTitle.addTitleElement(():string => {
               if (Jmx.currentProcessId === '') {

@@ -13,10 +13,16 @@ module ES {
                         .when('/elasticjs', {templateUrl: base_url + '/es.html'})
             }])
 
-            .run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+            .run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
                 // Use Full Layout of Hawtio
                 viewRegistry['elasticjs'] = 'app/elasticsearch/html/es.html';
+
+                helpRegistry.addUserDoc('elasticjs', 'app/elasticsearch/doc/help.md', () => {
+                  // TODO not sure how this plugin actually shows up in the toolbar
+                  return false;
+                });
+
 
                 /*
                  // Set up top-level link to our plugin

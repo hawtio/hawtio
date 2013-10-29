@@ -62,6 +62,11 @@ module Core {
       $scope.topics = helpRegistry.getTopics();
     });
 
+    $scope.$watch('topics', (newValue, oldValue) => {
+      log.debug("Topics: ", $scope.topics);
+    });
+
+
     if (!angular.isDefined($scope.topics[$scope.topic])) {
       $scope.html = "Unable to download help data for " + $scope.topic;
     } else {

@@ -5,9 +5,12 @@ module Log {
             $routeProvider.
                     when('/logs', {templateUrl: 'app/log/html/logs.html', reloadOnSearch: false})
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['log'] = layoutFull;
+            helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+            });
 
             workspace.topLevelTabs.push({
               content: "Logs",

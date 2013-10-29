@@ -10,10 +10,14 @@ module Tomcat {
                     when('/tomcat/mbeans', {templateUrl: 'app/tomcat/html/mbeans.html'});
           }).
           filter('tomcatIconClass', () => iconClass).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";
             viewRegistry['tomcatTree'] = "app/tomcat/html/layoutTomcatTree.html";
+            helpRegistry.addUserDoc('camel', 'app/camel/html/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("Tomcat") ||
+                     workspace.treeContainsDomainAndProperties("Catalina")
+            });
 
             workspace.topLevelTabs.push({
               content: "Tomcat",

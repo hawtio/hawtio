@@ -27,9 +27,12 @@ module Camel {
           filter('camelIconClass', () => iconClass).
           filter('lastExchangeCompletedSince', () => lastExchangeCompletedSince).
           filter('lastExchangeFailedSince', () => lastExchangeFailedSince).
-          run((workspace:Workspace, jolokia, viewRegistry) => {
+          run((workspace:Workspace, jolokia, viewRegistry, helpRegistry) => {
 
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
+            helpRegistry.addUserDoc('camel', 'app/camel/html/help.md', () => {
+              return workspace.treeContainsDomainAndProperties(jmxDomain);
+            });
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {
               // TODO there should be a nicer way to do this!

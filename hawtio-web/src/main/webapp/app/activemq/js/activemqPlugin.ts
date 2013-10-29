@@ -14,9 +14,12 @@ module ActiveMQ {
             when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
             when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'})
   }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
+            helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("org.apache.activemq");
+            });
 
             workspace.addTreePostProcessor(postProcessTree);
 

@@ -51,21 +51,30 @@ module Core {
 
     }
 
-    public addUserDoc(topic, path) {
-      this.addSubTopic(topic, 'user', path);
+    public addUserDoc(topic, path, isValid: () => bool = null) {
+      this.addSubTopic(topic, 'user', path, isValid);
     }
 
-    public addDevDoc(topic, path) {
-      this.addSubTopic(topic, 'developer', path);
+    public addDevDoc(topic, path, isValid: () => bool = null) {
+      this.addSubTopic(topic, 'developer', path, isValid);
     }
 
-    public addSubTopic(topic, subtopic, path) {
-      this.getOrCreateTopic(topic)[subtopic] = path;
+    public addSubTopic(topic, subtopic, path, isValid: () => bool = null) {
+      this.getOrCreateTopic(topic, isValid)[subtopic] = path;
     }
 
-    public getOrCreateTopic(topic) {
+    public getOrCreateTopic(topic, isValid: () => bool = null) {
       if (!angular.isDefined(this.topics[topic])) {
-        this.topics[topic] = {};
+
+        if (isValid === null) {
+          isValid = () => {
+            return true;
+          }
+        }
+
+        this.topics[topic] = {
+          isValid: isValid
+        };
         this.$rootScope.$broadcast('hawtioNewHelpTopic');
       }
       return this.topics[topic];
@@ -86,7 +95,18 @@ module Core {
     }
 
     public getTopics() {
-      return this.topics;
+      var answer = {};
+
+      angular.forEach(this.topics, (value, key) => {
+        if (value.isValid()) {
+          log.debug(key, " is available");
+          answer[key] = value;
+        } else {
+          log.debug(key, " is not available");
+        }
+      });
+
+      return answer;
     }
 
     public disableAutodiscover(name) {

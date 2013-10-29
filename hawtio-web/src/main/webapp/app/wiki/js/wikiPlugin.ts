@@ -91,7 +91,7 @@ module Wiki {
               }
             }
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) => {
 
 /*
             //viewRegistry['wiki/camel'] = "app/wiki/html/layoutCamel.html";
@@ -103,6 +103,9 @@ module Wiki {
             //viewRegistry["/wiki/(branch/^[/]+/)?camel/canvas/"] = "app/wiki/html/layoutCamelCanvas.html";
             viewRegistry["/wiki/(branch/^[/]+/)?camel/.*/"] = "app/wiki/html/layoutCamel.html";
             viewRegistry['wiki'] = layoutFull;
+            helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
+              return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
+            });
 
             workspace.topLevelTabs.push({
               content: "Wiki",

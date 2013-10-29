@@ -25,9 +25,13 @@ module Jclouds {
             when('/jclouds/blobstore/container/:blobstoreId/:containerId', {templateUrl: 'app/jclouds/html/blobstore/container.html'}).
             when('/jclouds/blobstore/container/:blobstoreId/:containerId/*directory', {templateUrl: 'app/jclouds/html/blobstore/container.html'})
     }).
-        run((workspace:Workspace, viewRegistry) => {
+        run((workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['jclouds'] = "app/jclouds/html/layoutJclouds.html";
+            helpRegistry.addUserDoc('jclouds', 'app/' + 'jclouds' + '/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("org.jclouds");
+            });
+
 
             workspace.topLevelTabs.push({
                 content: "jclouds",
