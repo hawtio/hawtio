@@ -48,7 +48,7 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
 
 hawtioPluginLoader.addModule('hawtioCore');
 
-angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog']).
+angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
         config(($routeProvider, $dialogProvider) => {
 
           $dialogProvider.options({
