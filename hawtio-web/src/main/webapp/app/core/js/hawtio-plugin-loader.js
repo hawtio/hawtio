@@ -3,19 +3,19 @@
  */
 
 (function( window, undefined) {
-
+  var log = Logger.get('PluginLoader');
   var hawtioPluginLoader = {
     urls: [],
     modules: []
   };
 
   hawtioPluginLoader.addModule = function(module) {
-    console.log("Adding module: " + module);
+    log.debug("Adding module: " + module);
     hawtioPluginLoader.modules.push(module);
   };
 
   hawtioPluginLoader.addUrl = function(url) {
-    console.log("Adding URL: " + url);
+    log.debug("Adding URL: " + url);
     hawtioPluginLoader.urls.push(url);
   };
 
@@ -79,7 +79,7 @@
 
   hawtioPluginLoader.setLoaderCallback = function(cb) {
     hawtioPluginLoader.loaderCallback = cb;
-    console.log("Setting callback to : ", hawtioPluginLoader.loaderCallback);
+    log.debug("Setting callback to : ", hawtioPluginLoader.loaderCallback);
   };
 
 
@@ -118,17 +118,17 @@
 
           data.Scripts.forEach( function(script) {
 
-            // console.log("Loading script: ", data.Name + " script: " + script);
+            // log.debug("Loading script: ", data.Name + " script: " + script);
 
             var scriptName = data.Context + "/" + script;
-            console.log("Fetching script: ", scriptName);
+            log.debug("Fetching script: ", scriptName);
             $.ajaxSetup({async:false});
             $.getScript(scriptName)
                 .done(function(textStatus) {
-                  console.log("Loaded script: ", scriptName);
+                  log.debug("Loaded script: ", scriptName);
                 })
                 .fail(function(jqxhr, settings, exception) {
-                  console.log("Failed loading script: ", exception);
+                  log.debug("Failed loading script: ", exception);
                 })
                 .always(scriptLoaded);
           });
@@ -176,10 +176,10 @@
           urlLoaded();
         } else {
 
-          console.log("Trying url: ", url);
+          log.debug("Trying url: ", url);
 
           $.get(url, function (data) {
-                // console.log("got data: ", data);
+                // log.debug("got data: ", data);
                 $.extend(plugins, data);
               }).always(function() {
                 urlLoaded();
@@ -190,9 +190,9 @@
   };
 
   hawtioPluginLoader.debug = function() {
-    console.log("urls and modules");
-    console.log(hawtioPluginLoader.urls);
-    console.log(hawtioPluginLoader.modules);
+    log.debug("urls and modules");
+    log.debug(hawtioPluginLoader.urls);
+    log.debug(hawtioPluginLoader.modules);
   };
 
   window.hawtioPluginLoader = hawtioPluginLoader;
