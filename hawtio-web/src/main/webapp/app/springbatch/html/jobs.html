@@ -1,1 +1,25 @@
-<h3>Job List</h3>
+<div ng-controller="SpringBatch.JobListController">
+    <h3>Job List</h3>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Resource</th>
+            <th>Description</th>
+            <th>ExecutionCount</th>
+            <th>Launchable</th>
+            <th>Incrementable</th>
+        </tr>
+        </thead>
+        <tbody>
+              <tr ng-repeat="job in jobList">
+                  <th>{{job.name}}</th>
+                  <th>{{job.resource}}</th>
+                  <th>{{job.description}}</th>
+                  <th>{{job.executionCount}}</th>
+                  <th>{{job.launchable}}</th>
+                  <th>{{job.incrementable}}</th>
+              </tr>
+        </tbody>
+    </table>
+</div>
