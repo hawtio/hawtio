@@ -210,10 +210,6 @@
         <input name="id" class="input-xlarge" type="text" ng-model="newVersionName" ng-pattern="/^[.a-zA-Z0-9_-]*$/">
         <span class="help-block" ng-hide="createVersion.id.$invalid">Leave blank to use the next available version number</span>
         <span class="help-block" ng-show="createVersion.id.$error.pattern">Name can only contain letters, numbers, '-', '_' and '.'</span>
-        <p></p>
-        <label ng-show="newVersionName != ''">Select a version to derive version {{newVersionName}} from if required, otherwise the highest version number will be the parent of version {{newVersionName}}.</label>
-        <label ng-hide="newVersionName != ''">Select a version to derive the new version from if required, otherwise the highest version number will be the parent of the new version</label>
-        <div class='dialogGrid' style="height: 250px;" ng-grid="createVersionGridOptions"></div>
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!createVersion.$valid" type="submit" value="Create">

@@ -59,21 +59,6 @@ module Fabric {
 
     $scope.targetContainer = {};
 
-    // Data for version creation dialog
-    $scope.createVersionGridOptions = {
-      data: 'versions',
-      selectedItems: $scope.selectedParentVersion,
-      showSelectionCheckbox: true,
-      multiSelect: false,
-      selectWithCheckboxOnly: false,
-      keepLastSelected: false,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'Name'
-        }]
-    };
-
 
     // Tweaks to ensure ng-grid displays on dialogs
     $scope.triggerResize = () => {
@@ -183,16 +168,11 @@ module Fabric {
       };
 
       var error = function (response) {
-        var msg = "Error creating new version: " + response.error;
-        if ($scope.newVersionName !== '') {
-          msg = "Error creating " + $scope.newVersionName + " : " + response.error;
-        }
-        notification('error', msg);
+        log.error("Failed to create version due to :", response.error, " stack trace: ", response.stacktrace);
+        Core.$apply($scope);
       };
 
-      if ($scope.selectedParentVersion.length > 0 && $scope.newVersionName !== '') {
-        createVersionWithParentAndId(jolokia, $scope.selectedParentVersion[0].id, $scope.newVersionName, success, error);
-      } else if ($scope.newVersionName !== '') {
+      if ($scope.newVersionName !== '') {
         createVersionWithId(jolokia, $scope.newVersionName, success, error);
       } else {
         createVersion(jolokia, success, error);
