@@ -32,7 +32,7 @@ public class FileInfo {
                     answer.setXmlNamespaces(namespaces);
                 }
             } catch (Exception e) {
-                LOG.warn("Failed to parse the XML namespaces in " + file + ". " + e, e);
+                LOG.warn("Failed to parse the XML namespaces in " + file + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return answer;

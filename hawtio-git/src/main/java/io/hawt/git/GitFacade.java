@@ -42,7 +42,7 @@ public class GitFacade extends GitFacadeSupport {
     private File configDirectory;
     private String remoteRepository;
     private Git git;
-    private Object lock = new Object();
+    private final Object lock = new Object();
     private String remote = "origin";
     private String defaultRemoteRepository = "https://github.com/hawtio/hawtio-config.git";
     private boolean cloneRemoteRepoOnStartup = true;
@@ -74,7 +74,7 @@ public class GitFacade extends GitFacadeSupport {
                 @Override
                 public Object call() throws Exception {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Pulled from remote repository " + getRemoteRepository());
+                        LOG.debug("Pulled from remote repository {}", getRemoteRepository());
                     }
                     return null;
                 }
@@ -85,7 +85,7 @@ public class GitFacade extends GitFacadeSupport {
                     try {
                         gitOperation(getStashPersonIdent(), emptyCallable);
                     } catch (Exception e) {
-                        LOG.warn("Failed to pull from remote repo " + e, e);
+                        LOG.warn("Failed to pull from remote repo due " + e.getMessage() + ". This exception is ignored.", e);
                     }
                 }
             };
@@ -132,7 +132,8 @@ public class GitFacade extends GitFacadeSupport {
                 try {
                     config.save();
                 } catch (IOException e) {
-                    LOG.error("Failed to save the git configuration to " + getConfigDirName() + " with remote repo: " + remoteRepository + ". " + e, e);
+                    LOG.error("Failed to save the git configuration to " + getConfigDirName() + " with remote repo: " + remoteRepository
+                            + " due: " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         }
@@ -244,8 +245,6 @@ public class GitFacade extends GitFacadeSupport {
 
     /**
      * Reads the file contents of the given path
-     *
-     * @return
      */
     public FileContents read(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
@@ -272,7 +271,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-
     /**
      * Provides a file/path completion hook so we can start typing the name of a file or directory
      */
@@ -285,7 +283,6 @@ public class GitFacade extends GitFacadeSupport {
             }
         });
     }
-
 
     /**
      * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
@@ -302,7 +299,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-
     public CommitInfo write(final String branch, final String path, final String commitMessage,
                       final String authorName, final String authorEmail, final String contents) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
@@ -314,7 +310,6 @@ public class GitFacade extends GitFacadeSupport {
             }
         });
     }
-
 
     /**
      * Creates a new file if it doesn't already exist
@@ -403,7 +398,7 @@ public class GitFacade extends GitFacadeSupport {
     /**
      * Retrieves a Java Date from a Git commit.
      *
-     * @param commit
+     * @param commit the commit
      * @return date of the commit or Date(0) if the commit is null
      */
     public static Date getCommitDate(RevCommit commit) {
@@ -466,7 +461,7 @@ public class GitFacade extends GitFacadeSupport {
                     git = command.call();
                     return;
                 } catch (Throwable e) {
-                    LOG.error("Failed to command remote repo " + repo + ". Reason: " + e, e);
+                    LOG.error("Failed to command remote repo " + repo + " due: " + e.getMessage(), e);
                     // lets just use an empty repo instead
                 }
             } else if (!isCloneRemoteRepoOnStartup()) {
@@ -475,7 +470,7 @@ public class GitFacade extends GitFacadeSupport {
             InitCommand initCommand = Git.init();
             initCommand.setDirectory(confDir);
             git = initCommand.call();
-            LOG.info("Initialised an empty git configuration repo at " + confDir.getCanonicalPath());
+            LOG.info("Initialised an empty git configuration repo at {}", confDir.getCanonicalPath());
 
             String branch = git.getRepository().getBranch();
             configureBranch(branch);
@@ -518,7 +513,7 @@ public class GitFacade extends GitFacadeSupport {
             String credText = "";
             if (cp instanceof UsernamePasswordCredentialsProvider) {
             }
-            LOG.error("Failed to pull from the remote git repo with credentials " + cp + ". Reason: " + e, e);
+            LOG.error("Failed to pull from the remote git repo with credentials " + cp + " due: " + e.getMessage() + ". This exception is ignored.", e);
         } finally {
             firstPull = false;
         }
@@ -575,7 +570,7 @@ public class GitFacade extends GitFacadeSupport {
         try {
             return git.getRepository().getBranch();
         } catch (IOException e) {
-            LOG.warn("Failed to get the current branch: " + e, e);
+            LOG.warn("Failed to get the current branch due: " + e.getMessage() + ". This exception is ignored.", e);
             return null;
         }
     }
@@ -617,7 +612,7 @@ public class GitFacade extends GitFacadeSupport {
                     config.save();
                 } catch (IOException e) {
                     LOG.error("Failed to save the git configuration to " + getConfigDirName()
-                            + " with branch " + branch + " on remote repo: " + remoteRepository + ". " + e, e);
+                            + " with branch " + branch + " on remote repo: " + remoteRepository + " due: " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         }
