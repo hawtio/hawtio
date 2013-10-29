@@ -1,4 +1,6 @@
 module Fabric {
+
+  export var log:Logging.Logger = Logger.get("Fabric");
   
   export var managerMBean = "org.fusesource.fabric:type=Fabric";
   export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
