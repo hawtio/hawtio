@@ -100,7 +100,8 @@ module Core {
       angular.forEach(this.topics, (value, key) => {
         if (value.isValid()) {
           log.debug(key, " is available");
-          answer[key] = value;
+          // strip out any functions...
+          answer[key] = angular.fromJson(angular.toJson(value));
         } else {
           log.debug(key, " is not available");
         }

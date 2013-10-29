@@ -2,13 +2,21 @@ module Core {
   export function HelpController($scope, $routeParams, marked, helpRegistry, branding) {
 
     $scope.branding = branding;
-
     $scope.topics = helpRegistry.getTopics();
-    $scope.topic = $routeParams.topic;
-    $scope.subTopic = Object.extended($scope.topics[$scope.topic]).keys().at(0);
-    if (angular.isDefined($routeParams.subtopic)) {
-      $scope.subTopic = $routeParams.subtopic
+
+    if ('topic' in $routeParams) {
+      $scope.topic = $routeParams['topic'];
+    } else {
+      $scope.topic = 'index';
     }
+
+    if ('subtopic' in $routeParams) {
+      $scope.subTopic = $routeParams['subtopic'];
+    } else {
+      $scope.subTopic = Object.extended($scope.topics[$scope.topic]).keys().first();
+    }
+
+    log.debug("topic: ", $scope.topic, " subtopic: ", $scope.subTopic);
 
     // when on the index pages, filter the user subTopic unless on the dev page
     var isIndex = $scope.topic === "index";
