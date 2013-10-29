@@ -12,7 +12,7 @@
       <li class="no-list profile-selector-folder" ng-repeat="branch in tree" ng-show="showBranch(branch)">
         <div class="expandable" ng-class="isOpen(branch)">
           <div title="{{branch.path}}" class="title">
-            <i class="expandable-indicator folder"></i> <span class="folder-title" ng-show="branch.path">{{branch.path.capitalize(true)}}</span><span class="folder-title" ng-hide="branch.path">Unsorted</span>
+            <i class="expandable-indicator folder"></i> <span class="folder-title" ng-show="branch.path">{{branch.path.capitalize(true)}}</span><span class="folder-title" ng-hide="branch.path">Uncategorized</span>
           </div>
           <div class="expandable-body">
             <ul>
