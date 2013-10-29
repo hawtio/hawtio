@@ -7,7 +7,8 @@ module SpringBatch {
         config(($routeProvider) => {
 
             $routeProvider.
-                when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
+                when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'}).
+                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsexecution.html'})
 
         }).
         value('ui.config', {
@@ -19,7 +20,8 @@ module SpringBatch {
                 }
             }
         }).
-        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+
+    run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
@@ -30,6 +32,7 @@ module SpringBatch {
                 href: () => "#/springbatch/jobs",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
+
 
         });
 
