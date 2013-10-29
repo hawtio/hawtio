@@ -8,7 +8,11 @@ module Karaf {
             when('/osgi/scr-component/:name', {templateUrl: 'app/karaf/html/scr-component.html'}).
             when('/osgi/feature/:name/:version', {templateUrl: 'app/karaf/html/feature.html'})
   }).
-      run((workspace:Workspace, viewRegistry) => {
+      run((workspace:Workspace, viewRegistry, helpRegistry) => {
+
+        helpRegistry.addUserDoc('karaf', 'app/karaf/doc/help.md', () => {
+          return workspace.treeContainsDomainAndProperties('org.apache.karaf');
+        });
 
       });
 

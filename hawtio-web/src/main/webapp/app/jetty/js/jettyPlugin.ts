@@ -9,10 +9,13 @@ module Jetty {
                     when('/jetty/mbeans', {templateUrl: 'app/jetty/html/mbeans.html'});
           }).
           filter('jettyIconClass',() => iconClass).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
             viewRegistry['jettyTree'] = "app/jetty/html/layoutJettyTree.html";
+            helpRegistry.addUserDoc('jetty', 'app/jetty/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
+            });
 
             workspace.topLevelTabs.push({
               content: "Jetty",

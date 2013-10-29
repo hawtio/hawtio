@@ -3,9 +3,12 @@ module OpenEJB {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {
       // TODO custom tomcat views go here...
   }).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['openojb'] = "app/openejb/html/layoutOpenEJBTree.html";
+            helpRegistry.addUserDoc('openejb', 'app/openejb/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("openejb");
+            });
 
             workspace.topLevelTabs.push( {
               content: "OpenEJB",

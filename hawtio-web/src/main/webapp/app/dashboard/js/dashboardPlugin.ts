@@ -30,9 +30,10 @@ module Dashboard {
           directive('hawtioDashboard', function() {
             return new Dashboard.GridsterDirective();
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['dashboard'] = 'app/dashboard/html/layoutDashboard.html';
+            helpRegistry.addUserDoc('dashboard', 'app/dashboard/doc/help.md');
 
             workspace.topLevelTabs.push({
               content: "Dashboard",

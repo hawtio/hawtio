@@ -13,11 +13,14 @@ module Osgi {
             when('/osgi/fwk', {templateUrl: 'app/osgi/html/framework.html'}).
             when('/osgi/dependencies', {templateUrl: 'app/osgi/html/svc-dependencies.html', reloadOnSearch: false })
   }).
-          run((workspace:Workspace, viewRegistry) => {
+          run((workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
+            helpRegistry.addUserDoc('osgi', 'app/osgi/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("osgi.core");
+            });
 
-            workspace.topLevelTabs.push( {
+        workspace.topLevelTabs.push( {
               content: "OSGi",
               title: "Visualise and manage the bundles and services in this OSGi container",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("osgi.core"),

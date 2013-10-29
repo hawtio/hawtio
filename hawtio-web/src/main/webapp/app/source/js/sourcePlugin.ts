@@ -9,19 +9,21 @@ module Source {
                     when('/source/view/:mavenCoords/*page', {templateUrl: 'app/source/html/source.html'}).
                     when('/source/javadoc/:mavenCoords/*page', {templateUrl: 'app/source/html/javadoc.html'});
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) => {
 
             viewRegistry['source'] = layoutFull;
+            helpRegistry.addUserDoc('source', 'app/source/html/help.md');
 
-/*
-            workspace.topLevelTabs.push({
-              content: "Source",
-              title: "View source code of arti",
-              isValid: (workspace: Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
-              href: () => "#/wiki/view/wiki",
-              isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki")
-            });
-*/
+
+        /*
+                    workspace.topLevelTabs.push({
+                      content: "Source",
+                      title: "View source code of arti",
+                      isValid: (workspace: Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
+                      href: () => "#/wiki/view/wiki",
+                      isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki")
+                    });
+        */
           });
 
   hawtioPluginLoader.addModule(pluginName);

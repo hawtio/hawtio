@@ -10,10 +10,15 @@ module JBoss {
             when('/jboss/mbeans', {templateUrl: 'app/jboss/html/mbeans.html'});
           }).
           filter('jbossIconClass', () => iconClass).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['jboss'] = "app/jboss/html/layoutJBossTabs.html";
             viewRegistry['jbossTree'] = "app/jboss/html/layoutJBossTree.html";
+            helpRegistry.addUserDoc(pluginName, 'app/' + pluginName + '/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties("jboss.as") ||
+                    workspace.treeContainsDomainAndProperties("jboss.jta") ||
+                    workspace.treeContainsDomainAndProperties("jboss.modules");
+            });
 
             workspace.topLevelTabs.push( {
               content: "JBoss",

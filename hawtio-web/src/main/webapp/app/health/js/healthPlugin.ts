@@ -4,9 +4,13 @@ module Health {
     $routeProvider.
             when('/health', {templateUrl: 'app/health/html/health.html'})
   }).
-          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull) => {
+          run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['health'] = layoutFull;
+
+            helpRegistry.addUserDoc('health', 'app/health/doc/help.md', () => {
+              return Health.hasHealthMBeans(workspace);
+            });
 
             workspace.topLevelTabs.push( {
               content: "Health",

@@ -10,9 +10,12 @@ module Infinispan {
                     when('/infinispan/query', {templateUrl: 'app/infinispan/html/query.html'});
           }).
           filter('infinispanCacheName', () => infinispanCacheName).
-          run((workspace:Workspace, viewRegistry) => {
+          run((workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['infinispan'] = 'app/infinispan/html/layoutCacheTree.html';
+            helpRegistry.addUserDoc('infinispan', 'app/infinispan/doc/help.md', () => {
+              return workspace.treeContainsDomainAndProperties(jmxDomain);
+            });
 
             /*
              Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {

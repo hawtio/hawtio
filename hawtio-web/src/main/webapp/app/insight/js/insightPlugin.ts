@@ -10,11 +10,17 @@ module Insight {
     });
 
 
-    insightPlugin.run(function(workspace, viewRegistry, jolokia, layoutFull) {
+    insightPlugin.run(function(workspace, viewRegistry, helpRegistry) {
 
         viewRegistry["insight"] = "app/insight/html/layoutInsight.html";
+        helpRegistry.addUserDoc('insight', 'app/insight/doc/help.md', () => {
+          return Fabric.hasFabric(workspace) &&
+              workspace.treeContainsDomainAndProperties("org.elasticsearch", { service: "restjmx"});
+        });
 
-        // instead lets add the Metrics link on the Fabric sub nav bar
+
+
+      // instead lets add the Metrics link on the Fabric sub nav bar
 
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
