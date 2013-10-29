@@ -58,14 +58,25 @@ module Health {
         });
 
         values.forEach((value) => {
-            value.data = {
+
+          var healthPercentCurrent = 0;
+          var healthPercentRemaining = 1;
+
+          if ('healthPercent' in value) {
+            var healthPercent = <number>value['healthPercent'];
+            healthPercentCurrent = healthPercent.round(3);
+            healthPercentRemaining = 1 - healthPercentCurrent;
+            healthPercentRemaining = healthPercentRemaining.round(3);
+          }
+
+          value.data = {
               total: 1,
               terms: [{
                 term: 'Health',
-                count: (<number>(value.healthPercent)).round(3)
+                count: healthPercentCurrent
               }, {
                 term: 'Remaining',
-                count: (<number>(1 - value.healthPercent)).round(3)
+                count: healthPercentRemaining
               }]
             };
             value.colorMap = $scope.colorMaps[value.level];
