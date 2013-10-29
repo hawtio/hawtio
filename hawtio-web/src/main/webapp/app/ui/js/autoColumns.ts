@@ -14,6 +14,11 @@ module UI {
 
         var children = $element.children(selector);
 
+        if (children.length === 0) {
+          log.debug("No children, skipping calculating column margins");
+          return;
+        }
+
         // find the biggest child, though really they should all be the same size...
         children.each(function(child) {
           var self = $(this);
@@ -30,13 +35,15 @@ module UI {
         }
 
         var columns = Math.floor(containerWidth / childWidth);
+        if (children.length < columns) {
+          columns = children.length;
+        }
         var margin = (containerWidth - (columns * childWidth)) / columns / 2;
-        /*
+
         log.debug("child width: ", childWidth);
         log.debug("Inner width: ", containerWidth);
         log.debug("columns: ", columns);
         log.debug("margin: ", margin);
-        */
 
         children.each(function(child) {
           $(this).css({
@@ -47,8 +54,8 @@ module UI {
 
       };
 
+      setTimeout(go, 300);
       $scope.$watch(go);
-      //setTimeout(go, 300);
       $(window).resize(go);
 
     };
