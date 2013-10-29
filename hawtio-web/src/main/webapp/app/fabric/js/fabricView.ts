@@ -13,6 +13,9 @@ module Fabric {
       var activeVersionId = $location.search()['cv'];
       if (activeVersionId) {
         $scope.activeVersionId = activeVersionId;
+        $scope.activeVersion = {
+          id: $scope.activeVersionId
+        };
       }
 
       var profiles = $location.search()['sp'];

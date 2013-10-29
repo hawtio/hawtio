@@ -133,8 +133,10 @@ module Fabric {
 
     $scope.$watch('selectedVersion', (newValue, oldValue) => {
       if (oldValue !== newValue) {
-        $scope.selectedVersionId = $scope.selectedVersion.id;
-        $location.search('versionId', $scope.selectedVersionId);
+        if (newValue && 'id' in newValue) {
+          $scope.selectedVersionId = newValue['id'];
+          $location.search('versionId', $scope.selectedVersionId);
+        }
       }
     }, true);
 
@@ -147,7 +149,7 @@ module Fabric {
 
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (oldValue !== newValue) {
-        console.log("selectedProfiles: ", $scope.selectedProfiles);
+        log.debug("selectedProfiles: ", $scope.selectedProfiles);
         $scope.selectedProfileIds = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
       }
     }, true);
@@ -211,7 +213,9 @@ module Fabric {
 
       var versionId = $location.search()['versionId'];
       if (versionId) {
-        $scope.selectedVersionId = versionId;
+        $scope.selectedVersion = {
+          id: versionId
+        };
       }
 
       var profileIds = $location.search()['profileIds'];
