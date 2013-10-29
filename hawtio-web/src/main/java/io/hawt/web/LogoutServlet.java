@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * @author Stan Lewis
+ * 
  */
 public class LogoutServlet extends HttpServlet {
 
@@ -28,7 +28,7 @@ public class LogoutServlet extends HttpServlet {
 
         String username = (String) session.getAttribute("user");
 
-        LOG.info("Logging out user: {}", username);
+        LOG.debug("Logging out user: {}", username);
         session.invalidate();
     }
 
