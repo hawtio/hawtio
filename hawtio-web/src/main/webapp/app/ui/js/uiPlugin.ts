@@ -40,8 +40,8 @@ module UI {
         return new UI.JSPlumb();
       //}).directive('connectTo', () => {
       //  return new UI.JSPlumbConnection();
-      }).directive('zeroClipboard', () => {
-        return new UI.ZeroClipboardDirective();
+      }).directive('zeroClipboard', ($parse) => {
+        return UI.ZeroClipboardDirective($parse);
       }).directive('hawtioAutoDropdown', () => {
         return UI.AutoDropDown;
       }).directive('hawtioMessagePanel', () => {

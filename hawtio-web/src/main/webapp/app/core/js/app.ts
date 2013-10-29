@@ -1,5 +1,33 @@
 module Core {
 
+  export function ConsoleController($scope, $element, $templateCache) {
+
+    $scope.setHandler = (clip) => {
+
+      clip.addEventListener('mouseDown', function(client, args) {
+
+
+        // this is apparently a global event handler for zero clipboard
+        // so you have to make sure you're handling the right click event
+        var icon = $element.find('.icon-copy');
+        if (this !== icon.get(0)) {
+          return;
+        }
+
+        var text = $templateCache.get("logClipboardTemplate").lines();
+        text.removeAt(0);
+        text.removeAt(text.length - 1);
+        $element.find('#log-panel-statements').children().each(function(index, child) {
+          text.push('  <li>' + child.innerHTML + '</li>');
+        });
+        text.push('</ul>');
+        clip.setText(text.join('\n'));
+        Core.$apply($scope);
+      });
+    };
+
+  }
+
   export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
 
     if (userDetails.username === null) {

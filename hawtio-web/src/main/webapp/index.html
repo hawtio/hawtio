@@ -49,16 +49,36 @@
     <script type="text/javascript" src="lib/html5shiv.js"></script>
     <![endif]-->
 
+    <script type="text/ng-template" id="logClipboardTemplate">
+<!--
+<style type="text/css">
+ul li {
+  list-style-type: none;
+}
+span.green {
+  color: green;
+}
+</style>
+<ul>
+-->
+    </script>
+
+
+
   </head>
 
 
   <body>
-
-    <div id="log-panel" style="bottom: 110%">
+    <div id="log-panel" style="bottom: 110%" ng-controller="Core.ConsoleController">
       <div>
         <ul id="log-panel-statements"></ul>
         <div id="close" log-toggler>
           <i class="icon-chevron-up"></i>
+        </div>
+        <div id="copy">
+          <i class="icon-copy" title="Click to copy log to clipboard"
+             zero-clipboard
+             use-callback="setHandler(clip)"></i>
         </div>
       </div>
     </div>

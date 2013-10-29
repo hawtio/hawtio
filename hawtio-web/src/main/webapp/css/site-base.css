@@ -99,6 +99,20 @@ a:focus {
   opacity: 1;
 }
 
+#log-panel #copy {
+  position: absolute;
+  right: 23px;
+  bottom: 26px;
+  background: inherit;
+  transition: opacity 1s ease-in-out;
+  opacity: 0.4;
+  color: white;
+  cursor: pointer;
+}
+
+#log-panel #copy:hover {
+  opacity: 1;
+}
 
 #canvas {
   display: inline-block;
