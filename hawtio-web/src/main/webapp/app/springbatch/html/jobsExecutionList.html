@@ -11,10 +11,13 @@
 
             </thead>
             <tr ng-repeat="jobExecution in jobExecutions">
-                <td data-title="'Id'"><a ng-href="#/springbatch/job/execution?{{encodeURI(jobExecution.resource)}}">{{jobExecution.resource}}</a> </td>
-                <td data-title="'Status'">{{jobExecution.status}}</td>
-                <td data-title="'Start Time'">{{jobExecution.startTime}}</td>
-                <td data-title="'Duration'">{{jobExecution.duration}}</td>
+
+                <td data-title="'Id'" ng-controller="SpringBatch.UtilController">
+                    <a ng-href="#/springbatch/job/execution?url={{encodedUrl(jobExecution.resource)}}">{{jobExecution.resource}}</a>
+                </td>
+                <td data-title="Status">{{jobExecution.status}}</td>
+                <td data-title="Start Time">{{jobExecution.startTime}}</td>
+                <td data-title="Duration">{{jobExecution.duration}}</td>
             </tr>
         </table>
     </div>

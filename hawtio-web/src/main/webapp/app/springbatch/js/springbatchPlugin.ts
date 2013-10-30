@@ -8,8 +8,8 @@ module SpringBatch {
 
             $routeProvider.
                 when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'}).
-                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsexecutionList.html'}).
-                when('/springbatch/job/execution/:url', {templateUrl: SpringBatch.templatePath + 'jobexecutionShow.html'})
+                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'}).
+                when('/springbatch/job/execution?url=:url', {templateUrl: SpringBatch.templatePath + 'jobExecutionShow.html'})
 
         }).
         value('ui.config', {
@@ -35,7 +35,7 @@ module SpringBatch {
             });
 
 
-        });
+        })
 
     hawtioPluginLoader.addModule(pluginName);
 }
