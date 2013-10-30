@@ -1,6 +1,6 @@
-module SpringBatchJobExecution {
+module SpringBatch{
 
-    export function SpringBatchJobExecutionController($scope, $http) {
+    export function SpringBatchJobExecutionListController($scope, $http) {
         $http.get('/hawtio/proxy/localhost:8181/jobs/executions.json',{
             cache:false
         }).success(function(data){
@@ -10,5 +10,7 @@ module SpringBatchJobExecution {
             });
 
     }
+
+
 
 }

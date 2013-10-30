@@ -1,14 +1,15 @@
 module SpringBatch {
 
     export var templatePath = 'app/springbatch/html/';
-    export var pluginName = 'springbatch';
+    export var pluginName = 'SpringBatch';
 
     angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
         config(($routeProvider) => {
 
             $routeProvider.
                 when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'}).
-                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsexecution.html'})
+                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsexecutionList.html'})
+                when('/springbatch/job/execution', {templateUrl: SpringBatch.templatePath + 'jobsexecutionList.html'})
 
         }).
         value('ui.config', {

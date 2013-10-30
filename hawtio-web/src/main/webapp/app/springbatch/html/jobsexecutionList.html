@@ -1,20 +1,20 @@
 <h3>Job Execution List</h3>
 
-<div ng-controller="SpringBatchJobExecution.SpringBatchJobExecutionController">
+<div ng-controller="SpringBatch.SpringBatchJobExecutionListController">
     <div>
         <table ng-table class="table">
             <thead>
+            <th>ID</th>
             <th>Status</th>
             <th>Start Time</th>
             <th>Duration</th>
-            <th>resource</th>
+
             </thead>
             <tr ng-repeat="jobExecution in jobExecutions">
+                <td data-title="'Id'"><a href="#/springbatch/job/execution">{{jobExecution.resource}}</a> </td>
                 <td data-title="'Status'">{{jobExecution.status}}</td>
                 <td data-title="'Start Time'">{{jobExecution.startTime}}</td>
                 <td data-title="'Duration'">{{jobExecution.duration}}</td>
-                <td data-title="'Resource'">{{jobExecution.resource}}</td>
-                <!--<td data-title="'Age'">{{user.age}}</td>-->
             </tr>
         </table>
     </div>
