@@ -1,8 +1,13 @@
+<ul class="nav nav-tabs" ng-controller="SpringBatch.NavBarController">
+    <li ng-repeat="tab in subLevelTabs" ng-class='{active : isActive(tab)}'>
+        <a ng-href="#/springbatch/{{tab.uri}}">
+            {{tab.name}}
+        </a>
+    </li>
+</ul>
 <div>
     <div class="row-fluid">
         <div ng-view></div>
     </div>
-    <ul>
-    </ul>
 </div>
 
