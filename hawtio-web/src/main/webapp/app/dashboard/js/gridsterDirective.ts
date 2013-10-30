@@ -22,6 +22,15 @@ module Dashboard {
 
       $scope.widgetMap = {};
 
+      $scope.$on('$destroy', () => {
+        angular.forEach($scope.widgetMap, (value, key) => {
+          if ('scope' in value) {
+            var scope = value['scope'];
+            scope.$destroy();
+          }
+        });
+      });
+
       updateWidgets();
 
       $scope.removeWidget = function(widget) {
