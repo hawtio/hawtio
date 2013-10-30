@@ -9,7 +9,7 @@ module SpringBatch {
             $routeProvider.
                 when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'}).
                 when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsexecutionList.html'}).
-                when('/springbatch/job/execution', {templateUrl: SpringBatch.templatePath + 'jobsexecutionList.html'})
+                when('/springbatch/job/execution/:url', {templateUrl: SpringBatch.templatePath + 'jobexecutionShow.html'})
 
         }).
         value('ui.config', {

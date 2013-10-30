@@ -1,0 +1,28 @@
+<h3>Job Execution </h3>
+
+<div ng-controller="SpringBatch.SpringBatchJobExecutionController">
+    <div>
+        <table ng-table class="table">
+
+            <tr>
+                <td>Id :</td><td data-title="'Id'">{{jobExecution.id}} </td>
+            <tr>
+            <tr>
+            <td>Name :</td><td data-title="'Status'">{{jobExecution.name}}</td>
+        </tr>
+            <tr>
+                <td>Status :</td><td data-title="'Status'">{{jobExecution.status}}</td>
+            </tr>
+            <tr>
+                <td>StartTime :</td><td data-title="'Status'">{{jobExecution.startTime}}</td>
+            </tr>
+            <tr>
+                <td>Duration :</td><td data-title="'Status'">{{jobExecution.duration}}</td>
+            </tr>
+            <tr>
+                <td>ExitCode :</td><td data-title="'Status'">{{jobExecution.exitCode}}</td>
+            </tr>
+
+        </table>
+    </div>
+</div>
