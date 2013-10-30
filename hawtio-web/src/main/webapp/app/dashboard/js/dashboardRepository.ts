@@ -22,19 +22,6 @@ module Dashboard {
         },
         {
           "id": "w3",
-          "title": "Logs",
-          "row": 5,
-          "col": 1,
-          "size_x": 8,
-          "size_y": 1,
-          "path": "logs",
-          "include": "app/log/html/logs.html",
-          "search": {},
-          "hash": "",
-          "routeParams": "{}"
-        },
-        {
-          "id": "w3",
           "title": "Java Heap Memory",
           "row": 1,
           "col": 6,
