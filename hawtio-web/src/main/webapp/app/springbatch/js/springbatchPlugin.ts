@@ -6,9 +6,10 @@ module SpringBatch {
     angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
         config(($routeProvider) => {
 
-            $routeProvider.
-                when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
-
+            $routeProvider
+                .when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
+                .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
+                .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
         }).
         value('ui.config', {
             // The ui-jq directive namespace
