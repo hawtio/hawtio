@@ -1,5 +1,5 @@
 module SpringBatch {
-    var springBatchServerPath ='localhost\\:8181/jobs.json';
+    var springBatchServerPath ='localhost\\:8080/spring-batch-admin-sample/jobs.json';
     var proxyUrl = '/hawtio/proxy/';
     export function JobListController($scope, $location, workspace:Workspace, jolokia, $resource) {
 
