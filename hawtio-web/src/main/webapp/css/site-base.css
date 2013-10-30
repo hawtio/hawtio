@@ -1739,8 +1739,9 @@ input[type="checkbox"].ng-invalid {
 
 pre.stack-line {
   font-family: monospace;
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
+  color: #333333;
   background: inherit;
   border: none;
   border-radius: 0;
