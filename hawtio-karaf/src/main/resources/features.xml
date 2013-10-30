@@ -4,6 +4,7 @@
   <feature name="hawtio-core" version="${project.version}" resolver="(obr)">
     <details>Installs the core hawtio war file with minimal extensions</details>
     <feature>war</feature>
+    <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
   </feature>
@@ -13,8 +14,6 @@
     <feature>hawtio-core</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
-    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
