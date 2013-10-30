@@ -1,6 +1,6 @@
 Currently hawtio uses JMX to discover which MBeans are present and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.
 
-So you can deploy the standard [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.2-M25/hawtio-web-1.2-M25.war); then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
+So you can deploy the standard [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.2-M26/hawtio-web-1.2-M26.war); then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
 
 Relying on JMX for discovery doesn't mean though that plugins can only interact with JMX; they can do anything at all that a browser can. e.g. a plugin could use REST to discover UI capabilities and other plugins.
 
