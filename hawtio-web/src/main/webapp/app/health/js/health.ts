@@ -26,13 +26,105 @@ module Health {
       $scope.results = [];
       $scope.responses = {};
       $scope.mbeans = [];
+      $scope.mbeanStatus = {};
       $scope.displays = [];
       $scope.page = '';
 
       $scope.pageFilter = '';
 
+      $scope.$watch('mbeans', (newValue, oldValue) => {
+        Core.unregister(jolokia, $scope);
+        if (!newValue) {
+          return;
+        }
+        $scope.mbeanStatus = {};
+        newValue.forEach((mbean) => {
+          Core.register(jolokia, $scope, {
+            type: 'exec', mbean: mbean,
+            operation: "healthList()"
+          }, {
+            success: $scope.render,
+            error: (response) => {
+              log.error("Failed to invoke healthList() on mbean: " + mbean + " due to: ", response.error);
+              log.info("Stack trace: ", response.stacktrace.split("\n"));
+            }
+          });
+
+          var error = (response) => {
+            if (!response.error.has("AttributeNotFoundException")) {
+              log.error("Failed to read CurrentStatus on mbean: " + mbean + " due to: ", response.error);
+              log.info("Stack trace: ", response.stacktrace.split("\n"));
+            }
+          };
+
+          //see if the mbean has a CurrentStatus attribute and keep an eye on it if so
+          jolokia.request({
+            type: 'read', mbean: mbean, attribute: 'CurrentStatus'
+          }, {
+            success: (response) => {
+              $scope.mbeanStatus[response.request['mbean']] = response.value;
+              Core.register(jolokia, $scope, {
+                type: 'read', mbean: mbean, attribute: 'CurrentStatus'
+              }, {
+                success: (response) => {
+                  /*
+                  log.debug("response for CurrentStatus",
+                      response.request['mbean'],
+                      ": ",
+                      response.value);
+                      */
+                  if (response.value === $scope.mbeanStatus[response.request['mbean']]) {
+                    return;
+                  }
+                  $scope.mbeanStatus[response.request['mbean']] = response.value;
+                  Core.$apply($scope);
+                },
+                error: error
+              });
+            },
+            error: error
+          });
+        });
+      }, true);
+
+
+      $scope.getMBeans = () => {
+        var healthMap = getHealthMBeans(workspace);
+        log.debug("HealthMap: ", healthMap);
+        if (healthMap) {
+          if (!angular.isArray(healthMap)) {
+            return [healthMap.objectName];
+          }
+          var answer = healthMap.map((obj) => { return obj.objectName; });
+          log.debug("Health mbeans: ", answer);
+          return answer;
+        } else {
+          log.debug("No health mbeans found...");
+          return [];
+        }
+      };
+
+
+      $scope.$on('jmxTreeUpdated', () => {
+        $scope.mbeans = $scope.getMBeans();
+      });
+
+      $scope.$on('$routeChangeSuccess', () => {
+        $scope.mbeans = $scope.getMBeans();
+      });
+
+      $scope.mbeans = $scope.getMBeans();
+
+
       $scope.render = (response) => {
-        //log.debug("Got response: ", response);
+        /*
+         log.debug("response for ",
+            response.request['mbean'],
+            ".",
+            response.request['operation'],
+            ": ",
+            response.value);
+        */
         var mbean = response.request['mbean'];
         var values = response.value;
 
@@ -99,40 +191,12 @@ module Health {
         Core.$apply($scope);
       };
 
+
       $scope.filterValues = (value) => {
         var json = angular.toJson(value);
         return json.has($scope.pageFilter);
       };
 
-      $scope.$watch('mbeans', (newValue, oldValue) => {
-        Core.unregister(jolokia, $scope);
-        $scope.mbeans.forEach((mbean) => {
-          Core.register(jolokia, $scope, {
-            type: 'exec', mbean: mbean,
-            operation: "healthList()"
-          }, {
-            success: $scope.render,
-            error: (response) => {
-              log.error("Failed to invoke healthList() on mbean: " + mbean + " due to: ", response.error);
-              log.info("Stack trace: ", response.stacktrace.split("\n"));
-            }
-          });
-        });
-      }, true);
-
-      $scope.getMBeans = () => {
-        var healthMap = getHealthMBeans(workspace);
-        //log.debug("HealthMap: ", healthMap);
-        if (healthMap) {
-          if (!angular.isArray(healthMap)) {
-            return [healthMap.objectName];
-          }
-          var answer = healthMap.map((obj) => { return obj.objectName; });
-          return answer;
-        } else {
-          return [];
-        }
-      };
 
       $scope.sanitize = (value) => {
         var answer = {};
@@ -158,8 +222,6 @@ module Health {
         }
         return 'HealthID: <strong>' + value['healthId'] + '</strong>';
       };
-
-      $scope.mbeans = $scope.getMBeans();
 
       /**
        * Default the values that are missing in the returned JSON
