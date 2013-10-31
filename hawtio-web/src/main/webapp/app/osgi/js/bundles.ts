@@ -30,13 +30,13 @@ module Osgi {
         field: 'Name',
         displayName: 'Name',
         width: "***",
-        cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}">{{row.getProperty(col.field)}}</a></div>'
+        cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
       },
       {
         field: 'SymbolicName',
         displayName: 'Symbolic Name',
         width: "***",
-        cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}">{{row.getProperty(col.field)}}</a></div>'
+        cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
       },
       {
         field: 'Version',

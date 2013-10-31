@@ -2,7 +2,7 @@ module Core {
 
   export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {
 
-    $scope.hash = null;
+    $scope.hash = workspace.hash();
     $scope.topLevelTabs = [];
     $scope.subLevelTabs = workspace.subLevelTabs;
     $scope.currentPerspective = null;
@@ -55,6 +55,12 @@ module Core {
         }
       }
     };
+
+    $scope.$watch('hash', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        log.debug("hash changed from ", oldValue, " to ", newValue);
+      }
+    });
 
     // when we change the view/selection lets update the hash so links have the latest stuff
     $scope.$on('$routeChangeSuccess', function () {

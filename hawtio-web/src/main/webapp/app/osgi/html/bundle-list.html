@@ -5,18 +5,18 @@
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="btn-group inline-block">
-            <button onclick="location.href='#/osgi/bundle-list'"
+            <a ng-href="#/osgi/bundle-list?p=container"
                     type="button"
                     class="btn active"
                     title="List view">
               <i class="icon-list"></i>
-            </button>
-            <button onclick="location.href='#/osgi/bundles'"
+            </a>
+            <a ng-href="#/osgi/bundles?p=container"
                     type="button"
                     class="btn"
                     title="Table view">
               <i class="icon-table"></i>
-            </button>
+            </a>
           </div>
 
           <div class="input-append">
@@ -74,7 +74,7 @@
            ng-show="filterBundle(bundle)"
            hawtio-template-popover title="Bundle Details">
         <a id="{{bundle.Identifier}}"
-           ng-href="#/osgi/bundle/{{bundle.Identifier}}">
+           ng-href="#/osgi/bundle/{{bundle.Identifier}}?p=container">
           <span class="badge" ng-class="getStateStyle(bundle.State)">{{getLabel(bundle)}}</span>
         </a>
       </div>

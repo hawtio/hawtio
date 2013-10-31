@@ -54,7 +54,7 @@
                         <div id="collapseFeatures" class="accordion-body collapse in">
                             <ul class="accordion-inner">
                                 <li ng-repeat="feature in row.Dependencies">
-                                    <a href='#/osgi/feature/{{feature.Name}}/{{feature.Version}}{{hash}}'>{{feature.Name}}/{{feature.Version}}</a>
+                                    <a href='#/osgi/feature/{{feature.Name}}/{{feature.Version}}?p=container'>{{feature.Name}}/{{feature.Version}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -79,7 +79,7 @@
                                 <li ng-repeat="bundle in row.BundleDetails">
                                     <div ng-switch="bundle.Installed">
                                         <p style="display: inline;" ng-switch-when="true">
-                                            <a href='#/osgi/bundle/{{bundle.Identifier}}{{hash}}'>{{bundle.Location}}</a></p>
+                                            <a href='#/osgi/bundle/{{bundle.Identifier}}?p=container'>{{bundle.Location}}</a></p>
 
                                         <p style="display: inline;" ng-switch-default>{{bundle.Location}}</p>
                                     </div>

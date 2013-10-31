@@ -129,7 +129,7 @@ module Karaf {
         {
           field: 'Version',
           displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a href="#/osgi/feature/{{row.entity.Name}}/{{row.entity.Version}}">{{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: '<div class="ngCellText"><a href="#/osgi/feature/{{row.entity.Name}}/{{row.entity.Version}}?p=container">{{row.getProperty(col.field)}}</a></div>',
           width: 200
         },
         {
