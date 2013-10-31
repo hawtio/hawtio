@@ -4,9 +4,9 @@
         <div class="span2"><strong>Job Instance ID:</strong></div>
         <div class="span1"><span class="text-info">{{jobInstance.id}}</span></div>
         <div class="span2">
-            <span style="cursor: pointer"> <i class="icon-backward icon-2x"></i> </span>  &nbsp;
+            <span style="cursor: pointer" ng-click="fetchPrevJobInstance(jobInstance)"> <i class="icon-backward icon-2x"></i> </span>  &nbsp;
             <span style="cursor: pointer" ng-click="refreshJobInstance(jobInstance)"> <i class="icon-refresh icon-2x"></i> </span>  &nbsp;
-            <span style="cursor: pointer"> <i class="icon-forward icon-2x"></i> </span>  &nbsp;
+            <span style="cursor: pointer" ng-click="fetchNextJobInstance(jobInstance)"> <i class="icon-forward icon-2x"></i> </span>  &nbsp;
         </div>
         <div class="span2">
             <span id="jobExecutionStatus">
