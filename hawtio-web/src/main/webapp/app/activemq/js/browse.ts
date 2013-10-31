@@ -184,7 +184,7 @@ module ActiveMQ {
     function createHeaderHtml(message) {
       var headers = createHeaders(message);
       var properties = createProperties(message);
-      var keys = Object.extended(headers).keys();
+      var headerKeys = Object.extended(headers).keys();
 
       function sort(a, b) {
         if (a > b) return 1;
@@ -192,17 +192,32 @@ module ActiveMQ {
         return 0;
       }
 
-      var jmsHeaders = keys.filter((key) => {
+      var propertiesKeys = Object.extended(properties).keys().sort(sort);
+
+      var jmsHeaders = headerKeys.filter((key) => {
         return key.startsWith("JMS");
       }).sort(sort);
 
-      var remaining = keys.subtract(jmsHeaders).sort(sort);
+      var remaining = headerKeys.subtract(jmsHeaders, propertiesKeys).sort(sort);
 
       var buffer = [];
 
-      function append(key) {
+      function appendHeader(key) {
 
         var value = headers[key];
+        if (value === null) {
+          value = '';
+        }
+
+        buffer.push('<tr><td class="propertyName"><span class="green">Header</span> - ' +
+            key +
+            '</td><td class="property-value">' +
+            value +
+            '</td></tr>');
+      }
+
+      function appendProperty(key) {
+        var value = properties[key];
         if (value === null) {
           value = '';
         }
@@ -214,9 +229,9 @@ module ActiveMQ {
             '</td></tr>');
       }
 
-      jmsHeaders.forEach(append);
-      remaining.forEach(append);
-      properties.forEach(append);
+      jmsHeaders.forEach(appendHeader);
+      remaining.forEach(appendHeader);
+      propertiesKeys.forEach(appendProperty);
       return buffer.join("\n");
     }
 
@@ -236,7 +251,9 @@ module ActiveMQ {
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
-            angular.forEach(value, (v2, k2) => answer[key+':'+k2] = v2);
+          angular.forEach(value, (v2, k2) => {
+            answer['<span class="green">' + key.replace('Properties', ' Property') + '</span> - ' + k2] = v2
+          });
         }
       });
       return answer;
