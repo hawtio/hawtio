@@ -183,7 +183,7 @@ module ActiveMQ {
      */
     function createHeaderHtml(message) {
       var headers = createHeaders(message);
-
+      var properties = createProperties(message);
       var keys = Object.extended(headers).keys();
 
       function sort(a, b) {
@@ -216,7 +216,7 @@ module ActiveMQ {
 
       jmsHeaders.forEach(append);
       remaining.forEach(append);
-
+      properties.forEach(append);
       return buffer.join("\n");
     }
 
@@ -224,12 +224,19 @@ module ActiveMQ {
       log.debug("headers: ", row);
       var answer = {};
       angular.forEach(row, (value, key) => {
-        if (!ignoreColumns.any(key)) {
-          if (flattenColumns.any(key)) {
-            angular.forEach(value, (v2, k2) => answer[k2] = v2);
-          } else {
+        if (!ignoreColumns.any(key) && !flattenColumns.any(key)) {
             answer[key] = value;
-          }
+        }
+      });
+      return answer;
+    }
+    
+    function createProperties(row) {
+      log.debug("properties: ", row);
+      var answer = {};
+      angular.forEach(row, (value, key) => {
+        if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
+            angular.forEach(value, (v2, k2) => answer[key+':'+k2] = v2);
         }
       });
       return answer;
