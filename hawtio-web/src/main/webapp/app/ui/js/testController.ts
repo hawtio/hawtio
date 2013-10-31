@@ -5,15 +5,36 @@ module UI {
       $scope.fileUploadExMode = 'text/html';
 
       $scope.menuItems = [];
+      $scope.divs = [];
 
       for (var i = 0; i < 20; i++) {
         $scope.menuItems.push("Some Item " + i);
       }
 
+      for (var i = 0; i < 20; i++) {
+        $scope.divs.push(i + 1);
+      }
+
+      $scope.things = [
+        {
+          'name': 'stuff1',
+          'foo1': 'bar1',
+          'foo2': 'bar2'
+        },
+        {
+          'name': 'stuff2',
+          'foo3': 'bar3',
+          'foo4': 'bar4'
+        }
+      ];
 
       $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
-
       $scope.zeroClipboard = $templateCache.get("zeroClipboardTemplate");
+
+      $scope.popoverEx = $templateCache.get("myTemplate");
+      $scope.popoverUsageEx = $templateCache.get("popoverExTemplate");
+
+      $scope.autoColumnEx = $templateCache.get("autoColumnTemplate");
 
 
     }

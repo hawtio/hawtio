@@ -6,6 +6,7 @@ module UI {
     public link = ($scope, $element, $attr) => {
 
       var selector = getIfSet('hawtioAutoColumns', $attr, 'div');
+      var minMargin = getIfSet('minMargin', $attr, '3').toNumber();
 
       var go = function() {
 
@@ -33,6 +34,8 @@ module UI {
         if (childWidth === 0) {
           return;
         }
+
+        childWidth = childWidth + (minMargin * 2);
 
         var columns = Math.floor(containerWidth / childWidth);
         if (children.length < columns) {
