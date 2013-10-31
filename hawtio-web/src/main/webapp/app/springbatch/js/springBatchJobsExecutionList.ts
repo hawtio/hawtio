@@ -5,18 +5,15 @@ module SpringBatch{
         $http.get('/hawtio/proxy/localhost:8181/jobs/executions.json',{
             cache:false
         }).success(function(data){
+                for(var execution in data.jobExecutions){
+                    data.jobExecutions[execution].id=execution;
+                }
+                console.info(data.jobExecutions)
                 $scope.jobExecutions=data.jobExecutions
 
             }).error(function(data){
 
             });
-
-
-    }
-
-    export function UtilController($scope) {
-
-      $scope.encodedUrl =  function (data){return encodeURIComponent(data) }
 
     }
 
