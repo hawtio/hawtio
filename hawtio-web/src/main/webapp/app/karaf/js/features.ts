@@ -1,246 +1,202 @@
 module Karaf {
 
-  export function FeaturesController($scope, $location, workspace, jolokia, $parse) {
+  export function FeaturesController($scope, $location, workspace, jolokia) {
 
-    $scope.feature = empty();
-    $scope.installedOnly = true;
     $scope.hasFabric = Fabric.hasFabric(workspace);
+    $scope.responseJson = '';
+    $scope.filter = '';
 
-    var key = $location.search()['repo'];
-    if (key) {
-      $scope.repository = { id: key };
-    }
-    /*
-    //TODO to add this we should disable page refreshing when $location is updated
-    var installed = $location.search()['installedOnly'];
-    if (installed) {
-      $parse(installed)($scope);
-    }
-    */
+    $scope.installedFeatures = [];
 
-    // caches last jolokia result
-    $scope.result = [];
-
-    // rows in feature table
     $scope.features = [];
     $scope.repositories = [];
+    $scope.selectedRepositoryId = '';
+    $scope.selectedRepository = {};
 
-    // selected features
-    $scope.selectedFeatures = [];
 
+    $scope.init = () => {
 
-    var SearchProvider = function (scope, location) {
-      var self = this;
-      self.scope = scope;
-      self.location = location;
-
-      self.callback = function (newValue, oldValue) {
-        if (angular.isUndefined(oldValue) && angular.isUndefined(newValue)) {
-          // if for some reason we do not have a values
-          return
-        }
-
-        // if we have an old value to quick compare against
-        if (angular.isDefined(oldValue)) {
-          if (newValue === oldValue) {
-            return;
-          }
-          if (newValue.id === oldValue.id) {
-            return;
-          }
-        }
-        self.scope.features = featuresOfRepo(self.scope.repository.id, self.scope.features);
-        self.scope.feature = setSelect(self.scope.repository, self.scope.repositories);
-
-        var q = location.search();
-        q['repo'] = self.scope.repository.id;
-        location.search(q);
-        self.evalFilter();
-      };
-
-      self.scope.$watch('repository', self.callback);
-
-      self.scope.$watch('installedOnly', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          self.evalFilter();
-        }
-      });
-
-      self.scope.$watch('filter', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          self.evalFilter();
-        }
-      });
-
-      self.init = function (childScope, grid) {
-        self.grid = grid;
-        self.childScope = childScope;
-        grid.searchProvider = self;
-      };
-
-      self.evalFilter = function () {
-        var byRepo = self.grid.rowCache;
-        if (angular.isDefined(self.scope.repository)) {
-          if (self.scope.repository.id !== "") {
-            byRepo = self.grid.rowCache.findAll((item) => {
-              return item.entity.RepositoryName === self.scope.repository.id;
-            });
-          }
-        }
-        if (self.scope.installedOnly) {
-          byRepo = byRepo.findAll((item) => {
-            return item.entity.Installed;
-          });
-        }
-        if (self.scope.filter) {
-          byRepo = byRepo.findAll((item) => {
-            return item.entity.Name.has(self.scope.filter) || item.entity.Version.has(self.scope.filter) || item.entity.RepositoryName.has(self.scope.filter);
-          });
-        }
-        self.grid.filteredRows = byRepo;
-        self.grid.rowFactory.filteredRowsChanged();
-      };
-
-    }
-
-    var searchProvider = new SearchProvider($scope, $location);
-
-    $scope.featureOptions = {
-      plugins: [searchProvider],
-      data: 'features',
-      showFilter: false,
-      showColumnMenu: false,
-      filterOptions: {
-        useExternalFilter: true
-      },
-      selectedItems: $scope.selectedFeatures,
-      rowHeight: 32,
-      enableRowSelection: !$scope.hasFabric,
-      selectWithCheckboxOnly: true,
-      keepLastSelected: true,
-      showSelectionCheckbox: !$scope.hasFabric,
-      columnDefs: [
-        {
-          field: 'Name',
-          displayName: 'Feature Name',
-          cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-          width: 200
-        },
-        {
-          field: 'Version',
-          displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a href="#/osgi/feature/{{row.entity.Name}}/{{row.entity.Version}}?p=container">{{row.getProperty(col.field)}}</a></div>',
-          width: 200
-        },
-        {
-          field: 'RepositoryName',
-          displayName: 'Repository'
-        },
-        {
-          field: 'Installed',
-          displayName: 'Installed'
-        }
-      ],
-      sortInfo: {
-        fields: ['Installed', 'RepositoryName'],
-        directions: ['asc', 'asc']
+      var selectedRepositoryId = $location.search()['repositoryId'];
+      if (selectedRepositoryId) {
+        $scope.selectedRepositoryId = selectedRepositoryId;
       }
+
+      var filter = $location.search()['filter'];
+      if (filter) {
+        $scope.filter = filter;
+      }
+
     };
 
+    $scope.init();
+
+    $scope.$watch('selectedRepository', (newValue, oldValue) => {
+      console.log("selectedRepository: ", $scope.selectedRepository);
+      if (newValue !== oldValue) {
+        if (!newValue) {
+          $scope.selectedRepositoryId = '';
+        } else {
+          $scope.selectedRepositoryId = newValue['repository'];
+        }
+        $location.search('repositoryId', $scope.selectedRepositoryId);
+      }
+    }, true);
+
+    $scope.$watch('filter', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search('filter', newValue);
+      }
+    });
+
     var featuresMBean = Karaf.getSelectionFeaturesMBean(workspace);
+
+    log.debug("Features mbean: ", featuresMBean);
+
     if (featuresMBean) {
       Core.register(jolokia, $scope, {
         type: 'read', mbean: featuresMBean
       }, onSuccess(render));
     }
 
-    $scope.install = () => {
-      $scope.selectedFeatures.each((feature) => {
-
-        var feature = feature;
-        installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
-          notification('success', 'Installed feature ' + feature.Name);
-          Core.$apply($scope);
-        }, (response) => {
-          notification('error', 'Failed to install feature ' + feature.Name + ' due to ' + response.error);
-          Core.$apply($scope);
-        });
+    $scope.install = (feature) => {
+      //$('.popover').remove();
+      installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
+        notification('success', 'Installed feature ' + feature.Name);
+        Core.$apply($scope);
+      }, (response) => {
+        log.error('Failed to install feature ', feature.Name, ' due to ', response.error);
+        log.info('stack trace: ', response.stacktrace);
+        Core.$apply($scope);
       });
     };
 
-    $scope.uninstall = () => {
-      $scope.selectedFeatures.each((feature) => {
-
-        var feature = feature;
-        uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
-          notification('success', 'Uninstalled feature ' + feature.Name);
-          Core.$apply($scope);
-        }, (response) => {
-          notification('error', 'Failed to uninstall feature ' + feature.Name + ' due to ' + response.error);
-          Core.$apply($scope);
-        });
+    $scope.uninstall = (feature) => {
+      //$('.popover').remove();
+      uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
+        notification('success', 'Uninstalled feature ' + feature.Name);
+        Core.$apply($scope);
+      }, (response) => {
+        log.error('Failed to uninstall feature ', feature.Name, ' due to ', response.error);
+        log.info('stack trace: ', response.stacktrace);
+        Core.$apply($scope);
       });
     };
 
-    $scope.statusIcon = (row) => {
-      if (row) {
-        if (row.alive) {
-          switch (row.provisionResult) {
-            case 'success':
-              return "icon-thumbs-up";
-            case 'downloading':
-              return "icon-download-alt";
-            case 'installing':
-              return "icon-hdd";
-            case 'analyzing':
-            case 'finalizing':
-              return "icon-refresh icon-spin";
-            case 'resolving':
-              return "icon-sitemap";
-            case 'error':
-              return "red icon-warning-sign";
-          }
-        } else {
-          return "icon-off";
+    $scope.filteredRows = ['Bundles', 'Configurations', 'Configuration Files', 'Dependencies'];
+
+    $scope.showRow = (key, value) => {
+
+      if ($scope.filteredRows.any(key)) {
+        return false;
+      }
+
+      if (angular.isArray(value)) {
+        if (value.length === 0) {
+          return false;
         }
       }
-      return "icon-refresh icon-spin";
+
+      if (angular.isString(value)) {
+        if (Core.isBlank(value)) {
+          return false;
+        }
+      }
+
+      if (angular.isObject(value)) {
+        if (!value || Object.equal(value, {})) {
+          return false;
+        }
+      }
+
+      return true;
     };
 
+    $scope.installed = (installed) => {
+      var answer = Core.parseBooleanValue(installed);
 
-    function empty() {
-      return [
-        {id: ""}
-      ];
-    }
+      if ($scope.hasFabric) {
+        return !answer;
+      }
 
-    $scope.javascript = 'javascript';
+      return answer;
+    };
+
+    $scope.showValue = (value) => {
+      if (angular.isArray(value)) {
+        var answer = ['<ul class="zebra-list">']
+        value.forEach((v) => { answer.push('<li>' + v + '</li>')});
+        answer.push('</ul>');
+        return answer.join('\n');
+      }
+      if (angular.isObject(value)) {
+        var answer = ['<table class="table">', '<tbody>']
+
+        angular.forEach(value, (value, key) => {
+          answer.push('<tr>');
+          answer.push('<td>' + key + '</td>')
+          answer.push('<td>' + value + '</td>')
+          answer.push('</tr>');
+        });
+
+        answer.push('</tbody>');
+        answer.push('</table>');
+
+        return answer.join('\n');
+      }
+      return "" + value;
+    };
+
+    $scope.getStateStyle = (feature) => {
+      if (Core.parseBooleanValue(feature.Installed)) {
+        return "badge badge-success";
+      }
+      return "badge";
+    };
+
+    $scope.filterFeature = (feature) => {
+      if (Core.isBlank($scope.filter)) {
+        return true;
+      }
+      if (feature.Id.has($scope.filter)) {
+        return true;
+      }
+      return false;
+    };
 
     function render(response) {
-      if (!Object.equal($scope.result, response.value)) {
-        $scope.result = response.value;
-        //$scope.resultString = angular.toJson($scope.result, true);
+      var responseJson = angular.toJson(response.value);
+      if ($scope.responseJson !== responseJson) {
+        $scope.responseJson = responseJson;
+        //log.debug("Got response: ", response.value);
 
-        $scope.features = [];
-        $scope.repositories = empty();
+        var features = [];
+        var repositories = [];
 
-        populateFeaturesAndRepos($scope.result, $scope.features, $scope.repositories);
-        $scope.repository = setSelect($scope.repository, $scope.repositories);
+        populateFeaturesAndRepos(response.value, features, repositories);
 
-        //$scope.featuresString = angular.toJson($scope.features, true);
-        //$scope.repositoriesString = angular.toJson($scope.repositories, true);
+        var installedFeatures = features.filter((f) => { return Core.parseBooleanValue(f.Installed); });
+        var uninstalledFeatures = features.filter((f) => { return !Core.parseBooleanValue(f.Installed); });
+
+        //log.debug("repositories: ", repositories);
+
+        $scope.installedFeatures = installedFeatures.sortBy((f) => { return f['Name'] });
+        uninstalledFeatures = uninstalledFeatures.sortBy((f) => { return f['Name'] });
+
+        repositories.sortBy('id').map((r) => { return r['id'] }).forEach((repo) => {
+          $scope.repositories.push({
+            repository: repo,
+            features: uninstalledFeatures.filter((f) => { return f['RepositoryName'] === repo })
+          });
+        });
+
+        if (Core.isBlank($scope.selectedRepositoryId)) {
+          $scope.selectedRepository = $scope.repositories.first();
+        } else {
+          $scope.selectedRepository = $scope.repositories.find((r) => { return r.repository === $scope.selectedRepositoryId });
+        }
 
         Core.$apply($scope);
       }
-    }
-
-    function featuresOfRepo(repository, features) {
-      if (repository === "") {
-        return features;
-      }
-      return features.findAll(function (feature) {
-        return feature.repository === repository
-      });
     }
   }
 }

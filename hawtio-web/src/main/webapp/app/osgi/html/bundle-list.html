@@ -56,11 +56,11 @@
 
     <script type="text/ng-template" id="popoverTemplate">
 <small>
-  <table>
+  <table class="table">
     <tbody>
     <tr ng-repeat="(k, v) in bundle track by $index">
-      <td>{{k}}</td>
-      <td>{{v}}</td>
+      <td class="property-name">{{k}}</td>
+      <td class="property-value">{{v}}</td>
     </tr>
     </tbody>
   </table>

@@ -295,6 +295,17 @@ if (!Object.keys) {
 module Core {
 
   /**
+   * Returns true if the string is either null or empty
+   * @param str
+   */
+  export function isBlank(str:string) {
+    if (!str) {
+      return true;
+    }
+    return str.isBlank();
+  }
+
+  /**
    * A named logger for our module...
    * @type {Logger}
    */
