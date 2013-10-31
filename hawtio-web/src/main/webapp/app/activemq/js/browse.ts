@@ -183,15 +183,45 @@ module ActiveMQ {
      */
     function createHeaderHtml(message) {
       var headers = createHeaders(message);
-      var buffer = "";
-      angular.forEach(headers, (value, key) => {
-        buffer += "<tr><td class='property-name'>" + key + "</td>" +
-                "<td class='property-value'>" + value + "</td></tr>";
-      });
-      return buffer;
+
+      var keys = Object.extended(headers).keys();
+
+      function sort(a, b) {
+        if (a > b) return 1;
+        if (a < b) return -1;
+        return 0;
+      }
+
+      var jmsHeaders = keys.filter((key) => {
+        return key.startsWith("JMS");
+      }).sort(sort);
+
+      var remaining = keys.subtract(jmsHeaders).sort(sort);
+
+      var buffer = [];
+
+      function append(key) {
+
+        var value = headers[key];
+        if (value === null) {
+          value = '';
+        }
+
+        buffer.push('<tr><td class="propertyName">' +
+            key +
+            '</td><td class="property-value">' +
+            value +
+            '</td></tr>');
+      }
+
+      jmsHeaders.forEach(append);
+      remaining.forEach(append);
+
+      return buffer.join("\n");
     }
 
     function createHeaders(row) {
+      log.debug("headers: ", row);
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key)) {

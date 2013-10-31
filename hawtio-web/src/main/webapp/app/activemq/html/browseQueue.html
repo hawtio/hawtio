@@ -40,7 +40,11 @@
         <div class="pull-right">
           <form class="form-horizontal no-bottom-margin">
 
-            <div class="btn-group" hawtio-pager="messages" on-index-change="selectRowIndex" row-index="rowIndex"></div>
+            <div class="btn-group"
+                 style="margin-top: 9px;"
+                 hawtio-pager="messages"
+                 on-index-change="selectRowIndex"
+                 row-index="rowIndex"></div>
 
             <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog = true"
                     title="Move the selected messages to another destination" data-placement="bottom">
@@ -64,7 +68,7 @@
       <div class="row-fluid">
         <div class="expandable closed">
           <div title="Headers" class="title">
-            <i class="expandable-indicator"></i> Headers
+            <i class="expandable-indicator"></i> Headers & Properties
           </div>
           <div class="expandable-body well">
             <table class="table table-condensed table-striped">
