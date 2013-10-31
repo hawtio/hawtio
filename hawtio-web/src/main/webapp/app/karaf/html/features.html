@@ -1,44 +1,82 @@
 <div class="controller-section" ng-controller="Karaf.FeaturesController">
-  <div class="row-fluid">
-    <div class="pull-left">
-      <form class="form-inline no-bottom-margin">
-        <fieldset>
-          <div class="control-group inline-block">
-            <div class="btn-group">
-              <button ng-disabled="hasFabric || selectedFeatures.length == 0" class="btn" ng-click="install()"><i
-                      class="icon-play-circle"></i> Start
-              </button>
-              <button ng-disabled="hasFabric || selectedFeatures.length == 0" class="btn" ng-click="uninstall()"><i
-                      class="icon-off"></i> Stop
-              </button>
-            </div>
-          </div>
-          &nbsp;
-          <div class="control-group inline-block">
-            <label for="repositories">Repositories: </label>
-            <select id="repositories" ng-model="repository" ng-options="v.id for v in repositories"></select>
-          </div>
-          &nbsp;
-          <div class="control-group inline-block">
-            <label for="installedOnly" title="Only show installed features">Installed only: </label>
-            <input type="checkbox" id="installedOnly" name="installedOnly" ng-model="installedOnly">
-          </div>
-        </fieldset>
-      </form>
-    </div>
 
-    <div class="pull-right">
-      <form class="form-inline no-bottom-margin">
-        <fieldset>
-          <div class="pull-right control-group inline-block">
-            <input type="text" class="search-query" placeholder="Filter..." ng-model="filter">
-          </div>
-        </fieldset>
-      </form>
-    </div>
+  <div class="row-fluid section-filter">
+    <input type="text" class="span12 search-query" placeholder="Filter..." ng-model="filter">
+    <i class="icon-remove clickable" title="Clear Filter" ng-click="filter = ''"></i>
   </div>
 
+  <script type="text/ng-template" id="popoverTemplate">
+    <small>
+      <table class="table">
+        <tbody>
+        <tr ng-repeat="(k, v) in feature track by $index" ng-show="showRow(k, v)">
+          <td class="property-name">{{k}}</td>
+          <td class="property-value" ng-bind-html-unsafe="showValue(v)"></td>
+        </tr>
+        </tbody>
+      </table>
+    </small>
+  </script>
+
+  <p></p>
   <div class="row-fluid">
-    <div class="gridStyle" ng-grid="featureOptions"></div>
+    <div class="span6">
+      <div class="bundle-list"
+           hawtio-auto-columns=".bundle-item">
+        <div ng-repeat="feature in installedFeatures"
+             class="bundle-item"
+             ng-show="filterFeature(feature)">
+          <a ng-href="#/osgi/feature/{{feature.Id}}?p=container"
+             hawtio-template-popover title="Feature Details">
+            <span class="badge" ng-class="getStateStyle(feature)">{{feature.Name}} / {{feature.Version}}</span>
+          </a>
+          <a class="toggle-action"
+             href=""
+             ng-show="installed(feature.Installed)"
+             ng-click="uninstall(feature)">
+            <i class="icon-power-off"></i>
+          </a>
+          <a class="toggle-action"
+             href=""
+             ng-hide="installed(feature.Installed)"
+             ng-click="install(feature)">
+            <i class="icon-play-circle"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="span6">
+      <div class="row-fluid">
+        <select class="span12" ng-model="selectedRepository" ng-options="r.repository for r in repositories"></select>
+      </div>
+      <div class="row-fluid">
+        <div class="bundle-list"
+             hawtio-auto-columns=".bundle-item">
+          <div ng-repeat="feature in selectedRepository.features"
+               class="bundle-item"
+               ng-show="filterFeature(feature)"
+               hawtio-template-popover title="Feature Details">
+            <a ng-href="#/osgi/feature/{{feature.Id}}?p=container">
+              <span class="badge" ng-class="getStateStyle(feature)">{{feature.Name}} / {{feature.Version}}</span>
+            </a >
+            <a class="toggle-action"
+               href=""
+               ng-show="installed(feature.Installed)"
+               ng-click="uninstall(feature)">
+              <i class="icon-power-off"></i>
+            </a>
+            <a class="toggle-action"
+               href=""
+               ng-hide="installed(feature.Installed)"
+               ng-click="install(feature)">
+              <i class="icon-play-circle"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>

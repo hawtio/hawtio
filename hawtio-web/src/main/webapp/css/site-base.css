@@ -11,6 +11,11 @@ a:focus {
   white-space: nowrap;
 }
 
+small table tbody tr td.property-name {
+  font-weight: bold;
+  text-align: right;
+}
+
 #log-panel {
   position: fixed;
   top: -5px;
@@ -936,7 +941,6 @@ input[type="checkbox"].hawtio-checkbox {
   background: linear-gradient(to bottom, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4', GradientType=0);
   z-index: 5;
-  text-overflow: ellipsis;
 }
 
 .bundle-item a:hover {
@@ -953,6 +957,8 @@ input[type="checkbox"].hawtio-checkbox {
   text-shadow: none;
   font-weight: normal;
   z-index: 6;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .bundle-item a span.badge {
@@ -985,6 +991,37 @@ input[type="checkbox"].hawtio-checkbox {
 .bundle-item a span.badge-important::before {
   background: #ee0002;
   box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(195, 6, 0, 0.47);
+}
+
+.bundle-item a.toggle-action {
+  position: absolute;
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  right: 12px;
+  top: 6px;
+  opacity: 0.2;
+  transition: all 500ms ease-in-out;
+  color: inherit;
+  box-shadow: none;
+  font-size: 18px;
+}
+
+.bundle-item a.toggle-action .icon-power-off {
+  color: orange;
+}
+
+.bundle-item a.toggle-action .icon-play-circle {
+  color: green;
+}
+
+.bundle-item a.toggle-action:hover {
+  opacity: 1;
+  text-decoration: none;
 }
 
 .bundle-list {

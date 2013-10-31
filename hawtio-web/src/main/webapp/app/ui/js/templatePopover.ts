@@ -13,6 +13,12 @@ module UI {
         var contentTemplate = UI.getIfSet('content', $attr, 'popoverTemplate');
         var placement = UI.getIfSet('placement', $attr, 'auto');
         var delay = UI.getIfSet('delay', $attr, '100');
+        var container = UI.getIfSet('container', $attr, 'body');
+        var selector = UI.getIfSet('container', $attr, 'false');
+
+        if (selector === 'false') {
+          selector = false;
+        }
 
         var template = $templateCache.get(contentTemplate);
 
@@ -26,15 +32,32 @@ module UI {
           html: html,
           content: $compile(template)($scope),
           delay: delay,
+          container: container,
+          selector: selector,
           placement: function(tip, element) {
             if (placement !== 'auto') {
               return placement;
             }
-            var width = $document.innerWidth();
+
             var el = $(element);
-            var elCenter = (<any>el.offset()).left + (el.outerWidth() / 2);
+            var offset = el.offset();
+            /* not sure on auto bottom/top
+
+            var elVerticalCenter = offset['top'] + (el.outerHeight() / 2);
+            if (elVerticalCenter < 300) {
+              return 'bottom';
+            }
+
+            var height = window.innerHeight;
+            if (elVerticalCenter > window.innerHeight - 300) {
+              return 'top';
+            }
+            */
+
+            var width = $document.innerWidth();
+            var elHorizontalCenter = offset['left'] + (el.outerWidth() / 2);
             var midpoint = width / 2;
-            if (elCenter < midpoint) {
+            if (elHorizontalCenter < midpoint) {
               return 'right';
             } else {
               return 'left';
