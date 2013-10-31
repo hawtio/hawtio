@@ -1,12 +1,27 @@
 <div ng-controller="SpringBatch.JobOverviewExecListController">
     <h3>Overview</h3>
-
     <div class="row-fluid">
         <div class="span2"><strong>Job Instance ID:</strong></div>
         <div class="span1"><span class="text-info">{{jobInstance.id}}</span></div>
-        <i class="icon-backward icon-2x"></i>
-        <i class="icon-refresh icon-2x"></i>
-        <i class="icon-forward icon-2x"></i>
+        <div class="span2">
+            <span style="cursor: pointer"> <i class="icon-backward icon-2x"></i> </span>  &nbsp;
+            <span style="cursor: pointer" ng-click="refreshJobInstance(jobInstance)"> <i class="icon-refresh icon-2x"></i> </span>  &nbsp;
+            <span style="cursor: pointer"> <i class="icon-forward icon-2x"></i> </span>  &nbsp;
+        </div>
+        <div class="span2">
+            <span id="jobExecutionStatus">
+                <span   class="btn-large {{(jobInstance.lastJobExecutionStatus == 'COMPLETED')?'btn-success':'btn-danger'}}">
+                   {{jobInstance.lastJobExecutionStatus}}
+                </span>
+            </span>
+        </div>
+        <div class="span2">
+            <div class="dropdown">
+                <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Actions <b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    ...
+                </ul>
+            </div>
+        </div>
     </div>
-
 </div>

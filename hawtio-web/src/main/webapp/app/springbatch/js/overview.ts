@@ -23,6 +23,14 @@ module SpringBatch {
                 }
             }
         });
-
+        $scope.refreshJobInstance = function(jobInstance){
+            var jobList = $resource(proxyUrl+springBatchServerPath);
+            jobList.get({'jobName':jobName+'.json'},function(data){
+                for(var job in data.job.jobInstances){
+                    data.job.jobInstances[job].id=job;
+                }
+                $scope.jobInstance = data.job.jobInstances[jobInstance.id];
+            });
+        }
     }
 }
