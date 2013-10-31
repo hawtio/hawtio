@@ -297,21 +297,7 @@
 
   </dependencies>
 
-  <repositories>
-    <repository>
-       <id>JBoss.org Public Repository</id>
-       <releases>
-          <enabled>true</enabled>
-       </releases>
-       <snapshots>
-          <enabled>true</enabled>
-       </snapshots>
-       <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
-
   <build>
-
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
