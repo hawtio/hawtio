@@ -1,6 +1,8 @@
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia) {
+  export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) {
+
+    $scope.hash = workspace.hash();
     $scope.selectedItems = [];
     $scope.repository = dashboardRepository;
     $scope.duplicateDashboards = new Core.Dialog();

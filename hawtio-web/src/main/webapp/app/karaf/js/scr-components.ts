@@ -29,7 +29,7 @@ module Karaf {
                 {
                     field: 'Name',
                     displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}">{{row.getProperty(col.field)}}</a></div>',
+                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}?p=container">{{row.getProperty(col.field)}}</a></div>',
                     width: 400
                 },
                 {
