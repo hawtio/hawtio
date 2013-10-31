@@ -125,24 +125,26 @@ public class Main {
     protected String findWar(String... paths) {
         if (paths != null) {
             for (String path : paths) {
-                File file = new File(path);
-                if (file.exists()) {
-                    if (file.isFile()) {
-                        String name = file.getName();
-                        if (isWarFileName(name)) {
-                            return file.getPath();
-                        }
-                    }
-                    if (file.isDirectory()) {
-                        // lets look for a war in this directory
-                        File[] wars = file.listFiles(new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return isWarFileName(name);
+                if (path != null) {
+                    File file = new File(path);
+                    if (file.exists()) {
+                        if (file.isFile()) {
+                            String name = file.getName();
+                            if (isWarFileName(name)) {
+                                return file.getPath();
                             }
-                        });
-                        if (wars != null && wars.length > 0) {
-                            return wars[0].getPath();
+                        }
+                        if (file.isDirectory()) {
+                            // lets look for a war in this directory
+                            File[] wars = file.listFiles(new FilenameFilter() {
+                                @Override
+                                public boolean accept(File dir, String name) {
+                                    return isWarFileName(name);
+                                }
+                            });
+                            if (wars != null && wars.length > 0) {
+                                return wars[0].getPath();
+                            }
                         }
                     }
                 }
