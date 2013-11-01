@@ -24,4 +24,30 @@
             </div>
         </div>
     </div>
+
+    <div>
+       <h3>Job Execution</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Exit Code</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="execution in jobExecutionList">
+            <td>{{execution.id}}</td>
+            <td>{{execution.startTime}}</td>
+            <td>{{execution.startTime}}</td>
+            <td>{{execution.duration}}</td>
+            <td>{{execution.status}}</td>
+            <td>{{execution.status}}</td>
+            </tr>
+
+
+        </table>
+    </div>
 </div>
