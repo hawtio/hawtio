@@ -1,5 +1,6 @@
 module SpringBatch {
-    var springBatchServerPath ='localhost\\:8080/spring-batch-admin-sample/jobs/:jobName';
+    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
+    var springBatchServerPath =springBatchServerOrigin+'jobs/:jobName';
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='/:jobInstanceId/executions.json';
 
@@ -60,6 +61,7 @@ module SpringBatch {
                         break;
                     }
                 }
+                $scope.stepExecutionList = null;
 
             });
         };
@@ -85,6 +87,7 @@ module SpringBatch {
                         break;
                     }
                 }
+                $scope.stepExecutionList = null;
             });
         };
         $scope.fetchPrevJobInstance = function(jobInstance){
@@ -109,9 +112,19 @@ module SpringBatch {
                         break;
                     }
                 }
+                $scope.stepExecutionList = null;
             });
         };
 
+        $scope.fetchStepsForExecution = function(executionId){
+            var jobList = $resource(proxyUrl+springBatchServerOrigin+'jobs/executions/:executionId');
+            jobList.get({'executionId':executionId+'.json'},function(data){
+                for(var execution in data.jobExecution.stepExecutions){
+                    data.jobExecution.stepExecutions[execution].name = execution;
+                }
+                $scope.stepExecutionList = data.jobExecution.stepExecutions;
+            });
+        };
 
     }
 }

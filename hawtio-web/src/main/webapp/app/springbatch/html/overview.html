@@ -27,9 +27,10 @@
 
     <div>
        <h3>Job Execution</h3>
-        <table class="table">
+        <table class="table table-striped table-hover">
             <thead>
             <tr>
+                <th></th>
                 <th>ID</th>
                 <th>Date</th>
                 <th>Start</th>
@@ -39,6 +40,7 @@
             </tr>
             </thead>
             <tr ng-repeat="execution in jobExecutionList">
+            <td><input type="radio" ng-click="fetchStepsForExecution(execution.id)"></td>
             <td>{{execution.id}}</td>
             <td>{{execution.startTime}}</td>
             <td>{{execution.startTime}}</td>
@@ -48,6 +50,37 @@
             </tr>
 
 
+        </table>
+    </div>
+
+    <div>
+        <h3>Step Executions</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Reads</th>
+                <th>Writes</th>
+                <th>Commit</th>
+                <th>Skip</th>
+                <th>Duration</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="stepExecution in stepExecutionList" >
+
+                <td data-title="'Id'">
+                    {{stepExecution.name}}
+                </td>
+                <td data-title="Status">{{stepExecution.status}}</td>
+                <td data-title="Read Count">{{stepExecution.readCount}}</td>
+                <td data-title="Write Count">{{stepExecution.writeCount}}</td>
+                <td data-title="Commit Count">{{stepExecution.commitCount}}</td>
+                <td data-title="Skip Count">{{stepExecution.rollbackCount}}</td>
+                <td data-title="Duration">{{stepExecution.duration}}</td>
+            </tr>
+            </tbody>
         </table>
     </div>
 </div>
