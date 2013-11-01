@@ -1,6 +1,6 @@
 module Core {
 
-  export function PreferencesController($scope, localStorage) {
+  export function PreferencesController($scope, localStorage, userDetails, jolokiaUrl) {
 
     if (!angular.isDefined(localStorage['logLevel'])) {
       localStorage['logLevel'] = '{"value": 2, "name": "INFO"}';
@@ -51,19 +51,19 @@ module Core {
 
     $scope.delete = (index) => {
       $scope.hosts.removeAt(index);
-    }
+    };
 
     $scope.moveUp = (index) => {
       var tmp = $scope.hosts[index];
       $scope.hosts[index] = $scope.hosts[index - 1];
       $scope.hosts[index - 1] = tmp
-    }
+    };
 
     $scope.moveDown = (index) => {
       var tmp = $scope.hosts[index];
       $scope.hosts[index] = $scope.hosts[index + 1];
       $scope.hosts[index + 1] = tmp
-    }
+    };
 
     $scope.onOk = () => {
       $scope.newHost['color'] = UI.colors.sample();
@@ -74,7 +74,7 @@ module Core {
       }
 
       $scope.newHost = {};
-    }
+    };
 
     $scope.$watch('hosts', (oldValue, newValue) => {
       if (!Object.equal(oldValue, newValue)) {
@@ -135,5 +135,14 @@ module Core {
     });
 
     console.log("logCacheSize " + $scope.logCacheSize);
+
+    $scope.doReset = () => {
+      logout(jolokiaUrl, userDetails, localStorage, $scope, () => {
+        localStorage.clear();
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      });
+    }
   }
 }

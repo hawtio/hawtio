@@ -317,18 +317,12 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
            * Initialize jolokia polling and add handler to change poll
            * frequency
            */
-          // only reset the update rate if its not defined
-          var updateRate = localStorage['updateRate'];
-          if (angular.isUndefined(updateRate)) {
-            localStorage['updateRate'] = 5000;
-          }
-
           $rootScope.$on('UpdateRate', (event, rate) => {
             jolokia.stop();
             if (rate > 0) {
               jolokia.start(rate);
             }
-            console.log("Set update rate to: " + rate);
+            Core.log.info("Set update rate to: ", rate);
           });
 
           $rootScope.$emit('UpdateRate', localStorage['updateRate']);
