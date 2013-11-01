@@ -34,6 +34,13 @@ class Workspace {
               public localStorage:WindowLocalStorage,
               public $rootScope) {
 
+    // set defaults
+    if (!('autoRefresh' in localStorage)) {
+      localStorage['autoRefresh'] = true;
+    }
+    if (!('updateRate' in localStorage)) {
+      localStorage['updateRate'] = 5000;
+    }
   }
 
   /**
@@ -133,7 +140,7 @@ class Workspace {
       return;
     }
     if (this.pluginUpdateCounter !== response.value) {
-      if (localStorage['autoRefresh'] === "true") {
+      if (Core.parseBooleanValue(localStorage['autoRefresh'])) {
         window.location.reload();
       }
     }

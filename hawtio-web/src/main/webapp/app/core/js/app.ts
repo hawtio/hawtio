@@ -139,35 +139,7 @@ module Core {
     $scope.doLogout = () => {
 
       $scope.confirmLogout = false;
-
-      var url = jolokiaUrl.replace("jolokia", "auth/logout/");
-
-      $.ajax(url, {
-        type: "POST",
-        success: () => {
-          userDetails.username = null;
-          userDetails.password = null;
-          userDetails.loginDetails = null;
-          userDetails.rememberMe = false;
-          localStorage[jolokiaUrl] = angular.toJson(userDetails);
-          Core.$apply($scope);
-        },
-        error: (xhr, textStatus, error) => {
-          // TODO, more feedback
-          switch(xhr.status) {
-            case 401:
-              notification('error', 'Failed to log out, ' + error);
-              break;
-            case 403:
-              notification('error', 'Failed to log out, ' + error);
-              break;
-            default:
-              notification('error', 'Failed to log out, ' + error);
-              break;
-          }
-          Core.$apply($scope);
-        }
-      });
+      logout(jolokiaUrl, userDetails, localStorage, $scope);
     };
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);

@@ -294,6 +294,54 @@ if (!Object.keys) {
 
 module Core {
 
+
+  /*
+   * log out the current user, should be in helpers.ts really
+   */
+  export function logout(jolokiaUrl,
+                  userDetails,
+                  localStorage,
+                  $scope,
+                  successCB: () => void = null,
+                  errorCB: () => void = null) {
+
+    var url = jolokiaUrl.replace("jolokia", "auth/logout/");
+
+    $.ajax(url, {
+      type: "POST",
+      success: () => {
+        userDetails.username = null;
+        userDetails.password = null;
+        userDetails.loginDetails = null;
+        userDetails.rememberMe = false;
+        localStorage[jolokiaUrl] = angular.toJson(userDetails);
+        if (successCB && angular.isFunction(successCB)) {
+          successCB();
+        }
+        Core.$apply($scope);
+      },
+      error: (xhr, textStatus, error) => {
+        // TODO, more feedback
+        switch (xhr.status) {
+          case 401:
+            log.error('Failed to log out, ', error);
+            break;
+          case 403:
+            log.error('Failed to log out, ', error);
+            break;
+          default:
+            log.error('Failed to log out, ', error);
+            break;
+        }
+        if (errorCB && angular.isFunction(errorCB)) {
+          errorCB();
+        }
+        Core.$apply($scope);
+      }
+    });
+  }
+
+
   /**
    * Returns true if the string is either null or empty
    * @param str
