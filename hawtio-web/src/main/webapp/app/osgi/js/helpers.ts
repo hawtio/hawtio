@@ -198,7 +198,8 @@ module Osgi {
             if (answer.length > 0) {
                 prefix = " ";
             }
-            var labelText = allValues[value].SymbolicName;
+            var info = allValues[value] || {};
+            var labelText = info.SymbolicName;
             answer += prefix + "<a class='label' href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + labelText + "</a>";
         });
         return answer;
