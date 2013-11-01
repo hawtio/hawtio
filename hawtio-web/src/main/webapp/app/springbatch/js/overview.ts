@@ -35,7 +35,7 @@ module SpringBatch {
                     $scope.jobInstance = data.job.jobInstances[jobInstanceId];
                 }else{
                     for(var job in data.job.jobInstances){
-                        $scope.jobInstance = jobInstances[job];
+                        $scope.jobInstance = data.job.jobInstances[job];
                         break;
                     }
                 }
@@ -57,7 +57,7 @@ module SpringBatch {
                 }
                 else{
                     for(var job in data.job.jobInstances){
-                        $scope.jobInstance = jobInstances[job];
+                        $scope.jobInstance = data.job.jobInstances[job];
                         break;
                     }
                 }
@@ -79,7 +79,7 @@ module SpringBatch {
                 }
                 else{
                     for(var job in data.job.jobInstances){
-                        $scope.jobInstance = jobInstances[job];
+                        $scope.jobInstance = data.job.jobInstances[job];
                         break;
                     }
                 }
