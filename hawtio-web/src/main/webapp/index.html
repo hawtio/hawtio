@@ -268,10 +268,10 @@ span.green {
     <script type="text/javascript">
       hawtioPluginLoader.setLoaderCallback({
         scriptLoaderCallback: function (self, total, remaining) {
-          console.log("Total scripts: ", total, " Remaining: ", remaining);
+          Logger.get("Core").info("Total scripts: ", total, " Remaining: ", remaining);
         },
-        urlLoaderCallback: function (total, remaining) {
-          console.log("Total URLs: ", total, " Remaining: ", remaining);
+        urlLoaderCallback: function (self, total, remaining) {
+          Logger.get("Core").info("Total URLs: ", total, " Remaining: ", remaining);
         }
       });
     </script>
