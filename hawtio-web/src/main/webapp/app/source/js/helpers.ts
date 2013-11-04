@@ -1,5 +1,7 @@
 module Source {
 
+  export var log:Logging.Logger = Logger.get("Source");
+
   export function getInsightMBean(workspace) {
     var mavenStuff = workspace.mbeanTypesToDomain["LogQuery"] || {};
     var insight = mavenStuff["org.fusesource.insight"] || {};

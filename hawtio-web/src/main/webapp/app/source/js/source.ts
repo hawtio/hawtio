@@ -70,7 +70,26 @@ module Source {
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
-    $scope.$watch('workspace.tree', function () {
+    $scope.onChange = (codeMirror) => {
+      log.debug("codeMirror: ", codeMirror);
+      if (codeMirror) {
+        lineNumber -= 1;
+        var lineText = codeMirror.getLine(lineNumber);
+        var endChar = (lineText) ? lineText.length : 1000;
+        var start = {line: lineNumber, ch: 0};
+        var end = {line: lineNumber, ch: endChar};
+        codeMirror.scrollIntoView(start);
+        codeMirror.setCursor(start);
+        codeMirror.setSelection(start, end);
+        codeMirror.refresh();
+        codeMirror.focus();
+      }
+    };
+
+    $scope.$watch('workspace.tree', function (oldValue, newValue) {
+      if (newValue === oldValue) {
+        return;
+      }
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
         //console.log("Reloading the view as we now seem to have a git mbean!");
@@ -86,20 +105,21 @@ module Source {
     function viewContents(response) {
       $scope.source = response;
       $scope.loadingMessage = null;
-      if (!response) {
-        var time = new Date().getTime();
-        if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
-          $scope.lastErrorTime = time;
-          notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
-        }
-      }
       Core.$apply($scope);
     }
 
     function updateView() {
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, onSuccess(viewContents));
+        jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
+          success: viewContents,
+          error: (response) => {
+            log.error("Failed to download the source code for the maven artifact: ", mavenCoords);
+            log.info("Stack trace: ", response.stacktrace);
+            $scope.loadingMessage = "Could not download file, please see console for details"
+            Core.$apply($scope);
+          }
+        });
       }
     }
   }
