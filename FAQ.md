@@ -76,15 +76,22 @@ Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](htt
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
 
-#### How do I build the project?
+### Problems using hawtio
 
-If you just want to run hawtio in a JVM then please see the [Getting Started](http://hawt.io/getstarted/index.html) section.
+Questions relating to errors you get while using hawtio:
 
-If you want to hack the source code then check out [how to build hawtio](http://hawt.io/building/index.html).
+#### Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
 
-#### What code conventions do you have?
+If you see an error like this:
+```
+java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
+```
+when starting up or trying the **Connect/Local** tab then its probably related to [this issue](http://stackoverflow.com/questions/14027164/fix-the-java-lang-unsatisfiedlinkerror-no-attach-in-java-library-path) as was found on [#718](https://github.com/hawtio/hawtio/issues/718#issuecomment-27677738).
 
-Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md) for our recommended approach.
+Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. try this first before starting hawtio:
+```
+set path=%path%;%JAVA_HOME%\jre\bin
+```
 
 ### Plugin Questions
 
@@ -120,6 +127,16 @@ The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release 
 ### Developer Questions
 
 Questions on writing new plugins or hacking on existing ones:
+
+#### How do I build the project?
+
+If you just want to run hawtio in a JVM then please see the [Getting Started](http://hawt.io/getstarted/index.html) section.
+
+If you want to hack the source code then check out [how to build hawtio](http://hawt.io/building/index.html).
+
+#### What code conventions do you have?
+
+Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md) for our recommended approach.
 
 #### What can my new plugin do?
 
