@@ -1,7 +1,9 @@
 module Camel {
-  export function SendMessageController($scope, workspace:Workspace, localStorage, $location) {
+  export function SendMessageController($scope, workspace:Workspace, jolokia, localStorage, $location) {
 
     $scope.noCredentials = false;
+    $scope.showChoose = false;
+    $scope.profileFileNames = [];
 
     if ($location.path().has('activemq')) {
       if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
@@ -56,9 +58,13 @@ module Camel {
       return answer;
     };
 
-    // if the current JMX selection does not support sending messages then lets redirect the page
     $scope.$watch('workspace.selection', function () {
+      // if the current JMX selection does not support sending messages then lets redirect the page
       workspace.moveIfViewInvalid();
+
+      if (Fabric.fabricCreated(workspace)) {
+        loadProfileConfigurationFiles();
+      }
     });
 
     /** save the sourceFormat in preferences for later
@@ -133,6 +139,17 @@ module Camel {
     function isJmsEndpoint() {
       // TODO check for the jms/activemq endpoint in camel or if its an activemq endpoint
       return true;
+    }
+
+    function loadProfileConfigurationFiles() {
+      jolokia.execute(Fabric.managerMBean, "currentContainerConfigurationFiles", onSuccess(onFabricConfigFiles));
+    }
+
+    function onFabricConfigFiles(response) {
+      $scope.profileFileNames = Object.keys(response).sort();
+      console.log("=== profile files: " + $scope.profileFileNames);
+      $scope.showChoose = $scope.profileFileNames.length ? true : false;
+      Core.$apply($scope);
     }
   }
 }

@@ -1,57 +1,88 @@
-<form class="form-horizontal" ng-controller="Camel.SendMessageController">
+<div ng-controller="Camel.SendMessageController">
 
-  <div class="row-fluid bottom-margin">
-    <span ng-show="noCredentials" class="alert">
-      No credentials set for endpoint!  Please set your username and password in the <a href="#/preferences">Preferences</a> page
-    </span>
-    <button id="sendButton" type="submit" class="btn btn-primary pull-right" ng-click="sendMessage()">Send Message
-    </button>
-  </div>
+  <tabset>
+    <tab heading="Compose" title="Compose a new message to send">
+      <div class="row-fluid">
+        <span ng-show="noCredentials" class="alert">
+          No credentials set for endpoint!  Please set your username and password in the <a
+                href="#/preferences">Preferences</a> page
+        </span>
 
-  <div class="row-fluid bottom-margin">
-
-    <ol class="zebra-list header-list">
-      <li ng-repeat="header in headers">
-        <div class="span5">
-          <input type="text" style="width: 100%" ng-model="header.name" typeahead="completion for completion in defaultHeaderNames() | filter:$viewValue"
-                 typeahead-editable='true'
-                 placeholder="Header name">
-        </div>
-        <div class="span6">
-          <input type="text" style="width: 100%" ng-model="header.value" placeholder="Value of the message header">
-        </div>
-        <div class="span1">
-          <button ng-click="removeHeader(header)" class="btn" title="Removes this message header"><i class="icon-remove"></i></button>
-        </div>
-      </li>
-    </ol>
-    <button id="addHeaderButton" class="btn pull-right" ng-click="addHeader()" title="Add a new message header"><i class="icon-plus"></i>
-    </button>
-
-  </div>
-
-  <div class="row-fluid bottom-margin">
-    <div class="pull-right">
-      <div class="controls">
-        <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">body
-          format: </label>
-        <select ng-model="codeMirrorOptions.mode.name" id="sourceFormat">
-          <option value="javascript">JSON</option>
-          <option value="text">Plain Text</option>
-          <option value="properties">Properties</option>
-          <option value="xml">XML</option>
-          <option value="yaml">YAML</option>
-        </select>
-
-        <button class="btn" ng-click="autoFormat()"
-                title="Automatically pretty prints the message so its easier to read">Auto Format
-        </button>
+        <form class="form-inline pull-right">
+          <button class="btn" ng-click="addHeader()" title="Add a new message header"><i
+                  class="icon-plus"></i> Header
+          </button>
+          <button type="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>
+        </form>
       </div>
-    </div>
-  </div>
 
-  <div class="row-fluid">
-    <textarea ui-codemirror="codeMirrorOptions" ng-model="message"></textarea>
-  </div>
+      <form class="form-inline bottom-margin" ng-submit="addHeader()">
+        <ol class="zebra-list header-list">
+          <div class="row-fluid">
+            <li ng-repeat="header in headers">
+              <div class="span4">
+                <input type="text" style="width: 100%" ng-model="header.name"
+                       typeahead="completion for completion in defaultHeaderNames() | filter:$viewValue"
+                       typeahead-editable='true'
+                       placeholder="Header name">
+              </div>
+              <div class="span6">
+                <input type="text" style="width: 100%" ng-model="header.value"
+                       placeholder="Value of the message header">
+              </div>
+              <div class="span2">
+                <button type="submit" class="btn" title="Add a new message header">
+                  <i class="icon-plus"></i>
+                </button>
+                <button type="button" ng-click="removeHeader(header)" class="btn" title="Removes this message header">
+                  <i class="icon-remove"></i>
+                </button>
+              </div>
+            </li>
+          </div>
+        </ol>
+      </form>
 
-</form>
+      <div class="row-fluid">
+        <form class="form-inline">
+          <div class="controls">
+            <label class="control-label" for="sourceFormat" title="The text format to use for the message payload">Payload
+              format: </label>
+            <select ng-model="codeMirrorOptions.mode.name" id="sourceFormat">
+              <option value="javascript">JSON</option>
+              <option value="text">Plain Text</option>
+              <option value="properties">Properties</option>
+              <option value="xml">XML</option>
+              <option value="yaml">YAML</option>
+            </select>
+
+            <button class="btn" ng-click="autoFormat()"
+                    title="Automatically pretty prints the message so its easier to read">Auto Format
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="row-fluid">
+        <textarea ui-codemirror="codeMirrorOptions" ng-model="message"></textarea>
+      </div>
+    </tab>
+
+    <tab heading="Choose" disabled="!showChoose"
+         title="Choose messages to send from the available files in the Profile configuration for this container">
+      <div class="row-fluid bottom-margin">
+        <span ng-show="noCredentials" class="alert">
+          No credentials set for endpoint!  Please set your username and password in the <a
+                href="#/preferences">Preferences</a> page
+        </span>
+        <button type="submit" class="btn btn-primary pull-right" ng-click="sendMessage()">Send Message</button>
+      </div>
+
+      <h3>Choose which sample files to send from this containers the profile data</h3>
+
+      <ul>
+        <li ng-repeat="fileName in profileFileNames">{{fileName}}</li>
+      </ul>
+    </tab>
+  </tabset>
+</div>
