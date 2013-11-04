@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -43,17 +47,29 @@ public class App {
                 //System.out.println("Found " + aClass + " on the classpath!");
             } catch (Exception e) {
                 // lets try find the tools.jar instead
-                String path = System.getProperty("java.home", ".");
-                String jreSuffix = File.separator + "jre";
-                if (path.endsWith(jreSuffix)) {
-                    path = path.substring(0, path.length() - jreSuffix.length());
+                Set<String> paths = new HashSet<String>();
+                String javaHome = System.getProperty("java.home", ".");
+                addPath(paths, javaHome);
+
+                // now lets try the JAVA_HOME environment variable just in case
+                javaHome = System.getenv("JAVA_HOME");
+                if (javaHome != null && javaHome.length() > 0) {
+                    addPath(paths, javaHome);
                 }
-                File file = new File(path, "lib/tools.jar");
-                if (file.exists()) {
-                    //System.out.println("Found tools.jar at " + file);
-                    main.setExtraClassPath("file://" + file.getCanonicalPath());
-                } else {
-                    System.out.println("Failed to load class " + virtualMachineClass + " and find tools.jar at " + file + ". " + e);
+
+                boolean found = false;
+                for (String path : paths) {
+                    File file = new File(path, "lib/tools.jar");
+                    if (file.exists()) {
+                        found = true;
+                        //System.out.println("Found tools.jar at " + file);
+                        main.setExtraClassPath("file://" + file.getCanonicalPath());
+                        break;
+                    }
+                }
+                if (!found) {
+                    System.out.println("Failed to load class " + virtualMachineClass
+                            + " and find tools.jar in directories " + paths + ". " + e);
                 }
             }
 
@@ -84,6 +100,15 @@ public class App {
                 System.out.println("Failed running hawtio: " + e.getMessage());
                 e.printStackTrace();
             }
+        }
+    }
+
+    protected static void addPath(Set<String> paths, String path) {
+        paths.add(path);
+        String jreSuffix = File.separator + "jre";
+        if (path.endsWith(jreSuffix)) {
+            path = path.substring(0, path.length() - jreSuffix.length());
+            paths.add(path);
         }
     }
 
