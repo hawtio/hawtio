@@ -56,7 +56,7 @@ module Camel {
       return answer;
     };
 
-    // TODO Find out what this does
+    // if the current JMX selection does not support sending messages then lets redirect the page
     $scope.$watch('workspace.selection', function () {
       workspace.moveIfViewInvalid();
     });
