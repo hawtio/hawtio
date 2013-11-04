@@ -11,8 +11,8 @@
   </div>
 
   <div class="create-container-body row-fluid">
-    <div class="span4">
-      <form id="container-create-form" class="form-inline">
+    <div class="span6">
+      <form id="container-create-form" class="form-inline centered">
         <label class="control-label">Container Type: </label>
         <select ng-model="selectedProvider" ng-options="key for (key, value) in providers"></select>
       </form>
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="span3 offset1">
+    <div class="span3">
       <div class="control-group">
         <form class="form-inline">
           <label class="control-label">Version: </label>
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <div class="span4">
+    <div class="span3">
       <h4>Selected Profiles</h4>
       <p class="alert" ng-hide="selectedProfiles.length > 0">
         No profiles selected
