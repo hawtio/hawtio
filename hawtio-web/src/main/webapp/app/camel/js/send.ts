@@ -40,10 +40,10 @@ module Camel {
 
       // lets set the focus to the last header
       if ($element) {
-          $timeout(() => {
-              var lastHeader = $element.find("input.headerName").last();
-              lastHeader.focus();
-          }, 100);
+        $timeout(() => {
+          var lastHeader = $element.find("input.headerName").last();
+          lastHeader.focus();
+        }, 100);
       }
     };
 
@@ -56,11 +56,13 @@ module Camel {
 
     $scope.defaultHeaderNames = () => {
       var answer = [];
+
       function addHeaderSchema(schema) {
         angular.forEach(schema.definitions.headers.properties, (value, name) => {
           answer.push(name);
         });
       }
+
       if (isJmsEndpoint()) {
         addHeaderSchema(Camel.jmsHeaderSchema);
       }
@@ -69,7 +71,6 @@ module Camel {
       }
       return answer;
     };
-
 
 
     $scope.$watch('workspace.selection', function () {
@@ -159,35 +160,35 @@ module Camel {
     };
 
     $scope.sendSelectedFiles = () => {
-        var filesToSend = $scope.fileSelection();
-        var fileCount = filesToSend.length;
-        var version = $scope.container.versionId || "1.0";
+      var filesToSend = $scope.fileSelection();
+      var fileCount = filesToSend.length;
+      var version = $scope.container.versionId || "1.0";
 
-        function onSendFileCompleted(response) {
-            if (filesToSend.length) {
-                var fileName = filesToSend.pop();
-                if (fileName) {
-                    // lets load the file data...
-                    var profile = $scope.profileFileNameToProfileId[fileName];
-                    if (profile) {
-                        var body = Fabric.getConfigFile(jolokia, version, profile, fileName);
-                        if (body) {
-                            doSendMessage(body, onSendFileCompleted);
-                        } else {
-                            // TODO log warning...
-                            console.log("WARNING: no body for message " + fileName);
-                            onSendFileCompleted(null);
-                        }
-                    }
-                }
-            } else {
-                var text = Core.maybePlural(fileCount, "Message") + " sent!";
-                notification("success", text);
+      function onSendFileCompleted(response) {
+        if (filesToSend.length) {
+          var fileName = filesToSend.pop();
+          if (fileName) {
+            // lets load the file data...
+            var profile = $scope.profileFileNameToProfileId[fileName];
+            if (profile) {
+              var body = Fabric.getConfigFile(jolokia, version, profile, fileName);
+              if (body) {
+                doSendMessage(body, onSendFileCompleted);
+              } else {
+                // TODO log warning...
+                console.log("WARNING: no body for message " + fileName);
+                onSendFileCompleted(null);
+              }
             }
+          }
+        } else {
+          var text = Core.maybePlural(fileCount, "Message") + " sent!";
+          notification("success", text);
         }
+      }
 
-        // now lets start sending
-        onSendFileCompleted(null);
+      // now lets start sending
+      onSendFileCompleted(null);
     };
 
     function isCamelEndpoint() {
