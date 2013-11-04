@@ -40,6 +40,38 @@ module Fabric {
    * Adds a bunch of common helper functions to the given scope
    */
   export function initScope($scope, $location, jolokia, workspace) {
+
+    $scope.isCurrentContainer = (container) => {
+      if (!container) {
+        return false;
+      }
+      if (Core.isBlank(Fabric.currentContainerId)) {
+        return false;
+      }
+      if (angular.isObject(container)) {
+        return container['id'] === Fabric.currentContainerId;
+      }
+      if (angular.isString(container)) {
+        return container === Fabric.currentContainerId;
+      }
+
+      return false;
+    };
+
+    $scope.canConnect = (container) => {
+      if (!container) {
+        return false;
+      }
+      if (Core.isBlank(container['jolokiaUrl'])) {
+        return false;
+      }
+
+      if (!Core.parseBooleanValue(container['alive'])) {
+        return false;
+      }
+      return !$scope.isCurrentContainer(container);
+    };
+
     $scope.hasFabricWiki = () => {
       return Git.isGitMBeanFabric(workspace);
     };

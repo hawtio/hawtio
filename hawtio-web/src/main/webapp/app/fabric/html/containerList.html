@@ -30,7 +30,10 @@
 
         <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
 
-        <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive" title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
+        <i class="icon-signin clickable"
+           ng-show="canConnect(container)"
+           title="Open a new window and connect to this container"
+           ng-click="doConnect(container)"></i>
       </div>
 
     </div>

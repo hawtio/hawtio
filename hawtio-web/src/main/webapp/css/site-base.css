@@ -3041,7 +3041,7 @@ fs-donut svg g text.units {
 }
 
 .health-details-wrap table tr td:last-child {
-  padding-lrft: 5px;
+  padding-left: 5px;
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
