@@ -3063,3 +3063,9 @@ fs-donut svg g text.units {
   width: 300px;
   height: 300px;
 }
+
+#create-form {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 422px;
+}
