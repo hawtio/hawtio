@@ -1,4 +1,7 @@
 module Maven {
+
+  export var log:Logging.Logger = Logger.get("Maven");
+
   /**
    * Returns the maven indexer mbean (from the hawtio-maven-indexer library)
    */

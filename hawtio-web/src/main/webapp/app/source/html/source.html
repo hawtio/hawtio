@@ -16,10 +16,15 @@
     </div>
   </div>
 
-  <div class="wiki-fixed form-horizontal">
+  <div class="wiki-fixed">
+    <p></p>
+    <p></p>
     <div class="control-group editor-autoresize">
       <textarea id="source" ui-codemirror="codeMirrorOptions" ng-model="source"></textarea>
     </div>
+    <!--
+    <div hawtio-editor="source" mode="mode" read-only="true" on-change="onChange(codeMirror)"></div>
+    -->
   </div>
 
   <div class="wiki-fixed row-fluid" ng-show="loadingMessage">

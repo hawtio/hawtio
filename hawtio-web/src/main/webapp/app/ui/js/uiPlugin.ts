@@ -18,8 +18,8 @@ module UI {
       directive('hawtioPager', function() {
         return new UI.TablePager();
       }).
-      directive('hawtioEditor', function() {
-        return new UI.Editor();
+      directive('hawtioEditor', function($parse) {
+        return UI.Editor($parse);
       }).directive('hawtioColorPicker', function() {
         return new UI.ColorPicker()
       }).directive('hawtioFileUpload', () => {

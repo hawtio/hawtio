@@ -19,7 +19,10 @@ module Source {
       filterFileNames();
     };
 
-    $scope.$watch('workspace.tree', function () {
+    $scope.$watch('workspace.tree', function (newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
         //console.log("Reloading the view as we now seem to have a git mbean!");
@@ -79,20 +82,24 @@ module Source {
       }
       filterFileNames();
       $scope.loadingMessage = null;
-      if (!response) {
-        var time = new Date().getTime();
-        if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
-          $scope.lastErrorTime = time;
-          notification("error", "Could not download the source code for the maven artifacts: " + $scope.mavenCoords);
-        }
-      }
       Core.$apply($scope);
     }
 
     function updateView() {
+      if (!$scope.mavenCoords) {
+        return;
+      }
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", onSuccess(viewContents));
+        jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", {
+          success: viewContents,
+          error: (response) => {
+            log.error("Failed to download the source code for the maven artifact: ", $scope.mavenCoords);
+            log.info("Stack trace: ", response.stacktrace);
+            $scope.loadingMessage = "Could not download index, please see console for details"
+            Core.$apply($scope);
+          }
+        });
       }
     }
 

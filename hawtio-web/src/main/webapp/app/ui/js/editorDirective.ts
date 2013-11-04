@@ -1,116 +1,131 @@
 module UI {
 
-  export class Editor {
+  export function Editor($parse) {
 
-    public restrict = 'A';
-    public replace = true;
+    return {
 
-    public templateUrl = UI.templatePath + "editor.html";
+      restrict: 'A',
+      replace: true,
 
-    public scope = {
-      text: '=hawtioEditor',
-      mode:  '=',
-      dirty: '=',
-      name: '@'
-    };
+      templateUrl: UI.templatePath + "editor.html",
 
-    public controller = ($scope, $element, $attrs) => {
+      scope: {
+        text: '=hawtioEditor',
+        mode:  '=',
+        dirty: '=',
+        name: '@'
+      },
 
-      $scope.codeMirror = null;
-      $scope.doc = null;
-      $scope.options = [];
+      controller: ($scope, $element, $attrs) => {
 
-      observe($scope, $attrs, 'name', 'editor');
+        $scope.codeMirror = null;
+        $scope.doc = null;
+        $scope.options = [];
 
-      $scope.applyOptions = () => {
-        if ($scope.codeMirror) {
-          $scope.options.each(function(option) {
-            $scope.codeMirror.setOption(option.key, option['value']);
-          });
-          $scope.options = [];
-        }
-      };
+        observe($scope, $attrs, 'name', 'editor');
 
-      $scope.$watch('doc', () => {
-        if ($scope.doc) {
-          $scope.codeMirror.on('change', function(changeObj) {
-            var phase = $scope.$parent.$$phase;
-            if (!phase) {
-              $scope.text = $scope.doc.getValue();
-              $scope.dirty = !$scope.doc.isClean();
-              Core.$applyNowOrLater($scope);
+        $scope.applyOptions = () => {
+          if ($scope.codeMirror) {
+            $scope.options.each(function(option) {
+              $scope.codeMirror.setOption(option.key, option['value']);
+            });
+            $scope.options = [];
+          }
+        };
+
+        $scope.$watch('doc', () => {
+          if ($scope.doc) {
+            $scope.codeMirror.on('change', function(changeObj) {
+              var phase = $scope.$parent.$$phase;
+              if (!phase) {
+                $scope.text = $scope.doc.getValue();
+                $scope.dirty = !$scope.doc.isClean();
+                Core.$applyNowOrLater($scope);
+              }
+            });
+          }
+        });
+
+        $scope.$watch('codeMirror', () => {
+          if ($scope.codeMirror) {
+            $scope.doc = $scope.codeMirror.getDoc();
+          }
+        });
+
+        $scope.$watch('text', function(oldValue, newValue) {
+          if ($scope.codeMirror && $scope.doc) {
+            if (!$scope.codeMirror.hasFocus()) {
+              $scope.doc.setValue($scope.text);
+            }
+          }
+        });
+
+      },
+
+      link: ($scope, $element, $attrs) => {
+
+        var config = Object.extended($attrs).clone();
+
+        delete config['$$element']
+        delete config['$attr'];
+        delete config['class'];
+        delete config['hawtioEditor'];
+        delete config['mode'];
+        delete config['dirty'];
+
+        if ('onChange' in $attrs) {
+          var onChange = $attrs['onChange'];
+          delete config['onChange'];
+          $scope.options.push({
+            onChange: (codeMirror) => {
+              var func = $parse(onChange);
+              if (func) {
+                func($scope.$parent, { codeMirror:codeMirror });
+              }
             }
           });
         }
-      });
 
-      $scope.$watch('codeMirror', () => {
-        if ($scope.codeMirror) {
-          $scope.doc = $scope.codeMirror.getDoc();
-        }
-      });
-
-      $scope.$watch('text', function(oldValue, newValue) {
-        if ($scope.codeMirror && $scope.doc) {
-          if (!$scope.codeMirror.hasFocus()) {
-            $scope.doc.setValue($scope.text);
-          }
-        }
-      });
-
-    };
-
-    public link = ($scope, $element, $attrs) => {
-
-      var config = Object.extended($attrs).clone();
-
-      delete config['$$element']
-      delete config['$attr'];
-      delete config['class'];
-      delete config['hawtioEditor'];
-      delete config['mode'];
-      delete config['dirty'];
-
-      angular.forEach(config, function(value, key) {
-        $scope.options.push({
-          key: key,
-          'value': value
+        angular.forEach(config, function(value, key) {
+          $scope.options.push({
+            key: key,
+            'value': value
+          });
         });
-      });
 
-      $scope.$watch('mode', () => {
-        if ($scope.mode) {
-          if (!$scope.codeMirror) {
-            $scope.options.push({
-              key: 'mode',
-              'value': $scope.mode
-            });
-          } else {
-            $scope.codeMirror.setOption('mode', $scope.mode);
+        $scope.$watch('mode', () => {
+          if ($scope.mode) {
+            if (!$scope.codeMirror) {
+              $scope.options.push({
+                key: 'mode',
+                'value': $scope.mode
+              });
+            } else {
+              $scope.codeMirror.setOption('mode', $scope.mode);
+            }
           }
-        }
-      });
+        });
 
-      $scope.$watch('dirty', () => {
-        if ($scope.dirty && !$scope.doc.isClean()) {
-          $scope.doc.markClean();
-        }
-      });
+        $scope.$watch('dirty', () => {
+          if ($scope.dirty && !$scope.doc.isClean()) {
+            $scope.doc.markClean();
+          }
+        });
 
-      $scope.$watch('text', function() {
-        if (!$scope.codeMirror) {
+        $scope.$watch('text', function() {
+          if (!$scope.codeMirror) {
 
-          var options:any = {
-            value: $scope.text
-          };
+            var options:any = {
+              value: $scope.text
+            };
 
-          options = CodeEditor.createEditorSettings(options);
-          $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
-          $scope.applyOptions();
-        }
-      });
+            options = CodeEditor.createEditorSettings(options);
+            $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
+            $scope.applyOptions();
+          }
+        });
+      }
 
     };
-
   }
 }
