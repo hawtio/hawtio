@@ -1,5 +1,5 @@
 module Camel {
-  export function SendMessageController($scope, workspace:Workspace, jolokia, localStorage, $location) {
+  export function SendMessageController($scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
 
     $scope.noCredentials = false;
     $scope.showChoose = false;
@@ -37,6 +37,14 @@ module Camel {
 
     $scope.addHeader = () => {
       $scope.headers.push({name: "", value: ""});
+
+      // lets set the focus to the last header
+      if ($element) {
+          $timeout(() => {
+              var lastHeader = $element.find("input.headerName").last();
+              lastHeader.focus();
+          }, 100);
+      }
     };
 
     // lets add a default header
