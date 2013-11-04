@@ -21,7 +21,8 @@
           <div class="row-fluid">
             <li ng-repeat="header in headers">
               <div class="span4">
-                <input type="text" style="width: 100%" ng-model="header.name"
+                <input type="text" style="width: 100%" class="headerName"
+                       ng-model="header.name"
                        typeahead="completion for completion in defaultHeaderNames() | filter:$viewValue"
                        typeahead-editable='true'
                        placeholder="Header name">
