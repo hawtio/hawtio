@@ -4,6 +4,10 @@ module Camel {
     $scope.noCredentials = false;
     $scope.showChoose = false;
     $scope.profileFileNames = [];
+    $scope.profileFileNameToProfileId = {};
+    $scope.selectedFiles = {};
+    $scope.container = {};
+
 
     if ($location.path().has('activemq')) {
       if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
@@ -58,6 +62,8 @@ module Camel {
       return answer;
     };
 
+
+
     $scope.$watch('workspace.selection', function () {
       // if the current JMX selection does not support sending messages then lets redirect the page
       workspace.moveIfViewInvalid();
@@ -87,6 +93,11 @@ module Camel {
 
     $scope.sendMessage = () => {
       var body = $scope.message;
+      doSendMessage(body, sendWorked);
+    };
+
+
+    function doSendMessage(body, onSendCompleteFn) {
       var selection = workspace.selection;
       if (selection) {
         var mbean = selection.objectName;
@@ -103,9 +114,7 @@ module Camel {
             console.log("About to send headers: " + JSON.stringify(headers));
           }
 
-          var jolokia = workspace.jolokia;
-          // if camel then use a different operation on the camel context mbean
-          var callback = onSuccess(sendWorked);
+          var callback = onSuccess(onSendCompleteFn);
           if (selection.domain === "org.apache.camel") {
             var uri = selection.title.replace("\\?", "?");
             mbean = getSelectionCamelContextMBean(workspace);
@@ -129,6 +138,48 @@ module Camel {
           }
         }
       }
+    }
+
+    $scope.fileSelection = () => {
+      var answer = [];
+      angular.forEach($scope.selectedFiles, (value, key) => {
+        if (value) {
+          answer.push(key);
+        }
+      });
+      return answer;
+    };
+
+    $scope.sendSelectedFiles = () => {
+        var filesToSend = $scope.fileSelection();
+        var fileCount = filesToSend.length;
+        var version = $scope.container.versionId || "1.0";
+
+        function onSendFileCompleted(response) {
+            if (filesToSend.length) {
+                var fileName = filesToSend.pop();
+                if (fileName) {
+                    // lets load the file data...
+                    var profile = $scope.profileFileNameToProfileId[fileName];
+                    if (profile) {
+                        var body = Fabric.getConfigFile(jolokia, version, profile, fileName);
+                        if (body) {
+                            doSendMessage(body, onSendFileCompleted);
+                        } else {
+                            // TODO log warning...
+                            console.log("WARNING: no body for message " + fileName);
+                            onSendFileCompleted(null);
+                        }
+                    }
+                }
+            } else {
+                var text = Core.maybePlural(fileCount, "Message") + " sent!";
+                notification("success", text);
+            }
+        }
+
+        // now lets start sending
+        onSendFileCompleted(null);
     };
 
     function isCamelEndpoint() {
@@ -142,13 +193,16 @@ module Camel {
     }
 
     function loadProfileConfigurationFiles() {
+      $scope.container = Fabric.getCurrentContainer(jolokia, ['versionId', 'profileIds']);
       jolokia.execute(Fabric.managerMBean, "currentContainerConfigurationFiles", onSuccess(onFabricConfigFiles));
     }
 
     function onFabricConfigFiles(response) {
+      $scope.profileFileNameToProfileId = response;
       $scope.profileFileNames = Object.keys(response).sort();
       console.log("=== profile files: " + $scope.profileFileNames);
       $scope.showChoose = $scope.profileFileNames.length ? true : false;
+      $scope.selectedFiles = {};
       Core.$apply($scope);
     }
   }
