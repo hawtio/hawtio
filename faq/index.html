@@ -138,15 +138,22 @@
 
 <p>So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views&mdash;all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.</p>
 
-<h4 id = "How_do_I_build_the_project_">How do I build the project?</h4>
+<h3 id = "Problems_using_hawtio">Problems using hawtio</h3>
 
-<p>If you just want to run hawtio in a JVM then please see the <a href="http://hawt.io/getstarted/index.html">Getting Started</a> section.</p>
+<p>Questions relating to errors you get while using hawtio:</p>
 
-<p>If you want to hack the source code then check out <a href="http://hawt.io/building/index.html">how to build hawtio</a>.</p>
+<h4 id = "Provider_sun_tools_attach_WindowsAttachProvider_could_not_be_instantiated:_java_lang_UnsatisfiedLinkError:_no_attach_in_java_library_path">Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path</h4>
 
-<h4 id = "What_code_conventions_do_you_have_">What code conventions do you have?</h4>
+<p>If you see an error like this:
+```
+java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
+```
+when starting up or trying the <strong>Connect/Local</strong> tab then its probably related to <a href="http://stackoverflow.com/questions/14027164/fix-the-java-lang-unsatisfiedlinkerror-no-attach-in-java-library-path">this issue</a> as was found on <a href="https://github.com/hawtio/hawtio/issues/718#issuecomment-27677738">#718</a>.</p>
 
-<p>Check out the <a href="https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md">Coding Conventions</a> for our recommended approach.</p>
+<p>Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. try this first before starting hawtio:
+```
+set path=%path%;%JAVA_HOME%\jre\bin
+```</p>
 
 <h3 id = "Plugin_Questions">Plugin Questions</h3>
 
@@ -182,6 +189,16 @@
 <h3 id = "Developer_Questions">Developer Questions</h3>
 
 <p>Questions on writing new plugins or hacking on existing ones:</p>
+
+<h4 id = "How_do_I_build_the_project_">How do I build the project?</h4>
+
+<p>If you just want to run hawtio in a JVM then please see the <a href="http://hawt.io/getstarted/index.html">Getting Started</a> section.</p>
+
+<p>If you want to hack the source code then check out <a href="http://hawt.io/building/index.html">how to build hawtio</a>.</p>
+
+<h4 id = "What_code_conventions_do_you_have_">What code conventions do you have?</h4>
+
+<p>Check out the <a href="https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md">Coding Conventions</a> for our recommended approach.</p>
 
 <h4 id = "What_can_my_new_plugin_do_">What can my new plugin do?</h4>
 
