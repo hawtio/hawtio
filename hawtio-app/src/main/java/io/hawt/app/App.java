@@ -63,7 +63,12 @@ public class App {
                     if (file.exists()) {
                         found = true;
                         //System.out.println("Found tools.jar at " + file);
-                        main.setExtraClassPath("file://" + file.getCanonicalPath());
+                        String canonicalPath = file.getCanonicalPath();
+                        if (canonicalPath.contains(" ")) {
+                            // lets wrap it in quotes to avoid issues with spaces in paths
+                            canonicalPath = "\"" + canonicalPath + "\"";
+                        }
+                        main.setExtraClassPath(canonicalPath);
                         break;
                     }
                 }
