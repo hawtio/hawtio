@@ -75,13 +75,15 @@
           No credentials set for endpoint!  Please set your username and password in the <a
                 href="#/preferences">Preferences</a> page
         </span>
-        <button type="submit" class="btn btn-primary pull-right" ng-click="sendMessage()">Send Message</button>
+        <button type="submit" ng-disabled="!fileSelection().length" class="btn btn-primary pull-right" ng-click="sendSelectedFiles()">Send Selected File</button>
       </div>
 
       <h3>Choose which sample files to send from this containers the profile data</h3>
 
       <ul>
-        <li ng-repeat="fileName in profileFileNames">{{fileName}}</li>
+        <li ng-repeat="fileName in profileFileNames">
+         <input type="checkbox" ng-model="selectedFiles[fileName]"> {{fileName}}
+        </li>
       </ul>
     </tab>
   </tabset>

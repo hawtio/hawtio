@@ -717,9 +717,16 @@ module Fabric {
     return jolokia.execute(Fabric.managerMBean, "getProfile(java.lang.String, java.lang.String, java.util.List)", versionId, profileId, fields, { method: 'POST' });
   }
 
-  export function getConfigFile(jolokia, versionId, profileId, fileName) {
-    var answer = jolokia.execute(Fabric.managerMBean, "getConfigurationFile(java.lang.String, java.lang.String, java.lang.String)", versionId, profileId, fileName)
-    if (answer) {
+  export function getConfigFile(jolokia, versionId, profileId, fileName, fn = null) {
+    var callback = !fn ? null : (result) => {
+        var answer: any = null;
+        if (result) {
+            answer = result.decodeBase64();
+        }
+        fn(answer);
+    };
+    var answer = jolokia.execute(Fabric.managerMBean, "getConfigurationFile(java.lang.String, java.lang.String, java.lang.String)", versionId, profileId, fileName, onSuccess(callback));
+    if (answer && fn == null) {
       return answer.decodeBase64();
     }
     return null;
