@@ -117,7 +117,8 @@
                          ng-click="createChildContainer(container)"></i>
                         -->
 
-                      <i class="icon-signin clickable" ng-show="container.jolokiaUrl && container.alive"
+                      <i class="icon-signin clickable"
+                         ng-show="canConnect(container)"
                          title="Connect to the Broker inside Container: {{container.id}}"
                          ng-click="connectToBroker(container, broker)"></i>
 

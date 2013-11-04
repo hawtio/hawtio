@@ -53,7 +53,11 @@
         <!-- TODO - rework this header in the css -->
         <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: {{row.id}}</h2>
         <div class="pull-right">
-          <button class="btn" ng-show="row.jolokiaUrl" ng-click="doConnect(container)"><i class="icon-signin"></i> Connect</button>
+          <button class="btn"
+                  ng-show="canConnect(row)"
+                  ng-click="doConnect(row)">
+            <i class="icon-signin"></i> Connect
+          </button>
           <button class="btn" ng-show="row.alive" ng-click="stop()"><i class="icon-off"></i> Stop</button>
           <button class="btn" ng-hide="row.alive" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
           <button class="btn" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
