@@ -1,6 +1,8 @@
 module Core {
 
-  export function PreferencesController($scope, localStorage, userDetails, jolokiaUrl) {
+  export function PreferencesController($scope, localStorage, userDetails, jolokiaUrl, branding) {
+
+    $scope.branding = branding;
 
     if (!angular.isDefined(localStorage['logLevel'])) {
       localStorage['logLevel'] = '{"value": 2, "name": "INFO"}';
@@ -137,12 +139,18 @@ module Core {
     console.log("logCacheSize " + $scope.logCacheSize);
 
     $scope.doReset = () => {
-      logout(jolokiaUrl, userDetails, localStorage, $scope, () => {
+
+      var doReset = () => {
         localStorage.clear();
         setTimeout(() => {
           window.location.reload();
         }, 10);
-      });
+      };
+      if (Core.isBlank(userDetails.username) && Core.isBlank(userDetails.password)) {
+        doReset();
+      } else {
+        logout(jolokiaUrl, userDetails, localStorage, $scope, doReset);
+      }
     }
   }
 }
