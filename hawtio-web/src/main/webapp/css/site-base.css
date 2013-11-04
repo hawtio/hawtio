@@ -3065,3 +3065,21 @@ fs-donut svg g text.units {
   margin-right: auto;
   max-width: 422px;
 }
+
+/* hack to work around strange tabset behavior */
+tabset > .tabbable > ul {
+  display: none;
+}
+/* end hack */
+
+tabset > .tabbable > .tab-content > .nav.nav-tabs > li {
+  cursor: pointer;
+}
+
+tabset > .tabbable > .tab-content > .nav.nav-tabs > li.active {
+  cursor: pointer;
+}
+
+tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
+  opacity: 0.3;
+}
