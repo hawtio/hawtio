@@ -62,13 +62,8 @@ public class App {
                     File file = new File(path, "lib/tools.jar");
                     if (file.exists()) {
                         found = true;
-                        //System.out.println("Found tools.jar at " + file);
-                        String canonicalPath = file.getCanonicalPath();
-                        if (canonicalPath.contains(" ")) {
-                            // lets wrap it in quotes to avoid issues with spaces in paths
-                            canonicalPath = "\"" + canonicalPath + "\"";
-                        }
-                        main.setExtraClassPath(canonicalPath);
+                        String url = file.toURI().toURL().toString();
+                        main.setExtraClassPath(url);
                         break;
                     }
                 }
