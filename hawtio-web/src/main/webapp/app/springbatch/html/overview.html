@@ -90,6 +90,21 @@
 
         <div class="span3">
 
+            <table>
+                <thead>
+                <tr class="info">
+                    <th><b>Params</b> + -</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="info" ng-repeat="param in jobParams">
+                    <td>
+                        <input type="text" value="{{param.name}}">
+                        <input type="text" value="{{param.value}}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 

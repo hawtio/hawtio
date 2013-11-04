@@ -3,6 +3,7 @@ module SpringBatch {
     var springBatchServerPath =springBatchServerOrigin+'jobs/:jobName';
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='/:jobInstanceId/executions.json';
+    var paramsListPath = 'jobs/:jobName/:jobInstanceId';
 
     export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource) {
 
@@ -20,6 +21,30 @@ module SpringBatch {
                     $scope.jobExecutionList = data.jobInstance.jobExecutions;
                 });
             }
+        };
+
+        $scope.fetchParams = function(jobName,jobInstanceId,executionId){
+            var paramsResource = $resource(proxyUrl+springBatchServerPath+paramsListPath);
+            paramsResource.get({'jobName':jobName,'jobInstanceId':jobInstanceId+'.json'}, function(data){
+                console.info(JSON.stringify(data.jobInstance.jobExecutions));
+                var jobParams = new Array();
+                if(executionId){
+                    for(var param in data.jobInstance.jobExecutions[executionId].jobParameters){
+                        jobParams.add({'name':param,'value':data.jobInstance.jobExecutions[executionId].jobParameters[param]});
+                    }
+                }else{
+                    for(var execution in data.jobInstance.jobExecutions){
+                        for(var param in data.jobInstance.jobExecutions[execution].jobParameters){
+                            jobParams.add({'name':param,'value':data.jobInstance.jobExecutions[execution].jobParameters[param]});
+                        }
+                        break;
+                    }
+                    $scope.jobParams = jobParams;
+                }
+                console.info('--------- '+JSON.stringify($scope.jobParams));
+            });
+            console.info('--------- '+jobName);
+            console.info('--------- '+jobInstanceId);
         };
 
         jobList.get({'jobName':jobName+'.json'},function(data){
@@ -40,6 +65,7 @@ module SpringBatch {
             }
             if($scope.jobInstance){
                 $scope.fetchAllExecutions($scope.jobInstance);
+                $scope.fetchParams(jobName,$scope.jobInstance.id);
             }
         });
 
@@ -54,10 +80,12 @@ module SpringBatch {
                     jobInstanceId = jobInstance.id;
                     $scope.jobInstance = data.job.jobInstances[jobInstanceId];
                     $scope.fetchAllExecutions(data.job.jobInstances[jobInstanceId]);
+                    $scope.fetchParams(jobName,jobInstanceId);
                 }else{
                     for(var job in data.job.jobInstances){
                         $scope.jobInstance = data.job.jobInstances[job];
                         $scope.fetchAllExecutions(data.job.jobInstances[job]);
+                        $scope.fetchParams(jobName,job);
                         break;
                     }
                 }
@@ -79,11 +107,13 @@ module SpringBatch {
                 if(jobInstance){
                     $scope.jobInstance = data.job.jobInstances[tempId];
                     $scope.fetchAllExecutions(data.job.jobInstances[tempId]);
+                    $scope.fetchParams(jobName,tempId);
                 }
                 else{
                     for(var job in data.job.jobInstances){
                         $scope.jobInstance = data.job.jobInstances[job];
                         $scope.fetchAllExecutions(data.job.jobInstances[job]);
+                        $scope.fetchParams(jobName,job);
                         break;
                     }
                 }
@@ -104,11 +134,13 @@ module SpringBatch {
                     if((tempId == null) && jobInstance.id){tempId = jobInstance.id;}
                     $scope.jobInstance = data.job.jobInstances[tempId];
                     $scope.fetchAllExecutions(data.job.jobInstances[tempId]);
+                    $scope.fetchParams(jobName,tempId);
                 }
                 else{
                     for(var job in data.job.jobInstances){
                         $scope.jobInstance = data.job.jobInstances[job];
                         $scope.fetchAllExecutions(data.job.jobInstances[job]);
+                        $scope.fetchParams(jobName,job);
                         break;
                     }
                 }
@@ -125,6 +157,7 @@ module SpringBatch {
                 $scope.stepExecutionList = data.jobExecution.stepExecutions;
             });
         };
+
 
     }
 }
