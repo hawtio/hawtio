@@ -3,7 +3,7 @@ module Perspective {
   export var metadata = {
     fabric: {
       label: "Fabric",
-      isValid: (workspace) => Fabric.hasFabric(workspace),
+      isValid: (workspace) => Fabric.isFMCContainer(workspace),
       lastPage: "#/fabric/activeProfiles",
       topLevelTabs: {
         includes: [
