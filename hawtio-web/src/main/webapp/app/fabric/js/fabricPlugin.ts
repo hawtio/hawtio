@@ -107,14 +107,14 @@ module Fabric {
             workspace.topLevelTabs.push( {
               content: "Runtime",
               title: "Manage your containers in this fabric",
-              isValid: (workspace) => Fabric.hasFabric(workspace),
+              isValid: (workspace) => Fabric.isFMCContainer(workspace),
               href: () => "#/fabric/activeProfiles",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
             workspace.topLevelTabs.push( {
               content: "Configuration",
               title: "Manage the configuration of your profiles in Fabric",
-              isValid: (workspace) => Fabric.hasFabric(workspace),
+              isValid: (workspace) => Fabric.isFMCContainer(workspace),
               href: () => {
                 return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
               },
@@ -125,7 +125,7 @@ module Fabric {
               content: "Insight",
               title: "View insight into your fabric looking at logs, metrics and messages across the fabric",
               isValid: (workspace) => {
-                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace)
+                return Fabric.isFMCContainer(workspace) && Insight.hasInsight(workspace)
               },
               href: () => {
                 return "#/insight/all?p=insight";
@@ -134,7 +134,7 @@ module Fabric {
             });
 
             helpRegistry.addUserDoc('fabric', 'app/fabric/doc/help.md', () => {
-              return Fabric.hasFabric(workspace);
+              return Fabric.isFMCContainer(workspace);
             });
             // don't need to pass the isValid parameter in subsequent calls...
             helpRegistry.addDevDoc("fabric", 'app/fabric/doc/developer.md');

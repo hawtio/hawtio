@@ -2,11 +2,18 @@ module Fabric {
 
   export var log:Logging.Logger = Logger.get("Fabric");
   
-  export var managerMBean = "org.fusesource.fabric:type=Fabric";
-  export var clusterManagerMBean = "org.fusesource.fabric:type=ClusterServiceManager";
-  export var clusterBootstrapManagerMBean = "org.fusesource.fabric:type=ClusterBootstrapManager";
-  export var openShiftFabricMBean = "org.fusesource.fabric:type=OpenShift";
-  export var mqManagerMBean = "org.fusesource.fabric:type=MQManager";
+  export var jmxDomain = "org.fusesource.fabric";
+  
+  export var managerMBean = Fabric.jmxDomain + ":type=Fabric";
+  export var clusterManagerMBean = Fabric.jmxDomain + ":type=ClusterServiceManager";
+  export var clusterBootstrapManagerMBean = Fabric.jmxDomain + ":type=ClusterBootstrapManager";
+  export var openShiftFabricMBean = Fabric.jmxDomain + ":type=OpenShift";
+  export var mqManagerMBean = Fabric.jmxDomain + ":type=MQManager";
+
+  var schemaLookupDomain = "io.hawt.jsonschema";
+  var schemaLookupType = "SchemaLookup";
+
+  export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;
 
   export var useDirectoriesInGit = true;
   var fabricTopLevel = "fabric/profiles/";
@@ -27,6 +34,20 @@ module Fabric {
 
   export function hasMQManager(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "MQManager"});
+  }
+
+  export function hasSchemaMBean(workspace) {
+    return workspace.treeContainsDomainAndProperties(schemaLookupDomain, {type: schemaLookupType});
+  }
+
+  export function hasGitMBean(workspace) {
+    return workspace.treeContainsDomainAndProperties(Git.jmxDomain, {type: Git.mbeanType});
+  }
+
+  export function isFMCContainer(workspace) {
+    return Fabric.hasFabric(workspace) &&
+           Fabric.hasSchemaMBean(workspace) &&
+           Fabric.hasGitMBean(workspace);
   }
 
   export function hasFabric(workspace):bool {
@@ -626,7 +647,7 @@ module Fabric {
   }
 
   export function getSchema(id, className, jolokia, cb) {
-    jolokia.execute('io.hawt.jsonschema:type=SchemaLookup', 'getSchemaForClass(java.lang.String)', className, {
+    jolokia.execute(Fabric.schemaLookupMBean, 'getSchemaForClass(java.lang.String)', className, {
       method: 'POST',
       success: (value) => {
         cb(Fabric.customizeSchema(id, angular.fromJson(value)));
@@ -635,7 +656,7 @@ module Fabric {
   }
 
   export function getDtoSchema(id, className, jolokia, cb) {
-    jolokia.execute('io.hawt.jsonschema:type=SchemaLookup', 'getSchemaForClass(java.lang.String)', className, {
+    jolokia.execute(Fabric.schemaLookupMBean, 'getSchemaForClass(java.lang.String)', className, {
       method: 'POST',
       success: (value) => {
         cb(angular.fromJson(value));

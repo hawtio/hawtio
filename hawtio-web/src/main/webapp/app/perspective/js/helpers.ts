@@ -1,5 +1,7 @@
 module Perspective {
 
+  export var log:Logging.Logger = Logger.get("Perspective");
+
   /**
    * The location search parameter for specifying the perspective to view
    */
@@ -100,14 +102,18 @@ module Perspective {
    * Returns the perspective we should be using right now since none is specified
    */
   export function choosePerspective($location, workspace: Workspace, jolokia, localStorage) {
-    var inFabric = Fabric.hasFabric(workspace);
-    var hasGit = Wiki.isWikiEnabled(workspace, jolokia, localStorage);
-    if (inFabric && hasGit) {
-      return "fabric";
-    } else if (inFabric) {
-      return "container";
+    var inFMC = Fabric.isFMCContainer(workspace);
+    if (inFMC) {
+      var url = $location.url();
+      log.debug("Checking url: ", url);
+      if (url.startsWith("/fabric") ||
+          url.startsWith("/dashboard") ||
+          (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||
+          (url.startsWith("/wiki") && url.has("/editFeatures"))) {
+        return "fabric";
+      }
     }
-    return null;
+    return "container";
   }
 
   /**
