@@ -209,7 +209,6 @@ module Camel {
     function onFabricConfigFiles(response) {
       $scope.profileFileNameToProfileId = response;
       $scope.profileFileNames = Object.keys(response).sort();
-      console.log("=== profile files: " + $scope.profileFileNames);
       $scope.showChoose = $scope.profileFileNames.length ? true : false;
       $scope.selectedFiles = {};
       Core.$apply($scope);
