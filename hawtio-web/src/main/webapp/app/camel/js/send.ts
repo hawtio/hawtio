@@ -1,5 +1,6 @@
 module Camel {
   export function SendMessageController($scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
+    var log:Logging.Logger = Logger.get("Camel");
 
     $scope.noCredentials = false;
     $scope.showChoose = false;
@@ -120,7 +121,7 @@ module Camel {
                 headers[key] = object.value;
               }
             });
-            console.log("About to send headers: " + JSON.stringify(headers));
+            log.info("About to send headers: " + JSON.stringify(headers));
           }
 
           var callback = onSuccess(onSendCompleteFn);
@@ -172,13 +173,11 @@ module Camel {
             var profile = $scope.profileFileNameToProfileId[fileName];
             if (profile) {
               var body = Fabric.getConfigFile(jolokia, version, profile, fileName);
-              if (body) {
-                doSendMessage(body, onSendFileCompleted);
-              } else {
-                // TODO log warning...
-                console.log("WARNING: no body for message " + fileName);
-                onSendFileCompleted(null);
+              if (!body) {
+                log.warn("No body for message " + fileName);
+                body = "";
               }
+              doSendMessage(body, onSendFileCompleted);
             }
           }
         } else {

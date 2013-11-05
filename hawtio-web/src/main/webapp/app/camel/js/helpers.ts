@@ -1,5 +1,7 @@
 module Camel {
 
+  export var log:Logging.Logger = Logger.get("Camel");
+
   /**
    * Looks up the route XML for the given context and selected route and
    * processes the selected route's XML with the given function
