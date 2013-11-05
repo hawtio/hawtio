@@ -20,6 +20,9 @@ module Perspective {
             href: "#/dashboard"
           },
           {
+            href: "#/health"
+          },
+          {
             id: "fabric.insight"
           }
         ]
