@@ -76,7 +76,12 @@
           No credentials set for endpoint!  Please set your username and password in the <a
                 href="#/preferences">Preferences</a> page
         </span>
-        <button type="submit" ng-disabled="!fileSelection().length" class="btn btn-primary pull-right" ng-click="sendSelectedFiles()">Send Selected File</button>
+        <button type="submit" ng-disabled="!fileSelection().length" class="btn btn-primary pull-right"
+                ng-click="sendSelectedFiles()">
+          <ng-pluralize count="fileSelection().length"
+                        when="{'0': 'No files selected', '1': 'Send the file','other': 'Send {} files'}">
+          </ng-pluralize>
+        </button>
       </div>
 
       <h3>Choose which sample files to send from this containers the profile data</h3>
