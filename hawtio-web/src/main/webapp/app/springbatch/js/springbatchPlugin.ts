@@ -5,11 +5,11 @@ module SpringBatch {
 
     angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
         config(($routeProvider) => {
-
-            $routeProvider.
-                when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'}).
-                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'}).
-                when('/springbatch/job/execution?url=:url', {templateUrl: SpringBatch.templatePath + 'jobExecutionShow.html'})
+            $routeProvider
+                .when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
+                .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
+                .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'}).
+                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'})
 
         }).
         value('ui.config', {
@@ -22,7 +22,7 @@ module SpringBatch {
             }
         }).
 
-    run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
