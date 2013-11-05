@@ -40,7 +40,7 @@
             </tr>
             </thead>
             <tr ng-repeat="execution in jobExecutionList">
-            <td><input type="radio" ng-click="fetchStepsForExecution(execution.id)"></td>
+            <td><input type="radio" name="fetchStepsForExecutionRadio" ng-click="fetchStepsForExecution(execution.id)"></td>
             <td>{{execution.id}}</td>
             <td>{{execution.startTime}}</td>
             <td>{{execution.startTime}}</td>
