@@ -393,6 +393,10 @@ module Fabric {
     return $location.search()['cv'] || "1.0";
   }
 
+  export function getContainerIdsForProfile(jolokia, version, profileId) {
+    return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
+  }
+
   export function deleteProfile(jolokia, version, id, success, error) {
     doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
   }

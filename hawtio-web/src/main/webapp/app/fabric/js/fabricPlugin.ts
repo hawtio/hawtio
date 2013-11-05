@@ -63,6 +63,21 @@ module Fabric {
           }
         }
     }).
+    directive('fabricContainers', (workspace, jolokia, localStorage) => {
+        return {
+            restrict: 'A',
+            link: ($scope, $element, $attrs) => {
+            var model = $attrs['fabricContainers'];
+            var profileId = $attrs['profile'];
+            var version = $scope.versionId || $scope.version || "1.0";
+            if (model && !model.isBlank() && profileId && !profileId.isBlank()) {
+              var containerIds = Fabric.getContainerIdsForProfile(jolokia, version, profileId);
+              log.info("Searching for containers for profile: " + profileId + " version " + version + ". Found: " + containerIds);
+              $scope[model] = containerIds;
+            }
+          }
+        }
+    }).
     directive('fabricVersionLink', (workspace, jolokia, localStorage) => {
         return {
             restrict: 'A',
