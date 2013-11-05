@@ -9,6 +9,16 @@ module Camel {
     $scope.selectedFiles = {};
     $scope.container = {};
 
+    // lets make the tabs bookmarkable
+    $scope.tab = $location.search()["subtab"] || "compose";
+    $scope.$watch("tab", () => {
+      var tab = $scope.tab;
+      if (tab) {
+        var params = $location.search();
+        params["subtab"] = tab;
+        $location.search(params);
+      }
+    });
 
     if ($location.path().has('activemq')) {
       if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {

@@ -1,7 +1,12 @@
 <div ng-controller="Camel.SendMessageController">
 
-  <tabset>
-    <tab heading="Compose" title="Compose a new message to send">
+  <div class="tabbable" ng-model="tab">
+
+    <div value="compose" class="tab-pane" title="Compose">
+      <!--
+         title="Compose a new message to send"
+      -->
+
       <div class="row-fluid">
         <span ng-show="noCredentials" class="alert">
           No credentials set for endpoint!  Please set your username and password in the <a
@@ -67,10 +72,13 @@
       <div class="row-fluid">
         <textarea ui-codemirror="codeMirrorOptions" ng-model="message"></textarea>
       </div>
+    </div>
     </tab>
 
-    <tab heading="Choose" disabled="!showChoose"
+    <div value="choose" class="tab-pane" title="Choose" ng-hide="!showChoose">
+<!--
          title="Choose messages to send from the available files in the Profile configuration for this container">
+-->
       <div class="row-fluid bottom-margin">
         <span ng-show="noCredentials" class="alert">
           No credentials set for endpoint!  Please set your username and password in the <a
@@ -91,6 +99,6 @@
          <input type="checkbox" ng-model="selectedFiles[fileName]"> {{fileName}}
         </li>
       </ul>
-    </tab>
-  </tabset>
+    </div>
+  </div>
 </div>
