@@ -279,7 +279,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
         filter("valueToHtml", () => Core.valueToHtml).
         filter('humanize',() => humanizeValue).
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding) => {
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr) => {
 
           $.support.cors = true;
 
@@ -358,6 +358,14 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             opts = angular.fromJson(opts);
             CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
           }
+
+
+          toastr.options = {
+            'closeButton': true,
+            'showMethod': 'slideDown',
+            'hideMethod': 'slideUp'
+          };
+
 
           window['logInterceptors'].push((level, message) => {
               if (level === "WARN") {
