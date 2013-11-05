@@ -88,19 +88,29 @@
 
         </div>
 
-        <div class="span3">
+        <div class="span1">
 
             <table>
                 <thead>
                 <tr class="info">
-                    <th><b>Params</b> + -</th>
+                    <th>
+                        <b class="pull-left">Params</b>
+                    </th>
+                    <th>
+                        <span class="pull-left" ng-click="addParam(jobParams)" style="cursor: pointer"> <i class="icon-plus"></i> </span>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr class="info" ng-repeat="param in jobParams">
                     <td>
-                        <input type="text" value="{{param.name}}">
-                        <input type="text" value="{{param.value}}">
+                        <span class="pull-left">
+                            <input type="text" value="{{param.name}}">
+                            <input type="text" value="{{param.value}}">
+                        </span>
+                    </td>
+                    <td>
+                        <span class="pull-left" ng-click="removeParam(jobParams , $index)" style="cursor: pointer"> <i class="icon-minus"></i></span>
                     </td>
                 </tr>
                 </tbody>

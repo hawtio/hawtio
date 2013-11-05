@@ -26,7 +26,6 @@ module SpringBatch {
         $scope.fetchParams = function(jobName,jobInstanceId,executionId){
             var paramsResource = $resource(proxyUrl+springBatchServerPath+paramsListPath);
             paramsResource.get({'jobName':jobName,'jobInstanceId':jobInstanceId+'.json'}, function(data){
-                console.info(JSON.stringify(data.jobInstance.jobExecutions));
                 var jobParams = new Array();
                 if(executionId){
                     for(var param in data.jobInstance.jobExecutions[executionId].jobParameters){
@@ -41,11 +40,17 @@ module SpringBatch {
                     }
                     $scope.jobParams = jobParams;
                 }
-                console.info('--------- '+JSON.stringify($scope.jobParams));
             });
-            console.info('--------- '+jobName);
-            console.info('--------- '+jobInstanceId);
         };
+
+        $scope.removeParam = function(jobParams,index){
+            jobParams.splice(index,1);
+        };
+
+        $scope.addParam = function(jobParams,index){
+            jobParams.add({name:'',value:''});
+        };
+
 
         jobList.get({'jobName':jobName+'.json'},function(data){
             for(var job in data.job.jobInstances){
