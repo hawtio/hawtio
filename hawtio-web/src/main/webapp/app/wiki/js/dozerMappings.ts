@@ -2,6 +2,7 @@ module Wiki {
   export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) {
     Wiki.initScope($scope, $routeParams, $location);
     Dozer.schemaConfigure();
+    var log = Dozer.log;
 
     $scope.schema = {};
     $scope.addDialog = new Core.Dialog();
@@ -59,8 +60,10 @@ module Wiki {
     };
 
     $scope.disableReload = () => {
-      return $scope.selectedMapping.class_a.value === $scope.aName && $scope.selectedMapping.class_b.value === $scope.bName;
-    }
+      var aValue = Core.pathGet($scope, ["selectedMapping", "class_a", "value"]);
+      var bValue = Core.pathGet($scope, ["selectedMapping", "class_b", "value"]);
+      return aValue === $scope.aName && bValue === $scope.bName;
+    };
 
     $scope.doReload = () => {
       $scope.selectedMapping.class_a.value = $scope.aName;
@@ -89,47 +92,52 @@ module Wiki {
     });
 
     $scope.fetchProperties = (className, target, anchor) => {
-      jolokia.request({
-        type: 'exec',
-        mbean: Dozer.getIntrospectorMBean(workspace),
-        operation: 'getProperties(java.lang.String)',
-        arguments: [className]
-      }, {
-        success: (response) => {
-          target.error = null;
-          target.properties = response.value;
-          var parentId = '';
-          if (angular.isDefined(target.value)) {
-            parentId = target.value;
-          } else {
-            parentId = target.path;
-          }
-
-          angular.forEach(target.properties, (property) => {
-            property.id = Core.getUUID();
-            property.path = parentId + '/' + property.displayName;
-            property.anchor = anchor;
-
-            // TODO - Let's see if we need to do this...
-            /*
-            var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
-            if (lookup) {
-              $scope.fetchProperties(property.typeName, property, anchor);
+      var introspectorMBean = Dozer.getIntrospectorMBean(workspace);
+      if (introspectorMBean) {
+        jolokia.request({
+          type: 'exec',
+          mbean: introspectorMBean,
+          operation: 'getProperties(java.lang.String)',
+          arguments: [className]
+        }, {
+          success: (response) => {
+            target.error = null;
+            target.properties = response.value;
+            var parentId = '';
+            if (angular.isDefined(target.value)) {
+              parentId = target.value;
+            } else {
+              parentId = target.path;
             }
-            */
-          });
-          Core.$apply($scope);
-        },
-        error: (response) => {
-          target.properties = null;
-          target.error = {
-            'type': response.error_type,
-            'stackTrace': response.error
-          };
-          console.log("got error: ", response);
-          Core.$apply($scope);
-        }
-      });
+
+            angular.forEach(target.properties, (property) => {
+              property.id = Core.getUUID();
+              property.path = parentId + '/' + property.displayName;
+              property.anchor = anchor;
+
+              // TODO - Let's see if we need to do this...
+              /*
+               var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
+               if (lookup) {
+               $scope.fetchProperties(property.typeName, property, anchor);
+               }
+               */
+            });
+            Core.$apply($scope);
+          },
+          error: (response) => {
+            target.properties = null;
+            target.error = {
+              'type': response.error_type,
+              'stackTrace': response.error
+            };
+            log.error("got: " + response);
+            Core.$apply($scope);
+          }
+        });
+      } else {
+        log.warn("No dozer introspector mbean found!");
+      }
     };
 
     $scope.getSourceAndTarget = (info) => {
@@ -147,7 +155,8 @@ module Wiki {
 
 
     function extractProperty(clazz, prop) {
-      return clazz.properties.find((property) => {
+      return (!clazz || !clazz.properties) ? null :
+        clazz.properties.find((property) => {
         return property.path.endsWith('/' + prop);
       });
     }
@@ -248,7 +257,7 @@ module Wiki {
       if ($scope.selectedMapping) {
         // lets find all the possible unmapped fields we can map from...
         Dozer.findUnmappedFields(workspace, $scope.selectedMapping, (data) => {
-          console.log("has unmapped data fields: " + data);
+          log.warn("has unmapped data fields: " + data);
           $scope.unmappedFields = data;
           $scope.unmappedFieldsHasValid = false;
           $scope.addDialog.open();
@@ -258,7 +267,7 @@ module Wiki {
     };
 
     $scope.addAndCloseDialog = () => {
-      console.log("About to add the unmapped fields " + JSON.stringify($scope.unmappedFields, null, "  "));
+      log.info("About to add the unmapped fields " + JSON.stringify($scope.unmappedFields, null, "  "));
       if ($scope.selectedMapping) {
         // TODO whats the folder???
         angular.forEach($scope.unmappedFields, (unmappedField) => {
@@ -278,7 +287,7 @@ module Wiki {
                 onTreeModified();
               }
             } else {
-              console.log("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
+              log.warn("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
             }
           }
         });
@@ -348,7 +357,7 @@ module Wiki {
     };
 
     $scope.cancel = () => {
-      console.log("cancelling...");
+      log.info("cancelling...");
       // TODO show dialog if folks are about to lose changes...
     };
 
@@ -367,7 +376,6 @@ module Wiki {
       $scope.selectedMappingFolder = null;
       // now the model is bound, lets add a listener
       if ($scope.removeModelChangeListener) {
-        console.log("Removing old form listener: " + $scope.removeModelChangeListener())
         $scope.removeModelChangeListener();
         $scope.removeModelChangeListener = null;
       }
@@ -438,9 +446,9 @@ module Wiki {
       // lets only query if the size is reasonable
       if (!text || text.length < 2) return [];
       return Core.time("Time the query of classes", () => {
-        console.log("searching for class names with filter '" + text + "'");
+        log.info("searching for class names with filter '" + text + "'");
         var answer =  Dozer.findClassNames(workspace, text);
-        console.log("Found results: " + answer.length);
+        log.info("Found results: " + answer.length);
         return answer;
       })
     };
@@ -460,12 +468,9 @@ module Wiki {
         $scope.responseText = text;
         // lets remove any dodgy characters so we can use it as a DOM id
         $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
-        console.log("Model:", $scope.model);
 
         $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
 
-        console.log("Mappings: ", $scope.mappings);
-        //console.log("Has mappings " + JSON.stringify($scope.mappings, null, '  '));
         $scope.mappingTree = Dozer.createDozerTree($scope.model);
         if (!angular.isDefined($scope.selectedMapping)) {
           $scope.selectedMapping = $scope.mappings.first();
@@ -473,13 +478,12 @@ module Wiki {
 
         $scope.main = $templateCache.get("pageTemplate.html");
       } else {
-        console.log("No XML found for page " + $scope.pageId);
+        log.warn("No XML found for page " + $scope.pageId);
       }
       Core.$apply($scope);
     }
 
     function onTreeModified() {
-      console.log("tree modified!");
       $scope.modified = true;
     }
 

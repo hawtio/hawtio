@@ -22,6 +22,9 @@ module Dozer {
     "Field": "field"
   };
 
+  export var log:Logging.Logger = Logger.get("Dozer");
+
+
   /**
    * Converts the XML string or DOM node to a Dozer model
    */
