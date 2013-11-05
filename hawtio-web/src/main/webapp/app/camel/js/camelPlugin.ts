@@ -17,7 +17,7 @@ module Camel {
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
-                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
+                    when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
                     when('/camel/debugRoute', {templateUrl: 'app/camel/html/debug.html'}).

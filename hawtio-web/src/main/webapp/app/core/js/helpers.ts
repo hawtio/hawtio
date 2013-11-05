@@ -1079,4 +1079,50 @@ module Core {
   }
 
 
+  /**
+   * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
+   * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
+   */
+  export function bindModelToSearchParam($scope, $location, modelName, paramName, initialValue = null) {
+    function currentValue() {
+      return $location.search()[paramName] || initialValue;
+    }
+
+    var value = currentValue();
+    Core.pathSet($scope, modelName, value);
+    $scope.$watch(modelName, () => {
+      var current = Core.pathGet($scope, modelName);
+      if (current) {
+        var params = $location.search();
+        var old = currentValue();
+        if (current !== old) {
+          $location.search(paramName, current);
+        }
+      }
+    });
+  }
+
+
+  /**
+   * For controllers where reloading is disabled via "reloadOnSearch: false" on the registration; lets pick which
+   * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
+   */
+  export function reloadWhenParametersChange($route, $scope, $location, parameters = ["nid"]) {
+    var initial = angular.copy($location.search());
+    $scope.$on('$routeUpdate', () => {
+      // lets check if any of the parameters changed
+      var current = $location.search();
+      var changed = [];
+      angular.forEach(parameters, (param) => {
+        if (current[param] !== initial[param]) {
+          changed.push(param);
+        }
+      });
+      if (changed.length) {
+        log.info("Reloading page due to change to parameters: " + changed);
+        $route.reload();
+      }
+    });
+  }
+
 }

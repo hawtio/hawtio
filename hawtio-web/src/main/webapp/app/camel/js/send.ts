@@ -1,6 +1,8 @@
 module Camel {
-  export function SendMessageController($scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
+  export function SendMessageController($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
     var log:Logging.Logger = Logger.get("Camel");
+
+    log.info("Loaded page!");
 
     $scope.noCredentials = false;
     $scope.showChoose = false;
@@ -9,16 +11,12 @@ module Camel {
     $scope.selectedFiles = {};
     $scope.container = {};
 
-    // lets make the tabs bookmarkable
-    $scope.tab = $location.search()["subtab"] || "compose";
-    $scope.$watch("tab", () => {
-      var tab = $scope.tab;
-      if (tab) {
-        var params = $location.search();
-        params["subtab"] = tab;
-        $location.search(params);
-      }
-    });
+    // bind model values to search params...
+    Core.bindModelToSearchParam($scope, $location, "tab", "subtab", "compose");
+    Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
+
+    // only reload the page if certain search parameters change
+    Core.reloadWhenParametersChange($route, $scope, $location);
 
     if ($location.path().has('activemq')) {
       if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
