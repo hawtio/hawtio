@@ -94,8 +94,12 @@
 
       <p>Choose which files to send from the profile configuration:</p>
 
+      <div class="control-group inline-block">
+          <input class="search-query" type="text" ng-model="searchText" placeholder="Filter..." autofocus>
+      </div>
+
       <ul>
-        <li ng-repeat="fileName in profileFileNames">
+        <li ng-repeat="fileName in profileFileNames | filter:searchText">
          <input type="checkbox" ng-model="selectedFiles[fileName]"> {{fileName}}
         </li>
       </ul>
