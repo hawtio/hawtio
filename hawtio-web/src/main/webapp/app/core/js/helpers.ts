@@ -234,6 +234,13 @@ function showLogPanel() {
       });
 }
 
+var w:any = window;
+w.toastr.options = {
+  'closeButton': true,
+  'showMethod': 'slideDown',
+  'hideMethod': 'slideUp'
+};
+
 function notification (type:string, message:string, options:any = null) {
   var w:any = window;
 
@@ -248,7 +255,6 @@ function notification (type:string, message:string, options:any = null) {
   }
 
   w.toastr[type](message, '', options);
-
 }
 
 /**
