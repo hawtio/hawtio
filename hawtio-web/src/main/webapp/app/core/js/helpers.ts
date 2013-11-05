@@ -217,13 +217,6 @@ function escapeTreeCssStyles(text:string) {
   return escapeDots(text).replace(/span/g, 'sp-an');
 }
 
-/**
- * Displays an alert message which is typically the result of some asynchronous operation
- *
- * @param type which is usually "success" or "error" and matches css alert-* css styles
- * @param message the text to display
- */
-
 function showLogPanel() {
   var log = $("#log-panel");
   var body = $('body');
@@ -234,12 +227,13 @@ function showLogPanel() {
       });
 }
 
-var w:any = window;
-w.toastr.options = {
-  'closeButton': true,
-  'showMethod': 'slideDown',
-  'hideMethod': 'slideUp'
-};
+
+/**
+ * Displays an alert message which is typically the result of some asynchronous operation
+ *
+ * @param type which is usually "success" or "error" and matches css alert-* css styles
+ * @param message the text to display
+ */
 
 function notification (type:string, message:string, options:any = null) {
   var w:any = window;
