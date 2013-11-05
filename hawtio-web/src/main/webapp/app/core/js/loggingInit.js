@@ -142,7 +142,7 @@ Logger.setHandler(function(messages, context) {
 
 // Catch uncaught exceptions and stuff so we can log them
 window.onerror = function(msg, url, line) {
-  Logger.error(msg, " (url:", url, ", line:", line, ")");
+  Logger.error(msg, ' (<a href="' + url + ':' + line + '">' + url + ':' + line + '</a>)');
   // supress error alert
   return true;
 };
