@@ -3,7 +3,7 @@ module SpringBatch{
     var springBatchServerPath =springBatchServerOrigin+'jobs';
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='/executions.json';
-    export function SpringBatchJobExecutionListController($scope, $http, $resource) {
+    export function SpringBatchJobExecutionListController($scope, $resource) {
 
         var executionListRes = $resource(proxyUrl+springBatchServerPath+executionsListPath);
         executionListRes.get(function(data){
