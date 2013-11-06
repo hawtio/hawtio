@@ -293,6 +293,29 @@ if (!Object.keys) {
 
 module Core {
 
+  export function parseMBean(mbean) {
+    var answer = {};
+
+    var parts = mbean.split(":");
+    if (parts.length === 2) {
+      answer['domain'] = parts[0];
+      answer['attributes'] = {};
+
+      var nameValues = parts[1].split(",");
+      nameValues.forEach((str) => {
+        var nameValue = str.split("=");
+        if (nameValue.length == 2) {
+          answer['attributes'][nameValue[0]] = nameValue[1];
+        }
+      });
+
+      return answer;
+    }
+
+    return {};
+  }
+
+
 
   /*
    * log out the current user, should be in helpers.ts really

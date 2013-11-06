@@ -35,17 +35,29 @@ module Karaf {
       if (angular.isArray(response)) {
         var mbean = response[0];
         if (mbean) {
-          jolokia.getAttribute(mbean, "Instances", onSuccess(onInstances));
+          jolokia.getAttribute(mbean, "Instances", onSuccess((response) => {
+            onInstances(response, mbean);
+          }));
         }
       }
     }
 
-    function onInstances(instances) {
+    function onInstances(instances, mbean) {
       if (instances) {
-        // console.log("Instances is " + JSON.stringify(instances));
+
+        var parsedMBean = Core.parseMBean(mbean);
+        var instanceName = 'root';
+        if ('attributes' in parsedMBean) {
+          if ('name' in parsedMBean['attributes']) {
+            instanceName = parsedMBean['attributes']['name'];
+          }
+        }
+
+        //log.debug("mbean: ", Core.parseMBean(mbean));
+        //log.debug("Instances: ", instances);
 
         // the name is the first child
-        var rootInstance = instances['root'];
+        var rootInstance = instances[instanceName];
         $scope.data.name = rootInstance.Name;
         $scope.data.state = rootInstance.State;
         $scope.data.root = rootInstance["Is Root"];
