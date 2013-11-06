@@ -674,6 +674,10 @@ module Fabric {
     return jolokia.execute(Fabric.managerMBean, "getContainer(java.lang.String, java.util.List)", name, fields, { method: 'POST' });
   }
 
+  export function getContainerFields(jolokia, name, fields) {
+    return jolokia.execute(Fabric.managerMBean, "getContainer(java.lang.String, java.util.List)", name, fields, { method: 'POST' });
+  }
+
 
   export function getRootContainers(jolokia) {
     var fields = ["id", "root"];
