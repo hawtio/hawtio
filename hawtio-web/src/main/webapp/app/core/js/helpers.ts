@@ -158,16 +158,15 @@ function onSuccess(fn, options = {}) {
       if (stacktrace) {
         var silent = options['silent'];
         if (!silent) {
-          console.log(stacktrace);
           if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
                   stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
-                  stacktrace.indexOf(" java.lang.IllegalArgumentException: No operation") >= 0) {
+                  stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
             // ignore these errors as they can happen on timing issues
             // such as its been removed
             // or if we run against older containers
           } else {
-            notification("error", "Operation failed due to: " + stacktrace);
-            console.log("Jolokia request failed: " + response.error);
+            Core.log.warn("Operation ", response['request']['operation'], " failed due to: ", response['error']);
+            Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
           }
         }
       }

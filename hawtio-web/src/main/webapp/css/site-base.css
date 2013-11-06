@@ -119,6 +119,16 @@ small table tbody tr td.property-name {
   opacity: 1;
 }
 
+div.log-stack-trace {
+  font-family: monospace;
+}
+
+div.log-stack-trace p {
+  font-family: monospace;
+  line-height: 14px;
+  margin-bottom: 2px;
+}
+
 #canvas {
   display: inline-block;
 }
@@ -3082,4 +3092,8 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.active {
 
 tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   opacity: 0.3;
+}
+
+.toast.toast-warning * {
+  color: black;
 }
