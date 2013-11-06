@@ -8,6 +8,7 @@ module SpringBatch {
     export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource) {
 
         var jobName = $routeParams.jobName;
+        $scope.jobName = $routeParams.jobName;
         var jobInstances = null;
         var jobList = $resource(proxyUrl+springBatchServerPath);
 
