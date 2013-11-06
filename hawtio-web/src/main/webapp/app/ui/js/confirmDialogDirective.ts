@@ -50,21 +50,35 @@ module UI {
         }
       });
 
+      function checkClosed() {
+        setTimeout(() => {
+          // lets make sure we don't have a modal-backdrop hanging around!
+          var backdrop = $("div.modal-backdrop");
+          if (backdrop && backdrop.length) {
+            Logger.get("ConfirmDialog").info("Removing the backdrop div! " + backdrop);
+            backdrop.remove();
+          }
+        }, 200);
+      }
+
       $scope.cancel = () => {
         $scope.show = false;
         $scope.$parent.$eval($scope.onCancel);
-      }
+        checkClosed();
+      };
 
       $scope.submit = () => {
         $scope.show = false;
         $scope.$parent.$eval($scope.onOk);
-      }
+        checkClosed();
+      };
 
       $scope.close = () => {
         $scope.$parent.$eval($scope.onClose);
-      }
+        checkClosed();
+      };
 
-    }
+    };
 
     public constructor () {
 
