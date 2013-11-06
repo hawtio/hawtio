@@ -200,7 +200,10 @@ module Fabric {
         options.view = $scope.connect.view;
         Fabric.connect(localStorage, container, userName, password, true, options);
         $scope.connect.container = {};
-        $scope.connect.dialog.close();
+        setTimeout(() => {
+          $scope.connect.dialog.close();
+          Core.$apply($scope);
+        }, 100);
       }
     };
 
