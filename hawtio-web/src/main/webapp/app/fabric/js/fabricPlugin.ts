@@ -63,7 +63,7 @@ module Fabric {
           }
         }
     }).
-    directive('fabricContainers', (workspace, jolokia, localStorage) => {
+    directive('fabricContainers', ($location, jolokia, workspace, $compile) => {
         return {
             restrict: 'A',
             link: ($scope, $element, $attrs) => {
@@ -71,14 +71,26 @@ module Fabric {
             var profileId = $attrs['profile'];
             var version = $scope.versionId || $scope.version || "1.0";
             if (model && !model.isBlank() && profileId && !profileId.isBlank()) {
+              // lets expose the $scope.connect object!
+
+              Fabric.initScope($scope, $location, jolokia, workspace);
               var containerIds = Fabric.getContainerIdsForProfile(jolokia, version, profileId);
               log.info("Searching for containers for profile: " + profileId + " version " + version + ". Found: " + containerIds);
               $scope[model] = containerIds;
+
+              $scope["onCancel"] = () => {
+                console.log("In our new cancel thingy!");
+              };
+
+              // now lets add the connect dialog
+              var dialog = $("<div ng-include=\"'app/fabric/html/connectToContainerDialog.html'\"></div>");
+              var answer = $compile(dialog)($scope);
+              $element.append(answer);
             }
           }
         }
     }).
-    directive('fabricContainerConnect', ($location, jolokia, workspace) => {
+    directive('fabricContainerConnect', ($location, jolokia) => {
         return {
             restrict: 'A',
             link: ($scope, $element, $attrs) => {
@@ -87,17 +99,16 @@ module Fabric {
             if (containerId && !containerId.isBlank()) {
               //var fields = ["parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
               var fields = ["jolokiaUrl"];
-              Fabric.initScope($scope, $location, jolokia, workspace);
+              //Fabric.initScope($scope, $location, jolokia, workspace);
 
-              $scope["connect"] = () => {
-                log.info("Fired connect() function!!!");
-
+              var connectFn = () => {
                 var container = Fabric.getContainerFields(jolokia, containerId, fields);
                 log.info("Connecting to container id " + containerId + " details + " + JSON.stringify(container));
                 container["id"]  = containerId;
                 $scope.doConnect(container, view);
+                Core.$apply($scope);
               };
-              $element.attr('ng-click', "connect()");
+              $element.on("click", connectFn);
             }
           }
         }
