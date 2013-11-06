@@ -392,18 +392,9 @@ module Fabric {
       return arr.map((o) => { return o.id; });
     }
 
-
     $scope.getStatusTitle = (container) => {
-      var answer = 'Alive';
-
-      if (!container.alive) {
-        answer = 'Not Running';
-      } else {
-        answer += ' - ' + humanizeValue(container.provisionResult);
-      }
-
-      return answer;
-    }
+      return Fabric.statusTitle(container);
+    };
 
 
     $scope.containersForVersion = (id) => {
