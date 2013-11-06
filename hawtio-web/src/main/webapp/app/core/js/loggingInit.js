@@ -59,26 +59,90 @@ if ('console' in window) {
   };
 }
 
-var isArrayOrObject = function(o) {
-  return (!!o) && (o.constructor === Array || o.constructor === Object);
-};
+
+function getType(obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1);
+}
+
+function isError(obj) {
+  return obj && getType(obj) === 'Error';
+}
+
+function isArray(obj) {
+  return obj && getType(obj) === 'Array';
+}
+
+function isObject(obj) {
+  return obj && getType(obj) === 'Object';
+}
+
+function isString(obj) {
+  return obj && getType(obj) === 'String';
+}
 
 window['logInterceptors'] = [];
+
+Logger.formatStackTraceString = function(stack) {
+  var lines = stack.split("\n");
+  var stackTrace = "<div class=\"log-stack-trace\">\n";
+
+  for (var j = 0; j < lines.length; j++) {
+    var line = lines[j];
+    if (line.trim().length === 0) {
+      continue;
+    }
+    line = line.replace(/\s/, "&nbsp;");
+    stackTrace = stackTrace + "<p>" + line + "</p>\n";
+  }
+  stackTrace = stackTrace + "</div>\n";
+  return stackTrace;
+};
+
 
 Logger.setHandler(function(messages, context) {
   // MyConsole.log("context: ", context);
   // MyConsole.log("messages: ", messages);
   var container = document.getElementById("log-panel");
   var panel = document.getElementById("log-panel-statements");
-
   var node = document.createElement("li");
+  var text = "";
+  var postLog = [];
 
-  var text = ""
+  // try and catch errors logged via console.error(e.toString) and reformat
+  if (context['level'].name === 'ERROR' && messages.length === 1) {
+    if (isString(messages[0])) {
+      var message = messages[0];
+      var messageSplit = message.split(/\n/);
+      if (messageSplit.length > 1) {
+
+        // we may have more cases that require normalizing, so a more flexible solution
+        // may be needed
+        var lookFor = "Error: Jolokia-Error: ";
+        if (messageSplit[0].search(lookFor) == 0) {
+          var msg = messageSplit[0].slice(lookFor.length);
+          window['JSConsole'].info("msg: ", msg);
+          try {
+            var errorObject = JSON.parse(msg);
+            var error = new Error();
+            error.message = errorObject['error'];
+            error.stack = errorObject['stacktrace'].replace("\\t", "&nbsp;&nbsp").replace("\\n", "\n");
+            messages = [error];
+          } catch (e) {
+            // we'll just bail and let it get logged as a string...
+          }
+        } else {
+          var error = new Error();
+          error.message = messageSplit[0];
+          error.stack = message;
+          messages = [error];
+        }
+      }
+    }
+  }
 
   for (var i = 0; i < messages.length; i++) {
     var message = messages[i];
-    if (isArrayOrObject(message)) {
-
+    if (isArray(message) || isObject(message)) {
       var obj = "" ;
       try {
         obj = '<pre data-language="javascript">' + JSON.stringify(message, null, 2) + '</pre>';
@@ -87,6 +151,21 @@ Logger.setHandler(function(messages, context) {
         // silently ignore, could be a circular object...
       }
       text = text + obj;
+    } else if (isError(message)) {
+
+      if ('message' in message) {
+        text = text + message['message'];
+      }
+      if ('stack' in message) {
+        postLog.push(function() {
+          var stackTrace = Logger.formatStackTraceString(message['stack']);
+          var logger = Logger;
+          if (context.name) {
+            logger = Logger.get(context['name']);
+          }
+          logger.info("Stack trace: ", stackTrace);
+        });
+      }
     } else {
       text = text + message;
     }
@@ -128,6 +207,8 @@ Logger.setHandler(function(messages, context) {
 
   onAdd();
 
+  postLog.forEach(function (func) { func(); });
+
   /*
   try {
     Rainbow.color(node, onAdd);
@@ -141,9 +222,18 @@ Logger.setHandler(function(messages, context) {
 });
 
 // Catch uncaught exceptions and stuff so we can log them
-window.onerror = function(msg, url, line) {
-  Logger.error(msg, ' (<a href="' + url + ':' + line + '">' + url + ':' + line + '</a>)');
-  // supress error alert
+window.onerror = function(msg, url, line, column, errorObject) {
+  if (errorObject) {
+    Logger.get("Window").error(errorObject);
+  } else {
+    var href = ' (<a href="' + url + ':' + line + '">' + url + ':' + line;
+
+    if (column) {
+      href = href + ':' + column;
+    }
+    href = href + '</a>)';
+    Logger.get("Window").error(msg, href);
+  }
   return true;
 };
 

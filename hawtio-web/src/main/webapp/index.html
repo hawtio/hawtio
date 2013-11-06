@@ -52,11 +52,27 @@
     <script type="text/ng-template" id="logClipboardTemplate">
 <!--
 <style type="text/css">
+* {
+  font-family: monospace;
+}
 ul li {
   list-style-type: none;
 }
+ul li:nth-child(odd) {
+  background: #f3f3f3;
+}
 span.green {
   color: green;
+}
+div.log-stack-trace p {
+  line-height: 14px;
+  margin-bottom: 2px;
+}
+div.log-stack-trace p:nth-child(even) {
+  background: white;
+}
+div.log-stack-trace p:nth-child(odd) {
+  background: #f3f3f3;
 }
 </style>
 <ul>

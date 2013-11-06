@@ -17,6 +17,7 @@ declare module Logging {
     info(...arguments:any[]):void;
     warn(...arguments:any[]):void;
     error(...arguments:any[]):void;
+    formatStackTraceString(stack:string):string;
   }
 
   export interface LoggerStatic extends Logger {
