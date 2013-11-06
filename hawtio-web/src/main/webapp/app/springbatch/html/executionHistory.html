@@ -4,11 +4,19 @@
         <thead>
         <tr>
             <th>Id</th>
+            <th>Status</th>
+            <th>StartTime</th>
+            <th>Duration</th>
+            <th>Resource</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>value</td>
+        <tr ng-repeat="execution in executionHistory">
+            <td>{{execution.id}}</td>
+            <td>{{execution.status}}</td>
+            <td>{{execution.startTime}}</td>
+            <td>{{execution.duration}}</td>
+            <td>{{execution.resource}}</td>
         </tr>
         </tbody>
     </table>
