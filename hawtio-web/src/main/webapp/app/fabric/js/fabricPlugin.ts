@@ -78,7 +78,7 @@ module Fabric {
           }
         }
     }).
-    directive('fabricContainerConnect', ($scope, $location, jolokia, workspace) => {
+    directive('fabricContainerConnect', ($location, jolokia, workspace) => {
         return {
             restrict: 'A',
             link: ($scope, $element, $attrs) => {
