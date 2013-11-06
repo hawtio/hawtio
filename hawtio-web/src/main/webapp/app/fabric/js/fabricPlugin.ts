@@ -78,6 +78,30 @@ module Fabric {
           }
         }
     }).
+    directive('fabricContainerConnect', ($scope, $location, jolokia, workspace) => {
+        return {
+            restrict: 'A',
+            link: ($scope, $element, $attrs) => {
+            var containerId = $attrs['fabricContainerConnect'];
+            var view = $attrs['view'];
+            if (containerId && !containerId.isBlank()) {
+              //var fields = ["parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains'];
+              var fields = ["jolokiaUrl"];
+              Fabric.initScope($scope, $location, jolokia, workspace);
+
+              $scope["connect"] = () => {
+                log.info("Fired connect() function!!!");
+
+                var container = Fabric.getContainerFields(jolokia, containerId, fields);
+                log.info("Connecting to container id " + containerId + " details + " + JSON.stringify(container));
+                container["id"]  = containerId;
+                $scope.doConnect(container, view);
+              };
+              $element.attr('ng-click', "connect()");
+            }
+          }
+        }
+    }).
     directive('fabricVersionLink', (workspace, jolokia, localStorage) => {
         return {
             restrict: 'A',
