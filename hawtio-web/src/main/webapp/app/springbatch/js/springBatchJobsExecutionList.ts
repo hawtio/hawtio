@@ -1,5 +1,5 @@
 module SpringBatch{
-    var springBatchServerOrigin = 'localhost:8181/';
+    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
     var springBatchServerPath =springBatchServerOrigin+'jobs';
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='/executions.json';
