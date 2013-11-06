@@ -1019,6 +1019,7 @@ module Core {
 
     localStorage[connectUrl] = angular.toJson(userDetails);
     var view = options.view;
+    var full = "";
     if (connectUrl) {
 
       if (options.useProxy) {
@@ -1040,12 +1041,10 @@ module Core {
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = angular.toJson(userDetails);
 
-      var full = "?url=" + encodeURIComponent(connectUrl);
-
+      full = "?url=" + encodeURIComponent(connectUrl);
       if (view) {
         full += "#" + view;
       }
-      window.open(full);
     } else {
 
       var host = options.host || "localhost";
@@ -1068,11 +1067,13 @@ module Core {
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = angular.toJson(userDetails);
 
-      var full = "?url=" + encodeURIComponent(connectUrl);
+      full = "?url=" + encodeURIComponent(connectUrl);
       if (view) {
         full += "#" + view;
       }
-      console.log("Full URL is: " + full);
+    }
+    if (full) {
+      log.info("Full URL is: " + full);
       window.open(full);
     }
 

@@ -103,7 +103,7 @@ module Fabric {
 
               var connectFn = () => {
                 var container = Fabric.getContainerFields(jolokia, containerId, fields);
-                log.info("Connecting to container id " + containerId + " details + " + JSON.stringify(container));
+                log.info("Connecting to container id " + containerId + " view + " + view);
                 container["id"]  = containerId;
                 $scope.doConnect(container, view);
                 Core.$apply($scope);
