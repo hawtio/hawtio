@@ -603,6 +603,16 @@ module Fabric {
     return Core.pathGet(folder, "objectName");
   }
 
+  export function statusTitle(container) {
+    var answer = 'Alive';
+    if (!container.alive) {
+      answer = 'Not Running';
+    } else {
+      answer += ' - ' + humanizeValue(container.provisionResult);
+    }
+    return answer;
+  }
+
   export function statusIcon(row) {
     if (row) {
       if (row.alive) {

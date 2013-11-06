@@ -90,6 +90,27 @@ module Fabric {
           }
         }
     }).
+    directive('fabricContainerLink', ($location, jolokia, workspace) => {
+        return {
+            restrict: 'A',
+            link: ($scope, $element, $attrs) => {
+            var containerId = $attrs['fabricContainerLink'];
+            if (containerId && !containerId.isBlank()) {
+              var fields = ["alive", "provisionResult", "versionId", "jmxDomains"];
+              var container = Fabric.getContainerFields(jolokia, containerId, fields);
+
+              var link = "#/fabric/container/" + containerId;
+              var title = Fabric.statusTitle(container) || "container " + containerId;
+              var icon = Fabric.statusIcon(container) || "";
+
+              var html = "<a href='" + link + "' title='" + title + "'><i class='" + icon + "'></i> " + containerId + "</a>";
+              $element.html(html);
+
+              Core.$apply($scope);
+            }
+          }
+        }
+    }).
     directive('fabricContainerConnect', ($location, jolokia) => {
         return {
             restrict: 'A',
