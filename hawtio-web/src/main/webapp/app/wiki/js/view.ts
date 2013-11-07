@@ -351,7 +351,7 @@ module Wiki {
       $scope.deleteDialog = false;
     };
 
-    $scope.$watch("fileName", () => {
+    $scope.$watch("newFileName", () => {
       // ignore errors if the file is the same as the rename file!
       var path = getRenameFilePath();
       if ($scope.originalRenameFilePath === path) {
@@ -368,7 +368,7 @@ module Wiki {
         name = selected.name;
       }
       if (name) {
-        $scope.fileName = name;
+        $scope.newFileName = name;
         $scope.originalRenameFilePath = getRenameFilePath();
         $scope.renameDialog.open();
         $timeout(() => {
@@ -622,7 +622,7 @@ module Wiki {
     }
 
     function getRenameFilePath() {
-      return ($scope.pageId && $scope.fileName) ? $scope.pageId + "/" + $scope.fileName : null;
+      return ($scope.pageId && $scope.newFileName) ? $scope.pageId + "/" + $scope.newFileName : null;
     }
   }
 }
