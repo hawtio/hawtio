@@ -7,5 +7,7 @@ module SpringBatch {
         jobList.get(function(data){
             if(data.jobs && data.jobs.registrations) $scope.jobList = data.jobs.registrations;
         });
+
     }
+
 }
