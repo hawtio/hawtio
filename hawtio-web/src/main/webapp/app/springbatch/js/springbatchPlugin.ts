@@ -1,16 +1,17 @@
 module SpringBatch {
 
     export var templatePath = 'app/springbatch/html/';
-    export var pluginName = 'springbatch';
+    export var pluginName = 'SpringBatch';
 
     angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
         config(($routeProvider) => {
-
             $routeProvider
                 .when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
                 .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
+                when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'})
+
         }).
         value('ui.config', {
             // The ui-jq directive namespace
@@ -21,6 +22,7 @@ module SpringBatch {
                 }
             }
         }).
+
         run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
@@ -33,7 +35,8 @@ module SpringBatch {
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
-        });
+
+        })
 
     hawtioPluginLoader.addModule(pluginName);
 }
