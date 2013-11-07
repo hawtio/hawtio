@@ -107,7 +107,7 @@ module Wiki {
       var start = startLink($scope.branch);
       var prefix = start + "/view";
       var postFix = "";
-      var path = child.path;
+      var path = Wiki.encodePath(child.path);
       if (child.directory) {
         // if we are a folder with the same name as a form file, lets add a form param...
         var formPath = path + ".form";

@@ -60,7 +60,7 @@ module Wiki {
         if (!name.startsWith("/") && !href.endsWith("/")) {
           href += "/";
         }
-        href += name;
+        href += Wiki.encodePath(name);
         if (!name.isBlank()) {
           $scope.breadcrumbs.push({href: href, name: name});
         }

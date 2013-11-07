@@ -112,7 +112,7 @@ module Wiki {
     function goToView() {
       var path = Core.trimLeading($scope.viewLink(), "#");
       console.log("going to view " + path);
-      $location.path(path);
+      $location.path(Wiki.decodePath(path));
       console.log("location is now " + $location.path());
     }
 

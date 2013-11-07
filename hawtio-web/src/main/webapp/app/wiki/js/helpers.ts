@@ -145,7 +145,7 @@ module Wiki {
     var link = null;
     var start = startLink(branch);
     if (pageId) {
-      link = start + "/view/" + Core.trimLeading(pageId, "/");
+      link = start + "/view/" + encodePath(Core.trimLeading(pageId, "/"));
     } else {
       // lets use the current path
       var path = $location.path();
@@ -168,7 +168,7 @@ module Wiki {
     var link = null;
     var start = startLink(branch);
     if (pageId) {
-      link = start + "/edit/" + pageId;
+      link = start + "/edit/" + encodePath(pageId);
     } else {
       // lets use the current path
       var path = $location.path();
@@ -182,7 +182,7 @@ module Wiki {
     var start = startLink(branch);
     var link = null;
     if (pageId) {
-      link = start + "/create/" + pageId;
+      link = start + "/create/" + encodePath(pageId);
     } else {
       // lets use the current path
       link = "#" + path.replace(/(view|edit|formTable)/, "create");
@@ -194,6 +194,14 @@ module Wiki {
       link = link.substring(0, idx + 1);
     }
     return link;
+  }
+
+  export function encodePath(pageId:string) {
+    return pageId.split("/").map(encodeURIComponent).join("/");
+  }
+
+  export function decodePath(pageId:string) {
+    return pageId.split("/").map(decodeURIComponent).join("/");
   }
 
   export function fileFormat(name:string, fileExtensionTypeRegistry) {
@@ -355,6 +363,8 @@ module Wiki {
   }
 
   export function fileExtension(name) {
+    if (name.indexOf('#') > 0)
+      name = name.substring(0, name.indexOf('#'));
     return Core.fileExtension(name, "markdown");
   }
 
