@@ -10,7 +10,7 @@ module SpringBatch {
         $scope.subLevelTabs = subLevelTabs;
 
         $scope.isActive = (tab) => {
-            return workspace.isLinkActive('#/springbatch/'+tab.uri);
+            return ('/springbatch/'+tab.uri === $location.path());
         };
     }
 }
