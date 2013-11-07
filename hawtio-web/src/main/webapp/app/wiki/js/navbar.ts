@@ -22,15 +22,10 @@ module Wiki {
     };
 
     $scope.isActive = (href) => {
-      var tidy = Core.trimLeading(href, "#");
-      var loc = $location.path();
-      if (loc === tidy) return true;
-      if (loc.startsWith("/wiki/view") || loc.startsWith("/wiki/edit")) {
-        var p1 = Wiki.pageIdFromURI(tidy);
-        var p2 = Wiki.pageIdFromURI(loc);
-        return p1 === p2;
+      if (!href) {
+        return false;
       }
-      return false;
+      return href.endsWith($routeParams['page']);
     };
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {

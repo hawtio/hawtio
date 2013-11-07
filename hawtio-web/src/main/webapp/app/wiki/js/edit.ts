@@ -23,6 +23,18 @@ module Wiki {
 
     $scope.isValid = () => $scope.fileName;
 
+    $scope.canSave = () => !$scope.modified;
+
+    $scope.$watch('entity.source', (newValue, oldValue) => {
+      $scope.modified = newValue && oldValue && newValue !== oldValue;
+    }, true);
+
+    log.debug("path: ", $scope.path);
+
+    $scope.$watch('modified', (newValue, oldValue) => {
+      log.debug("modified: ", newValue);
+    });
+
     $scope.viewLink = () => Wiki.viewLink($scope.branch, $scope.pageId, $location, $scope.fileName);
 
     $scope.cancel = () => {
@@ -30,7 +42,9 @@ module Wiki {
     };
 
     $scope.save = () => {
-      saveTo($scope["pageId"]);
+      if ($scope.modified && $scope.fileName) {
+        saveTo($scope["pageId"]);
+      }
     };
 
     $scope.create = () => {
@@ -67,6 +81,7 @@ module Wiki {
       if (isCreate()) {
         updateSourceView();
       } else {
+        log.debug("Getting page, branch: ", $scope.branch, " pageId: ", $scope.pageId, " objectId: ", $scope.objectId);
         wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileContents);
       }
     }
@@ -74,6 +89,9 @@ module Wiki {
     function onFileContents(details) {
       var contents = details.text;
       $scope.entity.source = contents;
+      $scope.fileName = $scope.pageId.split('/').last();
+      log.debug("file name: ", $scope.fileName);
+      log.debug("file details: ", details);
       updateSourceView();
       Core.$apply($scope);
     }
@@ -111,9 +129,9 @@ module Wiki {
 
     function goToView() {
       var path = Core.trimLeading($scope.viewLink(), "#");
-      console.log("going to view " + path);
+      log.debug("going to view " + path);
       $location.path(Wiki.decodePath(path));
-      console.log("location is now " + $location.path());
+      log.debug("location is now " + $location.path());
     }
 
     function saveTo(path:string) {
@@ -122,6 +140,7 @@ module Wiki {
       if ($scope.formEntity) {
         contents = JSON.stringify($scope.formEntity, null, "  ");
       }
+      log.debug("Saving file, branch: ", $scope.branch, " path: ", $scope.path);
       //console.log("About to write contents '" + contents + "'");
       wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
         Wiki.onComplete(status);
