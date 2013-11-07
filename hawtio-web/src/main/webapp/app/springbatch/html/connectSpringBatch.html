@@ -1,0 +1,33 @@
+<div ng-controller="SpringBatch.ConnectSpringBatchController">
+    <div class="row-fluid">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="host" title="The host name used to connect over HTTP">host name</label>
+
+                <div class="controls">
+                    <input id="host" name="host" type="text" ng-model="host"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="port" title="The HTTP port used to connect to the server">port</label>
+
+                <div class="controls">
+                    <input id="port" name="port" type="number" min="0" ng-model="port"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="path" title="The URL path used to connect to Jolokia on the remote server">path</label>
+
+                <div class="controls">
+                    <input id="path" name="path" type="text" ng-model="path"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input type="submit" value="Connect To Remote Server" class="btn" ng-disabled="!host" ng-click="connectSpringBatch()"
+                           title="Opens a new browser window connecting to the given JVM process via its Jolokia servlet URL">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
