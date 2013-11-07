@@ -1,5 +1,7 @@
 module Jmx {
 
+  export var log:Logging.Logger = Logger.get("JMX");
+
   var attributesToolBars = {};
 
   export var lazyLoaders = null;

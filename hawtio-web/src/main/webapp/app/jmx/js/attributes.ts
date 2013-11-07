@@ -252,7 +252,8 @@ module Jmx {
     function render(response) {
       var data = response.value;
       var mbeanIndex = $scope.mbeanIndex;
-      var mbean = response.request.mbean;
+      var mbean = response.request['mbean'];
+      log.debug("mbean: ", mbean);
       if (mbean) {
           // lets store the mbean in the row for later
           data["_id"] = mbean;
@@ -339,11 +340,21 @@ module Jmx {
               }
             }
           });
+          if (!properties.any((p) => { return p['key'] === 'ObjectName'; })) {
+            var objectName = {
+              key: "ObjectName",
+              name: "Object Name",
+              value: mbean
+            };
+            generateSummaryAndDetail(objectName);
+            properties.push(objectName);
+          }
           properties = properties.sortBy("name");
           $scope.selectedItems = [data];
           data = properties;
         }
         $scope.gridData = data;
+        log.debug("gridData: ", $scope.gridData);
         Core.$apply($scope);
       }
     }
