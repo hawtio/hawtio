@@ -23,16 +23,22 @@ public class FileInfo {
     public static FileInfo createFileInfo(File rootDir, File file) {
         String path = getRelativePath(rootDir, file).replace("\\", "/");
         FileInfo answer = new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
-        if (file.isFile() && file.getName().endsWith(".xml")) {
-            // lets load the XML namespaces
-            try {
-                Set<String> uris = XmlHelper.getNamespaces(file);
-                if (uris.size() > 0) {
-                    String[] namespaces = uris.toArray(new String[uris.size()]);
-                    answer.setXmlNamespaces(namespaces);
+        if (file.isFile()) {
+            String name = file.getName();
+            if (name.indexOf('#') > 0) {
+                name = name.substring(0, name.indexOf('#'));
+            }
+            if (name.endsWith(".xml")) {
+                // lets load the XML namespaces
+                try {
+                    Set<String> uris = XmlHelper.getNamespaces(file);
+                    if (uris.size() > 0) {
+                        String[] namespaces = uris.toArray(new String[uris.size()]);
+                        answer.setXmlNamespaces(namespaces);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Failed to parse the XML namespaces in " + file + " due: " + e.getMessage() + ". This exception is ignored.", e);
                 }
-            } catch (Exception e) {
-                LOG.warn("Failed to parse the XML namespaces in " + file + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return answer;
