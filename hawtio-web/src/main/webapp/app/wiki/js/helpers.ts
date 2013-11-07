@@ -1,5 +1,7 @@
 module Wiki {
 
+  export var log:Logging.Logger = Logger.get("Wiki");
+
   export var camelNamespaces = ["http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint"];
   export var springNamespaces = ["http://www.springframework.org/schema/beans"];
   export var droolsNamespaces = ["http://drools.org/schema/drools-spring"];
@@ -150,6 +152,9 @@ module Wiki {
       // lets use the current path
       var path = $location.path();
       link = "#" + path.replace(/(edit|create)/, "view");
+    }
+    if (fileName && pageId && pageId.endsWith(fileName)) {
+      return link;
     }
     if (fileName) {
       if (!link.endsWith("/")) {

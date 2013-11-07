@@ -1870,7 +1870,7 @@ div#main div ul.nav li a.nav-primary.active {
 }
 
 .nav.nav-tabs li a[disabled] {
-  cursor: pointer;
+  cursor: not-allowed;
   opacity: 0.3;
 }
 
