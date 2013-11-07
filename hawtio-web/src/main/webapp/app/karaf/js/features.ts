@@ -58,10 +58,21 @@ module Karaf {
       }, onSuccess(render));
     }
 
+    $scope.triggerRefresh = () => {
+      jolokia.request({
+        type: 'read',
+        method: 'POST',
+        mbean: featuresMBean
+      }, onSuccess(render));
+    };
+
     $scope.install = (feature) => {
       //$('.popover').remove();
+      notification('info', 'Installing feature ' + feature.Name);
       installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
         notification('success', 'Installed feature ' + feature.Name);
+        $scope.installedFeatures.add(feature);
+        $scope.triggerRefresh();
         Core.$apply($scope);
       }, (response) => {
         log.error('Failed to install feature ', feature.Name, ' due to ', response.error);
@@ -72,8 +83,11 @@ module Karaf {
 
     $scope.uninstall = (feature) => {
       //$('.popover').remove();
+      notification('info', 'Uninstalling feature ' + feature.Name);
       uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
         notification('success', 'Uninstalled feature ' + feature.Name);
+        $scope.installedFeatures.remove(feature);
+        $scope.triggerRefresh();
         Core.$apply($scope);
       }, (response) => {
         log.error('Failed to uninstall feature ', feature.Name, ' due to ', response.error);
