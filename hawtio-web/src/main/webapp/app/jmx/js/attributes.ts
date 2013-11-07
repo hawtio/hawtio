@@ -354,7 +354,7 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        log.debug("gridData: ", $scope.gridData);
+        // log.debug("gridData: ", $scope.gridData);
         Core.$apply($scope);
       }
     }
