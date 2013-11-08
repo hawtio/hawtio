@@ -31,7 +31,7 @@ var simplePlugin = angular.module(pluginName, ['hawtioCore'])
         div.remove();
 
         // compensate for internal horizontal padding
-        var cssWidth = width * charWidth + 10;
+        var cssWidth = width * charWidth + 20;
         // Add an extra line for the status bar and divider
         var cssHeight = (height * charHeight) + charHeight + 2;
 
