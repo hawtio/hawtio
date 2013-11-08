@@ -14,6 +14,9 @@
   <li ng-show="hasMQManager" ng-class='{active : isActive("#/fabric/mq")}'>
     <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the Fabric based MQ brokers">MQ</a>
   </li>
+  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/api")}'>
+    <a ng-href="#/fabric/api{{hash}}" title="View the APIs in the Fabric">APIs</a>
+  </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
     <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>
   </li>
