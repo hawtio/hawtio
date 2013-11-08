@@ -4,19 +4,19 @@
     <div class="section-header">
 
       <div class="section-filter">
-        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchText">
         <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
       </div>
 
     </div>
   </div>
 
-  <div class="">
-  <ul class="" ng-class="isInDashboardClass()">
-      <li class="" ng-repeat="api in apis | filter:searchText">
-        <a href="{{api.href}}">{{api.path}}</a>
-      </li>
-    </ul>
+  <div class="log-main">
+    <div ng-class="isInDashboardClass()">
+      <div class="row-fluid" ng-repeat="api in apis | filter:searchText">
+        <a href="{{api.href}}"><i class="icon-puzzle-piece"></i> {{api.path}}</a>
+      </div>
+    </div>
   </div>
 </div>
 
