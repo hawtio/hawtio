@@ -118,10 +118,15 @@ module Osgi {
     };
 
     function processResponse(response) {
-      if (!Object.equal($scope.result, response.value)) {
-        $scope.result = response.value;
+
+      var value = response['value'];
+
+      var responseJson = angular.toJson(value);
+
+      if ($scope.responseJson !== responseJson) {
+        $scope.responseJson = responseJson;
         $scope.bundles = [];
-        angular.forEach($scope.result, function (value, key) {
+        angular.forEach(value, function (value, key) {
           var obj = {
             Identifier: value.Identifier,
             Name: "",
@@ -139,22 +144,26 @@ module Osgi {
           $scope.bundles.push(obj);
         });
 
-        // Obtain start level information for all the bundles
-        for (var i = 0; i < $scope.bundles.length; i++) {
-          var b = $scope.bundles[i];
-          jolokia.request({
-            type: 'exec', mbean: getSelectionBundleMBean(workspace),
-            operation: 'getStartLevel(long)',
-            arguments: [$scope.bundles[i].Identifier]
-          }, onSuccess(function (bundle, last) {
-            return function (response) {
-              bundle.StartLevel = response.value;
-              if (last) {
-                Core.$apply($scope);
+        Core.$apply($scope);
+
+        // Obtain start level information for all the bundles, let's do this async though
+        setTimeout(() => {
+          for (var i = 0; i < $scope.bundles.length; i++) {
+            var b = $scope.bundles[i];
+            jolokia.request({
+              type: 'exec', mbean: getSelectionBundleMBean(workspace),
+              operation: 'getStartLevel(long)',
+              arguments: [$scope.bundles[i].Identifier]
+            }, onSuccess(function (bundle, last) {
+              return function (response) {
+                bundle.StartLevel = response.value;
+                if (last) {
+                  Core.$apply($scope);
+                }
               }
-            }
-          }(b, i === ($scope.bundles.length - 1))));
-        }
+            }(b, i === ($scope.bundles.length - 1))));
+          }
+        }, 500);
       }
     }
 
