@@ -1,13 +1,15 @@
 module SpringBatch {
     var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
+    var springBatchServerOriginHttp = 'localhost:8080/spring-batch-admin-sample/';
     var springBatchServerPath =springBatchServerOrigin+'jobs/:jobName';
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='/:jobInstanceId/executions.json';
     var paramsListPath = 'jobs/:jobName/:jobInstanceId';
 
-    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource) {
+    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $http) {
 
         var jobName = $routeParams.jobName;
+        $scope.jobName = $routeParams.jobName;
         var jobInstances = null;
         var jobList = $resource(proxyUrl+springBatchServerPath);
 
@@ -51,6 +53,30 @@ module SpringBatch {
             jobParams.add({name:'',value:''});
         };
 
+        $scope.runJob = function(jobName,jobParams){
+            console.info('-------------- job params------------------ '+JSON.stringify($scope.jobParams));
+
+
+            if(jobName && jobParams){
+                var postUrl = proxyUrl+springBatchServerOriginHttp+'jobs/'+jobName+'.json';
+                console.info('-------------- POST URL ------------------ '+postUrl);
+                $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                var params = '';
+                for(var param in jobParams){
+                    params=params+jobParams[param].name+'='+jobParams[param].value;
+                    if((param+1) != jobParams.length){params = params +',';}
+                }
+                params = encodeURIComponent(params);
+                $http.post(postUrl,'jobParameters='+params)
+                    .success(function(data){
+                        console.info('-------------- RUN CALLED SUCCESS------------------ '+data);
+                    })
+                    .error(function(data){
+                        console.info('-------------- RUN CALLED ERROR------------------ '+data);
+                    });
+            }
+
+        };
 
         jobList.get({'jobName':jobName+'.json'},function(data){
             for(var job in data.job.jobInstances){

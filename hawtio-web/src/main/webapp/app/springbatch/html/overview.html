@@ -21,7 +21,7 @@
                     <div class="dropdown">
                         <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Actions <b class="caret"></b></a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            ...
+                            <li> <a ng-click="runJob(jobName,jobParams)">Run Job</a> </li>
                         </ul>
                     </div>
                 </div>
@@ -103,8 +103,8 @@
                 <tr class="info" ng-repeat="param in jobParams">
                     <td>
                         <span class="pull-left">
-                            <input type="text" value="{{param.name}}">
-                            <input type="text" value="{{param.value}}">
+                            <input type="text" ng-model="param.name">
+                            <input type="text" ng-model="param.value">
                         </span>
                     </td>
                     <td>
