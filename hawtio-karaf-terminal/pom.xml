@@ -139,7 +139,6 @@
               javax.management,
               *;resolution:=optional
             </Import-Package>
-            <DynamicImport-Package>*</DynamicImport-Package>
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
 
