@@ -1,0 +1,23 @@
+<div class="row-fluid" ng-controller="Fabric.FabricApisController">
+
+  <div class="span12 page-padded">
+    <div class="section-header">
+
+      <div class="section-filter">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
+        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="">
+  <ul class="" ng-class="isInDashboardClass()">
+      <li class="" ng-repeat="api in apis | filter:searchText">
+        <a href="{{api.href}}">{{api.path}}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
