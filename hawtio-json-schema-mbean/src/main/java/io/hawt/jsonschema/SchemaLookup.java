@@ -7,6 +7,7 @@ import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +68,28 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     }
 
     protected Class getClass(String name) {
-        Bundle[] bundles = FrameworkUtil.getBundle(getClass()).getBundleContext().getBundles();
-        for (Bundle bundle : bundles) {
-            if (bundle.getState() >= Bundle.RESOLVED) {
-                try {
-                    return bundle.loadClass(name);
-                } catch (ClassNotFoundException e) {
-                    // Ignore
+        BundleContext bundleContext = null;
+        Bundle currentBundle = FrameworkUtil.getBundle(getClass());
+        if (currentBundle != null) {
+            bundleContext = currentBundle.getBundleContext();
+        }
+        if (bundleContext != null) {
+            Bundle[] bundles = bundleContext.getBundles();
+            for (Bundle bundle : bundles) {
+                if (bundle.getState() >= Bundle.RESOLVED) {
+                    try {
+                        return bundle.loadClass(name);
+                    } catch (ClassNotFoundException e) {
+                        // Ignore
+                    }
                 }
+            }
+        } else {
+            try {
+                return Class.forName(name);
+            } catch (ClassNotFoundException e) {
+                LOG.warn("Failed to find class for {}", name);
+                throw new RuntimeException(e);
             }
         }
         LOG.warn("Failed to find class for {}", name);
