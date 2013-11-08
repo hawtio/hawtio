@@ -33,6 +33,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+    </dependency>
+
     <!-- generated help mojo has a dependency to plexus-utils -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
