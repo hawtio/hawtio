@@ -23,10 +23,18 @@
     <fuse.osgi.import>
       io.hawt.jsonschema*;resolution:=optional,
       io.hawt.introspect*;resolution:=optional,
+      *
     </fuse.osgi.import>
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -122,8 +130,6 @@
 
             <Implementation-Title>HawtIO</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
-
-            <DynamicImport-Package>*</DynamicImport-Package>
           </instructions>
         </configuration>
       </plugin>

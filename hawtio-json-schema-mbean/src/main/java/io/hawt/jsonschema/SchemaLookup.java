@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,13 +67,19 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     }
 
     protected Class getClass(String name) {
-        // TODO - well, this relies on DynamicImport-Package to work, but seems simpler than mucking about with org.osgi.framework.wiring
-        try {
-            return Class.forName(name);
-        } catch (ClassNotFoundException e) {
-            LOG.warn("Failed to find class for {}", name);
-            throw new RuntimeException(e);
+        Bundle[] bundles = FrameworkUtil.getBundle(getClass()).getBundleContext().getBundles();
+        for (Bundle bundle : bundles) {
+            if (bundle.getState() >= Bundle.RESOLVED) {
+                try {
+                    return bundle.loadClass(name);
+                } catch (ClassNotFoundException e) {
+                    // Ignore
+                }
+            }
         }
+        LOG.warn("Failed to find class for {}", name);
+        ClassNotFoundException e = new ClassNotFoundException(name);
+        throw new RuntimeException(new ClassNotFoundException(name));
     }
 
     @Override
