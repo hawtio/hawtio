@@ -429,6 +429,44 @@
         </dependencies>
       </plugin>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>npm-install</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${npm-executable}</executable>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>typescript-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${grunt-executable}</executable>
+              <arguments>
+                <argument>--webapp_outdir</argument>
+                <argument>${webapp-outdir}</argument>
+                <argument>--webapp_port</argument>
+                <argument>${jettyPort}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
       <!--
       <plugin>
         <groupId>com.ppedregal.typescript</groupId>
@@ -600,57 +638,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>grunt</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>npm-install</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>${npm-executable}</executable>
-                  <arguments>
-                    <argument>install</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-              <execution>
-                <id>typescript-compile</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>${grunt-executable}</executable>
-                  <arguments>
-                    <argument>--webapp_outdir</argument>
-                    <argument>${webapp-outdir}</argument>
-                    <argument>--webapp_port</argument>
-                    <argument>${jettyPort}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>nogrunt</id>
-    </profile>
-
     <profile>
       <id>watch</id>
       <build>
