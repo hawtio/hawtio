@@ -1020,6 +1020,28 @@ module Core {
     );
   }
 
+
+  /**
+   * If a URL is external to the current web application, then
+   * replace the URL with the proxy servlet URL
+   */
+  export function useProxyIfExternal(connectUrl) {
+    var host = window.location.host;
+    if (!connectUrl.startsWith("http://" + host + "/") && !connectUrl.startsWith("https://" + host + "/")) {
+        // lets remove the http stuff
+        var idx = connectUrl.indexOf("://");
+        if (idx > 0) {
+          connectUrl = connectUrl.substring(idx + 3);
+        }
+        // lets replace the : with a /
+        connectUrl = connectUrl.replace(":", "/");
+        connectUrl = Core.trimLeading(connectUrl, "/");
+        connectUrl = Core.trimTrailing(connectUrl, "/");
+        connectUrl = url("/proxy/" + connectUrl);
+    }
+    return connectUrl;
+  }
+
   export function connectToServer(localStorage, options:ConnectToServerOptions) {
     var connectUrl = options.jolokiaUrl;
 
