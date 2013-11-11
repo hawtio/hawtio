@@ -1,0 +1,85 @@
+<div class="row-fluid" ng-controller="Wsdl.WsdlViewController">
+
+  <div class="span12 page-padded">
+    <div class="section-header">
+
+      <div class="section-filter">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchText">
+        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="log-main">
+    <div ng-class="isInDashboardClass()">
+      <ul>
+        <li ng-repeat="service in services  | filter:searchText">
+          <h3>{{service.name}}</h3>
+          <table>
+            <tr>
+              <td align="right">Namespace:</td>
+              <td>{{service.targetNamespace}}</td>
+            </tr>
+            <tr>
+              <td align="right">Port Name:</td>
+              <td>{{service.portName}}</td>
+            </tr>
+            <tr>
+              <td align="right">Path:</td>
+              <td><a href="{{service.pathHref}}">{{service.path}}</a></td>
+            </tr>
+          </table>
+
+          <ul>
+            <li ng-repeat="op in service.operations | filter:searchText">
+              <h4>{{op.name}}</h4>
+
+              <p>
+                {{op.description}}
+              </p>
+
+              <ul>
+                <li>
+                  <h5>Input Parameters</h5>
+                  <table>
+<!--
+                    <tr>
+                      <th>name</th>
+                      <th>type</th>
+                      <th>description</th>
+                    </tr>
+-->
+                    <tr ng-repeat="kind in op.inputs">
+                      <td>{{kind.name}}</td>
+                      <td>{{kind.type}}</td>
+                      <td>{{kind.description}}</td>
+                    </tr>
+                  </table>
+                </li>
+                <li>
+                  <h5>Return Value</h5>
+                  <table>
+<!--
+                    <tr>
+                      <th>name</th>
+                      <th>type</th>
+                      <th>description</th>
+                    </tr>
+-->
+                    <tr ng-repeat="kind in op.outputs">
+                      <td>{{kind.name}}</td>
+                      <td>{{kind.type}}</td>
+                      <td>{{kind.description}}</td>
+                    </tr>
+                  </table>
+                </li>
+              </ul>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
