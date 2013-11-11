@@ -148,21 +148,37 @@ module Osgi {
 
         // Obtain start level information for all the bundles, let's do this async though
         setTimeout(() => {
+
+          var requests = [];
+
           for (var i = 0; i < $scope.bundles.length; i++) {
             var b = $scope.bundles[i];
-            jolokia.request({
+            requests.push({
               type: 'exec', mbean: getSelectionBundleMBean(workspace),
               operation: 'getStartLevel(long)',
-              arguments: [$scope.bundles[i].Identifier]
-            }, onSuccess(function (bundle, last) {
-              return function (response) {
-                bundle.StartLevel = response.value;
-                if (last) {
-                  Core.$apply($scope);
-                }
-              }
-            }(b, i === ($scope.bundles.length - 1))));
+              arguments: [b.Identifier]
+            });
           }
+
+          var outstanding = requests.length;
+
+          jolokia.request(requests, onSuccess((response) => {
+            var id = response['request']['arguments'].first();
+            if (angular.isDefined(id)) {
+              var bundle = $scope.bundles[id];
+              if (bundle) {
+                log.debug("Setting bundle: ", bundle['Identifier'], " start level to: ", response['value']);
+                bundle['StartLevel'] = response['value'];
+              }
+            }
+            outstanding = outstanding - 1;
+            log.debug("oustanding responses: ", outstanding);
+            if (outstanding === 0) {
+              log.debug("Updating page...");
+              Core.$apply($scope);
+            }
+          }));
+
         }, 500);
       }
     }
