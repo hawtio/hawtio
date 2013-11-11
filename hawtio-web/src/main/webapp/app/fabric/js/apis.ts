@@ -30,7 +30,25 @@ module Fabric {
         if (services && angular.isArray(services) && value["id"]) {
           value["path"] = childPath;
           if (services.length) {
-            value["href"] = "/hawtio-swagger/index.html?baseUri=" + services[0];
+            var url = services[0];
+            value["endpoint"]  = url;
+
+            // lets use proxy if external URL
+            url = Core.useProxyIfExternal(url);
+            var apidocs = value["apidocs"];
+            var wadl = value["wadl"];
+            var wsdl = value["wsdl"];
+            var href: string = null;
+            if (apidocs) {
+              href = "/hawtio-swagger/index.html?baseUri=" + url + apidocs;
+            } else if (wadl) {
+              // TODO!
+            } else if (wsdl) {
+              href =  "#/wsdl/view?wsdl=" + encodeURIComponent(url + wsdl);
+            }
+            if (href) {
+              value["href"] = href;
+            }
           }
           array.push(value);
         } else {
