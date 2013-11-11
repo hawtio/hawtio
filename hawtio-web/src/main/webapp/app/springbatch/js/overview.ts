@@ -13,6 +13,18 @@ module SpringBatch {
         var jobInstances = null;
         var jobList = $resource(proxyUrl+springBatchServerPath);
 
+        $scope.alert = {
+            enable:false,
+            content:'',
+            type:'',
+            hide: function(){
+                this.enable = false;
+            },
+            show: function(){
+                this.enable = true;
+            }
+        };
+
         $scope.fetchAllExecutions = function(jobInstance){
             if(jobInstance != undefined){
                 var jobList = $resource(proxyUrl+springBatchServerPath+executionsListPath);
@@ -65,8 +77,23 @@ module SpringBatch {
                 params = encodeURIComponent(params);
                 $http.post(postUrl,'jobParameters='+params)
                     .success(function(data){
+                        if(data.jobExecution){
+                            $scope.alert.content='Job started successfully.';
+                            $scope.alert.type = 'alert-success';
+                            $scope.alert.show();
+                        }else if(data.errors){
+                            $scope.alert.content='';
+                            for(var message in data.errors){
+                                $scope.alert.content+=data.errors[message]+'\n';
+                                $scope.alert.type = 'alert-error';
+                                $scope.alert.show();
+                            }
+                        }
                     })
                     .error(function(data){
+                        $scope.alert.content='Count not start the job';
+                        $scope.alert.type = 'alert-error';
+                        $scope.alert.show();
                     });
             }
 

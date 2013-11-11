@@ -1,5 +1,13 @@
 <div ng-controller="SpringBatch.JobOverviewExecListController">
     <h3>Overview</h3>
+
+    <div class="control-group">
+        <div class="alert {{alert.type}}" ng-show="alert.enable">
+            <button type="button" class="close" ng-click="alert.hide()">×</button>
+            {{alert.content}}
+        </div>
+    </div>
+
     <div class="row-fluid">
         <div class="span9">
             <div class="row-fluid">
