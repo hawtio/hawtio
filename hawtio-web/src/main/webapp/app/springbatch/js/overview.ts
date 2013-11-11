@@ -54,12 +54,8 @@ module SpringBatch {
         };
 
         $scope.runJob = function(jobName,jobParams){
-            console.info('-------------- job params------------------ '+JSON.stringify($scope.jobParams));
-
-
             if(jobName && jobParams){
                 var postUrl = proxyUrl+springBatchServerOriginHttp+'jobs/'+jobName+'.json';
-                console.info('-------------- POST URL ------------------ '+postUrl);
                 $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
                 var params = '';
                 for(var param in jobParams){
@@ -69,10 +65,8 @@ module SpringBatch {
                 params = encodeURIComponent(params);
                 $http.post(postUrl,'jobParameters='+params)
                     .success(function(data){
-                        console.info('-------------- RUN CALLED SUCCESS------------------ '+data);
                     })
                     .error(function(data){
-                        console.info('-------------- RUN CALLED ERROR------------------ '+data);
                     });
             }
 
@@ -97,6 +91,9 @@ module SpringBatch {
             if($scope.jobInstance){
                 $scope.fetchAllExecutions($scope.jobInstance);
                 $scope.fetchParams(jobName,$scope.jobInstance.id);
+            }
+            else{
+                $scope.jobParams = new Array();
             }
         });
 
