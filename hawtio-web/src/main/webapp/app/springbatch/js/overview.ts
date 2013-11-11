@@ -154,23 +154,23 @@ module SpringBatch {
             jobList.get({'jobName':jobName+'.json'},function(data){
                 for(var job in data.job.jobInstances){
                     data.job.jobInstances[job].id=job;
-                    if(jobInstance && jobInstance.id && (job<jobInstance.id)){
+                    if(jobInstance && jobInstance.id && (parseInt(job)<parseInt(jobInstance.id))){
                         tempId=job;
                     }
                 }
                 if(jobInstance){
                     if((tempId == null) && jobInstance.id){tempId = jobInstance.id;}
                     $scope.jobInstance = data.job.jobInstances[tempId];
-                    $scope.fetchAllExecutions(data.job.jobInstances[tempId]);
-                    $scope.fetchParams(jobName,tempId);
                 }
                 else{
                     for(var job in data.job.jobInstances){
                         $scope.jobInstance = data.job.jobInstances[job];
-                        $scope.fetchAllExecutions(data.job.jobInstances[job]);
-                        $scope.fetchParams(jobName,job);
                         break;
                     }
+                }
+                if($scope.jobInstance){
+                    $scope.fetchAllExecutions($scope.jobInstance);
+                    $scope.fetchParams(jobName,$scope.jobInstance.id);
                 }
                 $scope.stepExecutionList = null;
             });
