@@ -13,7 +13,9 @@
         </thead>
         <tbody>
               <tr ng-repeat="job in jobList">
-                  <td>{{job.name}}</td>
+                  <td>
+                      <a ng-href="#/springbatch/jobs/{{job.name}}/executions">{{job.name}}</a>
+                  </td>
                   <td>{{job.resource}}</td>
                   <td>{{job.description}}</td>
                   <td>{{job.executionCount}}</td>
