@@ -180,7 +180,7 @@ module Fabric {
               content: "Runtime",
               title: "Manage your containers in this fabric",
               isValid: (workspace) => Fabric.isFMCContainer(workspace),
-              href: () => "#/fabric/activeProfiles",
+              href: () => "#/fabric/containers",
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
             workspace.topLevelTabs.push( {
