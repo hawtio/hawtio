@@ -83,6 +83,7 @@
     -->
     <fmc-version>${fabric-version}</fmc-version>
     <felix.gogo.version>0.10.0</felix.gogo.version>
+    <gitective-version>0.9.9</gitective-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
@@ -98,7 +99,10 @@
     <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
     <insight-log4j.version>${fabric-version}</insight-log4j.version>
     <jackson-version>2.1.4</jackson-version>
+    <javaewah-version>0.5.6</javaewah-version>
     <jaxb-version>2.1.13</jaxb-version>
+    <jcraft-version>0.1.46</jcraft-version>
+    <jcraft-jzlib-version>1.1.3</jcraft-jzlib-version>
 
     <!-- TODO lets use Jetty 7.x to avoid servlet 2.5 and 3.0 classpath clashes -->
 <!--

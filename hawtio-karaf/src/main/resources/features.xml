@@ -31,11 +31,7 @@
       hawtio.config.cloneOnStartup=true
     </config>
 
-    <bundle>fab:mvn:com.jcraft/jsch/0.1.44-1</bundle>
-    <bundle>fab:mvn:org.gitective/gitective-core/0.9.9</bundle>
-    <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit/${jgit-version}</bundle>
-    <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit.http.server/${jgit-version}</bundle>
-    <bundle>fab:mvn:io.hawt/hawtio-git/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-git/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
