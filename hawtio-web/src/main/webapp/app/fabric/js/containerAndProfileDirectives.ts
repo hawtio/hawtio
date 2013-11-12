@@ -184,6 +184,16 @@ module Fabric {
             newContainers = tmp;
           }
 
+          if (angular.isDefined($scope.atVersion)) {
+            newContainers = newContainers.filter((c) => { return c.versionId === $scope.atVersion; });
+          }
+
+          if (angular.isDefined($scope.withoutProfile)) {
+            newContainers = newContainers.filter((c) => {
+              return !c.profileIds.any((p) => { return p === $scope.withoutProfile; });
+            });
+          }
+
           newContainers.each((container) => {
             container.services = getServiceList(container);
             var c = $scope.containers.find((c) => { return c.id === container.id; });
@@ -379,9 +389,25 @@ module Fabric {
     }
 
     public link = ($scope, $element, $attrs) => {
-      if (angular.isDefined($attrs['showSelect'])) {
-        $scope.showSelect = Core.parseBooleanValue($attrs['showSelect']);
+      $scope.showSelect = Core.parseBooleanValue(UI.getIfSet('showSelect', $attrs, 'true'));
+
+      var atVersion = UI.getIfSet('atVersion', $attrs, null);
+      var withoutProfile = UI.getIfSet('withoutProfile', $attrs, null);
+
+      if (atVersion !== null) {
+        $scope.atVersion = $scope.$eval(atVersion);
       }
+
+      if (withoutProfile !== null) {
+        $scope.withoutProfile = $scope.$eval(withoutProfile);
+      }
+
+      log.debug("atVersion: ", $scope.atVersion);
+      log.debug("withoutProfile: ", $scope.withoutProfile);
+
+      log.debug("container list attributes: ", $attrs);
+
+
     };
 
   }

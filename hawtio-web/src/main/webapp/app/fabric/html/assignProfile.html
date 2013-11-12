@@ -1,0 +1,41 @@
+<div class="controller-section" ng-controller="Fabric.AssignProfileController">
+
+  <div class="row-fluid">
+    <div class="span12">
+      Select the containers to assign "{{profileId}}" from version "{{versionId}}" to:
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span6">
+
+      <div class="section-header">
+
+        <div class="selection-controls">
+          <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
+          <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
+        </div>
+
+        <div class="section-filter">
+          <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
+          <i class="icon-remove clickable" title="Clear Filter" ng-click="containerIdFilter = ''"></i>
+        </div>
+      </div>
+
+      <div fabric-container-list at-version="versionId" without-profile="profileId"></div>
+    </div>
+
+    <div class="span6">
+      <div class="row-fluid">
+        <h6>Selected Containers</h6>
+        <ul class="zebra-list">
+          <li ng-repeat="id in selectedContainerIds">{{id}}</li>
+        </ul>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>
