@@ -15,12 +15,18 @@ module SpringBatch {
         };
 
         $scope.addSpringBatchServerToGlobalList = function(){
-
-            console.info('host-----------'+$scope.host);
-            console.info('port-----------'+$scope.port);
-            console.info('path-----------'+$scope.path);
-            console.info('global -----------'+$rootScope.springBatchServers);
-            console.info('selected -----------'+$scope.springBatchServer);
+            var server = '';
+            server = $scope.host+'\\:'+$scope.port;
+            if($scope.path){
+                if($scope.path.charAt(0) != '/')
+                    server=server+'/'+$scope.path;
+                else
+                    server=server+$scope.path;
+            }
+            if(server.charAt(server.length-1) != '/'){
+                server=server+'/'
+            }
+            $rootScope.springBatchServers.add(server);
         };
     }
 }

@@ -36,7 +36,7 @@ module SpringBatch {
 
             $rootScope.springBatchServers = [
                 'localhost\\:8080/spring-batch-admin-sample/jobs.json',
-                'localhost\\:8181'
+                'localhost\\:8181/'
             ];
         })
 
