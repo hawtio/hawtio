@@ -360,6 +360,9 @@ module Jmx {
     }
 
     function unwrapObjectName(value) {
+      if (!angular.isObject(value)) {
+        return value;
+      }
       var keys = Object.keys(value);
       if (keys.length === 1 && keys[0] === "objectName") {
         return value["objectName"];
