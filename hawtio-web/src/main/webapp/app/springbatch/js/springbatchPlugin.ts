@@ -22,7 +22,7 @@ module SpringBatch {
             }
         }).
 
-        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
@@ -34,7 +34,10 @@ module SpringBatch {
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
-
+            $rootScope.springBatchServers = [
+                'localhost\\:8080/spring-batch-admin-sample/jobs.json',
+                'localhost\\:8181'
+            ];
         })
 
     hawtioPluginLoader.addModule(pluginName);
