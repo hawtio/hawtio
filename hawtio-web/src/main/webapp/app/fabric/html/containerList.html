@@ -1,6 +1,6 @@
 <div>
 
-  <div ng-repeat="container in containers">
+  <div ng-repeat="container in containers" ng-show="filterContainer(container)">
     <div class="box" ng-class="getSelectedClass(container)">
 
       <div class="box-left">

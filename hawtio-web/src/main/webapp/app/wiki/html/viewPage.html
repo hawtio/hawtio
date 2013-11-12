@@ -99,7 +99,7 @@
             </li>
             <li ng-repeat="childAction in childActions">
               <a ng-click="childAction.doAction()"
-                 title="((childAction.title))"
+                 title="{{childAction.title}}"
                  data-placement="bottom">
                 <i class="{{childAction.icon}}"></i> {{childAction.name}}</a>
             </li>

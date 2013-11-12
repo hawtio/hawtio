@@ -1,12 +1,10 @@
 module Fabric {
 
-  export function ContainersController($scope) {
+  export function ContainersController($scope, $location, jolokia, workspace) {
+
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.containerIdFilter = '';
-
-    $scope.getFilteredName = (item) => {
-      return item.versionId + " / " + item.id;
-    }
 
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/containers";
@@ -17,13 +15,6 @@ module Fabric {
           "&href=" + encodeURIComponent(href) +
           "&size=" + encodeURIComponent(size) +
           "&title=" + encodeURIComponent(title);
-    };
-
-    $scope.filterContainer = (container) => {
-      if (!$scope.getFilteredName(container).has($scope.containerIdFilter)) {
-        return false;
-      }
-      return true;
     };
 
     $scope.$watch('containers', (oldValue, newValue) => {
