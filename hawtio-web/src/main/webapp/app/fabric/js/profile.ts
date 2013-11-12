@@ -54,11 +54,21 @@ module Fabric {
       });
       actions.push({
         doAction: () => {
+          $location.url('/fabric/assignProfile').search({
+            vid: $scope.versionId,
+            pid: $scope.profileId
+          }); },
+        title: "Assign profile to existing containers",
+        icon: "icon-truck",
+        name: "Assign to Container"
+      });
+      actions.push({
+        doAction: () => {
           $location.url('/fabric/containers/createContainer').search({
           versionId: $scope.versionId,
           profileIds: $scope.profileId
         }); },
-        title: "Create Container",
+        title: "Create a new container with this profile",
         icon: "icon-truck",
         name: "Create Container"
       });

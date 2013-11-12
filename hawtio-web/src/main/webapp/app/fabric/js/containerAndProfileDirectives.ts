@@ -127,6 +127,17 @@ module Fabric {
         }
       };
 
+      $scope.getFilteredName = (item) => {
+        return item.versionId + " / " + item.id;
+      };
+
+      $scope.filterContainer = (container) => {
+        if (!$scope.getFilteredName(container).has($scope.containerIdFilter)) {
+          return false;
+        }
+        return true;
+      };
+
       $scope.$watch('editRequirements.addDependentProfileDialogShow', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           if (newValue) {
