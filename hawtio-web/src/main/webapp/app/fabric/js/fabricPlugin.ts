@@ -15,6 +15,7 @@ module Fabric {
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
             when('/fabric/containers', {templateUrl: templatePath + 'containers.html'}).
             when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html'}).
+            when('/fabric/assignProfile', {templateUrl: templatePath + 'assignProfile.html'}).
             when('/fabric/activeProfiles', {templateUrl: templatePath + 'activeProfiles.html'}).
             //when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
             when('/wiki/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
