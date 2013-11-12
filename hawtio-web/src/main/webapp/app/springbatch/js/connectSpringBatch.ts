@@ -6,12 +6,9 @@ module SpringBatch {
         $scope.port= 8080;
 
         $scope.connectSpringBatch = function(){
-
-            console.info('host-----------'+$scope.host);
-            console.info('port-----------'+$scope.port);
-            console.info('path-----------'+$scope.path);
-            console.info('global -----------'+$rootScope.springBatchServers);
-            console.info('selected -----------'+$scope.springBatchServer);
+            if($scope.selectedSpringBatchServer){
+                $rootScope.springBatchServer=$scope.selectedSpringBatchServer;
+            }
         };
 
         $scope.addSpringBatchServerToGlobalList = function(){

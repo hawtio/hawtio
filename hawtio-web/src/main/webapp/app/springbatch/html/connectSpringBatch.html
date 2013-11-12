@@ -5,7 +5,7 @@
                 <label class="control-label" for="springBatchServer" title="List of all the Spring Batch servers available">SpringBatch Servers</label>
 
                 <div class="controls">
-                    <select required="required" id="springBatchServer" ng-model="springBatchServer" name="springBatchServer" class="">
+                    <select required="required" id="springBatchServer" ng-model="selectedSpringBatchServer" name="springBatchServer" class="">
                         <option value="">Select a server</option>
                         <option ng-repeat="server in springBatchServers" value="{{server}}">{{server}}</option>
                     </select>

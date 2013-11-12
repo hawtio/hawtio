@@ -35,10 +35,12 @@ module SpringBatch {
             });
 
             $rootScope.springBatchServers = [
-                'localhost\\:8080/spring-batch-admin-sample/jobs.json',
+                'localhost\\:8080/spring-batch-admin-sample/',
                 'localhost\\:8181/'
             ];
-        })
+
+            $rootScope.springBatchServer = $rootScope.springBatchServers[0];
+        });
 
     hawtioPluginLoader.addModule(pluginName);
 }
