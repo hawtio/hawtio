@@ -4,7 +4,7 @@ module Perspective {
     fabric: {
       label: "Fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
-      lastPage: "#/fabric/activeProfiles",
+      lastPage: "#/fabric/containers",
       topLevelTabs: {
         includes: [
           {

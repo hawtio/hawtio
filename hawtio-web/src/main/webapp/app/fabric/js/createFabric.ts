@@ -42,7 +42,7 @@ module Fabric {
           method: 'post',
           success: (response) => {
             notification('success', "Created fabric!");
-            $location.url("/fabric/activeProfiles");
+            $location.url("/fabric/containers");
             Core.$apply($scope);
           },
           error: (response) => {
