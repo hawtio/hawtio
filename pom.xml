@@ -115,7 +115,7 @@
 
     <jgit-version>3.0.0.201306101825-r</jgit-version>
     <jline.version>2.11</jline.version>
-    <jolokia-version>1.1.4</jolokia-version>
+    <jolokia-version>1.1.5</jolokia-version>
     <junit-version>4.11</junit-version>
     <karaf-version>2.3.0.${perfectus-build}</karaf-version>
     <kotlin-version>0.4.68</kotlin-version>
