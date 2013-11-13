@@ -17,6 +17,12 @@ public class PluginContextListener implements ServletContextListener {
     HawtioPlugin plugin;
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+
+        /**
+         * Rather than using blueprint we'll just initialize our plugin MBean
+         * right here using the HawtioPlugin helper class
+         */
+
         plugin = new HawtioPlugin();
         plugin.setContext("/hawtio/custom-perspective");
         plugin.setName("custom-perspective");
