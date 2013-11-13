@@ -1,11 +1,13 @@
 module SpringBatch {
-    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var springBatchServerPath =springBatchServerOrigin+'jobs/:jobName';
-    var proxyUrl = '/hawtio/proxy/';
-    var executionsListPath='/:jobInstanceId/executions.json';
-    var paramsListPath = 'jobs/:jobName/:jobInstanceId';
 
-    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource) {
+
+    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $rootScope) {
+
+        var springBatchServerOrigin = $rootScope.springBatchServer;
+        var springBatchServerPath = springBatchServerOrigin+'jobs/:jobName';
+        var proxyUrl = $rootScope.proxyUrl;
+        var executionsListPath='/:jobInstanceId/executions.json';
+        var paramsListPath = 'jobs/:jobName/:jobInstanceId';
 
         var jobName = $routeParams.jobName;
         var jobInstances = null;
