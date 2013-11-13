@@ -168,14 +168,34 @@ The following plugins are not intended to be used by users of hawtio, but are th
 <table class="table">
   <tr>
     <th>Plugin</th>
-    <th>Source</th>
     <th>Description</th>
+    <th>Source</th>
   </tr>
   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/simple-plugin">simple-plugin</a></td>
+    <td>A very simple hello world plugin implemented as a separate plugin</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/simple-plugin">simple-plugin</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/custom-perspective">custom-perspective</a></td>
+    <td>A simple plugin that edits hawtio's default perspective definition, used to show or hide tabs and group tabs into different perspectives, implemented as a separate plugin</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/custom-perspective">custom-perspective</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-karaf-terminal">hawtio-karaf-terminal</a></td>
+    <td>A terminal plugin brought over from Apache Felix that uses Ajax term in the front-end to implement a terminal in hawtio when it's running in an Apache Karaf based container.</td>
+    <td><a href=https://github.com/hawtio/hawtio/tree/master/hawtio-karaf-terminal">hawtio-karaf-terminal</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/src/main/webapp/js/kibana3Plugin.js">insight-kibana3</a></td>
+    <td>A hawtio plugin that embeds the kibana3 frontend for Elastic Search into hawtio.  Source link is to the plugin definition, had to tell hawtio where to find all of kibana3's javascript files in <a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/pom.xml">the pom.xml</a></td>
+    <td><a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/src/main/webapp/js/kibana3Plugin.js">insight-kibana3</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-eshead/src/main/webapp/hawtio">insight-eshead</a></td>
+    <td>A plugin that embeds the ESHead elastic search frontend into hawtio, source link points to the hawtio specific stuff</td>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-eshead/src/main/webapp/hawtio">insight-eshead</a></td>
   </tr>
 </table>
 
-If you create a new external plugin to hawtio please fork this repository and update this file to add a link to your plugin and [submit a pull request](http://hawt.io/contributing/index.html).
+If you create a new external plugin to hawtio please fork this repository, update this file to add a link to your plugin and [submit a pull request](http://hawt.io/contributing/index.html).

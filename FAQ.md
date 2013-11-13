@@ -76,9 +76,14 @@ Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](htt
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
 
-### Problems using hawtio
+### Problems/General Questions about using hawtio
 
-Questions relating to errors you get while using hawtio:
+Questions relating to errors you get while using hawtio or other general questions:
+
+#### How can I hide or move tabs to different perspectives?
+
+An easy way is to use a plugin to reconfigure the default perspective definition.  Have a look at the [custom-perspective](https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/custom-perspective) for a plugin-based solution.
+
 
 #### Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
 
