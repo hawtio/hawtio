@@ -113,7 +113,9 @@ module Wiki {
         var formPath = path + ".form";
         var children = $scope.children;
         if (children) {
-          var formFile = children.find({path: formPath});
+          var formFile = children.find((child) => {
+            return child['path'] === formPath;
+          });
           if (formFile) {
             prefix = start + "/formTable";
             postFix = "?form=" + formPath;
@@ -493,7 +495,7 @@ module Wiki {
     function onBranches(response) {
       $scope.branches = response;
       // default the branch name if we have 'master'
-      if (!$scope.branch && $scope.branches.find("master")) {
+      if (!$scope.branch && $scope.branches.find((branch) => { return branch === "master"; })) {
         $scope.branch = "master";
       }
     }
