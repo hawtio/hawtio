@@ -34,12 +34,12 @@ module SpringBatch {
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
-            $rootScope.springBatchServers = [
+            $rootScope.springBatchServerList = [
                 'localhost\\:8080/spring-batch-admin-sample/',
                 'localhost\\:8181/'
             ];
             $rootScope.proxyUrl = '/hawtio/proxy/';
-            $rootScope.springBatchServer = $rootScope.springBatchServers[0];
+            $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
         });
 
     hawtioPluginLoader.addModule(pluginName);

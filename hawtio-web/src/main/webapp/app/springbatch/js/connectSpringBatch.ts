@@ -23,7 +23,7 @@ module SpringBatch {
             if(server.charAt(server.length-1) != '/'){
                 server=server+'/'
             }
-            $rootScope.springBatchServers.add(server);
+            $rootScope.springBatchServerList.add(server);
         };
     }
 }
