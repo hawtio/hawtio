@@ -1,5 +1,5 @@
 module SpringBatch {
-    export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope) {
+    export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource) {
         console.info('hello connect-----------');
 
         $scope.host= 'localhost';

@@ -22,7 +22,7 @@ module SpringBatch {
             }
         }).
 
-        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope) => {
+        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope, $resource ) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
@@ -34,12 +34,19 @@ module SpringBatch {
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
-            $rootScope.springBatchServerList = [
-                'localhost\\:8080/spring-batch-admin-sample/',
-                'localhost\\:8181/'
-            ];
+            var serverListRes = $resource('/hawtio/springBatch');
+            serverListRes.get(function(data){
+                console.info('=============='+JSON.stringify(data));
+                $rootScope.springBatchServerList = data.springBatchServerList || [
+                    'localhost\\:8080/spring-batch-admin-sample/',
+                    'localhost\\:8181/'
+                ];
+
+                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
+            });
+
+
             $rootScope.proxyUrl = '/hawtio/proxy/';
-            $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
         });
 
     hawtioPluginLoader.addModule(pluginName);

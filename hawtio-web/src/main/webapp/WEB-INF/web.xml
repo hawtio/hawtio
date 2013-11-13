@@ -78,6 +78,16 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
+    <servlet>
+        <servlet-name>springBatch</servlet-name>
+        <servlet-class>io.hawt.web.SpringBatchConfigServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springBatch</servlet-name>
+        <url-pattern>/springBatch/*</url-pattern>
+    </servlet-mapping>
+    
   <servlet>
     <servlet-name>file-upload</servlet-name>
     <servlet-class>io.hawt.web.UploadServlet</servlet-class>
