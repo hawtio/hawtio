@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+	  <groupId>io.hawt</groupId>
+	  <artifactId>hawtio-plugin-examples</artifactId>
+    <version>1.2-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>custom-perspective</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Example Custom Perspective plugin</description>
+
+  <properties>
+    <!-- filtered plugin properties -->
+    <plugin-context>/hawtio/custom-perspective</plugin-context>
+    <plugin-name>${project.artifactId}</plugin-name>
+    <plugin-domain />
+    <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
+
+    <fuse.osgi.import>
+      javax.servlet.*,
+      org.slf4j;resolution:=optional,
+      !org.slf4j.impl,
+      *;resolution:=optional
+    </fuse.osgi.import>
+    <fuse.osgi.export/>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-plugin-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <manifestLocation>${webapp-outdir}/META-INF</manifestLocation>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${plugin-context}</Webapp-Context>
+            <Web-ContextPath>${plugin-context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+            <!--
+            <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
+            <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
+            -->
+
+            <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war-plugin-version}</version>
+        <configuration>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <directory>src/main/resources</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
