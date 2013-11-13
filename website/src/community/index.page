@@ -30,7 +30,6 @@ title: join the hawtio community!
 Its pretty low volume though as we love <a href="${project_issue_url}">github issues</a></p>
 
 <p><a class="btn btn-primary btn-large" href="https://groups.google.com/forum/#!forum/hawtio">hawtio mailing list</a></p>
-
 </div>
 
 <div id="section">
@@ -38,6 +37,13 @@ Its pretty low volume though as we love <a href="${project_issue_url}">github is
 <p>We invite you to join us in the <b>#hawtio</b> channel on <b>irc.freenode.net</b> to chat about hawtio</p>
 
 <p>This channel is logged to <a class="btn" href="http://transcripts.jboss.org/channel/irc.freenode.org/%23hawtio/2013/index.html">transcripts.jboss.org</a> by JBossBot. The JBossBot is also present to expand issue numbers from the issue tracker.</p>
+</div>
+
+<div id="section">
+<h2 class="h2"><img style="max-width: 48px; max-height: 48px;" src="../images/stackoverflow.png">Stack Overflow</h2>
+<p>We also keep an eye out on Stack Overflow for questions which makes it really easy to find answers to questions and commonly found problems.  Though if you're running into an issue please use our <a href="${project_issue_url}">issue tracker</a> instead.</p>
+
+<p><a class="btn btn-primary btn-large" href="http://stackoverflow.com/questions/tagged/hawtio">Stack Overflow</a></p>
 </div>
 
 <div id="section">
