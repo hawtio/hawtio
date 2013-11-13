@@ -38,7 +38,7 @@ module SpringBatch {
                 'localhost\\:8080/spring-batch-admin-sample/',
                 'localhost\\:8181/'
             ];
-
+            $rootScope.proxyUrl = '/hawtio/proxy/';
             $rootScope.springBatchServer = $rootScope.springBatchServers[0];
         });
 
