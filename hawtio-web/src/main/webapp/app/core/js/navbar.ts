@@ -144,7 +144,9 @@ module Core {
       if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
         $scope.perspectiveId = currentId;
         $scope.perspectives = perspectives;
-        $scope.perspectiveDetails.perspective = $scope.perspectives.find({id: currentId});
+        $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
+          return p['id'] === currentId;
+        });
         console.log("Current perspective ID: " + currentId);
         $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
       }
