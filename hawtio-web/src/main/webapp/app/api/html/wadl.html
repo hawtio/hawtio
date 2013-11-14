@@ -117,63 +117,65 @@
                         </tr>
                         </tbody>
                       </table>
+                  </div>
 
-                      <div class="requests" ng-show="method.request.length">
-                        <h4>Request</h4>
-                        <ul>
-                          <li class="request" ng-repeat="request in method.request">
-                            <div ng-repeat="rep in request.representation">
-                              {{rep.mediaType}}
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
+                  <div class="requests" ng-show="method.request.length">
+                    <h4>Request</h4>
+                    <ul>
+                      <li class="request" ng-repeat="request in method.request">
+                        <div ng-repeat="rep in request.representation">
+                          {{rep.mediaType}}
+                          {{rep.element}}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
 
-                      <div class="responses" ng-show="method.response.length">
-                        <h4>Response</h4>
-                        <ul>
-                          <li class="response" ng-repeat="response in method.response">
-                            <div ng-repeat="rep in response.representation">
-                              {{rep.mediaType}}
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
+                  <div class="responses" ng-show="method.response.length">
+                    <h4>Response</h4>
+                    <ul>
+                      <li class="response" ng-repeat="response in method.response">
+                        <div ng-repeat="rep in response.representation">
+                          {{rep.mediaType}}
+                          {{rep.element}}
+                        </div>
+                      </li>
+                    </ul>
 
-<!--
-                      TODO
+                    <!--
+                                          TODO
 
-                      <div class="errorCodes">
-                        <h4>Error Status Codes</h4>
-                        <table class="fullwidth">
-                          <thead>
-                          <tr>
-                            <th>HTTP Status Code</th>
-                            <th>Reason</th>
-                          </tr>
-                          </thead>
-                          <tbody class="operation-status">
+                                          <div class="errorCodes">
+                                            <h4>Error Status Codes</h4>
+                                            <table class="fullwidth">
+                                              <thead>
+                                              <tr>
+                                                <th>HTTP Status Code</th>
+                                                <th>Reason</th>
+                                              </tr>
+                                              </thead>
+                                              <tbody class="operation-status">
 
-                          <tr>
-                            <td width="15%" class="code">400</td>
-                            <td>Invalid username supplied</td>
-                          </tr>
-                          <tr>
-                            <td width="15%" class="code">404</td>
-                            <td>User not found</td>
-                          </tr>
-                          </tbody>
-                        </table>
-                      </div>
+                                              <tr>
+                                                <td width="15%" class="code">400</td>
+                                                <td>Invalid username supplied</td>
+                                              </tr>
+                                              <tr>
+                                                <td width="15%" class="code">404</td>
+                                                <td>User not found</td>
+                                              </tr>
+                                              </tbody>
+                                            </table>
+                                          </div>
 
 
-                      <div class="sandbox_header">
-                        <input class="submit" name="commit" type="button" value="Try it out!">
-                        <a href="#" class="response_hider" style="display:none">Hide Response</a>
-                        <img alt="Throbber" class="response_throbber" src="images/throbber.gif" style="display:none">
-                      </div>
-                    </form>
--->
+                                          <div class="sandbox_header">
+                                            <input class="submit" name="commit" type="button" value="Try it out!">
+                                            <a href="#" class="response_hider" style="display:none">Hide Response</a>
+                                            <img alt="Throbber" class="response_throbber" src="images/throbber.gif" style="display:none">
+                                          </div>
+                                        </form>
+                    -->
                   </div>
                 </div>
               </div>
