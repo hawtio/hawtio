@@ -42,9 +42,9 @@ module Fabric {
             if (apidocs) {
               href = "/hawtio-swagger/index.html?baseUri=" + url + apidocs;
             } else if (wadl) {
-              // TODO!
+              href =  "#/api/wadl?wadl=" + encodeURIComponent(url + wadl);
             } else if (wsdl) {
-              href =  "#/wsdl/view?wsdl=" + encodeURIComponent(url + wsdl);
+              href =  "#/api/wsdl?wsdl=" + encodeURIComponent(url + wsdl);
             }
             if (href) {
               value["href"] = href;

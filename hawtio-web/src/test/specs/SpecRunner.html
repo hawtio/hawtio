@@ -117,6 +117,7 @@
 
 
   <!-- include spec files here... -->
+  <script type="text/javascript" src="spec/ApiSpec.js"></script>
   <script type="text/javascript" src="spec/FabricSpec.js"></script>
   <script type="text/javascript" src="spec/DozerSpec.js"></script>
   <script type="text/javascript" src="spec/CamelSpec.js"></script>
@@ -163,5 +164,87 @@
 </head>
 
 <body>
+  <!-- TODO dirty hack here to include the wadl test data! -->
+  <div id="wadlDoc" style="visibility: hidden">
+    <application xmlns="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <grammars>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified"
+                   elementFormDefault="unqualified">
+          <xs:element name="Customer" type="customer"/>
+          <xs:element name="Order" type="order"/>
+          <xs:complexType name="customer">
+            <xs:sequence>
+              <xs:element name="id" type="xs:long"/>
+              <xs:element minOccurs="0" name="name" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="order">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:schema>
+      </grammars>
+      <resources base="http://localhost:8181/cxf/crm">
+        <resource path="/customerservice/">
+          <resource path="customers/">
+            <method name="POST">
+              <request>
+                <representation mediaType="application/octet-stream"/>
+              </request>
+              <response>
+                <representation mediaType="application/octet-stream"/>
+              </response>
+            </method>
+            <method name="PUT">
+              <request>
+                <representation mediaType="application/octet-stream"/>
+              </request>
+              <response>
+                <representation mediaType="application/octet-stream"/>
+              </response>
+            </method>
+          </resource>
+          <resource path="customers/{id}/">
+            <param name="id" style="template" type="xs:string"/>
+            <method name="DELETE">
+              <request></request>
+              <response>
+                <representation mediaType="application/octet-stream"/>
+              </response>
+            </method>
+            <method name="GET">
+              <request></request>
+              <response>
+                <representation mediaType="application/xml"/>
+              </response>
+            </method>
+          </resource>
+          <!-- Dynamic subresource -->
+          <resource path="/orders/{orderId}/">
+            <param name="orderId" style="template" type="xs:string"/>
+          </resource>
+        </resource>
+        <resource path="/api-docs">
+          <method name="GET">
+            <request></request>
+            <response>
+              <representation mediaType="application/json"/>
+            </response>
+          </method>
+          <resource path="/{route: .+}">
+            <param name="route" style="template" type="xs:string"/>
+            <method name="GET">
+              <request></request>
+              <response>
+                <representation mediaType="application/json"/>
+              </response>
+            </method>
+          </resource>
+        </resource>
+      </resources>
+    </application>
+  </div>
 </body>
 </html>

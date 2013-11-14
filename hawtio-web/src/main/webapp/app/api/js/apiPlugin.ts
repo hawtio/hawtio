@@ -1,13 +1,14 @@
-module Wsdl {
-  var pluginName = 'wsdl';
-  angular.module(pluginName, ['bootstrap', 'hawtioCore']).
+module API {
+  var pluginName = 'api';
+  angular.module(pluginName, ['bootstrap', 'hawtioCore', 'hawtio-ui']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/wsdl/view', {templateUrl: 'app/wsdl/html/view.html'})
+                    when('/api/wsdl', {templateUrl: 'app/api/html/wsdl.html'}).
+                    when('/api/wadl', {templateUrl: 'app/api/html/wadl.html'});
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
-            viewRegistry['wsdl'] = layoutFull;
+            viewRegistry['api'] = layoutFull;
 /*
             helpRegistry.addUserDoc('log', 'app/wsdl/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
