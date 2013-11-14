@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="app/api/css/style.css" type="text/css"/>
+
 <div class="row-fluid" ng-controller="API.WsdlViewController">
 
   <div class="span12 page-padded">
@@ -13,71 +15,133 @@
 
   <div class="log-main">
     <div ng-class="isInDashboardClass()">
-      <ul>
-        <li ng-repeat="service in services  | filter:searchText">
-          <h3>{{service.name}}</h3>
-          <table>
-            <tr>
-              <td align="right">Namespace:</td>
-              <td>{{service.targetNamespace}}</td>
-            </tr>
-            <tr>
-              <td align="right">Port Name:</td>
-              <td>{{service.portName}}</td>
-            </tr>
-            <tr>
-              <td align="right">Path:</td>
-              <td><a href="{{service.pathHref}}">{{service.path}}</a></td>
-            </tr>
-          </table>
 
-          <ul>
-            <li ng-repeat="op in service.operations | filter:searchText">
-              <h4>{{op.name}}</h4>
+      <div class="swagger-ui-wrap">
+        <div class="info">
+          <div ng-repeat="resource in services | filter:searchText">
+            <ul class="resources">
+              <li class="resource active">
+                <div class="heading">
+                  <h2>
+                    <a ng-click="toggleResourcesFor(resource)">{{resource.name}}</a>
+                    : {{resource.targetNamespace}}
+                  </h2>
+                  <!-- TODO
+                  {{service.portName}}
+                   <a href="{{service.pathHref}}">{{service.path}}</a>
+                  -->
 
-              <p>
-                {{op.description}}
-              </p>
+                  <ul class="options">
+                    <li>
+                      <a ng-click="showHide(resource)">Show/Hide</a>
+                    </li>
+                    <li>
+                      <a ng-click="showOperations(resource)">
+                        List Operations
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="showOperations(resource)">
+                        Expand Operations
+                      </a>
+                    </li>
+                    <li>
+                      <a target="raw" href="{{url}}">Raw</a>
+                    </li>
+                  </ul>
+                </div>
 
-              <ul>
-                <li>
-                  <h5>Input Parameters</h5>
-                  <table>
-<!--
-                    <tr>
-                      <th>name</th>
-                      <th>type</th>
-                      <th>description</th>
-                    </tr>
--->
-                    <tr ng-repeat="kind in op.inputs">
-                      <td>{{kind.name}}</td>
-                      <td>{{kind.type}}</td>
-                      <td>{{kind.description}}</td>
-                    </tr>
-                  </table>
-                </li>
-                <li>
-                  <h5>Return Value</h5>
-                  <table>
-<!--
-                    <tr>
-                      <th>name</th>
-                      <th>type</th>
-                      <th>description</th>
-                    </tr>
--->
-                    <tr ng-repeat="kind in op.outputs">
-                      <td>{{kind.name}}</td>
-                      <td>{{kind.type}}</td>
-                      <td>{{kind.description}}</td>
-                    </tr>
-                  </table>
-                </li>
-              </ul>
-          </ul>
-        </li>
-      </ul>
+                <ul class="endpoints" style="display: block;">
+                  <li class="endpoint">
+                    <ul class="operations">
+                      <li ng-repeat="method in resource.operations | filter:searchText" class="get operation">
+                        <div class="expandable" model="method">
+                          <div class="heading title">
+                            <h3>
+                              <span class="http_method">{{method.name}}</span>
+                                <span class="path">
+                                  <!--
+                                  TODO {{resource.path}}
+                                  -->
+                                </span>
+                            </h3>
+                            <ul class="options">
+                              <li>
+                                <a href="#" class="toggleOperation">{{method.description}}</a>
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div class="content expandable-body">
+                            <div class="inputs" ng-show="method.inputs.length">
+                              <form accept-charset="UTF-8" class="sandbox">
+                                <div style="margin:0;padding:0;display:inline"></div>
+
+                                <h4>Inputs</h4>
+                                <table class="fullwidth">
+                                  <thead>
+                                  <tr>
+                                    <th style="width: 100px; max-width: 100px">Name</th>
+                                    <th style="width: 310px; max-width: 310px">Type</th>
+                                    <th style="width: 200px; max-width: 200px">Description</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody class="operation-params">
+
+                                  <tr ng-repeat="kind in method.inputs">
+                                    <td>{{kind.name}}</td>
+                                    <td>{{kind.type}}</td>
+                                    <td>{{kind.description}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </form>
+                            </div>
+
+                            <div class="outputs" ng-show="method.outputs.length">
+                              <form accept-charset="UTF-8" class="sandbox">
+                                <div style="margin:0;padding:0;display:inline"></div>
+
+                                <h4>Return Value</h4>
+                                <table class="fullwidth">
+                                  <thead>
+                                  <tr>
+                                    <th style="width: 100px; max-width: 100px">Name</th>
+                                    <th style="width: 310px; max-width: 310px">Type</th>
+                                    <th style="width: 200px; max-width: 200px">Description</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody class="operation-params">
+
+                                  <tr ng-repeat="kind in method.outputs">
+                                    <td>{{kind.name}}</td>
+                                    <td>{{kind.type}}</td>
+                                    <td>{{kind.description}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">
+          <br>
+          <br>
+          <h4 style="color: #999">[ <span style="font-variant: small-caps">base url</span>: {{root.base}},
+            <!--
+                            <span style="font-variant: small-caps">api version</span>: 1.0.0
+            -->
+            ]</h4>
+        </div>
+      </div>
     </div>
   </div>
 </div>
