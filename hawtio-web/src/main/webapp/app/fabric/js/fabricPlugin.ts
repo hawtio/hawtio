@@ -26,6 +26,11 @@ module Fabric {
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
             when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/api', { templateUrl: templatePath + 'apis.html' }).
+
+            // expose the API pages within the fabric namespace
+            when('/fabric/api/wsdl', {templateUrl: 'app/api/html/wsdl.html'}).
+            when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
+
             when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
 
