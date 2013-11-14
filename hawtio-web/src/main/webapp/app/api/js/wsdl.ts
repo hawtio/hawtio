@@ -1,24 +1,14 @@
-module Wsdl {
+module API {
 
   export function WsdlViewController($scope, $location, jolokia) {
 
     $scope.url = $location.search()["wsdl"];
-    var log:Logging.Logger = Logger.get("Wsdl");
+    var log:Logging.Logger = Logger.get("API");
     var wsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
 
-    if ($scope.url) {
-      log.info("Loading wsdl: " + $scope.url);
-
-      $.ajax({
-        type: "GET",
-        url: $scope.url,
-        dataType: "xml",
-        success: onWsdl
-      });
-    }
+    loadXml($scope.url, onWsdl);
 
     function onWsdl(response) {
-      log.info("Got WSDL: " + response);
       $scope.services = [];
       var root = response.documentElement;
       var targetNamespace = root ? root.getAttribute("targetNamespace") : null;
