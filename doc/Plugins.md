@@ -21,9 +21,19 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/activemq">activemq</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/apollo/">apollo</a></td>
+    <td>Adds support for <a href="http://activemq.apache.org/apollo/">Apache ActiveMQ Apollo</a>. Lets you browse broker statistics, create queues/topcs, browse queues, send messages and visualise subscription and network information</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/apollo">apollo</a></td>
+  </tr>
+  <tr>
     <td><a href="http://hawt.io/plugins/camel/">camel</a></td>
     <td>Adds support for <a href="http://camel.apache.org/">Apache Camel</a>. Lets you browse CamelContexts, routes, endpoints. Visualise running routes and their metrics. Create endpoints. Send messages. Trace message flows, as well profile routes to identifiy which parts runs fast or slow.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/camel">camel</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/camin/">camin</a></td>
+    <td>The camin plugin is used to render Gantt sequence diagrams of <a href="http://camel.apache.org/">Apache Camel</a> routes.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/camin">camin</a></td>
   </tr>
   <tr>
     <td>core</td>
@@ -41,6 +51,12 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="http://hawt.io/plugins/dozer/">dozer</a></td>
     <td>The Dozer plugin adds editing support for the <a href="http://dozer.sourceforge.net/">Dozer data mapping library</a> which can be used with <a href="http://camel.apache.org/">Apache Camel</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/dozer">dozer</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/elasticsearch/">elasticsearch</a></td>
+    <td>The elasticsearch plugin allows to connect to an <a href="http://www.elasticsearch.org/">ElasticSearch</a> server and perform queries to retrieve
+documents from indices.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/elasticsearch">elasticsearch</a></td>
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/fabric/">fabric</a></td>
@@ -66,6 +82,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/infinispan">infinispan</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/insight/">insight</a></td>
+    <td>This plugin provides a number of views for provising insight into a <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a> using <a href="http://www.elasticsearch.org/">ElasticSearch</a> to query data for logs, metrics or historic Camel messages.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/insight">insight</a></td>
+  </tr>
+  <tr>
     <td>jboss</td>
     <td>Adds support for <a href="http://www.jboss.org/jbossas">JBoss Application Server</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jboss">jboss</a></td>
@@ -84,6 +105,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td>jmx</td>
     <td>Provides the core <a href="http://www.oracle.com/technetwork/java/javase/tech/javamanagement-140525.html">JMX</a> support for interacting with MBeans, viewing real time attributes, charting and invoking operations.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jmx">jmx</a></td>
+  </tr>
+  <tr>
+    <td>jvm</td>
+    <td>The jvm plugin allows you to connect to local or remote JVMs, and as well install the Jolokia JVM agent into the JVMs.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jvm">jvm</a></td>
   </tr>
   <tr>
     <td>karaf</td>
@@ -125,6 +151,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td>Provides a git based wiki for viewing, creating and editing text files (Markdown, HTML, XML, property files, JSON) which are then versioned and stored in a git repository</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/wiki">wiki</a></td>
   </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/wsdl/">wsdl</a></td>
+    <td>This plugin supports viewing <a href="http://www.w3.org/TR/wsdl">WSDL</a> documents on <a href="http://cxf.apache.org/">Apache CXF</a> based web service endpoints</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/wsdl">wsdl</a></td>
+  </tr>  
 </table>
 
 
@@ -139,15 +170,30 @@ The following plugins are not intended to be used by users of hawtio, but are th
     <th>Source</th>
   </tr>
   <tr>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/branding/doc/developer.md">branding</a></td>
+    <td>The branding plugin applies an extra branding stylesheet depending on the version and type of server hawtio is running in.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/branding">branding</a></td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/datatable/doc/developer.md">datatable</a></td>
     <td>This plugin provides a programming API similar to <a href="http://angular-ui.github.com/ng-grid/">ng-grid</a> for writing table/grids in angularjs but uses <a href="http://datatables.net/">jQuery DataTables</a> as the underlying implementation.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/datatable">datatable</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forcegraph/doc/developer.md">forcegraph</a></td>
+    <td>The force graph plugin adds a directive to hawtio that allows en easy and customizable way of displaying graph data as a D3 forced graph.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/forcegraph">forcegraph</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md">forms</a></td>
     <td>This plugin provides an easy way, given a <a href="http://json-schema.org/">JSON Schema</a> model of generating a form with 2 way binding to some JSON data.
 </td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/forms">forms</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/perspective/doc/developer.md">perspective</a></td>
+    <td>The perspective plugin makes it easy to define different perspectives which affect which top level nav bars appear in hawtio so that it can behave in different ways for different kinds of users.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/perspective">perspective</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md">tree</a></td>
