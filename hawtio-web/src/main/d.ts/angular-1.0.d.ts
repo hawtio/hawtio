@@ -6,7 +6,10 @@
 
 /// <reference path="jquery-1.8.d.ts" />
 
-declare var angular: ng.IAngularStatic;
+// Support for painless dependency injection
+interface Function {
+    $inject:string[];
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ng module (angular.js)
@@ -647,3 +650,6 @@ declare module ng {
     }
 
 }
+
+declare var angular: ng.IAngularStatic;
+

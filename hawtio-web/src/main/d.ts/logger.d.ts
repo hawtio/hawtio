@@ -11,7 +11,7 @@ declare module Logging {
 
   export interface Logger {
     setHandler(handler:Function):void;
-    enabledFor(level:LogLevel):bool;
+    enabledFor(level:LogLevel):boolean;
     setLevel(level:LogLevel):void;
     debug(...arguments:any[]):void;
     info(...arguments:any[]):void;

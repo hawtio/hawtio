@@ -336,14 +336,14 @@ module Dashboard {
       if (routeParams) {
         $scope.routeParams = decodeURIComponent(routeParams);
       }
-      var size = $routeParams["size"];
+      var size:any = $routeParams["size"];
       if (size) {
-        var size = decodeURIComponent(size);
+        size = decodeURIComponent(size);
         $scope.preferredSize = angular.fromJson(size);
       }
-      var title = $routeParams["title"];
+      var title:any = $routeParams["title"];
       if (title) {
-        var title = decodeURIComponent(title);
+        title = decodeURIComponent(title);
         $scope.widgetTitle = title;
       }
 

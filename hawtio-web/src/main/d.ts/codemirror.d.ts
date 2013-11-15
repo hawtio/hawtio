@@ -36,8 +36,8 @@ interface CodeMirrorToken {
 }
 
 interface CodeMirrorMarkTextOptions {
-    inclusiveLeft: bool;
-    inclusiveRight: bool;
+    inclusiveLeft: boolean;
+    inclusiveRight: boolean;
     startStype: string;
     endStyle: string;
 }
@@ -86,16 +86,16 @@ interface CodeMirrorViewPortChangeListener {
 
 
 interface CodeMirrorStream {
-    eol(): bool;
-    sol(): bool;
+    eol(): boolean;
+    sol(): boolean;
     peek(): string;
     next(): string;
     eat(match: any): string;
-    eatWhile(match: any): bool;
-    eatSpace(): bool;
+    eatWhile(match: any): boolean;
+    eatSpace(): boolean;
     skipToEnd(): void;
-    skipTo(ch: string): bool;
-    match(pattern: RegExp, consume: bool, caseFold: bool): bool;
+    skipTo(ch: string): boolean;
+    match(pattern: RegExp, consume: boolean, caseFold: boolean): boolean;
     backUp(n: number): void;
     column(): number;
     indentation(): number;
@@ -133,7 +133,7 @@ interface CodeMirrorEditor {
     setOption(option: string, value: any);
     getOption(option: string): any;
     getMode(): CodeMirrorMode;
-    cursorCoords(start: bool, mode: string): CodeMirrorCoords;
+    cursorCoords(start: boolean, mode: string): CodeMirrorCoords;
     charCoords(pos: CodeMirrorPosition, mode: string): CodeMirrorCoords;
     undo(): void;
     redo(): void;
@@ -141,7 +141,7 @@ interface CodeMirrorEditor {
     clearHistory(): void;
     getHistory(): any;
     setHistory(history: any);
-    indentLine(line: number, dir?: bool);
+    indentLine(line: number, dir?: boolean);
     getTokenAt(pos: CodeMirrorPosition): CodeMirrorToken;
     markText(from: CodeMirrorPosition, to: CodeMirrorPosition, className: string,
              option?: CodeMirrorMarkTextOptions): CodeMirrorBookMark;
@@ -156,11 +156,11 @@ interface CodeMirrorEditor {
     lineInfo(line: number): CodeMirrorLineInfo;
     getLineHandler(line: number): CodeMirrorLineHandle;
     getViewPort(): CodeMirrorViewPort;
-    addWidget(pos: CodeMirrorPosition, node: Node, scrollIntoView: bool);
+    addWidget(pos: CodeMirrorPosition, node: Node, scrollIntoView: boolean);
     matchBrackets(): void;
     lineCount(): number;
-    getCursor(start?: bool): CodeMirrorPosition;
-    somethingSelected(): bool;
+    getCursor(start?: boolean): CodeMirrorPosition;
+    somethingSelected(): boolean;
     setCursor(pos: CodeMirrorPosition): void;
     setSelection(start: CodeMirrorPosition, end: CodeMirrorPosition): void;
     getLine(n: number): string;
@@ -188,18 +188,18 @@ interface CodeMirrorOptions {
     indentUnit?: number;
     smartIndend?: number;
     tabSize?: number;
-    indentWithTabs?: bool;
-    electricsChars?: bool;
-    autoClearEmptyLines?: bool;
+    indentWithTabs?: boolean;
+    electricsChars?: boolean;
+    autoClearEmptyLines?: boolean;
     keyMap?: string;
     extraKeys?: any;
-    lineWrapping?: bool;
-    lineNumbers?: bool;
-    firstLineNumber?: bool;
+    lineWrapping?: boolean;
+    lineNumbers?: boolean;
+    firstLineNumber?: boolean;
     lineNumberFormatter?: Function;
-    gutter?: bool;
-    fixedGutter?: bool;
-    readOnly?: bool;
+    gutter?: boolean;
+    fixedGutter?: boolean;
+    readOnly?: boolean;
     onChange?: CodeMirrorChangeListener;
     onCursorActivity?: Function;
     onViewportChange?: CodeMirrorViewPortChangeListener;
@@ -218,8 +218,8 @@ declare var CodeMirror: {
     connect(target: EventTarget, event: String, func: Function);
     commands: any;
     
-    tagRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
-    braceRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
+    tagRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: boolean) => number;
+    braceRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: boolean) => number;
     indentRangeFinder: (codeMirror: CodeMirrorEditor, line: number) => number;
     newFoldFunction: (rangeFinder?:any, markText?:any, hideEnd?:any) => (codeMirror, line) => void;
     

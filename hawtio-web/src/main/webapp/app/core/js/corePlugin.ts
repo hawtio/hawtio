@@ -40,8 +40,8 @@ if (jolokiaUrl) {
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   lineCount: (value:any) => number;
   params: ng.IRouteParamsService;
-  is: (type:any, value:any) => bool;
-  empty: (value:any) => bool;
+  is: (type:any, value:any) => boolean;
+  empty: (value:any) => boolean;
   log: (variable:string) => void;
   alert: (text:string) => void;
 }
@@ -299,7 +299,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
            * @param type {string} the name of the check (casing sensitive)
            * @param value {string} value to check
            */
-          $rootScope.is = function (type:any, value:any):bool {
+          $rootScope.is = function (type:any, value:any):boolean {
             return angular['is' + type](value);
           };
 
@@ -307,9 +307,9 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
            * Wrapper for $.isEmptyObject()
            *
            * @param value  {mixed} Value to be tested
-           * @return boolean
+           * @return booleanean
            */
-          $rootScope.empty = function (value:any):bool {
+          $rootScope.empty = function (value:any):boolean {
             return $.isEmptyObject(value);
           };
 

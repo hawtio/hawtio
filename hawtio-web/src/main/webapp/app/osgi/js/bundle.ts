@@ -330,7 +330,7 @@ module Osgi {
     return header.substring(idx + 1).trim();
   }
 
-  export function formatAttributesAndDirectivesForPopover(data:{}, skipVersion:bool):string {
+  export function formatAttributesAndDirectivesForPopover(data:{}, skipVersion:boolean):string {
     var str = "";
     var sortedKeys = Object.keys(data).sort();
     for (var i = 0; i < sortedKeys.length; i++) {

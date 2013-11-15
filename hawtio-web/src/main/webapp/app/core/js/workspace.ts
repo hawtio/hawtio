@@ -2,7 +2,7 @@ interface MenuItem {
   content: string;
   title?: string;
   isValid?: (Workspace) => any;
-  isActive?: (Workspace) => bool;
+  isActive?: (Workspace) => boolean;
   href: () => any;
 }
 
@@ -388,7 +388,7 @@ class Workspace {
     return pathName;
   }
 
-  public linkContains(...words:String[]):bool {
+  public linkContains(...words:String[]):boolean {
     var pathName = this.getStrippedPathName();
     return words.all((word) => {
       return pathName.has(word);
@@ -402,7 +402,7 @@ class Workspace {
    * @param href
    * @return true if the given link is active
    */
-  public isLinkActive(href:string):bool {
+  public isLinkActive(href:string):boolean {
     // lets trim the leading slash
     var pathName = this.getStrippedPathName();
 
@@ -424,7 +424,7 @@ class Workspace {
   /**
    * Returns true if the tab query parameter is active or the URL starts with the given path
    */
-  public isTopTabActive(path:string):bool {
+  public isTopTabActive(path:string):boolean {
     var tab = this.$location.search()['tab'];
     if (angular.isString(tab)) {
       return tab.startsWith(path);
