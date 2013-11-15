@@ -87,16 +87,17 @@ module Wiki {
         // lets add a history tab
         $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
       }
+      var name:string = null;
       if (loc.startsWith("/wiki/version")) {
         // lets add a version tab
-        var name = ($routeParams["objectId"] || "").substring(0, 6) || "Version";
+        name = ($routeParams["objectId"] || "").substring(0, 6) || "Version";
         $scope.breadcrumbs.push({href: "#" + loc, name: name});
       }
       if (loc.startsWith("/wiki/diff")) {
         // lets add a version tab
         var v1 = ($routeParams["objectId"] || "").substring(0, 6);
         var v2 = ($routeParams["baseObjectId"] || "").substring(0, 6);
-        var name = "Diff";
+        name = "Diff";
         if (v1) {
           if (v2) {
             name += " " + v1 + " " + v2;

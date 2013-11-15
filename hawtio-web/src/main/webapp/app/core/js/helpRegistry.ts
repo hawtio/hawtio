@@ -51,19 +51,19 @@ module Core {
 
     }
 
-    public addUserDoc(topic, path, isValid: () => bool = null) {
+    public addUserDoc(topic, path, isValid: () => boolean = null) {
       this.addSubTopic(topic, 'user', path, isValid);
     }
 
-    public addDevDoc(topic, path, isValid: () => bool = null) {
+    public addDevDoc(topic, path, isValid: () => boolean = null) {
       this.addSubTopic(topic, 'developer', path, isValid);
     }
 
-    public addSubTopic(topic, subtopic, path, isValid: () => bool = null) {
+    public addSubTopic(topic, subtopic, path, isValid: () => boolean = null) {
       this.getOrCreateTopic(topic, isValid)[subtopic] = path;
     }
 
-    public getOrCreateTopic(topic, isValid: () => bool = null) {
+    public getOrCreateTopic(topic, isValid: () => boolean = null) {
       if (!angular.isDefined(this.topics[topic])) {
 
         if (isValid === null) {

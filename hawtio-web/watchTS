@@ -1,0 +1,7 @@
+#!/bin/bash 
+
+tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep -v target)
+
+tsc -w --sourcemap --target es5 $tsFiles
+
+

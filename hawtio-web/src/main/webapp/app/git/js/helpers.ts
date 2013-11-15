@@ -34,7 +34,7 @@ module Git {
    * Returns true if the git mbean is a fabric configuration repository
    * (so we can use it for the fabric plugin)
    */
-  export function isGitMBeanFabric(workspace:Workspace):bool {
+  export function isGitMBeanFabric(workspace:Workspace):boolean {
     var folder = getGitMBeanFolder(workspace);
     return folder && folder.entries["repo"] === "fabric";
   }

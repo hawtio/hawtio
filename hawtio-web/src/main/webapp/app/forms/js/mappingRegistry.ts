@@ -204,7 +204,7 @@ module Forms {
             }
           });
           var values = Core.pathGet(property, ["enum"]);
-          var valuesScopeName = "$values_" + id.replace(/\./g, "_");
+          valuesScopeName = "$values_" + id.replace(/\./g, "_");
           scope[valuesScopeName] = values;
         }
       }
