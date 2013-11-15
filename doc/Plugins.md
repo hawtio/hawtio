@@ -64,7 +64,7 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/fabric">fabric</a></td>
   </tr>
   <tr>
-    <td>git</td>
+    <td><a href="http://hawt.io/plugins/git/">git</a></td>
     <td>Provides the HTML5 front end to the back end <a href="http://git-scm.com/">git repository</a> used to store configuration and files in plugins
     such as <a href="http://hawt.io/plugins/dashboard/">dashboard</a> and <a href="http://hawt.io/plugins/wiki/">wiki</a>. Uses the
     <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-git/src/main/java/io/hawt/git/GitFacadeMXBean.java#L26">GitFacadeMXBean</a> from the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-git">hawtio-git module</a></td>
@@ -87,14 +87,9 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/insight">insight</a></td>
   </tr>
   <tr>
-    <td>jboss</td>
+    <td><a href="http://hawt.io/plugins/jboss/">jboss</a></td>
     <td>Adds support for <a href="http://www.jboss.org/jbossas">JBoss Application Server</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jboss">jboss</a></td>
-  </tr>
-  <tr>
-    <td>jetty</td>
-    <td>Adds support for <a href="http://www.eclipse.org/jetty/">Jetty</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
-    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jetty">jetty</a></td>
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/jclouds/">jclouds</a></td>
@@ -102,17 +97,22 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jclouds">jclouds</a></td>
   </tr>
   <tr>
-    <td>jmx</td>
+    <td><a href="http://hawt.io/plugins/jetty/">jetty</a></td>
+    <td>Adds support for <a href="http://www.eclipse.org/jetty/">Jetty</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jetty">jetty</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://hawt.io/plugins/jmx/">jmx</a></td>
     <td>Provides the core <a href="http://www.oracle.com/technetwork/java/javase/tech/javamanagement-140525.html">JMX</a> support for interacting with MBeans, viewing real time attributes, charting and invoking operations.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jmx">jmx</a></td>
   </tr>
   <tr>
-    <td>jvm</td>
+    <td><a href="http://hawt.io/plugins/jvm/">jvm</a></td>
     <td>The jvm plugin allows you to connect to local or remote JVMs, and as well install the Jolokia JVM agent into the JVMs.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jvm">jvm</a></td>
   </tr>
   <tr>
-    <td>karaf</td>
+    <td><a href="http://hawt.io/plugins/karaf/">karaf</a></td>
     <td>Adds support for <a href="http://karaf.apache.org/">Apache Karaf</a> so you can browse features, bundles, services and configuration.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/karaf">karaf</a></td>
   </tr>
@@ -127,22 +127,22 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/maven">maven</a></td>
   </tr>
   <tr>
-    <td>openejb</td>
+    <td><a href="http://hawt.io/plugins/openejb/">openejb</a></td>
     <td>Adds support for <a href="http://openejb.apache.org/">Apache OpenEJB</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/openejb">openejb</a></td>
   </tr>
   <tr>
-    <td>osgi</td>
+    <td><a href="http://hawt.io/plugins/osgi/">osgi</a></td>
     <td>Provides support for <a href="http://www.osgi.org/Main/HomePage">OSGi containers</a> such as <a href="http://karaf.apache.org/">Apache Karaf</a> using the standard OSGi management hooks.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/osgi">osgi</a></td>
   </tr>
   <tr>
-    <td>source</td>
+    <td><a href="http://hawt.io/plugins/source/">source</a></td>
     <td>Used by the <a href="http://hawt.io/plugins/logs/">log plugin</a> to view the source code of any file in a maven source artefact using the maven coordinates, class name / file name and line number.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source">source</a></td>
   </tr>
   <tr>
-    <td>tomcat</td>
+    <td><a href="http://hawt.io/plugins/tomcat/">tomcat</a></td>
     <td>Adds support for <a href="http://tomcat.apache.org/">Apache Tomcat</a> and <a href="http://tomee.apache.org/">Apache TomEE</a> such as viewing, starting, stopping, refreshing applications, view connectors, sessions, and JMX etc.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/tomcat">tomcat</a></td>
   </tr>
