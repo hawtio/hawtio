@@ -1,6 +1,5 @@
 module SpringBatch {
     export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource, $http) {
-        console.info('hello connect-----------');
 
         $scope.host= 'localhost';
         $scope.port= 8080;
@@ -31,8 +30,6 @@ module SpringBatch {
         };
 
         $scope.removeServer = function (index){
-            console.info('removing : '+$scope.selectedSpringBatchServer);
-            console.info('removing : '+$scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer));
             $http.delete('/hawtio/springBatch?server='+encodeURIComponent($scope.selectedSpringBatchServer)).success(function(data){
                 $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer),1);
             });

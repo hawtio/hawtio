@@ -45,17 +45,8 @@ public class SpringBatchConfigServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        URL propsUrl = SpringBatchConfigServlet.class.getClassLoader().getResource("springbatch.properties");
-        File file = null;
-        try{
-            file = new File(propsUrl.toURI());
-        }catch (URISyntaxException s){
-            LOG.error(s.getMessage());
-        }
-        FileInputStream propsIn = new FileInputStream(file);
-        Properties properties = new Properties();
-        properties.load(propsIn);
-
+        File file = getPropertiesFile("springbatch.properties");
+        Properties properties = getProperties(file);
         String server = req.getParameter("server");
         if(server != null && !server.isEmpty()){
             properties.setProperty("springBatchServerList",properties.getProperty("springBatchServerList")+","+server);
