@@ -33,7 +33,9 @@ module SpringBatch {
         $scope.removeServer = function (index){
             console.info('removing : '+$scope.selectedSpringBatchServer);
             console.info('removing : '+$scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer));
-            $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer),1);
+            $http.delete('/hawtio/springBatch?server='+encodeURIComponent($scope.selectedSpringBatchServer)).success(function(data){
+                $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer),1);
+            });
         }
     }
 }
