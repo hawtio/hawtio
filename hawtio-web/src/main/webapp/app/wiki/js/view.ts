@@ -17,7 +17,7 @@ module Wiki {
     $scope.versionId = $scope.branch;
 
     $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
-    $scope.profile = $scope.profileId ? true: false;
+    $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true: false;
 
     $scope.operationCounter = 1;
     $scope.addDialog = new Core.Dialog();
