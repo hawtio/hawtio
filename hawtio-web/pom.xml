@@ -502,6 +502,10 @@
               <key>hawtio.authenticationEnabled</key>
               <value>false</value>
             </systemProperty>
+            <systemProperty>
+              <key>hawtio.forceBranding</key>
+              <value>true</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
