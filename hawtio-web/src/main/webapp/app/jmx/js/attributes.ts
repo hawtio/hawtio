@@ -2,7 +2,7 @@ module Jmx {
 
   export var propertiesColumnDefs = [
     {field: 'name', displayName: 'Property', width: "27%",
-      cellTemplate: '<div class="ngCellText"><div class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
+      cellTemplate: '<div class="ngCellText" title="{{row.entity.name}}" data-placement="bottom"><div class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
     {field: 'value', displayName: 'Value',  width: "70%",
       cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
@@ -29,6 +29,7 @@ module Jmx {
       canSelectRows: false,
       showColumnMenu: true,
       displaySelectionCheckbox: false,
+      enableColumnResize: true,
       filterOptions: {
         filterText: ''
       },
