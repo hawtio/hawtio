@@ -48,7 +48,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: "src/main/webapp/",
-            src: ["./**"],
+            src: ["./**", "!./**/*.ts"],
             dest: "<%= grunt.option('webapp_outdir') %>/"
           }
         ]
@@ -73,12 +73,6 @@ module.exports = function (grunt) {
           }]
       }
     },
-    concat: {
-      main: {
-        src: ["target/schema/js/*.js", "<%= grunt.option('webapp_outdir') %>/app/app.js"],
-        dest: "<%= grunt.option('webapp_outdir') %>/app/app.js"
-      }
-    },
     watch: {
       app: {
         files: ['src/main/webapp/**',
@@ -98,7 +92,7 @@ module.exports = function (grunt) {
   //grunt.config.set('currentTasks', fullBuild);
 
   // Default task.
-  grunt.registerTask('default', ['clean-appjs', 'type', 'concat', 'copy']);
+  grunt.registerTask('default', ['clean-appjs', 'type', 'copy']);
 
   // watch source for changes
   grunt.registerTask('watchSrc', ['watch']);
