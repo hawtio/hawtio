@@ -268,8 +268,8 @@ class Workspace {
           };
 
           var lastPath = paths.pop();
-          var ws = this
-          paths.each((value) => {
+          var ws = this;
+          paths.forEach((value) => {
             folder = ws.folderGetOrElse(folder, value);
             if (folder) {
               folderNames.push(value);

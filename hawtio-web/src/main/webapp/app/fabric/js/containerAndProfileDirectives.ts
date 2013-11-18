@@ -263,7 +263,11 @@ module Fabric {
               var profile = answer.find({id: id});
 
               function requireStyle() {
-                return Fabric.containerCountBadgeStyle(min, (profile ? profile.count : 0));
+                var count:any = 0;
+                if (profile) {
+                  count = profile['count'];
+                }
+                return Fabric.containerCountBadgeStyle(min, count);
               }
 
               if (profile) {

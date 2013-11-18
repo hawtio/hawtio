@@ -37,6 +37,7 @@ if (jolokiaUrl) {
   //hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
 }
 
+/*
 interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   lineCount: (value:any) => number;
   params: ng.IRouteParamsService;
@@ -45,6 +46,7 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
   log: (variable:string) => void;
   alert: (text:string) => void;
 }
+*/
 
 hawtioPluginLoader.addModule('hawtioCore');
 
@@ -262,9 +264,8 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             };
           }
         }).
-
-        factory('toastr', ($window) => {
-          return $window.toastr;
+        factory('toastr', () => {
+          return (<any>window).toastr;
         }).
         factory('xml2json', ($window) => {
           var jquery:any = $;
