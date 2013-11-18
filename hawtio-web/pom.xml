@@ -430,73 +430,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>npm-install</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${npm-executable}</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>typescript-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${grunt-executable}</executable>
-              <arguments>
-                <argument>--webapp_outdir</argument>
-                <argument>${webapp-outdir}</argument>
-                <argument>--webapp_port</argument>
-                <argument>${jettyPort}</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-
-      <!--
-      <plugin>
-        <groupId>com.ppedregal.typescript</groupId>
-        <artifactId>typescript-maven-plugin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <configuration>
-          <useTsc>true</useTsc>
-          <sourceDirectory>src/main/webapp/ts</sourceDirectory>
-          <targetDirectory>src/main/webapp/js</targetDirectory>
-        </configuration>
-      </plugin>
-      -->
-      <!--
-            <plugin>
-              <artifactId>maven-clean-plugin</artifactId>
-              <version>2.5</version>
-              <configuration>
-                <filesets>
-                  <fileset>
-                    <directory>src/main/webapp/js</directory>
-                    <includes>
-                      <include>app.js</include>
-                    </includes>
-                  </fileset>
-                </filesets>
-              </configuration>
-            </plugin>
-      -->
-
-      <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
@@ -506,7 +439,12 @@
           <useTestScope>true</useTestScope>
           <webAppConfig>
             <contextPath>${context}</contextPath>
+            <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+              <resourcesAsCSV>src/main/webapp,target/${project.name}-${project.version}              </resourcesAsCSV>
+            </baseResource>
           </webAppConfig>
+          <scanIntervalSeconds>0</scanIntervalSeconds>
+          <useTestScope>true</useTestScope>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
               <port>${jettyPort}</port>
@@ -638,6 +576,54 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>grunt></id>
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>npm-install</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>${npm-executable}</executable>
+                  <arguments>
+                    <argument>install</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>typescript-compile</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>${grunt-executable}</executable>
+                  <arguments>
+                    <argument>--webapp_outdir</argument>
+                    <argument>${webapp-outdir}</argument>
+                    <argument>--webapp_port</argument>
+                    <argument>${jettyPort}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+
+        </plugins>
+      </build>
+    </profile>
+
+
     <profile>
       <id>watch</id>
       <build>
