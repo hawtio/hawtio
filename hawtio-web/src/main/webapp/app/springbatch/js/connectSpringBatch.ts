@@ -29,5 +29,11 @@ module SpringBatch {
                 $rootScope.springBatchServerList.add(server);
             });
         };
+
+        $scope.removeServer = function (index){
+            console.info('removing : '+$scope.selectedSpringBatchServer);
+            console.info('removing : '+$scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer));
+            $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer),1);
+        }
     }
 }
