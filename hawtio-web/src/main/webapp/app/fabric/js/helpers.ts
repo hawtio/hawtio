@@ -17,7 +17,7 @@ module Fabric {
 
   export var useDirectoriesInGit = true;
   var fabricTopLevel = "fabric/profiles/";
-  var profileSuffix = ".profile";
+  export var profileSuffix = ".profile";
 
 
   export function fabricCreated(workspace) {
@@ -225,12 +225,20 @@ module Fabric {
     var answer = null;
     if (pageId.has(fabricTopLevel) && pageId !== fabricTopLevel) {
       var profileId = pageId.remove(fabricTopLevel);
-      if ((Fabric.useDirectoriesInGit || !profileId.has("/")) && (!Fabric.useDirectoriesInGit || profileId.endsWith(profileSuffix))) {
-        if (Fabric.useDirectoriesInGit) {
-          profileId = Core.trimTrailing(profileId, profileSuffix);
-          profileId = profileId.replace(/\//g, "-");
+      if ((Fabric.useDirectoriesInGit || !profileId.has("/"))) {
+        var profileSeparator = profileId.indexOf(profileSuffix + "/");
+        var endsWithSuffix = profileId.endsWith(profileSuffix);
+        if (!Fabric.useDirectoriesInGit || endsWithSuffix || profileSeparator > 0) {
+          if (Fabric.useDirectoriesInGit) {
+            if (endsWithSuffix) {
+              profileId = Core.trimTrailing(profileId, profileSuffix);
+            } else if (profileSeparator > 0) {
+              profileId = profileId.substring(0, profileSeparator);
+            }
+            profileId = profileId.replace(/\//g, "-");
+          }
+          answer = profileId;
         }
-        answer = profileId;
       }
     }
     return answer;
