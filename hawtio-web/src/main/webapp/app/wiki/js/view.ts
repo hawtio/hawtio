@@ -550,7 +550,7 @@ module Wiki {
         var item = $scope.children.find((info) => {
           var name = (info.name || "").toLowerCase();
           var ext = fileExtension(name);
-          return name && ext && (name.startsWith("readme.") || name === "readme");
+          return name && ext && ((name.startsWith("readme.") || name === "readme") || (name.startsWith("index.") || name === "index"));
         });
         if (item) {
           var pageName = item.path;
