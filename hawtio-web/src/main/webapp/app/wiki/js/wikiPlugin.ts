@@ -57,7 +57,7 @@ module Wiki {
 
                     a = $(a);
 
-                    var href = a.attr('href').trim();
+                    var href = (a.attr('href') || "").trim();
 
                     // Deal with relative URLs first...
                     if (href.startsWith('../')) {
