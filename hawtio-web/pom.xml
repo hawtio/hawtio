@@ -18,7 +18,7 @@
     <grunt-executable>grunt</grunt-executable>
     <npm-executable>npm</npm-executable>
     <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs</phantomjs-executable>
-    <schema-outdir>${project.build.directory}/schema/js</schema-outdir>
+    <schema-outdir>${webapp-outdir}/lib</schema-outdir>
   </properties>
 
 
