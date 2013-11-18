@@ -1,2 +1,0 @@
-#!/bin/sh
-mvn typescript-maven-plugin:tsc -Dts.watch=true -Dts.useTsc=true
