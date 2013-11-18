@@ -67,8 +67,6 @@ module Fabric {
 
       case 'jclouds':
         delete schema.properties['parent'];
-
-        bulkSet(schema, ['owner', 'credential', 'providerName'], 'required', true);
         schema['tabs'] = {
           'Default': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
           'Advanced': ['*']
