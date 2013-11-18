@@ -1,5 +1,5 @@
 module SpringBatch {
-    export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource) {
+    export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource, $http) {
         console.info('hello connect-----------');
 
         $scope.host= 'localhost';
@@ -23,7 +23,11 @@ module SpringBatch {
             if(server.charAt(server.length-1) != '/'){
                 server=server+'/'
             }
-            $rootScope.springBatchServerList.add(server);
+
+            $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $http.post('/hawtio/springBatch','server='+server).success(function(data){
+                $rootScope.springBatchServerList.add(server);
+            });
         };
     }
 }

@@ -9,8 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class SpringBatchConfigServlet extends HttpServlet {
     public void doGet(HttpServletRequest httpServletRequest,
                       HttpServletResponse httpServletResponse) throws IOException, ServletException {
 
-        out.println("=========================");
         InputStream propsIn = SpringBatchConfigServlet.class.getClassLoader().getResourceAsStream("springbatch.properties");
         Properties properties = new Properties();
         properties.load(propsIn);
@@ -40,10 +40,40 @@ public class SpringBatchConfigServlet extends HttpServlet {
         List<? extends String> springBatchServers = Arrays.asList(properties.getProperty("springBatchServerList").split(","));
         springBatchServersJson.addAll(springBatchServers);
         responseJson.put("springBatchServerList",springBatchServersJson);
-        out.println("========================="+responseJson.toJSONString());
         String res = "success";
 
         httpServletResponse.setHeader("Content-type","application/json");
         httpServletResponse.getWriter().println(responseJson.toJSONString());
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        URL propsUrl = SpringBatchConfigServlet.class.getClassLoader().getResource("springbatch.properties");
+        File file = null;
+        try{
+            out.println("===== uri ==== "+propsUrl.toURI().getPath());
+            file = new File(propsUrl.toURI());
+        }catch (URISyntaxException s){
+            LOG.error(s.getMessage());
+        }
+        FileInputStream propsIn = new FileInputStream(file);
+        out.println("========== file ===== "+propsIn.available());
+        Properties properties = new Properties();
+        properties.load(propsIn);
+        for (Map.Entry e : properties.entrySet()){
+            out.println("======= entry ==== "+e.getKey() + " === value === "+e.getValue());
+        }
+
+        for (Object o : req.getParameterMap().entrySet()){
+            Map.Entry e=(Map.Entry)o;
+            out.println("======= params ==== "+e.getKey() + " === value === "+e.getValue());
+        }
+        out.println("==== server ====== "+req.getParameter("server"));
+        String server = req.getParameter("server");
+        if(server != null && !server.isEmpty()){
+            properties.setProperty("springBatchServerList",properties.getProperty("springBatchServerList")+","+server);
+            properties.store(new FileOutputStream(file),null);
+        }
     }
 }
