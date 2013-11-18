@@ -1,7 +1,0 @@
-#!/bin/sh
-echo "Compiling the typescript code in a watch loop so we recompile on source changes"
-echo
-#
-# TODO does not seem to like the --sourcemap command line option here! :(
-#
-tsc --watch --out src/main/webapp/js/app.js src/main/d.ts/* src/main/webapp/app/*/js/*.ts
