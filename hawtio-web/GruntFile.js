@@ -83,8 +83,8 @@ module.exports = function (grunt) {
       app: {
         files: ['src/main/webapp/**',
                 '!src/main/webapp/**/*.ts',
-                'target/schema/js/*.js',
                 'GruntFile.js',
+                "<%= grunt.option('webapp_outdir') %>/lib/*.js",
                 "<%= grunt.option('webapp_outdir') %>/app/app.js"],
         tasks: [],
         options: {
