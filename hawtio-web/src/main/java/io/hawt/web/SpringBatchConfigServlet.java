@@ -52,28 +52,22 @@ public class SpringBatchConfigServlet extends HttpServlet {
         URL propsUrl = SpringBatchConfigServlet.class.getClassLoader().getResource("springbatch.properties");
         File file = null;
         try{
-            out.println("===== uri ==== "+propsUrl.toURI().getPath());
             file = new File(propsUrl.toURI());
         }catch (URISyntaxException s){
             LOG.error(s.getMessage());
         }
         FileInputStream propsIn = new FileInputStream(file);
-        out.println("========== file ===== "+propsIn.available());
         Properties properties = new Properties();
         properties.load(propsIn);
-        for (Map.Entry e : properties.entrySet()){
-            out.println("======= entry ==== "+e.getKey() + " === value === "+e.getValue());
-        }
 
-        for (Object o : req.getParameterMap().entrySet()){
-            Map.Entry e=(Map.Entry)o;
-            out.println("======= params ==== "+e.getKey() + " === value === "+e.getValue());
-        }
-        out.println("==== server ====== "+req.getParameter("server"));
         String server = req.getParameter("server");
         if(server != null && !server.isEmpty()){
             properties.setProperty("springBatchServerList",properties.getProperty("springBatchServerList")+","+server);
             properties.store(new FileOutputStream(file),null);
+            resp.getWriter().print("updated");
+        }
+        else {
+            resp.getWriter().print("failed");
         }
     }
 }
