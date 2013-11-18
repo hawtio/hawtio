@@ -58,31 +58,42 @@ module Wiki {
                     a = $(a);
 
                     var href = (a.attr('href') || "").trim();
+                    var fileExtension = a.attr('file-extension');
+                    var extension = fileExtension ? "." + fileExtension : "";
 
                     // Deal with relative URLs first...
+                    var path = $location.path();
                     if (href.startsWith('../')) {
-                      var path = $location.path();
                       var parts = href.split('/');
                       var pathParts = path.split('/');
                       var parents = parts.filter((part) => { return part === ".."; });
                       parts = parts.last(parts.length - parents.length);
                       pathParts = pathParts.first(pathParts.length - parents.length);
 
-                      a.attr('href', '#' + pathParts.join('/') + '/' + parts.join('/') + $location.hash());
+                      a.attr('href', '#' + pathParts.join('/') + '/' + parts.join('/') + extension + $location.hash());
                       Core.$apply($scope);
                       return;
                     }
 
                     // Turn an absolute link into a wiki link...
                     if (href.startsWith('/')) {
-                      a.attr('href', Wiki.branchLink($scope.branch, href, $location));
+                      a.attr('href', Wiki.branchLink($scope.branch, href + extension, $location) + extension);
                       return;
                     }
 
                     if (!Wiki.excludeAdjustmentPrefixes.any((exclude) => {
                       return href.startsWith(exclude);
                     })) {
-                      a.attr('href', '#' + $location.path() + "/" + href + $location.hash());
+                      // if the path has a dot in it lets exclude it as we are relative to a markdown or html file in a folder
+                      var folderPath = path;
+                      var idx = path.lastIndexOf("/");
+                      if (idx > 0) {
+                        var lastName = path.substring(idx + 1);
+                        if (lastName.indexOf(".") >= 0) {
+                          folderPath = path.substring(0, idx);
+                        }
+                      }
+                      a.attr('href', '#' + folderPath + "/" + href +  extension + $location.hash());
                       Core.$apply($scope);
                       return;
                     }
