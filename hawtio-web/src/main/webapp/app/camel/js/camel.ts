@@ -5,6 +5,7 @@ module Camel {
     $scope.routeNodes = {};
 
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
+    $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress

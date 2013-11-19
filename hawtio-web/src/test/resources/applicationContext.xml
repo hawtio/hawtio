@@ -87,6 +87,7 @@
     <route>
       <from id="inputFiles" uri="file:src/test/data?noop=true"/>
       <to id="firstStep" uri="activemq:personnel.records"/>
+      <to id="firstStep" uri="activemq:very.long.queue.name.goes.here.wow.this.really.is.quite.a.long.queue.name.isnt.it.eh"/>
       <bean ref="myBean" method="cheese"/>
       <to id="coolBeans" uri="activemq:browse.me"/>
     </route>
