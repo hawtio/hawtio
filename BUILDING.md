@@ -65,6 +65,24 @@ To specify a different port to run on, just override the `jettyPort` property
 
 A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.
 
+## Incremental compiling of TypeScript in IDEA
+
+The easiest way we've figured out how to use [IDEA](http://www.jetbrains.com/idea/) and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.
+
+* to the Preferences dialog
+* select **External Tools*
+* add a new one called **watchTsc**
+* select the watchTsc script inside hawtio-web for the Program
+* select hawtio-web as the working directory
+* click on Output Filters...
+* add a new Output Filter 
+* use this regular expression 
+```
+$FILE_PATH$\($LINE$,$COLUMN$\)\:
+```
+
+Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.
+
 ### Trying Different Containers
 
 The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
