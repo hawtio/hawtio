@@ -39,13 +39,18 @@ module Camel {
    * Returns the URI string for the given EIP pattern node or null if it is not applicable
    */
   export function getRouteNodeUri(node) {
-    var uri = null;
+    var uri: string = null;
     if (node) {
       uri = node.getAttribute("uri");
       if (!uri) {
         var ref = node.getAttribute("ref");
         if (ref) {
-          uri = "ref:" + ref;
+          var method = node.getAttribute("method");
+          if (method) {
+            uri = ref + "." + method + "()";
+          } else {
+            uri = "ref:" + ref;
+          }
         }
       }
     }

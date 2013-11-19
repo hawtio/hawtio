@@ -87,6 +87,7 @@
     <route>
       <from id="inputFiles" uri="file:src/test/data?noop=true"/>
       <to id="firstStep" uri="activemq:personnel.records"/>
+      <bean ref="myBean" method="cheese"/>
       <to id="coolBeans" uri="activemq:browse.me"/>
     </route>
     <route id="foo">
@@ -164,6 +165,8 @@
   <camelContext id="bar" xmlns="http://camel.apache.org/schema/spring">
   </camelContext>
 
+  <!-- dummy bean for camel routes -->
+  <bean id="myBean" class="io.hawt.camel.sample.CheeseBean"/>
 
   <!-- infinispan demo -->
   <bean id="infinispanFactory" class="io.hawt.example.infinispan.InfinispanDemo" init-method="init" lazy-init="false"/>
