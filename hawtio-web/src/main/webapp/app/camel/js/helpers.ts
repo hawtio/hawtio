@@ -841,7 +841,11 @@ module Camel {
         var elementID = route.getAttribute("id");
         var labelSummary = label;
         if (elementID) {
-          label = elementID;
+          if ($scope.camelIgnoreIdForLabel) {
+            labelSummary = elementID;
+          } else {
+            label = elementID;
+          }
         }
         var imageUrl = getRouteNodeIcon(nodeSettings);
         if ((nodeId === "from" || nodeId === "to") && uri) {
@@ -1072,4 +1076,12 @@ module Camel {
     return answer;
   }
 
+
+  /**
+   * Returns true if we should ignore ID values for labels in camel diagrams
+   */
+  export function ignoreIdForLabel(localStorage) {
+    var value = localStorage["camelIgnoreIdForLabel"];
+    return value && (value === "true" || value === true);
+  }
 }

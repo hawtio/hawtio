@@ -95,12 +95,14 @@ module Core {
 
     var defaults = {
       logCacheSize: 1000,
-      fabricEnableMaps: true
+      fabricEnableMaps: true,
+      camelIgnoreIdForLabel: false
     };
 
     var converters = {
       logCacheSize: parseInt,
-      fabricEnableMaps: parseBooleanValue
+      fabricEnableMaps: parseBooleanValue,
+      camelIgnoreIdForLabel: parseBooleanValue
     };
 
     $scope.$watch('updateRate', () => {
@@ -115,7 +117,8 @@ module Core {
       localStorage['autoRefresh'] = $scope.autoRefresh;
     });
 
-    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "logCacheSize", "fabricEnableMaps"];
+    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
+      "logCacheSize", "fabricEnableMaps", "camelIgnoreIdForLabel"];
 
     angular.forEach(names, (name) => {
       if (angular.isDefined(localStorage[name])) {
@@ -131,7 +134,12 @@ module Core {
       $scope.$watch(name, () => {
         var value = $scope[name];
         if (angular.isDefined(value)) {
-          localStorage[name] = value;
+          var actualValue = value;
+          var converter = converters[name];
+          if (converter) {
+            actualValue = converter(value);
+          }
+          localStorage[name] = actualValue;
         }
       });
     });
