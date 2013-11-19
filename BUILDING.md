@@ -2,18 +2,9 @@ We love [contributions](http://hawt.io/contributing/index.html)! You may also wa
 
 Before you can begin, you'll need to install the [hawtio](http://hawt.io/) dependencies first.
 
-## Installing Local Dependencies
+## Installing npm, TypeScript, Grunt
 
-To install all of the required local dependencies you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
-
-Then you should be able to run:
-
-    cd hawtio-web
-    npm install
-
-If this fails it could be you need a newer [npm](https://npmjs.org/) installation.
-
-## Installing Global Dependencies
+To install all of the required dependencies you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
 
 In order to make use of [TypeScript](http://typescriptlang.org/) you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.
 
@@ -33,7 +24,7 @@ You can install this by running
 
 ## Using LiveReload
 
-The incremental build and LiveReload support allows you to edit the code and for the browser to autmatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
+The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
 
 Here's how to do it:
 
@@ -47,12 +38,20 @@ Run the web application (or deploy it inside your container using the hawtio-dev
 
 On OS X and linux the _mvn compile_ command above is unnecessary but folks have found on windows there can be timing issues with grunt and maven that make this extra step a requirement (see [issue #203 for more details](https://github.com/hawtio/hawtio/issues/203#issuecomment-15808516))
 
-Now incrementally build the project and run the live reload server using a **separate shell** (while keeping the above shell running!):
-
+Or if you want to just run an empty hawtio and connect in hawtio to a remote container (e.g. connect to a Fuse Fabric or something via the Connect tab) just run
 
     cd hawtio-web
-    mvn -Pwatch
+    mvn clean jetty:run
 
+Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a **separate shell** (while keeping the above shell running!):
+
+    cd hawtio-web
+    grunt watchSrc
+
+Finally to auto-recompile all the TypeScript files into app.js in *another shell* type this
+
+    cd hawtio-web
+    watchTsc
 
 Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
@@ -61,6 +60,10 @@ Now if you change any source (HTML, CSS, TypeScript, JS library) the browser wil
 To specify a different port to run on, just override the `jettyPort` property
 
     mvn test-compile exec:java -DjettyPort=8181
+
+### Caveats
+
+A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.
 
 ### Trying Different Containers
 
