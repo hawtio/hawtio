@@ -3,6 +3,7 @@ module Wiki {
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
     $scope.modified = false;
+    $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;

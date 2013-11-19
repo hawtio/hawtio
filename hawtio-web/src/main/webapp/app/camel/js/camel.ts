@@ -1,8 +1,10 @@
 
 module Camel {
-  export function CamelController($scope, $element, workspace:Workspace, jolokia) {
+  export function CamelController($scope, $element, workspace:Workspace, jolokia, localStorage) {
     $scope.routes = [];
     $scope.routeNodes = {};
+
+    $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
