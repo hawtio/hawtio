@@ -45,8 +45,9 @@ public class Main {
             if (!contextPath.startsWith("/")) {
                 contextPath = "/" + contextPath;
             }
-            String path = System.getProperty("webapp-outdir", "target/hawtio-web-1.2-SNAPSHOT");
-            String webXml = path + "/WEB-INF/web.xml";
+            String sourcePath = "src/main/webapp";
+            String webappOutdir = System.getProperty("webapp-outdir", "target/hawtio-web-1.2-SNAPSHOT");
+            String webXml = sourcePath + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
 
             String pathSeparator = File.pathSeparator;
@@ -89,7 +90,7 @@ public class Main {
             Configuration[] contextConfigs = {new WebXmlConfiguration(), new WebInfConfiguration()};
             context.setConfigurations(contextConfigs);
             context.setDescriptor(webXml);
-            context.setResourceBase(path);
+            context.setResourceBases(new String[] {sourcePath, webappOutdir});
             context.setContextPath(contextPath);
             context.setParentLoaderPriority(true);
 
@@ -158,7 +159,7 @@ public class Main {
             // lets connect to fabric
             println("");
             println("");
-            println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + path);
+            println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + webappOutdir);
             println("");
             println("");
 
