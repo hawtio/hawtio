@@ -28,7 +28,7 @@ module Camel {
           run((workspace:Workspace, jolokia, viewRegistry, helpRegistry) => {
 
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
-            helpRegistry.addUserDoc('camel', 'app/camel/html/help.md', () => {
+            helpRegistry.addUserDoc('camel', 'app/camel/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties(jmxDomain);
             });
 

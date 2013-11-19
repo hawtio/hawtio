@@ -14,7 +14,7 @@ module Tomcat {
 
             viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";
             viewRegistry['tomcatTree'] = "app/tomcat/html/layoutTomcatTree.html";
-            helpRegistry.addUserDoc('camel', 'app/camel/html/help.md', () => {
+            helpRegistry.addUserDoc('tomcat', 'app/tomcat/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties("Tomcat") ||
                      workspace.treeContainsDomainAndProperties("Catalina")
             });
