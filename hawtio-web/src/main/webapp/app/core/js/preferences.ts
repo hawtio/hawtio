@@ -96,13 +96,15 @@ module Core {
     var defaults = {
       logCacheSize: 1000,
       fabricEnableMaps: true,
-      camelIgnoreIdForLabel: false
+      camelIgnoreIdForLabel: false,
+      camelMaximumLabelWidth: Camel.defaultMaximumLabelWidth
     };
 
     var converters = {
       logCacheSize: parseInt,
       fabricEnableMaps: parseBooleanValue,
-      camelIgnoreIdForLabel: parseBooleanValue
+      camelIgnoreIdForLabel: parseBooleanValue,
+      camelMaximumLabelWidth: parseInt
     };
 
     $scope.$watch('updateRate', () => {
@@ -118,7 +120,7 @@ module Core {
     });
 
     var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
-      "logCacheSize", "fabricEnableMaps", "camelIgnoreIdForLabel"];
+      "logCacheSize", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth"];
 
     angular.forEach(names, (name) => {
       if (angular.isDefined(localStorage[name])) {

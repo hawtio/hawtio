@@ -2,6 +2,8 @@ module Camel {
 
   export var log:Logging.Logger = Logger.get("Camel");
 
+  export var defaultMaximumLabelWidth = 34;
+
   /**
    * Looks up the route XML for the given context and selected route and
    * processes the selected route's XML with the given function
@@ -848,11 +850,19 @@ module Camel {
         if (elementID) {
           var customId = route.getAttribute("customId");
           if ($scope.camelIgnoreIdForLabel || (!customId || customId === "false")) {
-            labelSummary = elementID;
+            labelSummary = "id: " + elementID;
           } else {
             label = elementID;
           }
         }
+        // lets check if we need to trim the label
+        var labelLimit = $scope.camelMaximumLabelWidth || Camel.defaultMaximumLabelWidth;
+        var length = label.length;
+        if (length > labelLimit) {
+          labelSummary = label + "\n\n" + labelSummary;
+          label = label.substring(0, labelLimit) + "..";
+        }
+
         var imageUrl = getRouteNodeIcon(nodeSettings);
         if ((nodeId === "from" || nodeId === "to") && uri) {
           var idx = uri.indexOf(":");
@@ -1089,5 +1099,19 @@ module Camel {
   export function ignoreIdForLabel(localStorage) {
     var value = localStorage["camelIgnoreIdForLabel"];
     return value && (value === "true" || value === true);
+  }
+
+  /**
+   * Returns the maximum width of a label before we start to truncate
+   */
+  export function maximumLabelWidth(localStorage) {
+    var value = localStorage["camelMaximumLabelWidth"];
+    if (angular.isString(value)) {
+      value = parseInt(value);
+    }
+    if (!value) {
+      value = Camel.defaultMaximumLabelWidth;
+    }
+    return value;
   }
 }
