@@ -623,47 +623,6 @@ module Camel {
     return "orange icon-off";
   }
 
-  export function lastExchangeCompletedSince(entity) {
-    var answer = null;
-    if (entity && isState(entity, "started")) {
-      answer = entity.lastExchangeCompletedSince;
-      if (!answer) {
-        answer = sinceFromTimestamp(entity["LastExchangeCompletedTimestamp"]);
-        if (answer) {
-          entity.lastExchangeCompletedSince = answer;
-        }
-      }
-    }
-    return answer;
-  }
-
-  export function lastExchangeFailedSince(entity) {
-    var answer = null;
-    if (entity && isState(entity, "started")) {
-      answer = entity.lastExchangeFailedSince;
-      if (!answer) {
-        answer = sinceFromTimestamp(entity["LastExchangeFailedTimestamp"]);
-        if (answer) {
-          entity.lastExchangeFailedSince = answer;
-        }
-      }
-    }
-    return answer;
-  }
-
-  export function sinceFromTimestamp(timestamp:number) {
-    if (!timestamp) {
-      return null;
-    }
-
-    // convert from timestamp to delta since now
-    // 2013-04-26T145:01:17+0200
-    var time = new Date(timestamp);
-    var now = new Date();
-    var diff = now.getTime() - time.getTime();
-    return diff;
-  }
-
   export function getSelectedRouteId(workspace:Workspace, folder = null) {
     var selection = folder || workspace.selection;
     var selectedRouteId = null;
