@@ -40,6 +40,7 @@
                             <th>Duration</th>
                             <th>Status</th>
                             <th>Exit Code</th>
+                            <th>Context</th>
                         </tr>
                         </thead>
                         <tr ng-repeat="execution in jobExecutionList">
@@ -50,6 +51,7 @@
                             <td>{{execution.duration}}</td>
                             <td>{{execution.status}}</td>
                             <td>{{execution.status}}</td>
+                            <td data-title="Context"><a ng-href="#">view</a> </td>
                         </tr>
                     </table>
                 </div>
@@ -65,6 +67,7 @@
                             <th>Commit</th>
                             <th>Skip</th>
                             <th>Duration</th>
+
                         </tr>
                         </thead>
                         <tbody>
@@ -79,6 +82,7 @@
                             <td data-title="Commit Count">{{stepExecution.commitCount}}</td>
                             <td data-title="Skip Count">{{stepExecution.rollbackCount}}</td>
                             <td data-title="Duration">{{stepExecution.duration}}</td>
+
                         </tr>
                         </tbody>
                     </table>
