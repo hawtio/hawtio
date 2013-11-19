@@ -69,7 +69,7 @@ A couple of caveats, watchTsc won't pick up new typescript files, so if you crea
 
 The easiest way we've figured out how to use [IDEA](http://www.jetbrains.com/idea/) and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.
 
-* to the Preferences dialog
+* open the **Preferences** dialog
 * select **External Tools**
 * add a new one called **watchTsc**
 * select the **watchTsc** script inside **hawtio-web** for the Program
