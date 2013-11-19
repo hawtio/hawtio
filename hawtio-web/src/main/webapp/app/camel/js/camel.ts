@@ -186,6 +186,10 @@ module Camel {
             tooltip = "last: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
 
             node["counter"] = total;
+            var labelSummary = node["labelSummary"];
+            if (labelSummary) {
+              tooltip = labelSummary + "\n\n" + tooltip;
+            }
             node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats

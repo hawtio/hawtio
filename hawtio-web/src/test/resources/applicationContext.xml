@@ -85,19 +85,19 @@
   -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="file:src/test/data?noop=true"/>
-      <to uri="activemq:personnel.records"/>
-      <to uri="activemq:browse.me"/>
+      <from id="inputFiles" uri="file:src/test/data?noop=true"/>
+      <to id="firstStep" uri="activemq:personnel.records"/>
+      <to id="coolBeans" uri="activemq:browse.me"/>
     </route>
     <route id="foo">
-      <from uri="activemq:personnel.records"/>
+      <from id="personnelRecords" uri="activemq:personnel.records"/>
       <choice>
-        <when>
+        <when id="isCityLondon">
           <xpath>/person/city = 'London'</xpath>
-          <to uri="file:target/messages/uk"/>
+          <to id="messagesUK" uri="file:target/messages/uk"/>
         </when>
         <otherwise>
-          <to uri="file:target/messages/others"/>
+          <to id="messagesOthers" uri="file:target/messages/others"/>
         </otherwise>
       </choice>
     </route>
