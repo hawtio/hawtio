@@ -96,6 +96,46 @@ The metrics shown in the table are as follows:
 * Self = Total time in ms. for processing message in this processor only.
 
 
+##### Debug #####
+
+The debug tab is for real time debugging of the selected route.
+To activate the debugger, click the **Start Debugging** button. And to stop debugging click the **Close** button.
+
+When the debugger is started, the center screen presents the selected route,
+
+![Route Debug](app/camel/doc/img/route-debug-0.png "Route Debug")
+
+... and on the left hand side is buttons to control the debugging.
+
+![Route Debug Control Panel](app/camel/doc/img/route-debug-1.png "Route Debug Control Panel")
+
+To set a breakpoint in the route, double click on a node (or select a node, and click the **+** button),
+which inserts the breakpoint using a yellow ball as marker, as shown in the screen shot above, at the *Choice* node.
+To remove a breakpoint double click the node again (or select the node, and click the **x** button).
+
+The breakpoint is active, and when the first message arrives at the node, the color turns from yellow to blue, as shown below
+
+![Route Debug Breakpoint Suspended](app/camel/doc/img/route-debug-2.png "Route Debug Breakpoint Suspended")
+
+... and the message is suspended at the node. Below the route we can expand the message to see the message body and headers.
+In this example we can see its a message from Jonathan Anstey whom lives in St. Johns in Canada.
+
+Clicking on the ![Step Button](app/camel/img/debug/step.gif "Step Button") will advance the message to the next node, which
+in this example is the *messageOthers* node as shown below:
+
+![Route Debug Others](app/camel/doc/img/route-debug-3.png "Route Debug at messageOthers")
+
+By clicking on the ![Resume Button](app/camel/img/debug/resume.gif "Step Resume") would continue routing the message, until
+a message arrives at an active breakpoint.
+
+You can have multiple breakpoints in a route, and use the step or resume buttons to advance routing the message(s).
+
+Notice you can only *work with* one message at a time with the debugger; meaning that its the first message that arrives
+at an active breakpoint that is *only in use* in the debugger, until that message has completed its routing. This means
+if you have concurrent messages in the route, the other messages will continue routing without being suspended at breakpoints.
+
+
+
 
 
 If you select a CamelContext, Route or Endpoint you can then view the **Attributes** or **Charts** of the  various underlying MBeans.
