@@ -1,13 +1,17 @@
 package io.hawt.jmx;
 
+import io.hawt.system.ConfigManager;
 import io.hawt.util.Strings;
-import io.hawt.web.UploadServlet;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
+import org.apache.commons.io.FileCleaningTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -19,12 +23,26 @@ import java.util.List;
 public class UploadManager implements UploadManagerMBean {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(UploadManager.class);
+    public static String UPLOAD_DIRECTORY = "";
 
     private ObjectName objectName;
     private MBeanServer mBeanServer;
 
+    public static DiskFileItemFactory newDiskFileItemFactory(ServletContext context, File repository) {
+        FileCleaningTracker fileCleaningTracker = FileCleanerCleanup.getFileCleaningTracker(context);
+        DiskFileItemFactory factory = new DiskFileItemFactory(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, repository);
+        factory.setFileCleaningTracker(fileCleaningTracker);
+        return factory;
+    }
 
-    public void init() throws Exception {
+
+    public void init(ConfigManager config) throws Exception {
+
+        UploadManager.UPLOAD_DIRECTORY = config.get("uploadDirectory", System.getProperty("java.io.tmpdir") + File.separator + "uploads");
+
+        LOG.info("Using file upload directory: {}", UploadManager.UPLOAD_DIRECTORY);
+
+
         if (objectName == null) {
             objectName = getObjectName();
         }
@@ -58,7 +76,11 @@ public class UploadManager implements UploadManagerMBean {
 
     @Override
     public String getUploadDirectory() {
-        return UploadServlet.UPLOAD_DIRECTORY;
+        return UPLOAD_DIRECTORY;
+    }
+
+    public void setUploadDirectory(String directory) {
+        this.UPLOAD_DIRECTORY = directory;
     }
 
     @Override
@@ -81,9 +103,9 @@ public class UploadManager implements UploadManagerMBean {
     private String getTargetDirectory(String parent) {
         parent = Strings.sanitizeDirectory(parent);
         if (Strings.isNotBlank(parent)) {
-            return  UploadServlet.UPLOAD_DIRECTORY + File.separator + parent;
+            return  UPLOAD_DIRECTORY + File.separator + parent;
         }
-        return UploadServlet.UPLOAD_DIRECTORY;
+        return UPLOAD_DIRECTORY;
     }
 
     @Override

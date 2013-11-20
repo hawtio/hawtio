@@ -3,6 +3,7 @@ package io.hawt;
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
 import io.hawt.jmx.UploadManager;
+import io.hawt.system.ConfigManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -15,27 +16,18 @@ public class HawtioContextListener implements ServletContextListener {
     private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
     private PluginRegistry registry = new PluginRegistry();
     private UploadManager uploadManager = new UploadManager();
+    private ConfigManager configManager = new ConfigManager();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-
-        String realm = System.getProperty("hawtio.realm", "karaf");
-        String role = System.getProperty("hawtio.role", "admin");
-        //String rolePrincipalClasses = System.getProperty("hawtio.rolePrincipalClasses", "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal");
-        String rolePrincipalClasses = System.getProperty("hawtio.rolePrincipalClasses", "");
-        Boolean authEnabled = Boolean.valueOf(System.getProperty("hawtio.authenticationEnabled", "true"));
-
-        servletContextEvent.getServletContext().setAttribute("realm", realm);
-        servletContextEvent.getServletContext().setAttribute("role", role);
-        servletContextEvent.getServletContext().setAttribute("rolePrincipalClasses", rolePrincipalClasses);
-        servletContextEvent.getServletContext().setAttribute("authEnabled", authEnabled);
-
         try {
+            configManager.init();
             treeWatcher.init();
             registry.init();
-            uploadManager.init();
+            uploadManager.init(configManager);
         } catch (Exception e) {
             throw createServletException(e);
         }
+        servletContextEvent.getServletContext().setAttribute("ConfigManager", configManager);
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -43,6 +35,7 @@ public class HawtioContextListener implements ServletContextListener {
             treeWatcher.destroy();
             registry.destroy();
             uploadManager.destroy();
+            configManager.destroy();
         } catch (Exception e) {
             throw createServletException(e);
         }
