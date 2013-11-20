@@ -34,15 +34,15 @@
                         <thead>
                         <tr>
                             <th></th>
-                            <th>ID</th>
-                            <th>Date</th>
-                            <th>Start</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th>Exit Code</th>
+                            <th> <a ng-click="executionPredicate='id';executionReverse=!executionReverse" style="cursor: pointer">ID</a> </th>
+                            <th> <a ng-click="executionPredicate='startTime';executionReverse=!executionReverse" style="cursor: pointer">Date</a> </th>
+                            <th> <a ng-click="executionPredicate='startTime';executionReverse=!executionReverse" style="cursor: pointer">Start</a> </th>
+                            <th> <a ng-click="executionPredicate='duration';executionReverse=!executionReverse" style="cursor: pointer">Duration</a> </th>
+                            <th> <a ng-click="executionPredicate='status';executionReverse=!executionReverse" style="cursor: pointer">Status</a> </th>
+                            <th> <a ng-click="executionPredicate='status';executionReverse=!executionReverse" style="cursor: pointer">Exit Code</a> </th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="execution in jobExecutionList">
+                        <tr ng-repeat="execution in jobExecutionList | orderBy:executionPredicate:executionReverse">
                             <td><input type="radio" name="fetchStepsForExecutionRadio" ng-click="fetchStepsForExecution(execution.id)"></td>
                             <td>{{execution.id}}</td>
                             <td>{{execution.startTime}}</td>

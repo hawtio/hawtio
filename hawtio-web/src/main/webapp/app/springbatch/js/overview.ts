@@ -11,14 +11,19 @@ module SpringBatch {
         var jobInstances = null;
         var jobList = $resource(proxyUrl+springBatchServerPath);
 
+        $scope.executionPredicate = 'name';
+        $scope.executionReverse = false;
+
         $scope.fetchAllExecutions = function(jobInstance){
             if(jobInstance != undefined){
                 var jobList = $resource(proxyUrl+springBatchServerPath+executionsListPath);
                 jobList.get({'jobName':jobName,jobInstanceId:jobInstance.id},function(data){
+                    var jobExecutionList = new Array();
                     for(var execution in data.jobInstance.jobExecutions){
                         data.jobInstance.jobExecutions[execution].id=execution;
+                        jobExecutionList.add(data.jobInstance.jobExecutions[execution]);
                     }
-                    $scope.jobExecutionList = data.jobInstance.jobExecutions;
+                    $scope.jobExecutionList = jobExecutionList;
                 });
             }
         };
