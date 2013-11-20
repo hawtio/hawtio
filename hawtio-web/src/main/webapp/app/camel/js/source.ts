@@ -18,11 +18,27 @@ module Camel {
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
 
+    function getSource(routeXmlNode) {
+      function removeCrappyHeaders(idx, e) {
+        var answer = e.getAttribute("customId");
+        e.removeAttribute("customId");
+        if (!answer || answer !== "true") {
+          e.removeAttribute("id");
+        }
+        e.removeAttribute("_cid");
+      }
+      var copy = $(routeXmlNode).clone();
+      copy.each(removeCrappyHeaders);
+      copy.find("*").each(removeCrappyHeaders);
+      var newNode = (copy && copy.length) ? copy[0] : routeXmlNode;
+      return Core.xmlNodeToString(newNode);
+    }
+
     function updateRoutes() {
       var routeXmlNode = getSelectedRouteNode(workspace);
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
-        $scope.source = Core.xmlNodeToString(routeXmlNode);
+        $scope.source = getSource(routeXmlNode);
         Core.$apply($scope);
       } else if ($scope.mbean) {
         var jolokia = workspace.jolokia;
@@ -41,7 +57,7 @@ module Camel {
         if (routes && routes.length) {
           var selectedRoute = routes[0];
           // TODO turn into XML?
-          var routeXml = Core.xmlNodeToString(selectedRoute);
+          var routeXml = getSource(selectedRoute);
           if (routeXml) {
             data = routeXml;
           }
