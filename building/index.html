@@ -63,18 +63,9 @@
 
 <p>Before you can begin, you'll need to install the <a href="http://hawt.io/">hawtio</a> dependencies first.</p>
 
-<h2 id = "Installing_Local_Dependencies">Installing Local Dependencies</h2>
+<h2 id = "Installing_npm__TypeScript__Grunt">Installing npm, TypeScript, Grunt</h2>
 
-<p>To install all of the required local dependencies you first need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a>. If you're on OS X we recommend just installing <a href="https://npmjs.org/">npm</a> directly rather than via things like homebrew to get the latest npm crack.</p>
-
-<p>Then you should be able to run:</p>
-
-<pre><code>cd hawtio-web
-npm install</code></pre>
-
-<p>If this fails it could be you need a newer <a href="https://npmjs.org/">npm</a> installation.</p>
-
-<h2 id = "Installing_Global_Dependencies">Installing Global Dependencies</h2>
+<p>To install all of the required dependencies you first need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a>. If you're on OS X we recommend just installing <a href="https://npmjs.org/">npm</a> directly rather than via things like homebrew to get the latest npm crack.</p>
 
 <p>In order to make use of <a href="http://typescriptlang.org/">TypeScript</a> you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.</p>
 
@@ -94,7 +85,7 @@ npm install</code></pre>
 
 <h2 id = "Using_LiveReload">Using LiveReload</h2>
 
-<p>The incremental build and LiveReload support allows you to edit the code and for the browser to autmatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
+<p>The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
 
 <p>Here's how to do it:</p>
 
@@ -108,10 +99,20 @@ mvn test-compile exec:java</code></pre>
 
 <p>On OS X and linux the <em>mvn compile</em> command above is unnecessary but folks have found on windows there can be timing issues with grunt and maven that make this extra step a requirement (see <a href="https://github.com/hawtio/hawtio/issues/203#issuecomment-15808516">issue #203 for more details</a>)</p>
 
-<p>Now incrementally build the project and run the live reload server using a <strong>separate shell</strong> (while keeping the above shell running!):</p>
+<p>Or if you want to just run an empty hawtio and connect in hawtio to a remote container (e.g. connect to a Fuse Fabric or something via the Connect tab) just run</p>
 
 <pre><code>cd hawtio-web
-mvn -Pwatch</code></pre>
+mvn clean jetty:run</code></pre>
+
+<p>Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a <strong>separate shell</strong> (while keeping the above shell running!):</p>
+
+<pre><code>cd hawtio-web
+grunt watchSrc</code></pre>
+
+<p>Finally to auto-recompile all the TypeScript files into app.js in <em>another shell</em> type this</p>
+
+<pre><code>cd hawtio-web
+watchTsc</code></pre>
 
 <p>Enable Live Reload in your browser (open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> then click on the Live Reload icon to the right of the location bar).</p>
 
@@ -120,6 +121,31 @@ mvn -Pwatch</code></pre>
 <p>To specify a different port to run on, just override the <code>jettyPort</code> property</p>
 
 <pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
+
+<h3 id = "Caveats">Caveats</h3>
+
+<p>A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.</p>
+
+<h2 id = "Incremental_compiling_of_TypeScript_in_IDEA">Incremental compiling of TypeScript in IDEA</h2>
+
+<p>The easiest way we've figured out how to use <a href="http://www.jetbrains.com/idea/">IDEA</a> and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.</p>
+
+<ul>
+<li>open the <strong>Preferences</strong> dialog</li>
+<li>select <strong>External Tools</strong></li>
+<li>add a new one called <strong>watchTsc</strong></li>
+<li>select the <strong>watchTsc</strong> script inside <strong>hawtio-web</strong> for the Program</li>
+<li>select <strong>hawtio-web</strong> as the working directory</li>
+<li>click on Output Filters&hellip;</li>
+<li>add a new Output Filter</li>
+<li>use this regular expression</li>
+</ul>
+
+<p>```
+$FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
+```</p>
+
+<p>Now when you do <strong>Tools</strong> &rarr; <strong>watchTsc</strong> you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.</p>
 
 <h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
 

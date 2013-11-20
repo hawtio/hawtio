@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawtio Camel plugin</title>
+    <title>hawtio JMX plugin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -53,108 +53,75 @@
 		  <p><div id="content-header">
     <div class="container"></p>
 
-<h3 id = "Camel">Camel</h3>
+<h3 id = "JMX">JMX</h3>
 
-<p>Click <a href="#/jmx/attributes?tab=camel">Camel</a> in the top navigation bar to view all the running Camel Contexts in the current JVM. (The selection will not appear on the navigation bar if there is no Camel running).</p>
+<p>The <a href="#/jmx/attributes">JMX</a> plugin in <a href="http://hawt.io" title="hawtio">hawtio</a> gives a raw view of the underlying JMX metric data, allowing access to the entire JMX domain tree of MBeans.</p>
 
-<p>The Camel plugin allows you to view all the running Camel applications in the current JVM.
-You can among others see the following details:</p>
+<h5 id = "General_Navigation">General Navigation</h5>
 
-<ul>
-<li>Lists of all running Camel applications</li>
-<li>Detailed information of each Camel Context such as Camel version number, runtime statics</li>
-<li>Lists of all routes in each Camel applications and their runtime statistics</li>
-<li>Manage the lifecycle of all Camel applications and their routes, so you can restart / stop / pause / resume, etc.</li>
-<li>Graphical representation of the running routes along with real time metrics</li>
-<li>Profile the running routes with real time runtime statics; detailed specified per processor</li>
-<li>Live tracing and debugging of running routes</li>
-</ul>
+<h6 id = "The_JMX_Tree">The JMX Tree</h6>
 
-<h4 id = "Camel_Tree">Camel Tree</h4>
+<p>The topmost level of the JMX tree view lists JMX domains.</p>
 
-<p>On the left hand side is the Camel Tree which lists all the running Camel applications in the JVM.</p>
+<p><img src="app/jmx/doc/img/jmx-tree-domains.png" alt="JMX Tree Top Level" title="JMX Tree Top Level"/></p>
 
-<p><img src="app/camel/doc/img/camel-tree.png" alt="Camel Tree" title="Camel Tree"/></p>
+<p>Click the <i class='icon-chevron-right'></i> icon to expand a tree item and further navigate into a domain.</p>
 
-<p>And on the main view area is a table that lists runtime metrics of each Camel application, as shown below:</p>
+<p><img src="app/jmx/doc/img/jmx-tree-expanded.png" alt="JMX Tree Expanded" title="JMX Tree Expanded"/></p>
 
-<p><img src="app/camel/doc/img/context-attributes.png" alt="Camel Attributes" title="Camel Attributes"/></p>
+<p>MBeans are generally indicated with <i class='icon-cog'></i> while domains and MBeans that have descendants are indicated using <i class='icon-folder-close'></i>.</p>
 
-<p>Clicking on a Camel application in the tree, selects it, and allows you to see more details about that particular Camel application.</p>
+<h6 id = "The_JMX_Toolbar">The JMX Toolbar</h6>
 
-<h4 id = "Camel_Application">Camel Application</h4>
+<p>The JMX toolbar is used to interact with an MBean.</p>
 
-<p>In the Camel tree expand the selected Camel application to access more information such as the running routes.
-When clicking on the routes node in the tree, the main page lists a table of all the routes and runtime metrics as shown below:</p>
+<p><img src="app/jmx/doc/img/jmx-toolbar.png" alt="JMX Toolbar" title="JMX Toolbar"/></p>
 
-<p><img src="app/camel/doc/img/route-attributes.png" alt="Route Attributes" title="Route Attributes"/></p>
+<p>The next few sections describe the options provided by the JMX plugin.</p>
 
-<p>In the table you can select route(s) and use the buttons to control their lifecycle, such as stopping and starting routes.</p>
+<h6 id = "Attributes">Attributes</h6>
 
-<h4 id = "Camel_Route">Camel Route</h4>
+<p>The Attributes view shows a table of attributes for the selected MBean</p>
 
-<p>By selecting a route in the Camel Tree</p>
+<p><img src="app/jmx/doc/img/attributes-table.png" alt="Attributes View" title="Attributes Table"/></p>
 
-<p><img src="app/camel/doc/img/route-select.png" alt="Select Route" title="Select Route"/></p>
+<p>Data is organized in columns generally following a name/value format.</p>
 
-<p>&hellip; gives access to a full range of <em>hawt</em> functionality. For example the diagram tab, shows a real time visual representation of the route, as shown below:</p>
+<h6 id = "Operations">Operations</h6>
 
-<h5 id = "Diagram">Diagram</h5>
+<p>The Operations view shows a list of available JMX operations that can be invoked on the selected MBean.</p>
 
-<p><img src="app/camel/doc/img/route-diagram.png" alt="Route Diagram" title="Route Diagram"/></p>
+<p><img src="app/jmx/doc/img/operations-list.png" alt="Operations List" title="Operations List"/></p>
 
-<p>If you however the mouse over the nodes in the diagram, a tool tip is presented with additional details.</p>
+<p>Click the <i class='icon-chevron-right'></i> icon to expand the operation invocation form which is dynamically generated from JMX operation metadata.</p>
 
-<h5 id = "Source">Source</h5>
+<p><img src="app/jmx/doc/img/operation-invoke.png" alt="Operation Invocation Form" title="Operation Invocation Form"/></p>
 
-<p>The Source tab shows a XML representation of the route.
-Camel is able to output any route as XML even if the route was originally developed using Java, Groovy, or Scala code.</p>
+<p>Fill in the fields with the operation parameters and click the &ldquo;<i class='icon-ok'></i> Execute&rdquo; button to invoke the JMX operation.  Clicking the &ldquo;<i class='icon-refresh'></i> Reset&rdquo; button will reset the form, clearing all of the fields.  Clicking the &ldquo;<i class='icon-remove'></i> Cancel&rdquo; button will reset and close the form.  A successful invocation of the JMX operation will be reported in the body of the form.</p>
 
-<p><img src="app/camel/doc/img/route-source.png" alt="Route Source" title="Route Source"/></p>
+<p><img src="app/jmx/doc/img/operation-executed.png" alt="Operation Success" title="Operation Success"/></p>
 
-<p>You can even edit the source code, for example we could add a predicate for checking if the message is from Paris in France,
-such as adding the following to source code, and clicking the Save button.</p>
+<h6 id = "Chart">Chart</h6>
 
-<pre><code>&lt;when customId="true" id="isCityParis"&gt;
-  &lt;xpath&gt;/person/city = 'Paris'&lt;/xpath&gt;
-  &lt;to uri="file:target/messages/fr" customId="true" id="messagesFR"/&gt;
-&lt;/when&gt;</code></pre>
+<p>The Chart view displays charts of numeric metric values updated in realtime using <a href="http://square.github.com/cubism/">Cubism.js</a>.  As metrics are periodically fetched from the server the charts will scroll from right to left.  Hover the mouse over a portion of the chart data to view values from that time period.</p>
 
-<p>And the route would be updated at runtime, which we can see in the Diagram tab as shown below:</p>
+<p><img src="app/jmx/doc/img/chart.png" alt="Example Chart View" title="Example Chart"/></p>
 
-<p><img src="app/camel/doc/img/route-updated.png" alt="Route Updated" title="Route Updated"/></p>
+<p>When the Chart view is selected from the JMX toolbar an additional &ldquo;<i class='icon-cog'></i> Edit Chart&rdquo; option is enabled allowing customization of which JMX metrics are displayed on the chart.</p>
 
-<h5 id = "Profile">Profile</h5>
+<p><img src="app/jmx/doc/img/edit-chart.png" alt="Edit Chart View" title="Edit Chart"/></p>
 
-<p>The profile tab shows a real time profile of the selected route.</p>
+<h6 id = "_i_class__icon-share____i___Add_this_view_to_a_dashboard_"><i class='icon-share'></i> (Add this view to a dashboard)</h6>
 
-<p>The top shows the accumulated profile for the route. Each of the following rows is a break down per processor.</p>
+<p>Click this icon to add the current view to a <a href="#/help/dashboard">dashboard</a></p>
 
-<p>In the screen shot below, we can see the route has processed 3 messages, with a mean processing time of 56 ms per message,
-and a total of 169 ms. We can also see from the self time of the last 2 rows, that they only use 1 and 12 ms, so the
-bottleneck is at '''choice1'' which has a self time of 146 ms. The '''choice1''' is a Content Based Router EIP that
-uses an XPath expression which means the majority of processing time is spent evaluating XPath expressions.</p>
+<h6 id = "_i_class__icon-fullscreen____i___Show_this_view_in_fullscreen_"><i class='icon-fullscreen'></i> (Show this view in fullscreen)</h6>
 
-<p><img src="app/camel/doc/img/route-profile.png" alt="Route Profile" title="Route Profile"/></p>
+<p>Hides the JMX tree so only the current view is visible on the page.</p>
 
-<p>The metrics shown in the table are as follows:</p>
+<h5 id = "Other_Functions">Other Functions</h5>
 
-<ul>
-<li>Count = Total number of messages processed</li>
-<li>Last = Time in ms. processing the last message.</li>
-<li>Delta = Difference in +/- ms. processing the second-last and last message.</li>
-<li>Mean = Time in ms. for the average processing time.</li>
-<li>Min = Time in ms. for the lowest processing time.</li>
-<li>Max = Time in ms. for the highest processing time.</li>
-<li>Total = Accumulated self time in ms. for processing messages.</li>
-<li>Self = Total time in ms. for processing message in this processor only.</li>
-</ul>
-
-<p>If you select a CamelContext, Route or Endpoint you can then view the <strong>Attributes</strong> or <strong>Charts</strong> of the  various underlying MBeans.</p>
-
-<p>You can use the <strong>Diagram</strong> tab to view a graphical representation of the running routes along with real time runtime metrics. If you select a single route instance then the diagram just shows that route only.</p>
-
-<p>If you select a <strong>Route</strong> you can then use the <strong>Trace</strong> tab to perform diagnostic tracing of routes; to see every version of each message as it flows around a route.</p>
+<p>Plugins can extend the JMX toolbar and add additional functions.  Descriptions of these functions can be found in the plugins documentation such as <a href="#/help/activemq">ActiveMQ</a> or <a href="#/help/camel">Camel</a>.</p>
 
 <p></div>
   </div></p>
