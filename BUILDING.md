@@ -22,15 +22,9 @@ You can install this by running
 
     npm install -g grunt-cli
 
-## Using LiveReload
+## Building
 
-The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
-
-Here's how to do it:
-
-Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
-
-Run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources):
+Run the web application type:
 
     cd hawtio-web
     mvn compile
@@ -42,6 +36,58 @@ Or if you want to just run an empty hawtio and connect in hawtio to a remote con
 
     cd hawtio-web
     mvn clean jetty:run
+
+### Trying Different Containers
+
+The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
+
+    mvn tomcat7:run
+    mvn tomcat6:run
+    mvn jboss-as:run
+    mvn jetty:run
+
+## Incrementally compiling TypeScript
+
+For a more rapid development workflow its good to use incremental compiling of TypeScript and to use LiveReload (or LiveEdit) below too.
+
+So in a **separate shell** (while keeping the above shell running!) run the following commands:
+
+    cd hawtio-web
+    ./watchTsc
+
+Now that script will incrementally watch all the *.ts files in the src/main/webapp/app directory and recompile them into app/app.js whenever there's a change.
+
+### Caveats
+
+A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.
+
+## Incrementally compiling TypeScript inside IntelliJ (IDEA)
+
+The easiest way we've figured out how to use [IDEA](http://www.jetbrains.com/idea/) and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.
+
+* open the **Preferences** dialog
+* select **External Tools**
+* add a new one called **watchTsc**
+* select the **watchTsc** script inside **hawtio-web** for the Program
+* select **hawtio-web** as the working directory
+* click on Output Filters...
+* add a new Output Filter
+* use this regular expression
+
+```
+$FILE_PATH$\($LINE$,$COLUMN$\)\:
+```
+
+Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.
+
+
+## Using LiveReload
+
+The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
+
+Here's how to do it:
+
+Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
 Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a **separate shell** (while keeping the above shell running!):
 
@@ -60,38 +106,6 @@ Now if you change any source (HTML, CSS, TypeScript, JS library) the browser wil
 To specify a different port to run on, just override the `jettyPort` property
 
     mvn test-compile exec:java -DjettyPort=8181
-
-### Caveats
-
-A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.
-
-## Incremental compiling of TypeScript in IDEA
-
-The easiest way we've figured out how to use [IDEA](http://www.jetbrains.com/idea/) and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.
-
-* open the **Preferences** dialog
-* select **External Tools**
-* add a new one called **watchTsc**
-* select the **watchTsc** script inside **hawtio-web** for the Program
-* select **hawtio-web** as the working directory
-* click on Output Filters...
-* add a new Output Filter 
-* use this regular expression
-
-```
-$FILE_PATH$\($LINE$,$COLUMN$\)\:
-```
-
-Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.
-
-### Trying Different Containers
-
-The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
-
-    mvn tomcat7:run
-    mvn tomcat6:run
-    mvn jboss-as:run
-    mvn jetty:run
 
 ### Using your build & LiveReload inside web containers containers
 
@@ -120,25 +134,6 @@ Another thing is for symlinks jetty uses the real directory name rather than the
 
 So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.1-SNAPSHOT/](http://localhost:8080/hawtio-web-1.1-SNAPSHOT/)
 
-
-### Incremental Compile with TypeScript
-
-There is a handy shell script [compileTS](https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS) which wraps up using the _tsc_ command to compile the [TypeScipt *.ts files](https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js) into the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js)
-
-    cd hawtio
-    ./compileTS
-
-By default this then generates the [webapp/js/app.js file](https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js) and it then watches for changes to the source files and auto-recompiles on the fly.
-
-### Building with GruntJS
-
-Another build option is [gruntjs](http://gruntjs.com/). Again to build the code with gruntjs you will need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/)
-
-Make sure you install the local and global dependencies (see above).
-
-Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly
-
-    grunt
 
 ## Running Unit Tests
 
