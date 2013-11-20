@@ -71,31 +71,6 @@ And the route would be updated at runtime, which we can see in the Diagram tab a
 ![Route Updated](app/camel/doc/img/route-updated.png "Route Updated")
 
 
-##### Profile #####
-
-The profile tab shows a real time profile of the selected route.
-
-The top shows the accumulated profile for the route. Each of the following rows is a break down per processor.
-
-In the screen shot below, we can see the route has processed 3 messages, with a mean processing time of 56 ms per message,
-and a total of 169 ms. We can also see from the self time of the last 2 rows, that they only use 1 and 12 ms, so the
-bottleneck is at '''choice1'' which has a self time of 146 ms. The '''choice1''' is a Content Based Router EIP that
-uses an XPath expression which means the majority of processing time is spent evaluating XPath expressions.
-
-![Route Profile](app/camel/doc/img/route-profile.png "Route Profile")
-
-The metrics shown in the table are as follows:
-
-* Count = Total number of messages processed
-* Last = Time in ms. processing the last message.
-* Delta = Difference in +/- ms. processing the second-last and last message.
-* Mean = Time in ms. for the average processing time.
-* Min = Time in ms. for the lowest processing time.
-* Max = Time in ms. for the highest processing time.
-* Total = Accumulated self time in ms. for processing messages.
-* Self = Total time in ms. for processing message in this processor only.
-
-
 ##### Debug #####
 
 The debug tab is for real time debugging of the selected route.
@@ -135,11 +110,53 @@ at an active breakpoint that is *only in use* in the debugger, until that messag
 if you have concurrent messages in the route, the other messages will continue routing without being suspended at breakpoints.
 
 
+##### Trace #####
+
+The trace tab is for real time tracing of messages as they flows through the route.
+The tracing works similar to how the debugger works, expect that all messages is traced *as they* are being routed,
+and no messages is suspended at breakpoints.
+
+When the tracer is started, the route is displayed, and the traced messages is listed below the route as shown below:
+
+![Route Trace](app/camel/doc/img/route-trace-0.png "Route Trace")
+
+The ID column groups the traced message by their exchangeID. In the screen shot above, we have two groups traced messages (ID ending with -0-5 and -0-7).
+Clicking a message in the list highlights the selected message in the route, by marking the node as blue, and shows the content of the message body as well,
+as shown below:
+
+![Route Trace Message](app/camel/doc/img/route-trace-1.png "Route Trace Message")
+
+Using the control buttons we can navigate forward and backward the traced message at the actual path the message went.
+
+![Route Trace Control Buttons](app/camel/doc/img/route-trace-control.png "Route Trace Control Buttons")
+
+So if we click the next button we can see the message advanced to the next node which is the *Log* node, and the
+message body is changed from *null* to *Hello from Camel route*
+
+![Route Trace Message 2](app/camel/doc/img/route-trace-2.png "Route Trace Message 2")
 
 
+##### Profile #####
 
-If you select a CamelContext, Route or Endpoint you can then view the **Attributes** or **Charts** of the  various underlying MBeans.
+The profile tab shows a real time profile of the selected route.
 
-You can use the **Diagram** tab to view a graphical representation of the running routes along with real time runtime metrics. If you select a single route instance then the diagram just shows that route only.
+The top shows the accumulated profile for the route. Each of the following rows is a break down per processor.
 
-If you select a **Route** you can then use the **Trace** tab to perform diagnostic tracing of routes; to see every version of each message as it flows around a route.
+In the screen shot below, we can see the route has processed 3 messages, with a mean processing time of 56 ms per message,
+and a total of 169 ms. We can also see from the self time of the last 2 rows, that they only use 1 and 12 ms, so the
+bottleneck is at the *choice1* processor which has a self time of 146 ms. The *choice1* processor is a Content Based Router EIP that
+uses an XPath expression which means the majority of processing time is spent evaluating XPath expressions.
+
+![Route Profile](app/camel/doc/img/route-profile.png "Route Profile")
+
+The metrics shown in the table are as follows:
+
+* Count = Total number of messages processed
+* Last = Time in ms. processing the last message.
+* Delta = Difference in +/- ms. processing the second-last and last message.
+* Mean = Time in ms. for the average processing time.
+* Min = Time in ms. for the lowest processing time.
+* Max = Time in ms. for the highest processing time.
+* Total = Accumulated self time in ms. for processing messages.
+* Self = Total time in ms. for processing message in this processor only.
+
