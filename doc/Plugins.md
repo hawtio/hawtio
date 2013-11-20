@@ -93,7 +93,7 @@ documents from indices.</td>
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/jboss/">jboss</a></td>
-    <td>Adds support for <a href="http://www.jboss.org/jbossas">JBoss Application Server</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
+    <td>Adds support for <a href="http://www.jboss.org/jbossas">JBoss Application Server</a>, or <a href="http://www.wildfly.org/">JBoss WildFly</a> such as viewing, starting, stopping, refreshing web applications, view connectors and JMX etc.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jboss">jboss</a></td>
   </tr>
   <tr>
