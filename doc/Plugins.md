@@ -16,6 +16,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <th>Source</th>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/api/">api</a></td>
+    <td>This plugin supports viewing the APIs of WSDL and WADL documents on <a href="http://cxf.apache.org/">Apache CXF</a> based web service endpoints</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/api">api</a></td>
+  </tr>  
+  <tr>
     <td><a href="http://hawt.io/plugins/activemq/">activemq</a></td>
     <td>Adds support for <a href="http://activemq.apache.org/">Apache ActiveMQ</a>. Lets you browse broker statistics, create queues/topcs, browse queues, send messages and visualise subscription and network information</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/activemq">activemq</a></td>
@@ -151,11 +156,6 @@ documents from indices.</td>
     <td>Provides a git based wiki for viewing, creating and editing text files (Markdown, HTML, XML, property files, JSON) which are then versioned and stored in a git repository</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/wiki">wiki</a></td>
   </tr>
-  <tr>
-    <td><a href="http://hawt.io/plugins/wsdl/">wsdl</a></td>
-    <td>This plugin supports viewing <a href="http://www.w3.org/TR/wsdl">WSDL</a> documents on <a href="http://cxf.apache.org/">Apache CXF</a> based web service endpoints</td>
-    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/wsdl">wsdl</a></td>
-  </tr>  
 </table>
 
 
