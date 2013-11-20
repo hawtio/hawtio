@@ -237,7 +237,9 @@
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <resourceBase>${basedir}/src</resourceBase>
+            <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+              <resourcesAsCSV>${basedir}/src,${project.build.directory}/sitegen</resourcesAsCSV>
+            </baseResource>
             <unpackOverlays>false</unpackOverlays>
           </webAppConfig>
           <connectors>
