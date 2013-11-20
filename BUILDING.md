@@ -107,14 +107,14 @@ To specify a different port to run on, just override the `jettyPort` property
 
     mvn test-compile exec:java -DjettyPort=8181
 
-### Using your build & LiveReload inside web containers containers
+### Using your build & LiveReload inside other web containers
 
 The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.
 
-e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the **hawtio-web/target/hawtio-web-1.1-SNAPSHOT** directory:
+e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the **hawtio-web/target/hawtio-web-1.2-SNAPSHOT** directory:
 
     cd tomcat/webapps
-    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio
+    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.2-SNAPSHOT hawtio
 
 Then in a shell run
 
@@ -128,11 +128,11 @@ Now just run Tomcat as normal. You should have full LiveReload support and shoul
 For jetty you need to name the symlink directory **hawtio.war** for [Jetty to recognise it](http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html).
 
     cd jetty-distribution/webapps
-    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio.war
+    ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.2-SNAPSHOT hawtio.war
 
 Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.
 
-So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.1-SNAPSHOT/](http://localhost:8080/hawtio-web-1.1-SNAPSHOT/)
+So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.2-SNAPSHOT/](http://localhost:8080/hawtio-web-1.2-SNAPSHOT/)
 
 
 ## Running Unit Tests
