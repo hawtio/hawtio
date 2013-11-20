@@ -51,7 +51,9 @@
                             <td>{{execution.duration}}</td>
                             <td>{{execution.status}}</td>
                             <td>{{execution.status}}</td>
-                            <td data-title="Context"><a ng-href="#">view</a> </td>
+                            <td data-title="Context">
+                                <a ng-href="#/springbatch/jobs/executions/{{jobName}}/{{execution.id}}">view</a>
+                            </td>
                         </tr>
                     </table>
                 </div>

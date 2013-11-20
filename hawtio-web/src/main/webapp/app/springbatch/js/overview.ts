@@ -19,6 +19,7 @@ module SpringBatch {
                         data.jobInstance.jobExecutions[execution].id=execution;
                     }
                     $scope.jobExecutionList = data.jobInstance.jobExecutions;
+                    $scope.jobName = jobName;
                 });
             }
         };
