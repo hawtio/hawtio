@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import io.hawt.system.ConfigManager;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
@@ -13,11 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Stan Lewis
@@ -28,7 +25,7 @@ public class BrandingServlet extends HttpServlet {
 
     List<String> propertiesToCheck = new ArrayList<String>();
     List<String> wantedStrings = new ArrayList<String>();
-    boolean forceBranding;
+    boolean forceBranding = false;
     boolean useBranding = true;
     String profile;
     Converters converters = new Converters();
@@ -36,18 +33,31 @@ public class BrandingServlet extends HttpServlet {
 
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig servletConfig) throws ServletException {
 
-        propertiesToCheck.add("karaf.version");
+        ConfigManager config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
 
-        wantedStrings.add("redhat");
-        wantedStrings.add("fuse");
+        String propertiesToCheckString = config.get("propertiesToCheck", "karaf.version");
+        String wantedStringsString = config.get("wantedStrings", "redhat,fuse");
+        forceBranding = Boolean.parseBoolean(config.get("forceBranding", "false"));
+        useBranding = Boolean.parseBoolean(config.get("useBranding", "true"));
 
-        forceBranding = Boolean.parseBoolean(System.getProperty("hawtio.forceBranding", "false"));
-        useBranding = Boolean.parseBoolean(System.getProperty("hawtio.useBranding", "true"));
+        if (propertiesToCheckString != null) {
+            for (String str : propertiesToCheckString.split(",")) {
+                propertiesToCheck.add(str.trim());
+            }
+        }
+
+        if (wantedStringsString != null) {
+            for (String str : wantedStringsString.split(",")) {
+                wantedStrings.add(str.trim());
+            }
+        }
+
+        // we'll look for this as a system property for now...
         profile = System.getProperty("profile");
 
-        super.init(config);
+        super.init(servletConfig);
     }
 
 

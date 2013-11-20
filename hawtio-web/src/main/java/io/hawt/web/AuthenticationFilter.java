@@ -1,18 +1,14 @@
 package io.hawt.web;
 
 import io.hawt.system.Authenticator;
+import io.hawt.system.ConfigManager;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,13 +32,12 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
-        realm = (String) filterConfig.getServletContext().getAttribute("realm");
-        role = (String) filterConfig.getServletContext().getAttribute("role");
-        rolePrincipalClasses = (String) filterConfig.getServletContext().getAttribute("rolePrincipalClasses");
-        Object authEnabledValue = filterConfig.getServletContext().getAttribute("authEnabled");
-        if (authEnabledValue instanceof Boolean) {
-            enabled = (Boolean) authEnabledValue;
-        }
+        ConfigManager config = (ConfigManager) filterConfig.getServletContext().getAttribute("ConfigManager");
+
+        realm = config.get("realm", "karaf");
+        role = config.get("role", "admin");
+        rolePrincipalClasses = config.get("rolePrincipalClasses", "");
+        enabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
 
         if (enabled) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"" + realm + "\" authorized role: \"" + role + "\"" + " role principal classes: \"" + rolePrincipalClasses + "\"");

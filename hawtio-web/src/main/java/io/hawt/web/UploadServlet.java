@@ -1,13 +1,12 @@
 package io.hawt.web;
 
+import io.hawt.jmx.UploadManager;
 import io.hawt.util.Strings;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.FileCleaningTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,20 +28,6 @@ public class UploadServlet extends HttpServlet {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(UploadServlet.class);
 
-    // TODO - make more configurable
-    public static String UPLOAD_DIRECTORY = System.getProperty("java.io.tmpdir") + File.separator + "uploads";
-
-    static {
-        LOG.info("Using file upload directory: {}", UPLOAD_DIRECTORY);
-    }
-
-    private static DiskFileItemFactory newDiskFileItemFactory(ServletContext context, File repository) {
-        FileCleaningTracker fileCleaningTracker = FileCleanerCleanup.getFileCleaningTracker(context);
-        DiskFileItemFactory factory = new DiskFileItemFactory(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, repository);
-        factory.setFileCleaningTracker(fileCleaningTracker);
-        return factory;
-    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -52,14 +37,14 @@ public class UploadServlet extends HttpServlet {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
-            File uploadDir = new File(UPLOAD_DIRECTORY);
+            File uploadDir = new File(UploadManager.UPLOAD_DIRECTORY);
             if (!uploadDir.exists()) {
                 LOG.info("Creating directory {}" + uploadDir);
                 if (!uploadDir.mkdirs()) {
                     LOG.warn("Failed to create upload directory at {}", uploadDir);
                 }
             }
-            DiskFileItemFactory factory = newDiskFileItemFactory(context, uploadDir);
+            DiskFileItemFactory factory = UploadManager.newDiskFileItemFactory(context, uploadDir);
             ServletFileUpload upload = new ServletFileUpload(factory);
 
             String targetDirectory = null;
@@ -107,7 +92,7 @@ public class UploadServlet extends HttpServlet {
                             continue;
                         }
 
-                        File target = new File(UPLOAD_DIRECTORY + File.separator + fileName);
+                        File target = new File(UploadManager.UPLOAD_DIRECTORY + File.separator + fileName);
 
                         try {
                             item.write(target);
@@ -146,4 +131,5 @@ public class UploadServlet extends HttpServlet {
             super.doPost(request, response);
         }
     }
+
 }
