@@ -29,8 +29,8 @@ object Website {
   val project_forums_url= "http://hawt.io/community/index.html"
   val project_wiki_url= "https://github.com/hawtio/hawtio/wiki"
   val project_logo= "/images/project-logo.png"
-  val project_version= "1.2-M6"
-  val project_snapshot_version= "1.2-SNAPSHOT"
+  val project_version= "1.2.0"
+  val project_snapshot_version= "1.3-SNAPSHOT"
   val project_versions = List(
         project_version
         )
