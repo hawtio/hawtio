@@ -46,7 +46,7 @@ public class Main {
                 contextPath = "/" + contextPath;
             }
             String sourcePath = "src/main/webapp";
-            String webappOutdir = System.getProperty("webapp-outdir", "target/hawtio-web-1.2-SNAPSHOT");
+            String webappOutdir = System.getProperty("webapp-outdir", "target/hawtio-web-1.3-SNAPSHOT");
             String webXml = sourcePath + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
 
