@@ -13,7 +13,7 @@ module Camel {
                 displayName: 'Id',
                 cellTemplate: '<div class="ngCellText" ng-bind-html-unsafe="rowIcon(row.entity.id)"></div>',
                 cellFilter: null,
-                width: "*",
+                width: "**",
                 resizable: true
             },
             {
