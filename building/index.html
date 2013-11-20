@@ -83,15 +83,9 @@
 
 <pre><code>npm install -g grunt-cli</code></pre>
 
-<h2 id = "Using_LiveReload">Using LiveReload</h2>
+<h2 id = "Building">Building</h2>
 
-<p>The incremental build and LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
-
-<p>Here's how to do it:</p>
-
-<p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
-
-<p>Run the web application (or deploy it inside your container using the hawtio-dev WAR which serves up your developer sources):</p>
+<p>Run the web application type:</p>
 
 <pre><code>cd hawtio-web
 mvn compile
@@ -104,29 +98,31 @@ mvn test-compile exec:java</code></pre>
 <pre><code>cd hawtio-web
 mvn clean jetty:run</code></pre>
 
-<p>Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a <strong>separate shell</strong> (while keeping the above shell running!):</p>
+<h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
+
+<p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>
+
+<pre><code>mvn tomcat7:run
+mvn tomcat6:run
+mvn jboss-as:run
+mvn jetty:run</code></pre>
+
+<h2 id = "Incrementally_compiling_TypeScript">Incrementally compiling TypeScript</h2>
+
+<p>For a more rapid development workflow its good to use incremental compiling of TypeScript and to use LiveReload (or LiveEdit) below too.</p>
+
+<p>So in a <strong>separate shell</strong> (while keeping the above shell running!) run the following commands:</p>
 
 <pre><code>cd hawtio-web
-grunt watchSrc</code></pre>
+./watchTsc</code></pre>
 
-<p>Finally to auto-recompile all the TypeScript files into app.js in <em>another shell</em> type this</p>
-
-<pre><code>cd hawtio-web
-watchTsc</code></pre>
-
-<p>Enable Live Reload in your browser (open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> then click on the Live Reload icon to the right of the location bar).</p>
-
-<p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)</p>
-
-<p>To specify a different port to run on, just override the <code>jettyPort</code> property</p>
-
-<pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
+<p>Now that script will incrementally watch all the *.ts files in the src/main/webapp/app directory and recompile them into app/app.js whenever there's a change.</p>
 
 <h3 id = "Caveats">Caveats</h3>
 
 <p>A couple of caveats, watchTsc won't pick up new typescript files, so if you create a new typescript file or rename an existing one you'll need to restart watchTsc, might need to touch one of the .ts files to make it compile too.</p>
 
-<h2 id = "Incremental_compiling_of_TypeScript_in_IDEA">Incremental compiling of TypeScript in IDEA</h2>
+<h2 id = "Incrementally_compiling_TypeScript_inside_IntelliJ__IDEA_">Incrementally compiling TypeScript inside IntelliJ (IDEA)</h2>
 
 <p>The easiest way we've figured out how to use <a href="http://www.jetbrains.com/idea/">IDEA</a> and TypeScript together is to setup an External Tool to run watchTsc; then you get (relatively) fast recompile of all the TypeScript files to a single app.js file; so you can just keep hacking code in IDEA and letting LiveReload reload your web page.</p>
 
@@ -147,23 +143,40 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>Now when you do <strong>Tools</strong> &rarr; <strong>watchTsc</strong> you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.</p>
 
-<h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
+<h2 id = "Using_LiveReload">Using LiveReload</h2>
 
-<p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>
+<p>The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
 
-<pre><code>mvn tomcat7:run
-mvn tomcat6:run
-mvn jboss-as:run
-mvn jetty:run</code></pre>
+<p>Here's how to do it:</p>
 
-<h3 id = "Using_your_build__span_class__amp___amp___span__LiveReload_inside_web_containers_containers">Using your build <span class="amp">&amp;</span> LiveReload inside web containers containers</h3>
+<p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
+
+<p>Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a <strong>separate shell</strong> (while keeping the above shell running!):</p>
+
+<pre><code>cd hawtio-web
+grunt watchSrc</code></pre>
+
+<p>In another shell (as mentioned above in the &ldquo;Incrementally compile TypeScript&rdquo; section you probably want to auto-recompile all the TypeScript files into app.js in <em>another shell</em> via this command:</p>
+
+<pre><code>cd hawtio-web
+./watchTsc</code></pre>
+
+<p>Enable Live Reload in your browser (open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> then click on the Live Reload icon to the right of the location bar).</p>
+
+<p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)</p>
+
+<p>To specify a different port to run on, just override the <code>jettyPort</code> property</p>
+
+<pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
+
+<h3 id = "Using_your_build__span_class__amp___amp___span__LiveReload_inside_other_web_containers">Using your build <span class="amp">&amp;</span> LiveReload inside other web containers</h3>
 
 <p>The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.</p>
 
-<p>e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the <strong>hawtio-web/target/hawtio-web-1.1-SNAPSHOT</strong> directory:</p>
+<p>e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic link in the tomcat/webapps directory to the <strong>hawtio-web/target/hawtio-web-1.3-SNAPSHOT</strong> directory:</p>
 
 <pre><code>cd tomcat/webapps
-ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio</code></pre>
+ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio</code></pre>
 
 <p>Then in a shell run</p>
 
@@ -177,30 +190,11 @@ mvn -Pwatch</code></pre>
 <p>For jetty you need to name the symlink directory <strong>hawtio.war</strong> for <a href="http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html">Jetty to recognise it</a>.</p>
 
 <pre><code>cd jetty-distribution/webapps
-ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.1-SNAPSHOT hawtio.war</code></pre>
+ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio.war</code></pre>
 
 <p>Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.</p>
 
-<p>So to open the application in Jetty open <a href="http://localhost:8080/hawtio-web-1.1-SNAPSHOT/">http://localhost:8080/hawtio-web-1.1-SNAPSHOT/</a></p>
-
-<h3 id = "Incremental_Compile_with_TypeScript">Incremental Compile with TypeScript</h3>
-
-<p>There is a handy shell script <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/compileTS">compileTS</a> which wraps up using the <em>tsc</em> command to compile the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio/src/main/webapp/js">TypeScipt *.ts files</a> into the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a></p>
-
-<pre><code>cd hawtio
-./compileTS</code></pre>
-
-<p>By default this then generates the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio/src/main/webapp/js/app.js">webapp/js/app.js file</a> and it then watches for changes to the source files and auto-recompiles on the fly.</p>
-
-<h3 id = "Building_with_GruntJS">Building with GruntJS</h3>
-
-<p>Another build option is <a href="http://gruntjs.com/">gruntjs</a>. Again to build the code with gruntjs you will need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a></p>
-
-<p>Make sure you install the local and global dependencies (see above).</p>
-
-<p>Then to incrementally compile the project its a simple matter of running 'grunt' :) By default this then watches for changes to the source files and auto-recompiles on the fly</p>
-
-<pre><code>grunt</code></pre>
+<p>So to open the application in Jetty open <a href="http://localhost:8080/hawtio-web-1.3-SNAPSHOT/">http://localhost:8080/hawtio-web-1.3-SNAPSHOT/</a></p>
 
 <h2 id = "Running_Unit_Tests">Running Unit Tests</h2>
 
