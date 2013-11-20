@@ -24,7 +24,7 @@
   * Redesigned help pages
 * Tons more stuff we probably forgot to list here but is mentioned in [the issues](https://github.com/hawtio/hawtio/issues?milestone=4&state=closed) :)
 
-* Fixes [these 404 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=4&state=closed)
+* Fixes [these 407 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=4&state=closed)
 
 #### 1.1
 
