@@ -94,10 +94,10 @@ Now to watch for changes to the HTML/CSS or generated app.js file to live reload
     cd hawtio-web
     grunt watchSrc
 
-Finally to auto-recompile all the TypeScript files into app.js in *another shell* type this
+In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:
 
     cd hawtio-web
-    watchTsc
+    ./watchTsc
 
 Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
