@@ -1,6 +1,8 @@
-
 module Camel {
+
   export function CamelController($scope, $element, workspace:Workspace, jolokia, localStorage) {
+    var log:Logging.Logger = Logger.get("Camel");
+
     $scope.routes = [];
     $scope.routeNodes = {};
 
@@ -175,7 +177,15 @@ module Camel {
         var completed = stat.getAttribute("exchangesCompleted");
         var tooltip = "";
         if (id && completed) {
-          var node = isRoute ? $scope.routeNodes[id]: $scope.nodes[id];
+          var container = isRoute ? $scope.routeNodes: $scope.nodes;
+          var node = container[id];
+          if (!node) {
+            angular.forEach(container, (value, key) => {
+              if (!node && id === value.elementId) {
+                node = value;
+              }
+            });
+          }
           if (node) {
             var total = 0 + parseInt(completed);
             var failed = stat.getAttribute("exchangesFailed");
@@ -196,7 +206,10 @@ module Camel {
             node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats
-            //console.log("Warning, could not find " + id);
+/*
+            var keys = Object.keys(container).sort();
+            log.info("Warning, could not find node for " + id + " when keys were: " + keys);
+*/
           }
         }
       }
