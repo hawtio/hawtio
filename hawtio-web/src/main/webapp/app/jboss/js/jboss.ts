@@ -146,13 +146,26 @@ module JBoss {
         $scope.jbossServerName = "";
         $scope.jbossServerLaunchType = "";
 
-        var servers = jolokia.search("jboss.as:management-root=server")
+        // lookup jboss 6 and 7
+        var servers = jolokia.search("jboss.as:management-root=*")
         if (servers && servers.length === 1) {
             $scope.jbossServerVersion = jolokia.getAttribute(servers[0], "releaseVersion")
             $scope.jbossServerName = jolokia.getAttribute(servers[0], "name")
             $scope.jbossServerLaunchType = jolokia.getAttribute(servers[0], "launchType")
         } else {
-            console.log("Cannot find JBoss server or there was more than one server. response is: " + servers)
+            // wildfly is changed
+            var wildflyMBean = 'jboss.as:management-root=server';
+            var response = jolokia.request( {type: "read", mbean: wildflyMBean, attribute: ["releaseVersion", "name", "launchType"]});
+            if (response) {
+              var obj = response.value;
+              if (obj) {
+                $scope.jbossServerVersion = obj.releaseVersion;
+                $scope.jbossServerName = obj.name;
+                $scope.jbossServerLaunchType = obj.launchType;
+              }
+            } else {
+              console.log("Cannot find JBoss/Wildfly server or there was more than one server")
+            }
         }
 
     }
