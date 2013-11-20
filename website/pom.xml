@@ -103,6 +103,66 @@
         </executions>
       </plugin>
 
+      <!-- lets copy any images for the plugins -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <configuration>
+              <target>
+                <!--
+                    TODO iterating over the directories doesn't seem to work
+
+                <ac:for param="file" xmlns:ac="antlib:net.sf.antcontrib">
+                  <path>
+                    <fileset dir="${basedir}/../hawtio-web/src/main/webapp/app" includes="*"/>
+                  </path>
+                -->
+                <!--
+                  TODO this list is created via the command:
+                      find src/main/webapp/app -name "img" | grep "/doc/"
+                      then removing the prefix and postfix :)
+                  -->
+                <ac:for list="camel,core,forcegraph,jboss,jetty,jmx,tomcat" param="file" xmlns:ac="antlib:net.sf.antcontrib">
+                  <sequential>
+                    <echo>Processing plugin @{file}</echo>
+                    <mkdir dir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}"/>
+                    <copy todir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}">
+                      <fileset dir="${basedir}/../hawtio-web/src/main/webapp/app/@{file}">
+                        <include name="doc/img/*.*"/>
+                      </fileset>
+                    </copy>
+                  </sequential>
+                </ac:for>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+            <exclusions>
+              <exclusion>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
