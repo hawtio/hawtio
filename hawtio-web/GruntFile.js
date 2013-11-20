@@ -10,7 +10,7 @@ module.exports = function (grunt) {
   var webapp_outdir = grunt.option('webapp_outdir');
 
   if (!webapp_outdir) {
-    webapp_outdir = 'target/hawtio-web-1.2-SNAPSHOT'
+    webapp_outdir = 'target/hawtio-web-1.3-SNAPSHOT'
     grunt.option('webapp_outdir', webapp_outdir);
   }
 
