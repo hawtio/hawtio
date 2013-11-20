@@ -58,17 +58,17 @@
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Reads</th>
-                            <th>Writes</th>
-                            <th>Commit</th>
-                            <th>Skip</th>
-                            <th>Duration</th>
+                            <th> <a ng-click="stepPredicate='name';stepReverse=!stepReverse" style="cursor: pointer">Name</a> </th>
+                            <th> <a ng-click="stepPredicate='status';stepReverse=!stepReverse" style="cursor: pointer">Status</a> </th>
+                            <th> <a ng-click="stepPredicate='readCount';stepReverse=!stepReverse" style="cursor: pointer">Reads</a> </th>
+                            <th> <a ng-click="stepPredicate='writeCount';stepReverse=!stepReverse" style="cursor: pointer">Writes</a> </th>
+                            <th> <a ng-click="stepPredicate='commitCount';stepReverse=!stepReverse" style="cursor: pointer">Commit</a> </th>
+                            <th> <a ng-click="stepPredicate='rollbackCount';stepReverse=!stepReverse" style="cursor: pointer">Skip</a> </th>
+                            <th> <a ng-click="stepPredicate='duration';stepReverse=!stepReverse" style="cursor: pointer">Duration</a> </th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="stepExecution in stepExecutionList" >
+                        <tr ng-repeat="stepExecution in stepExecutionList | orderBy:stepPredicate:stepReverse" >
 
                             <td data-title="'Id'">
                                 {{stepExecution.name}}

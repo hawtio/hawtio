@@ -14,6 +14,9 @@ module SpringBatch {
         $scope.executionPredicate = 'name';
         $scope.executionReverse = false;
 
+        $scope.stepPredicate = 'name';
+        $scope.stepReverse = false;
+
         $scope.fetchAllExecutions = function(jobInstance){
             if(jobInstance != undefined){
                 var jobList = $resource(proxyUrl+springBatchServerPath+executionsListPath);
@@ -161,10 +164,12 @@ module SpringBatch {
         $scope.fetchStepsForExecution = function(executionId){
             var jobList = $resource(proxyUrl+springBatchServerOrigin+'jobs/executions/:executionId');
             jobList.get({'executionId':executionId+'.json'},function(data){
+                var stepList = new Array();
                 for(var execution in data.jobExecution.stepExecutions){
                     data.jobExecution.stepExecutions[execution].name = execution;
+                    stepList.add(data.jobExecution.stepExecutions[execution]);
                 }
-                $scope.stepExecutionList = data.jobExecution.stepExecutions;
+                $scope.stepExecutionList = stepList;
             });
         };
 
