@@ -124,6 +124,69 @@ such as adding the following to source code, and clicking the Save button.</p>
 
 <p><img src="app/camel/doc/img/route-updated.png" alt="Route Updated" title="Route Updated"/></p>
 
+<h5 id = "Debug">Debug</h5>
+
+<p>The debug tab is for real time debugging of the selected route.
+To activate the debugger, click the <strong>Start Debugging</strong> button. And to stop debugging click the <strong>Close</strong> button.</p>
+
+<p>When the debugger is started, the center screen presents the selected route,</p>
+
+<p><img src="app/camel/doc/img/route-debug-0.png" alt="Route Debug" title="Route Debug"/></p>
+
+<p>&hellip; and on the left hand side is buttons to control the debugging.</p>
+
+<p><img src="app/camel/doc/img/route-debug-1.png" alt="Route Debug Control Panel" title="Route Debug Control Panel"/></p>
+
+<p>To set a breakpoint in the route, double click on a node (or select a node, and click the <strong>+</strong> button),
+which inserts the breakpoint using a yellow ball as marker, as shown in the screen shot above, at the <em>Choice</em> node.
+To remove a breakpoint double click the node again (or select the node, and click the <strong>x</strong> button).</p>
+
+<p>The breakpoint is active, and when the first message arrives at the node, the color turns from yellow to blue, as shown below</p>
+
+<p><img src="app/camel/doc/img/route-debug-2.png" alt="Route Debug Breakpoint Suspended" title="Route Debug Breakpoint Suspended"/></p>
+
+<p>&hellip; and the message is suspended at the node. Below the route we can expand the message to see the message body and headers.
+In this example we can see its a message from Jonathan Anstey whom lives in St. Johns in Canada.</p>
+
+<p>Clicking on the <img src="app/camel/img/debug/step.gif" alt="Step Button" title="Step Button"/> will advance the message to the next node, which
+in this example is the <em>messageOthers</em> node as shown below:</p>
+
+<p><img src="app/camel/doc/img/route-debug-3.png" alt="Route Debug Others" title="Route Debug at messageOthers"/></p>
+
+<p>By clicking on the <img src="app/camel/img/debug/resume.gif" alt="Resume Button" title="Step Resume"/> would continue routing the message, until
+a message arrives at an active breakpoint.</p>
+
+<p>You can have multiple breakpoints in a route, and use the step or resume buttons to advance routing the message(s).</p>
+
+<p>Notice you can only <em>work with</em> one message at a time with the debugger; meaning that its the first message that arrives
+at an active breakpoint that is <em>only in use</em> in the debugger, until that message has completed its routing. This means
+if you have concurrent messages in the route, the other messages will continue routing without being suspended at breakpoints.</p>
+
+<h5 id = "Trace">Trace</h5>
+
+<p>The trace tab is for real time tracing of messages as they flows through the route.
+The tracing works similar to how the debugger works, expect that all messages is traced <em>as they</em> are being routed,
+and no messages is suspended at breakpoints.</p>
+
+<p>When the tracer is started, the route is displayed, and the traced messages is listed below the route as shown below:</p>
+
+<p><img src="app/camel/doc/img/route-trace-0.png" alt="Route Trace" title="Route Trace"/></p>
+
+<p>The ID column groups the traced message by their exchangeID. In the screen shot above, we have two groups traced messages (ID ending with -0-5 and -0-7).
+Clicking a message in the list highlights the selected message in the route, by marking the node as blue, and shows the content of the message body as well,
+as shown below:</p>
+
+<p><img src="app/camel/doc/img/route-trace-1.png" alt="Route Trace Message" title="Route Trace Message"/></p>
+
+<p>Using the control buttons we can navigate forward and backward the traced message at the actual path the message went.</p>
+
+<p><img src="app/camel/doc/img/route-trace-control.png" alt="Route Trace Control Buttons" title="Route Trace Control Buttons"/></p>
+
+<p>So if we click the next button we can see the message advanced to the next node which is the <em>Log</em> node, and the
+message body is changed from <em>null</em> to <em>Hello from Camel route</em></p>
+
+<p><img src="app/camel/doc/img/route-trace-2.png" alt="Route Trace Message 2" title="Route Trace Message 2"/></p>
+
 <h5 id = "Profile">Profile</h5>
 
 <p>The profile tab shows a real time profile of the selected route.</p>
@@ -132,7 +195,7 @@ such as adding the following to source code, and clicking the Save button.</p>
 
 <p>In the screen shot below, we can see the route has processed 3 messages, with a mean processing time of 56 ms per message,
 and a total of 169 ms. We can also see from the self time of the last 2 rows, that they only use 1 and 12 ms, so the
-bottleneck is at '''choice1'' which has a self time of 146 ms. The '''choice1''' is a Content Based Router EIP that
+bottleneck is at the <em>choice1</em> processor which has a self time of 146 ms. The <em>choice1</em> processor is a Content Based Router EIP that
 uses an XPath expression which means the majority of processing time is spent evaluating XPath expressions.</p>
 
 <p><img src="app/camel/doc/img/route-profile.png" alt="Route Profile" title="Route Profile"/></p>
@@ -149,12 +212,6 @@ uses an XPath expression which means the majority of processing time is spent ev
 <li>Total = Accumulated self time in ms. for processing messages.</li>
 <li>Self = Total time in ms. for processing message in this processor only.</li>
 </ul>
-
-<p>If you select a CamelContext, Route or Endpoint you can then view the <strong>Attributes</strong> or <strong>Charts</strong> of the  various underlying MBeans.</p>
-
-<p>You can use the <strong>Diagram</strong> tab to view a graphical representation of the running routes along with real time runtime metrics. If you select a single route instance then the diagram just shows that route only.</p>
-
-<p>If you select a <strong>Route</strong> you can then use the <strong>Trace</strong> tab to perform diagnostic tracing of routes; to see every version of each message as it flows around a route.</p>
 
 <p></div>
   </div></p>
