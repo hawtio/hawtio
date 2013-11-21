@@ -1,8 +1,8 @@
 module Wiki {
 
-  export function CamelController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
+  export function CamelController($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
     Wiki.initScope($scope, $routeParams, $location);
-    Camel.initEndpointChooserScope($scope, workspace, jolokia);
+    Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
     $scope.schema = Camel.getConfiguredCamelModel();
     $scope.modified = false;
 

@@ -19,6 +19,8 @@ module Fabric {
   var fabricTopLevel = "fabric/profiles/";
   export var profileSuffix = ".profile";
 
+  //export var jolokiaWebAppGroupId = "org.jolokia";
+  export var jolokiaWebAppGroupId = "org.fusesource.fabric.fabric-jolokia";
 
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
@@ -416,6 +418,58 @@ module Fabric {
     doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
   }
 
+  function onJolokiaUrlCreateJolokia(response, fn) {
+    var jolokia = null;
+    if (response) {
+      var url = response.value;
+      if (url) {
+        jolokia = Fabric.createJolokia(url);
+      } else {
+        if (response.error) {
+          log.warn(response.error, response.stacktrace);
+        }
+      }
+      if (fn) {
+        fn(jolokia);
+      }
+    }
+    return jolokia;
+  }
+
+
+
+  /**
+   * Attempts to create a jolokia for the given profile and version passing the created object
+   * into the onJolokia function
+   *
+   * @param jolokia
+   * @param profileId
+   * @param versionId
+   * @param onJolokia a function to receive the jolokia object or null if one cannot be created
+   */
+  export function profileJolokia(jolokia, profileId, versionId, onJolokia) {
+    function onJolokiaUrl(response) {
+      return onJolokiaUrlCreateJolokia(response, onJolokia);
+    }
+
+    return Fabric.profileWebAppURL(jolokia, jolokiaWebAppGroupId, profileId, versionId, onJolokiaUrl, onJolokiaUrl);
+  }
+
+  /**
+   * Attempts to create a jolokia for the given container id, passing the created object
+   * into the onJolokia function
+   *
+   * @param jolokia
+   * @param containerId the id of the container to connect to
+   * @param onJolokia a function to receive the jolokia object or null if one cannot be created
+   */
+  export function containerJolokia(jolokia, containerId, onJolokia) {
+    function onJolokiaUrl(response) {
+      return onJolokiaUrlCreateJolokia(response, onJolokia);
+    }
+    return Fabric.containerWebAppURL(jolokia, jolokiaWebAppGroupId, containerId, onJolokiaUrl, onJolokiaUrl);
+  }
+
   export function containerWebAppURL(jolokia, webAppId, containerId, success, error) {
     doAction('containerWebAppURL', jolokia, [webAppId, containerId], success, error);
   }
@@ -657,6 +711,16 @@ module Fabric {
 
     Core.connectToServer(localStorage, options);
 
+  }
+
+  /**
+   * Creates a jolokia object for connecting to the container with the given remote jolokia URL
+   */
+  export function createJolokia(url: string) {
+    // TODO dirty hack!!!
+    var username = "admin";
+    var password = "admin";
+    return Core.createJolokia(url, username, password);
   }
 
   export function registeredProviders(jolokia) {

@@ -1170,4 +1170,18 @@ module Core {
     });
   }
 
+
+  /**
+   * Creates a jolokia object for connecting to the container with the given remote jolokia URL,
+   * username and password
+   */
+  export function createJolokia(url: string, username: string, password: string) {
+    var jolokiaParams = {
+      url: url,
+      username: username,
+      password: password,
+      canonicalNaming: false, ignoreErrors: true, mimeType: 'application/json'
+    };
+    return new Jolokia(jolokiaParams);
+  }
 }

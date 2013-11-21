@@ -335,7 +335,10 @@ class Workspace {
 
       this.maybeMonitorPlugins();
 
-      this.$rootScope.$broadcast('jmxTreeUpdated');
+      var rootScope = this.$rootScope;
+      if (rootScope) {
+        rootScope.$broadcast('jmxTreeUpdated');
+      }
     }
   }
 
