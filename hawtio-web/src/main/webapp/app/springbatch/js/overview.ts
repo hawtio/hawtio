@@ -161,6 +161,7 @@ module SpringBatch {
                     data.jobExecution.stepExecutions[execution].name = execution;
                 }
                 $scope.stepExecutionList = data.jobExecution.stepExecutions;
+                $scope.executionId = executionId;
             });
         };
 

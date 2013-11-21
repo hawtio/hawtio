@@ -10,8 +10,8 @@ module SpringBatch {
                 .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'}).
                 when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'}).
-                when('/springbatch/jobs/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
-
+                when('/springbatch/jobs/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'}).
+                when('/springbatch/jobs/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
         }).
         value('ui.config', {
             // The ui-jq directive namespace
