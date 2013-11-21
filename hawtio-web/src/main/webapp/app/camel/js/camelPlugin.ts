@@ -1,4 +1,4 @@
-/// <reference path="../../jmx/js/helpers.ts"/>
+/// <reference path="../../jmx/js/jmxHelpers.ts"/>
 
 module Camel {
   import jmxModule = Jmx;

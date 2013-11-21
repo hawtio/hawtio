@@ -14,7 +14,9 @@ Here's a few of them we've found over time...
 * then put all the associated nested functions below; so its easier to grok the $scope by looking at the top of the file
 * its good practice to put a plugin in a TypeScript / JavaScript module
 * when sharing functions across controllers, pop them into the module as exported functions; they could be handy outside the module too.
-  * we've been using the naming convention of helpers.ts in a plugin for these helper exported functions.
+* common file names for plugin $foo:
+  * $fooPlugin.ts is the plugin
+  * $fooHelpers.ts containers the exported helper functions.
 
 ## Plugin File Layout
 
