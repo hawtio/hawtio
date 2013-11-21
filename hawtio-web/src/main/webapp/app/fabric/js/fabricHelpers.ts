@@ -423,6 +423,8 @@ module Fabric {
     if (response) {
       var url = response.value;
       if (url) {
+        // lets use a proxy if the URL is external
+        url = Core.useProxyIfExternal(url);
         jolokia = Fabric.createJolokia(url);
       } else {
         if (response.error) {
