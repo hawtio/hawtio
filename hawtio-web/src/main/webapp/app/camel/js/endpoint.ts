@@ -1,6 +1,6 @@
 module Camel {
-  export function EndpointController($scope, $location, workspace:Workspace, jolokia) {
-    Camel.initEndpointChooserScope($scope, workspace, jolokia);
+  export function EndpointController($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) {
+    Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
 
     $scope.workspace = workspace;
     $scope.message = "";

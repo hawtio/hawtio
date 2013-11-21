@@ -47,6 +47,13 @@ module Fabric {
               href =  "#/fabric/api/wsdl?wsdl=" + encodeURIComponent(url + wsdl);
             }
             if (href) {
+              // add other values to the link
+              angular.forEach(["container", "objectName"], (name) => {
+                var param = value[name];
+                if (param) {
+                  href += "&" + name + "=" + encodeURIComponent(param);
+                }
+              });
               value["href"] = href;
             }
           }
