@@ -5,6 +5,7 @@ module Wiki {
     $scope.modified = false;
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
+    $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;

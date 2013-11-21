@@ -3,6 +3,7 @@ module Camel {
   export var log:Logging.Logger = Logger.get("Camel");
 
   export var defaultMaximumLabelWidth = 34;
+  export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
 
   /**
    * Looks up the route XML for the given context and selected route and
@@ -1071,6 +1072,20 @@ module Camel {
     }
     if (!value) {
       value = Camel.defaultMaximumLabelWidth;
+    }
+    return value;
+  }
+
+  /**
+   * Returns the max body length for tracer and debugger
+   */
+  export function maximumTraceOrDebugBodyLength(localStorage) {
+    var value = localStorage["camelMaximumTraceOrDebugBodyLength"];
+    if (angular.isString(value)) {
+      value = parseInt(value);
+    }
+    if (!value) {
+      value = Camel.defaultCamelMaximumTraceOrDebugBodyLength;
     }
     return value;
   }
