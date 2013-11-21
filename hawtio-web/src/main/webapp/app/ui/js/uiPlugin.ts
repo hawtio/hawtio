@@ -9,16 +9,15 @@ module UI {
         $routeProvider.
             when('/ui/test', {templateUrl: templatePath + 'test.html'})
       }).
-      directive('hawtioConfirmDialog', function() {
+      factory('UI', () => {
+        return UI;
+      }).directive('hawtioConfirmDialog', function() {
         return new UI.ConfirmDialog();
-      }).
-      directive('hawtioSlideout', function() {
+      }).directive('hawtioSlideout', function() {
         return new UI.SlideOut();
-      }).
-      directive('hawtioPager', function() {
+      }).directive('hawtioPager', function() {
         return new UI.TablePager();
-      }).
-      directive('hawtioEditor', function($parse) {
+      }).directive('hawtioEditor', function($parse) {
         return UI.Editor($parse);
       }).directive('hawtioColorPicker', function() {
         return new UI.ColorPicker()
@@ -38,8 +37,6 @@ module UI {
         return new UI.DivRow();
       }).directive('hawtioJsplumb', () => {
         return new UI.JSPlumb();
-      //}).directive('connectTo', () => {
-      //  return new UI.JSPlumbConnection();
       }).directive('zeroClipboard', ($parse) => {
         return UI.ZeroClipboardDirective($parse);
       }).directive('hawtioAutoDropdown', () => {
@@ -52,6 +49,8 @@ module UI {
         return new UI.AutoColumns();
       }).directive('hawtioTemplatePopover', ($templateCache, $compile, $document) => {
         return UI.TemplatePopover($templateCache, $compile, $document);
+      }).directive('hawtioTocDisplay', (marked, $location, $anchorScroll) => {
+        return UI.HawtioTocDisplay(marked, $location, $anchorScroll);
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
