@@ -3,9 +3,17 @@ module SpringBatch {
     var proxyUrl = '/hawtio/proxy/';
     export function JobListController($scope, $location, workspace:Workspace, jolokia, $resource) {
 
+        $scope.predicate = 'name';
+        $scope.reverse = false;
         var jobList = $resource(proxyUrl+springBatchServerPath);
         jobList.get(function(data){
-            if(data.jobs && data.jobs.registrations) $scope.jobList = data.jobs.registrations;
+            if(data.jobs && data.jobs.registrations){
+                var jobList = new Array();
+                for(var job in data.jobs.registrations){
+                    jobList.add(data.jobs.registrations[job]);
+                }
+                $scope.jobList = jobList;
+            }
         });
 
     }

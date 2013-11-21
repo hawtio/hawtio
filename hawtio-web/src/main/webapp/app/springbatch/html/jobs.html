@@ -2,16 +2,16 @@
     <table class="table table-striped table-hover">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Resource</th>
-            <th>Description</th>
-            <th>ExecutionCount</th>
-            <th>Launchable</th>
-            <th>Incrementable</th>
+            <th> <a ng-click="predicate='name';reverse=!reverse" style="cursor: pointer">Name</a> </th>
+            <th> <a ng-click="predicate='resource';reverse=!reverse" style="cursor: pointer">Resource</a> </th>
+            <th> <a ng-click="predicate='description';reverse=!reverse" style="cursor: pointer">Description</a> </th>
+            <th> <a ng-click="predicate='executionCount';reverse=!reverse" style="cursor: pointer">ExecutionCount</a> </th>
+            <th> <a ng-click="predicate='launchable';reverse=!reverse" style="cursor: pointer">Launchable</a> </th>
+            <th> <a ng-click="predicate='incrementable';reverse=!reverse" style="cursor: pointer">Incrementable</a> </th>
         </tr>
         </thead>
         <tbody>
-              <tr ng-repeat="job in jobList">
+              <tr ng-repeat="job in jobList | orderBy:predicate:reverse">
                   <td>{{job.name}}</td>
                   <td>{{job.resource}}</td>
                   <td>{{job.description}}</td>
