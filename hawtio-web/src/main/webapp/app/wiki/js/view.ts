@@ -585,6 +585,26 @@ module Wiki {
       }
     }
 
+    // Called by hawtio TOC directive...
+    $scope.getContents = (filename, cb) => {
+      var pageId = filename;
+      if ($scope.directory) {
+        pageId = $scope.pageId + '/' + filename;
+      } else {
+        var pathParts = $scope.pageId.split('/');
+        pathParts = pathParts.remove(pathParts.last());
+        pathParts.push(filename);
+        pageId = pathParts.join('/');
+      }
+      log.debug("pageId: ", $scope.pageId);
+      log.debug("branch: ", $scope.branch);
+      log.debug("filename: ", filename);
+      log.debug("using pageId: ", pageId);
+      wikiRepository.getPage($scope.branch, pageId, undefined, (data) => {
+        cb(data.text);
+      });
+    };
+
     function getNewDocumentPath() {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
