@@ -1,6 +1,8 @@
 module API {
 
-  var log:Logging.Logger = Logger.get("API");
+  export var log:Logging.Logger = Logger.get("API");
+
+  export var wadlNamespace = "http://schemas.xmlsoap.org/wsdl/";
 
   /**
    * Loads the XML for the given url if its defined or ignore if not valid
@@ -38,6 +40,30 @@ module API {
       log.info("JSON: " + json);
     }
     return answer;
+  }
+
+  export function initScope($scope, $location, jolokia) {
+    var search = $location.search();
+    $scope.url = search["wadl"];
+    $scope.container = search["container"];
+    $scope.objectName = search["objectName"];
+
+    if ($scope.container && $scope.objectName) {
+      Fabric.containerJolokia(jolokia, $scope.container, (remoteJolokia) => {
+        $scope.remoteJolokia = remoteJolokia;
+        if (remoteJolokia) {
+          API.loadJsonSchema(remoteJolokia, $scope.objectName, (jsonSchema) => {
+            log.info("Got JSON Schema: " + JSON.stringify(jsonSchema, null, "  "));
+            $scope.jsonSchema = jsonSchema;
+          })
+        } else {
+          log.info("No Remote Jolokia!");
+        }
+      });
+    } else {
+      log.info("No container or objectName");
+    }
+    log.info("container: " + $scope.container + " objectName: " + $scope.objectName + " url: " + $scope.url);
   }
 
   /**
