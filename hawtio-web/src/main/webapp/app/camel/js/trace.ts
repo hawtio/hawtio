@@ -1,5 +1,6 @@
 module Camel {
-  export function TraceRouteController($scope, workspace:Workspace, jolokia) {
+  export function TraceRouteController($scope, workspace:Workspace, jolokia, localStorage) {
+    $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
     $scope.tracing = false;
     $scope.messages = [];
     $scope.graphView = null;
@@ -146,8 +147,16 @@ module Camel {
     function setTracing(flag:Boolean) {
       var mbean = getSelectionCamelTraceMBean(workspace);
       if (mbean) {
+        // set max only supported on BacklogTracer
+        // (the old fabric tracer does not support max length)
+        if (mbean.toString().endsWith("BacklogTracer")) {
+          var max = $scope.camelMaximumTraceOrDebugBodyLength;
+          jolokia.setAttribute(mbean, "BodyMaxChars",  max);
+        }
         jolokia.setAttribute(mbean, "Enabled", flag, onSuccess(tracingChanged));
       }
     }
+
   }
+
 }
