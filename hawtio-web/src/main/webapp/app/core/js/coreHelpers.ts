@@ -164,6 +164,8 @@ function onSuccess(fn, options = {}) {
             // ignore these errors as they can happen on timing issues
             // such as its been removed
             // or if we run against older containers
+            Core.log.debug("Operation ", response['request']['operation'], " failed due to: ", response['error']);
+            Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
           } else {
             Core.log.warn("Operation ", response['request']['operation'], " failed due to: ", response['error']);
             Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
