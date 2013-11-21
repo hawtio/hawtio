@@ -318,7 +318,7 @@ module Core {
 
 
   /*
-   * log out the current user, should be in helpers.ts really
+   * log out the current user, should be in activemqHelpers.ts really
    */
   export function logout(jolokiaUrl,
                   userDetails,
