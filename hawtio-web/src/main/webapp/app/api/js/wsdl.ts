@@ -2,9 +2,15 @@ module API {
 
   export function WsdlViewController($scope, $location, jolokia) {
 
-    $scope.url = $location.search()["wsdl"];
+    var search = $location.search();
+    $scope.url = search["wsdl"];
+    $scope.container = search["container"];
+    $scope.objectName = search["objectName"];
+
     var log:Logging.Logger = Logger.get("API");
     var wsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
+
+    log.info("container: " + $scope.container + " objectName: " + $scope.objectName + " url: " + $scope.url);
 
     loadXml($scope.url, onWsdl);
 

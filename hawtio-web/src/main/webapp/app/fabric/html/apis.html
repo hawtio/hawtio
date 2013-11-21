@@ -4,7 +4,7 @@
     <div class="section-header">
 
       <div class="section-filter">
-        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchText">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="apiOptions.filterOptions.filterText">
         <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
       </div>
 
@@ -13,8 +13,13 @@
 
   <div class="log-main">
     <div ng-class="isInDashboardClass()">
+<!--
       <div class="row-fluid" ng-repeat="api in apis | filter:searchText">
         <a href="{{api.href}}"><i class="icon-puzzle-piece"></i> {{api.path}}</a>
+      </div>
+-->
+      <div class="row-fluid">
+        <div class="gridStyle" ng-grid="apiOptions"></div>
       </div>
     </div>
   </div>

@@ -28,6 +28,41 @@ module API {
      */
   };
 
+  export function parseJson(json) {
+    var answer = null;
+    try {
+      //console.log("got JSON: " + responseJson);
+      answer = JSON.parse(json);
+    } catch (e) {
+      log.info("Failed to parse JSON " + e);
+      log.info("JSON: " + json);
+    }
+    return answer;
+  }
+
+  /**
+   * Loads the JSON schema from a given CXF endpoint mbean
+   */
+  export function loadJsonSchema(jolokia, mbean, onJsonSchemaFn) {
+    function onResults(response) {
+      var schema = {};
+      if (response) {
+        var json = response;
+        if (json) {
+          schema = parseJson(json);
+        }
+      }
+      onJsonSchemaFn(schema);
+    }
+    if (mbean) {
+      return jolokia.execute(mbean, "getJSONSchema", onSuccess(onResults));
+    } else {
+      var schema = {};
+      onJsonSchemaFn(schema);
+      return schema;
+    }
+  }
+
   /**
    * When a WADL XML document is loaded, lets convert it to JSON and return it
    */
