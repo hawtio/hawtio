@@ -1,5 +1,13 @@
 <div ng-controller="SpringBatch.JobOverviewExecListController">
     <h3>Overview</h3>
+
+    <div class="control-group">
+        <div class="alert {{alert.type}}" ng-show="alert.enable">
+            <button type="button" class="close" ng-click="alert.hide()">×</button>
+            {{alert.content}}
+        </div>
+    </div>
+
     <div class="row-fluid">
         <div class="span9">
             <div class="row-fluid">
@@ -22,8 +30,10 @@
                         <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Actions <b class="caret"></b></a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li>
-                                <a href="#/springbatch/jobs/{{jobName}}/history/executions">View History</a>
+                                <a href="#/springbatch/jobs/{{jobName}}/history/executions" style="cursor: pointer">View History</a>
                             </li>
+                            <li> <a ng-click="runJob(jobName,jobParams)" style="cursor: pointer">Run Job</a> </li>
+
                         </ul>
                     </div>
                 </div>
@@ -105,8 +115,8 @@
                 <tr class="info" ng-repeat="param in jobParams">
                     <td>
                         <span class="pull-left">
-                            <input type="text" value="{{param.name}}">
-                            <input type="text" value="{{param.value}}">
+                            <input type="text" ng-model="param.name">
+                            <input type="text" ng-model="param.value">
                         </span>
                     </td>
                     <td>
