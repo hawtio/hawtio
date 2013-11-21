@@ -1,16 +1,15 @@
-<h3>Job Execution List</h3>
-
 <div ng-controller="SpringBatch.SpringBatchJobExecutionListController">
     <div>
         <table ng-table class="table">
             <thead>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Start Time</th>
-            <th>Duration</th>
-
+            <tr>
+                <th> <a ng-click="predicate='id';reverse=!reverse" style="cursor: pointer">ID</a> </th>
+                <th> <a ng-click="predicate='status';reverse=!reverse" style="cursor: pointer">Status</a> </th>
+                <th> <a ng-click="predicate='startTime';reverse=!reverse" style="cursor: pointer">Start Time</a> </th>
+                <th> <a ng-click="predicate='duration';reverse=!reverse" style="cursor: pointer">Duration</a> </th>
+            </tr>
             </thead>
-            <tr ng-repeat="jobExecution in jobExecutions">
+            <tr ng-repeat="jobExecution in jobExecutions | orderBy:predicate:reverse">
 
                 <td data-title="'Id'">
                     {{jobExecution.id}}
