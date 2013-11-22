@@ -308,15 +308,16 @@
             <configuration>
               <target>
                 <!-- copy the markdown docs into the site plugin  -->
-                <copy todir="${basedir}/src/main/webapp/app/site" overwrite="true">
+                <copy todir="${webapp-outdir}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
-                <copy todir="${basedir}/src/main/webapp/app/site/doc" overwrite="true">
+                <copy todir="${webapp-outdir}/app/site/doc" overwrite="true">
                   <fileset dir="${basedir}/../docs">
                     <include name="**/*.md" />
                     <include name="**/*.html" />
+                    <include name="images/*.*" />
                   </fileset>
                 </copy>
               </target>

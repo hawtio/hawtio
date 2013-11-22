@@ -5,8 +5,11 @@ module Site {
     var log:Logging.Logger = Logger.get("Site");
     var pageId = $routeParams["page"];
     if (!pageId) {
+      pageId = "README.md";
+/*
       $location.path("/site/doc/index.md");
       return;
+*/
     }
 
     if (!pageId.startsWith("/") && pageId.indexOf(":/") < 0 && pageId.indexOf("app/site/") < 0) {

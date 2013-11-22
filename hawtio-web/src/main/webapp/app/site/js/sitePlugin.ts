@@ -14,8 +14,8 @@ module Site {
       workspace.topLevelTabs.push({
       content: "Site",
       title: "View the documentation for Hawtio",
-      isValid: (workspace:Workspace) => true,
-      href: () => "#/site/doc/index.md"
+      isValid: (workspace:Workspace) => false,
+      href: () => "#/site"
       });
 
       /*
@@ -23,15 +23,6 @@ module Site {
        return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
        });
 
-       */
-      /*
-
-       workspace.subLevelTabs.push({
-       content: '<i class="icon-list-alt"></i> Log',
-       title: "View the logs in this process",
-       isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
-       href: () => "#/logs"
-       });
        */
     });
 

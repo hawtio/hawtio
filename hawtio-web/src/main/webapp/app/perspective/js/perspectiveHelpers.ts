@@ -56,10 +56,18 @@ module Perspective {
         var id = tabSpec.id;
         var rhref = tabSpec.rhref;
         if (href) {
+          var hrefValue = href;
+          if (angular.isFunction(href)) {
+            hrefValue = href();
+          }
           var tab = workspace.topLevelTabs.find((t) => {
             var thref = t.href();
-            return thref && thref.startsWith(href);
+            return thref && thref.startsWith(hrefValue);
           });
+          if (!tab && !id && tabSpec.content) {
+            // lets assume the tab is the tabSpec
+            tab = tabSpec;
+          }
           if (tab) {
             answer.push(tab);
           }
