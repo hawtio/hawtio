@@ -322,8 +322,12 @@ module Camel {
 
       // TODO we need to find the MBean for the CamelContext / Route we are editing!
       var componentName = $scope.selectedComponentName;
-      var selectedCamelContextId = $scope.camelSelectionDetails.selectedCamelContextId;
-      var selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
+      var selectedCamelContextId;
+      var selectedRouteId
+      if (angular.isDefined($scope.camelSelectionDetails)) {
+        selectedCamelContextId = $scope.camelSelectionDetails.selectedCamelContextId;
+        selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
+      }
 
       console.log("==== componentName " + componentName +
               " selectedCamelContextId: " + selectedCamelContextId +

@@ -225,7 +225,7 @@ module Fabric {
    */
   export function pagePathToProfileId(pageId): string {
     var answer = null;
-    if (pageId.has(fabricTopLevel) && pageId !== fabricTopLevel) {
+    if (angular.isDefined(pageId) && pageId.has(fabricTopLevel) && pageId !== fabricTopLevel) {
       var profileId = pageId.remove(fabricTopLevel);
       if ((Fabric.useDirectoriesInGit || !profileId.has("/"))) {
         var profileSeparator = profileId.indexOf(profileSuffix + "/");
