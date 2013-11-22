@@ -454,7 +454,7 @@
     <profile>
       <id>camelSnapshot</id>
       <properties>
-        <camel-version>2.12-SNAPSHOT</camel-version>
+        <camel-version>2.13-SNAPSHOT</camel-version>
       </properties>
       <repositories>
       </repositories>
@@ -466,9 +466,7 @@
       <properties>
         <activemq-version>5.9-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
-<!--
-        <camel-version>2.11-SNAPSHOT</camel-version>
--->
+        <camel-version>2.13-SNAPSHOT</camel-version>
         <fabric-version>99-master-SNAPSHOT</fabric-version>
       </properties>
 

@@ -766,13 +766,6 @@
     </profile>
 
     <profile>
-      <id>camelSnapshot</id>
-      <properties>
-        <camel-version>2.12-SNAPSHOT</camel-version>
-      </properties>
-    </profile>
-
-    <profile>
       <id>amq57</id>
       <properties>
         <activemq-version>5.7.0.fuse-71-047</activemq-version>
