@@ -11,6 +11,13 @@ module Site {
 
       viewRegistry[pluginName] = layoutFull;
 
+      workspace.topLevelTabs.push({
+      content: "Site",
+      title: "View the documentation for Hawtio",
+      isValid: (workspace:Workspace) => true,
+      href: () => "#/site/doc/index.md"
+      });
+
       /*
        helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
        return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
@@ -18,12 +25,6 @@ module Site {
 
        */
       /*
-       workspace.topLevelTabs.push({
-       content: "Logs",
-       title: "View and search the logs of this container",
-       isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
-       href: () => "#/logs"
-       });
 
        workspace.subLevelTabs.push({
        content: '<i class="icon-list-alt"></i> Log',
