@@ -9,7 +9,7 @@ title: How hawtio plugins work
   <div id="content-header">
     <div class="container">
 
-${loadText(new FileInputStream("../doc/HowPluginsWork.md"))}
+${loadText(new FileInputStream("../docs/HowPluginsWork.md"))}
 
 </div>
   </div>
