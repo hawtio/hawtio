@@ -7,6 +7,8 @@ module Perspective {
    */
   export var perspectiveSearchId = "p";
 
+  export var defaultPerspective: string = null;
+
   /**
    * Returns the current perspective ID based on the query parameter or the current
    * discovered perspective
@@ -121,7 +123,7 @@ module Perspective {
         return "fabric";
       }
     }
-    return "container";
+    return Perspective.defaultPerspective || "container";
   }
 
   /**
