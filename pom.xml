@@ -93,7 +93,7 @@
     <infinispan-version>5.3.0.Final</infinispan-version>
 <!--
     TODO doesn't yet work - I think the config changed?
-    <infinispan-version>6.0.0.CR1</infinispan-version>
+    <infinispan-version>6.0.0.Final</infinispan-version>
 -->
 
     <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
