@@ -10,8 +10,9 @@ You can among others see the following details:
 * Lists of all routes in each Camel applications and their runtime statistics
 * Manage the lifecycle of all Camel applications and their routes, so you can restart / stop / pause / resume, etc.
 * Graphical representation of the running routes along with real time metrics
-* Profile the running routes with real time runtime statics; detailed specified per processor
 * Live tracing and debugging of running routes
+* Profile the running routes with real time runtime statics; detailed specified per processor
+* Browsing and sending messages to Camel endpoint
 
 
 #### Camel Tree ####
@@ -159,4 +160,19 @@ The metrics shown in the table are as follows:
 * Max = Time in ms. for the highest processing time.
 * Total = Accumulated self time in ms. for processing messages.
 * Self = Total time in ms. for processing message in this processor only.
+
+
+#### Endpoint Tree ####
+
+On the left hand side is the Camel Tree which lists all the running Camel applications in the JVM.
+
+When having selected a CamelContext you can list all the endpoint in use, as shown below:
+
+![Endpoint Tree](app/camel/doc/img/endpoint-tree.png "Endpoint Tree")
+
+And on the main view area is a table that lists the endpoints in tabular format as well.
+
+![Endpoint Table](app/camel/doc/img/endpoint-table.png "Endpoint Table")
+
+
 
