@@ -14,4 +14,15 @@
   <li ng-class='{active : isTopTabActive("tomcatTree")}'>
     <a ng-href="#/jmx/attributes?tab=tomcatTree{{hash}}">JMX</a>
   </li>
+
+  <li class="pull-right">
+    <a ng-href="{{fullScreenLink()}}" title="Show this view in full screen" data-placement="bottom">
+      <i class="icon-fullscreen"></i>
+    </a>
+  </li>
+  <li class="pull-right">
+    <a ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
+      <i class="icon-share"></i>
+    </a>
+  </li>
 </ul>
