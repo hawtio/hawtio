@@ -7,6 +7,7 @@ module SpringBatch{
     export function jobExecutionContextController($scope,$routeParams, $resource) {
         var jobExecutionId=$routeParams.jobExecutionId;
         var jobName=$routeParams.jobName;
+        var jobId=$routeParams.jobId;
         var jobExecutionContext = $resource(proxyUrl+springBatchServerPath+executionsListPath);
         jobExecutionContext.get({'jobExecutionId':jobExecutionId},function(data){
             for(var context in data.jobExecutionContext){
@@ -14,6 +15,7 @@ module SpringBatch{
             }
             $scope.jobExecutionContext=data.jobExecutionContext;
             $scope.jobName=jobName;
+            $scope.jobId=jobId;
         });
     }
 
