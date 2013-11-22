@@ -9,7 +9,7 @@ title: get your hawtio running!
   <div class="container">
     <div id="content">
 
-${unescape(loadText(new FileInputStream("../doc/GetStarted.md")))}
+${unescape(loadText(new FileInputStream("../docs/GetStarted.md")))}
 
 </div>
   </div>

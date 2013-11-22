@@ -22,7 +22,7 @@ Mostly hawtio just works. However, please check out the [Configuration Guide](ht
 
 Since 1.2-M2 of hawtio we enable security by default using the underlying application container's security mechanism.
 
-Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/doc/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
+Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
 
 #### How do I connect to my remote JVM?
 
@@ -141,7 +141,7 @@ If you want to hack the source code then check out [how to build hawtio](http://
 
 #### What code conventions do you have?
 
-Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/doc/CodingConventions.md) for our recommended approach.
+Check out the [Coding Conventions](https://github.com/hawtio/hawtio/blob/master/docs/CodingConventions.md) for our recommended approach.
 
 #### What can my new plugin do?
 

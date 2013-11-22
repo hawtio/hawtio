@@ -4,7 +4,7 @@ title: hawtio plugins
   <div id="content-header">
     <div class="container">
 
-${unescape(loadText(new FileInputStream("../doc/Plugins.md")))}
+${unescape(loadText(new FileInputStream("../docs/Plugins.md")))}
 
 </div>
   </div>
