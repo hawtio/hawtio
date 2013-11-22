@@ -49,58 +49,35 @@ module Wiki {
 
                 $element.bind('DOMNodeInserted', (event) => {
                   var ays = $element.find('a');
-
                   angular.forEach(ays, (a) => {
                     if (a.hasAttribute('no-adjust')) {
                       return;
                     }
-
                     a = $(a);
-
                     var href = (a.attr('href') || "").trim();
-                    var fileExtension = a.attr('file-extension');
-                    var extension = fileExtension ? "." + fileExtension : "";
-
-                    // if the last part of the path has a dot in it lets
-                    // exclude it as we are relative to a markdown or html file in a folder
-                    // such as when viewing readme.md or index.md
-                    var path = $location.path();
-                    var folderPath = path;
-                    var idx = path.lastIndexOf("/");
-                    if (idx > 0) {
-                      var lastName = path.substring(idx + 1);
-                      if (lastName.indexOf(".") >= 0) {
-                        folderPath = path.substring(0, idx);
+                    if (href) {
+                      var fileExtension = a.attr('file-extension');
+                      var newValue = Wiki.adjustHref($scope, $location, href, fileExtension);
+                      if (newValue) {
+                        a.attr('href', newValue);
                       }
                     }
-
-                    // Deal with relative URLs first...
-                    if (href.startsWith('../')) {
-                      var parts = href.split('/');
-                      var pathParts = folderPath.split('/');
-                      var parents = parts.filter((part) => {
-                        return part === "..";
-                      });
-                      parts = parts.last(parts.length - parents.length);
-                      pathParts = pathParts.first(pathParts.length - parents.length);
-
-                      a.attr('href', '#' + pathParts.join('/') + '/' + parts.join('/') + extension + $location.hash());
-                      Core.$apply($scope);
+                  });
+                  var imgs = $element.find('img');
+                  angular.forEach(imgs, (a) => {
+                    if (a.hasAttribute('no-adjust')) {
                       return;
                     }
+                    a = $(a);
+                    var href = (a.attr('src') || "").trim();
+                    if (href) {
+                      if (href.startsWith("/")) {
+                        href = url(href);
+                        a.attr('src', href);
 
-                    // Turn an absolute link into a wiki link...
-                    if (href.startsWith('/')) {
-                      a.attr('href', Wiki.branchLink($scope.branch, href + extension, $location) + extension);
-                      return;
-                    }
-
-                    if (!Wiki.excludeAdjustmentPrefixes.any((exclude) => {
-                      return href.startsWith(exclude);
-                    })) {
-                      a.attr('href', '#' + folderPath + "/" + href + extension + $location.hash());
-                      Core.$apply($scope);
-                      return;
+                        // lets avoid this element being reprocessed
+                        a.attr('no-adjust', 'true');
+                      }
                     }
                   });
                 })

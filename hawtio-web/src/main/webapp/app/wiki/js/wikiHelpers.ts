@@ -391,4 +391,50 @@ module Wiki {
     }
     return null;
   }
+
+  /**
+   * Adjusts a relative or absolute link from a wiki or file system to one using the hash bang syntax
+   */
+  export function adjustHref($scope, $location, href, fileExtension) {
+    var extension = fileExtension ? "." + fileExtension : "";
+
+    // if the last part of the path has a dot in it lets
+    // exclude it as we are relative to a markdown or html file in a folder
+    // such as when viewing readme.md or index.md
+    var path = $location.path();
+    var folderPath = path;
+    var idx = path.lastIndexOf("/");
+    if (idx > 0) {
+      var lastName = path.substring(idx + 1);
+      if (lastName.indexOf(".") >= 0) {
+        folderPath = path.substring(0, idx);
+      }
+    }
+
+    // Deal with relative URLs first...
+    if (href.startsWith('../')) {
+      var parts = href.split('/');
+      var pathParts = folderPath.split('/');
+      var parents = parts.filter((part) => {
+        return part === "..";
+      });
+      parts = parts.last(parts.length - parents.length);
+      pathParts = pathParts.first(pathParts.length - parents.length);
+
+      return '#' + pathParts.join('/') + '/' + parts.join('/') + extension + $location.hash();
+    }
+
+    // Turn an absolute link into a wiki link...
+    if (href.startsWith('/')) {
+      return Wiki.branchLink($scope.branch, href + extension, $location) + extension;
+    }
+
+    if (!Wiki.excludeAdjustmentPrefixes.any((exclude) => {
+      return href.startsWith(exclude);
+    })) {
+      return '#' + folderPath + "/" + href + extension + $location.hash();
+    } else {
+      return null;
+    }
+  }
 }
