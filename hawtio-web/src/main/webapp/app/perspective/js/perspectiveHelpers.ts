@@ -7,7 +7,17 @@ module Perspective {
    */
   export var perspectiveSearchId = "p";
 
+  /**
+   * Lets you specify which perspective to default to if there's not a single active one
+   */
   export var defaultPerspective: string = null;
+
+  /**
+   * A hook so folks can specify the default start page explicitly if the first valid page in the
+   * perspective is not the intended start page
+   */
+  export var defaultPageLocation: string = null;
+
 
   /**
    * Returns the current perspective ID based on the query parameter or the current
@@ -130,8 +140,8 @@ module Perspective {
    * Returns the default page after figuring out what the current perspective is
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
-    var answer = null;
-    if ($location && workspace) {
+    var answer = Perspective.defaultPageLocation;
+    if (!answer && $location && workspace) {
       var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
       angular.forEach(topLevelTabs, (tab) => {
         var href = tab.href();
