@@ -300,6 +300,36 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+              <target>
+                <!-- copy the markdown docs into the site plugin  -->
+                <copy todir="${basedir}/src/main/webapp/app/site" overwrite="true">
+                  <fileset dir="${basedir}/..">
+                    <include name="*.md" />
+                  </fileset>
+                </copy>
+                <copy todir="${basedir}/src/main/webapp/app/site/doc" overwrite="true">
+                  <fileset dir="${basedir}/../docs">
+                    <include name="**/*.md" />
+                    <include name="**/*.html" />
+                  </fileset>
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
