@@ -66,8 +66,9 @@ You can among others see the following details:</p>
 <li>Lists of all routes in each Camel applications and their runtime statistics</li>
 <li>Manage the lifecycle of all Camel applications and their routes, so you can restart / stop / pause / resume, etc.</li>
 <li>Graphical representation of the running routes along with real time metrics</li>
-<li>Profile the running routes with real time runtime statics; detailed specified per processor</li>
 <li>Live tracing and debugging of running routes</li>
+<li>Profile the running routes with real time runtime statics; detailed specified per processor</li>
+<li>Browsing and sending messages to Camel endpoint</li>
 </ul>
 
 <h4 id = "Camel_Tree">Camel Tree</h4>
@@ -212,6 +213,18 @@ uses an XPath expression which means the majority of processing time is spent ev
 <li>Total = Accumulated self time in ms. for processing messages.</li>
 <li>Self = Total time in ms. for processing message in this processor only.</li>
 </ul>
+
+<h4 id = "Endpoint_Tree">Endpoint Tree</h4>
+
+<p>On the left hand side is the Camel Tree which lists all the running Camel applications in the JVM.</p>
+
+<p>When having selected a CamelContext you can list all the endpoint in use, as shown below:</p>
+
+<p><img src="app/camel/doc/img/endpoint-tree.png" alt="Endpoint Tree" title="Endpoint Tree"/></p>
+
+<p>And on the main view area is a table that lists the endpoints in tabular format as well.</p>
+
+<p><img src="app/camel/doc/img/endpoint-table.png" alt="Endpoint Table" title="Endpoint Table"/></p>
 
 <p></div>
   </div></p>
