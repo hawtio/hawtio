@@ -69,7 +69,6 @@ module Camel {
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
-              {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'LastExchangeFailedTimestamp', displayName: 'Last exchange failed timestamp', visible: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
