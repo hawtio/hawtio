@@ -19,6 +19,11 @@ var numberTypeNames = {
 
 /**
  * Returns the number of lines in the given text
+ *
+ * @method lineCount
+ * @param {String} value
+ * @return {Number}
+ *
  */
 function lineCount(value): number {
   var rows = 0;
@@ -89,6 +94,11 @@ function trimQuotes(text:string) {
  *
  * If the value is null an empty array is returned.
  * If the value is a non empty string then the string is split by commas
+ *
+ * @method toSearchArgumentArray
+ * @param {Object} value
+ * @return {String[]}
+ *
  */
 function toSearchArgumentArray(value): string[] {
   if (value) {

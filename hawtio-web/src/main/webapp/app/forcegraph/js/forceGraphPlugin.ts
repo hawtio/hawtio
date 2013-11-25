@@ -1,3 +1,8 @@
+/**
+ * Force Graph plugin & directive
+ *
+ * @module ForceGraph
+ */
 module ForceGraph {
     var pluginName = 'forceGraph';
 

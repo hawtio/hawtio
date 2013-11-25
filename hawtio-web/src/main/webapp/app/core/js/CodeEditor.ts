@@ -18,9 +18,7 @@ module CodeEditor {
 
     $scope.preferences = GlobalCodeMirrorOptions;
 
-    /**
-     * If any of the preferences change, make sure to save them automatically
-     */
+    // If any of the preferences change, make sure to save them automatically
     $scope.$watch("preferences", function(newValue, oldValue) {
       if (newValue !== oldValue) {
         // such a cheap and easy way to update the example view :-)
@@ -45,6 +43,10 @@ module CodeEditor {
 
   /**
    * Auto formats the CodeMirror editor content to pretty print
+   *
+   * @method autoFormatEditor
+   * @param {CodeMirrorEditor} editor
+   * @return {void}
    */
   export function autoFormatEditor(editor:CodeMirrorEditor) {
     if (editor) {
@@ -58,7 +60,11 @@ module CodeEditor {
   }
 
   /**
-   * Used to configures the default editor settings (Per Editor Instance)
+   * Used to configures the default editor settings (per Editor Instance)
+   *
+   * @method createEditorSettings
+   * @param {Object} options
+   * @returns {Object}
    */
   export function createEditorSettings(options:any = {}) {
     options.extraKeys = options.extraKeys || {};
