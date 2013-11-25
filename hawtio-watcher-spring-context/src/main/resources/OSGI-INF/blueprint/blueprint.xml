@@ -8,12 +8,8 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="springContextWatcher" class="org.fusesource.fabric.watcher.spring.context.WatcherSpringContext" init-method="init" destroy-method="destroy">
-    <property name="rootPath" value="${hawtio.spring.config.dir}"/>
-  </bean>
-
   <bean id="springContextWatcherFacade" class="io.hawt.spring.WatcherSpringContextFacade" init-method="init" destroy-method="destroy">
-    <property name="watcher" ref="springContextWatcher"/>
+    <property name="rootPath" value="${hawtio.spring.config.dir}"/>
   </bean>
 
 </blueprint>
