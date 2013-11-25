@@ -28,7 +28,7 @@
                         <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Actions <b class="caret"></b></a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li>
-                                <a href="#/springbatch/jobs/{{jobName}}/history/executions" style="cursor: pointer">View History</a>
+                                <a href="#/springbatch/jobs/{{jobName}}/{{jobInstance.id}}/history/executions" style="cursor: pointer">View History</a>
                             </li>
                             <li> <a ng-click="runJob(jobName,jobParams)" style="cursor: pointer">Run Job</a> </li>
 

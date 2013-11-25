@@ -15,6 +15,8 @@ module SpringBatch {
                 executionList.add(data.jobExecutions[execution]);
             }
             $scope.executionHistory = executionList;
+            $scope.jobName = $routeParams.jobName;
+            $scope.jobId = $routeParams.jobId;
         })
     }
 }
