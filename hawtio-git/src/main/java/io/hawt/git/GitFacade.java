@@ -72,6 +72,11 @@ public class GitFacade extends GitFacadeSupport {
             }
             final Callable<Object> emptyCallable = new Callable<Object>() {
                 @Override
+                public String toString() {
+                    return "pull()";
+                }
+
+                @Override
                 public Object call() throws Exception {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Pulled from remote repository {}", getRemoteRepository());
@@ -249,6 +254,11 @@ public class GitFacade extends GitFacadeSupport {
     public FileContents read(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
             @Override
+            public String toString() {
+                return "doRead(" + branch + ", " + pathOrEmpty + ")";
+            }
+
+            @Override
             public FileContents call() throws Exception {
                 return doRead(git, getRootGitDirectory(), branch, pathOrEmpty);
             }
@@ -264,6 +274,11 @@ public class GitFacade extends GitFacadeSupport {
     public FileInfo exists(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileInfo>() {
             @Override
+            public String toString() {
+                return "doExists(" + branch + ", " + pathOrEmpty + ")";
+            }
+
+            @Override
             public FileInfo call() throws Exception {
                 File rootDir = getRootGitDirectory();
                 return doExists(git, rootDir, branch, pathOrEmpty);
@@ -276,6 +291,11 @@ public class GitFacade extends GitFacadeSupport {
      */
     public List<String> completePath(final String branch, final String completionText, final boolean directoriesOnly) {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
+            @Override
+            public String toString() {
+                return "completePath(" + branch + ", " + completionText + ")";
+            }
+
             @Override
             public List<String> call() throws Exception {
                 File rootDir = getRootGitDirectory();
@@ -292,6 +312,11 @@ public class GitFacade extends GitFacadeSupport {
         final String fileNameWildcard = (Strings.isBlank(fileNameWildcardOrBlank)) ? "*.json" : fileNameWildcardOrBlank;
         return gitOperation(getStashPersonIdent(), new Callable<String>() {
             @Override
+            public String toString() {
+                return "readJsonChildContent(" + branch + ", " + path + ")";
+            }
+
+            @Override
             public String call() throws Exception {
                 File rootDir = getRootGitDirectory();
                 return doReadJsonChildContent(git, rootDir, branch, path, fileNameWildcard, search);
@@ -303,6 +328,11 @@ public class GitFacade extends GitFacadeSupport {
                       final String authorName, final String authorEmail, final String contents) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
+            @Override
+            public String toString() {
+                return "doWrite(" + branch + ", " + path + ")";
+            }
+
             public CommitInfo call() throws Exception {
                 checkoutBranch(git, branch);
                 File rootDir = getRootGitDirectory();
@@ -321,6 +351,11 @@ public class GitFacade extends GitFacadeSupport {
                                      final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
+            @Override
+            public String toString() {
+                return "createDirectory(" + branch + ", " + path + ")";
+            }
+
             public CommitInfo call() throws Exception {
                 checkoutBranch(git, branch);
                 File rootDir = getRootGitDirectory();
@@ -335,6 +370,11 @@ public class GitFacade extends GitFacadeSupport {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<Void>() {
             @Override
+            public String toString() {
+                return "revertTo(" + branch + ", " + objectId + ", " + blobPath + ")";
+            }
+
+            @Override
             public Void call() throws Exception {
                 Git aGit = git;
                 File rootDir = getRootGitDirectory();
@@ -347,6 +387,11 @@ public class GitFacade extends GitFacadeSupport {
                        final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
+            @Override
+            public String toString() {
+                return "rename(" + branch + ", " + oldPath + ", " + newPath + ")";
+            }
+
             public RevCommit call() throws Exception {
                 File rootDir = getRootGitDirectory();
                 return doRename(git, rootDir, branch, oldPath, newPath, commitMessage, personIdent);
@@ -358,6 +403,11 @@ public class GitFacade extends GitFacadeSupport {
                        final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         gitOperation(personIdent, new Callable<RevCommit>() {
+            @Override
+            public String toString() {
+                return "remove(" + branch + ", " + path + ")";
+            }
+
             public RevCommit call() throws Exception {
                 Git aGit = git;
                 File rootDir = getRootGitDirectory();
@@ -369,6 +419,11 @@ public class GitFacade extends GitFacadeSupport {
     @Override
     public List<String> branches() {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
+            @Override
+            public String toString() {
+                return "doListBranches()";
+            }
+
             @Override
             public List<String> call() throws Exception {
                 return doListBranches(git);
@@ -541,6 +596,11 @@ public class GitFacade extends GitFacadeSupport {
      * Performs the given operations on a clean git repository
      */
     protected <T> T gitOperation(PersonIdent personIdent, Callable<T> callable) {
+        boolean debug = LOG.isDebugEnabled();
+        long start = 0;
+        if (debug) {
+            start = System.currentTimeMillis();
+        }
         synchronized (lock) {
             try {
                 // lets check if we have done a commit yet...
@@ -559,7 +619,12 @@ public class GitFacade extends GitFacadeSupport {
                 if (isPullOnStartup() && isPullBeforeOperation() && Strings.isNotBlank(getRemoteRepository())) {
                     doPull();
                 }
-                return callable.call();
+                T answer = callable.call();
+                if (debug) {
+                    long end = System.currentTimeMillis();
+                    LOG.debug("Operation " + callable + " took " + (end - start) + " ms");
+                }
+                return answer;
             } catch (Exception e) {
                 throw new RuntimeIOException(e);
             }
