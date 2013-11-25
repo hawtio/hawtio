@@ -297,24 +297,21 @@ module Core {
 
   export function parseMBean(mbean) {
     var answer = {};
-
     var parts = mbean.split(":");
-    if (parts.length === 2) {
-      answer['domain'] = parts[0];
+    if (parts.length > 1) {
+      answer['domain'] = parts.first();
+      parts = parts.exclude(parts.first());
+      parts = parts.join(":");
       answer['attributes'] = {};
-
-      var nameValues = parts[1].split(",");
+      var nameValues = parts.split(",");
       nameValues.forEach((str) => {
-        var nameValue = str.split("=");
-        if (nameValue.length == 2) {
-          answer['attributes'][nameValue[0]] = nameValue[1];
-        }
+        var nameValue = str.split('=');
+        var name = nameValue.first().trim();
+        nameValue = nameValue.exclude(nameValue.first());
+        answer['attributes'][name] = nameValue.join('=').trim();
       });
-
-      return answer;
     }
-
-    return {};
+    return answer;
   }
 
 

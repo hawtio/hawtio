@@ -187,6 +187,56 @@ module Camel {
   }
 
   /**
+   * Parse out the currently selected endpoint's name to be used when invoking on a
+   * context operation that wants an endpoint name
+   *
+   * @param workspace
+   * @returns {*} either a string that is the endpoint name or null if it couldn't be parsed
+   */
+  export function getSelectedEndpointName(workspace:Workspace) {
+    var selection = workspace.selection;
+    if (selection && selection['objectName'] && selection['typeName'] && selection['typeName'] === 'endpoints') {
+      var mbean = Core.parseMBean(selection['objectName']);
+      if (!mbean) {
+        return null;
+      }
+      var attributes = mbean['attributes'];
+      if (!attributes) {
+        return null;
+      }
+
+      if (!('name' in attributes)) {
+        return null;
+      }
+
+      var uri = attributes['name'];
+      uri = uri.replace("\\?", "?");
+      if (uri.startsWith("\"")) {
+        uri = uri.last(uri.length - 1);
+      }
+      if (uri.endsWith("\"")) {
+        uri = uri.first(uri.length - 1);
+      }
+      return uri;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Returns the mbean for the currently selected camel context and the name of the currently
+   * selected endpoint for JMX operations on a context that require an endpoint name.
+   * @param workspace
+   * @returns {{uri: string, mbean: string}} either value could be null if there's a parse failure
+   */
+  export function getContextAndTargetEndpoint(workspace:Workspace) {
+    return {
+      uri: Camel.getSelectedEndpointName(workspace),
+      mbean: Camel.getSelectionCamelContextMBean(workspace)
+    };
+  }
+
+  /**
    * Returns the cached Camel XML route node stored in the current tree selection Folder
    */
   export function getSelectedRouteNode(workspace:Workspace) {
