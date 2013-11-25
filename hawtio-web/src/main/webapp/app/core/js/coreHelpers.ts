@@ -1186,4 +1186,25 @@ module Core {
     };
     return new Jolokia(jolokiaParams);
   }
+
+  /**
+   * Returns a new function which ensures that the delegate function is only invoked at most once
+   * within the tiven number of millseconds
+   * @param fn the function to be invoked at most once within the given number of millis
+   * @param millis the time window during which this function should only be called at most once
+   */
+  export function throttled(fn, millis: number) {
+    var nextInvokeTime: number = 0;
+    var lastAnswer = null;
+    return () => {
+      var now = Date.now();
+      if (nextInvokeTime < now) {
+        nextInvokeTime = now + millis;
+        lastAnswer = fn();
+      } else {
+        log.info("Not invoking function as we did call " + (now - (nextInvokeTime - millis)) + " ms ago");
+      }
+      return lastAnswer;
+    }
+  }
 }

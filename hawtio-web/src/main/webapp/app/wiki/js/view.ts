@@ -8,7 +8,10 @@ module Wiki {
     }, 100);
   }
 
-  export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache) {
+  export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace,
+                                 marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache) {
+
+    var log:Logging.Logger = Logger.get("Wiki");
 
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -50,6 +53,9 @@ module Wiki {
     };
 
     $scope.childActions = [];
+
+    var maybeUpdateView = Core.throttled(updateView, 1000);
+
 
     /*
     if (!$scope.nameOnly) {
@@ -181,8 +187,8 @@ module Wiki {
     $scope.$watch('workspace.tree', function () {
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
-        //console.log("Reloading the view as we now seem to have a git mbean!");
-        setTimeout(updateView, 50);
+        //log.info("Reloading view as the tree changed and we have a git mbean now");
+        setTimeout(maybeUpdateView, 50);
       }
     });
 
@@ -195,7 +201,8 @@ module Wiki {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateView, 50);
+      //log.info("Reloading view due to $routeChangeSuccess");
+      setTimeout(maybeUpdateView, 50);
     });
 
     $scope.onSubmit = (json, form) => {
@@ -441,9 +448,9 @@ module Wiki {
 
     $scope.folderNames = (text) => {
       return wikiRepository.completePath($scope.branch, text, true, null);
-    }
+    };
 
-    updateView();
+    setTimeout(maybeUpdateView, 50);
 
     function updateView() {
       var path = $location.path();
