@@ -156,7 +156,7 @@ In the aboe the label for **foo.value** would jsut show _value_ rather than _foo
 
 To use a custom control use the **formTemplate** entry on a property to define the AngularJS partial to be used to render the form control. This lets you use any AngularJS directive or widget.
 
-For example if you search for **formTemplate** in the [code generated Camel json schema file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/camel/js/camelModel.js#L120) you will see how the **description** property uses a _textarea_
+For example if you search for **formTemplate** in the [code generated Camel json schema file](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/lib/camelModel.js#L120) you will see how the **description** property uses a _textarea_
 
 ## Live example
 <div ng-include="'app/forms/html/test.html'"></div>
