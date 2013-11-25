@@ -6,7 +6,7 @@ tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep 
 
 
 # starts yuidoc in server mode
-yuidoc -e .ts -o target/docs --server src/main/webapp/app/core/js/
+yuidoc -e .ts -o target/docs --server src/main/webapp/app/forcegraph/js/
 
 
 

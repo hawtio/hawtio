@@ -1,11 +1,21 @@
 module ForceGraph {
 
+    /**
+     * GraphBuilder
+     *
+     * @class GraphBuilder
+     */
     export class GraphBuilder {
 
         private nodes = {};
         private links = [];
         private linkTypes = {};
 
+      /**
+       * Adds a node to this graph
+       * @method addNode
+       * @param {Object} node
+       */
         public addNode(node) {
             if(!this.nodes[node.id]) {
                 this.nodes[node.id] = node;
