@@ -55,7 +55,7 @@ module Fabric {
             link: ($scope, $element, $attrs) => {
             var profileId = $attrs['fabricProfileLink'];
 
-            if (profileId && !profileId.isBlank()) {
+            if (profileId && !profileId.isBlank() && Fabric.fabricCreated(workspace)) {
               var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
               var versionId = container['versionId'];
               if (versionId && !versionId.isBlank()) {
@@ -147,7 +147,7 @@ module Fabric {
             link: ($scope, $element, $attrs) => {
             var versionLink = $attrs['fabricVersionLink'];
 
-            if (versionLink && !versionLink.isBlank()) {
+            if (versionLink && !versionLink.isBlank() && Fabric.fabricCreated(workspace)) {
               var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
               var versionId = container['versionId'] || "1.0";
               if (versionId && !versionId.isBlank()) {
@@ -165,7 +165,7 @@ module Fabric {
             viewRegistry['createFabric'] = layoutFull;
 
             pageTitle.addTitleElement( ():string => {
-              if (Fabric.currentContainerId === '') {
+              if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
                 try {
                   Fabric.currentContainerId = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
                 } catch (e) {

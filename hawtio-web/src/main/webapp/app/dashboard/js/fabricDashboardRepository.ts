@@ -10,18 +10,25 @@ module Dashboard {
     }
 
     public getBranchAndProfiles() {
+      if (Fabric.fabricCreated(this.workspace)) {
+        var container = Fabric.getCurrentContainer(this.jolokia, ['id', 'versionId', 'profiles']);
+        var profiles = [];
+        if (container.profiles) {
+          profiles = container.profiles.unique();
+          profiles = Fabric.filterProfiles(this.jolokia, container.versionId, profiles);
+        }
 
-      var container = Fabric.getCurrentContainer(this.jolokia, ['id', 'versionId', 'profiles']);
-      var profiles = [];
-      if (container.profiles) {
-        profiles = container.profiles.unique();
-        profiles = Fabric.filterProfiles(this.jolokia, container.versionId, profiles);
+        return {
+          branch: container.versionId,
+          profiles: profiles
+        }
+      } else {
+        return  {
+          branch: "1.0",
+          profiles: []
+        };
       }
 
-      return {
-        branch: container.versionId,
-        profiles: profiles
-      }
     }
 
     public putDashboards(array:Dashboard[], commitMessage:string, fn) {
