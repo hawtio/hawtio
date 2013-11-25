@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -17,13 +19,30 @@ import java.util.TreeMap;
 public class WatcherSpringContextFacade extends MBeanSupport implements WatcherSpringContextFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(WatcherSpringContextFacade.class);
 
+    private File rootPath;
     private WatcherSpringContext watcher;
+    private boolean manuallyCreatedWatcher;
 
     @Override
     public void init() throws Exception {
-        // force validation error
-        watcher();
+        if (watcher == null) {
+            if (rootPath != null) {
+                rootPath.mkdirs();
+            }
+            watcher = new WatcherSpringContext();
+            manuallyCreatedWatcher = true;
+            watcher.setRootDirectory(rootPath);
+            watcher.init();
+        }
         super.init();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (manuallyCreatedWatcher && watcher != null) {
+            watcher.destroy();
+        }
+        super.destroy();
     }
 
     /**
@@ -73,6 +92,14 @@ public class WatcherSpringContextFacade extends MBeanSupport implements WatcherS
 
     // Properties
     //-------------------------------------------------------------------------
+
+    public File getRootPath() {
+        return rootPath;
+    }
+
+    public void setRootPath(File rootPath) {
+        this.rootPath = rootPath;
+    }
 
     public WatcherSpringContext getWatcher() {
         return watcher;
