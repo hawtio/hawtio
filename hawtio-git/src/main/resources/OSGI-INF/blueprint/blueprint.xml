@@ -7,8 +7,8 @@
       <ext:property name="hawtio.config.dir" value=""/>
       <ext:property name="hawtio.config.repo" value="https://github.com/hawtio/hawtio-config.git"/>
       <ext:property name="hawtio.config.pullOnStartup" value="true"/>
-      <ext:property name="hawtio.config.pullBeforeOperation" value="true"/>
-      <ext:property name="hawtio.config.pullTimePeriod" value="5000"/>
+      <ext:property name="hawtio.config.pullBeforeOperation" value="false"/>
+      <ext:property name="hawtio.config.pullTimePeriod" value="60000"/>
       <ext:property name="hawtio.config.cloneOnStartup" value="true"/>
       <ext:property name="hawtio.config.remote" value="origin"/>
     </ext:default-properties>
