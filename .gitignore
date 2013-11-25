@@ -6,6 +6,8 @@ target
 overlays
 .DS_Store
 .settings
+.project
+.classpath
 bin
 runtime-EclipseApplication-m2eclipse
 .metadata
