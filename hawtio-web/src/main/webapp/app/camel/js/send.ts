@@ -209,8 +209,10 @@ module Camel {
     }
 
     function loadProfileConfigurationFiles() {
-      $scope.container = Fabric.getCurrentContainer(jolokia, ['versionId', 'profileIds']);
-      jolokia.execute(Fabric.managerMBean, "currentContainerConfigurationFiles", onSuccess(onFabricConfigFiles));
+      if (Fabric.fabricCreated(workspace)) {
+        $scope.container = Fabric.getCurrentContainer(jolokia, ['versionId', 'profileIds']);
+        jolokia.execute(Fabric.managerMBean, "currentContainerConfigurationFiles", onSuccess(onFabricConfigFiles));
+      }
     }
 
     function onFabricConfigFiles(response) {
