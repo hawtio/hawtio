@@ -134,16 +134,22 @@ module Camel {
 
           var callback = onSuccess(onSendCompleteFn);
           if (selection.domain === "org.apache.camel") {
-            var uri = selection.title.replace("\\?", "?");
-            mbean = getSelectionCamelContextMBean(workspace);
-            if (mbean) {
+            var target = Camel.getContextAndTargetEndpoint(workspace);
+            var uri = target['uri'];
+            mbean = target['mbean'];
+            if (mbean && uri) {
               if (headers) {
                 jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
               } else {
                 jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
               }
             } else {
-              notification("error", "Could not find CamelContext MBean!");
+              if (!mbean) {
+                notification("error", "Could not find CamelContext MBean!");
+              } else {
+                notification("error", "Failed to determine endpoint name!");
+              }
+              log.debug("Parsed context and endpoint: ", target);
             }
           } else {
             var user = localStorage["activemqUserName"];
