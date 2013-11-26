@@ -56,6 +56,11 @@ public interface GitFacadeMXBean {
     List<CommitInfo> history(String branch, String objectId, String path, int limit);
 
     /**
+     * Returns the commit tree for the given commit id
+     */
+    List<CommitTreeInfo> getCommitTree(String commitId);
+
+    /**
      * Get the contents of a blobPath for a given commit objectId
      */
     String getContent(String objectId, String blobPath);

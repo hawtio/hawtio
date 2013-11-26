@@ -388,6 +388,21 @@ public class GitFacade extends GitFacadeSupport {
     }
 
     @Override
+    public List<CommitTreeInfo> getCommitTree(final String commitId) {
+        return gitOperation(getStashPersonIdent(), new Callable<List<CommitTreeInfo>>() {
+            @Override
+            public String toString() {
+                return "getTree(" + commitId + ")";
+            }
+
+            public List<CommitTreeInfo> call() throws Exception {
+                return doGetCommitTree(git, commitId);
+            }
+        });
+    }
+
+
+    @Override
     public void revertTo(final String branch, final String objectId, final String blobPath, final String commitMessage,
                          final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);

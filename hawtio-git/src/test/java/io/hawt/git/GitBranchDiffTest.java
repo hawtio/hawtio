@@ -102,6 +102,20 @@ public class GitBranchDiffTest {
         assertNotNull("diff", diff);
         assertTrue("diff is blank: " + diff, Strings.isNotBlank(diff));
         LOG.info("Diff is: " + diff);
+
+        history = git.history(branch, null, null, 0);
+        for (CommitInfo commitInfo : history) {
+            System.out.println("Version: " + commitInfo);
+        }
+        assertCommitTree(history.get(0).getCommitHashText(), 2);
+    }
+
+    protected void assertCommitTree(String commitId, int exectedSize) {
+        List<CommitTreeInfo> commitTree = git.getCommitTree(commitId);
+        for (CommitTreeInfo commitTreeInfo : commitTree) {
+            System.out.println(commitId + " has " + commitTreeInfo);
+        }
+        assertSize("commit tree for " + commitId, exectedSize, commitTree);
     }
 
     public static void assertSize(String message, int expectedSize, Collection<?> collection) {
