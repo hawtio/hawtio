@@ -1,4 +1,7 @@
 // Lets use a NodeSelection interface so we can expose things like the objectName and the MBean's entries
+/**
+ * @class NodeSelection
+ */
 interface NodeSelection {
   title: string;
   key?:string;
@@ -51,6 +54,7 @@ class Folder implements NodeSelection {
   /**
    * Navigates the given paths and returns the value there or null if no value could be found
    * @method navigate
+   * @for Folder
    * @param {Array} paths
    * @return {NodeSelection}
    */
@@ -133,6 +137,7 @@ class Folder implements NodeSelection {
   /**
    * Removes this node from my parent if I have one
    * @method detach
+   * @for Folder
 \   */
   public detach() {
     var oldParent = this.parent;
@@ -153,6 +158,7 @@ class Folder implements NodeSelection {
   /**
    * Searches this folder and all its descendants for the first folder to match the filter
    * @method findDescendant
+   * @for Folder
    * @param {Function} filter
    * @return {Folder}
    */

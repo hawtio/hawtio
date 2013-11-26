@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding) {

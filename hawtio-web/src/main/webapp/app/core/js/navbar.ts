@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {

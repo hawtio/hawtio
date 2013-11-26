@@ -1,5 +1,12 @@
+/**
+ * @module Core
+ */
 module Core {
 
+  /**
+   * Directive that's used to ensure an ng-grid expands it's height to fit the viewport height
+   * @class GridStyle
+   */
   export class GridStyle {
     public restrict = 'C';
 

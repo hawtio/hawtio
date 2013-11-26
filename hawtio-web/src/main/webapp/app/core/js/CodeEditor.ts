@@ -1,4 +1,10 @@
+/**
+ * @module CodeEditor
+ * @main CodeEditor
+ */
 module CodeEditor {
+  // TODO break this out into a separate plugin and maybe combine with hawtio-editor directive?
+
   // TODO Wire up to a global config manager service
   export var GlobalCodeMirrorOptions = {
     theme: "default",
@@ -45,6 +51,7 @@ module CodeEditor {
    * Auto formats the CodeMirror editor content to pretty print
    *
    * @method autoFormatEditor
+   * @for CodeEditor
    * @param {CodeMirrorEditor} editor
    * @return {void}
    */
@@ -63,6 +70,7 @@ module CodeEditor {
    * Used to configures the default editor settings (per Editor Instance)
    *
    * @method createEditorSettings
+   * @for CodeEditor
    * @param {Object} options
    * @return {Object}
    */

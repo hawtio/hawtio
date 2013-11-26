@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
   export function HelpController($scope, $routeParams, marked, helpRegistry, branding) {
 

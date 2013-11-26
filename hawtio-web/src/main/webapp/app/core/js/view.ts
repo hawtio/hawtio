@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   // NOTE - $route is brought in here to ensure the factory for that service
