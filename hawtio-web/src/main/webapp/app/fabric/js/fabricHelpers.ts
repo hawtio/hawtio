@@ -803,9 +803,10 @@ module Fabric {
     return answer.filter({root: true}).map(v => v["id"]);
   }
 
-  export function getOpenShiftDomains(workspace ,jolokia, serverUrl, login, password, fn = null) {
+  export function getOpenShiftDomains(workspace ,jolokia, serverUrl, login, password, fn = null, onError = null) {
     if (hasOpenShiftFabric(workspace) && serverUrl && login && password) {
-      return jolokia.execute(Fabric.openShiftFabricMBean, "getDomains", serverUrl, login, password, onSuccess(fn));
+      var options = onSuccess(fn, {error: onError});
+      return jolokia.execute(Fabric.openShiftFabricMBean, "getDomains", serverUrl, login, password, options);
     } else {
       if (fn) {
         fn([]);
