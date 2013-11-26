@@ -192,7 +192,7 @@ module API {
     var elementProperyFn = config.elementToPropertyName || nodeName;
     var attributeProperyFn = config.attributeToPropertyName || nodeName;
 
-    angular.forEach(element.children, (child) => {
+    angular.forEach(element.childNodes, (child) => {
       if (child.nodeType === 1) {
         var propertyName = elementProperyFn(element, child);
         if (propertyName) {
