@@ -95,9 +95,37 @@ module Fabric {
 
         Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
         Core.pathSet(schema.properties, ['login', 'tooltip'], 'Your personal login to the OpenShift portal');
+        Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
         Core.pathSet(schema.properties, ['password', 'label'], 'OpenShift Password');
         Core.pathSet(schema.properties, ['password', 'tooltip'], 'Your personal password on the OpenShift portal');
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
+        Core.pathSet(schema.properties, ['password', 'input-attributes', "autofill"], "true");
+
+        // add an extra property to make it easy to login
+/*
+*/
+/*
+        Core.pathSet(schema.properties, ['tryLogin', 'label'], 'Try');
+*/
+/*
+        Core.pathSet(schema.properties, ['tryLogin', 'input-element'], "button");
+        Core.pathSet(schema.properties, ['tryLogin', 'input-attributes', "class"], "btn");
+        Core.pathSet(schema.properties, ['tryLogin', 'input-attributes', "ng-click"], "openShift.login()");
+*/
+        //Core.pathSet(schema.properties, ['tryLogin', 'input-attributes', "ng-disable"], "!entity.login || !entity.password || !entity.serverUrl");
+/*
+*/
+        Core.pathSet(schema.properties, ['tryLogin', 'type'], 'string');
+        Core.pathSet(schema.properties, ['tryLogin', 'input-attributes', "ng-model"], "openShift.tryLogin");
+        Core.pathSet(schema.properties, ['tryLogin', 'label'], 'Authenticate');
+        Core.pathSet(schema.properties, ['tryLogin', 'tooltip'], 'Authenticate with the OpenShift Broker using your login and password');
+        Core.pathSet(schema.properties, ['tryLogin', 'formTemplate'], '<a ng-click="openShift.login()" ng-disabled="!entity.login || !entity.password || !entity.serverUrl" ' +
+          'title="Test you entered the correct OpenShift Broker, login and password" class="btn btn-primary">Login to OpenShift</a>' +
+          '<div class="alert" ng-show="openShift.loginFailed" ' +
+          'title="Are you sure you correctly entered the OpenShift Broker, login and password correctly?">Login failed</div>');
+/*
+        Core.pathSet(schema.properties, ['tryLogin', 'formTemplate'], '<button ng-click="openShift.login()" title="Test you entered the correct OpenShift Broker, login and password">Try Login</button>');
+*/
 
         Core.pathSet(schema.properties, ['domain', 'label'], 'OpenShift Domain');
         Core.pathSet(schema.properties, ['domain', 'tooltip'], 'What is your unique domain name used for applications you create on OpenShift. Often this is your own user name or group name');
@@ -112,7 +140,7 @@ module Fabric {
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'serverUrl', 'login', 'password', 'domain', 'gearProfile', 'number'],
+          'Default': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
           'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
         };
         break;

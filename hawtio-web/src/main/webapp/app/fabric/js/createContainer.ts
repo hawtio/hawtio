@@ -2,6 +2,8 @@ module Fabric {
 
   export function CreateContainerController($scope, $element, $compile, $location, workspace, jolokia, localStorage) {
 
+    var log:Logging.Logger = Logger.get("Fabric");
+
     $scope.versionsOp = 'versions()';
 
     $scope.entity = {
@@ -36,7 +38,7 @@ module Fabric {
     };
 
     $scope.providers = Fabric.registeredProviders(jolokia);
-    console.log("providers: ", $scope.providers);
+    //console.log("providers: ", $scope.providers);
     $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
     $scope.schema = {};
 
@@ -62,7 +64,38 @@ module Fabric {
     $scope.openShift = {
       params: null,
       domains: [],
-      gearProfiles: []
+      gearProfiles: [],
+      tryLogin: "",
+      login: () => {
+        var entity = $scope.entity;
+        var serverUrl = Core.pathGet(entity, ["serverUrl"]) || "openshift.redhat.com";
+        var login = Core.pathGet(entity, ["login"]);
+        var password = Core.pathGet(entity, ["password"]);
+
+        log.info("Invoking login to server " + serverUrl + " user " + login);
+        $scope.openShift.loginFailed = false;
+        if (serverUrl && login && password) {
+          $scope.openShift.domains = [];
+          Fabric.getOpenShiftDomains(workspace, jolokia, serverUrl, login, password, (results) => {
+            $scope.openShift.domains = results;
+            log.info("found openshift domains: " + results);
+            // lets default the value if there's only 1
+            if (results.length === 1) {
+              $scope.entity.domain = results[0];
+            }
+            Core.$apply($scope);
+
+            Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
+              $scope.openShift.gearProfiles = results;
+              log.info("found openshift gears: " + $scope.openShift.gearProfiles);
+              Core.$apply($scope);
+            });
+          }, (error) => {
+            $scope.openShift.loginFailed = true;
+            Core.$apply($scope);
+          });
+        }
+      }
     };
 
     // referenced static data for jclouds
@@ -81,7 +114,8 @@ module Fabric {
           Core.$apply($scope);
         });
       }
-    }, true);
+    }, true
+    );
 
     $scope.$watch('schema', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -101,6 +135,7 @@ module Fabric {
           var localValue = localStorage[value];
           if (localValue) {
             $scope.entity[key] = localValue;
+            log.info("Defaulted entity " + key + " to " + localValue + " from localStorage");
           }
         });
 
@@ -114,6 +149,11 @@ module Fabric {
             $scope.entity["parent"] = rootContainers[0];
           }
         }
+
+        // updates autofilled fields
+        window.setTimeout(function () {
+          $('input[ng-model]').trigger('input');
+        }, 100);
       }
     }, true);
 
@@ -172,32 +212,6 @@ module Fabric {
     $scope.rootContainers = () => {
       return Fabric.getRootContainers(jolokia);
     };
-
-    function updateOpenShift() {
-      var serverUrl = Core.pathGet($scope.entity, ["serverUrl"]) || "openshift.redhat.com";
-      var login = Core.pathGet($scope.entity, ["login"]);
-      var password = Core.pathGet($scope.entity, ["password"]);
-
-      var params = [serverUrl, login, password];
-      if (!Object.equal(params, $scope.openShift.params)) {
-        $scope.openShift.params = params;
-
-        Fabric.getOpenShiftDomains(workspace, jolokia, serverUrl, login, password, (results) => {
-          $scope.openShift.domains = results;
-          console.log("found openshift domains: " + $scope.openShift.domains);
-          Core.$apply($scope);
-        });
-        Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
-          $scope.openShift.gearProfiles = results;
-          console.log("found openshift gears: " + $scope.openShift.gearProfiles);
-          Core.$apply($scope);
-        });
-      }
-    }
-
-    $scope.$watch('entity.serverUrl', updateOpenShift);
-    $scope.$watch('entity.login', updateOpenShift);
-    $scope.$watch('entity.password', updateOpenShift);
 
     $scope.init = () => {
 
