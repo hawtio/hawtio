@@ -22,7 +22,10 @@ module Wiki {
         {
           field: 'commitHashText',
           displayName: 'Version',
+          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/commit/{{row.entity.name}}{{hash}}">{{row.entity.commitHashText}}</a></div>',
+/*
           cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/version/{{pageId}}/{{row.getProperty(' + "'name'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+*/
           cellFilter: ""
         },
         {
