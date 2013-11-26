@@ -22,6 +22,10 @@ You can install this by running
 
     npm install -g grunt-cli
 
+If you want to be able to generate the JavaScript documentation reference docs then also do:
+
+    npm -g install yuidocjs
+
 ## Building
 
 Run the web application type:
