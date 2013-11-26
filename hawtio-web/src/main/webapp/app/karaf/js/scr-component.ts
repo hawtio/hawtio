@@ -1,3 +1,6 @@
+/**
+ * @module Karaf
+ */
 module Karaf {
 
     export function ScrComponentController($scope, $location, workspace, jolokia, $routeParams) {

@@ -1,3 +1,6 @@
+/**
+ * @module Jetty
+ */
 module Jetty {
 
   export function JettyController($scope, $location, workspace:Workspace, jolokia) {

@@ -1,5 +1,14 @@
+/**
+ * @module Perspective
+ */
 module Perspective {
 
+  /**
+   * Configuration for the perspective plugin that defines what tabs are in which perspectives
+   * @property metadata
+   * @for Perspective
+   * @type {any}
+   */
   export var metadata = {
     fabric: {
       label: "Fabric",

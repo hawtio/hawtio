@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
 
   export var propertiesColumnDefs = [
@@ -110,7 +113,7 @@ module Jmx {
       $location.url(Jmx.createDashboardLink(type, widget));
     };
 
-    /**
+    /*
      * Returns the toolBar template HTML to use for the current selection
      */
     $scope.toolBarTemplate = () => {

@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
 
   export function AttributeController($scope, jolokia) {

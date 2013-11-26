@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
   export function ChartController($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) {
 

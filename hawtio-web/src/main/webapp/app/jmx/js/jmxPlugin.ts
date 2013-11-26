@@ -1,3 +1,7 @@
+/**
+ * @module Jmx
+ * @main Jmx
+ */
 module Jmx {
   var pluginName = 'jmx';
 

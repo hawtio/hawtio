@@ -1,3 +1,7 @@
+/**
+ * @module Jvm
+ * @main Jvm
+ */
 module Jvm {
 
   var pluginName = 'jvm';

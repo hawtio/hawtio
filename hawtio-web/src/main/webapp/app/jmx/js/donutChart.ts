@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
 
   export function DonutChartController($scope, $routeParams, jolokia, $templateCache) {

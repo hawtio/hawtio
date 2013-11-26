@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
 
   export var log:Logging.Logger = Logger.get("JMX");
@@ -43,10 +46,11 @@ module Jmx {
 
   /**
    * Registers a toolbar template for the given plugin name, jmxDomain.
-   *
-   * @param pluginName used so that we can later on remove this function when the plugin is removed
-   * @param jmxDomain the JMX domain to avoid having to evaluate too many functions on each selection
-   * @param fn the function used to decide which attributes tool bar should be used for the given select
+   * @method addAttributeToolBar
+   * @for Jmx
+   * @param {String} pluginName used so that we can later on remove this function when the plugin is removed
+   * @param {String} jmxDomain the JMX domain to avoid having to evaluate too many functions on each selection
+   * @param {Function} fn the function used to decide which attributes tool bar should be used for the given select
    */
   export function addAttributeToolBar(pluginName: string, jmxDomain: string, fn: (NodeSelection) => string) {
     var array = attributesToolBars[jmxDomain];
@@ -59,6 +63,10 @@ module Jmx {
 
   /**
    * Try find a custom toolbar HTML template for the given selection or returns the default value
+   * @method getAttributeToolbar
+   * @for Jmx
+   * @param {Core.NodeSelection} node
+   * @param {String} defaultValue
    */
   export function getAttributeToolBar(node: NodeSelection, defaultValue: string = "app/jmx/html/attributeToolBar.html") {
     var answer = null;
@@ -127,7 +135,7 @@ module Jmx {
     if (treeElement.length) {
       workspace.treeElement = treeElement;
       treeElement.dynatree({
-        /**
+        /*
          * The event handler called when a different node in the tree is selected
          */
         onActivate: function (node:DynaTreeNode) {

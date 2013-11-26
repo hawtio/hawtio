@@ -1,3 +1,7 @@
+/**
+ * @module Karaf
+ * @main Karaf
+ */
 module Karaf {
   var pluginName = 'karaf';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {

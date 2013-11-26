@@ -1,3 +1,6 @@
+/**
+ * @module Jetty
+ */
 module Jetty {
 
   export function iconClass(state:string) {
@@ -14,9 +17,11 @@ module Jetty {
 
   /**
    * Returns true if the state of the item begins with the given state - or one of the given states
-   *
-   * @param item the item which has a State
-   * @param state a value or an array of states
+   * @method isState
+   * @for Jetty
+   * @param {any} item the item which has a State
+   * @param {any} state a value or an array of states
+   * @return {Boolean}
    */
   export function isState(item, state) {
     var value = (item.state || "").toLowerCase();

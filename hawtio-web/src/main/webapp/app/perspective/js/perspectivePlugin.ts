@@ -1,3 +1,7 @@
+/**
+ * @module Perspective
+ * @main Perspective
+ */
 module Perspective {
   var pluginName = 'perspective';
   angular.module(pluginName, ['hawtioCore']).

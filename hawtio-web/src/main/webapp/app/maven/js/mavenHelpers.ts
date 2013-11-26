@@ -1,9 +1,16 @@
+/**
+ * @module Maven
+ */
 module Maven {
 
   export var log:Logging.Logger = Logger.get("Maven");
 
   /**
    * Returns the maven indexer mbean (from the hawtio-maven-indexer library)
+   * @method getMavenIndexerMBean
+   * @for Maven
+   * @param {Core.Workspace} workspace
+   * @return {String}
    */
   export function getMavenIndexerMBean(workspace:Workspace) {
     if (workspace) {

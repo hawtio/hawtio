@@ -1,3 +1,6 @@
+/**
+ * @module Maven
+ */
 module Maven {
 
   export function ViewController($scope, $location, workspace:Workspace, jolokia) {

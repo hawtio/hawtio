@@ -1,3 +1,6 @@
+/**
+ * @module Maven
+ */
 module Maven {
   export function TestController($scope, workspace, jolokia, $q, $templateCache) {
 
