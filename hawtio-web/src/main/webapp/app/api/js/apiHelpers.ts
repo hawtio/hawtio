@@ -45,7 +45,6 @@ module API {
 
   export function initScope($scope, $location, jolokia) {
     var search = $location.search();
-    $scope.url = search["wadl"];
     $scope.container = search["container"];
     $scope.objectName = search["objectName"];
 
