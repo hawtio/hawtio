@@ -26,6 +26,12 @@ module Fabric {
 
     Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
 
+    // mark properties as autofill to avoid issues with angular missing autofill events
+    Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
+    Core.pathSet(schema.properties, ['password', 'input-attributes', "autofill"], "true");
+    Core.pathSet(schema.properties, ['jmxUser', 'input-attributes', "autofill"], "true");
+    Core.pathSet(schema.properties, ['jmxPassword', 'input-attributes', "autofill"], "true");
+
     setResolverEnum(schema);
 
     switch (id) {
@@ -99,7 +105,6 @@ module Fabric {
         Core.pathSet(schema.properties, ['password', 'label'], 'OpenShift Password');
         Core.pathSet(schema.properties, ['password', 'tooltip'], 'Your personal password on the OpenShift portal');
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
-        Core.pathSet(schema.properties, ['password', 'input-attributes', "autofill"], "true");
 
         // add an extra property to make it easy to login
 /*
