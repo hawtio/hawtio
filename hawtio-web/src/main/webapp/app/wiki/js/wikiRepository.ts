@@ -93,6 +93,10 @@ module Wiki {
       return git;
     }
 
+    public commitTree(commitId:string, fn) {
+      this.git().commitTree(commitId, fn);
+    }
+
     public putPage(branch:string, path:string, contents:string, commitMessage:string, fn) {
       var fullPath = this.getPath(path);
       this.git().write(branch, fullPath, commitMessage, contents, fn);
