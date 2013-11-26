@@ -1,3 +1,6 @@
+/**
+ * @module API
+ */
 module API {
 
   export var log:Logging.Logger = Logger.get("API");
@@ -7,6 +10,11 @@ module API {
   /**
    * Loads the XML for the given url if its defined or ignore if not valid
    * @method loadXml
+   * @for API
+   * @static
+   * @param {String} url
+   * @param {Function} onXml
+   *
    */
   export function loadXml(url, onXml) {
     if (url) {
@@ -69,6 +77,11 @@ module API {
   /**
    * Loads the JSON schema from a given CXF endpoint mbean
    * @method loadJsonSchema
+   * @for API
+   * @static
+   * @param {any} jolokia
+   * @param {String} mbean
+   * @param {Function} onJsonSchemaFn
    */
   export function loadJsonSchema(jolokia, mbean, onJsonSchemaFn) {
     function onResults(response) {
@@ -93,6 +106,10 @@ module API {
   /**
    * When a WADL XML document is loaded, lets convert it to JSON and return it
    * @method onWadlXmlLoaded
+   * @for API
+   * @static
+   * @param {any} response
+   * @return {any}
    */
   export function onWadlXmlLoaded(response) {
     var root = response.documentElement;
@@ -103,10 +120,15 @@ module API {
 
   /**
    * Converts the given XML element from WADL to JSON
-   * @method
+   * @method convertWadlToJson
+   * @for API
+   * @static
+   * @param {any} element
+   * @param {any} obj
+   * @return {any}
    */
-  export function convertWadlToJson(element, object = {}) {
-    return API.convertXmlToJson(element, object, wadlXmlToJavaConfig);
+  export function convertWadlToJson(element, obj = {}) {
+    return API.convertXmlToJson(element, obj, wadlXmlToJavaConfig);
   }
 
   export function convertWadlJsonToSwagger(object) {
@@ -184,9 +206,15 @@ module API {
    * Converts the given child elements or attributes into properties on the object
    * to convert the XML into JSON using the given config to customise which properties should
    * be considered singular
-   * @method
+   * @method convertXmlToJson
+   * @for API
+   * @static
+   * @param {any} element
+   * @param {any} obj
+   * @param {any} config
+   * @return {any}
    */
-  export function convertXmlToJson(element, object, config) {
+  export function convertXmlToJson(element, obj, config) {
 
     var elementProperyFn = config.elementToPropertyName || nodeName;
     var attributeProperyFn = config.attributeToPropertyName || nodeName;
@@ -196,14 +224,14 @@ module API {
         var propertyName = elementProperyFn(element, child);
         if (propertyName) {
           // TODO should we assume everything is a list and then flatten later?
-          var array = object[propertyName] || [];
+          var array = obj[propertyName] || [];
           if (!angular.isArray(array)) {
             array = [array];
           }
           var value = {};
           convertXmlToJson(child, value, config);
           array.push(value);
-          object[propertyName] = array;
+          obj[propertyName] = array;
         }
       }
     });
@@ -211,10 +239,10 @@ module API {
       var propertyName = attributeProperyFn(element, attr);
       if (propertyName) {
         var value = attr.nodeValue;
-        object[propertyName] = value;
+        obj[propertyName] = value;
       }
     });
-    return object;
+    return obj;
   };
 
 }

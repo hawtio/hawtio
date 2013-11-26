@@ -1,11 +1,22 @@
 /**
+ * The main entry point for hawtio
+ *
  * @module Core
  * @main Core
  */
 module Core {
+
+  /**
+   * Name of plugin registered to hawtio's plugin loader and Angularjs module name
+   *
+   * @property pluginName
+   * @for Core
+   * @type String
+   */
   export var pluginName = 'hawtioCore';
-  // just declaring it here
+
 }
+
 
 // Add any other known possible jolokia URLs here
 var jolokiaUrls = [

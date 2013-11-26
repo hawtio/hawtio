@@ -1,3 +1,6 @@
+/**
+ * @module API
+ */
 module API {
 
   export function WadlViewController($scope, $location, jolokia) {
