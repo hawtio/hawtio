@@ -758,10 +758,10 @@ module Fabric {
       // lets try reverse engineer the user/pwd from the stored user/pwd
       var jsonText = localStorage[url];
       if (jsonText) {
-        var object = Wiki.parseJSON(jsonText);
-        if (object) {
-          username = object["username"];
-          password = object["password"];
+        var obj = Wiki.parseJson(jsonText);
+        if (obj) {
+          username = obj["username"];
+          password = obj["password"];
         }
       }
     }
