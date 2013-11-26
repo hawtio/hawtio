@@ -158,6 +158,12 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
 
     protected abstract boolean isPushOnCommit();
 
+    protected void doCreateBranch(Git git, String fromBranch, String newBranch) throws GitAPIException {
+        checkoutBranch(git, fromBranch);
+        git.branchCreate().setName(newBranch).call();
+        checkoutBranch(git, newBranch);
+    }
+
     protected abstract Iterable<PushResult> doPush(Git git) throws Exception;
 
 
