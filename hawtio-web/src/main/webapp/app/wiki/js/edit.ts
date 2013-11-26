@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
   export function EditController($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 

@@ -1,3 +1,7 @@
+/**
+ * @module OpenEJB
+ * @main OpenEJB
+ */
 module OpenEJB {
   var pluginName = 'openejb';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(($routeProvider) => {

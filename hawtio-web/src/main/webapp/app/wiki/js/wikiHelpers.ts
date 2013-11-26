@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
 
   export var log:Logging.Logger = Logger.get("Wiki");
@@ -15,11 +18,17 @@ module Wiki {
 
   /**
    * Which extensions do we wish to hide in the wiki file listing
+   * @property hideExtentions
+   * @for Wiki
+   * @type Array
    */
   export var hideExtentions = [".profile"];
 
   /**
    * The wizard tree for creating new content in the wiki
+   * @property documentTemplates
+   * @for Wiki
+   * @type Array
    */
   export var documentTemplates = [
     {
@@ -92,7 +101,9 @@ module Wiki {
     return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
   }
   /**
-   * Returns a new create documnet wizard tree
+   * Returns a new create document wizard tree
+   * @method createWizardTree
+   * @for Wiki
    */
   export function createWizardTree() {
     var root = new Folder("New Documents");
@@ -222,6 +233,10 @@ module Wiki {
 
   /**
    * Returns the file name of the given path; stripping off any directories
+   * @method fileName
+   * @for Wiki
+   * @param {String} path
+   * @return {String}
    */
   export function fileName(path: string) {
     if (path) {
@@ -235,6 +250,10 @@ module Wiki {
 
   /**
    * Returns the folder of the given path (everything but the last path name)
+   * @method fileParent
+   * @for Wiki
+   * @param {String} path
+   * @return {String}
    */
   export function fileParent(path: string) {
     if (path) {
@@ -249,6 +268,10 @@ module Wiki {
 
   /**
    * Returns the file name for the given name; we hide some extensions
+   * @method hideFineNameExtensions
+   * @for Wiki
+   * @param {String} name
+   * @return {String}
    */
   export function hideFineNameExtensions(name) {
     if (name) {
@@ -319,6 +342,11 @@ module Wiki {
 
   /**
    * Extracts the pageId, branch, objectId from the route parameters
+   * @method initScope
+   * @for Wiki
+   * @param {ng.IScope} $scope
+   * @param {any} $routeParams
+   * @param {ng.ILocationService} $location
    */
   export function initScope($scope, $routeParams, $location) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
@@ -330,6 +358,11 @@ module Wiki {
 
   /**
    * Extracts the pageId from the route parameters
+   * @method pageId
+   * @for Wiki
+   * @param {any} $routeParams
+   * @param @ng.ILocationService @location
+   * @return {String}
    */
   export function pageId($routeParams, $location) {
     var pageId = $routeParams['page'];
@@ -380,6 +413,10 @@ module Wiki {
 
   /**
    * Parses the given JSON text reporting to the user if there is a parse error
+   * @method parseJson
+   * @for Wiki
+   * @param {String} text
+   * @return {any}
    */
   export function parseJson(text:string) {
     if (text) {
@@ -394,6 +431,13 @@ module Wiki {
 
   /**
    * Adjusts a relative or absolute link from a wiki or file system to one using the hash bang syntax
+   * @method adjustHref
+   * @for Wiki
+   * @param {ng.IScope} $scope
+   * @param {ng.ILocationService} $location
+   * @param {String} href
+   * @param {String} fileExtension
+   * @return {string}
    */
   export function adjustHref($scope, $location, href, fileExtension) {
     var extension = fileExtension ? "." + fileExtension : "";

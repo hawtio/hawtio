@@ -1,3 +1,7 @@
+/**
+ * @module DataTable
+ * @main DataTable
+ */
 module DataTable {
   var pluginName = 'datatable';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).

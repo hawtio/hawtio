@@ -1,5 +1,14 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
 
+  /**
+   * Implements the ng.ILocationService interface and is used by the dashboard to supply
+   * controllers with a saved URL location
+   *
+   * @class RectangleLocation
+   */
   export class RectangleLocation { // TODO implements ng.ILocationService {
     private _path: string;
     private _hash: string;
@@ -53,13 +62,6 @@ module Dashboard {
       }
       return this._search;
     }
-
-/*
-    search(parameter:string, parameterValue:any):ng.ILocationService {
-      // TODO
-      return this;
-    }
-*/
 
     url(newValue: string = null) {
       if (newValue) {

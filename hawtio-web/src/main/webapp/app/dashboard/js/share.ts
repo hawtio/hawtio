@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
   export function ShareController($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) {
     var id = $routeParams["dashboardId"];

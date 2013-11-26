@@ -1,3 +1,7 @@
+/**
+ * @module Dashboard
+ * @main Dashboard
+ */
 module Dashboard {
   
   export var templatePath = 'app/dashboard/html/';

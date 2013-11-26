@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
   export function NavBarController($scope, $routeParams, $rootScope, workspace:Workspace,
                                    dashboardRepository: DefaultDashboardRepository) {

@@ -1,3 +1,7 @@
+/**
+ * @module Osgi
+ * @main Osgi
+ */
 module Osgi {
   var pluginName = 'osgi';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {

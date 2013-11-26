@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
 
   export function HistoryController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {

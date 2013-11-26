@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
 
   function goToLink(link, $timeout, $location) {

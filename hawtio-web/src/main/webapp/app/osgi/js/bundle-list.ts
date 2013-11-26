@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
   export function BundleListController($scope, workspace:Workspace, jolokia) {
     $scope.result = {};

@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
 
     export function ServiceDependencyController($scope, $location, $routeParams, workspace:Workspace, osgiDataService: OsgiDataService) {

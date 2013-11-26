@@ -1,3 +1,7 @@
+/**
+ * @module Wiki
+ * @main Wiki
+ */
 module Wiki {
 
   var pluginName = 'wiki';

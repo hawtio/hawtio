@@ -1,3 +1,7 @@
+/**
+ * @module Site
+ * @main Site
+ */
 module Site {
   var pluginName = 'site';
 

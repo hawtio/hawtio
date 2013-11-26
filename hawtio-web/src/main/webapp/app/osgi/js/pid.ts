@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
     export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
         $scope.deletePropDialog = new Core.Dialog();

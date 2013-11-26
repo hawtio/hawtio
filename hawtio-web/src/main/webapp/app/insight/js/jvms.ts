@@ -1,3 +1,6 @@
+/**
+ * @module Insight
+ */
 module Insight {
 
     export function JVMsController($scope, jolokia, localStorage) {

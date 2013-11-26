@@ -1,3 +1,6 @@
+/**
+ * @module Site
+ */
 module Site {
 
   export function BookController($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
