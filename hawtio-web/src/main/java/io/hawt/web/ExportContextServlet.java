@@ -1,5 +1,7 @@
 package io.hawt.web;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 import static java.lang.System.out;
 /**
@@ -23,13 +24,28 @@ public class ExportContextServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(ExportContextServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.txt\"");
-        for(Object o : req.getParameterMap().entrySet()){
-            Map.Entry e = (Map.Entry)o;
-            out.println(" ======= key ===== "+e.getKey()+" ========= value  ========== "+e.getValue()+" ============== ");
-            resp.getWriter().println(" ======= key ===== "+e.getKey()+" ========= value  ========== "+e.getValue()+" ============== ");
+    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
+        out.println(" ===================== = jobExecution id ======================== "+httpServletRequest.getParameter("jobExecutionId"));
+        String server = httpServletRequest.getParameter("server");
+        String jobExecutionId = httpServletRequest.getParameter("jobExecutionId");
+
+
+        String jsonResponse = "Content not available";
+        if((jobExecutionId != null && !jobExecutionId.isEmpty()) && (server != null && !server.isEmpty())){
+            server = server.replaceAll("\\\\","");
+            if (!server.contains("http://")){
+                server = "http://"+server;
+            }
+            out.println("======= server ======= "+server);
+            out.println("======= final url ======= "+server+"jobs/executions/"+jobExecutionId+"/context.json");
+            HttpClient client = new HttpClient();
+            GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
+            int reponseCode =  client.executeMethod(get);
+            jsonResponse = get.getResponseBodyAsString();
+            out.println(" ===== response ====== "+jsonResponse);
+            get.releaseConnection();
         }
-        out.println(" ===================== = Post ======================== ");
+        resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.txt\"");
+        resp.getWriter().println(jsonResponse);
     }
 }
