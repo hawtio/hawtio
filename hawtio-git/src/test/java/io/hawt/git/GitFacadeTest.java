@@ -1,5 +1,6 @@
 package io.hawt.git;
 
+import io.hawt.util.Files;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
@@ -43,8 +44,16 @@ public class GitFacadeTest {
     }
 
     public static GitFacade createTestGitFacade() {
+        return createTestGitFacade("hawtio-config");
+    }
+
+    public static GitFacade createTestGitFacade(String directory) {
         GitFacade answer = new GitFacade();
-        File configDir = new File(targetDir(), "hawtio-config");
+        File configDir = new File(targetDir(), directory);
+        if (configDir.exists()) {
+            Files.recursiveDelete(configDir);
+        }
+        configDir.mkdirs();
         System.out.println("Using git config directory " + configDir.getAbsolutePath());
         answer.setConfigDirectory(configDir);
         return answer;
@@ -129,7 +138,7 @@ public class GitFacadeTest {
         assertReadFileContents(readMePath, readMeContent2);
 
         // now lets do a diff on this file
-        String blobPath = trimLeadingSlash(readMePath);
+        String blobPath = GitFacade.trimLeadingSlash(readMePath);
         String diff = git.diff(null, null, blobPath);
         assertNotNull("Should have returned a diff!");
         System.out.println("Diff of " + readMePath);
@@ -147,7 +156,7 @@ public class GitFacadeTest {
         // now lets find out the log.
         String[] paths = {null, readMePath, anotherPath};
         for (String path : paths) {
-            String name = trimLeadingSlash(path);
+            String name = GitFacade.trimLeadingSlash(path);
             List<CommitInfo> log = git.history(branch, null, name, 0);
             System.out.println("Showing commits for path " + name);
             for (CommitInfo info : log) {
@@ -177,7 +186,7 @@ public class GitFacadeTest {
         anotherGit.setConfigDirectory(git.getRootGitDirectory());
         anotherGit.init();
 
-        String path = trimLeadingSlash(anotherPath);
+        String path = GitFacade.trimLeadingSlash(anotherPath);
         List<CommitInfo> log = git.history(branch, null, path, 0);
         assertTrue("should have more than one commit info", log.size() > 0);
 
@@ -254,14 +263,6 @@ public class GitFacadeTest {
         String readMeActual = assertReadFileContents(path);
         assertEquals("content of " + path, expectedContents, readMeActual);
         return readMeActual;
-    }
-
-    public static String trimLeadingSlash(String path) {
-        String name = path;
-        if (name != null && name.startsWith("/")) {
-            name = name.substring(1);
-        }
-        return name;
     }
 
     private List<FileInfo> assertReadDirectory(String path) throws IOException, GitAPIException {

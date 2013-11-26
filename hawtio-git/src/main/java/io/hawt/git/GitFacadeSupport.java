@@ -20,6 +20,7 @@ package io.hawt.git;
 import io.hawt.util.FileFilters;
 import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
+import io.hawt.util.Objects;
 import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -29,12 +30,14 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.RevWalkUtils;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.gitective.core.BlobUtils;
@@ -57,6 +60,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static io.hawt.git.GitFacade.trimLeadingSlash;
+
 /**
  * A based class for implementations of {@link GitFacadeMXBean}
  */
@@ -65,8 +70,9 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
 
     private int shortCommitIdLength = 6;
 
-    protected String doDiff(Git git, String objectId, String baseObjectId, String path) {
+    protected String doDiff(Git git, String objectId, String baseObjectId, String pathOrBlobPath) {
         Repository r = git.getRepository();
+        String blobPath = trimLeadingSlash(pathOrBlobPath);
 /*
         RevCommit commit = JGitUtils.getCommit(r, objectId);
 
@@ -131,9 +137,9 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
             }
 
             List<DiffEntry> diffEntries = formatter.scan(baseTree, commitTree);
-            if (path != null && path.length() > 0) {
+            if (blobPath != null && blobPath.length() > 0) {
                 for (DiffEntry diffEntry : diffEntries) {
-                    if (diffEntry.getNewPath().equalsIgnoreCase(path)) {
+                    if (diffEntry.getNewPath().equalsIgnoreCase(blobPath)) {
                         formatter.format(diffEntry);
                         break;
                     }
@@ -232,30 +238,36 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return commit.getName();
     }
 
-    protected List<CommitInfo> doHistory(Git git, String branch, String objectId, String path, int limit) {
+    protected List<CommitInfo> doHistory(Git git, String branch, String objectId, String pathOrBlobPath, int limit) {
         Repository r = git.getRepository();
+        String path = trimLeadingSlash(pathOrBlobPath);
 
         CommitFinder finder = new CommitFinder(r);
-        CommitListFilter block = new CommitListFilter();
+        CommitListFilter filter = new CommitListFilter();
         if (Strings.isNotBlank(path)) {
             finder.setFilter(PathFilterUtils.and(path));
         }
-        finder.setFilter(block);
+        finder.setFilter(filter);
 
         if (limit > 0) {
-            finder.setFilter(new CommitLimitFilter(100).setStop(true));
+            finder.setFilter(new CommitLimitFilter(limit).setStop(true));
         }
         if (Strings.isNotBlank(objectId)) {
             finder.findFrom(objectId);
         } else {
             if (Strings.isNotBlank(branch)) {
-                RevCommit base = CommitUtils.getBase(r, branch);
-                finder.findFrom(base);
+                ObjectId branchObjectId = getBranchObjectId(git, branch);
+                if (branchObjectId != null) {
+                    finder = finder.findFrom(branchObjectId);
+                } else {
+                    finder = finder.findInBranches();
+                }
+
             } else {
                 finder.find();
             }
         }
-        List<RevCommit> commits = block.getCommits();
+        List<RevCommit> commits = filter.getCommits();
         List<CommitInfo> results = new ArrayList<CommitInfo>();
         for (RevCommit entry : commits) {
             CommitInfo commitInfo = createCommitInfo(entry);
@@ -264,6 +276,28 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return results;
     }
 
+    protected ObjectId getBranchObjectId(Git git, String branch) {
+        Ref branchRef = null;
+        try {
+            String branchRevName = "refs/heads/" + branch;
+            List<Ref> branches = git.branchList().call();
+            for (Ref ref : branches) {
+                String revName = ref.getName();
+                if (Objects.equals(branchRevName, revName)) {
+                    branchRef = ref;
+                    break;
+                }
+            }
+        } catch (GitAPIException e) {
+            LOG.warn("Failed to find branches " + e, e);
+        }
+
+        ObjectId branchObjectId = null;
+        if (branchRef != null) {
+            branchObjectId = branchRef.getObjectId();
+        }
+        return branchObjectId;
+    }
 
 
     @Override
@@ -271,9 +305,10 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return "io.hawt.git:type=GitFacade";
     }
 
-    protected String doGetContent(Git git, String objectId, String blobPath) {
+    protected String doGetContent(Git git, String objectId, String pathOrBlobPath) {
         objectId = defaultObjectId(git, objectId);
         Repository r = git.getRepository();
+        String blobPath = trimLeadingSlash(pathOrBlobPath);
         return BlobUtils.getContent(r, objectId, blobPath);
     }
 

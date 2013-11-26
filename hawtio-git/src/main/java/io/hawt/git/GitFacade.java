@@ -58,6 +58,14 @@ public class GitFacade extends GitFacadeSupport {
     private String defaultBranch;
     private boolean firstPull = true;
 
+    public static String trimLeadingSlash(String path) {
+        String name = path;
+        if (name != null && name.startsWith("/")) {
+            name = name.substring(1);
+        }
+        return name;
+    }
+
 
     public void init() throws Exception {
         // lets check if we have a config directory if not lets create one...
@@ -365,6 +373,23 @@ public class GitFacade extends GitFacadeSupport {
     }
 
     @Override
+    public void createBranch(final String fromBranch, final String newBranch) {
+        gitOperation(getStashPersonIdent(), new Callable<Object>() {
+            @Override
+            public String toString() {
+                return "createBranch(" + fromBranch + ", " + newBranch + ")";
+            }
+
+            public Object call() throws Exception {
+                checkoutBranch(git, fromBranch);
+                git.branchCreate().setName(newBranch).call();
+                checkoutBranch(git, newBranch);
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void revertTo(final String branch, final String objectId, final String blobPath, final String commitMessage,
                          final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
@@ -653,11 +678,11 @@ public class GitFacade extends GitFacadeSupport {
         }
         // lets check if the branch exists
         CheckoutCommand command = git.checkout().setName(branch);
-        boolean exists = localBranchExists(branch);
-        if (!exists) {
-            command = command.setCreateBranch(true).setForce(true).
-                    setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
-                    setStartPoint(getRemote() + "/" + branch);
+            boolean exists = localBranchExists(branch);
+            if (!exists) {
+                command = command.setCreateBranch(true).setForce(true).
+                        setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
+                        setStartPoint(getRemote() + "/" + branch);
         }
         Ref ref = command.call();
         if (LOG.isDebugEnabled()) {
