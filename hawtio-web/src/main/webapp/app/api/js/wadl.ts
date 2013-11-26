@@ -4,6 +4,7 @@ module API {
 
     API.initScope($scope, $location, jolokia);
 
+    $scope.url = $location.search()["wadl"];
     loadXml($scope.url, onWsdl);
 
     function onWsdl(response) {
