@@ -122,6 +122,7 @@ module Dashboard {
    * dashboard repository
    *
    * @class DefaultDashboardRepository
+   * @uses DashboardRepository
    */
   export class DefaultDashboardRepository implements DashboardRepository {
     constructor(public workspace:Workspace, public jolokia, public localStorage) {
@@ -200,6 +201,7 @@ module Dashboard {
 
   /**
    * @class LocalDashboardRepository
+   * @uses DashboardRepository
    */
   export class LocalDashboardRepository implements DashboardRepository {
 
@@ -289,6 +291,7 @@ module Dashboard {
 
   /**
    * @class GitDashboardRepository
+   * @uses DashboardRepository
    */
   export class GitDashboardRepository implements DashboardRepository {
     constructor(public workspace:Workspace, public git:Git.GitRepository) {
