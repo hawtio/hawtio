@@ -5,8 +5,13 @@ module Core {
 
   /**
    * Ensure whatever value is passed in is converted to a boolean
-   * Added here because it's needed for the below stuff...
-   * @method
+   *
+   * In the branding module for now as it's needed before bootstrap
+   *
+   * @method parseBooleanValue
+   * @for Core
+   * @param {any} value
+   * @return {Boolean}
    */
   export function parseBooleanValue(value):boolean {
     if (!angular.isDefined(value)) {
@@ -39,7 +44,10 @@ module Core {
 }
 
 /**
+ * The Red Hat hawtio theme
+ *
  * @module Branding
+ * @main Branding
  */
 module Branding {
 
