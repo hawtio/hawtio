@@ -33,7 +33,7 @@ module Fabric {
           field: 'wadlHref',
           displayName: 'APIs',
           cellTemplate: '<div class="ngCellText">' +
-            '<a ng-show="row.entity.apidocHref" ng-href="{{row.entity.apidocHref}}"><i class="icon-puzzle-piece"></i> Swagger</a> ' +
+            '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}"><i class="icon-puzzle-piece"></i> Swagger</a> ' +
             '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}"><i class="icon-puzzle-piece"></i> WADL</a> ' +
             '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}"><i class="icon-puzzle-piece"></i> WSDL</a>' +
             '</div>',
@@ -120,9 +120,11 @@ module Fabric {
             var wsdl = value["wsdl"];
             if (apidocs) {
               value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + url + apidocs);
-            } else if (wadl) {
+            }
+            if (wadl) {
               value["wadlHref"] = addParameters("#/fabric/api/wadl?wadl=" + encodeURIComponent(url + wadl));
-            } else if (wsdl) {
+            }
+            if (wsdl) {
               value["wsdlHref"] = addParameters("#/fabric/api/wsdl?wsdl=" + encodeURIComponent(url + wsdl));
             }
           }
