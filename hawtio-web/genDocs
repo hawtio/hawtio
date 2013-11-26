@@ -5,15 +5,37 @@
 # install yuidoc using the steps mentioned here -> http://yui.github.io/yuidoc/##install
 # or tl;dr just do npm install -g yuidocjs
 
+src=src/main/webapp/app
+out=target/docs
 
-# starts yuidoc in server mode
-yuidoc -e .ts -o target/docs --server src/main/webapp/app
-
-# Just evaluates JSDoc comments
-#yuidoc -e .ts -o target/docs --lint src/main/webapp/app
 
 # Generate docs
-#yuidoc -e .ts -o target/docs src/main/webapp/app/
+function gen {
+  yuidoc -e .ts -o $out $src
+}
 
+# starts yuidoc in server mode
+function server {
+  yuidoc -e .ts -o $out --server $src
+}
+
+# Just evaluates JSDoc comments
+function lint {
+  yuidoc -e .ts -o $out --lint $src
+}
+
+action='lint'
+
+case $1 in
+  -s|--server)
+  action='server'
+  ;;
+  -g|--generate)
+  action='gen'
+  ;;
+esac
+
+echo "doing action $action"
+$action
 
 
