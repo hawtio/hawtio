@@ -23,6 +23,7 @@ var numberTypeNames = {
  * Returns the number of lines in the given text
  *
  * @method lineCount
+ * @static
  * @param {String} value
  * @return {Number}
  *
@@ -98,6 +99,7 @@ function trimQuotes(text:string) {
  * If the value is a non empty string then the string is split by commas
  *
  * @method toSearchArgumentArray
+ * @static
  * @param {Object} value
  * @return {String[]}
  *
@@ -154,6 +156,7 @@ function closeHandle($scope, jolokia) {
  * Pass in null for the success function to switch to sync mode
  *
  * @method onSuccess
+ * @static
  * @param {Function} Success callback function
  * @param {Object} Options object to pass on to Jolokia request
  * @return {Object} initialized options object
@@ -232,6 +235,7 @@ function escapeDots(text:string) {
  * Escapes all dots and 'span' text in the css style names to avoid clashing with bootstrap stuff
  *
  * @method escapeTreeCssStyles
+ * @static
  * @param {String} text
  * @return {String}
  */
@@ -254,6 +258,7 @@ function showLogPanel() {
  * Displays an alert message which is typically the result of some asynchronous operation
  *
  * @method notification
+ * @static
  * @param type which is usually "success" or "error" and matches css alert-* css styles
  * @param message the text to display
  *
@@ -278,6 +283,7 @@ function notification (type:string, message:string, options:any = null) {
 /**
  * Clears all the pending notifications
  * @method clearNotifications
+ * @static
  */
 function clearNotifications() {
   var w:any = window;
@@ -288,6 +294,7 @@ function clearNotifications() {
  * Returns the CSS class for a log level based on if its info, warn, error etc.
  *
  * @method logLevelClass
+ * @static
  * @param {String} level
  * @return {String}
  */
@@ -347,6 +354,7 @@ module Core {
   /**
    * log out the current user
    * @for Core
+   * @static
    * @method logout
    * @param {String} jolokiaUrl
    * @param {Object} userDetails
@@ -405,6 +413,7 @@ module Core {
    *
    * @method isBlank
    * @for Core
+   * @static
    * @param {String} str
    * @return {Boolean}
    */
@@ -422,6 +431,7 @@ module Core {
    * removing any required parameters from the link
    * @method createHref
    * @for Core
+   * @static
    * @param {Object} $location
    * @param {String} href the link to have any $location.search() hash parameters appended
    * @param {Array} removeParams any parameters to be removed from the $location.search()
@@ -445,6 +455,7 @@ module Core {
    * Trims the leading prefix from a string if its present
    * @method trimLeading
    * @for Core
+   * @static
    * @param {String} text
    * @param {String} prefix
    * @return {String}
@@ -462,6 +473,7 @@ module Core {
    * Trims the trailing postfix from a string if its present
    * @method trimTrailing
    * @for Core
+   * @static
    * @param {String} trim
    * @param {String} postfix
    * @return {String}
@@ -479,6 +491,7 @@ module Core {
    * Turns the given search hash into a URI style query string
    * @method hashToString
    * @for Core
+   * @static
    * @param {Object} hash
    * @return {String}
    */
@@ -495,6 +508,7 @@ module Core {
    * Parses the given string of x=y&bar=foo into a hash
    * @method stringToHash
    * @for Core
+   * @static
    * @param {String} hashAsString
    * @return {Object}
    */
@@ -517,6 +531,7 @@ module Core {
    * Register a JMX operation to poll for changes
    * @method register
    * @for Core
+   * @static
    * @param {Object} jolokia
    * @param {Object} scope
    * @param {Object} arguments
@@ -555,6 +570,7 @@ module Core {
      * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
      * @method registerSearch
      * @for Core
+     * @static
      * @param {any} jolokia
      * @param {ng.IScope} scope
      * @param {String} mbeanPattern
@@ -602,6 +618,7 @@ module Core {
    * Converts the given XML node to a string representation of the XML
    * @method xmlNodeToString
    * @for Core
+   * @static
    * @param {Object} xmlNode
    * @return {Object}
    */
@@ -627,6 +644,7 @@ module Core {
    * Returns true if the given DOM node is a text node
    * @method isTextNode
    * @for Core
+   * @static
    * @param {Object} node
    * @return {Boolean}
    */
@@ -639,6 +657,7 @@ module Core {
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
    * @method $applyNowOrLater
    * @for Core
+   * @static
    * @param {ng.IScope} $scope
    */
   export function $applyNowOrLater($scope) {
@@ -655,6 +674,7 @@ module Core {
    * Performs a $scope.$apply() after the given timeout period
    * @method $applyLater
    * @for Core
+   * @static
    * @param {ng.IScope} $scope
    * @param {Integer} timeout
    */
@@ -669,6 +689,7 @@ module Core {
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
    * @method $apply
    * @for Core
+   * @static
    * @param {ng.IScope} $scope
    */
   export function $apply($scope) {
@@ -689,6 +710,8 @@ module Core {
    * Returns the lowercase file extension of the given file name or returns the empty
    * string if the file does not have an extension
    * @method fileExtension
+   * @for Core
+   * @static
    * @param {String} name
    * @param {String} defaultValue
    * @return {String}
@@ -735,6 +758,7 @@ module Core {
    * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
    * @method getOrCreateElements
    * @for Core
+   * @static
    * @param {Object} domElement
    * @param {Array} arrayOfElementNames
    * @return {Object}
@@ -766,6 +790,7 @@ module Core {
    * and returns the last most value of the path or null if it could not be found.
    * @method pathGet
    * @for Core
+   * @static
    * @param {Object} object the start object to start navigating from
    * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @return {*} the last step on the path which is updated
@@ -793,6 +818,7 @@ module Core {
    * and updates the last path value to the given newValue
    * @method pathSet
    * @for Core
+   * @static
    * @param {Object} object the start object to start navigating from
    * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @param {Object} newValue the value to update
@@ -862,6 +888,7 @@ module Core {
    * Characters before the first digit are ignored as are characters after the last digit.
    * @method parseVersionNumbers
    * @for Core
+   * @static
    * @param {String} text a maven like string containing a dash then numbers separated by dots
    * @return {Array}
    */
@@ -896,6 +923,7 @@ module Core {
    * Compares the 2 version arrays and returns -1 if v1 is less than v2 or 0 if they are equal or 1 if v1 is greater than v2
    * @method compareVersionNumberArrays
    * @for Core
+   * @static
    * @param {Array} v1 an array of version numbers with the most significant version first (major, minor, patch).
    * @param {Array} v2
    * @return {Number}
@@ -935,6 +963,7 @@ module Core {
    * If the value is not an array then wrap it in one
    * @method asArray
    * @for Core
+   * @static
    * @param {any} value
    * @return {Array}
    */
@@ -947,6 +976,7 @@ module Core {
    * lists into a <ul> for each value.
    * @method valueToHtml
    * @for Core
+   * @static
    * @param {any} value
    * @return {String}
    */
@@ -988,6 +1018,7 @@ module Core {
    * if it does not appear to be JSON
    * @method tryParseJson
    * @for Core
+   * @static
    * @param {String} text
    * @return {Object}
    */
@@ -1008,6 +1039,7 @@ module Core {
    * is required using the String.pluralize() function from sugarjs
    * @method maybePlural
    * @for Core
+   * @static
    * @param {Number} count
    * @param {String} word
    * @return {String}
@@ -1022,6 +1054,7 @@ module Core {
    * <code>{key: "value", another: "something"}</code>
    * @method objectNameProperties
    * @for Core
+   * @static
    * @param {String} name
    * @return {Object}
    */
@@ -1055,6 +1088,7 @@ module Core {
    * Returns the Folder object for the given domain name and type name or null if it can not be found
    * @method getMBeanTypeFolder
    * @for Core
+   * @static
    * @param {Workspace} workspace
    * @param {String} domain
    * @param {String} typeName}
@@ -1077,6 +1111,7 @@ module Core {
    * Returns the JMX objectName for the given jmx domain and type name
    * @method getMBeanTypeObjectName
    * @for Core
+   * @static
    * @param {Workspace} workspace
    * @param {String} domain
    * @param {String} typeName
@@ -1092,6 +1127,7 @@ module Core {
    * and used in jQuery / CSS selectors
    * @method toSafeDomID
    * @for Core
+   * @static
    * @param {String} text
    * @return {String}
    */
@@ -1104,6 +1140,7 @@ module Core {
    * Invokes the given function on each leaf node in the array of folders
    * @method forEachLeafFolder
    * @for Core
+   * @static
    * @param {Array[Folder]} folders
    * @param {Function} fn
    */
@@ -1166,6 +1203,7 @@ module Core {
    * replace the URL with the proxy servlet URL
    * @method useProxyIfExternal
    * @for Core
+   * @static
    * @param {String} connectUrl
    * @return {String}
    */
@@ -1275,6 +1313,7 @@ module Core {
    * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
    * @method bindModelToSearchParam
    * @for Core
+   * @static
    * @param {ng.IScope} $scope
    * @param {ng.ILocationService} $location
    * @param {String} modelName
@@ -1306,6 +1345,7 @@ module Core {
    * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
    * @method reloadWhenParametersChange
    * @for Core
+   * @static
    * @param {Object} $route
    * @param {ng.IScope} $scope
    * @param {ng.ILocationService} $location
@@ -1335,6 +1375,7 @@ module Core {
    * username and password
    * @method createJolokia
    * @for Core
+   * @static
    * @param {String} url
    * @param {String} username
    * @param {String} password
@@ -1355,6 +1396,7 @@ module Core {
    * within the tiven number of millseconds
    * @method throttled
    * @for Core
+   * @static
    * @param {Function} fn the function to be invoked at most once within the given number of millis
    * @param {Number} millis the time window during which this function should only be called at most once
    * @return {Object}

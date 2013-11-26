@@ -44,6 +44,7 @@ module Dozer {
    * Converts the XML string or DOM node to a Dozer model
    * @method loadDozerModel
    * @for Dozer
+   * @static
    * @param {Object} xml
    * @param {String} pageId
    * @return {Mappings}
@@ -102,6 +103,7 @@ module Dozer {
    * or does a sync request and returns them
    * @method findProperties
    * @for Dozer
+   * @static
    * @param {Core.Workspace} workspace
    * @param {String} className
    * @param {String} filter
@@ -130,6 +132,7 @@ module Dozer {
    * or does a sync request and returns them.
    * @method findClassNames
    * @for Dozer
+   * @static
    * @param {Core.Workspace} workspace
    * @param {String} searchText
    * @param {Number} limit @default 20
@@ -297,6 +300,7 @@ module Dozer {
    * Adds a new child element for this mapping to the given element
    * @method appendElement
    * @for Dozer
+   * @static
    * @param {any} object
    * @param {any} element
    * @param {String} elementName
