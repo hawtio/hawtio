@@ -20,6 +20,7 @@
                     <div class="span1">
                         <form action="/hawtio/exportContext" method="POST">
                             <input type="hidden" name="jobExecutionId" value="{{jobExecutionContext.jobExecutionId}}">
+                            <input type="hidden" name="server" value="{{springBatchServer}}">
                             <input type="submit" value="Export" class="btn btn-info">
                         </form>
                     </div>
