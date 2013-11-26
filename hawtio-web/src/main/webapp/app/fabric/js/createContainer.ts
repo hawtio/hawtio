@@ -268,6 +268,12 @@ module Fabric {
 
       }
 
+      // remove possibly dodgy values if they are blank
+      angular.forEach(json, (value, key) => {
+        if (value === "") {
+          delete json[key];
+        }
+      });
       delete json.saveJmxCredentials;
 
       if ( json.number === 1 ) {
