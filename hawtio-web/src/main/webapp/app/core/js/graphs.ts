@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   export function d3ForceGraph(scope, nodes, links, canvasElement) {

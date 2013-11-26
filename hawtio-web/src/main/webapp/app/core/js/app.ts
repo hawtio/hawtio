@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   export function ConsoleController($scope, $element, $templateCache) {

@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
 
   export class HelpRegistry {

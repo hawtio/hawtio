@@ -1,3 +1,5 @@
+
+// TODO Get these functions and variables out of the global namespace
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
 var _urlPrefix: string = null;
@@ -402,6 +404,7 @@ module Core {
    * Returns true if the string is either null or empty
    *
    * @method isBlank
+   * @for Core
    * @param {String} str
    * @return {Boolean}
    */
@@ -418,6 +421,7 @@ module Core {
    * Creates a link by appending the current $location.search() hash to the given href link,
    * removing any required parameters from the link
    * @method createHref
+   * @for Core
    * @param {Object} $location
    * @param {String} href the link to have any $location.search() hash parameters appended
    * @param {Array} removeParams any parameters to be removed from the $location.search()
@@ -440,6 +444,7 @@ module Core {
   /**
    * Trims the leading prefix from a string if its present
    * @method trimLeading
+   * @for Core
    * @param {String} text
    * @param {String} prefix
    * @return {String}
@@ -456,6 +461,7 @@ module Core {
   /**
    * Trims the trailing postfix from a string if its present
    * @method trimTrailing
+   * @for Core
    * @param {String} trim
    * @param {String} postfix
    * @return {String}
@@ -472,6 +478,7 @@ module Core {
   /**
    * Turns the given search hash into a URI style query string
    * @method hashToString
+   * @for Core
    * @param {Object} hash
    * @return {String}
    */
@@ -487,6 +494,7 @@ module Core {
   /**
    * Parses the given string of x=y&bar=foo into a hash
    * @method stringToHash
+   * @for Core
    * @param {String} hashAsString
    * @return {Object}
    */
@@ -508,6 +516,7 @@ module Core {
   /**
    * Register a JMX operation to poll for changes
    * @method register
+   * @for Core
    * @param {Object} jolokia
    * @param {Object} scope
    * @param {Object} arguments
@@ -542,8 +551,14 @@ module Core {
     }
   }
 
-    /*
+    /**
      * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
+     * @method registerSearch
+     * @for Core
+     * @param {any} jolokia
+     * @param {ng.IScope} scope
+     * @param {String} mbeanPattern
+     * @param {Function} callback
      */
     export function registerSearch(jolokia, scope, mbeanPattern:string, callback) {
         if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
@@ -586,6 +601,7 @@ module Core {
   /**
    * Converts the given XML node to a string representation of the XML
    * @method xmlNodeToString
+   * @for Core
    * @param {Object} xmlNode
    * @return {Object}
    */
@@ -610,6 +626,7 @@ module Core {
   /**
    * Returns true if the given DOM node is a text node
    * @method isTextNode
+   * @for Core
    * @param {Object} node
    * @return {Boolean}
    */
@@ -620,7 +637,8 @@ module Core {
 
   /**
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
-   * @method $applyNoOrLater
+   * @method $applyNowOrLater
+   * @for Core
    * @param {ng.IScope} $scope
    */
   export function $applyNowOrLater($scope) {
@@ -636,6 +654,7 @@ module Core {
   /**
    * Performs a $scope.$apply() after the given timeout period
    * @method $applyLater
+   * @for Core
    * @param {ng.IScope} $scope
    * @param {Integer} timeout
    */
@@ -649,6 +668,7 @@ module Core {
   /**
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
    * @method $apply
+   * @for Core
    * @param {ng.IScope} $scope
    */
   export function $apply($scope) {
@@ -714,6 +734,7 @@ module Core {
    *
    * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
    * @method getOrCreateElements
+   * @for Core
    * @param {Object} domElement
    * @param {Array} arrayOfElementNames
    * @return {Object}
@@ -744,6 +765,7 @@ module Core {
    * Navigates the given set of paths in turn on the source object
    * and returns the last most value of the path or null if it could not be found.
    * @method pathGet
+   * @for Core
    * @param {Object} object the start object to start navigating from
    * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @return {*} the last step on the path which is updated
@@ -770,6 +792,7 @@ module Core {
    * Navigates the given set of paths in turn on the source object
    * and updates the last path value to the given newValue
    * @method pathSet
+   * @for Core
    * @param {Object} object the start object to start navigating from
    * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @param {Object} newValue the value to update
@@ -838,6 +861,7 @@ module Core {
    *
    * Characters before the first digit are ignored as are characters after the last digit.
    * @method parseVersionNumbers
+   * @for Core
    * @param {String} text a maven like string containing a dash then numbers separated by dots
    * @return {Array}
    */
@@ -871,6 +895,7 @@ module Core {
   /**
    * Compares the 2 version arrays and returns -1 if v1 is less than v2 or 0 if they are equal or 1 if v1 is greater than v2
    * @method compareVersionNumberArrays
+   * @for Core
    * @param {Array} v1 an array of version numbers with the most significant version first (major, minor, patch).
    * @param {Array} v2
    * @return {Number}
@@ -909,7 +934,8 @@ module Core {
   /**
    * If the value is not an array then wrap it in one
    * @method asArray
-   * @param {*} value
+   * @for Core
+   * @param {any} value
    * @return {Array}
    */
   export function asArray(value) {
@@ -920,7 +946,8 @@ module Core {
    * Helper function which converts objects into tables of key/value properties and
    * lists into a <ul> for each value.
    * @method valueToHtml
-   * @param {*} value
+   * @for Core
+   * @param {any} value
    * @return {String}
    */
   export function valueToHtml(value) {
@@ -960,6 +987,7 @@ module Core {
    * If the string starts and ends with [] {} then try parse as JSON and return the parsed content or return null
    * if it does not appear to be JSON
    * @method tryParseJson
+   * @for Core
    * @param {String} text
    * @return {Object}
    */
@@ -979,6 +1007,7 @@ module Core {
    * Given values (n, "person") will return either "1 person" or "2 people" depending on if a plural
    * is required using the String.pluralize() function from sugarjs
    * @method maybePlural
+   * @for Core
    * @param {Number} count
    * @param {String} word
    * @return {String}
@@ -992,6 +1021,7 @@ module Core {
    * given a JMX ObjectName of the form <code>domain:key=value,another=something</code> then return the object
    * <code>{key: "value", another: "something"}</code>
    * @method objectNameProperties
+   * @for Core
    * @param {String} name
    * @return {Object}
    */
@@ -1024,6 +1054,7 @@ module Core {
   /**
    * Returns the Folder object for the given domain name and type name or null if it can not be found
    * @method getMBeanTypeFolder
+   * @for Core
    * @param {Workspace} workspace
    * @param {String} domain
    * @param {String} typeName}
@@ -1045,6 +1076,7 @@ module Core {
   /**
    * Returns the JMX objectName for the given jmx domain and type name
    * @method getMBeanTypeObjectName
+   * @for Core
    * @param {Workspace} workspace
    * @param {String} domain
    * @param {String} typeName
@@ -1059,6 +1091,7 @@ module Core {
    * Removes dodgy characters from a value such as '/' or '.' so that it can be used as a DOM ID value
    * and used in jQuery / CSS selectors
    * @method toSafeDomID
+   * @for Core
    * @param {String} text
    * @return {String}
    */
@@ -1070,6 +1103,7 @@ module Core {
   /**
    * Invokes the given function on each leaf node in the array of folders
    * @method forEachLeafFolder
+   * @for Core
    * @param {Array[Folder]} folders
    * @param {Function} fn
    */
@@ -1131,6 +1165,7 @@ module Core {
    * If a URL is external to the current web application, then
    * replace the URL with the proxy servlet URL
    * @method useProxyIfExternal
+   * @for Core
    * @param {String} connectUrl
    * @return {String}
    */
@@ -1237,6 +1272,7 @@ module Core {
    * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
    * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
    * @method bindModelToSearchParam
+   * @for Core
    * @param {ng.IScope} $scope
    * @param {ng.ILocationService} $location
    * @param {String} modelName
@@ -1267,6 +1303,7 @@ module Core {
    * For controllers where reloading is disabled via "reloadOnSearch: false" on the registration; lets pick which
    * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
    * @method reloadWhenParametersChange
+   * @for Core
    * @param {Object} $route
    * @param {ng.IScope} $scope
    * @param {ng.ILocationService} $location
@@ -1295,6 +1332,7 @@ module Core {
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL,
    * username and password
    * @method createJolokia
+   * @for Core
    * @param {String} url
    * @param {String} username
    * @param {String} password
@@ -1314,6 +1352,7 @@ module Core {
    * Returns a new function which ensures that the delegate function is only invoked at most once
    * within the tiven number of millseconds
    * @method throttled
+   * @for Core
    * @param {Function} fn the function to be invoked at most once within the given number of millis
    * @param {Number} millis the time window during which this function should only be called at most once
    * @return {Object}

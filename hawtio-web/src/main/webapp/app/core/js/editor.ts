@@ -1,3 +1,6 @@
+/**
+ * @module Core
+ */
 module Core {
     // TODO would be nice to use a directive instead; but couldn't get it working :(
     export function EditorController($scope, workspace:Workspace) {
