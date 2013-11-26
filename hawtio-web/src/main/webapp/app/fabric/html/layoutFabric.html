@@ -18,7 +18,7 @@
     <a ng-href="#/fabric/api{{hash}}" title="View the APIs in the Fabric">APIs</a>
   </li>
   <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/clusters")}' ng-disabled="!Fabric.getZooKeeperFacadeMBean(workspace)">
-    <a ng-href="{{clusterLink()}}" title="View the web application, messaging and integration clusters in this fabric">Clusters</a>
+    <a ng-href="{{clusterLink()}}" title="View the contents of the runtime registry in this fabric">Registry</a>
   </li>
   <li ng-show="hasFabric && mapsEnabled" ng-class='{active : isActive("#/fabric/map")}'>
     <a ng-href="#/fabric/map{{hash}}" title="View the containers on a Google map">Map</a>
