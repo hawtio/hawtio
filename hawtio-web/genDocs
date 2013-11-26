@@ -1,12 +1,15 @@
 #!/bin/bash 
 
-tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep -v target)
+#tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep -v target)
 
 # install yuidoc using the steps mentioned here -> http://yui.github.io/yuidoc/##install
 
 
 # starts yuidoc in server mode
-yuidoc -e .ts -o target/docs --server src/main/webapp/app/forcegraph/js/
+yuidoc -e .ts -o target/docs --server src/main/webapp/app/core/js/
+
+# Just evaluates JSDoc comments
+#yuidoc -e .ts -o target/docs --lint src/main/webapp/app/core/js/
 
 
 

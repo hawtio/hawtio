@@ -18,7 +18,9 @@ interface NodeSelection {
   ancestorHasEntry(key:string, value): boolean;
 }
 
-
+/**
+ * @class Folder
+ */
 class Folder implements NodeSelection {
   constructor(public title:string) {
     this.addClass = escapeTreeCssStyles(title);
@@ -48,6 +50,9 @@ class Folder implements NodeSelection {
   }
   /**
    * Navigates the given paths and returns the value there or null if no value could be found
+   * @method navigate
+   * @param {Array} paths
+   * @return {NodeSelection}
    */
   public navigate(...paths:string[]) {
     var node:NodeSelection = this;
@@ -127,7 +132,8 @@ class Folder implements NodeSelection {
 
   /**
    * Removes this node from my parent if I have one
-   */
+   * @method detach
+\   */
   public detach() {
     var oldParent = this.parent;
     if (oldParent) {
@@ -146,6 +152,9 @@ class Folder implements NodeSelection {
 
   /**
    * Searches this folder and all its descendants for the first folder to match the filter
+   * @method findDescendant
+   * @param {Function} filter
+   * @return {Folder}
    */
   public findDescendant(filter) {
     if (filter(this)) {

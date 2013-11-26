@@ -1,3 +1,6 @@
+/**
+ * @class TableWidget
+ */
 class TableWidget {
   private ignoreColumnHash = {};
   private flattenColumnHash = {};
@@ -36,6 +39,8 @@ class TableWidget {
 
   /**
    * Adds new data to the table
+   * @method addData
+   * @param {Object} newData
    */
   public addData(newData) {
     var dataTable = this.dataTable;
@@ -45,6 +50,8 @@ class TableWidget {
 
   /**
    * Populates the table with the given data
+   * @method populateTable
+   * @param {Object} data
    */
   public populateTable(data) {
     var $scope = this.scope;

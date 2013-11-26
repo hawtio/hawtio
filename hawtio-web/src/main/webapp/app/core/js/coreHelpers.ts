@@ -150,6 +150,11 @@ function closeHandle($scope, jolokia) {
 
 /**
  * Pass in null for the success function to switch to sync mode
+ *
+ * @method onSuccess
+ * @param {Function} Success callback function
+ * @param {Object} Options object to pass on to Jolokia request
+ * @return {Object} initialized options object
  */
 function onSuccess(fn, options = {}) {
   options['mimeType'] = 'application/json';
@@ -223,6 +228,10 @@ function escapeDots(text:string) {
 
 /**
  * Escapes all dots and 'span' text in the css style names to avoid clashing with bootstrap stuff
+ *
+ * @method escapeTreeCssStyles
+ * @param {String} text
+ * @return {String}
  */
 function escapeTreeCssStyles(text:string) {
   return escapeDots(text).replace(/span/g, 'sp-an');
@@ -242,8 +251,10 @@ function showLogPanel() {
 /**
  * Displays an alert message which is typically the result of some asynchronous operation
  *
+ * @method notification
  * @param type which is usually "success" or "error" and matches css alert-* css styles
  * @param message the text to display
+ *
  */
 
 function notification (type:string, message:string, options:any = null) {
@@ -264,6 +275,7 @@ function notification (type:string, message:string, options:any = null) {
 
 /**
  * Clears all the pending notifications
+ * @method clearNotifications
  */
 function clearNotifications() {
   var w:any = window;
@@ -273,7 +285,9 @@ function clearNotifications() {
 /**
  * Returns the CSS class for a log level based on if its info, warn, error etc.
  *
- * @return {string}
+ * @method logLevelClass
+ * @param {String} level
+ * @return {String}
  */
 function logLevelClass(level:string) {
   if (level) {
@@ -302,7 +316,9 @@ if (!Object.keys) {
   };
 }
 
-
+/**
+ * @module Core
+ */
 module Core {
 
   export function parseMBean(mbean) {
@@ -326,8 +342,17 @@ module Core {
 
 
 
-  /*
-   * log out the current user, should be in activemqHelpers.ts really
+  /**
+   * log out the current user
+   *
+   * @method logout
+   * @param {String} jolokiaUrl
+   * @param {Object} userDetails
+   * @param {Object} localStorage
+   * @param {Object} $scope
+   * @param {Function} successCB
+   * @param {Function} errorCB
+   *
    */
   export function logout(jolokiaUrl,
                   userDetails,
@@ -375,7 +400,10 @@ module Core {
 
   /**
    * Returns true if the string is either null or empty
-   * @param str
+   *
+   * @method isBlank
+   * @param {String} str
+   * @return {Boolean}
    */
   export function isBlank(str:string) {
     if (!str) {
@@ -384,20 +412,16 @@ module Core {
     return str.isBlank();
   }
 
-  /**
-   * A named logger for our module...
-   * @type {Logger}
-   */
   export var log:Logging.Logger = Logger.get("Core");
 
   /**
    * Creates a link by appending the current $location.search() hash to the given href link,
    * removing any required parameters from the link
-   *
-   * @param $location
-   * @param href the link to have any $location.search() hash parameters appended
-   * @param removeParams any parameters to be removed from the $location.search()
-   * @return the link with any $location.search() parameters added
+   * @method createHref
+   * @param {Object} $location
+   * @param {String} href the link to have any $location.search() hash parameters appended
+   * @param {Array} removeParams any parameters to be removed from the $location.search()
+   * @return {Object} the link with any $location.search() parameters added
    */
   export function createHref($location, href, removeParams = null) {
     var hashMap = angular.copy($location.search());
@@ -415,6 +439,10 @@ module Core {
 
   /**
    * Trims the leading prefix from a string if its present
+   * @method trimLeading
+   * @param {String} text
+   * @param {String} prefix
+   * @return {String}
    */
   export function trimLeading(text:string, prefix:string) {
     if (text && prefix) {
@@ -427,6 +455,10 @@ module Core {
 
   /**
    * Trims the trailing postfix from a string if its present
+   * @method trimTrailing
+   * @param {String} trim
+   * @param {String} postfix
+   * @return {String}
    */
   export function trimTrailing(text:string, postfix:string) {
     if (text && postfix) {
@@ -439,6 +471,9 @@ module Core {
 
   /**
    * Turns the given search hash into a URI style query string
+   * @method hashToString
+   * @param {Object} hash
+   * @return {String}
    */
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
@@ -451,6 +486,9 @@ module Core {
 
   /**
    * Parses the given string of x=y&bar=foo into a hash
+   * @method stringToHash
+   * @param {String} hashAsString
+   * @return {Object}
    */
   export function stringToHash(hashAsString: string) {
     var entries = {};
@@ -467,8 +505,13 @@ module Core {
     return entries;
   }
 
-  /*
+  /**
    * Register a JMX operation to poll for changes
+   * @method register
+   * @param {Object} jolokia
+   * @param {Object} scope
+   * @param {Object} arguments
+   * @param {Function} callback
    */
   export function register(jolokia, scope, arguments: any, callback) {
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
@@ -542,6 +585,9 @@ module Core {
 
   /**
    * Converts the given XML node to a string representation of the XML
+   * @method xmlNodeToString
+   * @param {Object} xmlNode
+   * @return {Object}
    */
   export function xmlNodeToString(xmlNode) {
     try {
@@ -563,6 +609,9 @@ module Core {
 
   /**
    * Returns true if the given DOM node is a text node
+   * @method isTextNode
+   * @param {Object} node
+   * @return {Boolean}
    */
   export function isTextNode(node) {
     return node && node.nodeType === 3;
@@ -571,6 +620,8 @@ module Core {
 
   /**
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
+   * @method $applyNoOrLater
+   * @param {ng.IScope} $scope
    */
   export function $applyNowOrLater($scope) {
     if ($scope.$$phase || $scope.$root.$$phase) {
@@ -584,6 +635,9 @@ module Core {
 
   /**
    * Performs a $scope.$apply() after the given timeout period
+   * @method $applyLater
+   * @param {ng.IScope} $scope
+   * @param {Integer} timeout
    */
   export function $applyLater($scope, timeout = 50) {
     setTimeout(() => {
@@ -594,6 +648,8 @@ module Core {
 
   /**
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
+   * @method $apply
+   * @param {ng.IScope} $scope
    */
   export function $apply($scope) {
     var phase = $scope.$$phase || $scope.$root.$$phase;
@@ -612,6 +668,10 @@ module Core {
   /**
    * Returns the lowercase file extension of the given file name or returns the empty
    * string if the file does not have an extension
+   * @method fileExtension
+   * @param {String} name
+   * @param {String} defaultValue
+   * @return {String}
    */
   export function fileExtension(name: string, defaultValue: string = "") {
     var extension = defaultValue;
@@ -653,6 +713,10 @@ module Core {
    * if not present.
    *
    * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
+   * @method getOrCreateElements
+   * @param {Object} domElement
+   * @param {Array} arrayOfElementNames
+   * @return {Object}
    */
   export function getOrCreateElements(domElement, arrayOfElementNames:string[]) {
     var element = domElement;
@@ -679,10 +743,9 @@ module Core {
   /**
    * Navigates the given set of paths in turn on the source object
    * and returns the last most value of the path or null if it could not be found.
-   *
-   * @param object the start object to start navigating from
-   * @param paths an array of path names to navigate or a string of dot separated paths to navigate
-   * @param newValue the value to update
+   * @method pathGet
+   * @param {Object} object the start object to start navigating from
+   * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @return {*} the last step on the path which is updated
    */
   export function pathGet(object, paths) {
@@ -706,10 +769,10 @@ module Core {
   /**
    * Navigates the given set of paths in turn on the source object
    * and updates the last path value to the given newValue
-   *
-   * @param object the start object to start navigating from
-   * @param paths an array of path names to navigate or a string of dot separated paths to navigate
-   * @param newValue the value to update
+   * @method pathSet
+   * @param {Object} object the start object to start navigating from
+   * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
+   * @param {Object} newValue the value to update
    * @return {*} the last step on the path which is updated
    */
   export function pathSet(object, paths, newValue) {
@@ -774,8 +837,9 @@ module Core {
    * to extract the version numbers as an array of numbers then returns an array of 2 or 3 numbers.
    *
    * Characters before the first digit are ignored as are characters after the last digit.
-   *
-   * @param text a maven like string containing a dash then numbers separated by dots
+   * @method parseVersionNumbers
+   * @param {String} text a maven like string containing a dash then numbers separated by dots
+   * @return {Array}
    */
   export function parseVersionNumbers(text: string) {
     if (text) {
@@ -803,11 +867,13 @@ module Core {
     console.log(message + " " + elapsed);
     return answer;
   }
+
   /**
    * Compares the 2 version arrays and returns -1 if v1 is less than v2 or 0 if they are equal or 1 if v1 is greater than v2
-   *
-   * @param v1 an array of version numbers with the most significant version first (major, minor, patch).
-   * @param v2
+   * @method compareVersionNumberArrays
+   * @param {Array} v1 an array of version numbers with the most significant version first (major, minor, patch).
+   * @param {Array} v2
+   * @return {Number}
    */
   export function compareVersionNumberArrays(v1:number[], v2:number[]) {
     if (v1 && !v2) {
@@ -842,6 +908,9 @@ module Core {
 
   /**
    * If the value is not an array then wrap it in one
+   * @method asArray
+   * @param {*} value
+   * @return {Array}
    */
   export function asArray(value) {
     return angular.isArray(value) ? value : [value];
@@ -850,6 +919,9 @@ module Core {
   /**
    * Helper function which converts objects into tables of key/value properties and
    * lists into a <ul> for each value.
+   * @method valueToHtml
+   * @param {*} value
+   * @return {String}
    */
   export function valueToHtml(value) {
     if (angular.isArray(value)) {
@@ -887,6 +959,9 @@ module Core {
   /**
    * If the string starts and ends with [] {} then try parse as JSON and return the parsed content or return null
    * if it does not appear to be JSON
+   * @method tryParseJson
+   * @param {String} text
+   * @return {Object}
    */
   export function tryParseJson(text: string) {
     text = text.trim();
@@ -903,6 +978,10 @@ module Core {
   /**
    * Given values (n, "person") will return either "1 person" or "2 people" depending on if a plural
    * is required using the String.pluralize() function from sugarjs
+   * @method maybePlural
+   * @param {Number} count
+   * @param {String} word
+   * @return {String}
    */
   export function maybePlural(count: Number, word: string) {
     var pluralWord = (count === 1) ? word : word.pluralize();
@@ -912,7 +991,9 @@ module Core {
   /**
    * given a JMX ObjectName of the form <code>domain:key=value,another=something</code> then return the object
    * <code>{key: "value", another: "something"}</code>
-   * @param name
+   * @method objectNameProperties
+   * @param {String} name
+   * @return {Object}
    */
   export function objectNameProperties(objectName: string) {
     var entries = {};
@@ -942,6 +1023,11 @@ module Core {
 
   /**
    * Returns the Folder object for the given domain name and type name or null if it can not be found
+   * @method getMBeanTypeFolder
+   * @param {Workspace} workspace
+   * @param {String} domain
+   * @param {String} typeName}
+   * @return {Folder}
    */
   export function getMBeanTypeFolder(workspace:Workspace, domain: string, typeName: string):Folder {
     if (workspace) {
@@ -958,6 +1044,11 @@ module Core {
 
   /**
    * Returns the JMX objectName for the given jmx domain and type name
+   * @method getMBeanTypeObjectName
+   * @param {Workspace} workspace
+   * @param {String} domain
+   * @param {String} typeName
+   * @return {String}
    */
   export function getMBeanTypeObjectName(workspace:Workspace, domain: string, typeName: string):string {
     var folder = Core.getMBeanTypeFolder(workspace, domain, typeName);
@@ -967,6 +1058,9 @@ module Core {
   /**
    * Removes dodgy characters from a value such as '/' or '.' so that it can be used as a DOM ID value
    * and used in jQuery / CSS selectors
+   * @method toSafeDomID
+   * @param {String} text
+   * @return {String}
    */
   export function toSafeDomID(text: string) {
     return text ? text.replace(/(\/|\.)/g, "_") : text;
@@ -975,6 +1069,9 @@ module Core {
 
   /**
    * Invokes the given function on each leaf node in the array of folders
+   * @method forEachLeafFolder
+   * @param {Array[Folder]} folders
+   * @param {Function} fn
    */
   export function forEachLeafFolder(folders, fn) {
     angular.forEach(folders, (folder) => {
@@ -1033,6 +1130,9 @@ module Core {
   /**
    * If a URL is external to the current web application, then
    * replace the URL with the proxy servlet URL
+   * @method useProxyIfExternal
+   * @param {String} connectUrl
+   * @return {String}
    */
   export function useProxyIfExternal(connectUrl) {
     var host = window.location.host;
@@ -1136,6 +1236,12 @@ module Core {
   /**
    * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
    * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
+   * @method bindModelToSearchParam
+   * @param {ng.IScope} $scope
+   * @param {ng.ILocationService} $location
+   * @param {String} modelName
+   * @param {String} paramName
+   * @param {Object} initialValue
    */
   export function bindModelToSearchParam($scope, $location, modelName, paramName, initialValue = null) {
     function currentValue() {
@@ -1160,6 +1266,11 @@ module Core {
   /**
    * For controllers where reloading is disabled via "reloadOnSearch: false" on the registration; lets pick which
    * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
+   * @method reloadWhenParametersChange
+   * @param {Object} $route
+   * @param {ng.IScope} $scope
+   * @param {ng.ILocationService} $location
+   * @param {Array[String]} parameters
    */
   export function reloadWhenParametersChange($route, $scope, $location, parameters = ["nid"]) {
     var initial = angular.copy($location.search());
@@ -1183,6 +1294,11 @@ module Core {
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL,
    * username and password
+   * @method createJolokia
+   * @param {String} url
+   * @param {String} username
+   * @param {String} password
+   * @return {Object}
    */
   export function createJolokia(url: string, username: string, password: string) {
     var jolokiaParams = {
@@ -1197,8 +1313,10 @@ module Core {
   /**
    * Returns a new function which ensures that the delegate function is only invoked at most once
    * within the tiven number of millseconds
-   * @param fn the function to be invoked at most once within the given number of millis
-   * @param millis the time window during which this function should only be called at most once
+   * @method throttled
+   * @param {Function} fn the function to be invoked at most once within the given number of millis
+   * @param {Number} millis the time window during which this function should only be called at most once
+   * @return {Object}
    */
   export function throttled(fn, millis: number) {
     var nextInvokeTime: number = 0;
