@@ -381,9 +381,7 @@ public class GitFacade extends GitFacadeSupport {
             }
 
             public Object call() throws Exception {
-                checkoutBranch(git, fromBranch);
-                git.branchCreate().setName(newBranch).call();
-                checkoutBranch(git, newBranch);
+                doCreateBranch(git, fromBranch, newBranch);
                 return null;
             }
         });
