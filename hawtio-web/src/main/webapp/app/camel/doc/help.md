@@ -175,4 +175,40 @@ And on the main view area is a table that lists the endpoints in tabular format 
 ![Endpoint Table](app/camel/doc/img/endpoint-table.png "Endpoint Table")
 
 
+##### Browsable Endpoints #####
+
+Some endpoints supports browsing, meaning you can view messages they have received or sent.
+For example file and activemq/jms endpoints are browsable.
+
+In the screen shot below we have selected the 'file:target/messages/uk' endpoint which contains one message that can be browsed
+
+![Endpoint Browsable](app/camel/doc/img/endpoint-file-browse-1.png "Endpoint Browsable")
+
+.. by clicking the message id, brings up the message, and a control panel on the right hand side.
+
+![Endpoint Browse](app/camel/doc/img/endpoint-file-browse-2.png "Endpoint Browse")
+
+If there is 2 or more messages that were browsable, you can use the control panel to navigate forward and backward among the messages.
+
+
+##### Sending Message to Endpoint ######
+
+It is possible to send message(s) to any Camel endpoint, by selecting the endpoint from the Camel Tree, as shown below,
+and selecting the Send sub-tab, as shown in the screen shot below:
+
+![Endpoint Send](app/camel/doc/img/endpoint-file-send-1.png "Endpoint Send")
+
+The Compose sub-tab which is shown, allows to compose a new message, using the message editor shown above. In this example
+we compose a new XML message for 'Claus Ibsen' to be sent as a file to the endpoint 'file://src/data'.
+
+![Endpoint Send](app/camel/doc/img/endpoint-file-send-2.png "Endpoint Send")
+
+To tell Camel what file name to use, we need to add a header, using the name 'CamelFileName'. As we start typing the header
+name a list of known header names is listed, which allows us to easily pick the header needed, which is 'CamelFileName'
+
+![Endpoint Send](app/camel/doc/img/endpoint-file-send-3.png "Endpoint Send")
+
+And then we are ready to send the message, by clicking the Send button.
+
+
 
