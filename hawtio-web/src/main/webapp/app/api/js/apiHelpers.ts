@@ -53,7 +53,7 @@ module API {
         $scope.remoteJolokia = remoteJolokia;
         if (remoteJolokia) {
           API.loadJsonSchema(remoteJolokia, $scope.objectName, (jsonSchema) => {
-            log.info("Got JSON Schema: " + JSON.stringify(jsonSchema, null, "  "));
+            //log.info("Got JSON Schema: " + JSON.stringify(jsonSchema, null, "  "));
             $scope.jsonSchema = jsonSchema;
           })
         } else {
