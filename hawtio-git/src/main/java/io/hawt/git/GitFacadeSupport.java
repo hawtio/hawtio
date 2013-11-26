@@ -30,6 +30,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
@@ -40,10 +41,12 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevWalkUtils;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.treewalk.TreeWalk;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.CommitUtils;
 import org.gitective.core.PathFilterUtils;
+import org.gitective.core.TreeUtils;
 import org.gitective.core.filter.commit.CommitLimitFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
@@ -162,6 +165,26 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         checkoutBranch(git, fromBranch);
         git.branchCreate().setName(newBranch).call();
         checkoutBranch(git, newBranch);
+    }
+
+    protected List<CommitTreeInfo> doGetCommitTree(Git git, String commitId) {
+        Repository repository = git.getRepository();
+        final List<CommitTreeInfo> list = new ArrayList<CommitTreeInfo>();
+        TreeWalk treeWalk = TreeUtils.withCommits(repository, commitId);
+        treeWalk.setRecursive(true);
+        int idx = 0;
+        try {
+            while (treeWalk.next()) {
+                FileMode mode = treeWalk.getFileMode(idx);
+                String path = treeWalk.getPathString();
+                String name = treeWalk.getNameString();
+                ObjectId id = treeWalk.getObjectId(idx);
+                list.add(new CommitTreeInfo(mode, path, name, id));
+            }
+        } catch (IOException e) {
+            LOG.warn("Failed to walk tree for commit " + commitId + ". " + e, e);
+        }
+        return list;
     }
 
     protected abstract Iterable<PushResult> doPush(Git git) throws Exception;
