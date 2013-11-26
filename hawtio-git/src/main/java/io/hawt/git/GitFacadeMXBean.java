@@ -34,6 +34,10 @@ public interface GitFacadeMXBean {
     CommitInfo createDirectory(String branch, String path, String commitMessage,
                               String authorName, String authorEmail);
 
+    /**
+     * Creates a new branch from the given branch
+     */
+    void createBranch(String fromBranch, String newBranch);
 
     /**
      * Renames the given oldPath to the newPath location for the given branch, commit message and user
