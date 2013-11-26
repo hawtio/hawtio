@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
   export function ChartEditController($scope, $location, workspace:Workspace, jolokia) {
     $scope.selectedAttributes = [];

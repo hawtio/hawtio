@@ -1,3 +1,6 @@
+/**
+ * @module Jvm
+ */
 module JVM {
   export function ConnectController($scope, $location, localStorage, workspace) {
 

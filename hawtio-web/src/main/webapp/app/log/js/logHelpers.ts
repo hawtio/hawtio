@@ -1,3 +1,6 @@
+/**
+ * @module Log
+ */
 module Log {
   export function logSourceHref(row) {
     if (!row) {

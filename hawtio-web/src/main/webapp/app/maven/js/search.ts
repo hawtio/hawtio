@@ -1,3 +1,6 @@
+/**
+ * @module Maven
+ */
 module Maven {
 
   export function SearchController($scope, $location, workspace:Workspace, jolokia) {

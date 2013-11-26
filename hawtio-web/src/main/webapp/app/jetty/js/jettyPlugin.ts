@@ -1,3 +1,7 @@
+/**
+ * @module Jetty
+ * @main Jetty
+ */
 module Jetty {
   var pluginName = 'jetty';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).

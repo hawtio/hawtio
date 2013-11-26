@@ -1,3 +1,6 @@
+/**
+ * @module Karaf
+ */
 module Karaf {
 
   export var log:Logging.Logger = Logger.get("Karaf");

@@ -1,4 +1,7 @@
-  module JVM {
+/**
+ * @module Jvm
+ */
+module JVM {
 
   export function JVMsController($scope, $window, $location, workspace, jolokia, mbeanName) {
 

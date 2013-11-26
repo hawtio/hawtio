@@ -1,7 +1,15 @@
+/**
+ * @module Jvm
+ */
 module JVM {
 
   /**
    * Adds common properties and functions to the scope
+   * @method configureScope
+   * @for Jvm
+   * @param {ng.IScope} $scope
+   * @param {ng.ILocationService} $location
+   * @param {Core.Workspace} workspace
    */
   export function configureScope($scope, $location, workspace) {
 

@@ -1,3 +1,6 @@
+/**
+ * @module Maven
+ */
 module Maven {
 
   export function DependenciesController($scope, $routeParams, $location, workspace:Workspace, jolokia) {

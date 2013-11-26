@@ -1,3 +1,7 @@
+/**
+ * @module Log
+ * @main Log
+ */
 module Log {
   var pluginName = 'log';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).

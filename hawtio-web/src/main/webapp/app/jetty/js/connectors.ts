@@ -1,3 +1,6 @@
+/**
+ * @module Jetty
+ */
 module Jetty {
 
   export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {

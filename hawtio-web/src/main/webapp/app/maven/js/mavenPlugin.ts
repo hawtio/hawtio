@@ -1,3 +1,7 @@
+/**
+ * @module Maven
+ * @main Maven
+ */
 module Maven {
   var pluginName = 'maven';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'tree', 'hawtioCore', 'hawtio-ui']).

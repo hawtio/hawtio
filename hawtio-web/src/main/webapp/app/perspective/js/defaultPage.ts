@@ -1,3 +1,6 @@
+/**
+ * @module Perspective
+ */
 module Perspective {
 
   /**

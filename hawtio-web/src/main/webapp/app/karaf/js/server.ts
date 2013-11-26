@@ -1,3 +1,6 @@
+/**
+ * @module Karaf
+ */
 module Karaf {
 
   export function ServerController($scope, $location, workspace:Workspace, jolokia) {

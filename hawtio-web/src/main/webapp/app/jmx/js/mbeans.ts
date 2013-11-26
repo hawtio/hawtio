@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 
 module Jmx {
   export function MBeansController($scope, $location: ng.ILocationService, workspace: Workspace) {

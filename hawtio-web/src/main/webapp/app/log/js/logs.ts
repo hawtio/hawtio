@@ -1,3 +1,6 @@
+/**
+ * @module Log
+ */
 module Log {
   export interface ILog {
     // TODO What is the point of seq?

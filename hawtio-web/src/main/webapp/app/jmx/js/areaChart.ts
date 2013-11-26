@@ -1,3 +1,6 @@
+/**
+ * @module Jmx
+ */
 module Jmx {
 
   export function AreaChartController($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
