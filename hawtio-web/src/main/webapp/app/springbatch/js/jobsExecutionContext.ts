@@ -17,6 +17,15 @@ module SpringBatch{
             $scope.jobName=jobName;
             $scope.jobId=jobId;
         });
+        var jobExecutionContextFormat = $resource("/hawtio/getFormattedContextData/");
+        jobExecutionContextFormat.get({'jobExecutionId':jobExecutionId},function(data){
+            for(var context in data.jobExecutionContext){
+                data.jobExecutionContext[context].id=context;
+            }
+            //$scope.jobExecutionContext=data.jobExecutionContext;
+            $scope.jobName=jobName;
+            $scope.jobId=jobId;
+        });
     }
 
 }

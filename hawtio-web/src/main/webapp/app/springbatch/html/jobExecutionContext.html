@@ -3,19 +3,43 @@
     <div>
         <a ng-href="#/springbatch/jobs/{{jobName}}/executions/{{jobId}}" class="btn btn-small btn-primary pull-right">Back</a>
     </div>
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th style="width: 3%">Job Execution Id</th>
-            <th>Context</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr>
-            <td>{{jobExecutionContext.jobExecutionId}}</td>
-            <td>{{jobExecutionContext.context}}</td>
-        </tr>
-        </tbody>
-    </table>
+    <span ng-repeat='entry in jobExecutionContext.context.map.entry'>
+        <div class="accordion" id="accordion{{index}}">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{$index}}" href="#collapseOne{{$index}}">
+                        Open/Close
+                    </a>
+                </div>
+                <div id="collapseOne{{$index}}" class="accordion-body collapse in">
+                    <div class="accordion-inner">
+                        <span ng-repeat="(key,value) in entry">
+                            <span ng-if="key == 'string'">
+                                {{entry}}
+                            </span>
+                            <span ng-if="key == 'int'">
+                                {{entry.int}}
+                            </span>
+                            <span ng-if="key == 'list'">
+                                <span ng-if="value">
+                                    <span ng-repeat="listItemMap in value">
+                                        <sjson:renderTable tableMap="${listItemMap}" entryIndex="${index}"/>
+                                    </span>
+                                </span>
+                                <!--<g:else>
+                                ${mapItem.list}
+                            </g:else>-->
+                            </span>
+                            <!--<g:elseif test="${mapItem['java.util.Collections_-UnmodifiableRandomAccessList']}">
+                                <sjson:renderTableForSpecialList tableMap="${mapItem['java.util.Collections_-UnmodifiableRandomAccessList']}" entryIndex="${index}" key="java.util.Collections_-UnmodifiableRandomAccessList"/>
+                            </g:elseif>
+                            <g:else>
+                                ${sjson.prettyJson(jsonString: item.toString())}
+                            </g:else>-->
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
 </div>
