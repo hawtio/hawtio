@@ -64,7 +64,7 @@ module CodeEditor {
    *
    * @method createEditorSettings
    * @param {Object} options
-   * @returns {Object}
+   * @return {Object}
    */
   export function createEditorSettings(options:any = {}) {
     options.extraKeys = options.extraKeys || {};

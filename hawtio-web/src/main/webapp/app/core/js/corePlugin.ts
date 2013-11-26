@@ -284,17 +284,17 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
           $.support.cors = true;
 
-          /**
+          /*
            * Count the number of lines in the given text
            */
           $rootScope.lineCount = lineCount;
 
-          /**
+          /*
            * Easy access to route params
            */
           $rootScope.params = $routeParams;
 
-          /**
+          /*
            * Wrapper for angular.isArray, isObject, etc checks for use in the view
            *
            * @param type {string} the name of the check (casing sensitive)
@@ -304,7 +304,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             return angular['is' + type](value);
           };
 
-          /**
+          /*
            * Wrapper for $.isEmptyObject()
            *
            * @param value  {mixed} Value to be tested
@@ -314,7 +314,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
             return $.isEmptyObject(value);
           };
 
-          /**
+          /*
            * Initialize jolokia polling and add handler to change poll
            * frequency
            */
@@ -328,7 +328,7 @@ angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dia
 
           $rootScope.$emit('UpdateRate', localStorage['updateRate']);
 
-          /**
+          /*
            * Debugging Tools
            *
            * Allows you to execute debug functions from the view
@@ -456,7 +456,7 @@ var adjustHeight = function () {
   var headerHeight = $("#main-nav").height();
   var containerHeight = windowHeight - headerHeight;
   $("#main").css("min-height", "" + containerHeight + "px");
-}
+};
 
 $(function () {
   hawtioPluginLoader.loadPlugins(function () {

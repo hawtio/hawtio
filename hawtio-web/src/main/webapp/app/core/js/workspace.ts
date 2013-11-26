@@ -6,7 +6,9 @@ interface MenuItem {
   href: () => any;
 }
 
-
+/**
+ * @class Workspace
+ */
 class Workspace {
   public operationCounter = 0;
   public selection:NodeSelection;
@@ -45,6 +47,9 @@ class Workspace {
 
   /**
    * Creates a shallow copy child workspace with its own selection and location
+   * @method createChildWorkspace
+   * @param {ng.ILocationService} location
+   * @return {Workspace}
    */
   public createChildWorkspace(location): Workspace {
     var child = new Workspace(this.jolokia, this.jolokiaStatus, this.jmxTreeLazyLoadRegistry,
@@ -84,6 +89,8 @@ class Workspace {
   /**
    * Adds a post processor of the tree to swizzle the tree metadata after loading
    * such as correcting any typeName values or CSS styles by hand
+   * @method addTreePostProcessor
+   * @param {Function} processor
    */
   public addTreePostProcessor(processor) {
     this.treePostProcessors.push(processor);
@@ -123,7 +130,7 @@ class Workspace {
       } else {
         // lets keep using the existing register handle
 
-        /** we don't need to unregister lets keep using it
+        /* we don't need to unregister lets keep using it
         if (this.treeWatchRegisterHandle !== null) {
           this.jolokia.unregister(this.treeWatchRegisterHandle);
           this.treeWatchRegisterHandle = null;
@@ -359,6 +366,8 @@ class Workspace {
 
   /**
    * Returns the hash query argument to append to URL links
+   * @method hash
+   * @return {String}
    */
   public hash() {
     var hash = this.$location.search();
@@ -371,8 +380,8 @@ class Workspace {
 
   /**
    * Returns the currently active tab
-   * @param href
-   * @return {*}
+   * @method getActiveTab
+   * @return {Boolean}
    */
   public getActiveTab() {
     var workspace = this;
@@ -401,9 +410,9 @@ class Workspace {
   /**
    * Returns true if the given link is active. The link can omit the leading # or / if necessary.
    * The query parameters of the URL are ignored in the comparison.
-   *
-   * @param href
-   * @return true if the given link is active
+   * @method isLinkActive
+   * @param {String} href
+   * @return {Boolean} true if the given link is active
    */
   public isLinkActive(href:string):boolean {
     // lets trim the leading slash
@@ -426,6 +435,9 @@ class Workspace {
 
   /**
    * Returns true if the tab query parameter is active or the URL starts with the given path
+   * @method isTopTabActive
+   * @param {String} path
+   * @return {Boolean}
    */
   public isTopTabActive(path:string):boolean {
     var tab = this.$location.search()['tab'];
@@ -437,6 +449,8 @@ class Workspace {
 
   /**
    * Returns the selected mbean name if there is one
+   * @method getSelectedMBeanName
+   * @return {String}
    */
   public getSelectedMBeanName():string {
     var selection = this.selection;
@@ -448,6 +462,9 @@ class Workspace {
 
   /**
    * Returns true if the path is valid for the current selection
+   * @method validSelection
+   * @param {String} uri
+   * @return {Boolean}
    */
   public validSelection(uri:string) {
     var workspace = this;
@@ -490,6 +507,7 @@ class Workspace {
   /**
    * In cases where we have just deleted something we typically want to change
    * the selection to the parent node
+   * @method removeAndSelectParentNode
    */
   public removeAndSelectParentNode() {
     var selection = this.selection;
@@ -524,6 +542,8 @@ class Workspace {
   /**
    * Returns the view configuration key for the kind of selection
    * for example based on the domain and the node type
+   * @method selectionViewConfigKey
+   * @return {String}
    */
   public selectionViewConfigKey():string {
     return this.selectionConfigKey("view/");
@@ -532,6 +552,9 @@ class Workspace {
   /**
    * Returns a configuration key for a node which is usually of the form
    * domain/typeName or for folders with no type, domain/name/folder
+   * @method selectionConfigKey
+   * @param {String} prefix
+   * @return {String}
    */
   public selectionConfigKey(prefix: string = ""):string {
     var key = null;
@@ -619,6 +642,7 @@ class Workspace {
 
   /**
    * Redraws the tree widget
+   * @method redrawTree
    */
   public redrawTree() {
     var treeElement = this.treeElement;
@@ -630,6 +654,8 @@ class Workspace {
 
   /**
    * Expand / collapse the current active node
+   * @method expandSelection
+   * @param {Boolean} flag
    */
   public expandSelection(flag) {
     var treeElement = this.treeElement;
