@@ -1,5 +1,18 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
 
+  /**
+   * Controller to show the details of a Jclouds provider
+   *
+   * @method ProviderController
+   * @for Jclouds
+   * @param {ng.IScope} $scope
+   * @param {ng.IFilterService} $filter
+   * @param {Workspace} workspace
+   * @param {ng.IRouteParamsService} $routeParams
+   */
     export function ProviderController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
         $scope.providerId = $routeParams.providerId;
 

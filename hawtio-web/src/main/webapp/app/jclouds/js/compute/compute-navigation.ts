@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
 
     export function ComputeNavigationController($scope, $routeParams, workspace:Workspace) {

@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
     export function ComputeListController($scope, $location, workspace, jolokia) {
 

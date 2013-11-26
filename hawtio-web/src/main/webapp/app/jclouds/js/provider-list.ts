@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
     export function ProviderListController($scope, $location, workspace, jolokia) {
 

@@ -1,3 +1,7 @@
+/**
+ * @module Jclouds
+ * @main Jclouds
+ */
 module Jclouds {
     var pluginName = 'jclouds';
 

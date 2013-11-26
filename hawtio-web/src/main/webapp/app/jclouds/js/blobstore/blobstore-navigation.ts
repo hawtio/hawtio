@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
 
     export function BlobstoreNavigationController($scope, $routeParams, workspace:Workspace) {
