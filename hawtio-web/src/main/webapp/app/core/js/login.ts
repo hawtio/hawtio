@@ -3,20 +3,25 @@
  */
 module Core {
 
+  export var username: string = null;
+  export var password: string = null;
+
   export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding) {
     jolokia.stop();
 
+    $scope.entity = {
+      username: '',
+      password: ''
+    };
     $scope.backstretch = (<any>$).backstretch(branding.loginBg);
 
-    $scope.username = '';
-    $scope.password = '';
     $scope.rememberMe = false;
     $scope.branding = branding;
 
     var details = angular.fromJson(localStorage[jolokiaUrl]);
     if (details) {
-      $scope.username = details['username'];
-      $scope.password = details['password'];
+      $scope.entity.username = details['username'];
+      $scope.entity.password = details['password'];
       $scope.rememberMe = details['rememberMe'];
     }
 
@@ -33,11 +38,13 @@ module Core {
       $.ajax(url, {
         type: "POST",
         success: (response) => {
-          userDetails.username = $scope.username;
-          userDetails.password = $scope.password;
+          userDetails.username = $scope.entity.username;
+          userDetails.password = $scope.entity.password;
           userDetails.rememberMe = $scope.rememberMe;
           userDetails.loginDetails = response;
 
+          Core.username = $scope.entity.username;
+          Core.password = $scope.entity.password;
           if ($scope.rememberMe) {
             localStorage[jolokiaUrl] = angular.toJson(userDetails);
           } else {
@@ -65,11 +72,11 @@ module Core {
           Core.$apply($scope);
         },
         beforeSend: (xhr) => {
-          xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.username, $scope.password));
+          xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.entity.username, $scope.entity.password));
         }
 
-        //username: $scope.username,
-        //password: $scope.password
+        //username: $scope.entity.username,
+        //password: $scope.entity.password
       });
 
     }
