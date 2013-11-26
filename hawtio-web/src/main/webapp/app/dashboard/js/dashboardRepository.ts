@@ -3,6 +3,13 @@
  */
 module Dashboard {
 
+  /**
+   * The default dashboard definition if no saved dashboards are available
+   *
+   * @property defaultDashboards
+   * @for Dashboard
+   * @type {any}
+   */
   var defaultDashboards = [
 
     {
@@ -86,14 +93,16 @@ module Dashboard {
   ];
 
   /**
+   * Base interface that dashboard repositories must implement
+   *
    * @class DashboardRepository
    */
   export interface DashboardRepository {
+
     putDashboards: (array:any[], commitMessage:string, fn) => any;
 
     deleteDashboards: (array:any[], fn) => any;
 
-    //getDashboards: (fn: (dashboards: Dashboard[]) => any) => any;
     getDashboards: (fn) => any;
 
     getDashboard: (id:string, fn) => any;
@@ -109,7 +118,9 @@ module Dashboard {
   }
 
   /**
-   * API to deal with the dashboards
+   * Registry of dashboard repositories that delegates to the current effective
+   * dashboard repository
+   *
    * @class DefaultDashboardRepository
    */
   export class DefaultDashboardRepository implements DashboardRepository {

@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
 
     export class OsgiGraphBuilder {

@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
   export function ImportController($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) {
     $scope.placeholder = "Paste the JSON here for the dashboard configuration to import...";

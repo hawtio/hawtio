@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
     $scope.addDialog = new Core.Dialog();
@@ -48,7 +51,7 @@ module Wiki {
       onRouteSelectionChanged();
     };
 
-    /**
+    /*
      * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
      */
     function createEndpointURI(endpointScheme: string, slashesText: string, endpointPath: string, endpointParameters: any) {
@@ -420,7 +423,7 @@ module Wiki {
       return states;
     }
 
-    /**
+    /*
      * Updates the selection with the given folder or ID
      */
     function updateSelection(folderOrId) {

@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
 
   export function BundlesController($scope, workspace:Workspace, jolokia) {

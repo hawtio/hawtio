@@ -1,13 +1,20 @@
 /**
  * @module Dozer
+ * @main Dozer
  */
 module Dozer {
 
+  /**
+   * The JMX domain for Dozer
+   * @property jmxDomain
+   * @for Dozer
+   * @type String
+   */
   export var jmxDomain = 'net.sourceforge.dozer';
 
   /**
    * Don't try and load properties for these types
-   * @property
+   * @property excludedPackages
    * @for Dozer
    * @type {Array}
    */
@@ -20,7 +27,7 @@ module Dozer {
 
   /**
    * Lets map the class names to element names
-   * @property
+   * @property elementNameMappings
    * @for Dozer
    * @type {Array}
    */
@@ -36,6 +43,7 @@ module Dozer {
   /**
    * Converts the XML string or DOM node to a Dozer model
    * @method loadDozerModel
+   * @for Dozer
    * @param {Object} xml
    * @param {String} pageId
    * @return {Mappings}
@@ -93,7 +101,8 @@ module Dozer {
    * Finds the properties on the given class and returns them; and either invokes the given function
    * or does a sync request and returns them
    * @method findProperties
-   * @param {Workspace} workspace
+   * @for Dozer
+   * @param {Core.Workspace} workspace
    * @param {String} className
    * @param {String} filter
    * @param {Function} fn
@@ -120,7 +129,8 @@ module Dozer {
    * Finds class names matching the given search text and either invokes the function with the results
    * or does a sync request and returns them.
    * @method findClassNames
-   * @param {Workspace} workspace
+   * @for Dozer
+   * @param {Core.Workspace} workspace
    * @param {String} searchText
    * @param {Number} limit @default 20
    * @param {Function} fn
@@ -286,6 +296,7 @@ module Dozer {
   /**
    * Adds a new child element for this mapping to the given element
    * @method appendElement
+   * @for Dozer
    * @param {any} object
    * @param {any} element
    * @param {String} elementName

@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
 
     export function ServiceController($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) {

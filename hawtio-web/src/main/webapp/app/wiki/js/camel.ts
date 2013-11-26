@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
 
   export function CamelController($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {

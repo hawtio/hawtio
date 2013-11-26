@@ -1,3 +1,6 @@
+/**
+ * @module Insight
+ */
 module Insight {
 
     export var managerMBean = "org.fusesource.fabric:type=Fabric";

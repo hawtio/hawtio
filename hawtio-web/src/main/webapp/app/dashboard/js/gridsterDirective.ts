@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
 
   export class GridsterDirective {

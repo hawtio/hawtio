@@ -1,3 +1,7 @@
+/**
+ * @module Insight
+ * @main Insight
+ */
 module Insight {
 
     // create our angular module and tell angular what route(s) it will handle

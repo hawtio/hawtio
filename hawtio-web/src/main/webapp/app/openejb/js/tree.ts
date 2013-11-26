@@ -1,3 +1,6 @@
+/**
+ * @module OpenEJB
+ */
 module OpenEJB {
 
   export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {

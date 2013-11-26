@@ -1,3 +1,6 @@
+/**
+ * @module Site
+ */
 module Site {
 
   export function IndexController($scope, $location) {

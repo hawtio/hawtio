@@ -1,3 +1,7 @@
+/**
+ * @module Tree
+ * @main Tree
+ */
 module Tree {
   var pluginName = 'tree';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
@@ -66,7 +70,7 @@ module Tree {
                   var config = {
                     clickFolderMode: 3, // activate and expand
 
-                    /**
+                    /*
                      * The event handler called when a different node in the tree is selected
                      */
                     onActivate: function (node:DynaTreeNode) {
@@ -135,7 +139,7 @@ module Tree {
                     children: children,
                     dnd: {
                       onDragStart: onDragStartFn ? onDragStartFn : function (node) {
-                        /** This function MUST be defined to enable dragging for the tree.
+                        /* This function MUST be defined to enable dragging for the tree.
                          *  Return false to cancel dragging of node.
                          */
                         console.log("onDragStart!");
@@ -147,7 +151,7 @@ module Tree {
                       },
                       onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
                         console.log("onDrop!");
-                        /** This function MUST be defined to enable dropping of items on
+                        /* This function MUST be defined to enable dropping of items on
                          *  the tree.
                          */
                         sourceNode.move(node, hitMode);

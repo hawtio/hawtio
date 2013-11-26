@@ -1,9 +1,19 @@
+/**
+ * @module Dozer
+ */
 module Dozer {
+
+  /**
+   * @class Mappings
+   */
   export class Mappings {
     constructor(public doc:any, public mappings:Mapping[] = []) {
     }
   }
 
+  /**
+   * @class Mapping
+   */
   export class Mapping {
     map_id:string;
     class_a:MappingClass;
@@ -36,6 +46,9 @@ module Dozer {
     }
   }
 
+  /**
+   * @class MappingClass
+   */
   export class MappingClass {
     constructor(public value:string) {
     }
@@ -45,7 +58,9 @@ module Dozer {
       appendAttributes(this, element, ["value", "properties", "error"]);
     }
   }
-
+  /**
+   * @class Field
+   */
   export class Field {
     constructor(public a:FieldDefinition, public b:FieldDefinition) {
     }
@@ -61,6 +76,9 @@ module Dozer {
     }
   }
 
+  /**
+   * @class FieldDefinition
+   */
   export class FieldDefinition {
     constructor(public value:string) {
     }
@@ -71,6 +89,9 @@ module Dozer {
     }
   }
 
+  /**
+   * @class UnmappedField
+   */
   export class UnmappedField {
     constructor(public fromField:string, public property:any, public toField:string = null) {
     }

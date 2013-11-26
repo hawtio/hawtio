@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
 
   export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) {

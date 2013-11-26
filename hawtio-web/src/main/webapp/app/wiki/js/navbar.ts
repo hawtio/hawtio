@@ -1,3 +1,6 @@
+/**
+ * @module Wiki
+ */
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 

@@ -1,3 +1,6 @@
+/**
+ * @module Osgi
+ */
 module Osgi {
 
   export var log:Logging.Logger = Logger.get("OSGi");
@@ -234,7 +237,14 @@ module Osgi {
     }
 
     /**
-     * Default the values that are missing in the returned JSON
+     * Finds a bundle by id
+     *
+     * @method findBundle
+     * @for Osgi
+     * @param {String} bundleId
+     * @param {Array} values
+     * @return {any}
+     *
      */
     export function findBundle(bundleId, values) {
         var answer = "";
@@ -259,6 +269,11 @@ module Osgi {
 
     /**
      * Walks the tree looking in the first child all the way down until we find an objectName
+     * @method findFirstObjectName
+     * @for Osgi
+     * @param {Folder} node
+     * @return {String}
+     *
      */
     export function findFirstObjectName(node) {
         if (node) {

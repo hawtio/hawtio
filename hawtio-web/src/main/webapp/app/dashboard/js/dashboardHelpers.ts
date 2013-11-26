@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
 
   export var log:Logging.Logger = Logger.get('Dashboard');
