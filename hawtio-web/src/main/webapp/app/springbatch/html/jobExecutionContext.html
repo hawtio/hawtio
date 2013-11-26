@@ -14,7 +14,14 @@
 
         <tr>
             <td>{{jobExecutionContext.jobExecutionId}}</td>
-            <td>{{jobExecutionContext.context}}</td>
+            <td>
+                <div class="row-fluid">
+                    <div class="span11">{{jobExecutionContext.context}}</div>
+                    <div class="span1">
+                        <a style="cursor: pointer" ng-href="/hawtio/exportContext/?jobExecutionId={{jobExecutionContext.jobExecutionId}}" class="btn btn-info">Export</a>
+                    </div>
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>
