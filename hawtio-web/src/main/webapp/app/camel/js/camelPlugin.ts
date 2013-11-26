@@ -1,5 +1,9 @@
 /// <reference path="../../jmx/js/jmxHelpers.ts"/>
 
+/**
+ * @module Camel
+ * @main Camel
+ */
 module Camel {
   import jmxModule = Jmx;
 

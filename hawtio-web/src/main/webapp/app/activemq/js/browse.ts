@@ -177,7 +177,7 @@ module ActiveMQ {
       Core.$apply($scope);
     }
 
-    /**
+    /*
      * For some reason using ng-repeat in the modal dialog doesn't work so lets
      * just create the HTML in code :)
      */

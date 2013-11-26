@@ -1,3 +1,7 @@
+/**
+ * @module Fabric
+ * @main Fabric
+ */
 module Fabric {
 
   export var jmxDomain = 'org.fusesource.fabric';

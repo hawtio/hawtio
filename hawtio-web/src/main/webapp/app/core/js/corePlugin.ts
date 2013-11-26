@@ -1,3 +1,11 @@
+/**
+ * @module Core
+ * @main Core
+ */
+module Core {
+  export var pluginName = 'hawtioCore';
+  // just declaring it here
+}
 
 // Add any other known possible jolokia URLs here
 var jolokiaUrls = [
@@ -48,9 +56,9 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
 }
 */
 
-hawtioPluginLoader.addModule('hawtioCore');
+hawtioPluginLoader.addModule(Core.pluginName);
 
-angular.module('hawtioCore', ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
+angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
         config(($routeProvider, $dialogProvider) => {
 
           $dialogProvider.options({

@@ -1,3 +1,6 @@
+/**
+ * @module Fabric
+ */
 module Fabric {
 
   export var log:Logging.Logger = Logger.get("Fabric");
@@ -61,6 +64,12 @@ module Fabric {
 
   /**
    * Adds a bunch of common helper functions to the given scope
+   * @method initScope
+   * @for Fabric
+   * @param {any} $scope
+   * @param {ng.ILocationService} $location
+   * @param {any} jolokia
+   * @param {Workspace} workspace
    */
   export function initScope($scope, $location, jolokia, workspace) {
 
@@ -222,6 +231,9 @@ module Fabric {
 
   /**
    * Converts the given path from the wiki into a profile ID
+   * @method pagePathToProfileId
+   * @param {String} pageId
+   * @return {String}
    */
   export function pagePathToProfileId(pageId): string {
     var answer = null;
@@ -262,9 +274,10 @@ module Fabric {
 
   /**
    * Returns the CSS style for the number of containers badge
-   * @param min
-   * @param count
-   * @returns {string}
+   * @method containerCountBadgeStyle
+   * @param {Number} min
+   * @param {number} count
+   * @return {string}
    */
   export function containerCountBadgeStyle(min, count) {
     if (min) {
@@ -443,11 +456,12 @@ module Fabric {
   /**
    * Attempts to create a jolokia for the given profile and version passing the created object
    * into the onJolokia function
+   * @method profileJolokia
    *
-   * @param jolokia
-   * @param profileId
-   * @param versionId
-   * @param onJolokia a function to receive the jolokia object or null if one cannot be created
+   * @param {any} jolokia
+   * @param {String} profileId
+   * @param {String} versionId
+   * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
    */
   export function profileJolokia(jolokia, profileId, versionId, onJolokia) {
     function onJolokiaUrl(response) {
@@ -460,10 +474,10 @@ module Fabric {
   /**
    * Attempts to create a jolokia for the given container id, passing the created object
    * into the onJolokia function
-   *
-   * @param jolokia
-   * @param containerId the id of the container to connect to
-   * @param onJolokia a function to receive the jolokia object or null if one cannot be created
+   * @method containerJolokia
+   * @param {any} jolokia
+   * @param {String} containerId the id of the container to connect to
+   * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
    */
   export function containerJolokia(jolokia, containerId, onJolokia) {
     function onJolokiaUrl(response) {
@@ -564,6 +578,10 @@ module Fabric {
   
   /**
    * Default the values that are missing in the returned JSON
+   * @method defaultContainerValues
+   * @param {Workspace} workspace
+   * @param {any} $scope
+   * @param {Array} values
    */
   export function defaultContainerValues(workspace:Workspace, $scope, values) {
     var map = {};
@@ -644,6 +662,10 @@ module Fabric {
 
   /**
    * Default the values that are missing in the returned JSON
+   * @method defaultProfileValues
+   * @param {Workspace} workspace
+   * @param {String} versionId
+   * @param {Array} values
    */
   export function defaultProfileValues(workspace, versionId, values) {
     angular.forEach(values, (row) => {
@@ -704,6 +726,13 @@ module Fabric {
 
   /**
    * Opens a window connecting to the given container row details if the jolokiaUrl is available
+   * @method connect
+   * @param {any} localStorage
+   * @param {any} row
+   * @param {String} userName
+   * @param {String} password
+   * @param {Boolean} useProxy
+   * @param {ConnectToServerOptions} options
    */
   export function connect(localStorage, row, userName = "", password = "", useProxy = true, options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions()) {
     options.jolokiaUrl = row.jolokiaUrl;
@@ -717,6 +746,8 @@ module Fabric {
 
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL
+   * @method createJolokia
+   * @param {String} url
    */
   export function createJolokia(url: string) {
     // TODO dirty hack!!!

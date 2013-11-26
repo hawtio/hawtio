@@ -72,7 +72,7 @@ module Fabric {
         onSuccess(onClusterData));
     }
 
-    /**
+    /*
      * Pulls all the properties out of the objectName and adds them to the object
      */
     function addObjectNameProperties(object) {

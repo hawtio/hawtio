@@ -1,3 +1,6 @@
+/**
+ * @module Health
+ */
 module Health {
 
   export var log:Logging.Logger = Logger.get("Health");
@@ -19,8 +22,11 @@ module Health {
 
   /**
    * Returns the health MBeans
+   * @method getHealthMBeans
+   * @for Health
+   * @param {Workspace} workspace
+   * @return {String}
    */
-  // TODO Make into a service
   export function getHealthMBeans(workspace:Workspace) {
     if (workspace) {
       var healthMap = workspace.mbeanServicesToDomain["Health"] || {};

@@ -6,6 +6,7 @@ module API {
 
   /**
    * Loads the XML for the given url if its defined or ignore if not valid
+   * @method loadXml
    */
   export function loadXml(url, onXml) {
     if (url) {
@@ -68,6 +69,7 @@ module API {
 
   /**
    * Loads the JSON schema from a given CXF endpoint mbean
+   * @method loadJsonSchema
    */
   export function loadJsonSchema(jolokia, mbean, onJsonSchemaFn) {
     function onResults(response) {
@@ -91,6 +93,7 @@ module API {
 
   /**
    * When a WADL XML document is loaded, lets convert it to JSON and return it
+   * @method onWadlXmlLoaded
    */
   export function onWadlXmlLoaded(response) {
     var root = response.documentElement;
@@ -101,6 +104,7 @@ module API {
 
   /**
    * Converts the given XML element from WADL to JSON
+   * @method
    */
   export function convertWadlToJson(element, object = {}) {
     return API.convertXmlToJson(element, object, wadlXmlToJavaConfig);
@@ -181,6 +185,7 @@ module API {
    * Converts the given child elements or attributes into properties on the object
    * to convert the XML into JSON using the given config to customise which properties should
    * be considered singular
+   * @method
    */
   export function convertXmlToJson(element, object, config) {
 

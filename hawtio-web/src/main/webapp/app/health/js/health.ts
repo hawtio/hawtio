@@ -1,3 +1,6 @@
+/**
+ * @module Health
+ */
 module Health {
 
     export function HealthController($scope, jolokia, workspace:Workspace, $templateCache) {
@@ -223,7 +226,7 @@ module Health {
         return 'HealthID: <strong>' + value['healthId'] + '</strong>';
       };
 
-      /**
+      /*
        * Default the values that are missing in the returned JSON
        */
       function defaultValues(values) {

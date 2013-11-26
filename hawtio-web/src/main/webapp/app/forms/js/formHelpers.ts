@@ -1,8 +1,12 @@
+/**
+ * @module Forms
+ */
 module Forms {
-
-
   /**
    * Default any values in the schema on the entity if they are not already present
+   * @method defaultValues
+   * @param {any} entity
+   * @param {any} schema
    */
   export function defaultValues(entity, schema) {
     if (entity && schema) {
@@ -17,7 +21,11 @@ module Forms {
   }
 
   /**
-   * If the type name refers to an alias in the schemas defintions then perform the lookup and return the real type name
+   * If the type name refers to an alias in the schemas definitions then perform the lookup and return the real type name
+   * @method resolveTypeNAmeAlias
+   * @param {String} type
+   * @param {any} schema
+   *
    */
   export function resolveTypeNameAlias(type, schema) {
     if (type && schema) {
@@ -34,6 +42,11 @@ module Forms {
 
   /**
    * Walks the base class hierarchy checking if the given type is an instance of the given type name
+   * @method isJsonType
+   * @param {String} name
+   * @param {any} schema
+   * @param {String} typeName
+   * @return {Boolean}
    */
   export function isJsonType(name, schema, typeName) {
     var definition = lookupDefinition(name, schema);
@@ -55,6 +68,9 @@ module Forms {
   /**
    * Removes any dodgy characters for a valid identifier in angularjs such as for '-' characters
    * which are replaced with '_'
+   * @method safeIdentifier
+   * @param {String} id
+   * @return {String}
    */
   export function safeIdentifier(id: string) {
     if (id) {
@@ -65,6 +81,9 @@ module Forms {
 
   /**
    * Looks up the given type name in the schemas definitions
+   * @method lookupDefinition
+   * @param {String} name
+   * @param {any} schema
    */
   export function lookupDefinition(name, schema) {
     if (schema) {
@@ -108,6 +127,9 @@ module Forms {
   /**
    * For an array property, find the schema of the items which is either nested inside this property
    * in the 'items' property; or the type name is used to lookup in the schemas definitions
+   * @method findArrayItemsSchema
+   * @param {String} property
+   * @param {any} schema
    */
   export function findArrayItemsSchema(property, schema) {
     var items = null;
@@ -135,6 +157,8 @@ module Forms {
 
   /**
    * Returns true if the given schema definition is an object
+   * @method isObjectType
+   * @param {any} definition
    */
   export function isObjectType(definition) {
     var typeName = Core.pathGet(definition, "type");
@@ -143,6 +167,9 @@ module Forms {
 
   /**
    * Returns true if the given property represents a nested object or array of objects
+   * @method isArrayOrNestedObject
+   * @param {any} property
+   * @param {any} schema
    */
   export function isArrayOrNestedObject(property, schema) {
     if (property) {

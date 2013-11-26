@@ -1,3 +1,6 @@
+/**
+ * @module Camel
+ */
 module Camel {
 
   export var log:Logging.Logger = Logger.get("Camel");
@@ -8,6 +11,11 @@ module Camel {
   /**
    * Looks up the route XML for the given context and selected route and
    * processes the selected route's XML with the given function
+   * @method processRouteXml
+   * @param {Workspace} workspace
+   * @param {Object} jolokia
+   * @param {Folder} folder
+   * @param {Function} onRoute
    */
   export function processRouteXml(workspace:Workspace, jolokia, folder, onRoute) {
     var selectedRouteId = getSelectedRouteId(workspace, folder);
@@ -40,6 +48,9 @@ module Camel {
 
   /**
    * Returns the URI string for the given EIP pattern node or null if it is not applicable
+   * @method getRouteNodeUri
+   * @param {Object} node
+   * @return {String}
    */
   export function getRouteNodeUri(node) {
     var uri: string = null;
@@ -62,7 +73,11 @@ module Camel {
 
   /**
    * Returns the JSON data for the camel folder; extracting it from the associated
-   * routeXmlNode or using the previously extracted and/or editted JSON
+   * routeXmlNode or using the previously extracted and/or edited JSON
+   * @method getRouteFolderJSON
+   * @param {Folder} folder
+   * @param {Object} answer
+   * @return {Object}
    */
   export function getRouteFolderJSON(folder, answer = {}) {
     var nodeData = folder["camelNodeData"];
@@ -189,9 +204,9 @@ module Camel {
   /**
    * Parse out the currently selected endpoint's name to be used when invoking on a
    * context operation that wants an endpoint name
-   *
-   * @param workspace
-   * @returns {*} either a string that is the endpoint name or null if it couldn't be parsed
+   * @method getSelectedEndpointName
+   * @param {Workspace} workspace
+   * @return {any} either a string that is the endpoint name or null if it couldn't be parsed
    */
   export function getSelectedEndpointName(workspace:Workspace) {
     var selection = workspace.selection;
@@ -226,8 +241,9 @@ module Camel {
   /**
    * Returns the mbean for the currently selected camel context and the name of the currently
    * selected endpoint for JMX operations on a context that require an endpoint name.
+   * @method
    * @param workspace
-   * @returns {{uri: string, mbean: string}} either value could be null if there's a parse failure
+   * @return {{uri: string, mbean: string}} either value could be null if there's a parse failure
    */
   export function getContextAndTargetEndpoint(workspace:Workspace) {
     return {
@@ -238,6 +254,7 @@ module Camel {
 
   /**
    * Returns the cached Camel XML route node stored in the current tree selection Folder
+   * @method
    */
   export function getSelectedRouteNode(workspace:Workspace) {
     var selection = workspace.selection;
@@ -246,6 +263,7 @@ module Camel {
 
   /**
    * Flushes the cached Camel XML route node stored in the selected tree Folder
+   * @method
    * @param workspace
    */
   export function clearSelectedRouteNode(workspace:Workspace) {
@@ -257,6 +275,7 @@ module Camel {
 
   /**
    * Looks up the given node name in the Camel schema
+   * @method
    */
   export function getCamelSchema(nodeIdOrDefinition) {
     return (angular.isObject(nodeIdOrDefinition)) ? nodeIdOrDefinition : Forms.lookupDefinition(nodeIdOrDefinition, _apacheCamelModel);
@@ -265,6 +284,7 @@ module Camel {
   /**
    * Returns true if the given nodeId is a route, endpoint or pattern
    * (and not some nested type like a data format)
+   * @method
    */
   export function isCamelPattern(nodeId) {
     return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
@@ -272,6 +292,7 @@ module Camel {
 
   /**
    * Returns true if the given node type prefers adding the next sibling as a child
+   * @method
    */
   export function isNextSiblingAddedAsChild(nodeIdOrDefinition) {
     var definition = getCamelSchema(nodeIdOrDefinition);
@@ -299,6 +320,7 @@ module Camel {
 
   /**
    * Looks up the Camel language settings for the given language name
+   * @method
    */
   export function camelLanguageSettings(nodeName) {
     return _apacheCamelModel.languages[nodeName];
@@ -310,6 +332,7 @@ module Camel {
 
   /**
    * Converts the XML string or DOM node to a camel tree
+   * @method
    */
   export function loadCamelTree(xml, key:string) {
     var doc = xml;
@@ -362,6 +385,7 @@ module Camel {
 
   /**
    * Adds the route children to the given folder for each step in the route
+   * @method
    */
   export function addRouteChildren(folder:Folder, route) {
     folder.children = [];
@@ -374,6 +398,7 @@ module Camel {
 
   /**
    * Adds a child to the given folder / route
+   * @method
    */
   export function addRouteChild(folder, n) {
     var nodeName = n.localName;
@@ -430,7 +455,7 @@ module Camel {
    * such as renaming language elements from <language expression="foo" language="bar/>
    * to <bar>foo</bar>
    * and changing <endpoint> into either <from> or <to>
-   *
+   * @method
    * @param treeNode is either the Node from the tree widget (with the real Folder in the data property) or a Folder
    */
   export function createFolderXmlTree(treeNode, xmlNode, indent = Camel.increaseIndent("")) {
@@ -536,6 +561,7 @@ module Camel {
 
   /**
    * Returns the selected camel context mbean for the given selection or null if it cannot be found
+   * @method
    */
     // TODO should be a service
   export function getSelectionCamelContextMBean(workspace:Workspace) {
@@ -577,6 +603,7 @@ module Camel {
 
   /**
    * Returns the selected camel trace mbean for the given selection or null if it cannot be found
+   * @method
    */
     // TODO Should be a service
   export function getSelectionCamelTraceMBean(workspace) {
@@ -649,7 +676,7 @@ module Camel {
 
   /**
    * Returns true if the state of the item begins with the given state - or one of the given states
-   *
+   * @method
    * @param item the item which has a State
    * @param state a value or an array of states
    */
@@ -691,6 +718,7 @@ module Camel {
 
   /**
    * Returns the selected camel route mbean for the given route id
+   * @method
    */
     // TODO Should be a service
   export function getSelectionRouteMBean(workspace:Workspace, routeId:String) {
@@ -966,6 +994,7 @@ module Camel {
 
   /**
    * Recursively add all the folders which have a cid value into the given map
+   * @method
    */
   export function addFoldersToIndex(folder:Folder, map = {}) {
     if (folder) {
@@ -982,6 +1011,7 @@ module Camel {
 
   /**
    * Re-generates the XML document using the given Tree widget Node or Folder as the source
+   * @method
    */
   export function generateXmlFromFolder(treeNode) {
     var folder = (treeNode && treeNode.data) ? treeNode.data : treeNode;
@@ -1032,6 +1062,7 @@ module Camel {
 
   /**
    * Returns an object of all the CamelContext MBeans keyed by their id
+   * @method
    */
   export function camelContextMBeansById(workspace:Workspace) {
     var answer = {};
@@ -1060,6 +1091,7 @@ module Camel {
 
   /**
    * Returns an object of all the CamelContext MBeans keyed by the component name
+   * @method
    */
   export function camelContextMBeansByComponentName(workspace:Workspace) {
     return camelContextMBeansByRouteOrComponentId(workspace, "components")
@@ -1067,6 +1099,7 @@ module Camel {
 
   /**
    * Returns an object of all the CamelContext MBeans keyed by the route ID
+   * @method
    */
   export function camelContextMBeansByRouteId(workspace:Workspace) {
     return camelContextMBeansByRouteOrComponentId(workspace, "routes")
@@ -1106,6 +1139,7 @@ module Camel {
 
   /**
    * Returns true if we should ignore ID values for labels in camel diagrams
+   * @method
    */
   export function ignoreIdForLabel(localStorage) {
     var value = localStorage["camelIgnoreIdForLabel"];
@@ -1114,6 +1148,7 @@ module Camel {
 
   /**
    * Returns the maximum width of a label before we start to truncate
+   * @method
    */
   export function maximumLabelWidth(localStorage) {
     var value = localStorage["camelMaximumLabelWidth"];
@@ -1128,6 +1163,7 @@ module Camel {
 
   /**
    * Returns the max body length for tracer and debugger
+   * @method
    */
   export function maximumTraceOrDebugBodyLength(localStorage) {
     var value = localStorage["camelMaximumTraceOrDebugBodyLength"];

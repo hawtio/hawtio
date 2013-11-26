@@ -344,7 +344,7 @@ module Core {
 
   /**
    * log out the current user
-   *
+   * @for Core
    * @method logout
    * @param {String} jolokiaUrl
    * @param {Object} userDetails

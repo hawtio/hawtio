@@ -1,8 +1,12 @@
+/**
+ * @module Core
+ */
 module Core {
 
   /**
    * Ensure whatever value is passed in is converted to a boolean
    * Added here because it's needed for the below stuff...
+   * @method
    */
   export function parseBooleanValue(value):boolean {
     if (!angular.isDefined(value)) {
@@ -34,6 +38,9 @@ module Core {
 
 }
 
+/**
+ * @module Branding
+ */
 module Branding {
 
   export var enabled = false;

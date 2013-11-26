@@ -1,3 +1,6 @@
+/**
+ * @module Dashboard
+ */
 module Dashboard {
 
   var defaultDashboards = [
@@ -82,7 +85,9 @@ module Dashboard {
 
   ];
 
-
+  /**
+   * @class DashboardRepository
+   */
   export interface DashboardRepository {
     putDashboards: (array:any[], commitMessage:string, fn) => any;
 
@@ -105,6 +110,7 @@ module Dashboard {
 
   /**
    * API to deal with the dashboards
+   * @class DefaultDashboardRepository
    */
   export class DefaultDashboardRepository implements DashboardRepository {
     constructor(public workspace:Workspace, public jolokia, public localStorage) {
@@ -122,6 +128,8 @@ module Dashboard {
 
     /**
      * Loads the dashboards then asynchronously calls the function with the data
+     * @method getDashboards
+     * @param {Function} fn
      */
     public getDashboards(fn) {
       this.getRepository().getDashboards((values) => {
@@ -131,6 +139,9 @@ module Dashboard {
 
     /**
      * Loads the given dashboard and invokes the given function with the result
+     * @method getDashboard
+     * @param {String} id
+     * @param {Function} onLoad
      */
     public getDashboard(id:string, onLoad) {
       this.getRepository().getDashboard(id, onLoad);
@@ -155,6 +166,8 @@ module Dashboard {
 
     /**
      * Looks up the MBean in the JMX tree
+     * @method getRepository
+     * @return {DashboardRepository}
      */
     public getRepository():DashboardRepository {
       if (this.repository && this.repository.isValid()) {
@@ -174,6 +187,9 @@ module Dashboard {
     }
   }
 
+  /**
+   * @class LocalDashboardRepository
+   */
   export class LocalDashboardRepository implements DashboardRepository {
 
     private localStorage:WindowLocalStorage = null;
@@ -223,16 +239,10 @@ module Dashboard {
       fn(this.storeDashboards(dashboards));
     }
 
-    /**
-     * Loads the dashboards then asynchronously calls the function with the data
-     */
     public getDashboards(fn) {
       fn(this.loadDashboards());
     }
 
-    /**
-     * Loads the given dashboard and invokes the given function with the result
-     */
     public getDashboard(id:string, fn) {
       var dashboards = this.loadDashboards();
       var dashboard = dashboards.find({id: id});
@@ -266,13 +276,16 @@ module Dashboard {
     }
   }
 
+  /**
+   * @class GitDashboardRepository
+   */
   export class GitDashboardRepository implements DashboardRepository {
     constructor(public workspace:Workspace, public git:Git.GitRepository) {
     }
 
     public branch: string = null;
 
-    public putDashboards(array:Dashboard[], commitMessage:string, fn) {
+    public putDashboards(array:any[], commitMessage:string, fn) {
       var toPut = array.length;
       var maybeCallback = () => {
         toPut = toPut - 1;
@@ -290,7 +303,7 @@ module Dashboard {
       });
     }
 
-    public deleteDashboards(array:Dashboard[], fn) {
+    public deleteDashboards(array:any[], fn) {
       var toDelete = array.length;
       var maybeCallback = () => {
         toDelete = toDelete - 1;

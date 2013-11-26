@@ -232,7 +232,7 @@ module ActiveMQ {
       Core.$apply($scope);
     }
 
-    /**
+    /*
      * Finds the broker node in the JMX tree
      */
     function findBrokerFolder(selection) {

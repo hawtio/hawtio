@@ -180,7 +180,7 @@ module Camel {
       }
     }
 
-    /**
+    /*
      * lets load current 'stack' of which breakpoints are active
      * and what is the current message content
      */
@@ -263,7 +263,7 @@ module Camel {
     }
 
 
-    /**
+    /*
      * Return the current node id we are stopped at
      */
     function getStoppedBreakpointId() {
@@ -279,7 +279,7 @@ module Camel {
       return stepNode;
     }
 
-    /**
+    /*
      * Returns true if the execution is currently suspended at the given node
      */
     function isSuspendedAt(nodeId) {
@@ -298,7 +298,7 @@ module Camel {
       Core.$apply($scope);
     }
 
-    /**
+    /*
      * Returns true if there is a breakpoint set at the given node id
      */
     function isBreakpointSet(nodeId) {

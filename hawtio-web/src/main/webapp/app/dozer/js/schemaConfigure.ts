@@ -1,7 +1,11 @@
+/**
+ * @module Dozer
+ */
 module Dozer {
 
   /**
    * Configures the JSON schemas to improve the UI models
+   * @method schemaConfigure
    */
   export function schemaConfigure() {
     io_hawt_dozer_schema_Field["tabs"] = {

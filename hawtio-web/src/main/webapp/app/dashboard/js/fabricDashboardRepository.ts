@@ -31,7 +31,7 @@ module Dashboard {
 
     }
 
-    public putDashboards(array:Dashboard[], commitMessage:string, fn) {
+    public putDashboards(array:any[], commitMessage:string, fn) {
       var jolokia = this.jolokia;
       var details = this.details;
 
@@ -69,7 +69,7 @@ module Dashboard {
 
     }
 
-    public deleteDashboards(array:Dashboard[], fn) {
+    public deleteDashboards(array:any[], fn) {
       var jolokia = this.jolokia;
       var details = this.details;
 

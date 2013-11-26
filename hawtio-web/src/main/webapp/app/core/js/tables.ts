@@ -40,6 +40,7 @@ class TableWidget {
   /**
    * Adds new data to the table
    * @method addData
+   * @for TableWidget
    * @param {Object} newData
    */
   public addData(newData) {
@@ -51,6 +52,7 @@ class TableWidget {
   /**
    * Populates the table with the given data
    * @method populateTable
+   * @for TableWidget
    * @param {Object} data
    */
   public populateTable(data) {

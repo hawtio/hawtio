@@ -1,3 +1,6 @@
+/**
+ * @module Git
+ */
 module Git {
 
   export function createGitRepository(workspace:Workspace, jolokia, localStorage):GitRepository {
@@ -18,6 +21,10 @@ module Git {
 
   /**
    * Returns the JMX ObjectName of the git mbean
+   * @method getGitMBean
+   * @for Git
+   * @param {Workspace} workspace
+   * @return {String}
    */
   export function getGitMBean(workspace:Workspace):string {
     return Core.getMBeanTypeObjectName(workspace, Git.jmxDomain, Git.mbeanType);
@@ -25,6 +32,10 @@ module Git {
 
   /**
    * Returns the Folder for the git mbean if it can be found
+   * @method getGitMBeanFolder
+   * @for Git
+   * @param {Workspace} workspace
+   * @return {Folder}
    */
   export function getGitMBeanFolder(workspace:Workspace):Folder {
     return Core.getMBeanTypeFolder(workspace, Git.jmxDomain, Git.mbeanType);
@@ -33,6 +44,10 @@ module Git {
   /**
    * Returns true if the git mbean is a fabric configuration repository
    * (so we can use it for the fabric plugin)
+   * @method isGitMBeanFabric
+   * @for Git
+   * @param {Workspace} workspace
+   * @return {Boolean}
    */
   export function isGitMBeanFabric(workspace:Workspace):boolean {
     var folder = getGitMBeanFolder(workspace);

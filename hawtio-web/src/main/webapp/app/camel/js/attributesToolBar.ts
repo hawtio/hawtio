@@ -22,7 +22,7 @@ module Camel {
       });
     };
 
-    /**
+    /*
      * Only for routes!
      */
     $scope.delete = () => {

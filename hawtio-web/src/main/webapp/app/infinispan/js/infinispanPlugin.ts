@@ -1,3 +1,7 @@
+/**
+ * @module Infinispan
+ * @main Infinispan
+ */
 module Infinispan {
   var pluginName = 'infinispan';
   export var jmxDomain = 'Infinispan';

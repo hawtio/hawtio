@@ -1,7 +1,14 @@
+/**
+ * @module Infinispan
+ */
 module Infinispan {
 
   /**
    * Returns the name of the cache from the mbean results
+   * @method infinispanCacheName
+   * @for Infinispan
+   * @param {any} entity
+   * @return {String}
    */
   export function infinispanCacheName(entity) {
     // there's no name in the MBean so lets extract it from the JMX ObjectName
@@ -27,6 +34,10 @@ module Infinispan {
 
   /**
    * Returns the MBean ObjectName for the interpreter
+   * @method getInterpreterMBean
+   * @for Infinispan
+   * @param {Workspace} workspace
+   * @return {String}
    */
   export function getInterpreterMBean(workspace:Workspace) {
     if (workspace) {
