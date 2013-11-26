@@ -750,9 +750,22 @@ module Fabric {
    * @param {String} url
    */
   export function createJolokia(url: string) {
-    // TODO dirty hack!!!
-    var username = "admin";
-    var password = "admin";
+    // lets default to the user/pwd for the login
+    // TODO maybe allow these to be configured to other values?
+    var username = Core.username;
+    var password = Core.password;
+    if (!username) {
+      // lets try reverse engineer the user/pwd from the stored user/pwd
+      var jsonText = localStorage[url];
+      if (jsonText) {
+        var object = Wiki.parseJSON(jsonText);
+        if (object) {
+          username = object["username"];
+          password = object["password"];
+        }
+      }
+    }
+    log.info("Logging into remote jolokia " + url + " using username: " + username);
     return Core.createJolokia(url, username, password);
   }
 
