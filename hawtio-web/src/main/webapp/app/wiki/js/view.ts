@@ -452,9 +452,13 @@ module Wiki {
 
     setTimeout(maybeUpdateView, 50);
 
-    function updateView() {
+    function isDiffView() {
       var path = $location.path();
-      if (path && path.startsWith("/wiki/diff")) {
+      return path && path.startsWith("/wiki/diff");
+    }
+
+    function updateView() {
+      if (isDiffView()) {
         var baseObjectId = $routeParams["baseObjectId"];
         $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
       } else {
@@ -467,7 +471,13 @@ module Wiki {
 
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
-      var format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
+
+      var format: string = null;
+      if (isDiffView()) {
+        format = "diff";
+      } else {
+        format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
+      }
       if ("markdown" === format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
