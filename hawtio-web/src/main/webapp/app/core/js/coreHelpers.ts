@@ -1205,11 +1205,13 @@ module Core {
 
     // TODO we should replace this and just store the real, final connectUrl!
 
-    localStorage[connectUrl] = angular.toJson(userDetails);
+    var json = angular.toJson(userDetails);
+    if (connectUrl) {
+      localStorage[connectUrl] = json;
+    }
     var view = options.view;
     var full = "";
     if (connectUrl) {
-
       if (options.useProxy) {
         // lets remove the http stuff
         var idx = connectUrl.indexOf("://");
@@ -1227,7 +1229,7 @@ module Core {
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = angular.toJson(userDetails);
+      localStorage[connectUrl] = json;
 
       full = "?url=" + encodeURIComponent(connectUrl);
       if (view) {
@@ -1244,7 +1246,7 @@ module Core {
         host += ":" + port;
       }
       var connectUrl = host + "/" + path;
-
+      localStorage[connectUrl] = json;
       if (options.useProxy) {
         connectUrl = url("/proxy/" + connectUrl);
       } else {
@@ -1253,7 +1255,7 @@ module Core {
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = angular.toJson(userDetails);
+      localStorage[connectUrl] = json;
 
       full = "?url=" + encodeURIComponent(connectUrl);
       if (view) {
