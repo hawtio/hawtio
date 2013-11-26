@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
     export function BlobstoreContainerListController($scope, $location, workspace, jolokia, $routeParams) {
         $scope.blobstoreId = $routeParams.blobstoreId;

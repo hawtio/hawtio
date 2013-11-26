@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
 
     export function HardwareController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {

@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
     export function ImageListController($scope, $location, workspace, jolokia, $routeParams) {
         $scope.computeId = $routeParams.computeId;

@@ -1,3 +1,6 @@
+/**
+ * @module Jclouds
+ */
 module Jclouds {
 
     Array.prototype.unique = function() {
@@ -26,6 +29,11 @@ module Jclouds {
 
     /**
      * Returns context by name.
+     * @method fundContextByName
+     * @for Jclouds
+     * @param {Workspace} workspace
+     * @param {String} name
+     * @return {any}
      */
     export function findContextByName(workspace, name) {
         var jcloudsMBean = getSelectionJcloudsMBean(workspace)
@@ -36,8 +44,10 @@ module Jclouds {
     }
 
     /**
-     * Add the type attribute to an array of apis.
-     * @param apis
+     * Add the type attribute to an array of apis
+     * @method populateTypeForApis
+     * @for Jclouds
+     * @param {Array} apis
      */
     export function populateTypeForApis(apis) {
         angular.forEach(apis, (api) => {
@@ -47,7 +57,9 @@ module Jclouds {
 
     /**
      * Add the type attribute to a singe api.
-     * @param api
+     * @method populateTypeForApi
+     * @for Jclouds
+     * @param {any} api
      */
     export function populateTypeForApi(api) {
         var views = api["views"];
@@ -67,6 +79,10 @@ module Jclouds {
 
     /**
      * Filters Images based on Operating System.
+     * @method filterImages
+     * @for Jclouds
+     * @param {Array} images
+     * @param {any} operatingSystemFamily
      */
     export function filterImages(images, operatingSystemFamily) {
         if (operatingSystemFamily === "") {
@@ -80,6 +96,12 @@ module Jclouds {
 
     /**
      * Filters Nodes based on type.
+     * @method filterNodes
+     * @for Jclouds
+     * @param {Array} nodes
+     * @param {String} group
+     * @param {String} location}
+     * @return {any}
      */
     export function filterNodes(nodes, group, location) {
         var filteredNodes = [];
@@ -142,8 +164,11 @@ module Jclouds {
 
     /**
      * Filters Apis based on type.
-     * @param apis
-     * @param type
+     * @method apisOfType
+     * @for Jclouds
+     * @param {Array} apis
+     * @param {String} type
+     * @return {Array}
      */
     export function apisOfType(apis, type) {
         if (type === "") {
@@ -158,7 +183,9 @@ module Jclouds {
 
     /**
      * Add the type attribute to an array of providers.
-     * @param providers
+     * @method populateTypeForProviders
+     * @for Jclouds
+     * @param {Array} providers
      */
     export function populateTypeForProviders(providers) {
         angular.forEach(providers, (provider) => {
@@ -168,7 +195,9 @@ module Jclouds {
 
     /**
      * Add the type attribute to a singe provider.
-     * @param provider
+     * @method populateTypeForProvider
+     * @for Jclouds
+     * @param {any} provider
      */
     export function populateTypeForProvider(provider) {
         var views = provider["api"]["views"];
@@ -188,8 +217,11 @@ module Jclouds {
 
     /**
      * Filters Providers based on type.
-     * @param providers
-     * @param type
+     * @method providersOfType
+     * @for Jclouds
+     * @param {Array} providers
+     * @param {String} type
+     * @return {Array}
      */
     export function providersOfType(providers, type) {
         if (type === "") {
@@ -205,6 +237,10 @@ module Jclouds {
 
     /**
      * Walks the tree looking in the first child all the way down until we find an objectName
+     * @method findFirstObjectName
+     * @for Jclouds
+     * @param {any} node
+     * @return {any}
      */
     export function findFirstObjectName(node) {
         if (node) {
@@ -223,6 +259,10 @@ module Jclouds {
 
     /**
      * Walks the tree looking for all available names.
+     * @method childsOfType
+     * @for Jclouds
+     * @param {any} node
+     * @return {Array}
      */
     export function childsOfType(node) {
         var types = [];
@@ -236,9 +276,11 @@ module Jclouds {
     /**
      * Jclouds MBeans are all listed under org.jclouds <type> <name>.
      * This method lists all <names> for the specified <type>.
-     * @param workspace
-     * @param type
-     * @return {*}
+     * @method listJcloudsMBeanNameOfType
+     * @for Jclouds
+     * @param {Workspace} workspace
+     * @param {String} type
+     * @return {any}
      */
     export function listJcloudsMBeanNameOfType(workspace:Workspace, type) {
         if (workspace) {
@@ -251,6 +293,10 @@ module Jclouds {
 
     /**
      * Returns the Jclouds Core Management MBean
+     * @method getSelectionJcloudsMBean
+     * @for Jclouds
+     * @param {Workspace} workspace
+     * @return {String}
      */
     export function getSelectionJcloudsMBean(workspace:Workspace):string {
         if (workspace) {
@@ -264,6 +310,11 @@ module Jclouds {
 
     /**
      * Returns the Jclouds Compute Management MBean for the specified name.
+     * @method getSelectionJcloudsComputeMBean
+     * @for Jclouds
+     * @param {Workspace} workspace
+     * @param {String} name
+     * @return {String}
      */
     export function getSelectionJcloudsComputeMBean(workspace:Workspace, name):string {
         if (workspace) {
@@ -276,6 +327,11 @@ module Jclouds {
 
     /**
      * Returns the Jclouds Compute Management MBean for the specified name.
+     * @method getSelectionJcloudsBlobstoreMBean
+     * @for Jclouds
+     * @param {Workspace} workspace
+     * @param {String} name
+     * @return {String}
      */
     export function getSelectionJcloudsBlobstoreMBean(workspace:Workspace, name):string {
         if (workspace) {
