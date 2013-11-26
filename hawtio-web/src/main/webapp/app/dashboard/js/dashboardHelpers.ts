@@ -3,6 +3,7 @@ module Dashboard {
   export var log:Logging.Logger = Logger.get('Dashboard');
   /**
    * Returns the cleaned up version of the dashboard data without any UI selection state
+   * @method
    */
   export function cleanDashboardData(item) {
     var cleanItem = {};
@@ -16,6 +17,7 @@ module Dashboard {
 
   /**
    * Runs decodeURIComponent() on each value in the object
+   * @method
    */
   export function decodeURIComponentProperties(hash) {
     if (!hash) {

@@ -91,7 +91,7 @@ module Camel {
       }
     });
 
-    /** save the sourceFormat in preferences for later
+    /* save the sourceFormat in preferences for later
      * Note, this would be controller specific preferences and not the global, overriding, preferences */
       // TODO Use ng-selected="changeSourceFormat()" - Although it seemed to fire multiple times..
     $scope.$watch('codeMirrorOptions.mode.name', function (newValue, oldValue) {

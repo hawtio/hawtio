@@ -1,9 +1,21 @@
+/**
+ * @module Forms
+ */
 module Forms {
 
   /**
    * Create a DOM widget tree for the given set of form configuration data.
    *
    * This will include either the standard AngularJS widgets or custom widgets
+   * @method createWidget
+   * @param {String} propTypeName
+   * @param {any} property
+   * @param {any} schema
+   * @param {any} config
+   * @param {String} id
+   * @param {Boolean ignorePrefixInLabel
+   * @param {String} configScoepName
+   * @param {Boolean} wrapInGroup
    */
   export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true) {
     var input = null;
@@ -163,6 +175,13 @@ module Forms {
 
   /**
    * Lets try create the standard angular JS widgets markup
+   * @method createStandardWidgetMarkup
+   * @param {String} propTypeName
+   * @param {any} property
+   * @param {any} schema
+   * @param {any} config
+   * @param {any} options
+   * @param {String} id
    */
   export function createStandardWidgetMarkup(propTypeName, property, schema, config, options, id) {
     // lets try use standard widgets first...

@@ -1,6 +1,11 @@
+/**
+ * @module Forms
+ */
 module Forms {
 
-
+    /**
+     * @class InputBaseConfig
+      */
   export class InputBaseConfig {
     public name = 'input';
     public type = '';
@@ -22,14 +27,23 @@ module Forms {
 
     /**
      * Custom template for custom form controls
-     * @type {null}
+     * @property
+     * @type String
      */
     public formtemplate = null;
 
-    /** the name of the attribute in the scope which is the data to be edited */
+    /**
+     * the name of the attribute in the scope which is the data to be edited
+     * @property
+     * @type String
+     */
     public entity = 'entity';
 
-    /** the model expression to bind to. If ommited this defaults to entity + "." + name **/
+    /**
+     * the model expression to bind to. If omitted this defaults to entity + "." + name
+     * @property
+     * @type String
+     */
     public model = undefined;
 
     public getEntity() {
@@ -312,7 +326,8 @@ module Forms {
 
 
   /**
-   * Generates a list of strings which can be added / editted / removed
+   * Generates a list of strings which can be added / edited / removed
+   * @class StringArrayInput
    */
   export class StringArrayInput extends InputBase {
 

@@ -1,3 +1,7 @@
+/**
+ * @module Health
+ * @main Health
+ */
 module Health {
   var pluginName = 'health';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {

@@ -1,9 +1,14 @@
+/**
+ * @module Dozer
+ */
 module Dozer {
 
   export var jmxDomain = 'net.sourceforge.dozer';
 
   /**
    * Don't try and load properties for these types
+   * @property
+   * @for Dozer
    * @type {Array}
    */
   export var excludedPackages = [
@@ -15,6 +20,9 @@ module Dozer {
 
   /**
    * Lets map the class names to element names
+   * @property
+   * @for Dozer
+   * @type {Array}
    */
   export var elementNameMappings = {
     "Mapping": "mapping",
@@ -27,6 +35,10 @@ module Dozer {
 
   /**
    * Converts the XML string or DOM node to a Dozer model
+   * @method loadDozerModel
+   * @param {Object} xml
+   * @param {String} pageId
+   * @return {Mappings}
    */
   export function loadDozerModel(xml, pageId: string): Mappings {
     var doc = xml;
@@ -80,6 +92,12 @@ module Dozer {
   /**
    * Finds the properties on the given class and returns them; and either invokes the given function
    * or does a sync request and returns them
+   * @method findProperties
+   * @param {Workspace} workspace
+   * @param {String} className
+   * @param {String} filter
+   * @param {Function} fn
+   * @return {any}
    */
   export function findProperties(workspace: Workspace, className: string, filter: string = null, fn = null) {
     var mbean = getIntrospectorMBean(workspace);
@@ -101,6 +119,12 @@ module Dozer {
   /**
    * Finds class names matching the given search text and either invokes the function with the results
    * or does a sync request and returns them.
+   * @method findClassNames
+   * @param {Workspace} workspace
+   * @param {String} searchText
+   * @param {Number} limit @default 20
+   * @param {Function} fn
+   * @return {any}
    */
   export function findClassNames(workspace: Workspace, searchText: string, limit = 20, fn = null) {
     var mbean = getIntrospectorMBean(workspace);
@@ -261,8 +285,12 @@ module Dozer {
 
   /**
    * Adds a new child element for this mapping to the given element
-   *
-   * @returns the last child element created
+   * @method appendElement
+   * @param {any} object
+   * @param {any} element
+   * @param {String} elementName
+   * @param {Number} indentLevel
+   * @return the last child element created
    */
   export function appendElement(object: any, element, elementName: string = null, indentLevel = 0) {
     var answer = null;

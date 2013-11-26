@@ -1,7 +1,13 @@
+/**
+ * @module Camel
+ */
 module Camel {
 
   /**
    * Define the default categories for endpoints and map them to endpoint names
+   * @property
+   * @for Camel
+   * @type {ObjecT}
    */
   export var endpointCategories = {
     bigdata: {
@@ -55,12 +61,18 @@ module Camel {
 
   /**
    * Maps endpoint names to a category object
+   * @property
+   * @for Camel
+   * @type {ObjecT}
    */
   export var endpointToCategory = {};
 
   export var endpointIcon = "/app/camel/img/endpoint24.png";
   /**
    *  specify custom label & icon properties for endpoint names
+   * @property
+   * @for Camel
+   * @type {ObjecT}
    */
   export var endpointConfigurations = {
     drools: {
@@ -94,6 +106,9 @@ module Camel {
 
   /**
    * Define the default form configurations
+   * @property
+   * @for Camel
+   * @type {ObjecT}
    */
   export var endpointForms = {
     file: {
@@ -124,6 +139,9 @@ module Camel {
 
   /**
    * Override the EIP pattern tabs...
+   * @property
+   * @for Camel
+   * @type {ObjecT}
    */
   var camelModelTabExtensions = {
     route: {

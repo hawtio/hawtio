@@ -1,7 +1,11 @@
+/**
+ * @module Infinispan
+ */
 module Infinispan {
 
   /**
    * Returns the name of the cache from the mbean results
+   * @class CLI
    */
   export class CLI {
     constructor(public workspace:Workspace, public jolokia) {
