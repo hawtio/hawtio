@@ -293,6 +293,9 @@
     <module>hawtio-karaf</module>
     <module>sample</module>
     <module>hawtio-karaf-terminal</module>
+    <!--
+    <module>hawtio-api-docs</module>
+    -->
   </modules>
 
   <build>
@@ -346,7 +349,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
 
@@ -537,6 +540,13 @@
       <properties>
         <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
       </properties>
+    </profile>
+
+    <profile>
+      <id>docs</id>
+      <modules>
+        <module>hawtio-api-docs</module>
+      </modules>
     </profile>
 
     <profile>
