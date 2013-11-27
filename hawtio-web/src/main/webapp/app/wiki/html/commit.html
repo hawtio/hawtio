@@ -10,12 +10,6 @@
       </a>
     </div>
   </script>
-  <script type="text/ng-template" id="changeTypeTemplate.html">
-    <div class="ngCellText">
-      <a class="changes-link" ng-show="row.entity.change != 'delete'" ng-click="diff(row.entity)">changes</a>
-    </div>
-  </script>
-
   <div>
     <ul class="nav nav-tabs">
       <li ng-class='{active : true}' title="{{commitInfo.shortMessage}}">
