@@ -156,13 +156,13 @@ module Wiki {
   }
 
   export function viewLink(branch:string, pageId:string, $location, fileName:string = null) {
-    var link = null;
+    var link:string = null;
     var start = startLink(branch);
     if (pageId) {
       link = start + "/view/" + encodePath(Core.trimLeading(pageId, "/"));
     } else {
       // lets use the current path
-      var path = $location.path();
+      var path:string = $location.path();
       link = "#" + path.replace(/(edit|create)/, "view");
     }
     if (fileName && pageId && pageId.endsWith(fileName)) {
@@ -182,7 +182,7 @@ module Wiki {
   }
 
   export function editLink(branch:string, pageId:string, $location) {
-    var link = null;
+    var link:string = null;
     var start = startLink(branch);
     if (pageId) {
       link = start + "/edit/" + encodePath(pageId);
@@ -367,7 +367,7 @@ module Wiki {
    * @method initScope
    * @for Wiki
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {any} $routeParams
    * @param {ng.ILocationService} $location
    */
@@ -479,7 +479,7 @@ module Wiki {
    * @method adjustHref
    * @for Wiki
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {ng.ILocationService} $location
    * @param {String} href
    * @param {String} fileExtension

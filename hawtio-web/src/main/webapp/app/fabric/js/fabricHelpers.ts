@@ -68,7 +68,7 @@ module Fabric {
    * @for Fabric
    * @param {any} $scope
    * @param {ng.ILocationService} $location
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {Workspace} workspace
    */
   export function initScope($scope, $location, jolokia, workspace) {
@@ -458,7 +458,7 @@ module Fabric {
    * into the onJolokia function
    * @method profileJolokia
    *
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {String} profileId
    * @param {String} versionId
    * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
@@ -475,7 +475,7 @@ module Fabric {
    * Attempts to create a jolokia for the given container id, passing the created object
    * into the onJolokia function
    * @method containerJolokia
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {String} containerId the id of the container to connect to
    * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
    */

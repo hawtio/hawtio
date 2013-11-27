@@ -3,6 +3,17 @@
  */
 module Core {
 
+  /**
+   * Controller that's attached to hawtio's drop-down console, mainly handles the
+   * clipboard icon at the bottom-right of the console.
+   *
+   * @method ConsoleController
+   * @for Core
+   * @static
+   * @param {*} $scope
+   * @param {*} $element
+   * @param {*} $templateCache
+   */
   export function ConsoleController($scope, $element, $templateCache) {
 
     $scope.setHandler = (clip) => {
@@ -31,6 +42,26 @@ module Core {
 
   }
 
+  /**
+   * Outermost controller attached to almost the root of the document, handles
+   * logging in and logging out, the PID/container indicator at the bottom right
+   * of the window and the document title
+   *
+   * @method AppController
+   * @for Core
+   * @static
+   * @param {*} $scope
+   * @param {ng.ILocationService} $location
+   * @param {Core.Workspace} workspace
+   * @param {*} jolokiaStatus
+   * @param {*} $document
+   * @param {Core.PageTitle} pageTitle
+   * @param {*} localStorage
+   * @param {*} userDetails
+   * @param {*} lastLocation
+   * @param {*} jolokiaUrl
+   * @param {*} branding
+   */
   export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
 
     if (userDetails.username === null) {
