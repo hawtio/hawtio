@@ -7,21 +7,22 @@
 
 src=src/main/webapp/app
 out=target/docs
+theme=../hawtio-docs/theme
 
 
 # Generate docs
 function gen {
-  yuidoc -e .ts -o $out $src
+  yuidoc -e .ts -t $theme -o $out $src
 }
 
 # starts yuidoc in server mode
 function server {
-  yuidoc -e .ts -o $out --server $src
+  yuidoc -e .ts -t $theme -o $out --server $src
 }
 
 # Just evaluates JSDoc comments
 function lint {
-  yuidoc -e .ts -o $out --lint $src
+  yuidoc -e .ts -t $theme -o $out --lint $src
 }
 
 action='lint'
