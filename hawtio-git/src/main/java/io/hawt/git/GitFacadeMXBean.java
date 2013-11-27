@@ -61,6 +61,11 @@ public interface GitFacadeMXBean {
     List<CommitTreeInfo> getCommitTree(String commitId);
 
     /**
+     * Returns details about the commit, such as its message etc
+     */
+    CommitInfo getCommitInfo(String commitId);
+
+    /**
      * Get the contents of a blobPath for a given commit objectId
      */
     String getContent(String objectId, String blobPath);
@@ -80,6 +85,7 @@ public interface GitFacadeMXBean {
      * against either the previous or a given baseObjectId
      */
     String diff(String objectId, String baseObjectId, String blobPath);
+
 
     /**
      * Reverts the file to a previous value
