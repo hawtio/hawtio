@@ -1,0 +1,12 @@
+{
+  "name": "hawtio",
+  "description": "The hawtio API documentation",
+  "version": "${project.version}",
+  "url": "http://hawt.io",
+  "logo": "logo.png",
+  "options": {
+    "outdir": "${webapp-outdir}",
+    "paths": "../hawtio-web/src/main/webapp/app"
+  }
+
+}
