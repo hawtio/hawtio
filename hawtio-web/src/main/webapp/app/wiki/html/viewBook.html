@@ -33,31 +33,12 @@
   <ng-include src="'app/wiki/html/viewNavBar.html'"></ng-include>
 
   <div class="wiki-fixed form-horizontal">
-
     <div class="row-fluid">
-      <div class="span3" ng-hide="!children">
-        <div class="gridStyle wiki-grid" ng-grid="gridOptions"></div>
-      </div>
-
-      <div ng-class="displayClass()">
-        <div ng-hide="!showProfileHeader">
-          <div class="row-fluid">
-            <div class="span12">
-              <div fabric-profile-details version-id="versionId" profile-id="profileId"></div>
-              <p></p>
-            </div>
-          </div>
+      <div wiki-href-adjuster>
+        <!-- TODO we maybe want a more flexible way to find the links to include than the current link-filter -->
+        <div hawtio-toc-display get-contents="getContents(filename, cb)"
+             html="html" link-filter="[file-extension]">
         </div>
-
-        <div ng-hide="!html" wiki-href-adjuster>
-          <div class="row-fluid">
-            <div class="span12">
-              <div ng-bind-html-unsafe="html"></div>
-            </div>
-          </div>
-        </div>
-
-        <div ng-include="sourceView" class="editor-autoresize"></div>
       </div>
     </div>
   </div>

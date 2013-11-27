@@ -16,6 +16,7 @@ module Wiki {
               $routeProvider.
                       when('/wiki' + path + '/view', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                      when('/wiki' + path + '/book/*page', {templateUrl: 'app/wiki/html/viewBook.html'}).
                       when('/wiki' + path + '/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
                       when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
                       when('/wiki' + path + '/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).

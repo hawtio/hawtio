@@ -56,8 +56,8 @@ module UI {
         return new UI.AutoColumns();
       }).directive('hawtioTemplatePopover', ($templateCache, $compile, $document) => {
         return UI.TemplatePopover($templateCache, $compile, $document);
-      }).directive('hawtioTocDisplay', (marked, $location, $anchorScroll) => {
-        return UI.HawtioTocDisplay(marked, $location, $anchorScroll);
+      }).directive('hawtioTocDisplay', (marked, $location, $anchorScroll, $compile) => {
+        return UI.HawtioTocDisplay(marked, $location, $anchorScroll, $compile);
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
