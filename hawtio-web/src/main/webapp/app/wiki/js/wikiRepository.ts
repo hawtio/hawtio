@@ -93,6 +93,10 @@ module Wiki {
       return git;
     }
 
+    public commitInfo(commitId:string, fn) {
+      this.git().commitInfo(commitId, fn);
+    }
+
     public commitTree(commitId:string, fn) {
       this.git().commitTree(commitId, fn);
     }
