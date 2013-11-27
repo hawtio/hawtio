@@ -3,7 +3,8 @@
  */
 module Wiki {
 
-  export function HistoryController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  export function HistoryController($scope, $location, $routeParams, $templateCache,
+                                    workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.selectedItems = [];
@@ -24,7 +25,7 @@ module Wiki {
         {
           field: 'commitHashText',
           displayName: 'Change',
-          cellTemplate: '<div class="ngCellText"><a class="commit-link" ng-href="#/wiki/commit/{{row.entity.name}}{{hash}}" title="{{row.entity.name}}">{{row.entity.commitHashText}} <i class="icon-circle-arrow-right"></i></a></div>',
+          cellTemplate: $templateCache.get('changeCellTemplate.html'),
           cellFilter: "",
           width: "*"
         },
@@ -102,6 +103,9 @@ module Wiki {
       var limit = 0;
 
       $scope.git = wikiRepository.history($scope.branch, objectId, $scope.pageId, limit, (logArray) => {
+        angular.forEach(logArray, (log) => {
+          log.commitLink = startLink($scope.branch) + "/commit/" + log.name;
+        });
         $scope.logs = logArray;
         Core.$apply($scope);
       });
