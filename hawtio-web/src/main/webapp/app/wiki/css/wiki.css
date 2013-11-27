@@ -2,11 +2,11 @@
 }
 
 .commit-id {
-    margin-left: 0.5em;
 }
 
 .commit-message {
     margin-left: 0.5em;
+    margin-bottom: 1em;
     font-weight: bold;
 }
 

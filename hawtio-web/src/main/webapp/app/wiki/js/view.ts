@@ -457,7 +457,7 @@ module Wiki {
 
     function isDiffView() {
       var path = $location.path();
-      return path && path.startsWith("/wiki/diff");
+      return path && (path.startsWith("/wiki/diff") || path.startsWith("/wiki/branch/" + $scope.branch + "/diff"));
     }
 
     function updateView() {
@@ -467,7 +467,7 @@ module Wiki {
       } else {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
-      wikiRepository.branches(onBranches);
+      Wiki.loadBranches(wikiRepository, $scope);
     }
 
     $scope.updateView = updateView;
@@ -510,14 +510,6 @@ module Wiki {
         }
       }
       Core.$apply($scope);
-    }
-
-    function onBranches(response) {
-      $scope.branches = response;
-      // default the branch name if we have 'master'
-      if (!$scope.branch && $scope.branches.find((branch) => { return branch === "master"; })) {
-        $scope.branch = "master";
-      }
     }
 
     function onFormSchema(json) {

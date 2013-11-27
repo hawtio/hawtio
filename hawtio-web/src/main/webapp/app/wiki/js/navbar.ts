@@ -4,6 +4,7 @@
 module Wiki {
   export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
 
+    Wiki.initScope($scope, $routeParams, $location);
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
@@ -86,10 +87,20 @@ module Wiki {
           }
         }
       }
-      if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version") || loc.startsWith("/wiki/diff")) {
+      /*
+      if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version")
+        || loc.startsWith("/wiki/diff") || loc.startsWith("/wiki/commit")) {
         // lets add a history tab
         $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
+      } else if ($scope.branch) {
+        var prefix ="/wiki/branch/" + $scope.branch;
+        if (loc.startsWith(prefix + "/history") || loc.startsWith(prefix + "/version")
+          || loc.startsWith(prefix + "/diff") || loc.startsWith(prefix + "/commit")) {
+          // lets add a history tab
+          $scope.breadcrumbs.push({href: "#/wiki/branch/" + $scope.branch + "/history/" + path, name: "History"});
+        }
       }
+      */
       var name:string = null;
       if (loc.startsWith("/wiki/version")) {
         // lets add a version tab
