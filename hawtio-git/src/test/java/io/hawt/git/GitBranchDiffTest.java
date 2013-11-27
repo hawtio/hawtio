@@ -1,19 +1,12 @@
 package io.hawt.git;
 
 import io.hawt.util.Strings;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.ObjectName;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -107,7 +100,17 @@ public class GitBranchDiffTest {
         for (CommitInfo commitInfo : history) {
             System.out.println("Version: " + commitInfo);
         }
-        assertCommitTree(history.get(0).getCommitHashText(), 2);
+        String diffId2 = history.get(0).getCommitHashText();
+        assertCommitTree(diffId2, 2);
+        assertCommitInfo(diffId2);
+    }
+
+    protected void assertCommitInfo(String commitId) {
+        CommitInfo info = git.getCommitInfo(commitId);
+        assertNotNull("commitInfo", info);
+        System.out.println("Commit info: " + info);
+        String shortMessage = info.getShortMessage();
+        assertNotNull("shortMessage", shortMessage);
     }
 
     protected void assertCommitTree(String commitId, int exectedSize) {

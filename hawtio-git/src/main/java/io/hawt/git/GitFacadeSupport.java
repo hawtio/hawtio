@@ -187,6 +187,16 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return list;
     }
 
+    protected CommitInfo doGetCommitInfo(Git git, String commitId) {
+        Repository repository = git.getRepository();
+        RevCommit commit = CommitUtils.getCommit(repository, commitId);
+        if (commit == null){
+            return null;
+        } else {
+            return createCommitInfo(commit);
+        }
+    }
+
     protected abstract Iterable<PushResult> doPush(Git git) throws Exception;
 
 
