@@ -2,6 +2,9 @@ package io.hawt.web;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +31,47 @@ public class ExportContextServlet extends HttpServlet {
         out.println(" ===================== = jobExecution id ======================== "+httpServletRequest.getParameter("jobExecutionId"));
         String server = httpServletRequest.getParameter("server");
         String jobExecutionId = httpServletRequest.getParameter("jobExecutionId");
+        String jobStepId = httpServletRequest.getParameter("jobStepId");
 
+        out.println("======= server ======= "+server);
+        out.println("======= jobExecutionId ======= "+jobStepId);
+        out.println("======= jobStepId ======= "+jobStepId);
 
-        String jsonResponse = "Content not available";
-        if((jobExecutionId != null && !jobExecutionId.isEmpty()) && (server != null && !server.isEmpty())){
-            server = server.replaceAll("\\\\","");
-            if (!server.contains("http://")){
-                server = "http://"+server;
+        String jsonStringResponse = "Content not available";
+        if((server != null && !server.isEmpty())){
+            if((jobExecutionId != null && !jobExecutionId.isEmpty())){
+                server = server.replaceAll("\\\\","");
+                if (!server.contains("http://")){
+                    server = "http://"+server;
+                }
+                out.println("======= final url ======= "+server+"jobs/executions/"+jobExecutionId+"/context.json");
+
+                HttpClient client = new HttpClient();
+                GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
+                int reponseCode =  client.executeMethod(get);
+                jsonStringResponse = get.getResponseBodyAsString();
+                JSONParser parser = new JSONParser();
+
+                JSONObject jsonObject = null;
+                try{
+                    jsonObject = (JSONObject)parser.parse(jsonStringResponse);
+                    out.println("======= jsonObject ======= "+jsonObject.getClass().getName());
+                    JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
+                    JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
+                    out.println("======= contextObject ======= "+jobExecutionContext.toString());
+                    out.println("======= entryObject ======= "+contextObject);
+
+                }catch(ParseException pe){
+                    LOG.error(pe.getMessage());
+                }
+                get.releaseConnection();
             }
-            out.println("======= server ======= "+server);
-            out.println("======= final url ======= "+server+"jobs/executions/"+jobExecutionId+"/context.json");
-            HttpClient client = new HttpClient();
-            GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
-            int reponseCode =  client.executeMethod(get);
-            jsonResponse = get.getResponseBodyAsString();
-            out.println(" ===== response ====== "+jsonResponse);
-            get.releaseConnection();
+            else if((jobStepId != null && !jobStepId.isEmpty())){
+
+            }
         }
+
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.txt\"");
-        resp.getWriter().println(jsonResponse);
+        resp.getWriter().println(jsonStringResponse);
     }
 }
