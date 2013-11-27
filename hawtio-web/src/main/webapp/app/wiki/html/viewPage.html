@@ -50,8 +50,11 @@
             </li>
           </ul>
         </li>
-        <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
+        <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href) && !objectId}'>
           <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
+        </li>
+        <li ng-show="objectId" class="active">
+          <a>{{objectId}}</a>
         </li>
 
         <li class="pull-right dropdown">
