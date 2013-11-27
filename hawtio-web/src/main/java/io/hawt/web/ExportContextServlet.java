@@ -2,6 +2,7 @@ package io.hawt.web;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -58,8 +59,13 @@ public class ExportContextServlet extends HttpServlet {
                     out.println("======= jsonObject ======= "+jsonObject.getClass().getName());
                     JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
                     JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
-                    out.println("======= contextObject ======= "+jobExecutionContext.toString());
-                    out.println("======= entryObject ======= "+contextObject);
+                    if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
+                        JSONObject mapObject = (JSONObject)contextObject.get("map");
+                        if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONArray)){
+                            JSONArray entryObject = (JSONArray)mapObject.get("entry");
+                            out.println("======= entryObject ======= "+entryObject);
+                        }
+                    }
 
                 }catch(ParseException pe){
                     LOG.error(pe.getMessage());
