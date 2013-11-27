@@ -6,7 +6,7 @@ module Wiki {
   export function CommitController($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     Wiki.initScope($scope, $routeParams, $location);
-    $scope.commitId = $scope.pageId;
+    $scope.commitId = $scope.objectId;
     $scope.selectedItems = [];
 
     // TODO we could configure this?
@@ -91,6 +91,8 @@ module Wiki {
 
     function updateView() {
       var commitId = $scope.commitId;
+
+      Wiki.loadBranches(wikiRepository, $scope);
 
       wikiRepository.commitInfo(commitId, (commitInfo) => {
         $scope.commitInfo = commitInfo;

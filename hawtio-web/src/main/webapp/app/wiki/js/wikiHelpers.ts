@@ -376,6 +376,26 @@ module Wiki {
     $scope.branch = $routeParams["branch"] || $location.search()["branch"];
     $scope.objectId = $routeParams["objectId"];
     $scope.startLink = Wiki.startLink($scope.branch);
+    $scope.historyLink = startLink($scope.branch) + "/history/" + ($scope.pageId || "");
+  }
+
+  /**
+   * Loads the branches for this wiki repository and stores them in the branches property in
+   * the $scope and ensures $scope.branch is set to a valid value
+   *
+   * @param wikiRepository
+   * @param $scope
+   */
+  export function loadBranches(wikiRepository, $scope) {
+    wikiRepository.branches((response) => {
+      $scope.branches = response;
+      // default the branch name if we have 'master'
+      if (!$scope.branch && $scope.branches.find((branch) => {
+        return branch === "master";
+      })) {
+        $scope.branch = "master";
+      }
+    });
   }
 
 
