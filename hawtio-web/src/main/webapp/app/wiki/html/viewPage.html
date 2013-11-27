@@ -53,6 +53,9 @@
         <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href) && !objectId}'>
           <a ng-href="{{link.href}}{{hash}}">{{link.name}}</a>
         </li>
+        <li ng-show="objectId">
+          <a ng-href="{{historyLink}}{{hash}}">History</a>
+        </li>
         <li ng-show="objectId" class="active">
           <a>{{objectId}}</a>
         </li>
