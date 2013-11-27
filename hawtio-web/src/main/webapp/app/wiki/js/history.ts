@@ -15,6 +15,8 @@ module Wiki {
       data: 'logs',
       showFilter: false,
       selectedItems: $scope.selectedItems,
+      showSelectionCheckbox: true,
+      displaySelectionCheckbox : true, // old pre 2.0 config!
       filterOptions: {
         filterText: ''
       },
@@ -88,7 +90,8 @@ module Wiki {
       if ($scope.selectedItems.length > 1) {
         baseObjectId = $scope.selectedItems[1].name ||defaultValue;
       }
-      var path = "/wiki/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
+      var link = startLink($scope.branch) + "/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
+      var path = Core.trimLeading(link, "#");
       $location.path(path);
     };
 

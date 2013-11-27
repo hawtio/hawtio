@@ -141,11 +141,18 @@ module Git {
     diff(objectId:string, baseObjectId:string, path:string, fn);
 
     /**
-     * Returns a list of commit tree info objects for the given commit
+     * Returns a list of commit tree info objects for the given commit ID
      * @param commitId
      * @param fn
      */
     commitTree(commitId:string, fn);
+
+    /**
+     * Returns details of a commit for the given commit ID
+     * @param commitId
+     * @param fn
+     */
+    commitInfo(commitId:string, fn);
 
 
     /**
@@ -225,6 +232,10 @@ module Git {
 
     public commitTree(commitId:string, fn) {
       return this.jolokia.execute(this.mbean, "getCommitTree", commitId, onSuccess(fn));
+    }
+
+    public commitInfo(commitId:string, fn) {
+      return this.jolokia.execute(this.mbean, "getCommitInfo", commitId, onSuccess(fn));
     }
 
     public diff(objectId:string, baseObjectId:string, path:string, fn) {

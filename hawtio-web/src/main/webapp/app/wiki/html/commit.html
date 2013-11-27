@@ -1,36 +1,36 @@
+<link rel="stylesheet" href="app/wiki/css/wiki.css" type="text/css"/>
+
 <div ng-controller="Wiki.CommitController">
   <script type="text/ng-template" id="fileCellTemplate.html">
     <div class="ngCellText">
-      <a ng-href="#/wiki/version/{{row.entity.path}}/{{commitId}}{{hash}}" class="file-name">
-        <span class="file-icon"
-              ng-class="row.entity.fileClass"
-              ng-bind-html-unsafe="row.entity.fileIconHtml"></span>
-        {{row.entity.path}}
+      <a ng-href="{{row.entity.fileLink}}" class="file-name"
+         title="{{row.entity.title}}">
+        <span class="file-icon" ng-class="row.entity.fileClass" ng-bind-html-unsafe="row.entity.fileIconHtml"></span>
+        <span ng-class="row.entity.changeClass">{{row.entity.path}}</span>
       </a>
     </div>
+  </script>
+  <script type="text/ng-template" id="changeTypeTemplate.html">
+    <div class="ngCellText">
+      <a class="changes-link" ng-show="row.entity.change != 'delete'" ng-click="diff(row.entity)">changes</a>
     </div>
   </script>
 
-  <div ng-controller="Wiki.NavBarController">
-    <ul class="connected nav nav-tabs">
-      <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
-        <a ng-href="{{link.href}}{{hash}}">
-          {{link.name}}
-        </a>
+  <div>
+    <ul class="nav nav-tabs">
+      <li ng-class='{active : true}' title="{{commitInfo.shortMessage}}">
+        <span class="commit-id">{{commitInfo.commitHashText}}</span>
+        :
+        <span class="commit-message">{{commitInfo.trimmedMessage}}</span>
       </li>
-
       <li class="pull-right">
-        <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
-           data-placement="bottom">
-          <i class="icon-edit"></i> Edit</a></li>
+        <span class="commit-author">
+          <i class="icon-user"></i> {{commitInfo.author}}
+        </span>
+      </li>
       <li class="pull-right">
-        <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
-           data-placement="bottom">
-          <i class="icon-comments-alt"></i> History</a></li>
-      <li class="pull-right">
-        <a ng-href="{{createLink()}}{{hash}}" title="Create new page"
-           data-placement="bottom">
-          <i class="icon-plus"></i> Create</a></li>
+        <span class="commit-date">{{commitInfo.date | date: dateFormat}}</span>
+      </li>
     </ul>
   </div>
 
@@ -42,9 +42,11 @@
           Compare
         </button>
 
+<!--
         <button class="btn" ng-disabled="!canRevert()" ng-click="revert()"
                 title="Revert to this version of the file"><i class="icon-exchange"></i> Revert
         </button>
+-->
       </div>
     </div>
     <div class="span8">
