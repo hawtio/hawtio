@@ -223,7 +223,7 @@ Logger.setHandler(function(messages, context) {
 
 // Catch uncaught exceptions and stuff so we can log them
 window.onerror = function(msg, url, line, column, errorObject) {
-  if (errorObject) {
+  if (errorObject && isObject(errorObject)) {
     Logger.get("Window").error(errorObject);
   } else {
     var href = ' (<a href="' + url + ':' + line + '">' + url + ':' + line;
