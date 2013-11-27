@@ -104,6 +104,7 @@ module Wiki {
    * Returns a new create document wizard tree
    * @method createWizardTree
    * @for Wiki
+   * @static
    */
   export function createWizardTree() {
     var root = new Folder("New Documents");
@@ -235,6 +236,7 @@ module Wiki {
    * Returns the file name of the given path; stripping off any directories
    * @method fileName
    * @for Wiki
+   * @static
    * @param {String} path
    * @return {String}
    */
@@ -252,6 +254,7 @@ module Wiki {
    * Returns the folder of the given path (everything but the last path name)
    * @method fileParent
    * @for Wiki
+   * @static
    * @param {String} path
    * @return {String}
    */
@@ -270,6 +273,7 @@ module Wiki {
    * Returns the file name for the given name; we hide some extensions
    * @method hideFineNameExtensions
    * @for Wiki
+   * @static
    * @param {String} name
    * @return {String}
    */
@@ -288,6 +292,13 @@ module Wiki {
    * Takes a row containing the entity object; or can take the entity directly.
    *
    * It then uses the name, directory and xmlNamespaces properties
+   *
+   * @method fileIconHtml
+   * @for Wiki
+   * @static
+   * @param {any} row
+   * @return {String}
+   *
    */
   export function fileIconHtml(row) {
     var name = row.name;
@@ -355,6 +366,7 @@ module Wiki {
    * Extracts the pageId, branch, objectId from the route parameters
    * @method initScope
    * @for Wiki
+   * @static
    * @param {ng.IScope} $scope
    * @param {any} $routeParams
    * @param {ng.ILocationService} $location
@@ -371,6 +383,7 @@ module Wiki {
    * Extracts the pageId from the route parameters
    * @method pageId
    * @for Wiki
+   * @static
    * @param {any} $routeParams
    * @param @ng.ILocationService @location
    * @return {String}
@@ -426,6 +439,7 @@ module Wiki {
    * Parses the given JSON text reporting to the user if there is a parse error
    * @method parseJson
    * @for Wiki
+   * @static
    * @param {String} text
    * @return {any}
    */
@@ -444,6 +458,7 @@ module Wiki {
    * Adjusts a relative or absolute link from a wiki or file system to one using the hash bang syntax
    * @method adjustHref
    * @for Wiki
+   * @static
    * @param {ng.IScope} $scope
    * @param {ng.ILocationService} $location
    * @param {String} href
