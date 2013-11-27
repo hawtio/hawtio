@@ -284,15 +284,26 @@ module Wiki {
     return name;
   }
 
+  /**
+   * Takes a row containing the entity object; or can take the entity directly.
+   *
+   * It then uses the name, directory and xmlNamespaces properties
+   */
   export function fileIconHtml(row) {
+    var name = row.name;
+    var directory = row.directory;
+    var xmlNamespaces = row.xmlNamespaces;
+    var entity = row.entity;
+    if (entity) {
+      name = name || entity.name;
+      directory = directory || entity.directory;
+      xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
+    }
     var css = null;
     var icon = null;
-    var name = row.getProperty("name");
     var extension = fileExtension(name);
-    var directory = row.getProperty("directory");
 
     // TODO could we use different icons for markdown v xml v html
-    var xmlNamespaces = row.xmlNamespaces || row.entity.xmlNamespaces;
     if (xmlNamespaces && xmlNamespaces.length) {
       if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
         icon = "/app/camel/img/camel.png";

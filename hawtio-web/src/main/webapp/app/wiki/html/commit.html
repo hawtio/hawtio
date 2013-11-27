@@ -1,4 +1,16 @@
 <div ng-controller="Wiki.CommitController">
+  <script type="text/ng-template" id="fileCellTemplate.html">
+    <div class="ngCellText">
+      <a ng-href="#/wiki/version/{{row.entity.path}}/{{commitId}}{{hash}}" class="file-name">
+        <span class="file-icon"
+              ng-class="row.entity.fileClass"
+              ng-bind-html-unsafe="row.entity.fileIconHtml"></span>
+        {{row.entity.path}}
+      </a>
+    </div>
+    </div>
+  </script>
+
   <div ng-controller="Wiki.NavBarController">
     <ul class="connected nav nav-tabs">
       <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
@@ -26,15 +38,19 @@
     <div class="span4">
       <div class="control-group">
         <button class="btn" ng-disabled="!selectedItems.length" ng-click="diff()"
-                title="Compare the selected versions of the files to see how they differ"><i class="icon-exchange"></i> Compare</button>
+                title="Compare the selected versions of the files to see how they differ"><i class="icon-exchange"></i>
+          Compare
+        </button>
 
         <button class="btn" ng-disabled="!canRevert()" ng-click="revert()"
-                title="Revert to this version of the file"><i class="icon-exchange"></i> Revert</button>
+                title="Revert to this version of the file"><i class="icon-exchange"></i> Revert
+        </button>
       </div>
     </div>
     <div class="span8">
       <div class="control-group">
-        <input class="span12 search-query" type="text" ng-model="gridOptions.filterOptions.filterText" placeholder="search">
+        <input class="span12 search-query" type="text" ng-model="gridOptions.filterOptions.filterText"
+               placeholder="search">
       </div>
     </div>
   </div>
@@ -45,3 +61,4 @@
     </div>
   </div>
 
+</div>
