@@ -1,3 +1,6 @@
+/**
+ * @module UI
+ */
 module UI {
 
   export var fileUploadMBean = "io.hawt.jmx:type=UploadManager";

@@ -1,3 +1,10 @@
+/**
+ * Module that contains a bunch of re-usable directives to assemble into pages in hawtio
+ *
+ * @module UI
+ * @main UI
+ *
+ */
 module UI {
 
   export var pluginName = 'hawtio-ui';

@@ -1,3 +1,6 @@
+/**
+ * @module UI
+ */
 module UI {
 
     export function UITestController2($scope, workspace, $templateCache) {

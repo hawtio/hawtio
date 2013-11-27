@@ -1,6 +1,14 @@
+/**
+ * @module UI
+ */
 module UI {
 
-  // expand the element to accomodate a group of elements to prevent them from wrapping
+  /**
+   * TODO turn this into a normal directive function
+   *
+   * @property AutoDropDown
+   * @type IAutoDropDown
+   */
   export var AutoDropDown = {
     restrict: 'A',
     link: ($scope, $element, $attrs) => {

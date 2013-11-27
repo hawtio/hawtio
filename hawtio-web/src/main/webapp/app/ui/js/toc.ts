@@ -1,3 +1,6 @@
+/**
+ * @module UI
+ */
 module UI {
 
   export function HawtioTocDisplay(marked, $location, $anchorScroll) {
