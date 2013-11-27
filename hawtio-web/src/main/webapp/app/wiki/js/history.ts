@@ -104,7 +104,9 @@ module Wiki {
 
       $scope.git = wikiRepository.history($scope.branch, objectId, $scope.pageId, limit, (logArray) => {
         angular.forEach(logArray, (log) => {
-          log.commitLink = startLink($scope.branch) + "/commit/" + $scope.pageId + "/" + log.name;
+          // lets use the shorter hash for links by default
+          var commitId = log.commitHashText || log.name;
+          log.commitLink = startLink($scope.branch) + "/commit/" + $scope.pageId + "/" + commitId;
         });
         $scope.logs = logArray;
         Core.$apply($scope);
