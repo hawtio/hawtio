@@ -38,7 +38,7 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {any} localStorage
    * @return {String}
    */
@@ -56,7 +56,7 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {any} localStorage
    */
   export function getPerspectives($location, workspace, jolokia, localStorage) {
@@ -145,7 +145,7 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {any} localStorage
    * @return {Array}
    */
@@ -161,7 +161,7 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {any} localStorage
    * @return {String}
    */
@@ -186,7 +186,7 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {any} localStorage
    * @return {String}
    */

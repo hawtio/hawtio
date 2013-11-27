@@ -79,7 +79,7 @@ module API {
    * @method loadJsonSchema
    * @for API
    * @static
-   * @param {any} jolokia
+   * @paran {*} jolokia
    * @param {String} mbean
    * @param {Function} onJsonSchemaFn
    */

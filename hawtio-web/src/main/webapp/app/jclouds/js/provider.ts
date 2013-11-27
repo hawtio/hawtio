@@ -8,7 +8,7 @@ module Jclouds {
    *
    * @method ProviderController
    * @for Jclouds
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {ng.IFilterService} $filter
    * @param {Workspace} workspace
    * @param {ng.IRouteParamsService} $routeParams

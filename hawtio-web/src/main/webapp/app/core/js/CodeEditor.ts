@@ -1,11 +1,55 @@
 /**
+ * Module that contains several helper functions related to hawtio's code editor
+ *
  * @module CodeEditor
  * @main CodeEditor
  */
 module CodeEditor {
   // TODO break this out into a separate plugin and maybe combine with hawtio-editor directive?
 
-  // TODO Wire up to a global config manager service
+  /**
+   * Options for the CodeMirror text editor
+   *
+   * @class CodeMirrorOptions
+   */
+  export interface CodeMirrorOptions {
+    /**
+     * @property theme
+     * @type String
+     */
+    theme: string;
+    /**
+     * @property tabSize
+     * @type number
+     */
+    tabSize: number;
+    /**
+     * @property lineNumbers
+     * @type boolean
+     */
+    lineNumbers: boolean;
+    /**
+     * @property indentWithTabs
+     * @type boolean
+     */
+    indentWithTabs: boolean;
+    /**
+     * @property lineWrapping
+     * @type boolean
+     */
+    lineWrapping: boolean;
+    /**
+     * @property autoClosetags
+     * @type boolean
+     */
+    autoClosetags: boolean;
+  }
+
+  /**
+   * @property GlobalCodeMirrorOptions
+   * @for CodeEditor
+   * @type CodeMirrorOptions
+   */
   export var GlobalCodeMirrorOptions = {
     theme: "default",
     tabSize: 4,
@@ -13,10 +57,19 @@ module CodeEditor {
     indentWithTabs: true,
     lineWrapping: true,
     autoCloseTags: true
-
-    // TODO Add autoformat option (Not explicitly a code mirror option)
   };
 
+  /**
+   * Controller used on the preferences page to configure the editor
+   *
+   * @method PreferencesController
+   * @for CodeEditor
+   * @static
+   * @param $scope
+   * @param workspace
+   * @param localStorage
+   * @param $templateCache
+   */
   export function PreferencesController($scope, workspace:Workspace, localStorage, $templateCache) {
     $scope.exampleText = $templateCache.get("exampleText");
     $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
@@ -35,6 +88,16 @@ module CodeEditor {
 
   }
 
+  /**
+   * Tries to figure out what kind of text we're going to render in the editor, either
+   * text, javascript or XML.
+   *
+   * @method detectTextFormat
+   * @for CodeEditor
+   * @static
+   * @param value
+   * @returns {string}
+   */
   export function detectTextFormat(value: any):string {
     var answer = "text";
     if (value) {
@@ -52,6 +115,7 @@ module CodeEditor {
    *
    * @method autoFormatEditor
    * @for CodeEditor
+   * @static
    * @param {CodeMirrorEditor} editor
    * @return {void}
    */
@@ -71,6 +135,7 @@ module CodeEditor {
    *
    * @method createEditorSettings
    * @for CodeEditor
+   * @static
    * @param {Object} options
    * @return {Object}
    */

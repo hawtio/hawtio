@@ -100,7 +100,7 @@ function trimQuotes(text:string) {
  *
  * @method toSearchArgumentArray
  * @static
- * @param {Object} value
+ * @param {*} value
  * @return {String[]}
  *
  */
@@ -357,7 +357,7 @@ module Core {
    * @static
    * @method logout
    * @param {String} jolokiaUrl
-   * @param {Object} userDetails
+   * @param {*} userDetails
    * @param {Object} localStorage
    * @param {Object} $scope
    * @param {Function} successCB
@@ -432,7 +432,7 @@ module Core {
    * @method createHref
    * @for Core
    * @static
-   * @param {Object} $location
+   * @param {ng.ILocationService} $location
    * @param {String} href the link to have any $location.search() hash parameters appended
    * @param {Array} removeParams any parameters to be removed from the $location.search()
    * @return {Object} the link with any $location.search() parameters added
@@ -532,8 +532,8 @@ module Core {
    * @method register
    * @for Core
    * @static
-   * @param {Object} jolokia
-   * @param {Object} scope
+   * @param {*} jolokia
+   * @param {*} scope
    * @param {Object} arguments
    * @param {Function} callback
    */
@@ -571,8 +571,8 @@ module Core {
      * @method registerSearch
      * @for Core
      * @static
-     * @param {any} jolokia
-     * @param {ng.IScope} scope
+     * @paran {*} jolokia
+     * @param {*} scope
      * @param {String} mbeanPattern
      * @param {Function} callback
      */
@@ -658,7 +658,7 @@ module Core {
    * @method $applyNowOrLater
    * @for Core
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    */
   export function $applyNowOrLater($scope) {
     if ($scope.$$phase || $scope.$root.$$phase) {
@@ -675,7 +675,7 @@ module Core {
    * @method $applyLater
    * @for Core
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {Integer} timeout
    */
   export function $applyLater($scope, timeout = 50) {
@@ -690,7 +690,7 @@ module Core {
    * @method $apply
    * @for Core
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    */
   export function $apply($scope) {
     var phase = $scope.$$phase || $scope.$root.$$phase;
@@ -1314,7 +1314,7 @@ module Core {
    * @method bindModelToSearchParam
    * @for Core
    * @static
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {ng.ILocationService} $location
    * @param {String} modelName
    * @param {String} paramName
@@ -1347,7 +1347,7 @@ module Core {
    * @for Core
    * @static
    * @param {Object} $route
-   * @param {ng.IScope} $scope
+   * @param {*} $scope
    * @param {ng.ILocationService} $location
    * @param {Array[String]} parameters
    */

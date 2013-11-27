@@ -61,6 +61,8 @@ Generally in hawtio a typescript module spans several files, so put the @main ta
 */
 ```
 
+If you don't care about types you can leave out the {foo} bit.  Note that Idea sees these as closure compiler types, so it'll interpret them, which can cause red squigglies, in which case just use {*} or leave out the type.
+
 For static functions that are in a module you could do:
 
 ```javascript
