@@ -101,7 +101,7 @@ public class GitBranchDiffTest {
             System.out.println("Version: " + commitInfo);
         }
         String diffId2 = history.get(0).getCommitHashText();
-        assertCommitTree(diffId2, 2);
+        assertCommitTree(diffId2, 1);
         assertCommitInfo(diffId2);
     }
 

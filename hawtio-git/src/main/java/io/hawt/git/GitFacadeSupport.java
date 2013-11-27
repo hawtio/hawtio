@@ -29,6 +29,8 @@ import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
@@ -42,6 +44,8 @@ import org.eclipse.jgit.revwalk.RevWalkUtils;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.TreeFilter;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.CommitUtils;
@@ -167,25 +171,62 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         checkoutBranch(git, newBranch);
     }
 
+    /**
+     * Returns the file changes in a commit
+     */
     protected List<CommitTreeInfo> doGetCommitTree(Git git, String commitId) {
         Repository repository = git.getRepository();
-        final List<CommitTreeInfo> list = new ArrayList<CommitTreeInfo>();
-        TreeWalk treeWalk = TreeUtils.withCommits(repository, commitId);
-        treeWalk.setRecursive(true);
-        int idx = 0;
-        try {
-            while (treeWalk.next()) {
-                FileMode mode = treeWalk.getFileMode(idx);
-                String path = treeWalk.getPathString();
-                String name = treeWalk.getNameString();
-                ObjectId id = treeWalk.getObjectId(idx);
-                list.add(new CommitTreeInfo(mode, path, name, id));
+        List<CommitTreeInfo> list = new ArrayList<CommitTreeInfo>();
+        RevCommit commit = CommitUtils.getCommit(repository, commitId);
+        if (commit != null) {
+            RevWalk rw = new RevWalk(repository);
+            try {
+                if (commit.getParentCount() == 0) {
+                    TreeWalk treeWalk = new TreeWalk(repository);
+                    treeWalk.reset();
+                    treeWalk.setRecursive(true);
+                    treeWalk.addTree(commit.getTree());
+                    while (treeWalk.next()) {
+                        String pathString = treeWalk.getPathString();
+                        ObjectId objectId = treeWalk.getObjectId(0);
+                        int rawMode = treeWalk.getRawMode(0);
+                        list.add(new CommitTreeInfo(pathString, pathString, 0, rawMode, objectId.getName(), commit.getId().getName(),
+                                ChangeType.ADD));
+                    }
+                    treeWalk.release();
+                } else {
+                    RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
+                    DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
+                    df.setRepository(repository);
+                    df.setDiffComparator(RawTextComparator.DEFAULT);
+                    df.setDetectRenames(true);
+                    List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
+                    for (DiffEntry diff : diffs) {
+                        String objectId = diff.getNewId().name();
+                        if (diff.getChangeType().equals(ChangeType.DELETE)) {
+                            list.add(new CommitTreeInfo(diff.getOldPath(), diff.getOldPath(), 0, diff
+                                    .getNewMode().getBits(), objectId, commit.getId().getName(), diff
+                                    .getChangeType()));
+                        } else if (diff.getChangeType().equals(ChangeType.RENAME)) {
+                            list.add(new CommitTreeInfo(diff.getOldPath(), diff.getNewPath(), 0, diff
+                                    .getNewMode().getBits(), objectId, commit.getId().getName(), diff
+                                    .getChangeType()));
+                        } else {
+                            list.add(new CommitTreeInfo(diff.getNewPath(), diff.getNewPath(), 0, diff
+                                    .getNewMode().getBits(), objectId, commit.getId().getName(), diff
+                                    .getChangeType()));
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                LOG.warn("Failed to walk tree for commit " + commitId + ". " + e, e);
+            } finally {
+                rw.dispose();
             }
-        } catch (IOException e) {
-            LOG.warn("Failed to walk tree for commit " + commitId + ". " + e, e);
         }
         return list;
     }
+    
 
     protected CommitInfo doGetCommitInfo(Git git, String commitId) {
         Repository repository = git.getRepository();
