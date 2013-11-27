@@ -8,26 +8,88 @@ module Core {
    * @class NodeSelection
    */
   export interface NodeSelection {
+    /**
+     * @property title
+     * @type string
+     */
     title: string;
+    /**
+     * @property key
+     * @type string
+     * @optional
+     */
     key?:string;
+    /**
+     * @property typeName
+     * @type string
+     * @optional
+     */
     typeName?: string;
+    /**
+     * @property objectName
+     * @type string
+     * @optional
+     */
     objectName?: string;
+    /**
+     * @property domain
+     * @type string
+     * @optional
+     */
     domain?: string;
+    /**
+     * @property entries
+     * @type any
+     * @optional
+     */
     entries?: any;
-
+    /**
+     * @property folderNames
+     * @type array
+     * @optional
+     */
     folderNames?: string[];
+    /**
+     * @property children
+     * @type NodeSelection
+     * @optional
+     */
     children?:NodeSelection[];
+    /**
+     * @property parent
+     * @type NodeSelection
+     * @optional
+     */
     parent?: NodeSelection;
+    /**
+     * @method isFolder
+     * @return {boolean}
+     */
     isFolder?: () => boolean;
-
+    /**
+     * @method get
+     * @param {String} key
+     * @return {NodeSelection}
+     */
     get(key:string): NodeSelection;
-
+    /**
+     * @method ancestorHasType
+     * @param {String} typeName
+     * @return {Boolean}
+     */
     ancestorHasType(typeName:string): boolean;
+    /**
+     * @method ancestorHasEntry
+     * @param key
+     * @param value
+     * @return {Boolean}
+     */
     ancestorHasEntry(key:string, value): boolean;
   }
 
   /**
    * @class Folder
+   * @uses NodeSelection
    */
   export class Folder implements NodeSelection {
     constructor(public title:string) {

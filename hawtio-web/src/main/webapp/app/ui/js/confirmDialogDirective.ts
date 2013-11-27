@@ -1,12 +1,81 @@
+/**
+ * @module UI
+ */
 module UI {
 
+  /**
+   * Configuration object for the ConfirmDialog directive
+   * @class ConfirmDialogConfig
+   */
+  export interface ConfirmDialogConfig {
+    /**
+     * Model used to open/close the dialog
+     *
+     * @property hawtioConfirmDialog
+     * @type String
+     */
+    show: string;
+    /**
+     * Sets the title of the dialog
+     *
+     * @property title
+     * @type String
+     */
+    title: string;
+    /**
+     * Sets the text used on the dialogs "OK" button
+     *
+     * @property okButtonText
+     * @type String
+     */
+    okButtonText: string;
+    /**
+     * Sets the text used on the dialog's "Cancel" button
+     *
+     * @property cancelButtonText
+     * @type String
+     */
+    cancelButtonText: string;
+    /**
+     * callback function that's called when the dialog has been cancelled
+     *
+     * @property onCancel
+     * @type String
+     */
+    onCancel: string;
+    /**
+     * Callback function that's called when the user has clicked "OK"
+     *
+     * @property onOk
+     * @type String
+     */
+    onOk: string;
+    /**
+     * Callback function when the dialog has been closed either way
+     *
+     * @property onClose
+     * @type String
+     */
+    onClose: string;
+  }
+
+  /**
+   * Directive that opens a simple standard confirmation dialog.  See ConfigDialogConfig
+   * for configuration properties
+   *
+   * @class ConfirmDialog
+   */
   export class ConfirmDialog {
     public restrict = 'A';
     public replace = true;
     public transclude = true;
     public templateUrl = UI.templatePath + 'confirmDialog.html';
 
-    public scope = {
+    /**
+     * @property scope
+     * @type ConfirmDialogConfig
+     */
+    public scope:ConfirmDialogConfig = {
       show: '=hawtioConfirmDialog',
       title: '@',
       okButtonText: '@',

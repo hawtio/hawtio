@@ -6,6 +6,20 @@ module Core {
   export var username: string = null;
   export var password: string = null;
 
+  /**
+   * Controller that handles the login page and actually logging in
+   *
+   * @method LoginController
+   * @for Core
+   * @static
+   * @param $scope
+   * @param jolokia
+   * @param userDetails
+   * @param jolokiaUrl
+   * @param workspace
+   * @param localStorage
+   * @param branding
+   */
   export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding) {
     jolokia.stop();
 

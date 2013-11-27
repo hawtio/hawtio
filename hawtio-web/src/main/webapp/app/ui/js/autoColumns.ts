@@ -1,5 +1,13 @@
+/**
+ * @module UI
+ */
 module UI {
 
+  /**
+   * Directive class that organizes child elements into columns automatically
+   *
+   * @class AutoColumns
+   */
   export class AutoColumns {
     public restrict = 'A';
 

@@ -1,3 +1,6 @@
+/**
+ * @module UI
+ */
 module UI {
 
   export function Editor($parse) {
