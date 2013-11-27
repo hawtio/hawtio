@@ -21,27 +21,29 @@ module Wiki {
       columnDefs: [
         {
           field: 'commitHashText',
-          displayName: 'Version',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/commit/{{row.entity.name}}{{hash}}">{{row.entity.commitHashText}}</a></div>',
-/*
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/version/{{pageId}}/{{row.getProperty(' + "'name'" + ')}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-*/
-          cellFilter: ""
+          displayName: 'Change',
+          cellTemplate: '<div class="ngCellText"><a class="commit-link" ng-href="#/wiki/commit/{{row.entity.name}}{{hash}}" title="{{row.entity.name}}">{{row.entity.commitHashText}} <i class="icon-circle-arrow-right"></i></a></div>',
+          cellFilter: "",
+          width: "*"
         },
         {
           field: 'date',
           displayName: 'Modified',
-          cellFilter: "date: dateFormat"
+          cellFilter: "date: dateFormat",
+          width: "**"
         },
         {
           field: 'author',
           displayName: 'Author',
-          cellFilter: ""
+          cellFilter: "",
+          width: "**"
         },
         {
           field: 'shortMessage',
           displayName: 'Message',
-          cellFilter: ""
+          cellTemplate: '<div class="ngCellText" title="{{row.entity.shortMessage}}">{{row.entity.trimmedMessage}}</div>',
+          cellFilter: "",
+          width: "****"
         }
       ]
     };

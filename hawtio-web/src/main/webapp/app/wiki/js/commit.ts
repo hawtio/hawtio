@@ -3,7 +3,8 @@
  */
 module Wiki {
 
-  export function CommitController($scope, $location, $routeParams, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  export function CommitController($scope, $location, $routeParams, $templateCache,
+                                   workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.commitId = $scope.pageId;
@@ -23,7 +24,7 @@ module Wiki {
         {
           field: 'path',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/wiki/version/{{row.entity.path}}/{{commitId}}{{hash}}">{{row.entity.name}}</a></div>',
+          cellTemplate: $templateCache.get('fileCellTemplate.html'),
           cellFilter: ""
         }
       ]
@@ -47,6 +48,11 @@ module Wiki {
     function updateView() {
      wikiRepository.commitTree($scope.commitId, (commits) => {
         $scope.commits = commits;
+
+        angular.forEach(commits, (commit) => {
+          commit.fileIconHtml = Wiki.fileIconHtml(commit);
+          commit.fileClass = commit.name.endsWith(".profile") ? "green" : "";
+        });
         Core.$apply($scope);
       });
     }
