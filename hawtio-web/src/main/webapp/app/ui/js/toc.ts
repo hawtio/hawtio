@@ -3,7 +3,9 @@
  */
 module UI {
 
-  export function HawtioTocDisplay(marked, $location, $anchorScroll) {
+  export function HawtioTocDisplay(marked, $location, $anchorScroll, $compile) {
+    var log:Logging.Logger = Logger.get("UI");
+
     return {
       restrict: 'A',
       scope: {
@@ -71,28 +73,52 @@ module UI {
         if (logbar.length) {
           var offsetTop = logbar.height() + logbar.offset().top;
         }
-
-        if (!$element.get(0).id) {
-          $element.get(0).id = 'toc';
+        var previousHtml = null;
+        var html = $element;
+        var linkFilter = $attrs["linkFilter"] || "[hawtio-toc]";
+        log.info("Using link filter: " + linkFilter);
+        var htmlName = $attrs["html"];
+        if (htmlName) {
+          log.info("Found html attribute " + htmlName);
+          var ownerScope = $scope.$parent || $scope;
+          ownerScope.$watch(htmlName, () => {
+            var htmlText = ownerScope[htmlName];
+            log.info("Found html " + htmlText);
+            if (htmlText && htmlText !== previousHtml) {
+              previousHtml = htmlText;
+              var markup = $compile(htmlText)(ownerScope);
+              $element.children().remove();
+              $element.append(markup);
+              loadChapters();
+            }
+          })
+        } else {
+          loadChapters();
         }
-        $scope.tocId = '#' + $element.get(0).id;
-        $scope.remaining = $element.find('a').filter('[hawtio-toc]').length;
-        $element.find('a').filter('[hawtio-toc]').each((index, a) => {
-          log.debug("Found: ", a);
-          var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
-          var item = {
-            filename: filename,
-            title: a.textContent
-          };
-          $scope.addChapter(item);
-        });
+
+        function loadChapters() {
+          if (!html.get(0).id) {
+            html.get(0).id = 'toc';
+          }
+          $scope.tocId = '#' + html.get(0).id;
+          $scope.remaining = html.find('a').filter(linkFilter).length;
+          html.find('a').filter(linkFilter).each((index, a) => {
+            log.debug("Found: ", a);
+            var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
+            var item = {
+              filename: filename,
+              title: a.textContent
+            };
+            $scope.addChapter(item);
+          });
+        }
 
         $scope.$watch('render', (newValue, oldValue) => {
           if (newValue !== oldValue) {
             if (newValue) {
-              if (!$element.next('.hawtio-toc').length) {
+              if (!html.next('.hawtio-toc').length) {
                 var div = $('<div class="hawtio-toc"></div>');
-                div.appendTo($element);
+                div.appendTo(html);
 
                 $scope.chapters.forEach((chapter, index) => {
                   log.debug("index:", index);
@@ -111,7 +137,7 @@ module UI {
                   panel.hide().appendTo(div).fadeIn(1000);
                 });
 
-                var pageTop = $element.offset().top - offsetTop;
+                var pageTop = html.offset().top - offsetTop;
 
                 div.find('a.toc-back').each((index, a) => {
                   $(a).click((e) => {
@@ -121,7 +147,7 @@ module UI {
                     }, 2000);
                   })
                 });
-                $element.find('a').filter('[hawtio-toc]').each((index, a) => {
+                html.find('a').filter(linkFilter).each((index, a) => {
                   var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
                   $(a).click((e) => {
                     e.preventDefault();
