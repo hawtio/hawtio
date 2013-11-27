@@ -15,15 +15,22 @@
                     <div class="accordion-inner">
                         <span ng-repeat="(key,value) in entry">
                             <span ng-if="key == 'string'">
-                                {{entry}}
+                                {{value}}
                             </span>
                             <span ng-if="key == 'int'">
-                                {{entry.int}}
+                                {{value}}
                             </span>
                             <span ng-if="key == 'list'">
                                 <span ng-if="value">
                                     <span ng-repeat="listItemMap in value">
-                                        <sjson:renderTable tableMap="${listItemMap}" entryIndex="${index}"/>
+                                      <!-- <table>
+                                        <thead>
+                                        <tr>
+                                        <th ng-repeat="thData in uniqueTh(listItemMap)">{{thData}}</th>
+                                        </tr>
+                                        </thead>
+                                       </table>-->
+                                        {{listItemMap}}
                                     </span>
                                 </span>
                                 <!--<g:else>

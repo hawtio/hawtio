@@ -5,6 +5,7 @@ module SpringBatch{
     var proxyUrl = '/hawtio/proxy/';
     var executionsListPath='context.json';
     export function jobExecutionContextController($scope,$routeParams, $resource) {
+        //$scope._=_;
         var jobExecutionId=$routeParams.jobExecutionId;
         var jobName=$routeParams.jobName;
         var jobId=$routeParams.jobId;
@@ -16,8 +17,16 @@ module SpringBatch{
             $scope.jobExecutionContext=data.jobExecutionContext;
             $scope.jobName=jobName;
             $scope.jobId=jobId;
+
         });
-        var jobExecutionContextFormat = $resource("/hawtio/getFormattedContextData/");
+
+        /*$scope.uniqueTh = function(list) {
+            return _.chain(list)
+                .flatten()
+                .unique()
+                .value();
+        };*/
+        /* var jobExecutionContextFormat = $resource("/hawtio/getFormattedContextData/");
         jobExecutionContextFormat.get({'jobExecutionId':jobExecutionId},function(data){
             for(var context in data.jobExecutionContext){
                 data.jobExecutionContext[context].id=context;
@@ -25,7 +34,7 @@ module SpringBatch{
             //$scope.jobExecutionContext=data.jobExecutionContext;
             $scope.jobName=jobName;
             $scope.jobId=jobId;
-        });
+        });*/
     }
 
 }
