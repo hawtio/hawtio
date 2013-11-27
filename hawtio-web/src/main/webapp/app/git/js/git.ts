@@ -142,15 +142,19 @@ module Git {
 
     /**
      * Returns a list of commit tree info objects for the given commit ID
-     * @param commitId
-     * @param fn
+     *
+     * @method commitTree
+     * @param {String} commitId
+     * @param {Function} fn
      */
     commitTree(commitId:string, fn);
 
     /**
      * Returns details of a commit for the given commit ID
-     * @param commitId
-     * @param fn
+     *
+     * @method commitInfo
+     * @param {String} commitId
+     * @param {function} fn
      */
     commitInfo(commitId:string, fn);
 
@@ -173,7 +177,10 @@ module Git {
   /**
    * A default implementation which uses jolokia and the
    * GitFacadeMXBean over JMX
+   *
    * @class JolokiaGit
+   * @uses GitRepository
+   *
    */
   export class JolokiaGit implements GitRepository {
     constructor(public mbean:string, public jolokia, public localStorage, public branch = "master") {
