@@ -1,6 +1,12 @@
 <link rel="stylesheet" href="app/wiki/css/wiki.css" type="text/css"/>
 
 <div ng-controller="Wiki.HistoryController">
+  <script type="text/ng-template" id="changeCellTemplate.html">
+    <div class="ngCellText">
+      <a class="commit-link" ng-href="{{row.entity.commitLink}}{{hash}}" title="{{row.entity.name}}">{{row.entity.commitHashText}} <i class="icon-circle-arrow-right"></i></a>
+    </div>
+  </script>
+
   <div ng-controller="Wiki.NavBarController">
     <ul class="connected nav nav-tabs">
       <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href)}'>
