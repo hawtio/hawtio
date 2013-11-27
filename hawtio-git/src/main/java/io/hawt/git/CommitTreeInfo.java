@@ -17,45 +17,60 @@
  */
 package io.hawt.git;
 
-import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.FileMode;
 
 /**
  * Represent part of a commit
  */
 public class CommitTreeInfo {
-    private String mode;
+    private int mode;
     private String path;
     private String name;
     private String id;
+    private long size;
+    private String commitId;
+   	private boolean isParentPath;
+    public DiffEntry.ChangeType changeType;
 
     public CommitTreeInfo() {
     }
 
-    public CommitTreeInfo(FileMode mode, String path, String name, AnyObjectId id) {
-        this.mode = mode.toString();
+    public CommitTreeInfo(String path, String name, long size, int mode, String id, String commitId, DiffEntry.ChangeType changeType) {
         this.path = path;
         this.name = name;
-        this.id = id.getName();
+        this.size = size;
+        this.mode = mode;
+        this.id = id;
+        this.commitId = commitId;
+        this.changeType = changeType;
     }
 
     @Override
     public String toString() {
         return "CommitTreeInfo{" +
-                "mode='" + mode + '\'' +
+                "mode=" + mode +
                 ", path='" + path + '\'' +
                 ", name='" + name + '\'' +
                 ", id='" + id + '\'' +
+                ", size=" + size +
+                ", commitId='" + commitId + '\'' +
+                ", isParentPath=" + isParentPath +
+                ", changeType=" + changeType +
                 '}';
     }
 
-    public String getMode() {
-        return mode;
-    }
+    public boolean isSymlink() {
+   		return FileMode.SYMLINK.equals(mode);
+   	}
 
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
+   	public boolean isSubmodule() {
+   		return FileMode.GITLINK.equals(mode);
+   	}
+
+   	public boolean isTree() {
+   		return FileMode.TREE.equals(mode);
+   	}
 
     public String getPath() {
         return path;
@@ -79,5 +94,45 @@ public class CommitTreeInfo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public void setCommitId(String commitId) {
+        this.commitId = commitId;
+    }
+
+    public boolean isParentPath() {
+        return isParentPath;
+    }
+
+    public void setParentPath(boolean isParentPath) {
+        this.isParentPath = isParentPath;
+    }
+
+    public DiffEntry.ChangeType getChangeType() {
+        return changeType;
+    }
+
+    public void setChangeType(DiffEntry.ChangeType changeType) {
+        this.changeType = changeType;
     }
 }
