@@ -3,7 +3,7 @@ package io.hawt.maven.indexer;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Represents information about an artefact in a repository
+ * Represents information about an artifact in a repository
  */
 public class ArtifactDTO {
     private final String groupId;

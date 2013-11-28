@@ -1,31 +1,11 @@
-/**
- *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.hawt.maven.indexer;
 
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,18 +30,18 @@ public class AsyncMavenIndexerFacadeFactory {
             @Override
             public void run() {
                 try {
-                    LOG.info("Starting to create the MavenIndexerFacade");
+                    LOG.debug("Starting to create the MavenIndexerFacade");
                     createMavenIndexer();
-                    LOG.info("Completed creating the MavenIndexerFacade");
+                    LOG.debug("Completed creating the MavenIndexerFacade");
                 } catch (Exception e) {
                     LOG.error("Failed to create the MavenIndexerFacade: " + e, e);
                 }
             }
         };
         timer.schedule(task, 3000);
-        LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
+        LOG.debug("Started the async timer to create the MavenIndexerFacade after the application starts up");
         if (repositories != null) {
-            LOG.info("Using remote repositories: " + Arrays.asList(repositories));
+            LOG.debug("Using remote repositories: " + Arrays.asList(repositories));
         }
     }
 
