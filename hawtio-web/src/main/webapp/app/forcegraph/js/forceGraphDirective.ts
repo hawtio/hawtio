@@ -99,9 +99,16 @@ module ForceGraph {
                     .attr("width", w)
                     .attr("height", h);
 
-                // The we add the markers for the arrow tips
-                $scope.svg.append("svg:defs").selectAll("marker")
-                    .data($scope.graph.linktypes)
+              // The we add the markers for the arrow tips
+              var linkTypes = null;
+              if ($scope.graph) {
+                linkTypes = $scope.graph.linktypes;
+              }
+              if (!linkTypes) {
+                return;
+              }
+              $scope.svg.append("svg:defs").selectAll("marker")
+                    .data(linkTypes)
                     .enter().append("svg:marker")
                     .attr("id", String)
                     .attr("viewBox", "0 -5 10 10")
