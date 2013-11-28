@@ -36,9 +36,12 @@ module SpringBatch {
                 href: () => "#/springbatch/jobs",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
-
-
         });
+ /*   var underscore = angular.module('angunderscore', []);
+    underscore.factory('_', function() {
+        return window._;
+    });*/
+
 
     hawtioPluginLoader.addModule(pluginName);
 }
