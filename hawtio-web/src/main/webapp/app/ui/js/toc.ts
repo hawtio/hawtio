@@ -75,11 +75,14 @@ module UI {
         }
         var previousHtml = null;
         var html = $element;
+        var contentDiv = $("#toc-content");
+        if (!contentDiv || !contentDiv.length) {
+          contentDiv = $element;
+        }
+
         var linkFilter = $attrs["linkFilter"] || "[hawtio-toc]";
-        log.info("Using link filter: " + linkFilter);
         var htmlName = $attrs["html"];
         if (htmlName) {
-          log.info("Found html attribute " + htmlName);
           var ownerScope = $scope.$parent || $scope;
           ownerScope.$watch(htmlName, () => {
             var htmlText = ownerScope[htmlName];
@@ -116,9 +119,9 @@ module UI {
         $scope.$watch('render', (newValue, oldValue) => {
           if (newValue !== oldValue) {
             if (newValue) {
-              if (!html.next('.hawtio-toc').length) {
+              if (!contentDiv.next('.hawtio-toc').length) {
                 var div = $('<div class="hawtio-toc"></div>');
-                div.appendTo(html);
+                div.appendTo(contentDiv);
 
                 $scope.chapters.forEach((chapter, index) => {
                   log.debug("index:", index);
@@ -137,7 +140,7 @@ module UI {
                   panel.hide().appendTo(div).fadeIn(1000);
                 });
 
-                var pageTop = html.offset().top - offsetTop;
+                var pageTop = contentDiv.offset().top - offsetTop;
 
                 div.find('a.toc-back').each((index, a) => {
                   $(a).click((e) => {
@@ -147,12 +150,17 @@ module UI {
                     }, 2000);
                   })
                 });
+                // TODO should this be html or contentDiv?
                 html.find('a').filter(linkFilter).each((index, a) => {
                   var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
                   $(a).click((e) => {
                     e.preventDefault();
                     var target = '#' + $scope.getTarget(filename);
-                    var top = $(target).offset().top - offsetTop;
+                    var top = 0;
+                    var offset = $(target).offset();
+                    if (offset) {
+                      top = offset.top - offsetTop;
+                    }
                     $('body').animate({
                       scrollTop: top
                     }, 2000);
