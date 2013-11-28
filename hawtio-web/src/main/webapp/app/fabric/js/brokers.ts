@@ -137,6 +137,13 @@ module Fabric {
             };
           });
           if (containerId) {
+            // lets create a container per broker for the N+1 case
+            var brokerContainer = findByIdOrCreate(broker.containers, brokerId + "_" + containerId, maps.container, () => {
+              return brokerStatus;
+            });
+            if (brokerContainer.master) {
+              container.masterTooltip = " is the master for broker: " + brokerId;
+            }
             var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
               return brokerStatus;
             });
