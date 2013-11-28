@@ -62,6 +62,7 @@ module Fabric {
 
     // referenced static data for openshift
     $scope.openShift = {
+      loginDataKey: "openshift.loginData",
       params: null,
       domains: [],
       gearProfiles: [],
@@ -88,6 +89,14 @@ module Fabric {
             Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
               $scope.openShift.gearProfiles = results;
               log.info("found openshift gears: " + $scope.openShift.gearProfiles);
+
+              // now lets store the current settings so they can be defaulted next time without a login
+              savePropertiesInLocalStorage();
+              var loginData = {
+                domains: $scope.openShift.domains,
+                gearProfiles: $scope.openShift.gearProfiles
+              };
+              localStorage[$scope.openShift.loginDataKey] = angular.toJson(loginData);
               Core.$apply($scope);
             });
           }, (error) => {
@@ -138,6 +147,23 @@ module Fabric {
             log.info("Defaulted entity " + key + " to " + localValue + " from localStorage");
           }
         });
+
+        if (providerId === "openshift") {
+          var loginDataText = localStorage[$scope.openShift.loginDataKey];
+          if (loginDataText) {
+            log.info("Loaded openshift login details: " + loginDataText);
+            var loginData = Wiki.parseJson(loginDataText);
+            if (loginData) {
+              angular.forEach(["domains", "gearProfiles"], (key) => {
+                var value = loginData[key];
+                // assume all non-empty arrays for n ow
+                if (value && angular.isArray(value) && value.length) {
+                  $scope.openShift[key] = value;
+                }
+              })
+            }
+          }
+        }
 
         Forms.defaultValues($scope.entity, $scope.schema);
 
@@ -250,22 +276,30 @@ module Fabric {
     $scope.$on('$routeUpdate', $scope.init);
 
 
+    /**
+     * Saves the provider specific properties into localStorage; called on a succesful submit
+     * or on a Login in the form so we remember the last successful login attempt.
+     */
+    function savePropertiesInLocalStorage() {
+      var providerId = $scope.entity['providerType'];
+      // e.g. key = jmxUser, value = fabric.userName
+      //    localStorage['fabric.userName'] = $scope.entity.jmxUser;
+      //    localStorage['fabric.password'] = $scope.entity.jmxPassword;
+      var properties = localStorageProperties[providerId];
+
+      angular.forEach(properties, (value, key) => {
+        var entityValue = $scope.entity[key];
+        if (entityValue) {
+          localStorage[value] = entityValue;
+        }
+      });
+    }
+
     $scope.onSubmit = (json, form) => {
 
       var providerId = $scope.entity['providerType'];
       if (json.saveJmxCredentials || 'child' !== providerId) {
-        // e.g. key = jmxUser, value = fabric.userName
-        //    localStorage['fabric.userName'] = $scope.entity.jmxUser;
-        //    localStorage['fabric.password'] = $scope.entity.jmxPassword;
-        var properties = localStorageProperties[providerId];
-
-        angular.forEach(properties, (value, key) => {
-          var entityValue = $scope.entity[key];
-          if (entityValue) {
-            localStorage[value] = entityValue;
-          }
-        });
-
+        savePropertiesInLocalStorage();
       }
 
       // remove possibly dodgy values if they are blank
