@@ -86,7 +86,6 @@ module UI {
           var ownerScope = $scope.$parent || $scope;
           ownerScope.$watch(htmlName, () => {
             var htmlText = ownerScope[htmlName];
-            log.info("Found html " + htmlText);
             if (htmlText && htmlText !== previousHtml) {
               previousHtml = htmlText;
               var markup = $compile(htmlText)(ownerScope);
@@ -97,6 +96,28 @@ module UI {
           })
         } else {
           loadChapters();
+        }
+
+        // make the link active for the first panel on the view
+        $(window).scroll(setFirstChapterActive);
+
+        function setFirstChapterActive() {
+          // lets find the first panel which is visible...
+          var cutoff = $(window).scrollTop();
+          $element.find("li a").removeClass("active");
+          $('.panel-body').each(function () {
+            var offset = $(this).offset();
+            if (offset && offset.top >= cutoff) {
+              // lets make the related TOC link active
+              var id = $(this).attr("id");
+              if (id) {
+                var link = html.find("a[chapter-id='" + id + "']");
+                link.addClass("active");
+                // stop iterating and just make first one active
+                return false;
+              }
+            }
+          });
         }
 
         function loadChapters() {
@@ -110,10 +131,16 @@ module UI {
             var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
             var item = {
               filename: filename,
-              title: a.textContent
+              title: a.textContent,
+              link: a
             };
             $scope.addChapter(item);
           });
+
+          // TODO this doesn't seem to have any effect ;)
+          setTimeout(() => {
+            setFirstChapterActive();
+          }, 100);
         }
 
         $scope.$watch('render', (newValue, oldValue) => {
@@ -128,10 +155,15 @@ module UI {
                   var panel = $('<div></div>');
                   var panelHeader:any = null;
 
-                  if (index > 0) {
-                    panelHeader = $('<div id="' + $scope.getTarget(chapter['filename']) + '"class="panel-title"><a class="toc-back" href="">Back to Contents</a></div>');
+                  var chapterId = $scope.getTarget(chapter['filename']);
+                  var link = chapter["link"];
+                  if (link) {
+                    link.setAttribute("chapter-id", chapterId);
                   }
-                  var panelBody = $('<div class="panel-body">' + chapter['text'] + '</div>');
+                  if (index > 0) {
+                    panelHeader = $('<div class="panel-title"><a class="toc-back" href="">Back to Contents</a></div>');
+                  }
+                  var panelBody = $('<div class="panel-body" id="' + chapterId + '">' + chapter['text'] + '</div>');
                   if (panelHeader) {
                     panel.append(panelHeader).append(panelBody);
                   } else {

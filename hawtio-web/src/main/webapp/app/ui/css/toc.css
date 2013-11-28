@@ -15,6 +15,10 @@
     border-radius: 6px;
 }
 
+.tocify li a.active {
+    font-weight: bolder;
+}
+
 /* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
 /*
 .tocify ul, .tocify li {
@@ -57,8 +61,8 @@
 }
 
 /* Twitter Bootstrap Override Style */
-.nav-list > li > a, .nav-list .nav-header {
 /*
+.nav-list > li > a, .nav-list .nav-header {
     margin: 0px;
 }
 */
