@@ -155,11 +155,23 @@ module Wiki {
     return start;
   }
 
+  /**
+   * Returns true if the given filename/path is an index page (named index.* and is a markdown/html page).
+   *
+   * @param path
+   * @returns {boolean}
+   */
+  export function isIndexPage(path: string) {
+    return path && (path.endsWith("index.md") || path.endsWith("index.html") || path.endsWith("index")) ? true : false;
+  }
+
   export function viewLink(branch:string, pageId:string, $location, fileName:string = null) {
     var link:string = null;
     var start = startLink(branch);
     if (pageId) {
-      link = start + "/view/" + encodePath(Core.trimLeading(pageId, "/"));
+      // figure out which view to use for this page
+      var view = isIndexPage(pageId) ? "/book/" : "/view/";
+      link = start + view + encodePath(Core.trimLeading(pageId, "/"));
     } else {
       // lets use the current path
       var path:string = $location.path();
