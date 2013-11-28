@@ -1415,4 +1415,21 @@ module Core {
       return lastAnswer;
     }
   }
+
+  /**
+   * Attempts to parse the given JSON text and returns the JSON object structure or null.
+   *Bad JSON is logged at info level.
+   *
+   * @param text a JSON formatted string
+   * @param message description of the thing being parsed logged if its invalid
+   */
+  export function parseJsonText(text: string, message: string = "JSON") {
+    var answer = null;
+    try {
+      answer = angular.fromJson(value);
+    } catch (e) {
+      log.info("Failed to parse " + message + " from: " + value +  ". " + e);
+    }
+    return answer;
+  }
 }
