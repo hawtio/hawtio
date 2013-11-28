@@ -98,6 +98,7 @@ module Core {
 
     var defaults = {
       logCacheSize: 1000,
+      fabricAlwaysPrompt: false,
       fabricEnableMaps: true,
       camelIgnoreIdForLabel: false,
       camelMaximumLabelWidth: Camel.defaultMaximumLabelWidth,
@@ -106,6 +107,7 @@ module Core {
 
     var converters = {
       logCacheSize: parseInt,
+      fabricAlwaysPrompt: parseBooleanValue,
       fabricEnableMaps: parseBooleanValue,
       camelIgnoreIdForLabel: parseBooleanValue,
       camelMaximumLabelWidth: parseInt,
@@ -125,7 +127,7 @@ module Core {
     });
 
     var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
-      "logCacheSize", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
+      "logCacheSize", "fabricAlwaysPrompt",  "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
     angular.forEach(names, (name) => {
