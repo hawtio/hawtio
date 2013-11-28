@@ -30,7 +30,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class Main {
     private Options options;
-    private final boolean joinServerThread = true;
     private boolean welcome = true;
 
     public Main() {
@@ -67,9 +66,9 @@ public class Main {
     }
 
     public void run() throws Exception {
-        run(joinServerThread);
-
+        run(options.isJointServerThread());
     }
+
     public void run(boolean join) throws Exception {
         System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
         Slf4jLog log = new Slf4jLog("jetty");
@@ -195,6 +194,14 @@ public class Main {
 
     public void setExtraClassPath(String extraClassPath) {
         options.setExtraClassPath(extraClassPath);
+    }
+
+    public boolean isJoinServerThread() {
+        return options.isJointServerThread();
+    }
+
+    public void setJoinServerThread(boolean joinServerThread) {
+        options.setJointServerThread(joinServerThread);
     }
 
     public boolean isHelp() {

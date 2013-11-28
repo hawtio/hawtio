@@ -31,6 +31,7 @@ public class Options {
     private Integer port = 8080;
     private String extraClassPath;
     private boolean help;
+    private boolean jointServerThread = true;
 
     private abstract class Option {
         private String abbreviation;
@@ -97,6 +98,12 @@ public class Options {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 help = true;
+            }
+        });
+
+        addOption(new ParameterOption("j", "join", "Join server thread") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                jointServerThread = "true".equalsIgnoreCase(parameter);
             }
         });
 
@@ -240,6 +247,14 @@ public class Options {
 
     public void setExtraClassPath(String extraClassPath) {
         this.extraClassPath = extraClassPath;
+    }
+
+    public boolean isJointServerThread() {
+        return jointServerThread;
+    }
+
+    public void setJointServerThread(boolean jointServerThread) {
+        this.jointServerThread = jointServerThread;
     }
 
     public boolean isHelp() {
