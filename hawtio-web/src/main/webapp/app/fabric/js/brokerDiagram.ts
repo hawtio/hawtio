@@ -10,6 +10,16 @@ module Fabric {
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
     }
 
+    /**
+     * Avoid the JMX type property clashing with the ForceGraph type property; used for associating css classes with nodes on the graph
+     *
+     * @param properties
+     */
+    function renameTypeProperty(properties) {
+      properties.mbeanType = properties['type'];
+      delete properties['type'];
+    }
+
     function onBrokerData(response) {
       if (response) {
         var responseJson = angular.toJson(response.value);
@@ -29,9 +39,9 @@ module Fabric {
         angular.forEach(brokers, (brokerStatus) => {
           // only query master brokers which are provisioned correctly
           brokerStatus.validContainer = brokerStatus.alive && brokerStatus.master && brokerStatus.provisionStatus === "success";
-
+          // don't use type field so we can use it for the node types..
+          renameTypeProperty(brokerStatus);
           log.info("Broker status: " + angular.toJson(brokerStatus, true));
-
           function getOrAddNode(typeName:string, id, properties, createFn) {
             var node = null;
             if (id) {
@@ -142,14 +152,15 @@ module Fabric {
                 container.jolokia = containerJolokia;
 
                 function configureDestinationProperties(properties) {
+                  renameTypeProperty(properties);
                   var destinationType = properties.destinationType || "Queue";
                   var typeName = destinationType.toLowerCase();
                   properties.isQueue = !typeName.startsWith("t");
-                  properties['type'] = typeName;
+                  properties['destType'] = typeName;
                 }
 
                 function getOrAddDestination(properties) {
-                  var typeName = properties['type'];
+                  var typeName = properties.destType
                   var destinationName = properties.destinationName;
                   return getOrAddNode(typeName, destinationName, properties, () => {
                     return {
