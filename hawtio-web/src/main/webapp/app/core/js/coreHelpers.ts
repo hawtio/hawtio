@@ -1426,9 +1426,9 @@ module Core {
   export function parseJsonText(text: string, message: string = "JSON") {
     var answer = null;
     try {
-      answer = angular.fromJson(value);
+      answer = angular.fromJson(text);
     } catch (e) {
-      log.info("Failed to parse " + message + " from: " + value +  ". " + e);
+      log.info("Failed to parse " + message + " from: " + text +  ". " + e);
     }
     return answer;
   }
