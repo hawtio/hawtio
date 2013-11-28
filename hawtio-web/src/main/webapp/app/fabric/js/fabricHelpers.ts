@@ -201,10 +201,16 @@ module Fabric {
         var userName = $scope.connect.userName;
         var password = $scope.connect.password;
         var container = $scope.connect.container;
+        log.info("Logging into container " + container + " with user " + userName);
+
         if ($scope.connect.saveCredentials) {
           $scope.connect.saveCredentials = false;
-          localStorage['fabric.userName'] = userName;
-          localStorage['fabric.password'] = password;
+          if (userName) {
+            localStorage['fabric.userName'] = userName;
+          }
+          if (password) {
+            localStorage['fabric.password'] = password;
+          }
         }
         console.log("Connecting as user " + userName);
         var options =  new Core.ConnectToServerOptions();
@@ -224,7 +230,13 @@ module Fabric {
       $scope.connect.password = localStorage['fabric.password'];
       $scope.connect.container = container;
       $scope.connect.view = view || "/logs";
-      $scope.connect.dialog.open();
+
+      var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
+      if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.userName) {
+        $scope.connect.dialog.open();
+      } else {
+        $scope.connect.onOK();
+      }
     };
 
   }
