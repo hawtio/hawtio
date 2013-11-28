@@ -88,11 +88,7 @@ module Core {
     function parsePerferencesJson(value, key) {
       var answer = null;
       if (angular.isDefined(value)) {
-        try {
-          answer = angular.fromJson(value);
-        } catch (e) {
-          log.info("Failed to parse localStorage value: " + value + " for " + key + ". " + e);
-        }
+        answer = Core.parseJsonText(value, "localStorage for " + key);
       }
       return answer;
     }
