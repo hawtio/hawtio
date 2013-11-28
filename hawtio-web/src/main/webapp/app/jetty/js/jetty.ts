@@ -42,7 +42,6 @@ module Jetty {
       data: 'webapps',
       displayFooter: true,
       selectedItems: $scope.selected,
-      selectWithCheckboxOnly: true,
       columnDefs: columnDefs,
       filterOptions: {
         filterText: ''
