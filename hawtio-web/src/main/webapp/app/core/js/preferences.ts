@@ -81,6 +81,22 @@ module Core {
       $scope.newHost = {};
     };
 
+
+    /**
+     * Parsers the given value as JSON if it is define
+     */
+    function parsePerferencesJson(value, key) {
+      var answer = null;
+      if (angular.isDefined(value)) {
+        try {
+          answer = angular.fromJson(value);
+        } catch (e) {
+          log.info("Failed to parse localStorage value: " + value + " for " + key + ". " + e);
+        }
+      }
+      return answer;
+    }
+
     $scope.$watch('hosts', (oldValue, newValue) => {
       if (!Object.equal(oldValue, newValue)) {
         if (angular.isDefined($scope.hosts)) {
@@ -89,10 +105,7 @@ module Core {
           delete localStorage['regexs'];
         }
       } else {
-        $scope.hosts = {};
-        if (angular.isDefined(localStorage['regexs'])) {
-          $scope.hosts = angular.fromJson(localStorage['regexs']);
-        }
+        $scope.hosts = parsePerferencesJson(localStorage['regexs'], "hosts") || {};
       }
     }, true);
 
