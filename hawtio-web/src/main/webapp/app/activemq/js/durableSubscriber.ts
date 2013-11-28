@@ -24,11 +24,12 @@ module ActiveMQ {
         showColumnMenu: true,
         enableColumnResize: true,
         enableColumnReordering: true,
+        selectWithCheckboxOnly: true,
+        showSelectionCheckbox: true,
+        displaySelectionCheckbox : true, // old pre 2.0 config!
         filterOptions: {
           filterText: ''
         },
-        selectWithCheckboxOnly: false,
-        showSelectionCheckbox: false,
         maintainColumnRatios: false,
         columnDefs: [
           {
@@ -82,17 +83,22 @@ module ActiveMQ {
           }
       };
 
-      $scope.openSubscriberDialog = (subscriber) => {
-          jolokia.request({type: "read", mbean: subscriber.entity._id, attribute:["SubscriptionName"]}, onSuccess( (response) => {
-             $scope.showSubscriberDialog.subscriber = response.value;
+    $scope.openSubscriberDialog = (subscriber) => {
+      jolokia.request({type: "read", mbean: subscriber.entity._id, attribute: ["SubscriptionName"]}, onSuccess((response) => {
+        $scope.showSubscriberDialog.subscriber = response.value;
+        console.log("Subscriber is now " + $scope.showSubscriberDialog.subscriber);
+        Core.$apply($scope);
 
-          }));
+        // now lets start opening the dialog
+        setTimeout(() => {
           $scope.showSubscriberDialog.open();
-      };
+          Core.$apply($scope);
+        }, 100);
+      }));
+    };
 
 
-
-      $scope.$watch('workspace.selection', function () {
+    $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;
 
         // lets defer execution as we may not have the selection just yet
