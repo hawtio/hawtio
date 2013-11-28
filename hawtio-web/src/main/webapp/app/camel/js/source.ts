@@ -21,11 +21,17 @@ module Camel {
     function getSource(routeXmlNode) {
       function removeCrappyHeaders(idx, e) {
         var answer = e.getAttribute("customId");
-        e.removeAttribute("customId");
+        if (e.nodeName === 'route') {
+          // always keep id on <route> element
+          answer = "true";
+        }
         if (!answer || answer !== "true") {
           e.removeAttribute("id");
         }
+        // just always remove customId, _cid, and group
+        e.removeAttribute("customId");
         e.removeAttribute("_cid");
+        e.removeAttribute("group");
       }
       var copy = $(routeXmlNode).clone();
       copy.each(removeCrappyHeaders);
