@@ -143,7 +143,7 @@ module Wiki {
         }
         if (child.path.endsWith(".form")) {
           postFix = "?form=/";
-        } else if (child.path.endsWith("index.md") || child.path.endsWith("index.html") || child.path.endsWith("index")) {
+        } else if (Wiki.isIndexPage(child.path)) {
           // lets default to book view on index pages
           prefix = start + "/book";
         }
