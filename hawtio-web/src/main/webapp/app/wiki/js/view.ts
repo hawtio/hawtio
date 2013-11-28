@@ -143,6 +143,9 @@ module Wiki {
         }
         if (child.path.endsWith(".form")) {
           postFix = "?form=/";
+        } else if (child.path.endsWith("index.md") || child.path.endsWith("index.html") || child.path.endsWith("index")) {
+          // lets default to book view on index pages
+          prefix = start + "/book";
         }
       }
       return Core.createHref($location, prefix + path + postFix, ["form"]);
