@@ -147,6 +147,10 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>Now when you do <strong>Tools</strong> &rarr; <strong>watchTsc</strong> you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.</p>
 
+<p><strong>Note</strong> when you do this you probably want the Run window to just show the latest compile errors (which is usually the last couple of lines).</p>
+
+<p>I spotted a handy tip on <a href="http://youtrack.jetbrains.com/issue/IDEA-74931">this issue</a>, if you move the cursor to the end of the Run window after some compiler output has been generated - pressing keys <em>META</em> + <em>end</em> (which on OS X is the <em>fn</em> and the <em>option/splat</em> keys) then IDEA keeps scrolling to the end of the output automatically; you don't have to then keep pressing the &ldquo;Scroll to end&rdquo; button ;)</p>
+
 <h2 id = "Using_LiveReload">Using LiveReload</h2>
 
 <p>The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!</p>
