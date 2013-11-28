@@ -169,6 +169,16 @@
 
       <strong>Fabric</strong>
       <form class="form-horizontal">
+        <label class="control-label">Always Prompt For User/Password</label>
+        <div class="control-group">
+          <div class="controls">
+            <input type="checkbox" ng-model="fabricAlwaysPrompt">
+            <span class="help-block">Always prompt for the user/password dialog whenever trying to connect to a remote JVM in the console</span>
+          </div>
+        </div>
+      </form>
+
+      <form class="form-horizontal">
         <label class="control-label">Enable Maps</label>
         <div class="control-group">
           <div class="controls">
