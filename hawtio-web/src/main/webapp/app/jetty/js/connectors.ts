@@ -7,7 +7,9 @@ module Jetty {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
+
     $scope.connectors = [];
+    $scope.selected = [];
 
     var columnDefs:any[] = [
       {
@@ -44,17 +46,62 @@ module Jetty {
 
     $scope.gridOptions = {
       data: 'connectors',
-      displayFooter: false,
-      displaySelectionCheckbox: false,
-      canSelectRows: false,
+      displayFooter: true,
+      selectedItems: $scope.selected,
       columnDefs: columnDefs,
       filterOptions: {
         filterText: ''
-      }
+      },
+      title: "Connectors"
     };
+
+
+    // function to control the connectors
+    $scope.controlConnectors = function (op) {
+      // grab id of mbean names to control
+      var mbeanNames = $scope.selected.map(function (b) {
+        return b.mbean
+      });
+      if (!angular.isArray(mbeanNames)) {
+        mbeanNames = [mbeanNames];
+      }
+
+      // execute operation on each mbean
+      var lastIndex = (mbeanNames.length || 1) - 1;
+      angular.forEach(mbeanNames, (mbean, idx) => {
+        var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+        jolokia.request({
+                  type: 'exec',
+                  mbean: mbean,
+                  operation: op,
+                  arguments: null
+                },
+                onSuccess(onResponse, {error: onResponse}));
+      });
+    };
+
+    $scope.stop = function () {
+      $scope.controlConnectors('stop');
+    };
+
+    $scope.start = function () {
+      $scope.controlConnectors('start');
+    };
+
+    $scope.anySelectionIsRunning = () => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.any((s) => s.running);
+    };
+
+    $scope.everySelectionIsRunning = (state) => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.every((s) => s.running);
+    };
+
 
     function render78(response) {
       $scope.connectors = [];
+      $scope.selected.length = 0;
 
       function onAttributes(response) {
         var obj = response.value;
@@ -91,6 +138,7 @@ module Jetty {
 
     function render9(response) {
       $scope.connectors = [];
+      $scope.selected.length = 0;
 
       function onAttributes(response) {
         var obj = response.value;
@@ -99,7 +147,7 @@ module Jetty {
           obj.protocols = obj['protocols'];
           obj.default = obj['defaultProtocol'];
           obj.port = obj.port;
-          obj.running = obj['running'] !== undefined ? obj['running'] : true;
+          obj.running = obj['state'] == "STARTED";
           $scope.connectors.push(obj);
           Core.$apply($scope);
         }
@@ -114,9 +162,14 @@ module Jetty {
     };
 
     // function to trigger reloading page
+    $scope.onLastResponse = function (response) {
+      $scope.onResponse(response);
+      // we only want to force updating the data on the last response
+      loadData();
+    };
+
     $scope.onResponse = function (response) {
       //console.log("got response: " + response);
-      loadData();
     };
 
     $scope.$on('jmxTreeUpdated', reloadFunction);
