@@ -84,6 +84,9 @@ $FILE_PATH$\($LINE$,$COLUMN$\)\:
 
 Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab. If you get a compile error when TypeScript gets recompiled you should get a nice link to the line and column of the error.
 
+**Note** when you do this you probably want the Run window to just show the latest compile errors (which is usually the last couple of lines).
+
+I spotted a handy tip on [this issue](http://youtrack.jetbrains.com/issue/IDEA-74931), if you move the cursor to the end of the Run window after some compiler output has been generated - pressing keys _META_ + _end_ (which on OS X is the _fn_ and the _option/splat_ keys) then IDEA keeps scrolling to the end of the output automatically; you don't have to then keep pressing the "Scroll to end" button ;)
 
 ## Using LiveReload
 
