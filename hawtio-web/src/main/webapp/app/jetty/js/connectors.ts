@@ -27,8 +27,15 @@ module Jetty {
         resizable: true
       },
       {
-        field: 'scheme',
-        displayName: 'Scheme',
+        field: 'protocols',
+        displayName: 'Protocols',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
+        field: 'default',
+        displayName: 'Default',
         cellFilter: null,
         width: "*",
         resizable: true
@@ -46,7 +53,7 @@ module Jetty {
       }
     };
 
-    function render(response) {
+    function render78(response) {
       $scope.connectors = [];
 
       function onAttributes(response) {
@@ -54,20 +61,46 @@ module Jetty {
         if (obj) {
           // split each into 2 rows as we want http and https on each row
           obj.mbean = response.request.mbean;
-          obj.scheme = "http";
+          obj.protocols = "[http]";
+          obj.default = "http";
           obj.port = obj.port;
           obj.running = obj['running'] !== undefined ? obj['running'] : true;
           $scope.connectors.push(obj);
           if (obj.confidentialPort) {
             // create a clone of obj for https
             var copyObj = {
-              scheme: "https",
+              protocols: "[https]",
+              default: "https",
               port: obj.confidentialPort,
               running: obj.running,
               mbean: obj.mbean
             }
             $scope.connectors.push(copyObj);
           }
+          Core.$apply($scope);
+        }
+      }
+
+      // create structure for each response
+      angular.forEach(response, function (value, key) {
+        var mbean = value;
+        jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
+      });
+      Core.$apply($scope);
+    };
+
+    function render9(response) {
+      $scope.connectors = [];
+
+      function onAttributes(response) {
+        var obj = response.value;
+        if (obj) {
+          obj.mbean = response.request.mbean;
+          obj.protocols = obj['protocols'];
+          obj.default = obj['defaultProtocol'];
+          obj.port = obj.port;
+          obj.running = obj['running'] !== undefined ? obj['running'] : true;
+          $scope.connectors.push(obj);
           Core.$apply($scope);
         }
       }
@@ -100,7 +133,8 @@ module Jetty {
       console.log("Loading Jetty connector data...");
       var tree = workspace.tree;
 
-      jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render));
+      jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
+      jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
     }
 
   }
