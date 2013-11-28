@@ -21,7 +21,7 @@
     }
 
     rect.graphbox {
-        fill: #DDD;
+        fill: #FFF;
     }
 
     rect.graphbox.frame {
@@ -29,12 +29,18 @@
         stroke-width: 2px
     }
 
+
+    /*
+
+/*
     path.link {
         fill: none;
         stroke: #666;
         stroke-width: 1.5px;
     }
+*/
 
+/*
     path.link.group {
     }
 
@@ -45,7 +51,9 @@
     path.link.container {
         stroke-dasharray: 0,2 1;
     }
+*/
 
+/*
     circle {
         fill: #black;
     }
@@ -72,7 +80,114 @@
         stroke-width: 3px;
         stroke-opacity: .8;
     }
+*/
 
+
+
+
+
+/* only things directly related to the network graph should be here */
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+marker#brokerMaster {
+  stroke: red;
+  fill: red;
+  stroke-width: 1.5px;
+}
+
+circle.brokerMaster {
+	fill: #0c0;
+}
+circle.notActive {
+	fill: #c00;
+}
+
+
+path.link.group {
+  stroke: #ccc;
+}
+marker#group {
+  stroke: #ccc;
+  fill: #ccc;
+}
+circle.group {
+  fill: #eee;
+  stroke: #ccc;
+}
+
+circle.destination {
+  fill: #bbb;
+  stroke: #ccc;
+}
+
+circle.pinned {
+  stroke-width: 4.5px;
+}
+
+path.link.profile {
+  stroke-dasharray: 0,2 1;
+  stroke: #888;
+}
+
+
+marker#container {
+}
+circle.container {
+  stroke-dasharray: 0,2 1;
+  stroke: #888;
+}
+path.link.container {
+  stroke-dasharray: 0,2 1;
+  stroke: #888;
+}
+
+
+circle {
+	fill: #ccc;
+	stroke: #333;
+	stroke-width: 1.5px;
+	cursor: pointer;
+}
+
+circle.closeMode {
+	cursor: crosshair;
+}
+
+path.link.destination {
+  stroke: #ccc;
+}
+
+path.link.producer {
+  stroke: #ccc;
+}
+
+path.link.consumer {
+  stroke: #ccc;
+}
+
+
+circle.hilited {
+  stroke-width: 3px;
+}
+.hilited {
+  stroke-width: 3px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
 </style>
 
 
