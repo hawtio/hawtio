@@ -9,6 +9,7 @@ module ActiveMQ {
 
       $scope.createSubscriberDialog = new Core.Dialog();
       $scope.deleteSubscriberDialog = new Core.Dialog();
+      $scope.showSubscriberDialog = new Core.Dialog();
 
       $scope.topicName = '';
       $scope.clientId = '';
@@ -26,7 +27,7 @@ module ActiveMQ {
         filterOptions: {
           filterText: ''
         },
-        selectWithCheckboxOnly: true,
+        selectWithCheckboxOnly: false,
         showSelectionCheckbox: false,
         maintainColumnRatios: false,
         columnDefs: [
@@ -38,6 +39,7 @@ module ActiveMQ {
           {
             field: 'consumerId',
             displayName: 'Consumer ID',
+            cellTemplate: '<div class="ngCellText"><a ng-click="openSubscriberDialog(row)">{{row.entity.consumerId}}</a></div>',
             width: '45%'
           },
           {
@@ -79,6 +81,16 @@ module ActiveMQ {
               });
           }
       };
+
+      $scope.openSubscriberDialog = (subscriber) => {
+          jolokia.request({type: "read", mbean: subscriber.entity._id, attribute:["SubscriptionName"]}, onSuccess( (response) => {
+             $scope.showSubscriberDialog.subscriber = response.value;
+
+          }));
+          $scope.showSubscriberDialog.open();
+      };
+
+
 
       $scope.$watch('workspace.selection', function () {
         if (workspace.moveIfViewInvalid()) return;
