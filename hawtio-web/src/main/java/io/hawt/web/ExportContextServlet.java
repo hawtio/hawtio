@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.*;
 
 import static java.lang.System.out;
 /**
@@ -28,15 +29,17 @@ public class ExportContextServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(ExportContextServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
         out.println(" ===================== = jobExecution id ======================== "+httpServletRequest.getParameter("jobExecutionId"));
         String server = httpServletRequest.getParameter("server");
-        String jobExecutionId = httpServletRequest.getParameter("jobExecutionId");
+        String jobExecutionId = httpServletRequest.getParameter("execId");
         String jobStepId = httpServletRequest.getParameter("jobStepId");
+        String key = httpServletRequest.getParameter("key");
 
         out.println("======= server ======= "+server);
         out.println("======= jobExecutionId ======= "+jobStepId);
         out.println("======= jobStepId ======= "+jobStepId);
+        out.println("======= key ======= "+key);
 
         String jsonStringResponse = "Content not available";
         if((server != null && !server.isEmpty())){
@@ -61,9 +64,18 @@ public class ExportContextServlet extends HttpServlet {
                     JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
                     if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
                         JSONObject mapObject = (JSONObject)contextObject.get("map");
+
                         if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONArray)){
                             JSONArray entryObject = (JSONArray)mapObject.get("entry");
-                            out.println("======= entryObject ======= "+entryObject);
+                            JSONObject exportEntry = null;
+                            for(Object o : entryObject){
+                                if (o instanceof JSONObject){
+                                    if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
+                                        out.println("======= selected 2======= " + entryObject);
+                                        exportEntry = (JSONObject)o;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -80,4 +92,14 @@ public class ExportContextServlet extends HttpServlet {
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.txt\"");
         resp.getWriter().println(jsonStringResponse);
     }
+
+
 }
+
+/*
+* SOURCE_DATA
+* key:TARGET_DATA
+* ERROR_MESSAGES
+*
+* executionId :
+* */

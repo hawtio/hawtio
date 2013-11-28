@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.management.AttributeNotFoundException;
 import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * @author Stan Lewis
@@ -38,5 +39,42 @@ public class ServletHelpers {
         } else {
             writeEmpty(out);
         }
+    }
+
+    public static Map populateTableMapForXl(List listEntry) {
+        listEntry = flatten(listEntry);
+        Map xlData = new HashMap();
+        List columns=null;
+        List rowsData = new ArrayList();
+
+        return null;
+    }
+
+    public static List flatten(List list){
+        List tempList = new ArrayList();
+        for(Object o : list){
+            if (o instanceof Collection){
+                tempList.addAll((Collection)o);
+            }else tempList.add(o);
+        }
+        return tempList;
+    }
+
+    public static Set flatten(Set set){
+        Set tempSet = new HashSet();
+        for(Object o : tempSet){
+            if (o instanceof Collection){
+                tempSet.addAll((Collection)o);
+            }else tempSet.add(o);
+        }
+        return tempSet;
+    }
+
+    public static String removeNoisyString(Object value) {
+        String string = "";
+        if (value != null) {
+            string = (value.toString().contains("@reference")) ?"":value.toString();
+        }
+        return string;
     }
 }
