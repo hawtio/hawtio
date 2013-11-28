@@ -134,12 +134,12 @@
         </otherwise>
       </choice>
     </onException>
-    <route id="route1">
+    <route>
       <from uri="timer://purgeTimer?period=900000"/>
       <log loggingLevel="INFO" logName="test" message="testPing..."/>
       <to uri="direct:e"/>
     </route>
-    <route id="route2">
+    <route>
       <from uri="direct:b"/>
       <log loggingLevel="INFO" logName="test" message="direct:b"/>
     </route>
