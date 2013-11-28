@@ -7,7 +7,9 @@ module Jetty {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
+
     $scope.connectors = [];
+    $scope.selected = [];
 
     var columnDefs:any[] = [
       {
@@ -27,8 +29,15 @@ module Jetty {
         resizable: true
       },
       {
-        field: 'scheme',
-        displayName: 'Scheme',
+        field: 'protocols',
+        displayName: 'Protocols',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
+        field: 'default',
+        displayName: 'Default',
         cellFilter: null,
         width: "*",
         resizable: true
@@ -37,31 +46,78 @@ module Jetty {
 
     $scope.gridOptions = {
       data: 'connectors',
-      displayFooter: false,
-      displaySelectionCheckbox: false,
-      canSelectRows: false,
+      displayFooter: true,
+      selectedItems: $scope.selected,
       columnDefs: columnDefs,
       filterOptions: {
         filterText: ''
-      }
+      },
+      title: "Connectors"
     };
 
-    function render(response) {
+
+    // function to control the connectors
+    $scope.controlConnectors = function (op) {
+      // grab id of mbean names to control
+      var mbeanNames = $scope.selected.map(function (b) {
+        return b.mbean
+      });
+      if (!angular.isArray(mbeanNames)) {
+        mbeanNames = [mbeanNames];
+      }
+
+      // execute operation on each mbean
+      var lastIndex = (mbeanNames.length || 1) - 1;
+      angular.forEach(mbeanNames, (mbean, idx) => {
+        var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+        jolokia.request({
+                  type: 'exec',
+                  mbean: mbean,
+                  operation: op,
+                  arguments: null
+                },
+                onSuccess(onResponse, {error: onResponse}));
+      });
+    };
+
+    $scope.stop = function () {
+      $scope.controlConnectors('stop');
+    };
+
+    $scope.start = function () {
+      $scope.controlConnectors('start');
+    };
+
+    $scope.anySelectionIsRunning = () => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.any((s) => s.running);
+    };
+
+    $scope.everySelectionIsRunning = (state) => {
+      var selected = $scope.selected || [];
+      return selected.length && selected.every((s) => s.running);
+    };
+
+
+    function render78(response) {
       $scope.connectors = [];
+      $scope.selected.length = 0;
 
       function onAttributes(response) {
         var obj = response.value;
         if (obj) {
           // split each into 2 rows as we want http and https on each row
           obj.mbean = response.request.mbean;
-          obj.scheme = "http";
+          obj.protocols = "[http]";
+          obj.default = "http";
           obj.port = obj.port;
           obj.running = obj['running'] !== undefined ? obj['running'] : true;
           $scope.connectors.push(obj);
           if (obj.confidentialPort) {
             // create a clone of obj for https
             var copyObj = {
-              scheme: "https",
+              protocols: "[https]",
+              default: "https",
               port: obj.confidentialPort,
               running: obj.running,
               mbean: obj.mbean
@@ -80,10 +136,40 @@ module Jetty {
       Core.$apply($scope);
     };
 
+    function render9(response) {
+      $scope.connectors = [];
+      $scope.selected.length = 0;
+
+      function onAttributes(response) {
+        var obj = response.value;
+        if (obj) {
+          obj.mbean = response.request.mbean;
+          obj.protocols = obj['protocols'];
+          obj.default = obj['defaultProtocol'];
+          obj.port = obj.port;
+          obj.running = obj['state'] == "STARTED";
+          $scope.connectors.push(obj);
+          Core.$apply($scope);
+        }
+      }
+
+      // create structure for each response
+      angular.forEach(response, function (value, key) {
+        var mbean = value;
+        jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
+      });
+      Core.$apply($scope);
+    };
+
     // function to trigger reloading page
+    $scope.onLastResponse = function (response) {
+      $scope.onResponse(response);
+      // we only want to force updating the data on the last response
+      loadData();
+    };
+
     $scope.onResponse = function (response) {
       //console.log("got response: " + response);
-      loadData();
     };
 
     $scope.$on('jmxTreeUpdated', reloadFunction);
@@ -100,7 +186,8 @@ module Jetty {
       console.log("Loading Jetty connector data...");
       var tree = workspace.tree;
 
-      jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render));
+      jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
+      jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
     }
 
   }
