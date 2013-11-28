@@ -40,16 +40,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -145,8 +137,12 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     }
 
     public void downloadOrUpdateIndices() throws IOException {
-        LOG.info("Updating the maven indices. This may take a while, please be patient...");
         Set<Map.Entry<String, IndexingContext>> entries = indexContexts.entrySet();
+
+        if (!entries.isEmpty()) {
+            LOG.info("Updating the maven indices. This may take a while, please be patient...");
+        }
+
         for (Map.Entry<String, IndexingContext> entry : entries) {
             final String contextId = entry.getKey();
             IndexingContext context = entry.getValue();
@@ -154,14 +150,14 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
 
             TransferListener listener = new AbstractTransferListener() {
                 public void transferStarted(TransferEvent transferEvent) {
-                    LOG.info(contextId + ": Downloading " + transferEvent.getResource().getName());
+                    LOG.debug(contextId + ": Downloading " + transferEvent.getResource().getName());
                 }
 
                 public void transferProgress(TransferEvent transferEvent, byte[] buffer, int length) {
                 }
 
                 public void transferCompleted(TransferEvent transferEvent) {
-                    LOG.info(contextId + ": Download complete");
+                    LOG.debug(contextId + ": Download complete");
                 }
             };
             ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
@@ -169,15 +165,19 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
             IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
             IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
             if (updateResult.isFullUpdate()) {
-                LOG.info(contextId + ": Full index update completed on index");
+                LOG.debug(contextId + ": Full index update completed on index");
             } else {
                 Date timestamp = updateResult.getTimestamp();
                 if (timestamp != null && timestamp.equals(contextTime)) {
-                    LOG.info(contextId + ": No index update needed, index is up to date!");
+                    LOG.debug(contextId + ": No index update needed, index is up to date!");
                 } else {
-                    LOG.info(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
+                    LOG.debug(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
                 }
             }
+        }
+
+        if (!entries.isEmpty()) {
+            LOG.info("Completed updating {} maven indices.", entries.size());
         }
     }
 
