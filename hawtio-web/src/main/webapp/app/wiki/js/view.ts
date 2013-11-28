@@ -11,7 +11,7 @@ module Wiki {
     }, 100);
   }
 
-  export function ViewController($scope, $location, $routeParams, $http, $timeout, workspace:Workspace,
+  export function ViewController($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace,
                                  marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache) {
 
     var log:Logging.Logger = Logger.get("Wiki");
@@ -37,6 +37,12 @@ module Wiki {
       exists: false,
       name: ""
     };
+
+    // bind filter model values to search params...
+    Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
+
+    // only reload the page if certain search parameters change
+    Core.reloadWhenParametersChange($route, $scope, $location);
 
     $scope.gridOptions = {
       data: 'children',

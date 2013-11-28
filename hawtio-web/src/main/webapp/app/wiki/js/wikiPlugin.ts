@@ -14,9 +14,9 @@ module Wiki {
             // allow optional branch paths...
             angular.forEach(["", "/branch/:branch"], (path) => {
               $routeProvider.
-                      when('/wiki' + path + '/view', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                      when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html'}).
-                      when('/wiki' + path + '/book/*page', {templateUrl: 'app/wiki/html/viewBook.html'}).
+                      when('/wiki' + path + '/view', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
+                      when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
+                      when('/wiki' + path + '/book/*page', {templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false}).
                       when('/wiki' + path + '/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
                       when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
                       when('/wiki' + path + '/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
@@ -30,7 +30,7 @@ module Wiki {
             });
 
             $routeProvider.
-                    when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
+                    when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
                     when('/wiki/history/*page', {templateUrl: 'app/wiki/html/history.html'});
           }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {

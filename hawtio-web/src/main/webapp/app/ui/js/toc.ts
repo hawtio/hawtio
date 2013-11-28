@@ -79,11 +79,12 @@ module UI {
         if (!contentDiv || !contentDiv.length) {
           contentDiv = $element;
         }
+        var ownerScope = $scope.$parent || $scope;
+        var scrollDuration = 1000;
 
         var linkFilter = $attrs["linkFilter"] || "[hawtio-toc]";
         var htmlName = $attrs["html"];
         if (htmlName) {
-          var ownerScope = $scope.$parent || $scope;
           ownerScope.$watch(htmlName, () => {
             var htmlText = ownerScope[htmlName];
             if (htmlText && htmlText !== previousHtml) {
@@ -150,6 +151,9 @@ module UI {
                 var div = $('<div class="hawtio-toc"></div>');
                 div.appendTo(contentDiv);
 
+                var selectedChapter = $location.search()["chapter"];
+
+                // lets load the chapter panels
                 $scope.chapters.forEach((chapter, index) => {
                   log.debug("index:", index);
                   var panel = $('<div></div>');
@@ -170,6 +174,11 @@ module UI {
                     panel.append(panelBody);
                   }
                   panel.hide().appendTo(div).fadeIn(1000);
+
+                  if (chapterId === selectedChapter) {
+                    // lets scroll on startup to allow for bookmarking
+                    scrollToChapter(chapterId);
+                  }
                 });
 
                 var pageTop = contentDiv.offset().top - offsetTop;
@@ -182,27 +191,57 @@ module UI {
                     }, 2000);
                   })
                 });
-                // TODO should this be html or contentDiv?
+
+                // handle clicking links in the TOC
                 html.find('a').filter(linkFilter).each((index, a) => {
-                  var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
+                  var href = a.href;
+                  var filename = $scope.getFilename(href, a.getAttribute('file-extension'));
                   $(a).click((e) => {
                     e.preventDefault();
-                    var target = '#' + $scope.getTarget(filename);
-                    var top = 0;
-                    var offset = $(target).offset();
-                    if (offset) {
-                      top = offset.top - offsetTop;
-                    }
-                    $('body').animate({
-                      scrollTop: top
-                    }, 2000);
+                    var chapterId = $scope.getTarget(filename);
+                    $location.search("chapter", chapterId);
+                    Core.$apply(ownerScope);
+                    scrollToChapter(chapterId);
                     return true;
                   });
-                })
+                });
               }
             }
           }
         });
+
+        // watch for back / forward / url changes
+        ownerScope.$on("$locationChangeSuccess", function (event, current, previous) {
+          // lets do this asynchronously to avoid Error: $digest already in progress
+          setTimeout(() => {
+            // lets check if the chapter selection has changed
+            var currentChapter = $location.search()["chapter"];
+            scrollToChapter(currentChapter);
+          }, 50);
+        });
+
+        /**
+         * Lets scroll to the given chapter ID
+         *
+         * @param chapterId
+         */
+        function scrollToChapter(chapterId) {
+          log.debug("selected chapter changed: " + chapterId);
+          if (chapterId) {
+            var target = '#' + chapterId;
+            var top = 0;
+            var targetElements = $(target);
+            if (targetElements.length) {
+              var offset = targetElements.offset();
+              if (offset) {
+                top = offset.top - offsetTop;
+              }
+              $('body').animate({
+                scrollTop: top
+              }, scrollDuration);
+            }
+          }
+        }
       }
     }
   }
