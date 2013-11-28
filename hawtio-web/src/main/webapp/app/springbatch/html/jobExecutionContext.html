@@ -16,13 +16,33 @@
             <td>{{jobExecutionContext.jobExecutionId}}</td>
             <td>
                 <div class="row-fluid">
-                    <div class="span11">{{jobExecutionContext.context}}</div>
-                    <div class="span1">
-                        <form action="/hawtio/exportContext" method="POST">
-                            <input type="hidden" name="jobExecutionId" value="{{jobExecutionContext.jobExecutionId}}">
-                            <input type="hidden" name="server" value="{{springBatchServer}}">
-                            <input type="submit" value="Export" class="btn btn-info">
-                        </form>
+                    <div class="span10">{{jobExecutionContext.context}}</div>
+                    <div class="span2">
+                        <div class="pull-left" >
+                            <div class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Export
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=SOURCE_DATA&execId={{jobExecutionContext.jobExecutionId}}">
+                                            SOURCE_DATA
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=TARGET_DATA&execId={{jobExecutionContext.jobExecutionId}}">
+                                            TARGET_DATA
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=ERROR_MESSAGES&execId={{jobExecutionContext.jobExecutionId}}">
+                                            ERROR_MESSAGES
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </td>
