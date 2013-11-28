@@ -7,6 +7,14 @@ module ActiveMQ {
 
       $scope.tempData = [];
 
+      $scope.createSubscriberDialog = new Core.Dialog();
+      $scope.deleteSubscriberDialog = new Core.Dialog();
+
+      $scope.topicName = '';
+      $scope.clientId = '';
+      $scope.subscriberName = '';
+      $scope.subSelector = '';
+
       $scope.gridOptions = {
         selectedItems: [],
         data: 'durableSubscribers',
@@ -19,7 +27,7 @@ module ActiveMQ {
           filterText: ''
         },
         selectWithCheckboxOnly: true,
-        showSelectionCheckbox: true,
+        showSelectionCheckbox: false,
         maintainColumnRatios: false,
         columnDefs: [
           {
@@ -38,6 +46,38 @@ module ActiveMQ {
             width: '10%'
           }
         ]
+      };
+
+      $scope.doCreateSubscriber = (clientId, subscriberName, topicName, subSelector) => {
+          $scope.createSubscriberDialog.close();
+          $scope.clientId = clientId;
+          $scope.subscriberName = subscriberName;
+          $scope.topicName = topicName;
+          $scope.subSelector = subSelector;
+          var mbean = getBrokerMBean(jolokia);
+          if (mbean) {
+              jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function() {
+                  notification('success', "Created durable subscriber " + clientId);
+                  $scope.clientId = '';
+                  $scope.subscriberName = '';
+                  $scope.topicName = '';
+                  $scope.subSelector = '';
+                  loadTable();
+              }));
+          } else {
+              notification("error", "Could not find the Broker MBean!");
+          }
+      }
+
+      $scope.deleteSubscribers = () => {
+          var selection = workspace.selection;
+          var mbean = selection.objectName;
+          if (mbean && selection) {
+              var selectedItems = $scope.gridOptions.selectedItems;
+              angular.forEach(selectedItems, (item, idx) => {
+                  alert("deleting " + item.clientId);
+              });
+          }
       };
 
       $scope.$watch('workspace.selection', function () {
