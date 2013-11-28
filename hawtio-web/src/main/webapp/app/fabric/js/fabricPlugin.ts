@@ -27,6 +27,7 @@ module Fabric {
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
+            when('/fabric/mq/brokerDiagram', { templateUrl: templatePath + 'brokerDiagram.html' }).
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
             when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/api', { templateUrl: templatePath + 'apis.html' }).

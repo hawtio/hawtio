@@ -1,0 +1,119 @@
+<style type="text/css">
+
+    div#pop-up {
+        display: none;
+        position:absolute;
+        color: white;
+        font-size: 14px;
+        background: rgba(0,0,0,0.6);
+        padding: 5px 10px 5px 10px;
+        -moz-border-radius: 8px 8px;
+        border-radius: 8px 8px;
+    }
+
+    div#pop-up-title {
+        font-size: 15px;
+        margin-bottom: 4px;
+        font-weight: bolder;
+    }
+    div#pop-up-content {
+        font-size: 12px;
+    }
+
+    rect.graphbox {
+        fill: #DDD;
+    }
+
+    rect.graphbox.frame {
+        stroke: #222;
+        stroke-width: 2px
+    }
+
+    path.link {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+    }
+
+    path.link.group {
+    }
+
+    path.link.broker {
+        stroke: #444;
+    }
+
+    path.link.container {
+        stroke-dasharray: 0,2 1;
+    }
+
+    circle {
+        fill: #black;
+    }
+
+    circle.service {
+        fill: blue;
+    }
+
+    circle.bundle {
+        fill: black;
+    }
+
+    circle.package {
+        fill: gray;
+    }
+
+    text {
+        font: 10px sans-serif;
+        pointer-events: none;
+    }
+
+    text.shadow {
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-opacity: .8;
+    }
+
+</style>
+
+
+<div class="row-fluid mq-page" ng-controller="Fabric.FabricBrokerDiagramController">
+
+  <div ng-hide="inDashboard" class="span12 page-padded">
+    <div class="section-header">
+
+      <div class="section-filter">
+        <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
+        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+      </div>
+
+      <div class="section-controls">
+        <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the broker and container diagram">
+          <i class="icon-edit"></i> Configuration
+        </a>
+        <a href="" title="Create a new broker configuration" ng-click="createBroker(null)">
+          <i class="icon-plus"></i> Broker
+        </a>
+        <a href="" title="Create a new container" ng-click="createContainer()">
+          <i class="icon-plus"></i> Container
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="pop-up">
+    <div id="pop-up-title"></div>
+    <div id="pop-up-content"></div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="span12 canvas">
+      <div hawtio-force-graph graph="graph" link-distance="100" charge="-300" nodesize="10" style="min-height: 800px"></div>
+    </div>
+  </div>
+
+  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
+
+</div>
+
+
