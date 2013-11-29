@@ -1,5 +1,7 @@
 module ForceGraph {
 
+  var log:Logging.Logger = Logger.get("ForceGraph");
+
   export class ForceGraphDirective {
 
     public restrict = 'A';
@@ -174,6 +176,10 @@ module ForceGraph {
               return d.navUrl;
             });
 
+          function hasImage(d) {
+            return d.image && d.image.url;
+          }
+
           // Add the images if they are set
           $scope.graphNodes.filter((d) => {
             return d.image != null;
@@ -196,9 +202,7 @@ module ForceGraph {
             });
 
           // if we don't have an image add a circle
-          $scope.graphNodes.filter((d) => {
-            return d.image == null;
-          })
+          $scope.graphNodes.filter((d) => !hasImage(d))
             .append("circle")
             .attr("class", (d) => {
               return d.type;
