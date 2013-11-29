@@ -10,16 +10,23 @@ module Fabric {
       slave: true,
       broker: true,
       container: false,
+      queue: true,
+      topic: true,
       consumer: true,
       producer: true
     };
 
     var graphBuilder = new ForceGraph.GraphBuilder();
 
+    angular.forEach($scope.showFlags, (value, key) => {
+      var watch = "showFlags." + key;
+      log.info("Watching " + watch);
+      $scope.$watch(watch, redrawGraph);
+    });
+
     if (Fabric.hasMQManager) {
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
     }
-
 
     function onBrokerData(response) {
       if (response) {
@@ -30,113 +37,116 @@ module Fabric {
 
         $scope.responseJson = responseJson;
 
-        var brokers = response.value;
-
-        $scope.groups = [];
-
-        var containersToDelete = $scope.activeContainers || {};
-        $scope.activeContainers = {};
-
-        angular.forEach(brokers, (brokerStatus) => {
-          // only query master brokers which are provisioned correctly
-          brokerStatus.validContainer = brokerStatus.alive && brokerStatus.master && brokerStatus.provisionStatus === "success";
-          // don't use type field so we can use it for the node types..
-          renameTypeProperty(brokerStatus);
-          log.info("Broker status: " + angular.toJson(brokerStatus, true));
-
-          var groupId = brokerStatus.group;
-          var profileId = brokerStatus.profile;
-          var brokerId = brokerStatus.brokerName;
-          var containerId = brokerStatus.container;
-          var versionId = brokerStatus.version || "1.0";
-
-          var group = getOrAddNode("group", groupId, brokerStatus, () => {
-            return {
-              /*
-               navUrl: ,
-               image: {
-               url: "/hawtio/app/osgi/img/bundle.png",
-               width: 32,
-               height:32
-               },
-               */
-              popup: {
-                title: "Broker Group: " + groupId,
-                content: "<p>" + groupId + "</p>"
-              }
-            };
-          });
-
-          var profile = getOrAddNode("profile", profileId, brokerStatus, () => {
-            return {
-              popup: {
-                title: "Profile: " + profileId,
-                content: "<p>" + profileId + "</p>"
-              }
-            };
-          });
-          var master = brokerStatus.master;
-          var broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
-            return {
-              type: master ? "brokerMaster" : "broker",
-              popup: {
-                title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
-              }
-            };
-          });
-
-          // TODO do we need to create a physical broker node per container and logical broker maybe?
-          var container = getOrAddNode("container", containerId, brokerStatus, () => {
-            return {
-              containerId: containerId,
-              popup: {
-                title: "Container: " + containerId,
-                content: "<p>" + containerId + " version: " + versionId + "</p>"
-              }
-            };
-          });
-
-
-          if (container && container.validContainer) {
-            var key = container.containerId;
-            $scope.activeContainers[key] = container;
-            delete containersToDelete[key];
-          }
-
-          // add the links...
-          if ($scope.showFlags.group) {
-            if ($scope.showFlags.profile) {
-              addLink(group, profile, "group");
-              addLink(profile, broker, "broker");
-            } else {
-              addLink(group, broker, "group");
-            }
-          } else {
-            if ($scope.showFlags.profile) {
-              addLink(profile, broker, "broker");
-            }
-          }
-          if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
-            addLink(broker, container, "container");
-            container.destinationLinkNode = container;
-          } else {
-            container.destinationLinkNode = broker;
-          }
-        });
-
-        // TODO delete any nodes from dead containers in containersToDelete
-        angular.forEach($scope.activeContainers, (container, id) => {
-          var containerJolokia = container.jolokia;
-          if (containerJolokia) {
-            onContainerJolokia(containerJolokia, container, id);
-          } else {
-            Fabric.containerJolokia(jolokia, id, (containerJolokia) => onContainerJolokia(containerJolokia, container, id));
-          }
-        });
-        $scope.graph = graphBuilder.buildGraph();
-        Core.$apply($scope);
+        $scope.brokers = response.value;
+        redrawGraph();
       }
+    }
+
+    function redrawGraph() {
+      graphBuilder = new ForceGraph.GraphBuilder();
+
+      var containersToDelete = $scope.activeContainers || {};
+      $scope.activeContainers = {};
+
+      angular.forEach($scope.brokers, (brokerStatus) => {
+        // only query master brokers which are provisioned correctly
+        brokerStatus.validContainer = brokerStatus.alive && brokerStatus.master && brokerStatus.provisionStatus === "success";
+        // don't use type field so we can use it for the node types..
+        renameTypeProperty(brokerStatus);
+        log.info("Broker status: " + angular.toJson(brokerStatus, true));
+
+        var groupId = brokerStatus.group;
+        var profileId = brokerStatus.profile;
+        var brokerId = brokerStatus.brokerName;
+        var containerId = brokerStatus.container;
+        var versionId = brokerStatus.version || "1.0";
+
+        var group = getOrAddNode("group", groupId, brokerStatus, () => {
+          return {
+            /*
+             navUrl: ,
+             image: {
+             url: "/hawtio/app/osgi/img/bundle.png",
+             width: 32,
+             height:32
+             },
+             */
+            popup: {
+              title: "Broker Group: " + groupId,
+              content: "<p>" + groupId + "</p>"
+            }
+          };
+        });
+
+        var profile = getOrAddNode("profile", profileId, brokerStatus, () => {
+          return {
+            popup: {
+              title: "Profile: " + profileId,
+              content: "<p>" + profileId + "</p>"
+            }
+          };
+        });
+        var master = brokerStatus.master;
+        var broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
+          return {
+            type: master ? "brokerMaster" : "broker",
+            popup: {
+              title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
+              content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
+            }
+          };
+        });
+
+        // TODO do we need to create a physical broker node per container and logical broker maybe?
+        var container = getOrAddNode("container", containerId, brokerStatus, () => {
+          return {
+            containerId: containerId,
+            popup: {
+              title: "Container: " + containerId,
+              content: "<p>" + containerId + " version: " + versionId + "</p>"
+            }
+          };
+        });
+
+
+        if (container && container.validContainer) {
+          var key = container.containerId;
+          $scope.activeContainers[key] = container;
+          delete containersToDelete[key];
+        }
+
+        // add the links...
+        if ($scope.showFlags.group) {
+          if ($scope.showFlags.profile) {
+            addLink(group, profile, "group");
+            addLink(profile, broker, "broker");
+          } else {
+            addLink(group, broker, "group");
+          }
+        } else {
+          if ($scope.showFlags.profile) {
+            addLink(profile, broker, "broker");
+          }
+        }
+        if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
+          addLink(broker, container, "container");
+          container.destinationLinkNode = container;
+        } else {
+          container.destinationLinkNode = broker;
+        }
+      });
+
+      // TODO delete any nodes from dead containers in containersToDelete
+      angular.forEach($scope.activeContainers, (container, id) => {
+        var containerJolokia = container.jolokia;
+        if (containerJolokia) {
+          onContainerJolokia(containerJolokia, container, id);
+        } else {
+          Fabric.containerJolokia(jolokia, id, (containerJolokia) => onContainerJolokia(containerJolokia, container, id));
+        }
+      });
+      $scope.graph = graphBuilder.buildGraph();
+      Core.$apply($scope);
     }
 
     function onContainerJolokia(containerJolokia, container, id) {
@@ -260,10 +270,10 @@ module Fabric {
             // lets not add nodes which are defined as being disabled
             var enabled = $scope.showFlags[typeName];
             if (enabled || !angular.isDefined(enabled)) {
-              log.info("Adding node " + nodeId  + " of type + " + typeName);
+              log.info("Adding node " + nodeId + " of type + " + typeName);
               graphBuilder.addNode(node);
             } else {
-              log.info("Ignoring node " + nodeId  + " of type + " + typeName);
+              log.info("Ignoring node " + nodeId + " of type + " + typeName);
             }
           }
         }
