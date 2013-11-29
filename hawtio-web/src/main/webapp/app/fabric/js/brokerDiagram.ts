@@ -24,6 +24,10 @@ module Fabric {
       $scope.$watch(watch, redrawGraph);
     });
 
+    $scope.$watch("searchFilter", (newValue, oldValue) => {
+      redrawGraph();
+    });
+
     if (Fabric.hasMQManager) {
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
     }
@@ -156,6 +160,9 @@ module Fabric {
         function getOrAddDestination(properties) {
           var typeName = properties.destType
           var destinationName = properties.destinationName;
+          if (!destinationName || ($scope.searchFilter && destinationName.indexOf($scope.searchFilter) < 0)) {
+            return null;
+          }
           return getOrAddNode(typeName, destinationName, properties, () => {
             return {
               popup: {
@@ -179,16 +186,18 @@ module Fabric {
                   var consumerId = properties.consumerId;
                   if (consumerId) {
                     var destination = getOrAddDestination(properties);
-                    addLink(container.destinationLinkNode, destination, "destination");
-                    var consumer = getOrAddNode("consumer", consumerId, properties, () => {
-                      return {
-                        popup: {
-                          title: "Consumer: " + consumerId,
-                          content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
-                        }
-                      };
-                    });
-                    addLink(destination, consumer, "consumer");
+                    if (destination) {
+                      addLink(container.destinationLinkNode, destination, "destination");
+                      var consumer = getOrAddNode("consumer", consumerId, properties, () => {
+                        return {
+                          popup: {
+                            title: "Consumer: " + consumerId,
+                            content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                          }
+                        };
+                      });
+                      addLink(destination, consumer, "consumer");
+                    }
                   }
                 }
               }
@@ -222,16 +231,18 @@ module Fabric {
                         destinationProperties.destType = "topic";
                       }
                       var destination = getOrAddDestination(destinationProperties);
-                      addLink(container.destinationLinkNode, destination, "destination");
-                      var producer = getOrAddNode("producer", producerId, properties, () => {
-                        return {
-                          popup: {
-                            title: "Producer: " + producerId,
-                            content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
-                          }
-                        };
-                      });
-                      addLink(producer, destination, "producer");
+                      if (destination) {
+                        addLink(container.destinationLinkNode, destination, "destination");
+                        var producer = getOrAddNode("producer", producerId, properties, () => {
+                          return {
+                            popup: {
+                              title: "Producer: " + producerId,
+                              content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                            }
+                          };
+                        });
+                        addLink(producer, destination, "producer");
+                      }
                       graphModelUpdated();
                     }));
                   }
