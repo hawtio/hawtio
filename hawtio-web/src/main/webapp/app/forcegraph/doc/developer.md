@@ -86,6 +86,7 @@ Below is an example to build a bundle node within the OSGI dependency viewer:
             name: bundle.SymbolicName,
             type: "bundle",
             navUrl: "#/osgi/bundle/" + bundle.Identifier,
+            size: 20,
             image: {
                 url: "/hawtio/app/osgi/img/bundle.png",
                 width: 32,

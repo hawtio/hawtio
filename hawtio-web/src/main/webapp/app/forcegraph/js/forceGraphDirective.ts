@@ -207,7 +207,9 @@ module ForceGraph {
             .attr("class", (d) => {
               return d.type;
             })
-            .attr("r", $scope.nodesize);
+            .attr("r", (d) => {
+              return d.size || $scope.nodesize;
+            });
 
           // Add the labels to the viewport
           $scope.graphLabels = $scope.viewport.append("svg:g").selectAll("g")
