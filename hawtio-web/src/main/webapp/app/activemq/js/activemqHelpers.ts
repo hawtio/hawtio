@@ -16,11 +16,38 @@ module ActiveMQ {
       return null;
     }
 
-
     var selection = workspace.selection;
     if (selection) {
       return findQueuesFolder(selection);
     }
     return null;
   }
+
+  export function getSelectionTopicsFolder(workspace) {
+    function findTopicsFolder(node) {
+      var answer = null
+      if (node) {
+        if (node.title === "Topics" || node.title === "Topic") {
+          answer = node;
+        }
+
+        if (answer === null) {
+          angular.forEach(node.children, (child) => {
+              if (child.title === "Topics" || child.title === "Topic") {
+                answer = child;
+              }
+          });
+        }
+      }
+      return answer;
+    }
+
+
+    var selection = workspace.selection;
+    if (selection) {
+      return findTopicsFolder(selection);
+    }
+    return null;
+  }
+
 }

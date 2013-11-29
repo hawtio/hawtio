@@ -1,15 +1,18 @@
 <div ng-controller="ActiveMQ.DurableSubscriberController">
+
     <div class="row-fluid">
       <div class="span12">
         <div class="pull-right">
-            <button class="btn" ng-click="createSubscriberDialog.open()"
-                    title="Create durable subscriber">
-              <i class="icon-plus"></i> Create
-            </button>
-            <button class="btn" ng-click="refresh()"
-                    title="Refreshes the list of subscribers">
-              <i class="icon-refresh"></i>
-            </button>
+            <form class="form-inline">
+                <button class="btn" ng-click="createSubscriberDialog.open()"
+                        title="Create durable subscriber">
+                    <i class="icon-plus"></i> Create
+                </button>
+                <button class="btn" ng-click="refresh()"
+                        title="Refreshes the list of subscribers">
+                    <i class="icon-refresh"></i>
+                </button>
+            </form>
         </div>
       </div>
     </div>
@@ -19,7 +22,7 @@
     </div>
 
     <div modal="createSubscriberDialog.show">
-      <form name="createSubscriber" class="form-horizontal no-bottom-margin" ng-submit="doCreateSubscriber(clientId, subscriberName, topicName, selector)">
+      <form name="createSubscriber" class="form-horizontal no-bottom-margin" ng-submit="doCreateSubscriber(clientId, subscriberName, topicName, subSelector)">
         <div class="modal-header"><h4>Create Durable Subscriber</h4></div>
         <div class="modal-body">
           <label>Client Id: </label>
@@ -27,7 +30,7 @@
           <label>Subscriber Name: </label>
           <input name="subscriberName" class="input-xlarge" type="text" ng-model="subscriberName" required>
           <label>Topic Name: </label>
-          <input name="topicName" class="input-xlarge" type="text" ng-model="topicName" required>
+          <input name="topicName" class="input-xlarge" type="text" ng-model="topicName" required typeahead="title for title in topicNames($viewValue) | filter:$viewValue" typeahead-editable='true'>
           <label>Selector: </label>
           <input name="subSelector" class="input-xlarge" type="text" ng-model="subSelector">
         </div>
@@ -43,7 +46,7 @@
 
         <div class="row-fluid">
           <div class="pull-right">
-            <form class="form-horizontal no-bottom-margin">
+            <form class="form-inline">
 
               <button class="btn btn-danger" ng-disabled="showSubscriberDialog.subscriber.Status == 'Active'"
                       ng-click="deleteSubscriberDialog.open()"
