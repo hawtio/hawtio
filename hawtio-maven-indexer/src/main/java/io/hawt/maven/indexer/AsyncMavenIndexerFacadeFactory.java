@@ -1,14 +1,14 @@
 package io.hawt.maven.indexer;
 
-import io.hawt.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import io.hawt.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory bean of an {@link MavenIndexerFacade} which starts itself completely
@@ -23,10 +23,12 @@ public class AsyncMavenIndexerFacadeFactory {
     private MBeanServer mBeanServer;
     private String[] repositories;
     private String indexDirectory;
+    private Timer timer;
+    private TimerTask task;
 
     public void init() {
-        Timer timer = new Timer("MavenIndexerFacade startup timer");
-        TimerTask task = new TimerTask() {
+        timer = new Timer("MavenIndexerFacade startup timer", true);
+        task = new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -48,6 +50,12 @@ public class AsyncMavenIndexerFacadeFactory {
     public void destroy() throws Exception {
         if (mavenIndexer != null) {
             mavenIndexer.destroy();
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        if (timer != null) {
+            timer.cancel();
         }
     }
 

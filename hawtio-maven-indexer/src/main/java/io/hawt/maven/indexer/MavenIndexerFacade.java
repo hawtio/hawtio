@@ -56,10 +56,10 @@ import java.util.TreeSet;
 public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(MavenIndexerFacade.class);
 
-    private final PlexusContainer plexusContainer;
-    private final Indexer indexer;
-    private final IndexUpdater indexUpdater;
-    private final Wagon httpWagon;
+    private PlexusContainer plexusContainer;
+    private Indexer indexer;
+    private IndexUpdater indexUpdater;
+    private Wagon httpWagon;
     private IndexingContext mergedContext;
     private List<IndexCreator> indexers;
     private boolean updateIndexOnStartup = true;
@@ -74,15 +74,16 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private FileLocker fileLock;
     private String lockFileName = "hawtio.lock";
 
+    public MavenIndexerFacade()  {
+    }
 
-    public MavenIndexerFacade() throws PlexusContainerException, ComponentLookupException {
+    public void init() throws Exception {
+        // do our logic in init
+        LOG.debug("Initializing MavenIndexer ... ");
         this.plexusContainer = new DefaultPlexusContainer();
         this.indexer = plexusContainer.lookup(Indexer.class);
         this.indexUpdater = plexusContainer.lookup(IndexUpdater.class);
         this.httpWagon = plexusContainer.lookup(Wagon.class, "http");
-    }
-
-    public void init() throws Exception {
 
         // Creators we want to use (search for fields it defines)
         if (indexers == null) {
@@ -134,6 +135,8 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         } catch (Exception e) {
             LOG.error("Failed to register MBean: " + e, e);
         }
+
+        LOG.debug("Initializing MavenIndexer done");
     }
 
     public void downloadOrUpdateIndices() throws IOException {
