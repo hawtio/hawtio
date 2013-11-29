@@ -125,7 +125,7 @@ public class Main {
                 if (text.contains("karaf")) {
                     LOG.info("Ignoring karaf based blueprint file " + text);
                 } else if (text.contains("hawtio-json-schema-mbean")) {
-                    LOG.info("Ignoring hawtio-json-schema-mbean blueprint as its using <reference-list/> which is not suported yet in blueprint-web " + text);
+                    LOG.info("Ignoring hawtio-json-schema-mbean blueprint as its using <reference-list/> which is not supported yet in blueprint-web " + text);
                 } else {
                     resourcePaths.add(url);
                 }
