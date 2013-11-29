@@ -226,8 +226,8 @@ module Fabric {
 
     $scope.doConnect = (container, view) => {
       // TODO at least obfusicate this
-      $scope.connect.userName = localStorage['fabric.userName'];
-      $scope.connect.password = localStorage['fabric.password'];
+      $scope.connect.userName = Core.username || localStorage['fabric.userName'];
+      $scope.connect.password = Core.password || localStorage['fabric.password'];
       $scope.connect.container = container;
       $scope.connect.view = view || "/logs";
 
