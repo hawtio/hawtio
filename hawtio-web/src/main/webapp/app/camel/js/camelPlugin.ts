@@ -67,20 +67,53 @@ module Camel {
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/context/folder"] = [
               stateColumn,
-              {field: 'CamelId', displayName: 'Name'},
+              {field: 'CamelId', displayName: 'Context'},
               {field: 'Uptime', displayName: 'Uptime', visible: false},
               {field: 'CamelVersion', displayName: 'Version', visible: false},
               {field: 'ExchangesCompleted', displayName: 'Completed #'},
               {field: 'ExchangesFailed', displayName: 'Failed #'},
               {field: 'ExchangesTotal', displayName: 'Total #', visible: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'},
-              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last exchange completed timestamp', visible: false},
-              {field: 'LastExchangeFailedTimestamp', displayName: 'Last exchange failed timestamp', visible: false},
               {field: 'MeanProcessingTime', displayName: 'Mean Time'},
               {field: 'MinProcessingTime', displayName: 'Min Time'},
               {field: 'MaxProcessingTime', displayName: 'Max Time'},
               {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
-              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false}
+              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
+              {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
+            ];
+            attributes[jmxDomain + "/routes/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
+              {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'ExchangesTotal', displayName: 'Total #', visible: false},
+              {field: 'InflightExchanges', displayName: 'Inflight #'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
+              {field: 'MinProcessingTime', displayName: 'Min Time'},
+              {field: 'MaxProcessingTime', displayName: 'Max Time'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
+              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
+              {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
+            ];
+            attributes[jmxDomain + "/processors/folder"] = [
+              stateColumn,
+              {field: 'CamelId', displayName: 'Context'},
+              {field: 'RouteId', displayName: 'Route'},
+              {field: 'ProcessorId', displayName: 'Processor'},
+              {field: 'ExchangesCompleted', displayName: 'Completed #'},
+              {field: 'ExchangesFailed', displayName: 'Failed #'},
+              {field: 'ExchangesTotal', displayName: 'Total #', visible: false},
+              {field: 'InflightExchanges', displayName: 'Inflight #'},
+              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
+              {field: 'MinProcessingTime', displayName: 'Min Time'},
+              {field: 'MaxProcessingTime', displayName: 'Max Time'},
+              {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
+              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+              {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
+              {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
             ];
             attributes[jmxDomain + "/components/folder"] = [
               stateColumn,
@@ -95,21 +128,6 @@ module Camel {
               {field: 'Suspended', displayName: 'Suspended', resizable: false},
               {field: 'InflightExchanges', displayName: 'Inflight #'}
             ];
-            attributes[jmxDomain + "/processors/folder"] = [
-              stateColumn,
-              {field: 'CamelId', displayName: 'Context'},
-              {field: 'RouteId', displayName: 'Route'},
-              {field: 'ProcessorId', displayName: 'Processor'},
-              {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'ExchangesFailed', displayName: 'Failed #'},
-              {field: 'ExchangesTotal', displayName: 'Total #', visible: false},
-              {field: 'InflightExchanges', displayName: 'Inflight #', visible: false},
-              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
-              {field: 'MinProcessingTime', displayName: 'Min Time'},
-              {field: 'MaxProcessingTime', displayName: 'Max Time'},
-              {field: 'TotalProcessingTime', displayName: 'Total Time'},
-              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false}
-            ];
             attributes[jmxDomain + "/services/folder"] = [
               stateColumn,
               {field: 'CamelId', displayName: 'Context'},
@@ -122,20 +140,6 @@ module Camel {
               {field: 'CamelId', displayName: 'Context'},
               {field: 'EndpointUri', displayName: 'Endpoint URI', width: "***"},
               {field: 'Singleton', displayName: 'Singleton', resizable: false }
-            ];
-            attributes[jmxDomain + "/routes/folder"] = [
-              stateColumn,
-              {field: 'CamelId', displayName: 'Context'},
-              {field: 'RouteId', displayName: 'Route'},
-              {field: 'ExchangesCompleted', displayName: 'Completed #'},
-              {field: 'ExchangesFailed', displayName: 'Failed #'},
-              {field: 'ExchangesTotal', displayName: 'Total #', visible: false},
-              {field: 'InflightExchanges', displayName: 'Inflight #', visible: false},
-              {field: 'MeanProcessingTime', displayName: 'Mean Time'},
-              {field: 'MinProcessingTime', displayName: 'Min Time'},
-              {field: 'MaxProcessingTime', displayName: 'Max Time'},
-              {field: 'TotalProcessingTime', displayName: 'Total Time'},
-              {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false}
             ];
             attributes[jmxDomain + "/threadpools/folder"] = [
               {field: 'Id', displayName: 'Id', width: "**"},
