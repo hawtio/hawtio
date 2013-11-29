@@ -60,7 +60,7 @@ Camel is able to output any route as XML even if the route was originally develo
 ![Route Source](app/camel/doc/img/route-source.png "Route Source")
 
 You can even edit the source code, for example we could add a predicate for checking if the message is from Paris in France,
-such as adding the following to source code, and clicking the Save button.
+such as adding the following to source code, and clicking the Update button.
 
     <when customId="true" id="isCityParis">
       <xpath>/person/city = 'Paris'</xpath>
