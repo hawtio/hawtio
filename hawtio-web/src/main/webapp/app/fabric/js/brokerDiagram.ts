@@ -20,15 +20,6 @@ module Fabric {
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
     }
 
-    /**
-     * Avoid the JMX type property clashing with the ForceGraph type property; used for associating css classes with nodes on the graph
-     *
-     * @param properties
-     */
-    function renameTypeProperty(properties) {
-      properties.mbeanType = properties['type'];
-      delete properties['type'];
-    }
 
     function onBrokerData(response) {
       if (response) {
@@ -90,7 +81,7 @@ module Fabric {
               type: master ? "brokerMaster" : "broker",
               popup: {
                 title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-                content: "<p>" + brokerId + "</p> <p>Group: " + groupId + "</p> <p>Container: " + containerId + "</p>"
+                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
               }
             };
           });
@@ -126,7 +117,7 @@ module Fabric {
               addLink(profile, broker, "broker");
             }
           }
-          if ((master || $scope.showFlags.slave) && $scope.showFlags.container)  {
+          if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
             addLink(broker, container, "container");
             container.destinationLinkNode = container;
           } else {
@@ -152,14 +143,6 @@ module Fabric {
       if (containerJolokia) {
         container.jolokia = containerJolokia;
 
-        function configureDestinationProperties(properties) {
-          renameTypeProperty(properties);
-          var destinationType = properties.destinationType || "Queue";
-          var typeName = destinationType.toLowerCase();
-          properties.isQueue = !typeName.startsWith("t");
-          properties['destType'] = typeName;
-        }
-
         function getOrAddDestination(properties) {
           var typeName = properties.destType
           var destinationName = properties.destinationName;
@@ -173,39 +156,87 @@ module Fabric {
           });
         }
 
-
-        // now lets query all the connections/consumers etc
-        containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
-          angular.forEach(response, (objectName) => {
-            //log.info("Got consumer: " + objectName + " on container: " + id);
-            var details = Core.parseMBean(objectName);
-            if (details) {
-              var properties = details['attributes'];
-              if (properties) {
-                log.info("Got consumer properties: " + angular.toJson(properties, true) + " on container: " + id);
-
-                configureDestinationProperties(properties);
-                var consumerId = properties.consumerId;
-                if (consumerId) {
-                  var destination = getOrAddDestination(properties);
-                  addLink(container.destinationLinkNode, destination, "destination");
-                  var consumer = getOrAddNode("consumer", consumerId, properties, () => {
-                    return {
-                      popup: {
-                        title: "Consumer: " + consumerId,
-                        content: "<p>" + consumerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
-                      }
-                    };
-                  });
-                  addLink(destination, consumer, "consumer");
+        // find consumers
+        if ($scope.showFlags.consumer) {
+          containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
+            angular.forEach(response, (objectName) => {
+              //log.info("Got consumer: " + objectName + " on container: " + id);
+              var details = Core.parseMBean(objectName);
+              if (details) {
+                var properties = details['attributes'];
+                if (properties) {
+                  configureDestinationProperties(properties);
+                  var consumerId = properties.consumerId;
+                  if (consumerId) {
+                    var destination = getOrAddDestination(properties);
+                    addLink(container.destinationLinkNode, destination, "destination");
+                    var consumer = getOrAddNode("consumer", consumerId, properties, () => {
+                      return {
+                        popup: {
+                          title: "Consumer: " + consumerId,
+                          content: "<p>" + consumerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                        }
+                      };
+                    });
+                    addLink(destination, consumer, "consumer");
+                  }
                 }
               }
-            }
-          });
-          $scope.graph = graphBuilder.buildGraph();
-          Core.$apply($scope);
-        }));
+            });
+            graphModelUpdated();
+          }));
+        }
+
+        // find producers
+        if ($scope.showFlags.producer) {
+          containerJolokia.search("org.apache.activemq:endpoint=dynamicProducer,*", onSuccess((response) => {
+            angular.forEach(response, (objectName) => {
+              var details = Core.parseMBean(objectName);
+              if (details) {
+                var properties = details['attributes'];
+                if (properties) {
+                  configureDestinationProperties(properties);
+                  var producerId = properties.producerId;
+                  if (producerId) {
+                    containerJolokia.request({type: 'read', mbean: objectName}, onSuccess((response) => {
+                      var attributes = {};
+                      if (response) {
+                        attributes = response.value;
+                        angular.forEach(attributes, (value, key) => {
+                          properties[key] = value;
+                        });
+                        properties.destinationName = properties.destinationName || attributes["DestinationName"];
+                      }
+                      var destinationProperties = angular.copy(properties);
+                      if (attributes["DestinationTemporary"] || attributes["DestinationTopc"]) {
+                        destinationProperties.destType = "topic";
+                      }
+                      var destination = getOrAddDestination(destinationProperties);
+                      addLink(container.destinationLinkNode, destination, "destination");
+                      var producer = getOrAddNode("producer", producerId, properties, () => {
+                        return {
+                          popup: {
+                            title: "Producer: " + producerId,
+                            content: "<p>" + producerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                          }
+                        };
+                      });
+                      addLink(producer, destination, "producer");
+                      graphModelUpdated();
+                    }));
+                  }
+                }
+              }
+            });
+            graphModelUpdated();
+          }));
+        }
       }
+    }
+
+    function graphModelUpdated() {
+      $scope.graph = graphBuilder.buildGraph();
+      Core.$apply($scope);
     }
 
     function getOrAddNode(typeName:string, id, properties, createFn) {
@@ -228,8 +259,11 @@ module Fabric {
           if (node) {
             // lets not add nodes which are defined as being disabled
             var enabled = $scope.showFlags[typeName];
-            if (enabled || !angular.isDefined(enabled)){
+            if (enabled || !angular.isDefined(enabled)) {
+              log.info("Adding node " + nodeId  + " of type + " + typeName);
               graphBuilder.addNode(node);
+            } else {
+              log.info("Ignoring node " + nodeId  + " of type + " + typeName);
             }
           }
         }
@@ -245,6 +279,24 @@ module Fabric {
           graphBuilder.addLink(id1, id2, linkType);
         }
       }
+    }
+
+    /**
+     * Avoid the JMX type property clashing with the ForceGraph type property; used for associating css classes with nodes on the graph
+     *
+     * @param properties
+     */
+    function renameTypeProperty(properties) {
+      properties.mbeanType = properties['type'];
+      delete properties['type'];
+    }
+
+    function configureDestinationProperties(properties) {
+      renameTypeProperty(properties);
+      var destinationType = properties.destinationType || "Queue";
+      var typeName = destinationType.toLowerCase();
+      properties.isQueue = !typeName.startsWith("t");
+      properties['destType'] = typeName;
     }
   }
 }
