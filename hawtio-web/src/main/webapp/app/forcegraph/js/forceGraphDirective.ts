@@ -145,9 +145,14 @@ module ForceGraph {
             .nodes($scope.graph.nodes)
             .links($scope.graph.links)
             .size([w, h])
-            .linkDistance($scope.linkDistance)
-            .charge($scope.charge)
             .on("tick", $scope.tick);
+
+          if (angular.isDefined($scope.linkDistance)) {
+            $scope.force.linkDistance($scope.linkDistance);
+          }
+          if (angular.isDefined($scope.charge)) {
+            $scope.force.charge($scope.charge);
+          }
 
           // Add all edges to the viewport
           $scope.graphEdges = $scope.viewport.append("svg:g").selectAll("path")
