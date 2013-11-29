@@ -4,6 +4,16 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    $scope.showFlags = {
+      group: false,
+      profile: false,
+      slave: true,
+      broker: true,
+      container: false,
+      consumer: true,
+      producer: true
+    };
+
     var graphBuilder = new ForceGraph.GraphBuilder();
 
     if (Fabric.hasMQManager) {
@@ -42,40 +52,6 @@ module Fabric {
           // don't use type field so we can use it for the node types..
           renameTypeProperty(brokerStatus);
           log.info("Broker status: " + angular.toJson(brokerStatus, true));
-          function getOrAddNode(typeName:string, id, properties, createFn) {
-            var node = null;
-            if (id) {
-              var nodeId = typeName + ":" + id;
-              node = graphBuilder.getNode(nodeId);
-              if (!node) {
-                var nodeValues = createFn();
-                node = angular.copy(properties);
-                angular.forEach(nodeValues, (value, key) => node[key] = value);
-
-                node['id'] = nodeId;
-                if (!node['type']) {
-                  node['type'] = typeName;
-                }
-                if (!node['name']) {
-                  node['name'] = id;
-                }
-                if (node) {
-                  graphBuilder.addNode(node);
-                }
-              }
-            }
-            return node;
-          }
-
-          function addLink(object1, object2, linkType) {
-            if (object1 && object2) {
-              var id1 = object1.id;
-              var id2 = object2.id;
-              if (id1 && id2) {
-                graphBuilder.addLink(id1, id2, linkType);
-              }
-            }
-          }
 
           var groupId = brokerStatus.group;
           var profileId = brokerStatus.profile;
@@ -108,14 +84,13 @@ module Fabric {
               }
             };
           });
-
+          var master = brokerStatus.master;
           var broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
-            var master = brokerStatus.master;
             return {
               type: master ? "brokerMaster" : "broker",
               popup: {
                 title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-                content: "<p>" + brokerId + "</p>"
+                content: "<p>" + brokerId + "</p> <p>Group: " + groupId + "</p> <p>Container: " + containerId + "</p>"
               }
             };
           });
@@ -139,85 +114,136 @@ module Fabric {
           }
 
           // add the links...
-          addLink(group, profile, "group");
-          addLink(profile, broker, "broker");
-          addLink(broker, container, "container");
+          if ($scope.showFlags.group) {
+            if ($scope.showFlags.profile) {
+              addLink(group, profile, "group");
+              addLink(profile, broker, "broker");
+            } else {
+              addLink(group, broker, "group");
+            }
+          } else {
+            if ($scope.showFlags.profile) {
+              addLink(profile, broker, "broker");
+            }
+          }
+          if ((master || $scope.showFlags.slave) && $scope.showFlags.container)  {
+            addLink(broker, container, "container");
+            container.destinationLinkNode = container;
+          } else {
+            container.destinationLinkNode = broker;
+          }
+        });
 
-          // TODO delete any nodes from dead containers in containersToDelete
+        // TODO delete any nodes from dead containers in containersToDelete
+        angular.forEach($scope.activeContainers, (container, id) => {
+          var containerJolokia = container.jolokia;
+          if (containerJolokia) {
+            onContainerJolokia(containerJolokia, container, id);
+          } else {
+            Fabric.containerJolokia(jolokia, id, (containerJolokia) => onContainerJolokia(containerJolokia, container, id));
+          }
+        });
+        $scope.graph = graphBuilder.buildGraph();
+        Core.$apply($scope);
+      }
+    }
+
+    function onContainerJolokia(containerJolokia, container, id) {
+      if (containerJolokia) {
+        container.jolokia = containerJolokia;
+
+        function configureDestinationProperties(properties) {
+          renameTypeProperty(properties);
+          var destinationType = properties.destinationType || "Queue";
+          var typeName = destinationType.toLowerCase();
+          properties.isQueue = !typeName.startsWith("t");
+          properties['destType'] = typeName;
+        }
+
+        function getOrAddDestination(properties) {
+          var typeName = properties.destType
+          var destinationName = properties.destinationName;
+          return getOrAddNode(typeName, destinationName, properties, () => {
+            return {
+              popup: {
+                title: (properties.destinationType || "Queue") + ": " + destinationName,
+                content: "<p>" + destinationName + " broker: " + (properties.brokerName || "") + "</p>"
+              }
+            };
+          });
+        }
 
 
-          angular.forEach($scope.activeContainers, (container, id) => {
-            function onContainerJolokia(containerJolokia) {
-              if (containerJolokia) {
-                container.jolokia = containerJolokia;
+        // now lets query all the connections/consumers etc
+        containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
+          angular.forEach(response, (objectName) => {
+            //log.info("Got consumer: " + objectName + " on container: " + id);
+            var details = Core.parseMBean(objectName);
+            if (details) {
+              var properties = details['attributes'];
+              if (properties) {
+                log.info("Got consumer properties: " + angular.toJson(properties, true) + " on container: " + id);
 
-                function configureDestinationProperties(properties) {
-                  renameTypeProperty(properties);
-                  var destinationType = properties.destinationType || "Queue";
-                  var typeName = destinationType.toLowerCase();
-                  properties.isQueue = !typeName.startsWith("t");
-                  properties['destType'] = typeName;
-                }
-
-                function getOrAddDestination(properties) {
-                  var typeName = properties.destType
-                  var destinationName = properties.destinationName;
-                  return getOrAddNode(typeName, destinationName, properties, () => {
+                configureDestinationProperties(properties);
+                var consumerId = properties.consumerId;
+                if (consumerId) {
+                  var destination = getOrAddDestination(properties);
+                  addLink(container.destinationLinkNode, destination, "destination");
+                  var consumer = getOrAddNode("consumer", consumerId, properties, () => {
                     return {
                       popup: {
-                        title: (properties.destinationType || "Queue") + ": " + destinationName,
-                        content: "<p>" + destinationName + " broker: " + (properties.brokerName || "") + "</p>"
+                        title: "Consumer: " + consumerId,
+                        content: "<p>" + consumerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
                       }
                     };
                   });
+                  addLink(destination, consumer, "consumer");
                 }
-
-
-                // now lets query all the connections/consumers etc
-                containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
-                  angular.forEach(response, (objectName) => {
-                    //log.info("Got consumer: " + objectName + " on container: " + id);
-                    var details = Core.parseMBean(objectName);
-                    if (details) {
-                      var properties = details['attributes'];
-                      if (properties) {
-                        log.info("Got consumer properties: " + angular.toJson(properties, true) + " on container: " + id);
-
-                        configureDestinationProperties(properties);
-                        var consumerId = properties.consumerId;
-                        if (consumerId) {
-                          var destination = getOrAddDestination(properties);
-                          addLink(container, destination, "destination");
-                          var consumer = getOrAddNode("consumer", consumerId, properties, () => {
-                            return {
-                              popup: {
-                                title: "Consumer: " + consumerId,
-                                content: "<p>" + consumerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
-                              }
-                            };
-                          });
-                          addLink(destination, consumer, "consumer");
-                        }
-                      }
-                    }
-                  });
-                  $scope.graph = graphBuilder.buildGraph();
-                  Core.$apply($scope);
-                }));
               }
             }
+          });
+          $scope.graph = graphBuilder.buildGraph();
+          Core.$apply($scope);
+        }));
+      }
+    }
 
-            var containerJolokia = container.jolokia;
-            if (containerJolokia) {
-              onContainerJolokia(containerJolokia);
-            } else {
-              Fabric.containerJolokia(jolokia, id, onContainerJolokia);
+    function getOrAddNode(typeName:string, id, properties, createFn) {
+      var node = null;
+      if (id) {
+        var nodeId = typeName + ":" + id;
+        node = graphBuilder.getNode(nodeId);
+        if (!node) {
+          var nodeValues = createFn();
+          node = angular.copy(properties);
+          angular.forEach(nodeValues, (value, key) => node[key] = value);
+
+          node['id'] = nodeId;
+          if (!node['type']) {
+            node['type'] = typeName;
+          }
+          if (!node['name']) {
+            node['name'] = id;
+          }
+          if (node) {
+            // lets not add nodes which are defined as being disabled
+            var enabled = $scope.showFlags[typeName];
+            if (enabled || !angular.isDefined(enabled)){
+              graphBuilder.addNode(node);
             }
-          })
-        });
+          }
+        }
+      }
+      return node;
+    }
 
-        $scope.graph = graphBuilder.buildGraph();
-        Core.$apply($scope);
+    function addLink(object1, object2, linkType) {
+      if (object1 && object2) {
+        var id1 = object1.id;
+        var id2 = object2.id;
+        if (id1 && id2) {
+          graphBuilder.addLink(id1, id2, linkType);
+        }
       }
     }
   }
