@@ -153,12 +153,16 @@ module Fabric {
       Core.$apply($scope);
     }
 
+    function brokerNameMarkup(brokerName) {
+      return brokerName ? "<p></p>broker: " +brokerName + "</p>" : "";
+    }
+
     function onContainerJolokia(containerJolokia, container, id) {
       if (containerJolokia) {
         container.jolokia = containerJolokia;
 
         function getOrAddDestination(properties) {
-          var typeName = properties.destType
+          var typeName = properties.destType;
           var destinationName = properties.destinationName;
           if (!destinationName || ($scope.searchFilter && destinationName.indexOf($scope.searchFilter) < 0)) {
             return null;
@@ -167,7 +171,7 @@ module Fabric {
             return {
               popup: {
                 title: (properties.destinationType || "Queue") + ": " + destinationName,
-                content: "<p>" + destinationName + " broker: " + (properties.brokerName || "") + "</p>"
+                content: brokerNameMarkup(properties.brokerName)
               }
             };
           });
@@ -192,7 +196,7 @@ module Fabric {
                         return {
                           popup: {
                             title: "Consumer: " + consumerId,
-                            content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                            content: "<p>client: " + (properties.clientId || "") + "</p> " +  brokerNameMarkup(properties.brokerName)
                           }
                         };
                       });
@@ -237,7 +241,7 @@ module Fabric {
                           return {
                             popup: {
                               title: "Producer: " + producerId,
-                              content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                              content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
                             }
                           };
                         });
