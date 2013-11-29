@@ -22,26 +22,33 @@ module ActiveMQ {
         displayFooter: false,
         showFilter: false,
         showColumnMenu: true,
+        enableCellSelection: false,
         enableColumnResize: true,
         enableColumnReordering: true,
-        selectWithCheckboxOnly: true,
-        showSelectionCheckbox: true,
-        displaySelectionCheckbox : true, // old pre 2.0 config!
+        selectWithCheckboxOnly: false,
+        showSelectionCheckbox: false,
+        multiSelect: false,
+        displaySelectionCheckbox : false, // old pre 2.0 config!
         filterOptions: {
           filterText: ''
         },
         maintainColumnRatios: false,
         columnDefs: [
           {
+              field: 'destinationName',
+              displayName: 'Topic',
+              width: '30%'
+          },
+          {
             field: 'clientId',
             displayName: 'Client ID',
-            width: '45%'
+            width: '30%'
           },
           {
             field: 'consumerId',
             displayName: 'Consumer ID',
             cellTemplate: '<div class="ngCellText"><a ng-click="openSubscriberDialog(row)">{{row.entity.consumerId}}</a></div>',
-            width: '45%'
+            width: '30%'
           },
           {
             field: 'status',
@@ -98,6 +105,11 @@ module ActiveMQ {
           Core.$apply($scope);
         }, 100);
       }));
+    };
+
+    $scope.topicNames = (completionText) => {
+      var topicsFolder = getSelectionTopicsFolder(workspace);
+      return (topicsFolder) ? topicsFolder.children.map(n => n.title) : [];
     };
 
 
