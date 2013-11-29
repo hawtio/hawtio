@@ -174,7 +174,7 @@ module Fabric {
                       return {
                         popup: {
                           title: "Consumer: " + consumerId,
-                          content: "<p>" + consumerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                          content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
                         }
                       };
                     });
@@ -217,7 +217,7 @@ module Fabric {
                         return {
                           popup: {
                             title: "Producer: " + producerId,
-                            content: "<p>" + producerId + " client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
+                            content: "<p>client: " + (properties.clientId || "") + " broker: " + (properties.brokerName || "") + "</p>"
                           }
                         };
                       });
