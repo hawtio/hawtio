@@ -58,7 +58,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>178</perfectus-number>
+    <perfectus-number>182</perfectus-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
@@ -123,6 +123,7 @@
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
+    <maven-plugin-version>3.2</maven-plugin-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>2.13</maven-surefire-plugin-version>
@@ -274,6 +275,7 @@
     <module>hawtio-watcher-blueprint-web</module>
     <module>hawtio-watcher-spring-context</module>
     <module>hawtio-maven-indexer</module>
+    <module>hawtio-maven-plugin</module>
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
@@ -329,7 +331,23 @@
           <artifactId>maven-war-plugin</artifactId>
           <version>${war-plugin-version}</version>
         </plugin>
-
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven-plugin-version}</version>
+          <configuration>
+            <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+           </configuration>
+           <executions>
+             <execution>
+               <id>mojo-descriptor</id>
+               <goals>
+                 <goal>descriptor</goal>
+               </goals>
+             </execution>
+           </executions>
+        </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build
           itself. -->
         <plugin>
