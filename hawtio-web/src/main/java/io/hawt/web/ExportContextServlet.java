@@ -71,8 +71,13 @@ public class ExportContextServlet extends HttpServlet {
                             for(Object o : entryObject){
                                 if (o instanceof JSONObject){
                                     if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
-                                        out.println("======= selected 2======= " + entryObject);
                                         exportEntry = (JSONObject)o;
+                                        if((exportEntry.get("list") != null)&&(exportEntry.get("list") instanceof JSONObject)){
+                                            JSONObject obj = (JSONObject)exportEntry.get("list");
+                                            JSONArray exportArray =  (JSONArray)new LinkedList(obj.values()).getFirst();
+                                            Map xlData = ServletHelpers.populateTableMapForXl(exportArray);
+                                            jsonStringResponse = ServletHelpers.generateCsvString(xlData);
+                                        }
                                     }
                                 }
                             }
@@ -88,18 +93,10 @@ public class ExportContextServlet extends HttpServlet {
 
             }
         }
-
-        resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.txt\"");
+        out.println(" =================== csv =============== "+jsonStringResponse);
+        resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
         resp.getWriter().println(jsonStringResponse);
     }
 
 
 }
-
-/*
-* SOURCE_DATA
-* key:TARGET_DATA
-* ERROR_MESSAGES
-*
-* executionId :
-* */

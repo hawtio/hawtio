@@ -2,6 +2,7 @@ package io.hawt.web;
 
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +44,74 @@ public class ServletHelpers {
 
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
-        Map xlData = new HashMap();
-        List columns=null;
-        List rowsData = new ArrayList();
 
-        return null;
+        Map<String,Object> xlData = new HashMap<String,Object>();
+        Set columns = getColumns(listEntry);
+        List rowsData = getRowsData(listEntry,columns);
+
+        xlData.put("columns",columns);
+        xlData.put("rows",rowsData);
+        return xlData;
+    }
+
+    private static Set getColumns(List listEntry){
+        Set set = new HashSet();
+        for (Object o : listEntry){
+            if (o instanceof JSONObject){
+                set.addAll(((JSONObject)o).keySet());
+            }
+        }
+        return set;
+    }
+
+    private static List getRowsData(List listEntry, Set columns){
+        List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
+        for(Object o : listEntry){
+            Map<String,Object> keyValuePairs = new HashMap<String,Object>();
+            if (o instanceof JSONObject){
+                JSONObject jsonObject = (JSONObject)o;
+                for(Object column : columns){
+                    Object value = removeNoisyString(jsonObject.get(column.toString()));
+                    keyValuePairs.put(column.toString(),value);
+                }
+            }
+            list.add(keyValuePairs);
+        }
+        return list;
+    }
+
+    public static String generateCsvString(Map xlData){
+        int idx1=0,idx2=0;
+        StringBuffer buffer = new StringBuffer();
+        Set columns = (Set)xlData.get("columns");
+        List rows = (List)xlData.get("rows");
+        for (Object column : columns){
+            buffer.append(wrapWithDoubleQuotes(column.toString()));
+            buffer = appendComma(buffer,columns.size(),idx1);
+            idx1++;
+        }
+        idx1 = 0;
+
+        buffer.append("\n\r");
+        for (Object row  : rows){
+            Map keyValuePair = (Map)row;
+            for (Object column : columns){
+                buffer.append(wrapWithDoubleQuotes(keyValuePair.get(column.toString()).toString()));
+                buffer = appendComma(buffer,columns.size(),idx2);
+                idx2++;
+            }
+            idx2 = 0;
+            buffer.append("\n\r");
+        }
+        return buffer.toString();
+    }
+
+    private static String wrapWithDoubleQuotes(String string){
+        return "\""+string+"\"";
+    }
+
+    private static StringBuffer appendComma(StringBuffer buffer, int size, int index){
+        return (size  == (index+1) ) ? buffer : buffer.append(",");
     }
 
     public static List flatten(List list){
