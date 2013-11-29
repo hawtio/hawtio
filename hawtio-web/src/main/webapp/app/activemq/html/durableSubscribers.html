@@ -6,11 +6,6 @@
                     title="Create durable subscriber">
               <i class="icon-plus"></i> Create
             </button>
-            <button class="btn" ng-disabled="!gridOptions.selectedItems.length"
-                    ng-click="deleteSubscriberDialog.open()"
-                    title="Delete the selected subscribers">
-              <i class="icon-remove"></i> Delete
-            </button>
             <button class="btn" ng-click="refresh()"
                     title="Refreshes the list of subscribers">
               <i class="icon-refresh"></i>
@@ -50,9 +45,9 @@
           <div class="pull-right">
             <form class="form-horizontal no-bottom-margin">
 
-              <button class="btn btn-danger" ng-disabled="!gridOptions.selectedItems.length"
-                      ng-click="deleteDialog = true"
-                      title="Delete the selected messages">
+              <button class="btn btn-danger" ng-disabled="showSubscriberDialog.subscriber.Status == 'Active'"
+                      ng-click="deleteSubscriberDialog.open()"
+                      title="Delete subscriber">
                 <i class="icon-remove"></i> Delete
               </button>
 
@@ -75,8 +70,40 @@
                   </thead>
                   <tbody>
                   <tr>
+                    <td class="property-name">Client Id</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["ClientId"]}}</td>
+                  </tr>
+                  <tr>
                     <td class="property-name">Subscription Name</td>
                     <td class="property-value">{{showSubscriberDialog.subscriber["SubscriptionName"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Topic Name</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["DestinationName"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Selector</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["Selector"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Status</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber.Status}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Enqueue Counter</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["EnqueueCounter"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Dequeue Counter</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["DequeueCounter"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Dispatched Counter</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["DispatchedCounter"]}}</td>
+                  </tr>
+                  <tr>
+                    <td class="property-name">Pending Size</td>
+                    <td class="property-value">{{showSubscriberDialog.subscriber["PendingQueueSize"]}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -85,6 +112,12 @@
 
       </div>
 
+    </div>
+
+    <div hawtio-confirm-dialog="deleteSubscriberDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteSubscribers()">
+      <div class="dialog-body">
+        <p>Are you sure you want to delete the subscriber</p>
+      </div>
     </div>
 
 </div>

@@ -73,19 +73,22 @@ module ActiveMQ {
       }
 
       $scope.deleteSubscribers = () => {
-          var selection = workspace.selection;
-          var mbean = selection.objectName;
-          if (mbean && selection) {
-              var selectedItems = $scope.gridOptions.selectedItems;
-              angular.forEach(selectedItems, (item, idx) => {
-                  alert("deleting " + item.clientId);
-              });
-          }
+        var mbean = getBrokerMBean(jolokia);
+        if (mbean) {
+            jolokia.execute(mbean, "destroyDurableSubscriber(java.lang.String, java.lang.String)", $scope.showSubscriberDialog.subscriber.ClientId, $scope.showSubscriberDialog.subscriber.SubscriptionName, onSuccess(function() {
+                $scope.showSubscriberDialog.close();
+                notification('success', "Deleted durable subscriber");
+                loadTable();
+            }));
+        } else {
+            notification("error", "Could not find the Broker MBean!");
+        }
       };
 
     $scope.openSubscriberDialog = (subscriber) => {
-      jolokia.request({type: "read", mbean: subscriber.entity._id, attribute: ["SubscriptionName"]}, onSuccess((response) => {
+      jolokia.request({type: "read", mbean: subscriber.entity._id}, onSuccess((response) => {
         $scope.showSubscriberDialog.subscriber = response.value;
+        $scope.showSubscriberDialog.subscriber.Status =  subscriber.entity.status;
         console.log("Subscriber is now " + $scope.showSubscriberDialog.subscriber);
         Core.$apply($scope);
 
