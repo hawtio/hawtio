@@ -14,39 +14,37 @@
                 <div id="collapseOne{{$index}}" class="accordion-body collapse in">
                     <div class="accordion-inner">
                         <span ng-repeat="(key,value) in entry">
+                            <span ng-if="key == 'string'">
+                                {{value}}
+                            </span>
+                            <span ng-if="key == 'int'">
+                                {{value}}
+                            </span>
+                        </span>
+                        <span ng-repeat="(key,value) in entry">
 
                             <span ng-if="key == 'list'">
                                 <span ng-if="value">
-                                    <span ng-repeat="listItemMap in value">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                               <!-- <th>row data</th>-->
-                                                <th ng-repeat="(k,v) in listItemMap[1]" title="{{k}}">{{k.substring(0,5)}}</th>
-                                            </tr>
-                                            <tr ng-repeat="row in listItemMap">
-                                                <!--<td>{{row}}</td>-->
-                                                <td ng-repeat="(ke,va) in row track by $index">
-                                                   <!--<span ng-if='va.indexOf("@reference") == -1'>--> {{va}}<!--</span>-->
-                                                </td>
-                                            </tr>
-                                            </thead>
-                                        </table>
+                                    <span ng-repeat="(kee,listItemMap) in value">
+                                        <span ng-if="kee =='string'">{{listItemMap}}</span>
+                                        <span ng-if="kee != 'string'">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th ng-repeat="(k,v) in listItemMap[1] track by $index" title="{{k}}">{{k.substring(0,5)}}</th>
+                                                </tr>
+                                                <tr ng-repeat="row in listItemMap">
+                                                    <td ng-repeat="(ke,va) in row track by $index">
+                                                        <span ng-if="toString(va).indexOf('reference') == -1">{{va}}</span>
+                                                    </td>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </span>
                                     </span>
                                 </span>
                             </span>
-                            <span ng-if="key == 'string'">
-                              {{value}}
-                            </span>
-                            <span ng-if="key == 'int'">
-                              {{value}}
-                            </span>
-                            <!--<g:elseif test="${mapItem['java.util.Collections_-UnmodifiableRandomAccessList']}">
-                                <sjson:renderTableForSpecialList tableMap="${mapItem['java.util.Collections_-UnmodifiableRandomAccessList']}" entryIndex="${index}" key="java.util.Collections_-UnmodifiableRandomAccessList"/>
-                            </g:elseif>
-                            <g:else>
-                                ${sjson.prettyJson(jsonString: item.toString())}
-                            </g:else>-->
+
                         </span>
                     </div>
                 </div>

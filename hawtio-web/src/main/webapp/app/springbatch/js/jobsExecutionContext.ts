@@ -19,9 +19,10 @@ module SpringBatch{
             $scope.jobId=jobId;
 
         });
-        $scope.contains = function(searchString, searchTerm) {
-            return searchString.indexOf(searchTerm) != -1;
+        $scope.toString = function(value) {
+            return JSON.stringify(value);
         }
+
     }
 
 }

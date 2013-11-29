@@ -152,16 +152,6 @@
     <servlet-name>maven-source</servlet-name>
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
-    <servlet>
-    <servlet-name>contextFormatter</servlet-name>
-    <servlet-class>io.hawt.web.ContextFormatServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>contextFormatter</servlet-name>
-    <url-pattern>/getFormattedContextData/*</url-pattern>
-  </servlet-mapping>
-
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
