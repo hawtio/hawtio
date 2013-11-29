@@ -1,43 +1,43 @@
 <style type="text/css">
 
-    div#pop-up {
-        display: none;
-        position:absolute;
-        color: white;
-        font-size: 14px;
-        background: rgba(0,0,0,0.6);
-        padding: 5px 10px 5px 10px;
-        -moz-border-radius: 8px 8px;
-        border-radius: 8px 8px;
-    }
+div#pop-up {
+  display: none;
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 5px 10px 5px 10px;
+  -moz-border-radius: 8px 8px;
+  border-radius: 8px 8px;
+}
 
-    div#pop-up-title {
-        font-size: 15px;
-        margin-bottom: 4px;
-        font-weight: bolder;
-    }
-    div#pop-up-content {
-        font-size: 12px;
-    }
+div#pop-up-title {
+  font-size: 15px;
+  margin-bottom: 4px;
+  font-weight: bolder;
+}
 
-    rect.graphbox {
-        fill: #FFF;
-    }
+div#pop-up-content {
+  font-size: 12px;
+}
 
-    rect.graphbox.frame {
-        stroke: #222;
-        stroke-width: 2px
-    }
+rect.graphbox {
+  fill: #FFF;
+}
 
-
-    /*
+rect.graphbox.frame {
+  stroke: #222;
+  stroke-width: 2px
+}
 
 /*
-    path.link {
-        fill: none;
-        stroke: #666;
-        stroke-width: 1.5px;
-    }
+
+/*
+path.link {
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5px;
+}
 */
 
 /*
@@ -82,10 +82,6 @@
     }
 */
 
-
-
-
-
 /* only things directly related to the network graph should be here */
 
 path.link {
@@ -101,20 +97,22 @@ marker#brokerMaster {
 }
 
 circle.brokerMaster {
-	fill: #0c0;
-}
-circle.notActive {
-	fill: #c00;
+  fill: #0c0;
 }
 
+circle.notActive {
+  fill: #c00;
+}
 
 path.link.group {
   stroke: #ccc;
 }
+
 marker#group {
   stroke: #ccc;
   fill: #ccc;
 }
+
 circle.group {
   fill: #eee;
   stroke: #ccc;
@@ -130,32 +128,32 @@ circle.pinned {
 }
 
 path.link.profile {
-  stroke-dasharray: 0,2 1;
+  stroke-dasharray: 0, 2 1;
   stroke: #888;
 }
-
 
 marker#container {
 }
+
 circle.container {
-  stroke-dasharray: 0,2 1;
-  stroke: #888;
-}
-path.link.container {
-  stroke-dasharray: 0,2 1;
+  stroke-dasharray: 0, 2 1;
   stroke: #888;
 }
 
+path.link.container {
+  stroke-dasharray: 0, 2 1;
+  stroke: #888;
+}
 
 circle {
-	fill: #ccc;
-	stroke: #333;
-	stroke-width: 1.5px;
-	cursor: pointer;
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+  cursor: pointer;
 }
 
 circle.closeMode {
-	cursor: crosshair;
+  cursor: crosshair;
 }
 
 path.link.destination {
@@ -186,10 +184,10 @@ path.link.consumer {
   stroke: #ccc;
 }
 
-
 circle.hilited {
   stroke-width: 3px;
 }
+
 .hilited {
   stroke-width: 3px;
 }
@@ -218,14 +216,61 @@ text.shadow {
       </div>
 
       <div class="section-controls">
+        <a href="#"
+           class="dropdown-toggle"
+           data-toggle="dropdown">
+          Show &nbsp;<i class="icon-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.consumer"> Consumers
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.producer"> Producers
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.queue"> Queues
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.topic"> Topics
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.group"> Broker Groups
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.profile"> Profiles
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.slave"> Brokers
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.slave"> Slave Brokers
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.container"> Containers
+            </label>
+          </li>
+        </ul>
+
         <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the broker and container diagram">
           <i class="icon-edit"></i> Configuration
-        </a>
-        <a href="" title="Create a new broker configuration" ng-click="createBroker(null)">
-          <i class="icon-plus"></i> Broker
-        </a>
-        <a href="" title="Create a new container" ng-click="createContainer()">
-          <i class="icon-plus"></i> Container
         </a>
       </div>
     </div>
@@ -239,7 +284,8 @@ text.shadow {
 
   <div class="row-fluid">
     <div class="span12 canvas">
-      <div hawtio-force-graph graph="graph" link-distance="50" charge="-120" nodesize="10" style="min-height: 800px"></div>
+      <div hawtio-force-graph graph="graph" link-distance="50" charge="-120" nodesize="10"
+           style="min-height: 800px"></div>
     </div>
   </div>
 

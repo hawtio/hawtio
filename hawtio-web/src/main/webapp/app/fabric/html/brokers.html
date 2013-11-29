@@ -9,14 +9,14 @@
       </div>
 
       <div class="section-controls">
-        <a ng-href="#/fabric/mq/brokerDiagram{{hash}}" title="View the network diagram of the brokers and their clients" ng-show="groups.length > 1">
-          <i class="icon-picture"></i> Diagram
-        </a>
         <a href="" title="Create a new broker configuration" ng-click="createBroker(null)">
           <i class="icon-plus"></i> Broker
         </a>
         <a href="" title="Create a new container" ng-click="createContainer()">
           <i class="icon-plus"></i> Container
+        </a>
+        <a ng-href="#/fabric/mq/brokerDiagram{{hash}}" title="View the network diagram of the brokers and their clients" ng-show="groups.length > 1">
+          <i class="icon-picture"></i> Diagram
         </a>
       </div>
 
