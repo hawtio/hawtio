@@ -6143,17 +6143,21 @@ function $LocationProvider(){
         if (elm[0] === $rootElement[0] || !(elm = elm.parent())[0]) return;
       }
 
+      // fix for https://github.com/angular/angular.js/issues/5198
       var absHref = elm.prop('href');
-      var rewrittenUrl = $location.$$rewrite(absHref);
+      // test for string to avoid SVGAnimatedString
+      if (absHref && angular.isString(absHref)) {
+        var rewrittenUrl = $location.$$rewrite(absHref);
 
-      if (absHref && !elm.attr('target') && rewrittenUrl && !event.isDefaultPrevented()) {
-        event.preventDefault();
-        if (rewrittenUrl != $browser.url()) {
-          // update location manually
-          $location.$$parse(rewrittenUrl);
-          $rootScope.$apply();
-          // hack to work around FF6 bug 684208 when scenario runner clicks on links
-          window.angular['ff-684208-preventDefault'] = true;
+        if (!elm.attr('target') && rewrittenUrl && !event.isDefaultPrevented()) {
+          event.preventDefault();
+          if (rewrittenUrl != $browser.url()) {
+            // update location manually
+            $location.$$parse(rewrittenUrl);
+            $rootScope.$apply();
+            // hack to work around FF6 bug 684208 when scenario runner clicks on links
+            window.angular['ff-684208-preventDefault'] = true;
+          }
         }
       }
     });
