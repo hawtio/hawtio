@@ -25,7 +25,7 @@ import static java.lang.System.out;
  * To change this template use File | Settings | File Templates.
  */
 public class ExportContextServlet extends HttpServlet {
-
+    public static final String RENDER_JSON_ERROR_MESSAGES = "ERROR_MESSAGES";
     private static final transient Logger LOG = LoggerFactory.getLogger(ExportContextServlet.class);
 
     @Override
@@ -48,7 +48,6 @@ public class ExportContextServlet extends HttpServlet {
                 if (!server.contains("http://")){
                     server = "http://"+server;
                 }
-                out.println("======= final url ======= "+server+"jobs/executions/"+jobExecutionId+"/context.json");
 
                 HttpClient client = new HttpClient();
                 GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
@@ -59,7 +58,6 @@ public class ExportContextServlet extends HttpServlet {
                 JSONObject jsonObject = null;
                 try{
                     jsonObject = (JSONObject)parser.parse(jsonStringResponse);
-                    out.println("======= jsonObject ======= "+jsonObject.getClass().getName());
                     JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
                     JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
                     if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
@@ -75,7 +73,7 @@ public class ExportContextServlet extends HttpServlet {
                                         if((exportEntry.get("list") != null)&&(exportEntry.get("list") instanceof JSONObject)){
                                             JSONObject obj = (JSONObject)exportEntry.get("list");
                                             JSONArray exportArray =  (JSONArray)new LinkedList(obj.values()).getFirst();
-                                            Map xlData = ServletHelpers.populateTableMapForXl(exportArray);
+                                            Map xlData = (key.equalsIgnoreCase(RENDER_JSON_ERROR_MESSAGES))?ServletHelpers.populateErrorTableMapForXl(exportArray):ServletHelpers.populateTableMapForXl(exportArray);
                                             jsonStringResponse = ServletHelpers.generateCsvString(xlData);
                                         }
                                     }
@@ -93,7 +91,6 @@ public class ExportContextServlet extends HttpServlet {
 
             }
         }
-        out.println(" =================== csv =============== "+jsonStringResponse);
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
         resp.getWriter().println(jsonStringResponse);
     }

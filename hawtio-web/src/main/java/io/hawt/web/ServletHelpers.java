@@ -54,6 +54,23 @@ public class ServletHelpers {
         return xlData;
     }
 
+    public static Map populateErrorTableMapForXl(List listEntry) {
+        listEntry = flatten(listEntry);
+
+        Map<String,Object> xlData = new HashMap<String,Object>();
+        Set<String> columns = new HashSet<String>();
+        columns.add("Error Message");
+        List rowsData = new ArrayList();
+        for (Object o : listEntry){
+            Map<String,Object> keyValuePairs = new HashMap<String,Object>();
+            keyValuePairs.put(columns.toArray()[0].toString(),removeNoisyString(o.toString()));
+            rowsData.add(keyValuePairs);
+        }
+        xlData.put("columns",columns);
+        xlData.put("rows",rowsData);
+        return xlData;
+    }
+
     private static Set getColumns(List listEntry){
         Set set = new HashSet();
         for (Object o : listEntry){
@@ -92,7 +109,7 @@ public class ServletHelpers {
         }
         idx1 = 0;
 
-        buffer.append("\n\r");
+        buffer.append("\n");
         for (Object row  : rows){
             Map keyValuePair = (Map)row;
             for (Object column : columns){
@@ -101,7 +118,7 @@ public class ServletHelpers {
                 idx2++;
             }
             idx2 = 0;
-            buffer.append("\n\r");
+            buffer.append("\n");
         }
         return buffer.toString();
     }
