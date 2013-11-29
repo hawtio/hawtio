@@ -16,6 +16,12 @@ module Fabric {
       producer: true
     };
 
+    $scope.shapeSize = {
+      broker: 20,
+      queue: 14,
+      topic: 14
+    };
+
     var graphBuilder = new ForceGraph.GraphBuilder();
 
     angular.forEach($scope.showFlags, (value, key) => {
@@ -282,6 +288,10 @@ module Fabric {
             node['name'] = id;
           }
           if (node) {
+            var size = $scope.shapeSize[typeName];
+            if (size && !node['size']) {
+              node['size'] = size;
+            }
             // lets not add nodes which are defined as being disabled
             var enabled = $scope.showFlags[typeName];
             if (enabled || !angular.isDefined(enabled)) {
