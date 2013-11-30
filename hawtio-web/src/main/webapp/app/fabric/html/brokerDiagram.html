@@ -184,11 +184,11 @@ path.link.consumer {
   stroke: #ccc;
 }
 
-circle.hilited {
+circle.selected {
   stroke-width: 3px;
 }
 
-.hilited {
+.selected {
   stroke-width: 3px;
 }
 
@@ -219,7 +219,7 @@ text.shadow {
         <a href="#"
            class="dropdown-toggle"
            data-toggle="dropdown">
-          Show &nbsp;<i class="icon-caret-down"></i>
+          View &nbsp;<i class="icon-caret-down"></i>
         </a>
         <ul class="dropdown-menu">
           <li>
@@ -284,8 +284,9 @@ text.shadow {
 
   <div class="row-fluid">
     <div class="span12 canvas">
-      <div hawtio-force-graph graph="graph" link-distance="150" charge="-600" nodesize="10"
-           style="min-height: 800px"></div>
+      <div hawtio-force-graph graph="graph" link-distance="150" charge="-600" nodesize="10" marker-kind="marker-end"
+           style="min-height: 800px">
+      </div>
     </div>
   </div>
 

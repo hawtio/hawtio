@@ -12,6 +12,7 @@ module ForceGraph {
       graph: '=graph',
       nodesize: '@',
       linkDistance: '@',
+      markerKind: '@',
       charge: '@'
     };
 
@@ -114,6 +115,17 @@ module ForceGraph {
           .enter().append("svg:marker")
           .attr("id", String)
           .attr("viewBox", "0 -5 10 10")
+
+/*
+          .attr("refX", 6)
+          .attr("refY", 0)
+          .attr("markerWidth", 6)
+          .attr("markerHeight", 6)
+          .attr("orient", "auto")
+          .append("svg:path")
+          .attr("d", "M0,-5L10,0L0,5");
+*/
+
           .attr("refX", 15)
           .attr("refY", -1.5)
           .attr("markerWidth", 6)
@@ -155,6 +167,7 @@ module ForceGraph {
           if (angular.isDefined($scope.charge)) {
             $scope.force.charge($scope.charge);
           }
+          var markerTypeName = $scope.markerKind || "marker-end";
 
           // Add all edges to the viewport
           $scope.graphEdges = $scope.viewport.append("svg:g").selectAll("path")
@@ -163,7 +176,7 @@ module ForceGraph {
             .attr("class", (d) => {
               return "link " + d.type;
             })
-            .attr("marker-end", (d) => {
+            .attr(markerTypeName, (d) => {
               return "url(#" + d.type + ")";
             });
 
@@ -174,6 +187,15 @@ module ForceGraph {
             .append("a")
             .attr("xlink:href", (d) => {
               return d.navUrl;
+            })
+            .on("mouseover.onLink", function (d, i) {
+              var sel = d3.select(d3.event.target);
+              sel.classed('selected', true);
+              //nodeSelected(sel, d);
+            })
+            .on("mouseout.onLink", function (d, i) {
+              var sel = d3.select(d3.event.target);
+              sel.classed('selected', false);
             });
 
           function hasImage(d) {
