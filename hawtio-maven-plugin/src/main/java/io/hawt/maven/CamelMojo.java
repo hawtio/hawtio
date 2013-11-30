@@ -1,7 +1,10 @@
 package io.hawt.maven;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -16,8 +19,10 @@ public class CamelMojo extends RunMojo {
     @Parameter(property = "camel.fileApplicationContextUri")
     private String fileApplicationContextUri;
 
+    protected Artifact camelCoreArtifact;
+
     @Override
-    protected void addCustomArguments(List<String> args) {
+    protected void addCustomArguments(List<String> args) throws Exception {
         if (applicationContextUri != null) {
             args.add("-ac");
             args.add(applicationContextUri);
@@ -33,5 +38,39 @@ public class CamelMojo extends RunMojo {
             getLog().info("Using org.apache.camel.spring.Main to initiate a CamelContext");
             mainClass = "org.apache.camel.spring.Main";
         }
+    }
+
+    protected Artifact getCamelCoreArtifact(Set<Artifact> artifacts) throws MojoExecutionException {
+        for (Artifact artifact : artifacts) {
+            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+                return artifact;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
+        // make sure we have camel-core
+        Artifact camelCore = getCamelCoreArtifact(artifacts);
+        if (camelCore == null) {
+            throw new IllegalAccessError("Cannot resolve camel-core dependency from the Maven pom.xml file");
+        }
+    }
+
+    @Override
+    protected boolean filterUnwantedArtifacts(Artifact artifact) {
+        // use camel-blueprint goal for blueprint/osgi
+        if (artifact.getGroupId().equals("org.apache.aries.blueprint")) {
+            return true;
+        } else if (artifact.getGroupId().startsWith("org.ops4j")) {
+            return true;
+        } else if (artifact.getGroupId().equals("org.osgi")) {
+            return true;
+        } else if (artifact.getGroupId().equals("org.apache.felix")) {
+            return true;
+        }
+
+        return super.filterUnwantedArtifacts(artifact);
     }
 }
