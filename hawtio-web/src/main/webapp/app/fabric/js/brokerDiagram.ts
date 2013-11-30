@@ -160,7 +160,7 @@ module Fabric {
     }
 
     function brokerNameMarkup(brokerName) {
-      return brokerName ? "<p></p>broker: " +brokerName + "</p>" : "";
+      return brokerName ? "<p></p>broker: " + brokerName + "</p>" : "";
     }
 
     function onContainerJolokia(containerJolokia, container, id) {
@@ -202,7 +202,7 @@ module Fabric {
                         return {
                           popup: {
                             title: "Consumer: " + consumerId,
-                            content: "<p>client: " + (properties.clientId || "") + "</p> " +  brokerNameMarkup(properties.brokerName)
+                            content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
                           }
                         };
                       });
