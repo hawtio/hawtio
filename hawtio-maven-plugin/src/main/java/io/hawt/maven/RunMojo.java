@@ -36,11 +36,15 @@ public class RunMojo extends BaseMojo {
 
         try {
             doPrepareArguments();
+            doBeforeExecute();
             doExecute();
+            doAfterExecute();
         } catch (Exception e) {
             throw new MojoExecutionException("Error executing", e);
         }
     }
+
+
 
     protected void doPrepareArguments() throws Exception {
         List<String> args = new ArrayList<String>();

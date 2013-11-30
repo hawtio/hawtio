@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import io.hawt.config.ConfigFacade;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,16 @@ public class AsyncMavenIndexerFacadeFactory {
     private String indexDirectory;
     private Timer timer;
     private TimerTask task;
+    private ConfigFacade config;
 
     public void init() {
+        config = ConfigFacade.getSingleton();
+
+        if (config.isOffline()) {
+            LOG.info("MavenIndexerFacade is not in use as hawtio is in offline mode");
+            return;
+        }
+
         timer = new Timer("MavenIndexerFacade startup timer", true);
         task = new TimerTask() {
             @Override
