@@ -74,4 +74,8 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
         this.configDir = configDir;
     }
 
+    public boolean isOffline() {
+        return "true".equals(System.getProperty("hawtio.offline", "false"));
+    }
+
 }

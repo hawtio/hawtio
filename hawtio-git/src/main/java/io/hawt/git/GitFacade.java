@@ -57,6 +57,7 @@ public class GitFacade extends GitFacadeSupport {
     private PersonIdent stashPersonIdent;
     private String defaultBranch;
     private boolean firstPull = true;
+    private ConfigFacade config;
 
     public static String trimLeadingSlash(String path) {
         String name = path;
@@ -66,8 +67,15 @@ public class GitFacade extends GitFacadeSupport {
         return name;
     }
 
-
     public void init() throws Exception {
+        config = ConfigFacade.getSingleton();
+
+        if (config.isOffline()) {
+            // lets avoid cloning or pulling the remote git repo for configuration on startup if offline mode
+            cloneRemoteRepoOnStartup = false;
+            pullOnStartup = false;
+        }
+
         // lets check if we have a config directory if not lets create one...
         initialiseGitRepo();
 
