@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -74,7 +76,7 @@ public class RunMojo extends BaseMojo {
      *
      * @param args the arguments
      */
-    protected void addCustomArguments(List<String> args) {
+    protected void addCustomArguments(List<String> args) throws Exception {
         // noop
     }
 
@@ -127,7 +129,11 @@ public class RunMojo extends BaseMojo {
             }
         }, mainClass + ".main()");
 
-        bootstrapThread.setContextClassLoader(getClassLoader());
+        // resolve artifacts to be used
+        Set<Artifact> artifacts = resolveArtifacts();
+        resolvedArtifacts(artifacts);
+
+        bootstrapThread.setContextClassLoader(getClassLoader(artifacts));
 
         bootstrapThread.start();
         joinNonDaemonThreads(threadGroup);
@@ -142,6 +148,10 @@ public class RunMojo extends BaseMojo {
         if (threadGroup.getUncaughtException() != null) {
             throw new MojoExecutionException("Uncaught exception", threadGroup.getUncaughtException());
         }
+    }
+
+    protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
+        // noop
     }
 
     protected void beforeBootstrapMain() {

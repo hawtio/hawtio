@@ -1,7 +1,6 @@
 package io.hawt.maven;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -67,6 +66,9 @@ public abstract class BaseMojo extends AbstractMojo {
     @Parameter(property = "hawtio.logClasspath", defaultValue = "false")
     private boolean logClasspath;
 
+    @Parameter(property = "hawtio.logDependencies", defaultValue = "false")
+    private boolean logDependencies;
+
     private boolean includeProjectDependencies = true;
     private boolean includePluginDependencies = false;
 
@@ -79,15 +81,17 @@ public abstract class BaseMojo extends AbstractMojo {
      * @return the classloader
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
-    protected ClassLoader getClassLoader() throws Exception {
+    protected ClassLoader getClassLoader(Set<Artifact> artifacts) throws Exception {
         Set<URL> classpathURLs = new LinkedHashSet<URL>();
 
-        // project classpath must be first
-        this.addRelevantProjectDependenciesToClasspath(classpathURLs);
-        // and extra plugin classpath
-        this.addExtraPluginDependenciesToClasspath(classpathURLs);
-        // and plugin classpath last
-        this.addRelevantPluginDependenciesToClasspath(classpathURLs);
+        // add ourselves to top of classpath
+        URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
+        getLog().debug("Adding to classpath : " + mainClasses);
+        classpathURLs.add(mainClasses);
+
+        for (Artifact artifact : artifacts) {
+            classpathURLs.add(artifact.getFile().toURI().toURL());
+        }
 
         if (logClasspath) {
             getLog().info("Classpath (" + classpathURLs.size() + " entries):");
@@ -98,122 +102,145 @@ public abstract class BaseMojo extends AbstractMojo {
         return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
 
+    protected Set<Artifact> resolveArtifacts() throws Exception {
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
+
+        // project classpath must be first
+        this.addRelevantProjectDependencies(artifacts);
+        // and extra plugin classpath
+        this.addExtraPluginDependencies(artifacts);
+        // and plugin classpath last
+        this.addRelevantPluginDependencies(artifacts);
+
+        Iterator<Artifact> it = artifacts.iterator();
+        while (it.hasNext()) {
+            Artifact artifact = it.next();
+            if (filterUnwantedArtifacts(artifact)) {
+                getLog().info("Removing unwanted artifact: " + artifact);
+                it.remove();
+            }
+        }
+
+        if (logDependencies) {
+            List<Artifact> sorted = new ArrayList<Artifact>(artifacts);
+            Collections.sort(sorted);
+            getLog().info("Artifact (" + sorted.size() + " entries):");
+            for (Artifact artifact : sorted) {
+                getLog().info("  " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType() + ":" + artifact.getVersion() + ":" + artifact.getScope());
+            }
+        }
+        return artifacts;
+    }
+
+    /**
+     * Filter unwanted artifacts
+     *
+     * @param artifact  the artifact
+     * @return <tt>true</tt> to skip this artifact, <tt>false</tt> to keep it
+     */
+    protected boolean filterUnwantedArtifacts(Artifact artifact) {
+        // filter out maven and plexus stuff (plexus used by maven plugins)
+        if (artifact.getGroupId().startsWith("org.apache.maven")) {
+            return true;
+        } else if (artifact.getGroupId().startsWith("org.codehaus.plexus")) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Add any relevant project dependencies to the classpath. Takes
      * includeProjectDependencies into consideration.
-     *
-     * @param path classpath of {@link java.net.URL} objects
-     * @throws MojoExecutionException
      */
     @SuppressWarnings("unchecked")
-    protected void addRelevantProjectDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
-        try {
-            getLog().debug("Project Dependencies will be included.");
+    protected void addRelevantProjectDependencies(Set<Artifact> artifacts) throws Exception {
+        getLog().debug("Project Dependencies will be included.");
 
-            URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-            getLog().debug("Adding to classpath : " + mainClasses);
-            path.add(mainClasses);
+        Set<Artifact> dependencies = project.getArtifacts();
+        getLog().debug("There are " + dependencies.size() + " dependencies in the project");
 
-            Set<Artifact> dependencies = project.getArtifacts();
-            getLog().debug("There are " + dependencies.size() + " dependencies in the project");
+        // system scope dependencies are not returned by maven 2.0. See MEXEC-17
+        dependencies.addAll(getAllNonTestOrProvidedScopedDependencies());
 
-            // system scope dependencies are not returned by maven 2.0. See MEXEC-17
-            dependencies.addAll(getAllNonTestOrProvidedScopedDependencies());
+        Iterator<Artifact> iter = dependencies.iterator();
+        while (iter.hasNext()) {
+            Artifact classPathElement = iter.next();
+            getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                    + " to classpath");
 
-            Iterator<Artifact> iter = dependencies.iterator();
-            while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
-                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                        + " to classpath");
-
-                getLog().debug("Artifact: " + classPathElement);
-                File file = classPathElement.getFile();
-                if (file != null) {
-                    path.add(file.toURI().toURL());
-                }
-            }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
+            artifacts.add(classPathElement);
         }
     }
 
     /**
      * Add any relevant project dependencies to the classpath. Indirectly takes
      * includePluginDependencies and ExecutableDependency into consideration.
-     *
-     * @param path classpath of {@link java.net.URL} objects
-     * @throws MojoExecutionException
      */
-    protected void addExtraPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    protected void addExtraPluginDependencies(Set<Artifact> artifacts) throws MojoExecutionException {
         if (extraPluginDependencyArtifactId == null && extendedPluginDependencyArtifactId == null) {
             return;
         }
 
-        try {
-            Set<Artifact> artifacts = new HashSet<Artifact>(this.pluginDependencies);
-            for (Artifact artifact : artifacts) {
-                // must
-                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
-                        || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
-                    getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
-                            + " to classpath");
-                    path.add(artifact.getFile().toURI().toURL());
+        Set<Artifact> deps = new HashSet<Artifact>(this.pluginDependencies);
+        for (Artifact artifact : deps) {
+            // must
+            if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
+                    || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
+                getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
+                        + " to classpath");
 
-                    // add the transient dependencies of this artifact
-                    Set<Artifact> deps = resolveExecutableDependencies(artifact);
-                    for (Artifact dep : deps) {
+                artifacts.add(artifact);
 
-                        // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                        if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                            getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                            continue;
-                        }
+                // add the transient dependencies of this artifact
+                Set<Artifact> resolvedDeps = resolveExecutableDependencies(artifact);
+                for (Artifact dep : resolvedDeps) {
 
-                        getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
-                                + " to classpath");
-                        path.add(dep.getFile().toURI().toURL());
+                    // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
+                    if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
+                        getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
+                        continue;
                     }
+
+                    getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId() + " to classpath");
+                    artifacts.add(dep);
                 }
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
         }
     }
 
     /**
      * Add any relevant project dependencies to the classpath.
-     *
-     * @param path classpath of {@link java.net.URL} objects
-     * @throws MojoExecutionException
      */
-    protected void addRelevantPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    protected void addRelevantPluginDependencies(Set<Artifact> artifacts) throws MojoExecutionException {
         if (pluginDependencies == null || !includePluginDependencies) {
             return;
         }
 
-        try {
-            Iterator<Artifact> iter = this.pluginDependencies.iterator();
-            while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
+        Iterator<Artifact> iter = this.pluginDependencies.iterator();
+        while (iter.hasNext()) {
+            Artifact classPathElement = iter.next();
 
-                // we must skip org.osgi.core, otherwise we get a
-                // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
-                if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
-                    continue;
-                }
-
-                getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
-                        + " to classpath");
-                path.add(classPathElement.getFile().toURI().toURL());
+            // we must skip org.osgi.core, otherwise we get a
+            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
+            if (classPathElement.getArtifactId().equals("org.osgi.core")) {
+                getLog().info("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                continue;
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
-        }
 
+            // we must skip org.apache.aries.blueprint, otherwise we get a
+            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
+            if (classPathElement.getArtifactId().equals("org.apache.aries.blueprint")) {
+                getLog().info("Skipping org.apache.aries.blueprint -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                continue;
+            }
+
+            getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
+            artifacts.add(classPathElement);
+        }
     }
 
-    protected Collection<Artifact> getAllNonTestOrProvidedScopedDependencies() throws MojoExecutionException {
+    protected Collection<Artifact> getAllNonTestOrProvidedScopedDependencies() throws Exception {
         List<Artifact> answer = new ArrayList<Artifact>();
 
         for (Artifact artifact : getAllDependencies()) {
@@ -227,7 +254,7 @@ public abstract class BaseMojo extends AbstractMojo {
     }
 
     // generic method to retrieve all the transitive dependencies
-    protected Collection<Artifact> getAllDependencies() throws MojoExecutionException {
+    protected Collection<Artifact> getAllDependencies() throws Exception {
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
