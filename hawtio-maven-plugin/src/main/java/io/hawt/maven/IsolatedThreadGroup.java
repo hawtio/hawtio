@@ -19,8 +19,8 @@ public class IsolatedThreadGroup extends ThreadGroup {
         synchronized (this) {
             // only remember the first one
             if (uncaughtException == null) {
-                uncaughtException = throwable; // will be reported
-                // eventually
+                uncaughtException = throwable;
+                // will be reported eventually
             } else {
                 doLog = true;
             }
