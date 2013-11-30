@@ -16,19 +16,22 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class RunMojo extends BaseMojo {
 
     @Parameter(property = "hawtio.port", defaultValue = "8080")
-    private int port;
+    int port;
 
     @Parameter(property = "hawtio.context", defaultValue = "hawtio")
-    private String context;
+    String context;
 
     @Parameter(property = "hawtio.mainClass")
-    private String mainClass;
+    String mainClass;
 
     @Parameter(property = "hawtio.arguments")
-    private String[] arguments;
+    String[] arguments;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // use hawtio-app
+        extendedPluginDependencyArtifactId = "hawtio-app";
+
         getLog().info("hawtio web console at http://localhost:" + port + "/" + context);
 
         try {
@@ -84,9 +87,25 @@ public class RunMojo extends BaseMojo {
         final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
                 try {
+                    beforeBootstrapHawtio();
+
+                    getLog().info("Starting hawtio ...");
+                    getLog().info("*************************************");
+                    Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
+                            .getMethod("main", new Class[] {String[].class});
+                    if (!hawtioMain.isAccessible()) {
+                        getLog().debug("Setting accessibility to true in order to invoke main().");
+                        hawtioMain.setAccessible(true);
+                    }
+                    String[] args = new String[]{"--port", "" + port, "--join", "false"};
+                    hawtioMain.invoke(hawtioMain, new Object[]{args});
+
+                    afterBootstrapHawtio();
+
                     beforeBootstrapMain();
 
                     getLog().info("Starting " + mainClass + "...");
+                    getLog().info("*************************************");
                     Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
                             .getMethod("main", new Class[] {String[].class});
                     if (!main.isAccessible()) {
@@ -96,6 +115,7 @@ public class RunMojo extends BaseMojo {
                     main.invoke(main, new Object[] {arguments});
 
                     afterBootstrapMain();
+
                 } catch (Exception e) { // just pass it on
                     // let it be printed so end users can see the exception on the console
                     getLog().error("*************************************");
@@ -108,8 +128,6 @@ public class RunMojo extends BaseMojo {
         }, mainClass + ".main()");
 
         bootstrapThread.setContextClassLoader(getClassLoader());
-        // TODO: system properties, and restore original afterwards
-        // setSystemProperties();
 
         bootstrapThread.start();
         joinNonDaemonThreads(threadGroup);
@@ -122,7 +140,7 @@ public class RunMojo extends BaseMojo {
         }
 
         if (threadGroup.getUncaughtException() != null) {
-            throw new MojoExecutionException(null, threadGroup.getUncaughtException());
+            throw new MojoExecutionException("Uncaught exception", threadGroup.getUncaughtException());
         }
     }
 
@@ -131,6 +149,14 @@ public class RunMojo extends BaseMojo {
     }
 
     protected void afterBootstrapMain() {
+        // noop
+    }
+
+    protected void beforeBootstrapHawtio() {
+        // noop
+    }
+
+    protected void afterBootstrapHawtio() {
         // noop
     }
 
