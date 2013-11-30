@@ -34,8 +34,6 @@ public class RunMojo extends BaseMojo {
         // use hawtio-app
         extendedPluginDependencyArtifactId = "hawtio-app";
 
-        getLog().info("hawtio web console at http://localhost:" + port + "/" + context);
-
         try {
             doPrepareArguments();
             doExecute();
@@ -99,7 +97,7 @@ public class RunMojo extends BaseMojo {
                         getLog().debug("Setting accessibility to true in order to invoke main().");
                         hawtioMain.setAccessible(true);
                     }
-                    String[] args = new String[]{"--port", "" + port, "--join", "false"};
+                    String[] args = new String[]{"--context", context, "--port", "" + port, "--join", "false"};
                     hawtioMain.invoke(hawtioMain, new Object[]{args});
 
                     afterBootstrapHawtio();
@@ -148,10 +146,6 @@ public class RunMojo extends BaseMojo {
         if (threadGroup.getUncaughtException() != null) {
             throw new MojoExecutionException("Uncaught exception", threadGroup.getUncaughtException());
         }
-    }
-
-    protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
-        // noop
     }
 
     protected void beforeBootstrapMain() {
