@@ -121,7 +121,61 @@ module Camel {
     }
 
     function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#cameltree"), true);
+      camelUpdateTreeSelectionFromURL($location, $("#cameltree"), true);
     }
   }
+
+  export function camelUpdateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
+    var dtree = treeElement.dynatree("getTree");
+    if (dtree) {
+      var node = null;
+      var key = $location.search()['nid'];
+      if (key) {
+        try {
+          node = dtree.activateKey(key);
+        } catch (e) {
+          // tree not visible we suspect!
+        }
+      }
+      if (node) {
+        node.expand(true);
+      } else {
+        if (!treeElement.dynatree("getActiveNode")) {
+          // lets expand the first node
+          var root = treeElement.dynatree("getRoot");
+          var children = root ? root.getChildren() : null;
+          if (children && children.length) {
+            // if only 1 camel context then auto select it, and expand its routes (if it has any routes)
+            if (children.length === 1) {
+              var first = children[0];
+              first.expand(true);
+              var contexts = first.getChildren();
+              if (contexts && contexts.length === 1) {
+                first = contexts[0];
+                first.expand(true);
+                children = first.getChildren();
+                if (children && children.length) {
+                  var routes = children[0];
+                  if (routes.data.typeName === 'routes') {
+                    first = routes;
+                    first.expand(true);
+                  }
+                }
+              }
+              if (activateIfNoneSelected) {
+                first.activate();
+              }
+            } else {
+              var first = children[0];
+              first.expand(true);
+              if (activateIfNoneSelected) {
+                first.activate();
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
