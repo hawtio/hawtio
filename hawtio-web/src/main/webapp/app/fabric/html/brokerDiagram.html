@@ -1,5 +1,11 @@
 <style type="text/css">
 
+ul.viewMenu li {
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
 div#pop-up {
   display: none;
   position: absolute;
@@ -221,7 +227,8 @@ text.shadow {
            data-toggle="dropdown">
           View &nbsp;<i class="icon-caret-down"></i>
         </a>
-        <ul class="dropdown-menu">
+
+        <ul class="dropdown-menu viewMenu">
           <li>
             <label class="checkbox">
               <input type="checkbox" ng-model="showFlags.consumer"> Consumers
@@ -268,6 +275,7 @@ text.shadow {
             </label>
           </li>
         </ul>
+
 
         <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the broker and container diagram">
           <i class="icon-edit"></i> Configuration
