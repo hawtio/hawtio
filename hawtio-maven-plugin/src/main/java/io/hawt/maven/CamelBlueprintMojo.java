@@ -43,6 +43,15 @@ public class CamelBlueprintMojo extends RunMojo {
         }
     }
 
+    protected Artifact getCamelCoreArtifact(Set<Artifact> artifacts) throws MojoExecutionException {
+        for (Artifact artifact : artifacts) {
+            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+                return artifact;
+            }
+        }
+        return null;
+    }
+
     protected Artifact getCamelBlueprintArtifact(Set<Artifact> artifacts) throws MojoExecutionException {
         for (Artifact artifact : artifacts) {
             if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-test-blueprint")) {
@@ -54,10 +63,33 @@ public class CamelBlueprintMojo extends RunMojo {
 
     @Override
     protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
-        Artifact camelCore = getCamelBlueprintArtifact(artifacts);
+        Artifact camelCore = getCamelCoreArtifact(artifacts);
         if (camelCore == null) {
-            throw new IllegalAccessError("Cannot resolve camel-test-blueprint dependency from the Maven pom.xml file");
+            throw new IllegalAccessError("Cannot resolve camel-core dependency from the Maven pom.xml file");
         }
+
+        // try to find camel-test-blueprint which we need
+        Artifact camelTestBlueprint = getCamelBlueprintArtifact(artifacts);
+        if (camelTestBlueprint == null) {
+            camelTestBlueprint = artifactFactory.createArtifact("org.apache.camel", "camel-test-blueprint", camelCore.getVersion(), null, "jar");
+            Set<Artifact> extras = resolveExecutableDependencies(camelTestBlueprint);
+            if (extras.isEmpty()) {
+                throw new IllegalAccessError("Cannot resolve camel-test-blueprint dependency from the Maven pom.xml file");
+            }
+
+            for (Artifact extra : extras) {
+                getLog().debug("Extra artifact: " + extra);
+                if (Artifact.SCOPE_TEST.equals(extra.getScope())) {
+                    continue;
+                }
+                if (!artifacts.contains(extra)) {
+                    getLog().debug("Adding extra artifact: " + extra);
+                    artifacts.add(extra);
+                }
+            }
+        }
+
+        super.resolvedArtifacts(artifacts);
     }
 
 }

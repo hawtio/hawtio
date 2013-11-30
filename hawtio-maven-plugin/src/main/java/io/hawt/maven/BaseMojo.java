@@ -37,40 +37,37 @@ public abstract class BaseMojo extends AbstractMojo {
     private long daemonThreadJoinTimeout = 15000L;
 
     @Component
-    private MavenProject project;
+    MavenProject project;
 
     @Component
-    private ArtifactResolver artifactResolver;
+    ArtifactResolver artifactResolver;
 
     @Component
-    private ArtifactFactory artifactFactory;
+    ArtifactFactory artifactFactory;
 
     @Component
-    private MavenProjectBuilder projectBuilder;
+    MavenProjectBuilder projectBuilder;
 
     @Component
-    private ArtifactMetadataSource metadataSource;
+    ArtifactMetadataSource metadataSource;
 
     @Parameter(property = "localRepository", readonly = true, required = true)
-    private ArtifactRepository localRepository;
+    ArtifactRepository localRepository;
 
     @Parameter(property = "project.remoteArtifactRepositories")
-    private List<?> remoteRepositories;
+    List<?> remoteRepositories;
 
     @Parameter(readonly = true, property = "plugin.artifacts")
-    private List<Artifact> pluginDependencies;
+    List<Artifact> pluginDependencies;
 
     @Parameter(readonly = true, property = "project.dependencyArtifacts")
-    private Set<Artifact> projectDependencies;
+    Set<Artifact> projectDependencies;
 
     @Parameter(property = "hawtio.logClasspath", defaultValue = "false")
-    private boolean logClasspath;
+    boolean logClasspath;
 
     @Parameter(property = "hawtio.logDependencies", defaultValue = "false")
-    private boolean logDependencies;
-
-    private boolean includeProjectDependencies = true;
-    private boolean includePluginDependencies = false;
+    boolean logDependencies;
 
     String extraPluginDependencyArtifactId;
     String extendedPluginDependencyArtifactId;
@@ -121,6 +118,10 @@ public abstract class BaseMojo extends AbstractMojo {
             }
         }
 
+        return artifacts;
+    }
+
+    protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
         if (logDependencies) {
             List<Artifact> sorted = new ArrayList<Artifact>(artifacts);
             Collections.sort(sorted);
@@ -129,7 +130,6 @@ public abstract class BaseMojo extends AbstractMojo {
                 getLog().info("  " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType() + ":" + artifact.getVersion() + ":" + artifact.getScope());
             }
         }
-        return artifacts;
     }
 
     /**
@@ -166,8 +166,7 @@ public abstract class BaseMojo extends AbstractMojo {
         Iterator<Artifact> iter = dependencies.iterator();
         while (iter.hasNext()) {
             Artifact classPathElement = iter.next();
-            getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                    + " to classpath");
+            getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
 
             artifacts.add(classPathElement);
         }
@@ -187,21 +186,13 @@ public abstract class BaseMojo extends AbstractMojo {
             // must
             if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
                     || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
-                getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
-                        + " to classpath");
 
+                getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId() + " to classpath");
                 artifacts.add(artifact);
 
                 // add the transient dependencies of this artifact
                 Set<Artifact> resolvedDeps = resolveExecutableDependencies(artifact);
                 for (Artifact dep : resolvedDeps) {
-
-                    // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                    if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                        getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                        continue;
-                    }
-
                     getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId() + " to classpath");
                     artifacts.add(dep);
                 }
@@ -213,28 +204,13 @@ public abstract class BaseMojo extends AbstractMojo {
      * Add any relevant project dependencies to the classpath.
      */
     protected void addRelevantPluginDependencies(Set<Artifact> artifacts) throws MojoExecutionException {
-        if (pluginDependencies == null || !includePluginDependencies) {
+        if (pluginDependencies == null) {
             return;
         }
 
         Iterator<Artifact> iter = this.pluginDependencies.iterator();
         while (iter.hasNext()) {
             Artifact classPathElement = iter.next();
-
-            // we must skip org.osgi.core, otherwise we get a
-            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
-            if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                getLog().info("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
-                continue;
-            }
-
-            // we must skip org.apache.aries.blueprint, otherwise we get a
-            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
-            if (classPathElement.getArtifactId().equals("org.apache.aries.blueprint")) {
-                getLog().info("Skipping org.apache.aries.blueprint -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
-                continue;
-            }
-
             getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
             artifacts.add(classPathElement);
         }

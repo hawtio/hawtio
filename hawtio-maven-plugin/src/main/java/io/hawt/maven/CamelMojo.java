@@ -56,11 +56,14 @@ public class CamelMojo extends RunMojo {
         if (camelCore == null) {
             throw new IllegalAccessError("Cannot resolve camel-core dependency from the Maven pom.xml file");
         }
+
+        super.resolvedArtifacts(artifacts);
     }
 
     @Override
     protected boolean filterUnwantedArtifacts(Artifact artifact) {
-        // use camel-blueprint goal for blueprint/osgi
+        // filter out unwanted OSGi related JARs as some projects like ActiveMQ includes these dependencies
+        // and you should use the camel-blueprint goal for running as OSGi
         if (artifact.getGroupId().equals("org.apache.aries.blueprint")) {
             return true;
         } else if (artifact.getGroupId().startsWith("org.ops4j")) {
