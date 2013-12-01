@@ -16,6 +16,12 @@
     <feature>hawtio-maven-indexer</feature>
   </feature>
 
+  <feature name="hawtio-default-offline" version="${hawtio-version}" resolver="(obr)">
+    <details>Hawt.io without the Git and Maven services which require a working internet connection</details>
+    <feature>hawtio-core</feature>
+    <feature>hawtio-karaf-terminal</feature>
+  </feature>
+
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
     <details>Installs the hawtio maven indexer service as a separate bundle</details>
     <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
