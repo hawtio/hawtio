@@ -32,10 +32,10 @@ public class CamelMojo extends RunMojo {
         }
 
         if (mainClass != null) {
-            getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
+            getLog().info("Using custom " + mainClass + " to initiate Camel");
         } else {
             // use spring by default
-            getLog().info("Using org.apache.camel.spring.Main to initiate a CamelContext");
+            getLog().info("Using org.apache.camel.spring.Main to initiate Camel");
             mainClass = "org.apache.camel.spring.Main";
         }
     }
@@ -52,8 +52,8 @@ public class CamelMojo extends RunMojo {
     @Override
     protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
         // make sure we have camel-core
-        Artifact camelCore = getCamelCoreArtifact(artifacts);
-        if (camelCore == null) {
+        camelCoreArtifact = getCamelCoreArtifact(artifacts);
+        if (camelCoreArtifact == null) {
             throw new IllegalAccessError("Cannot resolve camel-core dependency from the Maven pom.xml file");
         }
 

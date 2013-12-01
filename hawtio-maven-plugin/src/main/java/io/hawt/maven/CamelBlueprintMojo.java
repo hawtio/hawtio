@@ -19,6 +19,8 @@ public class CamelBlueprintMojo extends RunMojo {
     @Parameter(property = "camel.configAdminFileName")
     private String configAdminFileName;
 
+    protected Artifact camelCoreArtifact;
+
     @Override
     protected void addCustomArguments(List<String> args) {
         // must include plugin dependencies for blueprint
@@ -35,10 +37,10 @@ public class CamelBlueprintMojo extends RunMojo {
         }
 
         if (mainClass != null) {
-            getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
+            getLog().info("Using custom " + mainClass + " to initiate Camel");
         } else {
             // use blueprint by default
-            getLog().info("Using org.apache.camel.test.blueprint.Main to initiate a CamelContext");
+            getLog().info("Using org.apache.camel.test.blueprint.Main to initiate Camel");
             mainClass = "org.apache.camel.test.blueprint.Main";
         }
     }
@@ -63,15 +65,15 @@ public class CamelBlueprintMojo extends RunMojo {
 
     @Override
     protected void resolvedArtifacts(Set<Artifact> artifacts) throws Exception {
-        Artifact camelCore = getCamelCoreArtifact(artifacts);
-        if (camelCore == null) {
+        camelCoreArtifact = getCamelCoreArtifact(artifacts);
+        if (camelCoreArtifact == null) {
             throw new IllegalAccessError("Cannot resolve camel-core dependency from the Maven pom.xml file");
         }
 
         // try to find camel-test-blueprint which we need
         Artifact camelTestBlueprint = getCamelBlueprintArtifact(artifacts);
         if (camelTestBlueprint == null) {
-            camelTestBlueprint = artifactFactory.createArtifact("org.apache.camel", "camel-test-blueprint", camelCore.getVersion(), null, "jar");
+            camelTestBlueprint = artifactFactory.createArtifact("org.apache.camel", "camel-test-blueprint", camelCoreArtifact.getVersion(), null, "jar");
             Set<Artifact> extras = resolveExecutableDependencies(camelTestBlueprint);
             if (extras.isEmpty()) {
                 throw new IllegalAccessError("Cannot resolve camel-test-blueprint dependency from the Maven pom.xml file");
