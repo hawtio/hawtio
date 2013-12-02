@@ -77,25 +77,20 @@ public class ContextFormatterServlet extends HttpServlet {
                             LinkedList list = new LinkedList(jsonObject.values());
                             ArrayList requiredObj = (ArrayList)list.getFirst();
                             htmlView.append("<table class=\"table\"><thead><tr>");
-                            Map columnsAndRow= ServletHelpers.populateTableMapForTable(requiredObj);
-                            List columns=(List)columnsAndRow.get("columns");
+                            Map columnsAndRow= ServletHelpers.populateTableMapForXl(requiredObj);
+                            Set columns=(Set)columnsAndRow.get("columns");
                             List rows=(List)columnsAndRow.get("rows");
-                            htmlView.append("<th>index</th>");
                             for(Object th : columns){
                                 htmlView.append("<th>"+th.toString()+"</th>");
                             }
                             htmlView.append("</tr>");
-                            int i=1;
+
                             for(Object obj : rows){
                                     htmlView.append("<tr>");
-                                    for(Object row : (List)obj){
-                                        htmlView.append("<td>"+i+"</td>");
-                                        htmlView.append("<td>"+row.toString()+"</td>");
+                                    for(Object row : ((Map)obj).entrySet()){
+                                        htmlView.append("<td>"+((Map.Entry)row).getValue().toString()+"</td>");
                                     }
                                     htmlView.append("</tr>");
-
-                                System.out.println("***********************"+i);
-                              i++;
                             }
                             htmlView.append("</thead></table>");
                         }

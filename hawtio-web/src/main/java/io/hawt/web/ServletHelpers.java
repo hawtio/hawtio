@@ -43,25 +43,14 @@ public class ServletHelpers {
     }
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
-
         Map<String,Object> xlData = new HashMap<String,Object>();
         Set columns = getColumns(listEntry);
         List rowsData = getRowsData(listEntry, columns);
-
         xlData.put("columns",columns);
         xlData.put("rows",rowsData);
         return xlData;
     }
-    public static Map populateTableMapForTable(List listEntry) {
-       listEntry = flatten(listEntry);
-        Map<String,Object> xlData = new HashMap<String,Object>();
-        List columns = getColumnsForTable(listEntry);
-        List rowsData = getRowsDataForTable(listEntry, columns);
 
-        xlData.put("columns",columns);
-        xlData.put("rows",rowsData);
-        return xlData;
-    }
 
     public static Map populateErrorTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
@@ -115,21 +104,7 @@ public class ServletHelpers {
         }
         return list;
     }
-    private static List getRowsDataForTable(List listEntry, List columns){
-        List rowDataList = new ArrayList();
-        for(Object o : listEntry){
-             List keyValuePairs = new ArrayList();
-            if (o instanceof JSONObject){
-                JSONObject jsonObject = (JSONObject)o;
-                for(Object column : columns){
-                    Object value = removeNoisyString(jsonObject.get(column.toString()));
-                    keyValuePairs.add(value);
-                }
-            }
-            rowDataList.add(keyValuePairs);
-        }
-        return rowDataList;
-    }
+
 
     public static String generateCsvString(Map xlData){
         int idx1=0,idx2=0;
