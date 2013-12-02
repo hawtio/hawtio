@@ -92,4 +92,56 @@ public class ExportContextServlet extends HttpServlet {
             return ServletHelpers.generateCsvString(xlData);
         }else return "Content not available";
     }
+
+    @Override
+    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
+        String server = httpServletRequest.getParameter("server");
+        String jobExecutionId = httpServletRequest.getParameter("execId");
+        String entryIndex = httpServletRequest.getParameter("entryIndex");
+
+        System.out.println(" ===================== server ------------- " + server);
+        System.out.println(" ===================== jobExecutionId ----- " + jobExecutionId);
+        System.out.println(" ===================== entryIndex --------- " + entryIndex);
+
+        String jsonStringResponse = "Content not available";
+        if((server != null && !server.isEmpty())){
+            if((jobExecutionId != null && !jobExecutionId.isEmpty())){
+                server = server.replaceAll("\\\\","");
+                if (!server.contains("http://")){
+                    server = "http://"+server;
+                }
+                String url = server+"jobs/executions/"+jobExecutionId+"/context.json";
+                jsonStringResponse = executeHttpGetRequest(url);
+                System.out.println(" ===================== response string ------------- " + jsonStringResponse);
+                JSONParser parser = new JSONParser();
+
+                JSONObject jsonObject = null;
+            }
+        }
+        resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
+        resp.getWriter().println(jsonStringResponse);
+    }
+
+    private String executeHttpGetRequest(String url)throws IOException{
+        String jsonStringResponse;
+        HttpClient client = new HttpClient();
+        GetMethod get = new GetMethod(url);
+        int reponseCode =  client.executeMethod(get);
+        jsonStringResponse = get.getResponseBodyAsString();
+        get.releaseConnection();
+        return jsonStringResponse;
+    }
+
+    private JSONObject parseStringToJSON(String source){
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = null;
+        try{
+            jsonObject = (JSONObject)parser.parse(source);
+
+        }catch(Exception pe){
+            LOG.error(pe.getMessage());
+            return jsonObject;
+        }
+        return jsonObject;
+    }
 }

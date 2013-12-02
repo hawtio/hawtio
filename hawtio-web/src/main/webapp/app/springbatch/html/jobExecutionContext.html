@@ -6,7 +6,7 @@
     <table class="table table-striped table-hover">
         <thead>
         <tr>
-            <th style="width: 3%">Job Execution Id</th>
+            <th style="width: 3%;">Job Execution Id</th>
             <th>Context</th>
         </tr>
         </thead>
@@ -19,7 +19,12 @@
                     <div class="span10">{{jobExecutionContext.context}}</div>
                     <div class="span2">
                         <div class="pull-left" >
-
+                            <form action="/hawtio/exportContext" method="POST">
+                                <input type="hidden" name="server" value="{{springBatchServer}}">
+                                <input type="hidden" name="execId" value="{{jobExecutionContext.jobExecutionId}}">
+                                <input type="hidden" name="entryIndex" value="2">
+                                <input type="submit" value="Export as CSV" class="btn">
+                            </form>
                         </div>
                     </div>
                 </div>
