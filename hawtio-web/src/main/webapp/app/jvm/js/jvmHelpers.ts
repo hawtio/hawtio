@@ -23,6 +23,10 @@ module JVM {
       return link && link.isValid(workspace);
     };
 
+    $scope.hasLocalMBean = () => {
+      return JVM.hasLocalMBean(workspace);
+    };
+
     $scope.breadcrumbs = [
       {
         content: '<i class=" icon-signin"></i> Remote',
@@ -33,9 +37,13 @@ module JVM {
       {
         content: '<i class="icon-list-ul"></i> Local',
         title: "View a diagram of the route",
-        isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('io.hawt.jvm.local', {type: 'JVMList'}),
+        isValid: (workspace:Workspace) => hasLocalMBean(workspace),
         href: "#/jvm/local"
       }
     ];
+  }
+
+  export function hasLocalMBean(workspace) {
+    return workspace.treeContainsDomainAndProperties('io.hawt.jvm.local', {type: 'JVMList'});
   }
 }
