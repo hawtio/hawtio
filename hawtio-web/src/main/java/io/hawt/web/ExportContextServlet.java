@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-
-import static java.lang.System.out;
 /**
  * Created with IntelliJ IDEA.
  * User: prashant
@@ -30,16 +28,9 @@ public class ExportContextServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
-        out.println(" ===================== = jobExecution id ======================== "+httpServletRequest.getParameter("jobExecutionId"));
         String server = httpServletRequest.getParameter("server");
         String jobExecutionId = httpServletRequest.getParameter("execId");
-        String jobStepId = httpServletRequest.getParameter("jobStepId");
         String key = httpServletRequest.getParameter("key");
-
-        out.println("======= server ======= "+server);
-        out.println("======= jobExecutionId ======= "+jobStepId);
-        out.println("======= jobStepId ======= "+jobStepId);
-        out.println("======= key ======= "+key);
 
         String jsonStringResponse = "Content not available";
         if((server != null && !server.isEmpty())){
@@ -70,14 +61,15 @@ public class ExportContextServlet extends HttpServlet {
                                 if (o instanceof JSONObject){
                                     if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
                                         exportEntry = (JSONObject)o;
-                                        if((exportEntry.get("list") != null)&&(exportEntry.get("list") instanceof JSONObject)){
-                                            JSONObject obj = (JSONObject)exportEntry.get("list");
-                                            JSONArray exportArray =  (JSONArray)new LinkedList(obj.values()).getFirst();
-                                            Map xlData = (key.equalsIgnoreCase(RENDER_JSON_ERROR_MESSAGES))?ServletHelpers.populateErrorTableMapForXl(exportArray):ServletHelpers.populateTableMapForXl(exportArray);
-                                            jsonStringResponse = ServletHelpers.generateCsvString(xlData);
-                                        }
+                                        jsonStringResponse = getCsvData(exportEntry, key);
                                     }
                                 }
+                            }
+                        }else if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONObject)){
+                            JSONObject entryObject = (JSONObject)mapObject.get("entry");
+                            if(entryObject.get("string").toString().equalsIgnoreCase(key)){
+                                JSONObject exportEntry = (JSONObject)mapObject.get("string");
+                                jsonStringResponse = getCsvData(exportEntry, key);
                             }
                         }
                     }
@@ -87,13 +79,17 @@ public class ExportContextServlet extends HttpServlet {
                 }
                 get.releaseConnection();
             }
-            else if((jobStepId != null && !jobStepId.isEmpty())){
-
-            }
         }
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
         resp.getWriter().println(jsonStringResponse);
     }
 
-
+    private String getCsvData(JSONObject exportEntry, String key){
+        if((exportEntry.get("list") != null)&&(exportEntry.get("list") instanceof JSONObject)){
+            JSONObject obj = (JSONObject)exportEntry.get("list");
+            JSONArray exportArray =  (JSONArray)new LinkedList(obj.values()).getFirst();
+            Map xlData = (key.equalsIgnoreCase(RENDER_JSON_ERROR_MESSAGES))?ServletHelpers.populateErrorTableMapForXl(exportArray):ServletHelpers.populateTableMapForXl(exportArray);
+            return ServletHelpers.generateCsvString(xlData);
+        }else return "Content not available";
+    }
 }
