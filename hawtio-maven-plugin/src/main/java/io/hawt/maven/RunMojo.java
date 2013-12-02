@@ -96,13 +96,9 @@ public class RunMojo extends BaseMojo {
                     getLog().info("Starting hawtio ...");
                     getLog().info("*************************************");
                     Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
-                            .getMethod("main", new Class[] {String[].class});
-                    if (!hawtioMain.isAccessible()) {
-                        getLog().debug("Setting accessibility to true in order to invoke main().");
-                        hawtioMain.setAccessible(true);
-                    }
+                            .getMethod("main", String[].class);
                     String[] args = new String[]{"--context", context, "--port", "" + port, "--join", "false"};
-                    hawtioMain.invoke(hawtioMain, new Object[]{args});
+                    hawtioMain.invoke(null, new Object[]{args});
 
                     afterBootstrapHawtio();
 
@@ -111,11 +107,7 @@ public class RunMojo extends BaseMojo {
                     getLog().info("Starting " + mainClass + "...");
                     getLog().info("*************************************");
                     Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
-                            .getMethod("main", new Class[] {String[].class});
-                    if (!main.isAccessible()) {
-                        getLog().debug("Setting accessibility to true in order to invoke main().");
-                        main.setAccessible(true);
-                    }
+                            .getMethod("main", String[].class);
                     main.invoke(main, new Object[] {arguments});
 
                     afterBootstrapMain();
