@@ -1,3 +1,6 @@
+/**
+ * @module Source
+ */
 module Source {
 
   export function JavaDocController($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) {
