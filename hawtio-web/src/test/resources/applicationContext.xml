@@ -166,6 +166,14 @@
   <camelContext id="bar" xmlns="http://camel.apache.org/schema/spring">
   </camelContext>
 
+  <camelContext id="quartCamel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <!-- must set -1 due bug in camel-quarz2 -->
+      <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=10000&amp;trigger.repeatCount=-1"/>
+      <log message="Quartz2 fired"/>
+    </route>
+  </camelContext>
+
   <!-- dummy bean for camel routes -->
   <bean id="myBean" class="io.hawt.camel.sample.CheeseBean"/>
 
