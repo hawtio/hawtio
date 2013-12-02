@@ -12,7 +12,8 @@ module ActiveMQ {
             when('/activemq/deleteQueue', {templateUrl: 'app/activemq/html/deleteQueue.html'}).
             when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html'}).
             when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
-            when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'})
+            when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'}).
+            when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'})
   }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
@@ -140,6 +141,13 @@ module ActiveMQ {
               href: () => "#/activemq/durableSubscribers"
             });
 
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-list"></i> Jobs',
+                title: "Manage jobs",
+                isValid: (workspace:Workspace) => isJobScheduler(workspace),
+                href: () => "#/activemq/jobs"
+            });
+
             function postProcessTree(tree) {
               var activemq = tree.get("org.apache.activemq");
               setConsumerType(activemq);
@@ -205,6 +213,10 @@ module ActiveMQ {
 
   export function isTopicsFolder(workspace:Workspace) {
     return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Topic');
+  }
+
+  export function isJobScheduler(workspace:Workspace) {
+      return workspace.hasDomainAndProperties(jmxDomain, {'service': 'JobScheduler'}, 4);
   }
 
   export function isBroker(workspace:Workspace) {

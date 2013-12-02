@@ -19,7 +19,7 @@
         init-method="start" destroy-method="stop"/>
 
   <!-- This creates an embedded ActiveMQ Broker -->
-  <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" useJmx="true">
+  <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker1" useJmx="true" schedulerSupport="true">
     <networkConnectors>
       <networkConnector uri="static:(tcp://localhost:31317)" userName="admin" password="admin"/>
     </networkConnectors>
