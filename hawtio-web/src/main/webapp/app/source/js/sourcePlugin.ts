@@ -1,3 +1,7 @@
+/**
+ * @module Source
+ * @main Source
+ */
 module Source {
   var pluginName = 'source';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'wiki']).

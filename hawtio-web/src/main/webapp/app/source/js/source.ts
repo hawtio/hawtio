@@ -1,3 +1,6 @@
+/**
+ * @module Source
+ */
 
 module Source {
 
@@ -87,19 +90,16 @@ module Source {
     };
 
     $scope.$watch('workspace.tree', function (oldValue, newValue) {
-      if (newValue === oldValue) {
-        return;
-      }
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
         //console.log("Reloading the view as we now seem to have a git mbean!");
-        setTimeout(updateView, 50);
+        setTimeout(maybeUpdateView, 50);
       }
     });
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateView, 50);
+      setTimeout(maybeUpdateView, 50);
     });
 
     function viewContents(response) {
@@ -122,5 +122,9 @@ module Source {
         });
       }
     }
+
+    var maybeUpdateView = Core.throttled(updateView, 1000);
+     setTimeout(maybeUpdateView, 50);
+
   }
 }

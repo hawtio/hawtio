@@ -1,7 +1,16 @@
+/**
+ * @module Source
+ */
 module Source {
 
   export var log:Logging.Logger = Logger.get("Source");
 
+  /**
+   * @method getInsightMBean
+   * @for Source
+   * @param {Core.Workspace} workspace
+   * @returns {*}
+   */
   export function getInsightMBean(workspace) {
     var mavenStuff = workspace.mbeanTypesToDomain["LogQuery"] || {};
     var insight = mavenStuff["org.fusesource.insight"] || {};
@@ -9,6 +18,13 @@ module Source {
     return mbean;
   }
 
+  /**
+   * @method createBreadcrumbLinks
+   * @for Source
+   * @param {String} mavenCoords
+   * @param {pathName} pathName
+   * @returns {Array}
+   */
   export function createBreadcrumbLinks(mavenCoords: string, pathName: string) {
     var linkPrefix = "#/source/index/" + mavenCoords;
     var answer = [{href: linkPrefix, name: "root"}];

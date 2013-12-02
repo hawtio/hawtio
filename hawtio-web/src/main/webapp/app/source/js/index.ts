@@ -1,4 +1,6 @@
-
+/**
+ * @module Source
+ */
 module Source {
 
   export function IndexController($scope, $location, $routeParams, workspace:Workspace, jolokia) {
@@ -6,6 +8,9 @@ module Source {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.mavenCoords = $routeParams["mavenCoords"];
     var fileName = $scope.pageId;
+    if (fileName === '/') {
+      fileName = undefined;
+    }
 
     $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
 
@@ -20,19 +25,16 @@ module Source {
     };
 
     $scope.$watch('workspace.tree', function (newValue, oldValue) {
-      if (newValue === oldValue) {
-        return;
-      }
       if (!$scope.git && Git.getGitMBean(workspace)) {
         // lets do this asynchronously to avoid Error: $digest already in progress
         //console.log("Reloading the view as we now seem to have a git mbean!");
-        setTimeout(updateView, 50);
+        setTimeout(maybeUpdateView, 50);
       }
     });
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateView, 50);
+      setTimeout(maybeUpdateView, 50);
     });
 
     function filterFileNames() {
@@ -90,6 +92,7 @@ module Source {
         return;
       }
       var mbean = Source.getInsightMBean(workspace);
+      log.debug("In update view, mbean: ", mbean);
       if (mbean) {
         jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", {
           success: viewContents,
@@ -102,6 +105,9 @@ module Source {
         });
       }
     }
+
+    var maybeUpdateView = Core.throttled(updateView, 1000);
+    setTimeout(maybeUpdateView, 50);
 
   }
 }

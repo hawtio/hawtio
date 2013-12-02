@@ -7,7 +7,7 @@ module Jmx {
 
   var attributesToolBars = {};
 
-  export var lazyLoaders = null;
+  export var lazyLoaders = {};
 
   export function findLazyLoadingFunction(workspace, folder) {
     var factories = workspace.jmxTreeLazyLoadRegistry[folder.domain];
