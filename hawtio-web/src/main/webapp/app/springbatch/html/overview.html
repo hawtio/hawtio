@@ -51,6 +51,7 @@
                             <th> <a ng-click="executionPredicate='status';executionReverse=!executionReverse" style="cursor: pointer">Status</a> </th>
                             <th> <a ng-click="executionPredicate='status';executionReverse=!executionReverse" style="cursor: pointer">Exit Code</a> </th>
                             <th>Context</th>
+                            <th>Export</th>
 
                         </tr>
                         </thead>
@@ -64,6 +65,31 @@
                             <td>{{execution.status}}</td>
                             <td data-title="Context">
                                 <a ng-href="#/springbatch/jobs/executions/{{jobName}}/{{execution.id}}">view</a>
+                            </td>
+                            <td data-title="Export to CSV">
+                                <div class="btn-group">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Export
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=SOURCE_DATA&execId={{execution.id}}&server={{springBatchServer}}">
+                                                SOURCE_DATA
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=TARGET_DATA&execId={{execution.id}}&server={{springBatchServer}}">
+                                                TARGET_DATA
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a style="cursor: pointer;" ng-href="/hawtio/exportContext/?key=ERROR_MESSAGES&execId={{execution.id}}&server={{springBatchServer}}">
+                                                ERROR_MESSAGES
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     </table>
