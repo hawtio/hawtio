@@ -1,5 +1,9 @@
 package io.hawt.maven.main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -7,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * Main class to bootup Spring.
@@ -14,12 +19,29 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringMain {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringMain.class);
+    private final List<Option> options = new ArrayList<Option>();
     private final CountDownLatch latch = new CountDownLatch(1);
     private final AtomicBoolean completed = new AtomicBoolean(false);
     private static SpringMain instance;
     private AbstractApplicationContext appContext;
-    private String ac;
-    private String fc;
+    private String applicationContextUri = "META-INF/spring/*.xml";
+    private String fileApplicationContextUri;
+
+    public SpringMain() {
+        addOption(new ParameterOption("ac", "applicationContext",
+                "Sets the classpath based spring ApplicationContext", "applicationContext") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setApplicationContextUri(parameter);
+            }
+        });
+
+        addOption(new ParameterOption("fa", "fileApplicationContext",
+                "Sets the filesystem based spring ApplicationContext", "fileApplicationContext") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setFileApplicationContextUri(parameter);
+            }
+        });
+    }
 
     public static void main(String[] args) throws Exception {
         SpringMain main = new SpringMain();
@@ -28,12 +50,7 @@ public class SpringMain {
     }
 
     public void run(String[] args) throws Exception {
-        // TODO: parse args
-        appContext = new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
-
-        // enable jvm hangup
-        HangupInterceptor interceptor = new HangupInterceptor(this);
-        Runtime.getRuntime().addShutdownHook(interceptor);
+        parseArguments(args);
 
         LOG.info("Running Spring application");
         try {
@@ -41,6 +58,55 @@ public class SpringMain {
         } finally {
             LOG.info("Shutdown complete");
         }
+    }
+
+    /**
+     * Parses the command line arguments.
+     */
+    protected void parseArguments(String[] arguments) {
+        LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
+
+        boolean valid = true;
+        while (!args.isEmpty()) {
+            String arg = args.removeFirst();
+
+            boolean handled = false;
+            for (Option option : options) {
+                if (option.processOption(arg, args)) {
+                    handled = true;
+                    break;
+                }
+            }
+            if (!handled) {
+                System.out.println("Unknown option: " + arg);
+                System.out.println();
+                valid = false;
+                break;
+            }
+        }
+        if (!valid) {
+            showOptions();
+            completed();
+        }
+    }
+
+    /**
+     * Displays the command line options.
+     */
+    public void showOptions() {
+        showOptionsHeader();
+
+        for (Option option : options) {
+            System.out.println(option.getInformation());
+        }
+    }
+
+    /**
+     * Displays the header message for the command line options.
+     */
+    public void showOptionsHeader() {
+        System.out.println("hawtio:spring takes the following options");
+        System.out.println();
     }
 
     /**
@@ -72,7 +138,13 @@ public class SpringMain {
     }
 
     public void start() throws Exception {
+        // enable jvm hangup
+        HangupInterceptor interceptor = new HangupInterceptor(this);
+        Runtime.getRuntime().addShutdownHook(interceptor);
+
         LOG.info("Starting Spring application context");
+        appContext = createApplicationContext();
+        appContext.registerShutdownHook();
         appContext.start();
     }
 
@@ -80,6 +152,38 @@ public class SpringMain {
         LOG.info("Stopping Spring application context");
         appContext.stop();
         appContext.close();
+    }
+
+    public void addOption(Option option) {
+        options.add(option);
+    }
+
+    public String getApplicationContextUri() {
+        return applicationContextUri;
+    }
+
+    public void setApplicationContextUri(String applicationContextUri) {
+        this.applicationContextUri = applicationContextUri;
+    }
+
+    public String getFileApplicationContextUri() {
+        return fileApplicationContextUri;
+    }
+
+    public void setFileApplicationContextUri(String fileApplicationContextUri) {
+        this.fileApplicationContextUri = fileApplicationContextUri;
+    }
+
+    protected AbstractApplicationContext createApplicationContext() {
+        // file based
+        if (getFileApplicationContextUri() != null) {
+            String[] args = getFileApplicationContextUri().split(";");
+            return new FileSystemXmlApplicationContext(args);
+        } else {
+            // default to classpath based
+            String[] args = getApplicationContextUri().split(";");
+            return new ClassPathXmlApplicationContext(args);
+        }
     }
 
     /**
@@ -102,6 +206,64 @@ public class SpringMain {
                 log.warn("Error during stopping the main instance.", ex);
             }
         }
+    }
+
+    public abstract class Option {
+        private String abbreviation;
+        private String fullName;
+        private String description;
+
+        protected Option(String abbreviation, String fullName, String description) {
+            this.abbreviation = "-" + abbreviation;
+            this.fullName = "-" + fullName;
+            this.description = description;
+        }
+
+        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
+            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
+                doProcess(arg, remainingArgs);
+                return true;
+            }
+            return false;
+        }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+    }
+
+    public abstract class ParameterOption extends Option {
+        private String parameterName;
+
+        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+            super(abbreviation, fullName, description);
+            this.parameterName = parameterName;
+        }
+
+        protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+            String parameter = remainingArgs.removeFirst();
+            doProcess(arg, parameter, remainingArgs);
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
     }
 
 }
