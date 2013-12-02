@@ -22,6 +22,7 @@ module Wiki {
                       when('/wiki' + path + '/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
                       when('/wiki' + path + '/history/*page', {templateUrl: 'app/wiki/html/history.html'}).
                       when('/wiki' + path + '/commit/*page/:objectId', {templateUrl: 'app/wiki/html/commit.html'}).
+                      when('/wiki' + path + '/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
                       when('/wiki' + path + '/formTable/*page', {templateUrl: 'app/wiki/html/formTable.html'}).
                       when('/wiki' + path + '/dozer/mappings/*page', {templateUrl: 'app/wiki/html/dozerMappings.html'}).
                       when('/wiki' + path + '/camel/diagram/*page', {templateUrl: 'app/wiki/html/camelDiagram.html'}).
@@ -29,10 +30,7 @@ module Wiki {
                       when('/wiki' + path + '/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'});
             });
 
-            $routeProvider.
-                    when('/wiki/diff/*page/:objectId/:baseObjectId', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
-                    when('/wiki/history/*page', {templateUrl: 'app/wiki/html/history.html'});
-          }).
+    }).
           factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
             return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
           }).
