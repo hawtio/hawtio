@@ -37,20 +37,6 @@
       <version>${fabric-version}</version>
     </dependency>
     <!-- transitive dependencies of file-dynamic-jaxb that must not be provided scope -->
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jaxb</artifactId>
-      <version>${camel-version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-api</artifactId>
-        <version>${cxf-version}</version>
-      <scope>compile</scope>
-    </dependency>
--->
     <dependency>
       <groupId>org.fusesource.fabric</groupId>
       <artifactId>watcher-core</artifactId>
