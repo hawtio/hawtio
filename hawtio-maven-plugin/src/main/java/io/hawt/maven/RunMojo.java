@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -28,6 +29,9 @@ public class RunMojo extends BaseMojo {
 
     @Parameter(property = "hawtio.arguments")
     String[] arguments;
+
+    @Parameter(property = "hawtio.systemProperties")
+    Map<String, String> systemProperties;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -85,6 +89,13 @@ public class RunMojo extends BaseMojo {
     protected void doExecute() throws Exception {
         if (mainClass == null) {
             throw new IllegalArgumentException("Option mainClass must be specified");
+        }
+
+        if (systemProperties != null && !systemProperties.isEmpty()) {
+            for (Map.Entry<String, String> entry : systemProperties.entrySet()) {
+                System.setProperty(entry.getKey(), entry.getValue());
+            }
+            getLog().info("Adding system properties: " + systemProperties);
         }
 
         final IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(this, mainClass);
