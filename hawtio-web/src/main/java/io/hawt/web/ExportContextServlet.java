@@ -40,44 +40,33 @@ public class ExportContextServlet extends HttpServlet {
                     server = "http://"+server;
                 }
 
-                HttpClient client = new HttpClient();
-                GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
-                int reponseCode =  client.executeMethod(get);
-                jsonStringResponse = get.getResponseBodyAsString();
-                JSONParser parser = new JSONParser();
+                jsonStringResponse = executeHttpGetRequest(server+"jobs/executions/"+jobExecutionId+"/context.json");
+                JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
 
-                JSONObject jsonObject = null;
-                try{
-                    jsonObject = (JSONObject)parser.parse(jsonStringResponse);
-                    JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
-                    JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
-                    if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
-                        JSONObject mapObject = (JSONObject)contextObject.get("map");
+                JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
+                JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
+                if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
+                    JSONObject mapObject = (JSONObject)contextObject.get("map");
 
-                        if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONArray)){
-                            JSONArray entryObject = (JSONArray)mapObject.get("entry");
-                            JSONObject exportEntry = null;
-                            for(Object o : entryObject){
-                                if (o instanceof JSONObject){
-                                    if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
-                                        exportEntry = (JSONObject)o;
-                                        jsonStringResponse = getCsvData(exportEntry, key);
-                                    }
+                    if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONArray)){
+                        JSONArray entryObject = (JSONArray)mapObject.get("entry");
+                        JSONObject exportEntry = null;
+                        for(Object o : entryObject){
+                            if (o instanceof JSONObject){
+                                if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
+                                    exportEntry = (JSONObject)o;
+                                    jsonStringResponse = getCsvData(exportEntry, key);
                                 }
                             }
-                        }else if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONObject)){
-                            JSONObject entryObject = (JSONObject)mapObject.get("entry");
-                            if(entryObject.get("string").toString().equalsIgnoreCase(key)){
-                                JSONObject exportEntry = (JSONObject)mapObject.get("string");
-                                jsonStringResponse = getCsvData(exportEntry, key);
-                            }
+                        }
+                    }else if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONObject)){
+                        JSONObject entryObject = (JSONObject)mapObject.get("entry");
+                        if(entryObject.get("string").toString().equalsIgnoreCase(key)){
+                            JSONObject exportEntry = (JSONObject)mapObject.get("string");
+                            jsonStringResponse = getCsvData(exportEntry, key);
                         }
                     }
-
-                }catch(ParseException pe){
-                    LOG.error(pe.getMessage());
                 }
-                get.releaseConnection();
             }
         }
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
