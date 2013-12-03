@@ -178,12 +178,82 @@ The camel goal extends the run goal and provides the following additional option
 </table>
 
 
-## Examples
+## Configuring hawtio Maven Plugin in pom.xml
 
-TODO: some examples
+In the Maven pom.xml file, the **hawtio** plugin is configured by adding the following in the &lt;build&gt;&lt;plugin&gt;section:
 
-### Camel Examples
+    <plugin>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-maven-plugin</artifactId>
+      <version>1.2.1</version>
+      <configuration>
+        <!-- configuration options goes here -->
+      </configuration>
+    </plugin>
 
-TODO: some examples usign the Camel examples
+In the &lt;configuration&gt; section we can configure the plugin with any of the options mentioned before. For example to log the classpath:
+
+      <configuration>
+        <logClasspath>true</logClasspath>
+      </configuration>
+
+And to change the port number from 8080 to 8090 do:
+
+      <configuration>
+        <logClasspath>true</logClasspath>
+        <port>8090</port>
+      </configuration>
+
+And to set a number of system properties to the JVM, such as the JVM http proxy settings is simply done within the nested &lt;systemProperties&gt; tag:
+
+      <configuration>
+        <logClasspath>true</logClasspath>
+        <port>8090</port>
+        <systemProperties>
+          <http.proxyHost>myproxyserver.org</http.proxyHost>
+          <http.proxyPort>8081<http.proxyPort>
+        </systemProperties>  
+      </configuration>
+
+
+## Camel Examples
+
+The <a href="http://camel.apache.org/download.html">Apache Camel distributons</a> includes a number of examples, which you can try out using Maven plugins.
+
+For example to try the Camel console from a shell type:
+
+    cd examples
+    cd camel-example-console
+    mvn compile
+    mvn camel:run
+
+To run the same example with **hawtio** embedded as a web console, you simply do
+
+    cd examples
+    cd camel-example-console
+    mvn compile
+    mvn io.hawt:hawtio-maven-plugin:1.2.1:camel
+
+Where 1.2.1 is the **hawtio** version to use.
+
+### Adding hawtio plugin to the Apache Camel examples
+
+In any Maven pom.xml file you can include the **hawtio** Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory. 
+
+In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
+
+    <plugin>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-maven-plugin</artifactId>
+      <version>1.2.1</version>
+    </plugin>
+
+And you can run the console example simply by typing
+
+    mvn hawtio:camel
+
+And the example is started together with the embedded **hawtio** web console, such as the screenshot below illustrates:
+
+<img src="https://raw.github.com/hawtio/hawtio/master/docs/images/camel-example-console.png" alt="screenshot">
 
 
