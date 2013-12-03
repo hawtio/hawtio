@@ -13,10 +13,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "spring", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class SpringMojo extends RunMojo {
 
-    @Parameter(property = "spring.applicationContextUri")
+    @Parameter(property = "hawtio.applicationContextUri")
     private String applicationContextUri;
 
-    @Parameter(property = "spring.fileApplicationContextUri")
+    @Parameter(property = "hawtio.fileApplicationContextUri")
     private String fileApplicationContextUri;
 
     protected Artifact springCoreArtifact;

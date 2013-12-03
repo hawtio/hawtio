@@ -13,10 +13,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "camel-blueprint", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class CamelBlueprintMojo extends RunMojo {
 
-    @Parameter(property = "camel.configAdminPid")
+    @Parameter(property = "hawtio.applicationContext")
+    private String applicationContext;
+
+    @Parameter(property = "hawtio.fileApplicationContext")
+    private String fileApplicationContext;
+
+    @Parameter(property = "hawtio.configAdminPid")
     private String configAdminPid;
 
-    @Parameter(property = "camel.configAdminFileName")
+    @Parameter(property = "hawtio.configAdminFileName")
     private String configAdminFileName;
 
     protected Artifact camelCoreArtifact;
@@ -25,6 +31,15 @@ public class CamelBlueprintMojo extends RunMojo {
     protected void addCustomArguments(List<String> args) {
         // must include plugin dependencies for blueprint
         extraPluginDependencyArtifactId = "camel-test-blueprint";
+
+        if (applicationContext != null) {
+            args.add("-ac");
+            args.add(applicationContext);
+        }
+        if (fileApplicationContext != null) {
+            args.add("-fa");
+            args.add(fileApplicationContext);
+        }
 
         if (configAdminPid != null) {
             args.add("-pid");
