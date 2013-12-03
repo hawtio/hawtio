@@ -156,6 +156,16 @@ The camel goal extends the run goal and provides the following additional option
     <th>Description</th>
   </tr>
   <tr>
+    <td>applicationContext</td>
+    <td>OSGI-INF/blueprint/*.xml</td>
+    <td>Location on class-path to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
+  </tr> 
+  <tr>
+    <td>fileApplicationContext</td>
+    <td></td>
+    <td>Location on file-system to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
+  </tr> 
+  <tr>
     <td>configAdminPid</td>
     <td></td>
     <td>To use a custom config admin persistence id. The configAdminFileName must be configured as well.</td>
