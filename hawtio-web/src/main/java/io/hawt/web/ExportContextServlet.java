@@ -28,20 +28,20 @@ public class ExportContextServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
-        String server = httpServletRequest.getParameter("server");
+        String serverUrl = httpServletRequest.getParameter("server");
         String jobExecutionId = httpServletRequest.getParameter("execId");
         String key = httpServletRequest.getParameter("key");
 
         String jsonStringResponse = "";
         String exportCsvString= "Content not available";
-        if((server != null && !server.isEmpty())){
+        if((serverUrl != null && !serverUrl.isEmpty())){
             if((jobExecutionId != null && !jobExecutionId.isEmpty())){
-                server = server.replaceAll("\\\\","");
-                if (!server.contains("http://")){
-                    server = "http://"+server;
+                serverUrl = serverUrl.replaceAll("\\\\","");
+                if (!serverUrl.contains("http://")){
+                    serverUrl = "http://"+serverUrl;
                 }
 
-                jsonStringResponse = executeHttpGetRequest(server+"jobs/executions/"+jobExecutionId+"/context.json");
+                jsonStringResponse = executeHttpGetRequest(serverUrl+"jobs/executions/"+jobExecutionId+"/context.json");
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
 
                 Object entryObject = getEntryObject(jsonObject);
@@ -63,7 +63,6 @@ public class ExportContextServlet extends HttpServlet {
                         exportCsvString = getCsvData(exportEntry, key);
                     }
                 }
-
             }
         }
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
