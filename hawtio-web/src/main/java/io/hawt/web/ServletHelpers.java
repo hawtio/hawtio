@@ -41,6 +41,16 @@ public class ServletHelpers {
             writeEmpty(out);
         }
     }
+
+    public static Map populateTable(List listEntry) {
+        listEntry = flatten(listEntry);
+        Map<String,Object> xlData = new HashMap<String,Object>();
+        Set columns = getColumns(listEntry);
+        List rowsData = getRowsData(listEntry, columns);
+        xlData.put("columns",columns);
+        xlData.put("rows",rowsData);
+        return xlData;
+    }
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
         Map<String,Object> xlData = new HashMap<String,Object>();

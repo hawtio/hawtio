@@ -22,26 +22,38 @@ public class ContextFormatterServlet extends HttpServlet {
         PrintWriter pr=resp.getWriter();
         String server=req.getParameter("server");
         String jobExecutionId=req.getParameter("jobExecutionId");
+        String stepExecutionId=req.getParameter("stepExecutionId");
+        String contextType=req.getParameter("contextType");
         String jsonStringResponse="";
+        String url="";
+        String paramString="jobExecutionContext";
         server= server.replaceAll("\\\\","");
         if (!server.contains("http://")){
             server = "http://"+server;
         }
 
+        if(contextType.equals("jobExecution")){
+            url= server+"jobs/executions/"+jobExecutionId+"/context.json";
+            paramString="jobExecutionContext";
+        }else if(contextType.equals("stepExecution")){
+            url= server+"jobs/executions/"+jobExecutionId+"/steps/"+stepExecutionId+"/context.json";
+            paramString="stepExecutionContext";
+        }
+
         HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod(server+"jobs/executions/"+jobExecutionId+"/context.json");
+        GetMethod get = new GetMethod(url);
         int responseCode =  client.executeMethod(get);
         jsonStringResponse = get.getResponseBodyAsString();
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try{
             jsonObject = (JSONObject)parser.parse(jsonStringResponse);
-            JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
+            JSONObject jobExecutionContext = (JSONObject)jsonObject.get(paramString);
             JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
             if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
                 JSONObject mapObject = (JSONObject)contextObject.get("map");
                 if(mapObject.get("entry") instanceof ArrayList){
-                 pr.println(getHtmlView((JSONArray) mapObject.get("entry")));
+                    pr.println(getHtmlView((JSONArray) mapObject.get("entry")));
                 }else if(mapObject.get("entry") instanceof Map){
 
                 }
@@ -52,6 +64,8 @@ public class ContextFormatterServlet extends HttpServlet {
 
     private String getHtmlView(ArrayList entries){
         StringBuffer htmlView=new StringBuffer();
+        String errorMessageKey="";
+        String ERROR_MESSAGES="ERROR_MESSAGES";
         if(entries!=null){
             Integer index=0;
             for (Object entry : entries) {
@@ -67,32 +81,46 @@ public class ContextFormatterServlet extends HttpServlet {
 
 
                     for(Object o:((Map)entry).entrySet()){
-
                         if(((Map.Entry)o).getKey().toString().equals("string")){
+                            errorMessageKey=((Map.Entry)o).getValue().toString();
                             htmlView.append(((Map.Entry)o).getValue().toString());
                         }else if(((Map.Entry)o).getKey().toString().equals("int")){
                             htmlView.append(((Map.Entry)o).getValue().toString());
-                        }else if(((Map.Entry)o).getKey().toString().equals("list")){
+                            }else if(((Map.Entry)o).getKey().toString().equals("list")){
                             JSONObject jsonObject = (JSONObject)((Map.Entry)o).getValue();
                             LinkedList list = new LinkedList(jsonObject.values());
                             ArrayList requiredObj = (ArrayList)list.getFirst();
                             htmlView.append("<table class=\"table\"><thead><tr>");
-                            Map columnsAndRow= ServletHelpers.populateTableMapForXl(requiredObj);
+                            Map columnsAndRow=new HashMap();
+                            if(errorMessageKey.equals(ERROR_MESSAGES)){
+                                columnsAndRow=ServletHelpers.populateErrorTableMapForXl(requiredObj);
+                            }else{
+                                columnsAndRow=  ServletHelpers.populateTableMapForXl(requiredObj);
+                            }
                             Set columns=(Set)columnsAndRow.get("columns");
                             List rows=(List)columnsAndRow.get("rows");
                             for(Object th : columns){
-                                htmlView.append("<th>"+th.toString()+"</th>");
+                                htmlView.append("<th>");
+                                if(th.toString().length()>5){
+                                    htmlView.append(th.toString().substring(0, 5));
+                                }else{
+                                    htmlView.append(th.toString());
+                                }
+                                htmlView.append("</th>");
                             }
                             htmlView.append("</tr>");
 
                             for(Object obj : rows){
-                                    htmlView.append("<tr>");
-                                    for(Object row : ((Map)obj).entrySet()){
-                                        htmlView.append("<td>"+((Map.Entry)row).getValue().toString()+"</td>");
-                                    }
-                                    htmlView.append("</tr>");
+                                htmlView.append("<tr>");
+                                for(Object column : columns){
+                                    htmlView.append("<td>"+((Map)obj).get(column.toString()).toString()+"</td>");
+                                }
+
+                                htmlView.append("</tr>");
                             }
                             htmlView.append("</thead></table>");
+                        }else if(!((Map.Entry)o).getKey().toString().equals("string") || !((Map.Entry)o).getKey().toString().equals("list") || ((Map.Entry)o).getKey().toString().equals("int")){
+                            htmlView.append(((Map.Entry)o).getValue().toString());
                         }
 
                         index++;
