@@ -4,16 +4,19 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    $scope.defaultGroup = "default";
+    $scope.defaultBrokerName = "brokerName";
+
     $scope.groups = [];
     $scope.possibleNetworks = [];
     $scope.profiles = [];
     $scope.parentProfiles = [];
-    $scope.entity = {};
+    $scope.entity = {
+      group: $scope.defaultGroup
+    };
     $scope.otherEntity = {
       networkConnectAll: false
     };
-    $scope.defaultGroup = "default";
-    $scope.defaultBrokerName = "brokerName";
 
     // holds all the form objects from nested child scopes
     $scope.forms = {};
