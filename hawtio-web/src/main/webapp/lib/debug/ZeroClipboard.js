@@ -4,7 +4,7 @@
 * Copyright (c) 2013 Jon Rohan, James M. Greene
 * Licensed MIT
 * http://zeroclipboard.org/
-* v1.2.1
+* v1.2.3
 */
 (function() {
   "use strict";
@@ -263,7 +263,7 @@
   var _setHandCursor = function(enabled) {
     if (this.ready()) this.flashBridge.setHandCursor(enabled);
   };
-  ZeroClipboard.version = "1.2.1";
+  ZeroClipboard.version = "1.2.3";
   var _defaults = {
     moviePath: "ZeroClipboard.swf",
     trustedOrigins: null,
@@ -300,6 +300,7 @@
   var _amdModuleId = null;
   var _cjsModuleId = null;
   var _bridge = function() {
+    var flashBridge, len;
     var client = ZeroClipboard.prototype._singleton;
     var container = document.getElementById("global-zeroclipboard-html-bridge");
     if (!container) {
@@ -323,7 +324,11 @@
       document.body.appendChild(container);
     }
     client.htmlBridge = container;
-    client.flashBridge = document["global-zeroclipboard-flash-bridge"] || container.children[0].lastElementChild;
+    flashBridge = document["global-zeroclipboard-flash-bridge"];
+    if (flashBridge && (len = flashBridge.length)) {
+      flashBridge = flashBridge[len - 1];
+    }
+    client.flashBridge = flashBridge || container.children[0].lastElementChild;
   };
   ZeroClipboard.prototype.resetBridge = function() {
     this.htmlBridge.style.left = "-9999px";
