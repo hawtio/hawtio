@@ -30,6 +30,18 @@ module Camel {
           },
           JMSXGroupId: {
             type: "java.lang.String"
+          },
+          AMQ_SCHEDULED_CRON: {
+            type: "java.lang.String"
+          },
+          AMQ_SCHEDULED_DELAY: {
+            type: "java.lang.String"
+          },
+          AMQ_SCHEDULED_PERIOD: {
+            type: "java.lang.String"
+          },
+          AMQ_SCHEDULED_REPEAT: {
+            type: "java.lang.String"
           }
         }
       },
