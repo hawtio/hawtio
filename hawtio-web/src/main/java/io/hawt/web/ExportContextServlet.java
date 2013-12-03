@@ -32,7 +32,8 @@ public class ExportContextServlet extends HttpServlet {
         String jobExecutionId = httpServletRequest.getParameter("execId");
         String key = httpServletRequest.getParameter("key");
 
-        String jsonStringResponse = "Content not available";
+        String jsonStringResponse = "";
+        String exportCsvString= "Content not available";
         if((server != null && !server.isEmpty())){
             if((jobExecutionId != null && !jobExecutionId.isEmpty())){
                 server = server.replaceAll("\\\\","");
@@ -43,34 +44,30 @@ public class ExportContextServlet extends HttpServlet {
                 jsonStringResponse = executeHttpGetRequest(server+"jobs/executions/"+jobExecutionId+"/context.json");
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
 
-                JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
-                JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
-                if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
-                    JSONObject mapObject = (JSONObject)contextObject.get("map");
-
-                    if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONArray)){
-                        JSONArray entryObject = (JSONArray)mapObject.get("entry");
-                        JSONObject exportEntry = null;
-                        for(Object o : entryObject){
-                            if (o instanceof JSONObject){
-                                if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
-                                    exportEntry = (JSONObject)o;
-                                    jsonStringResponse = getCsvData(exportEntry, key);
-                                }
+                Object entryObject = getEntryObject(jsonObject);
+                if(entryObject != null && (entryObject instanceof JSONArray)){
+                    JSONArray entry = (JSONArray)entryObject;
+                    JSONObject exportEntry = null;
+                    for(Object o : entry){
+                        if (o instanceof JSONObject){
+                            if (((JSONObject)o).get("string").toString().equalsIgnoreCase(key)){
+                                exportEntry = (JSONObject)o;
+                                exportCsvString = getCsvData(exportEntry, key);
                             }
                         }
-                    }else if(mapObject.get("entry") != null && (mapObject.get("entry") instanceof JSONObject)){
-                        JSONObject entryObject = (JSONObject)mapObject.get("entry");
-                        if(entryObject.get("string").toString().equalsIgnoreCase(key)){
-                            JSONObject exportEntry = (JSONObject)mapObject.get("string");
-                            jsonStringResponse = getCsvData(exportEntry, key);
-                        }
+                    }
+                }else if(entryObject != null && (entryObject instanceof JSONObject)){
+                    JSONObject entry = (JSONObject)entryObject;
+                    if(entry.get("string").toString().equalsIgnoreCase(key)){
+                        JSONObject exportEntry = (JSONObject)entry.get("string");
+                        exportCsvString = getCsvData(exportEntry, key);
                     }
                 }
+
             }
         }
         resp.setHeader("Content-Disposition","attachment; filename=\"jsonData.csv\"");
-        resp.getWriter().println(jsonStringResponse);
+        resp.getWriter().println(exportCsvString);
     }
 
     private String getCsvData(JSONObject exportEntry, String key){
@@ -132,5 +129,14 @@ public class ExportContextServlet extends HttpServlet {
             return jsonObject;
         }
         return jsonObject;
+    }
+
+    private Object getEntryObject(JSONObject jsonObject){
+        JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
+        JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
+        if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
+            return ((JSONObject)contextObject.get("map")).get("entry");
+        }
+        return null;
     }
 }
