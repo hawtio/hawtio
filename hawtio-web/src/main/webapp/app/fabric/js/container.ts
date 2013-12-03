@@ -170,6 +170,10 @@ module Fabric {
       });
     };
 
+    $scope.showChangeVersionDialog = () => {
+      $scope.changeVersionDialog.open([$scope.container]);
+    };
+
     $scope.getArguments = () => {
       if ($scope.inDashboard) {
         return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer']];

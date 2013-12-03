@@ -28,6 +28,9 @@ module Fabric {
     }, true);
 
 
+    $scope.showChangeVersionDialog = () => {
+      $scope.changeVersionDialog.open($scope.selectedContainers);
+    };
   }
 
 }
