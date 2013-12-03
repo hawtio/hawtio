@@ -978,4 +978,21 @@ module Fabric {
     return fn ? answer : onResults(answer);
   }
 
+  /**
+   * Removes any attributes from the object that are set to an empty string.
+   *
+   * @method sanitizeJson
+   * @for Fabric
+   * @param {Object} json
+   * @return {Object}
+   */
+  export function sanitizeJson(json:Object) {
+    angular.forEach(json, (value, key) => {
+      if (value === "") {
+        delete json[key];
+      }
+    });
+    return json;
+  }
+
 }

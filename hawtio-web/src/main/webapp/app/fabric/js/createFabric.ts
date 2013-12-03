@@ -36,6 +36,8 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
 
+      json = Fabric.sanitizeJson(json);
+
       setTimeout(() => {
 
         jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
