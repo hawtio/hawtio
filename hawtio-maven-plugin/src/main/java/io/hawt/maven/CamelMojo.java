@@ -13,10 +13,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "camel", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class CamelMojo extends RunMojo {
 
-    @Parameter(property = "camel.applicationContextUri")
+    @Parameter(property = "hawtio.applicationContextUri")
     private String applicationContextUri;
 
-    @Parameter(property = "camel.fileApplicationContextUri")
+    @Parameter(property = "hawtio.fileApplicationContextUri")
     private String fileApplicationContextUri;
 
     protected Artifact camelCoreArtifact;
