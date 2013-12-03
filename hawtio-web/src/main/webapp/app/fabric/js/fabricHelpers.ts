@@ -587,7 +587,26 @@ module Fabric {
     }
     return answer;
   }
-  
+
+  /**
+   * Returns the default version ID for the current fabric
+   * @param jolokia
+   * @returns the version ID as a string; or defaults to 1.0 if not available
+   */
+  export function getDefaultVersionId(jolokia) {
+    return (getDefaultVersion(jolokia) || {})["id"] || "1.0";
+  }
+
+  /**
+   * Returns the default version object for the current fabric
+   * @param jolokia
+   * @returns the version object
+   */
+  export function getDefaultVersion(jolokia) {
+    return jolokia.execute(managerMBean, "defaultVersion()");
+  }
+
+
   /**
    * Default the values that are missing in the returned JSON
    * @method defaultContainerValues

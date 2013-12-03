@@ -9,6 +9,8 @@ module Fabric {
     $scope.apis = [];
     $scope.selectedApis = [];
 
+    $scope.versionId = Fabric.getDefaultVersionId(jolokia);
+
     $scope.apiOptions = {
       //plugins: [searchProvider],
       data: 'apis',
