@@ -138,7 +138,7 @@ module Fabric {
           });
           if (containerId) {
             // lets create a container object per broker for the N+1 case
-            var container = findByIdOrCreate(broker.containers, brokerId + "_" + containerId, maps.container, () => {
+            var container = findByIdOrCreate(broker.containers, containerId, maps.container, () => {
               return brokerStatus;
             });
             if (container.master) {
