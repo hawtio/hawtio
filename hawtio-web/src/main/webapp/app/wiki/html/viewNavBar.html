@@ -118,7 +118,7 @@
         </div>
       </div>
 
-      <form class="form-inline" ng-submit="addAndCloseDialog()">
+      <form class="form-inline" ng-submit="addAndCloseDialog(newDocumentName)">
         <label class="control-label" for="fileName">Name: </label>
 
         <input id="fileName" type="text" ng-model="newDocumentName"
@@ -132,7 +132,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <input id="submit" class="btn btn-primary add" type="submit" ng-click="addAndCloseDialog()"
+      <input id="submit" class="btn btn-primary add" type="submit" ng-click="addAndCloseDialog(newDocumentName)"
              ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists"
              value="Create">
       <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
