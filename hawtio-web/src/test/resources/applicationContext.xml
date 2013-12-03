@@ -166,7 +166,7 @@
   <camelContext id="bar" xmlns="http://camel.apache.org/schema/spring">
   </camelContext>
 
-  <camelContext id="quartCamel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="quartzCamel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <!-- must set -1 due bug in camel-quarz2 -->
       <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=10000&amp;trigger.repeatCount=-1"/>
@@ -176,6 +176,10 @@
 
   <!-- dummy bean for camel routes -->
   <bean id="myBean" class="io.hawt.camel.sample.CheeseBean"/>
+
+  <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
+    <property name="propertiesFile" value="myquartz.properties"/>
+  </bean>
 
   <!-- infinispan demo -->
   <bean id="infinispanFactory" class="io.hawt.example.infinispan.InfinispanDemo" init-method="init" lazy-init="false"/>
