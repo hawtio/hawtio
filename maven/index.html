@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Maven Plugins!</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
+		<!--
+    <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
+    -->
+    <link href="/stylesheets/screen.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
+    <![endif]-->
+    <link href="/favicon.ico" rel="shortcut icon" />
+  </head>
+  <body class="home">
+    <header class="navbar navbar-fixed-top" id="banner" role="banner">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <div class="g-plusone-slot">
+            <div class="g-plusone" data-annotation="none"></div>
+          </div>
+          <a class="brand" href="/">
+							<span class="name">
+	            	<img src="/images/logo.png" />
+								hawtio
+							</span>
+          </a>
+          <nav class="nav-collapse" role="navigation">
+            <ul class="nav">
+              <li><a href="/faq/index.html">FAQ</a></li>
+              <li><a href="/getstarted/index.html">Getting Started</a></li>
+              <li><a href="/community/index.html">Community</a></li>
+              <li><a href="/plugins/index.html">Plugins</a></li>
+              <li><a href="/developers/index.html">Developers</a></li>
+							<li><a href="https://github.com/hawtio/hawtio">github</a></li>
+							<!--
+              <li><a href="/blog/">Blog</a></li>
+							-->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div id="main">
+		  <p><div id="content-header">
+    <div class="container">
+      <h1>Maven Plugins</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div id="content"></p>
+
+<h1 id = "hawtio_Maven_Plugins">hawtio Maven Plugins</h1>
+
+<p><strong>Available as of hawtio 1.2.1</strong></p>
+
+<p><strong>hawtio</strong> offers a number of Maven Plugins, so that users can bootup Maven projects and have <strong>hawtio</strong> embedded in the running JVM.</p>
+
+<h2 id = "Maven_Goals">Maven Goals</h2>
+
+<p><strong>hawtio</strong> offers the following Maven Goals, and each goal is futther documented below:</p>
+
+<table class="table">
+  <tr>
+    <th>Goal</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>run</td>
+    <td>This goal runs the Maven project, by executing the configured *mainClass* (as a public static void main)</td>
+  </tr>  
+  <tr>
+    <td>spring</td>
+    <td>This goal runs the Maven project as a Spring application, by loading Spring XML configurations files from the classpath or file system.</td>
+  </tr>    
+  <tr>
+    <td>camel</td>
+    <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have **hawtio** embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
+  </tr>
+  <tr>
+    <td>camel-blueprint</td>
+    <td>The same as the camel goal but needed when using OSGi Blueprint Camel applications.</td>
+  </tr>         
+</table>
+
+<h3 id = "Common_Maven_Goal_configuration">Common Maven Goal configuration</h3>
+
+<p>All of the <strong>hawtio</strong> Maven Plugins provides the following common options:</p>
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>logClasspath</td>
+    <td>false</td>
+    <td>Whether to log the classpath.</td>
+  </tr>  
+  <tr>
+    <td>logDependencies</td>
+    <td>false</td>
+    <td>Whether to log resolved Maven dependencies.</td>
+  </tr>  
+  <tr>
+    <td>offline</td>
+    <td>false</td>
+    <td>Whether to run **hawtio** in offline mode. Some of the hawtio plugins requires online connection to the internet.</td>
+  </tr>  
+</table>
+
+<h3 id = "run_Maven_Goal_configuration">run Maven Goal configuration</h3>
+
+<p>Currently all of the <strong>hawtio</strong> Maven Plugins provides the following common options:</p>
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td>hawtio</td>
+    <td>The context-path to use for the embedded **hawtio** web console.</td>
+  </tr>  
+  <tr>
+    <td>port</td>
+    <td>8080</td>
+    <td>The port number to use for the embedded **hawtio** web console.</td>
+  </tr>  
+  <tr>
+    <td>mainClass</td>
+    <td></td>
+    <td>The fully qualified name of the main class to executed to bootstrap the Maven project. This option is required, and must be a public static void main Java class.</td>
+  </tr>  
+  <tr>
+    <td>arguments</td>
+    <td></td>
+    <td>Optional arguments to pass to the main class.</td>
+  </tr>  
+  <tr>
+    <td>systemProperties</td>
+    <td></td>
+    <td>Optional system properties to set on the JVM.</td>
+  </tr>  
+</table>
+
+<h3 id = "spring_Maven_Goal_configuration">spring Maven Goal configuration</h3>
+
+<p>The spring goal extends the run goal and provides the following additional options:</p>
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>applicationContextUri</td>
+    <td>META-INF/spring/*.xml</td>
+    <td>Location on class-path to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
+  </tr> 
+  <tr>
+    <td>fileApplicationContextUri</td>
+    <td></td>
+    <td>Location on file system to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
+  </tr>     
+</table>
+
+<h3 id = "camel_Maven_Goal_configuration">camel Maven Goal configuration</h3>
+
+<p>The camel goal extends the run goal and provides the following additional options:</p>
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>applicationContextUri</td>
+    <td>META-INF/spring/*.xml</td>
+    <td>Location on class-path to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
+  </tr> 
+  <tr>
+    <td>fileApplicationContextUri</td>
+    <td></td>
+    <td>Location on file system to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
+  </tr>     
+</table>
+
+<p>By default the camel plugin will assume the application is a Camel spring application and use the applicationContextUri or fileApplicationContextUri to use as Spring XML files. By configurign a custom mainClass, then the Camel application is using the custom mainClass to bootstrap the Camel application, and neither applicationContextUri, nor fileApplicationContextUri are in use.</p>
+
+<h3 id = "camel-blueprint_Maven_Goal_configuration">camel-blueprint Maven Goal configuration</h3>
+
+<p>The camel goal extends the run goal and provides the following additional options:</p>
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>applicationContext</td>
+    <td>OSGI-INF/blueprint/*.xml</td>
+    <td>Location on class-path to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
+  </tr> 
+  <tr>
+    <td>fileApplicationContext</td>
+    <td></td>
+    <td>Location on file-system to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
+  </tr> 
+  <tr>
+    <td>configAdminPid</td>
+    <td></td>
+    <td>To use a custom config admin persistence id. The configAdminFileName must be configured as well.</td>
+  </tr> 
+  <tr>
+    <td>configAdminFileName</td>
+    <td></td>
+    <td>Location of the configuration admin configuration file</td>
+  </tr>     
+</table>
+
+<h2 id = "Configuring_hawtio_Maven_Plugin_in_pom_xml">Configuring hawtio Maven Plugin in pom.xml</h2>
+
+<p>In the Maven pom.xml file, the <strong>hawtio</strong> plugin is configured by adding the following in the &lt;build&gt;&lt;plugin&gt;section:</p>
+
+<pre><code>&lt;plugin&gt;
+  &lt;groupId&gt;io.hawt&lt;/groupId&gt;
+  &lt;artifactId&gt;hawtio-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.2.1&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;!-- configuration options goes here --&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+
+<p>In the &lt;configuration&gt; section we can configure the plugin with any of the options mentioned before. For example to log the classpath:</p>
+
+<pre><code>  &lt;configuration&gt;
+    &lt;logClasspath&gt;true&lt;/logClasspath&gt;
+  &lt;/configuration&gt;</code></pre>
+
+<p>And to change the port number from 8080 to 8090 do:</p>
+
+<pre><code>  &lt;configuration&gt;
+    &lt;logClasspath&gt;true&lt;/logClasspath&gt;
+    &lt;port&gt;8090&lt;/port&gt;
+  &lt;/configuration&gt;</code></pre>
+
+<p>And to set a number of system properties to the JVM, such as the JVM http proxy settings is simply done within the nested &lt;systemProperties&gt; tag:</p>
+
+<pre><code>  &lt;configuration&gt;
+    &lt;logClasspath&gt;true&lt;/logClasspath&gt;
+    &lt;port&gt;8090&lt;/port&gt;
+    &lt;systemProperties&gt;
+      &lt;http.proxyHost&gt;myproxyserver.org&lt;/http.proxyHost&gt;
+      &lt;http.proxyPort&gt;8081&lt;http.proxyPort&gt;
+    &lt;/systemProperties&gt;  
+  &lt;/configuration&gt;</code></pre>
+
+<h2 id = "Camel_Examples">Camel Examples</h2>
+
+<p>The <a href="http://camel.apache.org/download.html">Apache Camel distributons</a> includes a number of examples, which you can try out using Maven plugins.</p>
+
+<p>For example to try the Camel console from a shell type:</p>
+
+<pre><code>cd examples
+cd camel-example-console
+mvn compile
+mvn camel:run</code></pre>
+
+<p>To run the same example with <strong>hawtio</strong> embedded as a web console, you simply do</p>
+
+<pre><code>cd examples
+cd camel-example-console
+mvn compile
+mvn io.hawt:hawtio-maven-plugin:1.2.1:camel</code></pre>
+
+<p>Where 1.2.1 is the <strong>hawtio</strong> version to use.</p>
+
+<h3 id = "Adding_hawtio_plugin_to_the_Apache_Camel_examples">Adding hawtio plugin to the Apache Camel examples</h3>
+
+<p>In any Maven pom.xml file you can include the <strong>hawtio</strong> Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory. </p>
+
+<p>In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:</p>
+
+<pre><code>&lt;plugin&gt;
+  &lt;groupId&gt;io.hawt&lt;/groupId&gt;
+  &lt;artifactId&gt;hawtio-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.2.1&lt;/version&gt;
+&lt;/plugin&gt;</code></pre>
+
+<p>And you can run the console example simply by typing</p>
+
+<pre><code>mvn hawtio:camel</code></pre>
+
+<p>And the example is started together with the embedded <strong>hawtio</strong> web console, such as the screenshot below illustrates:</p>
+
+<p><img src="https://raw.github.com/hawtio/hawtio/master/docs/images/camel-example-console.png" alt="screenshot"></p>
+
+<p></div>
+  </div></p>
+    </div>
+    <footer>
+      <div class="container">
+        <div class="project">
+          <img src="/images/footer-logo.png" />
+          <p class="bottom">
+            &#169;
+            Copyright 2012-2013 Red Hat, Inc.
+            <br />
+            <i class="icon-fire"></i>
+            Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
+            <br />
+            <i class="icon-share-alt"></i>
+            Website and docs licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+            <br />
+            Code released under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License, v2.0</a>.
+          </p>
+        </div>
+        <div class="footer-nav">
+          <h4>Learn</h4>
+          <ul>
+            <li>
+              <a href="/index.html">Get Started</a>
+            </li>
+            <li>
+							<a href="articles/index.html">Articles and Demos</a>
+            </li>
+            <li>
+							<a href="faq/index.html">FAQ</a>
+            </li>
+            <li>
+              <a href="/developers/index.html">Developers</a>
+            </li>
+            <li>
+              <a href="/building/index.html">Building</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-nav">
+          <h4>Get Involved</h4>
+          <ul>
+						<!--
+            <li>
+              <a href="http://community.jboss.org/en/hawtio?view=discussions">Forums</a>
+            </li>
+						-->
+            <li>
+							<a href="/contributing/index.html">Contributing</a>
+            </li>
+            <li>
+							<a href="/community/index.html">Community</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio/issues?state=open">Issue Tracker</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio">Source Code</a>
+            </li>
+						<!--
+            <li>
+              <a href="/community/contributors">Contributors</a>
+            </li>
+						-->
+          </ul>
+        </div>
+        <div class="sponser">
+          <div class="follow-us">
+            <h4>Stay Informed</h4>
+            <ul>
+							<!--
+              <li>
+                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
+              </li>
+							-->
+              <li>
+                <a href="https://twitter.com/#!/search/%23hawtio"><img alt="Twitter" src="/images/social/twitter-16.png" title="Browse the #hawtio hashtag on Twitter" /></a>
+              </li>
+							<!--
+              <li>
+                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
+              </li>
+              <li>
+                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
+              </li>
+							-->
+            </ul>
+          </div>
+          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
+          <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
+          <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+          <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
+        </div>
+        <a class="visible-desktop" href="#" id="toTop">Top</a>
+      </div>
+    </footer>
+    <script>
+      $(function() {
+        $('html').addClass('ready');
+        prettify();
+        activateFooterGravity();
+        activateTooltips();
+        activateToTopControl();
+      });
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.2/bootstrap.min.js"></script>
+    <script src="/javascripts/prettify.js"></script>
+    <script src="/javascripts/site.js"></script>
+    <script>
+      (function() {
+        var po = document.createElement('script'); po.async = true; po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-36899203-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+  </body>
+</html>
