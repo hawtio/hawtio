@@ -36,12 +36,7 @@ public class ExportContextServlet extends HttpServlet {
         String exportCsvString= "Content not available";
         if((serverUrl != null && !serverUrl.isEmpty())){
             if((jobExecutionId != null && !jobExecutionId.isEmpty())){
-                serverUrl = serverUrl.replaceAll("\\\\","");
-                if (!serverUrl.contains("http://")){
-                    serverUrl = "http://"+serverUrl;
-                }
-
-                jsonStringResponse = executeHttpGetRequest(serverUrl+"jobs/executions/"+jobExecutionId+"/context.json");
+                jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl)+"jobs/executions/"+jobExecutionId+"/context.json");
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
 
                 Object entryObject = getEntryObject(jsonObject);
@@ -137,5 +132,13 @@ public class ExportContextServlet extends HttpServlet {
             return ((JSONObject)contextObject.get("map")).get("entry");
         }
         return null;
+    }
+
+    private String getServerUrl(String serverUrl){
+        serverUrl = serverUrl.replaceAll("\\\\","");
+        if (!serverUrl.contains("http://")){
+            serverUrl = "http://"+serverUrl;
+        }
+        return serverUrl;
     }
 }
