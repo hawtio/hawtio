@@ -240,7 +240,8 @@ module Wiki {
       $scope.addDialog.open();
     };
 
-    $scope.addAndCloseDialog = () => {
+    $scope.addAndCloseDialog = (fileName) => {
+      $scope.newDocumentName = fileName;
       var template = $scope.selectedCreateDocumentTemplate;
       var path = getNewDocumentPath();
       if (!template || !path) {
