@@ -68,15 +68,20 @@ public class ExportContextServlet extends HttpServlet {
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse resp) throws ServletException, IOException {
         String serverUrl = httpServletRequest.getParameter("server");
         String jobExecutionId = httpServletRequest.getParameter("execId");
+        String stepId = httpServletRequest.getParameter("stepId");
         String entryIndex = httpServletRequest.getParameter("entryIndex");
 
         String jsonStringResponse;
         String exportCsvString = "Content not available";
         if((serverUrl != null && !serverUrl.isEmpty())){
             if((jobExecutionId != null && !jobExecutionId.isEmpty())){
-                jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl)+"jobs/executions/"+jobExecutionId+"/context.json");
+                if(stepId != null && !stepId.isEmpty()){
+                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl)+"jobs/executions/"+jobExecutionId+"/steps/"+stepId+"/context.json");
+                }else {
+                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl)+"jobs/executions/"+jobExecutionId+"/context.json");
+                }
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
-                Object entryObject = getEntryObject(jsonObject);
+                Object entryObject = (stepId != null && !stepId.isEmpty()) ? getEntryObject(jsonObject,"stepExecutionContext"):getEntryObject(jsonObject);
                 if(entryObject != null && (entryObject instanceof JSONArray)){
                     JSONArray entry = (JSONArray)entryObject;
                     Object exportEntryObject = entry.get(Integer.parseInt(entryIndex));
@@ -125,13 +130,18 @@ public class ExportContextServlet extends HttpServlet {
         return jsonObject;
     }
 
-    private Object getEntryObject(JSONObject jsonObject){
-        JSONObject jobExecutionContext = (JSONObject)jsonObject.get("jobExecutionContext");
+    private Object getEntryObject(JSONObject jsonObject, String contextType){
+        contextType = (contextType != null && !contextType.isEmpty())? contextType: "jobExecutionContext";
+        JSONObject jobExecutionContext = (JSONObject)jsonObject.get(contextType);
         JSONObject contextObject = (JSONObject)jobExecutionContext.get("context");
         if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
             return ((JSONObject)contextObject.get("map")).get("entry");
         }
         return null;
+    }
+
+    private Object getEntryObject(JSONObject jsonObject){
+        return getEntryObject(jsonObject,null);
     }
 
     private String getServerUrl(String serverUrl){
