@@ -20,6 +20,10 @@
           <a ng-click="createContainer()" title="Create new containers">
             <i class="icon-plus"></i> Create
           </a>
+          <a ng-click="showChangeVersionDialog()" ng-show="selectedContainers.length != 0"
+             title="Change the version of the containers">
+            <i class="icon-edit"></i> Version
+          </a>
           <a ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"
              title="Start Containers">
             <i class="icon-play-circle clickable"></i>
