@@ -11,10 +11,13 @@ module Wiki {
   export var dozerNamespaces = ["http://dozer.sourceforge.net"];
   export var activemqNamespaces = ["http://activemq.apache.org/schema/core"];
 
-  export var customViewLinks = ["/wiki/formTable", "/wiki/camel/diagram", "/wiki/camel/canvas", "/wiki/camel/properties", "/wiki/dozer/mappings"];
-
 
   export var excludeAdjustmentPrefixes = ["http://", "https://", "#"];
+
+  /**
+   * The custom views within the wiki namespace; either "/wiki/$foo" or "/wiki/branch/$branch/$foo"
+   */
+  export var customWikiViewPages = ["/formTable", "/camel/diagram", "/camel/canvas", "/camel/properties", "/dozer/mappings"];
 
   /**
    * Which extensions do we wish to hide in the wiki file listing
@@ -100,6 +103,18 @@ module Wiki {
   export function isWikiEnabled(workspace:Workspace, jolokia, localStorage) {
     return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
   }
+
+  /**
+   * Returns all the links for the given branch for the custom views, starting with "/"
+   * @param $scope
+   * @returns {string[]}
+   */
+  export function customViewLinks($scope) {
+    var branch = $scope.branch;
+    var prefix = Core.trimLeading(Wiki.startLink(branch), "#");
+    return customWikiViewPages.map(path => prefix + path);
+  }
+
   /**
    * Returns a new create document wizard tree
    * @method createWizardTree
