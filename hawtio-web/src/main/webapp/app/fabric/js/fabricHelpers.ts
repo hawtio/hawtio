@@ -274,6 +274,8 @@ module Fabric {
 
       gridOptions: {
         data: 'changeVersionDialogVersions',
+        selectedItems: [],
+
         showFilter: false,
         showColumnMenu: false,
         multiSelect: false,
@@ -281,15 +283,15 @@ module Fabric {
           filterText: "",
           useExternalFilter: false
         },
-        selectedItems: [],
         sortInfo: {
-          fields: ["id"],
+          fields: ["sortProperty"],
           directions: ["desc"]
         },
         columnDefs: [
           {
-            field: 'id',
-            displayName: 'Select New Version'
+            field: 'sortProperty',
+            displayName: 'Select New Version',
+            cellTemplate: '<div class="ngCellText">{{row.entity.id}}</div>'
           }
         ]
       },
@@ -313,16 +315,20 @@ module Fabric {
             if (currentIds && currentIds.length === 1) {
               var currentId = currentIds[0];
               response = response.filter(v => {
-                log.info("Filtering id '" + v.id + "' against version '" + currentId + "'");
                 return v.id !== currentId;
               });
             }
           }
+          // add a sorting column
+          angular.forEach(response, (version) => {
+            version.sortProperty = Core.versionToSortableString(version.id);
+          });
+          $scope.changeVersionDialogVersions = response;
+
           // select the latest version of the available options
           if (response.length > 0) {
-            $scope.changeVersionDialog.gridOptions.selectedItems.push(response[response.length - 1]);
+            $scope.changeVersionDialog.gridOptions.selectedItems = [response[response.length - 1]];
           }
-          $scope.changeVersionDialogVersions = response;
           $scope.changeVersionDialog.dialog.open();
           Core.$apply($scope);
         }

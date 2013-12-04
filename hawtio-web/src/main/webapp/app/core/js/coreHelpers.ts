@@ -911,6 +911,22 @@ module Core {
     return null;
   }
 
+  /**
+   * Converts a version string with numbers and dots of the form "123.456.790" into a string
+   * which is sortable as a string, by left padding each string between the dots to at least 4 characters
+   * so things just sort as a string.
+   *
+   * @param text
+   * @return {string} the sortable version string
+   */
+  export function versionToSortableString(version: string, maxDigitsBetweenDots = 4) {
+    return (version || "").split(".").map(x => {
+      var length = x.length;
+      return (length >= maxDigitsBetweenDots)
+        ? x : x.padLeft(' ', maxDigitsBetweenDots - length)
+    }).join(".");
+  }
+
   export function time(message: string, fn) {
     var start = new Date().getTime();
     var answer = fn();
