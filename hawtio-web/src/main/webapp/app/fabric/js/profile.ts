@@ -31,47 +31,70 @@ module Fabric {
 
     if ($scope.inDirective &&
         angular.isDefined($scope.$parent.childActions) &&
-        $scope.versionId &&
-        $scope.profileId) {
+        $scope.versionId) {
       var actions = $scope.$parent.childActions;
-      actions.push({
-        doAction: () => { $scope.showChangeParentsDialog(); },
-        title: "Edit parent profiles",
-        icon: "icon-edit",
-        name: "Change Parents"
-      });
-      actions.push({
-        doAction: () => { $scope.copyProfileDialog = true; },
-        title: "Copy Profile",
-        icon: "icon-copy",
-        name: "Copy Profile"
-      });
-      actions.push({
-        doAction: () => { $scope.goto('/wiki/profile/' + $scope.versionId + '/' + $scope.profileId + '/editFeatures'); },
-        title: "Edit the features defined in this profile",
-        icon: "icon-edit",
-        name: "Edit Features"
-      });
-      actions.push({
-        doAction: () => {
-          $location.url('/fabric/assignProfile').search({
-            vid: $scope.versionId,
-            pid: $scope.profileId
-          }); },
-        title: "Assign profile to existing containers",
-        icon: "icon-truck",
-        name: "Assign to Container"
-      });
-      actions.push({
-        doAction: () => {
-          $location.url('/fabric/containers/createContainer').search({
-          versionId: $scope.versionId,
-          profileIds: $scope.profileId
-        }); },
-        title: "Create a new container with this profile",
-        icon: "icon-truck",
-        name: "Create Container"
-      });
+
+      if ($scope.profileId) {
+        actions.push({
+          doAction: () => {
+            $scope.showChangeParentsDialog();
+          },
+          title: "Edit parent profiles",
+          icon: "icon-edit",
+          name: "Change Parents"
+        });
+        actions.push({
+          doAction: () => {
+            $scope.copyProfileDialog = true;
+          },
+          title: "Copy Profile",
+          icon: "icon-copy",
+          name: "Copy Profile"
+        });
+        actions.push({
+          doAction: () => {
+            $scope.goto('/wiki/profile/' + $scope.versionId + '/' + $scope.profileId + '/editFeatures');
+          },
+          title: "Edit the features defined in this profile",
+          icon: "icon-edit",
+          name: "Edit Features"
+        });
+        actions.push({
+          doAction: () => {
+            $location.url('/fabric/assignProfile').search({
+              vid: $scope.versionId,
+              pid: $scope.profileId
+            });
+          },
+          title: "Assign profile to existing containers",
+          icon: "icon-truck",
+          name: "Assign to Container"
+        });
+        actions.push({
+          doAction: () => {
+            $location.url('/fabric/containers/createContainer').search({
+              versionId: $scope.versionId,
+              profileIds: $scope.profileId
+            });
+          },
+          title: "Create a new container with this profile",
+          icon: "icon-truck",
+          name: "New Container"
+        });
+      }
+
+      var createVersionDialog = $scope.createVersionDialog;
+      if (createVersionDialog) {
+        actions.push({
+          doAction: () => {
+            log.info("Creating new version")
+            $scope.createVersionDialog.open();
+          },
+          title: "Create a new version of this configuration so you can edit it and then perform rolling upgrades",
+          icon: "icon-plus",
+          name: "New Version"
+        });
+      }
     }
 
     $scope.$watch('activeTab', (newValue, oldValue) => {
