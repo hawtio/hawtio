@@ -14,7 +14,7 @@ module Wiki {
     $scope.sourceLink = () => {
       var path = $location.path();
       var answer = null;
-      angular.forEach(Wiki.customViewLinks, (link) => {
+      angular.forEach(Wiki.customViewLinks($scope), (link) => {
         if (path.startsWith(link)) {
           answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
         }
@@ -72,7 +72,7 @@ module Wiki {
         last.name = Wiki.hideFineNameExtensions(last.name);
 
         var swizzled = false;
-        angular.forEach(Wiki.customViewLinks, (link) => {
+        angular.forEach(Wiki.customViewLinks($scope), (link) => {
           if (!swizzled && loc.startsWith(link)) {
             // lets swizzle the view to the current link
             switchFromViewToCustomLink($scope.breadcrumbs.last(), Core.trimLeading(link, "/"));
