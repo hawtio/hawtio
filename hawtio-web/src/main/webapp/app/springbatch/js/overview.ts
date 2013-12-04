@@ -183,6 +183,7 @@ module SpringBatch {
                     $scope.fetchAllExecutions($scope.jobInstance);
                     $scope.fetchParams(jobName,$scope.jobInstance.id);
                 }
+
                 $scope.stepExecutionList = null;
             });
         };

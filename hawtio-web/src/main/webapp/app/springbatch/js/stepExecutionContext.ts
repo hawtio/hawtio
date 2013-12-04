@@ -1,19 +1,23 @@
 module SpringBatch{
     var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var springBatchServerPath =springBatchServerOrigin+'jobs/executions/:jobExecutionId/steps/:stepExecutionId/';
+    var proxyUrl = '/hawtio';
 
-    var proxyUrl = '/hawtio/proxy/';
-    var executionsListPath='context.json';
-    export function stepExecutionContextController($scope,$routeParams, $resource) {
+    export function stepExecutionContextController($scope,$routeParams, $http) {
         var jobExecutionId=$routeParams.jobExecutionId;
         var stepExecutionId=$routeParams.stepExecutionId;
         var jobName=$routeParams.jobName;
+
+        var jobId=$routeParams.jobId;
         $scope.springBatchServer = springBatchServerOrigin;
-        var jobExecutionContext = $resource(proxyUrl+springBatchServerPath+executionsListPath);
-        jobExecutionContext.get({'jobExecutionId':jobExecutionId,'stepExecutionId':stepExecutionId},function(data){
-            $scope.stepExecutionContext=data.stepExecutionContext;
-            $scope.jobName=jobName;
-        });
+        var stepExecutionContext = $http.get(proxyUrl+"/contextFormatter?jobExecutionId="+jobExecutionId+"&stepExecutionId="+stepExecutionId+"&server="+springBatchServerOrigin+"&contextType=stepExecution")
+            .success(function(data){
+                $scope.htmlView=data;
+            });
+        $scope.jobName=jobName;
+        $scope.jobId=jobId;
+
+
+
     }
 
 }
