@@ -120,7 +120,6 @@ module Fabric {
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
       Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
-      Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
       Core.pathSet(schema.properties, ['networks', 'input-attributes', "ng-hide"], "otherEntity.networkConnectAll");
       Core.pathSet(schema.properties, ['networks', 'tooltip'], 'The broker groups to create a store and forward network to');
 
@@ -147,7 +146,10 @@ module Fabric {
       updatePossibleNetworks();
 
       var version = brokerStatuses.map(s => s.version).find(s => s) || "1.0";
-      jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String,java.util.List)", version, ["id", "abstract"], onSuccess(onProfileData));
+      if (version) {
+        jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String,java.util.List)", version, ["id", "abstract"], onSuccess(onProfileData));
+
+      }
       Core.$apply($scope);
     }
 
