@@ -88,6 +88,7 @@ module Perspective {
     },
     website: {
       label: "WebSite",
+      isValid: (workspace) => Site.sitePluginEnabled && Site.isSiteNavBarValid(),
       lastPage: "#/site/doc/index.md",
       topLevelTabs: {
         includes: [
