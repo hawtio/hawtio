@@ -251,6 +251,12 @@ module Fabric {
         var success = function (response) {
           notification('success', "Created version " + response.value.id);
           $scope.createVersionDialog.newVersionName = "";
+
+          // broadcast events to force reloads
+          var $rootScope = $scope.$root || $scope.$rootScope || $scope;
+          if ($rootScope) {
+            $rootScope.$broadcast('wikiBranchesUpdated');
+          }
         };
 
         var error = function (response) {
