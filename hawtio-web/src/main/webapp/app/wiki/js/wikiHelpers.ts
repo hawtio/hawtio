@@ -400,7 +400,9 @@ module Wiki {
    */
   export function loadBranches(wikiRepository, $scope) {
     wikiRepository.branches((response) => {
-      $scope.branches = response;
+      // lets sort by version number
+      $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
+
       // default the branch name if we have 'master'
       if (!$scope.branch && $scope.branches.find((branch) => {
         return branch === "master";

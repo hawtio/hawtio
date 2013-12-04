@@ -67,7 +67,6 @@ module Wiki {
 
 
     $scope.$on('wikiBranchesUpdated', function () {
-      log.info("Wiki branches updated!");
       updateView();
     });
 
