@@ -29,6 +29,13 @@ module Core {
      */
     public close() {
       this.show = false;
+      // lets make sure and remove any backgroup fades
+      this.removeBackdropFadeDiv();
+      setTimeout(this.removeBackdropFadeDiv, 100);
+    }
+
+    removeBackdropFadeDiv() {
+      $("div.modal-backdrop").remove();
     }
   }
 }
