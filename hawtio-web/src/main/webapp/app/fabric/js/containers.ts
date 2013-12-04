@@ -10,8 +10,6 @@ module Fabric {
     // only reload the page if certain search parameters change
     Core.reloadWhenParametersChange($route, $scope, $location);
 
-    $scope.containerIdFilter = '';
-
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/containers";
       var title = "Containers";

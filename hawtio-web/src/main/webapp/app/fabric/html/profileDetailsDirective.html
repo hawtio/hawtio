@@ -22,11 +22,13 @@
 
     <div class="row-fluid">
       <div class="pull-left">
-        <ng-pluralize count="row.containerCount"
-                      when="{'0': 'Not assigned to any containers',
-                                 'one': 'Assigned to 1 container',
-                                 'other': 'Assigned to {} containers'}">
-        </ng-pluralize>
+        <a href="#/fabric/containers?q={{profileId}}" title="View containers running this profile">
+          <ng-pluralize count="row.containerCount"
+                        when="{'0': 'Not assigned to any containers',
+                                   'one': 'Assigned to 1 container',
+                                   'other': 'Assigned to {} containers'}">
+          </ng-pluralize>
+        </a>
       </div>
     </div>
 
