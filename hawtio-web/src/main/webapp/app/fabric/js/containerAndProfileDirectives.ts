@@ -132,7 +132,12 @@ module Fabric {
       };
 
       $scope.filterContainer = (container) => {
-        if (!$scope.getFilteredName(container).has($scope.containerIdFilter)) {
+        var filterText = $scope.containerIdFilter;
+        if (filterText && !$scope.getFilteredName(container).has(filterText)) {
+          var profileIds = container.profileIds;
+          if (profileIds) {
+            return profileIds.any(id => id.indexOf(filterText) >= 0);
+          }
           return false;
         }
         return true;
