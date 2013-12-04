@@ -239,8 +239,36 @@ module Fabric {
       }
     };
 
+    $scope.createVersionDialog = {
+      dialog: new Core.Dialog(),
+      newVersionName: "",
+
+      open: () => {
+        $scope.createVersionDialog.newVersionName = "";
+        $scope.createVersionDialog.dialog.open();
+      },
+      onOk: () => {
+        var success = function (response) {
+          notification('success', "Created version " + response.value.id);
+          $scope.createVersionDialog.newVersionName = "";
+        };
+
+        var error = function (response) {
+          log.error("Failed to create version due to :", response.error, " stack trace: ", response.stacktrace);
+        };
+
+        var newVersionName = $scope.createVersionDialog.newVersionName;
+        if (newVersionName !== '') {
+          Fabric.createVersionWithId(jolokia, newVersionName, success, error);
+        } else {
+          Fabric.createVersion(jolokia, success, error);
+        }
+        $scope.createVersionDialog.dialog.close();
+      }
+    };
+
     $scope.changeVersionDialog = {
-      show: false,
+      dialog: new Core.Dialog(),
       containerIds: [],
       versions: [],
 
@@ -266,6 +294,14 @@ module Fabric {
         ]
       },
 
+      openNewVersionDialog: () => {
+        $scope.changeVersionDialog.dialog.close();
+        setTimeout(() => {
+          $scope.createVersionDialog.open();
+          Core.$apply($scope);
+        }, 500);
+      },
+
       open: (containers) => {
         $scope.changeVersionDialog.containers = containers || [];
         $scope.changeVersionDialog.gridOptions.selectedItems = [];
@@ -287,18 +323,15 @@ module Fabric {
             $scope.changeVersionDialog.gridOptions.selectedItems.push(response[response.length - 1]);
           }
           $scope.changeVersionDialogVersions = response;
-          $scope.changeVersionDialog.show = true;
+          $scope.changeVersionDialog.dialog.open();
           Core.$apply($scope);
         }
 
         jolokia.execute(managerMBean, 'versions(java.util.List)',
           ['id', 'defaultVersion'], onSuccess(render));
       },
-      close: () => {
-        $scope.changeVersionDialog.show = false;
-      },
       onOk: () => {
-        $scope.changeVersionDialog.close();
+        $scope.changeVersionDialog.dialog.close();
         var selectedItems = $scope.changeVersionDialog.gridOptions.selectedItems;
         if (selectedItems && selectedItems.length) {
           var newVersionId = selectedItems[0].id;
@@ -311,6 +344,11 @@ module Fabric {
             }, (response) => {
               notification('error', "Failed to migrate containers due to " + response.error);
             });
+
+            setTimeout(() => {
+              $scope.changeVersionDialog.dialog.close();
+              Core.$apply($scope);
+            }, 100);
           }
         }
       }
@@ -949,7 +987,10 @@ module Fabric {
 
 
   export function filterProfiles(jolokia, versionId, profileIds) {
-    var profiles = jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String, java.util.List)", versionId, ['id', 'hidden', 'abstract'], { method: 'POST' });
+    var profiles = [];
+    if (versionId) {
+      profiles = jolokia.execute(Fabric.managerMBean, "getProfiles(java.lang.String, java.util.List)", versionId, ['id', 'hidden', 'abstract'], { method: 'POST' });
+    }
 
     profiles = profiles.filter((profile) => {
       return profileIds.some((id) => { return profile.id === id });

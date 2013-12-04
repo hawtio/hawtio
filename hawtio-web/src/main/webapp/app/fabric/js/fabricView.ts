@@ -55,7 +55,6 @@ module Fabric {
     $scope.deleteVersionDialog = new Core.Dialog();
     $scope.deleteProfileDialog = new Core.Dialog();
     $scope.createProfileDialog = new Core.Dialog();
-    $scope.createVersionDialog = new Core.Dialog();
 
     $scope.ensembleContainerIds = [];
     $scope.profileSelectedAll = false;
@@ -85,7 +84,6 @@ module Fabric {
 
     // holders for dialog data
     $scope.newProfileName = '';
-    $scope.newVersionName = '';
     $scope.selectedParents = [];
     $scope.selectedParentVersion = [];
 
@@ -159,49 +157,27 @@ module Fabric {
     };
 
 
-    // create version dialog action
-    $scope.doCreateVersion = (newVersionName) => {
-      $scope.createVersionDialog.close();
-      $scope.newVersionName = newVersionName;
-
-      var success = function (response) {
-        notification('success', "Created version " + response.value.id);
-        $scope.newVersionName = '';
-        Core.$apply($scope);
-      };
-
-      var error = function (response) {
-        log.error("Failed to create version due to :", response.error, " stack trace: ", response.stacktrace);
-        Core.$apply($scope);
-      };
-
-      if ($scope.newVersionName !== '') {
-        createVersionWithId(jolokia, $scope.newVersionName, success, error);
-      } else {
-        createVersion(jolokia, success, error);
-      }
-    };
-
 
     // delete version dialog action
     $scope.deleteVersion = () => {
-
-      deleteVersion(jolokia, $scope.activeVersionId, function() {
-        notification('success', "Deleted version " + $scope.version.id);
+      var id = $scope.activeVersionId;
+      deleteVersion(jolokia, id, function() {
+        notification('success', "Deleted version " + id);
         $scope.activeVersionId = '';
         Core.$apply($scope);
       }, function(response) {
-        notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
+        notification('error', "Failed to delete version " + id + " due to " + response.error);
         Core.$apply($scope);
       });
     };
 
     $scope.deleteSelectedProfiles = () => {
       $scope.selectedProfiles.each(function(profile) {
-        deleteProfile(jolokia, $scope.activeVersionId, profile.id, function() {
-          notification('success', "Deleted profile " + profile.id);
+        var profileId = profile.id;
+        deleteProfile(jolokia, $scope.activeVersionId, profileId, function() {
+          notification('success', "Deleted profile " + profileId);
         }, function(response) {
-          notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
+          notification('error', "Failed to delete profile " + profileId + ' due to ' + response.error);
         })
       });
     };
