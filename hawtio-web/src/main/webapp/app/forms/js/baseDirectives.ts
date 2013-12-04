@@ -401,7 +401,7 @@ module Forms {
         if (!widget) {
           widget = $(readOnlyWidget);
         }
-        var markup = $('<div ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
+        var markup = $('<div style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
         markup.append(widget);
         markup.append($('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
         markup.after($('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
