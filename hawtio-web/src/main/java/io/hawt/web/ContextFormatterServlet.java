@@ -53,7 +53,7 @@ public class ContextFormatterServlet extends HttpServlet {
             if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
                 JSONObject mapObject = (JSONObject)contextObject.get("map");
                 if(mapObject.get("entry") instanceof ArrayList){
-                    pr.println(getHtmlView((JSONArray) mapObject.get("entry")));
+                    pr.println(getHtmlView((JSONArray) mapObject.get("entry"), server, jobExecutionId));
                 }else if(mapObject.get("entry") instanceof Map){
 
                 }
@@ -62,13 +62,15 @@ public class ContextFormatterServlet extends HttpServlet {
         }catch (Exception e){e.printStackTrace();}
     }
 
-    private String getHtmlView(ArrayList entries){
+    private String getHtmlView(ArrayList entries, String server, String jobExecutionId){
         StringBuffer htmlView=new StringBuffer();
         String errorMessageKey="";
         String ERROR_MESSAGES="ERROR_MESSAGES";
         if(entries!=null){
+            int entryIdx = 0;
             Integer index=0;
             for (Object entry : entries) {
+
                 if(entry instanceof Map){
                     htmlView.append("<div class=\"accordion\" id=\"accordion"+index+"\">")
                             .append("            <div class=\"accordion-group\">")
@@ -84,6 +86,9 @@ public class ContextFormatterServlet extends HttpServlet {
                         if(((Map.Entry)o).getKey().toString().equals("string")){
                             errorMessageKey=((Map.Entry)o).getValue().toString();
                             htmlView.append(((Map.Entry)o).getValue().toString());
+                            if (isListPresent((JSONObject)entry)){
+                                htmlView.append("<span class=\"pull-right\">"+getExportLink(server, jobExecutionId, entryIdx)+"</span>");
+                            }
                         }else if(((Map.Entry)o).getKey().toString().equals("int")){
                             htmlView.append(((Map.Entry)o).getValue().toString());
                             }else if(((Map.Entry)o).getKey().toString().equals("list")){
@@ -127,9 +132,25 @@ public class ContextFormatterServlet extends HttpServlet {
                     }
                     htmlView.append("</div></div></div></div>");
                 }
+                entryIdx++;
             }
         }
 
         return htmlView.toString();
+    }
+
+    private String getExportLink(String springBatchServer, String jobExecutionId, int index){
+        StringBuilder builder = new StringBuilder();
+        builder.append("<form action=\"/hawtio/exportContext\" method=\"POST\">")
+                .append("<input type=\"hidden\" name=\"server\" value=\"").append(springBatchServer).append("\">")
+                .append("<input type=\"hidden\" name=\"execId\" value=\"").append(jobExecutionId).append("\">")
+                .append("<input type=\"hidden\" name=\"entryIndex\" value=\"").append(index).append("\">")
+                .append("<input type=\"submit\" value=\"Export as CSV\" class=\"btn btn-info\">")
+                .append("</form>");
+        return builder.toString();
+    }
+
+    private boolean isListPresent(JSONObject entry){
+        return entry.keySet().contains("list");
     }
 }
