@@ -44,15 +44,15 @@ public class ServletHelpers {
 
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
-
         Map<String,Object> xlData = new HashMap<String,Object>();
         Set columns = getColumns(listEntry);
-        List rowsData = getRowsData(listEntry,columns);
+        List rowsData = getRowsData(listEntry, columns);
 
         xlData.put("columns",columns);
         xlData.put("rows",rowsData);
         return xlData;
     }
+
 
     public static Map populateErrorTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
@@ -81,6 +81,7 @@ public class ServletHelpers {
         return set;
     }
 
+
     private static List getRowsData(List listEntry, Set columns){
         List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
         for(Object o : listEntry){
@@ -96,6 +97,7 @@ public class ServletHelpers {
         }
         return list;
     }
+
 
     public static String generateCsvString(Map xlData){
         int idx1=0,idx2=0;

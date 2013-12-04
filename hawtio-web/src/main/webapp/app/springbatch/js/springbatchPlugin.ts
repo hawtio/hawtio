@@ -10,9 +10,9 @@ module SpringBatch {
                 .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'})
-                .when('/springbatch/jobs/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
-                .when('/springbatch/jobs/:jobName/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
-                .when('/springbatch/jobs/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
+                .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
+                .when('/springbatch/jobs/:jobName/:jobId/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
+                .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
 
         }).
         value('ui.config', {
@@ -36,9 +36,6 @@ module SpringBatch {
                 href: () => "#/springbatch/jobs",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
-
-
         });
-
-    hawtioPluginLoader.addModule(pluginName);
+     hawtioPluginLoader.addModule(pluginName);
 }
