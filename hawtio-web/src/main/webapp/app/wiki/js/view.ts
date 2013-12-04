@@ -66,6 +66,11 @@ module Wiki {
     var maybeUpdateView = Core.throttled(updateView, 1000);
 
 
+    $scope.$on('wikiBranchesUpdated', function () {
+      log.info("Wiki branches updated!");
+      updateView();
+    });
+
     /*
     if (!$scope.nameOnly) {
       $scope.gridOptions.columnDefs.push({
