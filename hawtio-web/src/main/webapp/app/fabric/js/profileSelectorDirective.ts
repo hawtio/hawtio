@@ -181,15 +181,17 @@ module Fabric {
 
 
       $scope.$on("fabricProfileRefresh", () => {
-        jolokia.request({
-          type: 'exec', mbean: Fabric.managerMBean,
-          operation: 'getProfiles(java.lang.String, java.util.List)',
-          arguments: [$scope.versionId, ['id', 'hidden']]
-        },
-        {
-          method: 'POST',
-          success: (response) => { $scope.render(response); }
-        })
+        if ($scope.versionId) {
+          jolokia.request({
+            type: 'exec', mbean: Fabric.managerMBean,
+            operation: 'getProfiles(java.lang.String, java.util.List)',
+            arguments: [$scope.versionId, ['id', 'hidden']]
+          },
+          {
+            method: 'POST',
+            success: (response) => { $scope.render(response); }
+          });
+        }
       });
 
 

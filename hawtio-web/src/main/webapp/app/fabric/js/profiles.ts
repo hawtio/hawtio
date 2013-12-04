@@ -72,10 +72,13 @@ module Fabric {
       }
       
       Core.unregister(jolokia, $scope);
-      Core.register(jolokia, $scope,[
-        {type: 'exec', mbean: managerMBean, operation: 'versions()'},
-        {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String, java.util.List)', arguments: [$scope.version.id, ["id", "parentIds", "childIds", "containerCount", "locked", "abstract"]]}],
-        onSuccess(render));
+      var versionId = $scope.version.id;
+      if (versionId) {
+        Core.register(jolokia, $scope,[
+          {type: 'exec', mbean: managerMBean, operation: 'versions()'},
+          {type: 'exec', mbean: managerMBean, operation: 'getProfiles(java.lang.String, java.util.List)', arguments: [versionId, ["id", "parentIds", "childIds", "containerCount", "locked", "abstract"]]}],
+          onSuccess(render));
+      }
     });
 
     $scope.selectedHasContainers = () => {
