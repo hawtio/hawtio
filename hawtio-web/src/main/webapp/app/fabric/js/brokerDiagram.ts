@@ -108,15 +108,18 @@ module Fabric {
         });
 
         // TODO do we need to create a physical broker node per container and logical broker maybe?
-        var container = getOrAddNode("container", containerId, brokerStatus, () => {
-          return {
-            containerId: containerId,
-            popup: {
-              title: "Container: " + containerId,
-              content: "<p>" + containerId + " version: " + versionId + "</p>"
-            }
-          };
-        });
+        var container = null;
+        if (containerId) {
+          container = getOrAddNode("container", containerId, brokerStatus, () => {
+            return {
+              containerId: containerId,
+              popup: {
+                title: "Container: " + containerId,
+                content: "<p>" + containerId + " version: " + versionId + "</p>"
+              }
+            };
+          });
+        }
 
 
         if (container && container.validContainer) {
@@ -138,11 +141,14 @@ module Fabric {
             addLink(profile, broker, "broker");
           }
         }
-        if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
-          addLink(broker, container, "container");
-          container.destinationLinkNode = container;
-        } else {
-          container.destinationLinkNode = broker;
+
+        if (container) {
+          if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
+            addLink(broker, container, "container");
+            container.destinationLinkNode = container;
+          } else {
+            container.destinationLinkNode = broker;
+          }
         }
       });
 
