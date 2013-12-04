@@ -87,7 +87,6 @@ module Fabric {
       if (createVersionDialog) {
         actions.push({
           doAction: () => {
-            log.info("Creating new version")
             $scope.createVersionDialog.open();
           },
           title: "Create a new version of this configuration so you can edit it and then perform rolling upgrades",
