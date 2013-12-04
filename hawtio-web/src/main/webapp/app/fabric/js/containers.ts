@@ -1,8 +1,14 @@
 module Fabric {
 
-  export function ContainersController($scope, $location, jolokia, workspace) {
+  export function ContainersController($scope, $location, $route, jolokia, workspace) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
+
+    // bind model values to search params...
+    Core.bindModelToSearchParam($scope, $location, "containerIdFilter", "q", "");
+
+    // only reload the page if certain search parameters change
+    Core.reloadWhenParametersChange($route, $scope, $location);
 
     $scope.containerIdFilter = '';
 
