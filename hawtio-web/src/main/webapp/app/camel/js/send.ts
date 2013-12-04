@@ -56,9 +56,6 @@ module Camel {
       }
     };
 
-    // lets add a default header
-    $scope.addHeader();
-
     $scope.removeHeader = (header) => {
       $scope.headers = $scope.headers.remove(header);
     };
