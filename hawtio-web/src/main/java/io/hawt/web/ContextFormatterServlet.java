@@ -53,7 +53,7 @@ public class ContextFormatterServlet extends HttpServlet {
             if(contextObject.get("map") != null && (contextObject.get("map") instanceof JSONObject)){
                 JSONObject mapObject = (JSONObject)contextObject.get("map");
                 if(mapObject.get("entry") instanceof ArrayList){
-                    pr.println(getHtmlView((JSONArray) mapObject.get("entry"), server, jobExecutionId));
+                    pr.println(getHtmlView((JSONArray) mapObject.get("entry"), server, jobExecutionId, stepExecutionId));
                 }else if(mapObject.get("entry") instanceof Map){
 
                 }
@@ -62,7 +62,7 @@ public class ContextFormatterServlet extends HttpServlet {
         }catch (Exception e){e.printStackTrace();}
     }
 
-    private String getHtmlView(ArrayList entries, String server, String jobExecutionId){
+    private String getHtmlView(ArrayList entries, String server, String jobExecutionId, String stepExecutionId){
         StringBuffer htmlView=new StringBuffer();
         String errorMessageKey="";
         String ERROR_MESSAGES="ERROR_MESSAGES";
@@ -87,7 +87,7 @@ public class ContextFormatterServlet extends HttpServlet {
                             errorMessageKey=((Map.Entry)o).getValue().toString();
                             htmlView.append(((Map.Entry)o).getValue().toString());
                             if (isListPresent((JSONObject)entry)){
-                                htmlView.append("<span class=\"pull-right\">"+getExportLink(server, jobExecutionId, entryIdx)+"</span>");
+                                htmlView.append("<span class=\"pull-right\">"+getExportLink(server, jobExecutionId, stepExecutionId, entryIdx)+"</span>");
                             }
                         }else if(((Map.Entry)o).getKey().toString().equals("int")){
                             htmlView.append(((Map.Entry)o).getValue().toString());
@@ -139,12 +139,16 @@ public class ContextFormatterServlet extends HttpServlet {
         return htmlView.toString();
     }
 
-    private String getExportLink(String springBatchServer, String jobExecutionId, int index){
+    private String getExportLink(String springBatchServer, String jobExecutionId, String stepExecutionId, int index){
         StringBuilder builder = new StringBuilder();
         builder.append("<form action=\"/hawtio/exportContext\" method=\"POST\">")
                 .append("<input type=\"hidden\" name=\"server\" value=\"").append(springBatchServer).append("\">")
-                .append("<input type=\"hidden\" name=\"execId\" value=\"").append(jobExecutionId).append("\">")
-                .append("<input type=\"hidden\" name=\"entryIndex\" value=\"").append(index).append("\">")
+                .append("<input type=\"hidden\" name=\"execId\" value=\"").append(jobExecutionId).append("\">");
+
+        if (stepExecutionId != null && !stepExecutionId.isEmpty())
+            builder.append("<input type=\"hidden\" name=\"stepId\" value=\"").append(stepExecutionId).append("\">");
+
+        builder.append("<input type=\"hidden\" name=\"entryIndex\" value=\"").append(index).append("\">")
                 .append("<input type=\"submit\" value=\"Export as CSV\" class=\"btn btn-info\">")
                 .append("</form>");
         return builder.toString();
