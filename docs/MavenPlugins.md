@@ -14,7 +14,7 @@
   </tr>
   <tr>
     <td>run</td>
-    <td>This goal runs the Maven project, by executing the configured *mainClass* (as a public static void main)</td>
+    <td>This goal runs the Maven project, by executing the configured mainClass (as a public static void main)</td>
   </tr>  
   <tr>
     <td>spring</td>
@@ -22,7 +22,7 @@
   </tr>    
   <tr>
     <td>camel</td>
-    <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have **hawtio** embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
+    <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have hawtio embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
   </tr>
   <tr>
     <td>camel-blueprint</td>
@@ -73,12 +73,12 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
   <tr>
     <td>context</td>
     <td>hawtio</td>
-    <td>The context-path to use for the embedded **hawtio** web console.</td>
+    <td>The context-path to use for the embedded hawtio web console.</td>
   </tr>  
   <tr>
     <td>port</td>
     <td>8080</td>
-    <td>The port number to use for the embedded **hawtio** web console.</td>
+    <td>The port number to use for the embedded hawtio web console.</td>
   </tr>  
   <tr>
     <td>mainClass</td>
@@ -238,7 +238,7 @@ Where 1.2.1 is the **hawtio** version to use.
 
 ### Adding hawtio plugin to the Apache Camel examples
 
-In any Maven pom.xml file you can include the **hawtio** Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory. 
+In any Maven pom.xml file you can include the hawtio Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory. 
 
 In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
 
