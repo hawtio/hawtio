@@ -1351,6 +1351,8 @@ module Core {
         if (current !== old) {
           $location.search(paramName, current);
         }
+      } else {
+        $location.search(paramName, null);
       }
     });
   }
