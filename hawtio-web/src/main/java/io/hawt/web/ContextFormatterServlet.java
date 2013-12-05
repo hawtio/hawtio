@@ -36,7 +36,6 @@ public class ContextFormatterServlet extends HttpServlet {
             url= server+"jobs/executions/"+jobExecutionId+"/steps/"+stepExecutionId+"/context.json";
             paramString="stepExecutionContext";
         }
-
         HttpClient client = new HttpClient();
         GetMethod get = new GetMethod(url);
         int responseCode =  client.executeMethod(get);

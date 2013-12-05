@@ -1,9 +1,10 @@
 module SpringBatch{
-    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var springBatchServerPath =springBatchServerOrigin+'jobs';
-    var proxyUrl = '/hawtio/proxy/';
-    var executionsListPath='/executions.json';
-    export function SpringBatchJobExecutionListController($scope, $resource) {
+
+    export function SpringBatchJobExecutionListController($scope, $resource, $rootScope) {
+        var springBatchServerOrigin = $rootScope.springBatchServer;
+        var springBatchServerPath = springBatchServerOrigin+'jobs';
+        var proxyUrl = $rootScope.proxyUrl;
+        var executionsListPath='/executions.json';
 
         $scope.predicate = 'name';
         $scope.reverse = false;
@@ -20,4 +21,3 @@ module SpringBatch{
     }
 
 }
-

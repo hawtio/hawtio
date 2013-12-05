@@ -4,7 +4,7 @@ module SpringBatch {
         var subLevelTabs =[
             {uri:'jobs',name:'Jobs List'} ,
             {uri:'jobs/executions',name:'Jobs Execution List'},
-
+            {uri:'connect',name:'Connect'}
         ];
 
         $scope.subLevelTabs = subLevelTabs;

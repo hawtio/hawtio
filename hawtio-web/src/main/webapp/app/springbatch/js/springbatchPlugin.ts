@@ -10,6 +10,7 @@ module SpringBatch {
                 .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'})
+                .when('/springbatch/connect', {templateUrl: SpringBatch.templatePath + 'connectSpringBatch.html'})
                 .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
                 .when('/springbatch/jobs/:jobName/:jobId/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
                 .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
@@ -25,7 +26,7 @@ module SpringBatch {
             }
         }).
 
-        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry) => {
+        run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope, $resource ) => {
 
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
@@ -36,6 +37,23 @@ module SpringBatch {
                 href: () => "#/springbatch/jobs",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
+
+
+            var serverListRes = $resource('/hawtio/springBatch');
+            serverListRes.get(function(data){
+                $rootScope.springBatchServerList = data.springBatchServerList || [
+                    'localhost\\:8080/spring-batch-admin-sample/',
+                    'localhost\\:8181/'
+                ];
+
+                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
+            });
+
+            $rootScope.proxyUrl = '/hawtio/proxy/';
         });
-     hawtioPluginLoader.addModule(pluginName);
+
+    hawtioPluginLoader.addModule(pluginName);
+
+
+
 }

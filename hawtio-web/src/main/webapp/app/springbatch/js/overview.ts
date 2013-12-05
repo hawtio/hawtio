@@ -1,13 +1,12 @@
 module SpringBatch {
-    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var springBatchServerOriginHttp = 'localhost:8080/spring-batch-admin-sample/';
-    var springBatchServerPath =springBatchServerOrigin+'jobs/:jobName';
-    var proxyUrl = '/hawtio/proxy/';
-    var executionsListPath='/:jobInstanceId/executions.json';
-    var paramsListPath = 'jobs/:jobName/:jobInstanceId';
 
-    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $http) {
+    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $rootScope,$http) {
 
+        var springBatchServerOrigin = $rootScope.springBatchServer;
+        var springBatchServerPath = springBatchServerOrigin+'jobs/:jobName';
+        var proxyUrl = $rootScope.proxyUrl;
+        var executionsListPath='/:jobInstanceId/executions.json';
+        var paramsListPath = 'jobs/:jobName/:jobInstanceId';
         var jobName = $routeParams.jobName;
         $scope.jobName = $routeParams.jobName;
         var jobInstances = null;
@@ -78,7 +77,8 @@ module SpringBatch {
 
         $scope.runJob = function(jobName,jobParams){
             if(jobName && jobParams){
-                var postUrl = proxyUrl+springBatchServerOriginHttp+'jobs/'+jobName+'.json';
+                var springServerOrigin=springBatchServerOrigin.replace('\\','');
+                var postUrl = proxyUrl+springServerOrigin+'jobs/'+jobName+'.json';
                 $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
                 var params = '';
                 for(var param in jobParams){
