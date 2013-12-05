@@ -33,12 +33,12 @@ public class AuthenticationFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
 
         ConfigManager config = (ConfigManager) filterConfig.getServletContext().getAttribute("ConfigManager");
-
-        realm = config.get("realm", "karaf");
-        role = config.get("role", "admin");
-        rolePrincipalClasses = config.get("rolePrincipalClasses", "");
-        enabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
-
+        if (config != null) {
+            realm = config.get("realm", "karaf");
+            role = config.get("role", "admin");
+            rolePrincipalClasses = config.get("rolePrincipalClasses", "");
+            enabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+        }
         if (enabled) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"" + realm + "\" authorized role: \"" + role + "\"" + " role principal classes: \"" + rolePrincipalClasses + "\"");
         } else {
