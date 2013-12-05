@@ -20,11 +20,11 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.maven.plugin.logging.Log;
 
-public class CountDownLatchMojoLifecycle extends DefaultMojoLifecycle {
+public class CountdownLatchMojoLifecycle extends DefaultMojoLifecycle {
 
     private final CountDownLatch latch;
 
-    public CountDownLatchMojoLifecycle(Log log, CountDownLatch latch) {
+    public CountdownLatchMojoLifecycle(Log log, CountDownLatch latch) {
         super(log);
         this.latch = latch;
     }
