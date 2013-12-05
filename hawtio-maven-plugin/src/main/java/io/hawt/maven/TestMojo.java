@@ -35,10 +35,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "test", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST)
 public class TestMojo extends CamelMojo {
 
-    // TODO: parse args to find class and test name
+    @Parameter(property = "hawtio.className", required = true)
+    private String className;
 
-    private String className = "com.foo.MyRouteTest";
-
+    @Parameter(property = "hawtio.testName")
     private String testName;
 
     /**
