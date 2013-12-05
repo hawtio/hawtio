@@ -110,16 +110,16 @@
             <form class="form-horizontal no-bottom-margin" ng-submit="addAndCloseDialog()">
               <div class="modal-header"><h4>Add Node</h4></div>
               <div class="modal-body">
-                <tabs>
-                  <pane heading="Patterns">
+                <tabset>
+                  <tab heading="Patterns">
                     <div hawtio-tree="paletteTree" hideRoot="true" onSelect="onPaletteSelect"
                          activateNodes="paletteActivations"></div>
-                  </pane>
-                  <pane heading="Endpoints">
+                  </tab>
+                  <tab heading="Endpoints">
                     <div hawtio-tree="componentTree" hideRoot="true" onSelect="onComponentSelect"
                          activateNodes="componentActivations"></div>
-                  </pane>
-                </tabs>
+                  </tab>
+                </tabset>
               </div>
               <div class="modal-footer">
                 <input id="submit" class="btn btn-primary add" type="submit" ng-disabled="!selectedPaletteNode && !selectedComponentNode"
