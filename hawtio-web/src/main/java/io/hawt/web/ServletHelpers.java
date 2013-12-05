@@ -42,20 +42,12 @@ public class ServletHelpers {
         }
     }
 
-    public static Map populateTable(List listEntry) {
-        listEntry = flatten(listEntry);
-        Map<String,Object> xlData = new HashMap<String,Object>();
-        Set columns = getColumns(listEntry);
-        List rowsData = getRowsData(listEntry, columns);
-        xlData.put("columns",columns);
-        xlData.put("rows",rowsData);
-        return xlData;
-    }
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
         Map<String,Object> xlData = new HashMap<String,Object>();
         Set columns = getColumns(listEntry);
         List rowsData = getRowsData(listEntry, columns);
+
         xlData.put("columns",columns);
         xlData.put("rows",rowsData);
         return xlData;
@@ -88,16 +80,7 @@ public class ServletHelpers {
         }
         return set;
     }
-    public static List getColumnsForTable(List listEntry){
-        List list = new ArrayList();
-        for (Object o : listEntry){
-            if (o instanceof JSONObject){
-                list=new ArrayList(((JSONObject)o).keySet());
-            }
-            break;
-        }
-        return list;
-    }
+
 
     private static List getRowsData(List listEntry, Set columns){
         List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
@@ -177,6 +160,4 @@ public class ServletHelpers {
         }
         return string;
     }
-
-
 }

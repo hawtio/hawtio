@@ -11,6 +11,7 @@ module SpringBatch {
         $scope.jobName = $routeParams.jobName;
         var jobInstances = null;
         var jobList = $resource(proxyUrl+springBatchServerPath);
+        $scope.springBatchServer = encodeURIComponent(springBatchServerOrigin);
 
         $scope.alert = {
             enable:false,

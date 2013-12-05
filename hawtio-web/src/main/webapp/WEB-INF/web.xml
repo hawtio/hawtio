@@ -134,6 +134,15 @@
     <url-pattern>/auth/logout/*</url-pattern>
   </servlet-mapping>
 
+    <servlet>
+    <servlet-name>exportContext</servlet-name>
+    <servlet-class>io.hawt.web.ExportContextServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exportContext</servlet-name>
+    <url-pattern>/exportContext/*</url-pattern>
+  </servlet-mapping>
+
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
