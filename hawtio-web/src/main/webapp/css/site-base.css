@@ -3126,4 +3126,10 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   padding: 10px;
 }
 
+._jsPlumb_endpoint {
+  z-index: 2000;
+}
 
+.camel-canvas-endpoint svg circle {
+  fill: #346789;
+}
