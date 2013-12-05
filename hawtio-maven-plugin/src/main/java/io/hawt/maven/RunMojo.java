@@ -145,7 +145,6 @@ public class RunMojo extends BaseMojo {
                 }
 
                 // notify before we die
-                Thread.currentThread().notifyAll();
                 getLog().info("Terminating thread " + Thread.currentThread());
             }
         }, mainClass + ".main()");
@@ -161,6 +160,7 @@ public class RunMojo extends BaseMojo {
         mojoLifecycle.join(threadGroup);
 
         try {
+            getLog().info("We will now terminate thread group " + threadGroup);
             mojoLifecycle.terminateThreads(threadGroup);
             threadGroup.destroy();
         } catch (IllegalThreadStateException e) {
