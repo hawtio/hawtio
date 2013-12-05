@@ -3127,7 +3127,7 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
 }
 
 ._jsPlumb_endpoint {
-  z-index: 2000;
+  z-index: 25;
 }
 
 .camel-canvas-endpoint svg circle {
