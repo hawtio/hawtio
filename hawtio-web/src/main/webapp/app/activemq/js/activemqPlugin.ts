@@ -78,6 +78,7 @@ module ActiveMQ {
             ];
 
             workspace.topLevelTabs.push({
+              id: "activemq",
               content: "ActiveMQ",
               title: "Manage your ActiveMQ message brokers",
               isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.apache.activemq"),

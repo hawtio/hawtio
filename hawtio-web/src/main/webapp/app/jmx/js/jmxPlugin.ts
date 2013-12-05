@@ -47,6 +47,7 @@ module Jmx {
 
 
             workspace.topLevelTabs.push( {
+              id: "jmx",
               content: "JMX",
               title: "View the JMX MBeans in this process",
               isValid: (workspace: Workspace) => true,

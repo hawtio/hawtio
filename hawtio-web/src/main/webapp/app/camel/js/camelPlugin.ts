@@ -160,6 +160,7 @@ module Camel {
             ];
 
             workspace.topLevelTabs.push({
+              id: "camel",
               content: "Camel",
               title: "Manage your Apache Camel applications",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
