@@ -155,6 +155,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>logout</servlet-name>
+    <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>plugin</servlet-name>
     <servlet-class>io.hawt.web.PluginServlet</servlet-class>
   </servlet>
@@ -170,15 +179,6 @@
   <servlet-mapping>
     <servlet-name>branding</servlet-name>
     <url-pattern>/branding/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>logout</servlet-name>
-    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>logout</servlet-name>
-    <url-pattern>/auth/logout/*</url-pattern>
   </servlet-mapping>
 
 <!--
