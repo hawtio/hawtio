@@ -11,16 +11,25 @@ public final class TestHelper {
     public static List<Method> findTestMethods(Class clazz, Class annotation, String filter) throws Exception {
         List<Method> methods = findMethodsWithAnnotation(clazz, annotation, false);
 
-        if (filter != null) {
-            for (Method method : methods) {
-                if (method.getName().equals(filter)) {
-                    methods.remove(method);
-                    break;
-                }
-            }
+        boolean wildcard = filter != null && filter.endsWith("*");
+        if (wildcard) {
+            filter = filter.substring(0, filter.length() - 1);
         }
 
-        return methods;
+        List<Method> result = new ArrayList<Method>();
+        if (filter != null) {
+            for (Method method : methods) {
+                if (wildcard && method.getName().startsWith(filter)) {
+                    result.add(method);
+                } else if (method.getName().equals(filter)) {
+                    result.add(method);
+                }
+            }
+        } else {
+            result.addAll(methods);
+        }
+
+        return result;
     }
 
     public static List<Method> findMethodsWithAnnotation(Class<?> type,
