@@ -2,6 +2,7 @@ package io.hawt.web.plugin.karaf.terminal;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
+import org.apache.felix.service.threadio.ThreadIO;
 import org.apache.karaf.shell.console.jline.Console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +32,17 @@ public class TerminalServlet extends HttpServlet {
         return CommandProcessorHolder.getCommandProcessor();
     }
 
+    public ThreadIO getThreadIO() {
+        return ThreadIOHolder.getThreadIO();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String encoding = request.getHeader("Accept-Encoding");
         boolean supportsGzip = (encoding != null && encoding.toLowerCase().indexOf("gzip") > -1);
         SessionTerminal st = (SessionTerminal) request.getSession(true).getAttribute("terminal");
         if (st == null || st.isClosed()) {
-            st = new SessionTerminal(getCommandProcessor());
+            st = new SessionTerminal(getCommandProcessor(), getThreadIO());
             request.getSession().setAttribute("terminal", st);
         }
         String str = request.getParameter("k");
@@ -68,7 +73,7 @@ public class TerminalServlet extends HttpServlet {
         private PipedInputStream out;
         private boolean closed;
 
-        public SessionTerminal(CommandProcessor commandProcessor) throws IOException {
+        public SessionTerminal(CommandProcessor commandProcessor, ThreadIO threadIO) throws IOException {
             try {
                 this.terminal = new Terminal(TERM_WIDTH, TERM_HEIGHT);
                 terminal.write("\u001b\u005B20\u0068"); // set newline mode on
@@ -78,6 +83,7 @@ public class TerminalServlet extends HttpServlet {
                 PrintStream pipedOut = new PrintStream(new PipedOutputStream(out), true);
 
                 console = new Console(commandProcessor,
+                        threadIO,
                         new PipedInputStream(in),
                         pipedOut,
                         pipedOut,
