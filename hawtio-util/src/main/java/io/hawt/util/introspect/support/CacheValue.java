@@ -15,15 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.introspect;
+package io.hawt.util.introspect.support;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
- * Represents a provider of a {@link ClassLoader}
  */
-public interface ClassLoaderProvider {
+public class CacheValue {
+    private SortedSet<String> classNames = new TreeSet<String>();
 
-    /**
-     * Returns the ClassLoader or null if one is not available
-     */
-    ClassLoader getClassLoader();
+    public SortedSet<String> getClassNames() {
+        return classNames;
+    }
+
+    public void setClassNames(SortedSet<String> classNames) {
+        this.classNames = classNames;
+    }
 }

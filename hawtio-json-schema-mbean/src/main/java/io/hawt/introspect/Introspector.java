@@ -1,6 +1,7 @@
 package io.hawt.introspect;
 
-import io.hawt.introspect.support.ClassScanner;
+import io.hawt.util.introspect.ClassLoaderProvider;
+import io.hawt.util.introspect.support.ClassScanner;
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;

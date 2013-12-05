@@ -17,7 +17,7 @@
  */
 package io.hawt.introspect;
 
-import io.hawt.introspect.support.ClassScanner;
+import io.hawt.util.introspect.support.ClassScanner;
 
 import java.util.SortedMap;
 
