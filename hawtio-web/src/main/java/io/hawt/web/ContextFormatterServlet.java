@@ -5,7 +5,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-
-import static java.lang.System.out;
 
 public class ContextFormatterServlet extends HttpServlet {
     @Override
@@ -91,7 +88,7 @@ public class ContextFormatterServlet extends HttpServlet {
                             }
                         }else if(((Map.Entry)o).getKey().toString().equals("int")){
                             htmlView.append(((Map.Entry)o).getValue().toString());
-                            }else if(((Map.Entry)o).getKey().toString().equals("list")){
+                        }else if(((Map.Entry)o).getKey().toString().equals("list")){
                             JSONObject jsonObject = (JSONObject)((Map.Entry)o).getValue();
                             LinkedList list = new LinkedList(jsonObject.values());
                             ArrayList requiredObj = (ArrayList)list.getFirst();
