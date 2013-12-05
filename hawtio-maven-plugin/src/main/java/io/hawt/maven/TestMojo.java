@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import io.hawt.maven.junit.DefaultJUnitService;
+import io.hawt.maven.junit.JUnitService;
 import io.hawt.maven.util.IsolatedThreadGroup;
 import io.hawt.maven.util.ReflectionHelper;
-import io.hawt.maven.util.TestHelper;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -47,6 +48,8 @@ public class TestMojo extends CamelMojo {
      */
     @Parameter( defaultValue = "${project.build.testOutputDirectory}" )
     protected File testClassesDirectory;
+
+    private JUnitService jUnitService = new DefaultJUnitService();
 
     @Override
     protected void doPrepareArguments() throws Exception {
@@ -76,8 +79,8 @@ public class TestMojo extends CamelMojo {
         getLog().debug("setUp() invoked");
 
         // loop all test methods
-        Class ann = Thread.currentThread().getContextClassLoader().loadClass("org.junit.Test");
-        List<Method> testMethods = TestHelper.findTestMethods(clazz, ann, testName);
+        List<Method> testMethods = jUnitService.findTestMethods(clazz);
+        testMethods = jUnitService.filterTestMethods(testMethods, testName);
         getLog().info("Found and filtered " + testMethods.size() + " @Test methods to invoke");
 
         final CountDownLatch latch = new CountDownLatch(testMethods.size());
