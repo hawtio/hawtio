@@ -6,12 +6,17 @@ module SpringBatch{
         var proxyUrl = $rootScope.proxyUrl;
         var executionsListPath='/executions.json';
 
+        $scope.predicate = 'name';
+        $scope.reverse = false;
+
         var executionListRes = $resource(proxyUrl+springBatchServerPath+executionsListPath);
         executionListRes.get(function(data){
+            var executionList = new Array();
             for(var execution in data.jobExecutions){
                 data.jobExecutions[execution].id=execution;
+                executionList.add(data.jobExecutions[execution]);
             }
-            $scope.jobExecutions=data.jobExecutions
+            $scope.jobExecutions = executionList;
         });
     }
 

@@ -11,6 +11,10 @@ module SpringBatch {
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/executions', {templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html'})
                 .when('/springbatch/connect', {templateUrl: SpringBatch.templatePath + 'connectSpringBatch.html'})
+                .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
+                .when('/springbatch/jobs/:jobName/:jobId/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
+                .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
+
         }).
         value('ui.config', {
             // The ui-jq directive namespace
@@ -34,9 +38,9 @@ module SpringBatch {
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
+
             var serverListRes = $resource('/hawtio/springBatch');
             serverListRes.get(function(data){
-                console.info('=============='+JSON.stringify(data));
                 $rootScope.springBatchServerList = data.springBatchServerList || [
                     'localhost\\:8080/spring-batch-admin-sample/',
                     'localhost\\:8181/'
@@ -45,9 +49,11 @@ module SpringBatch {
                 $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
             });
 
-
             $rootScope.proxyUrl = '/hawtio/proxy/';
         });
 
     hawtioPluginLoader.addModule(pluginName);
+
+
+
 }
