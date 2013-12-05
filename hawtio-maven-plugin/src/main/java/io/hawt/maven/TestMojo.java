@@ -54,7 +54,7 @@ public class TestMojo extends CamelMojo {
 
     @Override
     protected MojoLifecycle createMojoLifecycle() {
-        return new CountDownLatchMojoLifecycle(getLog(), latch);
+        return new CountdownLatchMojoLifecycle(getLog(), latch);
     }
 
     @Override
