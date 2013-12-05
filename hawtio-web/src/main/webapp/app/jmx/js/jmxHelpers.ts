@@ -129,21 +129,23 @@ module Jmx {
     return typeNames;
   }
 
-  export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children, redraw = false) {
+  export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children, redraw = false, onActivateFn = null) {
     //$scope.workspace = workspace;
-
     if (treeElement.length) {
+      if (!onActivateFn) {
+        onActivateFn = (node:DynaTreeNode) => {
+          var data = node.data;
+          //$scope.select(data);
+          workspace.updateSelectionNode(data);
+          Core.$apply($scope);
+        };
+      }
       workspace.treeElement = treeElement;
       treeElement.dynatree({
         /*
          * The event handler called when a different node in the tree is selected
          */
-        onActivate: function (node:DynaTreeNode) {
-          var data = node.data;
-          //$scope.select(data);
-          workspace.updateSelectionNode(data);
-          Core.$apply($scope);
-        },
+        onActivate: onActivateFn,
         onLazyRead: function(treeNode) {
           var folder = treeNode.data;
           var plugin = null;
