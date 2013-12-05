@@ -36,21 +36,22 @@ public class BrandingServlet extends HttpServlet {
     public void init(ServletConfig servletConfig) throws ServletException {
 
         ConfigManager config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
+        if (config != null) {
+            String propertiesToCheckString = config.get("propertiesToCheck", "karaf.version");
+            String wantedStringsString = config.get("wantedStrings", "redhat,fuse");
+            forceBranding = Boolean.parseBoolean(config.get("forceBranding", "false"));
+            useBranding = Boolean.parseBoolean(config.get("useBranding", "true"));
 
-        String propertiesToCheckString = config.get("propertiesToCheck", "karaf.version");
-        String wantedStringsString = config.get("wantedStrings", "redhat,fuse");
-        forceBranding = Boolean.parseBoolean(config.get("forceBranding", "false"));
-        useBranding = Boolean.parseBoolean(config.get("useBranding", "true"));
-
-        if (propertiesToCheckString != null) {
-            for (String str : propertiesToCheckString.split(",")) {
-                propertiesToCheck.add(str.trim());
+            if (propertiesToCheckString != null) {
+                for (String str : propertiesToCheckString.split(",")) {
+                    propertiesToCheck.add(str.trim());
+                }
             }
-        }
 
-        if (wantedStringsString != null) {
-            for (String str : wantedStringsString.split(",")) {
-                wantedStrings.add(str.trim());
+            if (wantedStringsString != null) {
+                for (String str : wantedStringsString.split(",")) {
+                    wantedStrings.add(str.trim());
+                }
             }
         }
 
