@@ -272,14 +272,14 @@ module Wiki {
       return $scope.selectedFolder ||  getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
     }
 
-    function layoutGraph(nodes, links, width, height) {
-      var transitions = [];
-      var states = Core.createGraphStates(nodes, links, transitions);
-      $scope.nodeStates = states;
-
-      var rootElement = $($element);
+    function getContainerElement() {
+      var rootElement = $element;
       var containerElement = rootElement.find(".canvas");
       if (!containerElement || !containerElement.length) containerElement = rootElement;
+      return containerElement;
+    }
+
+    function clearCanvasLayout(jsPlumb) {
       try {
         jsPlumb.detachEveryConnection();
       } catch (e) {
@@ -290,9 +290,30 @@ module Wiki {
       } catch (e) {
         // ignore errors
       }
+      return jsPlumb;
+    }
+
+    function configureCanvasLayout(endpointStyle, arrowStyles, labelStyles) {
+    }
+
+    function layoutGraph(nodes, links, width, height) {
+      var transitions = [];
+      var states = Core.createGraphStates(nodes, links, transitions);
+
+      log.debug("links: ", links);
+      log.debug("transitions: ", transitions);
+
+      $scope.nodeStates = states;
+
+      var containerElement = getContainerElement();
+
+      // first clean up the existing layout, stuff may have changed
+      clearCanvasLayout(jsPlumb);
       containerElement.find("div.component").remove();
 
-      var endpointStyle:any[] = ["Dot", {radius: 2}];
+      // configure canvas layout
+      var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
+      var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
       //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
       var labelStyles:any[] = [ "Label" ];
       var arrowStyles:any[] = [ "Arrow", {
@@ -302,14 +323,16 @@ module Wiki {
         width: 8,
         foldback: 0.8
       } ];
+
       jsPlumb.importDefaults({
         Endpoint: endpointStyle,
-        HoverPaintStyle: {strokeStyle: "#42a62c", lineWidth: 4 },
+        HoverPaintStyle: hoverPaintStyle,
         ConnectionOverlays: [
           arrowStyles,
           labelStyles
         ]
       });
+
 
       var offset = containerElement.offset();
       var left = Core.pathGet(offset, ["left"]) || 0;
@@ -330,13 +353,14 @@ module Wiki {
           node.width = width;
           node.height = height;
         }
+        log.debug("node: ", id, " width: ", width, " height: ", height);
       });
 
       // Create the layout and get the buildGraph
       dagre.layout()
               .nodeSep(100)
               .edgeSep(10)
-              .rankSep(50)
+              .rankSep(75)
               .nodes(states)
               .edges(transitions)
               .debugLevel(1)
@@ -344,24 +368,20 @@ module Wiki {
 
       angular.forEach(states, (node) => {
         var id = getNodeId(node);
-        var dagre = node.dagre || node;
-        var x = dagre.x || 0;
-        var y = dagre.y || dagre["y:"] || 0;
-        //if (left) x += left;
-        if (top)  y += top;
         var div = $("#" + id);
-        div.css({top: y, left: x});
+        div.css({top: node.dagre.y, left: node.dagre.x});
       });
 
       var nodes = containerElement.find("div.component");
-      var connectorStyle:any[] = [ "StateMachine", { curviness: 20 } ];
+      var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
+
       nodes.each(function (i, e) {
         var endpoint = $(e);
         jsPlumb.makeSource(endpoint, {
           filter: "img.nodeIcon",
           anchor: "Continuous",
           connector: connectorStyle,
-          connectorStyle: { strokeStyle: "#666", lineWidth: 2 },
+          connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
           maxConnections: -1
         });
       });
