@@ -29,6 +29,9 @@ public final class ReflectionHelper {
      * @return the result of the method invocation
      */
     public static Object invokeMethod(Method method, Object instance, Object... parameters) {
+        if (method == null) {
+            return null;
+        }
         try {
             return method.invoke(instance, parameters);
         } catch (IllegalAccessException e) {
