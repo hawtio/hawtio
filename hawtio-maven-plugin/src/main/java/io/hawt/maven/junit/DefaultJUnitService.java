@@ -72,7 +72,68 @@ public class DefaultJUnitService implements JUnitService {
         }
 
         return result;
+    }
 
+    @Override
+    public Method findBefore(Class clazz) throws Exception {
+        // first find annotations
+        Class ann = clazz.getClassLoader().loadClass("org.junit.Before");
+        List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
+        if (!annotations.isEmpty()) {
+            return annotations.get(0);
+        }
+
+        // if no annotations then assume setUp
+        List<Method> names = findMethodsWithName(clazz, "setUp");
+        if (names.isEmpty()) {
+            return names.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Method findBeforeClass(Class clazz) throws Exception {
+        // first find annotations
+        Class ann = clazz.getClassLoader().loadClass("org.junit.BeforeClass");
+        List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
+        if (!annotations.isEmpty()) {
+            return annotations.get(0);
+        }
+
+        // there is no naming convention for before class
+        return null;
+    }
+
+    @Override
+    public Method findAfter(Class clazz) throws Exception {
+        // first find annotations
+        Class ann = clazz.getClassLoader().loadClass("org.junit.After");
+        List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
+        if (!annotations.isEmpty()) {
+            return annotations.get(0);
+        }
+
+        // if no annotations then assume setUp
+        List<Method> names = findMethodsWithName(clazz, "tearDown");
+        if (names.isEmpty()) {
+            return names.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Method findAfterClass(Class clazz) throws Exception {
+        // first find annotations
+        Class ann = clazz.getClassLoader().loadClass("org.junit.AfterClass");
+        List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
+        if (!annotations.isEmpty()) {
+            return annotations.get(0);
+        }
+
+        // there is no naming convention for after class
+        return null;
     }
 
     private static List<Method> findMethodsWithName(Class<?> type, String namePattern) {

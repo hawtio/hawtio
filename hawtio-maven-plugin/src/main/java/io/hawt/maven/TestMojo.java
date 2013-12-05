@@ -62,6 +62,10 @@ public class TestMojo extends CamelMojo {
     @Override
     protected void doPrepareArguments() throws Exception {
         bootstrapMain = false;
+
+        // the main class is our unit test class
+        mainClass = className;
+
         super.doPrepareArguments();
     }
 
@@ -75,16 +79,18 @@ public class TestMojo extends CamelMojo {
     @Override
     protected void afterBootstrapMain() throws Exception {
         // must load class and methods using reflection as otherwise we have class-loader/compiled class issues
-        getLog().info("Starting " + className + "...");
+        getLog().info("*************************************");
+        getLog().info("Testing: " + className);
         getLog().info("*************************************");
 
         Class clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
         Object instance = ReflectionHelper.newInstance(clazz);
         getLog().debug("Loaded " + className + " and instantiated " + instance);
 
-        Method method = clazz.getMethod("setUp");
-        ReflectionHelper.invokeMethod(method, instance);
-        getLog().debug("setUp() invoked");
+        Method beforeClass = jUnitService.findBeforeClass(clazz);
+        ReflectionHelper.invokeMethod(beforeClass, instance);
+        Method before = jUnitService.findBefore(clazz);
+        ReflectionHelper.invokeMethod(before, instance);
 
         // loop all test methods
         List<Method> testMethods = jUnitService.findTestMethods(clazz);
@@ -96,19 +102,17 @@ public class TestMojo extends CamelMojo {
             ReflectionHelper.invokeMethod(testMethod, instance);
         }
 
-        getLog().info("... press ENTER to tear down tests from " + className);
+        getLog().info("*************************************");
+        getLog().info("         Press ENTER to exit         ");
+        getLog().info("*************************************");
         Console console = System.console();
         console.readLine();
 
         try {
-            method = clazz.getMethod("tearDown");
-            ReflectionHelper.invokeMethod(method, instance);
-            getLog().debug("tearDown() invoked");
-            method = clazz.getMethod("tearDownAfterClass");
-            ReflectionHelper.invokeMethod(method, null);
-            getLog().debug("tearDownAfterClass() invoked");
-
-            getLog().info("*************************************");
+            Method after = jUnitService.findAfter(clazz);
+            ReflectionHelper.invokeMethod(after, instance);
+            Method afterClass = jUnitService.findAfterClass(clazz);
+            ReflectionHelper.invokeMethod(afterClass, instance);
         } finally {
             // signal we are done
             latch.countDown();
