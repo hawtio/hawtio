@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.hawt.maven.util.IsolatedThreadGroup;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,6 +34,10 @@ public class RunMojo extends BaseMojo {
     @Parameter(property = "hawtio.systemProperties")
     Map<String, String> systemProperties;
 
+    boolean bootstrapMain = true;
+
+    ClassLoader classLoader;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // use hawtio-app
@@ -47,8 +52,6 @@ public class RunMojo extends BaseMojo {
             throw new MojoExecutionException("Error executing", e);
         }
     }
-
-
 
     protected void doPrepareArguments() throws Exception {
         List<String> args = new ArrayList<String>();
@@ -115,11 +118,13 @@ public class RunMojo extends BaseMojo {
 
                     beforeBootstrapMain();
 
-                    getLog().info("Starting " + mainClass + "...");
-                    getLog().info("*************************************");
-                    Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
-                            .getMethod("main", String[].class);
-                    main.invoke(main, new Object[] {arguments});
+                    if (bootstrapMain) {
+                        getLog().info("Starting " + mainClass + "...");
+                        getLog().info("*************************************");
+                        Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
+                                .getMethod("main", String[].class);
+                        main.invoke(main, new Object[] {arguments});
+                    }
 
                     afterBootstrapMain();
 
@@ -131,6 +136,10 @@ public class RunMojo extends BaseMojo {
                     getLog().error("*************************************");
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
+
+                // notify before we die
+                Thread.currentThread().notifyAll();
+                getLog().info("Terminating thread " + Thread.currentThread());
             }
         }, mainClass + ".main()");
 
@@ -138,7 +147,8 @@ public class RunMojo extends BaseMojo {
         Set<Artifact> artifacts = resolveArtifacts();
         resolvedArtifacts(artifacts);
 
-        bootstrapThread.setContextClassLoader(getClassLoader(artifacts));
+        classLoader = getClassLoader(artifacts);
+        bootstrapThread.setContextClassLoader(classLoader);
 
         bootstrapThread.start();
         joinNonDaemonThreads(threadGroup);
@@ -155,19 +165,19 @@ public class RunMojo extends BaseMojo {
         }
     }
 
-    protected void beforeBootstrapMain() {
+    protected void beforeBootstrapMain() throws Exception {
         // noop
     }
 
-    protected void afterBootstrapMain() {
+    protected void afterBootstrapMain() throws Exception {
         // noop
     }
 
-    protected void beforeBootstrapHawtio() {
+    protected void beforeBootstrapHawtio() throws Exception {
         // noop
     }
 
-    protected void afterBootstrapHawtio() {
+    protected void afterBootstrapHawtio() throws Exception {
         // noop
     }
 

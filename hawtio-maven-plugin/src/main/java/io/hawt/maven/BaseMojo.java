@@ -95,6 +95,8 @@ public abstract class BaseMojo extends AbstractMojo {
     protected ClassLoader getClassLoader(Set<Artifact> artifacts) throws Exception {
         Set<URL> classpathURLs = new LinkedHashSet<URL>();
 
+        addCustomClasspaths(classpathURLs, true);
+
         // add ourselves to top of classpath
         URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
         getLog().debug("Adding to classpath : " + mainClasses);
@@ -104,6 +106,8 @@ public abstract class BaseMojo extends AbstractMojo {
             classpathURLs.add(artifact.getFile().toURI().toURL());
         }
 
+        addCustomClasspaths(classpathURLs, false);
+
         if (logClasspath) {
             getLog().info("Classpath (" + classpathURLs.size() + " entries):");
             for (URL url : classpathURLs) {
@@ -111,6 +115,15 @@ public abstract class BaseMojo extends AbstractMojo {
             }
         }
         return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
+    }
+
+    /**
+     * To add any custom urls to the classpath
+     *
+     * @param classpathURLs the resolved classpaths
+     */
+    protected void addCustomClasspaths(Set<URL> classpathURLs, boolean first) throws Exception {
+        // noop
     }
 
     protected Set<Artifact> resolveArtifacts() throws Exception {
@@ -362,7 +375,7 @@ public abstract class BaseMojo extends AbstractMojo {
 
     protected void joinThread(Thread thread, long timeoutMsecs) {
         try {
-            getLog().debug("joining on thread " + thread);
+            getLog().info("Joining on thread " + thread);
             thread.join(timeoutMsecs);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // good practice if don't throw
