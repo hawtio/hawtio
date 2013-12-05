@@ -46,12 +46,14 @@ import java.util.WeakHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-
 /**
  * A helper class to scan classes on the classpath
  */
 public class ClassScanner {
     private static final transient Logger LOG = LoggerFactory.getLogger(ClassScanner.class);
+
+    // lets skip some classes which can cause ugly WARN logging when doing package scanning
+    private static final String[] SKIP_CLASSES = new String[]{"org.apache.log4j.net.ZeroConfSupport"};
 
     private final ClassLoader[] classLoaders;
 
@@ -84,7 +86,6 @@ public class ClassScanner {
             classLoaderProviderMap.remove(id);
         }
     }
-
 
     /**
      * Searches for the available class names given the text search
@@ -200,18 +201,22 @@ public class ClassScanner {
         return answer;
     }
 
-
     public Set<Class<?>> getClassesForPackage(ClassResource classResource, String filter, Integer limit) {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         addClassesForPackage(classResource, filter, limit, classes);
         return classes;
     }
 
-
     /**
      * Finds a class from its name
      */
     public Class<?> findClass(String className) throws ClassNotFoundException {
+        for (String skip : SKIP_CLASSES) {
+            if (skip.equals(className)) {
+                return null;
+            }
+        }
+
         for (ClassLoader classLoader : getClassLoaders()) {
             try {
                 return classLoader.loadClass(className);
@@ -408,7 +413,6 @@ public class ClassScanner {
         }
     }
 
-
     private String getJarPath(URL resource) {
         String resourcePath = resource.getPath();
         return resourcePath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
@@ -448,7 +452,6 @@ public class ClassScanner {
         }
         return answer;
     }
-
 
     /**
      * Returns true if the given class name matches the filter search
