@@ -27,12 +27,14 @@ import java.util.concurrent.CountDownLatch;
 import io.hawt.maven.junit.DefaultJUnitService;
 import io.hawt.maven.junit.JUnitService;
 import io.hawt.maven.util.ReflectionHelper;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "test", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(phase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class TestMojo extends CamelMojo {
 
     @Parameter(property = "hawtio.className", required = true)
