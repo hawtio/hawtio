@@ -194,7 +194,7 @@ module Core {
           $location.url(url);
         }
       }
-    }
+    };
 
     $scope.$watch('userDetails', (newValue, oldValue) => {
       $scope.maybeRedirect();
