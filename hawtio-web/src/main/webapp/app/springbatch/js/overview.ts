@@ -76,7 +76,8 @@ module SpringBatch {
 
         $scope.runJob = function(jobName,jobParams){
             if(jobName && jobParams){
-                var postUrl = proxyUrl+springBatchServerOriginHttp+'jobs/'+jobName+'.json';
+                var springServerOrigin=springBatchServerOrigin.replace('\\','');
+                var postUrl = proxyUrl+springServerOrigin+'jobs/'+jobName+'.json';
                 $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
                 var params = '';
                 for(var param in jobParams){
