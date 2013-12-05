@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import io.hawt.util.ReflectionHelper;
 import io.hawt.maven.junit.DefaultJUnitService;
 import io.hawt.maven.junit.JUnitService;
-import io.hawt.maven.util.ReflectionHelper;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;

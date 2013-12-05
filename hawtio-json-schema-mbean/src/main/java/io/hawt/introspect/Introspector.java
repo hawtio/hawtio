@@ -62,6 +62,15 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         return getClassScanner().findClassNames(search, limit);
     }
 
+    @Override
+    public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName) {
+        return getClassScanner().findClassNamesMethodsAnnotatedWith(annotationClassName);
+    }
+
+    @Override
+    public SortedSet<String> findJUnitTestClassNames() {
+        return findClassNamesMethodsAnnotatedWith("org.junit.Test");
+    }
 
     /**
      * Returns a list of properties for the given type name

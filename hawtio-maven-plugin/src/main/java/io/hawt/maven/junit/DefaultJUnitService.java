@@ -16,8 +16,9 @@
  */
 package io.hawt.maven.junit;
 
+import io.hawt.util.ReflectionHelper;
+
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,38 +158,13 @@ public class DefaultJUnitService implements JUnitService {
         do {
             Method[] methods = type.getDeclaredMethods();
             for (Method method : methods) {
-                if (hasAnnotation(method, annotationType, checkMetaAnnotations)) {
+                if (ReflectionHelper.hasAnnotation(method, annotationType, checkMetaAnnotations)) {
                     answer.add(method);
                 }
             }
             type = type.getSuperclass();
         } while (type != null);
         return answer;
-    }
-
-    /**
-     * Checks if a Class or Method are annotated with the given annotation
-     *
-     * @param elem                 the Class or Method to reflect on
-     * @param annotationType       the annotation type
-     * @param checkMetaAnnotations check for meta annotations
-     * @return true if annotations is present
-     */
-    private static boolean hasAnnotation(AnnotatedElement elem, Class<? extends Annotation> annotationType,
-                                         boolean checkMetaAnnotations) {
-        if (elem.isAnnotationPresent(annotationType)) {
-            return true;
-        }
-        if (checkMetaAnnotations) {
-            for (Annotation a : elem.getAnnotations()) {
-                for (Annotation meta : a.annotationType().getAnnotations()) {
-                    if (meta.annotationType().getName().equals(annotationType.getName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     public static boolean matchPattern(String name, String pattern) {
