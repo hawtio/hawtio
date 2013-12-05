@@ -26,7 +26,6 @@ import java.util.concurrent.CountDownLatch;
 
 import io.hawt.maven.junit.DefaultJUnitService;
 import io.hawt.maven.junit.JUnitService;
-import io.hawt.maven.util.IsolatedThreadGroup;
 import io.hawt.maven.util.ReflectionHelper;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -50,6 +49,13 @@ public class TestMojo extends CamelMojo {
     protected File testClassesDirectory;
 
     private JUnitService jUnitService = new DefaultJUnitService();
+
+    private final CountDownLatch latch = new CountDownLatch(1);
+
+    @Override
+    protected MojoLifecycle createMojoLifecycle() {
+        return new CountDownLatchMojoLifecycle(getLog(), latch);
+    }
 
     @Override
     protected void doPrepareArguments() throws Exception {
@@ -83,41 +89,28 @@ public class TestMojo extends CamelMojo {
         testMethods = jUnitService.filterTestMethods(testMethods, testName);
         getLog().info("Found and filtered " + testMethods.size() + " @Test methods to invoke");
 
-        final CountDownLatch latch = new CountDownLatch(testMethods.size());
-
-        // TODO: latch for base mojo to wait to complete to terminate nicely
-        IsolatedThreadGroup inProgress = new IsolatedThreadGroup(this, "testMonitor");
-        final Thread bootstrapThread = new Thread(inProgress, new Runnable() {
-            public void run() {
-                try {
-                    latch.await();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        });
-
-        // start monitoring thread before testing begins
-        bootstrapThread.start();
-
         for (Method testMethod : testMethods) {
             getLog().info("Invoking @Test method " + testMethod + " on " + className);
             ReflectionHelper.invokeMethod(testMethod, instance);
-            latch.countDown();
         }
 
         getLog().info("... press ENTER to tear down tests from " + className);
         Console console = System.console();
         console.readLine();
 
-        method = clazz.getMethod("tearDown");
-        ReflectionHelper.invokeMethod(method, instance);
-        getLog().debug("tearDown() invoked");
-        method = clazz.getMethod("tearDownAfterClass");
-        ReflectionHelper.invokeMethod(method, null);
-        getLog().debug("tearDownAfterClass() invoked");
+        try {
+            method = clazz.getMethod("tearDown");
+            ReflectionHelper.invokeMethod(method, instance);
+            getLog().debug("tearDown() invoked");
+            method = clazz.getMethod("tearDownAfterClass");
+            ReflectionHelper.invokeMethod(method, null);
+            getLog().debug("tearDownAfterClass() invoked");
 
-        getLog().info("*************************************");
+            getLog().info("*************************************");
+        } finally {
+            // signal we are done
+            latch.countDown();
+        }
     }
 
 }
