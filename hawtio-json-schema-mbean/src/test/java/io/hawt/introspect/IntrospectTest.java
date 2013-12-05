@@ -74,6 +74,14 @@ public class IntrospectTest {
 
     }
 
+
+    @Test
+    public void testFindTestCases() throws Exception {
+        SortedSet<String> testClassNames = introspector.findJUnitTestClassNames();
+        System.out.println("Test class names: " + testClassNames);
+        assertTrue("Should have found a test class name", !testClassNames.isEmpty());
+    }
+
     protected void assertFindProperties(String className, String filter, String... expectedNames) throws Exception {
         List<PropertyDTO> properties = introspector.findProperties(className, filter);
         log("Searched for " + filter + " for " + Arrays.asList(expectedNames));

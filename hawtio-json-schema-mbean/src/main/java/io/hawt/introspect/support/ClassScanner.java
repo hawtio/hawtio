@@ -18,12 +18,15 @@
 package io.hawt.introspect.support;
 
 import io.hawt.introspect.ClassLoaderProvider;
+import io.hawt.util.Predicate;
+import io.hawt.util.ReflectionHelper;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -93,16 +96,41 @@ public class ClassScanner {
         return findClassNamesInPackages(search, limit, packageMap);
     }
 
-    /**
-     * Returns all the class names found on the classpath in the given packages which match the given filter
-     */
-/*
-    public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Package... packages) {
-        return findClassNamesInPackages(search, limit, Arrays.asList(packages));
+    public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName) {
+        Map<Package, ClassLoader[]> packageMap = Packages.getPackageMap(getClassLoaders(), ignorePackages);
+        return findClassNamesMethodsAnnotatedWith(annotationClassName, null, packageMap);
     }
-*/
 
-    public SortedSet<String> findClassNamesInPackages(String search, Integer limit, Map<Package, ClassLoader[]> packages) {
+    public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName, Integer limit, Map<Package, ClassLoader[]> packages) {
+        final Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) optionallyFindClass(annotationClassName);
+        if (annotationClass != null && Annotation.class.isAssignableFrom(annotationClass)) {
+            Predicate<String> filter = new Predicate<String>() {
+                @Override
+                public boolean evaluate(String className) {
+                    Class<?> aClass = optionallyFindClass(className);
+                    if (aClass != null) {
+                        return ReflectionHelper.hasMethodWithAnnotation(aClass, annotationClass, true);
+                    }
+                    return false;
+                }
+            };
+            return findClassNames(packages, filter, limit);
+        }
+        return new TreeSet<String>();
+    }
+
+
+    public SortedSet<String> findClassNamesInPackages(final String search, Integer limit, Map<Package, ClassLoader[]> packages) {
+        Predicate<String> filter = new Predicate<String>() {
+            @Override
+            public boolean evaluate(String aClass) {
+                return classNameMatches(aClass, search);
+            }
+        };
+        return findClassNames(packages, filter, limit);
+    }
+
+    protected SortedSet<String> findClassNames(Map<Package, ClassLoader[]> packages, Predicate<String> filter, Integer limit) {
         SortedSet<String> answer = new TreeSet<String>();
         SortedSet<String> classes = new TreeSet<String>();
 
@@ -134,7 +162,7 @@ public class ClassScanner {
 
         if (withinLimit(limit, answer)) {
             for (String aClass : classes) {
-                if (classNameMatches(aClass, search)) {
+                if (filter.evaluate(aClass)) {
                     answer.add(aClass);
                     if (!withinLimit(limit, answer)) {
                         break;
@@ -193,6 +221,19 @@ public class ClassScanner {
         }
         return Class.forName(className);
     }
+
+    /**
+     * Returns the given class or null if it cannot be loaded
+     */
+    public Class<?> optionallyFindClass(String className)  {
+        try {
+            return findClass(className);
+        } catch (Throwable e) {
+            // ignore
+            return null;
+        }
+    }
+
 
     public Set<String> getIgnorePackages() {
         return ignorePackages;
@@ -445,4 +486,5 @@ public class ClassScanner {
         }
         return answer;
     }
+
 }

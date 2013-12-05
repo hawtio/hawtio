@@ -15,6 +15,8 @@ public interface IntrospectorMXBean {
      */
     SortedSet<String> findClassNames(String search, Integer limit);
 
+    SortedSet<String> findJUnitTestClassNames();
+
     /**
      * Returns a list of properties for the given type name
      */
@@ -30,4 +32,9 @@ public interface IntrospectorMXBean {
      * Clears the cache
      */
     void clearCache();
+
+    /**
+     * Returns the classes which have at least one method annotated with the given annotation class name
+     */
+    SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName);
 }
