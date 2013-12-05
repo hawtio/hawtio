@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-import static java.lang.System.out;
 
 public class ContextFormatterServlet extends HttpServlet {
     @Override
@@ -39,7 +38,6 @@ public class ContextFormatterServlet extends HttpServlet {
             url= server+"jobs/executions/"+jobExecutionId+"/steps/"+stepExecutionId+"/context.json";
             paramString="stepExecutionContext";
         }
-
         HttpClient client = new HttpClient();
         GetMethod get = new GetMethod(url);
         int responseCode =  client.executeMethod(get);
