@@ -1,5 +1,6 @@
 ## Demos
 
+* <a href="http://vimeo.com/80625940" title="Demo of Fuse 6.1 with Apache Camel and hawtio on OpenShift">Demo of Fuse 6.1 with Apache Camel and hawtio on OpenShift</a> by [James Strachan](http://macstrac.blogspot.co.uk/) showing how to get started using <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a> 6.1 Early Access release on OpenShift for creating integration solutions based on Apache Camel in the hybrid cloud (via <a href="https://www.openshift.com/products/online">OpenShift Online</a> for the public cloud or <a href="https://www.openshift.com/products/enterprise">OpenShift Enterprise</a> for on premise, or a combination of both).
 * <a href="https://vimeo.com/68442425" title="see a demo of provisioning Fuse containers, viewing, editing, debugging and provisioning Camel routes using Fuse Fabric with the hawtio console">CamelOne keynote 2013</a> by [James Strachan](http://macstrac.blogspot.co.uk/) showing the create, view, edit debug and provision of Camel routes using Fuse Fabric with the hawtio
 * <a href="https://www.youtube.com/watch?v=sL6tlEv-mxQ">demo of FMC and hawtio with Fuse Fabric</a>
 
