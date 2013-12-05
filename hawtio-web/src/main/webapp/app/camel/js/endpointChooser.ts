@@ -33,7 +33,7 @@ module Camel {
     },
     messaging: {
       label: "Messaging",
-      endpoints: ["jms", "activemq", "amqp", "cometd", "mqtt"],
+      endpoints: ["jms", "activemq", "amqp", "cometd", "cometds", "mqtt", "netty", "vertx", "websocket"],
       endpointIcon: "/app/camel/img/endpointQueue24.png"
     },
     mobile: {
@@ -42,11 +42,11 @@ module Camel {
     },
     sass: {
       label: "SaaS",
-      endpoints: ["salesforce", "sap-netweaver", "weather"]
+      endpoints: ["salesforce", "sap-netweaver"]
     },
     social: {
       label: "Social",
-      endpoints: ["atom", "irc", "rss", "smpp", "twitter"]
+      endpoints: ["atom", "facebook", "irc", "ircs", "rss", "smpp", "twitter", "weather"]
     },
     storage: {
       label: "Storage",
