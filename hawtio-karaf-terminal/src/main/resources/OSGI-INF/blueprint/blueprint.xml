@@ -22,6 +22,12 @@
     <property name="commandProcessor" ref="commandProcessor" />
   </bean>
 
+  <reference id="threadIO" interface="org.apache.felix.service.threadio.ThreadIO" availability="mandatory"/>
+
+  <bean id="threadIOHolder" class="io.hawt.web.plugin.karaf.terminal.ThreadIOHolder">
+    <property name="threadIO" ref="threadIO" />
+  </bean>
+
   <bean id="plugin" class="io.hawt.web.plugin.HawtioPlugin" init-method="init" destroy-method="destroy">
     <property name="name" value="${plugin-name}"/>
     <property name="context" value="${plugin-context}"/>
