@@ -103,7 +103,10 @@ public abstract class BaseMojo extends AbstractMojo {
         classpathURLs.add(mainClasses);
 
         for (Artifact artifact : artifacts) {
-            classpathURLs.add(artifact.getFile().toURI().toURL());
+            File file = artifact.getFile();
+            if (file != null) {
+                classpathURLs.add(file.toURI().toURL());
+            }
         }
 
         addCustomClasspaths(classpathURLs, false);
