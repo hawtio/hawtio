@@ -22,11 +22,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
-import io.hawt.util.ReflectionHelper;
 import io.hawt.maven.junit.DefaultJUnitService;
 import io.hawt.maven.junit.JUnitService;
+import io.hawt.util.ReflectionHelper;
+
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -51,13 +51,6 @@ public class TestMojo extends CamelMojo {
     protected File testClassesDirectory;
 
     private JUnitService jUnitService = new DefaultJUnitService();
-
-    private final CountDownLatch latch = new CountDownLatch(1);
-
-    @Override
-    protected MojoLifecycle createMojoLifecycle() {
-        return new CountdownLatchMojoLifecycle(getLog(), latch);
-    }
 
     @Override
     protected void doPrepareArguments() throws Exception {
@@ -87,10 +80,8 @@ public class TestMojo extends CamelMojo {
         Object instance = ReflectionHelper.newInstance(clazz);
         getLog().debug("Loaded " + className + " and instantiated " + instance);
 
-        Method beforeClass = jUnitService.findBeforeClass(clazz);
-        ReflectionHelper.invokeMethod(beforeClass, instance);
-        Method before = jUnitService.findBefore(clazz);
-        ReflectionHelper.invokeMethod(before, instance);
+        ReflectionHelper.invokeMethod(jUnitService.findBeforeClass(clazz), instance);
+        ReflectionHelper.invokeMethod(jUnitService.findBefore(clazz), instance);
 
         // loop all test methods
         List<Method> testMethods = jUnitService.findTestMethods(clazz);
@@ -108,15 +99,8 @@ public class TestMojo extends CamelMojo {
         Console console = System.console();
         console.readLine();
 
-        try {
-            Method after = jUnitService.findAfter(clazz);
-            ReflectionHelper.invokeMethod(after, instance);
-            Method afterClass = jUnitService.findAfterClass(clazz);
-            ReflectionHelper.invokeMethod(afterClass, instance);
-        } finally {
-            // signal we are done
-            latch.countDown();
-        }
+        ReflectionHelper.invokeMethod(jUnitService.findAfter(clazz), instance);
+        ReflectionHelper.invokeMethod(jUnitService.findAfterClass(clazz), instance);
     }
 
 }
