@@ -1,8 +1,9 @@
 module SpringBatch{
-    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var proxyUrl = '/hawtio';
 
-    export function stepExecutionContextController($scope,$routeParams, $http) {
+
+    export function stepExecutionContextController($scope,$routeParams, $http, $rootScope) {
+        var springBatchServerOrigin = $rootScope.springBatchServer;
+        var proxyUrl = '/hawtio';
         var jobExecutionId=$routeParams.jobExecutionId;
         var stepExecutionId=$routeParams.stepExecutionId;
         var jobName=$routeParams.jobName;

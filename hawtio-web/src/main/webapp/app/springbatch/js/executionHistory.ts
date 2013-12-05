@@ -1,9 +1,9 @@
 module SpringBatch {
-    var springBatchServerOrigin = 'localhost\\:8080/spring-batch-admin-sample/';
-    var proxyUrl = '/hawtio/proxy/';
-    var executionHistoryPath = 'jobs/:jobName/executions.json';
-    export function ExecutionHistoryController($scope, $routeParams, $location, workspace:Workspace, $resource) {
 
+    export function ExecutionHistoryController($scope, $routeParams, $location, workspace:Workspace, $resource, $rootScope) {
+        var springBatchServerOrigin = $rootScope.springBatchServer;
+        var proxyUrl = '/hawtio/proxy/';
+        var executionHistoryPath = 'jobs/:jobName/executions.json';
         $scope.predicate='id';
         $scope.reverse=false;
 
