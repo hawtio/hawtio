@@ -39,6 +39,11 @@ public class RunMojo extends BaseMojo {
     ClassLoader classLoader;
 
     @Override
+    protected MojoLifecycle createMojoLifecycle() {
+        return new DefaultMojoLifecycle(getLog());
+    }
+
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // use hawtio-app
         extendedPluginDependencyArtifactId = "hawtio-app";
@@ -151,10 +156,10 @@ public class RunMojo extends BaseMojo {
         bootstrapThread.setContextClassLoader(classLoader);
 
         bootstrapThread.start();
-        joinNonDaemonThreads(threadGroup);
+        mojoLifecycle.join(threadGroup);
 
         try {
-            terminateThreads(threadGroup);
+            mojoLifecycle.terminateThreads(threadGroup);
             threadGroup.destroy();
         } catch (IllegalThreadStateException e) {
             getLog().warn("Cannot destroy thread group " + threadGroup, e);
