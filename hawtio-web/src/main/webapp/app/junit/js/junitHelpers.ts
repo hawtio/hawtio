@@ -10,7 +10,7 @@ module JUnit {
    */
   export function isJUnitPluginEnabled(workspace:Workspace) {
     return getIntrospectorMBean(workspace)  &&
-          workspace.hasDomainAndProperties('io.hawt.junit', {type: 'JUnitFacade'});
+          workspace.findMBeanWithProperties('io.hawt.junit', {type: 'JUnitFacade'});
   }
 
   export function getIntrospectorMBean(workspace: Workspace) {
