@@ -1,4 +1,4 @@
-package io.hawt.maven.junit;
+package io.hawt.junit;
 
 import java.lang.reflect.Method;
 import java.util.List;

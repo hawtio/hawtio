@@ -23,8 +23,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
-import io.hawt.maven.junit.DefaultJUnitService;
-import io.hawt.maven.junit.JUnitService;
+import io.hawt.junit.DefaultJUnitService;
+import io.hawt.junit.JUnitService;
 import io.hawt.util.ReflectionHelper;
 
 import org.apache.maven.plugins.annotations.Execute;
