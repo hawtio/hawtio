@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.introspect.support;
+package io.hawt.util.introspect.support;
 
-import io.hawt.introspect.ClassLoaderProvider;
+import io.hawt.util.introspect.ClassLoaderProvider;
 import io.hawt.util.Predicate;
 import io.hawt.util.ReflectionHelper;
 import io.hawt.util.Strings;

@@ -17,8 +17,8 @@
  */
 package io.hawt.blueprint;
 
-import io.hawt.introspect.ClassLoaderProvider;
-import io.hawt.introspect.ClassLoaderProviders;
+import io.hawt.util.introspect.ClassLoaderProvider;
+import io.hawt.util.introspect.ClassLoaderProviders;
 import io.hawt.introspect.Introspector;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
