@@ -1,4 +1,4 @@
-package io.hawt.maven;
+package io.hawt.maven.util;
 
 import org.apache.maven.plugin.AbstractMojo;
 
