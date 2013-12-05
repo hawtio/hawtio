@@ -1,4 +1,4 @@
-package io.hawt.maven.junit;
+package io.hawt.junit;
 
 import io.hawt.util.ReflectionHelper;
 

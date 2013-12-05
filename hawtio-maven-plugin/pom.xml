@@ -49,6 +49,11 @@
       <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-junit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- to embed hawtio app -->
     <dependency>
