@@ -16,6 +16,24 @@ module JUnit {
       reloadTree();
     });
 
+    $scope.runAllTests = () => {
+      runTests($scope.testClasses);
+    };
+
+    $scope.runSelectedTests = () => {
+      runTests($scope.selectedTests);
+    };
+
+    $scope.clearResults = () => {
+      $scope.testResults = null;
+    };
+
+    $scope.runTest = (className) => {
+      if (className) {
+        runTests([className]);
+      }
+    };
+
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#junittree"), true);
     }
@@ -41,7 +59,7 @@ module JUnit {
       rootFolder.addClass = "testCases";
       rootFolder.typeName = "testCases";
       rootFolder.domain = domain;
-      rootFolder.key = "all";
+      rootFolder.key = "";
       var children = [rootFolder];
 
       if (mbean) {
@@ -96,5 +114,28 @@ module JUnit {
         jolokia.execute(mbean, "findJUnitTestClassNames", onSuccess(render));
       }
     }
+
+    function renderResults(results) {
+      $scope.testResults = results;
+      $scope.running = false;
+      var alertClass = "error";
+      if (results.successful) {
+        alertClass = "success";
+      } else if (!results.runCount) {
+        alertClass = "warning";
+      }
+      $scope.alertClass = alertClass;
+      Core.$apply($scope);
+    }
+
+    function runTests(listOfClassNames) {
+      $scope.running = true;
+      $scope.testResults = null;
+      var mbean = getJUnitMBean(workspace);
+      if (mbean && listOfClassNames && listOfClassNames.length) {
+        jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
+      }
+    }
+
   }
 }
