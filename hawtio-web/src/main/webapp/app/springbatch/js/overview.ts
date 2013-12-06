@@ -156,7 +156,7 @@ module SpringBatch {
                     if(jobInstance && jobInstance.id && (parseInt(job)>parseInt(jobInstance.id))){
                         tempId=job;
                         break;
-                    }else{tempId = jobInstance.id;}
+                    }else if(jobInstance && jobInstance.id){tempId = jobInstance.id;}
                 }
                 if(jobInstance){
                     $scope.jobInstance = data.job.jobInstances[tempId];
