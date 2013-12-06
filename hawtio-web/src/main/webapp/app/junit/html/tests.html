@@ -7,6 +7,10 @@
   .testGrid {
     height: 300px;
   }
+
+  .testHeader  {
+    font-weight: bold;
+  }
 </style>
 <div ng-controller="JUnit.TreeController">
   <div class="row-fluid test-toolbar">
@@ -39,6 +43,41 @@
       Failure count <strong>{{testResults.failureCount}}</strong>
       Ignore count <strong>{{testResults.ignoreCount}}</strong>
       Time: <strong>{{testResults.runTime}} ms</strong>
+
+      <ul class="failures">
+        <li ng-repeat="failure in testResults.failures | filter:resultSearchTest" class="failure">
+          <div class="expandable closed" model="failure">
+            <div class="heading title">
+              <span class="testHeader">{{failure.testHeader}}</span>
+            </div>
+
+            <div class="content expandable-body">
+              <strong>{{failure.message}}</strong>
+
+              <div class="exception" ng-repeat="exception in failure.exceptions">
+                <!--
+                                <div class="expandable closed" model="exception">
+                -->
+                <div class="" model="exception">
+                  <div class="heading title">
+                    <span class="exceptionMessage" ng-hide="exception.message == failure.message">{{exception.message}}</span>
+                  </div>
+                  <!--
+                                    <div class="content expandable-body">
+                  -->
+                  <div class="content">
+                    <ul class="stack-trace-list">
+                      <li class="stack-trace" ng-repeat="stack in exception.stackTraceList">
+                        {{stack.className}}.{{stack.methodName}}({{stack.fileName}}:{{stack.lineNumber}})
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 
