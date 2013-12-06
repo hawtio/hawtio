@@ -50,10 +50,19 @@ module SpringBatch {
             });
 
             $rootScope.proxyUrl = '/hawtio/proxy/';
+
+            $rootScope.alert = {
+                enable:false,
+                content:'',
+                type:'',
+                hide: function(){
+                    this.enable = false;
+                },
+                show: function(){
+                    this.enable = true;
+                }
+            };
         });
 
     hawtioPluginLoader.addModule(pluginName);
-
-
-
 }

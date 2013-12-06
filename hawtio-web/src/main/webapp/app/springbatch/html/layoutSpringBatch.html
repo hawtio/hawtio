@@ -7,6 +7,14 @@
 </ul>
         <br/>
 <div>
+
+    <div class="control-group">
+        <div class="alert {{alert.type}}" ng-show="alert.enable">
+            <button type="button" class="close" ng-click="alert.hide()">x</button>
+            {{alert.content}}
+        </div>
+    </div>
+
     <div class="row-fluid">
         <div ng-view></div>
     </div>

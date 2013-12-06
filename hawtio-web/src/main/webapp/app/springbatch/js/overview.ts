@@ -13,18 +13,6 @@ module SpringBatch {
         var jobList = $resource(proxyUrl+springBatchServerPath);
         $scope.springBatchServer = encodeURIComponent(springBatchServerOrigin);
 
-        $scope.alert = {
-            enable:false,
-            content:'',
-            type:'',
-            hide: function(){
-                this.enable = false;
-            },
-            show: function(){
-                this.enable = true;
-            }
-        };
-
         $scope.executionPredicate = 'name';
         $scope.executionReverse = false;
         $scope.stepPredicate = 'name';
@@ -89,22 +77,22 @@ module SpringBatch {
                 $http.post(postUrl,'jobParameters='+params)
                     .success(function(data){
                         if(data.jobExecution){
-                            $scope.alert.content='Job started successfully.';
-                            $scope.alert.type = 'alert-success';
-                            $scope.alert.show();
+                            $rootScope.alert.content='Job started successfully.';
+                            $rootScope.alert.type = 'alert-success';
+                            $rootScope.alert.show();
                         }else if(data.errors){
-                            $scope.alert.content='';
+                            $rootScope.alert.content='';
                             for(var message in data.errors){
-                                $scope.alert.content+=data.errors[message]+'\n';
-                                $scope.alert.type = 'alert-error';
-                                $scope.alert.show();
+                                $rootScope.alert.content+=data.errors[message]+'\n';
+                                $rootScope.alert.type = 'alert-error';
+                                $rootScope.alert.show();
                             }
                         }
                     })
                     .error(function(data){
-                        $scope.alert.content='Count not start the job';
-                        $scope.alert.type = 'alert-error';
-                        $scope.alert.show();
+                        $rootScope.alert.content='Count not start the job';
+                        $rootScope.alert.type = 'alert-error';
+                        $rootScope.alert.show();
                     });
             }
 
