@@ -272,6 +272,7 @@
     <module>hawtio-dozer-schema</module>
     <module>hawtio-dozer</module>
     <module>hawtio-git</module>
+    <module>hawtio-ide</module>
     <module>hawtio-junit</module>
     <module>hawtio-watcher-dynamic-jaxb</module>
     <module>hawtio-watcher-blueprint-web</module>
