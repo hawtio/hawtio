@@ -335,8 +335,8 @@ module Wiki {
 
 
       var offset = containerElement.offset();
-      var left = Core.pathGet(offset, ["left"]) || 0;
-      var top = Core.pathGet(offset, ["top"]) || 0;
+
+      var containerHeight = 0;
 
       angular.forEach(states, (node) => {
         var id = getNodeId(node);
@@ -352,6 +352,7 @@ module Wiki {
         if (height || width) {
           node.width = width;
           node.height = height;
+          containerHeight = containerHeight + node.height + 75;
         }
         log.debug("node: ", id, " width: ", width, " height: ", height);
       });
@@ -365,6 +366,8 @@ module Wiki {
               .edges(transitions)
               .debugLevel(1)
               .run();
+
+      containerElement.css({'min-height': containerHeight});
 
       angular.forEach(states, (node) => {
         var id = getNodeId(node);
