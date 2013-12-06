@@ -7,9 +7,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-junit</artifactId>
+  <artifactId>hawtio-ide</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: hawtio-junit</description>
+  <description>hawtio :: hawtio-ide</description>
 
   <properties>
   </properties>
@@ -17,13 +17,8 @@
   <dependencies>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-ide</artifactId>
+      <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -34,6 +29,12 @@
     </dependency>
 
     <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit-version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
