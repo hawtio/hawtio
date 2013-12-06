@@ -239,6 +239,20 @@ public class ClassScanner {
         }
     }
 
+    /**
+     * Tries to find as many of the class names on the class loaders as possible and return them
+     */
+    public List<Class<?>> optionallyFindClasses(Iterable<String> classNames) {
+        List<Class<?>> answer = new ArrayList<Class<?>>();
+        for (String className : classNames) {
+            Class<?> aClass = optionallyFindClass(className);
+            if (aClass != null) {
+                answer.add(aClass);
+            }
+        }
+        return answer;
+    }
+
 
     public Set<String> getIgnorePackages() {
         return ignorePackages;
@@ -489,5 +503,4 @@ public class ClassScanner {
         }
         return answer;
     }
-
 }
