@@ -7,6 +7,25 @@ module JUnit {
     $scope.testClasses = [];
     $scope.testClassMap = {};
 
+    $scope.gridOptions = {
+      selectedItems: [],
+      data: 'selectedTests',
+      displayFooter: false,
+      showFilter: false,
+      filterOptions: {
+        filterText: ''
+      },
+      //selectWithCheckboxOnly: true,
+      showSelectionCheckbox: true,
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'Test Class'
+          //cellTemplate: '<div class="ngCellText"><a ng-click="openMessageDialog(row)">{{row.entity.JMSMessageID}}</a></div>',
+        }
+      ]
+    };
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
@@ -20,12 +39,9 @@ module JUnit {
       runTests($scope.testClasses);
     };
 
-    $scope.runSelectedTests = () => {
-      runTests($scope.selectedTests);
-    };
-
-    $scope.clearResults = () => {
-      $scope.testResults = null;
+    $scope.runTests = () => {
+      var tests = ($scope.gridOptions.selectedItems || []).map(o => o.id);
+      runTests(tests);
     };
 
     $scope.runTest = (className) => {
@@ -33,6 +49,13 @@ module JUnit {
         runTests([className]);
       }
     };
+
+
+    $scope.clearResults = () => {
+      $scope.testResults = null;
+    };
+
+
 
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#junittree"), true);
@@ -48,7 +71,9 @@ module JUnit {
       if (selectionKey) {
         selectedTests = $scope.testClassMap[selectionKey] || [selectionKey];
       }
-      $scope.selectedTests = selectedTests;
+      $scope.selectedTests = selectedTests.map(t => {
+        return {id: t};
+      });
       Core.$apply($scope);
     }
 
