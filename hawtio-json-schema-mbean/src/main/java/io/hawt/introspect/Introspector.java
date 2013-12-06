@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -69,7 +70,19 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
 
     @Override
     public SortedSet<String> findJUnitTestClassNames() {
-        return findClassNamesMethodsAnnotatedWith("org.junit.Test");
+        String annotationClassName = "org.junit.Test";
+
+        File file = getBaseDir();
+        File targetDir = new File(file, "target");
+        File testClasses = new File(targetDir, "test-classes");
+        return getClassScanner().findClassNamesInDirectoryWithMethodAnnotatedWith(testClasses, annotationClassName);
+
+        //return findClassNamesMethodsAnnotatedWith(annotationClassName);
+    }
+
+    public File getBaseDir() {
+        String basedir = System.getProperty("basedir", ".");
+        return new File(basedir);
     }
 
     /**
