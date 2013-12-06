@@ -118,7 +118,7 @@ public class RunMojo extends BaseMojo {
                     getLog().info("*************************************");
                     Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
                             .getMethod("main", String[].class);
-                    String[] args = new String[]{"--context", context, "--port", "" + port, "--join", "false"};
+                    String[] args = new String[]{"--context", context, "--port", "" + port};
                     hawtioMain.invoke(null, new Object[]{args});
 
                     afterBootstrapHawtio();

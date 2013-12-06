@@ -34,7 +34,6 @@ public class App {
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.showWelcome(true);
 
         try {
             String virtualMachineClass = "com.sun.tools.attach.VirtualMachine";

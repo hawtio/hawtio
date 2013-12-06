@@ -31,7 +31,7 @@ public class Options {
     private Integer port = 8080;
     private String extraClassPath;
     private boolean help;
-    private boolean jointServerThread = true;
+    private boolean jointServerThread;
 
     private abstract class Option {
         private String abbreviation;
@@ -103,7 +103,7 @@ public class Options {
 
         addOption(new ParameterOption("j", "join", "Join server thread") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                jointServerThread = "true".equalsIgnoreCase(parameter);
+                jointServerThread = Boolean.valueOf(parameter);
             }
         });
 
@@ -180,6 +180,8 @@ public class Options {
         if (extraClassPath != null) {
             sb.append("\n\textraClassPath=").append(extraClassPath);
         }
+        sb.append("\n\tjointServerThread=").append(jointServerThread);
+        sb.append("\n\thelp=").append(help);
         sb.append("]");
         return sb.toString();
     }
