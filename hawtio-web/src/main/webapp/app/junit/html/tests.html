@@ -1,24 +1,44 @@
-<h1>Tests</h1>
+<style>
+  .testGrid {
+    height: 300px;
+  }
+</style>
+<div ng-controller="JUnit.TreeController">
+  <div class="row-fluid">
+    <div class="span8">
+      <input class="search-query span12" type="text" ng-model="gridOptions.filterOptions.filterText"
+             placeholder="Filter tests">
+    </div>
+    <div class="span4">
+      <div class="pull-right">
+        <form class="form-inline">
+          <button class="btn pull-right" ng-click="runTests()" ng-disabled="!gridOptions.selectedItems.length">Run
+            Tests
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-<a class="btn" ng-click="runSelectedTests()">Run Selected Tests</a>
-<a class="btn" ng-click="runAllTests()">Run All Tests</a>
+  <div class="row-fluid">
+    <div class="testGrid" ng-grid="gridOptions"></div>
+  </div>
 
-<ul>
-  <li ng-repeat="test in selectedTests">
-    {{test}}  <a class="btn" ng-click="runTest(test)">Run</a>
-  </li>
-</ul>
+  <div class="row-fluid">
+    <div ng-show="running">
+      Running!
+    </div>
+  </div>
 
-<div ng-show="running">
-  Running!
-</div>
+  <div class="row-fluid">
+    <div ng-show="testResults" class="alert alert-{{alertClass}}">
+      <button type="button" class="close" ng-click="clearResults()">&times;</button>
 
-<div ng-show="testResults" class="alert alert-{{alertClass}}">
-  <button type="button" class="close" ng-click="clearResults()">&times;</button>
-
-  Run count <strong>{{testResults.runCount}}</strong>
-  Failure count <strong>{{testResults.failureCount}}</strong>
-  Ignore count <strong>{{testResults.ignoreCount}}</strong>
-  Time: <strong>{{testResults.runTime}} ms</strong>
+      Run count <strong>{{testResults.runCount}}</strong>
+      Failure count <strong>{{testResults.failureCount}}</strong>
+      Ignore count <strong>{{testResults.ignoreCount}}</strong>
+      Time: <strong>{{testResults.runTime}} ms</strong>
+    </div>
+  </div>
 </div>
 
