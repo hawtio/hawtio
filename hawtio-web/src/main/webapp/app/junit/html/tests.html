@@ -1,10 +1,15 @@
 <style>
+  .test-toolbar {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
   .testGrid {
     height: 300px;
   }
 </style>
 <div ng-controller="JUnit.TreeController">
-  <div class="row-fluid">
+  <div class="row-fluid test-toolbar">
     <div class="span8">
       <input class="search-query span12" type="text" ng-model="gridOptions.filterOptions.filterText"
              placeholder="Filter tests">
