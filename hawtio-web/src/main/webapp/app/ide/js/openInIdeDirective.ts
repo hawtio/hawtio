@@ -15,10 +15,16 @@ module IDE {
       column: '@'
     };
 
+    public link: (scope, element, attrs) => any;
+
     constructor(public localStorage, public workspace, public jolokia) {
+      // necessary to ensure 'this' is this object <sigh>
+      this.link = (scope, element, attrs) => {
+        return this.doLink(scope, element, attrs);
+      }
     }
 
-    public link = ($scope, $element, $attrs) => {
+    public doLink($scope, $element, $attrs) {
       var workspace = this.workspace;
       var jolokia = this.jolokia;
 
@@ -52,6 +58,6 @@ module IDE {
           $element.append(ideaButton);
         }
       }
-    };
+    }
   }
 }
