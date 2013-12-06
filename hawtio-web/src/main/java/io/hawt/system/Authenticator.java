@@ -67,7 +67,7 @@ public class Authenticator {
           }
         });
 
-        if (info.username.equals("public")) {
+        if (info.username == null || info.username.equals("public")) {
             return AuthenticateResult.NO_CREDENTIALS;
         }
 
