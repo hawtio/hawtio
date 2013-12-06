@@ -168,18 +168,12 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
         byte[] bytes = xml.getBytes();
         connection.setRequestProperty("Content-Length", String.valueOf(bytes.length));
 
-        System.out.println("Sending XML: " + xml);
-
         OutputStream os = null;
         OutputStreamWriter writer = null;
         try {
             os = connection.getOutputStream();
             os.write(bytes);
-
-            String answer = connection.getResponseMessage();
-            String output = IOHelper.readFully(new BufferedReader(new InputStreamReader(connection.getInputStream())));
-            System.out.println("Output: " + output);
-            return answer;
+            return IOHelper.readFully(new BufferedReader(new InputStreamReader(connection.getInputStream())));
         } finally {
             if (os != null) {
                 try {
