@@ -1,5 +1,24 @@
 <h1>Tests</h1>
 
+<a class="btn" ng-click="runSelectedTests()">Run Selected Tests</a>
+<a class="btn" ng-click="runAllTests()">Run All Tests</a>
+
 <ul>
-  <li ng-repeat="test in selectedTests">{{test}}</li>
+  <li ng-repeat="test in selectedTests">
+    {{test}}  <a class="btn" ng-click="runTest(test)">Run</a>
+  </li>
 </ul>
+
+<div ng-show="running">
+  Running!
+</div>
+
+<div ng-show="testResults" class="alert alert-{{alertClass}}">
+  <button type="button" class="close" ng-click="clearResults()">&times;</button>
+
+  Run count <strong>{{testResults.runCount}}</strong>
+  Failure count <strong>{{testResults.failureCount}}</strong>
+  Ignore count <strong>{{testResults.ignoreCount}}</strong>
+  Time: <strong>{{testResults.runTime}} ms</strong>
+</div>
+
