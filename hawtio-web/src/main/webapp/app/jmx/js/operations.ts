@@ -117,6 +117,7 @@ module Jmx {
     export function OperationsController($scope, $routeParams, workspace:Workspace, jolokia) {
 
       $scope.operations = {};
+      $scope.methodFilter = '';
 
       var sanitize = (value) => {
         for (var item in value) {
@@ -140,7 +141,19 @@ module Jmx {
 
       $scope.isOperationsEmpty = () => {
         return $.isEmptyObject($scope.operations);
-      }
+      };
+
+      $scope.doFilter = (item) => {
+        log.debug("item: ", item);
+        if (Core.isBlank($scope.methodFilter)) {
+          return true;
+        }
+        if (item.name.toLowerCase().has($scope.methodFilter.toLowerCase())
+            || item.humanReadable.toLowerCase().has($scope.methodFilter.toLowerCase())) {
+          return true;
+        }
+        return false;
+      };
 
       $scope.$on("$routeChangeSuccess", function (event, current, previous) {
         // lets do this asynchronously to avoid Error: $digest already in progress

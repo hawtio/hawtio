@@ -4,8 +4,22 @@
     The selected MBean has no JMX operations.
   </div>
 
+  <div class="row-fluid" ng-hide="isOperationsEmpty()">
+
+    <form class="form-horizontal no-bottom-margin">
+      <fieldset>
+        <div class="control-group">
+          <input type="text"
+                 class="search-query span12"
+                 ng-model="methodFilter"
+                 placeholder="Filter...">
+          </div>
+        </fieldset>
+      </form>
+  </div>
+
   <ul class="unstyled" ng-hide="isOperationsEmpty()">
-    <li ng-repeat="item in operations">
+    <li ng-repeat="item in operations" ng-show="doFilter(item)">
       <div class="expandable closed" ng-controller="Jmx.OperationController">
         <div title="{{desc}}" class="title">
           <i class="expandable-indicator"></i> {{title}}
