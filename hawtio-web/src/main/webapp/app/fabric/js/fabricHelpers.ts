@@ -66,7 +66,7 @@ module Fabric {
    * Adds a bunch of common helper functions to the given scope
    * @method initScope
    * @for Fabric
-   * @param {any} $scope
+   * @param {*} $scope
    * @param {ng.ILocationService} $location
    * @paran {*} jolokia
    * @param {Workspace} workspace
@@ -103,6 +103,30 @@ module Fabric {
       }
       return !$scope.isCurrentContainer(container);
     };
+
+    $scope.refreshProfile = (versionId, profileId) => {
+      log.debug('Refreshing profile: ' + profileId + '/' + versionId);
+      if (!versionId || !profileId) {
+        return;
+      }
+      jolokia.request({
+        type: 'exec',
+        mbean: Fabric.managerMBean,
+        operation: 'refreshProfile',
+        arguments: [versionId, profileId]
+      }, {
+        method: 'POST',
+        success: () => {
+          notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
+          Core.$apply($scope);
+        },
+        error: (response) => {
+          log.warn('Failed to trigger refresh for profile ' + profileId + '/' + versionId + ' due to: ', response.error);
+          log.info("Stack trace: ", response.stacktrace);
+          Core.$apply($scope);
+        }
+      })
+    }
 
     $scope.hasFabricWiki = () => {
       return Git.isGitMBeanFabric(workspace);
