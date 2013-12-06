@@ -95,11 +95,13 @@
             <a href='' title="Automatically layout the diagram " ng-click="doLayout()"
                data-placement="bottom">
               <i class="icon-magic"></i> Layout</a></li>
+          <!--
           <li class="pull-right">
             <a href='' title="Edit the properties for the selected node" ng-disabled="!selectedFolder"
                ng-click="propertiesDialog.open()"
                data-placement="bottom">
               <i class="icon-edit"></i> Properties</a></li>
+              -->
         </ul>
 
         <div class="modal-large">
@@ -127,17 +129,21 @@
           </div>
         </div>
 
+
+        <!--
         <div modal="propertiesDialog.show" close="propertiesDialog.close()" ng-options="propertiesDialog.options">
           <form class="form-horizontal no-bottom-margin" ng-submit="updatePropertiesAndCloseDialog()">
             <div class="modal-header"><h4>Properties</h4></div>
             <div class="modal-body">
-              <div ng-show="!selectedEndpoint">
-                <!-- pattern form -->
+
+              <div ng-show="!selectedEndpoint"> -->
+                <!-- pattern form --> <!--
                 <div simple-form name="formEditor" entity='nodeData' data='nodeModel' schema="schema"
                      onsubmit="updatePropertiesAndCloseDialog"></div>
               </div>
-              <div ng-show="selectedEndpoint">
+              <div ng-show="selectedEndpoint"> -->
                 <!-- endpoint form -->
+                <!--
                 <div class="control-group">
                   <label class="control-label" for="endpointPath">Endpoint</label>
 
@@ -151,6 +157,8 @@
                 <div simple-form name="formEditor" entity='endpointParameters' data='endpointSchema'
                      schema="schema"></div>
               </div>
+
+
             </div>
             <div class="modal-footer">
               <input class="btn btn-primary add" type="submit" ng-click="updatePropertiesAndCloseDialog()" value="OK">
@@ -158,6 +166,8 @@
             </div>
           </form>
         </div>
+        -->
+
       </div>
     </div>
 
@@ -168,8 +178,49 @@
       </form>
     </div>
 
-    <div class="row-fluid">
-      <div style="position: relative;" class="camel-canvas canvas gridStyle"></div>
+    <div class="panes">
+      <div class="left-pane pull-left">
+        <div style="position: relative;" class="camel-canvas canvas gridStyle"></div>
+      </div>
+      <div class="right-pane pull-right">
+        <div class="camel-props">
+          <div class="button-bar">
+            <button class="btn pull-right" ng-click="updatePropertiesAndCloseDialog()">Apply</button>
+          </div>
+
+          <div ng-show="!selectedEndpoint">
+            <!-- pattern form -->
+            <div simple-form
+                 name="formEditor"
+                 entity='nodeData'
+                 data='nodeModel'
+                 schema="schema"
+                 onsubmit="updatePropertiesAndCloseDialog"></div>
+          </div>
+          <div class="endpoint-props" ng-show="selectedEndpoint">
+            <p>Endpoint</p>
+            <!-- endpoint form -->
+            <div class="control-group">
+              <label class="control-label" for="endpointPath">URI:</label>
+
+              <div class="controls">
+                <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="name"
+                       typeahead="title for title in endpointCompletions($viewValue) | filter:$viewValue"
+                       typeahead-editable='true'
+                       min-length="1">
+              </div>
+            </div>
+            <div simple-form
+                 name="formEditor"
+                 entity='endpointParameters'
+                 data='endpointSchema'
+                 schema="schema"
+                 onsubmit="updatePropertiesAndCloseDialog"></div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

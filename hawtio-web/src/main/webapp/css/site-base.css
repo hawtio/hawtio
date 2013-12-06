@@ -3130,6 +3130,80 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   z-index: 25;
 }
 
+.panes > .left-pane {
+  display: inline-block;
+  width: 70%;
+}
+
+.panes > .right-pane {
+  display: inline-block;
+  width: 29%;
+}
+
 .camel-canvas-endpoint svg circle {
   fill: #346789;
+}
+
+.camel-props {
+  position: relative;
+}
+
+.camel-props > .button-bar {
+  left: 0;
+  right: 0;
+  display: block;
+  position: absolute;
+}
+
+.camel-props form > fieldset > legend {
+  font-size: medium;
+  font-weight: bold;
+  margin: 0;
+  line-height: 12px;
+  padding: 3px;
+}
+
+.endpoint-control > label {
+  font-size: medium;
+  font-weight: bold;
+  margin: 0;
+  line-height: 12px;
+  padding: 3px;
+}
+
+.endpoint-props > p {
+  font-size: medium;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 25px;
+  line-height: 12px;
+  padding: 3px;
+}
+
+.endpoint-control > .controls {
+  margin-top: 15px;
+}
+
+.camel-props form > ul.nav.nav-tabs {
+
+}
+
+.camel-props form fieldset .control-label {
+  float: none;
+  width: auto;
+  text-align: left;
+}
+
+.camel-props form fieldset .controls {
+  margin-left: auto;
+}
+
+.camel-props form fieldset .controls .input-xxlarge {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.camel-props form fieldset div[hawtio-form-array] > div > div > div > .controls.pull-right {
+  float: none;
 }
