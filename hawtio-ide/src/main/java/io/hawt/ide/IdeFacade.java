@@ -39,7 +39,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.ide:type=IdeFacade";
+        return "hawtio:type=IdeFacade";
     }
 
     /**

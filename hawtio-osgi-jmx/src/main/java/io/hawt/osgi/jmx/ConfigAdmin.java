@@ -22,7 +22,7 @@ public class ConfigAdmin implements ConfigAdminMXBean {
 
     void init() throws Exception {
         if (objectName == null) {
-            objectName = new ObjectName("io.hawt.osgi:type=ConfigAdmin");
+            objectName = new ObjectName("hawtio:type=ConfigAdmin");
         }
         if (mBeanServer == null) {
             mBeanServer = ManagementFactory.getPlatformMBeanServer();

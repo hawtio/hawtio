@@ -13,7 +13,7 @@ module Fabric {
   export var openShiftFabricMBean = Fabric.jmxDomain + ":type=OpenShift";
   export var mqManagerMBean = Fabric.jmxDomain + ":type=MQManager";
 
-  var schemaLookupDomain = "io.hawt.jsonschema";
+  var schemaLookupDomain = "hawtio";
   var schemaLookupType = "SchemaLookup";
 
   export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;

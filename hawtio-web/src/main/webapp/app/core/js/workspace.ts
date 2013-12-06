@@ -127,11 +127,11 @@ module Core {
       }
 
       // lets also listen to see if we have a JMX tree watcher
-      if (this.treeContainsDomainAndProperties("io.hawt.jmx", {type: "TreeWatcher"})) {
+      if (this.treeContainsDomainAndProperties("hawtio", {type: "TreeWatcher"})) {
         if (this.treeWatchRegisterHandle === null) {
           this.treeWatchRegisterHandle = this.jolokia.register(angular.bind(this, this.maybeReloadTree), {
             type: "read",
-            mbean: "io.hawt.jmx:type=TreeWatcher",
+            mbean: "hawtio:type=TreeWatcher",
             attribute: "Counter"
           });
         } else {

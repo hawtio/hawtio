@@ -43,7 +43,7 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.introspect:type=Introspector";
+        return "hawtio:type=Introspector";
     }
 
     /**

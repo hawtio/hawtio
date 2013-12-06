@@ -70,7 +70,7 @@ public class JVMList implements JVMListMBean {
             }
 
             if (objectName == null) {
-                objectName = new ObjectName("io.hawt.jvm.local:type=JVMList");
+                objectName = new ObjectName("hawtio:type=JVMList");
             }
             if (mBeanServer == null) {
                 mBeanServer = ManagementFactory.getPlatformMBeanServer();

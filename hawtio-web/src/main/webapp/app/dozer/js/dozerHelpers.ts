@@ -154,7 +154,7 @@ module Dozer {
 
 
   export function getIntrospectorMBean(workspace: Workspace) {
-    return Core.getMBeanTypeObjectName(workspace, "io.hawt.introspect", "Introspector");
+    return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
   }
 
   export function loadModelFromTree(rootTreeNode, oldModel: Mappings): Mappings {

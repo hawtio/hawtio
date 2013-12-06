@@ -114,7 +114,7 @@ public class WatcherSpringContextFacade extends MBeanSupport implements WatcherS
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.spring:type=WatcherFacade";
+        return "hawtio:type=WatcherFacade";
     }
 
 }

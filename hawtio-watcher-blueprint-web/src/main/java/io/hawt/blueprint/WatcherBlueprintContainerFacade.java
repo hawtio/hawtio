@@ -97,7 +97,7 @@ public class WatcherBlueprintContainerFacade extends MBeanSupport implements Wat
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.blueprint:type=WatcherFacade";
+        return "hawtio:type=WatcherFacade";
     }
 
 }

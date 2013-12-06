@@ -182,7 +182,7 @@ public class GitFacadeTest {
 
         // now lets make a new git facade to check we can work with existing repos
         GitFacade anotherGit = createTestGitFacade();
-        anotherGit.setObjectName(new ObjectName("io.hawt.git:type=GitFacadePart2"));
+        anotherGit.setObjectName(new ObjectName("hawtio:type=GitFacadePart2"));
         anotherGit.setConfigDirectory(git.getRootGitDirectory());
         anotherGit.init();
 

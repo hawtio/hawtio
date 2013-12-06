@@ -71,7 +71,7 @@ public class UploadManager implements UploadManagerMBean {
     }
 
     protected ObjectName getObjectName() throws Exception {
-        return new ObjectName("io.hawt.jmx:type=UploadManager");
+        return new ObjectName("hawtio:type=UploadManager");
     }
 
     @Override

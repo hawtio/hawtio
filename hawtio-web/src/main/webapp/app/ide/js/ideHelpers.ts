@@ -7,7 +7,7 @@ module IDE {
    * Returns the mbean name of the IDE Facade mbean if its available
    */
   export function getIdeMBean(workspace:Workspace) {
-    return Core.getMBeanTypeObjectName(workspace, "io.hawt.ide", "IdeFacade");
+    return Core.getMBeanTypeObjectName(workspace, "hawtio", "IdeFacade");
   }
 
   /**
