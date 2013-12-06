@@ -102,9 +102,48 @@ public class ClassScanner {
         return findClassNamesMethodsAnnotatedWith(annotationClassName, null, packageMap);
     }
 
-    public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName, Integer limit, Map<Package, ClassLoader[]> packages) {
+    public SortedSet<String> findClassNamesInDirectoryWithMethodAnnotatedWith(File dir, String annotationClassName) {
+        SortedSet<String> answer = new TreeSet<String>();
+        final Class<? extends Annotation> annotationClass = optionallyFindAnnotationClass(annotationClassName);
+        if (annotationClass != null && dir.exists()) {
+            addClassNamesInDirectoryWithMethodsAnnotatedWith(answer, dir, annotationClass, "");
+        }
+        return answer;
+    }
+
+    protected void addClassNamesInDirectoryWithMethodsAnnotatedWith(SortedSet<String> answer, File dir,
+                                                                    Class<? extends Annotation> annotationClass, String packageName) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    addClassNamesInDirectoryWithMethodsAnnotatedWith(answer, file, annotationClass, packageName + file.getName() + ".");
+                } else if (file.isFile()) {
+                    String name = file.getName();
+                    if (name.endsWith(".class")) {
+                        String className = packageName + (name.substring(0, name.length() - 6).replace('$', '.'));
+                        Class<?> aClass = optionallyFindClass(className);
+                        if (aClass != null && ReflectionHelper.hasMethodWithAnnotation(aClass, annotationClass, true)) {
+                            answer.add(className);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    protected Class<? extends Annotation> optionallyFindAnnotationClass(String annotationClassName) {
         final Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) optionallyFindClass(annotationClassName);
         if (annotationClass != null && Annotation.class.isAssignableFrom(annotationClass)) {
+            return annotationClass;
+        }
+        return null;
+    }
+
+    public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName, Integer limit, Map<Package, ClassLoader[]> packages) {
+        final Class<? extends Annotation> annotationClass = optionallyFindAnnotationClass(annotationClassName);
+        if (annotationClass != null) {
             Predicate<String> filter = new Predicate<String>() {
                 @Override
                 public boolean evaluate(String className) {
@@ -503,4 +542,5 @@ public class ClassScanner {
         }
         return answer;
     }
+
 }
