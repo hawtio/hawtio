@@ -36,7 +36,7 @@ public class IdeFacadeTest {
     }
 
     protected String assertFindSampleFileName() {
-        String absoluteFile = facade.findClassAbsoluteFileName("io.hawt.ide.IdeFacade", "IdeFacade.java", null);
+        String absoluteFile = facade.findClassAbsoluteFileName("IdeFacade.java", "io.hawt.ide.IdeFacade", null);
         assertNotNull("Should have found an absolute file", absoluteFile);
         return absoluteFile;
     }
