@@ -86,6 +86,10 @@ module Camel {
     }
 
     function populateRouteMessages(response) {
+      // filter messages due CAMEL-7045 but in camel-core
+      // see https://github.com/hawtio/hawtio/issues/292
+      var selectedRouteId = getSelectedRouteId(workspace);
+
       var first = $scope.messages.length === 0;
       var xml = response.value;
       if (angular.isString(xml)) {
@@ -98,13 +102,16 @@ module Camel {
         }
 
         allMessages.each((idx, message) => {
-          var messageData = Camel.createMessageFromXml(message);
-          var toNode = $(message).find("toNode").text();
-          if (toNode) {
-            messageData["toNode"] = toNode;
+          var routeId = $(message).find("routeId").text();
+          if (routeId === selectedRouteId) {
+            var messageData = Camel.createMessageFromXml(message);
+            var toNode = $(message).find("toNode").text();
+            if (toNode) {
+              messageData["toNode"] = toNode;
+            }
+            $scope.messages.push(messageData);
+            Core.$apply($scope);
           }
-          $scope.messages.push(messageData);
-          Core.$apply($scope);
         });
       }
     }
