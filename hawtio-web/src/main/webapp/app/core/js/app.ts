@@ -62,10 +62,10 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export function AppController($scope, $location, workspace, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
+  export function AppController($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
 
     if (userDetails.username === null) {
-      $location.url('/help');
+      $location.url(defaultPage());
     }
 
     $scope.collapse = '';
@@ -187,7 +187,7 @@ module Core {
         }
       } else {
         if ($location.url().startsWith('/login')) {
-          var url:Object = '/help';
+          var url:Object = defaultPage();
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
@@ -224,6 +224,9 @@ module Core {
       return $location.url().startsWith("/login");
     }
 
+    function defaultPage() {
+      return Perspective.defaultPage($location, workspace, jolokia, localStorage);
+    }
   }
 
 }
