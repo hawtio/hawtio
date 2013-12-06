@@ -37,7 +37,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Execute(phase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class TestMojo extends CamelMojo {
 
-    @Parameter(property = "hawtio.className", required = true)
+    @Parameter(property = "hawtio.className")
     private String className;
 
     @Parameter(property = "hawtio.testName")
@@ -71,26 +71,31 @@ public class TestMojo extends CamelMojo {
 
     @Override
     protected void afterBootstrapMain() throws Exception {
-        // must load class and methods using reflection as otherwise we have class-loader/compiled class issues
-        getLog().info("*************************************");
-        getLog().info("Testing: " + className);
-        getLog().info("*************************************");
+        Class clazz = null;
+        Object instance = null;
 
-        Class clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Object instance = ReflectionHelper.newInstance(clazz);
-        getLog().debug("Loaded " + className + " and instantiated " + instance);
+        if (className != null) {
+            // must load class and methods using reflection as otherwise we have class-loader/compiled class issues
+            getLog().info("*************************************");
+            getLog().info("Testing: " + className);
+            getLog().info("*************************************");
 
-        ReflectionHelper.invokeMethod(jUnitService.findBeforeClass(clazz), instance);
-        ReflectionHelper.invokeMethod(jUnitService.findBefore(clazz), instance);
+            clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+            instance = ReflectionHelper.newInstance(clazz);
+            getLog().debug("Loaded " + className + " and instantiated " + instance);
 
-        // loop all test methods
-        List<Method> testMethods = jUnitService.findTestMethods(clazz);
-        testMethods = jUnitService.filterTestMethods(testMethods, testName);
-        getLog().info("Found and filtered " + testMethods.size() + " @Test methods to invoke");
+            ReflectionHelper.invokeMethod(jUnitService.findBeforeClass(clazz), instance);
+            ReflectionHelper.invokeMethod(jUnitService.findBefore(clazz), instance);
 
-        for (Method testMethod : testMethods) {
-            getLog().info("Invoking @Test method " + testMethod + " on " + className);
-            ReflectionHelper.invokeMethod(testMethod, instance);
+            // loop all test methods
+            List<Method> testMethods = jUnitService.findTestMethods(clazz);
+            testMethods = jUnitService.filterTestMethods(testMethods, testName);
+            getLog().info("Found and filtered " + testMethods.size() + " @Test methods to invoke");
+
+            for (Method testMethod : testMethods) {
+                getLog().info("Invoking @Test method " + testMethod + " on " + className);
+                ReflectionHelper.invokeMethod(testMethod, instance);
+            }
         }
 
         getLog().info("*************************************");
@@ -99,8 +104,10 @@ public class TestMojo extends CamelMojo {
         Console console = System.console();
         console.readLine();
 
-        ReflectionHelper.invokeMethod(jUnitService.findAfter(clazz), instance);
-        ReflectionHelper.invokeMethod(jUnitService.findAfterClass(clazz), instance);
+        if (className != null) {
+            ReflectionHelper.invokeMethod(jUnitService.findAfter(clazz), instance);
+            ReflectionHelper.invokeMethod(jUnitService.findAfterClass(clazz), instance);
+        }
     }
 
 }
