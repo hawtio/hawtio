@@ -61,7 +61,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
      * source file on the users machine or null if it cannot be found
      */
     @Override
-    public String findClassAbsoluteFileName(String className, String fileName, List<String> sourceRoots) {
+    public String findClassAbsoluteFileName(String fileName, String className, List<String> sourceRoots) {
         // usually the fileName is just the name of the file without any package information
         // so lets turn the package name into a path
         int lastIdx = className.lastIndexOf('.');
