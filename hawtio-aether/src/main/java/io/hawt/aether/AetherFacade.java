@@ -152,7 +152,7 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.aether:type=AetherFacade";
+        return "hawtio:type=AetherFacade";
     }
 
     protected RepositorySystem newManualSystem() throws PlexusContainerException, ComponentLookupException {

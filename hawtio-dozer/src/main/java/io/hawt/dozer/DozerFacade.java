@@ -44,7 +44,7 @@ public class DozerFacade extends MBeanSupport implements DozerFacadeMXBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.dozer:type=DozerFacade";
+        return "hawtio:type=DozerFacade";
     }
 
 }

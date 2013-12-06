@@ -135,7 +135,7 @@ module Osgi {
       divEl.innerHTML +=
               "<div class='alert alert-error'>" +
                       "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
-                      "The io.hawt.osgi.OSGiTools MBean is not available. Please contact technical support." +
+                      "The hawtio.OSGiTools MBean is not available. Please contact technical support." +
                       "</div>";
     }
 
@@ -144,7 +144,7 @@ module Osgi {
       divEl.innerHTML +=
               "<div class='alert alert-error'>" +
                       "<button type='button' class='close' data-dismiss='alert'>&times;</button>" +
-                      "Problem invoking io.hawt.osgi.OSGiTools MBean. " + response +
+                      "Problem invoking hawtio.OSGiTools MBean. " + response +
                       "</div>";
     }
 

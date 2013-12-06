@@ -12,7 +12,7 @@ module Git {
     return null;
   }
 
-  export var jmxDomain = "io.hawt.git";
+  export var jmxDomain = "hawtio";
   export var mbeanType = "GitFacade";
 
   export function hasGit(workspace:Workspace) {

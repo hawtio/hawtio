@@ -3,7 +3,7 @@
  */
 module UI {
 
-  export var fileUploadMBean = "io.hawt.jmx:type=UploadManager";
+  export var fileUploadMBean = "hawtio:type=UploadManager";
 
   export class FileUpload {
 

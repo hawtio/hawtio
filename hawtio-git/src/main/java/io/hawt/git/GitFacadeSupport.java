@@ -382,7 +382,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.git:type=GitFacade";
+        return "hawtio:type=GitFacade";
     }
 
     protected String doGetContent(Git git, String objectId, String pathOrBlobPath) {

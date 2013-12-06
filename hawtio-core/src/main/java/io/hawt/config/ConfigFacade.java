@@ -34,7 +34,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.config:type=ConfigFacade";
+        return "hawtio:type=ConfigFacade";
     }
 
     @Override

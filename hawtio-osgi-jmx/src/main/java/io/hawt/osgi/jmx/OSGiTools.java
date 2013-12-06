@@ -21,7 +21,7 @@ public class OSGiTools implements OSGiToolsMXBean {
 
     void init() throws Exception {
         if (objectName == null) {
-            objectName = new ObjectName("io.hawt.osgi:type=OSGiTools");
+            objectName = new ObjectName("hawtio:type=OSGiTools");
         }
         if (mBeanServer == null) {
             mBeanServer = ManagementFactory.getPlatformMBeanServer();

@@ -80,7 +80,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     }
 
     protected ObjectName getObjectName() throws Exception {
-        return new ObjectName("io.hawt.jmx:type=TreeWatcher");
+        return new ObjectName("hawtio:type=TreeWatcher");
     }
 
     protected NotificationListener getNotificationListener() {

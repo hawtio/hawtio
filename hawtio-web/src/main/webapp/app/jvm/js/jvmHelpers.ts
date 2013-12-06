@@ -44,6 +44,6 @@ module JVM {
   }
 
   export function hasLocalMBean(workspace) {
-    return workspace.treeContainsDomainAndProperties('io.hawt.jvm.local', {type: 'JVMList'});
+    return workspace.treeContainsDomainAndProperties('hawtio', {type: 'JVMList'});
   }
 }

@@ -434,7 +434,7 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.maven:type=Indexer";
+        return "hawtio:type=Indexer";
     }
 
     /**

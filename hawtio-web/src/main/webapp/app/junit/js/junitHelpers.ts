@@ -13,10 +13,10 @@ module JUnit {
   }
 
   export function getJUnitMBean(workspace: Workspace) {
-    return Core.getMBeanTypeObjectName(workspace, "io.hawt.junit", "JUnitFacade");
+    return Core.getMBeanTypeObjectName(workspace, "hawtio", "JUnitFacade");
   }
 
   export function getIntrospectorMBean(workspace: Workspace) {
-    return Core.getMBeanTypeObjectName(workspace, "io.hawt.introspect", "Introspector");
+    return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
   }
 }

@@ -12,7 +12,7 @@ module Jvm {
                     when('/jvm/connect', {templateUrl: 'app/jvm/html/connect.html'}).
                     when('/jvm/local', {templateUrl: 'app/jvm/html/local.html'});
           }).
-          constant('mbeanName', 'io.hawt.jvm.local:type=JVMList').
+          constant('mbeanName', 'hawtio:type=JVMList').
           run(($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry[pluginName] = layoutFull;

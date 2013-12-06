@@ -15,7 +15,7 @@ module Maven {
   export function getMavenIndexerMBean(workspace:Workspace) {
     if (workspace) {
       var mavenStuff = workspace.mbeanTypesToDomain["Indexer"] || {};
-      var object = mavenStuff["io.hawt.maven"] || {};
+      var object = mavenStuff["hawtio"] || {};
       return object.objectName;
     } else return null;
   }
@@ -23,7 +23,7 @@ module Maven {
   export function getAetherMBean(workspace:Workspace) {
     if (workspace) {
       var mavenStuff = workspace.mbeanTypesToDomain["AetherFacade"] || {};
-      var object = mavenStuff["io.hawt.aether"] || {};
+      var object = mavenStuff["hawtio"] || {};
       return object.objectName;
     } else return null;
   }

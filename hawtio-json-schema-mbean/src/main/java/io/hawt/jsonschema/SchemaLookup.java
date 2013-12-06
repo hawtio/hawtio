@@ -64,7 +64,7 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.jsonschema:type=SchemaLookup";
+        return "hawtio:type=SchemaLookup";
     }
 
     protected Class getClass(String name) {

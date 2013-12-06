@@ -29,7 +29,7 @@ module Fabric {
       if ($scope.hasFabric) {
         var containerId = null;
         Fabric.containerWebAppURL(jolokia, "drools-wb-distribution-wars", containerId, onDroolsUrl, onDroolsUrl);
-        $scope.canUpload = workspace.treeContainsDomainAndProperties('io.hawt.jmx', {type: 'UploadManager'});
+        $scope.canUpload = workspace.treeContainsDomainAndProperties('hawtio', {type: 'UploadManager'});
       }
     }
 

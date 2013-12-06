@@ -38,7 +38,7 @@ public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "io.hawt.junit:type=JUnitFacade";
+        return "hawtio:type=JUnitFacade";
     }
 
     @Override

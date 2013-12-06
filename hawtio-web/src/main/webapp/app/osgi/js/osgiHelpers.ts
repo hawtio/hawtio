@@ -329,7 +329,7 @@ module Osgi {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
             var toolsFacades = mbeanTypesToDomain["OSGiTools"];
-            var hawtioFolder = toolsFacades["io.hawt.osgi"];
+            var hawtioFolder = toolsFacades["hawtio"];
             return hawtioFolder["objectName"];
         }
         return null;
@@ -339,7 +339,7 @@ module Osgi {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
             var configAdminFacades = mbeanTypesToDomain["ConfigAdmin"];
-            var hawtioFolder = configAdminFacades["io.hawt.osgi"];
+            var hawtioFolder = configAdminFacades["hawtio"];
             return hawtioFolder["objectName"];
         }
         return null;
