@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
+
+<!--
+  <ext:property-placeholder>
+    <ext:default-properties>
+      &lt;!&ndash; no value will default to ~/.hawtio &ndash;&gt;
+      <ext:property name="hawtio.home.dir" value=""/>
+    </ext:default-properties>
+  </ext:property-placeholder>
+-->
+
+  <bean id="ideFacade" class="io.hawt.ide.IdeFacade" init-method="init" destroy-method="destroy" scope="singleton">
+  </bean>
+
+</blueprint>
+
