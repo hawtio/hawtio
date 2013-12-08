@@ -71,7 +71,7 @@ public class TestMojo extends CamelMojo {
 
     @Override
     protected void afterBootstrapMain() throws Exception {
-        Class clazz = null;
+        Class<?> clazz = null;
         Object instance = null;
 
         if (className != null) {

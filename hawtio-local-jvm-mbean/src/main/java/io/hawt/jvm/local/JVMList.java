@@ -30,8 +30,6 @@ public class JVMList implements JVMListMBean {
 
 
     protected static final Map<String,String> vmAliasMap = new HashMap<String, String>();
-    private VirtualMachineHandler vmHandler;
-
     static {
         vmAliasMap.put("com.intellij.idea.Main", "IDEA");
         vmAliasMap.put("com.intellij.rt.execution.application.AppMain", "IDEA");
@@ -230,7 +228,7 @@ public class JVMList implements JVMListMBean {
     }
 
     protected Properties getAgentSystemProperties(Object pVm) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class clazz = pVm.getClass();
+        Class<?> clazz = pVm.getClass();
         Method method = clazz.getMethod("getSystemProperties");
         return (Properties) method.invoke(pVm);
     }

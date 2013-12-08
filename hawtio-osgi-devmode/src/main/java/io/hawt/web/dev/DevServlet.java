@@ -31,6 +31,7 @@ import java.net.URLDecoder;
  */
 public class DevServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
     private static final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
 
     private final static Logger LOG = Logger.getLogger(DevServlet.class);

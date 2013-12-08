@@ -121,11 +121,9 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
             String firstPrefix = "";
             PropertyDTO lastNavigation = null;
             // lets try find the first property type and keep navigating
-            int idx = 0;
             StringBuilder prefixBuilder = new StringBuilder();
             for (String propertyPath : propertyPaths) {
                 PropertyDTO property = Introspections.findPropertyByName(properties, propertyPath);
-                boolean last = ++idx == propertyPaths.length;
                 if (property == null) {
                     // if we're the last path don't worry, just filter the results
                     break;

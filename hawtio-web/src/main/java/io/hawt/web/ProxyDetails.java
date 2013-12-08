@@ -76,7 +76,7 @@ public class ProxyDetails {
         }
 
         // lets add the query parameters
-        Enumeration iter = httpServletRequest.getParameterNames();
+        Enumeration<?> iter = httpServletRequest.getParameterNames();
         while (iter.hasMoreElements()) {
             Object next = iter.nextElement();
             if (next instanceof String) {

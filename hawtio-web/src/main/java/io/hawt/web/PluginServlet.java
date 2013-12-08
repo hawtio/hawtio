@@ -29,6 +29,7 @@ import java.util.Set;
  */
 public class PluginServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(PluginServlet.class);
 
     MBeanServer mBeanServer;

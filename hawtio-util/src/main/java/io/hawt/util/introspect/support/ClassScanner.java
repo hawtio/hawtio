@@ -134,7 +134,7 @@ public class ClassScanner {
 
 
     protected Class<? extends Annotation> optionallyFindAnnotationClass(String annotationClassName) {
-        final Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) optionallyFindClass(annotationClassName);
+        final Class<? extends Annotation> annotationClass = optionallyFindClass(annotationClassName).asSubclass(Annotation.class);
         if (annotationClass != null && Annotation.class.isAssignableFrom(annotationClass)) {
             return annotationClass;
         }
@@ -389,6 +389,13 @@ public class ClassScanner {
                 classes.add(className);
             }
         }
+
+        // let's not leak resources
+        try {
+            jarFile.close();
+        } catch (IOException e) {
+            LOG.debug("IOException closing JAR '" + jarPath + "'. Reason: " + e, e);
+        }
     }
 
 
@@ -454,6 +461,13 @@ public class ClassScanner {
             if (aClass != null) {
                 classes.add(aClass);
             }
+        }
+        
+        // let's not leak resources
+        try {
+            jarFile.close();
+        } catch (IOException e) {
+            LOG.debug("IOException closing JAR '" + jarPath + "'. Reason: " + e, e);
         }
     }
 
