@@ -95,6 +95,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
 
     protected NotificationFilter getNotificationFilter() {
         return new NotificationFilter() {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isNotificationEnabled(Notification notification) {
                 return true;

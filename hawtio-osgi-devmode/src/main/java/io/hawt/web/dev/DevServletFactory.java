@@ -21,8 +21,6 @@ import org.apache.log4j.Logger;
 import org.ops4j.pax.web.service.WebContainer;
 import org.osgi.service.http.HttpContext;
 
-import java.util.Map;
-
 /**
  *
  */
@@ -34,8 +32,6 @@ public class DevServletFactory {
   private HttpContext httpContext;
 
   private DevServlet servlet = new DevServlet();
-
-  private String welcomeFiles = null;
 
   public DevServletFactory() {
     LOG.info("DevServletFactory " + this + " instantiated");

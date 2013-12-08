@@ -5,6 +5,8 @@ package io.hawt.git;
  */
 public class RuntimeIOException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public RuntimeIOException(Exception e) {
         super(e);
     }

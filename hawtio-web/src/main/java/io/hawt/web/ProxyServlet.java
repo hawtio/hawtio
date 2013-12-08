@@ -35,7 +35,6 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +168,6 @@ public class ProxyServlet extends HttpServlet {
      * @param httpServletRequest     The {@link HttpServletRequest} that contains
      *                               the mutlipart POST data to be sent via the {@link PostMethod}
      */
-    @SuppressWarnings("unchecked")
     private void handleMultipartPost(PostMethod postMethodProxyRequest, HttpServletRequest httpServletRequest)
             throws ServletException {
         // Create a factory for disk-based file items
@@ -359,10 +357,9 @@ public class ProxyServlet extends HttpServlet {
      *                               request to the servlet engine
      * @param httpMethodProxyRequest The request that we are about to send to
      */
-    @SuppressWarnings("unchecked")
     private void setProxyRequestHeaders(ProxyDetails proxyDetails, HttpServletRequest httpServletRequest, HttpMethod httpMethodProxyRequest) {
         // Get an Enumeration of all of the header names sent by the client
-        Enumeration enumerationOfHeaderNames = httpServletRequest.getHeaderNames();
+        Enumeration<?> enumerationOfHeaderNames = httpServletRequest.getHeaderNames();
         while (enumerationOfHeaderNames.hasMoreElements()) {
             String stringHeaderName = (String) enumerationOfHeaderNames.nextElement();
 
@@ -375,7 +372,7 @@ public class ProxyServlet extends HttpServlet {
             //		as several headers each with a different value rather than
             //		sending the header as a comma separated list.
             // Thus, we get an Enumeration of the header values sent by the client
-            Enumeration enumerationOfHeaderValues = httpServletRequest.getHeaders(stringHeaderName);
+            Enumeration<?> enumerationOfHeaderValues = httpServletRequest.getHeaders(stringHeaderName);
             while (enumerationOfHeaderValues.hasMoreElements()) {
                 String stringHeaderValue = (String) enumerationOfHeaderValues.nextElement();
                 // In case the proxy host is running multiple virtual servers,

@@ -19,7 +19,6 @@ package io.hawt.maven.indexer;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -65,12 +64,8 @@ public class FuseEARepoSearchTest {
     @Test
     public void testFindsCamelVersions() throws Exception {
         List<ArtifactDTO> results = indexer.searchFlat("org.apache.camel", "camel-core", null, "jar", null, null);
-        if (true) {
-            for (ArtifactDTO result : results) {
-                System.out.println("camel-core jar version: " + result.getVersion());
-            }
-        } else {
-            System.out.println("Found " + results.size() + " camel jars");
+        for (ArtifactDTO result : results) {
+            System.out.println("camel-core jar version: " + result.getVersion());
         }
         assertTrue("Should have found at last one camel jar!", results.size() > 0);
     }

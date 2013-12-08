@@ -18,14 +18,12 @@
 package io.hawt.jaxb.dynamic.file;
 
 import io.hawt.introspect.Introspector;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.SortedSet;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**

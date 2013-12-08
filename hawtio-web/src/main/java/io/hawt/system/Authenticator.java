@@ -12,7 +12,6 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 /**
@@ -147,8 +146,6 @@ public class Authenticator {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
             LOG.debug("Login failed", e);
-        } catch (GeneralSecurityException e) {
-            LOG.error("General Security Exception", e);
         }
 
         return null;

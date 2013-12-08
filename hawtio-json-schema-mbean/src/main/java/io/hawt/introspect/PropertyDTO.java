@@ -29,7 +29,7 @@ public class PropertyDTO {
     private boolean writeable = true;
     private String description;
     private String displayName;
-    private transient Class typeClass;
+    private transient Class<?> typeClass;
 
     public PropertyDTO() {
     }
@@ -97,11 +97,11 @@ public class PropertyDTO {
         this.displayName = displayName;
     }
 
-    Class getTypeClass() {
+    Class<?> getTypeClass() {
         return typeClass;
     }
 
-    void setTypeClass(Class typeClass) {
+    void setTypeClass(Class<?> typeClass) {
         this.typeClass = typeClass;
     }
 }

@@ -32,6 +32,7 @@ import java.lang.management.ManagementFactory;
  * A servlet for returning the javadoc files for a given set of maven coordinates and file paths
  */
 public class JavaDocServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     private MBeanServer mbeanServer;
     private ObjectName objectName;
     private String[] argumentTypes = {"java.lang.String", "java.lang.String"};

@@ -17,9 +17,6 @@ import java.util.List;
 public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(JUnitFacade.class);
     private static JUnitFacade singleton;
-
-    private String configDir;
-    private String version;
     private ClassScanner classScanner = ClassScanner.newInstance();
 
     public static JUnitFacade getSingleton() {

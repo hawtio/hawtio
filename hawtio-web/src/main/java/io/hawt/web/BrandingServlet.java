@@ -21,6 +21,7 @@ import java.util.*;
  */
 public class BrandingServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(BrandingServlet.class);
 
     List<String> propertiesToCheck = new ArrayList<String>();

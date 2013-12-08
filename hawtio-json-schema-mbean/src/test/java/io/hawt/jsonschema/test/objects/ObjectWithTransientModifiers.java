@@ -1,7 +1,5 @@
 package io.hawt.jsonschema.test.objects;
 
-import java.util.ArrayList;
-
 public class ObjectWithTransientModifiers {
 
     private String nonTransient;

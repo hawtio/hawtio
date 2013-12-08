@@ -3,12 +3,9 @@ package io.hawt.spring;
 import io.hawt.util.MBeanSupport;
 import org.fusesource.common.util.Objects;
 import org.fusesource.fabric.watcher.spring.context.WatcherSpringContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -17,7 +14,6 @@ import java.util.TreeMap;
  * A facade bean to provide a little JMX API to the {@link WatcherSpringContext} as well as natural hawtio configuration for it
  */
 public class WatcherSpringContextFacade extends MBeanSupport implements WatcherSpringContextFacadeMXBean {
-    private static final transient Logger LOG = LoggerFactory.getLogger(WatcherSpringContextFacade.class);
 
     private File rootPath;
     private WatcherSpringContext watcher;

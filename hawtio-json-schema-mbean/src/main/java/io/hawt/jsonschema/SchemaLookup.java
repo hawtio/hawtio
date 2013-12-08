@@ -12,11 +12,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-
 /**
  * @author Stan Lewis
  */
@@ -67,7 +62,7 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
         return "hawtio:type=SchemaLookup";
     }
 
-    protected Class getClass(String name) {
+    protected Class<?> getClass(String name) {
         BundleContext bundleContext = null;
         Bundle currentBundle = FrameworkUtil.getBundle(getClass());
         if (currentBundle != null) {
@@ -93,17 +88,16 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
             }
         }
         LOG.warn("Failed to find class for {}", name);
-        ClassNotFoundException e = new ClassNotFoundException(name);
         throw new RuntimeException(new ClassNotFoundException(name));
     }
 
     @Override
     public String getSchemaForClass(String name) {
-        Class clazz = getClass(name);
+        Class<?> clazz = getClass(name);
         return getSchemaForClass(clazz);
     }
 
-    public String getSchemaForClass(Class clazz) {
+    public String getSchemaForClass(Class<?> clazz) {
         LOG.info("Looking up schema for " + clazz.getCanonicalName());
         String name = clazz.getName();
         try {
