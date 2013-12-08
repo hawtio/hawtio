@@ -11,10 +11,10 @@ import java.util.regex.PatternSyntaxException;
 public class DefaultJUnitService implements JUnitService {
 
     @Override
-    public List<Method> findTestMethods(Class clazz) throws Exception {
+    public List<Method> findTestMethods(Class<?> clazz) throws Exception {
 
         // first find annotations
-        Class ann = clazz.getClassLoader().loadClass("org.junit.Test");
+        Class<? extends Annotation> ann = loadAnnotationClass(clazz, "org.junit.Test");
         List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
 
         // if no annotations then find by testXXX naming pattern
@@ -60,9 +60,9 @@ public class DefaultJUnitService implements JUnitService {
     }
 
     @Override
-    public Method findBefore(Class clazz) throws Exception {
+    public Method findBefore(Class<?> clazz) throws Exception {
         // first find annotations
-        Class ann = clazz.getClassLoader().loadClass("org.junit.Before");
+        Class<? extends Annotation> ann = loadAnnotationClass(clazz, "org.junit.Before");
         List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
         if (!annotations.isEmpty()) {
             return annotations.get(0);
@@ -78,9 +78,9 @@ public class DefaultJUnitService implements JUnitService {
     }
 
     @Override
-    public Method findBeforeClass(Class clazz) throws Exception {
+    public Method findBeforeClass(Class<?> clazz) throws Exception {
         // first find annotations
-        Class ann = clazz.getClassLoader().loadClass("org.junit.BeforeClass");
+        Class<? extends Annotation> ann = loadAnnotationClass(clazz, "org.junit.BeforeClass");
         List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
         if (!annotations.isEmpty()) {
             return annotations.get(0);
@@ -91,9 +91,9 @@ public class DefaultJUnitService implements JUnitService {
     }
 
     @Override
-    public Method findAfter(Class clazz) throws Exception {
+    public Method findAfter(Class<?> clazz) throws Exception {
         // first find annotations
-        Class ann = clazz.getClassLoader().loadClass("org.junit.After");
+        Class<? extends Annotation> ann = loadAnnotationClass(clazz, "org.junit.After");
         List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
         if (!annotations.isEmpty()) {
             return annotations.get(0);
@@ -109,9 +109,9 @@ public class DefaultJUnitService implements JUnitService {
     }
 
     @Override
-    public Method findAfterClass(Class clazz) throws Exception {
+    public Method findAfterClass(Class<?> clazz) throws Exception {
         // first find annotations
-        Class ann = clazz.getClassLoader().loadClass("org.junit.AfterClass");
+        Class<? extends Annotation> ann = loadAnnotationClass(clazz, "org.junit.AfterClass");
         List<Method> annotations = findMethodsWithAnnotation(clazz, ann, false);
         if (!annotations.isEmpty()) {
             return annotations.get(0);
@@ -119,6 +119,10 @@ public class DefaultJUnitService implements JUnitService {
 
         // there is no naming convention for after class
         return null;
+    }
+
+    public Class<? extends Annotation> loadAnnotationClass(Class<?> clazz, String annotationClassName) throws ClassNotFoundException {
+        return clazz.getClassLoader().loadClass(annotationClassName).asSubclass(Annotation.class);
     }
 
     private static List<Method> findMethodsWithName(Class<?> type, String namePattern) {
@@ -151,7 +155,7 @@ public class DefaultJUnitService implements JUnitService {
         return answer;
     }
 
-    public static boolean matchPattern(String name, String pattern) {
+    private static boolean matchPattern(String name, String pattern) {
         if (name == null || pattern == null) {
             return false;
         }
