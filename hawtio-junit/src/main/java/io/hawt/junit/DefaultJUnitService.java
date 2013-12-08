@@ -121,7 +121,7 @@ public class DefaultJUnitService implements JUnitService {
         return null;
     }
 
-    public Class<? extends Annotation> loadAnnotationClass(Class<?> clazz, String annotationClassName) throws ClassNotFoundException {
+    private static Class<? extends Annotation> loadAnnotationClass(Class<?> clazz, String annotationClassName) throws ClassNotFoundException {
         return clazz.getClassLoader().loadClass(annotationClassName).asSubclass(Annotation.class);
     }
 
