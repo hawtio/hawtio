@@ -27,12 +27,12 @@ import java.util.List;
  * A DTO representing the results of a test
  */
 public class ResultDTO {
-    private boolean successful;
-    private int ignoreCount;
-    private int failureCount;
-    private int runCount;
-    private long runTime;
-    private List<FailureDTO> failures = new ArrayList<FailureDTO>();
+    boolean successful;
+    int ignoreCount;
+    int failureCount;
+    int runCount;
+    long runTime;
+    List<FailureDTO> failures = new ArrayList<FailureDTO>();
 
     public ResultDTO() {
     }

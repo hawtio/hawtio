@@ -162,5 +162,40 @@ module JUnit {
       }
     }
 
+    var renderInProgress = function (response) {
+      log.info("Render inProgress: " + response);
+
+      var result = response.value;
+      if (result) {
+        $scope.inProgressResults = result;
+        $scope.running = result.running;
+        var alertClass = "success";
+
+        if (result.successful) {
+          alertClass = "success";
+        } else {
+          if (result.running) {
+            alertClass = "warning";
+          } else {
+            alertClass = "error";
+          }
+        }
+        $scope.alertClass = alertClass;
+
+        Core.$apply($scope);
+      }
+    };
+
+    // TODO: potential issue with registering 2+ times
+    var mbean = getJUnitMBean(workspace);
+    if (mbean) {
+      Core.register(jolokia, $scope, {
+        type: 'exec', mbean: mbean,
+        operation: 'inProgress()',
+        ignoreErrors: true,
+        arguments: []
+      }, onSuccess(renderInProgress));
+    }
+
   }
 }

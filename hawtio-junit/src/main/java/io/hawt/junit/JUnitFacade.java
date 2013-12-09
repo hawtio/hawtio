@@ -1,15 +1,14 @@
 package io.hawt.junit;
 
+import java.util.List;
+
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.introspect.support.ClassScanner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
-import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * A facade for the hawtio configuration features.
@@ -18,6 +17,8 @@ public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(JUnitFacade.class);
     private static JUnitFacade singleton;
     private ClassScanner classScanner = ClassScanner.newInstance();
+
+    private volatile InProgressDTO inProgress;
 
     public static JUnitFacade getSingleton() {
         if (singleton == null) {
@@ -39,14 +40,27 @@ public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
     }
 
     @Override
+    public boolean isTestInProgress() {
+        return inProgress != null;
+    }
+
+    @Override
+    public InProgressDTO inProgress() throws Exception {
+        return inProgress;
+    }
+
+    @Override
     public ResultDTO runTestClasses(List<String> classNames) throws Exception {
+        inProgress = new InProgressDTO();
+
         JUnitCore core = new JUnitCore();
-        core.addListener(new RunListener() {
-        });
+        core.addListener(new InProgressRunListener(inProgress));
+
         List<Class<?>> classes = classScanner.optionallyFindClasses(classNames);
         Class<?>[] classArray = new Class<?>[classes.size()];
         classes.toArray(classArray);
         Request request = Request.classes(classArray);
+
         Result result = core.run(request);
         return new ResultDTO(result);
     }
