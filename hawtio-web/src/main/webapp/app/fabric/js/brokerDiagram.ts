@@ -26,8 +26,11 @@ module Fabric {
 
     angular.forEach($scope.showFlags, (value, key) => {
       var watch = "showFlags." + key;
-      log.info("Watching " + watch);
+      //log.info("Watching " + watch);
       $scope.$watch(watch, redrawGraph);
+
+      // bind model values to search params...
+      //Core.bindModelToSearchParam($scope, $location, watch, key, "");
     });
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
@@ -63,7 +66,7 @@ module Fabric {
         brokerStatus.validContainer = brokerStatus.alive && brokerStatus.master && brokerStatus.provisionStatus === "success";
         // don't use type field so we can use it for the node types..
         renameTypeProperty(brokerStatus);
-        log.info("Broker status: " + angular.toJson(brokerStatus, true));
+        //log.info("Broker status: " + angular.toJson(brokerStatus, true));
 
         var groupId = brokerStatus.group;
         var profileId = brokerStatus.profile;
@@ -179,6 +182,11 @@ module Fabric {
           if (!destinationName || ($scope.searchFilter && destinationName.indexOf($scope.searchFilter) < 0)) {
             return null;
           }
+          // should we be filtering this destination out
+          var hideFlag = "topic" === typeName ? $scope.showFlags.topic: $scope.showFlags.queue;
+          if (!hideFlag) {
+            return null;
+          }
           return getOrAddNode(typeName, destinationName, properties, () => {
             return {
               popup: {
@@ -224,6 +232,39 @@ module Fabric {
 
         // find producers
         if ($scope.showFlags.producer) {
+          containerJolokia.search("org.apache.activemq:endpoint=Producer,*", onSuccess((response) => {
+            angular.forEach(response, (objectName) => {
+              var details = Core.parseMBean(objectName);
+              if (details) {
+                var properties = details['attributes'];
+                if (properties) {
+                  configureDestinationProperties(properties);
+                  var producerId = properties.producerId;
+                  if (producerId) {
+                    var destination = getOrAddDestination(properties);
+                    if (destination) {
+                      addLink(container.destinationLinkNode, destination, "destination");
+                      var producer = getOrAddNode("producer", producerId, properties, () => {
+                        return {
+                          popup: {
+                            title: "Producer: " + producerId,
+                            content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
+                          }
+                        };
+                      });
+                      addLink(producer, destination, "producer");
+                    }
+                    graphModelUpdated();
+                  }
+                }
+              }
+            });
+            graphModelUpdated();
+          }));
+        }
+
+        // find dynamic producers
+        if ($scope.showFlags.producer) {
           containerJolokia.search("org.apache.activemq:endpoint=dynamicProducer,*", onSuccess((response) => {
             angular.forEach(response, (objectName) => {
               var details = Core.parseMBean(objectName);
@@ -252,7 +293,7 @@ module Fabric {
                         var producer = getOrAddNode("producer", producerId, properties, () => {
                           return {
                             popup: {
-                              title: "Producer: " + producerId,
+                              title: "Producer (Dynamic): " + producerId,
                               content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
                             }
                           };
@@ -268,6 +309,7 @@ module Fabric {
             graphModelUpdated();
           }));
         }
+
       }
     }
 
@@ -301,10 +343,10 @@ module Fabric {
             // lets not add nodes which are defined as being disabled
             var enabled = $scope.showFlags[typeName];
             if (enabled || !angular.isDefined(enabled)) {
-              log.info("Adding node " + nodeId + " of type + " + typeName);
+              //log.info("Adding node " + nodeId + " of type + " + typeName);
               graphBuilder.addNode(node);
             } else {
-              log.info("Ignoring node " + nodeId + " of type + " + typeName);
+              //log.info("Ignoring node " + nodeId + " of type + " + typeName);
             }
           }
         }
