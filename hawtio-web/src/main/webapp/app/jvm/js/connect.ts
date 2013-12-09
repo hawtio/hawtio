@@ -4,6 +4,8 @@
 module JVM {
   export function ConnectController($scope, $location, localStorage, workspace) {
 
+    var log:Logging.Logger = Logger.get("JVM");
+
     JVM.configureScope($scope, $location, workspace);
 
     $scope.useProxy = true;
@@ -50,7 +52,7 @@ module JVM {
         host = host.substring(0, idx);
       }
 
-      console.log("using host name: " + host);
+      log.info("using host name: " + host + " and user: " + $scope.userName + " and password: " + ($scope.password ? "********" : $scope.password));
       options.host = host;
       options.port = $scope.port;
       options.path = $scope.path;
