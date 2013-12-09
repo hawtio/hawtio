@@ -3130,19 +3130,31 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   z-index: 25;
 }
 
+.panes {
+  position: relative;
+  display: block;
+  min-height: 100%;
+}
+
 .panes > .left-pane {
-  display: inline-block;
-  width: 70%;
+  position: absolute;
+  left: 0;
+  right: 285px;
+  height: 100%;
 }
 
 .panes > .right-pane {
-  display: inline-block;
-  width: 29%;
+  position: absolute;
+  right: 0;
+  width: 275px;
+  height: 100%;
 }
 
 .camel-viewport {
   overflow: auto;
+  height: 100%;
 }
+
 
 .camel-canvas-endpoint svg circle {
   fill: #346789;
@@ -3150,6 +3162,7 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
 
 .camel-props {
   position: relative;
+  height: 100%;
 }
 
 .camel-props > .button-bar {
@@ -3157,6 +3170,15 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   right: 0;
   display: block;
   position: absolute;
+}
+
+.camel-props > .prop-viewport {
+  overflow-y: auto;
+  overflow-x: visible;
+  position: absolute;
+  bottom: 0;
+  top: 40px;
+  width: 100%;
 }
 
 .camel-props form > fieldset > legend {
