@@ -7,5 +7,9 @@ import java.util.List;
  */
 public interface JUnitFacadeMBean {
 
+    boolean isTestInProgress();
+
     ResultDTO runTestClasses(List<String> classNames) throws Exception;
+
+    InProgressDTO inProgress() throws Exception;
 }
