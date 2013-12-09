@@ -1,6 +1,6 @@
 module JUnit {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia, inProgressStatus) {
 
     var log:Logging.Logger = Logger.get("JUnit");
 
@@ -153,20 +153,11 @@ module JUnit {
       Core.$apply($scope);
     }
 
-    function runTests(listOfClassNames) {
-      $scope.running = true;
-      $scope.testResults = null;
-      var mbean = getJUnitMBean(workspace);
-      if (mbean && listOfClassNames && listOfClassNames.length) {
-        jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
-      }
-    }
-
     var renderInProgress = function (response) {
-      log.info("Render inProgress: " + response);
-
       var result = response.value;
       if (result) {
+        log.debug("Render inProgress: " + result);
+
         $scope.inProgressResults = result;
         $scope.running = result.running;
         var alertClass = "success";
@@ -182,19 +173,38 @@ module JUnit {
         }
         $scope.alertClass = alertClass;
 
+        // if we no longer are running then clear handle
+        if (!result.running && inProgressStatus.jhandle !== null) {
+          log.debug("Unit test done, unreigster jolokia handle")
+          jolokia.unregister(inProgressStatus.jhandle)
+          inProgressStatus.jhandle = null;
+        }
+
         Core.$apply($scope);
       }
     };
 
-    // TODO: potential issue with registering 2+ times
-    var mbean = getJUnitMBean(workspace);
-    if (mbean) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: mbean,
-        operation: 'inProgress()',
-        ignoreErrors: true,
-        arguments: []
-      }, onSuccess(renderInProgress));
+    function runTests(listOfClassNames) {
+      $scope.running = true;
+      $scope.testResults = null;
+
+      var mbean = getJUnitMBean(workspace);
+      if (mbean && listOfClassNames && listOfClassNames.length) {
+
+        // register callback for doing live update of testing progress
+        if (inProgressStatus.jhandle === null) {
+          log.debug("Registering jolokia handle")
+          inProgressStatus.jhandle = jolokia.register(renderInProgress, {
+            type: 'exec', mbean: mbean,
+            operation: 'inProgress()',
+            ignoreErrors: true,
+            arguments: []
+          });
+
+          // execute the unit tests
+          jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
+        }
+      }
     }
 
   }

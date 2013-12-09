@@ -21,8 +21,9 @@
     <div class="span4">
       <div class="pull-right">
         <form class="form-inline">
-          <button class="btn pull-right" ng-click="runTests()" ng-disabled="!gridOptions.selectedItems.length">Run
-            Tests
+          <!-- TODO: disable button if som tets are in progress -->
+          <button class="btn pull-right" ng-click="runTests()" ng-disabled="!gridOptions.selectedItems.length">
+            Run Tests
           </button>
         </form>
       </div>

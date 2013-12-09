@@ -9,6 +9,11 @@ module JUnit {
             $routeProvider.
                     when('/junit/tests', {templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false})
           }).
+          factory('inProgressStatus',function () {
+            return {
+              jhandle: null
+            };
+          }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
