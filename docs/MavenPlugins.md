@@ -54,7 +54,7 @@ All of the **hawtio** Maven Plugins provides the following common options:
   <tr>
     <td>offline</td>
     <td>false</td>
-    <td>Whether to run **hawtio** in offline mode. Some of the hawtio plugins requires online connection to the internet.</td>
+    <td>Whether to run hawtio in offline mode. Some of the hawtio plugins requires online connection to the internet.</td>
   </tr>  
 </table>
 
