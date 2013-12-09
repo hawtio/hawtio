@@ -49,28 +49,6 @@ module Forms {
     directive('hawtioReset',function () {
       return new Forms.ResetForm();
     }).
-    // autofill directive handles autofill input fields generating proper events in anguarjs
-    // see: http://stackoverflow.com/questions/14965968/angularjs-browser-autofill-workaround-by-using-a-directive/16800988#16800988
-    directive('autofill', ['$timeout', function ($timeout) {
-      return {
-        scope: true,
-        require: 'ngModel',
-        link: function (scope, elem, attrs, ctrl) {
-          function fireInput() {
-            // try both approaches just in case one doesn't work ;)
-            elem.trigger('input');
-            if (elem.length) {
-              $(elem[0]).trigger('input');
-            }
-          }
-
-          // lets try a couple of times just to be sure; as sometimes the event is fired too soon
-          $timeout(fireInput, 200);
-          $timeout(fireInput, 800);
-          $timeout(fireInput, 1500);
-        }
-      }
-    }]).
     run(function (helpRegistry) {
       helpRegistry.addDevDoc("forms", 'app/forms/doc/developer.md');
     });
