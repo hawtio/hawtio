@@ -36,13 +36,38 @@ module Fabric {
 
     var graphBuilder = new ForceGraph.GraphBuilder();
 
+    Core.bindModelToSearchParam($scope, $location, "searchFilter", "q", "");
+
     angular.forEach($scope.showFlags, (value, key) => {
-      var watch = "showFlags." + key;
-      //log.info("Watching " + watch);
-      $scope.$watch(watch, redrawGraph);
+      var modelName = "showFlags." + key;
 
       // bind model values to search params...
-      //Core.bindModelToSearchParam($scope, $location, watch, key, "");
+      function currentValue() {
+        var answer = $location.search()[paramName] || defaultFlags[key];
+        return answer === "false" ? false : answer;
+      }
+
+      var paramName = key;
+      var value = currentValue();
+      Core.pathSet($scope, modelName, value);
+
+      $scope.$watch(modelName, () => {
+        var current = Core.pathGet($scope, modelName);
+        var old = currentValue();
+        if (current !== old) {
+          var defaultValue = defaultFlags[key];
+          if (current !== defaultValue) {
+            if (!current) {
+              current = "false";
+            }
+            $location.search(paramName, current);
+          } else {
+            $location.search(paramName, null);
+          }
+        }
+        redrawGraph();
+      });
+
     });
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
