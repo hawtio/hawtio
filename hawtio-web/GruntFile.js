@@ -48,7 +48,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: "src/main/webapp/",
-            src: ["./**", "!./**/*.ts"],
+            src: ["./**", "!./**/*.ts", "!./index.html"],
             dest: "<%= grunt.option('webapp_outdir') %>/"
           }
         ]

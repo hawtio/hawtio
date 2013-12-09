@@ -388,7 +388,17 @@
             <phase>generate-sources</phase>
             <configuration>
               <target>
+                
                 <!-- copy the markdown docs into the site plugin  -->
+                <echo>Hello</echo>
+                <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html"overwrite="true">
+                  <filterchain>
+                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                      <param type="token" name="VERSION" value="${project.version}"/>
+                    </filterreader>
+                  </filterchain>
+                </copy>
+                
                 <copy todir="${webapp-outdir}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
