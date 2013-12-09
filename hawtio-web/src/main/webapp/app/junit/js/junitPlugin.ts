@@ -11,7 +11,9 @@ module JUnit {
           }).
           factory('inProgressStatus',function () {
             return {
-              jhandle: null
+              jhandle: null,
+              data: null,
+              alertClass: "success"
             };
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {

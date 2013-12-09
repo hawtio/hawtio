@@ -4,6 +4,9 @@ module JUnit {
 
     var log:Logging.Logger = Logger.get("JUnit");
 
+    $scope.inProgressData = null;
+    $scope.alertClass = "success";
+
     $scope.testClasses = [];
     $scope.testClassMap = {};
 
@@ -50,12 +53,11 @@ module JUnit {
       }
     };
 
-
     $scope.clearResults = () => {
       $scope.testResults = null;
+      inProgressStatus.data = null;
+      inProgressStatus.alertClass = "success";
     };
-
-
 
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#junittree"), true);
@@ -140,6 +142,17 @@ module JUnit {
       }
     }
 
+    $scope.runningTests = function () {
+      if (inProgressStatus.data !== null && inProgressStatus.data.running) {
+        // in case we navigate back, then make sure the scope has the last up to date result to use
+        $scope.inProgressData = inProgressStatus.data;
+        $scope.alertClass = inProgressStatus.alertClass;
+        return true;
+      } else {
+        return false;
+      }
+    };
+
     function renderResults(results) {
       $scope.testResults = results;
       $scope.running = false;
@@ -156,26 +169,21 @@ module JUnit {
     var renderInProgress = function (response) {
       var result = response.value;
       if (result) {
-        log.debug("Render inProgress: " + result);
+        log.info("Render inProgress: " + result);
 
-        $scope.inProgressResults = result;
-        $scope.running = result.running;
+        inProgressStatus.data = result;
+        $scope.inProgressData = inProgressStatus.data;
+
         var alertClass = "success";
-
-        if (result.successful) {
-          alertClass = "success";
-        } else {
-          if (result.running) {
-            alertClass = "warning";
-          } else {
-            alertClass = "error";
-          }
+        if (result.failureCount > 0) {
+          alertClass = "error";
         }
-        $scope.alertClass = alertClass;
+        inProgressStatus.alertClass = alertClass;
+        $scope.alertClass = inProgressStatus.alertClass;
 
         // if we no longer are running then clear handle
         if (!result.running && inProgressStatus.jhandle !== null) {
-          log.debug("Unit test done, unreigster jolokia handle")
+          log.info("Unit test done, unreigster jolokia handle")
           jolokia.unregister(inProgressStatus.jhandle)
           inProgressStatus.jhandle = null;
         }
@@ -193,7 +201,7 @@ module JUnit {
 
         // register callback for doing live update of testing progress
         if (inProgressStatus.jhandle === null) {
-          log.debug("Registering jolokia handle")
+          log.info("Registering jolokia handle")
           inProgressStatus.jhandle = jolokia.register(renderInProgress, {
             type: 'exec', mbean: mbean,
             operation: 'inProgress()',
