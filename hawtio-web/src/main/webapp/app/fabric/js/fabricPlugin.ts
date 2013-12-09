@@ -14,7 +14,7 @@ module Fabric {
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
     $routeProvider.
             when('/createFabric', {templateUrl: templatePath + 'createFabric.html'}).
-            when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html' , reloadOnSearch: false }).
+            when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html', reloadOnSearch: false }).
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
             when('/fabric/containers', {templateUrl: templatePath + 'containers.html', reloadOnSearch: false}).
@@ -28,7 +28,7 @@ module Fabric {
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
-            when('/fabric/mq/brokerDiagram', { templateUrl: templatePath + 'brokerDiagram.html' }).
+            when('/fabric/mq/brokerDiagram', { templateUrl: templatePath + 'brokerDiagram.html', reloadOnSearch: false }).
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
             when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/api', { templateUrl: templatePath + 'apis.html' }).
