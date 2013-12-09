@@ -4,10 +4,22 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    var defaultFlags = {
+      group: false,
+      profile: false,
+      slave: false,
+      broker: true,
+      container: false,
+      queue: true,
+      topic: true,
+      consumer: true,
+      producer: true
+    };
+
     $scope.showFlags = {
       group: false,
       profile: false,
-      slave: true,
+      slave: false,
       broker: true,
       container: false,
       queue: true,
@@ -100,15 +112,19 @@ module Fabric {
           };
         });
         var master = brokerStatus.master;
-        var broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
-          return {
-            type: master ? "brokerMaster" : "broker",
-            popup: {
-              title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-              content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
-            }
-          };
-        });
+        var broker = null;
+        var brokerFlag = master ? $scope.showFlags.broker : $scope.showFlags.slave;
+        if (brokerFlag) {
+          broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
+            return {
+              type: master ? "brokerMaster" : "broker",
+              popup: {
+                title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
+                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
+              }
+            };
+          });
+        }
 
         // TODO do we need to create a physical broker node per container and logical broker maybe?
         var container = null;
