@@ -3140,6 +3140,10 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   width: 29%;
 }
 
+.camel-viewport {
+  overflow: auto;
+}
+
 .camel-canvas-endpoint svg circle {
   fill: #346789;
 }

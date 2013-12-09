@@ -333,20 +333,21 @@ module Wiki {
         ]
       });
 
-
-      var offset = containerElement.offset();
-
+      //set our container to some arbitrary minimum height
+      containerElement.css({'min-height': '800px'});
       var containerHeight = 0;
 
       angular.forEach(states, (node) => {
         var id = getNodeId(node);
-        $("<div class='component window' id='" + id
+
+        var div = $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip + "'" +
           //+ " style='" + style + "'" +
                 "><img class='nodeIcon' src='" + node.imageUrl + "'>" +
-                "<span class='nodeText'>" + node.label + "</span></div>").appendTo(containerElement);
+                "<span class='nodeText'>" + node.label + "</span></div>");
 
-        var div = $("#" + id);
+        div.appendTo(containerElement);
+
         var height = div.height();
         var width = div.width();
         if (height || width) {
