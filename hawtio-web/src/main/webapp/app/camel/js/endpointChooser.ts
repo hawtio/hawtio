@@ -280,7 +280,7 @@ module Camel {
 
     function onComponents(response) {
       $scope.componentNames = response;
-      console.log("===== onComponents: " + response);
+      log.info("onComponents: " + response);
       $scope.hasComponentNames = $scope.componentNames ? true : false;
       Core.$apply($scope);
     }
