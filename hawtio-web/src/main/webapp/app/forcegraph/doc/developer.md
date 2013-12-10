@@ -122,5 +122,17 @@ The same principle is applied for nodes without images, which are displayed as c
 Looking at the [complete html](https://github.com/atooni/hawtio/blob/master/hawtio-web/src/main/webapp/app/osgi/html/svc-dependencies.html) you will notice CSS settings
 for the tooltips and also the background settings.
 
+#### Working with selections
 
+You can pass in the scope model name to use to keep track of the current node selection via the **select-model** attribute:
+
+    <div hawtio-force-graph graph="graph" selected-model="mySelection"></div>
+
+Then in your code you can do...
+
+    $scope.$watch("mySelection", (newValue, oldValue) => {
+      ...
+    });
+
+to respond to the selection.
 
