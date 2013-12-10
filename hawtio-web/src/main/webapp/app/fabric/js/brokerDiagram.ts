@@ -83,24 +83,57 @@ module Fabric {
           $scope.unregisterFn = Core.register(jolokia, $scope, {
             type: 'read', mbean: mbean
           }, onSuccess(renderNodeAttributes));
+        } else {
+          renderNodeAttributes({value: node.panelProperties || {}});
         }
       }
     });
 
+    function getDestinationTypeName(attributes) {
+      var prefix = attributes["DestinationTemporary"] ? "Temporary " : "";
+      return prefix + (attributes["DestinationTopic"] ? "Topic" : "Queue");
+    }
+
+    var ignoreNodeAttributes = ["Connection", "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic"];
+
     function renderNodeAttributes(response) {
-      $scope.selectedNodeProperties = [];
+      var properties = [];
       if (response) {
-        var value = response.value;
-        log.info("Got Node attributes! " + value);
-        log.info(angular.toJson(value));
+        var value = response.value || {};
         $scope.selectedNodeAttributes = value;
+        var selectedNode = $scope.selectedNode || {};
+        var nodeType = selectedNode["type"];
+        var brokerName = selectedNode["brokerName"];
+        if (brokerName && nodeType !== "broker" && nodeType !== "brokerSlave") {
+          properties.splice(0, 0, {key: "Broker", value: brokerName});
+        }
+
         angular.forEach(value, (v, k) => {
-          var formattedValue = humanizeValue(v);
-          $scope.selectedNodeProperties.push({key: k, value: formattedValue});
+          if (ignoreNodeAttributes.indexOf(k) < 0
+            && (!brokerName || !k.startsWith("Broker"))
+            && (nodeType !== "producer" || !k.startsWith("Producer"))) {
+            var formattedValue = humanizeValue(v);
+            properties.push({key: k, value: formattedValue});
+          }
         });
-        $scope.selectedNodeProperties = $scope.selectedNodeProperties.sortBy("key");
-        Core.$apply($scope);
+        properties = properties.sortBy("key");
+
+
+        var destinationName = value["DestinationName"] || selectedNode["destinationName"];
+        // TODO ignore for queue/topic
+        if (destinationName && (nodeType !== "queue" && nodeType !== "topic")) {
+          var destinationTypeName = getDestinationTypeName(value);
+          properties.splice(0, 0, {key: destinationTypeName, value: destinationName});
+        }
+
+        var typeLabel = selectedNode["typeLabel"];
+        var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
+        if (typeLabel) {
+          properties.splice(0, 0, {key: typeLabel, value: name});
+        }
       }
+      $scope.selectedNodeProperties = properties;
+      Core.$apply($scope);
     }
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
