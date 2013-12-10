@@ -3,7 +3,7 @@ title: hawtio IDE plugin
 --- pipeline:ssp,markdown
   <div id="content-header">
     <div class="container">
-${unescape(loadText(new FileInputStream(app_dir + "/ide/doc/help.md")))}
+${unescape(loadText(new FileInputStream(app_dir + "/ide/doc/developer.md")))}
 
 </div>
   </div>

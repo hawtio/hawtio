@@ -196,7 +196,7 @@ The following plugins are not intended to be used by users of hawtio, but are th
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/forms">forms</a></td>
   </tr>
   <tr>
-    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ide/doc/developer.md">forms</a></td>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ide/doc/developer.md">ide</a></td>
     <td>This plugin provides a directive for linking to source code in your IDE. Currently only IDEA supported
 </td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/ide">ide</a></td>
