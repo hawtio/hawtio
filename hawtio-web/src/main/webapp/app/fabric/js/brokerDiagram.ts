@@ -70,7 +70,38 @@ module Fabric {
 
     $scope.$watch("selectedNode", (newValue, oldValue) => {
       //log.info("Has selected: " + angular.toJson($scope.selectedNode));
+      // lets cancel any previously registered thingy
+      if ($scope.unregisterFn) {
+        $scope.unregisterFn();
+        $scope.unregisterFn = null;
+      }
+      var node = $scope.selectedNode;
+      if (node) {
+        var mbean = node.objectName;
+        var jolokia = node.jolokia || jolokia;
+        if (mbean && jolokia) {
+          $scope.unregisterFn = Core.register(jolokia, $scope, {
+            type: 'read', mbean: mbean
+          }, onSuccess(renderNodeAttributes));
+        }
+      }
     });
+
+    function renderNodeAttributes(response) {
+      $scope.selectedNodeProperties = [];
+      if (response) {
+        var value = response.value;
+        log.info("Got Node attributes! " + value);
+        log.info(angular.toJson(value));
+        $scope.selectedNodeAttributes = value;
+        angular.forEach(value, (v, k) => {
+          var formattedValue = humanizeValue(v);
+          $scope.selectedNodeProperties.push({key: k, value: formattedValue});
+        });
+        $scope.selectedNodeProperties = $scope.selectedNodeProperties.sortBy("key");
+        Core.$apply($scope);
+      }
+    }
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
       redrawGraph();
@@ -123,6 +154,7 @@ module Fabric {
              height:32
              },
              */
+            typeLabel: "Broker Group",
             popup: {
               title: "Broker Group: " + groupId,
               content: "<p>" + groupId + "</p>"
@@ -132,6 +164,7 @@ module Fabric {
 
         var profile = getOrAddNode("profile", profileId, brokerStatus, () => {
           return {
+            typeLabel: "Profile",
             popup: {
               title: "Profile: " + profileId,
               content: "<p>" + profileId + "</p>"
@@ -144,7 +177,8 @@ module Fabric {
         if (brokerFlag) {
           broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
             return {
-              type: master ? "brokerMaster" : "broker",
+              type: master ? "broker" : "brokerSlave",
+              typeLabel: master ? "Broker" : "Slave Broker",
               popup: {
                 title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
                 content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
@@ -159,6 +193,7 @@ module Fabric {
           container = getOrAddNode("container", containerId, brokerStatus, () => {
             return {
               containerId: containerId,
+              typeLabel: "Container",
               popup: {
                 title: "Container: " + containerId,
                 content: "<p>" + containerId + " version: " + versionId + "</p>"
@@ -232,6 +267,7 @@ module Fabric {
           }
           return getOrAddNode(typeName, destinationName, properties, () => {
             return {
+              typeLabel: properties.destinationType || "Queue",
               popup: {
                 title: (properties.destinationType || "Queue") + ": " + destinationName,
                 content: brokerNameMarkup(properties.brokerName)
@@ -278,6 +314,9 @@ module Fabric {
                       addLink(container.destinationLinkNode, destination, "destination");
                       var consumer = getOrAddNode("consumer", consumerId, properties, () => {
                         return {
+                          typeLabel: "Consumer",
+                          objectName: objectName,
+                          jolokia: containerJolokia,
                           popup: {
                             title: "Consumer: " + consumerId,
                             content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
@@ -310,6 +349,9 @@ module Fabric {
                       addLink(container.destinationLinkNode, destination, "destination");
                       var producer = getOrAddNode("producer", producerId, properties, () => {
                         return {
+                          typeLabel: "Producer",
+                          objectName: objectName,
+                          jolokia: containerJolokia,
                           popup: {
                             title: "Producer: " + producerId,
                             content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
@@ -351,6 +393,9 @@ module Fabric {
                 addLink(container.destinationLinkNode, destination, "destination");
                 var producer = getOrAddNode("producer", producerId, properties, () => {
                   return {
+                    typeLabel: "Producer (Dynamic)",
+                    objectName: objectName,
+                    jolokia: containerJolokia,
                     popup: {
                       title: "Producer (Dynamic): " + producerId,
                       content: "<p>client: " + (properties['ClientId'] || "") + "</p> " + brokerNameMarkup(properties['brokerName'])
