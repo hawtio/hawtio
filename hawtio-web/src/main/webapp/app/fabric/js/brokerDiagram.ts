@@ -9,6 +9,7 @@ module Fabric {
       profile: false,
       slave: false,
       broker: true,
+      network: true,
       container: false,
       queue: true,
       topic: true,
@@ -17,15 +18,6 @@ module Fabric {
     };
 
     $scope.showFlags = {
-      group: false,
-      profile: false,
-      slave: false,
-      broker: true,
-      container: false,
-      queue: true,
-      topic: true,
-      consumer: true,
-      producer: true
     };
 
     $scope.shapeSize = {
@@ -38,12 +30,12 @@ module Fabric {
 
     Core.bindModelToSearchParam($scope, $location, "searchFilter", "q", "");
 
-    angular.forEach($scope.showFlags, (value, key) => {
+    angular.forEach(defaultFlags, (defaultValue, key) => {
       var modelName = "showFlags." + key;
 
       // bind model values to search params...
       function currentValue() {
-        var answer = $location.search()[paramName] || defaultFlags[key];
+        var answer = $location.search()[paramName] || defaultValue;
         return answer === "false" ? false : answer;
       }
 
@@ -238,6 +230,27 @@ module Fabric {
           });
         }
 
+        // find networks
+        var brokerId = container.brokerName;
+        if (brokerId && $scope.showFlags.network && $scope.showFlags.broker) {
+          containerJolokia.request({type: "read", mbean: "org.apache.activemq:connector=networkConnectors,*"}, onSuccess((response) => {
+            angular.forEach(response.value, (properties, objectName) => {
+              var details = Core.parseMBean(objectName);
+              var attributes = details['attributes'];
+              if (properties) {
+                configureDestinationProperties(properties);
+                var remoteBrokerId = properties.RemoteBrokerName;
+                if (remoteBrokerId) {
+                  var brokerIdPrefix = "broker:";
+                  addLinkIds(brokerIdPrefix + brokerId, brokerIdPrefix + remoteBrokerId, "network");
+                }
+              }
+            });
+            graphModelUpdated();
+          }));
+        }
+
+
         // find consumers
         if ($scope.showFlags.consumer) {
           containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
@@ -306,51 +319,40 @@ module Fabric {
 
         // find dynamic producers
         if ($scope.showFlags.producer) {
-          containerJolokia.search("org.apache.activemq:endpoint=dynamicProducer,*", onSuccess((response) => {
-            angular.forEach(response, (objectName) => {
+          containerJolokia.request({type: "read", mbean: "org.apache.activemq:endpoint=dynamicProducer,*"}, onSuccess((response) => {
+            angular.forEach(response.value, (mbeanValues, objectName) => {
               var details = Core.parseMBean(objectName);
-              if (details) {
-                var properties = details['attributes'];
-                if (properties) {
-                  configureDestinationProperties(properties);
-                  var producerId = properties.producerId;
-                  if (producerId) {
-                    containerJolokia.request({type: 'read', mbean: objectName}, onSuccess((response) => {
-                      var attributes = {};
-                      if (response) {
-                        attributes = response.value;
-                        angular.forEach(attributes, (value, key) => {
-                          properties[key] = value;
-                        });
-                        properties.destinationName = properties.destinationName || attributes["DestinationName"];
-                      }
-                      var destinationProperties = angular.copy(properties);
-                      if (attributes["DestinationTemporary"] || attributes["DestinationTopc"]) {
-                        destinationProperties.destType = "topic";
-                      }
-                      var destination = getOrAddDestination(destinationProperties);
-                      if (destination) {
-                        addLink(container.destinationLinkNode, destination, "destination");
-                        var producer = getOrAddNode("producer", producerId, properties, () => {
-                          return {
-                            popup: {
-                              title: "Producer (Dynamic): " + producerId,
-                              content: "<p>client: " + (properties.clientId || "") + "</p> " + brokerNameMarkup(properties.brokerName)
-                            }
-                          };
-                        });
-                        addLink(producer, destination, "producer");
-                      }
-                      graphModelUpdated();
-                    }));
-                  }
-                }
+              var attributes = details['attributes'];
+              var properties = {};
+              angular.forEach(attributes, (value, key) => {
+                properties[key] = value;
+              });
+              angular.forEach(mbeanValues, (value, key) => {
+                properties[key] = value;
+              });
+              configureDestinationProperties(properties);
+              properties['destinationName'] = properties['DestinationName'];
+              var producerId = properties["producerId"] || properties["ProducerId"];
+              if (properties["DestinationTemporary"] || properties["DestinationTopc"]) {
+                properties["destType"] = "topic";
+              }
+              var destination = getOrAddDestination(properties);
+              if (producerId && destination) {
+                addLink(container.destinationLinkNode, destination, "destination");
+                var producer = getOrAddNode("producer", producerId, properties, () => {
+                  return {
+                    popup: {
+                      title: "Producer (Dynamic): " + producerId,
+                      content: "<p>client: " + (properties['ClientId'] || "") + "</p> " + brokerNameMarkup(properties['brokerName'])
+                    }
+                  };
+                });
+                addLink(producer, destination, "producer");
               }
             });
             graphModelUpdated();
           }));
         }
-
       }
     }
 
@@ -397,15 +399,17 @@ module Fabric {
 
     function addLink(object1, object2, linkType) {
       if (object1 && object2) {
-        var id1 = object1.id;
-        var id2 = object2.id;
-        if (id1 && id2) {
-          graphBuilder.addLink(id1, id2, linkType);
-        }
+        addLinkIds(object1.id, object2.id, linkType);
       }
     }
 
-    /**
+    function addLinkIds(id1, id2, linkType) {
+      if (id1 && id2) {
+        graphBuilder.addLink(id1, id2, linkType);
+      }
+    }
+
+  /**
      * Avoid the JMX type property clashing with the ForceGraph type property; used for associating css classes with nodes on the graph
      *
      * @param properties

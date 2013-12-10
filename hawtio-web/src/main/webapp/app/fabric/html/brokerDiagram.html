@@ -190,6 +190,10 @@ path.link.consumer {
   stroke: #ccc;
 }
 
+path.link.network {
+  stroke: #ccc;
+}
+
 circle.selected {
   stroke-width: 3px;
 }
@@ -267,6 +271,11 @@ text.shadow {
           <li>
             <label class="checkbox">
               <input type="checkbox" ng-model="showFlags.slave"> Slave Brokers
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="showFlags.network"> Networks
             </label>
           </li>
           <li>
