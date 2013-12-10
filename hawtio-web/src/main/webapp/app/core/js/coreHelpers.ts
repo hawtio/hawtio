@@ -178,16 +178,17 @@ function onSuccess(fn, options = {}) {
       if (stacktrace) {
         var silent = options['silent'];
         if (!silent) {
+          var operation = Core.pathGet(response, ['request', 'operation']) || "uknown";
           if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
                   stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
                   stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
             // ignore these errors as they can happen on timing issues
             // such as its been removed
             // or if we run against older containers
-            Core.log.debug("Operation ", response['request']['operation'], " failed due to: ", response['error']);
+            Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
             Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
           } else {
-            Core.log.warn("Operation ", response['request']['operation'], " failed due to: ", response['error']);
+            Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
             Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
           }
         }
