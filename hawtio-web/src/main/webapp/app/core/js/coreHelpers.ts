@@ -533,6 +533,7 @@ module Core {
    * @method register
    * @for Core
    * @static
+   * @return a zero argument function for unregistering  this registration
    * @param {*} jolokia
    * @param {*} scope
    * @param {Object} arguments
@@ -565,6 +566,9 @@ module Core {
       scope.$jhandle.push(handle);
       jolokia.request(arguments, callback);
     }
+    return () => {
+        Core.unregister(jolokia, scope);
+    };
   }
 
     /**
