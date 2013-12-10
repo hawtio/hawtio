@@ -380,6 +380,17 @@
     </pluginManagement>
 
     <plugins>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- skip dummy tests -->
+          <excludes>
+            <exclude>io/hawt/dummy/*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.6</version>
