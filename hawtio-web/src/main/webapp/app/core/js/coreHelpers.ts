@@ -178,7 +178,7 @@ function onSuccess(fn, options = {}) {
       if (stacktrace) {
         var silent = options['silent'];
         if (!silent) {
-          var operation = Core.pathGet(response, ['request', 'operation']) || "uknown";
+          var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
           if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
                   stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
                   stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
