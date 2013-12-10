@@ -19,11 +19,10 @@ module JUnit {
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
-/*
+
             helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', () => {
               return isJUnitPluginEnabled(workspace);
             });
-*/
 
             workspace.topLevelTabs.push({
               content: "JUnit",
