@@ -196,6 +196,12 @@ The following plugins are not intended to be used by users of hawtio, but are th
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/forms">forms</a></td>
   </tr>
   <tr>
+    <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ide/doc/developer.md">forms</a></td>
+    <td>This plugin provides a directive for linking to source code in your IDE. Currently only IDEA supported
+</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/ide">ide</a></td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/perspective/doc/developer.md">perspective</a></td>
     <td>The perspective plugin makes it easy to define different perspectives which affect which top level nav bars appear in hawtio so that it can behave in different ways for different kinds of users.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/perspective">perspective</a></td>
