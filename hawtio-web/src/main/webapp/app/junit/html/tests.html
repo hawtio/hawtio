@@ -45,7 +45,7 @@
   </div>
 
   <div class="row-fluid">
-    <div ng-show="testResults" class="alert alert-{{alertClass}}">
+    <div ng-show="hasTestResults()" class="alert alert-{{alertClass}}">
       <button type="button" class="close" ng-click="clearResults()">&times;</button>
 
       <strong>Test Results</strong>
