@@ -209,6 +209,9 @@ module JUnit {
             arguments: []
           });
 
+          // reset before running new set of unit tests
+          $scope.clearResults();
+
           // execute the unit tests
           jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
         }
