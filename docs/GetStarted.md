@@ -1,4 +1,5 @@
-You can use hawtio in many different containers - or outside a container. Below are all the various options for running hawtio.
+You can use hawtio in many different containers - or outside a container. Below are all the various options for running hawtio. To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
+
 
 The out of the box defaults try to do the right thing for most folks but you may want to check out [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things.
 
@@ -57,8 +58,6 @@ Please check [the configuration guide](http://hawt.io/configuration/index.html) 
 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
  <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2.1/hawtio-default-offline-1.2.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
-
-To see whats changed lately check out the [change log](http://hawt.io/changelog.html).
 
 If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.
 

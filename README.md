@@ -82,6 +82,7 @@ We love [contributions](http://hawt.io/contributing/index.html)!
 
 * [articles and demos](http://hawt.io/articles/index.html)
 * [FAQ](http://hawt.io/faq/index.html)
+* [Change Log](http://hawt.io/changelog.html)
 * [How to contribute](http://hawt.io/contributing/index.html)
 * [How to build the code](http://hawt.io/building/index.html)
 * [How to get started working on the code](http://hawt.io/developers/index.html)
