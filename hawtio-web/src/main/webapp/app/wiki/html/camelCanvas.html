@@ -87,10 +87,15 @@
             <a href='' title="Add new pattern node connecting to this pattern" ng-click="addDialog.open()"
                data-placement="bottom">
               <i class="icon-plus"></i> Add</a></li>
+
           <li class="pull-right">
             <a href='' title="Automatically layout the diagram " ng-click="doLayout()"
                data-placement="bottom">
               <i class="icon-magic"></i> Layout</a></li>
+
+          <li class="pull-right" style="margin-top: 0; margin-bottom: 0;">
+            </li>
+
           <!--
           <li class="pull-right">
             <a href='' title="Edit the properties for the selected node" ng-disabled="!selectedFolder"
@@ -168,10 +173,6 @@
     </div>
 
     <div class="row-fluid">
-      <form class="form-inline pull-right">
-        <label>Route: </label>
-        <select ng-model="selectedRouteId" ng-options="routeId for routeId in routeIds"></select>
-      </form>
     </div>
 
     <div class="panes gridStyle">
@@ -184,6 +185,10 @@
         <div class="camel-props">
           <div class="button-bar">
             <div class="centered">
+              <form class="form-inline">
+                <label>Route: </label>
+                <select ng-model="selectedRouteId" ng-options="routeId for routeId in routeIds"></select>
+              </form>
               <div class="btn-group">
                 <button class="btn"
                         title="{{getDeleteTitle()}}"
