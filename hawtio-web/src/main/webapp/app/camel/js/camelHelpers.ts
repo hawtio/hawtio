@@ -903,9 +903,9 @@ module Camel {
 
         var imageUrl = getRouteNodeIcon(nodeSettings);
         if ((nodeId === "from" || nodeId === "to") && uri) {
-          var idx = uri.indexOf(":");
-          if (idx > 0) {
-            var componentScheme = uri.substring(0, idx);
+          var uriIdx = uri.indexOf(":");
+          if (uriIdx > 0) {
+            var componentScheme = uri.substring(0, uriIdx);
             //console.log("lets find the endpoint icon for " + componentScheme);
             if (componentScheme) {
               var value = Camel.getEndpointIcon(componentScheme);

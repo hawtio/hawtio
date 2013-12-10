@@ -112,12 +112,12 @@ module Camel {
       var svg = canvasDiv.children("svg")[0];
       $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
 
-      var nodes = canvasDiv.find("g.node");
-      nodes.click(function() {
+      var gNodes = canvasDiv.find("g.node");
+      gNodes.click(function() {
         var selected = isSelected(this);
 
         // lets clear all selected flags
-        nodes.each((idx, element) => {
+        gNodes.each((idx, element) => {
           setSelected(element, false);
         });
 
