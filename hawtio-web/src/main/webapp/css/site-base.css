@@ -3172,12 +3172,16 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
   position: absolute;
 }
 
+.button-bar > .centered > form {
+  margin-bottom: 10px;
+}
+
 .camel-props > .prop-viewport {
   overflow-y: auto;
   overflow-x: visible;
   position: absolute;
   bottom: 0;
-  top: 40px;
+  top: 80px;
   width: 100%;
 }
 
