@@ -10,6 +10,8 @@ module Wiki {
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
 
+    $scope.forms = {};
+
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
       $scope.rootFolder = tree;
@@ -51,6 +53,42 @@ module Wiki {
       onRouteSelectionChanged();
     };
 
+    function isRouteOrNode() {
+      return !$scope.selectedFolder
+    }
+
+    $scope.getDeleteTitle = () => {
+      if (isRouteOrNode()) {
+        return "Delete this route";
+      }
+      return "Delete this node";
+    }
+
+    $scope.getDeleteTarget = () => {
+      if (isRouteOrNode()) {
+        return "Route";
+      }
+      return "Node";
+    }
+
+    $scope.isFormDirty = () => {
+      log.debug("endpointForm: ", $scope.endpointForm);
+      if ($scope.endpointForm.$dirty) {
+        return true;
+      }
+      if (!$scope.forms['formEditor']) {
+        return false;
+      } else {
+        return $scope.forms['formEditor']['$dirty'];
+      }
+    };
+
+    /* TODO
+    $scope.resetForms = () => {
+
+    }
+    */
+
     /*
      * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
      */
@@ -66,7 +104,7 @@ module Wiki {
       return uri;
     }
 
-    $scope.updatePropertiesAndCloseDialog = () => {
+    $scope.updateProperties = () => {
       log.info("old URI is " + $scope.nodeData.uri);
       var uri = createEndpointURI($scope.endpointScheme, ($scope.endpointPathHasSlashes ? "//" : ""), $scope.endpointPath, $scope.endpointParameters);
       log.info("new URI is " + uri);
@@ -87,7 +125,14 @@ module Wiki {
         // TODO not sure we need this to be honest
         selectedFolder["camelNodeData"] = $scope.nodeData;
       }
-      $scope.propertiesDialog.close();
+
+      if ($scope.isFormDirty()) {
+        $scope.endpointForm.$setPristine();
+        if ($scope.forms['formEditor']) {
+          $scope.forms['formEditor'].$setPristine();
+        }
+      }
+
       Core.$apply($scope);
       treeModified();
     };
@@ -296,6 +341,7 @@ module Wiki {
     }
 
     function configureCanvasLayout(endpointStyle, arrowStyles, labelStyles) {
+
     }
 
     function layoutGraph(nodes, links, width, height) {

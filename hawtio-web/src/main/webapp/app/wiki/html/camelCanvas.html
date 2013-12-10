@@ -88,10 +88,6 @@
                data-placement="bottom">
               <i class="icon-plus"></i> Add</a></li>
           <li class="pull-right">
-            <a href='' title="Deletes the selected pattern" ng-disabled="!selectedFolder" ng-click="removeNode()"
-               data-placement="bottom">
-              <i class="icon-remove"></i> Delete</a></li>
-          <li class="pull-right">
             <a href='' title="Automatically layout the diagram " ng-click="doLayout()"
                data-placement="bottom">
               <i class="icon-magic"></i> Layout</a></li>
@@ -187,7 +183,26 @@
       <div class="right-pane">
         <div class="camel-props">
           <div class="button-bar">
-            <button class="btn pull-right" ng-click="updatePropertiesAndCloseDialog()">Apply</button>
+            <div class="centered">
+              <div class="btn-group">
+                <button class="btn"
+                        title="{{getDeleteTitle()}}"
+                        ng-click="removeNode()"
+                        data-placement="bottom">
+                    <i class="icon-remove"></i> Delete {{getDeleteTarget()}}</button>
+                <button class="btn"
+                        title="Apply any changes to the endpoint properties"
+                        ng-disabled="!isFormDirty()"
+                        ng-click="updateProperties()">
+                    <i class="icon-ok"></i> Apply</button>
+                <!-- TODO Would be good to have this too
+                <button class="btn"
+                        title="Clear any changes to the endpoint properties"
+                        ng-disabled="!isFormDirty()"
+                        ng-click="resetForms()">
+                  <i class="icon-remove"></i> Cancel</button> -->
+              </div>
+            </div>
           </div>
           <div class="prop-viewport">
 
@@ -199,28 +214,31 @@
                      entity='nodeData'
                      data='nodeModel'
                      schema="schema"
-                     onsubmit="updatePropertiesAndCloseDialog"></div>
+                     onsubmit="updateProperties"></div>
               </div>
 
               <!-- endpoint form -->
               <div class="endpoint-props" ng-show="selectedEndpoint">
                 <p>Endpoint</p>
-                <div class="control-group">
-                  <label class="control-label" for="endpointPath">URI:</label>
+                <form name="endpointForm">
+                  <div class="control-group">
+                    <label class="control-label" for="endpointPath">URI:</label>
 
-                  <div class="controls">
-                    <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="name"
-                           typeahead="title for title in endpointCompletions($viewValue) | filter:$viewValue"
-                           typeahead-editable='true'
-                           min-length="1">
+                    <div class="controls">
+                      <input id="endpointPath" class="span10" type="text" ng-model="endpointPath" placeholder="name"
+                             typeahead="title for title in endpointCompletions($viewValue) | filter:$viewValue"
+                             typeahead-editable='true'
+                             min-length="1">
+                    </div>
                   </div>
-                </div>
+                </form>
+
                 <div simple-form
                      name="formEditor"
                      entity='endpointParameters'
                      data='endpointSchema'
                      schema="schema"
-                     onsubmit="updatePropertiesAndCloseDialog"></div>
+                     onsubmit="updateProperties"></div>
               </div>
 
             </div>
