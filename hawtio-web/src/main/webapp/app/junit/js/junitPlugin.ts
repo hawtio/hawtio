@@ -13,6 +13,7 @@ module JUnit {
             return {
               jhandle: null,
               data: null,
+              result: null,
               alertClass: "success"
             };
           }).

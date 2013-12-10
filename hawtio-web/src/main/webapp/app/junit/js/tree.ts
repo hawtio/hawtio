@@ -57,6 +57,7 @@ module JUnit {
       $scope.testResults = null;
       $scope.alertClass = "success";
       inProgressStatus.data = null;
+      inProgressStatus.result = null;
       inProgressStatus.alertClass = "success";
     };
 
@@ -154,6 +155,17 @@ module JUnit {
       }
     };
 
+    $scope.hasTestResults = function () {
+      if (inProgressStatus.result !== null) {
+        // in case we navigate back, then make sure the scope has the last up to date result to use
+        $scope.testResults = inProgressStatus.result;
+        $scope.alertClass = inProgressStatus.alertClass;
+        return true;
+      } else {
+        return false;
+      }
+    };
+
     var renderInProgress = function (response) {
       var result = response.value;
       if (result) {
@@ -186,13 +198,14 @@ module JUnit {
 
         inProgressStatus.data = null;
         inProgressStatus.alertClass = null;
+        inProgressStatus.result = result;
 
         var alertClass = "success";
         if (result.failureCount > 0) {
           alertClass = "error";
         }
         $scope.alertClass = alertClass;
-        $scope.testResults = result;
+        $scope.testResults = inProgressStatus.result;
 
         Core.$apply($scope);
       }
