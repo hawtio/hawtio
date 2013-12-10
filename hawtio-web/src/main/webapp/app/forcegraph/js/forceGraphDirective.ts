@@ -11,6 +11,7 @@ module ForceGraph {
     public scope = {
       graph: '=graph',
       nodesize: '@',
+      selectedModel: '@',
       linkDistance: '@',
       markerKind: '@',
       charge: '@'
@@ -153,6 +154,8 @@ module ForceGraph {
 
         // Only do this if we have a graph object
         if ($scope.graph) {
+          var ownerScope = $scope.$parent || $scope;
+          var selectedModel = $scope.selectedModel || "selectedNode";
 
           // kick off the d3 forced graph layout
           $scope.force = d3.layout.force()
@@ -191,7 +194,9 @@ module ForceGraph {
             .on("mouseover.onLink", function (d, i) {
               var sel = d3.select(d3.event.target);
               sel.classed('selected', true);
-              //nodeSelected(sel, d);
+              ownerScope[selectedModel] = d;
+              Core.pathSet(ownerScope, selectedModel, d);
+              Core.$apply(ownerScope);
             })
             .on("mouseout.onLink", function (d, i) {
               var sel = d3.select(d3.event.target);
