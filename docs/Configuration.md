@@ -57,7 +57,7 @@ this will disable security login. (Or use a different property to change the def
 
 Or if you are running hawtio stand alone try:
 
-    java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2.0.jar
+    java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2.1.jar
 
 If you are using containers like Tomcat you can pass in system property values via the **CATALINA_OPTS** environment variable instead.
 
