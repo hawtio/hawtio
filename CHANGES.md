@@ -4,9 +4,9 @@
 
 * New [Maven plugin](http://hawt.io/maven/) for running hawtio in your maven project; running Camel, Spring, Blueprint or tests.
 * New plugins:
-  * API for viewing APIs from [Apache CXF](http://cxf.apache.org/) endpoints; currently only usable in a Fuse Fabric
+  * [JUnit](http://hawt.io/plugins/junit/) for viewing/running test cases
+  * [API](http://hawt.io/plugins/api/) for viewing APIs from [Apache CXF](http://cxf.apache.org/) endpoints; currently only usable in a Fuse Fabric
   * IDE for generating links to open files in your IDE; currently IDEA the only one supported so far ;)
-  * JUnit for viewing/running test cases
   * Site plugin for using hawtio to view and host your project website
 * Improved the camel editor with a new properties panel on the right
 
