@@ -55,6 +55,7 @@ module JUnit {
 
     $scope.clearResults = () => {
       $scope.testResults = null;
+      $scope.alertClass = "success";
       inProgressStatus.data = null;
       inProgressStatus.alertClass = "success";
     };
@@ -153,19 +154,6 @@ module JUnit {
       }
     };
 
-    function renderResults(results) {
-      $scope.testResults = results;
-      $scope.running = false;
-      var alertClass = "error";
-      if (results.successful) {
-        alertClass = "success";
-      } else if (!results.runCount) {
-        alertClass = "warning";
-      }
-      $scope.alertClass = alertClass;
-      Core.$apply($scope);
-    }
-
     var renderInProgress = function (response) {
       var result = response.value;
       if (result) {
@@ -192,9 +180,27 @@ module JUnit {
       }
     };
 
+    var renderResults = function (result) {
+      if (result) {
+        log.info("Render results: " + result);
+
+        inProgressStatus.data = null;
+        inProgressStatus.alertClass = null;
+
+        var alertClass = "success";
+        if (result.failureCount > 0) {
+          alertClass = "error";
+        }
+        $scope.alertClass = alertClass;
+        $scope.testResults = result;
+
+        Core.$apply($scope);
+      }
+    }
+
     function runTests(listOfClassNames) {
-      $scope.running = true;
-      $scope.testResults = null;
+      // reset before running new set of unit tests
+      $scope.clearResults();
 
       var mbean = getJUnitMBean(workspace);
       if (mbean && listOfClassNames && listOfClassNames.length) {
@@ -208,9 +214,6 @@ module JUnit {
             ignoreErrors: true,
             arguments: []
           });
-
-          // reset before running new set of unit tests
-          $scope.clearResults();
 
           // execute the unit tests
           jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
