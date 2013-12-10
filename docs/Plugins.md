@@ -112,6 +112,11 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jmx">jmx</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/junit/">junit</a></td>
+    <td>Adds support for running JUnit tests from wihtin hawtio.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/junit">junit</a></td>
+  </tr>
+  <tr>
     <td><a href="http://hawt.io/plugins/jvm/">jvm</a></td>
     <td>The jvm plugin allows you to connect to local or remote JVMs, and as well install the Jolokia JVM agent into the JVMs.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/jvm">jvm</a></td>

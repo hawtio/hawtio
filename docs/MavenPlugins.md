@@ -28,6 +28,10 @@
     <td>camel-blueprint</td>
     <td>The same as the camel goal but needed when using OSGi Blueprint Camel applications.</td>
   </tr>         
+  <tr>
+    <td>test</td>
+    <td>This goal run the unit tests of the Maven project. Can be used together with the <a href"http://hawt.io/plugins/junit.html">JUnit</a> plugin to run unit tests from within hawtio console as well. This plugin is currently <strong>Work in progress</strong>, and subject for changes.</td>
+  </tr>         
 </table>
 
 
@@ -176,6 +180,34 @@ The camel goal extends the run goal and provides the following additional option
     <td>Location of the configuration admin configuration file</td>
   </tr>     
 </table>
+
+### test Maven Goal configuration
+
+The test **hawtio** Maven Plugins provides the following common options:
+
+<table class="table">
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>className</td>
+    <td></td>
+    <td>Optional to select a specific unit test class to start testing (must specific class name as fully qualified classname)</td>
+  </tr>  
+  <tr>
+    <td>testName</td>
+    <td></td>
+    <td>Optional to select a specific test method(s) to filter and use for testing. You can use * as wildcard to match multiple test methods.</td>
+  </tr>  
+</table>
+
+If no **className** has been specified then **hawtio** is started up included the projects test classpath, and the <a href="hawt.io/plugins/junit">junit plugin</a> can be used to select tests to run from within **hawtio** console itself.
+
+If a **className** has been specified then unit testing of the selected class happens when **hawtio** has been started, **but** the unit test will not tear down until the user press enter in the shell. This is on purpose allowing using **hawtio** to inspect the state of the JVM during and after testing. For example to look at the Camel plugin to see route diagrams and profiles with metrics from the completed unit tests. 
+
+Pressing enter in the shell runs the tear down of the unit tests, which for example could unregister Camel from JMX and therefore remove the CamelContext used during testing. When using the <a href="hawt.io/plugins/junit">junit plugin</a> to run unit tests, then these tests will tear down immediately when they complete, and therefore remove any CamelContexts during testing. This may change in the future, allows to keep the CamelContexts alive after testing, giving end users time to inspect the data; and then tear down by pressing a button.
 
 
 ## Configuring hawtio Maven Plugin in pom.xml
