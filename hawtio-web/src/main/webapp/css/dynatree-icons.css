@@ -112,19 +112,6 @@ span.dynatree-icon:before {
     content: "\f013";
 }
 
-span.org-apache-camel a.dynatree-title:before {
-    content: "Camel - ";
-}
-
-span.org-fusesource-fabric a.dynatree-title:before {
-    content: "Fuse Fabric - ";
-}
-
-span.org-fusesource-insight a.dynatree-title:before {
-    content: "Logs - ";
-}
-
-
 /* org.apache.camel */
 span.org-apache-camel span.dynatree-icon:before {
     content: url("../app/camel/img/camel.png");
@@ -176,10 +163,6 @@ span.org-apache-activemq span.dynatree-icon:before {
 }
 
 span.org-apache-activemq a.dynatree-title {
-}
-
-span.org-apache-activemq a.dynatree-title:before {
-    content: "ActiveMQ - ";
 }
 
 /* Broker mbean */
