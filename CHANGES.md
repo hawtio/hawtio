@@ -1,5 +1,17 @@
 ### Change Log
 
+#### 1.2.1
+
+* New [Maven plugin](http://hawt.io/maven/) for running hawtio in your maven project; running Camel, Spring, Blueprint or tests.
+* New plugins:
+  * API for viewing APIs from [Apache CXF](http://cxf.apache.org/) endpoints; currently only usable in a Fuse Fabric
+  * IDE for generating links to open files in your IDE; currently IDEA the only one supported so far ;)
+  * JUnit for viewing/running test cases
+  * Site plugin for using hawtio to view and host your project website
+* Improved the camel editor with a new properties panel on the right
+
+* Fixes [these 51 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=3&state=closed)
+
 #### 1.2.0
 
 * Connectivity
