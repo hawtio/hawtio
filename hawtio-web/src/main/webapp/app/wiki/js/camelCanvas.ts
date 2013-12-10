@@ -326,22 +326,14 @@ module Wiki {
       return containerElement;
     }
 
-    function clearCanvasLayout(jsPlumb) {
+    function clearCanvasLayout(jsPlumb, containerElement) {
       try {
-        jsPlumb.detachEveryConnection();
-      } catch (e) {
-        // ignore errors
-      }
-      try {
-        jsPlumb.deleteEveryEndpoint();
+        containerElement.empty();
+        jsPlumb.reset();
       } catch (e) {
         // ignore errors
       }
       return jsPlumb;
-    }
-
-    function configureCanvasLayout(endpointStyle, arrowStyles, labelStyles) {
-
     }
 
     function layoutGraph(nodes, links, width, height) {
@@ -356,10 +348,10 @@ module Wiki {
       var containerElement = getContainerElement();
 
       // first clean up the existing layout, stuff may have changed
-      clearCanvasLayout(jsPlumb);
+      clearCanvasLayout(jsPlumb, containerElement);
       containerElement.find("div.component").remove();
 
-      // configure canvas layout
+      // configure canvas layout and styles
       var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
       var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
       //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
@@ -371,6 +363,7 @@ module Wiki {
         width: 8,
         foldback: 0.8
       } ];
+      var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
 
       jsPlumb.importDefaults({
         Endpoint: endpointStyle,
@@ -381,9 +374,15 @@ module Wiki {
         ]
       });
 
-      //set our container to some arbitrary minimum height
-      containerElement.css({'min-height': '800px'});
+      //set our container to some arbitrary initial size
+      containerElement.css({
+        'width': '800px',
+        'height': '800px',
+        'min-height': '800px',
+        'min-width': '800px'
+      });
       var containerHeight = 0;
+      var containerWidth = 0;
 
       angular.forEach(states, (node) => {
         var id = getNodeId(node);
@@ -391,7 +390,7 @@ module Wiki {
         var div = $("<div class='component window' id='" + id
                 + "' title='" + node.tooltip + "'" +
           //+ " style='" + style + "'" +
-                "><img class='nodeIcon' src='" + node.imageUrl + "'>" +
+                "><img class='nodeIcon' title='Click and drag to create a connection' src='" + node.imageUrl + "'>" +
                 "<span class='nodeText'>" + node.label + "</span></div>");
 
         div.appendTo(containerElement);
@@ -401,67 +400,92 @@ module Wiki {
         if (height || width) {
           node.width = width;
           node.height = height;
-          containerHeight = containerHeight + node.height + 75;
+          div.css({
+            'min-width': width,
+            'min-height': height
+          });
         }
-        log.debug("node: ", id, " width: ", width, " height: ", height);
       });
+
+      var edgeSep = 10;
 
       // Create the layout and get the buildGraph
       dagre.layout()
               .nodeSep(100)
-              .edgeSep(10)
+              .edgeSep(edgeSep)
               .rankSep(75)
               .nodes(states)
               .edges(transitions)
               .debugLevel(1)
               .run();
 
-      containerElement.css({'min-height': containerHeight});
-
-      angular.forEach(states, (node) => {
-        var id = getNodeId(node);
-        var div = $("#" + id);
-        div.css({top: node.dagre.y, left: node.dagre.x});
-      });
 
       var nodes = containerElement.find("div.component");
-      var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
 
-      nodes.each(function (i, e) {
-        var endpoint = $(e);
-        jsPlumb.makeSource(endpoint, {
+      angular.forEach(states, (node) => {
+
+        // position the node in the graph
+        var id = getNodeId(node);
+        var div = $("#" + id);
+        var divHeight = div.height();
+        var divWidth = div.width();
+        var leftOffset = node.dagre.x + divWidth;
+        var bottomOffset = node.dagre.y + divHeight;
+        if (containerHeight < bottomOffset) {
+          containerHeight = bottomOffset + edgeSep * 2;
+        }
+        if (containerWidth < leftOffset) {
+          containerWidth = leftOffset + edgeSep * 2;
+        }
+        div.css({top: node.dagre.y, left: node.dagre.x});
+
+        // Make the node a jsplumb source
+        jsPlumb.makeSource(div, {
           filter: "img.nodeIcon",
           anchor: "Continuous",
           connector: connectorStyle,
           connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
           maxConnections: -1
         });
+
+        // add event handlers to this node
+        div.click(function () {
+          var newFlag = !div.hasClass("selected");
+          nodes.toggleClass("selected", false);
+          div.toggleClass("selected", newFlag);
+          var id = div.attr("id");
+          updateSelection(newFlag ? id : null);
+          Core.$apply($scope);
+        });
+
+        div.dblclick(function () {
+          var id = div.attr("id");
+          updateSelection(id);
+          //$scope.propertiesDialog.open();
+          Core.$apply($scope);
+        });
+
+        jsPlumb.makeTarget(div, {
+          dropOptions: { hoverClass: "dragHover" },
+          anchor: "Continuous"
+        });
+
+        jsPlumb.draggable(div, {
+          containment: '.camel-canvas'
+        });
+
+      });
+
+      // size the container to fit the graph
+      containerElement.css({
+        'width': containerWidth,
+        'height': containerHeight,
+        'min-height': containerHeight,
+        'min-width': containerWidth
       });
 
       containerElement.dblclick(function () {
         $scope.propertiesDialog.open();
-      });
-
-      nodes.click(function () {
-        var thisNode = $(this);
-        var newFlag = !thisNode.hasClass("selected");
-        nodes.toggleClass("selected", false);
-        thisNode.toggleClass("selected", newFlag);
-        var id = thisNode.attr("id");
-        updateSelection(newFlag ? id : null);
-        Core.$apply($scope);
-      });
-
-      nodes.dblclick(function () {
-        var id = $(this).attr("id");
-        updateSelection(id);
-        $scope.propertiesDialog.open();
-        Core.$apply($scope);
-      });
-
-      jsPlumb.makeTarget(nodes, {
-        dropOptions: { hoverClass: "dragHover" },
-        anchor: "Continuous"
       });
 
       angular.forEach(links, (link) => {
@@ -469,10 +493,6 @@ module Wiki {
           source: getNodeId(link.source),
           target: getNodeId(link.target)
         });
-      });
-
-      jsPlumb.draggable(nodes, {
-        containment: '.camel-canvas'
       });
 
       // double click on any connection
