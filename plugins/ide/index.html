@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>hawtio WSDL plugin</title>
+    <title>hawtio IDE plugin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
 		<!--
@@ -53,17 +53,21 @@
 		  <p><div id="content-header">
     <div class="container"></p>
 
-<h3 id = "API">API</h3>
+<h3 id = "IDE">IDE</h3>
 
-<p>This plugin supports viewing the APIs of <a href="http://www.w3.org/TR/wsdl">WSDL</a> and <a href="https://wadl.java.net/">WADL</a> documents on <a href="http://cxf.apache.org/">Apache CXF</a> based web service endpoints.</p>
+<p>The IDE plugin makes it easy to be able to link to a source file on a hawtio view so that it can opened for editing in your IDE. Currently supported IDEs are:</p>
 
-<p>For example in Fuse Fabric you can then view the available APIs:</p>
+<ul>
+<li><a href="http://www.jetbrains.com/idea/">IDEA</a></li>
+</ul>
 
-<p><img src="app/api/doc/img/api-browse.png" alt="Endpoints" title="Browse APIs"/></p>
+<p>To use the directive just include the following markup on a page&hellip;</p>
 
-<p>Then for a given endpoint you can browse its API (in this case WADL but this works for Swagger and WSDL too)</p>
+<pre><code>&lt;hawtio-open-ide file-name="Foo.java" class-name="com.acme.Foo" line="20" column="3"&gt;&lt;/hawtio-open-ide&gt;</code></pre>
 
-<p><img src="app/api/doc/img/wadl.png" alt="WADL API" title="API"/></p>
+<p>The class-name attribute is often included in log files and stack traces; often the file name has no directory part; so the directive combines as best it can the path information from the package with the file name; then uses the IdeFacadeMBean's <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-ide/src/main/java/io/hawt/ide/IdeFacadeMBean.java#L14-14">findClassAbsoluteFileName() method</a> to find the absolute file locally on disk so that it can be opened up in IDEA.</p>
+
+<p>Then you can enable/disable whichever IDEs you like to use; so the right links/buttons appear for you (or you can hide them).</p>
 
 <p></div>
   </div></p>
