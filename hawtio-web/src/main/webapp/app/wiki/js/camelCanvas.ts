@@ -67,10 +67,12 @@ module Wiki {
     }
 
     $scope.updatePropertiesAndCloseDialog = () => {
-      console.log("old URI is " + $scope.nodeData.uri);
+      log.info("old URI is " + $scope.nodeData.uri);
       var uri = createEndpointURI($scope.endpointScheme, ($scope.endpointPathHasSlashes ? "//" : ""), $scope.endpointPath, $scope.endpointParameters);
-      console.log("new URI is " + uri);
-      $scope.nodeData.uri = uri;
+      log.info("new URI is " + uri);
+      if (uri) {
+        $scope.nodeData.uri = uri;
+      }
       var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
         var nodeName = Camel.getFolderCamelNodeId(selectedFolder);
