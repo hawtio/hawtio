@@ -201,11 +201,18 @@ module JUnit {
         inProgressStatus.result = result;
 
         var alertClass = "success";
+        var notificationClass = "success";
+        var message = "JUnit testing succeded with " + result.runCount + " runs.";
         if (result.failureCount > 0) {
           alertClass = "error";
+          notificationClass = "warning";
+          message = "JUnit testing failed with " + result.failureCount + " failures.";
         }
         $scope.alertClass = alertClass;
         $scope.testResults = inProgressStatus.result;
+
+        // publish notification
+        notification(notificationClass, message);
 
         Core.$apply($scope);
       }
