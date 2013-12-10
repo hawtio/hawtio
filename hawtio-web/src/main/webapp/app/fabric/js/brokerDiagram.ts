@@ -4,7 +4,13 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    $scope.selectedNode = null;
+
     var defaultFlags = {
+      panel: true,
+      popup: false,
+      label: true,
+
       group: false,
       profile: false,
       slave: false,
@@ -17,7 +23,7 @@ module Fabric {
       producer: true
     };
 
-    $scope.showFlags = {
+    $scope.viewSettings = {
     };
 
     $scope.shapeSize = {
@@ -31,7 +37,7 @@ module Fabric {
     Core.bindModelToSearchParam($scope, $location, "searchFilter", "q", "");
 
     angular.forEach(defaultFlags, (defaultValue, key) => {
-      var modelName = "showFlags." + key;
+      var modelName = "viewSettings." + key;
 
       // bind model values to search params...
       function currentValue() {
@@ -60,6 +66,10 @@ module Fabric {
         redrawGraph();
       });
 
+    });
+
+    $scope.$watch("selectedNode", (newValue, oldValue) => {
+      //log.info("Has selected: " + angular.toJson($scope.selectedNode));
     });
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
@@ -130,7 +140,7 @@ module Fabric {
         });
         var master = brokerStatus.master;
         var broker = null;
-        var brokerFlag = master ? $scope.showFlags.broker : $scope.showFlags.slave;
+        var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
         if (brokerFlag) {
           broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
             return {
@@ -165,21 +175,21 @@ module Fabric {
         }
 
         // add the links...
-        if ($scope.showFlags.group) {
-          if ($scope.showFlags.profile) {
+        if ($scope.viewSettings.group) {
+          if ($scope.viewSettings.profile) {
             addLink(group, profile, "group");
             addLink(profile, broker, "broker");
           } else {
             addLink(group, broker, "group");
           }
         } else {
-          if ($scope.showFlags.profile) {
+          if ($scope.viewSettings.profile) {
             addLink(profile, broker, "broker");
           }
         }
 
         if (container) {
-          if ((master || $scope.showFlags.slave) && $scope.showFlags.container) {
+          if ((master || $scope.viewSettings.slave) && $scope.viewSettings.container) {
             addLink(broker, container, "container");
             container.destinationLinkNode = container;
           } else {
@@ -216,7 +226,7 @@ module Fabric {
             return null;
           }
           // should we be filtering this destination out
-          var hideFlag = "topic" === typeName ? $scope.showFlags.topic: $scope.showFlags.queue;
+          var hideFlag = "topic" === typeName ? $scope.viewSettings.topic: $scope.viewSettings.queue;
           if (!hideFlag) {
             return null;
           }
@@ -232,7 +242,7 @@ module Fabric {
 
         // find networks
         var brokerId = container.brokerName;
-        if (brokerId && $scope.showFlags.network && $scope.showFlags.broker) {
+        if (brokerId && $scope.viewSettings.network && $scope.viewSettings.broker) {
           containerJolokia.request({type: "read", mbean: "org.apache.activemq:connector=networkConnectors,*"}, onSuccess((response) => {
             angular.forEach(response.value, (properties, objectName) => {
               var details = Core.parseMBean(objectName);
@@ -252,7 +262,7 @@ module Fabric {
 
 
         // find consumers
-        if ($scope.showFlags.consumer) {
+        if ($scope.viewSettings.consumer) {
           containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess((response) => {
             angular.forEach(response, (objectName) => {
               //log.info("Got consumer: " + objectName + " on container: " + id);
@@ -285,7 +295,7 @@ module Fabric {
         }
 
         // find producers
-        if ($scope.showFlags.producer) {
+        if ($scope.viewSettings.producer) {
           containerJolokia.search("org.apache.activemq:endpoint=Producer,*", onSuccess((response) => {
             angular.forEach(response, (objectName) => {
               var details = Core.parseMBean(objectName);
@@ -318,7 +328,7 @@ module Fabric {
         }
 
         // find dynamic producers
-        if ($scope.showFlags.producer) {
+        if ($scope.viewSettings.producer) {
           containerJolokia.request({type: "read", mbean: "org.apache.activemq:endpoint=dynamicProducer,*"}, onSuccess((response) => {
             angular.forEach(response.value, (mbeanValues, objectName) => {
               var details = Core.parseMBean(objectName);
@@ -383,8 +393,17 @@ module Fabric {
             if (size && !node['size']) {
               node['size'] = size;
             }
+            if (!node['summary']) {
+              node['summary'] = node['popup'] || "";
+            }
+            if (!$scope.viewSettings.popup) {
+              delete node['popup'];
+            }
+            if (!$scope.viewSettings.label) {
+              delete node['name'];
+            }
             // lets not add nodes which are defined as being disabled
-            var enabled = $scope.showFlags[typeName];
+            var enabled = $scope.viewSettings[typeName];
             if (enabled || !angular.isDefined(enabled)) {
               //log.info("Adding node " + nodeId + " of type + " + typeName);
               graphBuilder.addNode(node);
