@@ -275,14 +275,6 @@ text.shadow {
     </div>
     <div ng-show="viewSettings.panel" class="span4">
       <div ng-show="selectedNode">
-        <dl class="dl-horizontal">
-          <dt>{{selectedNode.typeLabel}}:</dt>
-          <dd>{{selectedNode.name}}</dd>
-        </dl>
-        <dl ng-show="selectedNode.brokerName && selectedNode.type !== 'broker'" class="dl-horizontal">
-          <dt>Broker:</dt>
-          <dd>{{selectedNode.brokerName}}</dd>
-        </dl>
         <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
           <dt>{{property.key | humanize}}:</dt>
           <dd>{{property.value}}</dd>
