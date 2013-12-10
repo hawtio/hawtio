@@ -58,7 +58,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>184</perfectus-number>
+    <perfectus-number>196</perfectus-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
@@ -165,37 +165,39 @@
       </snapshots>
     </repository>
     <repository>
-      <id>fs-public.jboss.org</id>
-      <name>JBoss FuseSource Public Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+        <id>jboss-fs-public-repository-group</id>
+        <name>JBoss FS Public Repository Group</name>
+        <url>https://repo.fusesource.com/nexus/content/groups/public</url>
+        <layout>default</layout>
+        <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
     </repository>
     <repository>
-      <id>ea.jboss.org</id>
-      <name>JBoss Early Access Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+        <id>jboss.ea</id>
+        <name>JBoss Community Early Access Release Repository</name>
+        <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
     </repository>
     <repository>
-      <id>snapshot.jboss.org</id>
-      <name>JBoss FS Snapshot Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/fs-public-snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
+        <id>fusesource.m2-snapshot</id>
+        <name>FuseSource Community Snapshot Repository</name>
+        <url>https://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
     </repository>
     <repository>
       <snapshots>
