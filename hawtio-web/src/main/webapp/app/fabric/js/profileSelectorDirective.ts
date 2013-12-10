@@ -202,12 +202,14 @@ module Fabric {
           if ($scope.clearOnVersionChange) {
             $scope.selectNone();
           }
-          Core.register(jolokia, $scope, {
-            type: 'exec',
-            mbean: managerMBean,
-            operation: 'getProfiles(java.lang.String, java.util.List)',
-            arguments: [$scope.versionId, ['id', 'hidden']]
-          }, onSuccess($scope.render));
+          if ($scope.versionId) {
+            Core.register(jolokia, $scope, {
+              type: 'exec',
+              mbean: managerMBean,
+              operation: 'getProfiles(java.lang.String, java.util.List)',
+              arguments: [$scope.versionId, ['id', 'hidden']]
+            }, onSuccess($scope.render));
+          }
         }
       };
 
