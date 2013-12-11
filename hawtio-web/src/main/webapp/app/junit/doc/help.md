@@ -23,7 +23,21 @@ During testing there is a test summary which reports the progress.
 
 ![JUnit Testing](app/junit/doc/img/junit-testing.png "JUnit Testing")
 
-.. and when the tests finishes the failed tests is listed, which can be expanded, to see any stacktrace with the failure.
+The test summary dialog can be closed by clicking the little close &times; button on the top right corner.
+
+
+##### Failed Tests #####
+
+If any tests failed then the test summary is shown with red background and a list of the failed tests is shown
+
+![JUnit Failed Tests](app/junit/doc/img/junit-error.png "JUnit Failed Tests")
+
+... which can be expanded by clicking the bullet on the failed test, to see the stacktrace with more details.
+
+![JUnit Failed Stacktrace](app/junit/doc/img/junit-error-expanded.png "JUnit Failed Stacktrace")
+
+And in the stracktrace clicking the IDE icon will load the file in the editor (if its currently running).
+*Notice:* At this time of writing only Intellij IDEA is supported.
 
 
 ##### Other Functionality #####
