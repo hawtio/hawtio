@@ -160,7 +160,14 @@ module Fabric {
         angular.forEach(value, (v, k) => {
           if (ignoreNodeAttributes.indexOf(k) < 0
             && (nodeType !== "producer" || !k.startsWith("Producer"))) {
-            var formattedValue = humanizeValue(v);
+            var formattedValue = "";
+            if (v === true) {
+              formattedValue = '<i class="icon-check"></i>';
+            } else if (v === false) {
+              formattedValue = '<i class="icon-check-empty"></i>';
+            } else {
+              formattedValue = humanizeValue(v);
+            }
             properties.push({key: k, value: formattedValue});
           }
         });
