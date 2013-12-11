@@ -178,7 +178,7 @@ module Camel {
             workspace.subLevelTabs.push({
               content: '<i class=" icon-file-alt"></i> Source',
               title: "View the source of the Camel routes",
-              isValid: (workspace: Workspace) => workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext(),
+              isValid: (workspace: Workspace) => !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext()),
               href: () => "#/camel/source"
             });
             workspace.subLevelTabs.push({
