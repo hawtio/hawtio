@@ -1,9 +1,28 @@
 <style type="text/css">
 
-.nodeAttributes dl {
+.span4.node-panel {
+  margin-left: 10px;
+  width: 33%;
+}
+.node-attributes dl {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+.node-attributes dt {
+  width: 150px;
+}
+.node-attributes dd {
+  margin-left: 160px;
+}
+.node-attributes dd a {
+  /** lets make the destination links wrap */
+  -ms-word-break: break-all;
+  word-break: break-all;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
 ul.viewMenu li {
   padding-left: 10px;
   padding-top: 2px;
@@ -272,13 +291,13 @@ text.shadow {
   </div>
 
   <div class="row-fluid">
-    <div class="{{viewSettings.panel ? 'span8' : 'span12'}} canvas">
+    <div class="{{viewSettings.panel ? 'span8' : 'span12'}} canvas broker-canvas">
       <div hawtio-force-graph graph="graph" selected-model="selectedNode" link-distance="150" charge="-600" nodesize="10" marker-kind="marker-end"
            style="min-height: 800px">
       </div>
     </div>
-    <div ng-show="viewSettings.panel" class="span4">
-      <div ng-show="selectedNode" class="nodeAttributes">
+    <div ng-show="viewSettings.panel" class="span4 node-panel">
+      <div ng-show="selectedNode" class="node-attributes">
         <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
           <dt>{{property.key | humanize}}:</dt>
           <dd ng-bind-html-unsafe="property.value"></dd>
