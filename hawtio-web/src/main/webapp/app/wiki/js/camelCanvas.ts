@@ -297,10 +297,7 @@ module Wiki {
     }
 
     function showGraph(nodes, links) {
-      var width = getWidth();
-      var height = Camel.getCanvasHeight($($element));
-      layoutGraph(nodes, links, width, height);
-      return width;
+      layoutGraph(nodes, links);
     }
 
     function getNodeId(node) {
@@ -336,7 +333,7 @@ module Wiki {
       return jsPlumb;
     }
 
-    function layoutGraph(nodes, links, width, height) {
+    function layoutGraph(nodes, links) {
       var transitions = [];
       var states = Core.createGraphStates(nodes, links, transitions);
 
@@ -500,6 +497,27 @@ module Wiki {
         alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
       });
 
+      // TODO implement these
+      jsPlumb.bind('connection', function(info, evt) {
+        //log.debug("Connection event: ", info);
+        log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+        log.debug("Nodes:" , nodes);
+        var link = getLink(info);
+        var source:Folder = $scope.folders[link.source];
+        var target:Folder = $scope.folders[link.target];
+        source.moveChild(target);
+        treeModified();
+      });
+
+      jsPlumb.bind('connectionDetached', function(info, evt) {
+        //log.debug("Connection detach event: ", info);
+        log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+        var link = getLink(info);
+        var source:Folder = $scope.folders[link.source];
+        var target:Folder = $scope.folders[link.target];
+        // TODO orphan target folder without actually deleting it
+      });
+
       // lets delete connections on click
       jsPlumb.bind("click", function (c) {
         jsPlumb.detach(c);
@@ -513,6 +531,25 @@ module Wiki {
       });
 
       return states;
+    }
+
+    function removeEdge(source, target) {
+
+    }
+
+    function getLink(info) {
+      var sourceId = info.source.get(0).id;
+      var targetId = info.target.get(0).id;
+      return {
+        source: sourceId,
+        target: targetId
+      }
+    }
+
+    function getNodeByCID(nodes, cid) {
+      return nodes.find((node) => {
+        return node.cid === cid;
+      });
     }
 
     /*
