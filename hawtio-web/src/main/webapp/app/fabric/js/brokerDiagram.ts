@@ -111,7 +111,8 @@ module Fabric {
       var node = $scope.selectedNode;
       if (node) {
         var mbean = node.objectName;
-        var nodeJolokia = node.jolokia || jolokia;
+        var brokerContainer = node.brokerContainer || {};
+        var nodeJolokia = node.jolokia || brokerContainer.jolokia || jolokia;
         if (nodeJolokia !== $scope.selectedNodeJolokia) {
           stopOldJolokia();
           $scope.selectedNodeJolokia = nodeJolokia;
@@ -122,13 +123,19 @@ module Fabric {
             }
           }
         }
-        if (mbean && jolokia) {
+        var dummyResponse = {value: node.panelProperties || {}};
+        if (mbean && nodeJolokia) {
           $scope.unregisterFn = Core.register(nodeJolokia, $scope, {
             type: 'read', mbean: mbean
-          }, onSuccess(renderNodeAttributes));
+          }, onSuccess(renderNodeAttributes, {error: (response) => {
+            // probably we've got a wrong mbean name?
+            // so lets render at least
+            renderNodeAttributes(dummyResponse);
+            Core.defaultJolokiaErrorHandler(response);
+          }}));
 
         } else {
-          renderNodeAttributes({value: node.panelProperties || {}});
+          renderNodeAttributes(dummyResponse);
         }
       }
     });
@@ -140,10 +147,21 @@ module Fabric {
 
     var ignoreNodeAttributes = ["Broker", "BrokerId", "BrokerName", "Connection",
       "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic",
-
-      // Queue based attributes to ignore
-      "Name", "MessageGroups", "MessageGroupType", "Subscriptions"
     ];
+
+    var ignoreNodeAttributesByType = {
+      producer: ["Producer", "ProducerId"],
+      queue: ["Name", "MessageGroups", "MessageGroupType", "Subscriptions"],
+      topic: ["Name", "Subscriptions"],
+      broker: ["DataDirectory", "DurableTopicSubscriptions", "DynamicDestinationProducers", "InactiveDurableToppicSubscribers"]
+    };
+
+    var brokerShowProperties = ["AverageMessageSize", "BrokerId", "JobSchedulerStorePercentUsage",
+      "Slave", "MemoryPercentUsage", "StorePercentUsage", "TempPercentUsage"];
+    var onlyShowAttributesByType = {
+      broker: brokerShowProperties,
+      brokerSlave: brokerShowProperties
+    };
 
     function renderNodeAttributes(response) {
       var properties = [];
@@ -161,10 +179,11 @@ module Fabric {
         var version = selectedNode["version"] || brokerContainer["version"];
 
         var isBroker = nodeType && nodeType.startsWith("broker");
+        var ignoreKeys = ignoreNodeAttributes.concat(ignoreNodeAttributesByType[nodeType] || []);
+        var onlyShowKeys = onlyShowAttributesByType[nodeType];
 
         angular.forEach(value, (v, k) => {
-          if (ignoreNodeAttributes.indexOf(k) < 0
-            && (nodeType !== "producer" || !k.startsWith("Producer"))) {
+          if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0: ignoreKeys.indexOf(k) < 0) {
             var formattedValue = "";
             if (v === true) {
               formattedValue = '<i class="icon-check"></i>';
@@ -305,22 +324,6 @@ module Fabric {
             }
           };
         });
-        var master = brokerStatus.master;
-        var broker = null;
-        var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
-        if (brokerFlag) {
-          broker = getOrAddNode("broker", brokerId, brokerStatus, () => {
-            return {
-              type: master ? "broker" : "brokerSlave",
-              typeLabel: master ? "Broker" : "Slave Broker",
-              popup: {
-                title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
-              }
-            };
-          });
-        }
-
         // TODO do we need to create a physical broker node per container and logical broker maybe?
         var container = null;
         if (containerId) {
@@ -336,6 +339,31 @@ module Fabric {
           });
         }
 
+        var master = brokerStatus.master;
+        var broker = null;
+        var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
+        if (brokerFlag) {
+          broker = getOrAddNode("broker", brokerId + (master ? "" : ":slave"), brokerStatus, () => {
+            return {
+              type: master ? "broker" : "brokerSlave",
+              typeLabel: master ? "Broker" : "Slave Broker",
+              popup: {
+                title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
+                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
+              }
+            };
+          });
+          if (master) {
+            if (!broker['objectName']) {
+              // lets try guess the mbean name
+              broker['objectName'] = "org.apache.activemq:type=Broker,brokerName=" + brokerId;
+              log.info("Guessed broker mbean: " + broker['objectName']);
+            }
+            if (!broker['brokerContainer'] && container) {
+              broker['brokerContainer'] = container;
+            }
+          }
+        }
 
         if (container && container.validContainer) {
           var key = container.containerId;
