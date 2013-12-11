@@ -68,8 +68,18 @@ module Fabric {
 
     });
 
+    $scope.$on('$destroy', function (event) {
+      stopOldJolokia();
+    });
+
+    function stopOldJolokia() {
+      var oldJolokia = $scope.selectedNodeJolokia;
+      if (oldJolokia && oldJolokia !== jolokia) {
+        oldJolokia.stop();
+      }
+    }
+
     $scope.$watch("selectedNode", (newValue, oldValue) => {
-      //log.info("Has selected: " + angular.toJson($scope.selectedNode));
       // lets cancel any previously registered thingy
       if ($scope.unregisterFn) {
         $scope.unregisterFn();
@@ -78,11 +88,22 @@ module Fabric {
       var node = $scope.selectedNode;
       if (node) {
         var mbean = node.objectName;
-        var jolokia = node.jolokia || jolokia;
+        var nodeJolokia = node.jolokia || jolokia;
+        if (nodeJolokia !== $scope.selectedNodeJolokia) {
+          stopOldJolokia();
+          $scope.selectedNodeJolokia = nodeJolokia;
+          if (nodeJolokia !== jolokia) {
+            var rate = Core.parseIntValue(localStorage['updateRate'] || "2000", "update rate");
+            if (rate) {
+              nodeJolokia.start(rate);
+            }
+          }
+        }
         if (mbean && jolokia) {
-          $scope.unregisterFn = Core.register(jolokia, $scope, {
+          $scope.unregisterFn = Core.register(nodeJolokia, $scope, {
             type: 'read', mbean: mbean
           }, onSuccess(renderNodeAttributes));
+
         } else {
           renderNodeAttributes({value: node.panelProperties || {}});
         }
