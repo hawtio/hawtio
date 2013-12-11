@@ -277,7 +277,7 @@ text.shadow {
       <div ng-show="selectedNode">
         <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
           <dt>{{property.key | humanize}}:</dt>
-          <dd>{{property.value}}</dd>
+          <dd ng-bind-html-unsafe="property.value"></dd>
         </dl>
       </div>
     </div>
