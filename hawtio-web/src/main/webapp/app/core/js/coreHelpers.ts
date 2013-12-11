@@ -172,28 +172,9 @@ function onSuccess(fn, options = {}) {
   options['canonicalNaming'] = false;
   options['canonicalProperties'] = false;
   if (!options['error']) {
-    options['error'] = function (response) {
-      //alert("Jolokia request failed: " + response.error);
-      var stacktrace = response.stacktrace;
-      if (stacktrace) {
-        var silent = options['silent'];
-        if (!silent) {
-          var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
-          if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
-                  stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
-                  stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
-            // ignore these errors as they can happen on timing issues
-            // such as its been removed
-            // or if we run against older containers
-            Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-            Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
-          } else {
-            Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-            Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
-          }
-        }
-      }
-    };
+    options['error'] = (response) => {
+      Core.defaultJolokiaErrorHandler(response, options);
+    }
   }
   return options;
 }
@@ -618,6 +599,34 @@ module Core {
       delete scope.$jhandle;
     }
   }
+
+  /**
+   * The default error handler which logs errors either using debug or log level logging based on the silent setting
+   * @param response the response from a jolokia request
+   */
+  export function defaultJolokiaErrorHandler (response, options = {}) {
+    //alert("Jolokia request failed: " + response.error);
+    var stacktrace = response.stacktrace;
+    if (stacktrace) {
+      var silent = options['silent'];
+      if (!silent) {
+        var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+        if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
+          stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
+          stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
+          // ignore these errors as they can happen on timing issues
+          // such as its been removed
+          // or if we run against older containers
+          Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
+          Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+        } else {
+          Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
+          Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+        }
+      }
+    }
+  }
+
 
   /**
    * Converts the given XML node to a string representation of the XML
