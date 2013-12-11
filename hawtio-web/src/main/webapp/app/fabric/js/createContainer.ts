@@ -337,7 +337,7 @@ module Fabric {
         Core.$apply($scope);
       }, 10);
 
-      notification('info', "Requesting that new container(s) be created");
+      //notification('info', "Requesting that new container(s) be created");
       $location.url('/fabric/containers');
     }
 
