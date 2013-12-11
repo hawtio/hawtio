@@ -1,14 +1,13 @@
 <div ng-controller="Core.WelcomeController">
   <div class="row-fluid">
-    <div class="span8">
-      <div class="row welcome-display">
-        <!-- the html to display as welcome page -->
-        <div compile="html"></div>
-      </div>
+    <div class="span11 offset1">
+      <div class="welcome-display" compile="html"></div>
 
-      <!-- TODO: have a nicer button -->
-      <div>
-        <button type="button" class="close" ng-click="stopShowingWelcomePage()">Do not show welcome page on startup</button>
+      <div class="centered">
+        <button class="btn btn-primary" 
+                ng-click="stopShowingWelcomePage()">
+                Do not show welcome page on startup
+        </button>
       </div>
 
     </div>
