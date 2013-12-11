@@ -404,9 +404,11 @@ module Fabric {
             var objectName = "";
             var brokerName = properties.brokerName;
             if (brokerName) {
-              objectName = "org.apache.activemq:type=Broker,brokerName=" + brokerName +
-                ",destinationType=" + destinationTypeName + ",destinationName=" + destinationName;
-              log.info("Figured out broker mbean name: " + objectName);
+              // lets ignore temp topic stuff as there's no mbean for these
+              if (!destinationName.startsWith("ActiveMQ.Advisory.TempQueue_ActiveMQ.Advisory.TempTopic")) {
+                objectName = "org.apache.activemq:type=Broker,brokerName=" + brokerName +
+                  ",destinationType=" + destinationTypeName + ",destinationName=" + destinationName;
+              }
             }
             var answer = {
               typeLabel: destinationTypeName,
