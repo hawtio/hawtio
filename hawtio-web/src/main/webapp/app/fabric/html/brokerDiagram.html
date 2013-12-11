@@ -1,5 +1,9 @@
 <style type="text/css">
 
+.nodeAttributes dl {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
 ul.viewMenu li {
   padding-left: 10px;
   padding-top: 2px;
@@ -274,7 +278,7 @@ text.shadow {
       </div>
     </div>
     <div ng-show="viewSettings.panel" class="span4">
-      <div ng-show="selectedNode">
+      <div ng-show="selectedNode" class="nodeAttributes">
         <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
           <dt>{{property.key | humanize}}:</dt>
           <dd ng-bind-html-unsafe="property.value"></dd>
