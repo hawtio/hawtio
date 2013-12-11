@@ -191,6 +191,10 @@ module Perspective {
    * @return {String}
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
+    if (shouldShowWelcomePage(localStorage)) {
+      return "/welcome/";
+    }
+
     var answer = Perspective.defaultPageLocation;
     if (!answer && $location && workspace) {
       var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
@@ -205,6 +209,17 @@ module Perspective {
       });
     }
     return answer || '/help/index';
+  }
+
+  /**
+   * Whether to show the welcome page
+   */
+  export function shouldShowWelcomePage(localStorage) {
+    var value = localStorage["showWelcomePage"];
+    if (angular.isString(value)) {
+      return "true" === value;
+    }
+    return true;
   }
 
   /**

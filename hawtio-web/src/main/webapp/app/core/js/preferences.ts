@@ -35,6 +35,7 @@ module Core {
     $scope.updateRate = localStorage['updateRate'];
     $scope.url = localStorage['url'];
     $scope.autoRefresh = localStorage['autoRefresh'] === "true";
+    $scope.showWelcomePage = localStorage['showWelcomePage'] === "true";
 
     $scope.hosts = [];
     $scope.newHost = {};
@@ -135,7 +136,14 @@ module Core {
       localStorage['autoRefresh'] = $scope.autoRefresh;
     });
 
-    var names = ["gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
+    $scope.$watch('showWelcomePage', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+      localStorage['showWelcomePage'] = $scope.showWelcomePage;
+    });
+
+    var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
       "logCacheSize", "fabricAlwaysPrompt",  "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
