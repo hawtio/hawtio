@@ -76,6 +76,21 @@ module Fabric {
       }
     };
 
+    $scope.connectToDestination = () => {
+      var selectedNode = $scope.selectedNode;
+      if (selectedNode) {
+        var container = selectedNode["brokerContainer"] || selectedNode;
+        var brokerName = selectedNode["brokerName"];
+        var destinationType = selectedNode["destinationType"];
+        var destinationName = selectedNode["destinationName"];
+        var postfix: string = null;
+        if (brokerName && destinationType && destinationName) {
+          postfix = "nid=root-org.apache.activemq-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
+        }
+        Fabric.connectToBroker($scope, container, postfix);
+      }
+    };
+
     $scope.$on('$destroy', function (event) {
       stopOldJolokia();
     });
@@ -175,17 +190,20 @@ module Fabric {
         }
 
         var destinationName = value["DestinationName"] || selectedNode["destinationName"];
-        // TODO ignore for queue/topic
         if (destinationName && (nodeType !== "queue" && nodeType !== "topic")) {
           var destinationTypeName = getDestinationTypeName(value);
-          properties.splice(0, 0, {key: destinationTypeName, value: destinationName});
+          var html = createDestinationLink(destinationName, destinationTypeName);
+          properties.splice(0, 0, {key: destinationTypeName, value: html});
         }
-
 
         var typeLabel = selectedNode["typeLabel"];
         var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
         if (typeLabel) {
-          var typeProperty = {key: typeLabel, value: name};
+          var html = name;
+          if (nodeType === "queue" || nodeType === "topic") {
+            html = createDestinationLink(name, nodeType);
+          }
+          var typeProperty = {key: typeLabel, value: html};
           if (isBroker && brokerProperty) {
             typeProperty = brokerProperty;
           }
@@ -194,6 +212,17 @@ module Fabric {
       }
       $scope.selectedNodeProperties = properties;
       Core.$apply($scope);
+    }
+
+
+    /**
+     * Generates the HTML for a link to the destination
+     */
+    function createDestinationLink(destinationName, destinationType = "queue") {
+      return $compile('<a target="destination" ng-click="connectToDestination()">' +
+                                  //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
+                                  destinationName +
+                                  '</a>')($scope);
     }
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
