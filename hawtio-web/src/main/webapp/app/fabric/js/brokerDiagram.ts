@@ -231,7 +231,7 @@ module Fabric {
      * Generates the HTML for a link to the destination
      */
     function createDestinationLink(destinationName, destinationType = "queue") {
-      return $compile('<a target="destination" ng-click="connectToDestination()">' +
+      return $compile('<a target="destination" title="' + destinationName + '" ng-click="connectToDestination()">' +
                                   //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
                                   destinationName +
                                   '</a>')($scope);
