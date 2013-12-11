@@ -52,6 +52,7 @@ module Camel {
                   if (routesNode) {
                     var routesFolder = new Folder("Routes");
                     routesFolder.addClass = "org-apache-camel-routes-folder";
+                    routesFolder.parent = contextsFolder;
                     routesFolder.children = routesNode.children;
                     angular.forEach(routesFolder.children, (n) => n.addClass = "org-apache-camel-routes");
                     folder.children.push(routesFolder);
@@ -62,6 +63,7 @@ module Camel {
                   if (endpointsNode) {
                     var endpointsFolder = new Folder("Endpoints");
                     endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
+                    endpointsFolder.parent = contextsFolder;
                     endpointsFolder.children = endpointsNode.children;
                     angular.forEach(endpointsFolder.children, (n) => {
                       n.addClass = "org-apache-camel-endpoints";

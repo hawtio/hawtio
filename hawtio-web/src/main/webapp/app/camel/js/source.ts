@@ -41,16 +41,28 @@ module Camel {
     }
 
     function updateRoutes() {
+      // did we select a single route
       var routeXmlNode = getSelectedRouteNode(workspace);
-      $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (routeXmlNode) {
         $scope.source = getSource(routeXmlNode);
         Core.$apply($scope);
-      } else if ($scope.mbean) {
-        var jolokia = workspace.jolokia;
-        jolokia.request(
-                {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},
-                onSuccess(populateTable));
+      } else {
+        // no then try to find the camel context and get all the routes code
+        $scope.mbean = getSelectionCamelContextMBean(workspace);
+        if (!$scope.mbean) {
+          // maybe the parent is the camel context folder (when we have selected the routes folder),
+          // then grab the object name from parent
+          var parent = workspace.selection.parent;
+          if (parent && parent.title === "context") {
+            $scope.mbean = parent.children[0].objectName;
+          }
+        }
+        if ($scope.mbean) {
+          var jolokia = workspace.jolokia;
+          jolokia.request(
+            {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},
+            onSuccess(populateTable));
+        }
       }
     }
 
