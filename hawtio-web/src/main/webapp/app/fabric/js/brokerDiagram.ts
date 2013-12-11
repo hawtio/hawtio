@@ -138,7 +138,12 @@ module Fabric {
       return prefix + (attributes["DestinationTopic"] ? "Topic" : "Queue");
     }
 
-    var ignoreNodeAttributes = ["Broker", "BrokerId", "BrokerName", "Connection", "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic"];
+    var ignoreNodeAttributes = ["Broker", "BrokerId", "BrokerName", "Connection",
+      "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic",
+
+      // Queue based attributes to ignore
+      "Name", "MessageGroups", "MessageGroupType", "Subscriptions"
+    ];
 
     function renderNodeAttributes(response) {
       var properties = [];
@@ -395,14 +400,34 @@ module Fabric {
             return null;
           }
           return getOrAddNode(typeName, destinationName, properties, () => {
-            return {
-              typeLabel: properties.destinationType || "Queue",
+            var destinationTypeName = properties.destinationType || "Queue";
+            var objectName = "";
+            var brokerName = properties.brokerName;
+            if (brokerName) {
+              objectName = "org.apache.activemq:type=Broker,brokerName=" + brokerName +
+                ",destinationType=" + destinationTypeName + ",destinationName=" + destinationName;
+              log.info("Figured out broker mbean name: " + objectName);
+            }
+            var answer = {
+              typeLabel: destinationTypeName,
               brokerContainer: container,
+              objectName: objectName,
+              jolokia: containerJolokia,
               popup: {
-                title: (properties.destinationType || "Queue") + ": " + destinationName,
+                title: destinationTypeName + ": " + destinationName,
                 content: brokerNameMarkup(properties.brokerName)
               }
             };
+            if (!brokerName) {
+              containerJolokia.search("org.apache.activemq:destinationType=" + destinationTypeName
+                + ",destinationName=" + destinationName +",*", onSuccess((response) => {
+                log.info("Found destination mbean: " + response);
+                if (response && response.length) {
+                  answer.objectName = response[0];
+                }
+              }));
+            }
+            return answer;
           });
         }
 
