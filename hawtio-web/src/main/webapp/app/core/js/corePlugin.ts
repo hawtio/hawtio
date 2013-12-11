@@ -79,6 +79,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
 
           $routeProvider.
                   when('/login', {templateUrl: 'app/core/html/login.html'}).
+                  when('/welcome', {templateUrl: 'app/core/html/welcome.html'}).
                   when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
                   when('/help', {
                     redirectTo: '/help/index'
@@ -406,6 +407,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           viewRegistry['fullscreen'] = layoutFull;
           viewRegistry['notree'] = layoutFull;
           viewRegistry['help'] = layoutFull;
+          viewRegistry['welcome'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
           viewRegistry['login'] = layoutFull;
 
