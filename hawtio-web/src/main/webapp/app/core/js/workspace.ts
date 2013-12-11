@@ -769,7 +769,6 @@ module Core {
       return null;
     }
 
-
     public selectionHasDomainAndLastFolderName(objectName: string, lastName: string) {
       var lastNameLower = (lastName || "").toLowerCase();
       function isName(name) {
@@ -799,7 +798,6 @@ module Core {
     hasFabricMBean() {
       return this.hasDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'});
     }
-
     isFabricFolder() {
       return this.hasDomainAndProperties('org.fusesource.fabric');
     }
@@ -807,23 +805,18 @@ module Core {
     isCamelContext() {
       return this.hasDomainAndProperties('org.apache.camel', {type: 'context'});
     }
-
     isCamelFolder() {
       return this.hasDomainAndProperties('org.apache.camel');
     }
-
     isEndpointsFolder() {
       return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
     }
-
     isEndpoint() {
       return this.hasDomainAndProperties('org.apache.camel', {type: 'endpoints'});
     }
-
     isRoutesFolder() {
       return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'routes')
     }
-
     isRoute() {
       return this.hasDomainAndProperties('org.apache.camel', {type: 'routes'});
     }
@@ -832,12 +825,11 @@ module Core {
       return this.hasDomainAndProperties('osgi.core');
     }
     isKarafFolder() {
-          return this.hasDomainAndProperties('org.apache.karaf');
+      return this.hasDomainAndProperties('org.apache.karaf');
     }
-
-      isOsgiCompendiumFolder() {
-          return this.hasDomainAndProperties('osgi.compendium');
-      }
+    isOsgiCompendiumFolder() {
+      return this.hasDomainAndProperties('osgi.compendium');
+    }
   }
 
 }
