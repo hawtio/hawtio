@@ -12,14 +12,15 @@ module Fabric {
     };
 
     $scope.showBroker = (broker) => {
-      var path = Fabric.profileLink(workspace, jolokia, localStorage, broker.version, broker.profile);
-      path += "/org.fusesource.mq.fabric.server-" + broker.id + ".properties";
+      var brokerVersion = broker.version;
+      var brokerProfile = broker.profile;
+      var brokerId = broker.id;
+      var path = Fabric.brokerConfigLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile, brokerId);
       $location.path(path);
     };
 
     $scope.connectToBroker = (container, broker) => {
-      var view = "/jmx/attributes?tab=activemq";
-      $scope.doConnect(container, view);
+      Fabric.connectToBroker($scope, container);
     };
 
 

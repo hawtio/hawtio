@@ -1055,6 +1055,33 @@ module Fabric {
     return fn ? answer : onResults(answer);
   }
 
+
+  /**
+   * Creates a link to the given broker configuration so we can connect in the UI
+   * @param workspace
+   * @param jolokia
+   * @param localStorage
+   * @param brokerVersion
+   * @param brokerProfile
+   * @param brokerId
+   * @return the link to the broker page
+   */
+  export function brokerConfigLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile, brokerId) {
+    var path = Fabric.profileLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile);
+    path += "/org.fusesource.mq.fabric.server-" + brokerId + ".properties";
+    return path;
+  }
+
+
+  /**
+   * Connects to the broker in a new window
+   */
+  export function connectToBroker($scope, container) {
+    var view = "/jmx/attributes?tab=activemq";
+    $scope.doConnect(container, view);
+  }
+
+
   /**
    * Removes any attributes from the object that are set to an empty string.
    *

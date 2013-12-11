@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function FabricBrokerDiagramController($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
+  export function FabricBrokerDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -68,6 +68,14 @@ module Fabric {
 
     });
 
+    $scope.connectToBroker = () => {
+      var selectedNode = $scope.selectedNode;
+      if (selectedNode) {
+        var container = selectedNode["brokerContainer"] || selectedNode;
+        Fabric.connectToBroker($scope, container);
+      }
+    };
+
     $scope.$on('$destroy', function (event) {
       stopOldJolokia();
     });
@@ -115,7 +123,7 @@ module Fabric {
       return prefix + (attributes["DestinationTopic"] ? "Topic" : "Queue");
     }
 
-    var ignoreNodeAttributes = ["Connection", "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic"];
+    var ignoreNodeAttributes = ["Broker", "BrokerId", "BrokerName", "Connection", "DestinationName", "DestinationQueue", "DestinationTemporary", "DestinationTopic"];
 
     function renderNodeAttributes(response) {
       var properties = [];
@@ -123,15 +131,19 @@ module Fabric {
         var value = response.value || {};
         $scope.selectedNodeAttributes = value;
         var selectedNode = $scope.selectedNode || {};
+        var brokerContainer = selectedNode['brokerContainer'] || {};
         var nodeType = selectedNode["type"];
         var brokerName = selectedNode["brokerName"];
-        if (brokerName && nodeType !== "broker" && nodeType !== "brokerSlave") {
-          properties.splice(0, 0, {key: "Broker", value: brokerName});
-        }
+        var containerId = selectedNode["container"] || brokerContainer["container"];
+        var group = selectedNode["group"] || brokerContainer["group"];
+        var jolokiaUrl = selectedNode["jolokiaUrl"] || brokerContainer["jolokiaUrl"];
+        var profile = selectedNode["profile"] || brokerContainer["profile"];
+        var version = selectedNode["version"] || brokerContainer["version"];
+
+        var isBroker = nodeType && nodeType.startsWith("broker");
 
         angular.forEach(value, (v, k) => {
           if (ignoreNodeAttributes.indexOf(k) < 0
-            && (!brokerName || !k.startsWith("Broker"))
             && (nodeType !== "producer" || !k.startsWith("Producer"))) {
             var formattedValue = humanizeValue(v);
             properties.push({key: k, value: formattedValue});
@@ -139,6 +151,28 @@ module Fabric {
         });
         properties = properties.sortBy("key");
 
+        var brokerProperty: any = null;
+        if (brokerName) {
+          var html = brokerName;
+          if (version && profile) {
+            var brokerLink = Fabric.brokerConfigLink(workspace, jolokia, localStorage, version, profile, brokerName);
+            if (brokerLink) {
+              html = $compile('<a target="broker" ng-click="connectToBroker()">' +
+                '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
+                '</a> <a title="configuration settings" target="brokerConfig" href="' + brokerLink +
+                '"><i class="icon-tasks"></i></a>')($scope);
+            }
+          }
+          brokerProperty = {key: "Broker", value: html};
+          if (!isBroker) {
+            properties.splice(0, 0, brokerProperty);
+          }
+        }
+
+        if (containerId) {
+          var containerModel = "selectedNode" + (selectedNode['brokerContainer'] ? ".brokerContainer" : "");
+          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + containerModel + '"></div>')($scope)});
+        }
 
         var destinationName = value["DestinationName"] || selectedNode["destinationName"];
         // TODO ignore for queue/topic
@@ -147,10 +181,15 @@ module Fabric {
           properties.splice(0, 0, {key: destinationTypeName, value: destinationName});
         }
 
+
         var typeLabel = selectedNode["typeLabel"];
         var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
         if (typeLabel) {
-          properties.splice(0, 0, {key: typeLabel, value: name});
+          var typeProperty = {key: typeLabel, value: name};
+          if (isBroker && brokerProperty) {
+            typeProperty = brokerProperty;
+          }
+          properties.splice(0, 0, typeProperty);
         }
       }
       $scope.selectedNodeProperties = properties;
@@ -322,6 +361,7 @@ module Fabric {
           return getOrAddNode(typeName, destinationName, properties, () => {
             return {
               typeLabel: properties.destinationType || "Queue",
+              brokerContainer: container,
               popup: {
                 title: (properties.destinationType || "Queue") + ": " + destinationName,
                 content: brokerNameMarkup(properties.brokerName)
@@ -369,6 +409,7 @@ module Fabric {
                       var consumer = getOrAddNode("consumer", consumerId, properties, () => {
                         return {
                           typeLabel: "Consumer",
+                          brokerContainer: container,
                           objectName: objectName,
                           jolokia: containerJolokia,
                           popup: {
@@ -404,6 +445,7 @@ module Fabric {
                       var producer = getOrAddNode("producer", producerId, properties, () => {
                         return {
                           typeLabel: "Producer",
+                          brokerContainer: container,
                           objectName: objectName,
                           jolokia: containerJolokia,
                           popup: {
@@ -448,6 +490,7 @@ module Fabric {
                 var producer = getOrAddNode("producer", producerId, properties, () => {
                   return {
                     typeLabel: "Producer (Dynamic)",
+                    brokerContainer: container,
                     objectName: objectName,
                     jolokia: containerJolokia,
                     popup: {
