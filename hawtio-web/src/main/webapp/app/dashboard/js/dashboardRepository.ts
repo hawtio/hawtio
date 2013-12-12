@@ -258,7 +258,7 @@ module Dashboard {
 
     public getDashboard(id:string, fn) {
       var dashboards = this.loadDashboards();
-      var dashboard = dashboards.find({id: id});
+      var dashboard = dashboards.find((dashboard) => { return dashboard.id === id });
       fn(dashboard);
     }
 
