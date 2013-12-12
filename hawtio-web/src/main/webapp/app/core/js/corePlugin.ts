@@ -412,6 +412,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           viewRegistry['login'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
+          helpRegistry.addUserDoc('preference', 'app/core/doc/preference.md');
           helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/FAQ.md');
           helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');

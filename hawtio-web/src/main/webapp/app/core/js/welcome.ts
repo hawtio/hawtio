@@ -8,10 +8,9 @@ module Core {
     var log:Logging.Logger = Logger.get("Welcome");
 
     $scope.stopShowingWelcomePage = () => {
-      log.info("Stop showing welcome page");
+      log.debug("Stop showing welcome page");
       localStorage['showWelcomePage'] = false;
 
-      log.info("Redirecting to default page");
       $location.path("/");
     };
 
