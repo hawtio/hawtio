@@ -38,6 +38,7 @@ module Jclouds {
 
 
             workspace.topLevelTabs.push({
+                id: "jclouds",
                 content: "jclouds",
                 title: "Visualise and manage the Jclouds Compute/BlobStore providers and apis",
                 isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.jclouds"),

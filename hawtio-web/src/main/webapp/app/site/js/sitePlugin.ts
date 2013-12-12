@@ -18,10 +18,11 @@ module Site {
       viewRegistry[pluginName] = layoutFull;
 
       workspace.topLevelTabs.push({
-      content: "Site",
-      title: "View the documentation for Hawtio",
-      isValid: (workspace:Workspace) => false,
-      href: () => "#/site"
+        id: "site",
+        content: "Site",
+        title: "View the documentation for Hawtio",
+        isValid: (workspace:Workspace) => false,
+        href: () => "#/site"
       });
 
       /*

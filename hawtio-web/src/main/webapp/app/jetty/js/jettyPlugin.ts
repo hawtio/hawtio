@@ -22,6 +22,7 @@ module Jetty {
             });
 
             workspace.topLevelTabs.push({
+              id: "jetty",
               content: "Jetty",
               title: "Manage your Jetty container",
               isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server"),

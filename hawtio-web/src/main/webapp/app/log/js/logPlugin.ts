@@ -17,6 +17,7 @@ module Log {
             });
 
             workspace.topLevelTabs.push({
+              id: "logs",
               content: "Logs",
               title: "View and search the logs of this container",
               isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),

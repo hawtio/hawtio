@@ -17,6 +17,7 @@ module Health {
             });
 
             workspace.topLevelTabs.push( {
+              id: "health",
               content: "Health",
               title: "View the health of the various sub systems",
 

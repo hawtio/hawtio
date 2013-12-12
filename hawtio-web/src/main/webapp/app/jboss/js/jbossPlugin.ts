@@ -21,6 +21,7 @@ module JBoss {
             });
 
             workspace.topLevelTabs.push( {
+              id: "jboss",
               content: "JBoss",
               title: "Manage your JBoss container",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("jboss.as") ||

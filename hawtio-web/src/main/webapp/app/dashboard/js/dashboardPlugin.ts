@@ -40,6 +40,7 @@ module Dashboard {
             helpRegistry.addUserDoc('dashboard', 'app/dashboard/doc/help.md');
 
             workspace.topLevelTabs.push({
+              id: "dashboard",
               content: "Dashboard",
               title: "View and edit your own custom dashboards",
               isValid: (workspace: Workspace) => true,
