@@ -250,7 +250,7 @@ module Wiki {
       treeModified();
     }
 
-    function treeModified() {
+    function treeModified(reposition = true) {
       // lets recreate the XML model from the update Folder tree
       var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
       var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
@@ -323,6 +323,18 @@ module Wiki {
       return containerElement;
     }
 
+    // context menu (right click) on any component.
+    /* TODO disabling this for now just so I can look at elements easily in the dev tools
+    jsPlumb.bind("contextmenu", function (component, originalEvent) {
+      alert("context menu on component " + component.id);
+      originalEvent.preventDefault();
+      return false;
+    });
+    */
+
+
+
+    /*
     function clearCanvasLayout(jsPlumb, containerElement) {
       try {
         containerElement.empty();
@@ -332,6 +344,76 @@ module Wiki {
       }
       return jsPlumb;
     }
+    */
+
+    // configure canvas layout and styles
+    var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
+    var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
+    //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
+    var labelStyles:any[] = [ "Label" ];
+    var arrowStyles:any[] = [ "Arrow", {
+      location: 1,
+      id: "arrow",
+      length: 8,
+      width: 8,
+      foldback: 0.8
+    } ];
+    var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
+
+    jsPlumb.importDefaults({
+      Endpoint: endpointStyle,
+      HoverPaintStyle: hoverPaintStyle,
+      ConnectionOverlays: [
+        arrowStyles,
+        labelStyles
+      ]
+    });
+
+    $scope.$on('$destroy', () => {
+      jsPlumb.reset();
+    });
+
+    // double click on any connection
+    jsPlumb.bind("dblclick", function (connection, originalEvent) {
+      if (jsPlumb.isSuspendDrawing()) {
+        return;
+      }
+      alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
+    });
+
+    jsPlumb.bind('connection', function(info, evt) {
+      if (jsPlumb.isSuspendDrawing()) {
+        return;
+      }
+      //log.debug("Connection event: ", info);
+      log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+      var link = getLink(info);
+      var source:Folder = $scope.folders[link.source];
+      var target:Folder = $scope.folders[link.target];
+      source.moveChild(target);
+      treeModified();
+    });
+
+    jsPlumb.bind('connectionDetached', function(info, evt) {
+      if (jsPlumb.isSuspendDrawing()) {
+        return;
+      }
+      //log.debug("Connection detach event: ", info);
+      log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+      var link = getLink(info);
+      var source:Folder = $scope.folders[link.source];
+      var target:Folder = $scope.folders[link.target];
+      // TODO orphan target folder without actually deleting it
+    });
+
+    // lets delete connections on click
+    jsPlumb.bind("click", function (c) {
+      if (jsPlumb.isSuspendDrawing()) {
+        return;
+      }
+      jsPlumb.detach(c);
+    });
+
 
     function layoutGraph(nodes, links) {
       var transitions = [];
@@ -341,200 +423,155 @@ module Wiki {
       log.debug("transitions: ", transitions);
 
       $scope.nodeStates = states;
-
       var containerElement = getContainerElement();
 
-      // first clean up the existing layout, stuff may have changed
-      clearCanvasLayout(jsPlumb, containerElement);
-      containerElement.find("div.component").remove();
+      jsPlumb.doWhileSuspended(() => {
 
-      // configure canvas layout and styles
-      var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
-      var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
-      //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
-      var labelStyles:any[] = [ "Label" ];
-      var arrowStyles:any[] = [ "Arrow", {
-        location: 1,
-        id: "arrow",
-        length: 8,
-        width: 8,
-        foldback: 0.8
-      } ];
-      var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
+        //set our container to some arbitrary initial size
+        containerElement.css({
+          'width': '800px',
+          'height': '800px',
+          'min-height': '800px',
+          'min-width': '800px'
+        });
+        var containerHeight = 0;
+        var containerWidth = 0;
 
-      jsPlumb.importDefaults({
-        Endpoint: endpointStyle,
-        HoverPaintStyle: hoverPaintStyle,
-        ConnectionOverlays: [
-          arrowStyles,
-          labelStyles
-        ]
-      });
+        containerElement.find('div.component').each((i, el) => {
+          log.debug("Checking: ", el, " ", i);
+          if (!states.any((node) => {
+            return el.id === getNodeId(node);  
+          })) {
+            log.debug("Removing element: ", el.id);
+            jsPlumb.remove(el);
+          }
+        });
 
-      //set our container to some arbitrary initial size
-      containerElement.css({
-        'width': '800px',
-        'height': '800px',
-        'min-height': '800px',
-        'min-width': '800px'
-      });
-      var containerHeight = 0;
-      var containerWidth = 0;
+        angular.forEach(states, (node) => {
+          var id = getNodeId(node);
 
-      angular.forEach(states, (node) => {
-        var id = getNodeId(node);
+          var div = containerElement.find('#' + id);
 
-        var div = $("<div class='component window' id='" + id
-                + "' title='" + node.tooltip + "'" +
-          //+ " style='" + style + "'" +
-                "><img class='nodeIcon' title='Click and drag to create a connection' src='" + node.imageUrl + "'>" +
-                "<span class='nodeText'>" + node.label + "</span></div>");
+          if (!div[0]) {
 
-        div.appendTo(containerElement);
+            div = $("<div class='component window' id='" + id
+                    + "' title='" + node.tooltip + "'" +
+              //+ " style='" + style + "'" +
+                    "><img class='nodeIcon' title='Click and drag to create a connection' src='" + node.imageUrl + "'>" +
+                    "<span class='nodeText'>" + node.label + "</span></div>");
 
-        var height = div.height();
-        var width = div.width();
-        if (height || width) {
-          node.width = width;
-          node.height = height;
-          div.css({
-            'min-width': width,
-            'min-height': height
+            div.appendTo(containerElement);
+
+            // Make the node a jsplumb source
+            jsPlumb.makeSource(div, {
+              filter: "img.nodeIcon",
+              anchor: "Continuous",
+              connector: connectorStyle,
+              connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
+              maxConnections: -1
+            });
+
+            // and also a jsplumb target
+            jsPlumb.makeTarget(div, {
+              dropOptions: { hoverClass: "dragHover" },
+              anchor: "Continuous"
+            });
+
+            jsPlumb.draggable(div, {
+              containment: '.camel-canvas'
+            });
+
+            // add event handlers to this node
+            div.click(function () {
+              var newFlag = !div.hasClass("selected");
+              containerElement.find('div.component').toggleClass("selected", false);
+              div.toggleClass("selected", newFlag);
+              var id = div.attr("id");
+              updateSelection(newFlag ? id : null);
+              Core.$apply($scope);
+            });
+
+            div.dblclick(function () {
+              var id = div.attr("id");
+              updateSelection(id);
+              //$scope.propertiesDialog.open();
+              Core.$apply($scope);
+            });
+
+          }
+
+          var height = div.height();
+          var width = div.width();
+          if (height || width) {
+            node.width = width;
+            node.height = height;
+            div.css({
+              'min-width': width,
+              'min-height': height
+            });
+          }
+        });
+
+        var edgeSep = 10;
+
+        // Create the layout and get the buildGraph
+        dagre.layout()
+                .nodeSep(100)
+                .edgeSep(edgeSep)
+                .rankSep(75)
+                .nodes(states)
+                .edges(transitions)
+                .debugLevel(1)
+                .run();
+
+        angular.forEach(states, (node) => {
+
+          // position the node in the graph
+          var id = getNodeId(node);
+          var div = $("#" + id);
+          var divHeight = div.height();
+          var divWidth = div.width();
+          var leftOffset = node.dagre.x + divWidth;
+          var bottomOffset = node.dagre.y + divHeight;
+          if (containerHeight < bottomOffset) {
+            containerHeight = bottomOffset + edgeSep * 2;
+          }
+          if (containerWidth < leftOffset) {
+            containerWidth = leftOffset + edgeSep * 2;
+          }
+          div.css({top: node.dagre.y, left: node.dagre.x});
+        });
+
+        // size the container to fit the graph
+        containerElement.css({
+          'width': containerWidth,
+          'height': containerHeight,
+          'min-height': containerHeight,
+          'min-width': containerWidth
+        });
+
+
+        containerElement.dblclick(function () {
+          $scope.propertiesDialog.open();
+        });
+
+        jsPlumb.setSuspendEvents(true);
+        // Detach all the current connections and reconnect everything based on the updated graph
+        jsPlumb.detachEveryConnection({fireEvent: false});
+
+        angular.forEach(links, (link) => {
+          jsPlumb.connect({
+            source: getNodeId(link.source),
+            target: getNodeId(link.target)
           });
-        }
-      });
-
-      var edgeSep = 10;
-
-      // Create the layout and get the buildGraph
-      dagre.layout()
-              .nodeSep(100)
-              .edgeSep(edgeSep)
-              .rankSep(75)
-              .nodes(states)
-              .edges(transitions)
-              .debugLevel(1)
-              .run();
-
-
-      var nodes = containerElement.find("div.component");
-
-      angular.forEach(states, (node) => {
-
-        // position the node in the graph
-        var id = getNodeId(node);
-        var div = $("#" + id);
-        var divHeight = div.height();
-        var divWidth = div.width();
-        var leftOffset = node.dagre.x + divWidth;
-        var bottomOffset = node.dagre.y + divHeight;
-        if (containerHeight < bottomOffset) {
-          containerHeight = bottomOffset + edgeSep * 2;
-        }
-        if (containerWidth < leftOffset) {
-          containerWidth = leftOffset + edgeSep * 2;
-        }
-        div.css({top: node.dagre.y, left: node.dagre.x});
-
-        // Make the node a jsplumb source
-        jsPlumb.makeSource(div, {
-          filter: "img.nodeIcon",
-          anchor: "Continuous",
-          connector: connectorStyle,
-          connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
-          maxConnections: -1
         });
-
-        // add event handlers to this node
-        div.click(function () {
-          var newFlag = !div.hasClass("selected");
-          nodes.toggleClass("selected", false);
-          div.toggleClass("selected", newFlag);
-          var id = div.attr("id");
-          updateSelection(newFlag ? id : null);
-          Core.$apply($scope);
-        });
-
-        div.dblclick(function () {
-          var id = div.attr("id");
-          updateSelection(id);
-          //$scope.propertiesDialog.open();
-          Core.$apply($scope);
-        });
-
-        jsPlumb.makeTarget(div, {
-          dropOptions: { hoverClass: "dragHover" },
-          anchor: "Continuous"
-        });
-
-        jsPlumb.draggable(div, {
-          containment: '.camel-canvas'
-        });
+        jsPlumb.setSuspendEvents(false);
 
       });
 
-      // size the container to fit the graph
-      containerElement.css({
-        'width': containerWidth,
-        'height': containerHeight,
-        'min-height': containerHeight,
-        'min-width': containerWidth
-      });
 
-      containerElement.dblclick(function () {
-        $scope.propertiesDialog.open();
-      });
-
-      angular.forEach(links, (link) => {
-        jsPlumb.connect({
-          source: getNodeId(link.source),
-          target: getNodeId(link.target)
-        });
-      });
-
-      // double click on any connection
-      jsPlumb.bind("dblclick", function (connection, originalEvent) {
-        alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
-      });
-
-      // TODO implement these
-      jsPlumb.bind('connection', function(info, evt) {
-        //log.debug("Connection event: ", info);
-        log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-        log.debug("Nodes:" , nodes);
-        var link = getLink(info);
-        var source:Folder = $scope.folders[link.source];
-        var target:Folder = $scope.folders[link.target];
-        source.moveChild(target);
-        treeModified();
-      });
-
-      jsPlumb.bind('connectionDetached', function(info, evt) {
-        //log.debug("Connection detach event: ", info);
-        log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-        var link = getLink(info);
-        var source:Folder = $scope.folders[link.source];
-        var target:Folder = $scope.folders[link.target];
-        // TODO orphan target folder without actually deleting it
-      });
-
-      // lets delete connections on click
-      jsPlumb.bind("click", function (c) {
-        jsPlumb.detach(c);
-      });
-
-      // context menu (right click) on any component.
-      jsPlumb.bind("contextmenu", function (component, originalEvent) {
-        alert("context menu on component " + component.id);
-        originalEvent.preventDefault();
-        return false;
-      });
 
       return states;
-    }
-
-    function removeEdge(source, target) {
-
     }
 
     function getLink(info) {
