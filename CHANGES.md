@@ -1,9 +1,5 @@
 ### Change Log
 
-#### 1.3 (work in progress)
-
-* Added welcome page to aid first time users, and being able to easily dismiss the welcome page on startup.
-
 #### 1.2.1
 
 * New [Maven plugin](http://hawt.io/maven/) for running hawtio in your maven project; running Camel, Spring, Blueprint or tests.
@@ -66,3 +62,4 @@
 
 #### In Progress (1.3)
 
+* Added welcome page to aid first time users, and being able to easily dismiss the welcome page on startup.
