@@ -41,7 +41,8 @@ module UI {
 
         $scope.$watch('remaining', (newValue, oldValue) => {
           if (newValue !== oldValue) {
-            if (newValue === 0) {
+            var renderIfPageLoadFails = false;
+            if (newValue === 0 || renderIfPageLoadFails) {
               $scope.render = true;
             }
           }
@@ -70,19 +71,31 @@ module UI {
       link: ($scope, $element, $attrs) => {
         var offsetTop = 0;
         var logbar = $('.logbar');
+        var contentDiv = $("#toc-content");
         if (logbar.length) {
-          var offsetTop = logbar.height() + logbar.offset().top;
+          offsetTop = logbar.height() + logbar.offset().top;
+        } else if (contentDiv.length) {
+          var offsetContentDiv = contentDiv.offset();
+          if (offsetContentDiv) {
+            offsetTop = offsetContentDiv.top;
+          } else {
+            log.info("No offsettop!")
+          }
         }
+        if (!offsetTop) {
+          // set to a decent guestimate
+          offsetTop = 90;
+        }
+        log.info("using offsetTop: " + offsetTop);
         var previousHtml = null;
         var html = $element;
-        var contentDiv = $("#toc-content");
         if (!contentDiv || !contentDiv.length) {
           contentDiv = $element;
         }
         var ownerScope = $scope.$parent || $scope;
         var scrollDuration = 1000;
 
-        var linkFilter = $attrs["linkFilter"] || "[hawtio-toc]";
+        var linkFilter = $attrs["linkFilter"];
         var htmlName = $attrs["html"];
         if (htmlName) {
           ownerScope.$watch(htmlName, () => {
@@ -121,13 +134,21 @@ module UI {
           });
         }
 
+        function findLinks() {
+          var answer = html.find('a');
+          if (linkFilter) {
+            answer = answer.filter(linkFilter);
+          }
+          return answer;
+        }
+
         function loadChapters() {
           if (!html.get(0).id) {
             html.get(0).id = 'toc';
           }
           $scope.tocId = '#' + html.get(0).id;
-          $scope.remaining = html.find('a').filter(linkFilter).length;
-          html.find('a').filter(linkFilter).each((index, a) => {
+          $scope.remaining = findLinks().length;
+          findLinks().each((index, a) => {
             log.debug("Found: ", a);
             var filename = $scope.getFilename(a.href, a.getAttribute('file-extension'));
             var item = {
@@ -193,7 +214,7 @@ module UI {
                 });
 
                 // handle clicking links in the TOC
-                html.find('a').filter(linkFilter).each((index, a) => {
+                findLinks().each((index, a) => {
                   var href = a.href;
                   var filename = $scope.getFilename(href, a.getAttribute('file-extension'));
                   $(a).click((e) => {
