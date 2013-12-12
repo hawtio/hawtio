@@ -11,19 +11,15 @@ Primary navigation in [{{branding.appName}}](http://hawt.io "{{branding.appName}
 
 Clicking on a navigation link will take you to that plugin's main page.
 
-<i class='yellow text-shadowed icon-warning-sign'></i> **Note:** The available links in the navigation bar depend on what plugins are available and what JMX MBeans are available in the JVM, and so may differ from what is shown here.
-
 ##### Getting Help #####
-Click the Help icon (<i class='icon-question-sign'></i>) in the main navigation bar to access [{{branding.appName}}](http://hawt.io "{{branding.appName}}")'s help system. Browse the available help topics for plugin-specific documentation using the help navigation bar on the left.
-
-![Help Topic Navigation Bar](app/core/doc/img/help-topic-nav.png "Help Topic Navigation Bar")
-
-Available sub-topics for each plugin can be selected via the secondary navigation bar above the help display area.
-
-![Help Sub-Topic Navigation Bar](app/core/doc/img/help-subtopic-nav.png "Help Sub-Topic Navigation Bar")
+Click the Help icon (<i class='icon-question-sign'></i>) in the main navigation bar to access [{{branding.appName}}](http://hawt.io "{{branding.appName}}")'s help system.
+Browse the available help topics for plugin-specific documentation using the help navigation bar on the left.
 
 ##### Preferences #####
-Click the Preferences icon (<i class='icon-cogs'></i>) in the main navigation bar to access the [Preferences](#/preferences) page.  Available configuration options include, but not limited to:
+The [Preferences](#/preferences) is accessible by clicking the user icon (<i class='icon-user'></i>) in the main navigation bar,
+and then clicking the Preferences icon (<i class='icon-cogs'></i>).
+
+In the Preferences you can among others configure whether to show this welcome page on startup or not.
 
 
 
