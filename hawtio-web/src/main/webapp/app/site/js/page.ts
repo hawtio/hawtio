@@ -3,7 +3,7 @@
  */
 module Site {
 
-  export function BookController($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
+  export function PageController($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
 
     var log:Logging.Logger = Logger.get("Site");
     var pageId = $routeParams["page"];
@@ -20,8 +20,15 @@ module Site {
       pageId = "app/site/" + pageId;
     }
     $scope.pageId = pageId;
+    $scope.pageFolder = pageId.substring(0, pageId.lastIndexOf('/') + 1);
 
     log.info("Loading page '" + $scope.pageId + "'");
+
+    $scope.getContents = (filename, cb) => {
+      var fullPath = $scope.pageFolder + filename;
+      log.info("Loading the contents of: " + fullPath);
+      $http.get(fullPath).success(cb).error(() => cb(" "));
+    };
 
     $http.get($scope.pageId).success(onResults);
 

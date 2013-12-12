@@ -10,7 +10,8 @@ module Site {
       $routeProvider.
         when('/site', {templateUrl: 'app/site/html/index.html'}).
         when('/site/', {templateUrl: 'app/site/html/index.html'}).
-        when('/site/*page', {templateUrl: 'app/site/html/book.html'});
+        when('/site/book/*page', {templateUrl: 'app/site/html/book.html', reloadOnSearch: false}).
+        when('/site/*page', {templateUrl: 'app/site/html/page.html'});
     }).
     run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 

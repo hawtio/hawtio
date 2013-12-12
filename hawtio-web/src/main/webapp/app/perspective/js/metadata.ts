@@ -93,7 +93,7 @@ module Perspective {
       topLevelTabs: {
         includes: [
           {
-            content: "Getting Started",
+            content: "Get Started",
             title: "How to get started using hawtio",
             href: () => "#/site/doc/GetStarted.md",
             isValid: () => Site.isSiteNavBarValid()
@@ -107,7 +107,7 @@ module Perspective {
           {
             content: "User Guide",
             title: "All the docs on using hawtio",
-            href: () => "#/site/doc/index.md",
+            href: () => "#/site/book/doc/index.md",
             isValid: () => Site.isSiteNavBarValid()
           },
           {
