@@ -188,9 +188,10 @@ module Core {
       }
     };
 
-    $scope.plugins = [];
+    // add the default in the top
+    $scope.plugins = [{id: "_first", displayName: "First Plugin", selected: false}];
 
-    // setup the plugin tabs
+    // grab the top level tabs which is the plugins we can select as our default plugin
     var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
     // exclude invalid tabs at first
     topLevelTabs = topLevelTabs.filter(tab => {
@@ -198,23 +199,17 @@ module Core {
       return href && Perspective.isValidFunction(workspace, tab.isValid);
     });
 
-    // now put those into the tabs, having the default first plugin in the top
-    $scope.plugins.push({id: "_first", displayName: "First Plugin", selected: false});
-    topLevelTabs.forEach(tab => {
-      $scope.plugins.push({id: tab.id, displayName: tab.content, selected: false});
-    });
-
-    // just try to select logs
+    // add each tab as a plugin we can select
     var defaultPlugin = localStorage['defaultPlugin'];
     var found = false;
-    if (defaultPlugin) {
-      $scope.plugins.forEach(plugin => {
-        if (plugin.id === defaultPlugin) {
-          plugin.selected = true;
-          found = true;
-        }
-      });
-    }
+    topLevelTabs.forEach(tab => {
+      var selected = tab.id === defaultPlugin;
+      if (selected) {
+        found = true;
+      }
+      $scope.plugins.push({id: tab.id, displayName: tab.content, selected: selected});
+    });
+    // now find the default plugin and mark it as selected if we did not find the chosen plugin
     if (!found) {
       $scope.plugins[0].selected = true;
     }
