@@ -78,15 +78,12 @@ module UI {
           var offsetContentDiv = contentDiv.offset();
           if (offsetContentDiv) {
             offsetTop = offsetContentDiv.top;
-          } else {
-            log.info("No offsettop!")
           }
         }
         if (!offsetTop) {
           // set to a decent guestimate
           offsetTop = 90;
         }
-        log.info("using offsetTop: " + offsetTop);
         var previousHtml = null;
         var html = $element;
         if (!contentDiv || !contentDiv.length) {

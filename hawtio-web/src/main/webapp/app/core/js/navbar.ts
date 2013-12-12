@@ -78,7 +78,7 @@ module Core {
       }else {
         href = nav.href();
       }
-      var removeParams = ['tab', 'nid'];
+      var removeParams = ['tab', 'nid', 'chapter'];
       if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
         removeParams.push("p");
       }
