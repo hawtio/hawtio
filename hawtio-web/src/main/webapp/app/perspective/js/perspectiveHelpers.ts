@@ -235,7 +235,8 @@ module Perspective {
   function isMatchDefaultPlugin(id, localStorage) {
     var value = localStorage["defaultPlugin"];
     if (angular.isString(id) && angular.isString(value)) {
-      return id === value;
+      // if the default is the first then its a match
+      return value === "_first" || id === value;
     }
     // if no default plugin then match as a favorite
     return true;
@@ -253,7 +254,7 @@ module Perspective {
    * @param {Function} validFn
    * @return {Boolean}
    */
-  function isValidFunction(workspace, validFn) {
+  export function isValidFunction(workspace, validFn) {
     return !validFn || validFn(workspace);
   }
 

@@ -3,7 +3,7 @@
  */
 module Core {
 
-  export function PreferencesController($scope, localStorage, userDetails, jolokiaUrl, branding) {
+  export function PreferencesController($scope, $location, jolokia, workspace, localStorage, userDetails, jolokiaUrl, branding) {
 
     $scope.branding = branding;
 
@@ -186,6 +186,45 @@ module Core {
       } else {
         logout(jolokiaUrl, userDetails, localStorage, $scope, doReset);
       }
+    };
+
+    $scope.plugins = [];
+
+    // setup the plugin tabs
+    var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+    // exclude invalid tabs at first
+    topLevelTabs = topLevelTabs.filter(tab => {
+      var href = tab.href();
+      return href && Perspective.isValidFunction(workspace, tab.isValid);
+    });
+
+    // now put those into the tabs, having the default first plugin in the top
+    $scope.plugins.push({id: "_first", displayName: "First Plugin", selected: false});
+    topLevelTabs.forEach(tab => {
+      $scope.plugins.push({id: tab.id, displayName: tab.content, selected: false});
+    });
+
+    // just try to select logs
+    var defaultPlugin = localStorage['defaultPlugin'];
+    var found = false;
+    if (defaultPlugin) {
+      $scope.plugins.forEach(plugin => {
+        if (plugin.id === defaultPlugin) {
+          plugin.selected = true;
+          found = true;
+        }
+      });
     }
+    if (!found) {
+      $scope.plugins[0].selected = true;
+    }
+
+    $scope.$watch('defaultPlugin', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+      localStorage['defaultPlugin'] = newValue;
+    });
+
   }
 }
