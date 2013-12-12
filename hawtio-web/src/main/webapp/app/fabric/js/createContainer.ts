@@ -234,6 +234,13 @@ module Fabric {
       $location.search('profileIds', $scope.selectedProfileIds);
     });
 
+    $scope.massage = (str) => {
+      if (str === 'name') {
+        return 'containerName';
+      }
+      return str;
+    }
+
 
     $scope.rootContainers = () => {
       return Fabric.getRootContainers(jolokia);
