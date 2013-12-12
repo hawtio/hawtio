@@ -1,4 +1,4 @@
-## Hawtio Documentation
+## Documentation
 
 ### Using Hawtio
 
