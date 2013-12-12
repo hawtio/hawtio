@@ -198,16 +198,26 @@ module Perspective {
     var answer = Perspective.defaultPageLocation;
     if (!answer && $location && workspace) {
       var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
-      angular.forEach(topLevelTabs, (tab) => {
+
+      // exclude invalid tabs at first
+      topLevelTabs = topLevelTabs.filter(tab => {
         var href = tab.href();
-        if (href && !answer) {
-          // exclude invalid tabs
-          if (isValidFunction(workspace, tab.isValid)) {
-            answer =  Core.trimLeading(href, "#");
-          }
-        }
+        return href && isValidFunction(workspace, tab.isValid);
       });
+
+      // pick the default plugin if any configured, as otherwise we pick the first
+      topLevelTabs = topLevelTabs.filter(tab => {
+        return isMatchDefaultPlugin(tab.id, localStorage);
+      });
+
+      // then pick the first if multiple matched
+      var tab = topLevelTabs.length > 0 ? topLevelTabs[0] : null;
+      if (tab) {
+        // clip the href to get the path to the plugin
+        answer = Core.trimLeading(tab.href(), "#");
+      }
     }
+
     return answer || '/help/index';
   }
 
@@ -219,6 +229,15 @@ module Perspective {
     if (angular.isString(value)) {
       return "true" === value;
     }
+    return true;
+  }
+
+  function isMatchDefaultPlugin(id, localStorage) {
+    var value = localStorage["defaultPlugin"];
+    if (angular.isString(id) && angular.isString(value)) {
+      return id === value;
+    }
+    // if no default plugin then match as a favorite
     return true;
   }
 

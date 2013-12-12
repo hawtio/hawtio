@@ -49,6 +49,7 @@ module Infinispan {
             ];
 
             workspace.topLevelTabs.push({
+              id: "infinispan",
               content: "Infinispan",
               title: "View your distributed data",
               isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),

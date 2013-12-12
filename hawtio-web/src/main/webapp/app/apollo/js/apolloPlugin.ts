@@ -16,6 +16,7 @@ module Apollo {
 
 
       workspace.topLevelTabs.push( {
+        id: "apollo",
         content: "Apollo",
         title: "Manage your Apollo Broker",
         isValid: (workspace) => workspace.treeContainsDomainAndProperties("org.apache.apollo"),

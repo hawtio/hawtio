@@ -96,6 +96,7 @@ module Wiki {
             });
 
             workspace.topLevelTabs.push({
+              id: "wiki",
               content: "Wiki",
               title: "View and edit wiki pages",
               isValid: (workspace:Workspace) => Wiki.isWikiEnabled(workspace, jolokia, localStorage),

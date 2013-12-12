@@ -28,6 +28,7 @@ module Insight {
 
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
+          id: "insight",
           content: "Metrics",
           title: "View Insight metrics",
           href: () => "#/insight/all",

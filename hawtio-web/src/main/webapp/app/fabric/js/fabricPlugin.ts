@@ -202,6 +202,7 @@ module Fabric {
               isActive: (workspace) => workspace.isLinkActive("createFabric")
             });
             workspace.topLevelTabs.push( {
+              id: "fabric.runtime",
               content: "Runtime",
               title: "Manage your containers in this fabric",
               isValid: (workspace) => Fabric.isFMCContainer(workspace),
@@ -209,6 +210,7 @@ module Fabric {
               isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
             });
             workspace.topLevelTabs.push( {
+              id: "fabric.configuration",
               content: "Configuration",
               title: "Manage the configuration of your profiles in Fabric",
               isValid: (workspace) => Fabric.isFMCContainer(workspace),

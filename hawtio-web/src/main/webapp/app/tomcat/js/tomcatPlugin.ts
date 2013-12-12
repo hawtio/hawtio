@@ -20,6 +20,7 @@ module Tomcat {
             });
 
             workspace.topLevelTabs.push({
+              id: "tomcat",
               content: "Tomcat",
               title: "Manage your Tomcat container",
               isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina"),

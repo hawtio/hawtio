@@ -14,6 +14,7 @@ module Camin {
         });
 
         workspace.topLevelTabs.push( {
+          id: "camin",
           content: "Camel",
           title: "Insight into Camel",
           isValid: (workspace) => Fabric.hasFabric(workspace),

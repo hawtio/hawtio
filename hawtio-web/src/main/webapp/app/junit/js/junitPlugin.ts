@@ -26,6 +26,7 @@ module JUnit {
             });
 
             workspace.topLevelTabs.push({
+              id: "junit",
               content: "JUnit",
               title: "View and run test cases in this process",
               isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace),

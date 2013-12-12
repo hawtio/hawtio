@@ -24,6 +24,7 @@ module Maven {
             viewRegistry['maven'] = "app/maven/html/layoutMaven.html";
 
             workspace.topLevelTabs.push({
+              id: "maven",
               content: "Maven",
               title: "Search maven repositories for artifacts",
               isValid: (workspace: Workspace) => Maven.getMavenIndexerMBean(workspace),

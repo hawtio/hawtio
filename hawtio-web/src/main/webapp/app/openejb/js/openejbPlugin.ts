@@ -15,6 +15,7 @@ module OpenEJB {
             });
 
             workspace.topLevelTabs.push( {
+              id: "openejb",
               content: "OpenEJB",
               title: "Manage your OpenEJB resources",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("openejb"),

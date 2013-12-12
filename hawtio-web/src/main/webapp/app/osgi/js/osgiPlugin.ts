@@ -25,6 +25,7 @@ module Osgi {
             });
 
         workspace.topLevelTabs.push( {
+              id: "osgi",
               content: "OSGi",
               title: "Visualise and manage the bundles and services in this OSGi container",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("osgi.core"),
