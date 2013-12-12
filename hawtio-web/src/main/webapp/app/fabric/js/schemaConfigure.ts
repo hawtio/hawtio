@@ -54,7 +54,7 @@ module Fabric {
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
+          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
           'Advanced': ['*']
         };
         break;
@@ -66,7 +66,7 @@ module Fabric {
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
 
         schema['tabs'] = {
-          'Default': ['name', 'host', 'port', 'username', 'password', 'privateKeyFile', 'passPhrase'],
+          'Common': ['name', 'host', 'port', 'username', 'password', 'privateKeyFile', 'passPhrase'],
           'Advanced': ['*']
         };
         break;
@@ -74,7 +74,7 @@ module Fabric {
       case 'jclouds':
         delete schema.properties['parent'];
         schema['tabs'] = {
-          'Default': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
+          'Common': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
           'Advanced': ['*']
         };
         break;
@@ -145,7 +145,7 @@ module Fabric {
 
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
-          'Default': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
+          'Common': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
           'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
         };
         break;
@@ -169,7 +169,7 @@ module Fabric {
         delete schema['properties']['users'];
 
         schema['tabs'] = {
-          'Basic': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
+          'Common': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
           'Advanced': ['*']
         };
 
