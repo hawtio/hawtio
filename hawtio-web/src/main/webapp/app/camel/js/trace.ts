@@ -134,16 +134,25 @@ module Camel {
                 var cid = item["cid"];
                 var rid = item["rid"];
                 var type = item["type"];
+                var elementId = item["elementId"];
 
                 // if its from then match on rid
                 if ("from" === type) {
                   return toNode === rid;
                 }
 
+                // okay favor using element id as the cids can become
+                // undefined or mangled with mbean object names, causing this to not work
+                // where as elementId when present works fine
+                if (elementId) {
+                  // we should match elementId if defined
+                  return toNode === elementId;
+                }
+                // then fallback to cid
                 if (cid) {
-                  // we should match cid if defined
                   return toNode === cid;
                 } else {
+                  // and last rid
                   return toNode === rid;
                 }
               }
