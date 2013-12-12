@@ -12,6 +12,7 @@ module Camel {
     $scope.gridOptions = Camel.createBrowseGridOptions();
     $scope.gridOptions.selectWithCheckboxOnly = false;
     $scope.gridOptions.showSelectionCheckbox = false;
+    $scope.gridOptions.multiSelect = false;
     $scope.gridOptions.afterSelectionChange = onSelectionChanged;
     $scope.gridOptions.columnDefs.push({
       field: 'toNode',
@@ -132,6 +133,13 @@ module Camel {
               if (item) {
                 var cid = item["cid"];
                 var rid = item["rid"];
+                var type = item["type"];
+
+                // if its from then match on rid
+                if ("from" === type) {
+                  return toNode === rid;
+                }
+
                 if (cid) {
                   // we should match cid if defined
                   return toNode === cid;
