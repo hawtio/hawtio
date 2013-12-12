@@ -3,6 +3,8 @@
  */
 module Perspective {
 
+  export var containerPerspectiveEnabled = true;
+
   /**
    * Configuration for the perspective plugin that defines what tabs are in which perspectives
    * @property metadata
@@ -63,6 +65,7 @@ module Perspective {
     container: {
       label: "Container",
       lastPage: "#/logs",
+      isValid: (workspace) => workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length,
       topLevelTabs: {
         excludes: [
           {
