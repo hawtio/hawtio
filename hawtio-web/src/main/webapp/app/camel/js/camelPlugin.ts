@@ -8,7 +8,6 @@ module Camel {
   import jmxModule = Jmx;
 
   var pluginName = 'camel';
-  export var jmxDomain = 'org.apache.camel';
 
   var routeToolBar = "app/camel/html/attributeToolBarRoutes.html";
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
@@ -21,6 +20,7 @@ module Camel {
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
+                    when('/camel/fabricDiagram', {templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false}).
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
@@ -37,9 +37,11 @@ module Camel {
           }).
 
           filter('camelIconClass', () => iconClass).
-          run((workspace:Workspace, jolokia, viewRegistry, helpRegistry) => {
+          run((workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry) => {
 
+            viewRegistry['camel/fabricDiagram'] = layoutFull;
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
+
             helpRegistry.addUserDoc('camel', 'app/camel/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties(jmxDomain);
             });
@@ -182,6 +184,12 @@ module Camel {
               title: "View a diagram of the Camel routes",
               isValid: (workspace: Workspace) => workspace.isRoute(),
               href: () => "#/camel/routes"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-picture"></i> Diagram',
+              title: "View the entire JVMs camel flows",
+              isValid: (workspace: Workspace) =>  workspace.isTopTabActive("camel") && !workspace.isRoute(),
+              href: () => "#/camel/fabricDiagram"
             });
             workspace.subLevelTabs.push({
               content: '<i class=" icon-file-alt"></i> Source',

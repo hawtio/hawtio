@@ -184,15 +184,8 @@ module Fabric {
 
         angular.forEach(value, (v, k) => {
           if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0: ignoreKeys.indexOf(k) < 0) {
-            var formattedValue = "";
-            if (v === true) {
-              formattedValue = '<i class="icon-check"></i>';
-            } else if (v === false) {
-              formattedValue = '<i class="icon-check-empty"></i>';
-            } else {
-              formattedValue = humanizeValue(v);
-            }
-            properties.push({key: k, value: formattedValue});
+            var formattedValue = Core.humanizeValueHtml(v);
+            properties.push({key: humanizeValue(k), value: formattedValue});
           }
         });
         properties = properties.sortBy("key");

@@ -31,6 +31,7 @@ module Fabric {
             when('/fabric/mq/brokerDiagram', { templateUrl: templatePath + 'brokerDiagram.html', reloadOnSearch: false }).
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
             when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
+            when('/fabric/camel/diagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).
             when('/fabric/api', { templateUrl: templatePath + 'apis.html' }).
 
             // expose the API pages within the fabric namespace

@@ -1467,4 +1467,19 @@ module Core {
     }
     return answer;
   }
+
+  /**
+   * Returns the humanized markup of the given value
+   */
+  export function humanizeValueHtml(value:any):string {
+    var formattedValue = "";
+    if (value === true) {
+      formattedValue = '<i class="icon-check"></i>';
+    } else if (value === false) {
+      formattedValue = '<i class="icon-check-empty"></i>';
+    } else {
+      formattedValue = humanizeValue(value);
+    }
+    return formattedValue;
+  }
 }
