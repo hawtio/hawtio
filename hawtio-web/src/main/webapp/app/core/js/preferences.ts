@@ -13,6 +13,8 @@ module Core {
 
     $scope.localStorage = localStorage;
 
+    Core.bindModelToSearchParam($scope, $location, "pref", "pref", "behaviour");
+
     $scope.logBuffer = 0;
     if ('logBuffer' in localStorage) {
       $scope.logBuffer = parseInt(localStorage['logBuffer']);
