@@ -117,6 +117,25 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-watcher-spring-context</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-watcher-blueprint-web</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>io.hawt.example.services</groupId>
@@ -787,30 +806,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>watcher</id>
-      <dependencies>
-        <dependency>
-          <groupId>io.hawt</groupId>
-          <artifactId>hawtio-watcher-spring-context</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-         </dependency>
-         <dependency>
-         <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-blueprint-web</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-         <dependency>
-           <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-       </dependencies>
     </profile>
 
     <profile>
