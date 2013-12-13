@@ -19,7 +19,7 @@ module Camel {
       console.log("reloading the camel tree!!!");
 
       var children = [];
-      var domainName = "org.apache.camel";
+      var domainName = Camel.jmxDomain;
 
       // lets pull out each context
       var tree = workspace.tree;

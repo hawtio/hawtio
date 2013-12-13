@@ -5,6 +5,8 @@ module Camel {
 
   export var log:Logging.Logger = Logger.get("Camel");
 
+  export var jmxDomain = 'org.apache.camel';
+
   export var defaultMaximumLabelWidth = 34;
   export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
 
