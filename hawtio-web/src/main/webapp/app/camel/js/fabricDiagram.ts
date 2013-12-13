@@ -261,8 +261,8 @@ module Camel {
     });
 
     if (isFmc) {
-      // TODO query all the containers with camel; then for each container query the mbeans...
-      //Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
+      var fields = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "jmxDomains"];
+      Fabric.getContainersFields(jolokia, fields, onFabricContainerData);
     } else {
       // lets just use the current stuff from the workspace
       $scope.$watch('workspace.tree', function () {
@@ -275,34 +275,27 @@ module Camel {
     }
 
     function reloadLocalJmxTree() {
-      console.log("reloading the camel nodes locally!!!");
-
-      var domainName = Camel.jmxDomain;
-
       var localContainer = {
         jolokia: jolokia
       };
       $scope.activeContainers = {
         "local": localContainer
       };
-
       redrawGraph();
     }
 
-
-    function onBrokerData(response) {
+    function onFabricContainerData(response) {
       if (response) {
-        var responseJson = angular.toJson(response.value);
+        var responseJson = angular.toJson(response);
         if ($scope.responseJson === responseJson) {
           return;
         }
-
         $scope.responseJson = responseJson;
 
         $scope.brokers = response.value;
 
         var containersToDelete = $scope.activeContainers || {};
-        $scope.activeContainers = {};
+        $scope.activeContainers = (response || {}).filter(c => c.jmxDomains.any(Camel.jmxDomain));
 
         // query containers which have camel...
         redrawGraph();
@@ -315,6 +308,13 @@ module Camel {
       // TODO delete any nodes from dead containers in containersToDelete
       angular.forEach($scope.activeContainers, (container, id) => {
         var containerJolokia = container.jolokia;
+        if (!containerJolokia) {
+          var jolokiaUrl = container["jolokiaUrl"];
+          if (jolokiaUrl) {
+            var url = Core.useProxyIfExternal(jolokiaUrl);
+            containerJolokia = Fabric.createJolokia(url);
+          }
+        }
         if (containerJolokia) {
           onContainerJolokia(containerJolokia, container);
         } else {

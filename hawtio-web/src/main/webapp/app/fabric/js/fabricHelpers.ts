@@ -998,6 +998,17 @@ module Fabric {
     return answer.filter({root: true}).map(v => v["id"]);
   }
 
+  /**
+   * Queries the given fields on the contianers in the fabric invoking the given function or returning the results if the fn is null
+   * @param jolokia
+   * @param fields
+   * @param fn
+   * @return the result if fn is null
+   */
+  export function getContainersFields(jolokia, fields, fn = null) {
+    return jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, onSuccess(fn));
+  }
+
   export function getOpenShiftDomains(workspace ,jolokia, serverUrl, login, password, fn = null, onError = null) {
     if (hasOpenShiftFabric(workspace) && serverUrl && login && password) {
       var options = onSuccess(fn, {error: onError});
