@@ -1,6 +1,6 @@
 module Camel {
 
-  export function CamelController($scope, $element, workspace:Workspace, jolokia, localStorage) {
+  export function RouteController($scope, $element, workspace:Workspace, jolokia, localStorage) {
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.routes = [];
