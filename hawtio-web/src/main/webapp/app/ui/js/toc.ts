@@ -215,6 +215,7 @@ module UI {
                   var href = a.href;
                   var filename = $scope.getFilename(href, a.getAttribute('file-extension'));
                   $(a).click((e) => {
+                    log.debug("Clicked: ", e);
                     e.preventDefault();
                     var chapterId = $scope.getTarget(filename);
                     $location.search("chapter", chapterId);
@@ -254,7 +255,7 @@ module UI {
               if (offset) {
                 top = offset.top - offsetTop;
               }
-              $('body').animate({
+              $('body,html').animate({
                 scrollTop: top
               }, scrollDuration);
             }
