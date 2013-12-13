@@ -28,6 +28,14 @@ module Camel {
                     when('/camel/profileRoute', {templateUrl: 'app/camel/html/profileRoute.html'}).
                     when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
           }).
+
+          factory('tracerStatus',function () {
+            return {
+              jhandle: null,
+              messages: []
+            };
+          }).
+
           filter('camelIconClass', () => iconClass).
           run((workspace:Workspace, jolokia, viewRegistry, helpRegistry) => {
 
