@@ -27,7 +27,7 @@
     <dependency>
       <groupId>org.fusesource.fabric</groupId>
       <artifactId>tooling-fabric-all</artifactId>
-      <version>${fabric-test-version}</version>
+      <version>${fabric-version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.karaf.shell</groupId>
@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.fusesource.fabric</groupId>
       <artifactId>fabric-zookeeper</artifactId>
-      <version>${fabric-test-version}</version>
+      <version>${fabric-version}</version>
     </dependency>
     <dependency>
       <groupId>org.linkedin</groupId>
