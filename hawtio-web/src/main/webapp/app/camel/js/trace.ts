@@ -1,5 +1,8 @@
 module Camel {
-  export function TraceRouteController($scope, workspace:Workspace, jolokia, localStorage) {
+  export function TraceRouteController($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) {
+
+    var log:Logging.Logger = Logger.get("CamelTracer");
+
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
     $scope.tracing = false;
     $scope.messages = [];
@@ -21,26 +24,31 @@ module Camel {
 
 
     $scope.startTracing = () => {
+      log.info("Start tracing");
       setTracing(true);
     };
 
     $scope.stopTracing = () => {
+      log.info("Stop tracing");
       setTracing(false);
     };
 
     $scope.clear = () => {
+      log.debug("Clear messages")
+      tracerStatus.messages = [];
       $scope.messages = [];
-      // foo
       Core.$apply($scope);
     };
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
-      $scope.messages = [];
+      if (workspace.moveIfViewInvalid()) {
+        return;
+      }
+      $scope.messages = tracerStatus.messages;
       reloadTracingFlag();
     });
 
-        // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
+    // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
     $scope.openMessageDialog = (message) => {
       var idx = Core.pathGet(message, ["rowIndex"]);
       $scope.selectRowIndex(idx);
@@ -69,7 +77,11 @@ module Camel {
     function reloadTracingFlag() {
       $scope.tracing = false;
       // clear any previous polls
-      closeHandle($scope, jolokia);
+      if (tracerStatus.jhandle != null) {
+        log.debug("Unregistering jolokia handle")
+        jolokia.unregister(tracerStatus.jhandle)
+        tracerStatus.jhandle = null;
+      }
 
       var mbean = getSelectionCamelTraceMBean(workspace);
       if (mbean) {
@@ -78,26 +90,35 @@ module Camel {
         if ($scope.tracing) {
           var traceMBean = mbean;
           if (traceMBean) {
-            var query = {type: 'exec', mbean: traceMBean, operation: 'dumpAllTracedMessagesAsXml'};
-            scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteMessages, query));
+            // register callback for doing live update of tracing
+            if (tracerStatus.jhandle === null) {
+              log.debug("Registering jolokia handle")
+              tracerStatus.jhandle = jolokia.register(populateRouteMessages, {
+                type: 'exec', mbean: traceMBean,
+                operation: 'dumpAllTracedMessagesAsXml()',
+                ignoreErrors: true,
+                arguments: []
+              });
+            }
           }
           $scope.graphView = "app/camel/html/routes.html";
           $scope.tableView = "app/camel/html/browseMessages.html";
         } else {
+          tracerStatus.messages = [];
           $scope.messages = [];
           $scope.graphView = null;
           $scope.tableView = null;
         }
-        console.log("Tracing is now " + $scope.tracing);
       }
     }
 
     function populateRouteMessages(response) {
+      log.debug("Populating response " + response);
+
       // filter messages due CAMEL-7045 but in camel-core
       // see https://github.com/hawtio/hawtio/issues/292
       var selectedRouteId = getSelectedRouteId(workspace);
 
-      var first = $scope.messages.length === 0;
       var xml = response.value;
       if (angular.isString(xml)) {
         // lets parse the XML DOM here...
@@ -116,15 +137,17 @@ module Camel {
             if (toNode) {
               messageData["toNode"] = toNode;
             }
+            log.debug("Adding new message to trace table with id " + messageData["id"]);
             $scope.messages.push(messageData);
-            Core.$apply($scope);
           }
         });
+        // keep state of the traced messages on tracerStatus
+        tracerStatus.messages = $scope.messages;
+        Core.$apply($scope);
       }
     }
 
     function onSelectionChanged() {
-      //console.log("===== selection changed!!! and its now " + $scope.gridOptions.selectedItems.length);
       angular.forEach($scope.gridOptions.selectedItems, (selected) => {
         if (selected) {
           var toNode = selected["toNode"];
@@ -155,6 +178,9 @@ module Camel {
       }
     }
 
+    log.info("Re-activating tracer with " + tracerStatus.messages.length + " existing messages");
+    $scope.messages = tracerStatus.messages;
+    $scope.tracing = tracerStatus.jhandle != null;
   }
 
 }
