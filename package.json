@@ -1,49 +1,34 @@
 {
-    "name": "hawtio",
-    "version": "1.0.0",
-    "description": "A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible",
-    "keywords": [
-      "application", "java", "management", "tool", "angularjs", "typescript"
-    ],
-    "private": true,
-    "author": "hawt.io team",
-    "contributors": [
-      {
-        "name": "hawt.io team",
-        "web": "https://github.com/hawtio/hawtio/graphs/contributors"
-      }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/hawtio/hawtio"
-    },
-    "bugs": {
-        "url": "https://github.com/hawtio/hawtio/issues"
-    },
-    "licenses": [
-        {
-            "type": "Apache 2.0 License",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-    ],
-    "preferGlobal": false,
-    "scripts": {
-        "test": "grunt test"
-    },
-    "dependencies" : {
-        "grunt-contrib-copy": "~0.3.2",
-        "grunt-reload": "~0.2.0",
-        "grunt-type": "~0.8.1"
-    },
-    "analyze": true,
-    "devDependencies": {
-        "grunt": "~0.3.17",
-        "typescript": "~0.9.0",
-        "phantomjs": "1.9.0-1"
-    },
-    "bundledDependencies": [
-    ],
-    "engines": {
-        "node": ">=0.8"
+  "name": "hawtio",
+  "description": "The best project ever.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/hawtio/hawtio",
+  "author": {
+    "name": "Jonathan Anstey",
+    "email": "janstey@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hawtio/hawtio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hawtio/hawtio/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/hawtio/hawtio/blob/master/LICENSE-MIT"
     }
+  ],
+  "main": "lib/hawtio",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.17"
+  },
+  "keywords": []
 }
