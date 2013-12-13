@@ -204,7 +204,7 @@ module UI {
                 div.find('a.toc-back').each((index, a) => {
                   $(a).click((e) => {
                     e.preventDefault();
-                    $('body').animate({
+                    $('body,html').animate({
                       scrollTop: pageTop
                     }, 2000);
                   })
