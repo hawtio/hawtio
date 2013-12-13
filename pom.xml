@@ -77,6 +77,8 @@
     <dozer-version>5.4.0</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
+    <!-- fabric test version points to a previous release version to break cycle with fabric -->
+    <fabric-test-version>7.3.0.redhat-196</fabric-test-version>
     <fabric-version>7.3.0.redhat-${perfectus-number}</fabric-version>
     <!--
     <fabric-version>99-master-SNAPSHOT</fabric-version>
@@ -276,9 +278,6 @@
     <module>hawtio-git</module>
     <module>hawtio-ide</module>
     <module>hawtio-junit</module>
-    <module>hawtio-watcher-dynamic-jaxb</module>
-    <module>hawtio-watcher-blueprint-web</module>
-    <module>hawtio-watcher-spring-context</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-maven-plugin</module>
     <module>hawtio-json-schema-mbean</module>
@@ -286,7 +285,6 @@
     <module>hawtio-local-jvm-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
-
     <module>hawtio-web</module>
     <module>hawtio-base</module>
     <module>hawtio-default</module>
@@ -478,6 +476,16 @@
       </properties>
       <repositories>
       </repositories>
+    </profile>
+
+    <!-- watcher profile is needed to break build cycle with fabric -->
+    <profile>
+      <id>watcher</id>
+      <modules>
+        <module>hawtio-watcher-dynamic-jaxb</module>
+        <module>hawtio-watcher-blueprint-web</module>
+        <module>hawtio-watcher-spring-context</module>
+      </modules>
     </profile>
 
     <profile>
