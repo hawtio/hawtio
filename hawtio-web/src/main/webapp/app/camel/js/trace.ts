@@ -28,6 +28,12 @@ module Camel {
       setTracing(false);
     };
 
+    $scope.clear = () => {
+      $scope.messages = [];
+      // foo
+      Core.$apply($scope);
+    };
+
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
       $scope.messages = [];
