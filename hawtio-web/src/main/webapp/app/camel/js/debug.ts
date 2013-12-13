@@ -91,6 +91,7 @@ module Camel {
     $scope.gridOptions = Camel.createBrowseGridOptions();
     $scope.gridOptions.selectWithCheckboxOnly = false;
     $scope.gridOptions.showSelectionCheckbox = false;
+    $scope.gridOptions.multiSelect = false;
     $scope.gridOptions.afterSelectionChange = onSelectionChanged;
     $scope.gridOptions.columnDefs.push({
       field: 'toNode',
@@ -121,33 +122,14 @@ module Camel {
       }
       onSelectionChanged();
     };
-
-
     // END
-
 
     function onSelectionChanged() {
       var toNode = getStoppedBreakpointId();
       if (toNode) {
         // lets highlight the node in the diagram
         var nodes = getDiagramNodes();
-
-        // lets clear the selected node first
-        nodes.attr("class", "node");
-
-        nodes.filter(function (item) {
-          if (item) {
-            var cid = item["cid"];
-            var rid = item["rid"];
-            if (cid) {
-              // we should match cid if defined
-              return toNode === cid;
-            } else {
-              return toNode === rid;
-            }
-          }
-          return null;
-        }).attr("class", "node selected");
+        Camel.highlightSelectedNode(nodes, toNode);
       }
     }
 

@@ -125,39 +125,7 @@ module Camel {
           if (toNode) {
             // lets highlight the node in the diagram
             var nodes = d3.select("svg").selectAll("g .node");
-
-            // lets clear the selected node first
-            nodes.attr("class", "node");
-
-            nodes.filter(function (item) {
-              if (item) {
-                var cid = item["cid"];
-                var rid = item["rid"];
-                var type = item["type"];
-                var elementId = item["elementId"];
-
-                // if its from then match on rid
-                if ("from" === type) {
-                  return toNode === rid;
-                }
-
-                // okay favor using element id as the cids can become
-                // undefined or mangled with mbean object names, causing this to not work
-                // where as elementId when present works fine
-                if (elementId) {
-                  // we should match elementId if defined
-                  return toNode === elementId;
-                }
-                // then fallback to cid
-                if (cid) {
-                  return toNode === cid;
-                } else {
-                  // and last rid
-                  return toNode === rid;
-                }
-              }
-              return null;
-            }).attr("class", "node selected");
+            Camel.highlightSelectedNode(nodes, toNode);
           }
         }
       });
