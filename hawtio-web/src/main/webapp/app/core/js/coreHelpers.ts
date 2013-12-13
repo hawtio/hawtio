@@ -287,8 +287,11 @@ function logLevelClass(level:string) {
       return "warning"
     } else if (first === 'e' || first === "E") {
       return "error";
-    } else if (first === 'd' || first === "d") {
+    } else if (first === 'i' || first === "I") {
       return "info";
+    } else if (first === 'd' || first === "D") {
+      // we have no debug css style
+      return "";
     }
   }
   return "";
