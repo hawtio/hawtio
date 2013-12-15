@@ -2,6 +2,9 @@
  * @module Log
  */
 module Log {
+
+  var log:Logging.Logger = Logger.get("Log");
+
   export interface ILog {
     // TODO What is the point of seq?
     seq: string;
@@ -12,8 +15,15 @@ module Log {
   }
 
   export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document) {
-    $scope.logs = [];
+    $scope.sortAsc = true;
+    var value = localStorage["logSortAsc"];
+    if (angular.isString(value)) {
+      $scope.sortAsc = "true" === value;
+    }
 
+    log.info("Sorting from preference is " + $scope.sortAsc)
+
+    $scope.logs = [];
     $scope.branding = Branding.enabled;
 
     $scope.init = () => {
@@ -147,6 +157,13 @@ module Log {
       return "";
     };
 
+    $scope.sortIcon = () => {
+      if ($scope.sortAsc) {
+        return "icon-arrow-down";
+      } else {
+        return "icon-arrow-up";
+      }
+    };
 
     $scope.filterLogMessage = (log) => {
 
@@ -191,18 +208,21 @@ module Log {
 
 
     var updateValues = function (response) {
-      var scrollToBottom = false;
+      var scrollToTopOrBottom = false;
+
       if (!$scope.inDashboard) {
         var window = $($window);
 
         if ($scope.logs.length === 0) {
           // initial page load, let's scroll to the bottom
-          scrollToBottom = true;
+          scrollToTopOrBottom = true;
         }
 
-        if ( (window.scrollTop() + window.height()) > (Core.getDocHeight() - 100) ) {
+        var pos = window.scrollTop() + window.height();
+        var threshold = Core.getDocHeight() - 100;
+        if ( (pos) > (threshold) ) {
           // page is scrolled near the bottom
-          scrollToBottom = true;
+          scrollToTopOrBottom = true;
         }
       }
 
@@ -229,7 +249,11 @@ module Log {
             // TODO Why do we compare 'item.seq === log.message' ?
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
-              $scope.logs.push(log);
+              if ($scope.sortAsc) {
+                $scope.logs.push(log);
+              } else {
+                $scope.logs.unshift(log);
+              }
             }
           }
         });
@@ -238,13 +262,22 @@ module Log {
           if (size > maxSize) {
             // lets trim the log size
             var count = size - maxSize;
-            $scope.logs.splice(0, count);
+            var pos = 0;
+            if (!$scope.sortAsc) {
+              pos = size - count;
+            }
+            $scope.logs.splice(pos, count);
           }
         }
         if (counter) {
-          if (scrollToBottom) {
+          if (scrollToTopOrBottom) {
             setTimeout(() => {
-              $document.scrollTop( $document.height() - window.height());
+              var pos = 0;
+              if ($scope.sortAsc) {
+                pos = $document.height() - window.height();
+              }
+              log.debug("Scrolling to position: " + pos)
+              $document.scrollTop(pos);
             }, 20);
           }
           Core.$apply($scope);

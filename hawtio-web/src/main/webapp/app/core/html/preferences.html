@@ -173,18 +173,29 @@
 </div>
 
 <div value="logs" class="tab-pane" title="Logs">
-  <form class="form-horizontal">
-    <div class="control-group">
-      <label class="control-label" for="logCacheSize" title="The number of log messages to keep in the browser">Log
-        cache size</label>
 
+  <form class="form-horizontal">
+    <label class="control-label">Sort Ascending</label>
+    <div class="control-group">
       <div class="controls">
-        <input id="logCacheSize" type="number" ng-model="logCacheSize"/>
+        <input type="checkbox" ng-model="logSortAsc">
+        <span class="help-block">Ascending inserts new log lines in the bottom, descending inserts new log lines in the top</span>
       </div>
     </div>
   </form>
 
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="logCacheSize" title="The number of log messages to keep in the browser">Log
+        cache size</label>
+      <div class="controls">
+        <input id="logCacheSize" type="number" ng-model="logCacheSize"/>
+      </div>
+    </div>
+
+  </form>
 </div>
+
 <div value="git" class="tab-pane" title="Git">
   <form class="form-horizontal">
     <div class="control-group">
@@ -260,7 +271,6 @@
 <div value="fabric" class="tab-pane" title="Fabric">
   <form class="form-horizontal">
     <label class="control-label">Always Prompt for User/Password</label>
-
     <div class="control-group">
       <div class="controls">
         <input type="checkbox" ng-model="fabricAlwaysPrompt">
@@ -271,7 +281,6 @@
 
   <form class="form-horizontal">
     <label class="control-label">Enable Maps</label>
-
     <div class="control-group">
       <div class="controls">
         <input type="checkbox" ng-model="fabricEnableMaps">
