@@ -6,12 +6,11 @@ module Log {
   var log:Logging.Logger = Logger.get("Log");
 
   export interface ILog {
-    // TODO What is the point of seq?
     seq: string;
-    message: string;
     timestamp: string;
-    logger: string;
     level: string;
+    logger: string;
+    message: string;
   }
 
   export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document) {
