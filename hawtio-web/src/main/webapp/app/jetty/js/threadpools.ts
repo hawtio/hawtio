@@ -48,8 +48,8 @@ module Jetty {
         resizable: true
       },
       {
-        field: 'maxIdleTimeMs',
-        displayName: 'Max Idle Time (ms)',
+        field: 'idleTimeout',
+        displayName: 'Idle Timeout (ms)',
         cellFilter: null,
         width: "*",
         resizable: true
@@ -77,6 +77,9 @@ module Jetty {
       function onAttributes(response) {
         var obj = response.value;
         if (obj) {
+          // jetty78 vs jetty9 is a bit different
+          obj.running = obj['running'] !== undefined ? obj['running'] : obj['state'] == "STARTED";
+          obj.idleTimeout = obj['idleTimeout'] !== undefined ? obj['idleTimeout'] : obj['maxIdleTimeMs'];
           $scope.threadpools.push(obj);
         }
       }
