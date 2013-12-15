@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class LoginServlet extends HttpServlet {
 

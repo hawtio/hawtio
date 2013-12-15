@@ -9,7 +9,7 @@ import javax.management.AttributeNotFoundException;
 import java.io.PrintWriter;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class ServletHelpers {
 

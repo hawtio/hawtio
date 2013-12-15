@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class UploadServlet extends HttpServlet {
 

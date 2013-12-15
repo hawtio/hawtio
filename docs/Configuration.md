@@ -23,6 +23,17 @@ By default the security in hawtio uses these system properties which you can ove
   </tr>
   <tr>
     <td>
+      hawtio.realm
+    </td>
+    <td>
+      karaf
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+  <tr>
+    <td>
       hawtio.role
     </td>
     <td>
@@ -34,13 +45,13 @@ By default the security in hawtio uses these system properties which you can ove
   </tr>
   <tr>
     <td>
-      hawtio.realm
+      hawtio.rolePrincipalClasses
     </td>
     <td>
-      karaf
+      
     </td>
     <td>
-      The security realm used to login
+      Principal fully qualified classname(s). Multiple classes can be separated by comma.
     </td>
   </tr>
 </table>
