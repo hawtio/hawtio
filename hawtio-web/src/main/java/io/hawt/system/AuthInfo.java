@@ -3,9 +3,8 @@ package io.hawt.system;
 import io.hawt.util.Strings;
 
 /**
- * @author Stan Lewis
+ *
  */
-
 public class AuthInfo {
 
   public String username;

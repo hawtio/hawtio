@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class BrandingServlet extends HttpServlet {
 

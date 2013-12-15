@@ -1,21 +1,25 @@
 package io.hawt.system;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.security.Principal;
 import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.Principal;
+
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class Authenticator {
 
@@ -94,19 +98,25 @@ public class Authenticator {
     private static Subject doAuthenticate(String realm, String role,  String rolePrincipalClasses, final String username, final String password) {
         try {
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, username={}, password={}]", new Object[]{realm, role, rolePrincipalClasses, username, "******"});
+            }
+
             Subject subject = new Subject();
             LoginContext loginContext = new LoginContext(realm, subject, new CallbackHandler() {
 
                 @Override
                 public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
                     for (Callback callback : callbacks) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Callback type {} -> {}", callback.getClass(), callback);
+                        }
                         if (callback instanceof NameCallback) {
                             ((NameCallback)callback).setName(username);
                         } else if (callback instanceof PasswordCallback) {
                             ((PasswordCallback)callback).setPassword(password.toCharArray());
                         } else {
                           LOG.warn("Unsupported callback class [" + callback.getClass().getName() + "]");
-                            // throw new UnsupportedCallbackException(callback);
                         }
                     }
                 }

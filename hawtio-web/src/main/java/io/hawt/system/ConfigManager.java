@@ -8,7 +8,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class ConfigManager {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
@@ -16,7 +16,6 @@ public class ConfigManager {
     private Context envContext = null;
 
     public ConfigManager() {
-
     }
 
     public void init() {
@@ -61,7 +60,5 @@ public class ConfigManager {
         LOG.debug("Property {} is set to value {}", name, answer);
         return answer;
     }
-
-
 
 }
