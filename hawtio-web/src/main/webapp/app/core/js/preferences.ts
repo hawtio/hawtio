@@ -111,6 +111,7 @@ module Core {
     var defaults = {
       logCacheSize: 1000,
       logSortAsc: true,
+      logAutoScroll: true,
       fabricAlwaysPrompt: false,
       fabricEnableMaps: true,
       camelIgnoreIdForLabel: false,
@@ -121,6 +122,7 @@ module Core {
     var converters = {
       logCacheSize: parseInt,
       logSortAsc: parseBooleanValue,
+      logAutoScroll: parseBooleanValue,
       fabricAlwaysPrompt: parseBooleanValue,
       fabricEnableMaps: parseBooleanValue,
       camelIgnoreIdForLabel: parseBooleanValue,
@@ -148,7 +150,7 @@ module Core {
     });
 
     var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
-      "logCacheSize", "logSortAsc", "fabricAlwaysPrompt",  "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
+      "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt",  "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
     angular.forEach(names, (name) => {
