@@ -133,7 +133,7 @@
               org.ops4j.pax.web.service,
               org.osgi.service.blueprint.container,
               org.osgi.service.http,
-              jline,
+              jline;-split-package:=merge-first
               org.apache.karaf.shell.console.jline;version="[2.2,3.0)",
               org.osgi.framework,
               javax.management,
