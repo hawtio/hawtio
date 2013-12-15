@@ -34,7 +34,7 @@ module Log {
           filter('logDateFilter', function ($filter) {
             var standardDateFilter = $filter('date');
             return function (dateToFormat) {
-              return standardDateFilter(dateToFormat, 'yyyy-MM-dd HH:mm:ss');
+              return standardDateFilter(dateToFormat, 'yyyy-MM-dd HH:mm:ss.sss');
             }
           });
 

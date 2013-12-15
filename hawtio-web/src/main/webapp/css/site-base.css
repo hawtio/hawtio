@@ -2652,7 +2652,7 @@ ul.zebra-list li {
 
 .log-table .table-head div div:nth-child(4) {
   font-weight: bold;
-  left: 225px;
+  left: 247px;
   width: 326px;
   text-align: center !important;
   direction: ltr !important;
@@ -2697,13 +2697,13 @@ ul.zebra-list li {
 .log-table li div div:nth-child(2) {
   border-right: 1px solid #d4d4d4;
   left: 18px;
-  width: 143px;
+  width: 180px;
   z-index: 5;
 }
 
 .log-table li div div:nth-child(3) {
   border-right: 1px solid #d4d4d4;
-  left: 168px;
+  left: 190px;
   width: 60px;
   z-index: 5;
   text-align: center;
@@ -2716,11 +2716,11 @@ ul.zebra-list li {
   direction: rtl;
   z-index: 3;
   left: 0;
-  width: 551px;
+  width: 573px;
 }
 
 .log-table li div div:nth-child(5) {
-  left: 558px;
+  left: 580px;
   right: 0;
   padding-left: 5px;
 }
