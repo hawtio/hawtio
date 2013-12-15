@@ -16,7 +16,7 @@
     <feature>hawtio-maven-indexer</feature>
   </feature>
 
-  <feature name="hawtio-offline" version="${hawtio-version}" resolver="(obr)">
+  <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
     <details>Installs hawtio in offline mode (without Maven service which requires internet connection)</details>
     <feature>hawtio-core</feature>
     <feature>hawtio-karaf-terminal</feature>
