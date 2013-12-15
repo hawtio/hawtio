@@ -185,6 +185,16 @@
   </form>
 
   <form class="form-horizontal">
+    <label class="control-label">Auto Scroll</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="logAutoScroll">
+        <span class="help-block">Whether to automatic scroll window when new log lines is added</span>
+      </div>
+    </div>
+  </form>
+
+  <form class="form-horizontal">
     <div class="control-group">
       <label class="control-label" for="logCacheSize" title="The number of log messages to keep in the browser">Log
         cache size</label>

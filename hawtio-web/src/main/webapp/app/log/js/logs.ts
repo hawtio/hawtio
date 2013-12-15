@@ -19,8 +19,11 @@ module Log {
     if (angular.isString(value)) {
       $scope.sortAsc = "true" === value;
     }
-
-    log.info("Sorting from preference is " + $scope.sortAsc)
+    $scope.autoScroll = true;
+    var value = localStorage["logAutoScroll"];
+    if (angular.isString(value)) {
+      $scope.autoScroll = "true" === value;
+    }
 
     $scope.logs = [];
     $scope.branding = Branding.enabled;
@@ -217,9 +220,14 @@ module Log {
           scrollToTopOrBottom = true;
         }
 
-        var pos = window.scrollTop() + window.height();
-        var threshold = Core.getDocHeight() - 100;
-        if ( (pos) > (threshold) ) {
+        if ($scope.sortAsc) {
+          var pos = window.scrollTop() + window.height();
+          var threshold = Core.getDocHeight() - 100;
+        } else {
+          var pos = window.scrollTop() + window.height();
+          var threshold = 100;
+        }
+        if ( pos > threshold ) {
           // page is scrolled near the bottom
           scrollToTopOrBottom = true;
         }
@@ -269,7 +277,7 @@ module Log {
           }
         }
         if (counter) {
-          if (scrollToTopOrBottom) {
+          if ($scope.autoScroll && scrollToTopOrBottom) {
             setTimeout(() => {
               var pos = 0;
               if ($scope.sortAsc) {
@@ -306,6 +314,6 @@ module Log {
             });
 
     scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
-
   }
+
 }
