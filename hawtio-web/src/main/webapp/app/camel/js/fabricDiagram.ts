@@ -5,6 +5,7 @@ module Camel {
     Fabric.initScope($scope, $location, jolokia, workspace);
 
     var isFmc = Fabric.isFMCContainer(workspace);
+    $scope.isFmc = isFmc;
 
     $scope.selectedNode = null;
 
