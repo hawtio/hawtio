@@ -796,10 +796,10 @@ module Core {
     }
 
     hasFabricMBean() {
-      return this.hasDomainAndProperties('org.fusesource.fabric', {type: 'Fabric'});
+      return this.hasDomainAndProperties('io.fabric8', {type: 'Fabric'});
     }
     isFabricFolder() {
-      return this.hasDomainAndProperties('org.fusesource.fabric');
+      return this.hasDomainAndProperties('io.fabric8');
     }
 
     isCamelContext() {

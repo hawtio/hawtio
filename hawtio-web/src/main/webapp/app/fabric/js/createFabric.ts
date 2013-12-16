@@ -8,7 +8,7 @@ module Fabric {
       }
     });
 
-    Fabric.getSchema('createEnsemble', 'org.fusesource.fabric.api.CreateEnsembleOptions', jolokia, (schema) => {
+    Fabric.getSchema('createEnsemble', 'io.fabric8.api.CreateEnsembleOptions', jolokia, (schema) => {
       $scope.schema = schema;
       Core.$apply($scope);
     });

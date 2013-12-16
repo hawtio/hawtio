@@ -4,7 +4,7 @@
  */
 module Fabric {
 
-  export var jmxDomain = 'org.fusesource.fabric';
+  export var jmxDomain = 'io.fabric8';
 
   export var templatePath = 'app/fabric/html/';
 

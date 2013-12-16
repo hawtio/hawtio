@@ -28,7 +28,7 @@ module Fabric {
 
     /*
     // handy for working around any randomly added fields that won't marshal
-    $scope.fields = jolokia.execute(Fabric.managerMBean, 'getFields(java.lang.String)', 'org.fusesource.fabric.api.Container');
+    $scope.fields = jolokia.execute(Fabric.managerMBean, 'getFields(java.lang.String)', 'io.fabric8.api.Container');
     $scope.fields.remove('fabricService');
     $scope.operation = 'getContainer(java.lang.String, java.util.List)'
     */

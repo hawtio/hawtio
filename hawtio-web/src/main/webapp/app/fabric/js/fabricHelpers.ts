@@ -5,7 +5,7 @@ module Fabric {
 
   export var log:Logging.Logger = Logger.get("Fabric");
   
-  export var jmxDomain = "org.fusesource.fabric";
+  export var jmxDomain = "io.fabric8";
   
   export var managerMBean = Fabric.jmxDomain + ":type=Fabric";
   export var clusterManagerMBean = Fabric.jmxDomain + ":type=ClusterServiceManager";
@@ -22,8 +22,7 @@ module Fabric {
   var fabricTopLevel = "fabric/profiles/";
   export var profileSuffix = ".profile";
 
-  //export var jolokiaWebAppGroupId = "org.jolokia";
-  export var jolokiaWebAppGroupId = "org.fusesource.fabric.fabric-jolokia";
+  export var jolokiaWebAppGroupId = jmxDomain + "fabric-jolokia";
 
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
@@ -687,7 +686,7 @@ module Fabric {
       container.jmxDomains.forEach((domain) => {
         if (domain === "org.fusesource.insight") {
           answer.push({
-            title: "Fuse Insight",
+            title: "Fabric8 Insight",
             type: "icon",
             src: "icon-eye-open"
           })
@@ -706,9 +705,9 @@ module Fabric {
             src: "app/fabric/img/camel.png"
           });
         }
-        if (domain === "org.fusesource.fabric") {
+        if (domain === "io.fabric8") {
           answer.push({
-            title: "Fuse Fabric",
+            title: "Fabric8",
             type: "img",
             src: "app/fabric/img/fabric.png"
           });

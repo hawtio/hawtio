@@ -194,7 +194,7 @@ module Fabric {
       jolokia.request({
         type: 'exec', mbean: managerMBean,
         operation: 'getConfigurationFile(java.lang.String, java.lang.String, java.lang.String)',
-        arguments: [$scope.versionId, $scope.profileId, 'org.fusesource.fabric.agent.properties']
+        arguments: [$scope.versionId, $scope.profileId, 'io.fabric8.agent.properties']
       }, onSuccess($scope.doSave));
     };
 
@@ -219,7 +219,7 @@ module Fabric {
 
       configFile = lines.join('\n');
 
-      saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'org.fusesource.fabric.agent.properties', configFile.encodeBase64(), () => {
+      saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'io.fabric8.agent.properties', configFile.encodeBase64(), () => {
           notification('success', "Updated feature definitions...");
           Core.$apply($scope);
         }, (response) => {

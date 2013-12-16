@@ -3,7 +3,7 @@
  */
 module Insight {
 
-    export var managerMBean = "org.fusesource.fabric:type=Fabric";
+    export var managerMBean = "io.fabric8:type=Fabric";
 
     export var allContainers = { id: '-- all --' };
 
