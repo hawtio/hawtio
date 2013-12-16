@@ -17,8 +17,9 @@
       </div>
     </div>
 
+    <!-- TODO: Perspective combo box -->
     <div class="control-group">
-      <label class="control-label">Default Plugin</label>
+      <label class="control-label">Perspective</label>
 
       <div class="controls">
         <select id="updateDefaultPlugin" ng-model="defaultPlugin">
@@ -28,7 +29,38 @@
             {{plugin.displayName}}
           </option>
         </select>
-        <span class="help-block">The default plugin to select on startup</span>
+        <span class="help-block">Configure plugins in selected perspective</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+
+      <div class="controls">
+        <div>
+          <table>
+            <tr id="heading">
+              <th>Plugin</th>
+              <th>Enabled</th>
+              <th>Default</th>
+            </tr>
+            <tr ng-repeat="plugin in plugins">
+              <td>
+                <i class="icon-double-angle-up clickable" ng-hide="$first" ng-click="pluginMoveUp($index)"></i>
+                <i class="icon-double-angle-down clickable" ng-hide="$last" ng-click="pluginMoveDown($index)"></i>
+                {{plugin.displayName}}
+              </td>
+              <td>
+                <i class="icon-pause clickable" ng-hide="plugin.enabled" ng-click="pluginEnable($index)"></i>
+                <i class="icon-play clickable" ng-hide="!plugin.enabled" ng-click="pluginDisable($index)"></i>
+              </td>
+              <td>
+                <i class="icon-check clickable" ng-hide="plugin.isDefault" ng-click="pluginDefault($index)"></i>
+                {{plugin.isDefault ? "Default" : ""}}
+              </td>
+            </tr>
+          </table>
+          <button ng-disabled="!pluginDirty" ng-click="pluginApply()">Apply</button>
+        </div>
       </div>
     </div>
 

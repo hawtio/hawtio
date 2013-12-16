@@ -84,7 +84,7 @@ module Perspective {
    * @param {String} perspective
    * @return {Array}
    */
-  function topLevelTabsForPerspectiveId(workspace, perspective) {
+  export function topLevelTabsForPerspectiveId(workspace, perspective) {
     var data = perspective ? Perspective.metadata[perspective] : null;
     var answer = [];
     if (!data) {
