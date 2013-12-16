@@ -289,7 +289,7 @@
         </div>
       </div>
     </div>
-    <div class="hero-unit" ng-show="containerCount === 0">
+    <div class="hero-unit" ng-show="containerCount === 0 && isFmc">
       <p>There are currently no Camel routes running in this fabric</p>
 
       <p>To try out the EIP browser try create one of the example <a
@@ -305,6 +305,11 @@
           EIP Quickstart
         </a>
       </p>
+    </div>
+    <div class="hero-unit" ng-show="containerCount === 0 && !isFmc">
+      <p>There are currently no Camel routes running in this JVM</p>
+
+      <p>To try out the Camel diagram try create one more Camel routes</p>
     </div>
   </div>
 
