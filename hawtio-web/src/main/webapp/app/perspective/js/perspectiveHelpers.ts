@@ -152,7 +152,11 @@ module Perspective {
   export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
     var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
     //console.log("perspective: " + perspective);
-    return topLevelTabsForPerspectiveId(workspace, perspective);
+
+    var plugins = Core.configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+    var tabs = Core.filterTopLevelTabs(perspective, workspace, plugins);
+
+    return tabs;
   }
 
   /**
@@ -232,6 +236,7 @@ module Perspective {
     return true;
   }
 
+  // TODO: Change this code due #853
   function isMatchDefaultPlugin(id, localStorage) {
     var value = localStorage["defaultPlugin"];
     if (angular.isString(id) && angular.isString(value)) {
