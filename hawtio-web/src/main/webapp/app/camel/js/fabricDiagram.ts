@@ -147,18 +147,14 @@ module Camel {
       }
     });
 
-    function getDestinationTypeName(attributes) {
-      var prefix = attributes["DestinationTemporary"] ? "Temporary " : "";
-      return prefix + (attributes["DestinationTopic"] ? "Topic" : "Queue");
-    }
-
     var ignoreNodeAttributes = [
+      "CamelId", "CamelManagementName"
     ];
 
     var ignoreNodeAttributesByType = {
       context: ["ApplicationContextClassName", "CamelId", "ClassResolver","ManagementName", "PackageScanClassResolver", "Properties"],
       endpoint: ["Camel", "Endpoint"],
-      route: []
+      route: ["Description"]
     };
 
     var onlyShowAttributesByType = {
@@ -333,13 +329,38 @@ module Camel {
       if (containerJolokia) {
         container.jolokia = containerJolokia;
         var containerId = container.id || "local";
+        var idPrefix = containerId + ":";
+
+        var endpointUriToObject = {};
+
+        function getOrCreateCamelContext(contextId) {
+          var answer = null;
+          if (contextId) {
+            // try guess the mbean name
+            var contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
+            var contextAttributes = {
+              contextId: contextId
+            };
+
+            answer = getOrAddNode("context", idPrefix + contextId, contextAttributes, () => {
+              return {
+                name: contextId,
+                typeLabel: "CamelContext",
+                container: container,
+                objectName: contextMBean,
+                jolokia: containerJolokia,
+                popup: {
+                  title: "CamelContext: " + contextId,
+                  content: ""
+                }
+              };
+            });
+          }
+          return answer;
+        }
 
         // find endpoints
         if ($scope.viewSettings.endpoint) {
-/*
-          containerJolokia.request({type: "read", mbean: "org.apache.camel:type=endpoints,*"}, onSuccess((response) => {
-            angular.forEach(response.value, (properties, objectName) => {
-*/
           containerJolokia.search("org.apache.camel:type=endpoints,*", onSuccess((response) => {
             angular.forEach(response, (objectName) => {
               var details = Core.parseMBean(objectName);
@@ -353,14 +374,7 @@ module Camel {
               attributes["container"] = container;
 
               if (uri && contextId) {
-                var idPrefix = containerId + ":";
-                // try guess the mbean name
-                var contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
-                var contextAttributes = {
-                    contextId: contextId
-                };
-
-                var consumer = getOrAddNode("endpoint", idPrefix + uri, attributes, () => {
+                var endpoint = getOrAddNode("endpoint", idPrefix + uri, attributes, () => {
                   return {
                     name: uri,
                     typeLabel: "Endpoint",
@@ -373,20 +387,54 @@ module Camel {
                     }
                   };
                 });
-                var camelContext = getOrAddNode("context", idPrefix + contextId, contextAttributes, () => {
+                if (endpoint) {
+                  endpointUriToObject[uri] = endpoint;
+                }
+                var camelContext = getOrCreateCamelContext(contextId);
+                addLink(camelContext, endpoint, "endpoint");
+              }
+            });
+            graphModelUpdated();
+          }));
+        }
+
+        // find routes
+        if ($scope.viewSettings.route) {
+          containerJolokia.request({type: "read", mbean: "org.apache.camel:type=routes,*", attribute: ["EndpointUri"]}, onSuccess((response) => {
+            angular.forEach(response.value, (properties, objectName) => {
+              var details = Core.parseMBean(objectName);
+              var attributes = details['attributes'];
+              log.info("route attributes: " + angular.toJson(attributes) + " properties: " + angular.toJson(properties));
+              var contextId = attributes["context"];
+              var routeId = trimQuotes(attributes["name"]);
+              log.info("context " + contextId + " routeId " + routeId);
+              attributes["routeId"] = routeId;
+              attributes["mbean"] = objectName;
+              attributes["container"] = container;
+              attributes["type"] = "route";
+
+              if (routeId && contextId) {
+                var route = getOrAddNode("route", idPrefix + routeId, attributes, () => {
                   return {
-                    name: contextId,
-                    typeLabel: "CamelContext",
+                    name: routeId,
+                    typeLabel: "Route",
                     container: container,
-                    objectName: contextMBean,
+                    objectName: objectName,
                     jolokia: containerJolokia,
                     popup: {
-                      title: "CamelContext: " + contextId,
-                      content: ""
+                      title: "Route: " + routeId,
+                      content: "<p>context: " + contextId + "</p>"
                     }
                   };
                 });
-                addLink(camelContext, consumer, "consumer");
+                var uri = properties["EndpointUri"];
+                if (uri && route) {
+                  var endpoint = endpointUriToObject[uri];
+                  log.info("found route endpoint " + endpoint + " for uri " + uri);
+                  addLink(route, endpoint, "consumer");
+                }
+                var camelContext = getOrCreateCamelContext(contextId);
+                addLink(camelContext, route, "route");
               }
 
             });

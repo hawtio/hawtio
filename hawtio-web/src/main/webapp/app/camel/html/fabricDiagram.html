@@ -83,6 +83,10 @@
     fill: #0c0;
   }
 
+  circle.route {
+    fill: #00c;
+  }
+
   circle.notActive {
     fill: #c00;
   }
@@ -225,6 +229,11 @@
           <li>
             <label class="checkbox">
               <input type="checkbox" ng-model="viewSettings.endpoint"> Endpoint
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="viewSettings.route"> Route
             </label>
           </li>
           <!--
