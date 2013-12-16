@@ -6,7 +6,7 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
-    $scope.apis = [];
+    $scope.apis = null;
     $scope.selectedApis = [];
 
     $scope.versionId = Fabric.getDefaultVersionId(jolokia);
@@ -71,8 +71,9 @@ module Fabric {
           mbean: Fabric.managerMBean,
           operation: "clusterJson",
           arguments: [$scope.path]},
-        onSuccess(onClusterData));
+        onSuccess(onClusterData, {error: onClusterDataError}));
     }
+
 
     /*
      * Pulls all the properties out of the objectName and adds them to the object
@@ -138,26 +139,33 @@ module Fabric {
     }
 
     function onClusterData(response) {
-      if (response && response.value) {
-
-        var responseJson = response.value;
-        if ($scope.responseJson === responseJson) {
-          return;
-        }
-
-        $scope.responseJson = responseJson;
-
-        try {
-          //console.log("got JSON: " + responseJson);
-          var json = JSON.parse(responseJson);
-          $scope.apis = [];
-          createFlatList($scope.apis, json);
-          Core.$apply($scope);
-        } catch (e) {
-          console.log("Failed to parse JSON " + e);
-          console.log("JSON: " + responseJson);
-        }
+      var responseJson = null;
+      if (response) {
+        responseJson = response.value;
       }
+      if ($scope.responseJson === responseJson) {
+        return;
+      }
+      $scope.apis = [];
+      $scope.responseJson = responseJson;
+
+      try {
+        //console.log("got JSON: " + responseJson);
+        var json = JSON.parse(responseJson);
+        createFlatList($scope.apis, json);
+        Core.$apply($scope);
+      } catch (e) {
+        console.log("Failed to parse JSON " + e);
+        console.log("JSON: " + responseJson);
+      }
+    }
+
+    function onClusterDataError(response) {
+      // make sure we initialise the apis so we know to show the warning of no
+      // APIs available yet
+      $scope.apis = [];
+      Core.$apply($scope);
+      Core.defaultJolokiaErrorHandler(response);
     }
   }
 }
