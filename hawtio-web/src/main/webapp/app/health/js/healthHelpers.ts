@@ -8,7 +8,7 @@ module Health {
   export var healthDomains = {
     "org.apache.activemq": "ActiveMQ",
     "org.apache.camel": "Camel",
-    "org.fusesource.fabric": "Fabric"
+    "io.fabric8": "Fabric8"
   };
 
   export function hasHealthMBeans(workspace:Workspace) {

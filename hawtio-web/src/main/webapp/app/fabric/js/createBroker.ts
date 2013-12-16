@@ -61,7 +61,7 @@ module Fabric {
       $scope.entity.kind = "MasterSlave";
     }
 
-    Fabric.getDtoSchema("brokerConfig", "org.fusesource.fabric.api.jmx.MQBrokerConfigDTO", jolokia, (schema) => {
+    Fabric.getDtoSchema("brokerConfig", "io.fabric8.api.jmx.MQBrokerConfigDTO", jolokia, (schema) => {
       $scope.schema = schema;
       configureSchema(schema);
       jolokia.execute(Fabric.mqManagerMBean, "loadBrokerStatus()", onSuccess(onBrokerData));
