@@ -261,6 +261,7 @@ module Camel {
     });
 
     if (isFmc) {
+      $scope.versionId = Fabric.getDefaultVersionId(jolokia);
       var fields = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "jmxDomains"];
       Fabric.getContainersFields(jolokia, fields, onFabricContainerData);
     } else {
@@ -282,6 +283,7 @@ module Camel {
         "local": localContainer
       };
       redrawGraph();
+      $scope.containerCount = 1;
     }
 
     function onFabricContainerData(response) {
@@ -292,13 +294,14 @@ module Camel {
         }
         $scope.responseJson = responseJson;
 
-        $scope.brokers = response.value;
-
         var containersToDelete = $scope.activeContainers || {};
         $scope.activeContainers = (response || {}).filter(c => c.jmxDomains.any(Camel.jmxDomain));
+        $scope.containerCount = $scope.activeContainers.length;
 
         // query containers which have camel...
         redrawGraph();
+      } else {
+        $scope.containerCount = 0;
       }
     }
 
