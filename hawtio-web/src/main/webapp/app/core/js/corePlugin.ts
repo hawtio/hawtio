@@ -49,7 +49,7 @@ if (!jolokiaUrl) {
 }
 
 // bootstrap plugin loader
-hawtioPluginLoader.addUrl("/hawtio/plugin");
+hawtioPluginLoader.addUrl(url("/plugin"));
 
 if (jolokiaUrl) {
   // TODO replace with a jolokia call so we use authentication headers
