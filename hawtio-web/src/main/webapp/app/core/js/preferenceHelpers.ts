@@ -66,7 +66,7 @@ module Core {
     var answer = [];
     if (initPlugins) {
       initPlugins.forEach((tab, idx) => {
-        log.info("Plugin " + tab.id + " at " + idx);
+        log.info("Plugin " + tab.id + " at " + idx + " is " + tab.enabled + " enabled");
         var name;
         if (tab.displayName) {
           name = tab.displayName;
@@ -78,6 +78,21 @@ module Core {
     }
 
     return answer;
+  }
+
+  export function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
+    var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+    // only include the tabs accordingly to configured
+    var result = [];
+    configuredPlugins.forEach(p => {
+      if (p.enabled) {
+        var tab = topLevelTabs.find(t => t.id === p.id);
+        if (tab) {
+          result.push(tab);
+        }
+      }
+    });
+    return result;
   }
 
 }
