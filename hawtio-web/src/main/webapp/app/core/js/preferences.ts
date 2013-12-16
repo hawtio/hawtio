@@ -7,6 +7,81 @@ module Core {
 
     var log:Logging.Logger = Logger.get("Preference");
 
+    /**
+     * Parsers the given value as JSON if it is define
+     */
+    function parsePreferencesJson(value, key) {
+      var answer = null;
+      if (angular.isDefined(value)) {
+        answer = Core.parseJsonText(value, "localStorage for " + key);
+      }
+      return answer;
+    }
+
+    /**
+     * Function to return the configured plugin for the given perspective. The returned
+     * list is sorted in the configured order.
+     * Notice the list contains plugins which may have been configured as disabled.
+     */
+    function configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage) {
+
+      // grab the top level tabs which is the plugins we can select as our default plugin
+      var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+      if (topLevelTabs && topLevelTabs.length > 0) {
+        log.debug("Found " + topLevelTabs.length + " plugins");
+        // exclude invalid tabs at first
+        topLevelTabs = topLevelTabs.filter(tab => {
+          var href = tab.href();
+          return href && Perspective.isValidFunction(workspace, tab.isValid);
+        });
+        log.debug("After filtering there are " + topLevelTabs.length + " plugins");
+
+        var initPlugins = parsePreferencesJson(localStorage['plugins'], "plugins");
+        if (initPlugins) {
+          initPlugins.forEach((tab, idx) => {
+            log.info("Configured plugin " + tab.id + " at " + tab.index + " loaded at index " + idx);
+          });
+
+          // remove plugins which we cannot find active currently
+          initPlugins = initPlugins.filter(p => {
+            return topLevelTabs.some(tab => tab.id === p.id);
+          });
+
+          // add new active plugins which we didn't know about before
+          topLevelTabs.forEach(tab => {
+            var knownPlugin = initPlugins.filter(p => {
+              p.id === tab.id
+            });
+            if (!knownPlugin) {
+              log.info("Found new plugin " + tab.id);
+              initPlugins.push({id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false})
+            }
+          });
+
+        } else {
+          // okay no configured saved yet, so use what is active
+          initPlugins = topLevelTabs;
+        }
+      }
+
+      // okay push plugins to scope so we can see them in the UI
+      var answer = [];
+      if (initPlugins) {
+        initPlugins.forEach((tab, idx) => {
+          log.info("Plugin " + tab.id + " at " + idx + " is " + tab.enabled + " enabled");
+          var name;
+          if (tab.displayName) {
+            name = tab.displayName;
+          } else {
+            name = tab.content;
+          }
+          answer.push({id: tab.id, index: idx, displayName: name, enabled: tab.enabled, isDefault: tab.isDefault});
+        });
+      }
+
+      return answer;
+    }
+
     $scope.branding = branding;
 
     if (!angular.isDefined(localStorage['logLevel'])) {
@@ -160,6 +235,15 @@ module Core {
         log.info("Saving plugin settings: " + json);
         localStorage['plugins'] = json;
       }
+
+      // force the nav bar to be updated
+      var $rootScope = $scope.$root || $scope.$rootScope || $scope;
+      if ($rootScope) {
+        log.info("Using " + $rootScope + " to broadcast");
+        $rootScope.$broadcast('jmxTreeUpdated');
+      }
+
+      Core.$apply($scope);
     }
 
     $scope.$watch('hosts', (oldValue, newValue) => {
@@ -170,7 +254,7 @@ module Core {
           delete localStorage['regexs'];
         }
       } else {
-        $scope.hosts = Core.parsePreferencesJson(localStorage['regexs'], "hosts") || {};
+        $scope.hosts = parsePreferencesJson(localStorage['regexs'], "hosts") || {};
       }
     }, true);
 
@@ -262,7 +346,7 @@ module Core {
 
     var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
 
-    var plugins = Core.configuredPluginsForPerspective(perspectives[0], workspace, jolokia, localStorage);
+    var plugins = configuredPluginsForPerspective(perspectives[0], workspace, jolokia, localStorage);
     log.info("Found " + plugins.length + " plugins");
     $scope.plugins = plugins;
 
