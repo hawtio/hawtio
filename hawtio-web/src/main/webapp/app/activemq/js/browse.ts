@@ -240,7 +240,7 @@ module ActiveMQ {
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key) && !flattenColumns.any(key)) {
-            answer[key] = value;
+            answer[Core.escapeHtml(key)] = Core.escapeHtml(value);
         }
       });
       return answer;
@@ -252,7 +252,7 @@ module ActiveMQ {
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
           angular.forEach(value, (v2, k2) => {
-            answer['<span class="green">' + key.replace('Properties', ' Property') + '</span> - ' + k2] = v2
+            answer['<span class="green">' + key.replace('Properties', ' Property') + '</span> - ' + Core.escapeHtml(k2)] = Core.escapeHtml(v2)
           });
         }
       });
