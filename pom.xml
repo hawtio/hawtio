@@ -190,6 +190,7 @@
             <enabled>true</enabled>
         </releases>
     </repository>
+<!--
     <repository>
         <id>fusesource.m2-snapshot</id>
         <name>FuseSource Community Snapshot Repository</name>
@@ -201,6 +202,7 @@
             <enabled>false</enabled>
         </releases>
     </repository>
+-->
     <repository>
       <snapshots>
         <enabled>false</enabled>
