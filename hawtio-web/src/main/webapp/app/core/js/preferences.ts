@@ -59,6 +59,31 @@ module Core {
       }
     };
 
+    $scope.pluginSchema = {
+      properties: {
+        'id': {
+          description: 'Plugin id',
+          type: 'string'
+        },
+        'displayName': {
+          description: 'Plugin name',
+          type: 'string'
+        },
+        'index': {
+          description: 'Plugin index',
+          type: 'integer'
+        },
+        'enabled': {
+          description: 'Plugin enabled',
+          type: 'boolean'
+        },
+        'isDefault': {
+          description: 'Plugin is default',
+          type: 'boolean'
+        }
+      }
+    };
+
     $scope.delete = (index) => {
       $scope.hosts.removeAt(index);
     };
@@ -86,16 +111,55 @@ module Core {
       $scope.newHost = {};
     };
 
+    $scope.plugins = [];
+    $scope.pluginDirty = false;
 
-    /**
-     * Parsers the given value as JSON if it is define
-     */
-    function parsePerferencesJson(value, key) {
-      var answer = null;
-      if (angular.isDefined(value)) {
-        answer = Core.parseJsonText(value, "localStorage for " + key);
+    $scope.pluginMoveUp = (index) => {
+      $scope.pluginDirty = true;
+      var tmp = $scope.plugins[index];
+      $scope.plugins[index] = $scope.plugins[index - 1];
+      $scope.plugins[index - 1] = tmp
+    };
+
+    $scope.pluginMoveDown = (index) => {
+      $scope.pluginDirty = true;
+      var tmp = $scope.plugins[index];
+      $scope.plugins[index] = $scope.plugins[index + 1];
+      $scope.plugins[index + 1] = tmp
+    };
+
+    $scope.pluginDisable = (index) => {
+      $scope.pluginDirty = true;
+      $scope.plugins[index].enabled = false;
+      $scope.plugins[index].isDefault = false;
+    };
+
+    $scope.pluginEnable = (index) => {
+      $scope.pluginDirty = true;
+      $scope.plugins[index].enabled = true;
+    };
+
+    $scope.pluginDefault = (index) => {
+      $scope.pluginDirty = true;
+      $scope.plugins.forEach((p) => {
+        p.isDefault = false;
+      });
+      $scope.plugins[index].isDefault = true;
+    };
+
+    $scope.pluginApply = () => {
+      $scope.pluginDirty = false;
+
+      // set index before saving
+      $scope.plugins.forEach((p, idx) => {
+        p.index = idx;
+      });
+
+      var json = angular.toJson($scope.plugins);
+      if (json) {
+        log.info("Saving plugin settings: " + json);
+        localStorage['plugins'] = json;
       }
-      return answer;
     }
 
     $scope.$watch('hosts', (oldValue, newValue) => {
@@ -106,7 +170,7 @@ module Core {
           delete localStorage['regexs'];
         }
       } else {
-        $scope.hosts = parsePerferencesJson(localStorage['regexs'], "hosts") || {};
+        $scope.hosts = Core.parsePreferencesJson(localStorage['regexs'], "hosts") || {};
       }
     }, true);
 
@@ -152,7 +216,7 @@ module Core {
     });
 
     var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
-      "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt",  "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
+      "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
     angular.forEach(names, (name) => {
@@ -197,43 +261,12 @@ module Core {
     };
 
     var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
-    log.debug("Found " + perspectives.length + " perspectives");
 
-    // add the default in the top
-    $scope.plugins = [{id: "_first", displayName: "First Plugin", selected: false}];
+    var plugins = Core.configuredPluginsForPerspective(perspectives[0], workspace, jolokia, localStorage);
+    log.info("Found " + plugins.length + " plugins");
+    $scope.plugins = plugins;
 
-    // grab the top level tabs which is the plugins we can select as our default plugin
-    var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
-    log.debug("Found " + topLevelTabs.length + " plugins");
-
-    // exclude invalid tabs at first
-    topLevelTabs = topLevelTabs.filter(tab => {
-      var href = tab.href();
-      return href && Perspective.isValidFunction(workspace, tab.isValid);
-    });
-
-    // add each tab as a plugin we can select
-    var defaultPlugin = localStorage['defaultPlugin'];
-    var found = false;
-    topLevelTabs.forEach(tab => {
-      var selected = tab.id === defaultPlugin;
-      if (selected) {
-        found = true;
-      }
-      $scope.plugins.push({id: tab.id, displayName: tab.content, selected: selected});
-    });
-    // now find the default plugin and mark it as selected if we did not find the chosen plugin
-    if (!found) {
-      $scope.plugins[0].selected = true;
-    }
-    log.debug("After filtering there are " + $scope.plugins.length + " plugins");
-
-    $scope.$watch('defaultPlugin', (newValue, oldValue) => {
-      if (newValue === oldValue) {
-        return;
-      }
-      localStorage['defaultPlugin'] = newValue;
-    });
-
+    Core.$apply($scope);
   }
+
 }
