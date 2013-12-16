@@ -5,6 +5,8 @@ module Core {
 
   export function PreferencesController($scope, $location, jolokia, workspace, localStorage, userDetails, jolokiaUrl, branding) {
 
+    var log:Logging.Logger = Logger.get("Preference");
+
     $scope.branding = branding;
 
     if (!angular.isDefined(localStorage['logLevel'])) {
@@ -177,9 +179,9 @@ module Core {
       });
     });
 
-    console.log("logCacheSize " + $scope.logCacheSize);
-
     $scope.doReset = () => {
+
+      log.info("Resetting");
 
       var doReset = () => {
         localStorage.clear();
@@ -194,11 +196,16 @@ module Core {
       }
     };
 
+    var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+    log.debug("Found " + perspectives.length + " perspectives");
+
     // add the default in the top
     $scope.plugins = [{id: "_first", displayName: "First Plugin", selected: false}];
 
     // grab the top level tabs which is the plugins we can select as our default plugin
     var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+    log.debug("Found " + topLevelTabs.length + " plugins");
+
     // exclude invalid tabs at first
     topLevelTabs = topLevelTabs.filter(tab => {
       var href = tab.href();
@@ -219,6 +226,7 @@ module Core {
     if (!found) {
       $scope.plugins[0].selected = true;
     }
+    log.debug("After filtering there are " + $scope.plugins.length + " plugins");
 
     $scope.$watch('defaultPlugin', (newValue, oldValue) => {
       if (newValue === oldValue) {
