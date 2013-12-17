@@ -1,8 +1,11 @@
-module Fabric {
+module ActiveMQ {
 
-  export function FabricBrokerDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
+  export function BrokerDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
+
+    var isFmc = Fabric.isFMCContainer(workspace);
+    $scope.isFmc = isFmc;
 
     $scope.selectedNode = null;
 
@@ -31,6 +34,8 @@ module Fabric {
       queue: 14,
       topic: 14
     };
+
+    var redrawGraph = Core.throttled(doRedrawGraph, 1000);
 
     var graphBuilder = new ForceGraph.GraphBuilder();
 
@@ -253,9 +258,19 @@ module Fabric {
       redrawGraph();
     });
 
-    if (Fabric.hasMQManager) {
+    if (isFmc) {
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
+    } else {
+      // lets just use the current stuff from the workspace
+      $scope.$watch('workspace.tree', function () {
+        redrawGraph();
+      });
+
+      $scope.$on('jmxTreeUpdated', function () {
+        redrawGraph();
+      });
     }
+
 
     function onBrokerData(response) {
       if (response) {
@@ -267,13 +282,13 @@ module Fabric {
         $scope.responseJson = responseJson;
 
         $scope.brokers = response.value;
-        redrawGraph();
+        doRedrawGraph();
       }
     }
 
-    function redrawGraph() {
-      graphBuilder = new ForceGraph.GraphBuilder();
 
+
+    function redrawFabricBrokers() {
       var containersToDelete = $scope.activeContainers || {};
       $scope.activeContainers = {};
 
@@ -333,31 +348,7 @@ module Fabric {
         }
 
         var master = brokerStatus.master;
-        var broker = null;
-        var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
-        if (brokerFlag) {
-          broker = getOrAddNode("broker", brokerId + (master ? "" : ":slave"), brokerStatus, () => {
-            return {
-              type: master ? "broker" : "brokerSlave",
-              typeLabel: master ? "Broker" : "Slave Broker",
-              popup: {
-                title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
-                content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
-              }
-            };
-          });
-          if (master) {
-            if (!broker['objectName']) {
-              // lets try guess the mbean name
-              broker['objectName'] = "org.apache.activemq:type=Broker,brokerName=" + brokerId;
-              log.info("Guessed broker mbean: " + broker['objectName']);
-            }
-            if (!broker['brokerContainer'] && container) {
-              broker['brokerContainer'] = container;
-            }
-          }
-        }
-
+        var broker = getOrCreateBroker(master, brokerId, groupId, containerId, container, brokerStatus);
         if (container && container.validContainer) {
           var key = container.containerId;
           $scope.activeContainers[key] = container;
@@ -387,8 +378,45 @@ module Fabric {
           }
         }
       });
+    }
 
-      // TODO delete any nodes from dead containers in containersToDelete
+    function redrawLocalBroker() {
+      var container = {
+        jolokia: jolokia
+      };
+      var containerId = "local";
+      $scope.activeContainers = {
+        containerId: container
+      };
+
+      if ($scope.viewSettings.broker) {
+        jolokia.search("org.apache.activemq:type=Broker,brokerName=*", onSuccess((response) => {
+          angular.forEach(response, (objectName) => {
+            var details = Core.parseMBean(objectName);
+            if (details) {
+              var properties = details['attributes'];
+              log.info("Got broker: " + objectName + " on container: " + containerId + " properties: " + angular.toJson(properties, true));
+              if (properties) {
+                var master = true;
+                var brokerId = properties["brokerName"] || "unknown";
+                var groupId = "";
+                var broker = getOrCreateBroker(master, brokerId, groupId, containerId, container, properties);
+              }
+            }
+          });
+        }));
+      }
+    }
+
+    function doRedrawGraph() {
+      graphBuilder = new ForceGraph.GraphBuilder();
+      if (isFmc) {
+        redrawFabricBrokers();
+      } else {
+        redrawLocalBroker();
+      }
+
+         // TODO delete any nodes from dead containers in containersToDelete
       angular.forEach($scope.activeContainers, (container, id) => {
         var containerJolokia = container.jolokia;
         if (containerJolokia) {
@@ -595,6 +623,34 @@ module Fabric {
     function graphModelUpdated() {
       $scope.graph = graphBuilder.buildGraph();
       Core.$apply($scope);
+    }
+
+    function getOrCreateBroker(master, brokerId, groupId, containerId, container, brokerStatus) {
+      var broker = null;
+      var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
+      if (brokerFlag) {
+        broker = getOrAddNode("broker", brokerId + (master ? "" : ":slave"), brokerStatus, () => {
+          return {
+            type: master ? "broker" : "brokerSlave",
+            typeLabel: master ? "Broker" : "Slave Broker",
+            popup: {
+              title: (master ? "Master" : "Slave") + " Broker: " + brokerId,
+              content: "<p>Container: " + containerId + "</p> <p>Group: " + groupId + "</p>"
+            }
+          };
+        });
+        if (master) {
+          if (!broker['objectName']) {
+            // lets try guess the mbean name
+            broker['objectName'] = "org.apache.activemq:type=Broker,brokerName=" + brokerId;
+            log.info("Guessed broker mbean: " + broker['objectName']);
+          }
+          if (!broker['brokerContainer'] && container) {
+            broker['brokerContainer'] = container;
+          }
+        }
+      }
+      return broker;
     }
 
     function getOrAddNode(typeName:string, id, properties, createFn) {

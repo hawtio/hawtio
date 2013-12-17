@@ -5,7 +5,7 @@ module ActiveMQ {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']).config(($routeProvider) => {
     $routeProvider.
             when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html'}).
-            when('/activemq/subscribers', {templateUrl: 'app/activemq/html/subscribers.html'}).
+            when('/activemq/diagram', {templateUrl: 'app/activemq/html/brokerDiagram.html', reloadOnSearch: false}).
             when('/activemq/createDestination', {templateUrl: 'app/activemq/html/createDestination.html'}).
             when('/activemq/createQueue', {templateUrl: 'app/activemq/html/createQueue.html'}).
             when('/activemq/createTopic', {templateUrl: 'app/activemq/html/createTopic.html'}).
@@ -102,8 +102,9 @@ module ActiveMQ {
             workspace.subLevelTabs.push({
               content: '<i class="icon-picture"></i> Diagram',
               title: "View a diagram of the producers, destinations and consumers",
-              isValid: (workspace:Workspace) => isActiveMQFolder(workspace),
-              href: () => "#/activemq/subscribers"
+              //isValid: (workspace:Workspace) => isActiveMQFolder(workspace),
+              isValid: (workspace:Workspace) => true,
+              href: () => "#/activemq/diagram"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-plus"></i> Create',

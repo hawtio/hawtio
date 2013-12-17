@@ -1429,7 +1429,7 @@ module Core {
 
   /**
    * Returns a new function which ensures that the delegate function is only invoked at most once
-   * within the tiven number of millseconds
+   * within the given number of millseconds
    * @method throttled
    * @for Core
    * @static

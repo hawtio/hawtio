@@ -7,6 +7,7 @@ module Fabric {
   export var jmxDomain = 'io.fabric8';
 
   export var templatePath = 'app/fabric/html/';
+  export var activeMQTemplatePath = 'app/activemq/html/';
 
   export var currentContainerId = '';
 
@@ -28,7 +29,7 @@ module Fabric {
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
-            when('/fabric/mq/brokerDiagram', { templateUrl: templatePath + 'brokerDiagram.html', reloadOnSearch: false }).
+            when('/fabric/mq/brokerDiagram', { templateUrl: activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
             when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/camel/diagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).
