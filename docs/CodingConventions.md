@@ -32,7 +32,7 @@ For a plugin called `foo` Inside the `foo/js` folder we typically use a file cal
 
 Each controller we typically put into a file; usually using a lowercase version of the controller name (usually omitting the 'Controller' suffix since other than the `fooPlugin.ts` file most of the source is just controllers).
 
-For general helper functions we tend to have a file called `helpers.ts`.
+For general helper functions we tend to have a file called `fooHelpers.ts`.
 
 ## URI Templates
 
