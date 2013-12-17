@@ -102,8 +102,7 @@ module ActiveMQ {
             workspace.subLevelTabs.push({
               content: '<i class="icon-picture"></i> Diagram',
               title: "View a diagram of the producers, destinations and consumers",
-              //isValid: (workspace:Workspace) => isActiveMQFolder(workspace),
-              isValid: (workspace:Workspace) => true,
+              isValid: (workspace:Workspace) =>  workspace.isTopTabActive("activemq") || workspace.selectionHasDomain(jmxDomain),
               href: () => "#/activemq/diagram"
             });
             workspace.subLevelTabs.push({
@@ -227,9 +226,5 @@ module ActiveMQ {
       return !(parent && parent.ancestorHasType('Broker'));
     }
     return false;
-  }
-
-  export function isActiveMQFolder(workspace:Workspace) {
-    return workspace.hasDomainAndProperties(jmxDomain);
   }
 }
