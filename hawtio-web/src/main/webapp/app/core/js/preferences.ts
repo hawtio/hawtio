@@ -236,7 +236,7 @@ module Core {
         localStorage['plugins'] = json;
       }
 
-      // force the nav bar to be updated
+      // TODO: force navbar to be updated as its changed (current code not working)
       var $rootScope = $scope.$root || $scope.$rootScope || $scope;
       if ($rootScope) {
         log.info("Using " + $rootScope + " to broadcast");
