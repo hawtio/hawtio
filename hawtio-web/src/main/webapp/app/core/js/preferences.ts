@@ -103,7 +103,7 @@ module Core {
     $scope.newHost = {};
 
     $scope.addRegexDialog = false;
-    $scope.perspective;
+    $scope.perspectiveId;
     $scope.perspectives = [];
 
     $scope.hostSchema = {
@@ -217,8 +217,8 @@ module Core {
 
       var json = angular.toJson($scope.plugins);
       if (json) {
-        log.info("Saving plugin settings for perspective " + $scope.perspective.id + " -> " + json);
-        var id = "plugins-" + $scope.perspective.id;
+        log.info("Saving plugin settings for perspective " + $scope.perspectiveId + " -> " + json);
+        var id = "plugins-" + $scope.perspectiveId;
         localStorage[id] = json;
       }
 
@@ -330,7 +330,7 @@ module Core {
       }
     };
 
-    $scope.$watch('perspective', (newValue, oldValue) => {
+    $scope.$watch('perspectiveId', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
       }
@@ -345,13 +345,15 @@ module Core {
     function updateToPerspective(perspective) {
       var plugins = configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
       $scope.plugins = plugins;
-      $scope.perspective = perspective;
+      $scope.perspectiveId = perspective.id;
 
-      log.info("Updated to perspective " + perspective.id + " with " + plugins.length + " plugins");
+      log.info("Updated to perspective " + $scope.perspectiveId + " with " + plugins.length + " plugins");
     }
 
     // initialize the controller, and pick the 1st perspective
     $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+    log.info("There are " + $scope.perspectives.length + " perspectives");
+
     updateToPerspective($scope.perspectives[0]);
     // and force update the ui
     Core.$apply($scope);
