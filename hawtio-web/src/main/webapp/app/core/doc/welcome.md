@@ -11,6 +11,10 @@ Primary navigation in [{{branding.appName}}](http://hawt.io "{{branding.appName}
 
 Clicking on a navigation link will take you to that plugin's main page.
 
+##### Switching Perspective #####
+If {{branding.appName}} has more than one active perspectives, then you can switch between perspectives by clicking the (<i class='icon-caret-down'></i>) perspective menu,
+located on the upper right corner. If there is only one active perspective, then the (<i class='icon-caret-down'></i>) perspective menu is not shown.
+
 ##### Getting Help #####
 Click the Help icon (<i class='icon-question-sign'></i>) in the main navigation bar to access [{{branding.appName}}](http://hawt.io "{{branding.appName}}")'s help system.
 Browse the available help topics for plugin-specific documentation using the help navigation bar on the left.
