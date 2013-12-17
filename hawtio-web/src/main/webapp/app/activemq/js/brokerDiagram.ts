@@ -77,15 +77,21 @@ module ActiveMQ {
       var selectedNode = $scope.selectedNode;
       if (selectedNode) {
         var container = selectedNode["brokerContainer"] || selectedNode;
-        connectToBroker(container);
+        connectToBroker(container, selectedNode["brokerName"]);
       }
     };
 
-    function connectToBroker(container, postfix = null) {
+    function connectToBroker(container, brokerName, postfix = null) {
       if (isFmc && container.jolokia !== jolokia) {
         Fabric.connectToBroker($scope, container, postfix);
       } else {
         var view = "/jmx/attributes?tab=activemq";
+        if (!postfix) {
+          if (brokerName) {
+            // lets default to the broker view
+            postfix = "nid=root-org.apache.activemq-Broker-" + brokerName;
+          }
+        }
         if (postfix) {
           view += "&" + postfix;
         }
@@ -108,7 +114,7 @@ module ActiveMQ {
         if (brokerName && destinationType && destinationName) {
           postfix = "nid=root-org.apache.activemq-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
         }
-        connectToBroker(container, postfix);
+        connectToBroker(container, brokerName, postfix);
       }
     };
 
@@ -213,16 +219,17 @@ module ActiveMQ {
 
         var brokerProperty: any = null;
         if (brokerName) {
-          var html = brokerName;
+          var brokerHtml = '<a target="broker" ng-click="connectToBroker()">' +
+            '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
+            '</a>';
           if (version && profile) {
             var brokerLink = Fabric.brokerConfigLink(workspace, jolokia, localStorage, version, profile, brokerName);
             if (brokerLink) {
-              html = $compile('<a target="broker" ng-click="connectToBroker()">' +
-                '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
-                '</a> <a title="configuration settings" target="brokerConfig" href="' + brokerLink +
-                '"><i class="icon-tasks"></i></a>')($scope);
+              brokerHtml += ' <a title="configuration settings" target="brokerConfig" href="' + brokerLink +
+                '"><i class="icon-tasks"></i></a>';
             }
           }
+          var html = $compile(brokerHtml)($scope);
           brokerProperty = {key: "Broker", value: html};
           if (!isBroker) {
             properties.splice(0, 0, brokerProperty);
