@@ -22,7 +22,7 @@ module Fabric {
   var fabricTopLevel = "fabric/profiles/";
   export var profileSuffix = ".profile";
 
-  export var jolokiaWebAppGroupId = jmxDomain + "fabric-jolokia";
+  export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
 
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
