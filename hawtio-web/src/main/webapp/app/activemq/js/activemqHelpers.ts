@@ -1,6 +1,7 @@
 module ActiveMQ {
 
   export var log:Logging.Logger = Logger.get("activemq");
+  export var jmxDomain = 'org.apache.activemq';
 
   export function getSelectionQueuesFolder(workspace) {
     function findQueuesFolder(node) {

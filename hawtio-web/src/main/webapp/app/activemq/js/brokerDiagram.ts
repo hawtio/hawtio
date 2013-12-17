@@ -462,6 +462,28 @@ module ActiveMQ {
       return brokerName ? "<p></p>broker: " + brokerName + "</p>" : "";
     }
 
+    function matchesDestinationName(destinationName, typeName) {
+      if (destinationName) {
+        var selection = workspace.selection;
+        if (selection && selection.domain === ActiveMQ.jmxDomain) {
+          var type = selection.entries["destinationType"];
+          if (type) {
+            if ((type === "Queue" && typeName === "topic") || (type === "Topic" && typeName === "queue")) {
+              return false;
+            }
+          }
+          var destName = selection.entries["destinationName"];
+          if (destName) {
+            if (destName !== destinationName) return false;
+          }
+        }
+        log.info("selection: " + selection);
+        // TODO if the current selection is a destination...
+        return !$scope.searchFilter || destinationName.indexOf($scope.searchFilter) >= 0;
+      }
+      return false;
+    }
+
     function onContainerJolokia(containerJolokia, container, id) {
       if (containerJolokia) {
         container.jolokia = containerJolokia;
@@ -470,7 +492,7 @@ module ActiveMQ {
           var typeName = properties.destType;
           var brokerName = properties.brokerName;
           var destinationName = properties.destinationName;
-          if (!destinationName || ($scope.searchFilter && destinationName.indexOf($scope.searchFilter) < 0)) {
+          if (!matchesDestinationName(destinationName, typeName)) {
             return null;
           }
           // should we be filtering this destination out
@@ -534,7 +556,6 @@ module ActiveMQ {
             graphModelUpdated();
           }));
         }
-
 
         // find consumers
         if ($scope.viewSettings.consumer) {

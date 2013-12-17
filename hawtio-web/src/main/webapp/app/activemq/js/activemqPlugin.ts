@@ -1,6 +1,5 @@
 module ActiveMQ {
   var pluginName = 'activemq';
-  var jmxDomain = 'org.apache.activemq';
 
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']).config(($routeProvider) => {
     $routeProvider.
