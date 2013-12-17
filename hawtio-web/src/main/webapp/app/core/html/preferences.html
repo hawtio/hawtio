@@ -23,8 +23,8 @@
 
       <div class="controls">
         <select id="updatePerspective" ng-model="perspective">
-          <option ng-selected="{{p.id == perspective.id}}"
-                  ng-repeat="p in perspectives"
+          <option ng-repeat="p in perspectives"
+                  ng-selected="{{p.id == perspective.id}}"
                   value="{{p.id}}">
             {{p.title}}
           </option>
@@ -33,6 +33,7 @@
       </div>
     </div>
 
+    <!-- TODO: if a perspective has no plugins, then show some other message about that -->
     <div class="control-group">
 
       <div class="controls">

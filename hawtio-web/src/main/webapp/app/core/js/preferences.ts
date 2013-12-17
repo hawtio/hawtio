@@ -26,7 +26,7 @@ module Core {
     function configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage) {
 
       // grab the top level tabs which is the plugins we can select as our default plugin
-      var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+      var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective.id);
       if (topLevelTabs && topLevelTabs.length > 0) {
         log.debug("Found " + topLevelTabs.length + " plugins");
         // exclude invalid tabs at first
@@ -35,7 +35,8 @@ module Core {
           return href && Core.isValidFunction(workspace, tab.isValid);
         });
 
-        var initPlugins = parsePreferencesJson(localStorage['plugins'], "plugins");
+        var id = "plugins-" + perspective.id;
+        var initPlugins = parsePreferencesJson(localStorage[id], id);
         if (initPlugins) {
           // remove plugins which we cannot find active currently
           initPlugins = initPlugins.filter(p => {
@@ -216,8 +217,9 @@ module Core {
 
       var json = angular.toJson($scope.plugins);
       if (json) {
-        log.info("Saving plugin settings: " + json);
-        localStorage['plugins'] = json;
+        log.info("Saving plugin settings for perspective " + $scope.perspective.id + " -> " + json);
+        var id = "plugins-" + $scope.perspective.id;
+        localStorage[id] = json;
       }
 
       // TODO: force navbar to be updated as its changed (current code not working)
@@ -333,20 +335,24 @@ module Core {
         return;
       }
 
-      updateToPerspective(newValue);
-      Core.$apply($scope);
+      var perspective = Perspective.getPerspectiveById(newValue);
+      if (perspective) {
+        updateToPerspective(perspective);
+        Core.$apply($scope);
+      }
     });
 
     function updateToPerspective(perspective) {
       var plugins = configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
-      log.info("Found " + plugins.length + " plugins for perspective " + perspective.id);
       $scope.plugins = plugins;
+      $scope.perspective = perspective;
+
+      log.info("Updated to perspective " + perspective.id + " with " + plugins.length + " plugins");
     }
 
     // initialize the controller, and pick the 1st perspective
     $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
-    $scope.perspective = $scope.perspectives[0];
-    updateToPerspective($scope.perspective);
+    updateToPerspective($scope.perspectives[0]);
     // and force update the ui
     Core.$apply($scope);
   }

@@ -21,10 +21,10 @@ module Core {
    * list is sorted in the configured order.
    * Notice the list contains plugins which may have been configured as disabled.
    */
-  export function configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage) {
+  export function configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage) {
 
     // grab the top level tabs which is the plugins we can select as our default plugin
-    var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+    var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
     if (topLevelTabs && topLevelTabs.length > 0) {
       log.debug("Found " + topLevelTabs.length + " plugins");
       // exclude invalid tabs at first
@@ -34,12 +34,9 @@ module Core {
       });
       log.debug("After filtering there are " + topLevelTabs.length + " plugins");
 
-      var initPlugins = parsePreferencesJson(localStorage['plugins'], "plugins");
+      var id = "plugins-" + perspectiveId;
+      var initPlugins = parsePreferencesJson(localStorage[id], id);
       if (initPlugins) {
-        initPlugins.forEach((tab, idx) => {
-          log.info("Configured plugin " + tab.id + " at " + tab.index + " loaded at index " + idx);
-        });
-
         // remove plugins which we cannot find active currently
         initPlugins = initPlugins.filter(p => {
           return topLevelTabs.some(tab => tab.id === p.id);
@@ -51,7 +48,7 @@ module Core {
             p.id === tab.id
           });
           if (!knownPlugin) {
-            log.info("Found new plugin " + tab.id);
+            log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
             initPlugins.push({id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false})
           }
         });
@@ -130,8 +127,8 @@ module Core {
   /**
    * Gets the default configured plugin for the given perspective, or <tt>null</tt> if no default has been configured.
    */
-  export function getDefaultPlugin(perspective, workspace, jolokia, localStorage) {
-    var plugins = Core.configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+  export function getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage) {
+    var plugins = Core.configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage);
 
     // find the default plugins
     var defaultPlugin = null;
