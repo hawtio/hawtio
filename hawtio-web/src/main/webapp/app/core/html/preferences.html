@@ -22,18 +22,12 @@
       <label class="control-label">Perspective</label>
 
       <div class="controls">
-        <select id="updatePerspective" ng-model="perspective">
-          <option ng-repeat="p in perspectives"
-                  ng-selected="{{p.id == perspective.id}}"
-                  value="{{p.id}}">
-            {{p.title}}
-          </option>
+        <select ng-model="perspectiveId" required="required" ng-options="p.id as p.title for p in perspectives">
         </select>
         <span class="help-block">Configure plugins in selected perspective</span>
       </div>
     </div>
 
-    <!-- TODO: if a perspective has no plugins, then show some other message about that -->
     <div class="control-group">
 
       <div class="controls">
