@@ -787,6 +787,14 @@ module Core {
       return false;
     }
 
+    public selectionHasDomain(domainName: string) {
+      var node = this.selection;
+      if (node) {
+        return domainName === node.domain;
+      }
+      return false;
+    }
+
     public selectionHasDomainAndType(objectName: string, typeName: string) {
       var node = this.selection;
       if (node) {
