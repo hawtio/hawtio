@@ -44,7 +44,7 @@ module Core {
         Logger.debug("Setting perspective to " + pid);
         $scope.currentPerspective = perspective;
         reloadPerspective();
-        $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+        $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
         if (perspective.lastPage) {
           var path = Core.trimLeading(perspective.lastPage, "#");
           // lets avoid any old paths with ?p=" inside
@@ -151,7 +151,7 @@ module Core {
           return p['id'] === currentId;
         });
         console.log("Current perspective ID: " + currentId);
-        $scope.topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+        $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
       }
     }
 
