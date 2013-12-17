@@ -325,6 +325,16 @@ module Camel {
       Core.$apply($scope);
     }
 
+    /**
+     * Returns true if the given CamelContext ID matches the current search filter
+     */
+    function matchesContextId(contextId) {
+      if (contextId) {
+        return !$scope.searchFilter || contextId.indexOf($scope.searchFilter) >= 0;
+      }
+      return false;
+    }
+
     function onContainerJolokia(containerJolokia, container) {
       if (containerJolokia) {
         container.jolokia = containerJolokia;
@@ -335,7 +345,7 @@ module Camel {
 
         function getOrCreateCamelContext(contextId) {
           var answer = null;
-          if (contextId) {
+          if (matchesContextId(contextId)) {
             // try guess the mbean name
             var contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
             var contextAttributes = {
@@ -373,7 +383,7 @@ module Camel {
               attributes["mbean"] = objectName;
               attributes["container"] = container;
 
-              if (uri && contextId) {
+              if (uri && matchesContextId(contextId)) {
                 var endpoint = getOrAddNode("endpoint", idPrefix + uri, attributes, () => {
                   return {
                     name: uri,
@@ -413,7 +423,7 @@ module Camel {
               attributes["container"] = container;
               attributes["type"] = "route";
 
-              if (routeId && contextId) {
+              if (routeId && matchesContextId(contextId)) {
                 var route = getOrAddNode("route", idPrefix + routeId, attributes, () => {
                   return {
                     name: routeId,
