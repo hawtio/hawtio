@@ -76,6 +76,16 @@ module Perspective {
     return perspectives;
   }
 
+  export function getPerspectiveById(id) {
+    var answer;
+    angular.forEach(Perspective.metadata, (perspective, key) => {
+      if (key === id) {
+        answer = perspective;
+      }
+    });
+    return answer;
+  }
+
   /**
    * Returns the top level tabs for the given perspectiveId
    * @method topLevelTabsForPerspectiveId
@@ -152,7 +162,7 @@ module Perspective {
   export function getTopLevelTabsForPerspective($location, workspace: Workspace, jolokia, localStorage) {
     var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
 
-    var plugins = Core.configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+    var plugins = Core.configuredPluginsForPerspectiveId(perspective, workspace, jolokia, localStorage);
     var tabs = Core.filterTopLevelTabs(perspective, workspace, plugins);
 
     return tabs;
@@ -201,9 +211,9 @@ module Perspective {
     // now find the configured default plugin, and then find the top level tab that matches the default plugin
     var answer = Perspective.defaultPageLocation;
     if (!answer && $location && workspace) {
-      var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
-      var defaultPlugin = Core.getDefaultPlugin(perspective, workspace, jolokia, localStorage);
-      var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+      var perspectiveId = currentPerspectiveId($location, workspace, jolokia, localStorage);
+      var defaultPlugin = Core.getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage);
+      var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
 
       var defaultTab;
       if (defaultPlugin) {

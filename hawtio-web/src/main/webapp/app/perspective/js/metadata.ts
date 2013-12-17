@@ -89,6 +89,30 @@ module Perspective {
         ]
       }
     },
+    limited: {
+      label: "Limited",
+      lastPage: "#/logs",
+      isValid: (workspace) => workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length,
+      topLevelTabs: {
+        includes: [
+          {
+            href: "#/jmx"
+          },
+          {
+            href: "#/camel"
+          },
+          {
+            href: "#/activemq"
+          },
+          {
+            href: "#/jetty"
+          },
+          {
+            href: "#/logs"
+          }
+        ]
+      }
+    },
     website: {
       label: "WebSite",
       isValid: (workspace) => Site.sitePluginEnabled && Site.isSiteNavBarValid(),
