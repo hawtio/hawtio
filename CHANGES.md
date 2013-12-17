@@ -63,5 +63,5 @@
 #### In Progress (1.3)
 
 * Added welcome page to aid first time users, and being able to easily dismiss the welcome page on startup.
-* Added preference to choose a default plugin to select on startup.
+* Added preference to configure the order/enabling of the plugins in the navigation bar. and to select a plugin as the default on startup.
 
