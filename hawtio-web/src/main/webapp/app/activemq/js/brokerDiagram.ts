@@ -17,7 +17,7 @@ module ActiveMQ {
       group: false,
       profile: false,
       slave: false,
-      broker: true,
+      broker: isFmc,
       network: true,
       container: false,
       queue: true,
@@ -348,7 +348,7 @@ module ActiveMQ {
         }
 
         var master = brokerStatus.master;
-        var broker = getOrCreateBroker(master, brokerId, groupId, containerId, container, brokerStatus);
+        var broker = getOrAddBroker(master, brokerId, groupId, containerId, container, brokerStatus);
         if (container && container.validContainer) {
           var key = container.containerId;
           $scope.activeContainers[key] = container;
@@ -378,6 +378,7 @@ module ActiveMQ {
           }
         }
       });
+      redrawActiveContainers();
     }
 
     function redrawLocalBroker() {
@@ -400,23 +401,19 @@ module ActiveMQ {
                 var master = true;
                 var brokerId = properties["brokerName"] || "unknown";
                 var groupId = "";
-                var broker = getOrCreateBroker(master, brokerId, groupId, containerId, container, properties);
+                var broker = getOrAddBroker(master, brokerId, groupId, containerId, container, properties);
               }
             }
           });
+          redrawActiveContainers();
         }));
+      } else {
+        redrawActiveContainers();
       }
     }
 
-    function doRedrawGraph() {
-      graphBuilder = new ForceGraph.GraphBuilder();
-      if (isFmc) {
-        redrawFabricBrokers();
-      } else {
-        redrawLocalBroker();
-      }
-
-         // TODO delete any nodes from dead containers in containersToDelete
+    function redrawActiveContainers() {
+// TODO delete any nodes from dead containers in containersToDelete
       angular.forEach($scope.activeContainers, (container, id) => {
         var containerJolokia = container.jolokia;
         if (containerJolokia) {
@@ -429,6 +426,15 @@ module ActiveMQ {
       Core.$apply($scope);
     }
 
+    function doRedrawGraph() {
+      graphBuilder = new ForceGraph.GraphBuilder();
+      if (isFmc) {
+        redrawFabricBrokers();
+      } else {
+        redrawLocalBroker();
+      }
+    }
+
     function brokerNameMarkup(brokerName) {
       return brokerName ? "<p></p>broker: " + brokerName + "</p>" : "";
     }
@@ -439,6 +445,7 @@ module ActiveMQ {
 
         function getOrAddDestination(properties) {
           var typeName = properties.destType;
+          var brokerName = properties.brokerName;
           var destinationName = properties.destinationName;
           if (!destinationName || ($scope.searchFilter && destinationName.indexOf($scope.searchFilter) < 0)) {
             return null;
@@ -448,10 +455,9 @@ module ActiveMQ {
           if (!hideFlag) {
             return null;
           }
-          return getOrAddNode(typeName, destinationName, properties, () => {
+          var destination = getOrAddNode(typeName, destinationName, properties, () => {
             var destinationTypeName = properties.destinationType || "Queue";
             var objectName = "";
-            var brokerName = properties.brokerName;
             if (brokerName) {
               // lets ignore temp topic stuff as there's no mbean for these
               if (!destinationName.startsWith("ActiveMQ.Advisory.TempQueue_ActiveMQ.Advisory.TempTopic")) {
@@ -480,7 +486,12 @@ module ActiveMQ {
             }
             return answer;
           });
+          if (destination && $scope.viewSettings.broker && brokerName) {
+            addLinkIds(brokerNodeId(brokerName), destination["id"], "destination");
+          }
+          return destination;
         }
+
 
         // find networks
         var brokerId = container.brokerName;
@@ -493,8 +504,7 @@ module ActiveMQ {
                 configureDestinationProperties(properties);
                 var remoteBrokerId = properties.RemoteBrokerName;
                 if (remoteBrokerId) {
-                  var brokerIdPrefix = "broker:";
-                  addLinkIds(brokerIdPrefix + brokerId, brokerIdPrefix + remoteBrokerId, "network");
+                  addLinkIds(brokerNodeId(brokerId), brokerNodeId(remoteBrokerId), "network");
                 }
               }
             });
@@ -625,7 +635,7 @@ module ActiveMQ {
       Core.$apply($scope);
     }
 
-    function getOrCreateBroker(master, brokerId, groupId, containerId, container, brokerStatus) {
+    function getOrAddBroker(master, brokerId, groupId, containerId, container, brokerStatus) {
       var broker = null;
       var brokerFlag = master ? $scope.viewSettings.broker : $scope.viewSettings.slave;
       if (brokerFlag) {
@@ -708,6 +718,10 @@ module ActiveMQ {
       if (id1 && id2) {
         graphBuilder.addLink(id1, id2, linkType);
       }
+    }
+
+    function brokerNodeId(brokerId) {
+      return brokerId ? "broker:" + brokerId : null;
     }
 
   /**
