@@ -149,7 +149,7 @@ module Perspective {
    * @param {any} localStorage
    * @return {Array}
    */
-  export function topLevelTabs($location, workspace: Workspace, jolokia, localStorage) {
+  export function getTopLevelTabsForPerspective($location, workspace: Workspace, jolokia, localStorage) {
     var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
 
     var plugins = Core.configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
@@ -198,26 +198,28 @@ module Perspective {
       return "/welcome/";
     }
 
+    // now find the configured default plugin, and then find the top level tab that matches the default plugin
     var answer = Perspective.defaultPageLocation;
     if (!answer && $location && workspace) {
-      var topLevelTabs = Perspective.topLevelTabs($location, workspace, jolokia, localStorage);
+      var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
+      var defaultPlugin = Core.getDefaultPlugin(perspective, workspace, jolokia, localStorage);
+      var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
 
-      // exclude invalid tabs at first
-      topLevelTabs = topLevelTabs.filter(tab => {
-        var href = tab.href();
-        return href && isValidFunction(workspace, tab.isValid);
-      });
+      var defaultTab;
+      if (defaultPlugin) {
+        tabs.forEach(tab => {
+          if (tab.id === defaultPlugin.id) {
+            defaultTab = tab;
+          }
+        });
+      } else {
+        // if no default plugin configured, then select the 1st tab as default
+        defaultTab = tabs[0];
+      }
 
-      // pick the default plugin if any configured, as otherwise we pick the first
-      topLevelTabs = topLevelTabs.filter(tab => {
-        return isMatchDefaultPlugin(tab.id, localStorage);
-      });
-
-      // then pick the first if multiple matched
-      var tab = topLevelTabs.length > 0 ? topLevelTabs[0] : null;
-      if (tab) {
+      if (defaultTab) {
         // clip the href to get the path to the plugin
-        answer = Core.trimLeading(tab.href(), "#");
+        answer = Core.trimLeading(defaultTab.href(), "#");
       }
     }
 
@@ -235,17 +237,6 @@ module Perspective {
     return true;
   }
 
-  // TODO: Change this code due #853
-  function isMatchDefaultPlugin(id, localStorage) {
-    var value = localStorage["defaultPlugin"];
-    if (angular.isString(id) && angular.isString(value)) {
-      // if the default is the first then its a match
-      return value === "_first" || id === value;
-    }
-    // if no default plugin then match as a favorite
-    return true;
-  }
-
   /**
    * Returns true if there is no validFn defined or if its defined
    * then the function returns true.
@@ -256,7 +247,7 @@ module Perspective {
    * @param {Function} validFn
    * @return {Boolean}
    */
-  export function isValidFunction(workspace, validFn) {
+  function isValidFunction(workspace, validFn) {
     return !validFn || validFn(workspace);
   }
 

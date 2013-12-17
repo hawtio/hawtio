@@ -30,7 +30,7 @@ module Core {
       // exclude invalid tabs at first
       topLevelTabs = topLevelTabs.filter(tab => {
         var href = tab.href();
-        return href && Perspective.isValidFunction(workspace, tab.isValid);
+        return href && isValidFunction(workspace, tab.isValid);
       });
       log.debug("After filtering there are " + topLevelTabs.length + " plugins");
 
@@ -63,20 +63,38 @@ module Core {
     }
 
     // okay push plugins to scope so we can see them in the UI
+    var answer = safeTabsToPlugins(initPlugins);
+    return answer;
+  }
+
+  /**
+   * Function which safely can turn tabs/plugins to plugins
+   */
+  export function safeTabsToPlugins(tabs) {
     var answer = [];
-    if (initPlugins) {
-      initPlugins.forEach((tab, idx) => {
-        log.info("Plugin " + tab.id + " at " + idx + " is " + tab.enabled + " enabled");
+    if (tabs) {
+      tabs.forEach((tab, idx) => {
         var name;
-        if (tab.displayName) {
-          name = tab.displayName;
-        } else {
+        if (angular.isUndefined(tab.displayName)) {
           name = tab.content;
+        } else {
+          name = tab.displayName;
         }
-        answer.push({id: tab.id, index: idx, displayName: name, enabled: tab.enabled, isDefault: tab.isDefault});
+        var enabled;
+        if (angular.isUndefined(tab.enabled)) {
+          enabled = true;
+        } else {
+          enabled = tab.enabled;
+        }
+        var isDefault;
+        if (angular.isUndefined(tab.isDefault)) {
+          isDefault = false;
+        } else {
+          isDefault = tab.isDefault;
+        }
+        answer.push({id: tab.id, index: idx, displayName: name, enabled: enabled, isDefault: isDefault});
       });
     }
-
     return answer;
   }
 
@@ -93,6 +111,36 @@ module Core {
       }
     });
     return result;
+  }
+
+  /**
+   * Returns true if there is no validFn defined or if its defined
+   * then the function returns true.
+   *
+   * @method isValidFunction
+   * @for Perspective
+   * @param {Core.Workspace} workspace
+   * @param {Function} validFn
+   * @return {Boolean}
+   */
+  export function isValidFunction(workspace, validFn) {
+    return !validFn || validFn(workspace);
+  }
+
+  /**
+   * Gets the default configured plugin for the given perspective, or <tt>null</tt> if no default has been configured.
+   */
+  export function getDefaultPlugin(perspective, workspace, jolokia, localStorage) {
+    var plugins = Core.configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+
+    // find the default plugins
+    var defaultPlugin = null;
+    plugins.forEach(p => {
+      if (p.isDefault) {
+        defaultPlugin = p;
+      }
+    });
+    return defaultPlugin;
   }
 
 }

@@ -32,16 +32,11 @@ module Core {
         // exclude invalid tabs at first
         topLevelTabs = topLevelTabs.filter(tab => {
           var href = tab.href();
-          return href && Perspective.isValidFunction(workspace, tab.isValid);
+          return href && Core.isValidFunction(workspace, tab.isValid);
         });
-        log.debug("After filtering there are " + topLevelTabs.length + " plugins");
 
         var initPlugins = parsePreferencesJson(localStorage['plugins'], "plugins");
         if (initPlugins) {
-          initPlugins.forEach((tab, idx) => {
-            log.info("Configured plugin " + tab.id + " at " + tab.index + " loaded at index " + idx);
-          });
-
           // remove plugins which we cannot find active currently
           initPlugins = initPlugins.filter(p => {
             return topLevelTabs.some(tab => tab.id === p.id);
@@ -53,7 +48,7 @@ module Core {
               p.id === tab.id
             });
             if (!knownPlugin) {
-              log.info("Found new plugin " + tab.id);
+              log.info("Discovered new plugin in JVM which was not in preference configuration: " + tab.id);
               initPlugins.push({id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false})
             }
           });
@@ -65,20 +60,7 @@ module Core {
       }
 
       // okay push plugins to scope so we can see them in the UI
-      var answer = [];
-      if (initPlugins) {
-        initPlugins.forEach((tab, idx) => {
-          log.info("Plugin " + tab.id + " at " + idx + " is " + tab.enabled + " enabled");
-          var name;
-          if (tab.displayName) {
-            name = tab.displayName;
-          } else {
-            name = tab.content;
-          }
-          answer.push({id: tab.id, index: idx, displayName: name, enabled: tab.enabled, isDefault: tab.isDefault});
-        });
-      }
-
+      var answer = safeTabsToPlugins(initPlugins);
       return answer;
     }
 
@@ -120,6 +102,8 @@ module Core {
     $scope.newHost = {};
 
     $scope.addRegexDialog = false;
+    $scope.perspective;
+    $scope.perspectives = [];
 
     $scope.hostSchema = {
       properties: {
@@ -344,12 +328,26 @@ module Core {
       }
     };
 
-    var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+    $scope.$watch('perspective', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
 
-    var plugins = configuredPluginsForPerspective(perspectives[0], workspace, jolokia, localStorage);
-    log.info("Found " + plugins.length + " plugins");
-    $scope.plugins = plugins;
+      updateToPerspective(newValue);
+      Core.$apply($scope);
+    });
 
+    function updateToPerspective(perspective) {
+      var plugins = configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+      log.info("Found " + plugins.length + " plugins for perspective " + perspective.id);
+      $scope.plugins = plugins;
+    }
+
+    // initialize the controller, and pick the 1st perspective
+    $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
+    $scope.perspective = $scope.perspectives[0];
+    updateToPerspective($scope.perspective);
+    // and force update the ui
     Core.$apply($scope);
   }
 

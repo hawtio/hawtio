@@ -22,11 +22,11 @@
       <label class="control-label">Perspective</label>
 
       <div class="controls">
-        <select id="updateDefaultPlugin" ng-model="defaultPlugin">
-          <option ng-selected="{{plugin.selected}}"
-                  ng-repeat="plugin in plugins"
-                  value="{{plugin.id}}">
-            {{plugin.displayName}}
+        <select id="updatePerspective" ng-model="perspective">
+          <option ng-selected="{{p.id == perspective.id}}"
+                  ng-repeat="p in perspectives"
+                  value="{{p.id}}">
+            {{p.title}}
           </option>
         </select>
         <span class="help-block">Configure plugins in selected perspective</span>
