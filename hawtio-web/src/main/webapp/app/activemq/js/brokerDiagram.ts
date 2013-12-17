@@ -77,22 +77,38 @@ module ActiveMQ {
       var selectedNode = $scope.selectedNode;
       if (selectedNode) {
         var container = selectedNode["brokerContainer"] || selectedNode;
-        Fabric.connectToBroker($scope, container);
+        connectToBroker(container);
       }
     };
+
+    function connectToBroker(container, postfix = null) {
+      if (isFmc && container.jolokia !== jolokia) {
+        Fabric.connectToBroker($scope, container, postfix);
+      } else {
+        var view = "/jmx/attributes?tab=activemq";
+        if (postfix) {
+          view += "&" + postfix;
+        }
+        log.info("Opening view " + view);
+        var path = url("/#" + view);
+        window.open(path, '_destination');
+        window.focus();
+        //$location.path(view);
+      }
+    }
 
     $scope.connectToDestination = () => {
       var selectedNode = $scope.selectedNode;
       if (selectedNode) {
         var container = selectedNode["brokerContainer"] || selectedNode;
         var brokerName = selectedNode["brokerName"];
-        var destinationType = selectedNode["destinationType"];
+        var destinationType = selectedNode["destinationType"] || selectedNode["typeLabel"];
         var destinationName = selectedNode["destinationName"];
         var postfix: string = null;
         if (brokerName && destinationType && destinationName) {
           postfix = "nid=root-org.apache.activemq-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
         }
-        Fabric.connectToBroker($scope, container, postfix);
+        connectToBroker(container, postfix);
       }
     };
 
