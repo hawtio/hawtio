@@ -30,10 +30,12 @@
 
     <div class="control-group">
 
+      <div class="span6">
       <div class="controls">
         <div>
-          <table>
-            <tr id="heading">
+          <table class="table table-condensed table-striped">
+            <tr>
+              <th><i class="icon-double-angle-down"></i>/<i class="icon-double-angle-up"></i></th>
               <th>Plugin</th>
               <th>Enabled</th>
               <th>Default</th>
@@ -42,6 +44,8 @@
               <td>
                 <i class="icon-double-angle-up clickable" ng-hide="$first" ng-click="pluginMoveUp($index)"></i>
                 <i class="icon-double-angle-down clickable" ng-hide="$last" ng-click="pluginMoveDown($index)"></i>
+              </td>
+              <td>
                 {{plugin.displayName}}
               </td>
               <td>
@@ -54,8 +58,9 @@
               </td>
             </tr>
           </table>
-          <button ng-disabled="!pluginDirty" ng-click="pluginApply()">Apply</button>
+          <button class="btn btn-primary" ng-disabled="!pluginDirty" ng-click="pluginApply()">Apply plugin changes</button>
         </div>
+      </div>
       </div>
     </div>
 
