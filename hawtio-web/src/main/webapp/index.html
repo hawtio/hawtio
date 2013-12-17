@@ -121,14 +121,14 @@ div.log-stack-trace p:nth-child(odd) {
               <ul class="nav nav-tabs pull-right">
                 <li ng-show="loggedIn() && perspectives.length > 1" class="pull-right dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                          title="The current perspective">
+                          title="Click to switch between perspectives"
+                          data-placement="bottom">
                     <span ng-bind-html-unsafe=" perspectiveDetails.perspective.label || 'Perspective'"></span> <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
                     <li ng-repeat="perspective in perspectives">
                       <a ng-click="switchPerspective(perspective)"
                          ng-hide="perspectiveDetails.perspective.id === perspective.id"
-                         title="Switch to the {{perspective.label}} perspective"
                          data-placement="bottom">
                         {{perspective.label}}</a>
                     </li>
