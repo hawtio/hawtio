@@ -1,4 +1,8 @@
+/// <reference path="../../jmx/js/jmxHelpers.ts"/>
+
 /**
+ * That magic <reference> in the top of this file must be there!!!
+ *
  * @module Camel
  * @main Camel
  */
