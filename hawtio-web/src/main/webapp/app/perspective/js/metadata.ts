@@ -92,7 +92,7 @@ module Perspective {
     limited: {
       label: "Limited",
       lastPage: "#/logs",
-      isValid: (workspace) => workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length,
+      isValid: (workspace) => false,
       topLevelTabs: {
         includes: [
           {
