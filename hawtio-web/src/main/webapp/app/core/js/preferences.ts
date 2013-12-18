@@ -18,53 +18,6 @@ module Core {
       return answer;
     }
 
-    /**
-     * Function to return the configured plugin for the given perspective. The returned
-     * list is sorted in the configured order.
-     * Notice the list contains plugins which may have been configured as disabled.
-     */
-    function configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage) {
-
-      // grab the top level tabs which is the plugins we can select as our default plugin
-      var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective.id);
-      if (topLevelTabs && topLevelTabs.length > 0) {
-        log.debug("Found " + topLevelTabs.length + " plugins");
-        // exclude invalid tabs at first
-        topLevelTabs = topLevelTabs.filter(tab => {
-          var href = tab.href();
-          return href && Core.isValidFunction(workspace, tab.isValid);
-        });
-
-        var id = "plugins-" + perspective.id;
-        var initPlugins = parsePreferencesJson(localStorage[id], id);
-        if (initPlugins) {
-          // remove plugins which we cannot find active currently
-          initPlugins = initPlugins.filter(p => {
-            return topLevelTabs.some(tab => tab.id === p.id);
-          });
-
-          // add new active plugins which we didn't know about before
-          topLevelTabs.forEach(tab => {
-            var knownPlugin = initPlugins.filter(p => {
-              p.id === tab.id
-            });
-            if (!knownPlugin) {
-              log.info("Discovered new plugin in JVM which was not in preference configuration: " + tab.id);
-              initPlugins.push({id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false})
-            }
-          });
-
-        } else {
-          // okay no configured saved yet, so use what is active
-          initPlugins = topLevelTabs;
-        }
-      }
-
-      // okay push plugins to scope so we can see them in the UI
-      var answer = safeTabsToPlugins(initPlugins);
-      return answer;
-    }
-
     $scope.branding = branding;
 
     if (!angular.isDefined(localStorage['logLevel'])) {
@@ -217,7 +170,7 @@ module Core {
 
       var json = angular.toJson($scope.plugins);
       if (json) {
-        log.info("Saving plugin settings for perspective " + $scope.perspectiveId + " -> " + json);
+        log.debug("Saving plugin settings for perspective " + $scope.perspectiveId + " -> " + json);
         var id = "plugins-" + $scope.perspectiveId;
         localStorage[id] = json;
       }
@@ -225,7 +178,7 @@ module Core {
       // TODO: force navbar to be updated as its changed (current code not working)
       var $rootScope = $scope.$root || $scope.$rootScope || $scope;
       if ($rootScope) {
-        log.info("Using " + $rootScope + " to broadcast");
+        log.debug("Using " + $rootScope + " to broadcast");
         $rootScope.$broadcast('jmxTreeUpdated');
       }
 
@@ -343,15 +296,15 @@ module Core {
     });
 
     function updateToPerspective(perspective) {
-      var plugins = configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
+      var plugins = Core.configuredPluginsForPerspectiveId(perspective.id, workspace, jolokia, localStorage);
       $scope.plugins = plugins;
       $scope.perspectiveId = perspective.id;
-      log.info("Updated to perspective " + $scope.perspectiveId + " with " + plugins.length + " plugins");
+      log.debug("Updated to perspective " + $scope.perspectiveId + " with " + plugins.length + " plugins");
     }
 
     // initialize the controller, and pick the 1st perspective
     $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
-    log.info("There are " + $scope.perspectives.length + " perspectives");
+    log.debug("There are " + $scope.perspectives.length + " perspectives");
 
     // pick the current selected perspective
     var selectPerspective;
