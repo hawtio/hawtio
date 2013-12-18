@@ -39,7 +39,9 @@
 
         <ul class="unstyled switches">
           <li>
-            <div class="switch-container">
+            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles.
+
+So they are for implementation inheritance rather like Abstract Base Classes in Java">
               <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
                 <input type="checkbox" ng-checked="row.abstract">
                 <span>Abstract
@@ -51,7 +53,7 @@
             </div>
           </li>
           <li>
-            <div class="switch-container">
+            <div class="switch-container" title="Locking a profile means that no changes can be made to it until its unlocked first.">
               <label class="switch-light switch-ios" ng-click="changeAttribute('locked', !row.locked)">
                 <input type="checkbox" ng-checked="row.locked">
                 <span>Locked
