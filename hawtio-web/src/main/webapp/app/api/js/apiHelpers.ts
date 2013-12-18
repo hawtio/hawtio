@@ -73,7 +73,7 @@ module API {
         angular.forEach(resource.resource, (childResource) => {
           childResource.expanded = true;
         });
-        angular.forEach(resource.method, (method) => {
+        angular.forEach(resource.method || resource.operations, (method) => {
           method.expanded = true;
         });
       }

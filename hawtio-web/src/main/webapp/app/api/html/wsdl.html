@@ -41,7 +41,7 @@
                       </a>
                     </li>
                     <li>
-                      <a ng-click="showOperations(resource)">
+                      <a ng-click="expandOperations(resource)">
                         Expand Operations
                       </a>
                     </li>
@@ -52,7 +52,7 @@
                 </div>
 
                 <ul class="endpoints" style="display: block;">
-                  <li class="endpoint">
+                  <li class="endpoint" ng-hide="resource.hide">
                     <ul class="operations">
                       <li ng-repeat="method in resource.operations | filter:searchText" class="get operation">
                         <div class="expandable" model="method">
