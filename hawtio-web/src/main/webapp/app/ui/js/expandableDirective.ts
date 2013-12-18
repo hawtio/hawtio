@@ -5,13 +5,17 @@ module UI {
 
   export class Expandable {
 
+    log:Logging.Logger = Logger.get("Expandable");
+
     public restrict = 'C';
     public replace = false;
 
     public open(model, expandable, scope) {
       expandable.find('.expandable-body').slideDown(400, function() {
-        expandable.toggleClass('opened');
-        expandable.toggleClass('closed');
+        if (!expandable.hasClass('opened')) {
+          expandable.addClass('opened');
+        }
+        expandable.removeClass('closed');
         if (model) {
           model['expanded'] = true;
         }
@@ -21,8 +25,10 @@ module UI {
 
     public close(model, expandable, scope) {
       expandable.find('.expandable-body').slideUp(400, function() {
-        expandable.toggleClass('opened');
-        expandable.toggleClass('closed');
+        expandable.removeClass('opened');
+        if (!expandable.hasClass('closed')) {
+          expandable.addClass('closed');
+        }
         if (model) {
           model['expanded'] = false;
         }
@@ -81,29 +87,32 @@ module UI {
             }
           }
 
-          /*
-          scope.$watch(modelName + '.expanded', (newValue, oldValue) => {
+          if (modelName) {
+            scope.$watch(modelName + '.expanded', (newValue, oldValue) => {
 
-            console.log("model: " + angular.toJson(model));
-            console.log(modelName + ".expanded: ", newValue);
-
-            if (newValue !== oldValue) {
-
-            }
-          });
-          */
+              if (asBoolean(newValue) !== asBoolean(oldValue)) {
+                if (newValue) {
+                  self.open(model, expandable, scope);
+                } else {
+                  self.close(model, expandable, scope);
+                }
+              }
+            });
+          }
         }
 
         var title = expandable.find('.title');
         var button = expandable.find('.cancel');
 
         button.bind('click', function () {
+          model = scope[modelName];
           self.forceClose(model, expandable, scope);
           return false;
         });
 
         title.bind('click', function () {
-          if (expandable.hasClass('opened')) {
+          model = scope[modelName];
+          if (isOpen(expandable)) {
             self.close(model, expandable, scope);
           } else {
             self.open(model, expandable, scope);
@@ -117,4 +126,11 @@ module UI {
 
   }
 
+  function isOpen(expandable) {
+    return expandable.hasClass('opened') || !expandable.hasClass("closed");
+  }
+
+  function asBoolean(value) {
+    return value ? true : false;
+  }
 }
