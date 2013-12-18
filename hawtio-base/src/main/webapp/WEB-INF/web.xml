@@ -211,24 +211,26 @@
   </servlet-mapping>
 
   <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
+  <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
-
   <listener>
     <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
   </listener>
 
   <context-param>
-      <param-name>blueprintProperties</param-name>
-      <param-value>blueprint.properties</param-value>
+    <param-name>blueprintProperties</param-name>
+    <param-value>blueprint.properties</param-value>
   </context-param>
   <context-param>
-      <param-name>blueprintLocation</param-name>
-      <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
+    <param-name>blueprintLocation</param-name>
+    <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
   </context-param>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-</web-app>
 
+</web-app>
