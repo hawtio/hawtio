@@ -346,7 +346,6 @@ module Core {
       var plugins = configuredPluginsForPerspective(perspective, workspace, jolokia, localStorage);
       $scope.plugins = plugins;
       $scope.perspectiveId = perspective.id;
-
       log.info("Updated to perspective " + $scope.perspectiveId + " with " + plugins.length + " plugins");
     }
 
@@ -354,7 +353,18 @@ module Core {
     $scope.perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
     log.info("There are " + $scope.perspectives.length + " perspectives");
 
-    updateToPerspective($scope.perspectives[0]);
+    // pick the current selected perspective
+    var selectPerspective;
+    var perspectiveId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
+    if (perspectiveId) {
+      selectPerspective = $scope.perspectives.find(p => p.id === perspectiveId);
+    }
+    if (!selectPerspective) {
+      // just pick the 1st then
+      selectPerspective = $scope.perspectives[0];
+    }
+
+    updateToPerspective(selectPerspective);
     // and force update the ui
     Core.$apply($scope);
   }
