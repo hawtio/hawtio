@@ -11,6 +11,10 @@
     margin-left: 10px;
 }
 
+.swagger-ui-wrap .model-signature {
+  font-size: 1.25em;
+}
+
 /**
   mostly standard swagger apart from:
 
@@ -234,7 +238,9 @@ table {
 }
 .swagger-ui-wrap .model-signature {
   font-family: "Droid Sans", sans-serif;
+/*
   font-size: 1em;
+*/
   line-height: 1.5em;
 }
 .swagger-ui-wrap .model-signature .signature-nav a {

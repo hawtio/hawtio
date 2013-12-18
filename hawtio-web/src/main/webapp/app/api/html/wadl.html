@@ -122,22 +122,55 @@
                   <div class="requests" ng-show="method.request.length">
                     <h4>Request</h4>
                     <ul>
-                      <li class="request" ng-repeat="request in method.request">
-                        <div ng-repeat="rep in request.representation">
-                          {{rep.mediaType}}
-                          {{rep.element}}
+                      <li class="request" ng-repeat="step in method.request">
+                        <div class="tabbable" type="pills">
+                          <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
+                               title="{{rep.mediaType}}">
+                            <div class="model-signature" ng-show="rep.schema">
+                              <div class="signature-container">
+                                <div class="description" style="display: block;">
+                              <span class="strong" title="java class: {{rep.javaClass}}
+element name: {{rep.element}}">{{rep.typeName}} {</span>
+
+                                  <div ng-repeat="(key, value) in rep.schema.properties">
+                                    <span class="propName propOpt">{{key}}</span>
+                                    (<span class="propType">{{value.type}}</span><span class="propOptKey"
+                                                                                       ng-show="value.optional">, optional</span>)
+                                    <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                  </div>
+                                  <span class="strong">}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </li>
-                    </ul>
                   </div>
 
                   <div class="responses" ng-show="method.response.length">
                     <h4>Response</h4>
                     <ul>
-                      <li class="response" ng-repeat="response in method.response">
-                        <div ng-repeat="rep in response.representation">
-                          {{rep.mediaType}}
-                          {{rep.element}}
+                      <li class="response" ng-repeat="step in method.response">
+                        <div class="tabbable">
+                          <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
+                               title="{{rep.mediaType}}">
+                            <div class="model-signature" ng-show="rep.schema">
+                              <div class="signature-container">
+                                <div class="description" style="display: block;">
+                              <span class="strong" title="java class: {{rep.javaClass}}
+element name: {{rep.element}}">{{rep.typeName}} {</span>
+
+                                  <div ng-repeat="(key, value) in rep.schema.properties">
+                                    <span class="propName propOpt">{{key}}</span>
+                                    (<span class="propType">{{value.type}}</span><span class="propOptKey"
+                                                                                       ng-show="value.optional">, optional</span>)
+                                    <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                  </div>
+                                  <span class="strong">}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </li>
                     </ul>
