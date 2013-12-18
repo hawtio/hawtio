@@ -56,6 +56,30 @@ module API {
     $scope.container = search["container"];
     $scope.objectName = search["objectName"];
 
+    $scope.showHide = (resource) => {
+      if (resource) {
+        resource.hide = resource.hide ? false : true;
+      }
+    };
+
+    $scope.showOperations = (resource) => {
+      if (resource) {
+        resource.hide = false;
+      }
+    };
+    $scope.expandOperations = (resource) => {
+      if (resource) {
+        resource.hide = false;
+        angular.forEach(resource.resource, (childResource) => {
+          childResource.expanded = true;
+        });
+        angular.forEach(resource.method, (method) => {
+          method.expanded = true;
+        });
+      }
+    };
+
+
     if ($scope.container && $scope.objectName) {
       Fabric.containerJolokia(jolokia, $scope.container, (remoteJolokia) => {
         $scope.remoteJolokia = remoteJolokia;
