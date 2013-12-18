@@ -175,14 +175,10 @@ module Core {
         localStorage[id] = json;
       }
 
-      // TODO: force navbar to be updated as its changed (current code not working)
-      var $rootScope = $scope.$root || $scope.$rootScope || $scope;
-      if ($rootScope) {
-        log.debug("Using " + $rootScope + " to broadcast");
-        $rootScope.$broadcast('jmxTreeUpdated');
-      }
-
-      Core.$apply($scope);
+      // force UI to update by reloading the page which works
+      setTimeout(() => {
+        window.location.reload();
+      }, 10);
     }
 
     $scope.$watch('hosts', (oldValue, newValue) => {
