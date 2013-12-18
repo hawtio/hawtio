@@ -1,3 +1,7 @@
+/**
+ * @module JBoss
+ * @main JBoss
+ */
 module JBoss {
   var pluginName = 'jboss';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).
@@ -6,8 +10,7 @@ module JBoss {
             when('/jboss/server', {templateUrl: 'app/jboss/html/server.html'}).
             when('/jboss/applications', {templateUrl: 'app/jboss/html/applications.html'}).
             when('/jboss/dmr', {templateUrl: 'app/jboss/html/dmr.html'}).
-            when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'}).
-            when('/jboss/mbeans', {templateUrl: 'app/jboss/html/mbeans.html'});
+            when('/jboss/connectors', {templateUrl: 'app/jboss/html/connectors.html'});
           }).
           filter('jbossIconClass', () => iconClass).
           run(($location: ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
