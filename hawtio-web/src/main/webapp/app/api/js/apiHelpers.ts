@@ -268,6 +268,27 @@ module API {
       }
     });
     return obj;
-  };
+  }
+
+
+
+  /**
+   * Concatenate all the non-null arrays into a single array
+   * @param arrays an array of arrays
+   * @return the single flatten arrays with any null/undefined values ignored
+   */
+  export function concatArrays(arrays: any[]) {
+    var answer: any = [];
+    angular.forEach(arrays, (array) => {
+      if (array) {
+        if (angular.isArray(array)) {
+          answer = answer.concat(array);
+        } else {
+          answer.push(array);
+        }
+      }
+    });
+    return answer;
+  }
 
 }
