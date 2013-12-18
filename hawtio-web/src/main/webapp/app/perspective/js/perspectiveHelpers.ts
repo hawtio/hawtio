@@ -150,6 +150,17 @@ module Perspective {
   }
 
   /**
+   * Filter the top level tabs to only include currently active/valid tabs.
+   */
+  export function filterOnlyActiveTopLevelTabs(workspace, topLevelTabs) {
+    var answer = topLevelTabs.filter(tab => {
+      var href = tab.href();
+      return href && isValidFunction(workspace, tab.isValid);
+    });
+    return answer;
+  }
+
+  /**
    * Returns the top level tabs for the given perspective
    * @method topLevelTabs
    * @for Perspective
@@ -214,6 +225,7 @@ module Perspective {
       var perspectiveId = currentPerspectiveId($location, workspace, jolokia, localStorage);
       var defaultPlugin = Core.getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage);
       var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
+      tabs = Perspective.filterOnlyActiveTopLevelTabs(workspace, tabs);
 
       var defaultTab;
       if (defaultPlugin) {
