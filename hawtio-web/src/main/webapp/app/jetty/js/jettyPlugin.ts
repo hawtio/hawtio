@@ -16,7 +16,6 @@ module Jetty {
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
-            viewRegistry['jettyTree'] = "app/jetty/html/layoutJettyTree.html";
             helpRegistry.addUserDoc('jetty', 'app/jetty/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
             });
