@@ -24,10 +24,9 @@
       <div class="controls">
         <select ng-model="perspectiveId" required="required" ng-options="p.id as p.title for p in perspectives">
         </select>
-        <span class="help-block">Configure plugins in selected perspective</span>
+        <span class="help-block">Configure plugins in selected perspective<br/><br/>Click icon to toggle state on the plugin, and click the apply button to save changes.</span>
       </div>
     </div>
-
     <div class="control-group">
 
       <div class="span6">
@@ -42,19 +41,25 @@
             </tr>
             <tr ng-repeat="plugin in plugins">
               <td>
-                <i class="icon-double-angle-up clickable" ng-hide="$first" ng-click="pluginMoveUp($index)"></i>
-                <i class="icon-double-angle-down clickable" ng-hide="$last" ng-click="pluginMoveDown($index)"></i>
+                <i class="icon-double-angle-up clickable" ng-hide="$first" ng-click="pluginMoveUp($index)"
+                    title="Click to move this plugin up in the navigation bar"></i>
+                <i class="icon-double-angle-down clickable" ng-hide="$last" ng-click="pluginMoveDown($index)"
+                  title="Click to move this plugin down in the navigation bar"></i>
               </td>
-              <td>
+              <td title="This is the name of the plugin">
                 {{plugin.displayName}}
               </td>
               <td>
-                <i class="icon-pause clickable" ng-hide="plugin.enabled" ng-click="pluginEnable($index)"></i>
-                <i class="icon-play clickable" ng-hide="!plugin.enabled" ng-click="pluginDisable($index)"></i>
+                <i class="orange icon-off clickable" ng-hide="plugin.enabled" ng-click="pluginEnable($index)"
+                   title="This plugin is disabled and not available on the navigation bar"></i>
+                <i class="green icon-play-circle clickable" ng-hide="!plugin.enabled" ng-click="pluginDisable($index)"
+                   title="This plugin is enabled"></i>
               </td>
               <td>
-                <i class="icon-check clickable" ng-hide="plugin.isDefault" ng-click="pluginDefault($index)"></i>
-                {{plugin.isDefault ? "Default" : ""}}
+                <i class="icon-check-empty clickable" ng-hide="plugin.isDefault" ng-click="pluginDefault($index)"
+                    title="Click to select this plugin as the default plugin to use on startup"></i>
+                <i class="icon-check clickable" ng-hide="!plugin.isDefault" ng-click="pluginDefault($index)"
+                    title="This is the default plugin"></i>
               </td>
             </tr>
           </table>
