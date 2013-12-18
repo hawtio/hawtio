@@ -1,5 +1,5 @@
 /**
- * Force Graph plugin & directive
+ * IDE integration
  *
  * @module IDE
  */

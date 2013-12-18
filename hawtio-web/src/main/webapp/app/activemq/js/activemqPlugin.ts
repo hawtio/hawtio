@@ -1,3 +1,7 @@
+/**
+ * @module ActiveMQ
+ * @main ActiveMQ
+ */
 module ActiveMQ {
   var pluginName = 'activemq';
 

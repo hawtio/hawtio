@@ -1,9 +1,9 @@
 /**
  * API plugin for browsing WSDL and WADL
+ *
  * @module API
  * @main API
  */
-
 module API {
   var pluginName = 'api';
   angular.module(pluginName, ['bootstrap', 'hawtioCore', 'hawtio-ui']).

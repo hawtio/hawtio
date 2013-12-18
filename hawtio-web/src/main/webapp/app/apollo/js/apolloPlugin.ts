@@ -1,3 +1,7 @@
+/**
+ * @module Apollo
+ * @main Apollo
+ */
 module Apollo {
   var pluginName = 'apollo';
   angular.
