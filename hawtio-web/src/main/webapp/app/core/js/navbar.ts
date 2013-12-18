@@ -45,8 +45,28 @@ module Core {
         $scope.currentPerspective = perspective;
         reloadPerspective();
         $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
-        if (perspective.lastPage) {
-          var path = Core.trimLeading(perspective.lastPage, "#");
+
+        // is any of the top level tabs marked as default?
+        var defaultPlugin = Core.getDefaultPlugin(pid, workspace, jolokia, localStorage);
+        var defaultTab;
+        var path;
+        if (defaultPlugin) {
+          $scope.topLevelTabs.forEach(tab => {
+            if (tab.id === defaultPlugin.id) {
+              defaultTab = tab;
+            }
+          });
+          if (defaultTab) {
+            path = Core.trimLeading(defaultTab.href(), "#");
+          }
+        } else {
+          // if no default plugin configured, then select the last page as the active location
+          if (perspective.lastPage) {
+            path = Core.trimLeading(perspective.lastPage, "#");
+          }
+        }
+
+        if (path) {
           // lets avoid any old paths with ?p=" inside
           var idx = path.indexOf("?p=") || path.indexOf("&p=");
           if (idx > 0) {
