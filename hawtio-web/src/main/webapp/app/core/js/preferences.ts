@@ -59,6 +59,7 @@ module Core {
     $scope.perspectiveId;
     $scope.perspectives = [];
 
+    // used by add dialog in preference.html
     $scope.hostSchema = {
       properties: {
         'name': {
@@ -68,31 +69,6 @@ module Core {
         'regex': {
           description: 'Indicator regex',
           type: 'string'
-        }
-      }
-    };
-
-    $scope.pluginSchema = {
-      properties: {
-        'id': {
-          description: 'Plugin id',
-          type: 'string'
-        },
-        'displayName': {
-          description: 'Plugin name',
-          type: 'string'
-        },
-        'index': {
-          description: 'Plugin index',
-          type: 'integer'
-        },
-        'enabled': {
-          description: 'Plugin enabled',
-          type: 'boolean'
-        },
-        'isDefault': {
-          description: 'Plugin is default',
-          type: 'boolean'
         }
       }
     };
