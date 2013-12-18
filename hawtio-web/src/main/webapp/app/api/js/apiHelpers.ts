@@ -87,6 +87,7 @@ module API {
           API.loadJsonSchema(remoteJolokia, $scope.objectName, (jsonSchema) => {
             //log.info("Got JSON Schema: " + JSON.stringify(jsonSchema, null, "  "));
             $scope.jsonSchema = jsonSchema;
+            Core.$apply($scope);
           })
         } else {
           log.info("No Remote Jolokia!");
