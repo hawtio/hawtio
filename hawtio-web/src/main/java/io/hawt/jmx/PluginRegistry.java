@@ -50,7 +50,7 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
 
     @Override
     protected ObjectName getObjectName() throws Exception {
-        return new ObjectName("hawtio:type=registry");
+        return new ObjectName("hawtio:type=Registry");
     }
 
     protected NotificationListener getNotificationListener() {
