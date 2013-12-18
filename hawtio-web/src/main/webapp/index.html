@@ -293,10 +293,10 @@ div.log-stack-trace p:nth-child(odd) {
     <script type="text/javascript">
       hawtioPluginLoader.setLoaderCallback({
         scriptLoaderCallback: function (self, total, remaining) {
-          Logger.get("Core").info("Total scripts: ", total, " Remaining: ", remaining);
+          Logger.get("Core").debug("Total scripts: ", total, " Remaining: ", remaining);
         },
         urlLoaderCallback: function (self, total, remaining) {
-          Logger.get("Core").info("Total URLs: ", total, " Remaining: ", remaining);
+          Logger.get("Core").debug("Total URLs: ", total, " Remaining: ", remaining);
         }
       });
     </script>

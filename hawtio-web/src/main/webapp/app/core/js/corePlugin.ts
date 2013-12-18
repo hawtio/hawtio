@@ -386,7 +386,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
             if (rate > 0) {
               jolokia.start(rate);
             }
-            Core.log.info("Set update rate to: ", rate);
+            Core.log.debug("Set update rate to: ", rate);
           });
 
           $rootScope.$emit('UpdateRate', localStorage['updateRate']);
@@ -445,7 +445,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
 
           setTimeout(() => {
             $("#main-body").fadeIn(2000).after(() => {
-              Core.log.info("<strong>Hawtio started!</strong>");
+              Core.log.info(branding.appName + " started");
             });
           }, 500);
 
