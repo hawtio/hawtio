@@ -26,7 +26,7 @@ module Core {
 
     $scope.localStorage = localStorage;
 
-    Core.bindModelToSearchParam($scope, $location, "pref", "pref", "behaviour");
+    Core.bindModelToSearchParam($scope, $location, "pref", "pref", "core-preference");
 
     $scope.logBuffer = 0;
     if ('logBuffer' in localStorage) {
