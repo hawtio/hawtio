@@ -123,7 +123,7 @@
                     <h4>Request</h4>
                     <ul>
                       <li class="request" ng-repeat="step in method.request">
-                        <div class="tabbable" type="pills">
+                        <div class="tabbable signature-nav" type="pills">
                           <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
                                title="{{rep.mediaType}}">
                             <div class="model-signature" ng-show="rep.schema">
@@ -151,7 +151,7 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
                     <h4>Response</h4>
                     <ul>
                       <li class="response" ng-repeat="step in method.response">
-                        <div class="tabbable">
+                        <div class="tabbable signature-nav">
                           <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
                                title="{{rep.mediaType}}">
                             <div class="model-signature" ng-show="rep.schema">
