@@ -3,7 +3,6 @@
  *
  * @module UI
  * @main UI
- *
  */
 module UI {
 

@@ -1,5 +1,3 @@
-/// <reference path="../../jmx/js/jmxHelpers.ts"/>
-
 /**
  * @module Camel
  * @main Camel
@@ -11,7 +9,6 @@ module Camel {
 
   var routeToolBar = "app/camel/html/attributeToolBarRoutes.html";
   var contextToolBar = "app/camel/html/attributeToolBarContext.html";
-
 
   angular.module(pluginName, ['bootstrap', 'ui.bootstrap',
             'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']).

@@ -1,3 +1,7 @@
+/**
+ * @module ElasticSearch
+ * @main ElasticSearch
+ */
 module ES {
 
     var pluginEsName = 'elasticjs';

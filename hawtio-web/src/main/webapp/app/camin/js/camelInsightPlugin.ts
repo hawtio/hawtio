@@ -1,3 +1,9 @@
+/**
+ * Camel Insight Plugin
+ *
+ * @module Camin
+ * @main Camin
+ */
 module Camin {
   var pluginName = 'camin';
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).
