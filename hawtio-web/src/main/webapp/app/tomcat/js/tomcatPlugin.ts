@@ -16,7 +16,6 @@ module Tomcat {
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
 
             viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";
-            viewRegistry['tomcatTree'] = "app/tomcat/html/layoutTomcatTree.html";
             helpRegistry.addUserDoc('tomcat', 'app/tomcat/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties("Tomcat") ||
                      workspace.treeContainsDomainAndProperties("Catalina")
