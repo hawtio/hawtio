@@ -17,30 +17,10 @@ module API {
       var apidocs = $scope.apidocs;
       var jsonSchema = $scope.jsonSchema;
       if (apidocs && jsonSchema) {
-        log.info("We have apidocs and jsonSchema!");
         enrichResources(jsonSchema, apidocs.resources)
       }
     }
 
-
-    /**
-     * Concatenate all the non-null arrays into a single array
-     * @param arrays an array of arrays
-     * @return the single flatten arrays with any null/undefined values ignored
-     */
-    function concatArrays(arrays: any[]) {
-      var answer: any = [];
-      angular.forEach(arrays, (array) => {
-        if (array) {
-          if (angular.isArray(array)) {
-            answer = answer.concat(array);
-          } else {
-            answer.push(array);
-          }
-        }
-      });
-      return answer;
-    }
 
     function enrichResources(jsonSchema, resources) {
       angular.forEach(resources, (resource) => {
@@ -80,9 +60,6 @@ module API {
               representation["javaClass"] = key;
             }
           });
-          if (foundDef) {
-            log.info("Found def " + angular.toJson(foundDef) + " for element " + representation["element"]);
-          }
         }
       }
     }

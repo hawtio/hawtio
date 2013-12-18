@@ -13,6 +13,47 @@ module API {
     $scope.url = $location.search()["wsdl"];
     loadXml($scope.url, onWsdl);
 
+    $scope.$watch("services", enrichApiDocsWithSchema);
+    $scope.$watch("jsonSchema", enrichApiDocsWithSchema);
+
+    function enrichApiDocsWithSchema() {
+      var services = $scope.services;
+      var jsonSchema = $scope.jsonSchema;
+      if (services && jsonSchema) {
+        log.info("We have services and jsonSchema!");
+        enrichServices(jsonSchema, services)
+      }
+    }
+
+
+    function enrichServices(jsonSchema, services) {
+      angular.forEach(services, (service) => {
+        angular.forEach(service.operations, (method) => {
+          angular.forEach(concatArrays([method.inputs, method.outputs]), (object) => {
+            enrichRepresentation(jsonSchema, object);
+          });
+        });
+      });
+    }
+
+    function enrichRepresentation(jsonSchema, representation) {
+      var defs = jsonSchema ? jsonSchema["definitions"] : null;
+      if (defs && representation) {
+        var name = representation["name"];
+        if (name) {
+          var foundDef = defs[name];
+          if (foundDef) {
+            // unwrap arrays
+            if (angular.isArray(foundDef) && foundDef.length > 0) {
+              foundDef = foundDef[0];
+            }
+            log.info("Found def " + angular.toJson(foundDef) + " for name " + name);
+            representation["schema"] = foundDef;
+          }
+        }
+      }
+    }
+
     function onWsdl(response) {
       $scope.services = [];
       var root = response.documentElement;
