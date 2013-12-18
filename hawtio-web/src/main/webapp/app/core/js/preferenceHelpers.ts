@@ -44,15 +44,12 @@ module Core {
 
         // add new active plugins which we didn't know about before
         topLevelTabs.forEach(tab => {
-          var knownPlugin = initPlugins.filter(p => {
-            p.id === tab.id
-          });
+          var knownPlugin = initPlugins.some(p => p.id === tab.id);
           if (!knownPlugin) {
             log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
             initPlugins.push({id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false})
           }
         });
-
       } else {
         // okay no configured saved yet, so use what is active
         initPlugins = topLevelTabs;
