@@ -15,6 +15,22 @@
   font-size: 1.25em;
 }
 
+div#main .swagger-ui-wrap div ul.nav{
+    background-color: transparent;
+    background-image: none;
+    border: 0;
+    border-image: none;
+    border-image-width: 0;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    border-width: 0;
+}
+#main div div .swagger-ui-wrap div .nav.nav-tabs:not(.connected) {
+    border-image: none;
+    border-image-width: 0;
+    border-width: 0;
+}
+
 /**
   mostly standard swagger apart from:
 
