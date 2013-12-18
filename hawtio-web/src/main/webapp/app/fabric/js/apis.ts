@@ -25,9 +25,9 @@ module Fabric {
       selectWithCheckboxOnly: true,
       columnDefs: [
         {
-          field: 'service',
+          field: 'serviceName',
           displayName: 'Service',
-          cellTemplate: '<div class="ngCellText">{{row.entity.service}}</div>',
+          cellTemplate: '<div class="ngCellText">{{row.entity.serviceName}}</div>',
           //width: 400
           width: "***"
         },
@@ -118,6 +118,7 @@ module Fabric {
 
             // lets use proxy if external URL
             url = Core.useProxyIfExternal(url);
+            value["serviceName"] = trimQuotes(value["service"]);
             var apidocs = value["apidocs"];
             var wadl = value["wadl"];
             var wsdl = value["wsdl"];
@@ -150,7 +151,6 @@ module Fabric {
       $scope.responseJson = responseJson;
 
       try {
-        //console.log("got JSON: " + responseJson);
         var json = JSON.parse(responseJson);
         createFlatList($scope.apis, json);
         Core.$apply($scope);
