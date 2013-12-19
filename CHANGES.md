@@ -64,4 +64,5 @@
 
 * Added welcome page to aid first time users, and being able to easily dismiss the welcome page on startup.
 * Added preference to configure the order/enabling of the plugins in the navigation bar. and to select a plugin as the default on startup.
+* Added support for Apache Tomcat security using the conf/tomcat-users.xml file as user database.
 
