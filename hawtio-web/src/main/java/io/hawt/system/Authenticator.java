@@ -9,6 +9,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
+import javax.security.auth.login.Configuration;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
@@ -30,7 +31,7 @@ public class Authenticator {
 
     public static void extractAuthInfo(String authHeader, ExtractAuthInfoCallback cb) {
         authHeader = authHeader.trim();
-        String [] parts = authHeader.split(" ");
+        String[] parts = authHeader.split(" ");
         if (parts.length != 2) {
             return;
         }
@@ -48,26 +49,25 @@ public class Authenticator {
             String password = parts[1];
             cb.getAuthInfo(user, password);
         }
-
-
     }
 
-    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, HttpServletRequest request, PrivilegedCallback cb) {
+    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+                                                  HttpServletRequest request, PrivilegedCallback cb) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
         if (authHeader == null || authHeader.equals("")) {
             return AuthenticateResult.NO_CREDENTIALS;
         }
-  
+
         final AuthInfo info = new AuthInfo();
 
         Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-          @Override
-          public void getAuthInfo(String userName, String password) {
-            info.username = userName;
-            info.password = password;
-          }
+            @Override
+            public void getAuthInfo(String userName, String password) {
+                info.username = userName;
+                info.password = password;
+            }
         });
 
         if (info.username == null || info.username.equals("public")) {
@@ -75,8 +75,7 @@ public class Authenticator {
         }
 
         if (info.set()) {
-
-            Subject subject = doAuthenticate(realm, role, rolePrincipalClasses, info.username, info.password);
+            Subject subject = doAuthenticate(realm, role, rolePrincipalClasses, configuration, info.username, info.password);
             if (subject == null) {
                 return AuthenticateResult.NOT_AUTHORIZED;
             }
@@ -95,32 +94,26 @@ public class Authenticator {
         return AuthenticateResult.NO_CREDENTIALS;
     }
 
-    private static Subject doAuthenticate(String realm, String role,  String rolePrincipalClasses, final String username, final String password) {
+    private static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+                                          final String username, final String password) {
         try {
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, username={}, password={}]", new Object[]{realm, role, rolePrincipalClasses, username, "******"});
+                LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
+                        new Object[]{realm, role, rolePrincipalClasses, configuration, username, "******"});
             }
 
             Subject subject = new Subject();
-            LoginContext loginContext = new LoginContext(realm, subject, new CallbackHandler() {
+            CallbackHandler handler = new AuthenticationCallbackHandler(username, password);
 
-                @Override
-                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                    for (Callback callback : callbacks) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Callback type {} -> {}", callback.getClass(), callback);
-                        }
-                        if (callback instanceof NameCallback) {
-                            ((NameCallback)callback).setName(username);
-                        } else if (callback instanceof PasswordCallback) {
-                            ((PasswordCallback)callback).setPassword(password.toCharArray());
-                        } else {
-                          LOG.warn("Unsupported callback class [" + callback.getClass().getName() + "]");
-                        }
-                    }
-                }
-            });
+            // call the constructor with or without the configuration as it behaves differently
+            LoginContext loginContext;
+            if (configuration != null) {
+                loginContext = new LoginContext(realm, subject, handler, configuration);
+            } else {
+                loginContext = new LoginContext(realm, subject, handler);
+            }
+
             loginContext.login();
 
             if (role != null && role.length() > 0 && rolePrincipalClasses != null && rolePrincipalClasses.length() > 0) {
@@ -155,9 +148,38 @@ public class Authenticator {
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
+            // TODO: Add some option for verbosity logging
+            LOG.warn("Login failed", e);
             LOG.debug("Login failed", e);
         }
 
         return null;
+    }
+
+    private static final class AuthenticationCallbackHandler implements CallbackHandler {
+
+        private final String username;
+        private final String password;
+
+        private AuthenticationCallbackHandler(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (Callback callback : callbacks) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Callback type {} -> {}", callback.getClass(), callback);
+                }
+                if (callback instanceof NameCallback) {
+                    ((NameCallback) callback).setName(username);
+                } else if (callback instanceof PasswordCallback) {
+                    ((PasswordCallback) callback).setPassword(password.toCharArray());
+                } else {
+                    LOG.warn("Unsupported callback class [" + callback.getClass().getName() + "]");
+                }
+            }
+        }
     }
 }
