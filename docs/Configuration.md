@@ -2,7 +2,14 @@
 
 ### Configuring Security
 
-By default the security in hawtio uses these system properties which you can override:
+hawtio enables security out of the box depending on the container it is running within. Basically there is two types of containers:
+
+- Karaf based containers
+- Web containers
+
+#### Default Security Settings for Karaf containers
+
+By default the security in hawtio uses these system properties when running in Apache Karaf containers (Karaf, ServiceMix, JBoss Fuse) which you can override:
 
 <table class="buttonTable">
   <tr>
@@ -58,19 +65,96 @@ By default the security in hawtio uses these system properties which you can ove
 
 Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).
 
-#### Configuring or disabling security in Karaf, ServiceMix, Fuse
+#### Default Security Settings for web containers
 
-Edit the file **etc/system.properties** and add something like this to the end of the file:
+By default the security in hawtio uses these system properties when running in any other container which you can override:
 
-    hawtio.authenticationEnabled = false
+<table class="buttonTable">
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>
+      hawtio.authenticationEnabled
+    </td>
+    <td>
+      false
+    </td>
+    <td>
+      Whether or not security is enabled
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.realm
+    </td>
+    <td>
+      *
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.role
+    </td>
+    <td>
+      
+    </td>
+    <td>
+      The user role required to be able to login to the console
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.rolePrincipalClasses
+    </td>
+    <td>
+      
+    </td>
+    <td>
+      Principal fully qualified classname(s). Multiple classes can be separated by comma.
+    </td>
+  </tr>
+</table>
 
-this will disable security login. (Or use a different property to change the default role or realm used by security).
 
-Or if you are running hawtio stand alone try:
 
-    java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2.1.jar
+#### Configuring or disabling security in web containers
 
-If you are using containers like Tomcat you can pass in system property values via the **CATALINA_OPTS** environment variable instead.
+Set the following JVM system property to enable security:
+
+    hawtio.authenticationEnabled=true
+
+Or adjust the web.xml file and configure the &lt;env-entry&gt; element, accordingly.
+
+##### Configuring security in Apache Tomcat
+
+From **hawt 1.2.2** onwards we made it much easier to use Apache Tomcat's userdata file (conf/tomcat-users.xml) for security.
+All you have to do is to set the following **CATALINA_OPTS** environment variable:
+
+    export CATALINA_OPTS=-Dhawtio.authenticationEnabled=true
+
+Then **hawtio** will auto detect that its running in Apache Tomcat, and use its userdata file (conf/tomcat-users.xml) for security.
+
+For example to setup a new user named scott with password tiger, then edit the file '''conf/tomcat-users.xml''' to include:
+
+    <user username="scott" password="tiger" roles="tomcat"/>
+
+Then you can login to hawtio with the username scott and password tiger.
+
+If you only want users of a special role to be able to login **hawtio** then you can set the role name in the **CATALINA_OPTS** environment variable as shown:
+
+    export CATALINA_OPTS='-Dhawtio.authenticationEnabled=true -Dhawtio.role=manager'
+
+Now the user must be in the manager role to be able to login, which we can setup in the '''conf/tomcat-users.xml''' file:
+
+    <role rolename="manager"/>
+    <user username="scott" password="tiger" roles="tomcat,manager"/>
+
 
 ### Configuration Properties
 
