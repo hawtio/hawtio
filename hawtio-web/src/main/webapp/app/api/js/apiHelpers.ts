@@ -80,6 +80,32 @@ module API {
       }
     };
 
+    $scope.autoFormat = (codeMirror) => {
+      if (!codeMirror) {
+        // lets try find the codeMirror in a child scope as a hack :)
+        codeMirror = findChildScopeValue($scope, "codeMirror");
+      }
+      if (codeMirror) {
+        setTimeout(() => {
+          CodeEditor.autoFormatEditor(codeMirror);
+        }, 50);
+      }
+    };
+
+
+    /**
+     * Note using this method is usually a dirty hack ;)
+     */
+    function findChildScopeValue(scope, name) {
+      var answer = scope[name];
+      var childScope = scope.$$childHead;
+      while (childScope && !answer) {
+        answer = findChildScopeValue(childScope, name);
+        childScope = childScope.$$nextSibling;
+      }
+      return answer;
+    }
+
     if ($scope.container && $scope.objectName) {
       Fabric.containerJolokia(jolokia, $scope.container, (remoteJolokia) => {
         $scope.remoteJolokia = remoteJolokia;

@@ -40,6 +40,27 @@ div#main .swagger-ui-wrap div ul.nav{
     margin-left: 5px;
 }
 
+.swagger-ui-wrap .content .CodeMirror-lines pre {
+    margin-top: 0px;
+    border: 0px;
+}
+
+.swagger-ui-wrap .content .block pre.header {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.swagger-ui-wrap ul.resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block  .CodeMirror-lines pre {
+    padding-top: 0px;
+    padding-bottom: 8px;
+}
+
+.swagger-ui-wrap ul.resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block pre {
+    padding: 4px;
+}
+
 /**
   mostly standard swagger apart from:
 
@@ -699,8 +720,8 @@ table {
 }
 .swagger-ui-wrap ul.resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block pre {
   font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
-  padding: 10px;
 /*
+  padding: 10px;
   font-size: 0.9em;
 */
   max-height: 400px;

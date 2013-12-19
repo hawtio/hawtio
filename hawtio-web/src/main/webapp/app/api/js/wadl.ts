@@ -69,6 +69,7 @@ module API {
       }
     };
 
+
     function textFormat(headers) {
       var contentType = headers("content-type");
       if (contentType) {
