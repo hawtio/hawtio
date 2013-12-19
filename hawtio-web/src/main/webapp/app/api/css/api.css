@@ -31,6 +31,11 @@ div#main .swagger-ui-wrap div ul.nav{
     border-width: 0;
 }
 
+.swagger-ui-wrap .response pre {
+    color: black;
+    font-size: 1.25em;
+}
+
 /**
   mostly standard swagger apart from:
 
@@ -691,7 +696,9 @@ table {
 .swagger-ui-wrap ul.resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block pre {
   font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
   padding: 10px;
+/*
   font-size: 0.9em;
+*/
   max-height: 400px;
   overflow-y: auto;
 }

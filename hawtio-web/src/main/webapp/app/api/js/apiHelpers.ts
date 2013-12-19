@@ -67,6 +67,7 @@ module API {
         resource.hide = false;
       }
     };
+
     $scope.expandOperations = (resource) => {
       if (resource) {
         resource.hide = false;
@@ -78,7 +79,6 @@ module API {
         });
       }
     };
-
 
     if ($scope.container && $scope.objectName) {
       Fabric.containerJolokia(jolokia, $scope.container, (remoteJolokia) => {

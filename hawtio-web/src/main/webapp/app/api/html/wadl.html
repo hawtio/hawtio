@@ -85,8 +85,8 @@
                 </div>
 
                 <div class="content expandable-body">
-                  <div class="parameters" ng-show="resource.param.length">
-                    <form accept-charset="UTF-8" class="sandbox">
+                  <form accept-charset="UTF-8" class="sandbox" ng-submit="tryInvoke(resource, method)">
+                    <div class="parameters" ng-show="resource.param.length">
                       <div style="margin:0;padding:0;display:inline"></div>
 
                       <h4>Parameters</h4>
@@ -107,7 +107,7 @@
                           <td>
                             <input class="parameter required" minlength="1" name="{{param.name}}"
                                    placeholder="(required)"
-                                   type="text" value="">
+                                   type="text" ng-model="param.value">
                           </td>
                           <td>
                             <strong>{{param.description}}</strong>
@@ -117,99 +117,118 @@
                         </tr>
                         </tbody>
                       </table>
-                  </div>
+                    </div>
 
-                  <div class="requests" ng-show="method.request.length">
-                    <h4>Request</h4>
-                    <ul>
-                      <li class="request" ng-repeat="step in method.request">
-                        <div class="tabbable signature-nav" type="pills">
-                          <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
-                               title="{{rep.mediaType}}">
-                            <div class="model-signature" ng-show="rep.schema">
-                              <div class="signature-container">
-                                <div class="description" style="display: block;">
+                    <div class="requests" ng-show="method.request.length">
+                      <h4>Request</h4>
+                      <ul>
+                        <li class="request" ng-repeat="step in method.request">
+                          <div class="tabbable signature-nav" type="pills">
+                            <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
+                                 title="{{rep.mediaType}}">
+                              <div class="model-signature" ng-show="rep.schema">
+                                <div class="signature-container">
+                                  <div class="description" style="display: block;">
                               <span class="strong" title="java class: {{rep.javaClass}}
 element name: {{rep.element}}">{{rep.typeName}} {</span>
 
-                                  <div ng-repeat="(key, value) in rep.schema.properties">
-                                    <span class="propName propOpt">{{key}}</span>
-                                    (<span class="propType">{{value.type}}</span><span class="propOptKey"
-                                                                                       ng-show="value.optional">, optional</span>)
-                                    <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                    <div ng-repeat="(key, value) in rep.schema.properties">
+                                      <span class="propName propOpt">{{key}}</span>
+                                      (<span class="propType">{{value.type}}</span><span class="propOptKey"
+                                                                                         ng-show="value.optional">, optional</span>)
+                                      <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                    </div>
+                                    <span class="strong">}</span>
                                   </div>
-                                  <span class="strong">}</span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </li>
-                  </div>
+                        </li>
+                    </div>
 
-                  <div class="responses" ng-show="method.response.length">
-                    <h4>Response</h4>
-                    <ul>
-                      <li class="response" ng-repeat="step in method.response">
-                        <div class="tabbable signature-nav">
-                          <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
-                               title="{{rep.mediaType}}">
-                            <div class="model-signature" ng-show="rep.schema">
-                              <div class="signature-container">
-                                <div class="description" style="display: block;">
+                    <div class="responses" ng-show="method.response.length">
+                      <h4>Response</h4>
+                      <ul>
+                        <li class="response" ng-repeat="step in method.response">
+                          <div class="tabbable signature-nav">
+                            <div ng-repeat="rep in step.representation" value="{{rep.mediaType}}" class="tab-pane"
+                                 title="{{rep.mediaType}}">
+                              <div class="model-signature" ng-show="rep.schema">
+                                <div class="signature-container">
+                                  <div class="description" style="display: block;">
                               <span class="strong" title="java class: {{rep.javaClass}}
 element name: {{rep.element}}">{{rep.typeName}} {</span>
 
-                                  <div ng-repeat="(key, value) in rep.schema.properties">
-                                    <span class="propName propOpt">{{key}}</span>
-                                    (<span class="propType">{{value.type}}</span><span class="propOptKey"
-                                                                                       ng-show="value.optional">, optional</span>)
-                                    <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                    <div ng-repeat="(key, value) in rep.schema.properties">
+                                      <span class="propName propOpt">{{key}}</span>
+                                      (<span class="propType">{{value.type}}</span><span class="propOptKey"
+                                                                                         ng-show="value.optional">, optional</span>)
+                                      <span class="propDesc" ng-show="value.description">: {{value.description}}</span>
+                                    </div>
+                                    <span class="strong">}</span>
                                   </div>
-                                  <span class="strong">}</span>
                                 </div>
                               </div>
                             </div>
                           </div>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="errorCodes">
+                      <h4>Error Status Codes</h4>
+                      <table class="fullwidth">
+                        <thead>
+                        <tr>
+                          <th>HTTP Status Code</th>
+                          <th>Reason</th>
+                        </tr>
+                        </thead>
+                        <tbody class="operation-status">
+
+                        <tr>
+                          <td width="15%" class="code">400</td>
+                          <td>Invalid username supplied</td>
+                        </tr>
+                        <tr>
+                          <td width="15%" class="code">404</td>
+                          <td>User not found</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+
+                    <div class="sandbox_header">
+                      <input class="btn" name="commit" type="submit" value="Try it out!">
+                      <a class="response_hider" ng-show="method.invoke" ng-click="method.invoke = null">Hide Response</a>
+                      <img alt="Throbber" class="response_throbber" src="images/throbber.gif" style="display:none">
+
+                      <div class="response" ng-show="method.invoke.status">
+                        <h4>Request URL</h4>
+                        <div class="block request_url">
+                          <pre>{{method.invoke.url}}</pre>
                         </div>
-                      </li>
-                    </ul>
 
-                    <!--
-                                          TODO
+                        <h4>Response Body</h4>
+                        <div class="block response_body json">
+                          <pre><code>{{method.invoke.data}}</code></pre>
+                        </div>
 
-                                          <div class="errorCodes">
-                                            <h4>Error Status Codes</h4>
-                                            <table class="fullwidth">
-                                              <thead>
-                                              <tr>
-                                                <th>HTTP Status Code</th>
-                                                <th>Reason</th>
-                                              </tr>
-                                              </thead>
-                                              <tbody class="operation-status">
+                        <h4>Response Code</h4>
+                        <div class="block response_code">
+                          <pre>{{method.invoke.status}}</pre>
+                        </div>
 
-                                              <tr>
-                                                <td width="15%" class="code">400</td>
-                                                <td>Invalid username supplied</td>
-                                              </tr>
-                                              <tr>
-                                                <td width="15%" class="code">404</td>
-                                                <td>User not found</td>
-                                              </tr>
-                                              </tbody>
-                                            </table>
-                                          </div>
-
-
-                                          <div class="sandbox_header">
-                                            <input class="submit" name="commit" type="button" value="Try it out!">
-                                            <a href="#" class="response_hider" style="display:none">Hide Response</a>
-                                            <img alt="Throbber" class="response_throbber" src="images/throbber.gif" style="display:none">
-                                          </div>
-                                        </form>
-                    -->
-                  </div>
+                        <h4>Response Headers</h4>
+                        <div class="block response_headers">
+                          <pre ng-repeat="(headerName, headerValue) in method.invoke.headers">{{headerName}}: {{headerValue}}</pre>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
                 </div>
               </div>
             </li>
