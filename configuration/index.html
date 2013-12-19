@@ -62,7 +62,16 @@
 
 <h3 id = "Configuring_Security">Configuring Security</h3>
 
-<p>By default the security in hawtio uses these system properties which you can override:</p>
+<p>hawtio enables security out of the box depending on the container it is running within. Basically there is two types of containers:</p>
+
+<ul>
+<li>Karaf based containers</li>
+<li>Web containers</li>
+</ul>
+
+<h4 id = "Default_Security_Settings_for_Karaf_containers">Default Security Settings for Karaf containers</h4>
+
+<p>By default the security in hawtio uses these system properties when running in Apache Karaf containers (Karaf, ServiceMix, JBoss Fuse) which you can override:</p>
 
 <table class="buttonTable">
   <tr>
@@ -118,19 +127,93 @@
 
 <p>Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).</p>
 
-<h4 id = "Configuring_or_disabling_security_in_Karaf__ServiceMix__Fuse">Configuring or disabling security in Karaf, ServiceMix, Fuse</h4>
+<h4 id = "Default_Security_Settings_for_web_containers">Default Security Settings for web containers</h4>
 
-<p>Edit the file <strong>etc/system.properties</strong> and add something like this to the end of the file:</p>
+<p>By default the security in hawtio uses these system properties when running in any other container which you can override:</p>
 
-<pre><code>hawtio.authenticationEnabled = false</code></pre>
+<table class="buttonTable">
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>
+      hawtio.authenticationEnabled
+    </td>
+    <td>
+      false
+    </td>
+    <td>
+      Whether or not security is enabled
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.realm
+    </td>
+    <td>
+      *
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.role
+    </td>
+    <td>
 
-<p>this will disable security login. (Or use a different property to change the default role or realm used by security).</p>
+    </td>
+    <td>
+      The user role required to be able to login to the console
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.rolePrincipalClasses
+    </td>
+    <td>
 
-<p>Or if you are running hawtio stand alone try:</p>
+    </td>
+    <td>
+      Principal fully qualified classname(s). Multiple classes can be separated by comma.
+    </td>
+  </tr>
+</table>
 
-<pre><code>java -Dhawtio.authenticationEnabled=false -jar ~/Downloads/hawtio-app-1.2.1.jar</code></pre>
+<h4 id = "Configuring_or_disabling_security_in_web_containers">Configuring or disabling security in web containers</h4>
 
-<p>If you are using containers like Tomcat you can pass in system property values via the <strong>CATALINA_OPTS</strong> environment variable instead.</p>
+<p>Set the following JVM system property to enable security:</p>
+
+<pre><code>hawtio.authenticationEnabled=true</code></pre>
+
+<p>Or adjust the web.xml file and configure the &lt;env-entry&gt; element, accordingly.</p>
+
+<h5 id = "Configuring_security_in_Apache_Tomcat">Configuring security in Apache Tomcat</h5>
+
+<p>From <strong>hawt 1.2.2</strong> onwards we made it much easier to use Apache Tomcat's userdata file (conf/tomcat-users.xml) for security.
+All you have to do is to set the following <strong>CATALINA_OPTS</strong> environment variable:</p>
+
+<pre><code>export CATALINA_OPTS=-Dhawtio.authenticationEnabled=true</code></pre>
+
+<p>Then <strong>hawtio</strong> will auto detect that its running in Apache Tomcat, and use its userdata file (conf/tomcat-users.xml) for security.</p>
+
+<p>For example to setup a new user named scott with password tiger, then edit the file '''conf/tomcat-users.xml''' to include:</p>
+
+<pre><code>&lt;user username="scott" password="tiger" roles="tomcat"/&gt;</code></pre>
+
+<p>Then you can login to hawtio with the username scott and password tiger.</p>
+
+<p>If you only want users of a special role to be able to login <strong>hawtio</strong> then you can set the role name in the <strong>CATALINA_OPTS</strong> environment variable as shown:</p>
+
+<pre><code>export CATALINA_OPTS='-Dhawtio.authenticationEnabled=true -Dhawtio.role=manager'</code></pre>
+
+<p>Now the user must be in the manager role to be able to login, which we can setup in the '''conf/tomcat-users.xml''' file:</p>
+
+<pre><code>&lt;role rolename="manager"/&gt;
+&lt;user username="scott" password="tiger" roles="tomcat,manager"/&gt;</code></pre>
 
 <h3 id = "Configuration_Properties">Configuration Properties</h3>
 
