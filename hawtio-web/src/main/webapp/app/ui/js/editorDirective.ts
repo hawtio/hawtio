@@ -16,6 +16,7 @@ module UI {
         text: '=hawtioEditor',
         mode:  '=',
         dirty: '=',
+        outputEditor: '@',
         name: '@'
       },
 
@@ -75,6 +76,7 @@ module UI {
         delete config['hawtioEditor'];
         delete config['mode'];
         delete config['dirty'];
+        delete config['outputEditor'];
 
         if ('onChange' in $attrs) {
           var onChange = $attrs['onChange'];
@@ -124,6 +126,11 @@ module UI {
 
             options = CodeEditor.createEditorSettings(options);
             $scope.codeMirror = CodeMirror.fromTextArea($element.find('textarea').get(0), options);
+            var outputEditor = $scope.outputEditor;
+            if (outputEditor) {
+              var outputScope = $scope.$parent || $scope;
+              Core.pathSet(outputScope, outputEditor, $scope.codeMirror);
+            }
             $scope.applyOptions();
           }
         });
