@@ -177,6 +177,7 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
                     </div>
 
                     <div class="errorCodes">
+<!--
                       <h4>Error Status Codes</h4>
                       <table class="fullwidth">
                         <thead>
@@ -197,13 +198,16 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
                         </tr>
                         </tbody>
                       </table>
+-->
                     </div>
 
 
                     <div class="sandbox_header">
                       <input class="btn" name="commit" type="submit" value="Try it out!">
+                      <span ng-show="method.invoke.running" class="progress" title="Processing request">
+                        <i class="icon-refresh icon-spin"></i>
+                      </span>
                       <a class="response_hider" ng-show="method.invoke" ng-click="method.invoke = null">Hide Response</a>
-                      <img alt="Throbber" class="response_throbber" src="images/throbber.gif" style="display:none">
 
                       <div class="response" ng-show="method.invoke.status">
                         <h4>Request URL</h4>

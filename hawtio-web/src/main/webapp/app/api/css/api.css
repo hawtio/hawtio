@@ -36,6 +36,10 @@ div#main .swagger-ui-wrap div ul.nav{
     font-size: 1.25em;
 }
 
+.swagger-ui-wrap .sandbox_header .progress {
+    margin-left: 5px;
+}
+
 /**
   mostly standard swagger apart from:
 
