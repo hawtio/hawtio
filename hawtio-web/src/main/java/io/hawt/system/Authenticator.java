@@ -10,7 +10,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
-import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * To perform authentication using JAAS using the {@link LoginContext} for the choosen realm.
  */
 public class Authenticator {
 
@@ -139,7 +138,8 @@ public class Authenticator {
                     }
                 }
                 if (!found) {
-                    throw new FailedLoginException("User does not have the required role " + role);
+                    LOG.debug("User does not have the required role " + role);
+                    return null;
                 }
             }
 
@@ -148,8 +148,6 @@ public class Authenticator {
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
-            // TODO: Add some option for verbosity logging
-            LOG.warn("Login failed", e);
             LOG.debug("Login failed", e);
         }
 
@@ -182,4 +180,5 @@ public class Authenticator {
             }
         }
     }
+
 }
