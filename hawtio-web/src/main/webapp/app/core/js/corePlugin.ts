@@ -80,6 +80,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
                   when('/login', {templateUrl: 'app/core/html/login.html'}).
                   when('/welcome', {templateUrl: 'app/core/html/welcome.html'}).
                   when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
+                  when('/about', {templateUrl: 'app/core/html/about.html'}).
                   when('/help', {
                     redirectTo: '/help/index'
                   }).
@@ -415,6 +416,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           viewRegistry['help'] = layoutFull;
           viewRegistry['welcome'] = layoutFull;
           viewRegistry['preferences'] = layoutFull;
+          viewRegistry['about'] = layoutFull;
           viewRegistry['login'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
