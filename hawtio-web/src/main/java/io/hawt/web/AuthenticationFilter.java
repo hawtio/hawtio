@@ -18,6 +18,7 @@ import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
+import io.hawt.web.tomcat.TomcatLoginContextConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,52 +35,57 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_ROLE = "hawtio.role";
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
 
-    private String realm;
-    private String role;
-    private boolean enabled;
-    private String rolePrincipalClasses;
+    private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
         ConfigManager config = (ConfigManager) filterConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
-            realm = config.get("realm", "karaf");
-            role = config.get("role", "admin");
-            rolePrincipalClasses = config.get("rolePrincipalClasses", "");
-            enabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+            configuration.setRealm(config.get("realm", "karaf"));
+            configuration.setRole(config.get("role", "admin"));
+            configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", ""));
+            configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
         }
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            enabled = Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED);
+            configuration.setEnabled(Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED));
         }
         if (System.getProperty(HAWTIO_REALM) != null) {
-            realm = System.getProperty(HAWTIO_REALM);
+            configuration.setRealm(System.getProperty(HAWTIO_REALM));
         }
         if (System.getProperty(HAWTIO_ROLE) != null) {
-            role = System.getProperty(HAWTIO_ROLE);
+            configuration.setRole(System.getProperty(HAWTIO_ROLE));
         }
         if (System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES) != null) {
-            rolePrincipalClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
+            configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
+        }
+
+        // TODO: Introduce a discovery spi so we can try to figure out which runtime is in use, and auto-setup
+        // security accordingly, such as for Tomcat
+
+        // or infer using tomcat as realm name, or have tomcat-user-database as the realm name as convention or something
+        // if we use tomcat as realm then use the tomcat principal class if not set
+        if ("tomcat".equals(configuration.getRealm()) && "".equals(configuration.getRolePrincipalClasses())) {
+            configuration.setRolePrincipalClasses("io.hawt.web.tomcat.TomcatPrincipal");
+            configuration.setConfiguration(new TomcatLoginContextConfiguration());
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing AuthenticationFilter [enabled:{}, realm={}, role={}, rolePrincipalClasses={}]", new Object[]{enabled, realm, role, rolePrincipalClasses});
+            LOG.debug("Initializing AuthenticationFilter {}", configuration);
         }
 
-        if (enabled) {
-            LOG.info("Starting hawtio authentication filter, JAAS realm: \"" + realm + "\" authorized role: \"" + role + "\"" + " role principal classes: \"" + rolePrincipalClasses + "\"");
+        if (configuration.isEnabled()) {
+            LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role: \"{}\" role principal classes: \"{}\"",
+                    new Object[]{configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses()});
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
-
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-
-        if (realm == null || realm.equals("") || !enabled) {
+        if (configuration.getRealm() == null || configuration.getRealm().equals("") || !configuration.isEnabled()) {
             chain.doFilter(request, response);
             return;
         }
@@ -105,7 +111,8 @@ public class AuthenticationFilter implements Filter {
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
-            switch (Authenticator.authenticate(realm, role, rolePrincipalClasses, httpRequest, new PrivilegedCallback() {
+            switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
+                    configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
                 public void execute(Subject subject) throws Exception {
                     executeAs(request, response, chain, subject);
                 }
