@@ -211,24 +211,43 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
 
                       <div class="response" ng-show="method.invoke.status">
                         <h4>Request URL</h4>
+
                         <div class="block request_url">
-                          <pre>{{method.invoke.url}}</pre>
+                          <pre class="request_url">{{method.invoke.url}}</pre>
                         </div>
 
                         <h4>Response Body</h4>
-                        <button class="btn autoformat" ng-click="autoFormat(method.codeMirror)"
-                                title="Automatically pretty prints the response so its easier to read">Auto Format
-                        </button>
-                        <div class="block response_body">
-                          <div hawtio-editor="method.invoke.data" read-only="true" mode="method.invoke.dataMode" dirty="method.editorDirty" output-editor="method.codeMirror"></div>
+
+                        <div class="tabbable signature-nav">
+                          <div value="source" class="tab-pane" title="Source">
+                            <div class="block response_body">
+                              <div class="row-fluid signature-nav-buttons">
+                                <div class="control-group">
+                                  <button class="btn autoformat pull-right" ng-click="autoFormat(method.codeMirror)"
+                                          title="Automatically pretty prints the response so its easier to read">Format
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row-fluid">
+                              <div class="control-group">
+                                <div hawtio-editor="method.invoke.data" read-only="true" mode="method.invoke.dataMode"
+                                     dirty="method.editorDirty" output-editor="method.codeMirror"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div value="form" class="tab-pane" title="Form">
+                          </div>
                         </div>
 
                         <h4>Response Code</h4>
+
                         <div class="block response_code">
-                          <pre>{{method.invoke.status}}</pre>
+                          <pre class="response_code">{{method.invoke.status}}</pre>
                         </div>
 
                         <h4>Response Headers</h4>
+
                         <div class="block response_headers">
                           <pre class="header" ng-repeat="(headerName, headerValue) in method.invoke.headers">{{headerName}}: {{headerValue}}</pre>
                         </div>
