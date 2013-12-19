@@ -216,8 +216,11 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
                         </div>
 
                         <h4>Response Body</h4>
+                        <button class="btn autoformat" ng-click="autoFormat(method.codeMirror)"
+                                title="Automatically pretty prints the response so its easier to read">Auto Format
+                        </button>
                         <div class="block response_body">
-                          <div hawtio-editor="method.invoke.data" read-only="true" mode="method.invoke.dataMode"></div>
+                          <div hawtio-editor="method.invoke.data" read-only="true" mode="method.invoke.dataMode" dirty="method.editorDirty" output-editor="method.codeMirror"></div>
                         </div>
 
                         <h4>Response Code</h4>
@@ -227,7 +230,7 @@ element name: {{rep.element}}">{{rep.typeName}} {</span>
 
                         <h4>Response Headers</h4>
                         <div class="block response_headers">
-                          <pre ng-repeat="(headerName, headerValue) in method.invoke.headers">{{headerName}}: {{headerValue}}</pre>
+                          <pre class="header" ng-repeat="(headerName, headerValue) in method.invoke.headers">{{headerName}}: {{headerValue}}</pre>
                         </div>
                       </div>
                     </div>
