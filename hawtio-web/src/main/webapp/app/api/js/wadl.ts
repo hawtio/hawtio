@@ -37,7 +37,25 @@ module API {
             url: url,
             running: true
           };
-          $http({method: methodName, url: url}).
+          var requestData = {
+            method: methodName,
+            url: url,
+            headers: {
+            }
+          };
+          if (methodName === "POST" || methodName === "PUT") {
+            // lets see if we can find a payload
+            angular.forEach(method.request, (request) => {
+              if (!requestData["data"]) {
+                requestData["data"] = request.value;
+              }
+              if (!requestData.headers["Content-Type"]) {
+                  requestData.headers["Content-Type"] = request.contentType;
+              }
+            });
+          }
+          log.info("About to make request: " + angular.toJson(requestData));
+          $http(requestData).
             success(function(data, status, headers, config) {
               log.info("Worked!" + data);
               method.invoke = {
@@ -71,7 +89,10 @@ module API {
 
 
     function textFormat(headers) {
-      var contentType = headers("content-type");
+      return contentTypeTextFormat(headers("content-type"));
+    }
+
+    function contentTypeTextFormat(contentType) {
       if (contentType) {
         if (contentType.endsWith("xml")) {
           return "xml";
@@ -118,10 +139,33 @@ module API {
           enrichResources(jsonSchema, childResources, base);
         }
         angular.forEach(concatArrays([resource.method, resource.operation]), (method) => {
+          // lets remove any empty requests
+          var request = method.request;
+          if (request) {
+            var count = request.count((n) => n["representation"]);
+            if (!count) {
+              delete method.request;
+            }
+          }
           angular.forEach(concatArrays([method.request, method.response]), (object) => {
-            angular.forEach(object["representation"], (representation) => {
+            var element = object["element"];
+            var representations = object["representation"];
+            if (representations) {
+              var mediaTypes = representations.map(r => r["mediaType"]);
+              object["mediaTypes"] = mediaTypes;
+              if (mediaTypes && mediaTypes.length) {
+                object["contentType"] = mediaTypes[0];
+              }
+            }
+            angular.forEach(representations, (representation) => {
+              if (!element) {
+                element = representation["element"];
+              }
               enrichRepresentation(jsonSchema, representation);
-            })
+            });
+            if (element) {
+              object["element"] = element;
+            }
           });
         });
       });
@@ -130,6 +174,12 @@ module API {
     function enrichRepresentation(jsonSchema, representation) {
       var defs = jsonSchema ? jsonSchema["definitions"] : null;
       if (defs && representation) {
+        var contentType = representation["mediaType"];
+        if (contentType) {
+          representation["dataMode"] = contentTypeTextFormat(contentType);
+        }
+
+
         // TODO find a class name in the representation?
         var element = representation["element"];
         if (element) {
