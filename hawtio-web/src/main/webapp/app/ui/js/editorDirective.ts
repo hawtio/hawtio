@@ -58,7 +58,7 @@ module UI {
         $scope.$watch('text', function(oldValue, newValue) {
           if ($scope.codeMirror && $scope.doc) {
             if (!$scope.codeMirror.hasFocus()) {
-              $scope.doc.setValue($scope.text);
+              $scope.doc.setValue($scope.text || "");
             }
           }
         });

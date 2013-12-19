@@ -44,6 +44,7 @@ module API {
                 url: url,
                 success: true,
                 data: data,
+                dataMode: textFormat(headers),
                 status: status,
                 headers: headers(),
                 config: config
@@ -57,6 +58,7 @@ module API {
               method.invoke = {
                 url: url,
                 data: data,
+                dataMode: textFormat(headers),
                 status: status,
                 headers: headers(),
                 config: config
@@ -67,6 +69,21 @@ module API {
       }
     };
 
+    function textFormat(headers) {
+      var contentType = headers("content-type");
+      if (contentType) {
+        if (contentType.endsWith("xml")) {
+          return "xml";
+        }
+        if (contentType.endsWith("html")) {
+          return "html";
+        }
+        if (contentType.endsWith("json")) {
+          return "json";
+        }
+      }
+      return null;
+    }
 
     function enrichApiDocsWithSchema() {
       var apidocs = $scope.apidocs;
