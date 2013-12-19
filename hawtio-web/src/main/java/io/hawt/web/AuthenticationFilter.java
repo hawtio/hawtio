@@ -18,7 +18,7 @@ import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
-import io.hawt.web.tomcat.TomcatLoginContextConfiguration;
+import io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,11 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
 
     private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
+
+    // add known SPI authentication container discovery
+    private final AuthenticationContainerDiscovery[] discoveries = new AuthenticationContainerDiscovery[]{
+            new TomcatAuthenticationContainerDiscovery()
+    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -61,18 +66,13 @@ public class AuthenticationFilter implements Filter {
             configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
         }
 
-        // TODO: Introduce a discovery spi so we can try to figure out which runtime is in use, and auto-setup
-        // security accordingly, such as for Tomcat
-
-        // or infer using tomcat as realm name, or have tomcat-user-database as the realm name as convention or something
-        // if we use tomcat as realm then use the tomcat principal class if not set
-        if ("tomcat".equals(configuration.getRealm()) && "".equals(configuration.getRolePrincipalClasses())) {
-            configuration.setRolePrincipalClasses("io.hawt.web.tomcat.TomcatPrincipal");
-            configuration.setConfiguration(new TomcatLoginContextConfiguration());
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing AuthenticationFilter {}", configuration);
+        if (configuration.isEnabled()) {
+            for (AuthenticationContainerDiscovery discovery : discoveries) {
+                if (discovery.canAuthenticate(configuration)) {
+                    LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
+                    break;
+                }
+            }
         }
 
         if (configuration.isEnabled()) {
@@ -85,25 +85,25 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String path = httpRequest.getServletPath();
+        LOG.debug("Handling request for path {}", path);
+
         if (configuration.getRealm() == null || configuration.getRealm().equals("") || !configuration.isEnabled()) {
+            LOG.debug("No authentication needed for path {}", path);
             chain.doFilter(request, response);
             return;
         }
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession(false);
-
-        LOG.debug("Handling request for path {}", httpRequest.getServletPath());
-
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
             if (subject != null) {
+                LOG.debug("Session subject {}", subject);
                 executeAs(request, response, chain, subject);
                 return;
             }
         }
-
-        String path = httpRequest.getServletPath();
 
         boolean doAuthenticate = path.startsWith("/auth") ||
                 path.startsWith("/jolokia") ||
@@ -129,6 +129,7 @@ public class AuthenticationFilter implements Filter {
                     break;
             }
         } else {
+            LOG.debug("No authentication needed for path {}", path);
             chain.doFilter(request, response);
         }
     }

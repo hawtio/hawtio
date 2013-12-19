@@ -17,7 +17,6 @@ public class TomcatLoginContextConfiguration extends Configuration {
     }
 
     private static final class TomcatAppConfigurationEntry extends AppConfigurationEntry {
-
         public TomcatAppConfigurationEntry() {
             super("io.hawt.web.tomcat.TomcatUserDatabaseLoginContext", LoginModuleControlFlag.REQUIRED, new HashMap<String, Object>());
         }
