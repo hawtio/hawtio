@@ -20,10 +20,9 @@ module Core {
 
 // Add any other known possible jolokia URLs here
 var jolokiaUrls = [
-  "/" + window.location.pathname.split('/')[1] + "/jolokia",
-  "/hawtio/jolokia",  // instance configured by hawtio-web war file
-  "/jolokia"          // instance that's already installed in a karaf container for example
-  ];
+  url("jolokia"),    // instance configured by hawtio-web war file
+  "/jolokia"         // instance that's already installed in a karaf container for example
+];
 
 var jolokiaUrl = getJolokiaUrl();
 console.log("jolokiaUrl " + jolokiaUrl);
