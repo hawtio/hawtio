@@ -148,7 +148,12 @@ public class Authenticator {
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
-            LOG.debug("Login failed", e);
+            // do not be so verbose at DEBUG level
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Login failed due " + e.getMessage(), e);
+            } else {
+                LOG.debug("Login failed due " + e.getMessage());
+            }
         }
 
         return null;
