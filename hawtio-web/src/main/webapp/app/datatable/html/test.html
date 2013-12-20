@@ -19,12 +19,16 @@
     <ul>
       <li ng-repeat="person in selectedItems">{{person.name}}</li>
     </ul>
+
+    <p>
+       <a class="btn" href="#/datatable/test?multi={{!mygrid.multiSelect}}">multi select is: {{mygrid.multiSelect}}</a>
+    </p>
   </div>
 </div>
 
 
 <script type="text/javascript">
-  function SimpleTableTestController($scope) {
+  function SimpleTableTestController($scope, $location) {
     $scope.myData = [
       { name: "James", twitter: "jstrachan" },
       { name: "Stan", twitter: "gashcrumb" },
@@ -38,6 +42,7 @@
       data: 'myData',
       showFilter: false,
       showColumnMenu: false,
+      multiSelect: ($location.search()["multi"] || "").startsWith("f") ? false : true,
       filterOptions: {
         filterText: "",
         useExternalFilter: false
