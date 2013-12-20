@@ -1,18 +1,20 @@
 package io.hawt;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import io.hawt.jmx.About;
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
 import io.hawt.jmx.UploadManager;
 import io.hawt.system.ConfigManager;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  * A {@link javax.servlet.ServletContextListener} which initialises key hawtio services in the webapp
  */
 public class HawtioContextListener implements ServletContextListener {
 
+    private About about = new About();
     private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
     private PluginRegistry registry = new PluginRegistry();
     private UploadManager uploadManager = new UploadManager();
@@ -20,6 +22,7 @@ public class HawtioContextListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
+            about.init();
             configManager.init();
             treeWatcher.init();
             registry.init();
@@ -32,6 +35,7 @@ public class HawtioContextListener implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         try {
+            about.destroy();
             treeWatcher.destroy();
             registry.destroy();
             uploadManager.destroy();

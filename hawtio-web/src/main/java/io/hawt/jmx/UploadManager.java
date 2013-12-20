@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class UploadManager implements UploadManagerMBean {
 
@@ -35,13 +35,9 @@ public class UploadManager implements UploadManagerMBean {
         return factory;
     }
 
-
     public void init(ConfigManager config) throws Exception {
-
         UploadManager.UPLOAD_DIRECTORY = config.get("uploadDirectory", System.getProperty("java.io.tmpdir") + File.separator + "uploads");
-
         LOG.info("Using file upload directory: {}", UploadManager.UPLOAD_DIRECTORY);
-
 
         if (objectName == null) {
             objectName = getObjectName();
@@ -115,4 +111,5 @@ public class UploadManager implements UploadManagerMBean {
         LOG.info("Deleting {}", targetFile);
         return targetFile.delete();
     }
+
 }

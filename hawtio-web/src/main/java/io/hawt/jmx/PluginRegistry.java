@@ -13,7 +13,6 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package io.hawt.jmx;
 
 import org.slf4j.Logger;
@@ -33,7 +32,6 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
     private ObjectName comparator = null;
 
     public PluginRegistry() {
-
     }
 
     @Override
@@ -57,9 +55,7 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
         return new NotificationListener() {
             @Override
             public void handleNotification(Notification notification, Object handback) {
-
                 LOG.debug("Got notification: " + notification + " for object " + handback);
-
                 updateCounter.incrementAndGet();
             }
         };
@@ -83,7 +79,6 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
     public long getUpdateCounter() {
         return updateCounter.get();
     }
-
 
 }
 

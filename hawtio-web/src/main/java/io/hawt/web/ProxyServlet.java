@@ -57,7 +57,6 @@ import java.util.Map;
 /**
  * Based on code from http://edwardstx.net/2010/06/http-proxy-servlet/
  */
-
 public class ProxyServlet extends HttpServlet {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);

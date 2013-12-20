@@ -3,14 +3,13 @@ package io.hawt.jmx;
 import java.io.File;
 
 /**
- * @author Stan Lewis
+ *
  */
 public class FileDTO {
 
     private String absolutePath;
     private String fileName;
     private long length;
-
 
     public FileDTO(File file) {
         this.absolutePath = file.getAbsolutePath();
