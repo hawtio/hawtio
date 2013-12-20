@@ -3329,3 +3329,13 @@ tabset > .tabbable > .tab-content > .nav.nav-tabs > li.disabled {
 .camel-props form fieldset div[hawtio-form-array] > div > div > div > .controls.pull-right {
   float: none;
 }
+
+tr.selected,
+tr.selected .ngCell,
+tr.selected .ngCellText a,
+.table-striped tbody tr.selected:nth-child(odd) td {
+  background-color: #c9dde1;
+}
+
+
+}
