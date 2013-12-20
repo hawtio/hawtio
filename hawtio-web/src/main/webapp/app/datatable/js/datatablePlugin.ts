@@ -4,7 +4,13 @@
  */
 module DataTable {
   var pluginName = 'datatable';
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+    config( ($routeProvider) => {
+      $routeProvider.
+          when('/datatable/test', {templateUrl: 'app/datatable/html/test.html'})
+    }).
+          directive('hawtioSimpleTable', ($compile) => new DataTable.SimpleDataTable($compile)).
           directive('hawtioDatatable', function (workspace, $timeout, $filter, $compile) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
