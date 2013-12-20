@@ -284,7 +284,14 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           }
         }).
         factory('toastr', () => {
-          return (<any>window).toastr;
+          var win: any = window;
+          var answer: any = win.toastr;
+          if (!answer) {
+            // lets avoid any NPEs
+            answer = {};
+            win.toaster = answer;
+          }
+          return answer;
         }).
         factory('xml2json', ($window) => {
           var jquery:any = $;
