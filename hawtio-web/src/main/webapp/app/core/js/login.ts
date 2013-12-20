@@ -45,6 +45,17 @@ module Core {
       }
     });
 
+    jQuery(window).bind(
+      "beforeunload",
+      function() {
+        // auto logout if we should not remember me
+        if (!userDetails.rememberMe) {
+          console.log("Auto logging out as remember me is off");
+          logout(jolokiaUrl, userDetails, localStorage, $scope);
+        }
+      }
+    )
+
     $scope.doLogin = () => {
 
       var url = jolokiaUrl.replace("jolokia", "auth/login/");
@@ -92,6 +103,8 @@ module Core {
         //username: $scope.entity.username,
         //password: $scope.entity.password
       });
+
+
 
     }
 
