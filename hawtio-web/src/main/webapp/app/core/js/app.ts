@@ -20,14 +20,24 @@ module Core {
 
       clip.addEventListener('mouseDown', function(client, args) {
 
-
         // this is apparently a global event handler for zero clipboard
         // so you have to make sure you're handling the right click event
         var icon = $element.find('.icon-copy');
-        if (this !== icon.get(0)) {
+        var icon2 = $element.find('.icon-trash');
+        if (this !== icon.get(0) && this !== icon2.get(0)) {
           return;
         }
 
+        if (this == icon.get(0)) {
+          copyToClipboard();
+        } else {
+          clearLogs();
+          notification('info', "Cleared logging console");
+        }
+        Core.$apply($scope);
+      });
+
+      function copyToClipboard() {
         var text = $templateCache.get("logClipboardTemplate").lines();
         text.removeAt(0);
         text.removeAt(text.length - 1);
@@ -36,8 +46,11 @@ module Core {
         });
         text.push('</ul>');
         clip.setText(text.join('\n'));
-        Core.$apply($scope);
-      });
+      }
+
+      function clearLogs() {
+        $element.find('#log-panel-statements').children().remove();
+      }
     };
 
   }
