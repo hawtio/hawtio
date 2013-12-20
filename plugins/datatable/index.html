@@ -67,7 +67,16 @@
 
 <p>It supports most things we use in ng-grid like cellTemplate / cellFilter / width etc (though width's with values starting with &ldquo;*" are ignored). We also support specifying external search text field <span class="amp">&amp;</span> keeping track of selected items etc. To see it in action try the <a href="http://hawt.io/plugins/logs/">log plugin</a> or check its <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/html/logs.html#L47">HTML</a> or <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logs.ts#L64">column definitions</a></p>
 
-<p></div>
+<h3 id = "Simple_Table">Simple Table</h3>
+
+<p>In addition, for cases where you don't want a fixed sized table but want a simple HTML table populated with the same JSON model as ng-grid or hawtio-datatable there is the simple table:</p>
+
+<pre><code>&lt;table class="table table-striped" hawtio-simple-table="mygrid"&gt;&lt;/table&gt;</code></pre>
+
+<p>This lets you create a regular table element with whatever metadata you like and the &lt;thead&gt; and &lt;tbody&gt; will be generated from the column definitions to render the table dynamically; using the same kind of JSON configuration.</p>
+
+<p>This means you can switch between ng-grid, hawtio-datatable and hawtio-simple-table based on your requirements and tradeoffs (layout versus performance versus dynamic, user configurable views etc).
+</div>
   </div></p>
     </div>
     <footer>
