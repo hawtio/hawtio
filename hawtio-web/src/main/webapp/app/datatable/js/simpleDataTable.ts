@@ -15,10 +15,16 @@ module DataTable {
       showFiles: '@'
     };
 
+    public link:(scope, element, attrs) => any;
+
     constructor(public $compile) {
+      // necessary to ensure 'this' is this object <sigh>
+      this.link = ($scope, $element, $attrs) => {
+        return this.doLink($scope, $element, $attrs);
+      }
     }
 
-    public link = ($scope, $element, $attrs) => {
+    private doLink($scope, $element, $attrs) {
       var config = $scope.config;
       var dataName = config.data || "data";
       $scope.rows = [];
@@ -123,7 +129,7 @@ module DataTable {
 
       var newContent = this.$compile(html)($scope);
       rootElement.html(newContent);
-    };
+    }
   }
 
   /**
