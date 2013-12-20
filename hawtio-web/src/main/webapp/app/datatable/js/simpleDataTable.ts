@@ -40,7 +40,6 @@ module DataTable {
             }
           };
         });
-        log.info("Has rows: " + $scope.rows)
       };
 
       scope.$watch(dataName, listener);
@@ -67,6 +66,14 @@ module DataTable {
         return selectionArray;
       }
 
+      function isMultiSelect() {
+        var multiSelect = $scope.config.multiSelect;
+        if (angular.isUndefined(multiSelect)) {
+          multiSelect = true;
+        }
+        return multiSelect;
+      }
+
       $scope.toggleAllSelections = () => {
         var allRowsSelected = $scope.config.allRowsSelected;
         var newFlag = allRowsSelected;
@@ -83,7 +90,15 @@ module DataTable {
       $scope.toggleRowSelection = (row) => {
         if (row) {
           var selectionArray = getSelectionArray();
-          log.info("toggled row " + angular.toJson(row));
+          if (!isMultiSelect()) {
+            // lets clear all other selections
+            selectionArray.splice(0, selectionArray.length);
+            angular.forEach($scope.rows, (r) => {
+              if (r !== row) {
+                r.selected = false;
+              }
+            });
+          }
           var entity = row.entity;
           if (entity) {
             var idx = selectionArray.indexOf(entity);
@@ -100,8 +115,9 @@ module DataTable {
             }
           }
         }
-
       };
+
+
 
       // lets add the header and row cells
       var rootElement = $($element);
@@ -113,7 +129,12 @@ module DataTable {
       var bodyHtml = "<tbody><tr ng-repeat='row in rows | filter:config.filterOptions.filterText' ng-class=\"{'selected': row.selected}\">";
       var idx = 0;
       if (showCheckBox) {
-        headHtml += "\n<th><input type='checkbox' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'></th>"
+        var toggleAllHtml = isMultiSelect() ?
+          "<input type='checkbox' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
+
+        headHtml += "\n<th>" +
+          toggleAllHtml +
+          "</th>"
         bodyHtml += "\n<td><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>"
       }
       angular.forEach(config.columnDefs, (colDef) => {
@@ -130,6 +151,7 @@ module DataTable {
       var newContent = this.$compile(html)($scope);
       rootElement.html(newContent);
     }
+
   }
 
   /**
