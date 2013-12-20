@@ -93,7 +93,10 @@ div.log-stack-trace p:nth-child(odd) {
           <i class="icon-chevron-up"></i>
         </div>
         <div id="copy">
-          <i class="icon-copy" title="Click to copy log to clipboard"
+          <i class="span2 icon-copy" title="Click to copy log to clipboard"
+             zero-clipboard
+             use-callback="setHandler(clip)"></i>
+          <i class="span3 icon-trash" title="Click to clear log"
              zero-clipboard
              use-callback="setHandler(clip)"></i>
         </div>
