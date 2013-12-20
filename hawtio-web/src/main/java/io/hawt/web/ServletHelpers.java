@@ -15,7 +15,6 @@ public class ServletHelpers {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
 
-
     static void writeEmpty(PrintWriter out) {
         out.write("{}");
         out.flush();

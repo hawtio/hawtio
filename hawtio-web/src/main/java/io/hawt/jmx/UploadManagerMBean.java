@@ -3,7 +3,7 @@ package io.hawt.jmx;
 import java.util.List;
 
 /**
- * @author Stan Lewis
+ *
  */
 public interface UploadManagerMBean {
 

@@ -3,7 +3,7 @@
  */
 module Core {
 
-  export function AboutController($scope, $location, branding, localStorage) {
+  export function AboutController($scope, $location, jolokia, branding, localStorage) {
 
     var log:Logging.Logger = Logger.get("About");
 
@@ -18,6 +18,15 @@ module Core {
           $scope.html = marked(data);
           $scope.branding = branding;
           $scope.customBranding === Branding.enabled;
+          $scope.hawtioVersion = jolokia.request({
+            type: "read",
+            mbean: "hawtio:type=About",
+            attribute: "HawtioVersion"
+          }).value;
+          $scope.jolokiaVersion = jolokia.version().agent;
+          $scope.serverProduct = jolokia.version().info.product;
+          $scope.serverVendor = jolokia.version().info.vendor;
+          $scope.serverVersion = jolokia.version().info.version;
         }
         Core.$apply($scope);
       },

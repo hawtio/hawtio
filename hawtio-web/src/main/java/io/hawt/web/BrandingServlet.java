@@ -32,10 +32,8 @@ public class BrandingServlet extends HttpServlet {
     Converters converters = new Converters();
     JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
-
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
-
         ConfigManager config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
             String propertiesToCheckString = config.get("propertiesToCheck", "karaf.version");
@@ -62,12 +60,9 @@ public class BrandingServlet extends HttpServlet {
         super.init(servletConfig);
     }
 
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         Map<String, String> answer = new HashMap<String, String>();
-
         answer.put("profile", profile);
         answer.put("enable", enableBranding().toString());
 
@@ -75,7 +70,6 @@ public class BrandingServlet extends HttpServlet {
         final PrintWriter out = response.getWriter();
 
         Object result = null;
-
         try {
             result = converters.getToJsonConverter().convertToJson(answer, null, options);
         } catch (AttributeNotFoundException e) {
@@ -89,11 +83,9 @@ public class BrandingServlet extends HttpServlet {
         } else {
             out.write("{ \"enable\":\"false\"}");
         }
-
     }
 
     private Boolean enableBranding() {
-
         if (forceBranding) {
             return true;
         }
