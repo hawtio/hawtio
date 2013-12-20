@@ -21,7 +21,7 @@ module Forms {
     public properties = [];
     public action = '';
 
-    public tableclass = 'gridStyle';
+    public tableclass = 'table table-striped inputTable';
     public controlgroupclass = 'control-group';
     public controlclass = 'controls pull-right';
     public labelclass = 'control-label';
@@ -357,7 +357,9 @@ module Forms {
 
 
     private createTable(config, tableConfig) {
-      var table = $('<div class="' + config.tableclass + '" hawtio-datatable="' + tableConfig + '">');
+      //var tableType = "hawtio-datatable";
+      var tableType = "hawtio-simple-table";
+      var table = $('<div class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '">');
       //table.find('fieldset').append(this.getLegend(config));
       return table;
     }
