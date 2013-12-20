@@ -237,6 +237,12 @@ var _apacheCamelModel = {
           "tooltip": "strategyRef",
           "title": "strategyRef"
         },
+        "strategyMethodName": {
+          "type": "java.lang.String",
+          "description": "strategyMethodName",
+          "tooltip": "strategyMethodName",
+          "title": "strategyMethodName"
+        },
         "optimisticLockRetryPolicyDefinition": {
           "type": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",
           "description": "optimisticLockRetryPolicyDefinition",
@@ -254,6 +260,12 @@ var _apacheCamelModel = {
           "description": "optimisticLocking",
           "tooltip": "optimisticLocking",
           "title": "optimisticLocking"
+        },
+        "strategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "strategyMethodAllowNull",
+          "tooltip": "strategyMethodAllowNull",
+          "title": "strategyMethodAllowNull"
         },
         "completionSize": {
           "type": "java.lang.Integer",
@@ -383,6 +395,12 @@ var _apacheCamelModel = {
           "description": "beanType",
           "tooltip": "beanType",
           "title": "beanType"
+        },
+        "cache": {
+          "type": "java.lang.Boolean",
+          "description": "cache",
+          "tooltip": "cache",
+          "title": "cache"
         }
       }
     },
@@ -400,7 +418,10 @@ var _apacheCamelModel = {
       "acceptOutput": true,
       "properties": {
         "exceptions": {
-          "type": "java.util.List",
+          "type": "array",
+          "items": {
+            "type": "java.lang.String"
+          },
           "description": "exceptions",
           "tooltip": "exceptions",
           "title": "exceptions"
@@ -550,6 +571,18 @@ var _apacheCamelModel = {
           "description": "aggregationStrategyRef",
           "tooltip": "aggregationStrategyRef",
           "title": "aggregationStrategyRef"
+        },
+        "aggregationStrategyMethodName": {
+          "type": "java.lang.String",
+          "description": "aggregationStrategyMethodName",
+          "tooltip": "aggregationStrategyMethodName",
+          "title": "aggregationStrategyMethodName"
+        },
+        "aggregationStrategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "aggregationStrategyMethodAllowNull",
+          "tooltip": "aggregationStrategyMethodAllowNull",
+          "title": "aggregationStrategyMethodAllowNull"
         }
       }
     },
@@ -914,6 +947,12 @@ var _apacheCamelModel = {
           "tooltip": "strategyRef",
           "title": "strategyRef"
         },
+        "strategyMethodName": {
+          "type": "java.lang.String",
+          "description": "strategyMethodName",
+          "tooltip": "strategyMethodName",
+          "title": "strategyMethodName"
+        },
         "executorServiceRef": {
           "type": "java.lang.String",
           "description": "executorServiceRef",
@@ -931,6 +970,12 @@ var _apacheCamelModel = {
           "description": "parallelProcessing",
           "tooltip": "parallelProcessing",
           "title": "parallelProcessing"
+        },
+        "strategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "strategyMethodAllowNull",
+          "tooltip": "strategyMethodAllowNull",
+          "title": "strategyMethodAllowNull"
         },
         "streaming": {
           "type": "java.lang.Boolean",
@@ -1011,7 +1056,10 @@ var _apacheCamelModel = {
       "acceptOutput": true,
       "properties": {
         "exceptions": {
-          "type": "java.util.List",
+          "type": "array",
+          "items": {
+            "type": "java.lang.String"
+          },
           "description": "exceptions",
           "tooltip": "exceptions",
           "title": "exceptions"
@@ -1137,11 +1185,23 @@ var _apacheCamelModel = {
           "tooltip": "aggregationStrategyRef",
           "title": "aggregationStrategyRef"
         },
+        "aggregationStrategyMethodName": {
+          "type": "java.lang.String",
+          "description": "aggregationStrategyMethodName",
+          "tooltip": "aggregationStrategyMethodName",
+          "title": "aggregationStrategyMethodName"
+        },
         "timeout": {
           "type": "java.lang.Long",
           "description": "timeout",
           "tooltip": "timeout",
           "title": "timeout"
+        },
+        "aggregationStrategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "aggregationStrategyMethodAllowNull",
+          "tooltip": "aggregationStrategyMethodAllowNull",
+          "title": "aggregationStrategyMethodAllowNull"
         }
       }
     },
@@ -1196,6 +1256,12 @@ var _apacheCamelModel = {
           "tooltip": "strategyRef",
           "title": "strategyRef"
         },
+        "strategyMethodName": {
+          "type": "java.lang.String",
+          "description": "strategyMethodName",
+          "tooltip": "strategyMethodName",
+          "title": "strategyMethodName"
+        },
         "executorServiceRef": {
           "type": "java.lang.String",
           "description": "executorServiceRef",
@@ -1213,6 +1279,12 @@ var _apacheCamelModel = {
           "description": "parallelProcessing",
           "tooltip": "parallelProcessing",
           "title": "parallelProcessing"
+        },
+        "strategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "strategyMethodAllowNull",
+          "tooltip": "strategyMethodAllowNull",
+          "title": "strategyMethodAllowNull"
         },
         "stopOnException": {
           "type": "java.lang.Boolean",
@@ -1637,6 +1709,12 @@ var _apacheCamelModel = {
           "tooltip": "strategyRef",
           "title": "strategyRef"
         },
+        "strategyMethodName": {
+          "type": "java.lang.String",
+          "description": "strategyMethodName",
+          "tooltip": "strategyMethodName",
+          "title": "strategyMethodName"
+        },
         "executorServiceRef": {
           "type": "java.lang.String",
           "description": "executorServiceRef",
@@ -1654,6 +1732,12 @@ var _apacheCamelModel = {
           "description": "parallelProcessing",
           "tooltip": "parallelProcessing",
           "title": "parallelProcessing"
+        },
+        "strategyMethodAllowNull": {
+          "type": "java.lang.Boolean",
+          "description": "strategyMethodAllowNull",
+          "tooltip": "strategyMethodAllowNull",
+          "title": "strategyMethodAllowNull"
         },
         "streaming": {
           "type": "java.lang.Boolean",
@@ -2016,7 +2100,10 @@ var _apacheCamelModel = {
           "title": "newExchangeExpression"
         },
         "headers": {
-          "type": "java.util.List",
+          "type": "array",
+          "items": {
+            "type": "org.apache.camel.model.SetHeaderDefinition"
+          },
           "description": "headers",
           "tooltip": "headers",
           "title": "headers"
@@ -2041,317 +2128,22 @@ var _apacheCamelModel = {
         }
       }
     },
-    "org.apache.camel.model.dataformat.StringDataFormat": {
+    "org.apache.camel.model.loadbalancer.RandomLoadBalancer": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.String Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.String Data Format",
-      "properties": {
-        "charset": {
-          "type": "java.lang.String",
-          "description": "charset",
-          "tooltip": "charset",
-          "title": "charset"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.XMLBeansDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.XMLBeans Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.XMLBeans Data Format",
-      "properties": {
-        "prettyPrint": {
-          "type": "java.lang.Boolean",
-          "description": "prettyPrint",
-          "tooltip": "prettyPrint",
-          "title": "prettyPrint"
-        }
-      }
-    },
-    "org.apache.camel.model.config.StreamResequencerConfig": {
-      "type": "object",
-      "description": "org.apache.camel.model.config.Stream Resequencer Config",
-      "tooltip": "org.apache.camel.model.config.Stream Resequencer Config",
-      "properties": {
-        "capacity": {
-          "type": "java.lang.Integer",
-          "description": "capacity",
-          "tooltip": "capacity",
-          "title": "capacity"
-        },
-        "timeout": {
-          "type": "java.lang.Long",
-          "description": "timeout",
-          "tooltip": "timeout",
-          "title": "timeout"
-        },
-        "ignoreInvalidExchanges": {
-          "type": "java.lang.Boolean",
-          "description": "ignoreInvalidExchanges",
-          "tooltip": "ignoreInvalidExchanges",
-          "title": "ignoreInvalidExchanges"
-        },
-        "rejectOld": {
-          "type": "java.lang.Boolean",
-          "description": "rejectOld",
-          "tooltip": "rejectOld",
-          "title": "rejectOld"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.JibxDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Jibx Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Jibx Data Format",
-      "properties": {
-        "dataFormatName": {
-          "type": "java.lang.String",
-          "description": "dataFormatName",
-          "tooltip": "dataFormatName",
-          "optional": true,
-          "title": "dataFormatName"
-        },
-        "unmarshallTypeName": {
-          "type": "java.lang.String",
-          "description": "unmarshallTypeName",
-          "tooltip": "unmarshallTypeName",
-          "optional": true,
-          "title": "unmarshallTypeName"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.BeanioDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Beanio Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Beanio Data Format",
-      "properties": {
-        "mapping": {
-          "type": "java.lang.String",
-          "description": "mapping",
-          "tooltip": "mapping",
-          "title": "mapping"
-        },
-        "streamName": {
-          "type": "java.lang.String",
-          "description": "streamName",
-          "tooltip": "streamName",
-          "title": "streamName"
-        },
-        "encoding": {
-          "type": "java.lang.String",
-          "description": "encoding",
-          "tooltip": "encoding",
-          "title": "encoding"
-        },
-        "ignoreUnidentifiedRecords": {
-          "type": "java.lang.Boolean",
-          "description": "ignoreUnidentifiedRecords",
-          "tooltip": "ignoreUnidentifiedRecords",
-          "title": "ignoreUnidentifiedRecords"
-        },
-        "ignoreUnexpectedRecords": {
-          "type": "java.lang.Boolean",
-          "description": "ignoreUnexpectedRecords",
-          "tooltip": "ignoreUnexpectedRecords",
-          "title": "ignoreUnexpectedRecords"
-        },
-        "ignoreInvalidRecords": {
-          "type": "java.lang.Boolean",
-          "description": "ignoreInvalidRecords",
-          "tooltip": "ignoreInvalidRecords",
-          "title": "ignoreInvalidRecords"
-        }
-      }
-    },
-    "org.apache.camel.model.loadbalancer.StickyLoadBalancer": {
-      "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Sticky Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Sticky Load Balancer",
-      "properties": {
-        "correlationExpression": {
-          "kind": "expression",
-          "type": "org.apache.camel.model.language.ExpressionDefinition",
-          "description": "correlationExpression",
-          "tooltip": "correlationExpression",
-          "title": "correlationExpression"
-        }
-      }
-    },
-    "org.apache.camel.model.language.Expression": {
-      "type": "object",
-      "description": "org.apache.camel.model.language.Expression",
-      "tooltip": "org.apache.camel.model.language.Expression",
-      "properties": {
-        "expression": {
-          "type": "java.lang.String",
-          "description": "expression",
-          "tooltip": "expression",
-          "title": "expression"
-        },
-        "trim": {
-          "type": "java.lang.Boolean",
-          "description": "trim",
-          "tooltip": "trim",
-          "title": "trim"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.XMLSecurityDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.XMLSecurity Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.XMLSecurity Data Format",
-      "properties": {
-        "xmlCipherAlgorithm": {
-          "type": "java.lang.String",
-          "description": "xmlCipherAlgorithm",
-          "tooltip": "xmlCipherAlgorithm",
-          "title": "xmlCipherAlgorithm"
-        },
-        "passPhrase": {
-          "type": "java.lang.String",
-          "description": "passPhrase",
-          "tooltip": "passPhrase",
-          "title": "passPhrase"
-        },
-        "secureTag": {
-          "type": "java.lang.String",
-          "description": "secureTag",
-          "tooltip": "secureTag",
-          "title": "secureTag"
-        },
-        "keyCipherAlgorithm": {
-          "type": "java.lang.String",
-          "description": "keyCipherAlgorithm",
-          "tooltip": "keyCipherAlgorithm",
-          "title": "keyCipherAlgorithm"
-        },
-        "recipientKeyAlias": {
-          "type": "java.lang.String",
-          "description": "recipientKeyAlias",
-          "tooltip": "recipientKeyAlias",
-          "title": "recipientKeyAlias"
-        },
-        "keyOrTrustStoreParametersId": {
-          "type": "java.lang.String",
-          "description": "keyOrTrustStoreParametersId",
-          "tooltip": "keyOrTrustStoreParametersId",
-          "title": "keyOrTrustStoreParametersId"
-        },
-        "keyPassword": {
-          "type": "java.lang.String",
-          "description": "keyPassword",
-          "tooltip": "keyPassword",
-          "title": "keyPassword"
-        },
-        "secureTagContents": {
-          "type": "java.lang.Boolean",
-          "description": "secureTagContents",
-          "tooltip": "secureTagContents",
-          "title": "secureTagContents"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.CastorDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Castor Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Castor Data Format",
-      "properties": {
-        "mappingFile": {
-          "type": "java.lang.String",
-          "description": "mappingFile",
-          "tooltip": "mappingFile",
-          "title": "mappingFile"
-        },
-        "encoding": {
-          "type": "java.lang.String",
-          "description": "encoding",
-          "tooltip": "encoding",
-          "title": "encoding"
-        },
-        "validation": {
-          "type": "java.lang.Boolean",
-          "description": "validation",
-          "tooltip": "validation",
-          "title": "validation"
-        },
-        "packages": {
-          "type": "[Ljava.lang.String;",
-          "description": "packages",
-          "tooltip": "packages",
-          "title": "packages"
-        },
-        "classes": {
-          "type": "[Ljava.lang.String;",
-          "description": "classes",
-          "tooltip": "classes",
-          "title": "classes"
-        }
-      }
-    },
-    "org.apache.camel.model.Description": {
-      "type": "object",
-      "description": "org.apache.camel.model.Description",
-      "tooltip": "org.apache.camel.model.Description",
-      "properties": {
-        "lang": {
-          "type": "java.lang.String",
-          "description": "lang",
-          "tooltip": "lang",
-          "title": "lang"
-        },
-        "text": {
-          "type": "java.lang.String",
-          "description": "text",
-          "tooltip": "text",
-          "title": "text"
-        },
-        "layoutX": {
-          "type": "java.lang.Double",
-          "description": "layoutX",
-          "tooltip": "layoutX",
-          "title": "layoutX"
-        },
-        "layoutY": {
-          "type": "java.lang.Double",
-          "description": "layoutY",
-          "tooltip": "layoutY",
-          "title": "layoutY"
-        },
-        "layoutWidth": {
-          "type": "java.lang.Double",
-          "description": "layoutWidth",
-          "tooltip": "layoutWidth",
-          "title": "layoutWidth"
-        },
-        "layoutHeight": {
-          "type": "java.lang.Double",
-          "description": "layoutHeight",
-          "tooltip": "layoutHeight",
-          "title": "layoutHeight"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.FlatpackDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Flatpack Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Flatpack Data Format",
+      "description": "org.apache.camel.model.loadbalancer.Random Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Random Load Balancer",
       "properties": {}
     },
-    "org.apache.camel.model.dataformat.SyslogDataFormat": {
+    "org.apache.camel.model.dataformat.HL7DataFormat": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.Syslog Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Syslog Data Format",
-      "properties": {}
-    },
-    "org.apache.camel.model.dataformat.ZipDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Zip Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Zip Data Format",
+      "description": "org.apache.camel.model.dataformat.HL7Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.HL7Data Format",
       "properties": {
-        "compressionLevel": {
-          "type": "java.lang.Integer",
-          "description": "compressionLevel",
-          "tooltip": "compressionLevel",
-          "title": "compressionLevel"
+        "validate": {
+          "type": "java.lang.Boolean",
+          "description": "validate",
+          "tooltip": "validate",
+          "title": "validate"
         }
       }
     },
@@ -2416,282 +2208,28 @@ var _apacheCamelModel = {
         }
       }
     },
-    "org.apache.camel.model.dataformat.HL7DataFormat": {
+    "org.apache.camel.model.loadbalancer.FailoverLoadBalancer": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.HL7Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.HL7Data Format",
+      "description": "org.apache.camel.model.loadbalancer.Failover Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Failover Load Balancer",
       "properties": {
-        "validate": {
-          "type": "java.lang.Boolean",
-          "description": "validate",
-          "tooltip": "validate",
-          "title": "validate"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.Base64DataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Base64Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Base64Data Format",
-      "properties": {
-        "lineSeparator": {
-          "type": "java.lang.String",
-          "description": "lineSeparator",
-          "tooltip": "lineSeparator",
-          "title": "lineSeparator"
+        "exceptions": {
+          "type": "array",
+          "description": "exceptions",
+          "tooltip": "exceptions",
+          "title": "exceptions"
         },
-        "lineLength": {
+        "roundRobin": {
+          "type": "java.lang.Boolean",
+          "description": "roundRobin",
+          "tooltip": "roundRobin",
+          "title": "roundRobin"
+        },
+        "maximumFailoverAttempts": {
           "type": "java.lang.Integer",
-          "description": "lineLength",
-          "tooltip": "lineLength",
-          "title": "lineLength"
-        },
-        "urlSafe": {
-          "type": "java.lang.Boolean",
-          "description": "urlSafe",
-          "tooltip": "urlSafe",
-          "title": "urlSafe"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.XmlJsonDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Xml Json Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Xml Json Data Format",
-      "properties": {
-        "encoding": {
-          "type": "java.lang.String",
-          "description": "encoding",
-          "tooltip": "encoding",
-          "title": "encoding"
-        },
-        "elementName": {
-          "type": "java.lang.String",
-          "description": "elementName",
-          "tooltip": "elementName",
-          "title": "elementName"
-        },
-        "arrayName": {
-          "type": "java.lang.String",
-          "description": "arrayName",
-          "tooltip": "arrayName",
-          "title": "arrayName"
-        },
-        "rootName": {
-          "type": "java.lang.String",
-          "description": "rootName",
-          "tooltip": "rootName",
-          "title": "rootName"
-        },
-        "expandableProperties": {
-          "type": "java.util.List",
-          "description": "expandableProperties",
-          "tooltip": "expandableProperties",
-          "title": "expandableProperties"
-        },
-        "typeHints": {
-          "type": "java.lang.String",
-          "description": "typeHints",
-          "tooltip": "typeHints",
-          "title": "typeHints"
-        },
-        "forceTopLevelObject": {
-          "type": "java.lang.Boolean",
-          "description": "forceTopLevelObject",
-          "tooltip": "forceTopLevelObject",
-          "title": "forceTopLevelObject"
-        },
-        "namespaceLenient": {
-          "type": "java.lang.Boolean",
-          "description": "namespaceLenient",
-          "tooltip": "namespaceLenient",
-          "title": "namespaceLenient"
-        },
-        "skipWhitespace": {
-          "type": "java.lang.Boolean",
-          "description": "skipWhitespace",
-          "tooltip": "skipWhitespace",
-          "title": "skipWhitespace"
-        },
-        "trimSpaces": {
-          "type": "java.lang.Boolean",
-          "description": "trimSpaces",
-          "tooltip": "trimSpaces",
-          "title": "trimSpaces"
-        },
-        "skipNamespaces": {
-          "type": "java.lang.Boolean",
-          "description": "skipNamespaces",
-          "tooltip": "skipNamespaces",
-          "title": "skipNamespaces"
-        },
-        "removeNamespacePrefixes": {
-          "type": "java.lang.Boolean",
-          "description": "removeNamespacePrefixes",
-          "tooltip": "removeNamespacePrefixes",
-          "title": "removeNamespacePrefixes"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.SerializationDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Serialization Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Serialization Data Format",
-      "properties": {}
-    },
-    "org.apache.camel.model.dataformat.JsonDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Json Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Json Data Format",
-      "properties": {
-        "unmarshalTypeName": {
-          "type": "java.lang.String",
-          "description": "unmarshalTypeName",
-          "tooltip": "unmarshalTypeName",
-          "title": "unmarshalTypeName"
-        },
-        "prettyPrint": {
-          "type": "java.lang.Boolean",
-          "description": "prettyPrint",
-          "tooltip": "prettyPrint",
-          "title": "prettyPrint"
-        },
-        "library": {
-          "type": "org.apache.camel.model.dataformat.JsonLibrary",
-          "description": "library",
-          "tooltip": "library",
-          "title": "library"
-        }
-      }
-    },
-    "org.apache.camel.model.loadbalancer.CustomLoadBalancer": {
-      "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Custom Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Custom Load Balancer",
-      "properties": {
-        "ref": {
-          "type": "java.lang.String",
-          "description": "ref",
-          "tooltip": "ref",
-          "title": "ref"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.CustomDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Custom Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Custom Data Format",
-      "properties": {
-        "ref": {
-          "type": "java.lang.String",
-          "description": "ref",
-          "tooltip": "ref",
-          "title": "ref"
-        }
-      }
-    },
-    "org.apache.camel.model.config.BatchResequencerConfig": {
-      "type": "object",
-      "description": "org.apache.camel.model.config.Batch Resequencer Config",
-      "tooltip": "org.apache.camel.model.config.Batch Resequencer Config",
-      "properties": {
-        "batchSize": {
-          "type": "java.lang.Integer",
-          "description": "batchSize",
-          "tooltip": "batchSize",
-          "title": "batchSize"
-        },
-        "batchTimeout": {
-          "type": "java.lang.Long",
-          "description": "batchTimeout",
-          "tooltip": "batchTimeout",
-          "title": "batchTimeout"
-        },
-        "allowDuplicates": {
-          "type": "java.lang.Boolean",
-          "description": "allowDuplicates",
-          "tooltip": "allowDuplicates",
-          "title": "allowDuplicates"
-        },
-        "reverse": {
-          "type": "java.lang.Boolean",
-          "description": "reverse",
-          "tooltip": "reverse",
-          "title": "reverse"
-        },
-        "ignoreInvalidExchanges": {
-          "type": "java.lang.Boolean",
-          "description": "ignoreInvalidExchanges",
-          "tooltip": "ignoreInvalidExchanges",
-          "title": "ignoreInvalidExchanges"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.ZipFileDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Zip File Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Zip File Data Format",
-      "properties": {
-        "usingIterator": {
-          "type": "java.lang.Boolean",
-          "description": "usingIterator",
-          "tooltip": "usingIterator",
-          "title": "usingIterator"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.TidyMarkupDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Tidy Markup Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Tidy Markup Data Format",
-      "properties": {
-        "dataObjectTypeName": {
-          "type": "java.lang.String",
-          "description": "dataObjectTypeName",
-          "tooltip": "dataObjectTypeName",
-          "title": "dataObjectTypeName"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.XStreamDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.XStream Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.XStream Data Format",
-      "properties": {
-        "converters": {
-          "type": "java.util.List",
-          "description": "converters",
-          "tooltip": "converters",
-          "optional": true,
-          "title": "converters"
-        },
-        "dataFormatName": {
-          "type": "java.lang.String",
-          "description": "dataFormatName",
-          "tooltip": "dataFormatName",
-          "optional": true,
-          "title": "dataFormatName"
-        },
-        "driver": {
-          "type": "java.lang.String",
-          "description": "driver",
-          "tooltip": "driver",
-          "optional": true,
-          "title": "driver"
-        },
-        "driverRef": {
-          "type": "java.lang.String",
-          "description": "driverRef",
-          "tooltip": "driverRef",
-          "optional": true,
-          "title": "driverRef"
-        },
-        "encoding": {
-          "type": "java.lang.String",
-          "description": "encoding",
-          "tooltip": "encoding",
-          "optional": true,
-          "title": "encoding"
+          "description": "maximumFailoverAttempts",
+          "tooltip": "maximumFailoverAttempts",
+          "title": "maximumFailoverAttempts"
         }
       }
     },
@@ -2736,6 +2274,12 @@ var _apacheCamelModel = {
           "tooltip": "namespacePrefixRef",
           "title": "namespacePrefixRef"
         },
+        "xmlStreamWriterWrapper": {
+          "type": "java.lang.String",
+          "description": "xmlStreamWriterWrapper",
+          "tooltip": "xmlStreamWriterWrapper",
+          "title": "xmlStreamWriterWrapper"
+        },
         "prettyPrint": {
           "type": "java.lang.Boolean",
           "description": "prettyPrint",
@@ -2762,16 +2306,91 @@ var _apacheCamelModel = {
         }
       }
     },
-    "org.apache.camel.model.dataformat.ProtobufDataFormat": {
+    "org.apache.camel.model.dataformat.ZipDataFormat": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.Protobuf Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Protobuf Data Format",
+      "description": "org.apache.camel.model.dataformat.Zip Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Zip Data Format",
       "properties": {
-        "instanceClass": {
+        "compressionLevel": {
+          "type": "java.lang.Integer",
+          "description": "compressionLevel",
+          "tooltip": "compressionLevel",
+          "title": "compressionLevel"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.JsonDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Json Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Json Data Format",
+      "properties": {
+        "unmarshalTypeName": {
           "type": "java.lang.String",
-          "description": "instanceClass",
-          "tooltip": "instanceClass",
-          "title": "instanceClass"
+          "description": "unmarshalTypeName",
+          "tooltip": "unmarshalTypeName",
+          "title": "unmarshalTypeName"
+        },
+        "prettyPrint": {
+          "type": "java.lang.Boolean",
+          "description": "prettyPrint",
+          "tooltip": "prettyPrint",
+          "title": "prettyPrint"
+        },
+        "library": {
+          "type": "org.apache.camel.model.dataformat.JsonLibrary",
+          "description": "library",
+          "tooltip": "library",
+          "title": "library"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.AvroDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Avro Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Avro Data Format",
+      "properties": {
+        "instanceClassName": {
+          "type": "java.lang.String",
+          "description": "instanceClassName",
+          "tooltip": "instanceClassName",
+          "title": "instanceClassName"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.CsvDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Csv Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Csv Data Format",
+      "properties": {
+        "delimiter": {
+          "type": "java.lang.String",
+          "description": "delimiter",
+          "tooltip": "delimiter",
+          "title": "delimiter"
+        },
+        "configRef": {
+          "type": "java.lang.String",
+          "description": "configRef",
+          "tooltip": "configRef",
+          "title": "configRef"
+        },
+        "strategyRef": {
+          "type": "java.lang.String",
+          "description": "strategyRef",
+          "tooltip": "strategyRef",
+          "title": "strategyRef"
+        },
+        "autogenColumns": {
+          "type": "java.lang.Boolean",
+          "description": "autogenColumns",
+          "tooltip": "autogenColumns",
+          "title": "autogenColumns"
+        },
+        "skipFirstLine": {
+          "type": "java.lang.Boolean",
+          "description": "skipFirstLine",
+          "tooltip": "skipFirstLine",
+          "title": "skipFirstLine"
         }
       }
     },
@@ -2799,93 +2418,12 @@ var _apacheCamelModel = {
           "title": "type"
         },
         "packages": {
-          "type": "[Ljava.lang.String;",
+          "type": "array",
           "description": "packages",
           "tooltip": "packages",
           "title": "packages"
         }
       }
-    },
-    "org.apache.camel.model.dataformat.C24IODataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.C24IOData Format",
-      "tooltip": "org.apache.camel.model.dataformat.C24IOData Format",
-      "properties": {
-        "elementTypeName": {
-          "type": "java.lang.String",
-          "description": "elementTypeName",
-          "tooltip": "elementTypeName",
-          "title": "elementTypeName"
-        },
-        "contentType": {
-          "type": "org.apache.camel.model.dataformat.C24IOContentType",
-          "description": "contentType",
-          "tooltip": "contentType",
-          "title": "contentType"
-        }
-      }
-    },
-    "org.apache.camel.model.dataformat.GzipDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Gzip Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Gzip Data Format",
-      "properties": {}
-    },
-    "org.apache.camel.model.loadbalancer.FailoverLoadBalancer": {
-      "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Failover Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Failover Load Balancer",
-      "properties": {
-        "exceptions": {
-          "type": "java.util.List",
-          "description": "exceptions",
-          "tooltip": "exceptions",
-          "title": "exceptions"
-        },
-        "roundRobin": {
-          "type": "java.lang.Boolean",
-          "description": "roundRobin",
-          "tooltip": "roundRobin",
-          "title": "roundRobin"
-        },
-        "maximumFailoverAttempts": {
-          "type": "java.lang.Integer",
-          "description": "maximumFailoverAttempts",
-          "tooltip": "maximumFailoverAttempts",
-          "title": "maximumFailoverAttempts"
-        }
-      }
-    },
-    "org.apache.camel.model.loadbalancer.TopicLoadBalancer": {
-      "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Topic Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Topic Load Balancer",
-      "properties": {}
-    },
-    "org.apache.camel.model.dataformat.XmlRpcDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Xml Rpc Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Xml Rpc Data Format",
-      "properties": {
-        "request": {
-          "type": "java.lang.Boolean",
-          "description": "request",
-          "tooltip": "request",
-          "title": "request"
-        }
-      }
-    },
-    "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancer": {
-      "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Round Robin Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Round Robin Load Balancer",
-      "properties": {}
-    },
-    "org.apache.camel.model.dataformat.RssDataFormat": {
-      "type": "object",
-      "description": "org.apache.camel.model.dataformat.Rss Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Rss Data Format",
-      "properties": {}
     },
     "org.apache.camel.model.dataformat.PGPDataFormat": {
       "type": "object",
@@ -2910,6 +2448,12 @@ var _apacheCamelModel = {
           "tooltip": "keyFileName",
           "title": "keyFileName"
         },
+        "provider": {
+          "type": "java.lang.String",
+          "description": "provider",
+          "tooltip": "provider",
+          "title": "provider"
+        },
         "armored": {
           "type": "java.lang.Boolean",
           "description": "armored",
@@ -2921,6 +2465,74 @@ var _apacheCamelModel = {
           "description": "integrity",
           "tooltip": "integrity",
           "title": "integrity"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.BeanioDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Beanio Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Beanio Data Format",
+      "properties": {
+        "mapping": {
+          "type": "java.lang.String",
+          "description": "mapping",
+          "tooltip": "mapping",
+          "title": "mapping"
+        },
+        "streamName": {
+          "type": "java.lang.String",
+          "description": "streamName",
+          "tooltip": "streamName",
+          "title": "streamName"
+        },
+        "encoding": {
+          "type": "java.lang.String",
+          "description": "encoding",
+          "tooltip": "encoding",
+          "title": "encoding"
+        },
+        "ignoreUnidentifiedRecords": {
+          "type": "java.lang.Boolean",
+          "description": "ignoreUnidentifiedRecords",
+          "tooltip": "ignoreUnidentifiedRecords",
+          "title": "ignoreUnidentifiedRecords"
+        },
+        "ignoreUnexpectedRecords": {
+          "type": "java.lang.Boolean",
+          "description": "ignoreUnexpectedRecords",
+          "tooltip": "ignoreUnexpectedRecords",
+          "title": "ignoreUnexpectedRecords"
+        },
+        "ignoreInvalidRecords": {
+          "type": "java.lang.Boolean",
+          "description": "ignoreInvalidRecords",
+          "tooltip": "ignoreInvalidRecords",
+          "title": "ignoreInvalidRecords"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.Base64DataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Base64Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Base64Data Format",
+      "properties": {
+        "lineSeparator": {
+          "type": "java.lang.String",
+          "description": "lineSeparator",
+          "tooltip": "lineSeparator",
+          "title": "lineSeparator"
+        },
+        "lineLength": {
+          "type": "java.lang.Integer",
+          "description": "lineLength",
+          "tooltip": "lineLength",
+          "title": "lineLength"
+        },
+        "urlSafe": {
+          "type": "java.lang.Boolean",
+          "description": "urlSafe",
+          "tooltip": "urlSafe",
+          "title": "urlSafe"
         }
       }
     },
@@ -2986,61 +2598,573 @@ var _apacheCamelModel = {
         }
       }
     },
-    "org.apache.camel.model.loadbalancer.RandomLoadBalancer": {
+    "org.apache.camel.model.dataformat.XStreamDataFormat": {
       "type": "object",
-      "description": "org.apache.camel.model.loadbalancer.Random Load Balancer",
-      "tooltip": "org.apache.camel.model.loadbalancer.Random Load Balancer",
+      "description": "org.apache.camel.model.dataformat.XStream Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.XStream Data Format",
+      "properties": {
+        "converters": {
+          "type": "array",
+          "description": "converters",
+          "tooltip": "converters",
+          "optional": true,
+          "title": "converters"
+        },
+        "dataFormatName": {
+          "type": "java.lang.String",
+          "description": "dataFormatName",
+          "tooltip": "dataFormatName",
+          "optional": true,
+          "title": "dataFormatName"
+        },
+        "driver": {
+          "type": "java.lang.String",
+          "description": "driver",
+          "tooltip": "driver",
+          "optional": true,
+          "title": "driver"
+        },
+        "driverRef": {
+          "type": "java.lang.String",
+          "description": "driverRef",
+          "tooltip": "driverRef",
+          "optional": true,
+          "title": "driverRef"
+        },
+        "encoding": {
+          "type": "java.lang.String",
+          "description": "encoding",
+          "tooltip": "encoding",
+          "optional": true,
+          "title": "encoding"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.SerializationDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Serialization Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Serialization Data Format",
       "properties": {}
     },
-    "org.apache.camel.model.dataformat.AvroDataFormat": {
+    "org.apache.camel.model.dataformat.JibxDataFormat": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.Avro Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Avro Data Format",
+      "description": "org.apache.camel.model.dataformat.Jibx Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Jibx Data Format",
       "properties": {
-        "instanceClassName": {
+        "bindingName": {
           "type": "java.lang.String",
-          "description": "instanceClassName",
-          "tooltip": "instanceClassName",
-          "title": "instanceClassName"
+          "description": "bindingName",
+          "tooltip": "bindingName",
+          "optional": true,
+          "title": "bindingName"
+        },
+        "dataFormatName": {
+          "type": "java.lang.String",
+          "description": "dataFormatName",
+          "tooltip": "dataFormatName",
+          "optional": true,
+          "title": "dataFormatName"
+        },
+        "unmarshallTypeName": {
+          "type": "java.lang.String",
+          "description": "unmarshallTypeName",
+          "tooltip": "unmarshallTypeName",
+          "optional": true,
+          "title": "unmarshallTypeName"
         }
       }
     },
-    "org.apache.camel.model.dataformat.CsvDataFormat": {
+    "org.apache.camel.model.config.StreamResequencerConfig": {
       "type": "object",
-      "description": "org.apache.camel.model.dataformat.Csv Data Format",
-      "tooltip": "org.apache.camel.model.dataformat.Csv Data Format",
+      "description": "org.apache.camel.model.config.Stream Resequencer Config",
+      "tooltip": "org.apache.camel.model.config.Stream Resequencer Config",
       "properties": {
-        "delimiter": {
+        "comparatorRef": {
           "type": "java.lang.String",
-          "description": "delimiter",
-          "tooltip": "delimiter",
-          "title": "delimiter"
+          "description": "comparatorRef",
+          "tooltip": "comparatorRef",
+          "title": "comparatorRef"
         },
-        "configRef": {
-          "type": "java.lang.String",
-          "description": "configRef",
-          "tooltip": "configRef",
-          "title": "configRef"
+        "capacity": {
+          "type": "java.lang.Integer",
+          "description": "capacity",
+          "tooltip": "capacity",
+          "title": "capacity"
         },
-        "strategyRef": {
-          "type": "java.lang.String",
-          "description": "strategyRef",
-          "tooltip": "strategyRef",
-          "title": "strategyRef"
+        "timeout": {
+          "type": "java.lang.Long",
+          "description": "timeout",
+          "tooltip": "timeout",
+          "title": "timeout"
         },
-        "autogenColumns": {
+        "ignoreInvalidExchanges": {
           "type": "java.lang.Boolean",
-          "description": "autogenColumns",
-          "tooltip": "autogenColumns",
-          "title": "autogenColumns"
+          "description": "ignoreInvalidExchanges",
+          "tooltip": "ignoreInvalidExchanges",
+          "title": "ignoreInvalidExchanges"
         },
-        "skipFirstLine": {
+        "rejectOld": {
           "type": "java.lang.Boolean",
-          "description": "skipFirstLine",
-          "tooltip": "skipFirstLine",
-          "title": "skipFirstLine"
+          "description": "rejectOld",
+          "tooltip": "rejectOld",
+          "title": "rejectOld"
         }
       }
+    },
+    "org.apache.camel.model.dataformat.SyslogDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Syslog Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Syslog Data Format",
+      "properties": {}
+    },
+    "org.apache.camel.model.dataformat.GzipDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Gzip Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Gzip Data Format",
+      "properties": {}
+    },
+    "org.apache.camel.model.dataformat.CastorDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Castor Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Castor Data Format",
+      "properties": {
+        "mappingFile": {
+          "type": "java.lang.String",
+          "description": "mappingFile",
+          "tooltip": "mappingFile",
+          "title": "mappingFile"
+        },
+        "encoding": {
+          "type": "java.lang.String",
+          "description": "encoding",
+          "tooltip": "encoding",
+          "title": "encoding"
+        },
+        "validation": {
+          "type": "java.lang.Boolean",
+          "description": "validation",
+          "tooltip": "validation",
+          "title": "validation"
+        },
+        "packages": {
+          "type": "array",
+          "description": "packages",
+          "tooltip": "packages",
+          "title": "packages"
+        },
+        "classes": {
+          "type": "array",
+          "description": "classes",
+          "tooltip": "classes",
+          "title": "classes"
+        }
+      }
+    },
+    "org.apache.camel.model.language.Expression": {
+      "type": "object",
+      "description": "org.apache.camel.model.language.Expression",
+      "tooltip": "org.apache.camel.model.language.Expression",
+      "properties": {
+        "expression": {
+          "type": "java.lang.String",
+          "description": "expression",
+          "tooltip": "expression",
+          "title": "expression"
+        },
+        "trim": {
+          "type": "java.lang.Boolean",
+          "description": "trim",
+          "tooltip": "trim",
+          "title": "trim"
+        }
+      }
+    },
+    "org.apache.camel.model.loadbalancer.StickyLoadBalancer": {
+      "type": "object",
+      "description": "org.apache.camel.model.loadbalancer.Sticky Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Sticky Load Balancer",
+      "properties": {
+        "correlationExpression": {
+          "kind": "expression",
+          "type": "org.apache.camel.model.language.ExpressionDefinition",
+          "description": "correlationExpression",
+          "tooltip": "correlationExpression",
+          "title": "correlationExpression"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.XMLSecurityDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.XMLSecurity Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.XMLSecurity Data Format",
+      "properties": {
+        "xmlCipherAlgorithm": {
+          "type": "java.lang.String",
+          "description": "xmlCipherAlgorithm",
+          "tooltip": "xmlCipherAlgorithm",
+          "title": "xmlCipherAlgorithm"
+        },
+        "passPhrase": {
+          "type": "java.lang.String",
+          "description": "passPhrase",
+          "tooltip": "passPhrase",
+          "title": "passPhrase"
+        },
+        "secureTag": {
+          "type": "java.lang.String",
+          "description": "secureTag",
+          "tooltip": "secureTag",
+          "title": "secureTag"
+        },
+        "keyCipherAlgorithm": {
+          "type": "java.lang.String",
+          "description": "keyCipherAlgorithm",
+          "tooltip": "keyCipherAlgorithm",
+          "title": "keyCipherAlgorithm"
+        },
+        "recipientKeyAlias": {
+          "type": "java.lang.String",
+          "description": "recipientKeyAlias",
+          "tooltip": "recipientKeyAlias",
+          "title": "recipientKeyAlias"
+        },
+        "keyOrTrustStoreParametersId": {
+          "type": "java.lang.String",
+          "description": "keyOrTrustStoreParametersId",
+          "tooltip": "keyOrTrustStoreParametersId",
+          "title": "keyOrTrustStoreParametersId"
+        },
+        "keyPassword": {
+          "type": "java.lang.String",
+          "description": "keyPassword",
+          "tooltip": "keyPassword",
+          "title": "keyPassword"
+        },
+        "digestAlgorithm": {
+          "type": "java.lang.String",
+          "description": "digestAlgorithm",
+          "tooltip": "digestAlgorithm",
+          "title": "digestAlgorithm"
+        },
+        "mgfAlgorithm": {
+          "type": "java.lang.String",
+          "description": "mgfAlgorithm",
+          "tooltip": "mgfAlgorithm",
+          "title": "mgfAlgorithm"
+        },
+        "secureTagContents": {
+          "type": "java.lang.Boolean",
+          "description": "secureTagContents",
+          "tooltip": "secureTagContents",
+          "title": "secureTagContents"
+        }
+      }
+    },
+    "org.apache.camel.model.Description": {
+      "type": "object",
+      "description": "org.apache.camel.model.Description",
+      "tooltip": "org.apache.camel.model.Description",
+      "properties": {
+        "lang": {
+          "type": "java.lang.String",
+          "description": "lang",
+          "tooltip": "lang",
+          "title": "lang"
+        },
+        "text": {
+          "type": "java.lang.String",
+          "description": "text",
+          "tooltip": "text",
+          "title": "text"
+        },
+        "layoutX": {
+          "type": "java.lang.Double",
+          "description": "layoutX",
+          "tooltip": "layoutX",
+          "title": "layoutX"
+        },
+        "layoutY": {
+          "type": "java.lang.Double",
+          "description": "layoutY",
+          "tooltip": "layoutY",
+          "title": "layoutY"
+        },
+        "layoutWidth": {
+          "type": "java.lang.Double",
+          "description": "layoutWidth",
+          "tooltip": "layoutWidth",
+          "title": "layoutWidth"
+        },
+        "layoutHeight": {
+          "type": "java.lang.Double",
+          "description": "layoutHeight",
+          "tooltip": "layoutHeight",
+          "title": "layoutHeight"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.ProtobufDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Protobuf Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Protobuf Data Format",
+      "properties": {
+        "instanceClass": {
+          "type": "java.lang.String",
+          "description": "instanceClass",
+          "tooltip": "instanceClass",
+          "title": "instanceClass"
+        }
+      }
+    },
+    "org.apache.camel.model.loadbalancer.CustomLoadBalancer": {
+      "type": "object",
+      "description": "org.apache.camel.model.loadbalancer.Custom Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Custom Load Balancer",
+      "properties": {
+        "ref": {
+          "type": "java.lang.String",
+          "description": "ref",
+          "tooltip": "ref",
+          "title": "ref"
+        }
+      }
+    },
+    "org.apache.camel.model.config.BatchResequencerConfig": {
+      "type": "object",
+      "description": "org.apache.camel.model.config.Batch Resequencer Config",
+      "tooltip": "org.apache.camel.model.config.Batch Resequencer Config",
+      "properties": {
+        "batchSize": {
+          "type": "java.lang.Integer",
+          "description": "batchSize",
+          "tooltip": "batchSize",
+          "title": "batchSize"
+        },
+        "batchTimeout": {
+          "type": "java.lang.Long",
+          "description": "batchTimeout",
+          "tooltip": "batchTimeout",
+          "title": "batchTimeout"
+        },
+        "allowDuplicates": {
+          "type": "java.lang.Boolean",
+          "description": "allowDuplicates",
+          "tooltip": "allowDuplicates",
+          "title": "allowDuplicates"
+        },
+        "reverse": {
+          "type": "java.lang.Boolean",
+          "description": "reverse",
+          "tooltip": "reverse",
+          "title": "reverse"
+        },
+        "ignoreInvalidExchanges": {
+          "type": "java.lang.Boolean",
+          "description": "ignoreInvalidExchanges",
+          "tooltip": "ignoreInvalidExchanges",
+          "title": "ignoreInvalidExchanges"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.CustomDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Custom Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Custom Data Format",
+      "properties": {
+        "ref": {
+          "type": "java.lang.String",
+          "description": "ref",
+          "tooltip": "ref",
+          "title": "ref"
+        }
+      }
+    },
+    "org.apache.camel.model.loadbalancer.TopicLoadBalancer": {
+      "type": "object",
+      "description": "org.apache.camel.model.loadbalancer.Topic Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Topic Load Balancer",
+      "properties": {}
+    },
+    "org.apache.camel.model.dataformat.XmlJsonDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Xml Json Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Xml Json Data Format",
+      "properties": {
+        "encoding": {
+          "type": "java.lang.String",
+          "description": "encoding",
+          "tooltip": "encoding",
+          "title": "encoding"
+        },
+        "elementName": {
+          "type": "java.lang.String",
+          "description": "elementName",
+          "tooltip": "elementName",
+          "title": "elementName"
+        },
+        "arrayName": {
+          "type": "java.lang.String",
+          "description": "arrayName",
+          "tooltip": "arrayName",
+          "title": "arrayName"
+        },
+        "rootName": {
+          "type": "java.lang.String",
+          "description": "rootName",
+          "tooltip": "rootName",
+          "title": "rootName"
+        },
+        "expandableProperties": {
+          "type": "array",
+          "description": "expandableProperties",
+          "tooltip": "expandableProperties",
+          "title": "expandableProperties"
+        },
+        "typeHints": {
+          "type": "java.lang.String",
+          "description": "typeHints",
+          "tooltip": "typeHints",
+          "title": "typeHints"
+        },
+        "forceTopLevelObject": {
+          "type": "java.lang.Boolean",
+          "description": "forceTopLevelObject",
+          "tooltip": "forceTopLevelObject",
+          "title": "forceTopLevelObject"
+        },
+        "namespaceLenient": {
+          "type": "java.lang.Boolean",
+          "description": "namespaceLenient",
+          "tooltip": "namespaceLenient",
+          "title": "namespaceLenient"
+        },
+        "skipWhitespace": {
+          "type": "java.lang.Boolean",
+          "description": "skipWhitespace",
+          "tooltip": "skipWhitespace",
+          "title": "skipWhitespace"
+        },
+        "trimSpaces": {
+          "type": "java.lang.Boolean",
+          "description": "trimSpaces",
+          "tooltip": "trimSpaces",
+          "title": "trimSpaces"
+        },
+        "skipNamespaces": {
+          "type": "java.lang.Boolean",
+          "description": "skipNamespaces",
+          "tooltip": "skipNamespaces",
+          "title": "skipNamespaces"
+        },
+        "removeNamespacePrefixes": {
+          "type": "java.lang.Boolean",
+          "description": "removeNamespacePrefixes",
+          "tooltip": "removeNamespacePrefixes",
+          "title": "removeNamespacePrefixes"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.C24IODataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.C24IOData Format",
+      "tooltip": "org.apache.camel.model.dataformat.C24IOData Format",
+      "properties": {
+        "elementTypeName": {
+          "type": "java.lang.String",
+          "description": "elementTypeName",
+          "tooltip": "elementTypeName",
+          "title": "elementTypeName"
+        },
+        "contentType": {
+          "type": "org.apache.camel.model.dataformat.C24IOContentType",
+          "description": "contentType",
+          "tooltip": "contentType",
+          "title": "contentType"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.StringDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.String Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.String Data Format",
+      "properties": {
+        "charset": {
+          "type": "java.lang.String",
+          "description": "charset",
+          "tooltip": "charset",
+          "title": "charset"
+        }
+      }
+    },
+    "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancer": {
+      "type": "object",
+      "description": "org.apache.camel.model.loadbalancer.Round Robin Load Balancer",
+      "tooltip": "org.apache.camel.model.loadbalancer.Round Robin Load Balancer",
+      "properties": {}
+    },
+    "org.apache.camel.model.dataformat.XMLBeansDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.XMLBeans Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.XMLBeans Data Format",
+      "properties": {
+        "prettyPrint": {
+          "type": "java.lang.Boolean",
+          "description": "prettyPrint",
+          "tooltip": "prettyPrint",
+          "title": "prettyPrint"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.TidyMarkupDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Tidy Markup Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Tidy Markup Data Format",
+      "properties": {
+        "dataObjectTypeName": {
+          "type": "java.lang.String",
+          "description": "dataObjectTypeName",
+          "tooltip": "dataObjectTypeName",
+          "title": "dataObjectTypeName"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.RssDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Rss Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Rss Data Format",
+      "properties": {}
+    },
+    "org.apache.camel.model.dataformat.XmlRpcDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Xml Rpc Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Xml Rpc Data Format",
+      "properties": {
+        "request": {
+          "type": "java.lang.Boolean",
+          "description": "request",
+          "tooltip": "request",
+          "title": "request"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.ZipFileDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Zip File Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Zip File Data Format",
+      "properties": {
+        "usingIterator": {
+          "type": "java.lang.Boolean",
+          "description": "usingIterator",
+          "tooltip": "usingIterator",
+          "title": "usingIterator"
+        }
+      }
+    },
+    "org.apache.camel.model.dataformat.FlatpackDataFormat": {
+      "type": "object",
+      "description": "org.apache.camel.model.dataformat.Flatpack Data Format",
+      "tooltip": "org.apache.camel.model.dataformat.Flatpack Data Format",
+      "properties": {}
     }
   },
   "languages": {

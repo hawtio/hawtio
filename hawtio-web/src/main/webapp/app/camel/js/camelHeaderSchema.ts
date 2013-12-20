@@ -130,6 +130,9 @@ module Camel {
           "CamelFileNameProduced": {
             type: "java.lang.String"
           },
+          "CamelFileNameConsumed": {
+            type: "java.lang.String"
+          },
           "CamelFilePath": {
             type: "java.lang.String"
           },
@@ -236,6 +239,9 @@ module Camel {
             type: "java.lang.String"
           },
           "CamelParentUnitOfWork": {
+            type: "java.lang.String"
+          },
+          "CamelRecipientListEndpoint": {
             type: "java.lang.String"
           },
           "CamelReceivedTimestamp": {
