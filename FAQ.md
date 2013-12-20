@@ -84,6 +84,8 @@ Questions relating to errors you get while using hawtio or other general questio
 
 An easy way is to use a plugin to reconfigure the default perspective definition.  Have a look at the [custom-perspective](https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/custom-perspective) for a plugin-based solution.
 
+From **hawtio 1.2.2** onwards you can reorder and hide plugins from the preference.
+
 
 #### Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
 
