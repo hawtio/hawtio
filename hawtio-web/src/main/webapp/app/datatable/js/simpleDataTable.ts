@@ -130,7 +130,7 @@ module DataTable {
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?
-          "<input type='checkbox' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
+          "<input type='checkbox' ng-show='rows.length' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
 
         headHtml += "\n<th>" +
           toggleAllHtml +
