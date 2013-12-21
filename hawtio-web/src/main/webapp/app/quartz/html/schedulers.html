@@ -1,6 +1,21 @@
 <div ng-controller="Quartz.QuartzController">
 
   <div class="row-fluid">
+    <div ng-show="selectedScheduler" class="alert alert-info">
+
+      <strong>Scheduler Details:</strong>
+
+      <br/> Scheduler name: <strong>{{selectedScheduler.SchedulerName}}</strong>
+      <br/> State: <i class="{{iconClass(selectedScheduler.Started)}}"></i>
+      <br/> Version: <strong>{{selectedScheduler.Version}}</strong>
+
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <strong>Scheduler Triggers:</strong>
+  </div>
+  <div class="row-fluid">
     <div class="gridStyle" ng-grid="gridOptions"></div>
   </div>
 
