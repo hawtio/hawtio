@@ -168,8 +168,8 @@ A good MBean for real time values and charts is `java.lang/OperatingSystem`. Try
 
 ## Trying SNAPSHOT builds
 
-The **hawtio** project has a CI server which builds and deploys daily builds to a [Maven repository|https://repository.jboss.org/nexus/content/repositories/fs-snapshots/io/hawt]. For example to try the latest build of the 'hawtio-default' WAR you can
-download it from the [Maven repository|https://repository.jboss.org/nexus/content/repositories/fs-snapshots/io/hawt/hawtio-default].
+The **hawtio** project has a CI server which builds and deploys daily builds to a [Maven repository](https://repository.jboss.org/nexus/content/repositories/fs-snapshots/io/hawt). For example to try the latest build of the 'hawtio-default' WAR you can
+download it from the [Maven repository](https://repository.jboss.org/nexus/content/repositories/fs-snapshots/io/hawt/hawtio-default).
 
 
 ## Further Reading
