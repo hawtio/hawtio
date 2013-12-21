@@ -6,21 +6,24 @@ module Quartz {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
 
-    $scope.schedulers = [];
+    $scope.selectedScheduler = null;
+    $scope.selectedSchedulerMBean = null;
+    $scope.triggers = [];
 
     $scope.gridOptions = {
       selectedItems: [],
-      data: 'schedulers',
+      data: 'triggers',
       displayFooter: false,
       showFilter: false,
       filterOptions: {
         filterText: ''
       },
-      showColumnMenu: true,
+      showColumnMenu: false,
       showSelectionCheckbox: false,
+      multiSelect: false,
       columnDefs: [
         {
-          field: 'Started',
+          field: 'state',
           displayName: 'State',
           cellTemplate: stateTemplate,
           width: 56,
@@ -29,25 +32,44 @@ module Quartz {
           resizable: false
         },
         {
-          field: 'SchedulerName',
+          field: 'group',
+          displayName: 'Group'
+        },
+        {
+          field: 'name',
           displayName: 'Name'
         },
         {
-          field: 'Version',
-          displayName: 'Version'
+          field: 'previousFireTime',
+          displayName: 'Previous Fire Timestamp'
         },
+        {
+          field: 'nextFireTime',
+          displayName: 'Next Fire Timestamp'
+        }
       ]
     };
 
-    function selectQuartzScheduler(mbean) {
-      function onAttributes(response) {
-        var obj = response.value;
-        if (obj) {
-          $scope.schedulers.push(obj);
-        }
-        Core.$apply($scope);
+    $scope.renderTrigger = (response) => {
+      $scope.triggers = [];
+      log.info("Selected scheduler mbean " + $scope.selectedScheduler)
+      var obj = response.value;
+      if (obj) {
+        $scope.selectedScheduler = obj;
+
+        // grab state for all triggers
+        obj.AllTriggers.forEach(t => {
+          var state = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+            operation: "getTriggerState", arguments: [t.name, t.group]});
+          if (state) {
+            t.state = state.value;
+          } else {
+            t.state = "unknown";
+          }
+          $scope.triggers.push(t);
+        })
       }
-      jolokia.request({type: "read", mbean: mbean}, onSuccess(onAttributes));
+      Core.$apply($scope);
     }
 
     function reloadTree() {
@@ -103,14 +125,22 @@ module Quartz {
       var selectionKey = data ? data.key : null;
       log.info("Selection is now: " + selectionKey);
       if (selectionKey) {
-        selectQuartzScheduler(selectionKey)
+        // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
+        // as the trigger has prev/next fire times that changes
+        $scope.selectedSchedulerMBean = selectionKey;
+
+        var request = [{type: "read", mbean: $scope.selectedSchedulerMBean}];
+        Core.register(jolokia, $scope, request, onSuccess($scope.renderTrigger));
       } else {
-        $scope.schedulers = [];
+        Core.unregister(jolokia, $scope);
+        $scope.selectedSchedulerMBean = null;
+        $scope.selectedScheduler = null;
+        $scope.triggers = [];
       }
     }
 
     // force tree to be loaded on startup
     reloadTree();
-
   }
+
 }

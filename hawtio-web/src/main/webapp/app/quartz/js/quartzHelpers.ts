@@ -10,6 +10,10 @@ module Quartz {
       switch (state.toString().toLowerCase()) {
         case 'true':
           return "green icon-play-circle";
+        case 'normal':
+          return "green icon-play-circle";
+        case 'paused':
+          return "orange icon-off";
       }
     }
     return "orange icon-off";
