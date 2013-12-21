@@ -6,6 +6,7 @@ module Quartz {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
 
+    $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;
     $scope.triggers = [];
@@ -50,12 +51,14 @@ module Quartz {
       ]
     };
 
+    // TODO: only update data, instead of clear and refresh, as that causes table to de-select
     $scope.renderTrigger = (response) => {
       $scope.triggers = [];
       log.info("Selected scheduler mbean " + $scope.selectedScheduler)
       var obj = response.value;
       if (obj) {
         $scope.selectedScheduler = obj;
+        $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
 
         // grab state for all triggers
         obj.AllTriggers.forEach(t => {
@@ -70,6 +73,30 @@ module Quartz {
         })
       }
       Core.$apply($scope);
+    }
+
+    $scope.pause = () => {
+      if ($scope.gridOptions.selectedItems.length === 1) {
+        var groupName = $scope.gridOptions.selectedItems[0].group;
+        var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+        jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "pauseTrigger", arguments: [triggerName, groupName]});
+
+        notification("success", "Paused trigger " + groupName + "/" + triggerName);
+      }
+    }
+
+    $scope.resume = () => {
+      if ($scope.gridOptions.selectedItems.length === 1) {
+        var groupName = $scope.gridOptions.selectedItems[0].group;
+        var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+        jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "resumeTrigger", arguments: [triggerName, groupName]});
+
+        notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+      }
     }
 
     function reloadTree() {
