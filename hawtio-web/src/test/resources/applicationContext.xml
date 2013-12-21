@@ -167,10 +167,16 @@
   </camelContext>
 
   <camelContext id="quartzCamel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="quartzRoute1">
       <!-- must set -1 due bug in camel-quarz2 -->
       <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=10000&amp;trigger.repeatCount=-1"/>
-      <log message="Quartz2 fired"/>
+      <log message="Quartz2 mytrigger fired"/>
+    </route>
+
+    <route id="quartzRoute2">
+      <!-- must set -1 due bug in camel-quarz2 -->
+      <from uri="quartz2:mygroup/myothertimer?cron=0/2+*+*+*+*+?"/>
+      <log message="Quartz2 myothertrigger fired"/>
     </route>
   </camelContext>
 
