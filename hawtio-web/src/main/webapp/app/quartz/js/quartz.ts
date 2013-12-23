@@ -52,12 +52,10 @@ module Quartz {
       ]
     };
 
-    // TODO: only update data, instead of clear and refresh, as that causes table to de-select
     $scope.renderTrigger = (response) => {
-      $scope.triggers = [];
       $scope.selectedSchedulerDetails = [];
 
-      log.info("Selected scheduler mbean " + $scope.selectedScheduler)
+      log.debug("Selected scheduler mbean " + $scope.selectedScheduler)
       var obj = response.value;
       if (obj) {
         $scope.selectedScheduler = obj;
@@ -88,9 +86,22 @@ module Quartz {
           } else {
             t.state = "unknown";
           }
-          $scope.triggers.push(t);
+
+          // update existing trigger, so the UI remembers it selection
+          // and we don't have flicker if the table is very long
+          var existing = $scope.triggers.filter(e => {
+            return e.name === t.name && e.group === t.group;
+          });
+          if (existing && existing.length === 1) {
+            for (var prop in t) {
+              existing[0][prop] = t[prop];
+            }
+          } else {
+            $scope.triggers.push(t);
+          }
         })
       }
+
       Core.$apply($scope);
     }
 
@@ -131,9 +142,6 @@ module Quartz {
 
       if (mbean) {
         function render(results) {
-
-          log.info("Render Tree")
-
           angular.forEach(results, function (value, key) {
             var name = jolokia.request({type: "read", mbean: value,
               attribute: ["SchedulerName"]});
@@ -169,7 +177,7 @@ module Quartz {
 
     function selectionChanged(data) {
       var selectionKey = data ? data.key : null;
-      log.info("Selection is now: " + selectionKey);
+      log.debug("Selection is now: " + selectionKey);
       if (selectionKey) {
         // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
         // as the trigger has prev/next fire times that changes
