@@ -6,6 +6,7 @@ module Quartz {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
 
+    $scope.selectedSchedulerDetails = [];
     $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;
@@ -54,13 +55,31 @@ module Quartz {
     // TODO: only update data, instead of clear and refresh, as that causes table to de-select
     $scope.renderTrigger = (response) => {
       $scope.triggers = [];
+      $scope.selectedSchedulerDetails = [];
+
       log.info("Selected scheduler mbean " + $scope.selectedScheduler)
       var obj = response.value;
       if (obj) {
         $scope.selectedScheduler = obj;
         $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
 
-        // grab state for all triggers
+        // add extra details about the selected scheduler, and turn that into human readable details
+        angular.forEach(obj, (value, key) => {
+          if (includePropertyValue(key, value)) {
+            $scope.selectedSchedulerDetails.push({
+              field: humanizeValue(key),
+              displayName: value
+            });
+          }
+        });
+        // .. which we then sort also
+        $scope.selectedSchedulerDetails.sort((a, b) => {
+          var ta = a.field.toString();
+          var tb = b.field.toString();
+          return ta.localeCompare(tb);
+        });
+
+        // grab state for all triggers which requires to call a JMX operation per trigger
         obj.AllTriggers.forEach(t => {
           var state = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
             operation: "getTriggerState", arguments: [t.name, t.group]});
@@ -164,6 +183,51 @@ module Quartz {
         $scope.selectedScheduler = null;
         $scope.triggers = [];
       }
+    }
+
+    function includePropertyValue(key: string, value) {
+      // skip these keys as we have hardcoded them to be shown already
+      if ("SchedulerName" === key || "Version" === key || "Started" === key) {
+        return false;
+      }
+
+      return !angular.isObject(value);
+    }
+
+    function humanizeValue(value:any):string {
+      if (value) {
+        var text = value.toString();
+        try {
+          text = text.underscore();
+        } catch (e) {
+          // ignore
+        }
+        try {
+          text = text.humanize();
+        } catch (e) {
+          // ignore
+        }
+        return trimQuotes(text);
+      }
+      return value;
+    }
+
+    function safeNull(value:any):string {
+      if (value) {
+        return value;
+      } else {
+        return "";
+      }
+    }
+
+    function trimQuotes(text:string) {
+      while (text.endsWith('"') || text.endsWith("'")) {
+        text = text.substring(0, text.length - 1);
+      }
+      while (text.startsWith('"') || text.startsWith("'")) {
+        text = text.substring(1, text.length);
+      }
+      return text;
     }
 
     // force tree to be loaded on startup
