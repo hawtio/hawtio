@@ -5,6 +5,7 @@ module Quartz {
     var log:Logging.Logger = Logger.get("Quartz");
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
+    var misfireTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">{{row.getProperty(col.field) | quartzMisfire}}</div>';
 
     $scope.selectedSchedulerDetails = [];
     $scope.selectedSchedulerIcon = null;
@@ -40,6 +41,11 @@ module Quartz {
         {
           field: 'name',
           displayName: 'Name'
+        },
+        {
+          field: 'misfireInstruction',
+          displayName: 'Misfire Instruction',
+          cellTemplate: misfireTemplate
         },
         {
           field: 'previousFireTime',
