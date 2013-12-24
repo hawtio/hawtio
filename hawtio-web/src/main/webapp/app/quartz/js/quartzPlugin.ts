@@ -12,6 +12,7 @@ module Quartz {
                     when('/quartz/schedulers', {templateUrl: 'app/quartz/html/schedulers.html'})
           }).
           filter('quartzIconClass',() => iconClass).
+          filter('quartzMisfire',() => misfireText).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['quartz'] = 'app/quartz/html/layoutQuartzTree.html';

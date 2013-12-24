@@ -19,6 +19,22 @@ module Quartz {
     return "orange icon-off";
   }
 
+  export function misfireText(val:number) {
+    if (val) {
+      switch (val) {
+        case -1:
+          return "ignore";
+        case 0:
+          return "smart";
+        case 1:
+          return "fire once now";
+        case 2:
+          return "do nothing";
+      }
+    }
+    return "unknown";
+  }
+
   /**
    * Returns true if the state of the item begins with the given state - or one of the given states
    * @method
