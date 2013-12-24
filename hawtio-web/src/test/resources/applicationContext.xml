@@ -169,8 +169,10 @@
   <camelContext id="quartzCamel" xmlns="http://camel.apache.org/schema/spring">
     <route id="quartzRoute1">
       <!-- must set -1 due bug in camel-quarz2 -->
-      <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=10000&amp;trigger.repeatCount=-1"/>
+      <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=20000&amp;trigger.repeatCount=-1"/>
       <log message="Quartz2 mytrigger fired"/>
+      <delay><constant>10000</constant></delay>
+      <log message="Quartz mytrigger done"/>
     </route>
 
     <route id="quartzRoute2">
