@@ -183,7 +183,6 @@ module Quartz {
           var schedulers = first.getChildren();
           if (schedulers && schedulers.length === 1) {
             first = schedulers[0];
-            first.expand(true);
             return first;
           }
         }, true);

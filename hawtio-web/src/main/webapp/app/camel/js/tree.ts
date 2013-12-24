@@ -134,7 +134,6 @@ module Camel {
             var routes = children[0];
             if (routes.data.typeName === 'routes') {
               first = routes;
-              first.expand(true);
               return first;
             }
           }

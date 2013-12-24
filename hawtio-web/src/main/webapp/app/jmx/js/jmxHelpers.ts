@@ -119,6 +119,7 @@ module Jmx {
               }
             }
             if (activateIfNoneSelected) {
+              first.expand();
               first.activate();
             }
           } else {
