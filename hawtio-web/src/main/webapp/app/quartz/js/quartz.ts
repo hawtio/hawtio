@@ -177,47 +177,16 @@ module Quartz {
       }
     }
 
-    // TODO: Jmx.updateTreeSelectionFromURL should likely support to auto expand and select a node in the tree
-    // based on a function or an option if there is only 1 element in the tree
     function updateSelectionFromURL() {
-      quartzUpdateTreeSelectionFromURL($location, $("#quartztree"), true)
-    }
-
-    function quartzUpdateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
-      var dtree = treeElement.dynatree("getTree");
-      if (dtree) {
-        var node = null;
-        var key = $location.search()['nid'];
-        if (key) {
-          try {
-            node = dtree.activateKey(key);
-          } catch (e) {
-            // tree not visible we suspect!
+      Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#quartztree"), (first) => {
+        // use function to auto select first scheduler if there is only one scheduler
+          var schedulers = first.getChildren();
+          if (schedulers && schedulers.length === 1) {
+            first = schedulers[0];
+            first.expand(true);
+            return first;
           }
-        }
-        if (node) {
-          node.expand(true);
-        } else {
-          if (!treeElement.dynatree("getActiveNode")) {
-            // lets expand the first node
-            var root = treeElement.dynatree("getRoot");
-            var children = root ? root.getChildren() : null;
-            if (children && children.length) {
-              // if only 1 quartz scheduler then auto select it, and expand its routes (if it has any routes)
-              var first = children[0];
-              first.expand(true);
-              var schedulers = first.getChildren();
-              if (schedulers && schedulers.length === 1) {
-                first = schedulers[0];
-                first.expand(true);
-              }
-              if (activateIfNoneSelected) {
-                first.activate();
-              }
-            }
-          }
-        }
-      }
+        }, true);
     }
 
     function selectionChanged(data) {

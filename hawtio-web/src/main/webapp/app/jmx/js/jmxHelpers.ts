@@ -86,6 +86,10 @@ module Jmx {
 
 
   export function updateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
+    updateTreeSelectionFromURLAndAutoSelect($location, treeElement, null, activateIfNoneSelected);
+  }
+
+  export function updateTreeSelectionFromURLAndAutoSelect($location, treeElement, autoSelect, activateIfNoneSelected = false) {
     var dtree = treeElement.dynatree("getTree");
     if (dtree) {
       var node = null;
@@ -105,6 +109,19 @@ module Jmx {
           var root = treeElement.dynatree("getRoot");
           var children = root ? root.getChildren() : null;
           if (children && children.length) {
+            var first = children[0];
+            first.expand(true);
+            // invoke any auto select function, and use its result as new first, if any returned
+            if (autoSelect) {
+              var result = autoSelect(first);
+              if (result) {
+                first = result;
+              }
+            }
+            if (activateIfNoneSelected) {
+              first.activate();
+            }
+          } else {
             var first = children[0];
             first.expand(true);
             if (activateIfNoneSelected) {
