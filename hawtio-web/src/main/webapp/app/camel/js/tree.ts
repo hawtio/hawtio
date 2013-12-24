@@ -127,6 +127,8 @@ module Camel {
     }
   }
 
+  // TODO: Jmx.updateTreeSelectionFromURL should likely support to auto expand and select a node in the tree
+  // based on a function or an option if there is only 1 element in the tree
   export function camelUpdateTreeSelectionFromURL($location, treeElement, activateIfNoneSelected = false) {
     var dtree = treeElement.dynatree("getTree");
     if (dtree) {
