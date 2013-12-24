@@ -1,7 +1,16 @@
 <div ng-controller="Quartz.QuartzController">
 
-  <div class="row-fluid">
-    <div ng-show="selectedScheduler" class="alert alert-info">
+  <div class="span12 well" ng-hide="selectedScheduler">
+    <form>
+      <p>The Quartz plugin allows you to see details about running Quartz Schedulers, and their associated triggers and
+        jobs.</p>
+
+      <p>Select a Quartz Scheduler in the tree to continue.</p>
+    </form>
+  </div>
+
+  <div ng-show="selectedScheduler" class="row-fluid">
+    <div class="alert alert-info">
 
       <strong>Scheduler Details:</strong>
 
@@ -28,11 +37,13 @@
           <fieldset>
             <div class="controls control-group inline-block controls-row">
               <div class="btn-group">
-                <button ng-disabled="gridOptions.selectedItems.length == 0 || gridOptions.selectedItems[0].state != 'PAUSED'"
-                        class="btn" ng-click="resume()" title="Resume">
+                <button
+                    ng-disabled="gridOptions.selectedItems.length == 0 || gridOptions.selectedItems[0].state != 'PAUSED'"
+                    class="btn" ng-click="resume()" title="Resume">
                   <i class="icon-play-circle"></i></button>
-                <button ng-disabled="gridOptions.selectedItems.length == 0 || gridOptions.selectedItems[0].state == 'PAUSED'"
-                        class="btn" ng-click="pause()" title="Pause">
+                <button
+                    ng-disabled="gridOptions.selectedItems.length == 0 || gridOptions.selectedItems[0].state == 'PAUSED'"
+                    class="btn" ng-click="pause()" title="Pause">
                   <i class="icon-off"></i></button>
               </div>
             </div>
@@ -51,4 +62,6 @@
     </div>
 
   </div>
+
+</div>
 
