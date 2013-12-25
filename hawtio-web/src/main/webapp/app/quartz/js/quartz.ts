@@ -17,7 +17,7 @@ module Quartz {
       selectedItems: [],
       data: 'triggers',
       displayFooter: false,
-      showFilter: false,
+      showFilter: true,
       filterOptions: {
         filterText: ''
       },
@@ -45,7 +45,8 @@ module Quartz {
         {
           field: 'misfireInstruction',
           displayName: 'Misfire Instruction',
-          cellTemplate: misfireTemplate
+          cellTemplate: misfireTemplate,
+          width: 150
         },
         {
           field: 'previousFireTime',

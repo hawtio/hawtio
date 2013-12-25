@@ -9,7 +9,8 @@ module Quartz {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/quartz/schedulers', {templateUrl: 'app/quartz/html/schedulers.html'})
+                    when('/quartz/schedulers', {templateUrl: 'app/quartz/html/schedulers.html'}).
+                    when('/quartz/triggers', {templateUrl: 'app/quartz/html/triggers.html'});
           }).
           filter('quartzIconClass',() => iconClass).
           filter('quartzMisfire',() => misfireText).
@@ -25,11 +26,10 @@ module Quartz {
               content: "Quartz",
               title: "Quartz Scheduler",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
-              href: () => "#/quartz/schedulers",
-              isActive: (workspace: Workspace) => workspace.isTopTabActive("quartz")
+              href: () => "#/quartz/schedulers"
             });
 
-          });
+    });
 
   hawtioPluginLoader.addModule(pluginName);
 }
