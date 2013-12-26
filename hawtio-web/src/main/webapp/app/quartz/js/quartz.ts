@@ -12,6 +12,7 @@ module Quartz {
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;
     $scope.triggers = [];
+    $scope.jobs = [];
 
     $scope.gridOptions = {
       selectedItems: [],
@@ -59,10 +60,51 @@ module Quartz {
       ]
     };
 
-    $scope.renderTrigger = (response) => {
+    $scope.jobsGridOptions = {
+      selectedItems: [],
+      data: 'jobs',
+      displayFooter: false,
+      showFilter: true,
+      filterOptions: {
+        filterText: ''
+      },
+      showColumnMenu: true,
+      showSelectionCheckbox: false,
+      multiSelect: false,
+      columnDefs: [
+        {
+          field: 'group',
+          displayName: 'Group'
+        },
+        {
+          field: 'name',
+          displayName: 'Name'
+        },
+        {
+          field: 'description',
+          displayName: 'Description'
+        },
+        {
+          field: 'durability',
+          displayName: 'Durable',
+          width: 70
+        },
+        {
+          field: 'shouldRecover',
+          displayName: 'Recover',
+          width: 70
+        },
+        {
+          field: 'jobClass',
+          displayName: 'Job ClassName'
+        }
+      ]
+    };
+
+    $scope.renderQuartz = (response) => {
       $scope.selectedSchedulerDetails = [];
 
-      log.debug("Selected scheduler mbean " + $scope.selectedScheduler)
+      log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
       var obj = response.value;
       if (obj) {
         $scope.selectedScheduler = obj;
@@ -107,6 +149,18 @@ module Quartz {
             $scope.triggers.push(t);
           }
         })
+
+        // grab state for all triggers which requires to call a JMX operation per trigger
+        $scope.jobs = [];
+        $scope.triggers.forEach(t => {
+          var job = obj.AllJobDetails[t.jobName];
+          if (job) {
+            job = job[t.group];
+            if (job) {
+              $scope.jobs.push(job);
+            }
+          }
+        });
       }
 
       Core.$apply($scope);
@@ -201,12 +255,13 @@ module Quartz {
         $scope.selectedSchedulerMBean = selectionKey;
 
         var request = [{type: "read", mbean: $scope.selectedSchedulerMBean}];
-        Core.register(jolokia, $scope, request, onSuccess($scope.renderTrigger));
+        Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
       } else {
         Core.unregister(jolokia, $scope);
         $scope.selectedSchedulerMBean = null;
         $scope.selectedScheduler = null;
         $scope.triggers = [];
+        $scope.jobs = [];
       }
     }
 
