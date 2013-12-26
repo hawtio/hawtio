@@ -137,7 +137,7 @@ module Quartz {
     }
 
     function reloadTree() {
-      log.info("Reloading Quartz Tree")
+      log.debug("Reloading Quartz Tree")
       var mbean = Quartz.getQuartzMBean(workspace);
       var domain = "quartz";
       var rootFolder = new Folder("Quartz Schedulers");
@@ -158,7 +158,9 @@ module Quartz {
             scheduler.addClass = "quartzScheduler";
             scheduler.typeName = "quartzScheduler";
             scheduler.domain = domain;
-            scheduler.key = value;
+            scheduler.objectName = value;
+            // use scheduler name as key as that is unique for us
+            scheduler.key = txt;
             rootFolder.children.push(scheduler);
           });
 
@@ -190,8 +192,9 @@ module Quartz {
     }
 
     function selectionChanged(data) {
-      var selectionKey = data ? data.key : null;
+      var selectionKey = data ? data.objectName : null;
       log.debug("Selection is now: " + selectionKey);
+
       if (selectionKey) {
         // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
         // as the trigger has prev/next fire times that changes
@@ -214,42 +217,6 @@ module Quartz {
       }
 
       return !angular.isObject(value);
-    }
-
-    function humanizeValue(value:any):string {
-      if (value) {
-        var text = value.toString();
-        try {
-          text = text.underscore();
-        } catch (e) {
-          // ignore
-        }
-        try {
-          text = text.humanize();
-        } catch (e) {
-          // ignore
-        }
-        return trimQuotes(text);
-      }
-      return value;
-    }
-
-    function safeNull(value:any):string {
-      if (value) {
-        return value;
-      } else {
-        return "";
-      }
-    }
-
-    function trimQuotes(text:string) {
-      while (text.endsWith('"') || text.endsWith("'")) {
-        text = text.substring(0, text.length - 1);
-      }
-      while (text.startsWith('"') || text.startsWith("'")) {
-        text = text.substring(1, text.length);
-      }
-      return text;
     }
 
     // force tree to be loaded on startup

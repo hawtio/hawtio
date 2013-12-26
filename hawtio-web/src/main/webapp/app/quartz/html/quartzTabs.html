@@ -1,9 +1,12 @@
-<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+<ul class="nav nav-tabs" ng-controller="Quartz.QuartzController">
   <li ng-class='active'>
-    <a ng-href="{{link('#/quartz/schedulers')}}">Schedulers</a>
+    <a ng-href="#/quartz/schedulers{{hash}}">Schedulers</a>
   </li>
   <li ng-class='active'>
-    <a ng-href="{{link('#/quartz/triggers')}}">Triggers</a>
+    <a ng-href="#/quartz/triggers{{hash}}">Triggers</a>
+  </li>
+  <li ng-class='active'>
+    <a ng-href="#/quartz/jobs{{hash}}">Jobs</a>
   </li>
 
   <li class="pull-right">
