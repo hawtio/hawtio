@@ -10,7 +10,8 @@ module Quartz {
           config(($routeProvider) => {
             $routeProvider.
                     when('/quartz/schedulers', {templateUrl: 'app/quartz/html/schedulers.html'}).
-                    when('/quartz/triggers', {templateUrl: 'app/quartz/html/triggers.html'});
+                    when('/quartz/triggers', {templateUrl: 'app/quartz/html/triggers.html'}).
+                    when('/quartz/jobs', {templateUrl: 'app/quartz/html/jobs.html'});
           }).
           filter('quartzIconClass',() => iconClass).
           filter('quartzMisfire',() => misfireText).
