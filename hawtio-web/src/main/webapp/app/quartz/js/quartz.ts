@@ -107,6 +107,13 @@ module Quartz {
       log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
       var obj = response.value;
       if (obj) {
+
+        // did we change scheduler
+        var newScheduler = $scope.selectedScheduler !== obj;
+        if (newScheduler) {
+          $scope.triggers = [];
+        }
+
         $scope.selectedScheduler = obj;
         $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
 
@@ -163,6 +170,7 @@ module Quartz {
         });
       }
 
+      log.info("Core apply in render quartz")
       Core.$apply($scope);
     }
 
@@ -226,6 +234,7 @@ module Quartz {
             selectionChanged(data);
             Core.$apply($scope);
           });
+
           // lets do this asynchronously to avoid Error: $digest already in progress
           setTimeout(updateSelectionFromURL, 50);
         }
@@ -247,7 +256,7 @@ module Quartz {
 
     function selectionChanged(data) {
       var selectionKey = data ? data.objectName : null;
-      log.debug("Selection is now: " + selectionKey);
+      log.info("Selection is now: " + selectionKey);
 
       if (selectionKey) {
         // if we selected a scheduler then register a callback to get its trigger data updated in-real-time

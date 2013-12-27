@@ -1,6 +1,6 @@
 <div ng-controller="Quartz.QuartzController">
 
-  <div class="span12 well" ng-hide="selectedScheduler">
+  <div class="span12 well" ng-hide="selectedSchedulerMBean">
     <form>
       <p>The Quartz plugin allows you to see details about running Quartz Schedulers, and their associated triggers and
         jobs.</p>
@@ -9,7 +9,7 @@
     </form>
   </div>
 
-  <div ng-show="selectedScheduler" class="row-fluid">
+  <div ng-show="selectedSchedulerMBean" class="row-fluid">
     <div class="alert alert-info">
       <button class="close" data-dismiss="alert">×</button>
 
