@@ -35,10 +35,15 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
-        this.file = new File(fileName);
+
+        String base = System.getProperty("catalina.base", ".");
+        LOG.debug("Using base directory: {}", base);
+        this.file = new File(base, fileName);
 
         if (!file.exists()) {
-            throw new IllegalStateException("Apache Tomcat user database file " + file + " does not exists");
+            String msg = "Cannot find Apache Tomcat user database file: " + file;
+            LOG.warn(msg);
+            throw new IllegalStateException(msg);
         }
     }
 
