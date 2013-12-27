@@ -176,9 +176,15 @@
     </route>
 
     <route id="quartzRoute2">
-      <!-- must set -1 due bug in camel-quarz2 -->
       <from uri="quartz2:mygroup/myothertimer?cron=0/2+*+*+*+*+?"/>
       <log message="Quartz2 myothertrigger fired"/>
+    </route>
+  </camelContext>
+
+  <camelContext id="otherQuartzCamel" xmlns="http://camel.apache.org/schema/spring">
+    <route id="otherQuartzRoute">
+      <from uri="quartz2other:foo/bar?cron=0/8+*+*+*+*+?"/>
+      <log message="Other Quartz2 foo/bar fired"/>
     </route>
   </camelContext>
 
@@ -187,6 +193,10 @@
 
   <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
     <property name="propertiesFile" value="myquartz.properties"/>
+  </bean>
+
+  <bean id="quartz2other" class="org.apache.camel.component.quartz2.QuartzComponent">
+    <property name="propertiesFile" value="myotherquartz.properties"/>
   </bean>
 
   <!-- infinispan demo -->
