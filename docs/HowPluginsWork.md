@@ -42,11 +42,11 @@ e.g. if you create a maven WAR project and [add the hawtio-web WAR dependency an
 
 Plugins can be packaged up as a separate deployment unit (WAR, OSGi bundle, EAR, etc) and then deployed like any other deployment unit.
 
-The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the [plugin examples](https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-example) for more details.
+The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the [plugin examples](https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples) for more details.
 
 So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE).
 
-To see how this works check out the [plugin examples and detailed description](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-example/readme.md).
+To see how this works check out the [plugin examples and detailed description](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/readme.md).
 
 ### Using a Registry
 
