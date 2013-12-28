@@ -27,7 +27,8 @@ module Quartz {
               content: "Quartz",
               title: "Quartz Scheduler",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
-              href: () => "#/quartz/schedulers"
+              href: () => "#/quartz/schedulers",
+              isActive: (workspace:Workspace) => workspace.isTopTabActive("quartz")
             });
 
     });
