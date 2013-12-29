@@ -72,7 +72,7 @@ Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/product
 
 If you are using [Apache Karaf](http://karaf.apache.org/) 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:
 
-    features:chooseurl hawtio
+    features:chooseurl hawtio 1.2.1
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/). The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.
