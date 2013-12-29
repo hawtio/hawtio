@@ -40,12 +40,18 @@ public class AsyncMavenIndexerFacadeFactory {
         task = new TimerTask() {
             @Override
             public void run() {
+                // need to set the tccl while running in osgi so plexus is able to find it's components.xml
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();                
                 try {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
                     LOG.debug("Starting to create the MavenIndexerFacade");
                     createMavenIndexer();
                     LOG.debug("Completed creating the MavenIndexerFacade");
                 } catch (Exception e) {
                     LOG.error("Failed to create the MavenIndexerFacade: " + e, e);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(classLoader);
                 }
             }
         };
