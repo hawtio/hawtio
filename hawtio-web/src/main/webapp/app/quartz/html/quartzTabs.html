@@ -1,12 +1,12 @@
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController">
   <li ng-class='{active : isActive("#/quartz/schedulers")}'>
-    <a ng-href="{{link('#/quartz/schedulers')}}">Schedulers</a>
+    <a ng-href="#/quartz/schedulers{{hash}}">Schedulers</a>
   </li>
   <li ng-class='{active : isActive("#/quartz/triggers")}'>
-    <a ng-href="{{link('#/quartz/triggers')}}">Triggers</a>
+    <a ng-href="#/quartz/triggers{{hash}}">Triggers</a>
   </li>
   <li ng-class='{active : isActive("#/quartz/jobs")}'>
-    <a ng-href="{{link('#/quartz/jobs')}}">Jobs</a>
+    <a ng-href="#/quartz/jobs{{hash}}">Jobs</a>
   </li>
 
   <li class="pull-right">
