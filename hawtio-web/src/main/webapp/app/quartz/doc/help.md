@@ -1,5 +1,4 @@
 ### Quartz
 
-The [Quartz](#/quartz/schedulers/) plugin in [hawtio](http://hawt.io "hawtio") offers functionality for viewing Quartz Schedulers.
+The [Quartz](#/quartz/schedulers/) plugin in [hawtio](http://hawt.io "hawtio") offers functionality for viewing and managing Quartz Schedulers.
 
-TODO: document me
