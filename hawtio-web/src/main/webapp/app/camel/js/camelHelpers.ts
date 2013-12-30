@@ -137,8 +137,15 @@ module Camel {
   export function setRouteNodeJSON(routeXmlNode, newData, indent) {
     if (routeXmlNode) {
       var childIndent = increaseIndent(indent);
-      angular.forEach(newData, (value, key) => {
-        if (angular.isObject(value)) {
+
+      function doUpdate(value, key, append = false) {
+        if (angular.isArray(value)) {
+          // remove previous nodes
+          $(routeXmlNode).children(key).remove();
+          angular.forEach(value, (item) => {
+            doUpdate(item, key, true);
+          });
+        } else if (angular.isObject(value)) {
           // convert languages to the right xml
           var textContent = null;
           if (key === "expression") {
@@ -154,7 +161,7 @@ module Camel {
           // TODO deal with nested objects...
           var nested = $(routeXmlNode).children(key);
           var element = null;
-          if (!nested || !nested.length) {
+          if (append || !nested || !nested.length) {
             var doc = routeXmlNode.ownerDocument || document;
             routeXmlNode.appendChild(doc.createTextNode("\n" + childIndent));
             element = doc.createElement(key);
@@ -181,7 +188,9 @@ module Camel {
             routeXmlNode.removeAttribute(key);
           }
         }
-      });
+      }
+
+      angular.forEach(newData, (value, key) => doUpdate(value, key, false));
     }
   }
 
