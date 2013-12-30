@@ -199,7 +199,7 @@ module Quartz {
     }
 
     function reloadTree() {
-      log.debug("Reloading Quartz Tree")
+      log.info("Reloading Quartz Tree")
       var mbean = Quartz.getQuartzMBean(workspace);
       var domain = "quartz";
       var rootFolder = new Folder("Quartz Schedulers");
@@ -225,6 +225,18 @@ module Quartz {
             scheduler.key = txt;
             rootFolder.children.push(scheduler);
           });
+
+          log.info("Setitng up Quartz tree with nid " + $location.search()["nid"]);
+          var nid = $location.search()["nid"];
+          if (nid) {
+            var data = rootFolder.children.filter(folder => {
+              return folder.key === nid;
+            });
+            log.info("Found nid in tree " + data);
+            if (data && data.length === 1) {
+              selectionChanged(data[0]);
+            }
+          }
 
           Core.$apply($scope);
 
@@ -269,6 +281,8 @@ module Quartz {
         var request = [
           {type: "read", mbean: $scope.selectedSchedulerMBean}
         ];
+        // unregister before registering new
+        Core.unregister(jolokia, $scope);
         Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
       } else {
         Core.unregister(jolokia, $scope);
