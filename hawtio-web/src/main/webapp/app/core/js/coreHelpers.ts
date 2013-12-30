@@ -847,7 +847,7 @@ module Core {
     var lastIndex = pathArray.length - 1;
     angular.forEach(pathArray, (name, idx) => {
       var next = value[name];
-      if (!angular.isObject(next)) {
+      if (idx >= lastIndex || !angular.isObject(next)) {
         next = (idx < lastIndex) ? {} : newValue;
         value[name] = next;
       }
