@@ -6,11 +6,14 @@ module Quartz {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
     var misfireTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">{{row.getProperty(col.field) | quartzMisfire}}</div>';
+    var jobMapTemplate = '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.getProperty(col.field) | quartzJobDataClassText"></div>';
+
+    $scope.valueDetails = new Core.Dialog();
 
     $scope.selectedSchedulerDetails = [];
     $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
-    $scope.selectedSchedulerMBean = $location.search()["nid"];
+    $scope.selectedSchedulerMBean = null;
     $scope.triggers = [];
     $scope.jobs = [];
 
@@ -96,9 +99,17 @@ module Quartz {
         },
         {
           field: 'jobClass',
-          displayName: 'Job ClassName'
+          displayName: 'Job ClassName',
+          cellTemplate: jobMapTemplate
         }
       ]
+    };
+
+    $scope.openDetailView = (entity) => {
+      $scope.row = entity;
+      if (entity.detailHtml) {
+        $scope.valueDetails.open();
+      }
     };
 
     $scope.renderQuartz = (response) => {
@@ -164,6 +175,7 @@ module Quartz {
           if (job) {
             job = job[t.group];
             if (job) {
+              generateSummaryAndDetail(job);
               $scope.jobs.push(job);
             }
           }
@@ -172,6 +184,40 @@ module Quartz {
 
       log.info("Core apply in render quartz")
       Core.$apply($scope);
+    }
+
+    function generateSummaryAndDetail(data) {
+      log.info("Generate summary for job " + data);
+      var value = data.jobDataMap;
+      if (!angular.isArray(value) && angular.isObject(value)) {
+        var detailHtml = "<table class='table table-striped'>";
+        var summary = "";
+        var object = value;
+        var keys = Object.keys(value).sort();
+        angular.forEach(keys, (key) => {
+          var value = object[key];
+          detailHtml += "<tr><td>"
+            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+          summary += "" + humanizeValue(key) + ": " + value + "  "
+        });
+        detailHtml += "</table>";
+        data.summary = summary;
+        data.detailHtml = detailHtml;
+      } else {
+        // TODO can we format any nicer?
+        var text = value;
+        data.summary = "" + text + "";
+        data.detailHtml = "<pre>" + text + "</pre>";
+        if (angular.isArray(value)) {
+          var html = "<ul>";
+          angular.forEach(value, (item) => {
+            html += "<li>" + item + "</li>";
+          });
+          html += "</ul>";
+          data.detailHtml = html;
+        }
+
+      }
     }
 
     $scope.pause = () => {

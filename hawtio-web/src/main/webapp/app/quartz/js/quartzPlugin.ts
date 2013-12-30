@@ -15,6 +15,7 @@ module Quartz {
           }).
           filter('quartzIconClass',() => iconClass).
           filter('quartzMisfire',() => misfireText).
+          filter('quartzJobDataClassText',() => jobDataClassText).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
             viewRegistry['quartz'] = 'app/quartz/html/layoutQuartzTree.html';
