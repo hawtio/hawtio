@@ -32,6 +32,10 @@ module DataTable {
 
       var listener = (otherValue) => {
         var value = Core.pathGet(scope, dataName);
+        if (value && !angular.isArray(value)) {
+          value = [value];
+          Core.pathSet(scope, dataName, value);
+        }
         $scope.rows = (value || []).map(entity => {
           return {
             entity: entity,
