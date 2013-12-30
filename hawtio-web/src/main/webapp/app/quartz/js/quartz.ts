@@ -263,6 +263,9 @@ module Quartz {
         // as the trigger has prev/next fire times that changes
         $scope.selectedSchedulerMBean = selectionKey;
 
+        // TODO: is there a better way to add our nid to the uri parameter?
+        $location.search({nid: data.key});
+
         var request = [{type: "read", mbean: $scope.selectedSchedulerMBean}];
         Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
       } else {
@@ -271,6 +274,8 @@ module Quartz {
         $scope.selectedScheduler = null;
         $scope.triggers = [];
         $scope.jobs = [];
+        // TODO: clear parameters?
+        $location.search() == {};
       }
     }
 
