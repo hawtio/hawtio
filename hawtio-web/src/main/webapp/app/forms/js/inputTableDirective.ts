@@ -107,9 +107,14 @@ module Forms {
 
       function updateData(action) {
         var data = Core.pathGet(scope, entityPath);
-        if (data) {
-          data = action(data);
+        // lets coerce the data to an array if its empty or an object
+        if (!data) {
+          data = [];
         }
+        if (!angular.isArray(data) && data) {
+          data = [data];
+        }
+        data = action(data);
         Core.pathSet(scope, entityPath, data);
 
         // TODO for some reason this doesn't notify the underlying hawtio-datatable that the table has changed
@@ -201,7 +206,7 @@ module Forms {
 
         scope.addAndCloseDialog = () => {
           var newData = scope.addEntity;
-          console.log("About to add the new entity " + JSON.stringify(newData));
+          log.info("About to add the new entity " + JSON.stringify(newData));
           if (newData) {
             updateData((data) => {
               // TODO deal with non arrays
