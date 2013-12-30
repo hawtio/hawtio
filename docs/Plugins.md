@@ -47,9 +47,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/dashboard/">dashboard</a></td>
-    <td>Provides some default dashboards for viewing graphs, metrics and other widgets on a customisable tabbed view. You can create your own dashboards; they are
-    stored and versioned as JSON files in a git repository so that you can easily share them on <a href="http://github.com/">github</a>.
-    The default configuration repository <a href="https://github.com/hawtio/hawtio-config">is here</a></td>
+    <td>Provides some default dashboards for viewing graphs, metrics and other widgets on a customisable tabbed view. You can create your own dashboards; they are stored and versioned as JSON files in a git repository so that you can easily share them on <a href="http://github.com/">github</a>. The default configuration repository <a href="https://github.com/hawtio/hawtio-config">is here</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/dashboard">dashboard</a></td>
   </tr>
   <tr>
@@ -59,8 +57,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/elasticsearch/">elasticsearch</a></td>
-    <td>The elasticsearch plugin allows to connect to an <a href="http://www.elasticsearch.org/">ElasticSearch</a> server and perform queries to retrieve
-documents from indices.</td>
+    <td>The elasticsearch plugin allows to connect to an <a href="http://www.elasticsearch.org/">ElasticSearch</a> server and perform queries to retrieve documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/elasticsearch">elasticsearch</a></td>
   </tr>
   <tr>
@@ -70,8 +67,7 @@ documents from indices.</td>
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/git/">git</a></td>
-    <td>Provides the HTML5 front end to the back end <a href="http://git-scm.com/">git repository</a> used to store configuration and files in plugins
-    such as <a href="http://hawt.io/plugins/dashboard/">dashboard</a> and <a href="http://hawt.io/plugins/wiki/">wiki</a>. Uses the
+    <td>Provides the HTML5 front end to the back end <a href="http://git-scm.com/">git repository</a> used to store configuration and files in plugins such as <a href="http://hawt.io/plugins/dashboard/">dashboard</a> and <a href="http://hawt.io/plugins/wiki/">wiki</a>. Uses the
     <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-git/src/main/java/io/hawt/git/GitFacadeMXBean.java#L26">GitFacadeMXBean</a> from the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-git">hawtio-git module</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/git">git</a></td>
   </tr>
@@ -147,6 +143,11 @@ documents from indices.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/osgi">osgi</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/quartz/">quartz</a></td>
+    <td>Lets you view and manage Quartz Schedulers, such as adjusting triggers at runtime.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/quartz">quartz</a></td>
+  </tr>
+  <tr>
     <td><a href="http://hawt.io/plugins/source/">source</a></td>
     <td>Used by the <a href="http://hawt.io/plugins/logs/">log plugin</a> to view the source code of any file in a maven source artefact using the maven coordinates, class name / file name and line number.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source">source</a></td>
@@ -191,14 +192,12 @@ The following plugins are not intended to be used by users of hawtio, but are th
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md">forms</a></td>
-    <td>This plugin provides an easy way, given a <a href="http://json-schema.org/">JSON Schema</a> model of generating a form with 2 way binding to some JSON data.
-</td>
+    <td>This plugin provides an easy way, given a <a href="http://json-schema.org/">JSON Schema</a> model of generating a form with 2 way binding to some JSON data.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/forms">forms</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ide/doc/developer.md">ide</a></td>
-    <td>This plugin provides a directive for linking to source code in your IDE. Currently only IDEA supported
-</td>
+    <td>This plugin provides a directive for linking to source code in your IDE. Currently only IDEA supported</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/ide">ide</a></td>
   </tr>
   <tr>
@@ -208,14 +207,12 @@ The following plugins are not intended to be used by users of hawtio, but are th
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md">tree</a></td>
-    <td>This plugin provides a simple HTML directive for working with <a href="http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html">jQuery DynaTree widgets</a> from AngularJS
-</td>
+    <td>This plugin provides a simple HTML directive for working with <a href="http://wwwendt.de/tech/dynatree/doc/dynatree-doc.html">jQuery DynaTree widgets</a> from AngularJS</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/tree">tree</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ui/doc/developer.md">ui</a></td>
-    <td>Provides various AngularJS directives for custom widgets
-</td>
+    <td>Provides various AngularJS directives for custom widgets</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/ui">ui</a></td>
   </tr>
 </table>
@@ -241,7 +238,7 @@ The following plugins are not intended to be used by users of hawtio, but are th
   <tr>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-karaf-terminal">hawtio-karaf-terminal</a></td>
     <td>A terminal plugin brought over from Apache Felix that uses Ajax term in the front-end to implement a terminal in hawtio when it's running in an Apache Karaf based container.</td>
-    <td><a href=https://github.com/hawtio/hawtio/tree/master/hawtio-karaf-terminal">hawtio-karaf-terminal</a></td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-karaf-terminal">hawtio-karaf-terminal</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/src/main/webapp/js/kibana3Plugin.js">insight-kibana3</a></td>
