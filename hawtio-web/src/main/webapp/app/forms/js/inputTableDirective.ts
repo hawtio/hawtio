@@ -157,13 +157,12 @@ module Forms {
       var readOnly = attrs["readonly"];
       if (!readOnly) {
         var property = null;
-        var schema = null;
         var dataName = attrs["data"];
-        if (dataName) {
-          schema = Core.pathGet(scope, dataName);
-        }
-        if (propertyName && schema) {
-          property = Core.pathGet(schema, ["properties", propertyName]);
+        var dataModel = dataName ? Core.pathGet(scope, dataName) : null;
+        var schemaName = attrs["schema"] || dataName;
+        var schema = schemaName ? Core.pathGet(scope, schemaName) : null;
+        if (propertyName && dataModel) {
+          property = Core.pathGet(dataModel, ["properties", propertyName]);
         }
 
         add = this.getAddButton(config);
