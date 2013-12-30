@@ -10,7 +10,7 @@ module Quartz {
     $scope.selectedSchedulerDetails = [];
     $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
-    $scope.selectedSchedulerMBean = null;
+    $scope.selectedSchedulerMBean = $location.search()["nid"];
     $scope.triggers = [];
     $scope.jobs = [];
 
@@ -246,12 +246,12 @@ module Quartz {
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#quartztree"), (first) => {
         // use function to auto select first scheduler if there is only one scheduler
-          var schedulers = first.getChildren();
-          if (schedulers && schedulers.length === 1) {
-            first = schedulers[0];
-            return first;
-          }
-        }, true);
+        var schedulers = first.getChildren();
+        if (schedulers && schedulers.length === 1) {
+          first = schedulers[0];
+          return first;
+        }
+      }, true);
     }
 
     function selectionChanged(data) {
@@ -266,7 +266,9 @@ module Quartz {
         // TODO: is there a better way to add our nid to the uri parameter?
         $location.search({nid: data.key});
 
-        var request = [{type: "read", mbean: $scope.selectedSchedulerMBean}];
+        var request = [
+          {type: "read", mbean: $scope.selectedSchedulerMBean}
+        ];
         Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
       } else {
         Core.unregister(jolokia, $scope);
@@ -274,12 +276,10 @@ module Quartz {
         $scope.selectedScheduler = null;
         $scope.triggers = [];
         $scope.jobs = [];
-        // TODO: clear parameters?
-        $location.search() == {};
       }
     }
 
-    function includePropertyValue(key: string, value) {
+    function includePropertyValue(key:string, value) {
       // skip these keys as we have hardcoded them to be shown already
       if ("SchedulerName" === key || "Version" === key || "Started" === key) {
         return false;
@@ -288,7 +288,16 @@ module Quartz {
       return !angular.isObject(value);
     }
 
-    // force tree to be loaded on startup
+    $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      setTimeout(updateSelectionFromURL, 50);
+    });
+
+    $scope.$on('jmxTreeUpdated', function () {
+      reloadTree();
+    });
+
+    // reload tree on startup
     reloadTree();
   }
 
