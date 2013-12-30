@@ -183,15 +183,17 @@ module Forms {
           scope.addEntity = {};
           scope.addFormConfig = Forms.findArrayItemsSchema(property, schema);
 
+          var childDataModelName = "addFormConfig";
           if (!addDialog) {
             var title = "Add " + tableName;
             addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
-                    '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
-                    '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity"></div></div>\n' +
-                    '<div class="modal-footer">' +
-                    '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
-                    '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
-                    '</div></div>');
+              '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
+              '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity" data="'
+              + childDataModelName + '" schema="' + schemaName + '"></div></div>\n' +
+              '<div class="modal-footer">' +
+              '<button class="btn btn-primary add" type="button" ng-click="addAndCloseDialog()">Add</button>' +
+              '<button class="btn btn-warning cancel" type="button" ng-click="closeAddDialog()">Cancel</button>' +
+              '</div></div>');
             div.append(addDialog);
             this.$compile(addDialog)(scope);
           }
