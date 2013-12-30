@@ -1,18 +1,12 @@
-<ul class="nav nav-tabs" ng-controller="Quartz.QuartzController">
-  <li ng-class='active'>
-    <a ng-href="#/quartz/schedulers{{hash}}" title="Schedulers"
-       data-placement="bottom">Schedulers
-    </a>
+<ul class="nav nav-tabs" ng-controller="Core.NavBarController">
+  <li ng-class='{active : isActive("#/quartz/schedulers")}'>
+    <a ng-href="{{link('#/quartz/schedulers')}}">Schedulers</a>
   </li>
-  <li ng-class='active'>
-    <a ng-href="#/quartz/triggers{{hash}}" title="Triggers"
-       data-placement="bottom">Triggers
-    </a>
+  <li ng-class='{active : isActive("#/quartz/triggers")}'>
+    <a ng-href="{{link('#/quartz/triggers')}}">Triggers</a>
   </li>
-  <li ng-class='active'>
-    <a ng-href="#/quartz/jobs{{hash}}" title="Jobs"
-       data-placement="bottom">Jobs
-    </a>
+  <li ng-class='{active : isActive("#/quartz/jobs")}'>
+    <a ng-href="{{link('#/quartz/jobs')}}">Jobs</a>
   </li>
 
   <li class="pull-right">
