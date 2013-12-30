@@ -40,11 +40,15 @@ module Quartz {
         },
         {
           field: 'group',
-          displayName: 'Group'
+          displayName: 'Group',
+          resizable: true,
+          width: 150
         },
         {
           field: 'name',
-          displayName: 'Name'
+          displayName: 'Name',
+          resizable: true,
+          width: 150
         },
         {
           field: 'misfireInstruction',
@@ -77,30 +81,38 @@ module Quartz {
       columnDefs: [
         {
           field: 'group',
-          displayName: 'Group'
+          displayName: 'Group',
+          resizable: true,
+          width: 150
         },
         {
           field: 'name',
-          displayName: 'Name'
-        },
-        {
-          field: 'description',
-          displayName: 'Description'
+          displayName: 'Name',
+          resizable: true,
+          width: 150
         },
         {
           field: 'durability',
           displayName: 'Durable',
-          width: 70
+          width: 70,
+          resizable: false
         },
         {
           field: 'shouldRecover',
           displayName: 'Recover',
-          width: 70
+          width: 70,
+          resizable: false
         },
         {
           field: 'jobClass',
           displayName: 'Job ClassName',
-          cellTemplate: jobMapTemplate
+          cellTemplate: jobMapTemplate,
+          width: 350
+        },
+        {
+          field: 'description',
+          displayName: 'Description',
+          resizable: true
         }
       ]
     };
@@ -175,48 +187,29 @@ module Quartz {
           if (job) {
             job = job[t.group];
             if (job) {
-              generateSummaryAndDetail(job);
+              generateJobDataMapDetails(job);
               $scope.jobs.push(job);
             }
           }
         });
       }
 
-      log.info("Core apply in render quartz")
       Core.$apply($scope);
     }
 
-    function generateSummaryAndDetail(data) {
-      log.info("Generate summary for job " + data);
+    function generateJobDataMapDetails(data) {
       var value = data.jobDataMap;
       if (!angular.isArray(value) && angular.isObject(value)) {
         var detailHtml = "<table class='table table-striped'>";
-        var summary = "";
+        detailHtml += "<thead><th>Key</th><th>Value</th></thead>";
         var object = value;
         var keys = Object.keys(value).sort();
         angular.forEach(keys, (key) => {
           var value = object[key];
-          detailHtml += "<tr><td>"
-            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
-          summary += "" + humanizeValue(key) + ": " + value + "  "
+          detailHtml += "<tr><td>" + safeNull(key) + "</td><td>" + safeNull(value) + "</td></tr>";
         });
         detailHtml += "</table>";
-        data.summary = summary;
         data.detailHtml = detailHtml;
-      } else {
-        // TODO can we format any nicer?
-        var text = value;
-        data.summary = "" + text + "";
-        data.detailHtml = "<pre>" + text + "</pre>";
-        if (angular.isArray(value)) {
-          var html = "<ul>";
-          angular.forEach(value, (item) => {
-            html += "<li>" + item + "</li>";
-          });
-          html += "</ul>";
-          data.detailHtml = html;
-        }
-
       }
     }
 
@@ -314,7 +307,7 @@ module Quartz {
 
     function selectionChanged(data) {
       var selectionKey = data ? data.objectName : null;
-      log.info("Selection is now: " + selectionKey);
+      log.debug("Selection is now: " + selectionKey);
 
       if (selectionKey) {
         // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
