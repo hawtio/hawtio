@@ -35,6 +35,11 @@ module Quartz {
     return "unknown";
   }
 
+  export function jobDataClassText(text) {
+    // add info sign icon to the text so the end user notice there is some more details, by clicking the cell.
+    return "<i class='icon-info-sign'> " + text + "</i>";
+  }
+
   /**
    * Returns true if the state of the item begins with the given state - or one of the given states
    * @method
