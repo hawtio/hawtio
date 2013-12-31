@@ -103,6 +103,7 @@ module Maven {
       success: (response) => {
         $scope.$apply(() => {
           deferred.resolve(response.value.sortBy().first(15));
+          console.log(response);
         });
       },
       error: (response) => {
@@ -131,6 +132,7 @@ module Maven {
       success: (response) => {
         $scope.$apply(() => {
           deferred.resolve(response.value.sortBy().first(15));
+          console.log(response);
         });
       },
       error: (response) => {
@@ -163,6 +165,7 @@ module Maven {
       success: (response) => {
         $scope.$apply(() => {
           deferred.resolve(response.value.sortBy().first(15));
+          console.log(response);
         });
       },
       error: (response) => {
