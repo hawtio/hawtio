@@ -172,7 +172,7 @@
       <from uri="quartz2:mygroup/mytimer?trigger.repeatInterval=20000&amp;trigger.repeatCount=-1"/>
       <log message="Quartz2 mytrigger fired"/>
       <delay><constant>10000</constant></delay>
-      <log message="Quartz mytrigger done"/>
+      <log message="Quartz2 mytrigger done"/>
     </route>
 
     <route id="quartzRoute2">

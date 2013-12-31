@@ -1,3 +1,6 @@
+/**
+ * @module Quartz
+ */
 module Quartz {
 
   export function QuartzController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
@@ -134,9 +137,9 @@ module Quartz {
         var newScheduler = $scope.selectedScheduler !== obj;
         if (newScheduler) {
           $scope.triggers = [];
+          $scope.selectedScheduler = obj;
         }
 
-        $scope.selectedScheduler = obj;
         $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
 
         // grab state for all triggers which requires to call a JMX operation per trigger
@@ -196,7 +199,25 @@ module Quartz {
       }
     }
 
-    $scope.pause = () => {
+    $scope.pauseScheduler = () => {
+      if ($scope.selectedSchedulerMBean) {
+        jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "standby"});
+
+        notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+      }
+    }
+
+    $scope.startScheduler = () => {
+      if ($scope.selectedSchedulerMBean) {
+        jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "start"});
+
+        notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+      }
+    }
+
+    $scope.pauseTrigger = () => {
       if ($scope.gridOptions.selectedItems.length === 1) {
         var groupName = $scope.gridOptions.selectedItems[0].group;
         var triggerName = $scope.gridOptions.selectedItems[0].name;
@@ -208,7 +229,7 @@ module Quartz {
       }
     }
 
-    $scope.resume = () => {
+    $scope.resumeTrigger = () => {
       if ($scope.gridOptions.selectedItems.length === 1) {
         var groupName = $scope.gridOptions.selectedItems[0].group;
         var triggerName = $scope.gridOptions.selectedItems[0].name;
@@ -221,7 +242,7 @@ module Quartz {
     }
 
     function reloadTree() {
-      log.info("Reloading Quartz Tree")
+      log.debug("Reloading Quartz Tree")
       var mbean = Quartz.getQuartzMBean(workspace);
       var domain = "quartz";
       var rootFolder = new Folder("Quartz Schedulers");
@@ -248,13 +269,13 @@ module Quartz {
             rootFolder.children.push(scheduler);
           });
 
-          log.info("Setitng up Quartz tree with nid " + $location.search()["nid"]);
+          log.debug("Setitng up Quartz tree with nid " + $location.search()["nid"]);
           var nid = $location.search()["nid"];
           if (nid) {
             var data = rootFolder.children.filter(folder => {
               return folder.key === nid;
             });
-            log.info("Found nid in tree " + data);
+            log.debug("Found nid in tree " + data);
             if (data && data.length === 1) {
               selectionChanged(data[0]);
             }
