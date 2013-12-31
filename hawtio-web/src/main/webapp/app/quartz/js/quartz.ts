@@ -10,7 +10,6 @@ module Quartz {
 
     $scope.valueDetails = new Core.Dialog();
 
-    $scope.selectedSchedulerDetails = [];
     $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;
@@ -139,22 +138,6 @@ module Quartz {
 
         $scope.selectedScheduler = obj;
         $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
-
-        // add extra details about the selected scheduler, and turn that into human readable details
-        angular.forEach(obj, (value, key) => {
-          if (includePropertyValue(key, value)) {
-            $scope.selectedSchedulerDetails.push({
-              field: humanizeValue(key),
-              displayName: value
-            });
-          }
-        });
-        // .. which we then sort also
-        $scope.selectedSchedulerDetails.sort((a, b) => {
-          var ta = a.field.toString();
-          var tb = b.field.toString();
-          return ta.localeCompare(tb);
-        });
 
         // grab state for all triggers which requires to call a JMX operation per trigger
         obj.AllTriggers.forEach(t => {
