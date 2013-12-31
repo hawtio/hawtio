@@ -9,28 +9,61 @@
     </form>
   </div>
 
+  <!-- the dl need to be wider so we can see the labels -->
+  <style>
+    .dl-horizontal dt {
+      width: 260px;
+    }
+    .dl-horizontal dd {
+      margin-left: 280px;
+    }
+  </style>
+
   <div ng-show="selectedSchedulerMBean" class="row-fluid">
-    <div class="alert alert-info">
+    <form>
 
-      <strong>Scheduler Details:</strong>
-
-      <br/> Scheduler name: <strong>{{selectedScheduler.SchedulerName}}</strong>
-      <br/> State: <i class="{{selectedSchedulerIcon}}"></i>
-      <br/> Version: <strong>{{selectedScheduler.Version}}</strong>
-
-      <br/> Details ...
-      <div class="expandable closed">
-        <div class="title">
-          <i class="expandable-indicator"></i>
-        </div>
-        <div class="expandable-body well-small">
-          <div ng-repeat="detail in selectedSchedulerDetails">
-            {{detail.field}}: <strong>{{detail.displayName}}</strong>
-          </div>
-        </div>
+      <div class="row-fluid">
+        <dl class="dl-horizontal">
+          <dt>Scheduler name</dt>
+          <dd>{{selectedScheduler.SchedulerName}}</dd>
+          <dt>Scheduler instance</dt>
+          <dd>{{selectedScheduler.SchedulerInstanceId}}</dd>
+          <dt>Version</dt>
+          <dd>{{selectedScheduler.Version}}</dd>
+          <dt>State</dt>
+          <dd><i class="{{selectedSchedulerIcon}}"></i></dd>
+          <dt>Shutdown</dt>
+          <dd>{{selectedScheduler.Shutdown}}</dd>
+          <dt>Standby</dt>
+          <dd>{{selectedScheduler.Standby}}</dd>
+        </dl>
       </div>
-    </div>
 
+      <div>
+        <dl class="dl-horizontal">
+          <dt>JobStore ClassName</dt>
+          <dd>{{selectedScheduler.JobStoreClassName}}</dd>
+          <dt>Jobs Completed most recent sample</dt>
+          <dd>{{selectedScheduler.JobsCompletedMostRecentSample}}</dd>
+          <dt>Jobs Executed most recent sample</dt>
+          <dd>{{selectedScheduler.JobsExecutedMostRecentSample}}</dd>
+          <dt>Jobs Scheduled most recent sample</dt>
+          <dd>{{selectedScheduler.JobsScheduledMostRecentSample}}</dd>
+          <dt>Sampled Statistics Enabled</dt>
+          <dd>{{selectedScheduler.SampledStatisticsEnabled}}</dd>
+        </dl>
+      </div>
+
+      <div>
+        <dl class="dl-horizontal">
+          <dt>Thread Pool ClassName</dt>
+          <dd>{{selectedScheduler.ThreadPoolClassName}}</dd>
+          <dt>Thread Pool Size</dt>
+          <dd>{{selectedScheduler.ThreadPoolSize}}</dd>
+        </dl>
+      </div>
+
+    </form>
   </div>
 
 </div>
