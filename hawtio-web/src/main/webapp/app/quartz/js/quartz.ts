@@ -13,7 +13,6 @@ module Quartz {
 
     $scope.valueDetails = new Core.Dialog();
 
-    $scope.selectedSchedulerIcon = null;
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;
     $scope.triggers = [];
@@ -126,6 +125,10 @@ module Quartz {
       }
     };
 
+    $scope.renderIcon = (state) => {
+      return Quartz.iconClass(state);
+    }
+
     $scope.renderQuartz = (response) => {
       $scope.selectedSchedulerDetails = [];
 
@@ -139,8 +142,6 @@ module Quartz {
           $scope.triggers = [];
           $scope.selectedScheduler = obj;
         }
-
-        $scope.selectedSchedulerIcon = Quartz.iconClass(obj.Started);
 
         // grab state for all triggers which requires to call a JMX operation per trigger
         obj.AllTriggers.forEach(t => {
@@ -214,6 +215,18 @@ module Quartz {
           operation: "start"});
 
         notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+      }
+    }
+
+    $scope.enableSampleStatistics = () => {
+      if ($scope.selectedSchedulerMBean) {
+        jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", true);
+      }
+    }
+
+    $scope.disableSampleStatistics = () => {
+      if ($scope.selectedSchedulerMBean) {
+        jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", false);
       }
     }
 
