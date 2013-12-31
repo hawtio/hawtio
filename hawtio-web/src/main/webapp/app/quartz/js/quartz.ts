@@ -64,6 +64,11 @@ module Quartz {
         {
           field: 'nextFireTime',
           displayName: 'Next Fire Timestamp'
+        },
+        {
+          field: 'finalFireTime',
+          displayName: 'Final Fire Timestamp',
+          visible: false
         }
       ]
     };
@@ -113,7 +118,8 @@ module Quartz {
         {
           field: 'description',
           displayName: 'Description',
-          resizable: true
+          resizable: true,
+          visible: false
         }
       ]
     };
@@ -251,6 +257,36 @@ module Quartz {
           operation: "resumeTrigger", arguments: [triggerName, groupName]});
 
         notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+      }
+    }
+
+    $scope.updateTrigger = () => {
+      if ($scope.gridOptions.selectedItems.length === 1) {
+        var groupName = $scope.gridOptions.selectedItems[0].group;
+        var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+        // schedule new cron job
+        var triggerMap = {cronExpression: '0/3 * * * * ?'}
+
+        // TODO: We can get job data map from the selectedScheduler which we ought to have on $scope
+        // just need to find it
+
+        var jobMap = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "getJobDetail", arguments: [triggerName, groupName]});
+
+        if (jobMap) {
+
+          log.info("Job data map " + jobMap)
+
+          // must unschedule job first
+          jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+            operation: "unscheduleJob", arguments: [triggerName, groupName]});
+
+          jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+            operation: "scheduleBasicJob", arguments: [jobMap, triggerMap]});
+
+          notification("success", "Updated trigger " + groupName + "/" + triggerName);
+        }
       }
     }
 
