@@ -265,25 +265,18 @@ module Quartz {
         var groupName = $scope.gridOptions.selectedItems[0].group;
         var triggerName = $scope.gridOptions.selectedItems[0].name;
 
-        // schedule new cron job
-        var triggerMap = {cronExpression: '0/3 * * * * ?'}
-
-        // TODO: We can get job data map from the selectedScheduler which we ought to have on $scope
-        // just need to find it
-
         var jobMap = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "getJobDetail", arguments: [triggerName, groupName]});
 
-        if (jobMap) {
+        if (jobMap && jobMap.value != null) {
+          jobMap = jobMap.value;
 
-          log.info("Job data map " + jobMap)
+          var triggerMap = {cronExpression: '0/3 * * * * ?'}
 
-          // must unschedule job first
-          jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-            operation: "unscheduleJob", arguments: [triggerName, groupName]});
-
-          jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          var status = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
             operation: "scheduleBasicJob", arguments: [jobMap, triggerMap]});
+
+          log.info(status);
 
           notification("success", "Updated trigger " + groupName + "/" + triggerName);
         }
