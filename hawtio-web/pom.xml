@@ -577,60 +577,6 @@
               </arguments>
             </configuration>
           </execution>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <!--
-                        <phase>test-compile</phase>
-            -->
-            <configuration>
-              <mainClass>io.hawt.sample.Main</mainClass>
-              <classpathScope>test</classpathScope>
-              <systemProperties>
-                <systemProperty>
-                  <key>basedir</key>
-                  <value>${basedir}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>fabricUrl</key>
-                  <value>${fabricUrl}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>jettyPort</key>
-                  <value>${jettyPort}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>context</key>
-                  <value>${context}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>webapp-outdir</key>
-                  <value>${webapp-outdir}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>hawtio.config.dir</key>
-                  <value>${hawtio-config-dir}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>jettyUseFileLock</key>
-                  <value>${jetty-use-file-lock}</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>karaf.data</key>
-                  <value>${project.build.directory}/karaf-data</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>hawtio.authenticationEnabled</key>
-                  <value>false</value>
-                </systemProperty>
-                <systemProperty>
-                  <key>hawtio.forceBranding</key>
-                  <value>false</value>
-                </systemProperty>
-              </systemProperties>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
 
@@ -714,6 +660,69 @@
         <groupId>org.jboss.as.plugins</groupId>
         <artifactId>jboss-as-maven-plugin</artifactId>
         <version>7.3.Final</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <!--
+                        <phase>test-compile</phase>
+            -->
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>io.hawt.sample.Main</mainClass>
+          <classpathScope>test</classpathScope>
+
+          <systemProperties>
+            <systemProperty>
+              <key>basedir</key>
+              <value>${basedir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>fabricUrl</key>
+              <value>${fabricUrl}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>jettyPort</key>
+              <value>${jettyPort}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>context</key>
+              <value>${context}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>webapp-outdir</key>
+              <value>${webapp-outdir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>jettyUseFileLock</key>
+              <value>${jetty-use-file-lock}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>karaf.data</key>
+              <value>${project.build.directory}/karaf-data</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.authenticationEnabled</key>
+              <value>false</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.forceBranding</key>
+              <value>false</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
       </plugin>
     </plugins>
   </build>
