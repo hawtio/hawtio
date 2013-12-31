@@ -225,7 +225,7 @@ module Quartz {
       var mbean = Quartz.getQuartzMBean(workspace);
       var domain = "quartz";
       var rootFolder = new Folder("Quartz Schedulers");
-      rootFolder.addClass = "quartzSchedulers";
+      rootFolder.addClass = "quartz-folder";
       rootFolder.typeName = "quartzSchedulers";
       rootFolder.domain = domain;
       rootFolder.key = "";
@@ -239,7 +239,7 @@ module Quartz {
 
             var txt = name.value["SchedulerName"];
             var scheduler = new Folder(txt)
-            scheduler.addClass = "quartzScheduler";
+            scheduler.addClass = "quartz-scheduler";
             scheduler.typeName = "quartzScheduler";
             scheduler.domain = domain;
             scheduler.objectName = value;
@@ -284,6 +284,8 @@ module Quartz {
         if (schedulers && schedulers.length === 1) {
           first = schedulers[0];
           return first;
+        } else {
+          return first;
         }
       }, true);
     }
@@ -313,15 +315,6 @@ module Quartz {
         $scope.triggers = [];
         $scope.jobs = [];
       }
-    }
-
-    function includePropertyValue(key:string, value) {
-      // skip these keys as we have hardcoded them to be shown already
-      if ("SchedulerName" === key || "Version" === key || "Started" === key) {
-        return false;
-      }
-
-      return !angular.isObject(value);
     }
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
