@@ -17,6 +17,9 @@ module SpringBatch {
             }
         });
 
+        $scope.launchDiv = function(jobName){
+            console.info(' --------------- '+jobName);
+        }
     }
 
 }

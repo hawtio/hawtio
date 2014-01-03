@@ -8,6 +8,7 @@
             <th> <a ng-click="predicate='executionCount';reverse=!reverse" style="cursor: pointer">ExecutionCount</a> </th>
             <th> <a ng-click="predicate='launchable';reverse=!reverse" style="cursor: pointer">Launchable</a> </th>
             <th> <a ng-click="predicate='incrementable';reverse=!reverse" style="cursor: pointer">Incrementable</a> </th>
+            <th> <a ng-click="predicate='incrementable';reverse=!reverse" style="cursor: pointer">Launch</a> </th>
         </tr>
         </thead>
         <tbody>
@@ -20,6 +21,10 @@
                   </td>
                   <td>{{job.launchable}}</td>
                   <td>{{job.incrementable}}</td>
+                  <td>
+                        <a style="cursor: pointer;" ng-click="launchDiv(job.name)" class="btn btn-info">Launch</a>
+                      <i class="icon-play"></i>
+                  </td>
               </tr>
         </tbody>
     </table>
