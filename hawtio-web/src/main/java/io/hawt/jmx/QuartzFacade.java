@@ -70,9 +70,13 @@ public class QuartzFacade implements QuartzFacadeMBean {
         Map jobDataMap = new HashMap();
         initJobParams(jobParams, jobDataMap, triggerName, groupName, data);
 
+        // also ensure the job data map is up to date with the simple trigger changes
         Map triggerParams = new HashMap();
         triggerParams.put("repeatCount", repeatCount);
+        jobDataMap.put("CamelQuartzTriggerType", "simple");
+        jobDataMap.put("CamelQuartzTriggerSimpleRepeatCounter", repeatCount);
         triggerParams.put("repeatInterval", repeatInterval);
+        jobDataMap.put("CamelQuartzTriggerSimpleRepeatInterval", repeatCount);
         triggerParams.put("name", triggerName);
         triggerParams.put("group", groupName);
         triggerParams.put("jobName", triggerName);
@@ -105,9 +109,13 @@ public class QuartzFacade implements QuartzFacadeMBean {
         initJobParams(jobParams, jobDataMap, triggerName, groupName, data);
 
         Map triggerParams = new HashMap();
+        // also ensure the job data map is up to date with the cron trigger changes
         triggerParams.put("cronExpression", cronExpression);
+        jobDataMap.put("CamelQuartzTriggerType", "cron");
+        jobDataMap.put("CamelQuartzTriggerCronExpression", cronExpression);
         if (timeZone != null) {
             triggerParams.put("timeZone", timeZone);
+            jobDataMap.put("CamelQuartzTriggerCronTimeZone", timeZone);
         }
         triggerParams.put("name", triggerName);
         triggerParams.put("group", groupName);
@@ -142,4 +150,5 @@ public class QuartzFacade implements QuartzFacadeMBean {
         }
         jobParams.put("jobDataMap", jobDataMap);
     }
+
 }
