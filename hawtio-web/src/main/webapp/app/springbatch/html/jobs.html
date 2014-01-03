@@ -11,21 +11,28 @@
             <th> <a ng-click="predicate='incrementable';reverse=!reverse" style="cursor: pointer">Launch</a> </th>
         </tr>
         </thead>
-        <tbody>
-              <tr ng-repeat="job in jobList | orderBy:predicate:reverse">
-                  <td>{{job.name}}</td>
-                  <td>{{job.resource}}</td>
-                  <td>{{job.description}}</td>
-                  <td>
-                      <a ng-href="#/springbatch/jobs/{{job.name}}/executions">{{job.executionCount}}</a>
-                  </td>
-                  <td>{{job.launchable}}</td>
-                  <td>{{job.incrementable}}</td>
-                  <td>
-                        <a style="cursor: pointer;" ng-click="launchDiv(job.name)" class="btn btn-info">Launch</a>
-                      <i class="icon-play"></i>
-                  </td>
-              </tr>
+        <tbody ng-repeat="job in jobList | orderBy:predicate:reverse">
+        <tr >
+            <td>{{job.name}}</td>
+            <td>{{job.resource}}</td>
+            <td>{{job.description}}</td>
+            <td>
+                <a ng-href="#/springbatch/jobs/{{job.name}}/executions">{{job.executionCount}}</a>
+            </td>
+            <td>{{job.launchable}}</td>
+            <td>{{job.incrementable}}</td>
+            <td>
+                <i style="cursor: pointer;" ng-click="launchDiv(job.name)" class="icon-play"></i>
+            </td>
+        </tr>
+        <tr ng-show="true">
+            <td colspan="6">
+                <input style="width: inherit;" type="text">
+            </td>
+            <td>
+                <a style="cursor: pointer;" class="btn" >Launch</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
