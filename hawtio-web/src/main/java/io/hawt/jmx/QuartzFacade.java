@@ -50,7 +50,8 @@ public class QuartzFacade implements QuartzFacadeMBean {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void updateSimpleTrigger(String schedulerObjectName, String triggerName, String groupName, int repeatCount, long repeatInterval) throws Exception {
+    public void updateSimpleTrigger(String schedulerObjectName, String triggerName, String groupName, int misfireInstruction,
+                                    int repeatCount, long repeatInterval) throws Exception {
         if (schedulerObjectName == null) {
             throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
         }
@@ -81,6 +82,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
         triggerParams.put("group", groupName);
         triggerParams.put("jobName", triggerName);
         triggerParams.put("jobGroup", groupName);
+        triggerParams.put("misfireInstruction", misfireInstruction);
 
         // update trigger
         mBeanServer.invoke(on, "scheduleBasicJob", new Object[]{jobParams, triggerParams}, new String[]{"java.util.Map", "java.util.Map"});
@@ -88,7 +90,8 @@ public class QuartzFacade implements QuartzFacadeMBean {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void updateCronTrigger(String schedulerObjectName, String triggerName, String groupName, String cronExpression, String timeZone) throws Exception {
+    public void updateCronTrigger(String schedulerObjectName, String triggerName, String groupName, int misfireInstruction,
+                                  String cronExpression, String timeZone) throws Exception {
         if (schedulerObjectName == null) {
             throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
         }
@@ -121,6 +124,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
         triggerParams.put("group", groupName);
         triggerParams.put("jobName", triggerName);
         triggerParams.put("jobGroup", groupName);
+        triggerParams.put("misfireInstruction", misfireInstruction);
 
         // update trigger
         mBeanServer.invoke(on, "scheduleBasicJob", new Object[]{jobParams, triggerParams}, new String[]{"java.util.Map", "java.util.Map"});
