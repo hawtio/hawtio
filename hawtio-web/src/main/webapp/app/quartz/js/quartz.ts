@@ -18,6 +18,31 @@ module Quartz {
     $scope.triggers = [];
     $scope.jobs = [];
 
+    $scope.updatedTrigger = {};
+    $scope.triggerSchema = {
+      properties: {
+        'cron': {
+          description: 'Cron expression',
+          label: 'Cron expression',
+          tooltip: 'Specify a cron expression for the trigger',
+          type: 'string',
+          hidden: false
+        },
+        'repeatCount': {
+          description: 'Repeat count',
+          tooltip: 'Number of times to repeat. Use -1 for forever.',
+          type: 'integer',
+          hidden: false
+        },
+        'repeatInterval': {
+          description: 'Repeat interval',
+          tooltip: 'Elapsed time in millis between triggering',
+          type: 'integer',
+          hidden: false
+        }
+      }
+    };
+
     $scope.gridOptions = {
       selectedItems: [],
       data: 'triggers',
@@ -171,25 +196,29 @@ module Quartz {
             t.state = "unknown";
           }
 
-          // TODO: update the quartz facade code to update the job data map with new values when updating trigger
-
           // grab information about the trigger from the job map, as quartz does not have the information itself
           // so we had to enrich the job map in camel-quartz to include this information
           var job = obj.AllJobDetails[t.jobName];
           if (job) {
             job = job[t.group];
             if (job) {
+              var repeatCounter;
+              var repeatInterval;
+
               t.type = job.jobDataMap["CamelQuartzTriggerType"];
               if (t.type && t.type == "cron") {
                 t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
               } else if (t.type && t.type == "simple") {
                 t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
-                var counter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
-                if (counter > 0) {
-                  t.expression += " (" + counter + " times)";
+                repeatCounter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
+                repeatInterval = job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
+                if (repeatCounter > 0) {
+                  t.expression += " (" + repeatCounter + " times)";
                 } else {
                   t.expression += " (forever)"
                 }
+                t.repeatCounter = repeatCounter;
+                t.repeatInterval = repeatInterval;
               } else {
                 // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
                 var uri = job.jobDataMap["CamelQuartzEndpoint"];
@@ -201,16 +230,18 @@ module Quartz {
                     cron = cron.replace(/\++/g, ' ');
                     t.expression = cron;
                   }
-                  var counter = Core.getQueryParameterValue(uri, "trigger.repeatCount");
-                  var interval = Core.getQueryParameterValue(uri, "trigger.repeatInterval");
-                  if (counter || interval) {
+                  repeatCounter = Core.getQueryParameterValue(uri, "trigger.repeatCount");
+                  repeatInterval = Core.getQueryParameterValue(uri, "trigger.repeatInterval");
+                  if (repeatCounter || repeatInterval) {
                     t.type = "simple";
-                    t.expression = "every " + interval + " ms.";
-                    if (counter && counter > 0) {
-                      t.expression += " (" + counter + " times)";
+                    t.expression = "every " + repeatInterval + " ms.";
+                    if (repeatCounter && repeatCounter > 0) {
+                      t.expression += " (" + repeatCounter + " times)";
                     } else {
                       t.expression += " (forever)"
                     }
+                    t.repeatCounter = repeatCounter;
+                    t.repeatInterval = repeatInterval;
                   }
                 }
               }
@@ -326,11 +357,48 @@ module Quartz {
       }
     }
 
-    $scope.updateTrigger = () => {
-      if ($scope.gridOptions.selectedItems.length === 1) {
-        var groupName = $scope.gridOptions.selectedItems[0].group;
-        var triggerName = $scope.gridOptions.selectedItems[0].name;
-        var misfireInstruction = $scope.gridOptions.selectedItems[0].misfireInstruction;
+    $scope.onBeforeUpdateTrigger = () => {
+      var row = $scope.gridOptions.selectedItems[0];
+      if (row && row.type === 'cron') {
+        $scope.updatedTrigger["type"] = 'cron';
+        $scope.updatedTrigger["cron"] = row.expression;
+        $scope.updatedTrigger["repeatCount"] = null;
+        $scope.updatedTrigger["repeatInterval"] = null;
+        $scope.triggerSchema.properties["cron"].hidden = false;
+        $scope.triggerSchema.properties["repeatCount"].hidden = true;
+        $scope.triggerSchema.properties["repeatInterval"].hidden = true;
+        $scope.showTriggerDialog = true;
+      } else if (row && row.type === 'simple') {
+        $scope.updatedTrigger["type"] = 'simple';
+        $scope.updatedTrigger["cron"] = null;
+        $scope.updatedTrigger["repeatCount"] = row.repeatCounter;
+        $scope.updatedTrigger["repeatInterval"] = row.repeatInterval;
+        $scope.triggerSchema.properties["cron"].hidden = true;
+        $scope.triggerSchema.properties["repeatCount"].hidden = false;
+        $scope.triggerSchema.properties["repeatInterval"].hidden = false;
+        $scope.showTriggerDialog = true;
+      } else {
+        $scope.updatedTrigger = {};
+        $scope.showTriggerDialog = false;
+      }
+    }
+
+    $scope.onUpdateTrigger = () => {
+      var cron = $scope.updatedTrigger["cron"];
+      var repeatCounter = $scope.updatedTrigger["repeatCount"];
+      var repeatInterval = $scope.updatedTrigger["repeatInterval"];
+      $scope.updatedTrigger = {};
+
+      log.info(cron)
+      log.info(repeatCounter)
+      log.info(repeatInterval)
+
+      var groupName = $scope.gridOptions.selectedItems[0].group;
+      var triggerName = $scope.gridOptions.selectedItems[0].name;
+      var misfireInstruction = $scope.gridOptions.selectedItems[0].misfireInstruction;
+
+      if (cron) {
+        log.info("Updating trigger " + groupName + "/" + triggerName + " with cron " + cron);
 
         jolokia.request({type: "exec", mbean: "hawtio:type=QuartzFacade",
           operation: "updateCronTrigger", arguments: [
@@ -338,12 +406,35 @@ module Quartz {
             triggerName,
             groupName,
             misfireInstruction,
-            '0/5 * * * * ?',
+            cron,
             null]},
           onSuccess((response) => {
             notification("success", "Updated trigger " + groupName + "/" + triggerName);
           }
         ));
+      } else if (repeatCounter || repeatInterval) {
+
+        if (repeatCounter == null) {
+          repeatCounter = -1;
+        }
+        if (repeatInterval == null) {
+          repeatInterval = 1000;
+        }
+
+        log.info("Updating trigger " + groupName + "/" + triggerName + " with interval " + repeatInterval + " ms. for " + repeatCounter + " times");
+
+        jolokia.request({type: "exec", mbean: "hawtio:type=QuartzFacade",
+            operation: "updateSimpleTrigger", arguments: [
+              $scope.selectedSchedulerMBean,
+              triggerName,
+              groupName,
+              misfireInstruction,
+              repeatCounter,
+              repeatInterval]},
+          onSuccess((response) => {
+              notification("success", "Updated trigger " + groupName + "/" + triggerName);
+            }
+          ));
       }
     }
 
@@ -441,6 +532,7 @@ module Quartz {
         $scope.selectedScheduler = null;
         $scope.triggers = [];
         $scope.jobs = [];
+        $scope.updatedTrigger = {};
       }
     }
 
