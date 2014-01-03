@@ -171,6 +171,8 @@ module Quartz {
             t.state = "unknown";
           }
 
+          // TODO: update the quartz facade code to update the job data map with new values when updating trigger
+
           // grab information about the trigger from the job map, as quartz does not have the information itself
           // so we had to enrich the job map in camel-quartz to include this information
           var job = obj.AllJobDetails[t.jobName];
@@ -187,6 +189,29 @@ module Quartz {
                   t.expression += " (" + counter + " times)";
                 } else {
                   t.expression += " (forever)"
+                }
+              } else {
+                // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
+                var uri = job.jobDataMap["CamelQuartzEndpoint"];
+                if (uri) {
+                  var cron = Core.getQueryParameterValue(uri, "cron");
+                  if (cron) {
+                    t.type = "cron";
+                    // replace + with space as Camel uses + as space in the cron when specifying in the uri
+                    cron = cron.replace(/\++/g, ' ');
+                    t.expression = cron;
+                  }
+                  var counter = Core.getQueryParameterValue(uri, "trigger.repeatCount");
+                  var interval = Core.getQueryParameterValue(uri, "trigger.repeatInterval");
+                  if (counter || interval) {
+                    t.type = "simple";
+                    t.expression = "every " + interval + " ms.";
+                    if (counter && counter > 0) {
+                      t.expression += " (" + counter + " times)";
+                    } else {
+                      t.expression += " (forever)"
+                    }
+                  }
                 }
               }
             }
