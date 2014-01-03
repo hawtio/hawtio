@@ -267,18 +267,22 @@ module Quartz {
     $scope.pauseScheduler = () => {
       if ($scope.selectedSchedulerMBean) {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-          operation: "standby"});
-
-        notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+          operation: "standby"},
+        onSuccess((response) => {
+          notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+        }
+        ));
       }
     }
 
     $scope.startScheduler = () => {
       if ($scope.selectedSchedulerMBean) {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-          operation: "start"});
-
-        notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+          operation: "start"},
+        onSuccess((response) => {
+          notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+        }
+        ));
       }
     }
 
@@ -300,9 +304,11 @@ module Quartz {
         var triggerName = $scope.gridOptions.selectedItems[0].name;
 
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-          operation: "pauseTrigger", arguments: [triggerName, groupName]});
-
-        notification("success", "Paused trigger " + groupName + "/" + triggerName);
+          operation: "pauseTrigger", arguments: [triggerName, groupName]},
+          onSuccess((response) => {
+            notification("success", "Paused trigger " + groupName + "/" + triggerName);
+          }
+        ));
       }
     }
 
@@ -312,9 +318,11 @@ module Quartz {
         var triggerName = $scope.gridOptions.selectedItems[0].name;
 
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-          operation: "resumeTrigger", arguments: [triggerName, groupName]});
-
-        notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+          operation: "resumeTrigger", arguments: [triggerName, groupName]},
+          onSuccess((response) => {
+            notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+          }
+        ));
       }
     }
 
@@ -322,22 +330,20 @@ module Quartz {
       if ($scope.gridOptions.selectedItems.length === 1) {
         var groupName = $scope.gridOptions.selectedItems[0].group;
         var triggerName = $scope.gridOptions.selectedItems[0].name;
+        var misfireInstruction = $scope.gridOptions.selectedItems[0].misfireInstruction;
 
-        var jobMap = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-          operation: "getJobDetail", arguments: [triggerName, groupName]});
-
-        if (jobMap && jobMap.value != null) {
-          jobMap = jobMap.value;
-
-          var triggerMap = {cronExpression: '0/3 * * * * ?'}
-
-          var status = jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
-            operation: "scheduleBasicJob", arguments: [jobMap, triggerMap]});
-
-          log.info(status);
-
-          notification("success", "Updated trigger " + groupName + "/" + triggerName);
-        }
+        jolokia.request({type: "exec", mbean: "hawtio:type=QuartzFacade",
+          operation: "updateCronTrigger", arguments: [
+            $scope.selectedSchedulerMBean,
+            triggerName,
+            groupName,
+            misfireInstruction,
+            '0/5 * * * * ?',
+            null]},
+          onSuccess((response) => {
+            notification("success", "Updated trigger " + groupName + "/" + triggerName);
+          }
+        ));
       }
     }
 
