@@ -1483,4 +1483,33 @@ module Core {
     }
     return formattedValue;
   }
+
+  /**
+   * Gets a query value from the given url
+   *
+   * @param url  url
+   * @param parameterName the uri parameter value to get
+   * @returns {*}
+   */
+  export function getQueryParameterValue(url, parameterName) {
+    var parts;
+
+    var query = (url||'').split('?');
+    if (query && query.length > 0) {
+      parts = query[1];
+    } else {
+      parts = '';
+    }
+
+    var vars = parts.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      if (decodeURIComponent(pair[0]) == parameterName) {
+        return decodeURIComponent(pair[1]);
+      }
+    }
+    // not found
+    return null;
+  }
+
 }
