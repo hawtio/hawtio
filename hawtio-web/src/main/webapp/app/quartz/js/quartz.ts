@@ -52,6 +52,18 @@ module Quartz {
           width: 150
         },
         {
+          field: 'type',
+          displayName: 'Type',
+          resizable: false,
+          width: 70
+        },
+        {
+          field: 'expression',
+          displayName: 'Expression',
+          resizable: true,
+          width: 180
+        },
+        {
           field: 'misfireInstruction',
           displayName: 'Misfire Instruction',
           cellTemplate: misfireTemplate,
@@ -157,6 +169,27 @@ module Quartz {
             t.state = state.value;
           } else {
             t.state = "unknown";
+          }
+
+          // grab information about the trigger from the job map, as quartz does not have the information itself
+          // so we had to enrich the job map in camel-quartz to include this information
+          var job = obj.AllJobDetails[t.jobName];
+          if (job) {
+            job = job[t.group];
+            if (job) {
+              t.type = job.jobDataMap["CamelQuartzTriggerType"];
+              if (t.type && t.type == "cron") {
+                t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
+              } else if (t.type && t.type == "simple") {
+                t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
+                var counter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
+                if (counter > 0) {
+                  t.expression += " (" + counter + " times)";
+                } else {
+                  t.expression += " (forever)"
+                }
+              }
+            }
           }
 
           // update existing trigger, so the UI remembers it selection
