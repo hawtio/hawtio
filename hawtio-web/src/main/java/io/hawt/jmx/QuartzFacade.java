@@ -73,11 +73,11 @@ public class QuartzFacade implements QuartzFacadeMBean {
 
         // also ensure the job data map is up to date with the simple trigger changes
         Map triggerParams = new HashMap();
-        triggerParams.put("repeatCount", repeatCount);
         jobDataMap.put("CamelQuartzTriggerType", "simple");
+        triggerParams.put("repeatCount", repeatCount);
         jobDataMap.put("CamelQuartzTriggerSimpleRepeatCounter", repeatCount);
         triggerParams.put("repeatInterval", repeatInterval);
-        jobDataMap.put("CamelQuartzTriggerSimpleRepeatInterval", repeatCount);
+        jobDataMap.put("CamelQuartzTriggerSimpleRepeatInterval", repeatInterval);
         triggerParams.put("name", triggerName);
         triggerParams.put("group", groupName);
         triggerParams.put("jobName", triggerName);
@@ -112,9 +112,9 @@ public class QuartzFacade implements QuartzFacadeMBean {
         initJobParams(jobParams, jobDataMap, triggerName, groupName, data);
 
         Map triggerParams = new HashMap();
+        jobDataMap.put("CamelQuartzTriggerType", "cron");
         // also ensure the job data map is up to date with the cron trigger changes
         triggerParams.put("cronExpression", cronExpression);
-        jobDataMap.put("CamelQuartzTriggerType", "cron");
         jobDataMap.put("CamelQuartzTriggerCronExpression", cronExpression);
         if (timeZone != null) {
             triggerParams.put("timeZone", timeZone);
