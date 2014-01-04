@@ -18,6 +18,12 @@ module Quartz {
     $scope.triggers = [];
     $scope.jobs = [];
 
+    $scope.misfireInstructions = [
+      {id: '-1', title: 'Ignore'},
+      {id: '0', title: 'Smart'},
+      {id: '1', title: 'Fire once now'},
+      {id: '2', title: 'Do nothing'}
+    ];
     $scope.updatedTrigger = {};
     $scope.triggerSchema = {
       properties: {
@@ -39,6 +45,16 @@ module Quartz {
           tooltip: 'Elapsed time in millis between triggering',
           type: 'integer',
           hidden: false
+        },
+        'misfireInstruction': {
+          description: 'Misfire instruction',
+          tooltip: 'What to do when misfiring happens',
+          type: 'string',
+          hidden: false,
+          'input-element': 'select',
+          'input-attributes': {
+            'ng-options': "mi.id as mi.title for mi in misfireInstructions"
+          }
         }
       }
     };
@@ -364,6 +380,8 @@ module Quartz {
         $scope.updatedTrigger["cron"] = row.expression;
         $scope.updatedTrigger["repeatCount"] = null;
         $scope.updatedTrigger["repeatInterval"] = null;
+        // must be a string type for the select-box to select it
+        $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
         $scope.triggerSchema.properties["cron"].hidden = false;
         $scope.triggerSchema.properties["repeatCount"].hidden = true;
         $scope.triggerSchema.properties["repeatInterval"].hidden = true;
@@ -373,6 +391,8 @@ module Quartz {
         $scope.updatedTrigger["cron"] = null;
         $scope.updatedTrigger["repeatCount"] = row.repeatCounter;
         $scope.updatedTrigger["repeatInterval"] = row.repeatInterval;
+        // must be a string type for the select-box to select it
+        $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
         $scope.triggerSchema.properties["cron"].hidden = true;
         $scope.triggerSchema.properties["repeatCount"].hidden = false;
         $scope.triggerSchema.properties["repeatInterval"].hidden = false;
@@ -387,15 +407,11 @@ module Quartz {
       var cron = $scope.updatedTrigger["cron"];
       var repeatCounter = $scope.updatedTrigger["repeatCount"];
       var repeatInterval = $scope.updatedTrigger["repeatInterval"];
+      var misfireInstruction = parseInt($scope.updatedTrigger["misfireInstruction"]);
       $scope.updatedTrigger = {};
-
-      log.info(cron)
-      log.info(repeatCounter)
-      log.info(repeatInterval)
 
       var groupName = $scope.gridOptions.selectedItems[0].group;
       var triggerName = $scope.gridOptions.selectedItems[0].name;
-      var misfireInstruction = $scope.gridOptions.selectedItems[0].misfireInstruction;
 
       if (cron) {
         log.info("Updating trigger " + groupName + "/" + triggerName + " with cron " + cron);
