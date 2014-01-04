@@ -35,7 +35,8 @@
         </form>
       </div>
 
-      <div hawtio-confirm-dialog="showTriggerDialog" ok-button-text="Update" on-ok="onUpdateTrigger()" title="Update Trigger">
+      <div hawtio-confirm-dialog="showTriggerDialog" ok-button-text="Update" on-ok="onUpdateTrigger()"
+           title="Update Trigger: {{gridOptions.selectedItems[0].group}}/{{gridOptions.selectedItems[0].name}}">
         <div class="dialog-body">
           <div simple-form data='triggerSchema' entity='updatedTrigger'>
           </div>
