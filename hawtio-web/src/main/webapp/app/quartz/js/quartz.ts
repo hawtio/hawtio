@@ -171,8 +171,7 @@ module Quartz {
         {
           field: 'description',
           displayName: 'Description',
-          resizable: true,
-          visible: false
+          resizable: true
         }
       ]
     };
