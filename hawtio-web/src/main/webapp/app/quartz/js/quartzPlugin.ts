@@ -9,7 +9,7 @@ module Quartz {
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/quartz/schedulers', {templateUrl: 'app/quartz/html/schedulers.html'}).
+                    when('/quartz/scheduler', {templateUrl: 'app/quartz/html/scheduler.html'}).
                     when('/quartz/triggers', {templateUrl: 'app/quartz/html/triggers.html'}).
                     when('/quartz/jobs', {templateUrl: 'app/quartz/html/jobs.html'});
           }).
@@ -28,7 +28,7 @@ module Quartz {
               content: "Quartz",
               title: "Quartz Scheduler",
               isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
-              href: () => "#/quartz/schedulers",
+              href: () => "#/quartz/scheduler",
               isActive: (workspace:Workspace) => workspace.isTopTabActive("quartz")
             });
 
