@@ -75,6 +75,9 @@ function humanizeValue(value:any):string {
 }
 
 function safeNull(value:any):string {
+  if (typeof value === 'boolean') {
+    return value;
+  }
   if (value) {
     return value;
   } else {
