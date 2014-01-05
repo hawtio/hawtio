@@ -10,7 +10,7 @@
         <div><h4>{{row.name}}</h4></div>
         <div>Key: {{row.key}}</div>
         <div>Description: {{row.attrDesc}}</div>
-        <div>Mode: {{row.rw ? 'Read Write' : 'Read'}}</div>
+        <div>Mode: {{row.rw ? 'Read Write' : 'Read Only'}}</div>
       </div>
       <div class="modal-body">
         <div ng-bind-html-unsafe="row.detailHtml"></div>
