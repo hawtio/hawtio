@@ -5,9 +5,9 @@ module Jmx {
 
   export var propertiesColumnDefs = [
     {field: 'name', displayName: 'Property', width: "27%",
-      cellTemplate: '<div class="ngCellText" title="{{row.entity.name}}" data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
+      cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}"  data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
     {field: 'value', displayName: 'Value',  width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" title="{{row.entity.attrDesc}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
@@ -23,6 +23,9 @@ module Jmx {
     $scope.selectCheckBox = true;
 
     $scope.valueDetails = new Core.Dialog();
+
+    $scope.lastKey = null;
+    $scope.attributesInfoCache = {};
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -200,6 +203,27 @@ module Jmx {
       var mbean = workspace.getSelectedMBeanName();
       var request = null;
       var node = workspace.selection;
+      if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
+        // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
+        $scope.attributesInfoCache = null;
+        if (mbean) {
+          var asQuery = (node) => {
+            var path = escapeMBeanPath(node);
+            var query = {
+              type: "LIST",
+              method: "post",
+              path: path,
+              ignoreErrors: true
+            };
+            return query;
+          };
+          var infoQuery = asQuery(mbean);
+          jolokia.request(infoQuery, onSuccess((response) => {
+            $scope.attributesInfoCache = response.value;
+            log.debug("Updated attributes info cache for mbean " + mbean);
+          }));
+        }
+      }
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
@@ -338,7 +362,7 @@ module Jmx {
                 }
                 var data = {key: key, name: humanizeValue(key), value: safeNull(value)};
 
-                generateSummaryAndDetail(data);
+                generateSummaryAndDetail(key, data);
                 properties.push(data);
               }
             }
@@ -349,7 +373,7 @@ module Jmx {
               name: "Object Name",
               value: mbean
             };
-            generateSummaryAndDetail(objectName);
+            generateSummaryAndDetail(objectName.key, objectName);
             properties.push(objectName);
           }
           properties = properties.sortBy("name");
@@ -360,6 +384,16 @@ module Jmx {
         // log.debug("gridData: ", $scope.gridData);
         Core.$apply($scope);
       }
+    }
+
+    function isReadWrite(attr) {
+      if ($scope.attributesInfoCache != null) {
+        var info = $scope.attributesInfoCache.attr[attr];
+        if (angular.isDefined(info)) {
+          return info.rw;
+        }
+      }
+      return false;
     }
 
     function unwrapObjectName(value) {
@@ -373,7 +407,7 @@ module Jmx {
       return value;
     }
 
-    function generateSummaryAndDetail(data) {
+    function generateSummaryAndDetail(key, data) {
       var value = data.value;
       if (!angular.isArray(value) && angular.isObject(value)) {
         var detailHtml = "<table class='table table-striped'>";
@@ -402,7 +436,17 @@ module Jmx {
           html += "</ul>";
           data.detailHtml = html;
         }
+      }
 
+      // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
+      data.rw = false;
+      data.attrDesc = null;
+      if ($scope.attributesInfoCache != null) {
+        var info = $scope.attributesInfoCache.attr[key];
+        if (angular.isDefined(info)) {
+          data.rw = info.rw;
+          data.attrDesc = info.desc;
+        }
       }
     }
 
