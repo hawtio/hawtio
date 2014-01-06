@@ -12,7 +12,7 @@
         </tr>
         </thead>
         <tbody ng-repeat="job in jobList | orderBy:predicate:reverse">
-        <tr >
+        <tr>
             <td>{{job.name}}</td>
             <td>{{job.resource}}</td>
             <td>{{job.description}}</td>
@@ -22,15 +22,15 @@
             <td>{{job.launchable}}</td>
             <td>{{job.incrementable}}</td>
             <td>
-                <i style="cursor: pointer;" ng-click="launchDiv(job.name)" class="icon-play"></i>
+                <i style="cursor: pointer;" ng-click="job.showLaunchForm = (!job.showLaunchForm)" class="icon-play"></i>
             </td>
         </tr>
-        <tr ng-show="true">
-            <td colspan="6">
-                <input style="width: inherit;" type="text">
+        <tr ng-show="job.showLaunchForm">
+            <td colspan="6" width="100%">
+                <input ng-model="job.launchParams" style="width: inherit;" type="text">
             </td>
             <td>
-                <a style="cursor: pointer;" class="btn" >Launch</a>
+                <a style="cursor: pointer;" class="btn" ng-click="launchJob(job.name)" >Launch</a>
             </td>
         </tr>
         </tbody>

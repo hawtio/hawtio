@@ -11,14 +11,21 @@ module SpringBatch {
             if(data.jobs && data.jobs.registrations){
                 var jobList = new Array();
                 for(var job in data.jobs.registrations){
+                    data.jobs.registrations[job].showLaunchForm=false;
+                    data.jobs.registrations[job].launchParams='';
                     jobList.add(data.jobs.registrations[job]);
+                    console.info(' ---------------- '+JSON.stringify(data.jobs.registrations[job]));
                 }
                 $scope.jobList = jobList;
             }
         });
 
-        $scope.launchDiv = function(jobName){
-            console.info(' --------------- '+jobName);
+        $scope.launchJob = function(jobName){
+
+            var job ;
+            for(var idx in $scope.jobList){ if( $scope.jobList[idx].name == jobName) job=$scope.jobList[idx]; }
+
+            console.info(' --------------- '+ job.launchParams );
         }
     }
 
