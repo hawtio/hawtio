@@ -53,12 +53,20 @@ module Osgi {
       Core.$apply($scope);
     }
 
+    function onMetaType(response) {
+      $scope.metaType = response;
+    }
+
     function updateTableContents() {
       var mbean = getSelectionConfigAdminMBean(workspace);
       if (mbean) {
         jolokia.request(
           {type: 'exec', mbean: mbean, operation: 'getConfigurations', arguments: ['(service.pid=*)']},
           onSuccess(populateTable));
+      }
+      var metaTypeMBean = getMetaTypeMBean(workspace);
+      if (metaTypeMBean) {
+        jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
       }
     }
   }

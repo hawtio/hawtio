@@ -325,11 +325,21 @@ module Osgi {
         return null;
     }
 
+    export function getMetaTypeMBean(workspace:Workspace):string {
+        if (workspace) {
+          var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
+          var typeFolder = mbeanTypesToDomain["MetaTypeFacade"] || {};
+          var mbeanFolder = typeFolder["io.fabric8"] || {};
+          return mbeanFolder["objectName"];
+        }
+        return null;
+    }
+
     export function getHawtioOSGiToolsMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
-            var toolsFacades = mbeanTypesToDomain["OSGiTools"];
-            var hawtioFolder = toolsFacades["hawtio"];
+            var toolsFacades = mbeanTypesToDomain["OSGiTools"] || {};
+            var hawtioFolder = toolsFacades["hawtio"] || {};
             return hawtioFolder["objectName"];
         }
         return null;
@@ -338,9 +348,9 @@ module Osgi {
     export function getHawtioConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
-            var configAdminFacades = mbeanTypesToDomain["ConfigAdmin"];
-            var hawtioFolder = configAdminFacades["hawtio"];
-            return hawtioFolder["objectName"];
+            var typeFolder = mbeanTypesToDomain["ConfigAdmin"];
+            var mbeanFolder = typeFolder["hawtio"];
+            return mbeanFolder["objectName"];
         }
         return null;
     }

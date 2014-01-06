@@ -14,7 +14,7 @@
   <li ng-class='{active : isActive("#/osgi/features") || isActive("#/osgi/feature")}' ng-show="isFeaturesEnabled">
     <a ng-href="#/osgi/features{{hash}}">Features</a>
   </li>
-  <li ng-class='{active : isActive("#/osgi/configuration")}'>
+  <li ng-class='{active : isActive("#/osgi/configuration") || isPrefixActive("#/osgi/pid")}'>
       <a ng-href="#/osgi/configurations{{hash}}">Configuration</a>
   </li>
   <li ng-class='{active : isActive("#/osgi/scr-components")}' ng-show="isScrEnabled">
