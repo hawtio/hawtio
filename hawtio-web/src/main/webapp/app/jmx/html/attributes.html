@@ -16,7 +16,10 @@
         <div ng-bind-html-unsafe="row.detailHtml"></div>
       </div>
       <div class="modal-footer">
-        <!--<div class="pull-left">({{row.rw ? 'read-write' : 'read-only'}})</div>-->
+        <!-- https://github.com/hawtio/hawtio/issues/904
+        <i class="span2 icon-copy" title="Click to copy value to clipboard"
+           zero-clipboard
+           use-callback="setHandler(clip)"></i> -->
         <input class="btn" ng-click="valueDetails.close()" value="Close">
       </div>
     </form>
