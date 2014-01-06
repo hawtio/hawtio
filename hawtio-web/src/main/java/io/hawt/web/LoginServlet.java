@@ -1,17 +1,5 @@
 package io.hawt.web;
 
-import io.hawt.system.Helpers;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.AccessControlContext;
@@ -23,6 +11,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import io.hawt.system.ConfigManager;
+import io.hawt.system.Helpers;
+import org.jolokia.converter.Converters;
+import org.jolokia.converter.json.JsonConvertOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -34,6 +36,29 @@ public class LoginServlet extends HttpServlet {
 
     Converters converters = new Converters();
     JsonConvertOptions options = JsonConvertOptions.DEFAULT;
+    ConfigManager config;
+    private Integer timeout;
+
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+        config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
+        if (config != null) {
+            String s = config.get("sessionTimeout", null);
+            if (s != null) {
+                try {
+                    timeout = Integer.parseInt(s);
+                    // timeout of 0 means default timeout
+                    if (timeout == 0) {
+                        timeout = null;
+                    }
+                } catch (Exception e) {
+                    // ignore and use default timeout value
+                }
+            }
+        }
+
+        LOG.info("hawtio login is using " + (timeout != null ? timeout + " sec." : "default") + " HttpSession timeout");
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -69,7 +94,7 @@ public class LoginServlet extends HttpServlet {
             for (Principal principal : principals) {
                 if (principal.getClass().getSimpleName().equals("UserPrincipal")) {
                     username = principal.getName();
-                    LOG.debug("Authorizing user " + username);
+                    LOG.debug("Authorizing user {}", username);
                 }
             }
         }
@@ -80,7 +105,12 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
         session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
         session.setAttribute("loginTime", GregorianCalendar.getInstance().getTimeInMillis());
-        session.setMaxInactiveInterval(900);
+        if (timeout != null) {
+            session.setMaxInactiveInterval(timeout);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
+        }
 
         returnPrincipals(subject, out);
     }

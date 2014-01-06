@@ -179,6 +179,9 @@ The following table contains the various configuration settings for the various 
 <tr>
 <td>hawtio.maven.index.dir</td><td>The directory where the maven indexer will use to store its cache and index files</td>
 </tr>
+<tr>
+<td>hawtio.sessionTimeout</td><td><strong>hawtio 1.2.2</strong> The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
+</tr>
 </table>
 
 #### Web Application configuration
