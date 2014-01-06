@@ -13,13 +13,12 @@
         <div>Mode: {{row.rw ? 'Read Write' : 'Read Only'}}</div>
       </div>
       <div class="modal-body">
-        <div ng-bind-html-unsafe="row.detailHtml"></div>
+        <div readonly ng-bind-html-unsafe="row.detailHtml"></div>
       </div>
       <div class="modal-footer">
-        <!-- https://github.com/hawtio/hawtio/issues/904
-        <i class="span2 icon-copy" title="Click to copy value to clipboard"
-           zero-clipboard
-           use-callback="setHandler(clip)"></i> -->
+        <button class="btn" zero-clipboard data-clipboard-text="{{row.value}}" title="Copy value to clipboard">
+          <i class="icon-copy"></i>
+        </button>
         <input class="btn" ng-click="valueDetails.close()" value="Close">
       </div>
     </form>
