@@ -174,6 +174,10 @@ module Fabric {
           if (rootContainers && rootContainers.length === 1 && !$scope.entity["parent"]) {
             $scope.entity["parent"] = rootContainers[0];
           }
+        } else {
+          if ('parent' in $scope.entity) {
+            delete $scope.entity["parent"];
+          }
         }
 
         // updates autofilled fields
