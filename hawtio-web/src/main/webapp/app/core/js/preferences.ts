@@ -170,6 +170,7 @@ module Core {
     }, true);
 
     var defaults = {
+      showWelcomePage: true,
       logCacheSize: 1000,
       logSortAsc: true,
       logAutoScroll: true,
@@ -181,6 +182,7 @@ module Core {
     };
 
     var converters = {
+      showWelcomePage: parseBooleanValue,
       logCacheSize: parseInt,
       logSortAsc: parseBooleanValue,
       logAutoScroll: parseBooleanValue,
