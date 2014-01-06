@@ -125,7 +125,7 @@
                       find src/main/webapp/app -name "img" | grep "/doc/"
                       then removing the prefix and postfix :)
                   -->
-                <ac:for list="api,camel,core,forcegraph,jboss,jetty,jmx,junit,tomcat" param="file" xmlns:ac="antlib:net.sf.antcontrib">
+                <ac:for list="api,camel,core,forcegraph,jboss,jetty,jmx,junit,quartz,tomcat" param="file" xmlns:ac="antlib:net.sf.antcontrib">
                   <sequential>
                     <echo>Processing plugin @{file}</echo>
                     <mkdir dir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}"/>
