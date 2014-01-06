@@ -15,13 +15,12 @@ module UI {
       scope: {
         text: '=hawtioEditor',
         mode:  '=',
-        dirty: '=',
         outputEditor: '@',
         name: '@'
       },
 
       controller: ($scope, $element, $attrs) => {
-
+        
         $scope.codeMirror = null;
         $scope.doc = null;
         $scope.options = [];
@@ -40,12 +39,9 @@ module UI {
         $scope.$watch('doc', () => {
           if ($scope.doc) {
             $scope.codeMirror.on('change', function(changeObj) {
-              var phase = $scope.$parent.$$phase;
-              if (!phase) {
-                $scope.text = $scope.doc.getValue();
-                $scope.dirty = !$scope.doc.isClean();
-                Core.$applyNowOrLater($scope);
-              }
+              $scope.text = $scope.doc.getValue();
+              $scope.dirty = !$scope.doc.isClean();
+              Core.$apply($scope);
             });
           }
         });
@@ -67,6 +63,15 @@ module UI {
       },
 
       link: ($scope, $element, $attrs) => {
+
+        if ('dirty' in $attrs) {
+          $scope.dirtyTarget = $attrs['dirty'];
+          $scope.$watch("$parent['" + $scope.dirtyTarget + "']", (newValue, oldValue) => {
+            if (newValue !== oldValue) {
+              $scope.dirty = newValue;
+            }
+          });
+        }
 
         var config = Object.extended($attrs).clone();
 
@@ -111,9 +116,12 @@ module UI {
           }
         });
 
-        $scope.$watch('dirty', () => {
+        $scope.$watch('dirty', (newValue, oldValue) => {
           if ($scope.dirty && !$scope.doc.isClean()) {
             $scope.doc.markClean();
+          }
+          if (newValue !== oldValue && 'dirtyTarget' in $scope) {
+            $scope.$parent[$scope.dirtyTarget] = $scope.dirty;
           }
         });
 
