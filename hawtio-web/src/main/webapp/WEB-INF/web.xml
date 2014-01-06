@@ -71,6 +71,13 @@
     <env-entry-value></env-entry-value>
   </env-entry>
 
+  <env-entry>
+    <description>The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses.</description>
+    <env-entry-name>hawtio/sessionTimeout</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
   <filter>
     <filter-name>cache</filter-name>
     <filter-class>io.hawt.web.CacheHeadersFilter</filter-class>
