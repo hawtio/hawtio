@@ -389,7 +389,7 @@ module Jmx {
     }
 
     function isReadWrite(attr) {
-      if ($scope.attributesInfoCache != null) {
+      if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
         var info = $scope.attributesInfoCache.attr[attr];
         if (angular.isDefined(info)) {
           return info.rw;
@@ -443,7 +443,7 @@ module Jmx {
       // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
       data.rw = false;
       data.attrDesc = data.name;
-      if ($scope.attributesInfoCache != null) {
+      if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
         var info = $scope.attributesInfoCache.attr[key];
         if (angular.isDefined(info)) {
           data.rw = info.rw;
