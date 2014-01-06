@@ -96,9 +96,37 @@ a:hover {
 
 }
 
-.prefs {
-  margin-top: 14px;
+.prefs > .row-fluid > .tabbable > .nav.nav-tabs {
+  margin-top: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  max-height: 31px !important;
+  min-height: 31px !important;
+  border-bottom: 1px solid #cecdcd !important;
 }
+
+.prefs > .row-fluid > .tabbable > .nav.nav-tabs > li {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.prefs > .row-fluid > .tabbable > .nav.nav-tabs > li > a {
+  background-image: none;
+  background: #f6f6f6;
+  color: #4d5258;
+  border-radius: 0;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 6px;
+  padding-bottom: 5px;
+}
+
+.prefs > .row-fluid > .tabbable > .nav.nav-tabs > li.active a {
+  border-bottom: 1px solid #2289ba !important;
+}
+
 
 #main-nav .navbar-inner.main-nav-upper .container .brand {
   display: block !important;

@@ -63,7 +63,7 @@ module Branding {
     Branding.enabled = Core.parseBooleanValue(response.enable);
 
     // Branding.enabled = false;
-    // Branding.enabled = true;
+    Branding.enabled = true;
 
     if (Branding.enabled) {
       Branding.profile = response.profile;
