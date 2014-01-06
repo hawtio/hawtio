@@ -55,6 +55,7 @@ module Osgi {
 
     function onMetaType(response) {
       $scope.metaType = response;
+      Core.$apply($scope);
     }
 
     function updateTableContents() {
