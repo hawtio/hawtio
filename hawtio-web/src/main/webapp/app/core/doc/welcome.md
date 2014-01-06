@@ -1,4 +1,4 @@
-<h3 class="help-header">Welcome to <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}} </h3>
+<h3 class="help-header centered">Welcome to <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}}</h3>
 
 Don't cha wish your console was <a href="http://www.youtube.com/watch?v=YNSxNsr4wmA">hawt like me</a>? I'm <i>hawt</i> so you can stay cool!
 

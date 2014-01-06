@@ -3337,5 +3337,8 @@ tr.selected .ngCellText a,
   background-color: #c9dde1;
 }
 
-
+.welcome {
+  margin-left: 5em;
+  margin-right: 5em;
 }
+
