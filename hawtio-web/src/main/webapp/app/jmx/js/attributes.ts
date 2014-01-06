@@ -17,7 +17,7 @@ module Jmx {
       cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
     }];
 
-  export function AttributesController($scope, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
+  export function AttributesController($scope, $element, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
     $scope.searchText = '';
     $scope.columnDefs = [];
     $scope.selectedItems = [];
@@ -47,6 +47,20 @@ module Jmx {
       columnDefs: 'columnDefs'
     };
 
+    // handler needed for copy to clipboard support
+    $scope.setHandler = (clip) => {
+      clip.addEventListener('mouseDown', function(client, args) {
+        // this is apparently a global event handler for zero clipboard
+        // so you have to make sure you're handling the right click event
+        var icon = $element.find('.icon-copy');
+        if (this !== icon.get(0)) {
+          return;
+        }
+
+        // TODO: grab the value
+        clip.setText("Copying some stuff here");
+      });
+    };
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
