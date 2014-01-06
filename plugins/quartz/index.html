@@ -57,6 +57,52 @@
 
 <p>The <a href="#/quartz/schedulers/">Quartz</a> plugin in <a href="http://hawt.io" title="hawtio">hawtio</a> offers functionality for viewing and managing Quartz Schedulers.</p>
 
+<h4 id = "Quartz_Tree">Quartz Tree</h4>
+
+<p>On the left hand side is the Quartz Tree which lists all the running Quartz schedulers in the JVM.</p>
+
+<p><img src="app/quartz/doc/img/quartz-tree.png" alt="Quartz Tree" title="Quartz Tree"/></p>
+
+<p>And on the main view area there is sub tabs to see details about the selected scheduler.</p>
+
+<p>Clicking on a Quartz scheduler in the tree, selects it, and allows you to see more details about that particular scheduler.</p>
+
+<h4 id = "Quartz_Scheduler">Quartz Scheduler</h4>
+
+<p>This sub tab displays information about the scheduler, such as its name, version and state.</p>
+
+<p><img src="app/quartz/doc/img/quartz-scheduler.png" alt="Quartz Scheduler" title="Quartz Scheduler"/></p>
+
+<p>There is control buttons to suspend and resume the scheduler. When the scheduler is suspended (standby) then any
+triggers will not be fired.</p>
+
+<h4 id = "Quartz_Triggers">Quartz Triggers</h4>
+
+<p>The triggers sub tabs shows all the triggers for the selected scheduler in a table.</p>
+
+<p><img src="app/quartz/doc/img/quartz-triggers.png" alt="Quartz Triggers" title="Quartz Triggers"/></p>
+
+<p>Quartz has two kind of triggers:
+* basic
+* cron</p>
+
+<p>The basic trigger is a trigger that can fire using a constant time interval, such as every 20 seconds.
+The cron trigger is an advanced trigger that use cron expressions to define when the trigger should fire.</p>
+
+<p>There is control buttons to suspend and resume trigger(s), and as well to edit the trigger as shown below:</p>
+
+<p><img src="app/quartz/doc/img/quartz-edit-trigger.png" alt="Quartz Edit Trigger" title="Quartz Edit Trigger"/></p>
+
+<h4 id = "Quartz_Jobs">Quartz Jobs</h4>
+
+<p>This sub tab shows all the jobs for the selected scheduler in a table.</p>
+
+<p><img src="app/quartz/doc/img/quartz-jobs.png" alt="Quartz Jobs" title="Quartz Jobs"/></p>
+
+<p>Clicking on the info icon (<i class='icon-info-sign'></i>) will display additional job information as shown below:</p>
+
+<p><img src="app/quartz/doc/img/quartz-view-job.png" alt="Quartz View Job" title="Quartz View Job"/></p>
+
 <p></div>
   </div></p>
     </div>
