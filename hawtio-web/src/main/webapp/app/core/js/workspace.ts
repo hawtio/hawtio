@@ -439,6 +439,27 @@ module Core {
       }
     }
 
+    /**
+     * Returns true if the given link is active. The link can omit the leading # or / if necessary.
+     * The query parameters of the URL are ignored in the comparison.
+     * @method isLinkActive
+     * @param {String} href
+     * @return {Boolean} true if the given link is active
+     */
+    public isLinkPrefixActive(href:string):boolean {
+      // lets trim the leading slash
+      var pathName = this.getStrippedPathName();
+
+      var link = Core.trimLeading(href, "#");
+      link = Core.trimLeading(link, "/");
+      // strip any query arguments
+      var idx = link.indexOf('?');
+      if (idx >= 0) {
+        link = link.substring(0, idx);
+      }
+      return pathName.startsWith(link);
+    }
+
 
     /**
      * Returns true if the tab query parameter is active or the URL starts with the given path

@@ -18,5 +18,9 @@ module Karaf {
     $scope.isActive = (nav) => {
       return workspace.isLinkActive(nav);
     };
+
+    $scope.isPrefixActive = (nav) => {
+      return workspace.isLinkPrefixActive(nav);
+    };
   }
 }
