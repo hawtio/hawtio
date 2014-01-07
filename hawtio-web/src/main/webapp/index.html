@@ -208,7 +208,9 @@ div.log-stack-trace p:nth-child(odd) {
             -->
 
               <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
-                <li ng-repeat="nav in topLevelTabs" ng-class="{active : isActive(nav)}" ng-show="isValid(nav)">
+                <li ng-repeat="nav in topLevelTabs track by $index" 
+                    ng-class="{active : isActive(nav)}" 
+                    ng-show="isValid(nav)">
                   <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
                   </a>
                 </li>
