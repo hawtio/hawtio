@@ -32,20 +32,19 @@ module Jmx {
           description: 'Key',
             tooltip: 'Attribute key',
             type: 'string',
-            'input-attributes': { readonly: true }
+            'input-attributes': { readonly: 'true' }
         },
         'description': {
           description: 'Description',
             tooltip: 'Attribute description',
             type: 'string',
-            formTemplate: "<textarea class='input-xlarge' rows='2'></textarea>",
-            'input-attributes': { readonly: true }
+            formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>",
         },
         'type': {
           description: 'Type',
             tooltip: 'Attribute type',
             type: 'string',
-            'input-attributes': { readonly: true }
+            'input-attributes': { readonly: 'true' }
         },
         'value': {
           description: 'Value',
