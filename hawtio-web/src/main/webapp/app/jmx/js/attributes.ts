@@ -32,24 +32,24 @@ module Jmx {
           description: 'Key',
             tooltip: 'Attribute key',
             type: 'string',
-            'input-attributes': { readonly: 'true' }
+            readOnly: 'true'
         },
         'description': {
           description: 'Description',
             tooltip: 'Attribute description',
             type: 'string',
-            formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>",
+            formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
         },
         'type': {
           description: 'Type',
             tooltip: 'Attribute type',
             type: 'string',
-            'input-attributes': { readonly: 'true' }
+            readOnly: 'true'
         },
         'value': {
           description: 'Value',
-            tooltip: 'Attribute value',
-            type: 'string'
+          tooltip: 'Attribute value',
+          type: 'string'
         }
       }
     };
@@ -92,9 +92,17 @@ module Jmx {
       return true;
     };
 
+    $scope.onCancelAttribute = () => {
+      // clear entity
+      $scope.entity = {};
+    }
+
     $scope.onUpdateAttribute = () => {
       var value = $scope.entity["value"];
       var key = $scope.entity["key"];
+
+      // clear entity
+      $scope.entity = {};
 
       // TODO: check if value changed
 
@@ -110,12 +118,19 @@ module Jmx {
     };
 
     $scope.onViewAttribute = (row) => {
+      // create entity and populate it with data from the selected row
+      $scope.entity = {};
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
       $scope.entity["value"] = row.summary;
       $scope.entity["rw"] = row.rw;
-      $scope.attributeSchema.properties.value["type"] = asJsonSchemaType(row.type, row.key);
+      var type = asJsonSchemaType(row.type, row.key);
+      var readOnly = !row.rw;
+      $scope.attributeSchema.properties.value["type"] = type;
+      $scope.attributeSchema.properties.value["readOnly"] = readOnly;
+
+      log.debug("Using json type " + type + " read-only: " + readOnly + " for attr key " + $scope.entity["key"] + " with value " + $scope.entity["value"]);
       $scope.showAttributeDialog = true;
     }
 

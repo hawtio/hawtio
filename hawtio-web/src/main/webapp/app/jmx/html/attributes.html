@@ -6,12 +6,15 @@
 
   <!-- modal dialog to show/edit the attribute -->
   <div hawtio-confirm-dialog="showAttributeDialog"
-       ok-button-text="Update" show-ok-button="{{entity.rw ? 'true' : 'false'}}" on-ok="onUpdateAttribute()"
+       ok-button-text="Update" show-ok-button="{{entity.rw ? 'true' : 'false'}}" on-ok="onUpdateAttribute()" on-cancel="onCancelAttribute()"
        cancel-button-text="Close"
-       title="View attribute: {{entity.key}}">
+       title="Attribute: {{entity.key}}">
     <div class="dialog-body">
       <div simple-form data='attributeSchema' mode="{{entity.rw ? 'edit' : 'view'}}" entity='entity'>
       </div>
+      <button class="pull-right btn" zero-clipboard data-clipboard-text="{{entity.value}}" title="Copy value to clipboard">
+        <i class="icon-copy"></i>
+      </button>
     </div>
   </div>
 
