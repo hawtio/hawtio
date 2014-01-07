@@ -8,7 +8,7 @@ module Jmx {
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
         'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
     {field: 'value', displayName: 'Value',  width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="openDetailView(row.entity)" title="{{row.entity.attrDesc}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.attrDesc}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
@@ -22,10 +22,38 @@ module Jmx {
     $scope.columnDefs = [];
     $scope.selectedItems = [];
 
-    $scope.valueDetails = new Core.Dialog();
-
     $scope.lastKey = null;
     $scope.attributesInfoCache = {};
+
+    $scope.entity = {};
+    $scope.attributeSchema = {
+      properties: {
+        'key': {
+          description: 'Key',
+            tooltip: 'Attribute key',
+            type: 'string',
+            'input-attributes': { readonly: true }
+        },
+        'description': {
+          description: 'Description',
+            tooltip: 'Attribute description',
+            type: 'string',
+            formTemplate: "<textarea class='input-xlarge' rows='2'></textarea>",
+            'input-attributes': { readonly: true }
+        },
+        'type': {
+          description: 'Type',
+            tooltip: 'Attribute type',
+            type: 'string',
+            'input-attributes': { readonly: true }
+        },
+        'value': {
+          description: 'Value',
+            tooltip: 'Attribute value',
+            type: 'string'
+        }
+      }
+    };
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -65,20 +93,31 @@ module Jmx {
       return true;
     };
 
-    $scope.canEditAttribute = (row) => {
-      // must be rw
-      if (isReadWrite(row.key)) {
-        var info = $scope.attributesInfoCache.attr[row.key];
-        // must be a boolean/number/string for us to support as editable attribute
-        if (info.type === 'boolean' || info.type === 'java.lang.String' || info.type === 'int' || info.type === 'long') {
-          return true;
-        }
-      }
-      return false;
-    }
+    $scope.onUpdateAttribute = () => {
+      var value = $scope.entity["value"];
+      var key = $scope.entity["key"];
 
-    $scope.onEditAttribute = (row) => {
-      log.info("Editing attribute " + row);
+      // TODO: check if value changed
+
+      // update the attribute on the mbean
+      var mbean = workspace.getSelectedMBeanName();
+      if (mbean) {
+        jolokia.setAttribute(mbean, key, value,
+        onSuccess((response) => {
+            notification("success", "Updated attribute " + key);
+        }
+        ));
+      }
+    };
+
+    $scope.onViewAttribute = (row) => {
+      $scope.entity["key"] = row.key;
+      $scope.entity["description"] = row.attrDesc;
+      $scope.entity["type"] = row.type;
+      $scope.entity["value"] = row.summary;
+      $scope.entity["rw"] = row.rw;
+      $scope.attributeSchema.properties.value["type"] = asJsonSchemaType(row.type, row.key);
+      $scope.showAttributeDialog = true;
     }
 
     $scope.getDashboardWidgets = (row) => {
@@ -199,14 +238,6 @@ module Jmx {
 */
       return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
     };
-
-    $scope.openDetailView = (entity) => {
-      $scope.row = entity;
-      if (entity.detailHtml) {
-        $scope.valueDetails.open();
-      }
-    };
-
 
     function operationComplete() {
       updateTableContents();
@@ -459,7 +490,7 @@ module Jmx {
       // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
       data.rw = false;
       data.attrDesc = data.name;
-      data.type = "";
+      data.type = "string";
       if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
         var info = $scope.attributesInfoCache.attr[key];
         if (angular.isDefined(info)) {
@@ -473,6 +504,31 @@ module Jmx {
     function includePropertyValue(key: string, value) {
       return !angular.isObject(value);
     }
+
+    function asJsonSchemaType(typeName, id) {
+      if (typeName) {
+        var lower = typeName.toLowerCase();
+        if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
+          return "integer";
+        }
+        if (lower === "double" || lower === "float" || lower === "bigdecimal") {
+          return "number";
+        }
+        if (lower === "boolean" || lower === "java.lang.boolean") {
+          return "boolean";
+        }
+        if (lower === "string" || lower === "java.lang.String") {
+          // TODO hack to try force password type on dodgy metadata such as pax web
+          if (id && id.endsWith("password")) {
+            return "password";
+          }
+          return "string";
+        }
+      }
+      // fallback as string
+      return "string";
+    }
+
   }
 
 }

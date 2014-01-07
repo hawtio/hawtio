@@ -4,27 +4,15 @@
   <div id="attributesGrid" class="gridStyle" ng-grid="gridOptions">
   </div>
 
-  <div modal="valueDetails.show" close="valueDetails.close()" options="valueDetails.options">
-    <form class="form-horizontal no-bottom-margin" ng-submit="valueDetails.close()">
-      <div class="modal-header">
-        <div><h4>{{row.name}}</h4></div>
-        <div>Key: {{row.key}}</div>
-        <div>Description: {{row.attrDesc}}</div>
-        <div>Mode: {{row.rw ? 'Read Write' : 'Read Only'}}</div>
-        <div>Type: {{row.type}}</div>
+  <!-- modal dialog to show/edit the attribute -->
+  <div hawtio-confirm-dialog="showAttributeDialog"
+       ok-button-text="Update" show-ok-button="{{entity.rw ? 'true' : 'false'}}" on-ok="onUpdateAttribute()"
+       cancel-button-text="Close"
+       title="View attribute: {{entity.key}}">
+    <div class="dialog-body">
+      <div simple-form data='attributeSchema' mode="{{entity.rw ? 'edit' : 'view'}}" entity='entity'>
       </div>
-      <div class="modal-body">
-        <div ng-bind-html-unsafe="row.detailHtml"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" ng-hide="!canEditAttribute(row)" ng-click="onEditAttribute(row)" title="Edit value">
-          <i class="icon-edit"></i>
-        </button>
-        <button class="btn" zero-clipboard data-clipboard-text="{{row.value}}" title="Copy value to clipboard">
-          <i class="icon-copy"></i>
-        </button>
-        <input class="btn" ng-click="valueDetails.close()" value="Close"/>
-      </div>
-    </form>
+    </div>
   </div>
+
 </div>
