@@ -126,6 +126,8 @@ module Osgi {
         properties: properties
       };
       $scope.schema = schema;
+      var inputClass = "span12";
+      var labelClass = "control-label";
 
       var metaType = $scope.metaType;
       if (metaType) {
@@ -141,7 +143,14 @@ module Osgi {
             var attributeProperties = {
               title: attribute.name,
               tooltip: attribute.description,
+              'input-attributes': {
+                class: inputClass
+              },
+              'label-attributes': {
+                class: labelClass
+              },
               type: typeName
+
             };
             if (attribute.typeName === "char") {
               attributeProperties["maxLength"] = 1;
@@ -189,6 +198,12 @@ module Osgi {
           entity[key] = attrValue;
           if (!properties[key]) {
             properties[key] = {
+              'input-attributes': {
+                class: inputClass
+              },
+              'label-attributes': {
+                class: labelClass
+              },
               type: attrType
             }
           }
