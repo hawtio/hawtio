@@ -70,6 +70,9 @@ module Forms {
 
       input.attr('name', id);
 
+      if (config.isReadOnly()) {
+        input.attr('readonly', 'true');
+      }
       var title = property.tooltip || property.label;
       if (title) {
         input.attr('title', title);
