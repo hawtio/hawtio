@@ -160,10 +160,34 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
         factory('userDetails', function(jolokiaUrl, localStorage) {
           var answer = angular.fromJson(localStorage[jolokiaUrl]);
           if (!angular.isDefined(answer)) {
-            return {
+            answer = {
               username: '',
               password: ''
-            };
+            }
+
+            Core.log.debug("No username set, checking if we have a session");
+            // fetch the username if we've already got a session at the server
+            var userUrl = jolokiaUrl.replace("jolokia", "user");
+            $.ajax(userUrl, {
+              type: "GET",
+              success: (response) => {
+                Core.log.debug("Got user response: ", response);
+                // We'll only touch these if they're not set
+                if (response !== '' && response !== null) {
+                  answer.username = response;
+                  if (!('loginDetails' in answer)) {
+                    answer['loginDetails'] = {};
+                  }
+                }
+              },
+              error: (xhr, textStatus, error) => {
+                Core.log.debug("Failed to get session username: ", error);
+                // silently ignore, we could be using the proxy
+              }
+            });
+
+            return answer;
+
           } else {
             return answer;
           }
@@ -350,7 +374,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
         }]).
 
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr) => {
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr, userDetails) => {
 
           $.support.cors = true;
 

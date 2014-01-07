@@ -85,6 +85,7 @@ module Core {
     $scope.match = null;
     $scope.pageTitle = [];
     $scope.userDetails = userDetails;
+
     $scope.confirmLogout = false;
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
