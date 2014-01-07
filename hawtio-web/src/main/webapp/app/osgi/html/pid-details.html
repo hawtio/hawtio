@@ -1,31 +1,25 @@
 <div>
   <h4 title="{{metaType.description}}">{{metaType.name || pid}}</h4>
 
-  <div class="row-fluid">
-    <button class="btn" ng-hide="editMode" ng-click="setEditMode(true)">Edit Configuration</button>
-    <button class="btn btn-primary" ng-show="editMode" ng-disabled="!canSave" ng-click="pidSave()">Save Changes</button>
-    <button class="btn" ng-show="editMode" ng-click="addPropertyDialog.open()">Add Property</button>
-    <button class="btn btn-warning pull-right" ng-show="editMode" ng-click="setEditMode(false)">Cancel</button>
-    <button class="btn btn-danger pull-right" ng-show="!editMode" ng-click="deletePidDialog.open()">Delete this Pid</button>
+  <div ng-show="!editMode">
+    <div class="row-fluid">
+      <button class="btn" ng-click="setEditMode(true)">Edit Configuration</button>
+      <button class="btn btn-danger pull-right" ng-show="!editMode" ng-click="deletePidDialog.open()">Delete this Pid</button>
+    </div>
+    <div class="row-fluid">
+      <div simple-form name="pidEditor" mode='view' entity='entity' data='schema' schema="fullSchema"></div>
+    </div>
   </div>
-  <div class="row-fluid">
-    <div simple-form name="pidEditor" mode='{{formMode}}' entity='entity' data='schema' schema="fullSchema"></div>
+  <div ng-show="editMode">
+    <div class="row-fluid">
+      <button class="btn btn-primary" ng-show="editMode" ng-disabled="!canSave" ng-click="pidSave()">Save Changes</button>
+      <button class="btn" ng-show="editMode" ng-click="addPropertyDialog.open()">Add Property</button>
+      <button class="btn btn-warning pull-right" ng-show="editMode" ng-click="setEditMode(false)">Cancel</button>
+    </div>
+    <div class="row-fluid">
+      <div simple-form name="pidEditor" mode='edit' entity='entity' data='schema' schema="fullSchema"></div>
+    </div>
   </div>
-
-  <!--
-      <table id="configValues" class="table table-hover">
-          <tr>
-              <th>Key</th><th>Value</th><th></th>
-          </tr>
-
-
-          <tr ng-repeat="(Key, Value) in row">
-              <td id="pid.{{Key}}"><strong>{{Key}}</strong></td>
-              <td onclick="Osgi.editPidValueCell(this)" class="pid-value">{{Value.Value}}</td>
-              <td><button class="btn" ng-click="deletePidProp(this)" title="Delete"><i class="icon-trash"></i></button></td>
-          </tr>
-      </table>
-  -->
 
   <div modal="deletePropDialog.show" close="deletePropDialog.close()" options="deletePropDialog.options">
     <form name="deleteProperty" class="form-horizontal no-bottom-margin" ng-submit="deletePidPropConfirmed()">
