@@ -103,8 +103,21 @@ module Osgi {
 
     function populateTable(response) {
       $scope.modelLoaded = true;
-      $scope.configValues = response.value || {};
+      var configValues = response.value || {};
+      $scope.configValues = configValues;
       updateSchema();
+      var metaTypeMBean = getMetaTypeMBean(workspace);
+      if (metaTypeMBean) {
+        var locale = null;
+        var pid = null;
+        var factoryId = configValues["service.factoryPid"];
+        if (factoryId) {
+          pid = factoryId["Value"];
+        }
+        pid = pid || $scope.pid;
+        log.info("looking up MetaType for pid: " + pid);
+        jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+      }
       Core.$apply($scope);
     }
 
@@ -213,8 +226,9 @@ module Osgi {
     }
 
     function isValidProperty(id) {
-      return id && id !== "service.pid";
+      return id && id !== "service.pid" && id !== "service.factoryPid";
     }
+
     function encodeKey(key) {
       return key.replace(/\./g, "__");
     }
@@ -252,11 +266,6 @@ module Osgi {
         jolokia.request(
           {type: 'exec', mbean: mbean, operation: 'getProperties', arguments: [$scope.pid]},
           onSuccess(populateTable));
-      }
-      var metaTypeMBean = getMetaTypeMBean(workspace);
-      if (metaTypeMBean) {
-        var locale = null;
-        jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", $scope.pid, locale, onSuccess(onMetaType));
       }
     }
   }
