@@ -13,6 +13,7 @@ module Osgi {
             when('/osgi/packages', {templateUrl: 'app/osgi/html/packages.html'}).
             when('/osgi/package/:package/:version', {templateUrl: 'app/osgi/html/package.html'}).
             when('/osgi/configurations', {templateUrl: 'app/osgi/html/configurations.html'}).
+            when('/osgi/pid/:pid/:factoryPid', {templateUrl: 'app/osgi/html/pid.html'}).
             when('/osgi/pid/:pid', {templateUrl: 'app/osgi/html/pid.html'}).
             when('/osgi/fwk', {templateUrl: 'app/osgi/html/framework.html'}).
             when('/osgi/dependencies', {templateUrl: 'app/osgi/html/svc-dependencies.html', reloadOnSearch: false })
