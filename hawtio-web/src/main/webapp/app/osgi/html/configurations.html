@@ -6,7 +6,7 @@
         <i class="icon-remove clickable" title="Clear Filter" ng-click="grid.filterOptions.filterText = ''"></i>
       </div>
 
-      <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add Pid">Add Pid</button>
+      <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration"><i class="icon-plus"></i> Configuration</button>
     </div>
   </div>
 
@@ -17,10 +17,10 @@
 
   <div modal="addPidDialog.show" close="addPidDialog.close()" options="addPidDialog.options">
     <form name="addPidDialogForm" class="form-horizontal no-bottom-margin" ng-submit="addPid(newPid)">
-      <div class="modal-header"><h4>Add Configuration Admin Pid</h4></div>
+      <div class="modal-header"><h4>Add New Configuration</h4></div>
       <div class="modal-body">
         <div class="control-group">
-          <label class="control-label" for="newPid">New Pid</label>
+          <label class="control-label" for="newPid">New Configuration ID</label>
 
           <div class="controls">
             <input class="input-xlarge" type="text" id="newPid" ng-model="newPid"/>
