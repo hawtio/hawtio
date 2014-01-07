@@ -46,29 +46,10 @@ module Jmx {
             type: 'string',
             readOnly: 'true'
         },
-        'valueString': {
+        'value': {
           description: 'Value',
           tooltip: 'Attribute value',
-          type: 'string',
-          hidden: true
-        },
-        'valueBoolean': {
-          description: 'Value',
-          tooltip: 'Attribute value',
-          type: 'boolean',
-          hidden: true
-        },
-        'valueInteger': {
-          description: 'Value',
-          tooltip: 'Attribute value',
-          type: 'integer',
-          hidden: true
-        },
-        'valueNumber': {
-          description: 'Value',
-          tooltip: 'Attribute value',
-          type: 'number',
-          hidden: true
+          type: 'string'
         }
       }
     };
@@ -117,19 +98,8 @@ module Jmx {
     }
 
     $scope.onUpdateAttribute = () => {
+      var value = $scope.entity["value"];
       var key = $scope.entity["key"];
-
-      var jsonType = $scope.entity["jsonType"];
-      var value;
-      if (jsonType === 'integer') {
-        value = $scope.entity["valueInteger"];
-      } else if (jsonType === 'number') {
-        value = $scope.entity["valueNumber"];
-      } else if (jsonType === 'boolean') {
-        value = $scope.entity["valueBoolean"];
-      } else {
-        value = $scope.entity["valueString"];
-      }
 
       // clear entity
       $scope.entity = {};
@@ -153,40 +123,14 @@ module Jmx {
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
+      $scope.entity["value"] = row.summary;
       $scope.entity["rw"] = row.rw;
-
-      // reset schema
-      $scope.attributeSchema.properties.valueInteger["hidden"] = true;
-      $scope.attributeSchema.properties.valueInteger["readOnly"] = true;
-      $scope.attributeSchema.properties.valueNumber["hidden"] = true;
-      $scope.attributeSchema.properties.valueNumber["readOnly"] = true;
-      $scope.attributeSchema.properties.valueBoolean["hidden"] = true;
-      $scope.attributeSchema.properties.valueBoolean["readOnly"] = true;
-      $scope.attributeSchema.properties.valueString["hidden"] = true;
-      $scope.attributeSchema.properties.valueString["readOnly"] = true;
-
+      var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
-      var jsonType = asJsonSchemaType(row.type, row.key);
-      $scope.entity["jsonType"] = jsonType;
+      $scope.attributeSchema.properties.value["type"] = type;
+      $scope.attributeSchema.properties.value["readOnly"] = readOnly;
 
-      if (jsonType === 'integer') {
-        $scope.attributeSchema.properties.valueInteger["hidden"] = false;
-        $scope.attributeSchema.properties.valueInteger["readOnly"] = readOnly;
-        $scope.entity["valueInteger"] = row.summary;
-      } else if (jsonType === 'number') {
-        $scope.attributeSchema.properties.valueNumber["hidden"] = false;
-        $scope.attributeSchema.properties.valueNumber["readOnly"] = readOnly;
-        $scope.entity["valueNumber"] = row.summary;
-      } else if (jsonType === 'boolean') {
-        $scope.attributeSchema.properties.valueBoolean["hidden"] = false;
-        $scope.attributeSchema.properties.valueBoolean["readOnly"] = readOnly;
-        $scope.entity["valueBoolean"] = row.summary;
-      } else {
-        $scope.attributeSchema.properties.valueString["hidden"] = false;
-        $scope.attributeSchema.properties.valueString["readOnly"] = readOnly;
-        $scope.entity["valueString"] = row.summary;
-      }
-
+      log.debug("Using json type " + type + " read-only: " + readOnly + " for attr key " + $scope.entity["key"] + " with value " + $scope.entity["value"]);
       $scope.showAttributeDialog = true;
     }
 
@@ -588,6 +532,10 @@ module Jmx {
           return "boolean";
         }
         if (lower === "string" || lower === "java.lang.String") {
+          // TODO hack to try force password type on dodgy metadata such as pax web
+          if (id && id.endsWith("password")) {
+            return "password";
+          }
           return "string";
         }
       }
