@@ -34,7 +34,7 @@ module Karaf {
     $scope.init();
 
     $scope.$watch('selectedRepository', (newValue, oldValue) => {
-      console.log("selectedRepository: ", $scope.selectedRepository);
+      log.info("selectedRepository: ", $scope.selectedRepository);
       if (newValue !== oldValue) {
         if (!newValue) {
           $scope.selectedRepositoryId = '';
@@ -75,8 +75,9 @@ module Karaf {
       installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
         notification('success', 'Installed feature ' + feature.Name);
         $scope.installedFeatures.add(feature);
+        $scope.responseJson = null;
         $scope.triggerRefresh();
-        Core.$apply($scope);
+        //Core.$apply($scope);
       }, (response) => {
         log.error('Failed to install feature ', feature.Name, ' due to ', response.error);
         log.info('stack trace: ', response.stacktrace);
@@ -90,8 +91,9 @@ module Karaf {
       uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
         notification('success', 'Uninstalled feature ' + feature.Name);
         $scope.installedFeatures.remove(feature);
+        $scope.responseJson = null;
         $scope.triggerRefresh();
-        Core.$apply($scope);
+        //Core.$apply($scope);
       }, (response) => {
         log.error('Failed to uninstall feature ', feature.Name, ' due to ', response.error);
         log.info('stack trace: ', response.stacktrace);
@@ -185,6 +187,9 @@ module Karaf {
       if ($scope.responseJson !== responseJson) {
         $scope.responseJson = responseJson;
         //log.debug("Got response: ", response.value);
+
+        $scope.features = [];
+        $scope.repositories = [];
 
         var features = [];
         var repositories = [];
