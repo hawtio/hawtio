@@ -65,6 +65,22 @@ module Jmx {
       return true;
     };
 
+    $scope.canEditAttribute = (row) => {
+      // must be rw
+      if (isReadWrite(row.key)) {
+        var info = $scope.attributesInfoCache.attr[row.key];
+        // must be a boolean/number/string for us to support as editable attribute
+        if (info.type === 'boolean' || info.type === 'java.lang.String' || info.type === 'int' || info.type === 'long') {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    $scope.onEditAttribute = (row) => {
+      log.info("Editing attribute " + row);
+    }
+
     $scope.getDashboardWidgets = (row) => {
       var mbean = workspace.getSelectedMBeanName();
       if (!mbean) {
@@ -443,11 +459,13 @@ module Jmx {
       // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
       data.rw = false;
       data.attrDesc = data.name;
+      data.type = "";
       if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
         var info = $scope.attributesInfoCache.attr[key];
         if (angular.isDefined(info)) {
           data.rw = info.rw;
           data.attrDesc = info.desc;
+          data.type = info.type;
         }
       }
     }

@@ -11,15 +11,19 @@
         <div>Key: {{row.key}}</div>
         <div>Description: {{row.attrDesc}}</div>
         <div>Mode: {{row.rw ? 'Read Write' : 'Read Only'}}</div>
+        <div>Type: {{row.type}}</div>
       </div>
       <div class="modal-body">
-        <div readonly ng-bind-html-unsafe="row.detailHtml"></div>
+        <div ng-bind-html-unsafe="row.detailHtml"></div>
       </div>
       <div class="modal-footer">
+        <button class="btn" ng-hide="!canEditAttribute(row)" ng-click="onEditAttribute(row)" title="Edit value">
+          <i class="icon-edit"></i>
+        </button>
         <button class="btn" zero-clipboard data-clipboard-text="{{row.value}}" title="Copy value to clipboard">
           <i class="icon-copy"></i>
         </button>
-        <input class="btn" ng-click="valueDetails.close()" value="Close">
+        <input class="btn" ng-click="valueDetails.close()" value="Close"/>
       </div>
     </form>
   </div>
