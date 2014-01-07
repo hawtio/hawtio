@@ -54,24 +54,91 @@ module Osgi {
     function pidBundleDescription(pid, bundle) {
       return  "pid: " + pid + "\nbundle: " + bundle;
     }
-    function populateTable(response) {
-      var configurations = [];
+
+    function createPidConfig(pid, bundle) {
+      var config = {
+        pid: pid,
+        name: pid,
+        class: 'pid',
+        description: pidBundleDescription(pid, bundle),
+        bundle: bundle,
+        pidLink: url("#/osgi/pid/" + pid + workspace.hash())
+      };
+      return config;
+    }
+
+    function onConfigPids(response) {
       var pids = {};
       angular.forEach(response, (row) => {
         var pid = row[0];
         var bundle = row[1];
-        var config = {
-          pid: pid,
-          name: pid,
-          description: pidBundleDescription(pid, bundle),
-          bundle: bundle,
-          pidLink: url("#/osgi/pid/" + pid + workspace.hash())
-        };
-        configurations.push(config);
+        var config = createPidConfig(pid, bundle);
+        config["hasValue"] = true;
         pids[pid] = config;
       });
-      $scope.configurations = configurations;
       $scope.pids = pids;
+
+      // lets load the factory pids
+      var mbean = getSelectionConfigAdminMBean(workspace);
+      if (mbean) {
+        jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)', onSuccess(onConfigFactoryPids));
+      } else {
+        updateMetaType();
+      }
+    }
+
+    function getOrCreatePidConfig(pid, bundle) {
+      var pids = $scope.pids;
+      var factoryConfig = pids[pid];
+      if (!factoryConfig) {
+        factoryConfig = createPidConfig(pid, bundle);
+        pids[pid] = factoryConfig;
+        updateConfigurations();
+      }
+      return factoryConfig;
+    }
+
+    function setFactoryPid(factoryConfig) {
+      factoryConfig["isFactory"] = true;
+      factoryConfig["class"] = "factoryPid";
+    }
+
+    /**
+     * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
+     */
+    function onConfigFactoryPids(response) {
+      var mbean = getSelectionConfigAdminMBean(workspace);
+      var pids = $scope.pids;
+      if (pids && mbean) {
+        angular.forEach(response, (row) => {
+          var pid = row[0];
+          var bundle = row[1];
+          if (pid) {
+            var config = pids[pid];
+            if (config) {
+              config["isFactoryInstance"] = true;
+              log.info("Loading factory pid for: " + pid);
+              jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(factoryPid => {
+                log.info("pid " + pid + " is factory pid" + factoryPid);
+                config["factoryPid"] = factoryPid;
+                if (factoryPid) {
+                  var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
+                  if (factoryConfig) {
+                    setFactoryPid(factoryConfig);
+                    var children = factoryConfig.children;
+                    if (!children) {
+                      children = {};
+                      factoryConfig["children"] = children;
+                    }
+                    children[pid] = config;
+                    Core.$apply($scope);
+                  }
+                }
+              }));
+            }
+          }
+        });
+      }
       updateMetaType();
     }
 
@@ -80,13 +147,29 @@ module Osgi {
       updateMetaType();
     }
 
-    function updateMetaType() {
+    function updateConfigurations() {
       var pids = $scope.pids;
+      var configurations = [];
+      angular.forEach(pids, (config, pid) => {
+        if (!config["isFactoryInstance"]) {
+          configurations.push(config);
+        }
+      });
+      $scope.configurations = configurations.sortBy("name");
+      Core.$apply($scope);
+    }
+
+    function updateMetaType() {
       var metaType = $scope.metaType;
-      if (pids && metaType) {
+      if (metaType) {
         angular.forEach(metaType.pids, (value, pid) => {
-          var config = pids[pid];
+          var bundle = null;
+          var config = getOrCreatePidConfig(pid, bundle);
           if (config) {
+            var factoryPidBundleIds = value.factoryPidBundleIds;
+            if (factoryPidBundleIds && factoryPidBundleIds.length) {
+              setFactoryPid(config);
+            }
             config["name"] = value.name || pid;
             var description = value.description;
             if (description) {
@@ -95,14 +178,15 @@ module Osgi {
           }
         });
       }
-      $scope.configurations = $scope.configurations.sortBy("name");
-      Core.$apply($scope);
+      updateConfigurations();
     }
 
+
     function updateTableContents() {
+      $scope.configurations = [];
       var mbean = getSelectionConfigAdminMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(populateTable));
+        jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids));
       }
       var metaTypeMBean = getMetaTypeMBean(workspace);
       if (metaTypeMBean) {
