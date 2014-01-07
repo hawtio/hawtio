@@ -137,7 +137,7 @@ module Osgi {
           var id = attribute.id;
           if (isValidProperty(id)) {
             var key = encodeKey(id);
-            var typeName = asJsonSchemaType(attribute.typeName);
+            var typeName = asJsonSchemaType(attribute.typeName, attribute.id);
             var attributeProperties = {
               title: attribute.name,
               tooltip: attribute.description,
@@ -184,7 +184,7 @@ module Osgi {
           var attrType = "string";
           if (angular.isObject(value)) {
             attrValue = value.Value;
-            attrType = asJsonSchemaType(value.Type);
+            attrType = asJsonSchemaType(value.Type, rawKey);
           }
           entity[key] = attrValue;
           if (!properties[key]) {
@@ -208,7 +208,7 @@ module Osgi {
       return key.replace(/__/g, ".");
     }
 
-    function asJsonSchemaType(typeName) {
+    function asJsonSchemaType(typeName, id) {
       if (typeName) {
         var lower = typeName.toLowerCase();
         if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
@@ -218,6 +218,10 @@ module Osgi {
           return "number";
         }
         if (lower === "string") {
+          // TODO hack to try force password type on dodgy metadata such as pax web
+          if (id && id.endsWith("password")) {
+            return "password";
+          }
           return "string";
         }
         return typeName;
