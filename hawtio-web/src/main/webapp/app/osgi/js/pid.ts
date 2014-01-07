@@ -9,6 +9,8 @@ module Osgi {
     $scope.factoryPid = $routeParams.factoryPid;
     $scope.pid = $routeParams.pid || $scope.factoryPid;
 
+    $scope.selectValues = {};
+
     $scope.modelLoaded = false;
     $scope.canSave = false;
 
@@ -222,8 +224,15 @@ module Osgi {
             var optionLabels = attribute.optionLabels;
             var optionValues = attribute.optionValues;
             if (optionLabels && optionLabels.length && optionValues && optionValues.length) {
-              // enum type
-              log.info("enum type " + id + " for labels " + optionLabels + " and values " + optionValues);
+              var enumObject = {};
+              for (var i = 0; i < optionLabels.length; i++) {
+                var label = optionLabels[i];
+                var value = optionValues[i];
+                enumObject[value] = label;
+              }
+              $scope.selectValues[key] = enumObject;
+              Core.pathSet(attributeProperties, ['input-element'], "select");
+              Core.pathSet(attributeProperties, ['input-attributes', "ng-options"], "key as value for (key, value) in selectValues." + key);
             }
             properties[key] = attributeProperties;
           }
