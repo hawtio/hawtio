@@ -12,13 +12,11 @@ module Osgi {
     $scope.canSave = false;
     $scope.entity = {};
 
-    updateTableContents();
-
     $scope.setEditMode = (flag) => {
       $scope.editMode = flag;
       $scope.formMode = flag ? "edit" : "view";
       if (!flag) {
-        $scope.canSave = false;
+        updateTableContents();
       }
     };
     $scope.setEditMode(false);
