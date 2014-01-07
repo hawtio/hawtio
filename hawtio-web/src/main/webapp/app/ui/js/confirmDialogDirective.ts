@@ -30,6 +30,13 @@ module UI {
      */
     okButtonText: string;
     /**
+     * Whether to show the ok button
+     *
+     * @property showOkButton
+     * @type boolean
+     */
+    showOkButton: string;
+    /**
      * Sets the text used on the dialog's "Cancel" button
      *
      * @property cancelButtonText
@@ -79,6 +86,7 @@ module UI {
       show: '=hawtioConfirmDialog',
       title: '@',
       okButtonText: '@',
+      showOkButton: '@',
       cancelButtonText: '@',
       onCancel: '&',
       onOk: '&',
