@@ -1,10 +1,10 @@
 <div>
   <h4 title="{{metaType.description}}">{{metaType.name || pid}}</h4>
 
-  <div ng-show="!editMode">
+  <div ng-hide="editMode">
     <div class="row-fluid">
       <button class="btn" ng-click="setEditMode(true)">Edit Configuration</button>
-      <button class="btn btn-danger pull-right" ng-show="!editMode" ng-click="deletePidDialog.open()">Delete this Pid</button>
+      <button class="btn btn-danger pull-right" ng-click="deletePidDialog.open()">Delete this Pid</button>
     </div>
     <div class="row-fluid">
       <div simple-form name="pidEditor" mode='view' entity='entity' data='schema' schema="fullSchema"></div>
@@ -12,9 +12,9 @@
   </div>
   <div ng-show="editMode">
     <div class="row-fluid">
-      <button class="btn btn-primary" ng-show="editMode" ng-disabled="!canSave" ng-click="pidSave()">Save Changes</button>
-      <button class="btn" ng-show="editMode" ng-click="addPropertyDialog.open()">Add Property</button>
-      <button class="btn btn-warning pull-right" ng-show="editMode" ng-click="setEditMode(false)">Cancel</button>
+      <button class="btn btn-primary" ng-disabled="!canSave" ng-click="pidSave()">Save Changes</button>
+      <button class="btn" ng-click="addPropertyDialog.open()">Add Property</button>
+      <button class="btn btn-warning pull-right" ng-click="setEditMode(false)">Cancel</button>
     </div>
     <div class="row-fluid">
       <div simple-form name="pidEditor" mode='edit' entity='entity' data='schema' schema="fullSchema"></div>
