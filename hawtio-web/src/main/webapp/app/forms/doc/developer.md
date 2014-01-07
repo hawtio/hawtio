@@ -124,6 +124,20 @@ Use the **control-group-attributes** or **control-attributes** object to add ng-
      }
    }
 
+### Customising label attributes
+
+Use the **label-attributes** object to add custom attributes for labels such as for the css class
+
+    properties: {
+      foo: {
+        type: "string",
+
+        'label-attributes': {
+          'class': 'control-label'
+        }
+     }
+   }
+
 ### Ignoring prefix of deeply nested properties
 
 

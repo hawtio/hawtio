@@ -94,6 +94,8 @@ module Forms {
           labelElement.attr('title', title);
         }
         group.append(labelElement);
+        copyElementAttributes(labelElement, "label-attributes");
+
         var controlDiv = Forms.getControlDiv(config);
         controlDiv.append(input);
         controlDiv.append(Forms.getHelpSpan(config, config, id));
