@@ -2,33 +2,53 @@
  * @module Osgi
  */
 module Osgi {
-  export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams, jolokia) {
+  export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams, $location, jolokia) {
     $scope.deletePropDialog = new Core.Dialog();
     $scope.deletePidDialog = new Core.Dialog();
     $scope.addPropertyDialog = new Core.Dialog();
-    $scope.pid = $routeParams.pid;
+    $scope.factoryPid = $routeParams.factoryPid;
+    $scope.pid = $routeParams.pid || $scope.factoryPid;
 
     $scope.modelLoaded = false;
     $scope.canSave = false;
-    $scope.entity = {};
 
     $scope.setEditMode = (flag) => {
       $scope.editMode = flag;
       $scope.formMode = flag ? "edit" : "view";
-      if (!flag) {
+      if (!flag || !$scope.entity) {
+        $scope.entity = {};
         updateTableContents();
       }
     };
-    $scope.setEditMode(false);
+    var startInEditMode = $scope.factoryPid && !$routeParams.pid;
+    $scope.setEditMode(startInEditMode);
 
     $scope.$on("hawtio.form.modelChange", () => {
       if ($scope.modelLoaded) {
         // TODO lets check if we've really changed the values!
         enableCanSave();
-        //log.info("model changed, can save now: " + $scope.canSave);
         Core.$apply($scope);
       }
     });
+
+    function goToConfigurations() {
+      $location.path("/osgi/configurations");
+    }
+
+    function updatePid(mbean, pid, json) {
+        jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess((response) => {
+          $scope.canSave = false;
+          $scope.setEditMode(false);
+          notification("success", "Successfully updated pid: " + pid);
+
+          if (pid && $scope.factoryPid && !$routeParams.pid) {
+            // we've just created a new pid so lets move to the full pid URL
+            var newPath = Osgi.createPidPath(pid, $scope.factoryPid);
+            $location.path(newPath);
+            //goToConfigurations();
+          }
+        }));
+    }
 
     $scope.pidSave = () => {
       var data = {};
@@ -37,15 +57,30 @@ module Osgi {
         data[decodeKey(key)] = value;
       });
 
-      log.info("about to update value " + angular.toJson(data));
+      //log.info("about to update value " + angular.toJson(data));
 
       var mbean = getHawtioConfigAdminMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "configAdminUpdate", $scope.pid, JSON.stringify(data), onSuccess((response) => {
-          $scope.canSave = false;
-          $scope.setEditMode(false);
-          notification("success", "Successfully updated pid: " + $scope.pid);
-        }));
+        var pidMBean = getSelectionConfigAdminMBean(workspace);
+        var pid = $scope.pid;
+        var json = JSON.stringify(data);
+        var factoryPid = $scope.factoryPid;
+        if (factoryPid && pidMBean) {
+          // lets generate a new pid
+          jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
+            pid = response;
+            if (pid) {
+              updatePid(mbean, pid, json);
+            }
+          }, {
+            error: (response) => {
+              notification("error", "Failed to create new PID: " +  response['error'] || response);
+              Core.defaultJolokiaErrorHandler(response);
+            }
+          }));
+        } else {
+          updatePid(mbean, pid, json);
+        }
       }
     };
 
@@ -94,8 +129,7 @@ module Osgi {
           },
           success: function (response) {
             notification("success", "Successfully deleted pid: " + $scope.pid);
-            // Move back to the overview page
-            window.location.href = "#/osgi/configurations";
+            goToConfigurations();
           }
         });
       }
@@ -115,7 +149,6 @@ module Osgi {
           pid = factoryId["Value"];
         }
         pid = pid || $scope.pid;
-        log.info("looking up MetaType for pid: " + pid);
         jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
       }
       Core.$apply($scope);

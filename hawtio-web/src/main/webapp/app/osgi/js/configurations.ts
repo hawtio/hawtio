@@ -62,7 +62,7 @@ module Osgi {
         class: 'pid',
         description: pidBundleDescription(pid, bundle),
         bundle: bundle,
-        pidLink: url("#/osgi/pid/" + pid + workspace.hash())
+        pidLink: createPidLink(workspace, pid)
       };
       return config;
     }
@@ -101,8 +101,14 @@ module Osgi {
     function setFactoryPid(factoryConfig) {
       factoryConfig["isFactory"] = true;
       factoryConfig["class"] = "factoryPid";
+      var factoryPid = factoryConfig["factoryPid"] || "";
+      var pid = factoryConfig["pid"] || "";
+      if (!factoryPid) {
+        factoryPid = pid;
+        pid = null;
+      }
+      factoryConfig["pidLink"] = createPidLink(workspace, pid, factoryPid);
     }
-
     /**
      * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
      */
@@ -117,9 +123,7 @@ module Osgi {
             var config = pids[pid];
             if (config) {
               config["isFactoryInstance"] = true;
-              log.info("Loading factory pid for: " + pid);
               jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(factoryPid => {
-                log.info("pid " + pid + " is factory pid" + factoryPid);
                 config["factoryPid"] = factoryPid;
                 if (factoryPid) {
                   var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);

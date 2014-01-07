@@ -345,6 +345,28 @@ module Osgi {
         return null;
     }
 
+  /**
+   * Creates a link to the given configuration pid and/or factoryPid
+   */
+    export function createPidLink(workspace, pid, factoryPid = null) {
+      return url("#" + createPidPath(pid, factoryPid) + workspace.hash())
+    }
+
+  /**
+   * Creates a path to the given configuration pid and/or factoryPid
+   */
+    export function createPidPath(pid, factoryPid = null) {
+      var link;
+      pid = pid || "";
+      if (factoryPid) {
+        link = pid + "/" + factoryPid;
+      } else {
+        link = pid;
+      }
+      return "/osgi/pid/" + link;
+    }
+
+
     export function getHawtioConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
