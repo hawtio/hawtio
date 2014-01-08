@@ -110,6 +110,7 @@ module Osgi {
               config["isFactoryInstance"] = true;
               $scope.jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(factoryPid => {
                 config["factoryPid"] = factoryPid;
+                config["name"] = removeFactoryPidPrefix(pid, factoryPid);
                 if (factoryPid) {
                   var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
                   if (factoryConfig) {
@@ -124,7 +125,7 @@ module Osgi {
                       Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, pid, (configValues) => {
                         var zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
                         if (zkPid) {
-                          config["name"] = zkPid;
+                          config["name"] = removeFactoryPidPrefix(zkPid, factoryPid);
                           config["zooKeeperPid"] = zkPid;
                           Core.$apply($scope);
                         }

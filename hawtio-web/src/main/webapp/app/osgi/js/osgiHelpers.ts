@@ -427,4 +427,20 @@ module Osgi {
     return answer;
   }
 
+  /**
+   * For a pid of the form "foo.generatedId" for a pid "foo" or "foo.bar" remove the "foo." prefix
+   */
+  export function removeFactoryPidPrefix(pid, factoryPid) {
+    if (pid && factoryPid) {
+      if (pid.startsWith(factoryPid)) {
+        return pid.substring(factoryPid.length + 1);
+      }
+      var idx = factoryPid.lastIndexOf(".");
+      if (idx > 0) {
+        var prefix = factoryPid.substring(0, idx + 1);
+        return Core.trimLeading(pid, prefix);
+      }
+    }
+    return pid;
+  }
 }
