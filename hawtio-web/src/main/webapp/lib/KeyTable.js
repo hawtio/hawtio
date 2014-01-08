@@ -420,7 +420,11 @@ function KeyTable ( oInit )
 		if ( _oDatatable )
 		{
 			oSettings = _oDatatable.fnSettings();
-			var iRow = _fnFindDtCell( nTarget )[1];
+      var cell = _fnFindDtCell( nTarget );
+      if (cell === null) {
+        return;
+      }
+			var iRow = cell[1];
 			var bKeyCaptureCache = _bKeyCapture;
 			
 			/* Page forwards */

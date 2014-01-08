@@ -255,7 +255,7 @@ module Core {
         });
 
         // $(document).on("click", "#grid td", function () {
-        $(tableElement).on("click", "td.control", function () {
+        $(tableElement).find("td.control").on("click", function (event) {
           var dataTable = widget.dataTable;
           if ($(this).hasClass('selected')) {
             $(this).removeClass('focus selected');
