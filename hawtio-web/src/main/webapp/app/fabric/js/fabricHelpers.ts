@@ -19,7 +19,7 @@ module Fabric {
   export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;
 
   export var useDirectoriesInGit = true;
-  var fabricTopLevel = "fabric/profiles/";
+  export var fabricTopLevel = "fabric/profiles/";
   export var profileSuffix = ".profile";
 
   export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
@@ -421,7 +421,11 @@ module Fabric {
   }
 
   export function profilePath(profileId) {
-    return profileId.replace(/-/g, "/") + profileSuffix;
+    if (profileId) {
+      return profileId.replace(/-/g, "/") + profileSuffix;
+    } else {
+      return null;
+    }
   }
 
   export function profileLink(workspace, jolokia, localStorage, versionId, profileId) {

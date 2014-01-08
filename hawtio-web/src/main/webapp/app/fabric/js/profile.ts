@@ -28,6 +28,7 @@ module Fabric {
     $scope.selectedParents = [];
 
     $scope.profilePath = Fabric.profilePath;
+    $scope.pageId = fabricTopLevel + Fabric.profilePath($scope.profileId);
 
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
