@@ -29,6 +29,14 @@ module Fabric {
 
     $scope.profilePath = Fabric.profilePath;
 
+    var versionId = $scope.versionId;
+    var profileId = $scope.profileId;
+    if (versionId && versionId) {
+      Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
+        $scope.profileJolokia = profileJolokia;
+      });
+    }
+
     if ($scope.inDirective &&
         angular.isDefined($scope.$parent.childActions) &&
         $scope.versionId) {

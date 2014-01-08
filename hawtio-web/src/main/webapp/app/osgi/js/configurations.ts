@@ -3,7 +3,7 @@
  */
 module Osgi {
 
-  export function ConfigurationsController($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes, jolokia) {
+  export function ConfigurationsController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
     $scope.selectedItems = [];
 
     $scope.grid = {
@@ -30,12 +30,16 @@ module Osgi {
 
     $scope.addPidDialog = new Core.Dialog();
 
+    initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, () => {
+      updateTableContents();
+    });
+
     $scope.addPid = (newPid) => {
       $scope.addPidDialog.close();
-      var mbean = getHawtioConfigAdminMBean(workspace);
+      var mbean = getHawtioConfigAdminMBean($scope.workspace);
       if (mbean && newPid) {
         var json = JSON.stringify({});
-        jolokia.execute(mbean, "configAdminUpdate", newPid, json, onSuccess(response => {
+        $scope.jolokia.execute(mbean, "configAdminUpdate", newPid, json, onSuccess(response => {
           notification("success", "Successfully created pid: " + newPid);
           updateTableContents();
         }));
@@ -62,10 +66,24 @@ module Osgi {
         class: 'pid',
         description: pidBundleDescription(pid, bundle),
         bundle: bundle,
-        pidLink: createPidLink(workspace, pid)
+        pidLink: createPidLink(pid)
       };
       return config;
     }
+
+    function createPidLink(pid, factoryPid = null) {
+      return createConfigPidLink($scope, workspace, pid, factoryPid);
+    }
+
+    function errorHandler(message) {
+      return {
+        error: (response) => {
+          notification("error", message + response['error'] || response);
+          Core.defaultJolokiaErrorHandler(response);
+        }
+      };
+    }
+
 
     function onConfigPids(response) {
       var pids = {};
@@ -79,9 +97,10 @@ module Osgi {
       $scope.pids = pids;
 
       // lets load the factory pids
-      var mbean = getSelectionConfigAdminMBean(workspace);
+      var mbean = getSelectionConfigAdminMBean($scope.workspace);
       if (mbean) {
-        jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)', onSuccess(onConfigFactoryPids));
+        $scope.jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)',
+          onSuccess(onConfigFactoryPids, errorHandler("Failed to load factory PID configurations: ")));
       } else {
         updateMetaType();
       }
@@ -107,13 +126,13 @@ module Osgi {
         factoryPid = pid;
         pid = null;
       }
-      factoryConfig["pidLink"] = createPidLink(workspace, pid, factoryPid);
+      factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
     }
     /**
      * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
      */
     function onConfigFactoryPids(response) {
-      var mbean = getSelectionConfigAdminMBean(workspace);
+      var mbean = getSelectionConfigAdminMBean($scope.workspace);
       var pids = $scope.pids;
       if (pids && mbean) {
         angular.forEach(response, (row) => {
@@ -123,7 +142,7 @@ module Osgi {
             var config = pids[pid];
             if (config) {
               config["isFactoryInstance"] = true;
-              jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(factoryPid => {
+              $scope.jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(factoryPid => {
                 config["factoryPid"] = factoryPid;
                 if (factoryPid) {
                   var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
@@ -185,16 +204,18 @@ module Osgi {
       updateConfigurations();
     }
 
-
     function updateTableContents() {
+      log.info("updateTableContents $scope.jolokia " + $scope.jolokia + " pids " + $scope.pids);
       $scope.configurations = [];
-      var mbean = getSelectionConfigAdminMBean(workspace);
-      if (mbean) {
-        jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids));
-      }
-      var metaTypeMBean = getMetaTypeMBean(workspace);
-      if (metaTypeMBean) {
-        jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+      if ($scope.jolokia) {
+        var mbean = getSelectionConfigAdminMBean($scope.workspace);
+        if (mbean) {
+          $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
+        }
+        var metaTypeMBean = getMetaTypeMBean($scope.workspace);
+        if (metaTypeMBean && $scope.pids) {
+          $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+        }
       }
     }
   }

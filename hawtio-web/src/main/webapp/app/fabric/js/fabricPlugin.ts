@@ -28,6 +28,9 @@ module Fabric {
             when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
+            when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).
+            when('/fabric/configuration/:versionId/:profileId/:pid', { templateUrl: 'app/osgi/html/pid.html' }).
+            when('/fabric/configuration/:versionId/:profileId/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).
             when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
             when('/fabric/mq/brokerDiagram', { templateUrl: activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).
             when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).

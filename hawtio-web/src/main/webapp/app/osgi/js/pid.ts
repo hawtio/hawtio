@@ -33,23 +33,23 @@ module Osgi {
       }
     });
 
-    function goToConfigurations() {
-      $location.path("/osgi/configurations");
-    }
+    initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, () => {
+      updateTableContents();
+    });
 
     function updatePid(mbean, pid, json) {
-        jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess((response) => {
-          $scope.canSave = false;
-          $scope.setEditMode(false);
-          notification("success", "Successfully updated pid: " + pid);
+      $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess((response) => {
+        $scope.canSave = false;
+        $scope.setEditMode(false);
+        notification("success", "Successfully updated pid: " + pid);
 
-          if (pid && $scope.factoryPid && !$routeParams.pid) {
-            // we've just created a new pid so lets move to the full pid URL
-            var newPath = Osgi.createPidPath(pid, $scope.factoryPid);
-            $location.path(newPath);
-            //goToConfigurations();
-          }
-        }));
+        if (pid && $scope.factoryPid && !$routeParams.pid) {
+          // we've just created a new pid so lets move to the full pid URL
+          var newPath = createConfigPidPath($scope, pid, $scope.factoryPid);
+          $location.path(newPath);
+          //goToConfigurations();
+        }
+      }));
     }
 
     $scope.pidSave = () => {
@@ -61,22 +61,22 @@ module Osgi {
 
       //log.info("about to update value " + angular.toJson(data));
 
-      var mbean = getHawtioConfigAdminMBean(workspace);
+      var mbean = getHawtioConfigAdminMBean($scope.workspace);
       if (mbean) {
-        var pidMBean = getSelectionConfigAdminMBean(workspace);
+        var pidMBean = getSelectionConfigAdminMBean($scope.workspace);
         var pid = $scope.pid;
         var json = JSON.stringify(data);
         var factoryPid = $scope.factoryPid;
         if (factoryPid && pidMBean) {
           // lets generate a new pid
-          jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
+          $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
             pid = response;
             if (pid) {
               updatePid(mbean, pid, json);
             }
           }, {
             error: (response) => {
-              notification("error", "Failed to create new PID: " +  response['error'] || response);
+              notification("error", "Failed to create new PID: " + response['error'] || response);
               Core.defaultJolokiaErrorHandler(response);
             }
           }));
@@ -118,9 +118,9 @@ module Osgi {
     $scope.deletePidConfirmed = () => {
       $scope.deletePidDialog.close();
 
-      var mbean = getSelectionConfigAdminMBean(workspace);
+      var mbean = getSelectionConfigAdminMBean($scope.workspace);
       if (mbean) {
-        jolokia.request({
+        $scope.jolokia.request({
           type: "exec",
           mbean: mbean,
           operation: 'delete',
@@ -131,7 +131,7 @@ module Osgi {
           },
           success: function (response) {
             notification("success", "Successfully deleted pid: " + $scope.pid);
-            goToConfigurations();
+            $location.path($scope.configurationsLink);
           }
         });
       }
@@ -142,7 +142,7 @@ module Osgi {
       var configValues = response.value || {};
       $scope.configValues = configValues;
       updateSchema();
-      var metaTypeMBean = getMetaTypeMBean(workspace);
+      var metaTypeMBean = getMetaTypeMBean($scope.workspace);
       if (metaTypeMBean) {
         var locale = null;
         var pid = null;
@@ -151,7 +151,7 @@ module Osgi {
           pid = factoryId["Value"];
         }
         pid = pid || $scope.pid;
-        jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+        $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
       }
       Core.$apply($scope);
     }
@@ -302,10 +302,10 @@ module Osgi {
     }
 
     function updateTableContents() {
-      var mbean = getSelectionConfigAdminMBean(workspace);
-      if (mbean) {
+      var mbean = getSelectionConfigAdminMBean($scope.workspace);
+      if ($scope.jolokia && mbean) {
         $scope.modelLoaded = false;
-        jolokia.request(
+        $scope.jolokia.request(
           {type: 'exec', mbean: mbean, operation: 'getProperties', arguments: [$scope.pid]},
           onSuccess(populateTable));
       }
