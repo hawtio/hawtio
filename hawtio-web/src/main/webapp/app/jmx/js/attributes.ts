@@ -55,14 +55,12 @@ module Jmx {
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
-      //plugins: [$scope.selectToggle],
       showFilter: false,
-      //showColumnMenu: false,
       canSelectRows: false,
       enableRowSelection: false,
       keepLastSelected: false,
       multiSelect: false,
-      showColumnMenu: true,
+      showColumnMenu: false,
       displaySelectionCheckbox: false,
       filterOptions: {
         filterText: ''
