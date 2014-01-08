@@ -67,4 +67,4 @@
 * Added support for Apache Tomcat security using the conf/tomcat-users.xml file as user database.
 * Added [quartz](http://hawt.io/plugins/quartz/) plugin to manage quartz schedulers.
 * Allow to configure the HTTP session timeout used by hawtio. hawti now uses the default timeout of the web container, instead of hardcoded value of 900 seconds. 
-
+* The [JMX](http://hawt.io/plugins/jmx/) plugin can now edit JMX attributes.
