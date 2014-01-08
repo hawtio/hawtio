@@ -70,7 +70,8 @@ module Forms {
 
       input.attr('name', id);
 
-      if (config.isReadOnly()) {
+      var readOnlyFn = config.isReadOnly;
+      if (angular.isFunction(readOnlyFn) && readOnlyFn()) {
         input.attr('readonly', 'true');
       }
       var title = property.tooltip || property.label;
