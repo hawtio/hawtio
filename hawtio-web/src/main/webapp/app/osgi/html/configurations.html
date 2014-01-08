@@ -1,11 +1,15 @@
 <style type="text/css">
+  .configuration-header {
+    margin: 20px 20px;
+  }
+
   ul.configurations,
   ul.configurations li {
     list-style: none;
   }
 
   ul.configurations {
-    margin: 20px 20px;
+    margin: 0px 20px;
   }
 
   ul.configurations .bundle-item {
@@ -24,15 +28,14 @@
 
 <div class="controller-section" ng-controller="Osgi.ConfigurationsController">
   <div class="row-fluid">
-    <div class="section-header">
-      <div class="section-filter">
-        <input type="text" class="search-query" placeholder="Filter..." ng-model="filterText">
+    <div class="configuration-header">
+      <div class="configuration-filter">
+        <input type="text" class="span8 search-query" placeholder="Filter..." ng-model="filterText">
         <i class="icon-remove clickable" title="Clear Filter" ng-click="filterText = ''"></i>
+        <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration"><i
+                class="icon-plus"></i> Configuration
+        </button>
       </div>
-
-      <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration"><i
-              class="icon-plus"></i> Configuration
-      </button>
     </div>
   </div>
 
@@ -44,7 +47,7 @@
       <ul ng-show="config.isFactory">
         <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>
           <a ng-href="{{child.pidLink}}" title="{{child.description}}">
-          <span class="{{child.kind.class}}" title="{{child.kind.title}}">{{child.name}}</span>
+            <span class="{{child.kind.class}}" title="{{child.kind.title}}">{{child.name}}</span>
           </a>
         </li>
       </ul>
