@@ -6,6 +6,7 @@ module Quartz {
   export var log:Logging.Logger = Logger.get("Quartz");
 
   export function iconClass(state:string) {
+    log.info("state " + state);
     if (state) {
       switch (state.toString().toLowerCase()) {
         case 'true':
@@ -20,6 +21,7 @@ module Quartz {
   }
 
   export function misfireText(val:number) {
+    log.info("misfire " + val);
     if (val) {
       switch (val) {
         case -1:
