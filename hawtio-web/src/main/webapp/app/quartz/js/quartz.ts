@@ -7,9 +7,9 @@ module Quartz {
 
     var log:Logging.Logger = Logger.get("Quartz");
 
-    var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | quartzIconClass}}"></i></div>';
-    var misfireTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">{{row.getProperty(col.field) | quartzMisfire}}</div>';
-    var jobMapTemplate = '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.getProperty(col.field) | quartzJobDataClassText"></div>';
+    var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
+    var misfireTemplate = '<div class="ngCellText" title="{{row.entity.field}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
+    var jobMapTemplate = '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.jobClass | quartzJobDataClassText"></div>';
 
     $scope.valueDetails = new Core.Dialog();
 
@@ -68,7 +68,7 @@ module Quartz {
         filterText: ''
       },
       showColumnMenu: true,
-      showSelectionCheckbox: false,
+      showSelectionCheckbox: true,
       multiSelect: false,
       columnDefs: [
         {
