@@ -28,6 +28,22 @@ module Osgi {
       ]
     };
 
+    /** the kinds of config */
+    var configKinds = {
+      factory: {
+        class: "badge badge-info",
+        title: "Configuration factory used to create separate instances of the configuration"
+      },
+      pid: {
+        class: "badge badge-success",
+        title: "Configuration which has a set of properties associated with it"
+      },
+      pidNoValue: {
+        class: "badge badge-warning",
+        title: "Configuration which does not yet have any bound values"
+      }
+    };
+
     $scope.addPidDialog = new Core.Dialog();
 
     initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, () => {
@@ -55,35 +71,6 @@ module Osgi {
       updateTableContents();
     });
 
-    function pidBundleDescription(pid, bundle) {
-      return  "pid: " + pid + "\nbundle: " + bundle;
-    }
-
-    function createPidConfig(pid, bundle) {
-      var config = {
-        pid: pid,
-        name: pid,
-        class: 'pid',
-        description: pidBundleDescription(pid, bundle),
-        bundle: bundle,
-        pidLink: createPidLink(pid)
-      };
-      return config;
-    }
-
-    function createPidLink(pid, factoryPid = null) {
-      return createConfigPidLink($scope, workspace, pid, factoryPid);
-    }
-
-    function errorHandler(message) {
-      return {
-        error: (response) => {
-          notification("error", message + response['error'] || response);
-          Core.defaultJolokiaErrorHandler(response);
-        }
-      };
-    }
-
 
     function onConfigPids(response) {
       var pids = {};
@@ -92,6 +79,7 @@ module Osgi {
         var bundle = row[1];
         var config = createPidConfig(pid, bundle);
         config["hasValue"] = true;
+        config["kind"] = configKinds.pid;
         pids[pid] = config;
       });
       $scope.pids = pids;
@@ -106,28 +94,6 @@ module Osgi {
       }
     }
 
-    function getOrCreatePidConfig(pid, bundle) {
-      var pids = $scope.pids;
-      var factoryConfig = pids[pid];
-      if (!factoryConfig) {
-        factoryConfig = createPidConfig(pid, bundle);
-        pids[pid] = factoryConfig;
-        updateConfigurations();
-      }
-      return factoryConfig;
-    }
-
-    function setFactoryPid(factoryConfig) {
-      factoryConfig["isFactory"] = true;
-      factoryConfig["class"] = "factoryPid";
-      var factoryPid = factoryConfig["factoryPid"] || "";
-      var pid = factoryConfig["pid"] || "";
-      if (!factoryPid) {
-        factoryPid = pid;
-        pid = null;
-      }
-      factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
-    }
     /**
      * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
      */
@@ -218,5 +184,63 @@ module Osgi {
         }
       }
     }
+
+    function pidBundleDescription(pid, bundle) {
+      return  "pid: " + pid + "\nbundle: " + bundle;
+    }
+
+    function createPidConfig(pid, bundle) {
+      var config = {
+        pid: pid,
+        name: pid,
+        class: 'pid',
+        description: pidBundleDescription(pid, bundle),
+        bundle: bundle,
+        kind: configKinds.pidNoValue,
+        pidLink: createPidLink(pid)
+      };
+      return config;
+    }
+
+
+    function getOrCreatePidConfig(pid, bundle) {
+      var pids = $scope.pids;
+      var factoryConfig = pids[pid];
+      if (!factoryConfig) {
+        factoryConfig = createPidConfig(pid, bundle);
+        pids[pid] = factoryConfig;
+        updateConfigurations();
+      }
+      return factoryConfig;
+    }
+
+    function setFactoryPid(factoryConfig) {
+      factoryConfig["isFactory"] = true;
+      factoryConfig["class"] = "factoryPid";
+      factoryConfig["kind"] = configKinds.factory;
+      var factoryPid = factoryConfig["factoryPid"] || "";
+      var pid = factoryConfig["pid"] || "";
+      if (!factoryPid) {
+        factoryPid = pid;
+        pid = null;
+      }
+      factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
+    }
+
+    function createPidLink(pid, factoryPid = null) {
+      return createConfigPidLink($scope, workspace, pid, factoryPid);
+    }
+
+    function errorHandler(message) {
+      return {
+        error: (response) => {
+          notification("error", message + response['error'] || response);
+          Core.defaultJolokiaErrorHandler(response);
+        }
+      };
+    }
+
+
+
   }
 }

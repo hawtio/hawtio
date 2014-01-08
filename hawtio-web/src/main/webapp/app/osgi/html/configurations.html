@@ -8,33 +8,17 @@
     margin: 20px 20px;
   }
 
-  ul.configurations li {
-    margin: 1px;
-    line-height: 34px;
+  ul.configurations .bundle-item {
+    display: list-item;
+    margin-bottom: 4px;
   }
 
-  ul.configurations li a {
-    color: #404040;
-    padding: 3px 10px;
-    border-radius: 4px;
-    border: 1px solid #d4d4d4;
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(34%, #ffffff), color-stop(76%, #f4f4f4));
-    background: -webkit-linear-gradient(top, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
-    background: -o-linear-gradient(top, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
-    background: -ms-linear-gradient(top, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
-    background: linear-gradient(to bottom, #ffffff 0%, #ffffff 34%, #f4f4f4 76%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4', GradientType=0);
-    z-index: 5;
-  }
-  ul.configurations li.factoryPid a {
-    font-weight: bold;
-  }
-
-  ul.configurations li.pid a {
-    font-weight: normal;
+  ul.configurations li.bundle-item a {
+    /*
+      TODO it'd be nice to use the natural widgth here,
+      but then it might be nice to use multiple columns?
+    */
+    width: 450px;
   }
 </style>
 
@@ -53,11 +37,15 @@
   </div>
 
   <ul class="configurations">
-    <li ng-repeat='config in configurations | filter:filterText'  class='{{config.class}}'>
-      <a ng-href="{{config.pidLink}}" title="{{config.description}}">{{config.name}}</a>
+    <li ng-repeat='config in configurations | filter:filterText' class='{{config.class}} bundle-item'>
+      <a ng-href="{{config.pidLink}}" title="{{config.description}}">
+        <span class="{{config.kind.class}}" title="{{config.kind.title}}">{{config.name}}</span>
+      </a>
       <ul ng-show="config.isFactory">
-        <li ng-repeat="child in config.children" class='{{child.class}}'>
-          <a ng-href="{{child.pidLink}}" title="{{child.description}}">{{child.name}}</a>
+        <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>
+          <a ng-href="{{child.pidLink}}" title="{{child.description}}">
+          <span class="{{config.kind.class}}" title="{{config.kind.title}}">{{child.name}}</span>
+          </a>
         </li>
       </ul>
     </li>
