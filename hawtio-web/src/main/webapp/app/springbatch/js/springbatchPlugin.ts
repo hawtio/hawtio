@@ -6,6 +6,7 @@ module SpringBatch {
     angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).
         config(($routeProvider) => {
             $routeProvider
+                .when('/springbatch/servers', {templateUrl: SpringBatch.templatePath + 'serverList.html'})
                 .when('/springbatch/jobs', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
                 .when('/springbatch/jobs/:jobName/executions', {templateUrl: SpringBatch.templatePath + 'overview.html'})
                 .when('/springbatch/jobs/:jobName/executions/:jobInstanceId', {templateUrl: SpringBatch.templatePath + 'overview.html'})
@@ -34,7 +35,7 @@ module SpringBatch {
                 content: "SpringBatch",
                 title: "View Spring-Batch jobs",
                 isValid: (workspace: Workspace) => true,
-                href: () => "#/springbatch/jobs",
+                href: () => "#/springbatch/servers",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
