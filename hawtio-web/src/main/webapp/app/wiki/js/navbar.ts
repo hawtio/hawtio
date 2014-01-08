@@ -11,6 +11,8 @@ module Wiki {
       return Wiki.createLink($scope.branch, pageId, $location, $scope);
     };
 
+    $scope.startLink = startLink($scope.branch);
+
     $scope.sourceLink = () => {
       var path = $location.path();
       var answer = null;
