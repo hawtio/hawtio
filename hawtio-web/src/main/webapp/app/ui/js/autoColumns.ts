@@ -51,10 +51,10 @@ module UI {
         }
         var margin = (containerWidth - (columns * childWidth)) / columns / 2;
 
-        log.debug("child width: ", childWidth);
-        log.debug("Inner width: ", containerWidth);
-        log.debug("columns: ", columns);
-        log.debug("margin: ", margin);
+        //log.debug("child width: ", childWidth);
+        //log.debug("Inner width: ", containerWidth);
+        //log.debug("columns: ", columns);
+        //log.debug("margin: ", margin);
 
         children.each(function(child) {
           $(this).css({
