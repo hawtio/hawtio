@@ -2,7 +2,7 @@
  * @module Osgi
  */
 module Osgi {
-  export function PidController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams, $location, jolokia) {
+  export function PidController($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) {
     $scope.deletePropDialog = new Core.Dialog();
     $scope.deletePidDialog = new Core.Dialog();
     $scope.addPropertyDialog = new Core.Dialog();
@@ -37,19 +37,27 @@ module Osgi {
       updateTableContents();
     });
 
-    function updatePid(mbean, pid, json) {
-      $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess((response) => {
-        $scope.canSave = false;
-        $scope.setEditMode(false);
+    function updatePid(mbean, pid, data) {
+      var completeFn = (response) => {
         notification("success", "Successfully updated pid: " + pid);
 
-        if (pid && $scope.factoryPid && !$routeParams.pid) {
+        if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
           // we've just created a new pid so lets move to the full pid URL
           var newPath = createConfigPidPath($scope, pid, $scope.factoryPid);
           $location.path(newPath);
-          //goToConfigurations();
+        } else {
+          $scope.setEditMode(false);
+          $scope.canSave = false;
+          $scope.saved = true;
         }
-      }));
+      };
+      var callback = onSuccess(completeFn, errorHandler("Failed to update: " + pid));
+      if ($scope.inFabricProfile) {
+        jolokia.execute(Fabric.managerMBean, "setProfileProperties", $scope.versionId, $scope.profileId, pid, data, callback);
+      } else {
+        var json = JSON.stringify(data);
+        $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, callback);
+      }
     }
 
     $scope.pidSave = () => {
@@ -61,30 +69,37 @@ module Osgi {
 
       //log.info("about to update value " + angular.toJson(data));
 
-      var mbean = getHawtioConfigAdminMBean($scope.workspace);
+      var mbean = getHawtioConfigAdminMBean(workspace);
       if (mbean) {
         var pidMBean = getSelectionConfigAdminMBean($scope.workspace);
         var pid = $scope.pid;
-        var json = JSON.stringify(data);
+        var zkPid = $scope.zkPid;
         var factoryPid = $scope.factoryPid;
-        if (factoryPid && pidMBean) {
+        if (factoryPid && pidMBean && !zkPid) {
           // lets generate a new pid
           $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
             pid = response;
             if (pid) {
-              updatePid(mbean, pid, json);
+              updatePid(mbean, pid, data);
             }
-          }, {
-            error: (response) => {
-              notification("error", "Failed to create new PID: " + response['error'] || response);
-              Core.defaultJolokiaErrorHandler(response);
-            }
-          }));
+          }, errorHandler("Failed to create new PID: ")));
         } else {
-          updatePid(mbean, pid, json);
+          if (zkPid) {
+            pid = zkPid;
+          }
+          updatePid(mbean, pid, data);
         }
       }
     };
+
+    function errorHandler(message) {
+       return {
+         error: (response) => {
+           notification("error", message + "\n" + response['error'] || response);
+           Core.defaultJolokiaErrorHandler(response);
+         }
+       }
+    }
 
     function enableCanSave() {
       if ($scope.editMode) {
@@ -141,9 +156,35 @@ module Osgi {
       $scope.modelLoaded = true;
       var configValues = response || {};
       $scope.configValues = configValues;
+      $scope.zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+
+      if ($scope.zkPid && $scope.saved) {
+        // lets load the current properties direct from git
+        // in case we have just saved them into git and config admin hasn't yet
+        // quite caught up yet (to avoid freaking the user out that things look like
+        // changes got reverted ;)
+        function onProfileProperties(gitProperties) {
+          log.info("Just loaded git properties: " + angular.toJson(gitProperties, true));
+          angular.forEach(gitProperties, (value, key) => {
+            var configProperty = configValues[key];
+            if (configProperty) {
+              configProperty.Value = value;
+            }
+          });
+          updateSchemaAndLoadMetaType();
+          Core.$apply($scope);
+        }
+        jolokia.execute(Fabric.managerMBean, "getProfileProperties", $scope.versionId, $scope.profileId, $scope.zkPid, onSuccess(onProfileProperties));
+      } else {
+        updateSchemaAndLoadMetaType();
+      }
+    }
+
+    function updateSchemaAndLoadMetaType() {
       updateSchema();
       var metaTypeMBean = getMetaTypeMBean($scope.workspace);
-      if (metaTypeMBean) {
+      var configValues = $scope.configValues;
+      if (metaTypeMBean && configValues) {
         var locale = null;
         var pid = null;
         var factoryId = configValues["service.factoryPid"];
@@ -153,7 +194,6 @@ module Osgi {
         pid = pid || $scope.pid;
         $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
       }
-      $scope.pidName = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
       Core.$apply($scope);
     }
 
