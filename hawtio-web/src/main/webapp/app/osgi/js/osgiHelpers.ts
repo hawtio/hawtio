@@ -396,6 +396,7 @@ module Osgi {
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     if (versionId && versionId) {
+      $scope.inFabricProfile = true;
       $scope.configurationsLink = "/fabric/configurations/" + versionId + "/" + profileId;
 
       Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
@@ -412,4 +413,14 @@ module Osgi {
       initFn();
     }
   }
+
+  export function getConfigurationProperties(workspace, jolokia, pid, onDataFn) {
+    var mbean = getSelectionConfigAdminMBean(workspace);
+    var answer = null;
+    if (jolokia && mbean) {
+      answer = jolokia.execute(mbean, 'getProperties', pid, onSuccess(onDataFn));
+    }
+    return answer;
+  }
+
 }
