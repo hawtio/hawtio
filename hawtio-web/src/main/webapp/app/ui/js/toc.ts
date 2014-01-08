@@ -183,7 +183,7 @@ module UI {
                     link.setAttribute("chapter-id", chapterId);
                   }
                   if (index > 0) {
-                    panelHeader = $('<div class="panel-title"><a class="toc-back" href="">Back to Contents</a></div>');
+                    panelHeader = $('<div class="panel-title"><a class="toc-back" href="">Back to Top</a></div>');
                   }
                   var panelBody = $('<div class="panel-body" id="' + chapterId + '">' + chapter['text'] + '</div>');
                   if (panelHeader) {
