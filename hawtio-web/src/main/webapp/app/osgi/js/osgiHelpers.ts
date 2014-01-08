@@ -376,7 +376,7 @@ module Osgi {
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     if (versionId && versionId) {
-      return "/fabric/configuration/" + versionId + "/" + profileId + "/" + link;
+      return "/wiki/branch/" + versionId + "/configuration/" + link + "/" + $scope.pageId;
     } else {
       return "/osgi/pid/" + link;
     }
@@ -387,8 +387,12 @@ module Osgi {
    * or use a local jolokia
    */
   export function initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, initFn = null) {
-    $scope.versionId = $routeParams.versionId;
-    $scope.profileId = $routeParams.profileId;
+    Wiki.initScope($scope, $routeParams, $location);
+    $scope.versionId = $routeParams.versionId || $scope.branch;
+    $scope.profileId = $routeParams.profileId || Fabric.pagePathToProfileId($scope.pageId);
+    if (!$scope.pageId) {
+      $scope.pageId = Fabric.fabricTopLevel + Fabric.profilePath($scope.profileId)
+    }
 
     if (!initFn) {
       initFn = () => null;
@@ -397,7 +401,7 @@ module Osgi {
     var profileId = $scope.profileId;
     if (versionId && versionId) {
       $scope.inFabricProfile = true;
-      $scope.configurationsLink = "/fabric/configurations/" + versionId + "/" + profileId;
+      $scope.configurationsLink = "/wiki/branch/" + versionId + "/configurations/" + $scope.pageId;
 
       Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
         $scope.jolokia = profileJolokia;
