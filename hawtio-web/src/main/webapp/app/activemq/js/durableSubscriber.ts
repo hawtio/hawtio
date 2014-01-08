@@ -47,7 +47,7 @@ module ActiveMQ {
           {
             field: 'consumerId',
             displayName: 'Consumer ID',
-            cellTemplate: '<div class="ngCellText"><a ng-click="openSubscriberDialog(row)">{{row.entity.consumerId}}</a></div>',
+            cellTemplate: '<div class="ngCellText"><span ng-hide="row.entity.status != \'Offline\'">{{row.entity.consumerId}}</span><a ng-show="row.entity.status != \'Offline\'" ng-click="openSubscriberDialog(row)">{{row.entity.consumerId}}</a></div>',
             width: '30%'
           },
           {
@@ -64,6 +64,9 @@ module ActiveMQ {
           $scope.subscriberName = subscriberName;
           $scope.topicName = topicName;
           $scope.subSelector = subSelector;
+          if (Core.isBlank($scope.subSelector)) {
+            $scope.subSelector = null;
+          }
           var mbean = getBrokerMBean(jolokia);
           if (mbean) {
               jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function() {
@@ -131,9 +134,13 @@ module ActiveMQ {
 
       function populateTable(response, attr, status) {
           var data = response.value;
+          log.debug("Got data: ", data);
           $scope.durableSubscribers.push.apply($scope.durableSubscribers, data[attr].map(o => {
               var objectName = o["objectName"];
               var entries = Core.objectNameProperties(objectName);
+              if ( !('objectName' in o)) {
+                entries = Object.extended(o['keyPropertyList']).clone();
+              }
               entries["_id"] = objectName;
               entries["status"] = status;
               return entries;
