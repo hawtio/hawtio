@@ -1014,6 +1014,14 @@ input[type="checkbox"].hawtio-checkbox {
   background: #ee0002;
   box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(195, 6, 0, 0.47);
 }
+.bundle-item a span.badge-info::before {
+  background: #3a87ad;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(45, 105, 135, 0.47);
+}
+.bundle-item a span.badge-warning::before {
+  background: #f89406;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(198, 118, 5, 0.47);
+}
 
 .bundle-item a.toggle-action {
   position: absolute;
