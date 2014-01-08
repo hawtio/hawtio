@@ -4,9 +4,13 @@
 module Maven {
 
   export function SearchController($scope, $location, workspace:Workspace, jolokia) {
+
+    var log:Logging.Logger = Logger.get("Maven");
+
     $scope.artifacts = [];
     $scope.selected = [];
     $scope.done = false;
+    $scope.inProgress = false;
     $scope.form = {
       searchText: ""
     };
@@ -54,6 +58,14 @@ module Maven {
 
     $scope.doSearch = () => {
       $scope.done = false;
+      $scope.inProgress = true;
+      $scope.artifacts = [];
+
+      // ensure ui is updated with search in progress...
+      setTimeout( () => {
+        Core.$apply($scope)
+      }, 50);
+
       var mbean = Maven.getMavenIndexerMBean(workspace);
       var form = $scope.form;
       if (mbean) {
@@ -61,19 +73,20 @@ module Maven {
         var kind = form.artifactType;
         if (kind) {
           if (kind === "className") {
+            log.debug("Search for: " + form.searchText + " className");
             jolokia.execute(mbean, "searchClasses", searchText, onSuccess(render));
           } else {
             var paths = kind.split('/');
             var packaging = paths[0];
             var classifier = paths[1];
-            console.log("Search for: " + form.searchText + " packaging " + packaging + " classifier " + classifier);
+            log.debug("Search for: " + form.searchText + " packaging " + packaging + " classifier " + classifier);
             jolokia.execute(mbean, "searchTextAndPackaging", searchText, packaging, classifier, onSuccess(render));
           }
         } else if (searchText) {
-          console.log("Search text is: " + form.searchText);
+          log.debug("Search text is: " + form.searchText);
           jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
         } else if ($scope.hasAdvancedSearch(form)) {
-          console.log("Searching for " +
+          log.debug("Searching for " +
                   form.searchGroup + "/" + form.searchArtifact + "/" +
                   form.searchVersion + "/" + form.searchPackaging + "/" +
                   form.searchClassifier + "/" + form.searchClassName);
@@ -84,12 +97,14 @@ module Maven {
                   onSuccess(render));
         }
       } else {
-        notification("error", "Could not find the Maven Indexer MBean!");
+        notification("error", "Cannot find the Maven Indexer MBean!");
       }
     };
 
     function render(response) {
+      log.debug("Search done, preparing result.");
       $scope.done = true;
+      $scope.inProgress = false;
       $scope.artifacts = response;
       Core.$apply($scope);
     }
