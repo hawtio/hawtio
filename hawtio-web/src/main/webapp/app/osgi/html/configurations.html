@@ -44,7 +44,7 @@
       <ul ng-show="config.isFactory">
         <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>
           <a ng-href="{{child.pidLink}}" title="{{child.description}}">
-          <span class="{{config.kind.class}}" title="{{config.kind.title}}">{{child.name}}</span>
+          <span class="{{child.kind.class}}" title="{{child.kind.title}}">{{child.name}}</span>
           </a>
         </li>
       </ul>
