@@ -8,7 +8,7 @@ module Jmx {
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
         'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
     {field: 'value', displayName: 'Value', width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.summary}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
@@ -134,10 +134,17 @@ module Jmx {
         rows = 10;
       }
 
-      // clone the new map
       if (readOnly) {
-        $scope.entity["attrValueView"] = row.summary;
+        // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
+        if (row.summary === '&nbsp;') {
+          $scope.entity["attrValueView"] = '';
+        } else {
+          $scope.entity["attrValueView"] = row.summary;
+        }
 
+        // clone from the basic schema to the new schema we create on-the-fly
+        // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
+        // so its safer to create a new schema according to our needs
         $scope.attributeSchemaView = {};
         for (var i in attributeSchemaBasic) {
           $scope.attributeSchemaView[i] = attributeSchemaBasic[i];
@@ -151,11 +158,21 @@ module Jmx {
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
         }
+        // just to be safe, then delete not needed part of the scema
         if ($scope.attributeSchemaView) {
           delete $scope.attributeSchemaView.properties.attrValueEdit;
         }
       } else {
-        $scope.entity["attrValueEdit"] = row.summary;
+        // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
+        if (row.summary === '&nbsp;') {
+          $scope.entity["attrValueEdit"] = '';
+        } else {
+          $scope.entity["attrValueEdit"] = row.summary;
+        }
+
+        // clone from the basic schema to the new schema we create on-the-fly
+        // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
+        // so its safer to create a new schema according to our needs
         $scope.attributeSchemaEdit = {};
         for (var i in attributeSchemaBasic) {
           $scope.attributeSchemaEdit[i] = attributeSchemaBasic[i];
@@ -168,6 +185,7 @@ module Jmx {
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
         }
+        // just to be safe, then delete not needed part of the scema
         if ($scope.attributeSchemaEdit) {
           delete $scope.attributeSchemaEdit.properties.attrValueView;
         }
@@ -522,9 +540,17 @@ module Jmx {
         detailHtml += "</table>";
         data.summary = summary;
         data.detailHtml = detailHtml;
+        data.tooltip = summary;
       } else {
-        // TODO can we format any nicer?
         var text = value;
+        // if the text is empty then use a no-break-space so the table allows us to click on the row,
+        // otherwise if the text is empty, then you cannot click on the row
+        if (text === '') {
+          text = '&nbsp;';
+          data.tooltip = "";
+        } else {
+          data.tooltip = text;
+        }
         data.summary = "" + text + "";
         data.detailHtml = "<pre>" + text + "</pre>";
         if (angular.isArray(value)) {
