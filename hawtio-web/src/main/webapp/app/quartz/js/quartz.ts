@@ -189,6 +189,7 @@ module Quartz {
 
     $scope.renderQuartz = (response) => {
       $scope.selectedSchedulerDetails = [];
+      var selected = $scope.gridOptions.selectedItems;
 
       log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
       var obj = response.value;
@@ -210,6 +211,9 @@ module Quartz {
           } else {
             t.state = "unknown";
           }
+
+          // unique id of trigger
+          t.id = t.name + "/" + t.group;
 
           // grab information about the trigger from the job map, as quartz does not have the information itself
           // so we had to enrich the job map in camel-quartz to include this information
@@ -285,11 +289,18 @@ module Quartz {
             job = job[t.group];
             if (job) {
               generateJobDataMapDetails(job);
+
+              // unique id of jobs
+              job.id = job.jobName + "/" + job.group;
+
               $scope.jobs.push(job);
             }
           }
         });
       }
+
+      // remember what we have selected
+      $scope.gridOptions.selectedItems = selected;
 
       Core.$apply($scope);
     }
