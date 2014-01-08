@@ -607,13 +607,13 @@ div#main div ul.nav li a.nav-primary {
   background-color: white;
 }
 
-.dropdown-menu .divider {
+.dropdown-menu > .divider {
   margin: 0 !important;
   border: 0;
   color: #E5E5E5;
 }
 
-.dropdown-menu li > a {
+.dropdown-menu > li > a {
   background: inherit !important;
   text-shadow: none;
   line-height: 22px;
@@ -623,13 +623,10 @@ div#main div ul.nav li a.nav-primary {
   max-height: 22px;
 }
 
-.dropdown-menu .divider:hover {
-
-}
-
-.dropdown-menu li:hover {
+.dropdown-menu > li:hover {
   color: #ffffff !important;
   border-top: 1px solid #2289ba;
+  background-color: #40a0ce !important;
   background-image: linear-gradient(to bottom, #40a0ce 0%, #3890ba 100%) !important;
   cursor: pointer;
 }
@@ -646,26 +643,23 @@ div#main div ul.nav li a.nav-primary {
   border-bottom: 1px solid #d4d4d4;
 }
 
-
 .ngRow.selected .ngCellText a {
   color: #ffffff !important;
   background-color: #40a0ce !important;
 }
 
-
-
-.dropdown-menu .divider:hover {
+.dropdown-menu > .divider:hover {
   border-top: 0;
   background-image: none !important;
 }
 
-.dropdown-menu li:hover > a {
+.dropdown-menu > li:hover > a {
   color: #ffffff !important;
   text-shadow: none !important;
   font-weight: bold;
 }
 
-.dropdown-menu li {
+.dropdown-menu > li {
   padding-left: 10px !important;
   padding-right: 10px !important;
   line-height: 24px !important;
@@ -674,7 +668,7 @@ div#main div ul.nav li a.nav-primary {
   max-height: 24px;
 }
 
-li.dropdown.open a.dropdown-toggle {
+li.dropdown.open > a.dropdown-toggle {
   color: #2289ba !important;
   border-bottom: 1px solid #2289ba;
 }
