@@ -189,18 +189,21 @@ module Quartz {
 
     $scope.renderQuartz = (response) => {
       $scope.selectedSchedulerDetails = [];
-      var selected = $scope.gridOptions.selectedItems;
+
+      // remember selected trigger id (we can only select one row)
+      var selectedId = null;
+      if ($scope.gridOptions.selectedItems.length > 0) {
+        selectedId = $scope.gridOptions.selectedItems[0].id;
+      }
 
       log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
       var obj = response.value;
       if (obj) {
 
-        // did we change scheduler
-        var newScheduler = $scope.selectedScheduler !== obj;
-        if (newScheduler) {
-          $scope.triggers = [];
-          $scope.selectedScheduler = obj;
-        }
+        // redraw table
+        $scope.selectedScheduler = obj;
+        $scope.triggers = [];
+        $scope.job = [];
 
         // grab state for all triggers which requires to call a JMX operation per trigger
         obj.AllTriggers.forEach(t => {
@@ -267,19 +270,8 @@ module Quartz {
             }
           }
 
-          // update existing trigger, so the UI remembers it selection
-          // and we don't have flicker if the table is very long
-          var existing = $scope.triggers.filter(e => {
-            return e.name === t.name && e.group === t.group;
-          });
-          if (existing && existing.length === 1) {
-            for (var prop in t) {
-              existing[0][prop] = t[prop];
-            }
-          } else {
-            $scope.triggers.push(t);
-          }
-        })
+          $scope.triggers.push(t);
+        });
 
         // grab state for all triggers which requires to call a JMX operation per trigger
         $scope.jobs = [];
@@ -299,8 +291,10 @@ module Quartz {
         });
       }
 
-      // remember what we have selected
-      $scope.gridOptions.selectedItems = selected;
+      // re-select the previous selected id
+      if (selectedId) {
+        $scope.gridOptions.selectedItems = $scope.triggers.filter(t => t.id === selectedId);
+      }
 
       Core.$apply($scope);
     }
