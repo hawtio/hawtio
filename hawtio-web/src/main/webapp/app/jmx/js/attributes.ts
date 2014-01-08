@@ -7,15 +7,17 @@ module Jmx {
     {field: 'name', displayName: 'Property', width: "27%",
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
         'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
-    {field: 'value', displayName: 'Value',  width: "70%",
+    {field: 'value', displayName: 'Value', width: "70%",
       cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.attrDesc}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
-  export var foldersColumnDefs = [{
+  export var foldersColumnDefs = [
+    {
       displayName: 'Name',
       cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
-    }];
+    }
+  ];
 
   export function AttributesController($scope, $element, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
     $scope.searchText = '';
@@ -26,30 +28,27 @@ module Jmx {
     $scope.attributesInfoCache = {};
 
     $scope.entity = {};
-    $scope.attributeSchema = {
+    $scope.attributeSchema = {};
+
+    var attributeSchemaBasic = {
       properties: {
         'key': {
           description: 'Key',
-            tooltip: 'Attribute key',
-            type: 'string',
-            readOnly: 'true'
+          tooltip: 'Attribute key',
+          type: 'string',
+          readOnly: 'true'
         },
         'description': {
           description: 'Description',
-            tooltip: 'Attribute description',
-            type: 'string',
-            formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
+          tooltip: 'Attribute description',
+          type: 'string',
+          formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
         },
         'type': {
           description: 'Type',
-            tooltip: 'Attribute type',
-            type: 'string',
-            readOnly: 'true'
-        },
-        'value': {
-          description: 'Value',
-          tooltip: 'Attribute value',
-          type: 'string'
+          tooltip: 'Attribute type',
+          type: 'string',
+          readOnly: 'true'
         }
       }
     };
@@ -98,7 +97,7 @@ module Jmx {
     }
 
     $scope.onUpdateAttribute = () => {
-      var value = $scope.entity["value"];
+      var value = $scope.entity["attrValueEdit"];
       var key = $scope.entity["key"];
 
       // clear entity
@@ -110,10 +109,10 @@ module Jmx {
       var mbean = workspace.getSelectedMBeanName();
       if (mbean) {
         jolokia.setAttribute(mbean, key, value,
-        onSuccess((response) => {
-            notification("success", "Updated attribute " + key);
-        }
-        ));
+          onSuccess((response) => {
+              notification("success", "Updated attribute " + key);
+            }
+          ));
       }
     };
 
@@ -123,14 +122,44 @@ module Jmx {
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
-      $scope.entity["value"] = row.summary;
       $scope.entity["rw"] = row.rw;
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
-      $scope.attributeSchema.properties.value["type"] = type;
-      $scope.attributeSchema.properties.value["readOnly"] = readOnly;
 
-      log.debug("Using json type " + type + " read-only: " + readOnly + " for attr key " + $scope.entity["key"] + " with value " + $scope.entity["value"]);
+      // clone the new map
+      if (readOnly) {
+        $scope.entity["attrValueView"] = row.summary;
+        $scope.attributeSchemaView = {};
+        for (var i in attributeSchemaBasic) {
+          $scope.attributeSchemaView[i] = attributeSchemaBasic[i];
+        }
+        // and add the new attrValue which is dynamic computed
+        $scope.attributeSchemaView.properties.attrValueView = {
+          description: 'Value',
+          label: "Value",
+          tooltip: 'Attribute value',
+          type: 'string',
+          readOnly: 'true'
+        }
+        delete $scope.attributeSchemaEdit.properties.attrValueEdit;
+      } else {
+        $scope.entity["attrValueEdit"] = row.summary;
+        $scope.attributeSchemaEdit = {};
+        for (var i in attributeSchemaBasic) {
+          $scope.attributeSchemaEdit[i] = attributeSchemaBasic[i];
+        }
+        // and add the new attrValue which is dynamic computed
+        $scope.attributeSchemaEdit.properties.attrValueEdit = {
+          description: 'Value',
+          label: "Value",
+          tooltip: 'Attribute value',
+          type: 'string'
+        }
+        delete $scope.attributeSchemaEdit.properties.attrValueView;
+      }
+
+      log.info("Read only " + readOnly);
+
       $scope.showAttributeDialog = true;
     }
 
@@ -196,17 +225,17 @@ module Jmx {
 
       // TODO - maybe there's a better way to determine when to enable selections
 
-/*
-      if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
-        $scope.selectToggle.setSelect(true);
-      } else {
-        $scope.selectToggle.setSelect(false);
-      }
-*/
+      /*
+       if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
+       $scope.selectToggle.setSelect(true);
+       } else {
+       $scope.selectToggle.setSelect(false);
+       }
+       */
       return answer;
     };
 
-    $scope.invokeSelectedMBeans = (operationName, completeFunction: () => any = null) => {
+    $scope.invokeSelectedMBeans = (operationName, completeFunction:() => any = null) => {
       var queries = [];
       angular.forEach($scope.selectedItems || [], (item) => {
         var mbean = item["_id"];
@@ -244,12 +273,12 @@ module Jmx {
       // TODO lets ignore the classes property for now
       // as we don't have an easy way to know if there is an icon defined for an icon or not
       // and we want to make sure there always is an icon shown
-/*
-      var classes = (row.getProperty("addClass") || "").trim();
-      if (classes) {
-        return classes;
-      }
-*/
+      /*
+       var classes = (row.getProperty("addClass") || "").trim();
+       if (classes) {
+       return classes;
+       }
+       */
       return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
     };
 
@@ -345,8 +374,8 @@ module Jmx {
       var mbean = response.request['mbean'];
       log.debug("mbean: ", mbean);
       if (mbean) {
-          // lets store the mbean in the row for later
-          data["_id"] = mbean;
+        // lets store the mbean in the row for later
+        data["_id"] = mbean;
       }
       if (mbeanIndex) {
         if (mbean) {
@@ -421,7 +450,9 @@ module Jmx {
                 }
                 // lets unwrap any arrays of object names
                 if (angular.isArray(value)) {
-                  value = value.map((v) => { return unwrapObjectName(v); });
+                  value = value.map((v) => {
+                    return unwrapObjectName(v);
+                  });
                 }
                 var data = {key: key, name: humanizeValue(key), value: safeNull(value)};
 
@@ -430,7 +461,9 @@ module Jmx {
               }
             }
           });
-          if (!properties.any((p) => { return p['key'] === 'ObjectName'; })) {
+          if (!properties.any((p) => {
+            return p['key'] === 'ObjectName';
+          })) {
             var objectName = {
               key: "ObjectName",
               name: "Object Name",
@@ -447,16 +480,6 @@ module Jmx {
         // log.debug("gridData: ", $scope.gridData);
         Core.$apply($scope);
       }
-    }
-
-    function isReadWrite(attr) {
-      if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
-        var info = $scope.attributesInfoCache.attr[attr];
-        if (angular.isDefined(info)) {
-          return info.rw;
-        }
-      }
-      return false;
     }
 
     function unwrapObjectName(value) {
@@ -480,7 +503,7 @@ module Jmx {
         angular.forEach(keys, (key) => {
           var value = object[key];
           detailHtml += "<tr><td>"
-                  + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
           summary += "" + humanizeValue(key) + ": " + value + "  "
         });
         detailHtml += "</table>";
@@ -515,7 +538,7 @@ module Jmx {
       }
     }
 
-    function includePropertyValue(key: string, value) {
+    function includePropertyValue(key:string, value) {
       return !angular.isObject(value);
     }
 
@@ -532,10 +555,6 @@ module Jmx {
           return "boolean";
         }
         if (lower === "string" || lower === "java.lang.String") {
-          // TODO hack to try force password type on dodgy metadata such as pax web
-          if (id && id.endsWith("password")) {
-            return "password";
-          }
           return "string";
         }
       }

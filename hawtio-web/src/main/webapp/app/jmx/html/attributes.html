@@ -10,9 +10,15 @@
        cancel-button-text="Close"
        title="Attribute: {{entity.key}}">
     <div class="dialog-body">
-      <div simple-form data='attributeSchema' mode="{{entity.rw ? 'edit' : 'view'}}" entity='entity'>
-      </div>
-      <button class="pull-right btn" zero-clipboard data-clipboard-text="{{entity.value}}" title="Copy value to clipboard">
+
+      <!-- have a form for view and another for edit -->
+      <div simple-form ng-hide="!entity.rw" name="attributeEditor" mode="edit" entity='entity' data='attributeSchemaEdit'></div>
+      <button ng-hide="!entity.rw" class="pull-right btn" zero-clipboard data-clipboard-text="{{entity.attrValueEdit}}" title="Copy value to clipboard">
+        <i class="icon-copy"></i>
+      </button>
+
+      <div simple-form ng-hide="entity.rw" name="attributeViewer" mode="view" entity='entity' data='attributeSchemaView'></div>
+      <button ng-hide="entity.rw" class="pull-right btn" zero-clipboard data-clipboard-text="{{entity.attrValueView}}" title="Copy value to clipboard">
         <i class="icon-copy"></i>
       </button>
     </div>
