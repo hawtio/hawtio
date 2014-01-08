@@ -47,6 +47,10 @@ module Osgi {
     $scope.addPidDialog = new Core.Dialog();
 
     initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, () => {
+      $scope.$watch('workspace.selection', function () {
+        updateTableContents();
+      });
+
       updateTableContents();
     });
 
@@ -65,10 +69,6 @@ module Osgi {
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateTableContents, 50);
-    });
-
-    $scope.$watch('workspace.selection', function () {
-      updateTableContents();
     });
 
 
