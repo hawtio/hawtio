@@ -45,12 +45,7 @@ module Forms {
     }
 
     public isReadOnly() {
-      var value: any = this.mode;
-      var getter = this.getMode;
-      if (angular.isFunction(getter)) {
-        value = getter();
-      }
-      return value === "view";
+      return this.getMode() === "view";
     }
   }
 
