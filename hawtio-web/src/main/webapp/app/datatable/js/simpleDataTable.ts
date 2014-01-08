@@ -39,6 +39,7 @@ module DataTable {
         $scope.rows = (value || []).map(entity => {
           return {
             entity: entity,
+            selected: isSelected(entity),
             getProperty: (name) => {
               return entity[name];
             }
@@ -52,6 +53,15 @@ module DataTable {
       // if we find cases where the delta logic doesn't work
       // (such as for nested hawtioinput-input-table)
       scope.$on("hawtio.datatable." + dataName, listener);
+
+      // figure out if the entity is selected or not
+      // so we can keep the selection when updating the table with new data
+      function isSelected(entity) {
+        var selectionArray = getSelectionArray();
+        return selectionArray.some(t => {
+          return t.id === entity.id;
+        });
+      }
 
       function getSelectionArray() {
         var selectionArray = config.selectedItems;
