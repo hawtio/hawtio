@@ -629,8 +629,11 @@ module Fabric {
     function onJolokiaUrl(response) {
       return onJolokiaUrlCreateJolokia(response, onJolokia);
     }
-
-    return Fabric.profileWebAppURL(jolokia, jolokiaWebAppGroupId, profileId, versionId, onJolokiaUrl, onJolokiaUrl);
+    if (profileId && versionId) {
+      return Fabric.profileWebAppURL(jolokia, jolokiaWebAppGroupId, profileId, versionId, onJolokiaUrl, onJolokiaUrl);
+    } else {
+      onJolokia(null);
+    }
   }
 
   /**

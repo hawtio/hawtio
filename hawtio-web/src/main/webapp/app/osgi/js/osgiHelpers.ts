@@ -344,29 +344,6 @@ module Osgi {
         }
         return null;
     }
-
-  /**
-   * Creates a link to the given configuration pid and/or factoryPid
-   */
-    export function createPidLink(workspace, pid, factoryPid = null) {
-      return url("#" + createPidPath(pid, factoryPid) + workspace.hash())
-    }
-
-  /**
-   * Creates a path to the given configuration pid and/or factoryPid
-   */
-    export function createPidPath(pid, factoryPid = null) {
-      var link;
-      pid = pid || "";
-      if (factoryPid) {
-        link = pid + "/" + factoryPid;
-      } else {
-        link = pid;
-      }
-      return "/osgi/pid/" + link;
-    }
-
-
     export function getHawtioConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
@@ -376,4 +353,63 @@ module Osgi {
         }
         return null;
     }
+
+
+  /**
+   * Creates a link to the given configuration pid and/or factoryPid
+   */
+    export function createConfigPidLink($scope, workspace, pid, factoryPid = null) {
+      return url("#" + createConfigPidPath($scope, pid, factoryPid) + workspace.hash())
+    }
+
+  /**
+   * Creates a path to the given configuration pid and/or factoryPid
+   */
+    export function createConfigPidPath($scope, pid, factoryPid = null) {
+    var link;
+    pid = pid || "";
+    if (factoryPid) {
+      link = pid + "/" + factoryPid;
+    } else {
+      link = pid;
+    }
+    var versionId = $scope.versionId;
+    var profileId = $scope.profileId;
+    if (versionId && versionId) {
+      return "/fabric/configuration/" + versionId + "/" + profileId + "/" + link;
+    } else {
+      return "/osgi/pid/" + link;
+    }
+  }
+
+  /**
+   * A helper method which initialises a scope's jolokia to refer to a profile's jolokia if used in a Fabric
+   * or use a local jolokia
+   */
+  export function initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, initFn = null) {
+    $scope.versionId = $routeParams.versionId;
+    $scope.profileId = $routeParams.profileId;
+
+    if (!initFn) {
+      initFn = () => null;
+    }
+    var versionId = $scope.versionId;
+    var profileId = $scope.profileId;
+    if (versionId && versionId) {
+      $scope.configurationsLink = "/fabric/configurations/" + versionId + "/" + profileId;
+
+      Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
+        $scope.jolokia = profileJolokia;
+        if (profileJolokia) {
+          $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
+        }
+        initFn();
+      });
+    } else {
+      $scope.configurationsLink = "/osgi/configurations";
+      $scope.jolokia = jolokia;
+      $scope.workspace = workspace;
+      initFn();
+    }
+  }
 }
