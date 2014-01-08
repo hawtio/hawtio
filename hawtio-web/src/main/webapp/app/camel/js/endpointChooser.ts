@@ -316,20 +316,9 @@ module Camel {
     function findCamelContextMBean() {
       var profileWorkspace = $scope.profileWorkspace;
       if (!profileWorkspace) {
-        if ($scope.jolokia) {
-          // lets create a child workspace object for the remote container
-          var jolokiaStatus = {
-            xhr: null
-          };
-          // disable reload notifications
-          var $rootScope = null;
-          var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
-          var $compile = null;
-          var $templateCache = null;
-          profileWorkspace = new Workspace($scope.jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
-
-          log.info("Loading the profile using jolokia: " + $scope.jolokia);
-          profileWorkspace.loadTree();
+        var removeJolokia = $scope.jolokia;
+        if (removeJolokia) {
+          profileWorkspace = Core.createRemoteWorkspace(removeJolokia, $location, localStorage);
           $scope.profileWorkspace = profileWorkspace;
         }
       }

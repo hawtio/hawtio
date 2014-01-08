@@ -1515,4 +1515,27 @@ module Core {
     return null;
   }
 
+  /**
+   * Creates a remote workspace given a remote jolokia for querying the JMX MBeans inside the jolokia
+   * @param remoteJolokia
+   * @param $location
+   * @param localStorage
+   * @return {Core.Workspace|Workspace}
+   */
+  export function createRemoteWorkspace(remoteJolokia, $location, localStorage, $rootScope = null, $compile = null, $templateCache = null) {
+    // lets create a child workspace object for the remote container
+    var jolokiaStatus = {
+      xhr: null
+    };
+    // disable reload notifications
+    var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
+    var profileWorkspace = new Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
+
+    log.info("Loading the profile using jolokia: " + remoteJolokia);
+    profileWorkspace.loadTree();
+    return profileWorkspace;
+  }
+
+
+
 }
