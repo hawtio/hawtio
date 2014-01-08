@@ -181,7 +181,6 @@ module Osgi {
     }
 
     function updateTableContents() {
-      log.info("updateTableContents $scope.jolokia " + $scope.jolokia + " pids " + $scope.pids);
       $scope.configurations = [];
       if ($scope.jolokia) {
         var mbean = getSelectionConfigAdminMBean($scope.workspace);

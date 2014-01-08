@@ -164,7 +164,6 @@ module Osgi {
         // quite caught up yet (to avoid freaking the user out that things look like
         // changes got reverted ;)
         function onProfileProperties(gitProperties) {
-          log.info("Just loaded git properties: " + angular.toJson(gitProperties, true));
           angular.forEach(gitProperties, (value, key) => {
             var configProperty = configValues[key];
             if (configProperty) {
