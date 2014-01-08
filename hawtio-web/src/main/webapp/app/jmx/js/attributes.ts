@@ -126,22 +126,34 @@ module Jmx {
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
 
+      // calculate a textare with X number of rows that usually fit the value to display
+      var len = row.summary.length;
+      var rows = (len / 40) + 1;
+      if (rows > 10) {
+        // cap at most 10 rows to not make the dialog too large
+        rows = 10;
+      }
+
       // clone the new map
       if (readOnly) {
         $scope.entity["attrValueView"] = row.summary;
+
         $scope.attributeSchemaView = {};
         for (var i in attributeSchemaBasic) {
           $scope.attributeSchemaView[i] = attributeSchemaBasic[i];
         }
+
         // and add the new attrValue which is dynamic computed
         $scope.attributeSchemaView.properties.attrValueView = {
           description: 'Value',
           label: "Value",
           tooltip: 'Attribute value',
           type: 'string',
-          readOnly: 'true'
+          formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
         }
-        delete $scope.attributeSchemaEdit.properties.attrValueEdit;
+        if ($scope.attributeSchemaView) {
+          delete $scope.attributeSchemaView.properties.attrValueEdit;
+        }
       } else {
         $scope.entity["attrValueEdit"] = row.summary;
         $scope.attributeSchemaEdit = {};
@@ -153,12 +165,13 @@ module Jmx {
           description: 'Value',
           label: "Value",
           tooltip: 'Attribute value',
-          type: 'string'
+          type: 'string',
+          formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
         }
-        delete $scope.attributeSchemaEdit.properties.attrValueView;
+        if ($scope.attributeSchemaEdit) {
+          delete $scope.attributeSchemaEdit.properties.attrValueView;
+        }
       }
-
-      log.info("Read only " + readOnly);
 
       $scope.showAttributeDialog = true;
     }
