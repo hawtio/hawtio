@@ -153,6 +153,7 @@ module Osgi {
         pid = pid || $scope.pid;
         $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
       }
+      $scope.pidName = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
       Core.$apply($scope);
     }
 
@@ -267,8 +268,10 @@ module Osgi {
       $scope.entity = entity;
     }
 
+    var ignorePropertyIds = ["service.pid", "service.factoryPid", "fabric.zookeeper.pid"];
+
     function isValidProperty(id) {
-      return id && id !== "service.pid" && id !== "service.factoryPid";
+      return id && ignorePropertyIds.indexOf(id) < 0;
     }
 
     function encodeKey(key) {
