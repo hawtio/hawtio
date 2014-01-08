@@ -124,10 +124,15 @@ module Osgi {
     };
 
     $scope.uninstallBundle = (bundleId) => {
-      jolokia.request([
-        {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'uninstallBundle', arguments: [bundleId]}
-      ],
-              onSuccess($location.path("/osgi/bundle-list")));
+      jolokia.request([{
+        type: 'exec', 
+        mbean: getSelectionFrameworkMBean(workspace), 
+        operation: 'uninstallBundle', 
+        arguments: [bundleId]
+        }], onSuccess(function() { 
+          $location.path("/osgi/bundle-list");
+          Core.$apply($scope); 
+        }));
     };
 
     function inspectReportNoMBeanFound() {
