@@ -139,7 +139,7 @@ module Osgi {
 
     function populateTable(response) {
       $scope.modelLoaded = true;
-      var configValues = response.value || {};
+      var configValues = response || {};
       $scope.configValues = configValues;
       updateSchema();
       var metaTypeMBean = getMetaTypeMBean($scope.workspace);
@@ -302,13 +302,8 @@ module Osgi {
     }
 
     function updateTableContents() {
-      var mbean = getSelectionConfigAdminMBean($scope.workspace);
-      if ($scope.jolokia && mbean) {
-        $scope.modelLoaded = false;
-        $scope.jolokia.request(
-          {type: 'exec', mbean: mbean, operation: 'getProperties', arguments: [$scope.pid]},
-          onSuccess(populateTable));
-      }
+      $scope.modelLoaded = false;
+      Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
     }
   }
 }

@@ -120,6 +120,16 @@ module Osgi {
                       factoryConfig["children"] = children;
                     }
                     children[pid] = config;
+                    if ($scope.inFabricProfile) {
+                      Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, pid, (configValues) => {
+                        var zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+                        if (zkPid) {
+                          config["name"] = zkPid;
+                          config["zooKeeperPid"] = zkPid;
+                          Core.$apply($scope);
+                        }
+                      });
+                    }
                     Core.$apply($scope);
                   }
                 }
