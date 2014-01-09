@@ -19,11 +19,13 @@ package io.hawt.app;
 
 import io.hawt.embedded.Main;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -97,6 +99,15 @@ public class App {
         } else {
             try {
                 main.run();
+                if (Desktop.isDesktopSupported()) {
+                    int port = main.getPort();
+                    String url = "http://localhost:" +  port + "/hawtio";
+                    try {
+                        Desktop.getDesktop().browse(new URI(url));
+                    } catch (Exception e) {
+                        System.out.println("Failed to open browser session, to access hawtio visit \"" + url + "\"");
+                    }
+                }
             } catch (Exception e) {
                 System.out.println("Failed running hawtio: " + e.getMessage());
                 e.printStackTrace();
