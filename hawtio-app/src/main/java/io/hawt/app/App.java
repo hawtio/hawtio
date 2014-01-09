@@ -33,6 +33,12 @@ public class App {
     private static final int KB = 1024;
 
     public static void main(String[] args) {
+
+        Object val = System.getProperty("hawtio.authenticationEnabled");
+        if (val == null) {
+            System.setProperty("hawtio.authenticationEnabled", "false");
+        }
+
         Main main = new Main();
 
         try {

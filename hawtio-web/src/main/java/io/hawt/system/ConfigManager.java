@@ -46,8 +46,8 @@ public class ConfigManager {
                 answer = (String) envContext.lookup("hawtio/" + name);
             } catch (Exception e) {
                 // ignore...
-            }
-        } else {
+            }        }
+        if (answer == null) {
             if (defaultValue == null) {
                 answer = System.getProperty("hawtio." + name);
             } else {
