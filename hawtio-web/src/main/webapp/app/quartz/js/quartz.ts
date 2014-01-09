@@ -9,7 +9,6 @@ module Quartz {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
     var misfireTemplate = '<div class="ngCellText" title="{{row.entity.misfireInstruction}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
-    var jobMapTemplate = '<div class="ngCellText" title="{{row.entity.jobClass}}" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.jobClass | quartzJobDataClassText"></div>';
 
     $scope.valueDetails = new Core.Dialog();
 
@@ -133,6 +132,8 @@ module Quartz {
         filterText: ''
       },
       showSelectionCheckbox: false,
+      enableRowClickSelection: true,
+      multiSelect: false,
       columnDefs: [
         {
           field: 'group',
@@ -161,7 +162,6 @@ module Quartz {
         {
           field: 'jobClass',
           displayName: 'Job ClassName',
-          cellTemplate: jobMapTemplate,
           width: 350
         },
         {
@@ -172,10 +172,8 @@ module Quartz {
       ]
     };
 
-    $scope.openDetailView = (entity) => {
-      log.info("Open detail view " + entity);
-      $scope.row = entity;
-      if (entity.detailHtml) {
+    $scope.openJobDetailView = () => {
+      if ($scope.jobsGridOptions.selectedItems.length === 1) {
         $scope.valueDetails.open();
       }
     };
