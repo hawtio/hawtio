@@ -44,7 +44,7 @@ This sub tab shows all the jobs for the selected scheduler in a table.
 
 ![Quartz Jobs](app/quartz/doc/img/quartz-jobs.png "Quartz Jobs")
 
-Clicking on the info icon (<i class='icon-info-sign'></i>) will display additional job information as shown below:
+Clicking on the info button (<i class='icon-info'></i>) will display additional job information as shown below:
 
 ![Quartz View Job](app/quartz/doc/img/quartz-view-job.png "Quartz View Job")
 
