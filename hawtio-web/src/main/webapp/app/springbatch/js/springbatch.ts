@@ -1,6 +1,6 @@
 module SpringBatch {
 
-    export function JobListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http) {
+    export function JobListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http, $routeParams) {
         var springBatchServerPath = $rootScope.springBatchServer+'jobs.json';
         var proxyUrl = $rootScope.proxyUrl ;
 

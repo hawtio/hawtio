@@ -5,12 +5,14 @@
         <tr>
             <th>Hostname</th>
             <th>Port</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="server in serverList" >
-            <td ng-bind="server.hostname" ></td>
-            <td ng-bind="server.port"></td>
+            <td> <a href="{{server.href}}">{{server.hostname}}</a>  </td>
+            <td>{{server.port}}</td>
+            <td>{{server.href}}</td>
         </tr>
         </tbody>
     </table>

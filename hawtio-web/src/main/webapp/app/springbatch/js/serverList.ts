@@ -16,7 +16,7 @@ module SpringBatch {
 
         for(var server in $rootScope.springBatchServerList){
             serverList.add({
-                href: $rootScope.springBatchServerList[server],
+                href: '#/springbatch/jobs/'+$scope.getHost($rootScope.springBatchServerList[server])+'/'+$scope.getPort($rootScope.springBatchServerList[server]),
                 hostname: $scope.getHost($rootScope.springBatchServerList[server]),
                 port:$scope.getPort($rootScope.springBatchServerList[server])
             })
