@@ -89,6 +89,14 @@ public class Main {
         webapp.setLogUrlOnStart(true);
         webapp.setExtraClasspath(options.getExtraClassPath());
 
+        // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
+        String homeDir = System.getProperty("user.home", ".") + "/.hawtio";
+        String tempDirPath = homeDir + "/tmp";
+        File tempDir = new File(tempDirPath);
+        tempDir.mkdirs();
+        log.info("using temp directory for jetty: " + tempDir.getPath());
+        webapp.setTempDirectory(tempDir);
+
         Server server = new Server(options.getPort());
         server.setHandler(webapp);
 
