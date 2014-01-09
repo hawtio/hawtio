@@ -62,15 +62,13 @@ module Quartz {
     $scope.gridOptions = {
       selectedItems: [],
       data: 'triggers',
-      displayFooter: false,
       showFilter: true,
       filterOptions: {
         filterText: ''
       },
-      showColumnMenu: true,
       showSelectionCheckbox: false,
-      selectRows: true,
       enableRowClickSelection: true,
+      multiSelect: false,
       columnDefs: [
         {
           field: 'state',
@@ -130,15 +128,11 @@ module Quartz {
     $scope.jobsGridOptions = {
       selectedItems: [],
       data: 'jobs',
-      displayFooter: false,
       showFilter: true,
       filterOptions: {
         filterText: ''
       },
-      showColumnMenu: true,
       showSelectionCheckbox: false,
-      multiSelect: false,
-      enableRowClickSelection: false,
       columnDefs: [
         {
           field: 'group',
