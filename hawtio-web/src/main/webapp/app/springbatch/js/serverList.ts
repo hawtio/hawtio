@@ -1,19 +1,26 @@
 module SpringBatch {
 
     export function ServerListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http) {
-        console.info('----------------------- ServerListController ------------ ');
+
+        $scope.getHost = function(link){
+            var endIdx;
+            if(link.indexOf('\\')>=0) endIdx = link.indexOf('\\');
+            else endIdx = link.indexOf(':');
+            return link.substring(0,endIdx);
+        };
+
+        $scope.getPort = function(link){
+            return link.substring(link.indexOf(':')+1,link.indexOf('/'));
+        };
         var serverList = [];
+
         for(var server in $rootScope.springBatchServerList){
-            console.info(' -------------- server --------- '+ $rootScope.springBatchServerList[server]);
-
-            var hostname = '';
-            var port = '';
-
             serverList.add({
-                href:$rootScope.springBatchServerList[server],
-                hostname:'',
-                port:''
+                href: $rootScope.springBatchServerList[server],
+                hostname: $scope.getHost($rootScope.springBatchServerList[server]),
+                port:$scope.getPort($rootScope.springBatchServerList[server])
             })
         }
+        $scope.serverList = serverList;
     }
 }
