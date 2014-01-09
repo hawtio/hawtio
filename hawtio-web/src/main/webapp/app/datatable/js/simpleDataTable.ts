@@ -27,7 +27,11 @@ module DataTable {
     private doLink($scope, $element, $attrs) {
       var config = $scope.config;
       var dataName = config.data || "data";
+      // need to remember which rows by index has been selected as the config.data / config.selectedItems
+      // may not have any uuid we can use to know which was selected, and re-select them when the data is changed (refreshed)
+      var selectedRowIds = [];
       $scope.rows = [];
+
       var scope = $scope.$parent || $scope;
 
       var listener = (otherValue) => {
@@ -36,32 +40,36 @@ module DataTable {
           value = [value];
           Core.pathSet(scope, dataName, value);
         }
+
+        // enrich the rows with information about their index
+        var idx = -1;
         $scope.rows = (value || []).map(entity => {
+          idx++;
           return {
             entity: entity,
-            selected: isSelected(entity),
+            index: idx,
+            selected: selectedRowIds.indexOf(idx) >= 0,
             getProperty: (name) => {
               return entity[name];
             }
           };
         });
+
+        // re-select selected rows in the config.selectedItems
+        config.selectedItems = [];
+        $scope.rows.forEach(row => {
+          if (row.selected) {
+            config.selectedItems.push(row.entity);
+          }
+        })
       };
 
-      scope.$watch(dataName, listener);
+     scope.$watch(dataName, listener);
 
       // lets add a separate event so we can force updates
       // if we find cases where the delta logic doesn't work
       // (such as for nested hawtioinput-input-table)
       scope.$on("hawtio.datatable." + dataName, listener);
-
-      // figure out if the entity is selected or not
-      // so we can keep the selection when updating the table with new data
-      function isSelected(entity) {
-        var selectionArray = getSelectionArray();
-        return selectionArray.some(t => {
-          return t.id === entity.id;
-        });
-      }
 
       function getSelectionArray() {
         var selectionArray = config.selectedItems;
@@ -131,16 +139,41 @@ module DataTable {
         }
       };
 
+      $scope.isSelected = (row) => {
+        return selectedRowIds.indexOf(row.index) >= 0;
+      }
 
+      $scope.onRowSelected = (row) => {
+        // are we already selected?
+        var idx = selectedRowIds.indexOf(row.index);
+        if (idx >= 0) {
+          delete selectedRowIds[idx];
+          delete config.selectedItems[row.entity];
+        } else {
+          if (!config.multiSelect) {
+            selectedRowIds = [];
+            config.selectedItems = [];
+          }
+          selectedRowIds.push(row.index);
+          config.selectedItems.push(row.entity);
+        }
+      }
 
       // lets add the header and row cells
       var rootElement = $($element);
       rootElement.children().remove();
 
       var showCheckBox = firstValueDefined(config, ["showSelectionCheckbox", "displaySelectionCheckbox"], true);
+      var enableRowClickSelection = firstValueDefined(config, ["enableRowClickSelection"], false);
 
+      var onMouseDown;
+      if (enableRowClickSelection) {
+        onMouseDown = "ng-mousedown='onRowSelected(row)' ";
+      } else {
+        onMouseDown = "";
+      }
       var headHtml = "<thead><tr>";
-      var bodyHtml = "<tbody><tr ng-repeat='row in rows | filter:config.filterOptions.filterText' ng-class=\"{'selected': row.selected}\">";
+      var bodyHtml = "<tbody><tr ng-repeat='row in rows | filter:config.filterOptions.filterText' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?
@@ -153,7 +186,7 @@ module DataTable {
       }
       angular.forEach(config.columnDefs, (colDef) => {
         var field = colDef.field;
-        var cellTemplate = colDef.cellTemplate || '<div class="ngCellText">{{row.entity.' + field + '}}</div>';
+        var cellTemplate = colDef.cellTemplate || '<div class="ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
 
         headHtml += "\n<th>{{config.columnDefs[" + idx + "].displayName}}</th>"
         bodyHtml += "\n<td>" + cellTemplate + "</td>"

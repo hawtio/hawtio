@@ -8,8 +8,8 @@ module Quartz {
     var log:Logging.Logger = Logger.get("Quartz");
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
-    var misfireTemplate = '<div class="ngCellText" title="{{row.entity.field}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
-    var jobMapTemplate = '<div class="ngCellText" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.jobClass | quartzJobDataClassText"></div>';
+    var misfireTemplate = '<div class="ngCellText" title="{{row.entity.misfireInstruction}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
+    var jobMapTemplate = '<div class="ngCellText" title="{{row.entity.jobClass}}" ng-click="openDetailView(row.entity)" ng-bind-html-unsafe="row.entity.jobClass | quartzJobDataClassText"></div>';
 
     $scope.valueDetails = new Core.Dialog();
 
@@ -68,8 +68,9 @@ module Quartz {
         filterText: ''
       },
       showColumnMenu: true,
-      showSelectionCheckbox: true,
-      multiSelect: false,
+      showSelectionCheckbox: false,
+      selectRows: true,
+      enableRowClickSelection: true,
       columnDefs: [
         {
           field: 'state',
@@ -137,6 +138,7 @@ module Quartz {
       showColumnMenu: true,
       showSelectionCheckbox: false,
       multiSelect: false,
+      enableRowClickSelection: false,
       columnDefs: [
         {
           field: 'group',
@@ -177,6 +179,7 @@ module Quartz {
     };
 
     $scope.openDetailView = (entity) => {
+      log.info("Open detail view " + entity);
       $scope.row = entity;
       if (entity.detailHtml) {
         $scope.valueDetails.open();
@@ -189,12 +192,6 @@ module Quartz {
 
     $scope.renderQuartz = (response) => {
       $scope.selectedSchedulerDetails = [];
-
-      // remember selected trigger id (we can only select one row)
-      var selectedId = null;
-      if ($scope.gridOptions.selectedItems.length > 0) {
-        selectedId = $scope.gridOptions.selectedItems[0].id;
-      }
 
       log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
       var obj = response.value;
@@ -289,11 +286,6 @@ module Quartz {
             }
           }
         });
-      }
-
-      // re-select the previous selected id
-      if (selectedId) {
-        $scope.gridOptions.selectedItems = $scope.triggers.filter(t => t.id === selectedId);
       }
 
       Core.$apply($scope);
