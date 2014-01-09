@@ -89,9 +89,8 @@ module Osgi {
       if (mbean) {
         $scope.jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)',
           onSuccess(onConfigFactoryPids, errorHandler("Failed to load factory PID configurations: ")));
-      } else {
-        updateMetaType();
       }
+      loadMetaType();
     }
 
     /**
@@ -181,16 +180,19 @@ module Osgi {
       updateConfigurations();
     }
 
+    function loadMetaType() {
+      var metaTypeMBean = getMetaTypeMBean($scope.workspace);
+      if (metaTypeMBean && $scope.pids) {
+        $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+      }
+    }
+
     function updateTableContents() {
       $scope.configurations = [];
       if ($scope.jolokia) {
         var mbean = getSelectionConfigAdminMBean($scope.workspace);
         if (mbean) {
           $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
-        }
-        var metaTypeMBean = getMetaTypeMBean($scope.workspace);
-        if (metaTypeMBean && $scope.pids) {
-          $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
         }
       }
     }
