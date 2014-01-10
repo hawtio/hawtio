@@ -268,7 +268,7 @@ In addition there are some server side Java based plugins you can deploy to add 
   </tr>
   <tr>
     <td>insight-log</td>
-    <td>JBoss A-MQ, JBoss Fuse and fabric8 distros</td>
+    <td><a href="http://www.jboss.org/products/amq">JBoss A-MQ, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a> and <a href="http://fabric8.io/">fabric8</a> distros</td>
     <td>Karaf based plugin which is required for the <a href="http://hawt.io/plugins/log/">log</a> plugin to query logs.</td>
     <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-log">source</a></td>
   </tr>
