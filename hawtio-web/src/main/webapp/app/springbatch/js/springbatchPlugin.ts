@@ -15,6 +15,7 @@ module SpringBatch {
                 .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', {templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html'})
                 .when('/springbatch/jobs/:jobName/:jobId/history/executions', {templateUrl: SpringBatch.templatePath + 'executionHistory.html'})
                 .when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', {templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html'})
+                .when('/springbatch/jobs/:host/:port/:serverSuffix', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
                 .when('/springbatch/jobs/:host/:port', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
 
         }).

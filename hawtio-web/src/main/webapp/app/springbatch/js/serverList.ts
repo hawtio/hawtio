@@ -1,7 +1,6 @@
 module SpringBatch {
 
     export function ServerListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http) {
-
         $scope.getHost = function(link){
             var endIdx;
             if(link.indexOf('\\')>=0) endIdx = link.indexOf('\\');
@@ -12,14 +11,27 @@ module SpringBatch {
         $scope.getPort = function(link){
             return link.substring(link.indexOf(':')+1,link.indexOf('/'));
         };
-        var serverList = [];
 
+        $scope.getServerPrefix = function(link){
+             if(link.indexOf('/') != link.lastIndexOf('/'))
+                 return link.substring(link.indexOf('/')+1,link.lastIndexOf('/'));
+            else return '';
+        };
+
+        var serverList = [];
+        var serverHref = '';
         for(var server in $rootScope.springBatchServerList){
+            serverHref += '#/springbatch/jobs/' ;
+            serverHref += $scope.getHost($rootScope.springBatchServerList[server])+'/' ;
+            serverHref += $scope.getPort($rootScope.springBatchServerList[server]) ;
+            if($scope.getServerPrefix($rootScope.springBatchServerList[server]).length > 0)
+                serverHref += '/'+$scope.getServerPrefix($rootScope.springBatchServerList[server]) ;
             serverList.add({
-                href: '#/springbatch/jobs/'+$scope.getHost($rootScope.springBatchServerList[server])+'/'+$scope.getPort($rootScope.springBatchServerList[server]),
+                href: serverHref,
                 hostname: $scope.getHost($rootScope.springBatchServerList[server]),
                 port:$scope.getPort($rootScope.springBatchServerList[server])
-            })
+            });
+            serverHref='';
         }
         $scope.serverList = serverList;
     }
