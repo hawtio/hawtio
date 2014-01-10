@@ -11,16 +11,10 @@ module Jmx {
     var jolokia = new Jolokia(jolokiaParams);
     jolokia.start($scope.updateRate);
 
-    // lets disable as it causes 2 events which
-    // cause double charts
-    var watchRouteChange = false;
-
     $scope.$on('$destroy', function () {
       jolokia.stop();
       delete jolokia;
-      if (watchRouteChange) {
-        $scope.deregRouteChange();
-      }
+      $scope.deregRouteChange();
       $scope.dereg();
       if ($scope.context) {
         $scope.context.stop();
@@ -39,28 +33,46 @@ module Jmx {
       }
     };
 
-    if (watchRouteChange) {
-      $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-        // lets do this asynchronously to avoid Error: $digest already in progress
-        setTimeout(render, 50);
-      });
-    }
+    $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+      // lets do this asynchronously to avoid Error: $digest already in progress
+      Core.throttled(render, 500)();
+    });
     $scope.dereg = $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
-      render();
+      Core.throttled(render, 500)();
     });
 
+    Core.throttled(render, 500)();
+
+
     function render() {
+
       var node = workspace.selection;
       if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
+        // Called render too early, let's retry
+        setTimeout(Core.throttled(() => {
+          render();
+          Core.$apply($scope);
+        }, 500), 1000);
         return;
       }
       var width = 594;
-      var charts = $($element);
+      var charts = $element.find('#charts');
       if (charts) {
         width = charts.width();
       } else {
+        // Called render too early, let's retry
+        setTimeout(Core.throttled(() => {
+          render();
+          Core.$apply($scope);
+        }, 500), 1000);
         return;
+      }
+
+      // clear out the existing context to ensure we don't get duplicates
+      if ($scope.context !== null) {
+        $scope.context = null;
+        charts.empty();
       }
 
       var mbean = node.objectName;
@@ -167,7 +179,7 @@ module Jmx {
         }
       }
 
-      var d3Selection = d3.select($element[0]);
+      var d3Selection = d3.select(charts.get(0));
       if ($scope.metrics.length > 0) {
         d3Selection.selectAll(".axis")
                 .data(["top", "bottom"])
