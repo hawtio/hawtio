@@ -96,6 +96,7 @@ module Perspective {
    */
   export function topLevelTabsForPerspectiveId(workspace, perspective) {
     var data = perspective ? Perspective.metadata[perspective] : null;
+    var metaData = data;
     var answer = [];
     if (!data) {
       answer = workspace.topLevelTabs;
@@ -104,31 +105,29 @@ module Perspective {
       var topLevelTabs = data.topLevelTabs;
 
       var includes = filterTabs(topLevelTabs.includes, workspace);
-      includes = includes.filter(t => {
-        if (angular.isFunction(t.onCondition)) {
-          // not all tabs has on condition function, so use try .. catch
-          var answer = t.onCondition(workspace);
-          if (!answer) {
-            log.info("Plugin " + (t.href != null ? t.href : t.id) + " not included in perspective " + perspective);
-          }
-          return answer;
-        } else {
-          return true;
-        }
-      });
       var excludes = filterTabs(topLevelTabs.excludes, workspace);
-      excludes.filter(t => {
-        if (angular.isFunction(t.onCondition)) {
-          // not all tabs has on condition function, so use try .. catch
-          var answer = t.onCondition(workspace);
-          if (answer) {
-            log.info("Plugin " + (t.href != null ? t.href : t.id) + " excluded in perspective " + perspective);
+
+      // now do extra filtering of excludes, if they have some conditions in the meta data
+      if (metaData) {
+        excludes = excludes.filter(t => {
+          var metaTab = metaData.topLevelTabs.excludes.find(et => {
+            var etid = et.id;
+            return etid && etid === t.id;
+          })
+          if (metaTab != null && angular.isFunction(metaTab.onCondition)) {
+            // not all tabs has on condition function, so use try .. catch
+            var answer = metaTab.onCondition(workspace);
+            if (answer) {
+              log.info("Plugin " + t.id + " excluded in perspective " + perspective);
+              return true;
+            } else {
+              // the condition was false, so it does not apply
+              return false;
+            }
           }
-          return answer;
-        } else {
           return true;
-        }
-      });
+        })
+      }
 
       // if the meta-data only had excludes, then it means all the top level tabs, excluding these
       if (!topLevelTabs.includes) {

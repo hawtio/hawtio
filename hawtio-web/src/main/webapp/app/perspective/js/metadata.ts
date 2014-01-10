@@ -87,9 +87,16 @@ module Perspective {
             href: "#/eshead"
           },
           {
-            href: "#/health",
-            // we only want health plugin if we are not running in Fabric
-            onCondition: (workspace) => !Fabric.isFMCContainer(workspace)
+            id: "dashboard",
+            // we only want to exclude dashboard if we are running in fabric (as they are in another perspective)
+            // (must use "id" attribute for the plugin, an not href, when using onCondition)
+            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+          },
+          {
+            id: "health",
+            // we only want to exclude health if we are running in fabric (as they are in another perspective)
+            // (must use "id" attribute for the plugin, an not href, when using onCondition)
+            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           }
         ]
       }

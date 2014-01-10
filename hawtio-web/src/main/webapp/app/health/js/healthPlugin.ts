@@ -20,20 +20,10 @@ module Health {
               id: "health",
               content: "Health",
               title: "View the health of the various sub systems",
-
-              // TODO move this mbean helper to this plugin?
               isValid: (workspace: Workspace) => Health.hasHealthMBeans(workspace),
-              href: () => "#/health"
+              href: () => "#/health",
+              isActive: (workspace: Workspace) => workspace.isTopTabActive("health")
             });
-
-/*
-            workspace.subLevelTabs.push( {
-              content: '<i class="icon-eye-open"></i> Health',
-              title: "View the health of either all of a selected subset of the systems",
-              isValid: (workspace: Workspace) => Health.hasHealthMBeans(workspace),
-              href: () => "#/health"
-            });
-*/
 
           });
 
