@@ -118,7 +118,7 @@ module Perspective {
             // not all tabs has on condition function, so use try .. catch
             var answer = metaTab.onCondition(workspace);
             if (answer) {
-              log.info("Plugin " + t.id + " excluded in perspective " + perspective);
+              log.debug("Plugin " + t.id + " excluded in perspective " + perspective);
               return true;
             } else {
               // the condition was false, so it does not apply
