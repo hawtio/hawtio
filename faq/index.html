@@ -112,6 +112,16 @@
 
 <p>After trying the above if you have problems connecting to your JVM, please <a href="http://hawt.io/community/index.html">let us know</a> by <a href="https://github.com/hawtio/hawtio/issues?state=open">raising an issue</a> and we'll try to help.</p>
 
+<h4 id = "_How_do_I_install_a_plugin_"> How do I install a plugin?</h4>
+
+<p>Each hawtio distro has these <a href="http://hawt.io/plugins/index.html">browser based plugins</a> inside already; plus hawtio can discover any other external plugins deployed in the same JVM too.</p>
+
+<p>Then the hawtio UI updates itself in real time based on what it can find in the server side JVM it connects to. So, for example, if you connect to an empty tomcat/jetty you'll just see things like JMX and tomcat/jetty (and maybe wiki / dashboard / maven if you're using hawtio-default.war which has a few more server side plugins inside).</p>
+
+<p>Then if you deploy a WAR which has ActiveMQ or Camel inside it, you should see an ActiveMQ or Camel tab appear as you deploy code which registers mbeans for ActiveMQ or Camel.</p>
+
+<p>So usually, if you are interested in a particular plugin and its not visible in the hawtio UI (after checking your preferences in case you disabled it), usually you just need to deploy or add a server side plugin; which is usually a case of deploying some Java code (e.g. ActiveMQ, Camel, Infinispan etc).</p>
+
 <h4 id = "What_has_changed_lately_">What has changed lately?</h4>
 
 <p>Try have a look at the <a href="http://hawt.io/changelog.html">change log</a> to see the latest changes in hawtio!</p>
