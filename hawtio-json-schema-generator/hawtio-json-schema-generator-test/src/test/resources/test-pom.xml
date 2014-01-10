@@ -19,7 +19,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-core-agent-ssh</artifactId>
       <version>${fabric-version}</version>
       <scope>compile</scope>
@@ -42,9 +42,9 @@
         <version>${project.version}</version>
         <configuration>
           <classes>
-            <org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
+            <io.fabric8.service.ssh.CreateSshContainerOptions>
               createSshContainerOptions.json
-            </org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
+            </io.fabric8.service.ssh.CreateSshContainerOptions>
           </classes>
         </configuration>
         <dependencies>

@@ -97,32 +97,32 @@
         </executions>
         <configuration>
           <classes>
-            <org.fusesource.fabric.api.CreateChildContainerOptions>
+            <io.fabric8.api.CreateChildContainerOptions>
               ${project.build.outputDirectory}/webapp/fabric/js/createContainerChildOptions.js
-            </org.fusesource.fabric.api.CreateChildContainerOptions>
-            <org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
+            </io.fabric8.api.CreateChildContainerOptions>
+            <io.fabric8.service.ssh.CreateSshContainerOptions>
               ${project.build.outputDirectory}/webapp/fabric/js/createSshContainerOptions.js
-            </org.fusesource.fabric.service.ssh.CreateSshContainerOptions>
-            <org.fusesource.fabric.service.jclouds.CreateJCloudsContainerOptions>
+            </io.fabric8.service.ssh.CreateSshContainerOptions>
+            <io.fabric8.service.jclouds.CreateJCloudsContainerOptions>
               ${project.build.outputDirectory}/webapp/fabric/js/createJcloudsContainerOptions.js
-            </org.fusesource.fabric.service.jclouds.CreateJCloudsContainerOptions>
+            </io.fabric8.service.jclouds.CreateJCloudsContainerOptions>
           </classes>
         </configuration>
         <dependencies>
           <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8.fabric</groupId>
             <artifactId>fabric-core-agent-ssh</artifactId>
             <version>${fabric-test-version}</version>
             <scope>compile</scope>
           </dependency>
           <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8.fabric</groupId>
             <artifactId>fabric-core-agent-jclouds</artifactId>
             <version>${fabric-test-version}</version>
             <scope>compile</scope>
           </dependency>
           <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8.fabric</groupId>
             <artifactId>fabric-api</artifactId>
             <version>${fabric-test-version}</version>
             <scope>compile</scope>

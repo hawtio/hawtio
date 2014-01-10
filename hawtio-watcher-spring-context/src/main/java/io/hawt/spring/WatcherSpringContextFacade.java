@@ -2,7 +2,7 @@ package io.hawt.spring;
 
 import io.hawt.util.MBeanSupport;
 import org.fusesource.common.util.Objects;
-import org.fusesource.fabric.watcher.spring.context.WatcherSpringContext;
+import io.fabric8.watcher.spring.context.WatcherSpringContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.File;

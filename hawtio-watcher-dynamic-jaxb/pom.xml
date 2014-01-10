@@ -32,13 +32,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>watcher-dynamic-jaxb</artifactId>
       <version>${fabric-version}</version>
     </dependency>
     <!-- transitive dependencies of file-dynamic-jaxb that must not be provided scope -->
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>watcher-core</artifactId>
       <version>${fabric-version}</version>
       <scope>compile</scope>

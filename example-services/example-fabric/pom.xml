@@ -25,7 +25,7 @@
 
     <!-- for fabric -->
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>tooling-fabric-all</artifactId>
       <version>${fabric-test-version}</version>
       <exclusions>
@@ -36,7 +36,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-zookeeper</artifactId>
       <version>${fabric-test-version}</version>
     </dependency>

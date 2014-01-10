@@ -2,7 +2,7 @@ package io.hawt.blueprint;
 
 import io.hawt.util.MBeanSupport;
 import org.fusesource.common.util.Objects;
-import org.fusesource.fabric.watcher.blueprint.web.WatcherBlueprintContainer;
+import io.fabric8.watcher.blueprint.web.WatcherBlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
