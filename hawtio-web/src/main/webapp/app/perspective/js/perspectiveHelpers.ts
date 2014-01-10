@@ -130,8 +130,16 @@ module Perspective {
         }
       });
 
-      // lets exclude the matched tabs, and include the includes
-      answer = workspace.topLevelTabs.subtract(excludes) || includes;
+      // if the meta-data only had excludes, then it means all the top level tabs, excluding these
+      if (!topLevelTabs.includes) {
+        // lets exclude the excluded tabs
+        answer = workspace.topLevelTabs;
+      } else {
+        // if the meta-data had includes, then its only these
+        answer = includes;
+      }
+      // and remove any excludes
+      answer = answer.subtract(excludes);
     }
     return answer;
   }
