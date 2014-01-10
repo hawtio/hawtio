@@ -67,6 +67,13 @@ module Perspective {
       lastPage: "#/logs",
       isValid: (workspace) => workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length,
       topLevelTabs: {
+        includes: [
+          {
+            href: "#/health",
+            // we only want health plugin if we are not running in Fabric
+            onCondition: (workspace) => !Fabric.isFMCContainer(workspace)
+          }
+        ],
         excludes: [
           {
             href: "#/fabric"
