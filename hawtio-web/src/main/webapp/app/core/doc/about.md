@@ -13,7 +13,7 @@
   <p/>
 </div>
 
-<h4>Versions:</h4>
+<h4>Versions</h4>
 
   **hawtio** version: {{hawtioVersion}}
 
