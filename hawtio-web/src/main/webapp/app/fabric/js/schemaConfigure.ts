@@ -151,7 +151,7 @@ module Fabric {
         break;
 
 
-
+      /*
       case 'createEnsemble':
         delete schema['properties']['name'];
         angular.forEach(["username", "password", "role", "zookeeperPassword"], (name) => {
@@ -172,6 +172,7 @@ module Fabric {
           'Common': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
           'Advanced': ['*']
         };
+        */
 
       default:
     }
