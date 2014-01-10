@@ -19,6 +19,11 @@ public class ConfigManager {
     }
 
     public void init() {
+        if (Boolean.parseBoolean((String)System.getProperty("hawtio.forceProperties", "false"))) {
+            LOG.info("Forced using system properties");
+            return;
+        }
+
         try {
             envContext = (Context) new InitialContext().lookup("java:/comp/env");
             LOG.info("Configuration will be discovered via JNDI");
@@ -46,7 +51,8 @@ public class ConfigManager {
                 answer = (String) envContext.lookup("hawtio/" + name);
             } catch (Exception e) {
                 // ignore...
-            }        }
+            }
+        }
         if (answer == null) {
             if (defaultValue == null) {
                 answer = System.getProperty("hawtio." + name);
