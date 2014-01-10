@@ -217,6 +217,33 @@ The following plugins are not intended to be used by users of hawtio, but are th
   </tr>
 </table>
 
+## Server Side Plugins
+
+Each hawtio distro has these [browser based plugins](http://hawt.io/plugins/index.html) inside already. The hawtio UI updates itself in real time based on what it can find in the server side JVM it connects to. So for example if you deploy some Apache Camel then the Camel plugin will appear.
+
+In addition there are some server side Java based plugins you can deploy to add new behaviour to your hawtio console.
+
+<table class="table">
+  <tr>
+    <th>Server Side Plugin</th>
+    <th title="which distribution is this plugin included?">Distribution</th>
+    <th>Description</th>
+    <th>Source</th>
+  </tr>
+  <tr>
+    <td>hawtio-git</td>
+    <td>hawtio-web.war</td>
+    <td>Supports the wiki plugin and allows the dashboard plugin to load/save/store and version dashboard configurations.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-git/">source</a></td>
+  </tr>
+  <tr>
+    <td>hawtio-ide</td>
+    <td></td>
+    <td>Server side code for the ide plugin</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-ide/">source</a></td>
+  </tr>
+</table>
+
 ## External plugins
 
 <table class="table">

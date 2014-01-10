@@ -52,7 +52,7 @@ After trying the above if you have problems connecting to your JVM, please [let 
 
 #### How do I install a plugin?
 
-So any standard hawtio distro has these [browser based plugins](http://hawt.io/plugins/index.html) inside already; plus hawtio can discover any other external plugins deployed in the same JVM too.
+Each hawtio distro has these [browser based plugins](http://hawt.io/plugins/index.html) inside already; plus hawtio can discover any other external plugins deployed in the same JVM too.
 
 Then the hawtio UI updates itself in real time based on what it can find in the server side JVM it connects to. So, for example, if you connect to an empty tomcat/jetty you'll just see things like JMX and tomcat/jetty (and maybe wiki / dashboard / maven if you're using hawtio-default.war which has a few more server side plugins inside).
 
