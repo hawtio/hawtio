@@ -14,7 +14,6 @@ module Fabric {
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
     $routeProvider.
-            when('/createFabric', {templateUrl: templatePath + 'createFabric.html'}).
             when('/fabric/containers/createContainer', {templateUrl: templatePath + 'createContainer.html', reloadOnSearch: false }).
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
@@ -186,7 +185,6 @@ module Fabric {
           run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, layoutFull) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
-            viewRegistry['createFabric'] = layoutFull;
 
             pageTitle.addTitleElement( ():string => {
               if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
@@ -199,13 +197,6 @@ module Fabric {
               return Fabric.currentContainerId;
             });
 
-            workspace.topLevelTabs.push( {
-              content: "Create Fabric",
-              title: "Create a fabric starting with this container",
-              isValid: (workspace) => Fabric.canBootstrapFabric(workspace) && !Fabric.fabricCreated(workspace),
-              href: () => "#/createFabric",
-              isActive: (workspace) => workspace.isLinkActive("createFabric")
-            });
             workspace.topLevelTabs.push( {
               id: "fabric.runtime",
               content: "Runtime",
