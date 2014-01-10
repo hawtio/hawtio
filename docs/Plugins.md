@@ -231,16 +231,40 @@ In addition there are some server side Java based plugins you can deploy to add 
     <th>Source</th>
   </tr>
   <tr>
+    <td>hawtio-aether</td>
+    <td>hawtio-default.war</td>
+    <td>Used by the <a href="http://hawt.io/plugins/maven/">maven</a> plugin to resolve dependency trees</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-aether/">source</a></td>
+  </tr>
+  <tr>
     <td>hawtio-git</td>
     <td>hawtio-web.war</td>
-    <td>Supports the wiki plugin and allows the dashboard plugin to load/save/store and version dashboard configurations.</td>
+    <td>Supports the <a href="http://hawt.io/plugins/wiki/">wiki</a> plugin and allows the <a href="http://hawt.io/plugins/dashboard/">dashboard</a> plugin to load/save/store and version dashboard configurations.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-git/">source</a></td>
   </tr>
   <tr>
+    <td>hawtio-json-schema-mbean</td>
+    <td>hawtio-default.war</td>
+    <td>Provides introspection and JSON Schema lookup of beans which is used for the <a href="http://hawt.io/plugins/fabric/">fabric</a> plugin and is needed for the Dozer editor in the  <a href="http://hawt.io/plugins/wiki/">wiki</a></td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-json-schema-mbean/">source</a></td>
+  </tr>
+  <tr>
+    <td>hawtio-local-jvm-mbean</td>
+    <td>hawtio-default.war</td>
+    <td>Provides 'jconsole-like' discovery of all JVMs on the same machine as the JVM so that the <a href="http://hawt.io/plugins/jvm/">jvm</a> plugin can easily connect to any local JVMs</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-local-jvm-mbean/">source</a></td>
+  </tr>
+  <tr>
     <td>hawtio-ide</td>
-    <td></td>
-    <td>Server side code for the ide plugin</td>
+    <td>hawtio-default.war</td>
+    <td>Server side code for the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/ide/doc/developer.md">ide</a> plugin</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-ide/">source</a></td>
+  </tr>
+  <tr>
+    <td>hawtio-maven-indexer</td>
+    <td>hawtio-default.war</td>
+    <td>Required for the <a href="http://hawt.io/plugins/maven/">maven</a> plugin so that it can download and quickly search maven central for artifacts.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-maven-indexer/">source</a></td>
   </tr>
 </table>
 
