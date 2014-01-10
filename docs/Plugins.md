@@ -266,6 +266,18 @@ In addition there are some server side Java based plugins you can deploy to add 
     <td>Required for the <a href="http://hawt.io/plugins/maven/">maven</a> plugin so that it can download and quickly search maven central for artifacts.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-maven-indexer/">source</a></td>
   </tr>
+  <tr>
+    <td>insight-log</td>
+    <td>JBoss A-MQ, JBoss Fuse and fabric8 distros</td>
+    <td>Karaf based plugin which is required for the <a href="http://hawt.io/plugins/log/">log</a> plugin to query logs.</td>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-log">source</a></td>
+  </tr>
+  <tr>
+    <td>insight-log4j</td>
+    <td></td>
+    <td>A log4j based plugin required for the <a href="http://hawt.io/plugins/log/">log</a> plugin to query logs.</td>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-log4j">source</a></td>
+  </tr>
 </table>
 
 ## External plugins
@@ -295,6 +307,11 @@ In addition there are some server side Java based plugins you can deploy to add 
     <td><a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/src/main/webapp/js/kibana3Plugin.js">insight-kibana3</a></td>
     <td>A hawtio plugin that embeds the kibana3 frontend for Elastic Search into hawtio.  Source link is to the plugin definition, had to tell hawtio where to find all of kibana3's javascript files in <a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/pom.xml">the pom.xml</a></td>
     <td><a href="https://github.com/jboss-fuse/fuse/blob/master/insight/insight-kibana3/src/main/webapp/js/kibana3Plugin.js">insight-kibana3</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-eshead/src/main/webapp/hawtio">insight-eshead</a></td>
+    <td>A plugin that embeds the ESHead elastic search frontend into hawtio, source link points to the hawtio specific stuff</td>
+    <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-eshead/src/main/webapp/hawtio">insight-eshead</a></td>
   </tr>
   <tr>
     <td><a href="https://github.com/jboss-fuse/fuse/tree/master/insight/insight-eshead/src/main/webapp/hawtio">insight-eshead</a></td>
