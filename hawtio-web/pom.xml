@@ -613,6 +613,10 @@
               <value>${project.build.directory}/karaf-data</value>
             </systemProperty>
             <systemProperty>
+              <key>hawtio.forceProperties</key>
+              <value>true</value>
+            </systemProperty>
+            <systemProperty>
               <key>hawtio.authenticationEnabled</key>
               <value>false</value>
             </systemProperty>

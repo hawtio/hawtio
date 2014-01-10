@@ -57,6 +57,17 @@ public class BrandingServlet extends HttpServlet {
         // we'll look for this as a system property for now...
         profile = System.getProperty("profile");
 
+        if (forceBranding) {
+            LOG.info("Branding enabled via forceBranding");
+        } else {
+            if (useBranding) {
+                LOG.info("Will check if branding should be enabled or not");
+                LOG.info("Checking properties: {}", propertiesToCheck);
+                LOG.info("Strings that will enable branding: {}", wantedStrings);
+            } else {
+                LOG.info("Will use the default hawtio branding");
+            }
+        }
         super.init(servletConfig);
     }
 
