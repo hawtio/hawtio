@@ -102,51 +102,81 @@ module Perspective {
     } else {
       // lets iterate through the available tabs in the perspective
       var topLevelTabs = data.topLevelTabs;
-      var list = topLevelTabs.includes || topLevelTabs.excludes;
-      angular.forEach(list, (tabSpec) => {
-        var href = tabSpec.href;
-        var id = tabSpec.id;
-        var rhref = tabSpec.rhref;
-        if (href) {
-          var hrefValue = href;
-          if (angular.isFunction(href)) {
-            hrefValue = href();
+
+      var includes = filterTabs(topLevelTabs.includes, workspace);
+      includes = includes.filter(t => {
+        if (angular.isFunction(t.onCondition)) {
+          // not all tabs has on condition function, so use try .. catch
+          var answer = t.onCondition(workspace);
+          if (!answer) {
+            log.info("Plugin " + (t.href != null ? t.href : t.id) + " not included in perspective " + perspective);
           }
-          var tab = workspace.topLevelTabs.find((t) => {
-            var thref = t.href();
-            return thref && thref.startsWith(hrefValue);
-          });
-          if (!tab && !id && tabSpec.content) {
-            // lets assume the tab is the tabSpec
-            tab = tabSpec;
-          }
-          if (tab) {
-            answer.push(tab);
-          }
-        } else if (id) {
-          var tab = workspace.topLevelTabs.find((t) => {
-            var tid = t.id;
-            return tid && tid === id;
-          });
-          if (tab) {
-            answer.push(tab);
-          }
-        } else if (rhref) {
-          var tab = workspace.topLevelTabs.find((t) => {
-            var thref = t.href();
-            return thref && thref.match(rhref);
-          });
-          if (tab) {
-            answer.push(tab);
-          }
+          return answer;
+        } else {
+          return true;
         }
       });
-      if (!topLevelTabs.includes) {
-        // lets exclude the matched tabs
-        answer = workspace.topLevelTabs.subtract(answer);
-      }
+      var excludes = filterTabs(topLevelTabs.excludes, workspace);
+      excludes.filter(t => {
+        if (angular.isFunction(t.onCondition)) {
+          // not all tabs has on condition function, so use try .. catch
+          var answer = t.onCondition(workspace);
+          if (answer) {
+            log.info("Plugin " + (t.href != null ? t.href : t.id) + " excluded in perspective " + perspective);
+          }
+          return answer;
+        } else {
+          return true;
+        }
+      });
+
+      // lets exclude the matched tabs, and include the includes
+      answer = workspace.topLevelTabs.subtract(excludes) || includes;
     }
     return answer;
+  }
+
+  function filterTabs(tabs, workspace) {
+    var matched = [];
+    angular.forEach(tabs, (tabSpec) => {
+      var href = tabSpec.href;
+      var id = tabSpec.id;
+      var rhref = tabSpec.rhref;
+      if (href) {
+        var hrefValue = href;
+        if (angular.isFunction(href)) {
+          hrefValue = href();
+        }
+        var tab = workspace.topLevelTabs.find((t) => {
+          var thref = t.href();
+          return thref && thref.startsWith(hrefValue);
+        });
+        if (!tab && !id && tabSpec.content) {
+          // lets assume the tab is the tabSpec
+          tab = tabSpec;
+        }
+        if (tab) {
+          matched.push(tab);
+        }
+      } else if (id) {
+        var tab = workspace.topLevelTabs.find((t) => {
+          var tid = t.id;
+          return tid && tid === id;
+        });
+        if (tab) {
+          matched.push(tab);
+        }
+      } else if (rhref) {
+        var tab = workspace.topLevelTabs.find((t) => {
+          var thref = t.href();
+          return thref && thref.match(rhref);
+        });
+        if (tab) {
+          matched.push(tab);
+        }
+      }
+    });
+    return matched;
   }
 
   /**
