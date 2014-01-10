@@ -8,11 +8,11 @@
         </ext:default-properties>
     </ext:property-placeholder>
 
-    <bean id="jaxbDataFormat" class="org.fusesource.fabric.jaxb.dynamic.DynamicJaxbDataFormat" scope="singleton">
+    <bean id="jaxbDataFormat" class="io.fabric8.jaxb.dynamic.DynamicJaxbDataFormat" scope="singleton">
         <property name="compiler" ref="fileJaxbCompiler"/>
     </bean>
 
-    <bean id="fileJaxbCompiler" class="org.fusesource.fabric.jaxb.dynamic.watcher.FileWatcherDynamicCompiler" init-method="init" destroy-method="destroy" scope="singleton">
+    <bean id="fileJaxbCompiler" class="io.fabric8.jaxb.dynamic.watcher.FileWatcherDynamicCompiler" init-method="init" destroy-method="destroy" scope="singleton">
         <property name="rootPath" value="${schemaPath}"/>
     </bean>
 </blueprint>

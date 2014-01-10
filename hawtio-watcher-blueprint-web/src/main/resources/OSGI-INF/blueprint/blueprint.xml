@@ -8,7 +8,7 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="blueprintContextWatcher" class="org.fusesource.fabric.watcher.blueprint.web.WatcherBlueprintContainer" init-method="init" destroy-method="destroy">
+  <bean id="blueprintContextWatcher" class="io.fabric8.watcher.blueprint.web.WatcherBlueprintContainer" init-method="init" destroy-method="destroy">
     <property name="rootPath" value="${hawtio.blueprint.config.dir}"/>
     <property name="parentContainer" ref="blueprintContainer" />
   </bean>

@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 /**
- * A JMX API to the {@link org.fusesource.fabric.watcher.blueprint.web.WatcherBlueprintContainer}
+ * A JMX API to the {@link io.fabric8.watcher.blueprint.web.WatcherBlueprintContainer}
  */
 public interface WatcherBlueprintContainerFacadeMXBean {
 

@@ -17,13 +17,13 @@
  */
 package io.hawt.example.fabric;
 
-import org.fusesource.fabric.api.PlaceholderResolver;
-import org.fusesource.fabric.service.ChecksumPlaceholderResolver;
-import org.fusesource.fabric.service.FabricServiceImpl;
-import org.fusesource.fabric.service.ZooKeeperDataStore;
-import org.fusesource.fabric.service.ZookeeperPlaceholderResolver;
-import org.fusesource.fabric.zookeeper.IZKClient;
-import org.fusesource.fabric.zookeeper.spring.ZKClientFactoryBean;
+import io.fabric8.api.PlaceholderResolver;
+import io.fabric8.service.ChecksumPlaceholderResolver;
+import io.fabric8.service.FabricServiceImpl;
+import io.fabric8.service.ZooKeeperDataStore;
+import io.fabric8.service.ZookeeperPlaceholderResolver;
+import io.fabric8.zookeeper.IZKClient;
+import io.fabric8.zookeeper.spring.ZKClientFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

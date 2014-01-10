@@ -27,14 +27,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>watcher-spring-context</artifactId>
       <version>${fabric-version}</version>
       <scope>compile</scope>
     </dependency>
     <!-- explicitly add transitive dependencies to avoid fuse's provided scope issue -->
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>watcher-core</artifactId>
       <version>${fabric-version}</version>
       <scope>compile</scope>
