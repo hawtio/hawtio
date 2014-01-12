@@ -21,3 +21,14 @@ In addition, for cases where you don't want a fixed sized table but want a simpl
 This lets you create a regular table element with whatever metadata you like and the &lt;thead&gt; and &lt;tbody&gt; will be generated from the column definitions to render the table dynamically; using the same kind of JSON configuration.
 
 This means you can switch between ng-grid, hawtio-datatable and hawtio-simple-table based on your requirements and tradeoffs (layout versus performance versus dynamic, user configurable views etc).
+
+#### Keep selection on data change
+
+The simple table uses a function evaluated as a primary key for the selected row(s). This ensures that the rows can be kept selected, when the underlying data changes due live updated.
+When the data is changed, then it is often easier for a plugin to just create the data from scratch, instead of updating existing data. This allows developers to use the same logic
+in the plugin for the initial data load, as well for subsequent data updates.
+
+For an example see the [quartz](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/quartz) plugin, using the function as shown below:
+
+    primaryKeyFn: (entity, idx) => { return entity.group + "/" + entity.name }
+
