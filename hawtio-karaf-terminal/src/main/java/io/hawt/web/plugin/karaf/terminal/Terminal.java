@@ -24,7 +24,6 @@
  * See http://www.ecma-international.org/publications/standards/Ecma-048.htm
  *       and http://vt100.net/docs/vt510-rm/
  */
-
 package io.hawt.web.plugin.karaf.terminal;
 
 import java.util.*;

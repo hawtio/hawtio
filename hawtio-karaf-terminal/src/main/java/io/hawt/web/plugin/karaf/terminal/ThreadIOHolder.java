@@ -3,7 +3,7 @@ package io.hawt.web.plugin.karaf.terminal;
 import org.apache.felix.service.threadio.ThreadIO;
 
 /**
- * @author Guillaume Nodet
+ *
  */
 public class ThreadIOHolder {
 
@@ -14,8 +14,7 @@ public class ThreadIOHolder {
     }
 
     public void setThreadIO(ThreadIO threadIO) {
-        this.threadIO = threadIO;
+        ThreadIOHolder.threadIO = threadIO;
     }
-
 
 }

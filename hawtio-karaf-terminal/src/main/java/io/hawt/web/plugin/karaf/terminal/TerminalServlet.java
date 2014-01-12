@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.zip.GZIPOutputStream;
 
-
 /**
- * @author Stan Lewis
+ *
  */
 public class TerminalServlet extends HttpServlet {
 
@@ -82,14 +82,30 @@ public class TerminalServlet extends HttpServlet {
                 out = new PipedInputStream();
                 PrintStream pipedOut = new PrintStream(new PipedOutputStream(out), true);
 
-                console = new Console(commandProcessor,
-                        threadIO,
-                        new PipedInputStream(in),
-                        pipedOut,
-                        pipedOut,
-                        new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
-                        null,
-                        null);
+                Constructor ctr = Console.class.getConstructors()[0];
+                if (ctr.getParameterTypes().length <= 7) {
+                    LOG.debug("Using old Karaf Console API");
+                    // the old API does not have the threadIO parameter, so its only 7 parameters
+                    console = (Console) ctr.newInstance(commandProcessor,
+                            new PipedInputStream(in),
+                            pipedOut,
+                            pipedOut,
+                            new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
+                            null,
+                            null);
+                } else {
+                    LOG.debug("Using new Karaf Console API");
+                    // use the new api directly which we compile against
+                    console = new Console(commandProcessor,
+                            threadIO,
+                            new PipedInputStream(in),
+                            pipedOut,
+                            pipedOut,
+                            new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
+                            null,
+                            null);
+                }
+
                 CommandSession session = console.getSession();
                 session.put("APPLICATION", System.getProperty("karaf.name", "root"));
                 session.put("USER", "karaf");
