@@ -34,7 +34,7 @@ module Karaf {
     $scope.init();
 
     $scope.$watch('selectedRepository', (newValue, oldValue) => {
-      log.info("selectedRepository: ", $scope.selectedRepository);
+      log.debug("selectedRepository: ", $scope.selectedRepository);
       if (newValue !== oldValue) {
         if (!newValue) {
           $scope.selectedRepositoryId = '';
