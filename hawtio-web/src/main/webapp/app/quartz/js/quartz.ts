@@ -68,6 +68,7 @@ module Quartz {
       showSelectionCheckbox: false,
       enableRowClickSelection: true,
       multiSelect: false,
+      primaryKeyFn: (entity, idx) => { return entity.group + "/" + entity.name },
       columnDefs: [
         {
           field: 'state',
@@ -134,6 +135,7 @@ module Quartz {
       showSelectionCheckbox: false,
       enableRowClickSelection: true,
       multiSelect: false,
+      primaryKeyFn: (entity, idx) => { return entity.group + "/" + entity.name },
       columnDefs: [
         {
           field: 'group',

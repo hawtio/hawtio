@@ -25,11 +25,17 @@ module DataTable {
     }
 
     private doLink($scope, $element, $attrs) {
+
+      var defaultPrimaryKeyFn = (entity, idx) => {
+        return idx;
+      }
+
       var config = $scope.config;
       var dataName = config.data || "data";
-      // need to remember which rows by index has been selected as the config.data / config.selectedItems
-      // may not have any uuid we can use to know which was selected, and re-select them when the data is changed (refreshed)
-      var selectedRowIds = [];
+      // need to remember which rows has been selected as the config.data / config.selectedItems
+      // so we can re-select them when data is changed/updated, and entity may be new instances
+      // so we need a primary key function to generate a 'primary key' of the entity
+      var primaryKeyFn = config.primaryKeyFn || defaultPrimaryKeyFn;
       $scope.rows = [];
 
       var scope = $scope.$parent || $scope;
@@ -48,20 +54,29 @@ module DataTable {
           return {
             entity: entity,
             index: idx,
-            selected: selectedRowIds.indexOf(idx) >= 0,
             getProperty: (name) => {
               return entity[name];
             }
           };
         });
 
-        // re-select selected rows in the config.selectedItems
-        config.selectedItems = [];
-        $scope.rows.forEach(row => {
-          if (row.selected) {
-            config.selectedItems.push(row.entity);
+        // okay the data was changed/updated so we need to re-select previously selected items
+        // and for that we need to evaluate the primary key function so we can match new data with old data.
+        var reSelectedItems = [];
+        $scope.rows.forEach((row, idx) => {
+          var rpk = primaryKeyFn(row.entity, row.index);
+          var selected = config.selectedItems.some(s => {
+            var spk = primaryKeyFn(s, s.index);
+            return angular.equals(rpk, spk);
+          });
+          if (selected) {
+            // need to enrich entity with index, as we push row.entity to the re-selected items
+            row.entity.index = row.index;
+            reSelectedItems.push(row.entity);
+            log.debug("Data changed so keep selecting row at index " + row.index);
           }
-        })
+        });
+        config.selectedItems = reSelectedItems;
       };
 
      scope.$watch(dataName, listener);
@@ -140,21 +155,21 @@ module DataTable {
       };
 
       $scope.isSelected = (row) => {
-        return selectedRowIds.indexOf(row.index) >= 0;
+        return config.selectedItems.some(row.entity);
       }
 
       $scope.onRowSelected = (row) => {
-        // are we already selected?
-        var idx = selectedRowIds.indexOf(row.index);
+        var idx = config.selectedItems.indexOf(row.entity);
         if (idx >= 0) {
-          delete selectedRowIds[idx];
-          delete config.selectedItems[row.entity];
+          log.debug("De-selecting row at index " + row.index);
+          config.selectedItems.splice(idx, 1);
         } else {
           if (!config.multiSelect) {
-            selectedRowIds = [];
             config.selectedItems = [];
           }
-          selectedRowIds.push(row.index);
+          log.debug("Selecting row at index " + row.index);
+          // need to enrich entity with index, as we push row.entity to the selected items
+          row.entity.index = row.index;
           config.selectedItems.push(row.entity);
         }
       }
@@ -173,6 +188,7 @@ module DataTable {
         onMouseDown = "";
       }
       var headHtml = "<thead><tr>";
+      // use a function to check if a row is selected so the UI can be kept up to date asap
       var bodyHtml = "<tbody><tr ng-repeat='row in rows | filter:config.filterOptions.filterText' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
