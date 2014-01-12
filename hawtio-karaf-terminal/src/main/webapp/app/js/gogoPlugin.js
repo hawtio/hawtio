@@ -59,16 +59,18 @@ var Gogo = (function() {
 
         }
       };
-    }).run(function(workspace, viewRegistry, layoutFull) {
+    }).run(function(workspace, viewRegistry, helpRegistry, layoutFull) {
 
       // tell the app to use the full layout, also could use layoutTree
       // to get the JMX tree or provide a URL to a custom layout
       viewRegistry[pluginName] = layoutFull;
 
+      helpRegistry.addUserDoc('Terminal', 'hawtio-karaf-terminal/app/doc/help.md');
+
       // Set up top-level link to our plugin
       workspace.topLevelTabs.push({
         content: "Terminal",
-        title: "Open a terminal to the server",
+        title: "Open a terminal to the Karaf server",
         isValid: function () { return workspace.treeContainsDomainAndProperties("hawtio", {type: "plugin", name: "hawtio-karaf-terminal"}) },
         href: function() { return "#/gogo"; },
         isActive: function() { return workspace.isLinkActive("gogo"); }
