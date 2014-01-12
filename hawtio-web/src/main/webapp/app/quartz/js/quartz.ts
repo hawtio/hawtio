@@ -68,7 +68,7 @@ module Quartz {
       showSelectionCheckbox: false,
       enableRowClickSelection: true,
       multiSelect: false,
-      primaryKeyFn: (entity) => { return entity.group + "/" + entity.name },
+      primaryKeyFn: (entity, idx) => { return entity.group + "/" + entity.name },
       columnDefs: [
         {
           field: 'state',
