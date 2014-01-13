@@ -38,11 +38,11 @@ module Jmx {
                 } catch (e) {
                   // ignore
                 }
-                if ( Jmx.currentProcessId &&  Jmx.currentProcessId.has("@")) {
+                if (Jmx.currentProcessId && Jmx.currentProcessId.has("@")) {
                   Jmx.currentProcessId = "pid:" +  Jmx.currentProcessId.split("@")[0];
                 }
               }
-              return  Jmx.currentProcessId;
+              return Jmx.currentProcessId;
             });
 
 
