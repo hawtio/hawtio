@@ -8,19 +8,38 @@ module Jmx {
     $scope.metrics = [];
     $scope.updateRate = 1000; //parseInt(localStorage['updateRate']);
 
-    var jolokia = new Jolokia(jolokiaParams);
-    jolokia.start($scope.updateRate);
+    $scope.context = null;
+    $scope.jolokia = null;
+    $scope.charts = null;
 
-    $scope.$on('$destroy', function () {
-      jolokia.stop();
-      delete jolokia;
-      $scope.deregRouteChange();
-      $scope.dereg();
+    $scope.reset = () => {
       if ($scope.context) {
         $scope.context.stop();
         $scope.context = null;
       }
-      $($element).children().remove();
+      if ($scope.jolokia) {
+        $scope.jolokia.stop();
+        $scope.jolokia = null;
+      }
+      if ($scope.charts) {
+        $scope.charts.empty();
+        $scope.charts = null;
+      }
+    };
+
+    $scope.$on('$destroy', function () {
+      try {
+        $scope.deregRouteChange();
+      } catch (error) {
+        // ignore
+      }
+      try {
+        $scope.dereg();
+      } catch (error) {
+        // ignore
+      }
+      $scope.reset();
+
     });
 
     $scope.errorMessage = () => {
@@ -69,11 +88,12 @@ module Jmx {
         return;
       }
 
+      $scope.charts = charts;
       // clear out the existing context to ensure we don't get duplicates
-      if ($scope.context !== null) {
-        $scope.context = null;
-        charts.empty();
-      }
+      $scope.reset();
+
+      $scope.jolokia = new Jolokia(jolokiaParams);
+      $scope.jolokia.start($scope.updateRate);
 
       var mbean = node.objectName;
       $scope.metrics = [];
@@ -85,7 +105,7 @@ module Jmx {
               .size(width);
 
       $scope.context = context;
-      $scope.jolokiaContext = context.jolokia(jolokia);
+      $scope.jolokiaContext = context.jolokia($scope.jolokia);
       var search = $location.search();
       var attributeNames = toSearchArgumentArray(search["att"]);
 
@@ -96,7 +116,7 @@ module Jmx {
         // we need to escape the mbean path for list
         var listKey = encodeMBeanPath(mbean);
         //console.log("Looking up mbeankey: " + listKey);
-        var meta = jolokia.list(listKey);
+        var meta = $scope.jolokia.list(listKey);
         if (meta) {
           var attributes = meta.attr;
           if (attributes) {
