@@ -16,18 +16,8 @@ module Source {
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) => {
 
             viewRegistry['source'] = layoutFull;
-            helpRegistry.addUserDoc('source', 'app/source/html/help.md');
+            helpRegistry.addUserDoc('source', 'app/source/doc/help.md');
 
-
-        /*
-                    workspace.topLevelTabs.push({
-                      content: "Source",
-                      title: "View source code of arti",
-                      isValid: (workspace: Workspace) => Git.createGitRepository(workspace, jolokia, localStorage) !== null,
-                      href: () => "#/wiki/view/wiki",
-                      isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki")
-                    });
-        */
           });
 
   hawtioPluginLoader.addModule(pluginName);
