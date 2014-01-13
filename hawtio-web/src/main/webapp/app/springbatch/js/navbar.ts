@@ -2,7 +2,7 @@ module SpringBatch {
     export function NavBarController($scope, $routeParams, $location, workspace:Workspace) {
 
         var subLevelTabs =[
-            {uri:'jobs',name:'Jobs List'} ,
+            {uri:'servers',name:'Servers List'} ,
             {uri:'jobs/executions',name:'Jobs Execution List'},
             {uri:'connect',name:'Connect'}
         ];

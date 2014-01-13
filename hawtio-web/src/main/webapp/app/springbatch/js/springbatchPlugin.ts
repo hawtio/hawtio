@@ -49,7 +49,7 @@ module SpringBatch {
                     'localhost\\:8181/'
                 ];
 
-                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
+//                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
             });
 
             $rootScope.proxyUrl = '/hawtio/proxy/';

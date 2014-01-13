@@ -2,6 +2,12 @@ module SpringBatch{
 
     export function SpringBatchJobExecutionListController($scope, $resource, $rootScope) {
         var springBatchServerOrigin = $rootScope.springBatchServer;
+        if(springBatchServerOrigin == undefined){
+            $rootScope.alert.content='No Server selected. Please, use Connect or Server List screen to select one.';
+            $rootScope.alert.type = 'alert-error';
+            $rootScope.alert.show();
+            return;
+        }
         var springBatchServerPath = springBatchServerOrigin+'jobs';
         var proxyUrl = $rootScope.proxyUrl;
         var executionsListPath='/executions.json';
