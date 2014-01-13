@@ -29,7 +29,15 @@ module Fabric {
   }
 
   export function canBootstrapFabric(workspace) {
+    return hasClusterBootstrapManager(workspace);
+  }
+
+  export function hasClusterBootstrapManager(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterBootstrapManager"});
+  }
+
+  export function hasClusterServiceManager(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterServiceManager"});
   }
 
   export function hasOpenShiftFabric(workspace) {
@@ -49,16 +57,25 @@ module Fabric {
   }
 
   export function isFMCContainer(workspace) {
-    return Fabric.hasFabric(workspace) &&
-           Fabric.hasSchemaMBean(workspace) &&
-           Fabric.hasGitMBean(workspace);
+    var hasFabric = Fabric.hasFabric(workspace);
+    var hasSchemaMBean = Fabric.hasSchemaMBean(workspace);
+    var hasGitMBean = Fabric.hasGitMBean(workspace);
+
+    // Too noisy...
+    // log.debug("is FMC container, hasFabric: ", hasFabric, " hasSchemaMBean:", hasSchemaMBean, " hasGitMBean:", hasGitMBean);
+
+    return hasFabric &&
+           hasSchemaMBean &&
+           hasGitMBean;
   }
 
   export function hasFabric(workspace):boolean{
-    // lets make sure we only have a fabric if we have the ClusterBootstrapManager available
-    // so that we hide Fabric for 6.0 or earlier of JBoss Fuse which doesn't have the necessary
-    // mbeans for hawtio awesomeness
-    return fabricCreated(workspace) && canBootstrapFabric(workspace);
+    // lets make sure we only have a fabric if we have
+    // the ClusterServiceManager or ClusterBootstrapManager available
+    // so that we hide Fabric for 6.0 or earlier of JBoss Fuse
+    // which doesn't have the necessary mbeans for hawtio awesomeness
+    return fabricCreated(workspace) &&
+        (hasClusterServiceManager(workspace) || hasClusterBootstrapManager(workspace));
   }
 
   /**
