@@ -75,8 +75,19 @@
 
 <p>This lets you create a regular table element with whatever metadata you like and the &lt;thead&gt; and &lt;tbody&gt; will be generated from the column definitions to render the table dynamically; using the same kind of JSON configuration.</p>
 
-<p>This means you can switch between ng-grid, hawtio-datatable and hawtio-simple-table based on your requirements and tradeoffs (layout versus performance versus dynamic, user configurable views etc).
-</div>
+<p>This means you can switch between ng-grid, hawtio-datatable and hawtio-simple-table based on your requirements and tradeoffs (layout versus performance versus dynamic, user configurable views etc).</p>
+
+<h4 id = "Keep_selection_on_data_change">Keep selection on data change</h4>
+
+<p>The simple table uses a function evaluated as a primary key for the selected row(s). This ensures that the rows can be kept selected, when the underlying data changes due live updated.
+When the data is changed, then it is often easier for a plugin to just create the data from scratch, instead of updating existing data. This allows developers to use the same logic
+in the plugin for the initial data load, as well for subsequent data updates.</p>
+
+<p>For an example see the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/quartz">quartz</a> plugin, using the function as shown below:</p>
+
+<pre><code>primaryKeyFn: (entity, idx) =&gt; { return entity.group + "/" + entity.name }</code></pre>
+
+<p></div>
   </div></p>
     </div>
     <footer>
