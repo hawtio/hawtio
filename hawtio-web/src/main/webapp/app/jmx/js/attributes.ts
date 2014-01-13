@@ -433,17 +433,34 @@ module Jmx {
                 }
               });
 
+              var extraDefs = [];
               angular.forEach(data, (value, key) => {
                 if (includePropertyValue(key, value)) {
                   if (!map[key]) {
-                    defaultDefs.push({
+                    extraDefs.push({
                       field: key,
-                      displayName: humanizeValue(key),
+                      displayName: key === '_id' ? 'Object name' : humanizeValue(key),
                       visible: defaultSize === 0
                     });
                   }
                 }
               });
+
+              // the additional columns (which are not pre-configured), should be sorted
+              // so the column menu has a nice sorted list instead of random ordering
+              extraDefs = extraDefs.sort((def, def2) => {
+                // make sure _id is last
+                if (def.field.startsWith('_')) {
+                  return 1;
+                } else if (def2.field.startsWith('_')) {
+                  return -1;
+                }
+                return def.field.localeCompare(def2.field);
+              });
+              extraDefs.forEach(e => {
+                defaultDefs.push(e);
+              })
+
               $scope.columnDefs = defaultDefs;
             }
           }
