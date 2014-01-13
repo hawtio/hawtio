@@ -7,8 +7,6 @@ Don't cha wish your console was <a href="http://www.youtube.com/watch?v=YNSxNsr4
 ##### General Navigation #####
 Primary navigation in [{{branding.appName}}](http://hawt.io "{{branding.appName}}") is via the top navigation bar.
 
-![Main Navigation Bar](app/core/doc/img/main-nav.png "Main Navigation Bar")
-
 Clicking on a navigation link will take you to that plugin's main page.
 
 ##### Switching Perspective #####
