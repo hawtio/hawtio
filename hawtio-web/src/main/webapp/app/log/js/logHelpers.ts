@@ -56,10 +56,13 @@ module Log {
     if (!exception) {
       return '';
     }
+    // turn exception into an array
     if (!angular.isArray(exception) && angular.isString(exception)) {
       exception = exception.split('\n');
-    } else {
-      return '';
+    }
+
+    if (!angular.isArray(exception)) {
+      return "";
     }
 
     var answer = '<ul class="unstyled">\n';
