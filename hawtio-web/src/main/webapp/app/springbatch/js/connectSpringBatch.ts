@@ -14,17 +14,7 @@ module SpringBatch {
         };
 
         $scope.addSpringBatchServerToGlobalList = function(){
-            var server = '';
-            server = $scope.host+'\\:'+$scope.port;
-            if($scope.path){
-                if($scope.path.charAt(0) != '/')
-                    server=server+'/'+$scope.path;
-                else
-                    server=server+$scope.path;
-            }
-            if(server.charAt(server.length-1) != '/'){
-                server=server+'/'
-            }
+            var server = getServerUrl($scope.host, $scope.port, $scope.path);
 
             $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
             $http.post('/hawtio/springBatch','server='+server).success(function(data){
@@ -51,6 +41,20 @@ module SpringBatch {
                     $rootScope.alert.type = 'alert-error';
                     $rootScope.alert.show();
                 });
+        };
+
+        $scope.editServer = function(){
+            $scope.host = getHost($scope.selectedSpringBatchServer);
+            $scope.port = parseInt(getPort($scope.selectedSpringBatchServer));
+            $scope.path = getServerSuffix($scope.selectedSpringBatchServer);
+        };
+
+        $scope.updateServer = function(){
+            var server = getServerUrl($scope.host, $scope.port, $scope.path);
+
+            console.info(' ----------------- server ----------- '+ server );
+            console.info(' ----------------- server index ----------- '+ $scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer) );
+            $rootScope.springBatchServerList[$rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer)] = server;
         }
     }
 }

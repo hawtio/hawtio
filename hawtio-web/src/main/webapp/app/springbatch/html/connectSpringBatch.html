@@ -16,6 +16,9 @@
                             <button ng-click="removeServer()" ng-disabled="!selectedSpringBatchServer" class="btn">
                                 <i class="icon-trash" ></i>
                             </button>
+                            <button ng-click="editServer()" ng-disabled="!selectedSpringBatchServer" class="btn">
+                                <i class="icon-pencil" ></i>
+                            </button>
                         </span>
                     </div>
                 </div>
@@ -58,6 +61,9 @@
                     <div class="controls">
                         <input type="submit" value="Add to the list" class="btn" ng-disabled="!host" ng-click="addSpringBatchServerToGlobalList()"
                                title="Add new SpringBatch server to the global list">
+
+                        <input type="submit" value="Update" class="btn" ng-disabled="!host" ng-click="updateServer()"
+                               title="Update SpringBatch server">
                     </div>
                 </div>
             </form>
