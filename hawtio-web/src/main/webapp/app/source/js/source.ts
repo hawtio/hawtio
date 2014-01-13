@@ -103,8 +103,16 @@ module Source {
     });
 
     function viewContents(response) {
-      $scope.source = response;
-      $scope.loadingMessage = null;
+      if (response) {
+        log.debug("Downloaded file for the maven artifact: " + mavenCoords);
+        $scope.source = response;
+        $scope.loadingMessage = null;
+      } else {
+        // we could not download the source code
+        $scope.source = null;
+        $scope.loadingMessage = "Cannot download file, please see logging console for details."
+        log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
+      }
       Core.$apply($scope);
     }
 
@@ -114,9 +122,9 @@ module Source {
         jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
           success: viewContents,
           error: (response) => {
-            log.error("Failed to download the source code for the maven artifact: ", mavenCoords);
+            log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
             log.info("Stack trace: ", response.stacktrace);
-            $scope.loadingMessage = "Could not download file, please see console for details"
+            $scope.loadingMessage = "Cannot not download file, please see logging console for details."
             Core.$apply($scope);
           }
         });
