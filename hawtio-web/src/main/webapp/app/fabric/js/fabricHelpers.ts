@@ -162,7 +162,7 @@ module Fabric {
       var kind = null;
       // lets see if there is an openshift option
       var providers = registeredProviders(jolokia);
-      angular.forEach(["openshift", "jclouds"], (value) => {
+      angular.forEach(["openshift", "docker", "jclouds"], (value) => {
         if (!kind && providers[value]) {
           kind = value;
         }
