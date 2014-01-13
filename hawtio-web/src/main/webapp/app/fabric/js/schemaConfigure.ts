@@ -152,6 +152,24 @@ module Fabric {
         break;
 
 
+      case 'docker':
+        delete schema.properties['parent'];
+        delete schema.properties['manualIp'];
+        delete schema.properties['preferredAddress'];
+        delete schema.properties['resolver'];
+        delete schema.properties['ensembleServer'];
+        delete schema.properties['proxyUri'];
+        delete schema.properties['adminAccess'];
+        delete schema.properties['path'];
+        delete schema.properties['bindAddress'];
+        delete schema.properties['hostNameContext'];
+
+        schema['tabs'] = {
+          'Common': ['name', 'number'],
+          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+        };
+        break;
+
       /*
       case 'createEnsemble':
         delete schema['properties']['name'];
