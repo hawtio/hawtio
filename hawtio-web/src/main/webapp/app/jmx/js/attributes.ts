@@ -57,7 +57,7 @@ module Jmx {
       selectedItems: $scope.selectedItems,
       showFilter: false,
       canSelectRows: false,
-      enableRowSelection: false,
+      enableRowSelection: true,
       keepLastSelected: false,
       multiSelect: false,
       showColumnMenu: true,
