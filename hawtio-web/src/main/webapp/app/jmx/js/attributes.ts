@@ -59,7 +59,7 @@ module Jmx {
       canSelectRows: false,
       enableRowSelection: true,
       keepLastSelected: false,
-      multiSelect: false,
+      multiSelect: true,
       showColumnMenu: true,
       displaySelectionCheckbox: false,
       filterOptions: {
