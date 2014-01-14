@@ -33,8 +33,12 @@ module Log {
           }).
           filter('logDateFilter', function ($filter) {
             var standardDateFilter = $filter('date');
-            return function (dateToFormat) {
-              return standardDateFilter(dateToFormat, 'yyyy-MM-dd HH:mm:ss.sss');
+            return function (log) {
+              if (log.timestampMs) {
+                return standardDateFilter(log.timestampMs, 'yyyy-MM-dd HH:mm:ss.sss')
+              } else {
+                return standardDateFilter(log.timestamp, 'yyyy-MM-dd HH:mm:ss')
+              }
             }
           });
 

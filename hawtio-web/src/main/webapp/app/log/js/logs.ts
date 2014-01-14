@@ -256,6 +256,10 @@ module Log {
             // TODO Why do we compare 'item.seq === log.message' ?
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
+              // if there is a seq in the reply, then its the timestamp with milli seconds
+              if (log.seq != null) {
+                log['timestampMs'] = log.seq;
+              }
               if ($scope.sortAsc) {
                 $scope.logs.push(log);
               } else {
