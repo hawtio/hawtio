@@ -228,7 +228,10 @@ module Jmx {
           });
         });
 
+      } else {
+        $scope.reset();
       }
+
     };
 
   }
