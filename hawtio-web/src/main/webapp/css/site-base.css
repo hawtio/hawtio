@@ -1456,17 +1456,66 @@ li.stacktrace {
 .box.selected .box-right i {
   text-shadow: none;
 }
-.box .box-left div {
-  padding: 5px;
+
+.contained {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  /* top: 9px; */
+  white-space: nowrap;
+}
+
+h2 > .contained {
+  top: 9px;
+}
+
+h4 > .contained {
+  top: 4px;
+}
+
+.dropdown-toggle > .contained,
+.breadcrumb-link > .contained {
+  top: 3px;
+  line-height: 15px;
+}
+
+/* these widths are totally arbitrary */
+.c-narrow {
+  max-width: 5em;
+}
+
+.c-medium {
+  max-width: 10em;
+}
+
+.c-wide {
+  max-width: 15em;
+}
+
+.profile-selector-name > .contained {
+  top: 8px;
+}
+
+.box > .box-left > div {
+  /* padding: 5px; */
   border-radius: 4px;
-  top: -1px;
-  left: 0px;
+  top: 8px;
+  left: 0;
   position: relative;
   display: inline;
 }
-.box .box-left .profile-select {
+
+/*
+.box > .box-left > div > span {
+  position: relative;
+  top: 9px;
+}
+*/
+
+.box > .box-left > .profile-select {
   display: inline-block;
-  top: 14px;
+  top: 9px;
   max-width: 210px;
   width: 210px;
   overflow: hidden;

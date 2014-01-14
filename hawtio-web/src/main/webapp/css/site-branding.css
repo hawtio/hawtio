@@ -693,33 +693,35 @@ li.dropdown.open > a.dropdown-toggle {
   color: white !important;
 }
 
-.wiki ul li[ng-repeat='link in breadcrumbs']:first-child {
+.wiki > ul > li[ng-repeat='link in breadcrumbs']:first-child {
   padding-left: 20px !important;
 }
 
-.wiki ul li[ng-repeat='link in breadcrumbs'] {
+.wiki > ul > li[ng-repeat='link in breadcrumbs'] {
   padding-left: 5px !important;
   padding-right: 5px !important;
   white-space: nowrap;
 }
 
-.wiki ul li[ng-repeat='link in breadcrumbs'] a {
+.wiki > ul > li[ng-repeat='link in breadcrumbs'] a {
   display: inline-block;
 }
 
-.wiki ul li[ng-repeat='link in breadcrumbs']:after {
+.wiki > ul > li[ng-repeat='link in breadcrumbs']:after {
+  position: relative;
+  top: 1px;
   content: '/';
 }
 
-.wiki ul li[ng-repeat='link in breadcrumbs'].active:after {
+.wiki > ul > li[ng-repeat='link in breadcrumbs'].active:after {
   content: '';
 }
 
-.wiki ul li.pull-right.dropdown {
+.wiki > ul > li.pull-right.dropdown {
   padding-right: 20px;
 }
 
-.tabbable .nav-tabs {
+.tabbable > .nav-tabs {
   min-height: inherit !important;
   max-height: inherit !important;
 }
