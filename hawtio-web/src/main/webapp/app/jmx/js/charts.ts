@@ -52,16 +52,18 @@ module Jmx {
       }
     };
 
+    var doRender = Core.throttled(render, 200);
+
     $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      Core.throttled(render, 500)();
+      doRender();
     });
     $scope.dereg = $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) return;
-      Core.throttled(render, 500)();
+      doRender();
     });
 
-    Core.throttled(render, 500)();
+    doRender();
 
 
     function render() {
@@ -69,10 +71,8 @@ module Jmx {
       var node = workspace.selection;
       if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
         // Called render too early, let's retry
-        setTimeout(Core.throttled(() => {
-          render();
-          Core.$apply($scope);
-        }, 500), 1000);
+        setTimeout(doRender, 500);
+        Core.$apply($scope);
         return;
       }
       var width = 594;
@@ -81,17 +81,15 @@ module Jmx {
         width = charts.width();
       } else {
         // Called render too early, let's retry
-        setTimeout(Core.throttled(() => {
-          render();
-          Core.$apply($scope);
-        }, 500), 1000);
+        setTimeout(doRender, 500);
+        Core.$apply($scope);
         return;
       }
 
-      $scope.charts = charts;
-      // clear out the existing context to ensure we don't get duplicates
+      // clear out any existing context
       $scope.reset();
 
+      $scope.charts = charts;
       $scope.jolokia = new Jolokia(jolokiaParams);
       $scope.jolokia.start($scope.updateRate);
 
@@ -199,9 +197,12 @@ module Jmx {
         }
       }
 
-      var d3Selection = d3.select(charts.get(0));
       if ($scope.metrics.length > 0) {
+
+        var d3Selection = d3.select(charts.get(0));
         var axisEl = d3Selection.selectAll(".axis");
+
+        var bail = false;
 
         axisEl.data(["top", "bottom"])
                 .enter().append("div")
@@ -209,15 +210,37 @@ module Jmx {
                   return d + " axis";
                 })
                 .each(function (d) {
-                  d3.select(this).call(context.axis().ticks(12).orient(d));
+                  if (bail) {
+                    return;
+                  }
+                  try {
+                    d3.select(this).call(context.axis().ticks(12).orient(d));
+                  } catch (error) {
+                    // still rendering at not the right time...
+                    // log.debug("error: ", error);
+                    if (!bail) {
+                      bail = true;
+                    }
+                  }
                 });
+
+        if (bail) {
+          $scope.reset();
+          setTimeout(doRender, 500);
+          Core.$apply($scope);
+          return;
+        }
 
         d3Selection.append("div")
                 .attr("class", "rule")
                 .call(context.rule());
 
         context.on("focus", function (i) {
-          d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+          try {
+            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+          } catch (error) {
+            log.info("error: ", error);
+          }
         });
 
         $scope.metrics.forEach((metric) => {
@@ -232,6 +255,8 @@ module Jmx {
       } else {
         $scope.reset();
       }
+
+      Core.$apply($scope);
 
     };
 
