@@ -15,7 +15,12 @@ module SpringBatch {
 
         $scope.addSpringBatchServerToGlobalList = function(){
             var server = getServerUrl($scope.host, $scope.port, $scope.path);
-
+            if($rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer) > 0){
+                $rootScope.alert.content='Server already in the list.';
+                $rootScope.alert.type = 'alert-error';
+                $rootScope.alert.show();
+                return;
+            }
             $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
             $http.post('/hawtio/springBatch','server='+server).success(function(data){
                 $rootScope.springBatchServerList.add(server);
