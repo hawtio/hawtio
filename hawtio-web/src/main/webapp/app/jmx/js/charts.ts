@@ -201,8 +201,9 @@ module Jmx {
 
       var d3Selection = d3.select(charts.get(0));
       if ($scope.metrics.length > 0) {
-        d3Selection.selectAll(".axis")
-                .data(["top", "bottom"])
+        var axisEl = d3Selection.selectAll(".axis");
+
+        axisEl.data(["top", "bottom"])
                 .enter().append("div")
                 .attr("class", function (d) {
                   return d + " axis";
