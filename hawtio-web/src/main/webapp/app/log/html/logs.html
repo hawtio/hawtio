@@ -62,8 +62,8 @@
           <div class="title">
             <i class="expandable-indicator"></i>
           </div>
-          <!-- TODO: use log.seq as it has timestamp with milli seconds -->
-          <div class="title">{{log.seq | logDateFilter}}</div>
+          <!-- we may have the timestamp with milli seconds (not available in all containers) -->
+          <div class="title">{{log | logDateFilter}}</div>
           <div class="title"><span class="text-{{logClass(log)}}"><i class="{{logIcon(log)}}"></i> {{log.level}}</span></div>
           <div title="{{log.logger}}" ng-switch="hasLogSourceHref(log)">
             <a ng-href="{{logSourceHref(log)}}" ng-switch-when="true">{{log.logger}}</a>
