@@ -51,10 +51,19 @@ module SpringBatch {
 
         $scope.updateServer = function(){
             var server = getServerUrl($scope.host, $scope.port, $scope.path);
+            var replaceServer = $scope.selectedSpringBatchServer;
+            $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+            $http.post('/hawtio/springBatch','server='+server+'&replaceServer='+replaceServer).success(function(data){
+                $rootScope.springBatchServerList[$rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer)] = server;
+                $rootScope.alert.content='Server updated.';
+                $rootScope.alert.type = 'alert-success';
+                $rootScope.alert.show();
+            }).error(function(data){
+                    $rootScope.alert.content='Could not add server.';
+                    $rootScope.alert.type = 'alert-error';
+                    $rootScope.alert.show();
+                });
 
-            console.info(' ----------------- server ----------- '+ server );
-            console.info(' ----------------- server index ----------- '+ $scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer) );
-            $rootScope.springBatchServerList[$rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer)] = server;
         }
     }
 }

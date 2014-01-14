@@ -48,10 +48,23 @@ public class SpringBatchConfigServlet extends HttpServlet {
         File file = getPropertiesFile("springbatch.properties");
         Properties properties = getProperties(file);
         String server = req.getParameter("server");
-        if(server != null && !server.isEmpty()){
-            properties.setProperty("springBatchServerList",properties.getProperty("springBatchServerList")+","+server);
+        String replaceServer = req.getParameter("replaceServer");
+
+        if((replaceServer != null && !replaceServer.isEmpty()) && (server != null && !server.isEmpty())){
+            String[] servers = properties.getProperty("springBatchServerList").split(",");
+            List<String> serverList = new ArrayList<String>(Arrays.asList(servers));
+            if (serverList.contains(replaceServer)){
+                serverList.remove(replaceServer);
+                serverList.add(server);
+            }
+            properties.setProperty("springBatchServerList",join(serverList,","));
             properties.store(new FileOutputStream(file), null);
             resp.getWriter().print("updated");
+        }
+        else if(server != null && !server.isEmpty()){
+            properties.setProperty("springBatchServerList",properties.getProperty("springBatchServerList")+","+server);
+            properties.store(new FileOutputStream(file), null);
+            resp.getWriter().print("added");
         }
         else {
             resp.getWriter().print("failed");
