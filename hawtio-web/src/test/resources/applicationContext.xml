@@ -176,14 +176,14 @@
     </route>
 
     <route id="quartzRoute2">
-      <from uri="quartz2:mygroup/myothertimer?cron=0/2+*+*+*+*+?"/>
+      <from uri="quartz2:mygroup/myothertimer?cron=0/30+*+*+*+*+?"/>
       <log message="Quartz2 myothertrigger fired"/>
     </route>
   </camelContext>
 
   <camelContext id="otherQuartzCamel" xmlns="http://camel.apache.org/schema/spring">
     <route id="otherQuartzRoute">
-      <from uri="quartz2other:foo/bar?cron=0/8+*+*+*+*+?"/>
+      <from uri="quartz2other:foo/bar?cron=0/45+*+*+*+*+?"/>
       <log message="Other Quartz2 foo/bar fired"/>
     </route>
   </camelContext>
