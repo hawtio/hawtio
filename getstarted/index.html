@@ -66,21 +66,21 @@
 
 <p>You can startup hawtio on your machine using the hawtio-app executable jar.</p>
 
-<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.2.1/hawtio-app-1.2.1.jar">Download the executable hawtio-app-1.2.1.jar</a></p>
+<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.2.2/hawtio-app-1.2.2.jar">Download the executable hawtio-app-1.2.2.jar</a></p>
 
 <p>Once you have downloaded it, just run this from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.2.1.jar</code></pre>
+<pre><code>java -jar hawtio-app-1.2.2.jar</code></pre>
 
 <p>And the console should show you which URL to open to view hawtio; which by default is <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a></p>
 
 <p>You can specify the port number to use, for example to use port 8090 run from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.2.1.jar --port 8090</code></pre>
+<pre><code>java -jar hawtio-app-1.2.2.jar --port 8090</code></pre>
 
 <p>hawtio supports other options which you can get listed by running from command line:</p>
 
-<pre><code>java -jar hawtio-app-1.2.1.jar --help</code></pre>
+<pre><code>java -jar hawtio-app-1.2.2.jar --help</code></pre>
 
 <h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
 
@@ -89,10 +89,10 @@
 <table class="buttonTable">
   <tr>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.2.1/hawtio-default-1.2.1.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.2.2/hawtio-default-1.2.2.war">Download hawtio-default.war</a>
     </td>
     <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.2.1/sample-1.2.1.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.2.2/sample-1.2.2.war">Download sample.war</a>
     </td>
   </tr>
   <tr>
@@ -110,12 +110,12 @@
 
 <p>If you rename the downloaded file to <em>hawtio.war</em> then drop it into your deploy directory then open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
 
-<p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.2.1/">http://localhost:8080/hawtio-default-1.2.1/</a> or <a href="http://localhost:8080/sample-1.2.1/">http://localhost:8080/sample-1.2.1/</a>  depending on the file name you downloaded.</p>
+<p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.2.2/">http://localhost:8080/hawtio-default-1.2.2/</a> or <a href="http://localhost:8080/sample-1.2.2/">http://localhost:8080/sample-1.2.2/</a>  depending on the file name you downloaded.</p>
 
 <p>Please check <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things; in particular security.</p>
 
 <p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2.1/hawtio-default-offline-1.2.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
+ <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.2.2/hawtio-default-offline-1.2.2.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
 
 <p>If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.</p>
 
@@ -125,19 +125,19 @@
 
 <p>Otherwise if you are using 6.0 or earlier of <a href="http://www.jboss.org/products/fuse">Fuse</a> or a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a> or <a href="http://servicemix.apache.org/">Apache ServiceMix</a> then try the following:</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.2.1/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.2.2/xml/features
 features:install hawtio</code></pre>
 
 <p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:</p>
 
-<pre><code>features:chooseurl hawtio 1.2.1
+<pre><code>features:chooseurl hawtio 1.2.2
 features:install hawtio</code></pre>
 
 <p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>. The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.</p>
 
 <p><strong>NOTE</strong> if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.2.1/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.2.2/xml/features
 features:install hawtio-core</code></pre>
 
 <h3 id = "If_you_use_a_HTTP_proxy">If you use a HTTP proxy</h3>
@@ -172,7 +172,7 @@ features:install hawtio-core</code></pre>
 
 <p>If you use JBoss AS 7.x or later or use EAP 6.x or later the above should just work.</p>
 
-<p>However for JBoss AS 6.x or earlier there is <a href="http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html">an issue with using newer versions of slf4j</a> so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2.1/hawtio-no-slf4j-1.2.1.war">Download hawtio-no-slf4j.war</a>.</p>
+<p>However for JBoss AS 6.x or earlier there is <a href="http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html">an issue with using newer versions of slf4j</a> so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.2.2/hawtio-no-slf4j-1.2.2.war">Download hawtio-no-slf4j.war</a>.</p>
 
 <p>To disable security <a href="http://www.mastertheboss.com/jboss-configuration/how-to-inject-system-properties-into-jboss">configure the system properties</a> by adding the following to your <strong>jboss-as/server/default/deploy/properties-service.xml</strong> file (which probably has the mbean definition already but commented out):</p>
 
