@@ -1,5 +1,5 @@
 # hawtio Maven Plugins
-**Available as of hawtio 1.2.2**
+**Available as of hawtio 1.2.1**
 
 **hawtio** offers a number of Maven Plugins, so that users can bootup Maven projects and have **hawtio** embedded in the running JVM.
 
