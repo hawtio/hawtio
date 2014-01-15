@@ -47,47 +47,22 @@ module Source {
       }
       return null;
     };
-    var options = {
-      readOnly: true,
-      mode: $scope.format,
-      lineNumbers: true,
 
-      // Quick hack to get the codeMirror instance.
-      onChange: function(codeMirror) {
-        if (codeMirror) {
-          if (!$scope.codeMirror) {
-            lineNumber -= 1;
-            var lineText = codeMirror.getLine(lineNumber);
-            var endChar = (lineText) ? lineText.length : 1000;
-            var start = {line: lineNumber, ch: 0};
-            var end = {line: lineNumber, ch: endChar};
-            codeMirror.scrollIntoView(start);
-            codeMirror.setCursor(start);
-            codeMirror.setSelection(start, end);
-            codeMirror.refresh();
-            codeMirror.focus();
-          }
-          $scope.codeMirror = codeMirror;
-        }
-      }
-    };
-    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-
-    $scope.onChange = (codeMirror) => {
-      log.debug("codeMirror: ", codeMirror);
-      if (codeMirror) {
-        lineNumber -= 1;
-        var lineText = codeMirror.getLine(lineNumber);
+    function updateLineSelection() {
+      var codeMirror = $scope.codeMirror;
+      if (codeMirror && lineNumber) {
+        var line = lineNumber - 1;
+        var lineText = codeMirror.getLine(line);
         var endChar = (lineText) ? lineText.length : 1000;
-        var start = {line: lineNumber, ch: 0};
-        var end = {line: lineNumber, ch: endChar};
+        var start = {line: line, ch: 0};
+        var end = {line: line, ch: endChar};
         codeMirror.scrollIntoView(start);
         codeMirror.setCursor(start);
         codeMirror.setSelection(start, end);
         codeMirror.refresh();
         codeMirror.focus();
       }
-    };
+    }
 
     $scope.$watch('workspace.tree', function (oldValue, newValue) {
       if (!$scope.git && Git.getGitMBean(workspace)) {
@@ -110,10 +85,13 @@ module Source {
       } else {
         // we could not download the source code
         $scope.source = null;
-        $scope.loadingMessage = "Cannot download file, please see logging console for details."
+        $scope.loadingMessage = "Cannot download file, please see logging console for details.";
         log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
       }
       Core.$apply($scope);
+
+      // lets update the line selection asynchronously to check we've properly loaded by now
+      setTimeout(updateLineSelection, 100);
     }
 
     function updateView() {
@@ -124,7 +102,7 @@ module Source {
           error: (response) => {
             log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
             log.info("Stack trace: ", response.stacktrace);
-            $scope.loadingMessage = "Cannot not download file, please see logging console for details."
+            $scope.loadingMessage = "Cannot not download file, please see logging console for details.";
             Core.$apply($scope);
           }
         });
@@ -133,6 +111,5 @@ module Source {
 
     var maybeUpdateView = Core.throttled(updateView, 1000);
      setTimeout(maybeUpdateView, 50);
-
   }
 }
