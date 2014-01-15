@@ -1,5 +1,5 @@
 # hawtio Maven Plugins
-**Available as of hawtio 1.2.1**
+**Available as of hawtio 1.2.2**
 
 **hawtio** offers a number of Maven Plugins, so that users can bootup Maven projects and have **hawtio** embedded in the running JVM.
 
@@ -217,7 +217,7 @@ In the Maven pom.xml file, the **hawtio** plugin is configured by adding the fol
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2</version>
       <configuration>
         <!-- configuration options goes here -->
       </configuration>
@@ -264,9 +264,9 @@ To run the same example with **hawtio** embedded as a web console, you simply do
     cd examples
     cd camel-example-console
     mvn compile
-    mvn io.hawt:hawtio-maven-plugin:1.2.1:camel
+    mvn io.hawt:hawtio-maven-plugin:1.2.2:camel
 
-Where 1.2.1 is the **hawtio** version to use.
+Where 1.2.2 is the **hawtio** version to use.
 
 ### Adding hawtio plugin to the Apache Camel examples
 
@@ -277,7 +277,7 @@ In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2</version>
     </plugin>
 
 And you can run the console example simply by typing
