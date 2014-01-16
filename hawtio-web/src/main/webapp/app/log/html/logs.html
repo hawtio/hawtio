@@ -118,10 +118,22 @@
           <span><strong>Method:</strong> {{selectedRow.methodName}}</span>
           <span><strong>File:</strong> <span class="blue">{{selectedRow.fileName}}</span>:<span class="green">{{selectedRow.lineNumber}}</span></span>
         </div>
-        <p></p>
         <div class="row-fluid">
-          <span><strong>Host:</strong> {{selectedRow.host}}</span>
+          <span ng-show="selectedRow.host"><strong>Host:</strong> {{selectedRow.host}}</span>
           <span><strong>Thread:</strong> {{selectedRow.thread}}</span>
+        </div>
+
+        <div class="row-fluid" ng-show="hasOSGiProps(selectedRow)">
+          <span ng-show="selectedRow.properties['bundle.name']">
+            <strong>Bundle Name:</strong> <span class="green">{{selectedRow.properties['bundle.name']}}</span>
+          </span>
+          <span ng-show="selectedRow.properties['bundle.id']">
+            <strong>Bundle ID:</strong> {{selectedRow.properties['bundle.id']}}
+          </span>
+          <span ng-show="selectedRow.properties['bundle.version']">
+            <strong>Bundle Version:</strong> {{selectedRow.properties['bundle.version']}}
+          </span>
+
         </div>
 
         <div class="row-fluid">

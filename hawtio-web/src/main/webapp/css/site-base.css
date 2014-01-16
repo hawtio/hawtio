@@ -2855,14 +2855,14 @@ ul.zebra-list li {
   white-space: nowrap;
 }
 
-.log-info-panel > .log-info-panel-frame > .log-info-panel-header > span {
+.log-info-panel-header > span {
   margin-left: 7px;
   position: relative;
   top: 2px;
   overflow: hidden;
 }
 
-.log-info-panel > .log-info-panel-frame > .log-info-panel-body {
+.log-info-panel-frame > .log-info-panel-body {
   position: absolute;
   overflow: auto;
   left: 5px;
@@ -2872,6 +2872,10 @@ ul.zebra-list li {
   padding-top: 10px;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.log-info-panel-body > .row-fluid {
+  margin-bottom: 10px;
 }
 
 .log-info-panel > .log-info-panel-frame > .log-info-panel-body > .row-fluid > span {
