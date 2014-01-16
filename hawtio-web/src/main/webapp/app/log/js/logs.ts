@@ -13,7 +13,7 @@ module Log {
     message: string;
   }
 
-  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document) {
+  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document, $templateCache) {
     $scope.sortAsc = true;
     var value = localStorage["logSortAsc"];
     if (angular.isString(value)) {
@@ -27,6 +27,10 @@ module Log {
 
     $scope.logs = [];
     $scope.branding = Branding.enabled;
+    $scope.showRowDetails = false;
+    $scope.showRaw = {
+      expanded: false
+    };
 
     $scope.init = () => {
       $scope.searchText = $routeParams['s'];
@@ -78,17 +82,126 @@ module Log {
 
     $scope.logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
     $scope.logLevelMap = {};
+    $scope.skipFields = ['seq'];
 
     angular.forEach($scope.logLevels, (name, idx) => {
       $scope.logLevelMap[name] = idx;
       $scope.logLevelMap[name.toLowerCase()] = idx;
     });
 
+    $scope.selectedClass = ($index) => {
+      if ($index === $scope.selectedRowIndex) {
+        return 'selected';
+      }
+      return '';
+    };
+
+    $scope.generateSchema = (row) => {
+      var answer = {};
+
+      angular.forEach(row, (value, key) => {
+        if (key.startsWith("$")) {
+          return;
+        }
+        if (value === null) {
+          return;
+        }
+        if ($scope.skipFields.any(key)) {
+          return;
+        }
+
+        Core.pathSet(answer, ['properties', key, 'type'], Core.getType(value));
+        Core.pathSet(answer, ['properties', key, 'title'], key);
+      });
+      Core.pathSet(answer, ['description'], '');
+      Core.pathSet(answer, ['type'], 'String');
+      Core.pathSet(answer, ['id'], 1);
+      Core.pathSet(answer, ['name'], 'foo');
+
+      return {};
+    };
+
+    $scope.$watch('selectedRowIndex', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue < 0 || newValue > $scope.logs.length) {
+          $scope.selectedRow = null;
+          $scope.showRowDetails = false;
+          return;
+        }
+        Log.log.info("New index: ", newValue);
+        $scope.selectedRow = $scope.logs[newValue];
+        $scope.selectedRowSchema = $scope.generateSchema($scope.selectedRow);
+        if (!$scope.showRowDetails) {
+          $scope.showRowDetails = true;
+        }
+      }
+    });
+
+    $scope.sanitizeRow = (row) => {
+      var answer = [];
+      angular.forEach(row, (value, key) => {
+        if (key.startsWith("$")) {
+          return;
+        }
+        if (value === null) {
+          return;
+        }
+        if ($scope.skipFields.any(key)) {
+          return;
+        }
+        answer.push({
+          'key': key,
+          'value': value
+        });
+
+      });
+      return answer;
+    };
+
+    $scope.selectRow = ($index) => {
+      // in case the user clicks a row, closes the slideout and clicks
+      // the row again
+      if ($scope.selectedRowIndex == $index) {
+        $scope.showRowDetails = true;
+        return;
+      }
+      $scope.selectedRowIndex = $index;
+    };
+
+    $scope.getSelectedRowJson = () => {
+      return angular.toJson($scope.selectedRow, true);
+    };
+
+    $scope.getSelectedRowFields = () => {
+      var row = $scope.getSelectedRow();
+      var answer = '<ul class="zebra-list">\n';
+      row.forEach((item) => {
+        answer += '<li>\n';
+        answer += '<dl class="dl-horizontal">\n';
+        answer += '<dt>' + item.key + '</dt>\n'
+        answer += '<dd>' + item.value + '</dd>\n'
+        answer += '</dl>\n';
+        answer += '</li>\n';
+      });
+      answer += '</ul>';
+      return answer;
+    };
+
+    $scope.getSelectedRow = () => {
+      return $scope.sanitizeRow($scope.selectedRow);
+    };
+
     $scope.logClass = (log) => {
+      if (!log) {
+        return '';
+      }
       return logLevelClass(log['level']);
     };
 
     $scope.logIcon = (log) => {
+      if (!log) {
+        return '';
+      }
       var style = $scope.logClass(log);
       if (style === "error") {
         return "red icon-warning-sign";
@@ -105,6 +218,9 @@ module Log {
     $scope.logSourceHref = Log.logSourceHref;
 
     $scope.hasLogSourceHref = (row) => {
+      if (!row) {
+        return false;
+      }
       return Log.hasLogSourceHref(row);
     };
 
@@ -277,7 +393,17 @@ module Log {
             if (!$scope.sortAsc) {
               pos = size - count;
             }
+
             $scope.logs.splice(pos, count);
+
+            if ($scope.showRowDetails) {
+              if ($scope.sortAsc) {
+                $scope.selectedRowIndex -= count;
+              } else {
+                $scope.selectedRowIndex += count;
+              }
+            }
+
           }
         }
         if (counter) {
