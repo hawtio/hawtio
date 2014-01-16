@@ -2,6 +2,9 @@
  * @module Log
  */
 module Log {
+
+  export var log:Logging.Logger = Logger.get("Logs");
+
   export function logSourceHref(row) {
     if (!row) {
       return "";
@@ -101,7 +104,19 @@ module Log {
         return "<div class='stack-line'>  at <a href='" + link + "'>" + classAndMethod + "</a>(<span class='fileName'>" + fileName + "</span>:<span class='lineNumber'>" + line + "</span>)[<span class='mavenCoords'>" + mvnCoords + "</span>]</div>";
       }
     }
-    return '<pre class="stack-line">' + line + '</pre>';
+    var bold = true;
+    if (line) {
+      line = line.trim();
+      if (line.startsWith('at')) {
+        line = '  '  + line;
+        bold = false;
+      }
+    }
+    if (bold) {
+      return '<pre class="stack-line bold">' + line + '</pre>';
+    } else {
+      return '<pre class="stack-line">' + line + '</pre>';
+    }
   }
 
   export function getLogCacheSize(localStorage) {

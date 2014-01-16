@@ -34,6 +34,9 @@ module Log {
           filter('logDateFilter', function ($filter) {
             var standardDateFilter = $filter('date');
             return function (log) {
+              if (!log) {
+                return null;
+              }
               if (log.timestampMs) {
                 return standardDateFilter(log.timestampMs, 'yyyy-MM-dd HH:mm:ss.sss')
               } else {

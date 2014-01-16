@@ -802,7 +802,7 @@ div#main div ul.nav li a:hover {
   border: 1px solid #d4d4d4;
 }
 .logbar {
-  z-index: 50;
+  z-index: 40;
   background: white;
   position: fixed;
   width: 87%;
@@ -1825,14 +1825,23 @@ input[type="checkbox"].ng-invalid {
   margin-top: 10px;
 }
 
-.log-stack-trace dd {
+.log-stack-trace > dd {
   margin-left: 0;
 }
 
-.log-stack-trace dd ul li {
+.log-message > dd > div {
+  margin-top: 10px;
+}
+
+.log-stack-trace > dd > ul {
+  margin-top: 10px;
+}
+
+.log-stack-trace > dd > ul > li {
   line-height: 12px;
 }
 
+/*
 .log-stack-trace dd ul li:nth-child(even) {
   background-color: #f3f3f3;
 }
@@ -1840,16 +1849,13 @@ input[type="checkbox"].ng-invalid {
 .log-stack-trace dd ul li:nth-child(odd) {
   background: white;
 }
+*/
 
-.log-stack-trace dd ul li .stack-line * {
+.log-stack-trace > dd > ul > li > .stack-line * {
   font-family: monospace;
 }
 
-.log-stack-trace dd ul li > div.stack-line > a {
-  font-weight: bold;
-}
-
-.log-stack-trace dd ul li > pre.stack-line {
+.log-stack-trace > dd > ul > li > div.stack-line > a {
   font-weight: bold;
 }
 
@@ -2735,30 +2741,44 @@ ul.zebra-list li {
   margin: 0;
 }
 
-.log-table li:nth-child(odd) div div:not(.stack-line) {
+.log-table > .table-row {
+  cursor: pointer;
+}
+
+.log-table > .table-row.selected:before {
+  z-index: 60;
+  position: absolute;
+  top: 6px;
+  font-family: FontAwesome;
+  content: "\f054";
+  font-size: 20px;
+  color: green;
+}
+
+.log-table > li:nth-child(odd) > div > div:not(.stack-line) {
   background-color: white;
 }
 
 
-.log-table li:nth-child(even) div div:not(.stack-line) {
+.log-table > li:nth-child(even) > div > div:not(.stack-line) {
   background-color: #f3f3f3;
 }
 
 
-.log-table li div div:nth-child(1):not(.stack-line) {
+.log-table > li > div > div:nth-child(1):not(.stack-line) {
   left: 0;
   width: 11px;
   z-index: 5;
 }
 
-.log-table li div div:nth-child(2) {
+.log-table > li > div > div:nth-child(2) {
   border-right: 1px solid #d4d4d4;
   left: 18px;
   width: 180px;
   z-index: 5;
 }
 
-.log-table li div div:nth-child(3) {
+.log-table > li > div > div:nth-child(3) {
   border-right: 1px solid #d4d4d4;
   left: 190px;
   width: 60px;
@@ -2766,7 +2786,7 @@ ul.zebra-list li {
   text-align: center;
 }
 
-.log-table li div div:nth-child(4) {
+.log-table > li > div > div:nth-child(4) {
   padding-right: 5px;
   border-right: 1px solid #d4d4d4;
   text-align: right;
@@ -2776,19 +2796,87 @@ ul.zebra-list li {
   width: 573px;
 }
 
-.log-table li div div:nth-child(5) {
+.log-table > li > div > div:nth-child(5) {
   left: 580px;
   right: 0;
   padding-left: 5px;
 }
 
-.log-table li div div:nth-child(6) {
+.log-table > li > div > div:nth-child(6) {
   background: white;
   position: static;
   margin-top: 43px;
   /*top: 20px; */
   white-space: normal;
   display: block;
+}
+
+.log-info-panel {
+  background: white;
+  z-index: 60;
+  position: fixed;
+  right: 7em;
+  top: 150px;
+  bottom: 5em;
+  border-radius: 4px;
+  border: 1px solid #d4d4d4;
+  padding: 0;
+  overflow: hidden;
+  min-height: 500px;
+  min-width: 800px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+@media(max-width: 1085px) {
+
+  .log-info-panel {
+    left: 5px;
+    right: 5px;
+    max-width: inherit;
+    min-width: 500px;
+  }
+
+}
+
+.log-info-panel >.log-info-panel-frame {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  margin: 10px;
+}
+
+.log-info-panel > .log-info-panel-frame > .log-info-panel-header {
+  position: absolute;
+  top: 0;
+  height: 80px;
+  left: 5px;
+  right: 50px;
+  border-bottom: 1px solid #d4d4d4;
+  white-space: nowrap;
+}
+
+.log-info-panel > .log-info-panel-frame > .log-info-panel-header > span {
+  margin-left: 7px;
+  position: relative;
+  top: 2px;
+  overflow: hidden;
+}
+
+.log-info-panel > .log-info-panel-frame > .log-info-panel-body {
+  position: absolute;
+  overflow: auto;
+  left: 5px;
+  right: 27px;
+  top: 80px;
+  bottom: 15px;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.log-info-panel > .log-info-panel-frame > .log-info-panel-body > .row-fluid > span {
+  margin-right: 7px;
+  white-space: nowrap;
 }
 
 .log-table-dashboard {
