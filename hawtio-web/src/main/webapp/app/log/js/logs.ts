@@ -96,31 +96,6 @@ module Log {
       return '';
     };
 
-    $scope.generateSchema = (row) => {
-      var answer = {};
-
-      angular.forEach(row, (value, key) => {
-        if (key.startsWith("$")) {
-          return;
-        }
-        if (value === null) {
-          return;
-        }
-        if ($scope.skipFields.any(key)) {
-          return;
-        }
-
-        Core.pathSet(answer, ['properties', key, 'type'], Core.getType(value));
-        Core.pathSet(answer, ['properties', key, 'title'], key);
-      });
-      Core.pathSet(answer, ['description'], '');
-      Core.pathSet(answer, ['type'], 'String');
-      Core.pathSet(answer, ['id'], 1);
-      Core.pathSet(answer, ['name'], 'foo');
-
-      return {};
-    };
-
     $scope.$watch('selectedRowIndex', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         if (newValue < 0 || newValue > $scope.logs.length) {
@@ -130,31 +105,21 @@ module Log {
         }
         Log.log.info("New index: ", newValue);
         $scope.selectedRow = $scope.logs[newValue];
-        $scope.selectedRowSchema = $scope.generateSchema($scope.selectedRow);
         if (!$scope.showRowDetails) {
           $scope.showRowDetails = true;
         }
       }
     });
 
-    $scope.sanitizeRow = (row) => {
-      var answer = [];
-      angular.forEach(row, (value, key) => {
-        if (key.startsWith("$")) {
-          return;
-        }
-        if (value === null) {
-          return;
-        }
-        if ($scope.skipFields.any(key)) {
-          return;
-        }
-        answer.push({
-          'key': key,
-          'value': value
-        });
-
-      });
+    $scope.hasOSGiProps = (row) => {
+      if (!row) {
+        return false;
+      }
+      if (!('properties' in row)) {
+        return false;
+      }
+      var props = row.properties;
+      var answer = Object.extended(props).keys().any((key) => { return key.startsWith('bundle'); });
       return answer;
     };
 
@@ -170,25 +135,6 @@ module Log {
 
     $scope.getSelectedRowJson = () => {
       return angular.toJson($scope.selectedRow, true);
-    };
-
-    $scope.getSelectedRowFields = () => {
-      var row = $scope.getSelectedRow();
-      var answer = '<ul class="zebra-list">\n';
-      row.forEach((item) => {
-        answer += '<li>\n';
-        answer += '<dl class="dl-horizontal">\n';
-        answer += '<dt>' + item.key + '</dt>\n'
-        answer += '<dd>' + item.value + '</dd>\n'
-        answer += '</dl>\n';
-        answer += '</li>\n';
-      });
-      answer += '</ul>';
-      return answer;
-    };
-
-    $scope.getSelectedRow = () => {
-      return $scope.sanitizeRow($scope.selectedRow);
     };
 
     $scope.logClass = (log) => {
@@ -231,15 +177,13 @@ module Log {
     };
 
     $scope.getSupport = () => {
-      var uri =  "https://access.redhat.com/knowledge/solutions"
-      var expanded = $scope.logs.filter((log) => { return log.expanded; });
-      if (expanded.length > 0) {
-        // guess we'll take the most recent expanded event
-        var last = expanded.last();
-        var text = last.message;
-        var logger = last.logger;
-        uri = uri + "?logger=" + logger + "&text=" + text;
+      if (!$scope.selectedRow) {
+        return;
       }
+      var uri =  "https://access.redhat.com/knowledge/solutions"
+      var text = $scope.selectedRow.message;
+      var logger = $scope.selectedRow.logger;
+      uri = uri + "?logger=" + logger + "&text=" + text;
       window.location.href = uri;
     };
 
