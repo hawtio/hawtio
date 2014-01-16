@@ -64,7 +64,15 @@ module Osgi {
       var data = {};
 
       angular.forEach($scope.entity, (value, key) => {
-        data[decodeKey(key)] = value;
+        var text = undefined;
+        if (angular.isString(value)) {
+          text = value;
+        } else if (angular.isDefined(value)) {
+          text = value.toString();
+        }
+        if (angular.isDefined(text)) {
+          data[decodeKey(key)] = text;
+        }
       });
 
       //log.info("about to update value " + angular.toJson(data));
