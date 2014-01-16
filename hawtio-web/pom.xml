@@ -42,37 +42,17 @@
       <artifactId>hawtio-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-system</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Git module -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-git</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <!-- for proxy support -->
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${commons-httpclient-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>${commons-fileupload-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>${commons-codec-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -380,7 +360,8 @@
             <phase>generate-sources</phase>
             <configuration>
               <target>
-                
+                <mkdir dir="${basedir}/target/classes"/>
+
                 <!-- copy the markdown docs into the site plugin  -->
                 <echo>Hello</echo>
                 <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html" overwrite="true">
@@ -462,7 +443,7 @@
               javaewah
             </Private-Package>
 
-            <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+            <Bundle-ClassPath>.</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Implementation-Title>hawtio osgi</Implementation-Title>

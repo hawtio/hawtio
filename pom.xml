@@ -274,6 +274,7 @@
   <modules>
     <module>hawtio-util</module>
     <module>hawtio-core</module>
+    <module>hawtio-system</module>
     <module>hawtio-aether</module>
     <module>hawtio-dozer-schema</module>
     <module>hawtio-dozer</module>
