@@ -4,7 +4,7 @@ describe("Logs", function() {
 
   it("log stack frames without maven coordinates should be left as plain text with pre tags", function() {
     var x = Log.formatStackLine("hello");
-    expect(x).toEqual('<pre class="stack-line">hello</pre>');
+    expect(x).toEqual('<pre class="stack-line bold">hello</pre>');
   });
 
   it("a log stack frame with maven coordinates should turn into a nice source link", function() {
