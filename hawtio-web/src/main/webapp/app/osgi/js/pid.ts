@@ -216,6 +216,9 @@ module Osgi {
     function updateSchema() {
       var properties = {};
       var required = [];
+      $scope.defaultValues = {
+
+      };
       var schema = {
         type: "object",
         required: required,
@@ -267,7 +270,9 @@ module Osgi {
               if (angular.isArray(defaultValue) && defaultValue.length === 1) {
                 defaultValue = defaultValue[0];
               }
-              attributeProperties["default"] = defaultValue;
+              //attributeProperties["default"] = defaultValue;
+              // TODO convert to boolean / number?
+              $scope.defaultValues[key] = defaultValue;
             }
             var optionLabels = attribute.optionLabels;
             var optionValues = attribute.optionValues;
@@ -312,6 +317,15 @@ module Osgi {
           }
         }
       });
+      // add default values for missing values
+      angular.forEach($scope.defaultValues, (value, key) => {
+        var current = entity[key];
+        if (!angular.isDefined(current)) {
+          //log.info("updating entity " + key + " with default: " + value + " as was: " + current);
+          entity[key] = value;
+        }
+      });
+      //log.info("default values: " + angular.toJson($scope.defaultValues));
       $scope.entity = entity;
     }
 
