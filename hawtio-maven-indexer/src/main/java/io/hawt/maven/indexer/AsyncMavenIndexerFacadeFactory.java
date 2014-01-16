@@ -52,6 +52,8 @@ public class AsyncMavenIndexerFacadeFactory {
                     LOG.error("Failed to create the MavenIndexerFacade: " + e, e);
                 } finally {
                     Thread.currentThread().setContextClassLoader(classLoader);
+                    // and no longer need for this thread as we are done
+                    timer.cancel();
                 }
             }
         };
