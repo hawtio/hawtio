@@ -34,11 +34,99 @@
     <div ng-show="threadSelected" class="log-info-panel">
       <div class="log-info-panel-frame">
         <div class="log-info-panel-header">
-          <button class="btn" ng-click="deselect()"><i class="icon-remove"></i> Close</button>
+          <div class="row-fluid">
+            <button class="btn" ng-click="deselect()"><i class="icon-remove"></i> Close</button>
+            <div class="btn-group"
+                 style="margin-top: 9px;"
+                 hawtio-pager="threads"
+                 on-index-change="selectThreadByIndex"
+                 row-index="selectedRowIndex">
+            </div>
+
+            <span><strong>Thread ID:</strong> {{row.threadId}}</span>
+          </div>
+
+          <div class="row-fluid">
+            <span><strong>Thread Name:</strong> {{row.threadName}}</span>
+          </div>
 
         </div>
         <div class="log-info-panel-body">
-          <div hawtio-editor="selectedRowJson" mode="javascript"></div>
+
+          <div class="row-fluid">
+            <span><strong>Waited Count:</strong> {{row.waitedCount}}</span>
+            <span><strong>Waited Time:</strong> {{row.waitedTime}}</span>
+          </div>
+
+          <div class="row-fluid">
+            <span><strong>Blocked Count:</strong> {{row.blockedCount}}</span>
+            <span><strong>Blocked Time:</strong> {{row.blockedTime}}</span>
+          </div>
+
+          <div class="row-fluid" ng-show="row.lockInfo != null">
+            <span><strong>Lock Name:</strong> {{row.lockName}}</span>
+            <span><strong>Lock Class Name:</strong> {{row.lockInfo.className}}</span>
+            <span><strong>Lock Identity Hash Code:</strong> {{row.lockInfo.identityHashCode}}</span>
+          </div>
+
+          <div class="row-fluid" ng-show="row.lockOwnerId > 0">
+            <span>Waiting for lock owned by <a href="" ng-click="selectThreadById(row.lockOwnerId)">{{row.lockOwnerId}}</a></span>
+            <span><strong>Owner Name:</strong> {{row.lockOwnerName}}</span>
+          </div>
+
+          <dl ng-show="row.lockedSynchronizers.length > 0">
+            <dt>Locked Synchronizers</dt>
+            <dd>
+              <ol class="zebra-list">
+                <li ng-repeat="synchronizer in row.lockedSynchronizers">
+                  <span><strong>Class Name:</strong> {{synchronizer.className}}</span>
+                  <span><strong>Identity Hash Code:</strong> {{synchronizer.identityHashCode}}</span>
+                </li>
+              </ol>
+            </dd>
+          </dl>
+
+          <dl ng-show="row.lockedMonitors.length > 0">
+            <dt>Locked Monitors</dt>
+            <dd>
+              <ol class="zebra-list">
+                <li ng-repeat="monitor in row.lockedMonitors">
+                  Frame: <strong>{{monitor.lockedStackDepth}}</strong>
+                  <span class="green">{{monitor.lockedStackFrame.className}}</span>
+                  <span class="bold">.</span>
+                  <span class="blue bold">{{monitor.lockedStackFrame.methodName}}</span>
+                  &nbsp;({{monitor.lockedStackFrame.fileName}}<span ng-show="frame.lineNumber > 0">:{{monitor.lockedStackFrame.lineNumber}}</span>)
+                  <span class="orange" ng-show="monitor.lockedStackFrame.nativeMethod">(Native)</span>
+                </li>
+              </ol>
+            </dd>
+          </dl>
+
+          <!-- a simple stack trace display, ideally we
+          could show maven links eventually -->
+          <dl>
+            <dt>Stack Trace</dt>
+            <dd>
+              <ol class="zebra-list">
+                <li ng-repeat="frame in row.stackTrace">
+                  <span class="green">{{frame.className}}</span>
+                  <span class="bold">.</span>
+                  <span class="blue bold">{{frame.methodName}}</span>
+                  &nbsp;({{frame.fileName}}<span ng-show="frame.lineNumber > 0">:{{frame.lineNumber}}</span>)
+                  <span class="orange" ng-show="frame.nativeMethod">(Native)</span>
+                </li>
+              </ol>
+            </dd>
+          </dl>
+
+          <div class="expandable" model="showRaw">
+            <div class="title">
+              <i class="expandable-indicator"></i><span> Show JSON</span>
+            </div>
+            <div class="expandable-body">
+              <div hawtio-editor="selectedRowJson" mode="javascript"></div>
+            </div>
+          </div>
 
         </div>
       </div>
