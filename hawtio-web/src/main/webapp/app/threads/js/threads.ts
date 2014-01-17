@@ -5,10 +5,16 @@ module Threads {
 
   export function ThreadsController($scope, $routeParams, workspace:Workspace, jolokia) {
 
-    $scope.allThreadIdsResponseJson = '';
-    $scope.getThreadInfoResponseJson = '';
+    /*
+    $scope.objectMonitorUsageSupported = null;
+    $scope.synchronizerUsageSupported = null;
+    */
 
+    $scope.lastThreadJson = '';
+    $scope.getThreadInfoResponseJson = '';
     $scope.threads = [];
+    $scope.totals = {};
+    $scope.support = {};
 
     $scope.threadGridOptions = {
       data: 'threads',
@@ -28,89 +34,131 @@ module Threads {
         {
           field: 'threadName',
           displayName: 'Name'
+        },
+        {
+          field: 'blockedTime',
+          displayName: 'Blocked Time(ms)'
+        },
+        {
+          field: 'inNative',
+          displayName: 'In Native'
+        },
+        {
+          field: 'suspended',
+          displayName: 'Is Suspended'
         }
       ]
     };
 
-    $scope.$on('$destroy', () => {
-      if ($scope.handle) {
-        jolokia.unregister($scope.handle);
-        delete $scope.handle;
-      }
-      if ($scope.threadInfoHandle) {
-        jolokia.unregister($scope.threadInfoHandle);
-        delete $scope.threadInfoHandle;
-      }
-    });
-
-    var allThreadIds = {
-      type: 'read',
-      mbean: Threads.mbean,
-      attribute: 'AllThreadIds'
-    };
-
-    var getThreadInfo = {
-      type: 'exec',
-      mbean: Threads.mbean,
-      operation: 'getThreadInfo([J)',
-      arguments: []
-    };
-
     $scope.init = () => {
-      jolokia.request(allThreadIds, onSuccess(getThreadData));
+
+      jolokia.request(
+      [{
+        type: 'read',
+        mbean: Threads.mbean,
+        attribute: 'ThreadContentionMonitoringSupported'
+      }, {
+        type: 'read',
+        mbean: Threads.mbean,
+        attribute: 'ObjectMonitorUsageSupported'
+      }, {
+        type: 'read',
+        mbean: Threads.mbean,
+        attribute: 'SynchronizerUsageSupported'
+      }], {
+        method: 'post',
+        success: [
+          (response) => {
+            $scope.support.threadContentionMonitoringSupported = response.value;
+            log.debug("ThreadContentionMonitoringSupported: ", $scope.support.threadContentionMonitoringSupported);
+            $scope.maybeRegister();
+          },
+          (response) => {
+            $scope.support.objectMonitorUsageSupported = response.value;
+            log.debug("ObjectMonitorUsageSupported: ", $scope.support.objectMonitorUsageSupported);
+            $scope.maybeRegister();
+          },
+          (response) => {
+            $scope.support.synchronizerUsageSupported = response.value;
+            log.debug("SynchronizerUsageSupported: ", $scope.support.synchronizerUsageSupported);
+            $scope.maybeRegister();
+          }],
+        error: (response) => {
+          log.error('Failed to query for supported usages: ', response.error);
+        }
+      });
     };
 
-    $scope.registerAllThreadIds = () => {
-      return jolokia.register(onSuccess(getThreadData), allThreadIds);
+    $scope.maybeRegister = () => {
+      if ('objectMonitorUsageSupported' in $scope.support &&
+          'synchronizerUsageSupported' in $scope.support &&
+          'threadContentionMonitoringSupported' in $scope.support) {
+        log.debug("Registering dumpAllThreads polling");
+        Core.register(jolokia, $scope, {
+          type: 'exec',
+          mbean: Threads.mbean,
+          operation: 'dumpAllThreads',
+          arguments: [$scope.support.objectMonitorUsageSupported, $scope.support.synchronizerUsageSupported]
+        }, onSuccess(render));
+
+        if ($scope.support.threadContentionMonitoringSupported) {
+          // check and see if it's actually turned on, if not
+          // enable it
+          jolokia.request({
+            type: 'read',
+            mbean: Threads.mbean,
+            attribute: 'ThreadContentionMonitoringEnabled'
+          }, onSuccess($scope.maybeEnableThreadContentionMonitoring));
+
+        }
+      }
     };
 
-    $scope.registerGetThreadInfo = (ids) => {
-      getThreadInfo.arguments = [ids];
-      return jolokia.register(onSuccess(render), getThreadInfo);
+    function enabledContentionMonitoring(response) {
+      log.debug("Enabled contention monitoring: ", response);
+    }
+
+    $scope.maybeEnableThreadContentionMonitoring = (response) => {
+      if (response.value === false) {
+        jolokia.request({
+          type: 'write',
+          mbean: Threads.mbean,
+          attribute: 'ThreadContentionMonitoringEnabled',
+          argument: true
+        }, onSuccess(enabledContentionMonitoring));
+      }
+    };
+
+    $scope.getMonitorClass = (name, value) => {
+      return value.toString();
+    };
+
+    $scope.getMonitorName = (name) => {
+      name = name.replace('Supported', '');
+      return name.titleize();
     };
 
     $scope.init();
 
-    function getThreadData(response) {
-      if (!$scope.handle) {
-        $scope.handle = $scope.registerAllThreadIds();
-      }
-      var responseJson = angular.toJson(response.value, true);
-      if ($scope.allThreadIdsResponseJson !== responseJson) {
-        $scope.allThreadIdsResponseJson = responseJson;
-        if ($scope.threadInfoHandle) {
-          jolokia.unregister($scope.threadInfoHandle);
-          delete $scope.threadInfoHandle;
-        }
-        getThreadInfo.arguments = [response.value];
-        jolokia.request(getThreadInfo, onSuccess(render));
-      }
-    }
-
     function render(response) {
-      if (!$scope.threadInfoHandle) {
-        var ids = response.value.map((t) => { return t['threadId']; });
-        $scope.threadInfoHandle = $scope.registerGetThreadInfo(ids);
-      }
       var responseJson = angular.toJson(response.value, true);
       if ($scope.getThreadInfoResponseJson !== responseJson) {
         $scope.getThreadInfoResponseJson = responseJson;
+        var threads = response.value.exclude((t) => { return t === null; });
 
-        // sometimes we get a null threadinfo back,
-        // lets avoid redrawing in these cases
-        var skipRefresh = false;
-        response.value.forEach((t) => {
-          if (t === null) {
-            skipRefresh = true;
+        $scope.totals = {};
+        threads.forEach((t) => {
+          // calculate totals
+          var state = t.threadState.titleize();
+          if (!(state in $scope.totals)) {
+            $scope.totals[state] = 1;
+          } else {
+            $scope.totals[state]++
           }
         });
-        if (skipRefresh) {
-          Core.$apply($scope);
-          return;
-        }
 
-        var threads = response.value.exclude((t) => { return t === null; });
         $scope.threads = threads;
+        $scope.lastThreadJson = angular.toJson($scope.threads.last(), true);
         Core.$apply($scope);
       }
     }
