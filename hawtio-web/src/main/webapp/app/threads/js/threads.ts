@@ -15,6 +15,11 @@ module Threads {
 
     $scope.row = {};
     $scope.threadSelected = false;
+    $scope.selectedRowIndex = -1;
+
+    $scope.showRaw = {
+      expanded: false
+    };
 
     $scope.threadGridOptions = {
       selectedItems: [],
@@ -56,9 +61,11 @@ module Threads {
         if (newValue.length === 0) {
           $scope.row = {};
           $scope.threadSelected = false;
+          $scope.selectedRowIndex = -1;
         } else {
           $scope.row = newValue.first();
           $scope.threadSelected = true;
+          $scope.selectedRowIndex = $scope.threads.findIndex($scope.row);
         }
         $scope.selectedRowJson = angular.toJson($scope.row, true);
       }
@@ -66,6 +73,14 @@ module Threads {
 
     $scope.deselect = () => {
       $scope.threadGridOptions.selectedItems = [];
+    };
+
+    $scope.selectThreadById = (id) => {
+      $scope.threadGridOptions.selectedItems = $scope.threads.find((t) => { return t.threadId === id; });
+    };
+
+    $scope.selectThreadByIndex = (idx) => {
+      $scope.threadGridOptions.selectedItems = [$scope.threads[idx]];
     };
 
     $scope.init = () => {
