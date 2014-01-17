@@ -129,9 +129,9 @@
                   <sequential>
                     <echo>Processing plugin @{file}</echo>
                     <mkdir dir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}"/>
-                    <copy todir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}">
-                      <fileset dir="${basedir}/../hawtio-web/src/main/webapp/app/@{file}">
-                        <include name="doc/img/*.*"/>
+                    <copy todir="${project.build.directory}/sitegen/plugins/@{file}/app/@{file}/doc/img">
+                      <fileset dir="${basedir}/../hawtio-web/src/main/webapp/app/@{file}/doc/img">
+                        <include name="**/*.*"/>
                       </fileset>
                     </copy>
                   </sequential>
