@@ -321,7 +321,10 @@ module Fabric {
         delete json.number;
       }
 
-      json['version'] = $scope.selectedVersion.id;
+      var selectedVersion = $scope.selectedVersion;
+      if (selectedVersion) {
+        json['version'] = selectedVersion.id;
+      }
       if ($scope.selectedProfiles.length > 0) {
         json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
       }
