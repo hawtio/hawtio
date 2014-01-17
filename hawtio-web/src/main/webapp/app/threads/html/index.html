@@ -1,17 +1,41 @@
 <div ng-controller="Threads.ThreadsController">
 
-  <table class="table table-condensed table-striped"
-         hawtio-simple-table="threadGridOptions"></table>
+  <div class="threads logbar">
+    <div class="logbar-container">
 
-  <!--
-  <ul class="zebra-list">
-    <li ng-repeat="thread in threads" ng-show="thread != null">
-      <span><strong>ID:</strong> {{thread.threadId}}</span>
-      <span><strong>State:</strong> {{thread.threadState}}</span>
-      <span><strong>Name:</strong> {{thread.threadName}}</span>
-    </li>
-  </ul>
-  -->
+      <div class="state-panel inline-block">
+        <ul class="inline">
+          <li>
+            <strong ng-class="total">Total:</strong> {{threads.length}}
+          </li>
+          <li ng-repeat="(state, total) in totals">
+            <strong class="{{state.dasherize()}}">{{state}}:</strong> {{total}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="inline-block support-panel pull-right">
+        <ul class="inline">
+          <li ng-repeat="(name, value) in support track by $index">
+            <span class="monitor-indicator {{getMonitorClass(name, value)}}">{{getMonitorName(name)}}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="wiki-fixed">
+    <!--
+    <div hawtio-editor="lastThreadJson" mode="javascript"></div>
+    -->
+
+    <table class="table table-condensed table-striped"
+           hawtio-simple-table="threadGridOptions"></table>
+
+
+  </div>
 
 </div>
 

@@ -3505,3 +3505,57 @@ input.ng-invalid-pattern:focus {
   box-shadow: 0 0 6px #f8b9b7;
 }
 
+.threads.logbar {
+
+}
+
+.threads.logbar > .logbar-container {
+  margin-top: 2px;
+  margin-bottom: 5px;
+}
+
+.state-panel > ul > li:not(:first-child) > strong {
+  margin-left: 15px;
+}
+
+.runnable {
+  color: green;
+}
+
+.timed-waiting {
+  color: orange;
+}
+
+.waiting {
+  color: darkgray;
+}
+
+.blocked {
+  color: red;
+}
+
+strong.new {
+  color: lightgreen;
+}
+
+.terminated {
+  color: darkred;
+}
+
+.monitor-indicator {
+  /* border: 1px solid #d4d4d4; */
+  border-radius: 6px;
+  font-size: 10px;
+  padding: 4px;
+  margin: 5px;
+}
+
+.monitor-indicator.true {
+  background: #1cd11d;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(34, 203, 1, 0.49);
+}
+
+.monitor-indicator.false {
+  background: #737373;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5);
+}
