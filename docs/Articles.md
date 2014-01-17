@@ -13,7 +13,9 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Apache Camel web dashboard with hawtio](http://www.davsclaus.com/2013/04/apache-camel-web-dashboard-with-hawtio.html) by [Claus Ibsen](http://www.davsclaus.com)
 * [introducing the Apache Camel based open source iPaaS](http://macstrac.blogspot.co.uk/2013/06/introducing-apache-camel-based-open.html) by [James Strachan](http://macstrac.blogspot.co.uk/)
 * [Monitoring Camel Application](http://bushorn.com/monitoring-camel-application/) by [Gnanaguru](http://bushorn.com/author/gnanagurus/)
-* [Hawtio, la console web polyvalente](http://blog.zenika.com/index.php?post/2014/01/07/HawtIO-la-console-web-polyvalente) by Gerald Quintana (in French) with a great overview of hawtio (note: Google can translate the page into readable english)
+* [Hawtio, la console web polyvalente](http://blog.zenika.com/index.php?post/2014/01/07/HawtIO-la-console-web-polyvalente) by Gérald Quintana (in French) with a great overview of hawtio (note: Google can translate the page into readable english)
+* [Hawtio, écrire un plugin](http://blog.zenika.com/index.php?post/2014/01/14/HawtIO-ecrire-un-plugin) by Gérald Quintana (in French) the second part on writing a plugin (note: Google can translate the page into readable english)
+
 
 ## Developer articles
 
