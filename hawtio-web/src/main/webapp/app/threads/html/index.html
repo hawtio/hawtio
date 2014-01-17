@@ -17,7 +17,7 @@
       <div class="inline-block support-panel pull-right">
         <ul class="inline">
           <li ng-repeat="(name, value) in support track by $index">
-            <span class="monitor-indicator {{getMonitorClass(name, value)}}">{{getMonitorName(name)}}</span>
+            <span class="monitor-indicator {{getMonitorClass(name, value)}}" ng-click="maybeToggleMonitor(name, value)">{{getMonitorName(name)}}</span>
           </li>
         </ul>
       </div>
@@ -27,16 +27,24 @@
 
 
   <div class="wiki-fixed">
-    <!--
-    <div hawtio-editor="lastThreadJson" mode="javascript"></div>
-    -->
 
     <table class="table table-condensed table-striped"
            hawtio-simple-table="threadGridOptions"></table>
 
+    <div ng-show="threadSelected" class="log-info-panel">
+      <div class="log-info-panel-frame">
+        <div class="log-info-panel-header">
+          <button class="btn" ng-click="deselect()"><i class="icon-remove"></i> Close</button>
+
+        </div>
+        <div class="log-info-panel-body">
+          <div hawtio-editor="selectedRowJson" mode="javascript"></div>
+
+        </div>
+      </div>
+    </div>
 
   </div>
-
 </div>
 
 

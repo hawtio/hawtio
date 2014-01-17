@@ -5,10 +5,7 @@ module Threads {
 
   export function ThreadsController($scope, $routeParams, workspace:Workspace, jolokia) {
 
-    /*
-    $scope.objectMonitorUsageSupported = null;
-    $scope.synchronizerUsageSupported = null;
-    */
+    $scope.selectedRowJson = '';
 
     $scope.lastThreadJson = '';
     $scope.getThreadInfoResponseJson = '';
@@ -16,7 +13,11 @@ module Threads {
     $scope.totals = {};
     $scope.support = {};
 
+    $scope.row = {};
+    $scope.threadSelected = false;
+
     $scope.threadGridOptions = {
+      selectedItems: [],
       data: 'threads',
       showSelectionCheckbox: false,
       enableRowClickSelection: true,
@@ -48,6 +49,23 @@ module Threads {
           displayName: 'Is Suspended'
         }
       ]
+    };
+
+    $scope.$watch('threadGridOptions.selectedItems', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue.length === 0) {
+          $scope.row = {};
+          $scope.threadSelected = false;
+        } else {
+          $scope.row = newValue.first();
+          $scope.threadSelected = true;
+        }
+        $scope.selectedRowJson = angular.toJson($scope.row, true);
+      }
+    }, true);
+
+    $scope.deselect = () => {
+      $scope.threadGridOptions.selectedItems = [];
     };
 
     $scope.init = () => {
@@ -89,6 +107,8 @@ module Threads {
       });
     };
 
+    var initFunc = Core.throttled($scope.init, 500);
+
     $scope.maybeRegister = () => {
       if ('objectMonitorUsageSupported' in $scope.support &&
           'synchronizerUsageSupported' in $scope.support &&
@@ -114,19 +134,27 @@ module Threads {
       }
     };
 
+    function disabledContentionMonitoring(response) {
+      log.info("Disabled contention monitoring: ", response);
+      Core.$apply($scope);
+    }
+
     function enabledContentionMonitoring(response) {
-      log.debug("Enabled contention monitoring: ", response);
+      $scope.$on('$routeChangeStart', () => {
+        jolokia.setAttribute(mbean, 'ThreadContentionMonitoringEnabled', false, onSuccess(disabledContentionMonitoring));
+      });
+      log.info("Enabled contention monitoring");
+      Core.$apply($scope);
     }
 
     $scope.maybeEnableThreadContentionMonitoring = (response) => {
       if (response.value === false) {
-        jolokia.request({
-          type: 'write',
-          mbean: Threads.mbean,
-          attribute: 'ThreadContentionMonitoringEnabled',
-          argument: true
-        }, onSuccess(enabledContentionMonitoring));
+        log.info("Thread contention monitoring not enabled, enabling");
+        jolokia.setAttribute(mbean, 'ThreadContentionMonitoringEnabled', true, onSuccess(enabledContentionMonitoring));
+      } else {
+        log.info("Thread contention monitoring already enabled");
       }
+      Core.$apply($scope);
     };
 
     $scope.getMonitorClass = (name, value) => {
@@ -137,8 +165,6 @@ module Threads {
       name = name.replace('Supported', '');
       return name.titleize();
     };
-
-    $scope.init();
 
     function render(response) {
       var responseJson = angular.toJson(response.value, true);
@@ -163,6 +189,7 @@ module Threads {
       }
     }
 
+    initFunc();
 
   }
 
