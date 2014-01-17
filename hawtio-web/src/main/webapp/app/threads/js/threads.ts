@@ -42,6 +42,10 @@ module Threads {
           displayName: 'Name'
         },
         {
+          field: 'waitedTime',
+          displayName: 'Waited Time(ms)'
+        },
+        {
           field: 'blockedTime',
           displayName: 'Blocked Time(ms)'
         },
