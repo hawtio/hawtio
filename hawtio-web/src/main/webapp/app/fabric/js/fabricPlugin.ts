@@ -207,8 +207,8 @@ module Fabric {
             });
             workspace.topLevelTabs.push( {
               id: "fabric.configuration",
-              content: "Configuration",
-              title: "Manage the configuration of your profiles in Fabric",
+              content: "Wiki",
+              title: "View the documentation and configuration of your profiles in Fabric",
               isValid: (workspace) => Fabric.isFMCContainer(workspace),
               href: () => {
                 return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
