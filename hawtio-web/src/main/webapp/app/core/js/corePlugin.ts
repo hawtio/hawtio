@@ -159,7 +159,7 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
 
         factory('userDetails', function(jolokiaUrl, localStorage) {
           var answer = angular.fromJson(localStorage[jolokiaUrl]);
-          if (!angular.isDefined(answer)) {
+          if (!angular.isDefined(answer) && jolokiaUrl) {
             answer = {
               username: '',
               password: ''
