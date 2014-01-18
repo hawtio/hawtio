@@ -123,11 +123,15 @@ module Jmx {
               first.activate();
             }
           } else {
+/*
+            causes NPE :)
+
             var first = children[0];
             first.expand(true);
             if (activateIfNoneSelected) {
               first.activate();
             }
+*/
           }
         }
       }
