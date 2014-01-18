@@ -76,7 +76,9 @@ module Core {
    * @param {*} branding
    */
   export function AppController($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
-
+    if (!userDetails) {
+      userDetails = {};
+    }
     if (userDetails.username === null) {
       $location.url(defaultPage());
     }
