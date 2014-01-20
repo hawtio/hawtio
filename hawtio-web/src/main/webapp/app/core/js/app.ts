@@ -95,6 +95,8 @@ module Core {
     $scope.appName = branding.appName;
     $scope.appLogo = branding.appLogo;
 
+    $scope.hasMBeans = () => workspace.hasMBeans();
+
     $scope.$watch('jolokiaStatus.xhr', function () {
       var failure = jolokiaStatus.xhr;
       $scope.connectionFailed = failure ? true : false;
