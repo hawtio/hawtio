@@ -94,11 +94,17 @@ module Core {
 
   export function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
     var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+    if (perspective === "website") return topLevelTabs;
+
     // only include the tabs accordingly to configured
     var result = [];
     configuredPlugins.forEach(p => {
       if (p.enabled) {
-        var tab = topLevelTabs.find(t => t.id === p.id);
+        var pid = p.id;
+        var tab = null;
+        if (pid) {
+          tab = topLevelTabs.find(t => t.id === pid);
+        }
         if (tab) {
           result.push(tab);
         }
