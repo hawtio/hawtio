@@ -17,12 +17,17 @@ module Core {
         if (angular.isDefined(data)) {
           $scope.html = marked(data);
           $scope.branding = branding;
-          $scope.customBranding === Branding.enabled;
-          $scope.hawtioVersion = jolokia.request({
-            type: "read",
-            mbean: "hawtio:type=About",
-            attribute: "HawtioVersion"
-          }).value;
+          $scope.customBranding = Branding.enabled;
+          try {
+            $scope.hawtioVersion = jolokia.request({
+              type: "read",
+              mbean: "hawtio:type=About",
+              attribute: "HawtioVersion"
+            }).value;
+          } catch (Error) {
+            // ignore
+            $scope.hawtioVersion = "N/A";
+          }
           $scope.jolokiaVersion = jolokia.version().agent;
           $scope.serverProduct = jolokia.version().info.product;
           $scope.serverVendor = jolokia.version().info.vendor;
