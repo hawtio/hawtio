@@ -29,6 +29,12 @@ console.log("jolokiaUrl " + jolokiaUrl);
 
 function getJolokiaUrl() {
   var query = hawtioPluginLoader.parseQueryString();
+  var localMode = query['localMode'];
+  if (localMode) {
+    console.log("local mode so not using jolokia URL");
+    jolokiaUrls = [];
+    return null;
+  }
   var uri = query['url'];
   if (angular.isArray(uri)) {
     uri = uri[0];

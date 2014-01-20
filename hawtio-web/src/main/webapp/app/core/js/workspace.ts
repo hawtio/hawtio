@@ -824,6 +824,20 @@ module Core {
       return false;
     }
 
+    /**
+     * Returns true if this workspace has any mbeans at all
+     */
+    hasMBeans() {
+      var answer = false;
+      var tree = this.tree;
+      if (tree) {
+        var children = tree.children;
+        if (angular.isArray(children) && children.length > 0) {
+          answer = true;
+        }
+      }
+      return answer;
+    }
     hasFabricMBean() {
       return this.hasDomainAndProperties('io.fabric8', {type: 'Fabric'});
     }
