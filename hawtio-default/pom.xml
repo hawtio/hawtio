@@ -108,6 +108,13 @@
       <groupId>org.fusesource.insight</groupId>
       <artifactId>insight-log4j</artifactId>
       <version>${insight-log4j.version}</version>
+      <exclusions>
+        <!-- seems to have embedded commons-codec so exclude -->
+        <exclusion>
+          <groupId>org.ops4j.pax.url:</groupId>
+          <artifactId>pax-url-aether</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
