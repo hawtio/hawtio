@@ -43,7 +43,7 @@ module Dashboard {
               id: "dashboard",
               content: "Dashboard",
               title: "View and edit your own custom dashboards",
-              isValid: (workspace: Workspace) => true,
+              isValid: (workspace: Workspace) => workspace.hasMBeans(),
               href: () => "#/dashboard/idx/0?tab=dashboard",
               isActive: (workspace: Workspace) => workspace.isTopTabActive("dashboard")
             });
