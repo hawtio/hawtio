@@ -7,6 +7,8 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import io.hawt.util.Objects;
+
 public class About implements AboutMBean {
 
     private ObjectName objectName;
@@ -30,6 +32,13 @@ public class About implements AboutMBean {
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
             }
+
+            // try to compute hawtio version once on startup
+            try {
+                hawtioVersion = doGetHawtioVersion();
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 
@@ -47,33 +56,48 @@ public class About implements AboutMBean {
 
     @Override
     public String getHawtioVersion() {
+        if (hawtioVersion != null) {
+            return hawtioVersion;
+        }
         return doGetHawtioVersion();
     }
 
     private synchronized String doGetHawtioVersion() {
-        if (hawtioVersion != null) {
-            return hawtioVersion;
+        // loading the version can be tricky depending on how hawtio has been started, so we try different strategies
+
+        String version = Objects.getVersion(getClass(), "io.hawt", "hawtio-web");
+        if (version == null) {
+            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-app");
+        }
+        if (version == null) {
+            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-default");
+        }
+        if (version != null) {
+            return version;
         }
 
         InputStream is = null;
         try {
             Properties p = new Properties();
 
-            // try loading from manifest first
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/MANIFEST.MF");
+            // try to load from maven properties first as they have the version
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-web/pom.properties");
             if (is == null) {
-                // then try to load from maven properties first
-                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-web/pom.properties");
-            }
-            if (is == null) {
-                // then try to load from maven properties first
                 is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-default/pom.properties");
             }
+            if (is == null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-app/pom.properties");
+            }
+            if (is == null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-embedded/pom.properties");
+            }
+            // then try the general manifest file
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/MANIFEST.MF");
             if (is != null) {
                 p.load(is);
-                hawtioVersion = p.getProperty("Bundle-Version", null);
-                if (hawtioVersion == null) {
-                    hawtioVersion = p.getProperty("version", "");
+                version = p.getProperty("Bundle-Version", null);
+                if (version == null) {
+                    version = p.getProperty("version", "");
                 }
             }
         } catch (Exception e) {
@@ -90,22 +114,22 @@ public class About implements AboutMBean {
         }
 
         // fallback to using Java API
-        if (hawtioVersion == null) {
+        if (version == null) {
             Package aPackage = Thread.currentThread().getContextClassLoader().getClass().getPackage();
             if (aPackage != null) {
-                hawtioVersion = aPackage.getImplementationVersion();
-                if (hawtioVersion == null) {
-                    hawtioVersion = aPackage.getSpecificationVersion();
+                version = aPackage.getImplementationVersion();
+                if (version == null) {
+                    version = aPackage.getSpecificationVersion();
                 }
             }
         }
 
-        if (hawtioVersion == null) {
+        if (version == null) {
             // we could not compute the version so use a blank
-            hawtioVersion = "";
+            version = "";
         }
 
-        return hawtioVersion;
+        return version;
     }
 
 }
