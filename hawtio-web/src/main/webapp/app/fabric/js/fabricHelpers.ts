@@ -889,7 +889,7 @@ module Fabric {
     return values;
   }
 
-  export function getZooKeeperFacadeMBean(workspace: Workspace) {
+  export function getZooKeeperFacadeMBean(workspace: Core.Workspace) {
     var folder = workspace.findMBeanWithProperties(jmxDomain, {type: "ZooKeeper"});
     return Core.pathGet(folder, "objectName");
   }
