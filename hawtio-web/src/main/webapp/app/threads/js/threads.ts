@@ -21,6 +21,12 @@ module Threads {
       expanded: false
     };
 
+    $scope.$watch('searchFilter', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.threadGridOptions.filterOptions.filterText = newValue;
+      }
+    });
+
     $scope.threadGridOptions = {
       selectedItems: [],
       data: 'threads',
@@ -28,6 +34,13 @@ module Threads {
       enableRowClickSelection: true,
       multiSelect: false,
       primaryKeyFn: (entity, idx) => { return entity.threadId; },
+      filterOptions: {
+        filterText: ''
+      },
+      sortInfo: {
+        sortBy: 'threadId',
+        ascending: false
+      },
       columnDefs: [
         {
           field: 'threadId',

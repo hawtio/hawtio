@@ -32,6 +32,7 @@ module DataTable {
       }
 
       var config = $scope.config;
+
       var dataName = config.data || "data";
       // need to remember which rows has been selected as the config.data / config.selectedItems
       // so we can re-select them when data is changed/updated, and entity may be new instances
@@ -47,6 +48,17 @@ module DataTable {
           value = [value];
           Core.pathSet(scope, dataName, value);
         }
+
+        if (!('sortInfo' in config)) {
+          config['sortInfo'] = {
+            sortBy: config.columnDefs.first()['field'],
+            ascending: true
+          }
+        }
+
+        var sortInfo = $scope.config.sortInfo;
+        log.debug("sortInfo: ", sortInfo);
+        value = value.sortBy(sortInfo.sortBy, !sortInfo.ascending);
 
         // enrich the rows with information about their index
         var idx = -1;
@@ -80,7 +92,7 @@ module DataTable {
         config.selectedItems = reSelectedItems;
       };
 
-     scope.$watch(dataName, listener);
+      scope.$watch(dataName, listener);
 
       // lets add a separate event so we can force updates
       // if we find cases where the delta logic doesn't work
@@ -155,9 +167,33 @@ module DataTable {
         }
       };
 
+      $scope.sortBy = (field) => {
+        if ($scope.config.sortInfo.sortBy === field) {
+          $scope.config.sortInfo.ascending = !$scope.config.sortInfo.ascending;
+        } else {
+          $scope.config.sortInfo.sortBy = field;
+          $scope.config.sortInfo.ascending = true;
+        }
+        $scope.$emit("hawtio.datatable." + dataName);
+      };
+
+      $scope.getClass = (field) => {
+        if ('sortInfo' in $scope.config) {
+          if ($scope.config.sortInfo.sortBy === field) {
+            if ($scope.config.sortInfo.ascending) {
+              return 'asc';
+            } else {
+              return 'desc';
+            }
+          }
+        }
+
+        return '';
+      };
+
       $scope.isSelected = (row) => {
         return config.selectedItems.some(row.entity);
-      }
+      };
 
       $scope.onRowSelected = (row) => {
         var idx = config.selectedItems.indexOf(row.entity);
@@ -176,8 +212,8 @@ module DataTable {
       }
 
       // lets add the header and row cells
-      var rootElement = $($element);
-      rootElement.children().remove();
+      var rootElement = $element;
+      rootElement.empty();
 
       var showCheckBox = firstValueDefined(config, ["showSelectionCheckbox", "displaySelectionCheckbox"], true);
       var enableRowClickSelection = firstValueDefined(config, ["enableRowClickSelection"], false);
@@ -205,7 +241,8 @@ module DataTable {
         var field = colDef.field;
         var cellTemplate = colDef.cellTemplate || '<div class="ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
 
-        headHtml += "\n<th>{{config.columnDefs[" + idx + "].displayName}}</th>"
+        headHtml += "\n<th class='clickable no-fade table-header' ng-click=\"sortBy('" + field + "')\" ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>"
+
         bodyHtml += "\n<td>" + cellTemplate + "</td>"
         idx += 1;
       });
