@@ -231,8 +231,10 @@ module Perspective {
     if (inFMC) {
       var url = $location.url();
       log.debug("Checking url: ", url);
-      // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
-      if (url.startsWith("/fabric") ||
+      // we want first time users on welcome/index/default page to be in the fabric perspective
+      if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
+          // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
+          url.startsWith("/fabric") ||
           url.startsWith("/dashboard") ||
           url.startsWith("/health") ||
           (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||
