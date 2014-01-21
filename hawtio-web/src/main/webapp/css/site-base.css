@@ -3540,8 +3540,12 @@ input.ng-invalid-pattern:focus {
   margin-bottom: 5px;
 }
 
-.state-panel > ul > li:not(:first-child) > strong {
+.state-panel > ul > li:not(:first-child) > span {
   margin-left: 15px;
+}
+
+.state-panel > ul > li.active {
+  font-weight: bold;
 }
 
 .runnable {
