@@ -3,7 +3,7 @@
  */
 module Threads {
 
-  export function ThreadsController($scope, $routeParams, workspace:Workspace, jolokia) {
+  export function ThreadsController($scope, $routeParams, $templateCache, jolokia) {
 
     $scope.selectedRowJson = '';
 
@@ -48,7 +48,8 @@ module Threads {
         },
         {
           field: 'threadState',
-          displayName: 'State'
+          displayName: 'State',
+          cellTemplate: $templateCache.get("threadStateTemplate")
         },
         {
           field: 'threadName',
@@ -56,19 +57,24 @@ module Threads {
         },
         {
           field: 'waitedTime',
-          displayName: 'Waited Time(ms)'
+          displayName: 'Waited Time',
+          cellTemplate: '<div class="ngCellText" ng-show="row.entity.waitedTime">{{row.entity.waitedTime | humanizeMs}}</div>'
         },
         {
           field: 'blockedTime',
-          displayName: 'Blocked Time(ms)'
+          displayName: 'Blocked Time',
+          cellTemplate: '<div class="ngCellText" ng-show="row.entity.blockedTime">{{row.entity.blockedTime | humanizeMs}}</div>'
+
         },
         {
           field: 'inNative',
-          displayName: 'In Native'
+          displayName: 'Native',
+          cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.inNative" class="orange">(in native)</span></div>'
         },
         {
           field: 'suspended',
-          displayName: 'Is Suspended'
+          displayName: 'Suspended',
+          cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.suspended" class="red">(suspended)</span></div>'
         }
       ]
     };

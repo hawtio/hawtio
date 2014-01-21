@@ -1545,6 +1545,42 @@ module Core {
   export var isString = (<any>window).isString;
 
 
+  /**
+   * Takes a value in ms and returns a human readable
+   * duration
+   * @param value
+   */
+  export function humanizeMilliseconds(value:number):String {
+
+    if (getType(value) !== 'Number') {
+      return "XXX";
+    }
+
+    var seconds = value / 1000;
+    var years = Math.floor(seconds / 31536000);
+    if (years) {
+      return maybePlural(years, "year");
+    }
+    var days = Math.floor((seconds %= 31536000) / 86400);
+    if (days) {
+      return maybePlural(days, "day");
+    }
+    var hours = Math.floor((seconds %= 86400) / 3600);
+    if (hours) {
+      return maybePlural(hours, 'hour');
+    }
+    var minutes = Math.floor((seconds %= 3600) / 60);
+    if (minutes) {
+      return maybePlural(minutes, 'minute');
+    }
+    seconds = Math.floor(seconds % 60);
+    if (seconds) {
+      return maybePlural(seconds, 'second');
+    }
+    return value + " ms";
+  }
+
+
 
 
 }
