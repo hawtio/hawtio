@@ -1,5 +1,24 @@
 <div ng-controller="Threads.ThreadsController">
 
+  <script type="text/ng-template" id="threadStateTemplate">
+    <div class="thread-state-indicator"
+         title="{{row.entity.threadState | humanize}}"
+         ng-switch on="row.entity.threadState">
+      <i ng-switch-when="NEW"
+         class="lightgreen icon-bolt"></i>
+      <i ng-switch-when="RUNNABLE"
+         class="green icon-play-circle"></i>
+      <i ng-switch-when="BLOCKED"
+         class="red icon-stop"></i>
+      <i ng-switch-when="WAITING"
+         class="darkgray icon-pause"></i>
+      <i ng-switch-when="TIMED_WAITING"
+         class="orange icon-time"></i>
+      <i ng-switch-default="TERMINATED"
+         class="darkred icon-remove"></i>
+    </div>
+  </script>
+
   <div class="threads logbar">
     <div class="logbar-container">
 
