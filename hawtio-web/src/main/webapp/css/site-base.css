@@ -3630,3 +3630,16 @@ strong.new,
 .table-header.desc > .indicator:after {
   content: "\f078";
 }
+
+.camel-tree > ul.nav {
+  margin-bottom: 3px !important;
+}
+
+.camel-tree > .section-filter {
+  margin: 0 0 8px;
+  display: block;
+}
+
+.camel-tree > .section-filter > input {
+
+}
