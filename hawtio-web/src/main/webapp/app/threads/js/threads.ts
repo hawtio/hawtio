@@ -17,6 +17,8 @@ module Threads {
     $scope.threadSelected = false;
     $scope.selectedRowIndex = -1;
 
+    $scope.stateFilter = 'NONE';
+
     $scope.showRaw = {
       expanded: false
     };
@@ -24,6 +26,16 @@ module Threads {
     $scope.$watch('searchFilter', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.threadGridOptions.filterOptions.filterText = newValue;
+      }
+    });
+
+    $scope.$watch('stateFilter', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if ($scope.stateFilter === 'NONE') {
+          $scope.threads = $scope.unfilteredThreads;
+        } else {
+          $scope.threads = $scope.filterThreads($scope.stateFilter, $scope.unfilteredThreads);
+        }
       }
     });
 
@@ -93,6 +105,28 @@ module Threads {
         $scope.selectedRowJson = angular.toJson($scope.row, true);
       }
     }, true);
+
+    $scope.filterOn = (state) => {
+      $scope.stateFilter = state;
+    };
+
+    $scope.filterThreads = (state, threads) => {
+      log.debug("Filtering threads by: ", state);
+      if (state === 'NONE') {
+        return threads;
+      }
+      return threads.filter((t) => {
+        return t && t['threadState'] === state;
+      });
+    };
+
+    $scope.selectedFilterClass = (state) => {
+      if (state === $scope.stateFilter) {
+        return "active";
+      } else {
+        return "";
+      }
+    }
 
     $scope.deselect = () => {
       $scope.threadGridOptions.selectedItems = [];
@@ -208,12 +242,14 @@ module Threads {
       var responseJson = angular.toJson(response.value, true);
       if ($scope.getThreadInfoResponseJson !== responseJson) {
         $scope.getThreadInfoResponseJson = responseJson;
+
         var threads = response.value.exclude((t) => { return t === null; });
 
+        $scope.unfilteredThreads = threads;
         $scope.totals = {};
         threads.forEach((t) => {
           // calculate totals
-          var state = t.threadState.titleize();
+          var state = t.threadState;
           if (!(state in $scope.totals)) {
             $scope.totals[state] = 1;
           } else {
@@ -221,8 +257,9 @@ module Threads {
           }
         });
 
+        threads = $scope.filterThreads($scope.stateFilter, threads);
+
         $scope.threads = threads;
-        $scope.lastThreadJson = angular.toJson($scope.threads.last(), true);
         Core.$apply($scope);
       }
     }

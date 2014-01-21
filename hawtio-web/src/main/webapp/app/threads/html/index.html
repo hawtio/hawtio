@@ -24,11 +24,16 @@
 
       <div class="state-panel inline-block">
         <ul class="inline">
-          <li>
-            <strong ng-class="total">Total:</strong> {{threads.length}}
+          <li ng-click="filterOn('NONE')"
+              title="Clear state filter"
+              ng-class="selectedFilterClass('NONE')">
+            <span class="clickable no-fade total">Total:</span> {{unfilteredThreads.length}}
           </li>
-          <li ng-repeat="(state, total) in totals">
-            <strong class="{{state.dasherize()}}">{{state}}:</strong> {{total}}
+          <li ng-repeat="(state, total) in totals"
+              ng-click="filterOn(state)"
+              title="Filter by {{state}}"
+              ng-class="selectedFilterClass(state)">
+            <span class="clickable no-fade {{state.dasherize()}}">{{state | humanize}}:</span>{{total}}
           </li>
         </ul>
       </div>
