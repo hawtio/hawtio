@@ -1,23 +1,37 @@
 module Camel {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function TreeController($scope, $location:ng.ILocationService, $timeout, workspace:Workspace) {
+    $scope.contextFilterText = $location.search()["cq"];
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
     });
 
+    var reloadThrottled = Core.throttled(reloadFunction, 500);
+
+
     $scope.$watch('workspace.tree', function () {
-      reloadFunction();
+      reloadThrottled();
+    });
+
+    var reloadOnContextFilterThrottled = Core.throttled(() => {
+      reloadFunction(() => {
+        $("#camelContextIdFilter").focus();
+      });
+    }, 500);
+
+    $scope.$watch('contextFilterText', function () {
+      if ($scope.contextFilterText != $scope.lastContextFilterText) {
+        $timeout(reloadOnContextFilterThrottled, 250);
+      }
     });
 
     $scope.$on('jmxTreeUpdated', function () {
-      reloadFunction();
+      reloadThrottled();
     });
 
-    function reloadFunction() {
-      console.log("reloading the camel tree!!!");
-
+    function reloadFunction(afterSelectionFn = null) {
       var children = [];
       var domainName = Camel.jmxDomain;
 
@@ -31,6 +45,9 @@ module Camel {
         rootFolder.key = "camelContexts";
         rootFolder.domain = domainName;
 
+        var contextFilterText = $scope.contextFilterText;
+        $scope.lastContextFilterText = contextFilterText;
+        log.info("Reloading the tree for filter: " + contextFilterText);
         var folder = tree.get(domainName);
         if (folder) {
           angular.forEach(folder.children, (value, key) => {
@@ -42,56 +59,59 @@ module Camel {
               if (contextsFolder) {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
-                  var folder = new Folder(contextNode.title);
-                  folder.addClass = "org-apache-camel-context";
-                  folder.domain = domainName;
-                  folder.objectName = contextNode.objectName;
-                  folder.entries = contextNode.entries;
-                  folder.typeName = contextNode.typeName;
-                  folder.key = contextNode.key;
-                  if (routesNode) {
-                    var routesFolder = new Folder("Routes");
-                    routesFolder.addClass = "org-apache-camel-routes-folder";
-                    routesFolder.parent = contextsFolder;
-                    routesFolder.children = routesNode.children;
-                    angular.forEach(routesFolder.children, (n) => n.addClass = "org-apache-camel-routes");
-                    folder.children.push(routesFolder);
-                    routesFolder.typeName = "routes";
-                    routesFolder.key = routesNode.key;
-                    routesFolder.domain = routesNode.domain;
-                  }
-                  if (endpointsNode) {
-                    var endpointsFolder = new Folder("Endpoints");
-                    endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
-                    endpointsFolder.parent = contextsFolder;
-                    endpointsFolder.children = endpointsNode.children;
-                    angular.forEach(endpointsFolder.children, (n) => {
-                      n.addClass = "org-apache-camel-endpoints";
-                      if (!getContextId(n)) {
-                        n.entries["context"] = contextNode.entries["context"];
+                  var title = contextNode.title;
+                  if (!contextFilterText || (title && title.indexOf(contextFilterText) >= 0)) {
+                    var folder = new Folder(title);
+                    folder.addClass = "org-apache-camel-context";
+                    folder.domain = domainName;
+                    folder.objectName = contextNode.objectName;
+                    folder.entries = contextNode.entries;
+                    folder.typeName = contextNode.typeName;
+                    folder.key = contextNode.key;
+                    if (routesNode) {
+                      var routesFolder = new Folder("Routes");
+                      routesFolder.addClass = "org-apache-camel-routes-folder";
+                      routesFolder.parent = contextsFolder;
+                      routesFolder.children = routesNode.children;
+                      angular.forEach(routesFolder.children, (n) => n.addClass = "org-apache-camel-routes");
+                      folder.children.push(routesFolder);
+                      routesFolder.typeName = "routes";
+                      routesFolder.key = routesNode.key;
+                      routesFolder.domain = routesNode.domain;
+                    }
+                    if (endpointsNode) {
+                      var endpointsFolder = new Folder("Endpoints");
+                      endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
+                      endpointsFolder.parent = contextsFolder;
+                      endpointsFolder.children = endpointsNode.children;
+                      angular.forEach(endpointsFolder.children, (n) => {
+                        n.addClass = "org-apache-camel-endpoints";
+                        if (!getContextId(n)) {
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                      });
+                      folder.children.push(endpointsFolder);
+                      endpointsFolder.entries = contextNode.entries;
+                      endpointsFolder.typeName = "endpoints";
+                      endpointsFolder.key = endpointsNode.key;
+                      endpointsFolder.domain = endpointsNode.domain;
+                    }
+                    var jmxNode = new Folder("MBeans");
+
+                    // lets add all the entries which are not one context/routes/endpoints
+                    angular.forEach(entries, (jmxChild, name) => {
+                      if (name !== "context" && name !== "routes" && name !== "endpoints") {
+                        jmxNode.children.push(jmxChild);
                       }
                     });
-                    folder.children.push(endpointsFolder);
-                    endpointsFolder.entries = contextNode.entries;
-                    endpointsFolder.typeName = "endpoints";
-                    endpointsFolder.key = endpointsNode.key;
-                    endpointsFolder.domain = endpointsNode.domain;
-                  }
-                  var jmxNode = new Folder("MBeans");
 
-                  // lets add all the entries which are not one context/routes/endpoints
-                  angular.forEach(entries, (jmxChild, name) => {
-                    if (name !== "context" && name !== "routes" && name !== "endpoints") {
-                      jmxNode.children.push(jmxChild);
+                    if (jmxNode.children.length > 0) {
+                      jmxNode.sortChildren(false);
+                      folder.children.push(jmxNode);
                     }
-                  });
-
-                  if (jmxNode.children.length > 0) {
-                    jmxNode.sortChildren(false);
-                    folder.children.push(jmxNode);
+                    folder.parent = rootFolder;
+                    children.push(folder);
                   }
-                  folder.parent = rootFolder;
-                  children.push(folder);
                 }
               }
             }
@@ -118,7 +138,12 @@ module Camel {
          }
          */
         // lets do this asynchronously to avoid Error: $digest already in progress
-        setTimeout(updateSelectionFromURL, 50);
+        setTimeout(() => {
+          updateSelectionFromURL()
+          if (angular.isFunction(afterSelectionFn)) {
+            afterSelectionFn();
+          }
+        }, 50);
       }
     }
 
