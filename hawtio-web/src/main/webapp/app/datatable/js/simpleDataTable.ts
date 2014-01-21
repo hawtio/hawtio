@@ -57,12 +57,10 @@ module DataTable {
         }
 
         var sortInfo = $scope.config.sortInfo;
-        log.debug("sortInfo: ", sortInfo);
-        value = value.sortBy(sortInfo.sortBy, !sortInfo.ascending);
 
         // enrich the rows with information about their index
         var idx = -1;
-        $scope.rows = (value || []).map(entity => {
+        $scope.rows = (value || []).sortBy(sortInfo.sortBy, !sortInfo.ascending).map(entity => {
           idx++;
           return {
             entity: entity,
@@ -72,6 +70,8 @@ module DataTable {
             }
           };
         });
+
+        Core.pathSet(scope, ['hawtioSimpleTable', dataName, 'rows'], $scope.rows);
 
         // okay the data was changed/updated so we need to re-select previously selected items
         // and for that we need to evaluate the primary key function so we can match new data with old data.

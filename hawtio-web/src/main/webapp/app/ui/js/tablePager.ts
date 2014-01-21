@@ -62,7 +62,7 @@ module UI {
       };
 
       scope.rowIndex = () => {
-        return scope.$parent[this.rowIndexName];
+        return Core.pathGet(scope.$parent, this.rowIndexName.split('.'));
       };
 
       scope.tableLength = () => {
@@ -73,7 +73,7 @@ module UI {
 
 
     public tableData() {
-      return this.$scope.$parent[this.tableName] || [];
+      return Core.pathGet(this.$scope.$parent, this.tableName.split('.')) || [];
     }
 
     public goToIndex(idx:number) {
