@@ -24,7 +24,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
-import org.ops4j.net.Base64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import java.util.Arrays;
 
@@ -72,8 +72,7 @@ public class JBossPostApp {
         PostMethod method = new PostMethod(url);
 
         String userPwd = userName + ":" + password;
-        String hash = Base64Encoder.encode(userPwd);
-        //String hash = Base64.encode(userPwd.getBytes());
+        String hash = new Base64().encodeAsString(userPwd.getBytes());
         method.setRequestHeader("Authorization", "Basic " + hash);
         System.out.println("headers " + Arrays.asList(method.getRequestHeaders()));
         method.setRequestEntity(new StringRequestEntity(data, "application/json", "UTF-8"));
