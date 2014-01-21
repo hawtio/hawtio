@@ -100,7 +100,7 @@ module Threads {
         } else {
           $scope.row = newValue.first();
           $scope.threadSelected = true;
-          $scope.selectedRowIndex = $scope.threads.findIndex($scope.row);
+          $scope.selectedRowIndex = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows']).findIndex((t) => { return t.entity['threadId'] === $scope.row['threadId']});
         }
         $scope.selectedRowJson = angular.toJson($scope.row, true);
       }
@@ -137,7 +137,10 @@ module Threads {
     };
 
     $scope.selectThreadByIndex = (idx) => {
-      $scope.threadGridOptions.selectedItems = [$scope.threads[idx]];
+      var selectedThread = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows'])[idx];
+      $scope.threadGridOptions.selectedItems = $scope.threads.filter((t) => {
+        return t && t['threadId'] == selectedThread.entity['threadId'];
+      });
     };
 
     $scope.init = () => {
