@@ -186,16 +186,17 @@ module Fabric {
         if ($scope.containersResponse !== response) {
           $scope.containersResponse = response;
 
+          newContainers = newContainers.sortBy('id');
+
           var rootContainers = newContainers.exclude((c) => { return !c.root; });
           var childContainers = newContainers.exclude((c) => { return c.root; });
 
           if (childContainers.length > 0) {
             var tmp = [];
-            rootContainers = rootContainers.sortBy('id');
             rootContainers.each((c) => {
               tmp.add(c);
               var children = childContainers.exclude((child) => { return child.parentId !== c.id });
-              tmp.add(children.sortBy('id'));
+              tmp.add(children);
             });
             newContainers = tmp;
           }
