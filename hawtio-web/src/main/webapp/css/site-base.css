@@ -3143,15 +3143,29 @@ i.expandable-indicator.folder {
  */
 /* The Table of Contents container element */
 .tocify {
-    width: 232px;
-    padding-left: 1em;
-    padding-right: 1em;
-    overflow: auto;
-    position: fixed;
-    border: 1px solid #ccc;
-    webkit-border-radius: 6px;
-    moz-border-radius: 6px;
-    border-radius: 6px;
+  /* top works for the wiki, may need customization
+     elsewhere */
+  top: 120px;
+  width: 232px;
+  padding-left: 1em;
+  padding-right: 1em;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: fixed;
+  border: 1px solid #ccc;
+  webkit-border-radius: 6px;
+  moz-border-radius: 6px;
+  border-radius: 6px;
+  background-color: white;
+  bottom: 5px;
+  z-index: 20;
+}
+
+.tocify h2,
+.tocify h3 {
+  white-space: normal;
 }
 
 .toc-container {
@@ -3161,7 +3175,7 @@ i.expandable-indicator.folder {
 
 .toc-content {
   position: absolute;
-  left: 278px;
+  left: 290px;
   right: 0;
 }
 
