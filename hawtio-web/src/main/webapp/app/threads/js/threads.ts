@@ -133,7 +133,7 @@ module Threads {
     };
 
     $scope.selectThreadById = (id) => {
-      $scope.threadGridOptions.selectedItems = $scope.threads.find((t) => { return t.threadId === id; });
+      $scope.threadGridOptions.selectedItems = $scope.threads.filter((t) => { return t.threadId === id; });
     };
 
     $scope.selectThreadByIndex = (idx) => {
