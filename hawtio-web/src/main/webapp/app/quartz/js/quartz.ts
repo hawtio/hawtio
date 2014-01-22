@@ -111,16 +111,15 @@ module Quartz {
         },
         {
           field: 'previousFireTime',
-          displayName: 'Previous Fire Timestamp'
+          displayName: 'Previous Fire'
         },
         {
           field: 'nextFireTime',
-          displayName: 'Next Fire Timestamp'
+          displayName: 'Next Fire'
         },
         {
           field: 'finalFireTime',
-          displayName: 'Final Fire Timestamp',
-          visible: false
+          displayName: 'Final Fire'
         }
       ]
     };
