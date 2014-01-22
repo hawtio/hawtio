@@ -3640,6 +3640,15 @@ strong.new,
   display: block;
 }
 
-.camel-tree > .section-filter > input {
-
+.table > thead > tr > th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+th > .indicator:before {
+  display: inline-block;
+  content: "\00a0";
+  margin-left: 12px;
+}
+
