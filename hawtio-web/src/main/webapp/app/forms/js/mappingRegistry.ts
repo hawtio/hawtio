@@ -54,7 +54,7 @@ module Forms {
     // Note if for whatever reason we need to go back to the old way of using hawtio directives for standard
     // angularjs directives, just clear inputMarker to null here ;)
     // inputMarkup = null;
-                                 id
+
     if (inputMarkup) {
       input = $(inputMarkup);
 

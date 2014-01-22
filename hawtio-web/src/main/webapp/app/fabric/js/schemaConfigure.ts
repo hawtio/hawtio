@@ -26,6 +26,7 @@ module Fabric {
     Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
 
     Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create');
+    Core.pathSet(schema.properties, ['number', 'input-attributes', 'min'], '1');
 
     // mark properties as autofill to avoid issues with angular missing autofill events
     Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
