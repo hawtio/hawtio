@@ -708,12 +708,19 @@ module Fabric {
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
 
       container.jmxDomains.forEach((domain) => {
+        if (domain === "org.apache.cxf") {
+          answer.push({
+            title: "Apache CXF",
+            type: "icon",
+            src: "icon-puzzle-piece"
+          });
+        }
         if (domain === "org.fusesource.insight") {
           answer.push({
             title: "Fabric8 Insight",
             type: "icon",
             src: "icon-eye-open"
-          })
+          });
         }
         if (domain === "org.apache.activemq") {
           answer.push({
