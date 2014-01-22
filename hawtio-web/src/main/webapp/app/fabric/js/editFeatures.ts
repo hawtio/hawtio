@@ -9,16 +9,7 @@ module Fabric {
     $scope.response = {};
 
     $scope.features = [];
-    $scope.repositories = [];
-    $scope.repoIds = [];
-    $scope.selectedRepoId = '';
-    $scope.selectedRepo = {};
 
-    $scope.selectedRepoXML = '';
-    $scope.selectedRepoJson = {};
-    $scope.selectedRepoError = '';
-
-    $scope.selectedRepoRepos = [];
     $scope.selectedRepoFeatures = [];
 
     $scope.deletingFeatures = [];
@@ -65,77 +56,6 @@ module Fabric {
     }, true);
 
 
-    $scope.$watch('selectedRepoXML', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        $scope.selectedRepoJson = xml2json($scope.selectedRepoXML);
-      }
-    });
-
-
-    $scope.$watch('selectedRepoId', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        if ($scope.selectedRepoId !== '') {
-          $scope.selectedRepo = $scope.repositories.find((repo) => { return $scope.selectedRepoId === repo.id; });
-        } else {
-          $scope.selectedRepo = {};
-        }
-      }
-    });
-
-
-    $scope.$watch('selectedRepoJson', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        $scope.selectedRepoName = $scope.selectedRepoJson.name;
-        $scope.selectedRepoRepos = $scope.selectedRepoJson.repository;
-        if (!angular.isArray($scope.selectedRepoRepos)) {
-          $scope.selectedRepoRepos = [$scope.selectedRepoRepos];
-        }
-        Logger.info("selectedRepoRepos: ", $scope.selectedRepoRepos);
-        $scope.selectedRepoFeatures = $scope.selectedRepoJson.feature;
-        if (!angular.isArray($scope.selectedRepoFeatures)) {
-          $scope.selectedRepoFeatures = [$scope.selectedRepoFeatures];
-        }
-      }
-    });
-
-
-    $scope.$watch('selectedRepo', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        if (angular.isDefined($scope.selectedRepo.data)) {
-          $scope.selectedRepoXML = $scope.selectedRepo.data;
-        } else {
-          $scope.selectedRepoXML = '';
-        }
-
-        if (angular.isDefined($scope.selectedRepo.errorMessage)) {
-          $scope.selectedRepoError = $scope.selectedRepo.errorMessage;
-        } else {
-          $scope.selectedRepoError = '';
-        }
-      }
-    }, true);
-
-
-    $scope.$watch('repoIds', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        if ($scope.repoIds.length > 0) {
-          if ($scope.selectedRepoId === '') {
-            $scope.selectedRepoId = $scope.repoIds[0];
-          }
-        } else {
-          $scope.selectedRepoId = '';
-        }
-      }
-    }, true);
-
-
-    $scope.$watch('repositories', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        $scope.repoIds = $scope.repositories.map((repo) => { return repo.id; });
-      }
-    }, true);
-
-
     $scope.dispatch = (response) => {
       var responseJson = angular.toJson(response.value);
       if (responseJson !== $scope.responseJson) {
@@ -143,8 +63,24 @@ module Fabric {
           notification('info', "Profile feature definitions updated");
         }
         $scope.responseJson = responseJson;
-        $scope.features = Object.clone(response.value.featureDefinitions, true);
-        $scope.repositories = Object.clone(response.value.repositoryDefinitions, true);
+        $scope.features = response.value.featureDefinitions;
+        var repositories = response.value.repositoryDefinitions;
+
+        $scope.selectedRepoFeatures = [];
+
+        repositories.forEach((repo) => {
+          var repoJson = xml2json(repo['data']);
+          if ('feature' in repoJson) {
+            var features = repoJson['feature'];
+            if (!angular.isArray(features)) {
+              features = [features];
+            }
+            $scope.selectedRepoFeatures.add(features);
+          }
+        });
+
+        $scope.selectedRepoFeatures = $scope.selectedRepoFeatures.sortBy('name');
+
         Core.$apply($scope);
       }
     };
