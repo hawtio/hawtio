@@ -31,17 +31,11 @@
         "test": "grunt test"
     },
     "dependencies" : {
-        "grunt-contrib-copy": "~0.4",
-        "grunt-contrib-concat": "~0.3.0",
-        "grunt-contrib-watch": "~0.4.4",
-        "grunt-contrib-nodeunit": "~0.2.0",
-        "grunt-contrib-less": "~0.6.1",
-        "grunt-type": "~0.9.0"
+        "grunt-contrib-watch": "~0.4.4"
     },
     "analyze": true,
     "devDependencies": {
         "grunt": "~0.4.1",
-        "typescript-dev": "~0.9.0",
         "phantomjs": "1.9.0-1"
     },
     "bundledDependencies": [
