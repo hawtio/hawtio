@@ -295,7 +295,7 @@ module Dashboard {
 
 
       function resizeBlock(elmObj) {
-        var elmObj = $(elmObj);
+        //var elmObj = $(elmObj);
         var area = elmObj.find('.widget-area');
         var w = elmObj.width() - gridSize;
         var h = elmObj.height() - gridSize;

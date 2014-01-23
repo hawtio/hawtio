@@ -244,7 +244,7 @@ module Wiki {
       $scope.addDialog.open();
     };
 
-    $scope.addAndCloseDialog = (fileName) => {
+    $scope.addAndCloseDialog = (fileName:string) => {
       $scope.newDocumentName = fileName;
       var template = $scope.selectedCreateDocumentTemplate;
       var path = getNewDocumentPath();
@@ -252,7 +252,7 @@ module Wiki {
         return;
       }
       var name = Wiki.fileName(path);
-      var fileName = name;
+      var fileName:string = name;
       var folder = Wiki.fileParent(path);
       var exemplar = template.exemplar;
 

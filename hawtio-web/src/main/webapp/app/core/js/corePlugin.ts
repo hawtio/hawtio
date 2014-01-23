@@ -19,7 +19,7 @@ module Core {
 
 
 // Add any other known possible jolokia URLs here
-var jolokiaUrls = [
+var jolokiaUrls:string[] = [
   url("jolokia"),    // instance configured by hawtio-web war file
   "/jolokia"         // instance that's already installed in a karaf container for example
 ];
@@ -43,7 +43,7 @@ function getJolokiaUrl() {
 }
 
 if (!jolokiaUrl) {
-  jolokiaUrl = jolokiaUrls.find(function (url) {
+  jolokiaUrl = <string>jolokiaUrls.find(function (url) {
     var jqxhr = $.ajax(url, {
       async: false,
       username: 'public',

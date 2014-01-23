@@ -391,7 +391,6 @@
                 <exec executable="${tsc-executable}"
                       dir="${basedir}"
                       failonerror="true">
-                  <arg value="--allowbool"/>
                   <arg value="--target"/>
                   <arg value="es5"/>
                   <arg value="--out"/>

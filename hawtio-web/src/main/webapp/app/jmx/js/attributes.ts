@@ -216,7 +216,7 @@ module Jmx {
       var rc = [];
       potentialCandidates.forEach((widget) => {
         var widgetType = Jmx.getWidgetType(widget);
-        rc.push("<i class=\"" + widgetType.icon + " clickable\" title=\"" + widgetType.title + "\" ng-click=\"addChartToDashboard(row.entity, '" + widgetType.type + "')\"></i>");
+        rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"addChartToDashboard(row.entity, '" + widgetType['type'] + "')\"></i>");
 
       });
       return rc.join() + "&nbsp;";

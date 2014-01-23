@@ -515,7 +515,7 @@ module Core {
       }
       if (tab) {
         //console.log("Found tab " + JSON.stringify(tab));
-        var validFn = tab.isValid;
+        var validFn = tab['isValid'];
         return !angular.isDefined(validFn) || validFn(workspace);
       } else {
         Core.log.info("Could not find tab for " + uri);

@@ -245,8 +245,9 @@ module Fabric {
             var activeProfile = answer.find((o) => { return o.versionId === container.versionId && o.id === profile });
 
             if (activeProfile) {
-              activeProfile.containers = activeProfile.containers.include(container.id).unique();
-              activeProfile.count = activeProfile.containers.length;
+              activeProfile['containers'] = activeProfile['containers'].include(container.id).unique();
+
+              activeProfile.count = activeProfile['containers'].length;
             } else {
               answer.push({
                 id: profile,

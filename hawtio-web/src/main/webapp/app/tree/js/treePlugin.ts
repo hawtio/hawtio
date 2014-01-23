@@ -65,7 +65,7 @@ module Tree {
                   var children = Core.asArray(tree);
                   var hideRoot = attrs["hideroot"];
                   if ("true" === hideRoot) {
-                    children = tree.children;
+                    children = tree['children'];
                   }
                   var config = {
                     clickFolderMode: 3, // activate and expand
@@ -188,7 +188,7 @@ module Tree {
                     }
                     // select and activate first child if we have not activated any others
                     if (!activatedNode) {
-                      var children = root.getChildren();
+                      var children = root['getChildren']();
                       if (children && children.length) {
                         var child = children[0];
                         child.expand(true);

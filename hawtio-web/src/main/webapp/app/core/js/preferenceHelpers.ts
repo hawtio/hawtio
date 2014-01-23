@@ -3,9 +3,7 @@
  */
 module Core {
 
-  export var log:Logging.Logger = Logger.get("Core");
-
-  /**
+   /**
    * Parsers the given value as JSON if it is define
    */
   export function parsePreferencesJson(value, key) {
