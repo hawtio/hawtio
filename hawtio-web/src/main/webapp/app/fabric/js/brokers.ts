@@ -87,7 +87,7 @@ module Fabric {
         var brokers = response.value;
 
         function findByIdOrCreate(collection, id, map, fn) {
-          var value = collection.find({"id": id});
+          var value = collection.find((v) => { return v && v['id'] === id});
           if (!value) {
             value = fn();
             value["id"] = id;
