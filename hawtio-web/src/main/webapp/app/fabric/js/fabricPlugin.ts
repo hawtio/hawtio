@@ -4,8 +4,6 @@
  */
 module Fabric {
 
-  export var jmxDomain = 'io.fabric8';
-
   export var templatePath = 'app/fabric/html/';
   export var activeMQTemplatePath = 'app/activemq/html/';
 
