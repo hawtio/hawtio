@@ -24,9 +24,9 @@ module Dashboard {
       return this.protocol() + this.host() + ":" + this.port() + this.path() + this.search();
     }
 
-    hash(newHash:string = null) {
+    hash(newHash:string = null):any {
       if (newHash) {
-        return this.delegate.hash(newHash).search('tab', null);;
+        return this.delegate.hash(newHash).search('tab', null);
         //this._hash = newHash;
       }
       return this._hash;
@@ -36,7 +36,7 @@ module Dashboard {
       return this.delegate.host();
     }
 
-    path(newPath:string = null) {
+    path(newPath:string = null):any {
       if (newPath) {
         return this.delegate.path(newPath).search('tab', null);
       }
@@ -56,14 +56,14 @@ module Dashboard {
       return this;
     }
 
-    search(parametersMap:any = null) {
+    search(parametersMap:any = null):any {
       if (parametersMap) {
         return this.delegate.search(parametersMap);
       }
       return this._search;
     }
 
-    url(newValue: string = null) {
+    url(newValue: string = null):any {
       if (newValue) {
         return this.delegate.url(newValue).search('tab', null);
       }

@@ -55,11 +55,11 @@ module Insight {
 
     function chart(context, chartDef, jolokia) {
 
-        return context.metric(function(start, stop, step, callback) {
+        return context.metric(function(start:number, stop:number, step, callback) {
             var  values    = [],
                  value     = 0,
-                 start     = +start,
-                 stop      = +stop;
+                 start:number     = +start,
+                 stop:number      = +stop;
             var range = {
                             range: {
                                 timestamp: {

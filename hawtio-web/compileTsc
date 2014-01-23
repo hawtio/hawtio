@@ -2,6 +2,6 @@
 
 tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep -v target)
 
-tsc --allowbool --target es5 --out target/hawtio-web-1.3-SNAPSHOT/app/app.js src/main/d.ts/* $tsFiles
+tsc --target es5 --out target/hawtio-web-1.3-SNAPSHOT/app/app.js src/main/d.ts/* $tsFiles
 
 

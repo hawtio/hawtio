@@ -160,7 +160,7 @@ module Jmx {
           elementNames.forEach((elementName) => {
             var child = node.get(elementName);
             if (!child && node.children) {
-              child = node.children.find(n => elementName === n["title"]);
+              child = <any>node.children.find(n => elementName === n["title"]);
             }
             if (child) {
               var mbean = child.objectName;

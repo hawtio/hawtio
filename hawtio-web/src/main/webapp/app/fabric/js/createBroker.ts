@@ -24,8 +24,8 @@ module Fabric {
     $scope.onSubmit = (json, form) => {
       $scope.message = ($scope.entity.brokerName || "unknown") + " in group " + ($scope.entity.group || "unknown");
       notification("info", "Creating broker " + $scope.message);
-      var json = JSON.stringify($scope.entity, null, '  ');
-      jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", json, onSuccess(onSave));
+      var tmpJson = JSON.stringify($scope.entity, null, '  ');
+      jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
     };
 
     $scope.brokerNameExists = () => {

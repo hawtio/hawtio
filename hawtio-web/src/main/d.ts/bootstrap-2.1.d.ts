@@ -7,9 +7,9 @@
 /// <reference path="jquery.d.ts"/>
 
 interface ModalOptions {
-    backdrop?: bool;
-    keyboard?: bool;
-    show?: bool;
+    backdrop?: boolean;
+    keyboard?: boolean;
+    show?: boolean;
     remote?: string;
 }
 
@@ -18,8 +18,8 @@ interface ScrollSpyOptions {
 }
 
 interface TooltipOptions {
-    animation?: bool;
-    html?: bool;
+    animation?: boolean;
+    html?: boolean;
     placement?: any;
     selector?: string;
     title?: any;
@@ -28,8 +28,8 @@ interface TooltipOptions {
 }
 
 interface PopoverOptions {
-    animation?: bool;
-    html?: bool;
+    animation?: boolean;
+    html?: boolean;
     placement?: any;
     selector?: string;
     trigger?: string;
@@ -40,7 +40,7 @@ interface PopoverOptions {
 
 interface CollapseOptions {
     parent?: any;    
-    toggle?: bool;
+    toggle?: boolean;
 }
 
 interface CarouselOptions {

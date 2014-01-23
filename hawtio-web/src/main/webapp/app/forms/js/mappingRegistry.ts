@@ -60,7 +60,7 @@ module Forms {
 
       copyAttributes();
 
-      var id = safeId;
+      id = safeId;
 
       var modelName = config.model || Core.pathGet(property, ["input-attributes", "ng-model"]);
       if (!modelName) {
