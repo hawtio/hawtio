@@ -15,6 +15,8 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+    <tsc-filelist>${basedir}/target/ts-files.txt</tsc-filelist>
+    <tsc-executable>tsc</tsc-executable>
     <grunt-executable>grunt</grunt-executable>
     <npm-executable>npm</npm-executable>
     <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs</phantomjs-executable>
@@ -356,14 +358,59 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.6</version>
         <executions>
+
           <execution>
+            <id>test</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+
+                <echo>Copying stuff to src/test/unit</echo>
+                <copy todir="src/test/unit">
+                  <fileset dir="${webapp-outdir}">
+                    <include name="**"/>
+                  </fileset>
+                </copy>
+
+              </target>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Compiling typescript files</echo>
+                <exec executable="${tsc-executable}"
+                      dir="${basedir}"
+                      failonerror="true">
+                  <arg value="--allowbool"/>
+                  <arg value="--target"/>
+                  <arg value="es5"/>
+                  <arg value="--out"/>
+                  <arg value="${webapp-outdir}/app/app.js"/>
+                  <arg value="@${tsc-filelist}"/>
+                </exec>
+              </target>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>generate-sources</id>
             <phase>generate-sources</phase>
             <configuration>
               <target>
                 <mkdir dir="${basedir}/target/classes"/>
 
                 <!-- copy the markdown docs into the site plugin  -->
-                <echo>Hello</echo>
+                <echo>Writing version to index.html</echo>
                 <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html" overwrite="true">
                   <filterchain>
                     <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
@@ -371,12 +418,15 @@
                     </filterreader>
                   </filterchain>
                 </copy>
-                
+
+                <echo>Coping help files to site</echo>
                 <copy todir="${webapp-outdir}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
+
+                <echo>Copying site documentation</echo>
                 <copy todir="${webapp-outdir}/app/site/doc" overwrite="true">
                   <fileset dir="${basedir}/../docs">
                     <include name="**/*.md" />
@@ -384,6 +434,36 @@
                     <include name="images/*.*" />
                   </fileset>
                 </copy>
+
+                <echo>Copying base directory docs</echo>
+                <copy todir="${webapp-outdir}/app/core/doc">
+                  <fileset dir="${basedir}/../">
+                    <include name="*.md"/>
+                  </fileset>
+                </copy>
+
+                <echo>Copying static non-ts resources to exploded war directory</echo>
+                <copy todir="${webapp-outdir}">
+                  <fileset dir="${basedir}/src/main/webapp">
+                    <include name="**"/>
+                    <exclude name="**/*.ts"/>
+                    <exclude name="index.html"/>
+                  </fileset>
+                </copy>
+
+                <echo>Generating typescript file list</echo>
+                <fileset id="tsc-files" dir="${basedir}">
+                  <include name="src/main/webapp/**/*.ts"/>
+                  <include name="src/main/d.ts/*"/>
+                </fileset>
+                <!-- <property name="files" refid="tsc-files"/> -->
+                <pathconvert pathsep="${line.separator}"
+                             property="files"
+                             refid="tsc-files">
+                  <map from="${basedir}/" to=""/>
+                </pathconvert>
+                <echo file="${tsc-filelist}">${files}</echo>
+
               </target>
             </configuration>
             <goals>
@@ -542,22 +622,6 @@
               </arguments>
             </configuration>
           </execution>
-          <execution>
-            <id>typescript-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${grunt-executable}</executable>
-              <arguments>
-                <argument>--webapp_outdir</argument>
-                <argument>${webapp-outdir}</argument>
-                <argument>--webapp_port</argument>
-                <argument>${jettyPort}</argument>
-              </arguments>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
 
@@ -709,38 +773,6 @@
   </build>
 
   <profiles>
-
-    <profile>
-      <id>watch</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>typescript-watch</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>${grunt-executable}</executable>
-                  <arguments>
-                    <argument>watchSrc</argument>
-                    <argument>--webapp_outdir</argument>
-                    <argument>${webapp-outdir}</argument>
-                    <argument>--webapp_port</argument>
-                    <argument>${jettyPort}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <profile>
       <id>tomcat</id>

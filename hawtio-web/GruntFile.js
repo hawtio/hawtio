@@ -1,9 +1,7 @@
 module.exports = function (grunt) {
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-type');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Project configuration.
@@ -14,65 +12,7 @@ module.exports = function (grunt) {
     grunt.option('webapp_outdir', webapp_outdir);
   }
 
-  grunt.task.registerTask('clean-appjs', 'Clean up generated app.js file', function() {
-    var file = webapp_outdir + "/app/app.js";
-    grunt.log.writeln("Cleaning up " + file);
-    grunt.file.delete(file, { force: true });
-  });
-
-  var appFiles = ['src/main/d.ts/*.ts', 'src/main/webapp/app/**/*.ts'];
-
   grunt.initConfig({
-    test:{
-      files:['src/test/js/**/*.js']
-    },
-    type:{
-      compile:{
-        files: [
-          {
-            src: appFiles,
-            dest: "<%= grunt.option('webapp_outdir') %>/app/app.js"
-          }
-        ],
-        options:{
-          sourcemap: false,
-          target: 'es5',
-          //module:'amd',
-          style:'eqeqeq;bitwise'
-        }
-      }
-    },
-    copy:{
-      dist: {
-        files: [
-          {
-            expand: true,
-            cwd: "src/main/webapp/",
-            src: ["./**", "!./**/*.ts", "!./index.html"],
-            dest: "<%= grunt.option('webapp_outdir') %>/"
-          }
-        ]
-      },
-      docs: {
-        files: [
-          {
-            expand: true,
-            cwd: "..",
-            src: ["./*.md"],
-            dest: "<%= grunt.option('webapp_outdir') %>/app/core/doc/"
-          }
-        ]
-      },
-      test: {
-        files: [
-          {
-            expand: true,
-            cwd: "<%= grunt.option('webapp_outdir') %>/",
-            src: ["./**"],
-            dest: "src/test/unit/"
-          }]
-      }
-    },
     watch: {
       app: {
         files: ['src/main/webapp/**',
@@ -91,10 +31,7 @@ module.exports = function (grunt) {
 
   //grunt.config.set('currentTasks', fullBuild);
 
-  // Default task.
-  grunt.registerTask('default', ['clean-appjs', 'type', 'copy']);
-
   // watch source for changes
-  grunt.registerTask('watchSrc', ['watch']);
+  grunt.registerTask('default', ['watch']);
 
 };
