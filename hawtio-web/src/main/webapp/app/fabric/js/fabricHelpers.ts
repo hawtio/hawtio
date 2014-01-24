@@ -89,6 +89,10 @@ module Fabric {
    */
   export function initScope($scope, $location, jolokia, workspace) {
 
+    $scope.gotoProfile = (versionId:string, profileId:string) => {
+      Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, versionId, profileId);
+    };
+
     $scope.getStatusTitle = (container) => {
       return Fabric.statusTitle(container);
     };
@@ -477,9 +481,16 @@ module Fabric {
     return "";
   }
 
-  export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
-    var path = profileLink(workspace, jolokia, localStorage, versionId, profile.id);
-    $location.url(path);
+  export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile:any) {
+    var path = '';
+    if (Core.isString(profile)) {
+      path = profileLink(workspace, jolokia, localStorage, versionId, profile);
+    } else {
+      path = profileLink(workspace, jolokia, localStorage, versionId, profile.id);
+    }
+    if (!Core.isBlank(path)) {
+      $location.url(path);
+    }
   }
 
   export function setSelect(selection, group) {

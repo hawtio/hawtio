@@ -1,6 +1,9 @@
 module Fabric {
 
-  export function FeatureEditController($scope, $routeParams, $location, jolokia, xml2json) {
+  export function FeatureEditController($scope, $routeParams, $location, jolokia, xml2json, workspace:Core.Workspace) {
+
+
+    Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.getProfileFeaturesOp = "getProfileFeatures(java.lang.String, java.lang.String)";
     $scope.versionId = $routeParams.versionId;
