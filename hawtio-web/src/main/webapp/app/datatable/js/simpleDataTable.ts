@@ -226,7 +226,7 @@ module DataTable {
       }
       var headHtml = "<thead><tr>";
       // use a function to check if a row is selected so the UI can be kept up to date asap
-      var bodyHtml = "<tbody><tr ng-repeat='row in rows | filter:config.filterOptions.filterText' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
+      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index | filter:config.filterOptions.filterText' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?
