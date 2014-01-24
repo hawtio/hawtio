@@ -92,8 +92,7 @@ module Core {
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
 
-    $scope.appName = branding.appName;
-    $scope.appLogo = branding.appLogo;
+    $scope.branding = branding;
 
     $scope.hasMBeans = () => workspace.hasMBeans();
 
