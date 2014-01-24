@@ -368,11 +368,6 @@ module Fabric {
       return arr.map((o) => { return o.id; });
     }
 
-    $scope.getStatusTitle = (container) => {
-      return Fabric.statusTitle(container);
-    };
-
-
     $scope.containersForVersion = (id) => {
       var count = $scope.containers.findAll((container) => { return container.versionId === id }).length;
       if (count === 0) {

@@ -89,6 +89,10 @@ module Fabric {
    */
   export function initScope($scope, $location, jolokia, workspace) {
 
+    $scope.getStatusTitle = (container) => {
+      return Fabric.statusTitle(container);
+    };
+
     $scope.isCurrentContainer = (container) => {
       if (!container) {
         return false;
