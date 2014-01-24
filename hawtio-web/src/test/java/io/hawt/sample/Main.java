@@ -23,12 +23,16 @@ import javax.management.MBeanServer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.nio.file.FileSystems;
+import net_alchim31_livereload.LRServer;
 
 /**
  * A simple bootstrap class
@@ -46,7 +50,6 @@ public class Main {
                 contextPath = "/" + contextPath;
             }
             String sourcePath = "src/main/webapp";
-            String webappOutdir = System.getProperty("webapp-outdir", "target/hawtio-web-1.3-SNAPSHOT");
             String webXml = sourcePath + "/WEB-INF/web.xml";
             require(fileExists(webXml), "No web.xml could be found for $webXml");
 
@@ -90,7 +93,7 @@ public class Main {
             Configuration[] contextConfigs = {new WebXmlConfiguration(), new WebInfConfiguration()};
             context.setConfigurations(contextConfigs);
             context.setDescriptor(webXml);
-            context.setResourceBases(new String[] {sourcePath, webappOutdir});
+            context.setResourceBases(new String[] {sourcePath});
             context.setContextPath(contextPath);
             context.setParentLoaderPriority(true);
 
@@ -159,15 +162,24 @@ public class Main {
             // lets connect to fabric
             println("");
             println("");
-            println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + webappOutdir);
+            println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + resourcePaths);
             println("");
             println("");
+
+            LOG.info("Starting LiveReload server");
+
+            LRServer lrServer = null;
+            int lrPort = 35729;
+            Path docroot = FileSystems.getDefault().getPath("src/main/webapp");
+            lrServer = new LRServer(lrPort, docroot);
 
             LOG.info("starting jetty");
             server.start();
 
             LOG.info("Joining the jetty server thread...");
-            server.join();
+            // this guy does a start() and a join()...
+            lrServer.run();
+            //server.join();
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
         }

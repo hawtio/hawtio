@@ -271,6 +271,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>net.alchim31</groupId>
+      <artifactId>livereload-jvm</artifactId>
+      <version>0.1.0</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
