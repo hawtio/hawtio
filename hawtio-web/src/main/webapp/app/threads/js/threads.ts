@@ -70,12 +70,12 @@ module Threads {
         {
           field: 'waitedTime',
           displayName: 'Waited Time',
-          cellTemplate: '<div class="ngCellText" ng-show="row.entity.waitedTime">{{row.entity.waitedTime | humanizeMs}}</div>'
+          cellTemplate: '<div class="ngCellText" ng-show="row.entity.waitedTime > 0">{{row.entity.waitedTime | humanizeMs}}</div>'
         },
         {
           field: 'blockedTime',
           displayName: 'Blocked Time',
-          cellTemplate: '<div class="ngCellText" ng-show="row.entity.blockedTime">{{row.entity.blockedTime | humanizeMs}}</div>'
+          cellTemplate: '<div class="ngCellText" ng-show="row.entity.blockedTime > 0">{{row.entity.blockedTime | humanizeMs}}</div>'
 
         },
         {
