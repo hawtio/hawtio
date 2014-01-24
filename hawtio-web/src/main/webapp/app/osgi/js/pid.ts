@@ -228,6 +228,9 @@ module Osgi {
       var inputClass = "span12";
       var labelClass = "control-label";
 
+      var inputClassArray = "span11";
+      var labelClassArray = labelClass;
+
       var metaType = $scope.metaType;
       if (metaType) {
         schema["id"] = metaType.id;
@@ -259,6 +262,12 @@ module Osgi {
             if (cardinality) {
               attributeProperties.type = "array";
               attributeProperties["items"] = {
+                'input-attributes': {
+                  class: inputClassArray
+                },
+                'label-attributes': {
+                  class: labelClassArray
+                },
                 "type": typeName
               };
             }
@@ -303,8 +312,8 @@ module Osgi {
             attrValue = value.Value;
             attrType = asJsonSchemaType(value.Type, rawKey);
           }
-          entity[key] = attrValue;
-          if (!properties[key]) {
+          var property = properties[key];
+          if (!property) {
             properties[key] = {
               'input-attributes': {
                 class: inputClass
@@ -314,9 +323,18 @@ module Osgi {
               },
               type: attrType
             }
+          } else {
+            var propertyType = property["type"];
+            if ("array" === propertyType) {
+              if (!angular.isArray(attrValue)) {
+                attrValue = attrValue ? attrValue.split(",") : [];
+              }
+            }
           }
+          entity[key] = attrValue;
         }
       });
+
       // add default values for missing values
       angular.forEach($scope.defaultValues, (value, key) => {
         var current = entity[key];

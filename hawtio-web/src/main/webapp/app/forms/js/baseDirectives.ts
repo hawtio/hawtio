@@ -347,7 +347,8 @@ module Forms {
       } else {
         // TODO there should be an easier way to find the property / schema!
         var scope = config.scope;
-        var schema = scope[config.schemaName] || {};
+        var fallbackSchemaName = (arg.$attr || {})["schema"] || "schema";
+        var schema = scope[config.schemaName] || scope[fallbackSchemaName] || {};
         var properties = schema.properties || {};
         var arrayProperty = properties[id] || {};
 
@@ -371,8 +372,9 @@ module Forms {
         // we maintain a separate object of all the keys (indices) of the array
         // and use that to lookup the values
         function updateKeys() {
-          var value = Core.pathGet(scope, modelName) || [];
-          scope[itemKeys] = Object.keys(value);
+          var value = Core.pathGet(scope, modelName);
+          scope[itemKeys] = value ? Object.keys(value) : [];
+          scope.$emit("hawtio.form.modelChange", modelName, value);
         }
 
         updateKeys();
