@@ -19,6 +19,8 @@ module Camel {
           config(($routeProvider) => {
             $routeProvider.
                     when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
+                    //when('/camel/endpoint/browse/:contextId/:scheme/:endpointPath', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
+                    when('/camel/endpoint/browse/:contextId/*endpointPath', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
                     when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/fabricDiagram', {templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false}).
@@ -40,6 +42,7 @@ module Camel {
           filter('camelIconClass', () => iconClass).
           run((workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry) => {
 
+            viewRegistry['camel/endpoint/browse'] = layoutFull;
             viewRegistry['camel/fabricDiagram'] = layoutFull;
             viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
 
