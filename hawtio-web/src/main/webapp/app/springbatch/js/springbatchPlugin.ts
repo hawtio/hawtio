@@ -34,9 +34,10 @@ module SpringBatch {
             viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
 
             workspace.topLevelTabs.push({
+                id: "springbatch",
                 content: "SpringBatch",
                 title: "View Spring-Batch jobs",
-                isValid: (workspace: Workspace) => true,
+                isValid: (workspace: Workspace) => { return true; },
                 href: () => "#/springbatch/servers",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
