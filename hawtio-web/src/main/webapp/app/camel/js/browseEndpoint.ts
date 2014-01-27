@@ -1,6 +1,6 @@
 module Camel {
 
-  export function BrowseEndpointController($scope, workspace:Workspace, jolokia) {
+  export function BrowseEndpointController($scope, $routeParams, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
 
     $scope.forwardDialog = new Core.Dialog();
@@ -10,8 +10,17 @@ module Camel {
 
     $scope.gridOptions = Camel.createBrowseGridOptions();
 
+    var routeContextId = $routeParams["contextId"];
+    var routeEndpointName = $routeParams["endpointPath"];
+    $scope.contextId = routeContextId;
+    $scope.endpointPath = routeEndpointName;
+
+    $scope.isJmxTab = !routeContextId || !routeEndpointName;
+
+    log.info("Starting browse context: " + routeContextId + " endpoint: " + routeEndpointName);
+
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
       loadData();
     });
 
@@ -81,8 +90,22 @@ module Camel {
     }
 
     function loadData() {
-      var mbean = workspace.getSelectedMBeanName();
+      var mbean: string = null;
+      if (routeContextId && routeEndpointName) {
+        var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+          context: routeContextId,
+          type: "endpoints",
+          name: routeEndpointName
+        });
+        if (node) {
+          mbean = node.objectName;
+        }
+      }
+      if (!mbean) {
+        mbean = workspace.getSelectedMBeanName();
+      }
       if (mbean) {
+        log.info("MBean: " + mbean);
         var options = onSuccess(populateTable);
         jolokia.execute(mbean, 'browseAllMessagesAsXml(java.lang.Boolean)', true, options);
       }
