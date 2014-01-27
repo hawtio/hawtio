@@ -22,7 +22,7 @@ public class HawtioContextListener implements ServletContextListener {
         String role = System.getProperty("hawtio.role", "admin");
         //String rolePrincipalClasses = System.getProperty("hawtio.rolePrincipalClasses", "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal");
         String rolePrincipalClasses = System.getProperty("hawtio.rolePrincipalClasses", "");
-        Boolean authEnabled = Boolean.valueOf(System.getProperty("hawtio.authenticationEnabled", "false"));
+        Boolean authEnabled = Boolean.valueOf(System.getProperty("hawtio.authenticationEnabled", "true"));
 
         servletContextEvent.getServletContext().setAttribute("realm", realm);
         servletContextEvent.getServletContext().setAttribute("role", role);
