@@ -150,6 +150,16 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
+    <servlet>
+        <servlet-name>springBatch</servlet-name>
+        <servlet-class>io.hawt.web.SpringBatchConfigServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springBatch</servlet-name>
+        <url-pattern>/springBatch/*</url-pattern>
+    </servlet-mapping>
+    
   <servlet>
     <servlet-name>file-upload</servlet-name>
     <servlet-class>io.hawt.web.UploadServlet</servlet-class>
@@ -205,6 +215,15 @@
     <url-pattern>/branding/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>exportContext</servlet-name>
+    <servlet-class>io.hawt.web.ExportContextServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exportContext</servlet-name>
+    <url-pattern>/exportContext/*</url-pattern>
+  </servlet-mapping>
+
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
@@ -229,21 +248,29 @@
     <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>maven-source</servlet-name>
-    <url-pattern>/javadoc/*</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>maven-source</servlet-name>
+        <url-pattern>/javadoc/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>contextFormatter</servlet-name>
+        <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>contextFormatter</servlet-name>
+        <url-pattern>/contextFormatter/*</url-pattern>
+    </servlet-mapping>
+    <listener>
+        <listener-class>io.hawt.HawtioContextListener</listener-class>
+    </listener>
 
-  <listener>
-    <listener-class>io.hawt.HawtioContextListener</listener-class>
-  </listener>
+    <listener>
+        <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+    </listener>
 
-  <listener>
-    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
-  </listener>
-
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>
 
