@@ -13,6 +13,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static io.hawt.web.ServletHelpers.writeEmpty;
+
 /**
  * Created with IntelliJ IDEA.
  * User: prashant
@@ -29,6 +31,11 @@ public class SpringBatchConfigServlet extends HttpServlet {
                       HttpServletResponse httpServletResponse) throws IOException, ServletException {
 
         InputStream propsIn = SpringBatchConfigServlet.class.getClassLoader().getResourceAsStream("springbatch.properties");
+        httpServletResponse.setHeader("Content-type","application/json");
+        if (propsIn == null) {
+            writeEmpty(httpServletResponse.getWriter());
+            return;
+        }
         Properties properties = new Properties();
         properties.load(propsIn);
         JSONObject responseJson = new JSONObject();
@@ -38,7 +45,6 @@ public class SpringBatchConfigServlet extends HttpServlet {
         responseJson.put("springBatchServerList", springBatchServersJson);
         String res = "success";
 
-        httpServletResponse.setHeader("Content-type","application/json");
         httpServletResponse.getWriter().println(responseJson.toJSONString());
     }
 
