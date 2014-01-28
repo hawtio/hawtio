@@ -3371,9 +3371,21 @@ fs-donut svg g text.units {
   height: 300px;
 }
 
+.create-container-body {
+}
+
+.create-column {
+  vertical-align: top;
+  display: inline-block;
+  width: 445px;
+  margin-bottom: 10px;
+}
+
 #create-form {
+/*
   margin-left: auto;
   margin-right: auto;
+*/
   max-width: 422px;
 }
 
