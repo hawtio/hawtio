@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>hawtio Elastichsearch plugin</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
+		<!--
+    <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
+    -->
+    <link href="/stylesheets/screen.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
+    <![endif]-->
+    <link href="/favicon.ico" rel="shortcut icon" />
+  </head>
+  <body class="home">
+    <header class="navbar navbar-fixed-top" id="banner" role="banner">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <div class="g-plusone-slot">
+            <div class="g-plusone" data-annotation="none"></div>
+          </div>
+          <a class="brand" href="/">
+							<span class="name">
+	            	<img src="/images/logo.png" />
+								hawtio
+							</span>
+          </a>
+          <nav class="nav-collapse" role="navigation">
+            <ul class="nav">
+              <li><a href="/faq/index.html">FAQ</a></li>
+              <li><a href="/getstarted/index.html">Get Started</a></li>
+              <li><a href="/community/index.html">Community</a></li>
+              <li><a href="/plugins/index.html">Plugins</a></li>
+              <li><a href="/developers/index.html">Developers</a></li>
+							<li><a href="https://github.com/hawtio/hawtio">github</a></li>
+							<!--
+              <li><a href="/blog/">Blog</a></li>
+							-->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div id="main">
+		  <p><div id="content-header">
+    <div class="container"></p>
+
+<h3 id = "Elasticsearch">Elasticsearch</h3>
+
+<p>This hawtio plugin allows to connect to a ElasticSearch (http://www.elasticsearch.org/) server running on a machine (e.g : localhost:9200) and can be query to retrieve
+documents from indices. By default the 'index Sample Docs' will populate an indices 'twitter' and create documents of type 'tweet'.</p>
+
+<p>Remarks :</p>
+
+<ul>
+<li>Elasticsearch server must be started locally using command './elasticsearch -f'</li>
+<li>By default values can be changed in the config.js file</li>
+</ul>
+
+<p></div>
+  </div></p>
+    </div>
+    <footer>
+      <div class="container">
+        <div class="project">
+          <img src="/images/footer-logo.png" />
+          <p class="bottom">
+            &#169;
+            Copyright 2012-2013 Red Hat, Inc.
+            <br />
+            <i class="icon-fire"></i>
+            Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
+            <br />
+            <i class="icon-share-alt"></i>
+            Website and docs licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+            <br />
+            Code released under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License, v2.0</a>.
+          </p>
+        </div>
+        <div class="footer-nav">
+          <h4>Learn</h4>
+          <ul>
+            <li>
+              <a href="/index.html">Get Started</a>
+            </li>
+            <li>
+							<a href="articles/index.html">Articles and Demos</a>
+            </li>
+            <li>
+							<a href="faq/index.html">FAQ</a>
+            </li>
+            <li>
+              <a href="/developers/index.html">Developers</a>
+            </li>
+            <li>
+              <a href="/building/index.html">Building</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-nav">
+          <h4>Get Involved</h4>
+          <ul>
+						<!--
+            <li>
+              <a href="http://community.jboss.org/en/hawtio?view=discussions">Forums</a>
+            </li>
+						-->
+            <li>
+							<a href="/contributing/index.html">Contributing</a>
+            </li>
+            <li>
+							<a href="/community/index.html">Community</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio/issues?state=open">Issue Tracker</a>
+            </li>
+            <li>
+              <a href="https://github.com/hawtio/hawtio">Source Code</a>
+            </li>
+						<!--
+            <li>
+              <a href="/community/contributors">Contributors</a>
+            </li>
+						-->
+          </ul>
+        </div>
+        <div class="sponser">
+          <div class="follow-us">
+            <h4>Stay Informed</h4>
+            <ul>
+							<!--
+              <li>
+                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
+              </li>
+							-->
+              <li>
+                <a href="https://twitter.com/#!/search/%23hawtio"><img alt="Twitter" src="/images/social/twitter-16.png" title="Browse the #hawtio hashtag on Twitter" /></a>
+              </li>
+							<!--
+              <li>
+                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
+              </li>
+              <li>
+                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
+              </li>
+							-->
+            </ul>
+          </div>
+          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
+          <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
+          <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+          <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
+        </div>
+        <a class="visible-desktop" href="#" id="toTop">Top</a>
+      </div>
+    </footer>
+    <script>
+      $(function() {
+        $('html').addClass('ready');
+        prettify();
+        activateFooterGravity();
+        activateTooltips();
+        activateToTopControl();
+      });
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.2/bootstrap.min.js"></script>
+    <script src="/javascripts/prettify.js"></script>
+    <script src="/javascripts/site.js"></script>
+    <script>
+      (function() {
+        var po = document.createElement('script'); po.async = true; po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-36899203-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+  </body>
+</html>
