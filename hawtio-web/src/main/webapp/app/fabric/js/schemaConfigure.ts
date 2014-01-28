@@ -18,6 +18,17 @@ module Fabric {
     delete schema.properties['importPath'];
     delete schema.properties['users'];
 
+    ['zooKeeperServerInitLimit',
+      'zooKeeperServerTickTime',
+      'zooKeeperServerSyncLimit',
+      'zooKeeperServerDataDir',
+      'waitForProvision',
+      'ensembleStart',
+      'migrationTimeout',
+      'dataStoreProperties'].forEach((attr) => {
+      Core.pathSet(schema, ['properties', attr, 'control-attributes', 'ng-show'], 'entity.ensembleServer');
+    });
+
     Core.pathSet(schema, ['properties','providerType', 'type'], 'hidden');
     Core.pathSet(schema, ['properties','profiles', 'type'], 'hidden');
     Core.pathSet(schema, ['properties','version', 'type'], 'hidden');
@@ -62,6 +73,10 @@ module Fabric {
         break;
 
       case 'ssh':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+
+
         delete schema.properties['parent'];
 
         bulkSet(schema, ['host'], 'required', true);
@@ -74,6 +89,9 @@ module Fabric {
         break;
 
       case 'jclouds':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+
         delete schema.properties['parent'];
         schema['tabs'] = {
           'Common': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
@@ -82,6 +100,9 @@ module Fabric {
         break;
 
       case 'openshift':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+
         delete schema.properties['parent'];
         delete schema.properties['manualIp'];
         delete schema.properties['preferredAddress'];
@@ -154,6 +175,9 @@ module Fabric {
 
 
       case 'docker':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+
         delete schema.properties['parent'];
         delete schema.properties['manualIp'];
         delete schema.properties['preferredAddress'];
@@ -170,29 +194,6 @@ module Fabric {
           'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
         };
         break;
-
-      /*
-      case 'createEnsemble':
-        delete schema['properties']['name'];
-        angular.forEach(["username", "password", "role", "zookeeperPassword"], (name) => {
-          Core.pathSet(schema, ["properties", name, "type"], 'string');
-          Core.pathSet(schema, ["properties", name, "required"], true);
-        });
-
-        setGlobalResolverEnum(schema);
-        setResolverEnum(schema);
-
-        Core.pathSet(schema, ["properties", "profiles", "type"], "hidden");
-        Core.pathSet(schema, ['properties', 'password', 'type'], "password");
-        Core.pathSet(schema, ['properties', 'zookeeperPassword', 'type'], "password");
-
-        delete schema['properties']['users'];
-
-        schema['tabs'] = {
-          'Common': ['username', 'password', 'role', 'zookeeperPassword', 'zooKeeperServerPort', 'globalResolver', 'resolver', 'manualIp'],
-          'Advanced': ['*']
-        };
-        */
 
       default:
     }
