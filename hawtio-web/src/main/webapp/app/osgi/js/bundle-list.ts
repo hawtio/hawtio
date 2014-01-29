@@ -2,7 +2,7 @@
  * @module Osgi
  */
 module Osgi {
-  export function BundleListController($scope, workspace:Workspace, jolokia) {
+  export function BundleListController($scope, workspace:Workspace, jolokia, localStorage) {
     $scope.result = {};
     $scope.bundles = [];
     $scope.bundleUrl = "";
@@ -13,9 +13,19 @@ module Osgi {
       startLevelFilter: 0
     };
 
+    if ('bundleList' in localStorage) {
+      $scope.display = angular.fromJson(localStorage['bundleList']);
+    }
+
+    $scope.$watch('display', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        localStorage['bundleList'] = angular.toJson(newValue);
+      }
+    }, true);
+
     $scope.installDisabled = function () {
       return $scope.bundleUrl === "";
-    }
+    };
 
     $scope.install = function () {
       jolokia.request({
@@ -67,30 +77,11 @@ module Osgi {
       });
     };
 
-    /*
-     $scope.$watch("display.sortField", function() {
-     $scope.bundles = $scope.bundles.sortBy(function(n){
-     switch ($scope.display.sortField) {
-     case "Name":
-     return n.Name;
-     case "SymbolicName":
-     return n.SymbolicName;
-     default:
-     return n.Identifier;
-     }
-     });
-     render();
-     });
-     $scope.$watch("display.bundleField", function() {
-     render();
-     });
-     $scope.$watch("display.bundleFilter", function() {
-     render();
-     });
-     $scope.$watch("display.startLevelFilter", function() {
-     render();
-     });
-     */
+    $scope.$watch('display.sortField', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.bundles = $scope.bundles.sortBy(newValue);
+      }
+    });
 
     $scope.getStateStyle = (state) => {
       return Osgi.getStateStyle("badge", state);
@@ -146,6 +137,8 @@ module Osgi {
           }
           $scope.bundles.push(obj);
         });
+
+        $scope.bundles = $scope.bundles.sortBy($scope.display.sortField);
 
         Core.$apply($scope);
 
