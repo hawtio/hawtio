@@ -99,6 +99,68 @@ module Karaf {
     */
   }
 
+  var platformBundlePatterns = [
+    "^org.apache.aries",
+    "^org.apache.karaf",
+    "^activemq-karaf",
+    "^org.apache.commons",
+    "^org.apache.felix",
+    "^io.fabric8",
+    "^org.apache.geronimo.specs",
+    "^org.apache.servicemix.bundles",
+    "^org.objectweb.asm",
+    "^io.hawt",
+    "^javax.mail",
+    "^org.jvnet",
+    "^org.apache.mina.core",
+    "^org.apache.sshd.core",
+    "^org.apache.neethi",
+    "^org.apache.servicemix.specs",
+    "^org.apache.xbean",
+    "^org.apache.santuario.xmlsec",
+    "^biz.aQute.bndlib",
+    "^groovy-all",
+    "^com.google.guava",
+    "jackson-\\w+-asl",
+    "^org.ops4j",
+    "^org.springframework",
+    "^bcprov$",
+    "^jline$",
+    "^scala-library$",
+    "^stax2-api$",
+    "^woodstox-core-asl",
+    "^org.jboss.amq.mq-fabric",
+    "^joda-time$",
+    "^org.apache.ws",
+    "-commands$",
+    "patch.patch",
+    "org.fusesource.insight",
+    "activeio-core",
+    "activemq-osgi",
+    "^org.eclipse.jetty",
+    "org.codehaus.jettison.jettison"
+  ];
+
+  var platformBundleRegex = new RegExp(platformBundlePatterns.join('|'));
+
+  var camelBundlePatterns = ["^org.apache.camel", "activemq-camel$"];
+  var camelBundleRegex = new RegExp(camelBundlePatterns.join('|'));
+
+  var cxfBundlePatterns = ["^org.apache.cxf"];
+  var cxfBundleRegex = new RegExp(cxfBundlePatterns.join('|'));
+
+  export function isPlatformBundle(symbolicName:string):boolean {
+    return platformBundleRegex.test(symbolicName);
+  }
+
+  export function isCamelBundle(symbolicName:string):boolean {
+    return camelBundleRegex.test(symbolicName);
+  }
+
+  export function isCxfBundle(symbolicName:string):boolean {
+    return cxfBundleRegex.test(symbolicName);
+  }
+
   export function populateFeaturesAndRepos(attributes, features, repositories) {
     var fullFeatures = attributes["Features"];
     angular.forEach(attributes["Repositories"], (repo) => {

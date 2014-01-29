@@ -3700,3 +3700,32 @@ th > .indicator:before {
 .repository-browser-toolbar > .btn {
   margin-bottom: 10px;
 }
+
+ {
+  margin-bottom: 10px;
+}
+
+.bundle-list-toolbar {
+  vertial-align: top;
+}
+
+.bundle-list-toolbar > .pull-left > *,
+.bundle-list-toolbar > .pull-right > * {
+  display: inline-block;
+}
+
+.bundle-list-toolbar > div > input {
+  margin-bottom: 10px;
+}
+
+.bundle-list-toolbar > div > label,
+.bundle-list-toolbar > div > strong {
+  position: relative;
+  top: -3px;
+}
+
+.bundle-list-toolbar > div > .input-append {
+  position: relative;
+  left: 3px;
+  top: -9px;
+}

@@ -10,7 +10,10 @@ module Osgi {
       bundleField: "Name",
       sortField: "Identifier",
       bundleFilter: "",
-      startLevelFilter: 0
+      startLevelFilter: 0,
+      showPlatformBundles: false,
+      showCxfBundles: false,
+      showCamelBundles: true
     };
 
     if ('bundleList' in localStorage) {
@@ -108,6 +111,20 @@ module Osgi {
       if ($scope.display.bundleFilter && !labelText.toLowerCase().has($scope.display.bundleFilter.toLowerCase())) {
         return false;
       }
+      if (Core.isBlank($scope.display.bundleFilter)) {
+        var answer = true;
+        if (!$scope.display.showPlatformBundles) {
+          answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
+        }
+        if (answer && !$scope.display.showCxfBundles) {
+          answer = !Karaf.isCxfBundle(bundle['SymbolicName']);
+        }
+        if (answer && !$scope.display.showCamelBundles) {
+          answer = !Karaf.isCamelBundle(bundle['SymbolicName']);
+        }
+        return answer;
+      }
+
       return true;
     };
 
