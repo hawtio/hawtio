@@ -36,7 +36,7 @@ module Karaf {
     $scope.init();
 
     $scope.$watch('selectedRepository', (newValue, oldValue) => {
-      log.debug("selectedRepository: ", $scope.selectedRepository);
+      //log.debug("selectedRepository: ", $scope.selectedRepository);
       if (newValue !== oldValue) {
         if (!newValue) {
           $scope.selectedRepositoryId = '';
@@ -238,6 +238,12 @@ module Karaf {
       if ($scope.responseJson !== responseJson) {
         $scope.responseJson = responseJson;
         //log.debug("Got response: ", response.value);
+
+        if (response['value']['Features'] === null) {
+          $scope.featuresError = true;
+        } else {
+          $scope.featuresError = false;
+        }
 
         $scope.features = [];
         $scope.repositories = [];

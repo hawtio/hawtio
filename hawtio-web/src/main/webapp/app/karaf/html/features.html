@@ -21,6 +21,9 @@
   <p></p>
   <div class="row-fluid">
     <div class="span6">
+      <div ng-show="featuresError" class="alert alert-warning">
+        The feature list returned by the server was null, please check the logs and Karaf console for errors.
+      </div>
       <div class="bundle-list"
            hawtio-auto-columns=".bundle-item">
         <div ng-repeat="feature in installedFeatures"

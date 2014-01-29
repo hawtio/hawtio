@@ -108,6 +108,10 @@ module Karaf {
         uri: repo["Uri"]
       });
 
+      if (!fullFeatures) {
+        return;
+      }
+
       angular.forEach(repo["Features"], (feature) => {
 
         angular.forEach(feature, (entry) => {
