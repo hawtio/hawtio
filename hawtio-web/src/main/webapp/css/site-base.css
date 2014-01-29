@@ -949,7 +949,7 @@ input[type="checkbox"].hawtio-checkbox {
   background: white;
 }
 
-.bundle-item a {
+.bundle-item > a {
   border-radius: 4px;
   border: 1px solid #d4d4d4;
   display: block;
@@ -965,7 +965,18 @@ input[type="checkbox"].hawtio-checkbox {
   z-index: 5;
 }
 
-.bundle-item a:hover {
+.bundle-item.in-selected-repository > a {
+  background: #ddeeff;
+  background: -moz-linear-gradient(top, #ddeeff 0%, #ddeeff 34%, #e3e3f4 76%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ddeeff), color-stop(34%, #ddeeff), color-stop(76%, #e3e3f4));
+  background: -webkit-linear-gradient(top, #ddeeff 0%, #ddeeff 34%, #e3e3f4 76%);
+  background: -o-linear-gradient(top, #ddeeff 0%, #ddeeff 34%, #e3e3f4 76%);
+  background: -ms-linear-gradient(top, #ddeeff 0%, #ddeeff 34%, #e3e3f4 76%);
+  background: linear-gradient(to bottom, #ddeeff 0%, #ddeeff 34%, #e3e3f4 76%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ddeeff', endColorstr='#e3e3f4', GradientType=0);
+}
+
+.bundle-item > a:hover {
   text-decoration: none;
 }
 
@@ -3686,3 +3697,6 @@ th > .indicator:before {
   margin-left: 12px;
 }
 
+.repository-browser-toolbar > .btn {
+  margin-bottom: 10px;
+}

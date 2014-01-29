@@ -19,6 +19,24 @@ module Karaf {
     }
   }
 
+  export function installRepository(workspace, jolokia, uri, success, error) {
+    log.info("installing URI: ", uri);
+    jolokia.request({
+      type: 'exec', mbean: getSelectionFeaturesMBean(workspace),
+      operation: 'addRepository(java.lang.String)',
+      arguments: [uri]
+    }, onSuccess(success, { error: error }));
+  }
+
+  export function uninstallRepository(workspace, jolokia, uri, success, error) {
+    log.info("uninstalling URI: ", uri);
+    jolokia.request({
+      type: 'exec', mbean: getSelectionFeaturesMBean(workspace),
+      operation: 'removeRepository(java.lang.String)',
+      arguments: [uri]
+    }, onSuccess(success, { error: error }));
+  }
+
   export function installFeature(workspace, jolokia, feature, version, success, error) {
     jolokia.request(
             {

@@ -16,6 +16,8 @@ module Karaf {
     $scope.selectedRepositoryId = '';
     $scope.selectedRepository = {};
 
+    $scope.newRepositoryURI = '';
+
 
     $scope.init = () => {
 
@@ -60,6 +62,55 @@ module Karaf {
         type: 'read', mbean: featuresMBean
       }, onSuccess(render));
     }
+
+    $scope.inSelectedRepository = (feature) => {
+      if (!$scope.selectedRepository || !('repository' in $scope.selectedRepository)) {
+        return "";
+      }
+      if (!feature  || !('RepositoryName' in feature)) {
+        return "";
+      }
+      if (feature['RepositoryName'] === $scope.selectedRepository['repository']) {
+        return "in-selected-repository";
+      }
+      return "";
+    };
+
+    $scope.isValidRepository = () => {
+      return Core.isBlank($scope.newRepositoryURI);
+    };
+
+    $scope.installRepository = () => {
+      var repoURL = $scope.newRepositoryURI;
+      notification('info', 'Adding feature repository URL');
+      Karaf.installRepository(workspace, jolokia, repoURL, () => {
+        notification('success', 'Added feature repository URL');
+        $scope.selectedRepository = {};
+        $scope.selectedRepositoryId = '';
+        $scope.responseJson = null;
+        $scope.triggerRefresh();
+      }, (response) => {
+        log.error('Failed to add feature repository URL ', repoURL, ' due to ', response.error);
+        log.info('stack trace: ', response.stacktrace);
+        Core.$apply($scope);
+      });
+    };
+
+    $scope.uninstallRepository = () => {
+      var repoURI = $scope.selectedRepository['uri'];
+      notification('info', 'Removing feature repository ' + repoURI);
+      Karaf.uninstallRepository(workspace, jolokia, repoURI, () => {
+        notification('success', 'Removed feature repository ' + repoURI);
+        $scope.responseJson = null;
+        $scope.selectedRepositoryId = '';
+        $scope.selectedRepository = {};
+        $scope.triggerRefresh();
+      }, (response) => {
+        log.error('Failed to remove feature repository ', repoURI, ' due to ', response.error);
+        log.info('stack trace: ', response.stacktrace);
+        Core.$apply($scope);
+      });
+    };
 
     $scope.triggerRefresh = () => {
       jolokia.request({
@@ -204,12 +255,21 @@ module Karaf {
         $scope.installedFeatures = installedFeatures.sortBy((f) => { return f['Name'] });
         uninstalledFeatures = uninstalledFeatures.sortBy((f) => { return f['Name'] });
 
-        repositories.sortBy('id').map((r) => { return r['id'] }).forEach((repo) => {
+        repositories.sortBy('id').forEach((repo) => {
           $scope.repositories.push({
-            repository: repo,
-            features: uninstalledFeatures.filter((f) => { return f['RepositoryName'] === repo })
+            repository: repo['id'],
+            uri: repo['uri'],
+            features: uninstalledFeatures.filter((f) => { return f['RepositoryName'] === repo['id'] })
           });
         });
+
+        if (!Core.isBlank($scope.newRepositoryURI)) {
+          var selectedRepo = repositories.find((r) => { return r['uri'] === $scope.newRepositoryURI });
+          if (selectedRepo) {
+            $scope.selectedRepositoryId = selectedRepo['id'];
+          }
+          $scope.newRepositoryURI = '';
+        }
 
         if (Core.isBlank($scope.selectedRepositoryId)) {
           $scope.selectedRepository = $scope.repositories.first();
