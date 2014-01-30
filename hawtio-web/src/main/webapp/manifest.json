@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+
+  "name": "hawtio",
+  "description": "Don't cha wish your console was hawt like me?",
+  "version": "1.2.2",
+
+  "icons": {
+    "16": "img/logo-16px.png",
+    "128": "img/logo-128px.png"
+  },
+
+  "permissions": [
+    "http://*/"
+    /*
+     "app.window",
+     "storage"
+     */
+  ],
+
+  "app": {
+    "launch": {
+      "local_path": "index.html"
+    }
+  }
+}
