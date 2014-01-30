@@ -359,40 +359,43 @@ module Core {
                   successCB: () => void = null,
                   errorCB: () => void = null) {
 
-    var url = jolokiaUrl.replace("jolokia", "auth/logout/");
+    if (jolokiaUrl) {
+      var url = jolokiaUrl.replace("jolokia", "auth/logout/");
 
-    $.ajax(url, {
-      type: "POST",
-      success: () => {
-        userDetails.username = null;
-        userDetails.password = null;
-        userDetails.loginDetails = null;
-        userDetails.rememberMe = false;
-        localStorage[jolokiaUrl] = angular.toJson(userDetails);
-        if (successCB && angular.isFunction(successCB)) {
-          successCB();
+      $.ajax(url, {
+        type: "POST",
+        success: () => {
+          userDetails.username = null;
+          userDetails.password = null;
+          userDetails.loginDetails = null;
+          userDetails.rememberMe = false;
+          localStorage[jolokiaUrl] = angular.toJson(userDetails);
+          if (successCB && angular.isFunction(successCB)) {
+            successCB();
+          }
+          Core.$apply($scope);
+        },
+        error: (xhr, textStatus, error) => {
+          // TODO, more feedback
+          switch (xhr.status) {
+            case 401:
+              log.error('Failed to log out, ', error);
+              break;
+            case 403:
+              log.error('Failed to log out, ', error);
+              break;
+            default:
+              log.error('Failed to log out, ', error);
+              break;
+          }
+          if (errorCB && angular.isFunction(errorCB)) {
+            errorCB();
+          }
+          Core.$apply($scope);
         }
-        Core.$apply($scope);
-      },
-      error: (xhr, textStatus, error) => {
-        // TODO, more feedback
-        switch (xhr.status) {
-          case 401:
-            log.error('Failed to log out, ', error);
-            break;
-          case 403:
-            log.error('Failed to log out, ', error);
-            break;
-          default:
-            log.error('Failed to log out, ', error);
-            break;
-        }
-        if (errorCB && angular.isFunction(errorCB)) {
-          errorCB();
-        }
-        Core.$apply($scope);
-      }
-    });
+      });
+    }
+
   }
 
 
@@ -1245,6 +1248,9 @@ module Core {
    * @return {String}
    */
   export function useProxyIfExternal(connectUrl) {
+    if (Core.isChromeApp()) {
+      return connectUrl;
+    }
     var host = window.location.host;
     if (!connectUrl.startsWith("http://" + host + "/") && !connectUrl.startsWith("https://" + host + "/")) {
         // lets remove the http stuff
@@ -1286,8 +1292,9 @@ module Core {
     }
     var view = options.view;
     var full = "";
+    var useProxy = options.useProxy && !Core.isChromeApp();
     if (connectUrl) {
-      if (options.useProxy) {
+      if (useProxy) {
         // lets remove the http stuff
         var idx = connectUrl.indexOf("://");
         if (idx > 0) {
@@ -1322,7 +1329,7 @@ module Core {
       }
       var connectUrl = host + "/" + path;
       localStorage[connectUrl] = json;
-      if (options.useProxy) {
+      if (useProxy) {
         connectUrl = url("/proxy/" + connectUrl);
       } else {
         if (connectUrl.indexOf("://") < 0) {
@@ -1581,6 +1588,13 @@ module Core {
   }
 
 
-
+  /**
+   * Returns true if we are running inside a Chrome app or extension
+   */
+  export function isChromeApp() {
+    var answer = (chrome) ? true : false;
+    log.info("Is chrome app: " + answer);
+    return answer;
+  }
 
 }
