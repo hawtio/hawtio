@@ -94,7 +94,7 @@ Here's how to do it:
 
 Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
-Clone [this repo](https://github.com/hawtio/livereload-jvm/tree/file-exclude) and check out the file-exclude branch.  Build using an "mvn clean install".  To start the Live Reload server run this command in a **separate shell** from the livereload-jvm project directory:
+Clone [this repo](https://github.com/hawtio/livereload-jvm).  Build using an "mvn clean install".  To start the Live Reload server run this command in a **separate shell** from the livereload-jvm project directory:
 
     java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$
 
@@ -114,6 +114,8 @@ To specify a different port to run on, just override the `jettyPort` property
     mvn test-compile exec:java -DjettyPort=8181
 
 ### Using your build & LiveReload inside other web containers
+
+TODO - this needs updating still...
 
 The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.
 
