@@ -198,14 +198,18 @@ module Forms {
     if (angular.isDefined(arg.description)) {
       rc.attr('title', arg.description);
     }
+
     log.debug("getControlGroup, config:", config, " arg: ", arg, " id: ", id);
-    var elementConfig = config['properties'][id];
-    log.debug("elementConfig: ", elementConfig);
-    if (elementConfig && 'control-attributes' in elementConfig) {
-      angular.forEach(elementConfig['control-attributes'], (value, key) => {
-        rc.attr(key, value);
-      });
+    if (config['properties'] && config['properties'][id]) {
+      var elementConfig = config['properties'][id];
+      log.debug("elementConfig: ", elementConfig);
+      if (elementConfig && 'control-attributes' in elementConfig) {
+        angular.forEach(elementConfig['control-attributes'], (value, key) => {
+          rc.attr(key, value);
+        });
+      }
     }
+
     return rc;
   }
 
