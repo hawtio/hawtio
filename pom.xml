@@ -290,7 +290,6 @@
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
-    <module>hawtio-crx</module>
     <module>hawtio-base</module>
     <module>hawtio-default</module>
     <module>hawtio-default-offline</module>
@@ -638,6 +637,19 @@
       <properties>
         <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
       </properties>
+    </profile>
+
+    <!-- only build the CRX if you've setup the CRX key -->
+    <profile>
+      <id>crx</id>
+      <activation>
+        <file>
+          <exists>${user.home}/.m2/hawtio-crx.pem</exists>
+        </file>
+      </activation>
+      <modules>
+        <module>hawtio-crx</module>
+      </modules>
     </profile>
   </profiles>
 </project>

@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-crx</artifactId>
-  <packaging>war</packaging>
+  <packaging>crx</packaging>
   <name>${project.artifactId}</name>
   <description>hawtio :: Chrome Extension</description>
 
@@ -25,20 +25,24 @@
       <type>war</type>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${war-plugin-version}</version>
-        <configuration>
-          <packagingExcludes>**/classes/**,WEB-INF/*,WEB-INF,META-INF/*,META-INF</packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
 
-      <!-- lets rename the artefact -->
+      <!-- use the war plugin to stage the crx files -->
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-war-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>stage-crx</id>
+             <phase>prepare-package</phase>
+             <goals>
+               <goal>exploded</goal>
+             </goals>
+           </execution>
+         </executions>
+       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -52,10 +56,9 @@
             </goals>
             <configuration>
               <target>
-                <echo>HEY!!!</echo>
-                <echo>Copying file: ${project.build.directory}/${project.build.finalName}.war</echo>
-                <copy verbose="true" file="${project.build.directory}/${project.build.finalName}.war"
-                      tofile="${project.build.directory}/${project.build.finalName}.crx"/>
+                <echo>Removing cruft</echo>
+                <delete verbose="false" dir="${basedir}/target/${project.artifactId}-${project.version}/META-INF"/>
+                <delete verbose="false" dir="${basedir}/target/${project.artifactId}-${project.version}/WEB-INF"/>
               </target>
             </configuration>
           </execution>
@@ -63,26 +66,14 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-instrumented-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>remove-project-artifact</goal>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/${project.build.finalName}.crx</file>
-                  <type>crx</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
+        <groupId>com.btmatthews.maven.plugins</groupId>
+        <artifactId>crx-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <crxSourceDirectory>${basedir}/target/${project.artifactId}-${project.version}</crxSourceDirectory>
+          <crxPEMFile>${user.home}/.m2/hawtio-crx.pem</crxPEMFile>
+        </configuration>
       </plugin>
 
       <plugin>
