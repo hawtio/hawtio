@@ -6,7 +6,7 @@ module Jvm {
 
   var pluginName = 'jvm';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms']).
           config(($routeProvider) => {
             $routeProvider.
                     when('/jvm/connect', {templateUrl: 'app/jvm/html/connect.html'}).
