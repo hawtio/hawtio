@@ -3,7 +3,8 @@
 
   "name": "hawtio",
   "description": "Don't cha wish your console was hawt like me?",
-  "version": "@VERSION@",
+
+  "version": "1.0.0",
 
   "update_url": "http://hawt.io/chrome/extension.xml",
 

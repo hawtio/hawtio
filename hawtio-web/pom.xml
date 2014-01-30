@@ -16,6 +16,8 @@
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
     <tsc-filelist>${basedir}/target/ts-files.txt</tsc-filelist>
+    <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
+    <chrome-version>1.0.1</chrome-version>
     <tsc-executable>tsc</tsc-executable>
     <grunt-executable>grunt</grunt-executable>
     <npm-executable>npm</npm-executable>
@@ -450,15 +452,28 @@
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
                 <copy todir="${webapp-outdir}">
+<!--
                   <filterchain>
                     <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
                       <param type="token" name="VERSION" value="${project.version}" />
                     </filterreader>
                   </filterchain>
+-->
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="**"/>
                     <exclude name="**/*.ts"/>
                     <exclude name="index.html"/>
+                    <exclude name="manifest.json"/>
+                  </fileset>
+                </copy>
+
+                <!-- update the manifest version -->
+                <copy todir="${webapp-outdir}">
+                  <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
+                      <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;"/>
+                    </filterset>
+                  <fileset dir="${basedir}/src/main/webapp">
+                    <include name="manifest.json"/>
                   </fileset>
                 </copy>
 
@@ -997,6 +1012,9 @@
     -->
     <profile>
       <id>release</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+      </properties>
     </profile>
 
     <profile>
