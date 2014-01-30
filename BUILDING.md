@@ -94,11 +94,9 @@ Here's how to do it:
 
 Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
-Clone [this repo](https://github.com/hawtio/livereload-jvm).  Build using an "mvn clean install".  To start the Live Reload server run this command in a **separate shell** from the livereload-jvm project directory:
+When you run "mvn test-compile exec:java" the sample server runs an embedded Live Reload server that's already configured to look at src/main/webapp for file changes.  The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
 
-    java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$
-
-Adjust the argument to -d to specify the correct path to src/main/webapp in hawtio-web, the above command should just work if you've cloned livereload-jvm in the same parent directory as hawtio.
+    java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$
 
 In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:
 
@@ -124,10 +122,7 @@ e.g. to use Tomcat7 in LiveReload mode try the following to create a symbolic li
     cd tomcat/webapps
     ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio
 
-Then in a shell run
-
-    cd hawtio-web
-    mvn -Pwatch
+Then use [livereload-jvm](https://github.com/davidB/livereload-jvm) manually as shown above.
 
 Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!
 
