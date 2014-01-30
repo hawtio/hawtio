@@ -3,7 +3,7 @@
 
   "name": "hawtio",
   "description": "Don't cha wish your console was hawt like me?",
-  "version": "1.2.2",
+  "version": "@VERSION@",
 
   "icons": {
     "16": "img/logo-16px.png",

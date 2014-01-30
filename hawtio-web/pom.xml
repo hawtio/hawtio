@@ -450,6 +450,11 @@
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
                 <copy todir="${webapp-outdir}">
+                  <filterchain>
+                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                      <param type="token" name="VERSION" value="${project.version}" />
+                    </filterreader>
+                  </filterchain>
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="**"/>
                     <exclude name="**/*.ts"/>
