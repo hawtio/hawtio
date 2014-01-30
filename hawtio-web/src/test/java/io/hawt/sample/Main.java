@@ -166,20 +166,26 @@ public class Main {
             println("");
             println("");
 
+            /*
             LOG.info("Starting LiveReload server");
 
             LRServer lrServer = null;
             int lrPort = 35729;
             Path docroot = FileSystems.getDefault().getPath("src/main/webapp");
             lrServer = new LRServer(lrPort, docroot);
+            */
+            System.out.println("For live reload clone hawtio/livereload-jvm, checkout the file-exclude branch, build it and run:");
+            System.out.println();
+            System.out.println("java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\\.ts$");
+            System.out.println();
 
             LOG.info("starting jetty");
             server.start();
 
             LOG.info("Joining the jetty server thread...");
             // this guy does a start() and a join()...
-            lrServer.run();
-            //server.join();
+            //lrServer.run();
+            server.join();
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
         }
