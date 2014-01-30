@@ -7,6 +7,21 @@
 module Core {
 
   /**
+   * Returns true if we are running inside a Chrome app or extension
+   */
+  export function isChromeApp() {
+    var answer = false;
+    try {
+      answer = (chrome && chrome.app && chrome.extension) ? true : false;
+    } catch (e) {
+      answer = false;
+    }
+    //log.info("isChromeApp is: " + answer);
+    return answer;
+  }
+
+
+  /**
    * Name of plugin registered to hawtio's plugin loader and Angularjs module name
    *
    * @property pluginName
