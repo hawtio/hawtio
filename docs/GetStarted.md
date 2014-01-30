@@ -6,13 +6,13 @@ The out of the box defaults try to do the right thing for most folks but if you 
 
 Note this extension is a little experimental until we cut 1.2.3; so please be gentle - here's now to get started:
 
-<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.2.2/hawtio-app-1.2.2.jar">Download the hawtio Chrome Extension for 1.0.1</a>
+<a class="btn btn-large  btn-primary" href="https://repository.jboss.org/nexus/content/repositories/fs-snapshots/io/hawt/hawtio-crx/1.3-SNAPSHOT/hawtio-crx-1.3-20140130.160936-3.crx">Download the hawtio Chrome Extension for 1.0.1</a>
 
 * Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b>
 
-* now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-large" href="chrome://extensions/">Extensions Page</a>
+* now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-large" href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&g; Extensions</b>
 
-* now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> and it should install the hawtio extension for Chrome.
+* now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&g; Extensions</b> and it should install the hawtio extension for Chrome.
 
 * now to open a <a href="http://hawt.io/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there....
 
