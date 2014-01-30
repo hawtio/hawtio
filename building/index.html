@@ -77,11 +77,9 @@
 
 <pre><code>sudo npm install -g typescript</code></pre>
 
-<p><a href="http://hawt.io/">hawtio</a> also makes use of <a href="http://gruntjs.com/">gruntjs</a> for building. This is mentioned in more detail <a href="http://hawt.io/building/index.html#Building&#95;with&#95;GruntJS">here</a>.</p>
+<p>To run the tests you'll also need to install phantomjs:</p>
 
-<p>You can install this by running</p>
-
-<pre><code>npm install -g grunt-cli</code></pre>
+<pre><code>sudo npm install -g phantomjs</code></pre>
 
 <p>If you want to be able to generate the JavaScript documentation reference docs then also do:</p>
 
@@ -159,10 +157,11 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
 
-<p>Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a <strong>separate shell</strong> (while keeping the above shell running!):</p>
+<p>Clone <a href="https://github.com/hawtio/livereload-jvm/tree/file-exclude">this repo</a> and check out the file-exclude branch.  Build using an &ldquo;mvn clean install&rdquo;.  To start the Live Reload server run this command in a <strong>separate shell</strong> from the livereload-jvm project directory:</p>
 
-<pre><code>cd hawtio-web
-grunt watchSrc</code></pre>
+<pre><code>java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$</code></pre>
+
+<p>Adjust the argument to -d to specify the correct path to src/main/webapp in hawtio-web, the above command should just work if you've cloned livereload-jvm in the same parent directory as hawtio.</p>
 
 <p>In another shell (as mentioned above in the &ldquo;Incrementally compile TypeScript&rdquo; section you probably want to auto-recompile all the TypeScript files into app.js in <em>another shell</em> via this command:</p>
 
