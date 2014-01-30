@@ -157,11 +157,9 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
 
-<p>Clone <a href="https://github.com/hawtio/livereload-jvm">this repo</a>.  Build using an &ldquo;mvn clean install&rdquo;.  To start the Live Reload server run this command in a <strong>separate shell</strong> from the livereload-jvm project directory:</p>
+<p>When you run &ldquo;mvn test-compile exec:java&rdquo; the sample server runs an embedded Live Reload server that's already configured to look at src/main/webapp for file changes.  The Live Reload server implementation is provided by <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a>.  When using other methods run run hawtio like &ldquo;mvn jetty:run&rdquo; or &ldquo;mvn tomcat:run&rdquo; you can run <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a> directly, for example from the hawtio-web directory:</p>
 
-<pre><code>java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$</code></pre>
-
-<p>Adjust the argument to -d to specify the correct path to src/main/webapp in hawtio-web, the above command should just work if you've cloned livereload-jvm in the same parent directory as hawtio.</p>
+<pre><code>java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$</code></pre>
 
 <p>In another shell (as mentioned above in the &ldquo;Incrementally compile TypeScript&rdquo; section you probably want to auto-recompile all the TypeScript files into app.js in <em>another shell</em> via this command:</p>
 
@@ -187,10 +185,7 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 <pre><code>cd tomcat/webapps
 ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio</code></pre>
 
-<p>Then in a shell run</p>
-
-<pre><code>cd hawtio-web
-mvn -Pwatch</code></pre>
+<p>Then use <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a> manually as shown above.</p>
 
 <p>Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!</p>
 
