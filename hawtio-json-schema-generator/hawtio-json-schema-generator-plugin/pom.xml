@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hawtio-json-schema-generator-plugin</artifactId>
-  <name>${project.parent.artifactId}/${project.artifactId}</name>
+  <name>${project.artifactId}</name>
 
   <packaging>maven-plugin</packaging>
 

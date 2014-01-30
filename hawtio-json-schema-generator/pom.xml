@@ -10,7 +10,7 @@
 
   <packaging>pom</packaging>
 
-  <name>${project.parent.artifactId}/${project.artifactId}</name>
+  <name>${project.artifactId}</name>
   <description>${project.parent.artifactId} :: ${project.artifactId}</description>
 
   <modules>
