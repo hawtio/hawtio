@@ -33,9 +33,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
-<!--
-          <warName>hawtio-crx-${project.version}</warName>
--->
           <packagingExcludes>**/classes/**,WEB-INF/*,WEB-INF,META-INF/*,META-INF</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
@@ -48,11 +45,8 @@
         <version>1.6</version>
         <executions>
           <execution>
-            <id>zip</id>
+            <id>crx</id>
             <phase>package</phase>
-<!--
-            <phase>generate-test-sources</phase>
--->
             <goals>
               <goal>run</goal>
             </goals>
@@ -61,7 +55,7 @@
                 <echo>HEY!!!</echo>
                 <echo>Copying file: ${project.build.directory}/${project.build.finalName}.war</echo>
                 <copy verbose="true" file="${project.build.directory}/${project.build.finalName}.war"
-                      tofile="${project.build.directory}/${project.build.finalName}.zip"/>
+                      tofile="${project.build.directory}/${project.build.finalName}.crx"/>
               </target>
             </configuration>
           </execution>
@@ -82,26 +76,14 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/${project.build.finalName}.zip</file>
-                  <type>zip</type>
+                  <file>${project.build.directory}/${project.build.finalName}.crx</file>
+                  <type>crx</type>
                 </artifact>
               </artifacts>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
-      <!--
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/descriptors/crx.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
--->
 
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
