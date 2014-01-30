@@ -37,12 +37,14 @@ module SpringBatch {
                 id: "springbatch",
                 content: "SpringBatch",
                 title: "View Spring-Batch jobs",
-                isValid: (workspace: Workspace) => { return true; },
+                // TODO: Need a way to figure out if spring batch is in the JVM
+                isValid: (workspace: Workspace) => { return false; },
                 href: () => "#/springbatch/servers",
                 isActive: (workspace: Workspace) => workspace.isTopTabActive("springbatch")
             });
 
 
+            // TODO: server list should not be hardcoded
             var serverListRes = $resource('/hawtio/springBatch');
             serverListRes.get(function(data){
                 $rootScope.springBatchServerList = data.springBatchServerList || [
