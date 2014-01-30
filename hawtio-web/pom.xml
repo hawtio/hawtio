@@ -19,9 +19,7 @@
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
     <tsc-executable>tsc</tsc-executable>
-    <grunt-executable>grunt</grunt-executable>
-    <npm-executable>npm</npm-executable>
-    <phantomjs-executable>${basedir}/node_modules/.bin/phantomjs</phantomjs-executable>
+    <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
     <schema-outdir>${webapp-outdir}/lib</schema-outdir>
   </properties>
 
@@ -631,27 +629,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>npm-install</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${npm-executable}</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
@@ -1020,7 +997,8 @@
     <profile>
       <id>jasmine-test</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
+        <file><exists>${phantomjs-executable}</exists></file>
       </activation>
       <build>
         <plugins>

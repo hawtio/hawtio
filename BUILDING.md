@@ -15,12 +15,10 @@ You can do this by running:
 Note, if you are using Ubuntu then you may need to use the `sudo` command:
 
     sudo npm install -g typescript
-    
-[hawtio](http://hawt.io/) also makes use of [gruntjs](http://gruntjs.com/) for building. This is mentioned in more detail [here](http://hawt.io/building/index.html#Building_with_GruntJS).
 
-You can install this by running
+To run the tests you'll also need to install phantomjs:
 
-    npm install -g grunt-cli
+    sudo npm install -g phantomjs
 
 If you want to be able to generate the JavaScript documentation reference docs then also do:
 
@@ -96,10 +94,11 @@ Here's how to do it:
 
 Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
 
-Now to watch for changes to the HTML/CSS or generated app.js file to live reload your browser using a **separate shell** (while keeping the above shell running!):
+Clone [this repo](https://github.com/hawtio/livereload-jvm/tree/file-exclude) and check out the file-exclude branch.  Build using an "mvn clean install".  To start the Live Reload server run this command in a **separate shell** from the livereload-jvm project directory:
 
-    cd hawtio-web
-    grunt watchSrc
+    java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$
+
+Adjust the argument to -d to specify the correct path to src/main/webapp in hawtio-web, the above command should just work if you've cloned livereload-jvm in the same parent directory as hawtio.
 
 In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:
 
