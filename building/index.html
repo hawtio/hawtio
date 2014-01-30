@@ -157,7 +157,7 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)</p>
 
-<p>Clone <a href="https://github.com/hawtio/livereload-jvm/tree/file-exclude">this repo</a> and check out the file-exclude branch.  Build using an &ldquo;mvn clean install&rdquo;.  To start the Live Reload server run this command in a <strong>separate shell</strong> from the livereload-jvm project directory:</p>
+<p>Clone <a href="https://github.com/hawtio/livereload-jvm">this repo</a>.  Build using an &ldquo;mvn clean install&rdquo;.  To start the Live Reload server run this command in a <strong>separate shell</strong> from the livereload-jvm project directory:</p>
 
 <pre><code>java -jar target/livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d ../hawtio/hawtio-web/src/main/webapp/ -e .*\.ts$</code></pre>
 
@@ -177,6 +177,8 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 <pre><code>mvn test-compile exec:java -DjettyPort=8181</code></pre>
 
 <h3 id = "Using_your_build__span_class__amp___amp___span__LiveReload_inside_other_web_containers">Using your build <span class="amp">&amp;</span> LiveReload inside other web containers</h3>
+
+<p>TODO - this needs updating still&hellip;</p>
 
 <p>The easiest way to use other containers and still get the benefits of LiveReload is to create a symbolic link to the generated hawtio-web war in expanded form, in the deploy directory in your web server.</p>
 
