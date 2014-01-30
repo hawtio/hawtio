@@ -290,6 +290,7 @@
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
+    <module>hawtio-crx</module>
     <module>hawtio-base</module>
     <module>hawtio-default</module>
     <module>hawtio-default-offline</module>
