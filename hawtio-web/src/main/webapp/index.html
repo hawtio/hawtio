@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-csp>
 
   <head>
     <meta charset="utf-8"/>
@@ -302,6 +302,7 @@ div.log-stack-trace p:nth-child(odd) {
     <!-- Now load and set up the plugin loader -->
     <script type="text/javascript" src="lib/hawtio-plugin-loader.js?v=@VERSION@"></script>
 
+<!--
     <script type="text/javascript">
       hawtioPluginLoader.setLoaderCallback({
         scriptLoaderCallback: function (self, total, remaining) {
@@ -312,6 +313,7 @@ div.log-stack-trace p:nth-child(odd) {
         }
       });
     </script>
+-->
 
     <!-- charts and jolokia for jmx -->
     <script type="text/javascript" src="lib/d3.v3.min.js?v=@VERSION@"></script>
