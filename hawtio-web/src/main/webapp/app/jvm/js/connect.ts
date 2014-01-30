@@ -9,7 +9,7 @@ module JVM {
     JVM.configureScope($scope, $location, workspace);
 
     $scope.chromeApp = Core.isChromeApp();
-    $scope.useProxy = !$scope.chromeApp;
+    $scope.useProxy = $scope.chromeApp ? false : true;
 
     // lets load the local storage configuration
     var key = "jvmConnect";

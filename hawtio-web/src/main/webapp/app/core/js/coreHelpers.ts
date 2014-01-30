@@ -1592,8 +1592,8 @@ module Core {
    * Returns true if we are running inside a Chrome app or extension
    */
   export function isChromeApp() {
-    var answer = (chrome) ? true : false;
-    log.info("Is chrome app: " + answer);
+    var answer = (chrome && chrome.app && chrome.extension) ? true : false;
+    //log.info("isChromeApp is: " + answer);
     return answer;
   }
 

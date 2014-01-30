@@ -74,7 +74,7 @@ interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
 
 hawtioPluginLoader.addModule(Core.pluginName);
 
-angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
+var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
         config(($routeProvider, $dialogProvider) => {
 
           $dialogProvider.options({
@@ -104,17 +104,6 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           })();
           return storage;
         }).
-
-
-        // for chrome packaged apps lets enable chrome-extension pages
-        config(Core.isChromeApp() ? [
-          '$compileProvider',
-          function ($compileProvider) {
-            //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-            $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-            // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
-          }
-        ] : []).
 
         factory('marked',function () {
           marked.setOptions({
@@ -557,6 +546,19 @@ angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.
           };
 
         });
+
+// for chrome packaged apps lets enable chrome-extension pages
+if (hawtioCoreModule && Core.isChromeApp()) {
+  hawtioCoreModule.config([
+    '$compileProvider',
+    function ($compileProvider) {
+      //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+      // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+    }
+  ]);
+}
+
 
 // enable bootstrap tooltips
 $(function () {
