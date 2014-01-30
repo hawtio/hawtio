@@ -256,7 +256,7 @@ module Perspective {
    * @return {String}
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
-    if (shouldShowWelcomePage(localStorage)) {
+    if (shouldShowWelcomePage(localStorage) && !Core.isChromeApp()) {
       return "/welcome/";
     }
 
