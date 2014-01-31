@@ -25,6 +25,7 @@ module Karaf {
             filterOptions: {
                 useExternalFilter: false
             },
+            sortInfo: { fields: ['Name'], directions: ['asc'] },
             selectedItems: $scope.selectedComponents,
             rowHeight: 32,
             selectWithCheckboxOnly: true,
