@@ -101,7 +101,7 @@ public class App {
                 main.run();
                 if (Desktop.isDesktopSupported()) {
                     int port = main.getPort();
-                    String url = "http://localhost:" +  port + "/hawtio";
+                    String url = "http://localhost:" +  port + main.getContextPath();
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
