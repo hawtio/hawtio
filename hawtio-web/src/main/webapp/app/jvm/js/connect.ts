@@ -122,6 +122,7 @@ module JVM {
     };
 
     $scope.deleteConnection = () => {
+      Core.removeRegex($scope.settings.lastConnection);
       delete $scope.connectionConfigs[$scope.settings.lastConnection];
       var tmp = Object.extended($scope.connectionConfigs);
       if (tmp.size() === 0) {
@@ -129,6 +130,7 @@ module JVM {
       } else {
         $scope.settings.lastConnection = tmp.keys().first();
       }
+      localStorage[connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
     };
 
     $scope.$watch('settings', (newValue, oldValue) => {
@@ -151,8 +153,6 @@ module JVM {
 
     $scope.gotoServer = (json, form, saveOnly) => {
 
-      log.info("Got json: ", json);
-
       if (json) {
 
         var json = Object.extended(json).clone(true);
@@ -164,17 +164,22 @@ module JVM {
           json['connectionName'] = connectionName
         }
 
-        if (!Core.isBlank($scope.settings.lastConnection)) {
-          console.log("Deleting last connection: ", $scope.settings.lastConnection);
+        var regexs = Core.getRegexs();
+
+        var hasFunc = (r) => { return r['name'] === $scope.settings.lastConnection };
+
+        if ($scope.settings.lastConnection !== connectionName && !Core.isBlank($scope.settings.lastConnection)) {
           //we're updating an existing connection...
           delete $scope.connectionConfigs[$scope.settings.lastConnection];
+          // clean up any similarly named regex
+          regexs = regexs.exclude(hasFunc);
         }
 
         $scope.connectionConfigs[connectionName] = json;
-
-        log.info("connectionConfigs: ", $scope.connectionConfigs);
-
         localStorage[connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
+        if (!regexs.any(hasFunc)) {
+          Core.storeConnectionRegex(regexs, connectionName, json);
+        }
 
         // let's default to saved connections now that we've a new connection
         $scope.currentConfig = json;

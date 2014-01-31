@@ -1590,4 +1590,47 @@ module Core {
     return value + " ms";
   }
 
+  export function storeConnectionRegex(regexs, name, json) {
+    if (!regexs.any((r) => { r['name'] === name })) {
+      var regex = '';
+
+      if (json['useProxy']) {
+        regex = '/hawtio/proxy/';
+      } else {
+        regex = '//';
+      }
+      regex += json['host'] + ':' + json['port'] + '/' + json['path'];
+      regexs.push({
+        name: name,
+        regex: regex.escapeURL(true),
+        color: UI.colors.sample()
+      });
+      writeRegexs(regexs);
+    }
+  }
+
+  export function getRegexs() {
+    var regexs:any = [];
+    try {
+      regexs = angular.fromJson(localStorage['regexs']);
+    } catch (e) {
+      // corrupted config
+      delete localStorage['regexs'];
+    }
+    return regexs;
+  }
+
+  export function removeRegex(name) {
+    var regexs = Core.getRegexs();
+    var hasFunc = (r) => { return r['name'] === name; };
+    if (regexs.any(hasFunc)) {
+      regexs = regexs.exclude(hasFunc);
+      Core.writeRegexs(regexs);
+    }
+  }
+
+  export function writeRegexs(regexs) {
+    localStorage['regexs'] = angular.toJson(regexs);
+  }
+
 }
