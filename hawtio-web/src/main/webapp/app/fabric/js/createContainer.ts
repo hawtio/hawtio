@@ -7,7 +7,9 @@ module Fabric {
     $scope.versionsOp = 'versions()';
 
     $scope.entity = {
-      number: 1
+      // default options
+      number: 1,
+      saveJmxCredentials: true
     };
 
 

@@ -42,8 +42,12 @@ module Fabric {
     // mark properties as autofill to avoid issues with angular missing autofill events
     Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
     Core.pathSet(schema.properties, ['password', 'input-attributes', "autofill"], "true");
+
     Core.pathSet(schema.properties, ['jmxUser', 'input-attributes', "autofill"], "true");
+    Core.pathSet(schema.properties, ['jmxUser', 'tooltip'], 'The username for connecting to the container using JMX');
+
     Core.pathSet(schema.properties, ['jmxPassword', 'input-attributes', "autofill"], "true");
+    Core.pathSet(schema.properties, ['jmxPassword', 'tooltip'], 'The password for connecting to the container using JMX');
 
     setResolverEnum(schema);
 
@@ -59,6 +63,7 @@ module Fabric {
         schema.properties['saveJmxCredentials'] = {
           'type': 'boolean'
         };
+        Core.pathSet(schema.properties, ['saveJmxCredentials', 'tooltip'], 'Remember credentials when connecting to container (avoid prompting user to enter credentials)');
 
         Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
         Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
