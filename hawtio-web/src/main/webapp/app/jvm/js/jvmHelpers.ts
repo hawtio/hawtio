@@ -3,6 +3,11 @@
  */
 module JVM {
 
+  export var log:Logging.Logger = Logger.get("JVM");
+
+  export var connectControllerKey = "jvmConnectSettings";
+  export var connectionSettingsKey = "jvmConnect";
+
   /**
    * Adds common properties and functions to the scope
    * @method configureScope

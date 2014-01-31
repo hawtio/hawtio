@@ -4,46 +4,59 @@
 module JVM {
   export function ConnectController($scope, $location, localStorage, workspace) {
 
-    var log:Logging.Logger = Logger.get("JVM");
-
     JVM.configureScope($scope, $location, workspace);
+
+    $scope.forms = {};
 
     $scope.chromeApp = Core.isChromeApp();
     $scope.useProxy = $scope.chromeApp ? false : true;
 
-    // lets load the local storage configuration
-    var key = "jvmConnect";
+    $scope.settings = {
+      last: 1,
+      lastConnection: ''
+    };
 
-    log.debug("localStorage[jvmConnect]: ", localStorage[key]);
-
-    var config = {};
-    var configJson = localStorage[key];
-    if (configJson) {
+    // load settings like current tab, last used connection
+    if (connectControllerKey in localStorage) {
       try {
-        config = JSON.parse(configJson);
+        $scope.settings = angular.fromJson(localStorage[connectControllerKey]);
       } catch (e) {
-        delete localStorage[key];
-        // ignore
+        // corrupt config
+        delete localStorage[connectControllerKey];
       }
     }
 
-    log.debug("config after pulling out of local storage: ", config);
+    // load connection settings
+    // TODO add known default configurations here...
+    $scope.connectionConfigs = {
 
-    if (!('Unnamed' in config)) {
-      Core.pathSet(config, ['Unnamed', 'host'], 'localhost');
-      Core.pathSet(config, ['Unnamed', 'path'], 'jolokia');
-      Core.pathSet(config, ['Unnamed', 'port'], '8181');
-      Core.pathSet(config, ['Unnamed', 'userName'], '');
-      Core.pathSet(config, ['Unnamed', 'password'], '');
+    };
+
+
+
+    if (connectionSettingsKey in localStorage) {
+      try {
+        $scope.connectionConfigs = angular.fromJson(localStorage[connectionSettingsKey]);
+      } catch (e) {
+        // corrupt config
+        delete localStorage[connectionSettingsKey];
+      }
     }
 
-    $scope.currentConfig = config['Unnamed'];
+    /*
+    log.debug("Controller settings: ", $scope.settings);
+    log.debug("Current config: ", $scope.currentConfig);
+    log.debug("All connection settings: ", $scope.connectionConfigs);
+    */
 
     $scope.formConfig = {
       properties: {
         connectionName: {
           type: 'java.lang.String',
-          description: 'Name for this connection'
+          description: 'Name for this connection',
+          'input-attributes': {
+            'placeholder': 'Unnamed...'
+          }
         },
         host: {
           type: 'java.lang.String',
@@ -81,23 +94,98 @@ module JVM {
       type: 'void'
     };
 
-    $scope.$watch('currentConfig', (newValue, oldValue) => {
-      if (!newValue) {
-        return;
+    function newConfig() {
+      var answer = {
+        host: 'localhost',
+        path: 'jolokia',
+        port: '8181',
+        userName: '',
+        password: ''
+      };
+
+      if ($scope.chromeApp) {
+        answer['useProxy'] = false;
+      } else {
+        answer['useProxy'] = true;
       }
-      var config = angular.fromJson(localStorage[key]);
-      if (!config) {
-        config = {};
+      return answer;
+    }
+
+    $scope.clearSettings = () => {
+      delete localStorage[connectControllerKey];
+      delete localStorage[connectionSettingsKey];
+      window.location.reload();
+    };
+
+    $scope.newConnection = () => {
+      $scope.settings.lastConnection = '';
+    };
+
+    $scope.deleteConnection = () => {
+      delete $scope.connectionConfigs[$scope.settings.lastConnection];
+      var tmp = Object.extended($scope.connectionConfigs);
+      if (tmp.size() === 0) {
+        $scope.settings.lastConnection = '';
+      } else {
+        $scope.settings.lastConnection = tmp.keys().first();
       }
-      log.debug("Config: ", $scope.currentConfig);
-      if (Core.isBlank(newValue['name'])) {
-        newValue['name'] = 'Unnamed';
+    };
+
+    $scope.$watch('settings', (newValue, oldValue) => {
+
+      if (Core.isBlank($scope.settings['lastConnection'])) {
+        $scope.currentConfig = newConfig();
+      } else {
+        $scope.currentConfig = Object.extended($scope.connectionConfigs[$scope.settings['lastConnection']]).clone();
       }
-      config[newValue['name']] = newValue;
-      localStorage[key] = angular.toJson(config);
+
+      if (newValue !== oldValue) {
+        localStorage[connectControllerKey] = angular.toJson(newValue);
+      }
     }, true);
 
-    $scope.gotoServer = () => {
+
+    $scope.save = () => {
+      $scope.gotoServer($scope.currentConfig, null, true);
+    };
+
+    $scope.gotoServer = (json, form, saveOnly) => {
+
+      log.info("Got json: ", json);
+
+      if (json) {
+
+        var json = Object.extended(json).clone(true);
+
+        // new connection created via the form, let's save it
+        var connectionName = json['connectionName'];
+        if (Core.isBlank(connectionName)) {
+          connectionName = "Unnamed" + $scope.settings.last++;
+          json['connectionName'] = connectionName
+        }
+
+        if (!Core.isBlank($scope.settings.lastConnection)) {
+          console.log("Deleting last connection: ", $scope.settings.lastConnection);
+          //we're updating an existing connection...
+          delete $scope.connectionConfigs[$scope.settings.lastConnection];
+        }
+
+        $scope.connectionConfigs[connectionName] = json;
+
+        log.info("connectionConfigs: ", $scope.connectionConfigs);
+
+        localStorage[connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
+
+        // let's default to saved connections now that we've a new connection
+        $scope.currentConfig = json;
+        $scope.settings.lastConnection = connectionName;
+      }
+
+      if (saveOnly === true) {
+        Core.$apply($scope);
+        return;
+      }
+
       var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
       var host = $scope.currentConfig['host'] || 'localhost';
 
@@ -111,13 +199,15 @@ module JVM {
         host = host.substring(0, idx);
       }
 
-      log.info("using host name: " + host + " and user: " + $scope.userName + " and password: " + ($scope.password ? "********" : $scope.password));
+      log.info("using host name: " + host + " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
       options.host = host;
       options.port = $scope.currentConfig['port'];
       options.path = $scope.currentConfig['path'];
       options.userName = $scope.currentConfig['userName'];
       options.password = $scope.currentConfig['password'];
       options.useProxy = $scope.currentConfig['useProxy'];
+
+      Core.$apply($scope);
 
       Core.connectToServer(localStorage, options);
     }
