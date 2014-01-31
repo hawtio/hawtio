@@ -187,9 +187,9 @@ module Perspective {
   }
 
   /**
-   * Filter the top level tabs to only include currently active/valid tabs.
+   * Filter the top level tabs to only include currently valid tabs.
    */
-  export function filterOnlyActiveTopLevelTabs(workspace, topLevelTabs) {
+  export function filterOnlyValidTopLevelTabs(workspace, topLevelTabs) {
     var answer = topLevelTabs.filter(tab => {
       var href = tab.href();
       return href && isValidFunction(workspace, tab.isValid);
@@ -198,7 +198,18 @@ module Perspective {
   }
 
   /**
-   * Returns the top level tabs for the given perspective
+   * Filter the top level tabs to only include currently active tabs.
+   */
+  export function filterOnlyActiveTopLevelTabs(workspace, topLevelTabs) {
+    var answer = topLevelTabs.filter(tab => {
+      var href = tab.href();
+      return href && isValidFunction(workspace, tab.isActive);
+    });
+    return answer;
+  }
+
+  /**
+   * Returns the top level tabs for the given perspective (which are valid)
    * @method topLevelTabs
    * @for Perspective
    * @param {ng.ILocationService} $location
@@ -212,6 +223,7 @@ module Perspective {
 
     var plugins = Core.configuredPluginsForPerspectiveId(perspective, workspace, jolokia, localStorage);
     var tabs = Core.filterTopLevelTabs(perspective, workspace, plugins);
+    tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
 
     return tabs;
   }
@@ -266,7 +278,7 @@ module Perspective {
       var perspectiveId = currentPerspectiveId($location, workspace, jolokia, localStorage);
       var defaultPlugin = Core.getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage);
       var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
-      tabs = Perspective.filterOnlyActiveTopLevelTabs(workspace, tabs);
+      tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
 
       var defaultTab;
       if (defaultPlugin) {
