@@ -14,7 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
- * Main class to bootup Spring.
+ * Main class to boot up Spring.
  */
 public class SpringMain {
 
