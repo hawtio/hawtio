@@ -155,13 +155,13 @@ module JVM {
 
       if (json) {
 
-        var json = Object.extended(json).clone(true);
+        var jsonCloned = Object.extended(json).clone(true);
 
         // new connection created via the form, let's save it
-        var connectionName = json['connectionName'];
+        var connectionName = jsonCloned['connectionName'];
         if (Core.isBlank(connectionName)) {
           connectionName = "Unnamed" + $scope.settings.last++;
-          json['connectionName'] = connectionName
+          jsonCloned['connectionName'] = connectionName
         }
 
         var regexs = Core.getRegexs();
@@ -175,14 +175,14 @@ module JVM {
           regexs = regexs.exclude(hasFunc);
         }
 
-        $scope.connectionConfigs[connectionName] = json;
+        $scope.connectionConfigs[connectionName] = jsonCloned;
         localStorage[connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
         if (!regexs.any(hasFunc)) {
-          Core.storeConnectionRegex(regexs, connectionName, json);
+          Core.storeConnectionRegex(regexs, connectionName, jsonCloned);
         }
 
         // let's default to saved connections now that we've a new connection
-        $scope.currentConfig = json;
+        $scope.currentConfig = jsonCloned;
         $scope.settings.lastConnection = connectionName;
       }
 
