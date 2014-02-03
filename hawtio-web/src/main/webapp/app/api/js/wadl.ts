@@ -60,6 +60,7 @@ module API {
               log.info("Worked!" + data);
               method.invoke = {
                 url: url,
+                realUrl: path,
                 success: true,
                 data: data,
                 dataMode: textFormat(headers),
@@ -75,6 +76,7 @@ module API {
               log.info("Failed: " + status);
               method.invoke = {
                 url: url,
+                realUrl: path,
                 data: data,
                 dataMode: textFormat(headers),
                 status: status,
