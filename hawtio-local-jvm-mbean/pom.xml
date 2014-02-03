@@ -106,7 +106,28 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
+    <!-- TODO rework tests to also run properly on Windows -->
+    <profile>
+      <id>
+        SkipTestsOnWindows
+      </id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
