@@ -63,22 +63,24 @@ module API {
     };
 
     $scope.showOperations = (resource) => {
-      if (resource) {
-        resource.hide = false;
-      }
+      showHideOperations(resource, false);
     };
 
     $scope.expandOperations = (resource) => {
+      showHideOperations(resource, true);
+    };
+
+    function showHideOperations(resource, flag) {
       if (resource) {
         resource.hide = false;
         angular.forEach(resource.resource, (childResource) => {
-          childResource.expanded = true;
+          showHideOperations(childResource, flag);
         });
         angular.forEach(resource.method || resource.operations, (method) => {
-          method.expanded = true;
+          method.expanded = flag;
         });
       }
-    };
+    }
 
     $scope.autoFormat = (codeMirror) => {
       if (!codeMirror) {
