@@ -177,7 +177,7 @@ module JVM {
 
         $scope.connectionConfigs[connectionName] = jsonCloned;
         localStorage[connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
-        if (!regexs.any(hasFunc)) {
+        if (regexs && !regexs.any(hasFunc)) {
           Core.storeConnectionRegex(regexs, connectionName, jsonCloned);
         }
 
