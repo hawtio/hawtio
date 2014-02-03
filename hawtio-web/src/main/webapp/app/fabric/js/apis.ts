@@ -50,9 +50,16 @@ module Fabric {
           width: "*"
         },
         {
+          field: 'version',
+          displayName: 'Version',
+          cellTemplate: '<div class="ngCellText">{{row.entity.version}}</div>',
+          //width: 100
+          width: "*"
+        },
+        {
           field: 'endpoint',
           displayName: 'Location',
-          cellTemplate: '<div class="ngCellText">{{row.entity.endpoint}}</div>',
+          cellTemplate: '<div class="ngCellText"><a target="endpoint" href="{{row.entity.endpoint}}">{{row.entity.endpoint}}</a></div>',
           width: "***"
           //width: 300
         }
