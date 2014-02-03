@@ -87,7 +87,13 @@
 
 <h2 id = "Building">Building</h2>
 
-<p>Run the web application type:</p>
+<p>After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First <code>cd</code> into the root directory of the hawtio project and run:</p>
+
+<pre><code>mvn install</code></pre>
+
+<p>This will ensure all dependencies within the hawtio repo are built and any dependencies are downloaded and in your local repo.</p>
+
+<p>To run the sample web application for development, type:</p>
 
 <pre><code>cd hawtio-web
 mvn compile
