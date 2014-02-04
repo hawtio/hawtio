@@ -21,6 +21,7 @@
     <tsc-executable>tsc</tsc-executable>
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
     <schema-outdir>${webapp-outdir}/lib</schema-outdir>
+    <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
   </properties>
 
 
@@ -394,14 +395,14 @@
             </goals>
             <configuration>
               <target>
-                <echo>Compiling typescript files</echo>
+                <echo>Compiling typescript files to ${appjs-outfile}</echo>
                 <exec executable="${tsc-executable}"
                       dir="${basedir}"
                       failonerror="true">
                   <arg value="--target"/>
                   <arg value="es5"/>
                   <arg value="--out"/>
-                  <arg value="${webapp-outdir}/app/app.js"/>
+                  <arg value="${appjs-outfile}"/>
                   <arg value="@${tsc-filelist}"/>
                 </exec>
               </target>
@@ -776,6 +777,47 @@
   </build>
 
   <profiles>
+
+    <profile>
+      <id>watch</id>
+      <properties>
+        <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+
+              <execution>
+                <id>compile</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <echo>Compiling typescript files to ${appjs-outfile}</echo>
+                    <echo>Watching typescript files for changes...</echo>
+                    <exec executable="${tsc-executable}"
+                      dir="${basedir}"
+                      failonerror="true">
+                      <arg value="--watch"/>
+                      <arg value="--target"/>
+                      <arg value="es5"/>
+                      <arg value="--out"/>
+                      <arg value="${appjs-outfile}"/>
+                      <arg value="@${tsc-filelist}"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <profile>
       <id>Windows</id>
