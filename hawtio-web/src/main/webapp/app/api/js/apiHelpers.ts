@@ -20,12 +20,21 @@ module API {
     if (url) {
       log.info("Loading XML: " + url);
 
-      $.ajax({
+      var ajaxParams = {
         type: "GET",
         url: url,
+        beforeSend: (xhr) => {
+            xhr.setRequestHeader('Authorization', null);
+        },
+
         dataType: "xml",
-        success: onXml
-      });
+        contextType: "text/xml",
+        success: onXml,
+        error: (jqXHR, textStatus, errorThrow) => {
+          log.error("Failed to query XML for: " + url + " status:" + textStatus + " error: " + errorThrow);
+        }
+      };
+      $.ajax(ajaxParams);
     }
   }
 
