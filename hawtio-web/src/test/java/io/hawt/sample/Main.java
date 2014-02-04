@@ -102,9 +102,11 @@ public class Main {
             // see http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
             // https://github.com/hawtio/hawtio/issues/22
             if (System.getProperty("jettyUseFileLock", "").toLowerCase().equals("false")) {
-                LOG.info("Disabling the use of the Jetty file lock for static content to try fix incremental grunt compilation on Windows");
-                context.setCopyWebDir(true);
-                context.setInitParameter("useFileMappedBuffer", "false");
+                //LOG.info("Disabling the use of the Jetty file lock for static content to try fix incremental grunt compilation on Windows");
+                //context.setCopyWebDir(true);
+                //context.setInitParameter("useFileMappedBuffer", "false");
+                LOG.info("Setting maxCachedFiles to 0");
+                context.setInitParameter("org.eclipse.jetty.servlet.Default.maxCachedFiles", "0");
             }
 
             Server server = new Server(port);

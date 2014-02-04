@@ -829,6 +829,7 @@
       <properties>
         <tsc-executable>tsc.cmd</tsc-executable>
         <phantomjs-executable>phantomjs.cmd</phantomjs-executable>
+        <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
 
