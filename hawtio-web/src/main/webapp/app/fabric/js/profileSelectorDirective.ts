@@ -12,7 +12,7 @@ module Fabric {
       filterWatch: '@',
       selectedWatch: '@',
       clearOnVersionChange: '@',
-      showLinks: '@',
+      noLinks: '@',
       showHeader: '@',
       useCircles: '@',
       expanded: '@',
@@ -25,7 +25,7 @@ module Fabric {
       $scope.responseJson = '';
       $scope.filterText = '';
       $scope.clearOnVersionChange = false;
-      $scope.showLinks = false;
+      $scope.noLinks = false;
       $scope.selectedAll = false;
       $scope.indeterminate = false;
       $scope.showFilter = true;
