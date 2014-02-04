@@ -778,6 +778,19 @@
   <profiles>
 
     <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <tsc-executable>tsc.cmd</tsc-executable>
+        <phantomjs-executable>phantomjs.cmd</phantomjs-executable>
+      </properties>
+    </profile>
+
+    <profile>
       <id>tomcat</id>
       <dependencies>
         <dependency>
