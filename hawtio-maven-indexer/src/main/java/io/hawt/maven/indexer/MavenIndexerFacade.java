@@ -61,7 +61,7 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private IndexingContext mergedContext;
     private List<IndexCreator> indexers;
     private boolean updateIndexOnStartup = true;
-    private int maximumIndexersPerMachine = 1000;
+    private int maximumIndexersPerMachine = 20;
     private String[] repositories = {
             "http://repository.jboss.org/nexus/content/repositories/ea@id=ea.jboss..release.repo",
             "http://repo1.maven.org/maven2@central"
@@ -261,6 +261,9 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                     if (fileLock != null) {
                         cacheDirectory = tryDir;
                         break;
+                    } else {
+                        LOG.warn("Cannot lock directory {} as file lock {} present."
+                                + " If there are no other processes running hawtio, then the lock is likely orphaned and can be deleted.", tryDir, lockFileName);
                     }
                     postfix = "-" + i;
                 }
