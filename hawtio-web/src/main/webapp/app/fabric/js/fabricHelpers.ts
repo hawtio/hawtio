@@ -125,7 +125,7 @@ module Fabric {
       if (!Core.parseBooleanValue(container['alive'])) {
         return false;
       }
-      return !$scope.isCurrentContainer(container);
+      return true;
     };
 
     $scope.refreshProfile = (versionId, profileId) => {
@@ -280,7 +280,7 @@ module Fabric {
       $scope.connect.view = view || "/logs";
 
       var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
-      if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.userName) {
+      if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
         $scope.connect.dialog.open();
       } else {
         $scope.connect.onOK();
