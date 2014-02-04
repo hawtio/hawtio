@@ -91,6 +91,7 @@ module Camel {
 
     function loadData() {
       var mbean: string = null;
+      $scope.treeViewLink = null;
       if (routeContextId && routeEndpointName) {
         var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
           context: routeContextId,
@@ -98,12 +99,17 @@ module Camel {
           name: routeEndpointName
         });
         if (node) {
+          var key = node.key;
+          if (key) {
+            $scope.treeViewLink = "#/camel/browseEndpoint?tab=camel&nid=" + key;
+          }
           mbean = node.objectName;
         }
       }
       if (!mbean) {
         mbean = workspace.getSelectedMBeanName();
       }
+      $scope.fullScreenViewLink = createFullScreenViewLink();
       if (mbean) {
         log.info("MBean: " + mbean);
         var options = onSuccess(populateTable);
@@ -125,6 +131,22 @@ module Camel {
       }
       $scope.messages = data;
       Core.$apply($scope);
+    }
+
+    function createFullScreenViewLink() {
+      var answer: string = null;
+      var selection = workspace.selection;
+      if (selection) {
+        var entries = selection.entries;
+        if (entries) {
+          var contextId = entries["context"];
+          var endpointPath = entries["name"];
+          if (contextId && endpointPath) {
+            answer = "#/camel/endpoint/browse/" + contextId + "/" + endpointPath;
+          }
+        }
+      }
+      return answer;
     }
   }
 }
