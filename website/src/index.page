@@ -1,11 +1,11 @@
 ---
 title: "hawt.io - manage your server stuff and stay cool!"
 --- pipeline:ssp,markdown
-  <div class="container">
-    <div id="content">
-
-${unescape(loadText(new FileInputStream("../README.md")))}
+<div class="container">
+<div id="content">
+<p></p>
+${unescape(loadText(new FileInputStream("./src/main.html")))}
 
 </div>
-  </div>
+</div>
 
