@@ -6,9 +6,9 @@
           <span class="contained c-medium">Camel Contexts</span>
         </a>
       </li>
-        <li class="dropdown"  ng-repeat="breadcrumb in breadcrumbs">
+        <li class="dropdown" ng-repeat="breadcrumb in breadcrumbs">
           <a ng-show="breadcrumb.items.length > 0" href="#" class="breadcrumb-link dropdown-toggle" data-toggle="dropdown"
-             data-placement="bottom">
+             data-placement="bottom" title="{{breadcrumb.tooltip}}">
             {{breadcrumb.name}}
             <span class="caret"></span>
           </a>

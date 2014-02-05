@@ -8,6 +8,10 @@ module Camel {
     $scope.routeId = $routeParams["routeId"];
 
     var defaultChildEntity = $scope.endpointPath ? "endpoints" : "routes";
+    var childEntityToolTips = {
+      "endpoints": "Camel Endpoint",
+      "routes": "Camel Route"
+    };
 
     /**
      * The array of breadcrumbs so that each item in the list of bookmarks can be switched for fast navigation and
@@ -16,15 +20,18 @@ module Camel {
     $scope.breadcrumbs = [
       {
         name:  $scope.contextId,
-        items: findContexts()
+        items: findContexts(),
+        tooltip: "Camel Context"
       },
       {
         name: defaultChildEntity,
-        items: findChildEntityTypes($scope.contextId)
+        items: findChildEntityTypes($scope.contextId),
+        tooltip: "Entity inside a Camel Context"
       },
       {
         name: $scope.endpointName || $scope.routeId,
-        items: findChildEntityLinks($scope.contextId, currentChildEntity())
+        items: findChildEntityLinks($scope.contextId, currentChildEntity()),
+        tooltip: childEntityToolTips[defaultChildEntity]
       }
     ];
 
@@ -40,6 +47,7 @@ module Camel {
             var link = createLinkToFirstChildEntity(id, currentChildEntity());
             answer.push({
               name: name,
+              tooltip: "Camel Context",
               link: link
             });
           }
@@ -56,6 +64,7 @@ module Camel {
           var link = createLinkToFirstChildEntity(contextId, childEntityName);
           answer.push({
             name: childEntityName,
+            tooltip: "Entity inside a Camel Context",
             link: link
           });
         }
@@ -106,6 +115,7 @@ module Camel {
                   contextId: contextId,
                   path: endpointPath,
                   name: name,
+                  tooltip: "Endpoint",
                   link: link
                 });
               }
@@ -134,6 +144,7 @@ module Camel {
                   contextId: contextId,
                   path: routeId,
                   name: name,
+                  tooltip: "Camel Route",
                   link: link
                 });
               }
