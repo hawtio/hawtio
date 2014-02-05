@@ -1,5 +1,9 @@
 <div ng-controller="Camel.BrowseEndpointController">
-  <div ng-hide="isJmxTab" class="logbar logbar-wiki">
+  <div ng-hide="isJmxTab">
+    <ng-include src="'app/camel/html/breadcrumbBar.html'"></ng-include>
+  </div>
+  <!--
+  <div ng-hide="isJmxTab" class="logbar logbar-wiki" ng-controller="Camel.BreadcrumbBarController">
     <div class="wiki logbar-container">
       <ul class="nav nav-tabs">
         <li class="">
@@ -14,11 +18,27 @@
           <a class="breadcrumb-link">endpoints</a>
         </li>
         <li class="active">
-          <a class="breadcrumb-link">{{endpointPath}}</a>
+          <a class="breadcrumb-link">{{endpointName}}</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                  data-placement="bottom">
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" ng-show="breadcrumbs.endpoints.length">
+            <li ng-repeat="endpoint in breadcrumbs.endpoints">
+              <a ng-href="{{endpoint.link}}{{hash}}"
+                 ng-hide="endpoint.name === endpointPath"
+                 title="Switch to endpoint {{endpoint.name}} "
+                 data-placement="bottom">
+                {{endpoint.name}}</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
   </div>
+  -->
 
   <div ng-class="{'wiki-fixed' : !isJmxTab}">
     <div class="row-fluid">

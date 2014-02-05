@@ -141,9 +141,7 @@ module Camel {
         if (entries) {
           var contextId = entries["context"];
           var endpointPath = entries["name"];
-          if (contextId && endpointPath) {
-            answer = "#/camel/endpoint/browse/" + contextId + "/" + endpointPath;
-          }
+          return linkToBrowseEndpointFullScreen(contextId, endpointPath);
         }
       }
       return answer;

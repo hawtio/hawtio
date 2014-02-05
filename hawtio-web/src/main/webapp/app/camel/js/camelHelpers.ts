@@ -455,6 +455,44 @@ module Camel {
     return null;
   }
 
+  /**
+   * Returns the root JMX Folder of the camel mbeans
+   */
+  export function getRootCamelFolder(workspace) {
+    var tree = workspace ? workspace.tree : null;
+    if (tree) {
+      return tree.get(jmxDomain);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the JMX folder for the camel context
+   */
+  export function getCamelContextFolderFolder(workspace, camelcontextId) {
+    var answer = null;
+    var root = getRootCamelFolder(workspace);
+    if (root && camelcontextId) {
+        angular.forEach(root.children, (contextFolder) => {
+          if (!answer && camelcontextId === contextFolder.title) {
+            answer = contextFolder;
+          }
+        });
+    }
+    return answer;
+  }
+
+  /**
+   * Returns the link to browse the endpoint full screen
+   */
+  export function linkToBrowseEndpointFullScreen(contextId, endpointPath) {
+    var answer: string = null;
+    if (contextId && endpointPath) {
+      answer = "#/camel/endpoint/browse/" + contextId + "/" + endpointPath;
+    }
+    return answer;
+  }
+
   export function getFolderCamelNodeId(folder) {
     var answer = Core.pathGet(folder, ["routeXmlNode", "localName"]);
     return ("from" === answer || "to" === answer) ? "endpoint" : answer;
