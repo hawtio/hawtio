@@ -7,6 +7,8 @@ module Camel {
     $scope.endpointName = tidyJmxName($scope.endpointPath);
     $scope.routeId = $routeParams["routeId"];
 
+    $scope.treeViewLink = linkToTreeView();
+
     var defaultChildEntity = $scope.endpointPath ? "endpoints" : "routes";
     var childEntityToolTips = {
       "endpoints": "Camel Endpoint",
@@ -19,7 +21,7 @@ module Camel {
      */
     $scope.breadcrumbs = [
       {
-        name:  $scope.contextId,
+        name: $scope.contextId,
         items: findContexts(),
         tooltip: "Camel Context"
       },
@@ -29,7 +31,7 @@ module Camel {
         tooltip: "Entity inside a Camel Context"
       },
       {
-        name: $scope.endpointName || $scope.routeId,
+        name: $scope.endpointName || tidyJmxName($scope.routeId),
         items: findChildEntityLinks($scope.contextId, currentChildEntity()),
         tooltip: childEntityToolTips[defaultChildEntity]
       }
@@ -60,7 +62,7 @@ module Camel {
     function findChildEntityTypes(contextId) {
       var answer = [];
       angular.forEach(["endpoints", "routes"], (childEntityName) => {
-        if (childEntityName && childEntityName !==  currentChildEntity()) {
+        if (childEntityName && childEntityName !== currentChildEntity()) {
           var link = createLinkToFirstChildEntity(contextId, childEntityName);
           answer.push({
             name: childEntityName,
@@ -136,9 +138,9 @@ module Camel {
           angular.forEach(folders.children, (folder) => {
             var entries = folder ? folder.entries : null;
             if (entries) {
-              var routeId = tidyJmxName(entries["name"]);
+              var routeId = entries["name"];
               if (routeId) {
-                var name = routeId;
+                var name = tidyJmxName(routeId);
                 var link = linkToRouteDiagramFullScreen(contextId, routeId);
                 answer.push({
                   contextId: contextId,
@@ -150,6 +152,38 @@ module Camel {
               }
             }
           });
+        }
+      }
+      return answer;
+    }
+
+
+    /**
+     * Creates a link to the tree view version of this view
+     */
+    function linkToTreeView() {
+      var answer:string = null;
+      if ($scope.contextId) {
+        var node = null;
+        var tab:string = null;
+        if ($scope.endpointPath) {
+          tab = "browseEndpoint";
+          node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+            context: $scope.contextId,
+            type: "endpoints",
+            name: $scope.endpointPath
+          });
+        } else if ($scope.routeId) {
+          tab = "routes";
+          node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+            context: $scope.contextId,
+            type: "routes",
+            name: $scope.routeId
+          });
+        }
+        var key = node ? node["key"] : null;
+        if (key && tab) {
+          answer = "#/camel/" + tab + "?tab=camel&nid=" + key;
         }
       }
       return answer;

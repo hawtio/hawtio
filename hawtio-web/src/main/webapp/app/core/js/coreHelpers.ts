@@ -89,11 +89,13 @@ function safeNull(value:any):string {
 }
 
 function trimQuotes(text:string) {
-  while (text.endsWith('"') || text.endsWith("'")) {
-    text = text.substring(0, text.length - 1);
-  }
-  while (text.startsWith('"') || text.startsWith("'")) {
-    text = text.substring(1, text.length);
+  if (text) {
+    while (text.endsWith('"') || text.endsWith("'")) {
+      text = text.substring(0, text.length - 1);
+    }
+    while (text.startsWith('"') || text.startsWith("'")) {
+      text = text.substring(1, text.length);
+    }
   }
   return text;
 }

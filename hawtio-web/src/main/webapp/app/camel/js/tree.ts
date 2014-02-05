@@ -2,6 +2,7 @@ module Camel {
 
   export function TreeController($scope, $location:ng.ILocationService, $timeout, workspace:Workspace) {
     $scope.contextFilterText = $location.search()["cq"];
+    $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -9,7 +10,6 @@ module Camel {
     });
 
     var reloadThrottled = Core.throttled(reloadFunction, 500);
-
 
     $scope.$watch('workspace.tree', function () {
       reloadThrottled();
@@ -32,6 +32,8 @@ module Camel {
     });
 
     function reloadFunction(afterSelectionFn = null) {
+      $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
+
       var children = [];
       var domainName = Camel.jmxDomain;
 
@@ -165,6 +167,7 @@ module Camel {
         }
         return null;
       }, true);
+      $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
     }
   }
 

@@ -11,12 +11,6 @@
       <div class="span6">
         <div class="pull-right">
           <form class="form-inline">
-            <a ng-show="!isJmxTab && treeViewLink" class="btn"
-               title="Switch to the tree view of this CamelContext and its endpoints"
-               href="{{treeViewLink}}"><i class="icon-resize-small"></i></a>
-            <a ng-show="isJmxTab && fullScreenViewLink" class="btn"
-               title="Switch to a full screen view of this endpoint"
-               href="{{fullScreenViewLink}}"><i class="icon-resize-full"></i></a>
             <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="forwardDialog.open()"
                     title="Forward the selected messages to another endpoint" data-placement="bottom">
               <i class="icon-forward"></i> Forward

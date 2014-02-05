@@ -7,7 +7,7 @@ module Camel {
     $scope.routeNodes = {};
 
     $scope.contextId = $routeParams["contextId"];
-    $scope.routeId = $routeParams["routeId"];
+    $scope.routeId = trimQuotes($routeParams["routeId"]);
 
     $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
 

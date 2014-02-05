@@ -499,6 +499,31 @@ module Camel {
 
 
   /**
+   * Given a selection in the workspace try figure out the URL to the
+   * full screen view
+   */
+  export function linkToFullScreenView(workspace) {
+    var answer: string = null;
+    var selection = workspace.selection;
+    if (selection) {
+      var entries = selection.entries;
+      if (entries) {
+        var contextId = entries["context"];
+        var name = entries["name"];
+        var type = entries["type"];
+        if ("endpoints" === type) {
+          return linkToBrowseEndpointFullScreen(contextId, name);
+        }
+        if ("routes" === type) {
+          return linkToRouteDiagramFullScreen(contextId, name);
+        }
+        // TODO a default page for a context?
+      }
+    }
+    return answer;
+  }
+
+  /**
    * Returns the link to browse the endpoint full screen
    */
   export function linkToBrowseEndpointFullScreen(contextId, endpointPath) {
