@@ -31,6 +31,54 @@ module UI {
         }
       ];
 
+      $scope.someVal = 1;
+
+      $scope.dropDownConfig = {
+        icon: 'icon-cogs',
+        title: 'My Awesome Menu',
+        items: [{
+          title: 'Some Item',
+          action: 'someVal=2'
+        }, {
+          title: 'Some other stuff',
+          icon: 'icon-twitter',
+          action: 'someVal=3'
+        }, {
+          title: "I've got children",
+          icon: 'icon-file-text',
+          items: [{
+            title: 'Hi!',
+            action: 'someVal=4'
+          }, {
+            title: 'Yo!',
+            items: [{
+              title: 'More!',
+              action: 'someVal=5'
+            }, {
+              title: 'Child',
+              action: 'someVal=6'
+            }, {
+              title: 'Menus!',
+              action: 'someVal=7'
+            }]
+          }]
+        }, {
+          title: "Call a function!",
+          action: () => {
+            notification("info", "Function called!");
+          }
+        }]
+      };
+      $scope.dropDownConfigTxt = angular.toJson($scope.dropDownConfig, true);
+
+      $scope.$watch('dropDownConfigTxt', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          $scope.dropDownConfig = angular.fromJson($scope.dropDownConfigTxt);
+        }
+      });
+
+      $scope.dropDownEx = $templateCache.get("dropDownTemplate");
+
       $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
       $scope.zeroClipboard = $templateCache.get("zeroClipboardTemplate");
 

@@ -57,6 +57,8 @@ module UI {
         return UI.TemplatePopover($templateCache, $compile, $document);
       }).directive('hawtioTocDisplay', (marked, $location, $anchorScroll, $compile) => {
         return UI.HawtioTocDisplay(marked, $location, $anchorScroll, $compile);
+      }).directive('hawtioDropDown', ($templateCache) => {
+        return UI.hawtioDropDown($templateCache);
       }).run(function (helpRegistry) {
 
         helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');

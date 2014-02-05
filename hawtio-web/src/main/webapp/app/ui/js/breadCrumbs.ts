@@ -1,0 +1,6 @@
+/**
+ * @module UI
+ */
+module UI {
+
+}
