@@ -469,12 +469,12 @@ module Camel {
   /**
    * Returns the JMX folder for the camel context
    */
-  export function getCamelContextFolderFolder(workspace, camelcontextId) {
+  export function getCamelContextFolder(workspace, camelContextId) {
     var answer = null;
     var root = getRootCamelFolder(workspace);
-    if (root && camelcontextId) {
+    if (root && camelContextId) {
         angular.forEach(root.children, (contextFolder) => {
-          if (!answer && camelcontextId === contextFolder.title) {
+          if (!answer && camelContextId === contextFolder.title) {
             answer = contextFolder;
           }
         });
@@ -483,12 +483,40 @@ module Camel {
   }
 
   /**
+   * Returns the mbean for the given camel context ID or null if it cannot be found
+   */
+  export function getCamelContextMBean(workspace, camelContextId) {
+    var contextsFolder = getCamelContextFolder(workspace, camelContextId);
+    if (contextsFolder) {
+      var contextFolder = contextsFolder.navigate("context");
+      if (contextFolder && contextFolder.children && contextFolder.children.length) {
+        var contextItem = contextFolder.children[0];
+        return contextItem.objectName;
+      }
+    }
+    return null;
+  }
+
+
+  /**
    * Returns the link to browse the endpoint full screen
    */
   export function linkToBrowseEndpointFullScreen(contextId, endpointPath) {
     var answer: string = null;
     if (contextId && endpointPath) {
       answer = "#/camel/endpoint/browse/" + contextId + "/" + endpointPath;
+    }
+    return answer;
+  }
+
+
+  /**
+   * Returns the link to the route diagram full screen
+   */
+  export function linkToRouteDiagramFullScreen(contextId, routeId) {
+    var answer: string = null;
+    if (contextId && routeId) {
+      answer = "#/camel/route/diagram/" + contextId + "/" + routeId;
     }
     return answer;
   }

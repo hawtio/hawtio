@@ -10,14 +10,10 @@ module Camel {
 
     $scope.gridOptions = Camel.createBrowseGridOptions();
 
-    var routeContextId = $routeParams["contextId"];
-    var routeEndpointName = $routeParams["endpointPath"];
-    $scope.contextId = routeContextId;
-    $scope.endpointPath = routeEndpointName;
+    $scope.contextId = $routeParams["contextId"];
+    $scope.endpointPath = $routeParams["endpointPath"];
 
-    $scope.isJmxTab = !routeContextId || !routeEndpointName;
-
-    log.info("Starting browse context: " + routeContextId + " endpoint: " + routeEndpointName);
+    $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["endpointPath"];
 
     $scope.$watch('workspace.selection', function () {
       if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
@@ -92,11 +88,11 @@ module Camel {
     function loadData() {
       var mbean: string = null;
       $scope.treeViewLink = null;
-      if (routeContextId && routeEndpointName) {
+      if ($scope.contextId && $scope.endpointPath) {
         var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
-          context: routeContextId,
+          context: $scope.contextId,
           type: "endpoints",
-          name: routeEndpointName
+          name: $scope.endpointPath
         });
         if (node) {
           var key = node.key;

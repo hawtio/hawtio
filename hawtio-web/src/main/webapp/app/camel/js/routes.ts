@@ -1,10 +1,15 @@
 module Camel {
 
-  export function RouteController($scope, $element, workspace:Workspace, jolokia, localStorage) {
+  export function RouteController($scope, $routeParams, $element, workspace:Workspace, jolokia, localStorage) {
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.routes = [];
     $scope.routeNodes = {};
+
+    $scope.contextId = $routeParams["contextId"];
+    $scope.routeId = $routeParams["routeId"];
+
+    $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
 
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
@@ -15,12 +20,12 @@ module Camel {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
       updateRoutes();
     });
 
     $scope.$watch('nodeXmlNode', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
       updateRoutes();
     });
 
@@ -38,6 +43,10 @@ module Camel {
         }
       }
       $scope.mbean = getSelectionCamelContextMBean(workspace);
+      if (!$scope.mbean && $scope.contextId) {
+        $scope.mbean = getCamelContextMBean(workspace, $scope.contextId)
+        log.info("Found camel context mbean: " + $scope.mbean);
+      }
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
         $scope.nodes = {};
@@ -63,7 +72,10 @@ module Camel {
       $scope.routeNodes = {};
       var nodes = [];
       var links = [];
-      var selectedRouteId = getSelectedRouteId(workspace);
+      var selectedRouteId = $scope.routeId;
+      if (!selectedRouteId) {
+        selectedRouteId = getSelectedRouteId(workspace);
+      }
       if (data) {
         var doc = $.parseXML(data);
         Camel.loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, getWidth());
