@@ -1,6 +1,6 @@
 module Camel {
 
-  export function RouteController($scope, $routeParams, $element, workspace:Workspace, jolokia, localStorage) {
+  export function RouteController($scope, $routeParams, $element, $timeout, workspace:Workspace, jolokia, localStorage) {
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.routes = [];
@@ -14,22 +14,32 @@ module Camel {
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
 
+    var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
+
+    // lets delay a little updating the routes to avoid timing issues where we've not yet
+    // fully loaded the workspace and/or the XML model
+    var delayUpdatingRoutes = 300;
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateRoutes, 50);
+      $timeout(updateRoutes, delayUpdatingRoutes);
     });
 
     $scope.$watch('workspace.selection', function () {
       if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
-      updateRoutes();
+      $timeout(updateRoutes, delayUpdatingRoutes);
+    });
+
+    $scope.$on('jmxTreeUpdated', function () {
+      $timeout(updateRoutes, delayUpdatingRoutes);
     });
 
     $scope.$watch('nodeXmlNode', function () {
       if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
-      updateRoutes();
+      $timeout(updateRoutes, delayUpdatingRoutes);
     });
 
-    function updateRoutes() {
+    function doUpdateRoutes() {
       var routeXmlNode = null;
       if (!$scope.ignoreRouteXmlNode) {
         routeXmlNode = getSelectedRouteNode(workspace);
@@ -45,7 +55,6 @@ module Camel {
       $scope.mbean = getSelectionCamelContextMBean(workspace);
       if (!$scope.mbean && $scope.contextId) {
         $scope.mbean = getCamelContextMBean(workspace, $scope.contextId)
-        log.info("Found camel context mbean: " + $scope.mbean);
       }
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
@@ -59,7 +68,7 @@ module Camel {
                 {type: 'exec', mbean: $scope.mbean, operation: 'dumpRoutesAsXml()'},
                 onSuccess(populateTable));
       } else {
-        console.log("No camel context bean!")
+        log.info("No camel context bean! Selection: " + workspace.selection);
       }
     }
 
