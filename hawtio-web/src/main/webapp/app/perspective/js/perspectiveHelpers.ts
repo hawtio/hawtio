@@ -242,7 +242,10 @@ module Perspective {
     var inFMC = Fabric.isFMCContainer(workspace);
     if (inFMC) {
       var url = $location.url();
-      log.debug("Checking url: ", url);
+
+      // noisy!
+      //log.debug("Checking url: ", url);
+
       // we want first time users on welcome/index/default page to be in the fabric perspective
       if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
           // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
