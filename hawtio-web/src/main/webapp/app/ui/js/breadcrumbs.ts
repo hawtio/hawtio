@@ -105,11 +105,11 @@ module UI {
         $scope.$watch('config.path', (newValue, oldValue) => {
           if (!Core.isBlank(newValue)) {
             var pathParts = newValue.split('/').exclude((p) => { return Core.isBlank(p); });
-            log.debug("path: ", newValue);
-            log.debug("pathParts: ", pathParts);
+            //log.debug("path: ", newValue);
+            //log.debug("pathParts: ", pathParts);
             var matches = true;
             pathParts.forEach((part, index) => {
-              log.debug("Checking part: ", part, " index: ", index)
+              //log.debug("Checking part: ", part, " index: ", index)
               if (!matches) {
                 return;
               }
@@ -117,7 +117,7 @@ module UI {
                 matches = false;
               }
             });
-            log.debug("matches: ", matches);
+            //log.debug("matches: ", matches);
             if (matches) {
               return;
             }

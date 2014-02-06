@@ -28,7 +28,7 @@ module UI {
             $event.preventDefault();
             $event.stopPropagation();
           } else if ('action' in config) {
-            log.debug("executing action: ", config.action);
+            //log.debug("executing action: ", config.action);
             var action = config['action'];
             if (angular.isFunction(action)) {
               action.apply();
