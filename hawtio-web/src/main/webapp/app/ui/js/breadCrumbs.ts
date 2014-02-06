@@ -1,6 +1,0 @@
-/**
- * @module UI
- */
-module UI {
-
-}

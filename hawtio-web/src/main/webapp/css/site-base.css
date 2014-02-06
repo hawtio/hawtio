@@ -3766,9 +3766,15 @@ span.hawtio-dropdown .dropdown-menu {
   color: #53595f;
 }
 
-.hawtio-dropdown > .submenu-caret:before {
+.hawtio-dropdown > ul > li > .menu-item {
+  position: relative;
+  display: block;
+}
+
+.hawtio-dropdown > .submenu-caret:before,
+.hawtio-dropdown > ul > li > .menu-item > .submenu-caret:before {
   position: absolute;
-  top: 3px;
+  top: 0;
   right: -2px;
 }
 

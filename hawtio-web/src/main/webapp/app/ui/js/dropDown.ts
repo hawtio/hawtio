@@ -13,45 +13,51 @@ module UI {
       },
       controller: ($scope, $element, $attrs) => {
 
+        if (!$scope.config) {
+          $scope.config = {};
+        }
+
         if (!('open' in $scope.config)) {
           $scope.config['open'] = false;
         }
 
         $scope.action = (config, $event) => {
-          log.debug("doAction on : ", config, "event: ", $event);
-          if ('items' in config) {
+          //log.debug("doAction on : ", config, "event: ", $event);
+          if ('items' in config && !('action' in config)) {
             config.open = !config.open;
             $event.preventDefault();
             $event.stopPropagation();
-          } else {
-            if ('action' in config) {
-              var action = config['action'];
-              if (angular.isFunction(action)) {
-                action.apply();
-              } else if (angular.isString(action)) {
-                $scope.$parent.$eval(action);
-              }
+          } else if ('action' in config) {
+            log.debug("executing action: ", config.action);
+            var action = config['action'];
+            if (angular.isFunction(action)) {
+              action.apply();
+            } else if (angular.isString(action)) {
+              $scope.$parent.$eval(action, {
+                config: config,
+                '$event': $event
+              });
             }
           }
         };
 
         $scope.submenu = (config) => {
-          if (config.submenu) {
+          if (config && config.submenu) {
             return "sub-menu";
           }
           return "";
         };
 
-        $scope.icon = (item) => {
-          if (!Core.isBlank(item.icon)) {
-            return item.icon
+        $scope.icon = (config) => {
+          if (config && !Core.isBlank(config.icon)) {
+            return config.icon
           } else {
             return 'icon-spacer';
           }
         };
 
         $scope.open = (config) => {
-          if (!config.open) {
+          if (config && !config.open) {
             return '';
           }
           return 'open';
@@ -59,6 +65,13 @@ module UI {
 
       },
       link: ($scope, $element, $attrs) => {
+        $scope.menuStyle = $templateCache.get("withsubmenus.html");
+
+        if ('processSubmenus' in $attrs) {
+          if (!Core.parseBooleanValue($attrs['processSubmenus'])) {
+            $scope.menuStyle = $templateCache.get("withoutsubmenus.html");
+          }
+        }
 
       }
     };

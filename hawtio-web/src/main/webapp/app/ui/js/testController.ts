@@ -77,6 +77,57 @@ module UI {
         }
       });
 
+      $scope.breadcrumbSelection = 1;
+
+      $scope.breadcrumbConfig = {
+        icon: 'icon-cogs',
+        title: 'root',
+        items: [{
+          title: 'first child',
+          icon: 'icon-folder-close-alt',
+          items: [{
+            title: "first child's first child",
+            icon: 'icon-file-text'
+          }]
+        }, {
+          title: 'second child',
+          icon: 'icon-file'
+        }, {
+          title: "third child",
+          icon: 'icon-folder-close-alt',
+          items: [{
+            title: "third child's first child",
+            icon: 'icon-file-text'
+          }, {
+            title: "third child's second child",
+            icon: 'icon-file-text'
+          }, {
+            title: "third child's third child",
+            icon: 'icon-folder-close-alt',
+            items: [{
+              title: 'More!',
+              icon: 'icon-file-text'
+            }, {
+              title: 'Child',
+              icon: 'icon-file-text'
+            }, {
+              title: 'Menus!',
+              icon: 'icon-file-text'
+            }]
+          }]
+        }]
+      };
+
+      $scope.breadcrumbConfigTxt = angular.toJson($scope.breadcrumbConfig, true);
+
+      $scope.$watch('breadcrumbConfigTxt', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          $scope.breadcrumbconfig = angular.toJson($scope.breadcrumbConfigTxt);
+        }
+      });
+
+      $scope.breadcrumbEx = $templateCache.get("breadcrumbTemplate");
+
       $scope.dropDownEx = $templateCache.get("dropDownTemplate");
 
       $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
