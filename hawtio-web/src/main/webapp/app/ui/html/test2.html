@@ -4,9 +4,9 @@
 
     <div class="row-fluid">
       <h3>BreadCrumbs</h3>
-      <p>A breadcrumb implementation that supports dropdowns for each node</p>
+      <p>A breadcrumb implementation that supports dropdowns for each node.  The data structure is a tree structure with a single starting node.  When the user makes a selection the directive will update the 'path' property of the config object.  The directive also watches the 'path' property, allowing you to also set the initial state of the breadcrumbs.</p>
       <script type="text/ng-template" id="breadcrumbTemplate">
-<p>breadcrumbSelection: {{breadcrumbSelection}}</p>
+<p>path: {{breadcrumbConfig.path}}</p>
 <ul class="nav nav-tabs">
 <hawtio-breadcrumbs config="breadcrumbConfig"></hawtio-breadcrumbs>
 </ul>

@@ -80,6 +80,7 @@ module UI {
       $scope.breadcrumbSelection = 1;
 
       $scope.breadcrumbConfig = {
+        path: '/root/first child',
         icon: 'icon-cogs',
         title: 'root',
         items: [{
