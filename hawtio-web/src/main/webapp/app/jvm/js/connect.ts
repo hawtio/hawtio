@@ -58,6 +58,11 @@ module JVM {
             'placeholder': 'Unnamed...'
           }
         },
+        scheme: {
+          type: 'java.lang.String',
+          description: 'HTTP or HTTPS',
+          required: true
+        },
         host: {
           type: 'java.lang.String',
           description: 'Target host to connect to',
@@ -96,6 +101,7 @@ module JVM {
 
     function newConfig() {
       var answer = {
+        scheme: 'http',
         host: 'localhost',
         path: 'jolokia',
         port: '8181',
@@ -204,7 +210,9 @@ module JVM {
         host = host.substring(0, idx);
       }
 
-      log.info("using host name: " + host + " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
+      log.info("using scheme: " + $scope.currentConfig['scheme'] + " and host name: " + host +
+        " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
+      options.scheme = $scope.currentConfig['scheme'];
       options.host = host;
       options.port = $scope.currentConfig['port'];
       options.path = $scope.currentConfig['path'];
@@ -216,5 +224,13 @@ module JVM {
 
       Core.connectToServer(localStorage, options);
     }
+
+    function init() {
+      log.debug("Initializing")
+      var schemeEnum = ['http', 'https'];
+      Core.pathSet($scope.formConfig, ['properties', 'scheme', 'enum'], schemeEnum);
+    }
+
+    init();
   }
 }

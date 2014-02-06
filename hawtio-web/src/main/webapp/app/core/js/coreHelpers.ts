@@ -1223,6 +1223,7 @@ module Core {
   }
 
   export class ConnectToServerOptions {
+    public scheme:string = "http";
     public host:string;
     public port:number;
     public path:string;
@@ -1312,7 +1313,7 @@ module Core {
         connectUrl = url("/proxy/" + connectUrl);
       } else {
         if (connectUrl.indexOf("://") < 0) {
-          connectUrl = "http://" + connectUrl;
+          connectUrl = options.scheme + "://" + connectUrl;
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
@@ -1338,7 +1339,7 @@ module Core {
         connectUrl = url("/proxy/" + connectUrl);
       } else {
         if (connectUrl.indexOf("://") < 0) {
-          connectUrl = "http://" + connectUrl;
+          connectUrl = options.scheme + "://" + connectUrl;
         }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
