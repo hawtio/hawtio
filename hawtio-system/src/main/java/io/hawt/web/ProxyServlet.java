@@ -108,11 +108,15 @@ public class ProxyServlet extends HttpServlet {
             throws IOException, ServletException {
         // Create a GET request
         ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
-        GetMethod getMethodProxyRequest = new GetMethod(proxyDetails.getStringProxyURL());
-        // Forward the request headers
-        setProxyRequestHeaders(proxyDetails, httpServletRequest, getMethodProxyRequest);
-        // Execute the proxy request
-        this.executeProxyRequest(proxyDetails, getMethodProxyRequest, httpServletRequest, httpServletResponse);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            GetMethod getMethodProxyRequest = new GetMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, getMethodProxyRequest);
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, getMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
     }
 
     /**
@@ -128,17 +132,21 @@ public class ProxyServlet extends HttpServlet {
             throws IOException, ServletException {
         // Create a standard POST request
         ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
-        PostMethod postMethodProxyRequest = new PostMethod(proxyDetails.getStringProxyURL());
-        // Forward the request headers
-        setProxyRequestHeaders(proxyDetails, httpServletRequest, postMethodProxyRequest);
-        // Check if this is a mulitpart (file upload) POST
-        if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
-            this.handleMultipartPost(postMethodProxyRequest, httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
         } else {
-            this.handleStandardPost(postMethodProxyRequest, httpServletRequest);
+            PostMethod postMethodProxyRequest = new PostMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, postMethodProxyRequest);
+            // Check if this is a mulitpart (file upload) POST
+            if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
+                this.handleMultipartPost(postMethodProxyRequest, httpServletRequest);
+            } else {
+                this.handleStandardPost(postMethodProxyRequest, httpServletRequest);
+            }
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, postMethodProxyRequest, httpServletRequest, httpServletResponse);
         }
-        // Execute the proxy request
-        this.executeProxyRequest(proxyDetails, postMethodProxyRequest, httpServletRequest, httpServletResponse);
     }
 
     /**

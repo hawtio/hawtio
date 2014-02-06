@@ -80,6 +80,11 @@ public class ProxyDetails {
 
     public ProxyDetails(String pathInfo) {
         hostAndPort = pathInfo;
+
+        if (hostAndPort == null) {
+            return;
+        }
+
         while (hostAndPort.startsWith("/")) {
             hostAndPort = hostAndPort.substring(1);
         }
@@ -195,5 +200,9 @@ public class ProxyDetails {
 
     public String getPath() {
         return path;
+    }
+
+    public boolean isValid() {
+        return hostAndPort != null;
     }
 }
