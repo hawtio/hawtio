@@ -103,7 +103,7 @@ module Log {
           $scope.showRowDetails = false;
           return;
         }
-        Log.log.info("New index: ", newValue);
+        Log.log.debug("New index: ", newValue);
         $scope.selectedRow = $scope.logs[newValue];
         if (!$scope.showRowDetails) {
           $scope.showRowDetails = true;
