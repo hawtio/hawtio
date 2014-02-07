@@ -270,41 +270,59 @@ module Wiki {
         });
       } else if (template.profile) {
 
-        if (name.endsWith(".profile")) {
-          name = name.replace(".profile", '');
+        function toPath(profileName:string) {
+          var answer = "fabric/profiles/" + profileName;
+          answer = answer.replace(/-/g, "/");
+          answer = answer + ".profile";
+          return answer;
         }
 
-        Fabric.createProfile(workspace.jolokia, $scope.branch, name, ['default'], () => {
+        function toProfileName(path:string) {
+          var answer = path.replace(/^fabric\/profiles\//, "");
+          answer = answer.replace(/\//g, "-");
+          answer = answer.replace(/\.profile$/, "");
+          return answer;
+        }
 
-          $scope.addDialog.close();
-          notification('success', 'Created profile ' + name);
+        // strip off any profile name in case the user creates a profile while looking at
+        // another profile
+        folder = folder.replace(/\/=?(\w*)\.profile$/, "");
 
-          Fabric.newConfigFile(workspace.jolokia, $scope.branch, name, 'ReadMe.md', () => {
+        var concatenated = folder + "/" + name;
 
-            notification('info', 'Created empty Readme.md in profile ' + name);
+        var profileName = toProfileName(concatenated);
+        var targetPath = toPath(profileName);
+
+        $scope.addDialog.close();
+
+        Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], () => {
+
+          notification('success', 'Created profile ' + profileName);
+          Core.$apply($scope);
+
+          Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', () => {
+
+            notification('info', 'Created empty Readme.md in profile ' + profileName);
             Core.$apply($scope);
 
-            var contents = "Here's an empty ReadMe.md for '" + name + "', please update!";
+            var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
 
-            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, name, 'ReadMe.md', contents.encodeBase64(), () => {
-              notification('info', 'Updated Readme.md in profile ' + name);
-
+            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), () => {
+              notification('info', 'Updated Readme.md in profile ' + profileName);
               Core.$apply($scope);
-
-              var link = Wiki.viewLink($scope.branch, path + '.profile', $location);
+              var link = Wiki.viewLink($scope.branch, targetPath, $location);
               goToLink(link, $timeout, $location);
-
             }, (response) => {
-              notification('error', 'Failed to set ReadMe.md data in profile ' + name + ' due to ' + response.error);
+              notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
               Core.$apply($scope);
             });
           }, (response) => {
-            notification('error', 'Failed to create ReadMe.md in profile ' + name + ' due to ' + response.error);
+            notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
             Core.$apply($scope);
           });
 
         }, (response) => {
-          notification('error', 'Failed to create profile ' + name + ' due to ' + response.error);
+          notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
           Core.$apply($scope);
         })
 
