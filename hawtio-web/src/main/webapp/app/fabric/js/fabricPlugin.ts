@@ -42,8 +42,8 @@ module Fabric {
             when('/fabric/test', { templateUrl: templatePath + 'test.html' });
   }).
 
-    directive('fabricVersionSelector', function() {
-      return new Fabric.VersionSelector();
+    directive('fabricVersionSelector', ($templateCache) => {
+      return Fabric.VersionSelector($templateCache);
     }).
     directive('fabricProfileSelector', function() {
       return new Fabric.ProfileSelector();

@@ -321,6 +321,30 @@ module Fabric {
       }
     };
 
+    $scope.$watch('selectedContainers', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        var num = $scope.selectedContainers.length;
+        $scope.versionTitle = "Migrate " + Core.maybePlural(num, "Container") + " to:";
+      }
+    });
+
+    $scope.onVersionChange = (version) => {
+      var containerIds = $scope.selectedContainers.map(c => c.id);
+      log.info("Setting version to " + version + " on containers: " + containerIds);
+
+      Fabric.migrateContainers(jolokia, version, containerIds, () => {
+        notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
+        Core.$apply($scope);
+      }, (response) => {
+        log.error("Failed to migrate containers due to ", response.error);
+        log.info("Stack trace: ", response.stacktrace);
+        Core.$apply($scope);
+      });
+    };
+
+
+
+
     $scope.changeVersionDialog = {
       dialog: new Core.Dialog(),
       containerIds: [],
@@ -333,6 +357,7 @@ module Fabric {
         showFilter: false,
         showColumnMenu: false,
         multiSelect: false,
+        showSelectionCheckbox: true,
         filterOptions: {
           filterText: "",
           useExternalFilter: false
@@ -377,14 +402,24 @@ module Fabric {
           angular.forEach(response, (version) => {
             version.sortProperty = Core.versionToSortableString(version.id);
           });
-          $scope.changeVersionDialogVersions = response;
+          $scope.changeVersionDialogVersions = (response || []).sortBy((v) => {
+            var answer = parseFloat(v['id']);
+            if (answer === NaN) {
+              answer = v['id'];
+            }
+            return answer;
+          });
 
-          // select the latest version of the available options
-          if (response.length > 0) {
-            $scope.changeVersionDialog.gridOptions.selectedItems = [response[response.length - 1]];
-          }
           $scope.changeVersionDialog.dialog.open();
           Core.$apply($scope);
+          setTimeout(() => {
+            // select the latest version of the available options
+            $scope.changeVersionDialog.gridOptions.selectedItems = [$scope.changeVersionDialogVersions.last()];
+            Core.$apply($scope);
+
+          }, 500);
+
+
         }
 
         jolokia.execute(managerMBean, 'versions(java.util.List)',
