@@ -8,7 +8,8 @@ module Fabric {
       templateUrl: Fabric.templatePath + "versionSelector.html",
       scope: {
         selectedVersion: '=fabricVersionSelector',
-        menuBind: '='
+        menuBind: '=',
+        order: '&'
       },
       controller: ($scope, $element, $attrs, jolokia) => {
         $scope.versions = [];
@@ -47,7 +48,7 @@ module Fabric {
           var responseJson = angular.toJson(response.value);
           if ($scope.responseJson !== responseJson) {
             $scope.responseJson = responseJson;
-            $scope.versions = response.value;
+            $scope.versions = Fabric.sortVersions(response.value, $scope.desc);
             if ($scope.config) {
               $scope.config.items = $scope.versions.map((v) => {
                 return {
@@ -97,6 +98,11 @@ module Fabric {
           }
           if (!Core.isBlank($attrs['useIcon'])) {
             $scope.config.icon = $attrs['useIcon'];
+          }
+          if ('desc' in $attrs) {
+            $scope.desc = true;
+          } else {
+            $scope.desc = false;
           }
           $scope.template = $templateCache.get('withMenu');
         }

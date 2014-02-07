@@ -402,13 +402,7 @@ module Fabric {
           angular.forEach(response, (version) => {
             version.sortProperty = Core.versionToSortableString(version.id);
           });
-          $scope.changeVersionDialogVersions = (response || []).sortBy((v) => {
-            var answer = parseFloat(v['id']);
-            if (answer === NaN) {
-              answer = v['id'];
-            }
-            return answer;
-          });
+          $scope.changeVersionDialogVersions = Fabric.sortVersions(response, true);
 
           $scope.changeVersionDialog.dialog.open();
           Core.$apply($scope);
@@ -449,6 +443,19 @@ module Fabric {
       }
     };
 
+  }
+
+  export var ASC = 'asc';
+  export var DESC = 'desc';
+
+  export function sortVersions(versions, order:boolean) {
+    return (versions || []).sortBy((v) => {
+      var answer = parseFloat(v['id']);
+      if (answer === NaN) {
+        answer = v['id'];
+      }
+      return answer;
+    }, order);
   }
 
   /**
