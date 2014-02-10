@@ -1,7 +1,6 @@
 
 Logger.setLevel(Logger.INFO);
 // we'll default to 100 statements I guess...
-// TODO - make configurable...
 window['LogBuffer'] = 100;
 
 if ('localStorage' in window) {
@@ -88,6 +87,14 @@ window['logInterceptors'] = [];
 
 Logger.formatStackTraceString = function(stack) {
   var lines = stack.split("\n");
+
+  if (lines.length > 100) {
+    // too many lines, let's snip the middle so the browser doesn't bail
+    var start = 25;
+    var amount = lines.length - start * 2;
+    lines.splice(start, amount, '>>> snipped ' + amount + ' frames <<<');
+  }
+
   var stackTrace = "<div class=\"log-stack-trace\">\n";
 
   for (var j = 0; j < lines.length; j++) {
@@ -95,7 +102,7 @@ Logger.formatStackTraceString = function(stack) {
     if (line.trim().length === 0) {
       continue;
     }
-    line = line.replace(/\s/, "&nbsp;");
+    line = line.replace(/\s/g, "&nbsp;");
     stackTrace = stackTrace + "<p>" + line + "</p>\n";
   }
   stackTrace = stackTrace + "</div>\n";
