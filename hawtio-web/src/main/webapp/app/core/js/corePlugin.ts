@@ -280,7 +280,13 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               $.ajax(loginUrl, {
                 type: "POST",
                 success: (response) => {
-                  userDetails.loginDetails = response;
+                  Core.log.debug("Response from silent login: ", response);
+                  if (!angular.isObject(response)) {
+                    userDetails.loginDetails = response;
+                  } else {
+                      // hmm, maybe we got an XML document, let's log it just in case...
+                      Core.log.debug("Response is a document (ignoring this): ", Core.pathGet(response, ['children', 0, 'innerHTML']));
+                  }
                 },
                 error: (xhr, textStatus, error) => {
                   // silently ignore, we could be using the proxy

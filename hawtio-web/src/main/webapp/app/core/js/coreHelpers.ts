@@ -1549,14 +1549,6 @@ module Core {
     return profileWorkspace;
   }
 
-  // re-export these from the Core namespace, they're declared in
-  // lib/loggingInit.js
-  export var getType = (<any>window).getType;
-  export var isError = (<any>window).isError;
-  export var isArray = (<any>window).isArray;
-  export var isObject = (<any>window).isObject;
-  export var isString = (<any>window).isString;
-
 
   /**
    * Takes a value in ms and returns a human readable
@@ -1565,7 +1557,7 @@ module Core {
    */
   export function humanizeMilliseconds(value:number):String {
 
-    if (getType(value) !== 'Number') {
+    if (!angular.isNumber(value)) {
       return "XXX";
     }
 
