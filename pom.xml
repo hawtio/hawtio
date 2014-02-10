@@ -58,7 +58,8 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>337</perfectus-number>
+    <perfectus-number>340</perfectus-number>
+    <perfectus-previous-number>337</perfectus-previous-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
@@ -78,7 +79,7 @@
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
     <!-- fabric test version points to a previous release version to break cycle with fabric -->
-    <fabric-test-version>1.0.0.redhat-336</fabric-test-version>
+    <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
     <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
     <!--
     <fabric-version>99-master-SNAPSHOT</fabric-version>
