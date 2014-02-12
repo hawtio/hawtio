@@ -29,6 +29,10 @@ module UI {
           return;
         }
 
+        $element.on('$destroy', () => {
+          (<any>$element).popover('hide');
+        });
+
         (<any>$element).popover({
           title: title,
           trigger: trigger,
@@ -42,7 +46,7 @@ module UI {
               return placement;
             }
 
-            var el = $(element);
+            var el = $element;
             var offset = el.offset();
             /* not sure on auto bottom/top
 
