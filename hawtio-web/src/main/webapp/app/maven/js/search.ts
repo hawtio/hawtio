@@ -101,11 +101,22 @@ module Maven {
       }
     };
 
+    var RESPONSE_LIMIT = 50;
+
     function render(response) {
       log.debug("Search done, preparing result.");
       $scope.done = true;
       $scope.inProgress = false;
-      $scope.artifacts = response;
+      // let's limit the reponse to avoid blowing up
+      // the browser until we start using a widget
+      // that supports pagination
+      if (response.length > RESPONSE_LIMIT) {
+        $scope.tooManyResponses = "This search returned " + response.length + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+      } else {
+        $scope.tooManyResponses = "";
+      }
+      $scope.artifacts = response.first(RESPONSE_LIMIT);
+
       Core.$apply($scope);
     }
   }
