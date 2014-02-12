@@ -3869,3 +3869,14 @@ span.hawtio-dropdown .dropdown-menu {
   text-shadow: 2px 0 2px   rgba(0, 0, 0, 0.3);
 
 }
+
+.modal {
+  width: 660px;
+  margin: -250px 0 0 -320px;
+}
+
+.scrollable-section {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 260px;
+}
