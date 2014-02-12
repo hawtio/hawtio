@@ -267,7 +267,7 @@ module Fabric {
             var id = profileRequirement.profile;
             var min = profileRequirement.minimumInstances;
             if (id) {
-              var profile = answer.find({id: id});
+              var profile = answer.find(p => p.id);
 
               function requireStyle() {
                 var count:any = 0;
