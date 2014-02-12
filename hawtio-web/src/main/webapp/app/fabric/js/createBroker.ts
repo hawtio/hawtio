@@ -26,6 +26,10 @@ module Fabric {
       notification("info", "Creating broker " + $scope.message);
       var tmpJson = JSON.stringify($scope.entity, null, '  ');
       jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
+
+      // now lets switch to the brokers view
+      $location.path("/fabric/mq/brokers");
+      Core.$apply($scope);
     };
 
     $scope.brokerNameExists = () => {
@@ -161,8 +165,6 @@ module Fabric {
 
     function onSave(response) {
       notification("success", "Created broker " + $scope.message);
-      // now lets switch to the brokers view
-      $location.path("/fabric/mq/brokers");
       Core.$apply($scope);
     }
   }
