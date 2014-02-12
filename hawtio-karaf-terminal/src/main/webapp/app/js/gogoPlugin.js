@@ -69,7 +69,7 @@ var Gogo = (function() {
 
       // Set up top-level link to our plugin
       workspace.topLevelTabs.push({
-        id: "karaf.terminal"
+        id: "karaf.terminal",
         content: "Terminal",
         title: "Open a terminal to the Karaf server",
         isValid: function () { return workspace.treeContainsDomainAndProperties("hawtio", {type: "plugin", name: "hawtio-karaf-terminal"}) },
