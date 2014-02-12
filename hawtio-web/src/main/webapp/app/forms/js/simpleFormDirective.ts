@@ -211,6 +211,11 @@ module Forms {
 
         if (angular.isDefined(onSubmit)) {
           form.submit(() => {
+            log.debug("child scope: ", childScope);
+            log.debug("form name: ", config);
+            if (childScope[config.name].$invalid) {
+              return false;
+            }
             var entity = scope[entityName];
             onSubmit(entity, form);
             return false;

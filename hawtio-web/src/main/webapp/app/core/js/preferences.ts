@@ -55,7 +55,9 @@ module Core {
     $scope.hosts = [];
     $scope.newHost = {};
 
-    $scope.addRegexDialog = false;
+    $scope.addRegexDialog = new Core.Dialog();
+    $scope.forms = {};
+
     $scope.perspectiveId;
     $scope.perspectives = [];
 
@@ -64,11 +66,13 @@ module Core {
       properties: {
         'name': {
           description: 'Indicator name',
-          type: 'string'
+          type: 'string',
+          required: true
         },
         'regex': {
           description: 'Indicator regex',
-          type: 'string'
+          type: 'string',
+          required: true
         }
       }
     };
@@ -89,7 +93,8 @@ module Core {
       $scope.hosts[index + 1] = tmp
     };
 
-    $scope.onOk = () => {
+    $scope.onOk = (json, form) => {
+      $scope.addRegexDialog.close();
       $scope.newHost['color'] = UI.colors.sample();
       if (!angular.isArray($scope.hosts)) {
         $scope.hosts = [Object.clone($scope.newHost)];
@@ -98,6 +103,7 @@ module Core {
       }
 
       $scope.newHost = {};
+      Core.$apply($scope);
     };
 
     $scope.plugins = [];
