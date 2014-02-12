@@ -525,7 +525,7 @@ module Fabric {
 
   export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile:any) {
     var path = '';
-    if (Core.isString(profile)) {
+    if (angular.isString(profile)) {
       path = profileLink(workspace, jolokia, localStorage, versionId, profile);
     } else {
       path = profileLink(workspace, jolokia, localStorage, versionId, profile.id);
