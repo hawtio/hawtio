@@ -23,7 +23,7 @@ module UI {
             propertyName = attrs['property'];
           }
           return propertyName;
-        }
+        };
 
         scope.propertyName = scope.getPropertyName();
 
@@ -32,6 +32,12 @@ module UI {
             return;
           }
           scope.text = ngModel.$viewValue[scope.propertyName];
+        };
+
+        scope.getInputStyle = () => {
+          return {
+            width: scope.text.length / 1.5 + 'em'
+          }
         };
 
         scope.showEdit = function () {

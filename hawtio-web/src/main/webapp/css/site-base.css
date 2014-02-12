@@ -528,12 +528,12 @@ editable-property {
   background: white;
   border-bottom: 1px solid #d4d4d4;
   z-index: 10000;
-  width: 278px;
+  min-width: 278px;
   border: 1px solid #cecdcd;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
-.ep[ng-show=editing] form fieldset i {
+.ep[ng-show=editing] > form > fieldset > i {
   position: relative;
   top: 2px;
 }
@@ -546,7 +546,7 @@ editable-property {
   -webkit-transition: opacity 0.25s ease-in-out;
 }
 
-.ep form fieldset input {
+.ep > form > fieldset > input {
   border: 0;
 }
 
