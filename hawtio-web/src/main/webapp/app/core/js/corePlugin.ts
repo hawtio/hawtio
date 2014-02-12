@@ -281,11 +281,14 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
                 type: "POST",
                 success: (response) => {
                   Core.log.debug("Response from silent login: ", response);
-                  if (!angular.isObject(response)) {
+                  if (angular.isDefined(response['credentials'] || angular.isDefined(response['principals']))) {
                     userDetails.loginDetails = response;
                   } else {
+                    var doc = Core.pathGet(response, ['children', 0, 'innerHTML']);
                       // hmm, maybe we got an XML document, let's log it just in case...
-                      Core.log.debug("Response is a document (ignoring this): ", Core.pathGet(response, ['children', 0, 'innerHTML']));
+                      if (doc) {
+                        Core.log.debug("Response is a document (ignoring this): ", doc);
+                      }
                   }
                 },
                 error: (xhr, textStatus, error) => {
