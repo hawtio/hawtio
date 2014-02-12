@@ -528,8 +528,8 @@ editable-property {
   background: white;
   border-bottom: 1px solid #d4d4d4;
   z-index: 10000;
-  min-width: 278px;
   border: 1px solid #cecdcd;
+  white-space: nowrap;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 

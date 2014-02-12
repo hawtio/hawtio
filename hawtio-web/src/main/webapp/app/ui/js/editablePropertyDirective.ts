@@ -35,8 +35,11 @@ module UI {
         };
 
         scope.getInputStyle = () => {
+          if (!scope.text) {
+            return {};
+          }
           return {
-            width: scope.text.length / 1.5 + 'em'
+            width: (scope.text + "").length / 1.5 + 'em'
           }
         };
 
