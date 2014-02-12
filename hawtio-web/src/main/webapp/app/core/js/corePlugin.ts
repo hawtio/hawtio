@@ -506,6 +506,8 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           setTimeout(() => {
             $("#main-body").fadeIn(2000).after(() => {
               Core.log.info(branding.appName + " started");
+              Core.$apply($rootScope);
+              $(window).trigger('resize');
             });
           }, 500);
 
