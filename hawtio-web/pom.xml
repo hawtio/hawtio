@@ -15,13 +15,12 @@
   <properties>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <tsc-filelist>${basedir}/target/ts-files.txt</tsc-filelist>
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
-    <tsc-executable>tsc</tsc-executable>
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
     <schema-outdir>${webapp-outdir}/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
+    <watch>false</watch>
   </properties>
 
 
@@ -366,13 +365,12 @@
         </executions>
         <configuration>
           <sourceDirectory>src/main/webapp/app</sourceDirectory>
-          <targetDirectory>target/ts</targetDirectory>
-          <libDTS>src/main/tsc/lib.d.ts</libDTS>
           <libraryDirectory>src/main/d.ts</libraryDirectory>
           <noStandardLib>false</noStandardLib>
           <useTsc>true</useTsc>
           <targetVersion>ES5</targetVersion>
           <targetFile>${appjs-outfile}</targetFile>
+          <watch>${watch}</watch>
         </configuration>
       </plugin>
 
@@ -477,19 +475,6 @@
                     <include name="manifest.json"/>
                   </fileset>
                 </copy>
-
-                <echo>Generating typescript file list</echo>
-                <fileset id="tsc-files" dir="${basedir}">
-                  <include name="src/main/webapp/**/*.ts"/>
-                  <include name="src/main/d.ts/*"/>
-                </fileset>
-                <!-- <property name="files" refid="tsc-files"/> -->
-                <pathconvert pathsep="${line.separator}"
-                             property="files"
-                             refid="tsc-files">
-                  <!-- <map from="${basedir}/" to=""/> -->
-                </pathconvert>
-                <echo file="${tsc-filelist}">${files}</echo>
 
               </target>
             </configuration>
@@ -784,40 +769,8 @@
       <id>watch</id>
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
+        <watch>true</watch>
       </properties>
-      <build>
-        <plugins>
-
-          <plugin>
-            <groupId>io.hawt</groupId>
-            <artifactId>typescript-maven-plugin</artifactId>
-            <version>0.0.1</version>
-            <executions>
-              <execution>
-                <id>compile</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>tsc</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <sourceDirectory>src/main/webapp/app</sourceDirectory>
-              <!--
-              <targetDirectory>target/ts</targetDirectory>
-              <libDTS>src/main/tsc/lib.d.ts</libDTS>
-              -->
-              <libraryDirectory>src/main/d.ts</libraryDirectory>
-              <noStandardLib>false</noStandardLib>
-              <useTsc>true</useTsc>
-              <targetVersion>ES5</targetVersion>
-              <targetFile>${appjs-outfile}</targetFile>
-              <watch>true</watch>
-            </configuration>
-          </plugin>
-
-        </plugins>
-      </build>
     </profile>
 
     <profile>

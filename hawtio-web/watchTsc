@@ -1,7 +1,0 @@
-#!/bin/bash 
-
-tsFiles=$(find . -type f -name *.ts | grep -v [.]d[.]ts | grep -v /test/ | grep -v target)
-
-tsc --watch --target es5 --out src/main/webapp/app/app.js src/main/d.ts/* $tsFiles
-
-
