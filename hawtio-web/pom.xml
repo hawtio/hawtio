@@ -282,7 +282,6 @@
   </dependencies>
 
   <build>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -353,6 +352,31 @@
     <plugins>
 
       <plugin>
+        <groupId>io.hawt</groupId>
+        <artifactId>typescript-maven-plugin</artifactId>
+        <version>0.0.1</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>tsc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>src/main/webapp/app</sourceDirectory>
+          <targetDirectory>target/ts</targetDirectory>
+          <libDTS>src/main/tsc/lib.d.ts</libDTS>
+          <libraryDirectory>src/main/d.ts</libraryDirectory>
+          <noStandardLib>false</noStandardLib>
+          <useTsc>true</useTsc>
+          <targetVersion>ES5</targetVersion>
+          <targetFile>${appjs-outfile}</targetFile>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- skip dummy tests -->
@@ -383,28 +407,6 @@
                   </fileset>
                 </copy>
 
-              </target>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <echo>Compiling typescript files to ${appjs-outfile}</echo>
-                <exec executable="${tsc-executable}"
-                      dir="${basedir}"
-                      failonerror="true">
-                  <arg value="--target"/>
-                  <arg value="es5"/>
-                  <arg value="--out"/>
-                  <arg value="${appjs-outfile}"/>
-                  <arg value="@${tsc-filelist}"/>
-                </exec>
               </target>
             </configuration>
           </execution>
@@ -485,7 +487,7 @@
                 <pathconvert pathsep="${line.separator}"
                              property="files"
                              refid="tsc-files">
-                  <map from="${basedir}/" to=""/>
+                  <!-- <map from="${basedir}/" to=""/> -->
                 </pathconvert>
                 <echo file="${tsc-filelist}">${files}</echo>
 

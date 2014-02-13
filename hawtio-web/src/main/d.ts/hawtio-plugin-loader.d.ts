@@ -1,4 +1,4 @@
-module Hawtio {
+declare module Hawtio {
 
   export interface PluginLoaderStatic {
 
