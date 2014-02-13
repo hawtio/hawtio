@@ -44,6 +44,8 @@ module Fabric {
       return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&title=" + encodeURIComponent(title);
     };
 
+    $scope.versionTitle = "Migrate to:";
+
     $scope.selectedProfiles = [];
     $scope.selectedProfilesDialog = [];
     $scope.selectedProfilesString = '';
@@ -176,10 +178,6 @@ module Fabric {
         $scope.selectedProfilesDialog = [];
         Core.$apply($scope);
       });
-    };
-
-    $scope.showChangeVersionDialog = () => {
-      $scope.changeVersionDialog.open([$scope.container]);
     };
 
     $scope.getArguments = () => {

@@ -8,8 +8,9 @@ module Fabric {
       templateUrl: Fabric.templatePath + "versionSelector.html",
       scope: {
         selectedVersion: '=fabricVersionSelector',
-        menuBind: '=',
-        order: '&'
+        availableVersions:'=?',
+        menuBind: '=?',
+        exclude: '@'
       },
       controller: ($scope, $element, $attrs, jolokia) => {
         $scope.versions = [];
@@ -43,30 +44,68 @@ module Fabric {
           }
         }, true);
 
+        function excludeVersions(versions, exclude) {
+          if (angular.isString(exclude)) {
+            if (exclude.has("[") && exclude.has("]")) {
+              exclude = angular.fromJson(exclude);
+            } else {
+              exclude = [exclude];
+            }
+          }
+          //log.debug("exclude: ", exclude);
+          if (!exclude || exclude.length === 0) {
+            return versions;
+          }
+          return versions.exclude((v) => {
+            return exclude.some((e) => { return e === v.id });
+          });
+        }
+
+        function generateMenu(versions) {
+          return $scope.versions.map((v) => {
+            return {
+              title: v.id,
+              action: () => {
+                $scope.selectedVersion = v;
+                if (!Core.isBlank($scope.onPick)) {
+                  $scope.$parent.$eval($scope.onPick, {
+                    version: v['id']
+                  });
+                }
+              }
+            }
+          });
+        }
+
+        $scope.$watch('exclude', (newValue, oldValue) => {
+          if (newValue !== oldValue) {
+            // need to rebuild the original version list
+            if ($scope.responseJson) {
+              var versions  = angular.fromJson($scope.responseJson);
+              buildArray(versions);
+            }
+          }
+        });
+
+        function buildArray(versions) {
+          //log.debug("Building array from: ", versions);
+          $scope.versions = Fabric.sortVersions(versions, $scope.desc);
+          $scope.versions = excludeVersions($scope.versions, $scope.exclude);
+          if ($scope.config) {
+            $scope.config.items = generateMenu($scope.versions);
+          }
+          $scope.availableVersions = $scope.versions;
+        }
 
         $scope.render = (response) => {
           var responseJson = angular.toJson(response.value);
           if ($scope.responseJson !== responseJson) {
             $scope.responseJson = responseJson;
-            $scope.versions = Fabric.sortVersions(response.value, $scope.desc);
-            if ($scope.config) {
-              $scope.config.items = $scope.versions.map((v) => {
-                return {
-                  title: v.id,
-                  action: () => {
-                    $scope.selectedVersion = v;
-                    if (!Core.isBlank($scope.onPick)) {
-                      $scope.$parent.$eval($scope.onPick, {
-                        version: v['id']
-                      });
-                    }
-                  }
-                }
-              });
-            }
+            buildArray(response.value);
             Core.$apply($scope);
           }
         };
+
         Core.register(jolokia, $scope, {
           type: 'exec',
           mbean: managerMBean,
@@ -99,11 +138,7 @@ module Fabric {
           if (!Core.isBlank($attrs['useIcon'])) {
             $scope.config.icon = $attrs['useIcon'];
           }
-          if ('desc' in $attrs) {
-            $scope.desc = true;
-          } else {
-            $scope.desc = false;
-          }
+          $scope.desc = 'desc' in $attrs;
           $scope.template = $templateCache.get('withMenu');
         }
       }

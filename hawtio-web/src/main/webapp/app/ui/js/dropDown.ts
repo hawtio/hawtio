@@ -41,6 +41,13 @@ module UI {
           }
         };
 
+        $scope.$watch('config.items', (newValue, oldValue) => {
+          if (newValue !== oldValue) {
+            // just add some space to force a redraw
+            $scope.menuStyle = $scope.menuStyle + " ";
+          }
+        }, true);
+
         $scope.submenu = (config) => {
           if (config && config.submenu) {
             return "sub-menu";

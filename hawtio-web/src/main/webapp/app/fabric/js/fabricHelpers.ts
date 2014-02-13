@@ -150,7 +150,20 @@ module Fabric {
           Core.$apply($scope);
         }
       })
-    }
+    };
+
+    $scope.getVersionsToExclude = () => {
+      if (!$scope.selectedContainers || $scope.selectedContainers.length === 0) {
+        return [];
+      }
+      var answer = $scope.selectedContainers.map(c => c['versionId']);
+      answer = answer.unique();
+      if (answer.length > 1) {
+        return [];
+      } else {
+        return answer;
+      }
+    };
 
     $scope.hasFabricWiki = () => {
       return Git.isGitMBeanFabric(workspace);
@@ -329,7 +342,17 @@ module Fabric {
     });
 
     $scope.onVersionChange = (version) => {
-      var containerIds = $scope.selectedContainers.map(c => c.id);
+
+      var containerIds = [];
+
+      if (angular.isDefined($scope.selectedContainers)) {
+        containerIds = $scope.selectedContainers.map(c => c.id);
+      } else if (angular.isDefined($scope.row)) {
+        containerIds = [$scope.row.id];
+      } else {
+        return;
+      }
+
       log.info("Setting version to " + version + " on containers: " + containerIds);
 
       Fabric.migrateContainers(jolokia, version, containerIds, () => {
@@ -342,111 +365,7 @@ module Fabric {
       });
     };
 
-
-
-
-    $scope.changeVersionDialog = {
-      dialog: new Core.Dialog(),
-      containerIds: [],
-      versions: [],
-
-      gridOptions: {
-        data: 'changeVersionDialogVersions',
-        selectedItems: [],
-
-        showFilter: false,
-        showColumnMenu: false,
-        multiSelect: false,
-        showSelectionCheckbox: true,
-        filterOptions: {
-          filterText: "",
-          useExternalFilter: false
-        },
-        sortInfo: {
-          fields: ["sortProperty"],
-          directions: ["desc"]
-        },
-        columnDefs: [
-          {
-            field: 'sortProperty',
-            displayName: 'Select New Version',
-            cellTemplate: '<div class="ngCellText">{{row.entity.id}}</div>'
-          }
-        ]
-      },
-
-      openNewVersionDialog: () => {
-        $scope.changeVersionDialog.dialog.close();
-        setTimeout(() => {
-          $scope.createVersionDialog.open();
-          Core.$apply($scope);
-        }, 500);
-      },
-
-      open: (containers) => {
-        $scope.changeVersionDialog.containers = containers || [];
-        $scope.changeVersionDialog.gridOptions.selectedItems = [];
-
-        function render(response) {
-          if (response) {
-            // if there's only one current version ID, lets filter that one out of the list
-            var currentIds = $scope.changeVersionDialog.containers.map(c => c.versionId).unique();
-            if (currentIds && currentIds.length === 1) {
-              var currentId = currentIds[0];
-              response = response.filter(v => {
-                return v.id !== currentId;
-              });
-            }
-          }
-          // add a sorting column
-          angular.forEach(response, (version) => {
-            version.sortProperty = Core.versionToSortableString(version.id);
-          });
-          $scope.changeVersionDialogVersions = Fabric.sortVersions(response, true);
-
-          $scope.changeVersionDialog.dialog.open();
-          Core.$apply($scope);
-          setTimeout(() => {
-            // select the latest version of the available options
-            $scope.changeVersionDialog.gridOptions.selectedItems = [$scope.changeVersionDialogVersions.last()];
-            Core.$apply($scope);
-
-          }, 500);
-
-
-        }
-
-        jolokia.execute(managerMBean, 'versions(java.util.List)',
-          ['id', 'defaultVersion'], onSuccess(render));
-      },
-      onOk: () => {
-        $scope.changeVersionDialog.dialog.close();
-        var selectedItems = $scope.changeVersionDialog.gridOptions.selectedItems;
-        if (selectedItems && selectedItems.length) {
-          var newVersionId = selectedItems[0].id;
-          if (newVersionId) {
-            var containerIds = $scope.changeVersionDialog.containers.map(c => c.id);
-            log.info("Setting version to " + newVersionId + " on containers: " + containerIds);
-
-            Fabric.migrateContainers(jolokia, newVersionId, containerIds, () => {
-              notification('success', "Successfully migrated containers");
-            }, (response) => {
-              notification('error', "Failed to migrate containers due to " + response.error);
-            });
-
-            setTimeout(() => {
-              $scope.changeVersionDialog.dialog.close();
-              Core.$apply($scope);
-            }, 100);
-          }
-        }
-      }
-    };
-
   }
-
-  export var ASC = 'asc';
-  export var DESC = 'desc';
 
   export function sortVersions(versions, order:boolean) {
     return (versions || []).sortBy((v) => {
