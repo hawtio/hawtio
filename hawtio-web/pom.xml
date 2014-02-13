@@ -787,36 +787,35 @@
       </properties>
       <build>
         <plugins>
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
 
+          <plugin>
+            <groupId>io.hawt</groupId>
+            <artifactId>typescript-maven-plugin</artifactId>
+            <version>0.0.1</version>
+            <executions>
               <execution>
                 <id>compile</id>
                 <phase>compile</phase>
                 <goals>
-                  <goal>run</goal>
+                  <goal>tsc</goal>
                 </goals>
-                <configuration>
-                  <target>
-                    <echo>Compiling typescript files to ${appjs-outfile}</echo>
-                    <echo>Watching typescript files for changes...</echo>
-                    <exec executable="${tsc-executable}"
-                      dir="${basedir}"
-                      failonerror="true">
-                      <arg value="--watch"/>
-                      <arg value="--target"/>
-                      <arg value="es5"/>
-                      <arg value="--out"/>
-                      <arg value="${appjs-outfile}"/>
-                      <arg value="@${tsc-filelist}"/>
-                    </exec>
-                  </target>
-                </configuration>
               </execution>
             </executions>
-
+            <configuration>
+              <sourceDirectory>src/main/webapp/app</sourceDirectory>
+              <!--
+              <targetDirectory>target/ts</targetDirectory>
+              <libDTS>src/main/tsc/lib.d.ts</libDTS>
+              -->
+              <libraryDirectory>src/main/d.ts</libraryDirectory>
+              <noStandardLib>false</noStandardLib>
+              <useTsc>true</useTsc>
+              <targetVersion>ES5</targetVersion>
+              <targetFile>${appjs-outfile}</targetFile>
+              <watch>true</watch>
+            </configuration>
           </plugin>
+
         </plugins>
       </build>
     </profile>
