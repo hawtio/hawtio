@@ -111,9 +111,9 @@ module Wiki {
       this.git().createDirectory(branch, fullPath, commitMessage, fn);
     }
 
-    public revertTo(objectId:string, blobPath:string, commitMessage:string, fn) {
+    public revertTo(branch:string, objectId:string, blobPath:string, commitMessage:string, fn) {
       var fullPath = this.getLogPath(blobPath);
-      this.git().revertTo(objectId, fullPath, commitMessage, fn);
+      this.git().revertTo(branch, objectId, fullPath, commitMessage, fn);
     }
 
     public rename(branch:string, oldPath:string,  newPath:string, commitMessage:string, fn) {

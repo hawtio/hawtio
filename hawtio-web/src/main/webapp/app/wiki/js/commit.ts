@@ -58,7 +58,7 @@ module Wiki {
         var objectId = $scope.commitId;
         if (path && objectId) {
           var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
-          wikiRepository.revertTo(objectId, $scope.pageId, commitMessage, (result) => {
+          wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, (result) => {
             Wiki.onComplete(result);
             // now lets update the view
             updateView();
