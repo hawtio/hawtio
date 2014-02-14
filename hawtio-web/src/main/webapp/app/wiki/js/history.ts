@@ -64,7 +64,6 @@ module Wiki {
       }
     });
     $scope.canRevert = () => {
-      log.debug("selected: ", $scope.selectedItems);
       return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
     };
 
