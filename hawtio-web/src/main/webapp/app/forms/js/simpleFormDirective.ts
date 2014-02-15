@@ -304,6 +304,10 @@ module Forms {
         // TODO should also support getting inputs from the template cache, maybe
         // for type="template"
         var propTypeName = property.type;
+        // make sure we detect string as string
+        if ("java.lang.String" === propTypeName) {
+          propTypeName = "string";
+        }
         var propSchema = Forms.lookupDefinition(propTypeName, schema);
         if (!propSchema) {
           propSchema = Forms.lookupDefinition(propTypeName, fullSchema);
