@@ -144,9 +144,12 @@ module Wiki {
         if (xmlNode) {
           var text = Core.xmlNodeToString(xmlNode);
           if (text) {
+            var decoded = decodeURIComponent(text);
+            log.debug("Saving xml decoded: " + decoded);
+
             // lets save the file...
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-            wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
+            wikiRepository.putPage($scope.branch, $scope.pageId, decoded, commitMessage, (status) => {
               Wiki.onComplete(status);
               notification("success", "Saved " + $scope.pageId);
               $scope.modified = false;

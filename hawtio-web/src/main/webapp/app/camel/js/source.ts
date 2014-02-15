@@ -95,10 +95,12 @@ module Camel {
     $scope.saveRouteXml = () => {
       var routeXml = $scope.source;
       if (routeXml) {
+        var decoded = decodeURIComponent(routeXml);
+        log.debug("addOrUpdateRoutesFromXml xml decoded: " + decoded);
         var jolokia = workspace.jolokia;
         var mbean = getSelectionCamelContextMBean(workspace);
         if (mbean) {
-          jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", routeXml, onSuccess(saveWorked));
+          jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", decoded, onSuccess(saveWorked));
         } else {
           notification("error", "Could not find CamelContext MBean!");
         }
