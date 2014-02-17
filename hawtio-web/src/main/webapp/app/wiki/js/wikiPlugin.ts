@@ -202,6 +202,11 @@ module Wiki {
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
             });
+
+            if (!Fabric.hasFabric(workspace)) {
+              Wiki.documentTemplates = Wiki.documentTemplates.exclude((t) => t.fabricOnly);
+            }
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

@@ -42,11 +42,20 @@ module Wiki {
       exemplar: "New Folder"
     },
     {
-      label: "Fabric Profile",
-      tooltip: "Create a new empty Fabric profile.  Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
+      label: "Fabric8 Profile",
+      tooltip: "Create a new empty Fabric8 profile.  Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
       profile: true,
       addClass: "icon-book green",
-      exemplar: "user-profile"
+      exemplar: "user-profile",
+      fabricOnly: true
+    },
+    {
+      label: "Fabric8 Version",
+      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name",
+      version: true,
+      addClass: "icon-book green",
+      exemplar: "MyVersion",
+      fabricOnly: true
     },
     {
       label: "Properties File",
