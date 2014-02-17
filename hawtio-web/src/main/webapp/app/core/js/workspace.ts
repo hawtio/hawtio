@@ -41,7 +41,8 @@ module Core {
                 public $compile:ng.ICompileService,
                 public $templateCache:ng.ITemplateCacheService,
                 public localStorage:WindowLocalStorage,
-                public $rootScope) {
+                public $rootScope,
+                public userDetails) {
 
       // set defaults
       if (!('autoRefresh' in localStorage)) {
@@ -60,7 +61,7 @@ module Core {
      */
     public createChildWorkspace(location): Workspace {
       var child = new Workspace(this.jolokia, this.jolokiaStatus, this.jmxTreeLazyLoadRegistry,
-              this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope);
+              this.$location, this.$compile, this.$templateCache, this.localStorage, this.$rootScope, this.userDetails);
       // lets copy across all the properties just in case
       angular.forEach(this, (value, key) => child[key] = value);
       child.$location = location;

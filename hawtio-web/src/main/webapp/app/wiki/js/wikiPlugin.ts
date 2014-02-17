@@ -33,8 +33,8 @@ module Wiki {
                       when('/wiki' + path + '/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'});
             });
     }).
-          factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage, userDetails) {
-            return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage, userDetails));
+          factory('wikiRepository',function (workspace:Workspace, jolokia, localStorage) {
+            return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
           }).
           factory('fileExtensionTypeRegistry',function () {
             return {

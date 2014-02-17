@@ -1535,14 +1535,14 @@ module Core {
    * @param localStorage
    * @return {Core.Workspace|Workspace}
    */
-  export function createRemoteWorkspace(remoteJolokia, $location, localStorage, $rootScope = null, $compile = null, $templateCache = null) {
+  export function createRemoteWorkspace(remoteJolokia, $location, localStorage, $rootScope = null, $compile = null, $templateCache = null, userDetails = null) {
     // lets create a child workspace object for the remote container
     var jolokiaStatus = {
       xhr: null
     };
     // disable reload notifications
     var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
-    var profileWorkspace = new Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope);
+    var profileWorkspace = new Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
 
     log.info("Loading the profile using jolokia: " + remoteJolokia);
     profileWorkspace.loadTree();
