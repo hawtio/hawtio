@@ -114,8 +114,6 @@ module Branding {
         } else {
           setTimeout(() => {
             Branding.log.debug("Branding.enabled not yet set: ", Branding.enabled);
-            var branding = branding;
-            var $rootScope = $rootScope;
             if (Branding.enabled) {
               enableBranding(branding);
               Core.$apply($rootScope);
