@@ -53,7 +53,7 @@ module Wiki {
       label: "Fabric8 Version",
       tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name",
       version: true,
-      addClass: "icon-book green",
+      addClass: "icon-code-fork green",
       exemplar: "MyVersion",
       fabricOnly: true
     },

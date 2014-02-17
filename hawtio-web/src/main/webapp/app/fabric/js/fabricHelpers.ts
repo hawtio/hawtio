@@ -348,10 +348,14 @@ module Fabric {
           if ($rootScope) {
             $rootScope.$broadcast('wikiBranchesUpdated');
           }
+          $location.path('/wiki/branch/' + response.value.id + '/view/fabric/profiles');
+          Core.$apply($scope);
         };
 
         var error = function (response) {
-          log.error("Failed to create version due to :", response.error, " stack trace: ", response.stacktrace);
+          log.error("Failed to create version due to :", response.error);
+          log.info("stack trace: ", response.stacktrace);
+          Core.$apply($scope);
         };
 
         var newVersionName = $scope.createVersionDialog.newVersionName;
