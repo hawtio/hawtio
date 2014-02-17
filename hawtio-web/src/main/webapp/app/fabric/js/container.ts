@@ -67,21 +67,6 @@ module Fabric {
       doStopContainer($scope, jolokia, $scope.containerId);
     };
 
-    $scope.maybeDelete = () => {
-      $scope.deleteContainerDialog.open();
-    };
-
-    $scope.delete = () => {
-      // avoid any nasty errors that the container doesn't existing anymore
-      Core.unregister(jolokia, $scope);
-      $location.path('/fabric/containers');
-
-      doDeleteContainer($scope, jolokia, $scope.containerId, () => {
-        log.debug("Deleted: ", $scope.containerId);
-        Core.$apply($scope);
-      });
-    };
-
     $scope.start = () => {
       doStartContainer($scope, jolokia, $scope.containerId);
     };

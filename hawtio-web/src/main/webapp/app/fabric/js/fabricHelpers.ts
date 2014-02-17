@@ -300,6 +300,36 @@ module Fabric {
       }
     };
 
+    $scope.confirmDeleteDialog = {
+      dialog: new Core.Dialog(),
+      onOk: () => {
+        $scope.confirmDeleteDialog.dialog.close();
+        if (angular.isDefined($scope.containerId)) {
+          // avoid any nasty errors that the container doesn't existing anymore
+          Core.unregister(jolokia, $scope);
+          $location.path('/fabric/containers');
+
+          Fabric.doDeleteContainer($scope, jolokia, $scope.containerId);
+
+        } else if (angular.isDefined($scope.selectedContainers)) {
+
+          $scope.selectedContainers.each((c) => {
+            doDeleteContainer($scope, jolokia, c.id);
+          });
+
+        } else {
+          // bail...
+          log.info("Asked to delete containers but no containerId or selectedContainers attributes available");
+        }
+      },
+      open: () => {
+        $scope.confirmDeleteDialog.dialog.open();
+      },
+      close: () => {
+        $scope.confirmDeleteDialog.dialog.close();
+      }
+    };
+
     $scope.createVersionDialog = {
       dialog: new Core.Dialog(),
       newVersionName: "",

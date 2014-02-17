@@ -354,14 +354,6 @@ module Fabric {
         container.selected = true;
       };
 
-
-      $scope.deleteSelectedContainers = () => {
-        $scope.selectedContainers.each((c) => {
-          $scope.deleteContainer(c.id);
-        });
-      };
-
-
       $scope.startSelectedContainers = () => {
         $scope.selectedContainers.each((c) => {
           $scope.startContainer(c.id);
@@ -374,12 +366,6 @@ module Fabric {
           $scope.stopContainer(c.id);
         });
       };
-
-
-      $scope.deleteContainer = (name) => {
-        doDeleteContainer($scope, jolokia, name);
-      };
-
 
       $scope.startContainer = (name) => {
         doStartContainer($scope, jolokia, name);
