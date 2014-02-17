@@ -183,7 +183,7 @@ module Git {
    *
    */
   export class JolokiaGit implements GitRepository {
-    constructor(public mbean:string, public jolokia, public localStorage, public branch = "master") {
+    constructor(public mbean:string, public jolokia, public localStorage, public userDetails, public branch = "master") {
     }
 
     public exists(branch:string, path:string, fn) {
@@ -265,7 +265,7 @@ module Git {
     // TODO move...
 
     public getUserName():string {
-      return this.localStorage["gitUserName"] || "anonymous";
+      return this.localStorage["gitUserName"] || this.userDetails.username || "anonymous";
     }
 
     public getUserEmail():string {

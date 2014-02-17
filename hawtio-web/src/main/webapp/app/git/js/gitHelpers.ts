@@ -3,10 +3,10 @@
  */
 module Git {
 
-  export function createGitRepository(workspace:Workspace, jolokia, localStorage):GitRepository {
+  export function createGitRepository(workspace:Workspace, jolokia, localStorage, userDetails):GitRepository {
     var mbean = getGitMBean(workspace);
     if (mbean && jolokia) {
-      return new JolokiaGit(mbean, jolokia, localStorage);
+      return new JolokiaGit(mbean, jolokia, localStorage, userDetails);
     }
     // TODO use local storage to make a little wiki thingy?
     return null;
