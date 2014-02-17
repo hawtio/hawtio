@@ -29,7 +29,7 @@ module DataTable {
       var defaultPrimaryKeyFn = (entity, idx) => {
         // default function to use id/_id/name as primary key, and fallback to use index
         return entity["id"] || entity["_id"] || entity["name"] || idx;
-      }
+      };
 
       var config = $scope.config;
 
@@ -191,6 +191,15 @@ module DataTable {
         return '';
       };
 
+      $scope.showRow = (row) => {
+        var filter = Core.pathGet($scope, ['config', 'filterOptions', 'filterText']);
+        if (Core.isBlank(filter)) {
+          return true;
+        }
+        var rowJson = angular.toJson(row);
+        return rowJson.has(filter);
+      };
+
       $scope.isSelected = (row) => {
         return config.selectedItems.some(row.entity);
       };
@@ -209,7 +218,7 @@ module DataTable {
           row.entity.index = row.index;
           config.selectedItems.push(row.entity);
         }
-      }
+      };
 
       // lets add the header and row cells
       var rootElement = $element;
@@ -226,7 +235,7 @@ module DataTable {
       }
       var headHtml = "<thead><tr>";
       // use a function to check if a row is selected so the UI can be kept up to date asap
-      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index | filter:config.filterOptions.filterText' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
+      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?

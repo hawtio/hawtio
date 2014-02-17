@@ -126,7 +126,7 @@ module Threads {
       } else {
         return "";
       }
-    }
+    };
 
     $scope.deselect = () => {
       $scope.threadGridOptions.selectedItems = [];
