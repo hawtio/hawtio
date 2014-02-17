@@ -243,19 +243,22 @@ module Fabric {
         notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
         Core.$apply($scope);
       });
-    }
+    };
 
 
     $scope.goto = (location) => {
       $location.url(location);
-    }
+    };
 
     $scope.addNewThing = (title, type, current) => {
+      if (Core.isBlank($scope.newThingName)) {
+        return;
+      }
       $scope.thingName = title;
       $scope.currentThing = current;
       $scope.currentThingType = type;
       $scope.doAddThing();
-    }
+    };
 
     $scope.deleteThing = (title, type, current, item) => {
       $scope.thingName = title;
@@ -263,14 +266,14 @@ module Fabric {
       $scope.currentThingType = type;
       $scope.currentThingItem = item;
       $scope.deleteThingDialog = true;
-    }
+    };
 
     $scope.updateThing = (title, type, current) => {
       $scope.thingName = title;
       $scope.currentThing = current;
       $scope.currentThingType = type;
       $scope.callSetProfileThing("Changed", "change", title);
-    }
+    };
 
     $scope.mavenLink = (url) => {
       return Maven.mavenLink(url);
