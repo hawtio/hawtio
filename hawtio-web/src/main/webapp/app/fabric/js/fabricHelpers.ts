@@ -339,31 +339,8 @@ module Fabric {
         $scope.createVersionDialog.dialog.open();
       },
       onOk: () => {
-        var success = function (response) {
-          notification('success', "Created version " + response.value.id);
-          $scope.createVersionDialog.newVersionName = "";
-
-          // broadcast events to force reloads
-          var $rootScope = $scope.$root || $scope.$rootScope || $scope;
-          if ($rootScope) {
-            $rootScope.$broadcast('wikiBranchesUpdated');
-          }
-          $location.path('/wiki/branch/' + response.value.id + '/view/fabric/profiles');
-          Core.$apply($scope);
-        };
-
-        var error = function (response) {
-          log.error("Failed to create version due to :", response.error);
-          log.info("stack trace: ", response.stacktrace);
-          Core.$apply($scope);
-        };
-
-        var newVersionName = $scope.createVersionDialog.newVersionName;
-        if (newVersionName !== '') {
-          Fabric.createVersionWithId(jolokia, newVersionName, success, error);
-        } else {
-          Fabric.createVersion(jolokia, success, error);
-        }
+        Fabric.doCreateVersion($scope, jolokia, $location, $scope.createVersionDialog.newVersionName);
+        $scope.createVersionDialog.newVersionName = "";
         $scope.createVersionDialog.dialog.close();
       }
     };
@@ -400,6 +377,48 @@ module Fabric {
     };
 
   }
+
+
+  export function doCreateVersion($scope, jolokia, $location, newVersionName) {
+    var success = function (response) {
+      notification('success', "Created version <strong>" + response.value.id + "</strong>, switching to this new version");
+
+      // broadcast events to force reloads
+      var $rootScope = $scope.$root || $scope.$rootScope || $scope;
+      if ($rootScope) {
+        $rootScope.$broadcast('wikiBranchesUpdated');
+      }
+
+      var defaultTarget = '/wiki/branch/' + response.value.id + '/view/fabric/profiles';
+
+      var path = $location.path();
+      var branch = $scope.branch || $scope.$parent.branch;
+
+      if (!path.startsWith('/wiki/branch/') || !branch) {
+        $location.path(defaultTarget);
+      } else {
+        path = path.replace('/branch/' + branch, '/branch/' + response.value.id);
+        $location.path(path);
+      }
+      Core.$apply($scope);
+    };
+
+    var error = function (response) {
+      log.error("Failed to create version due to :", response.error);
+      log.info("stack trace: ", response.stacktrace);
+      Core.$apply($scope);
+    };
+
+    if (!Core.isBlank(newVersionName)) {
+      Fabric.createVersionWithId(jolokia, newVersionName, success, error);
+    } else {
+      Fabric.createVersion(jolokia, success, error);
+    }
+
+  }
+
+
+
 
   export function sortVersions(versions, order:boolean) {
     return (versions || []).sortBy((v) => {

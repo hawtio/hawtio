@@ -342,32 +342,7 @@ module Wiki {
         if (name === exemplar) {
           name = '';
         }
-
-        if (!Core.isBlank(name)) {
-          notification('info', "Creating new version " + name);
-          Fabric.createVersionWithId(jolokia, name, () => {
-            notification('success', "Created version " + name);
-            $location.path('/wiki/branch/' + name + '/view/fabric/profiles');
-            Core.$apply($scope);
-          }, (response) => {
-            log.error("Error creating version: ", response.error);
-            log.info("Stack trace: ", response.stacktrace);
-            Core.$apply($scope);
-          });
-        } else {
-          notification('info', "Creating new version");
-          Fabric.createVersion(jolokia, (response) => {
-            log.debug("Response: ", response);
-            var newVersion = response.value;
-            notification('success', "Created version " + newVersion.name);
-            $location.path('/wiki/branch/' + newVersion.name + '/view/fabric/profiles');
-            Core.$apply($scope);
-          }, (response) => {
-            log.error("Error creating version: ", response.error);
-            log.info("Stack trace: ", response.stacktrace);
-            Core.$apply($scope);
-          });
-        }
+        Fabric.doCreateVersion($scope, jolokia, $location, name);
 
       } else {
         notification("success", "Creating new document " + name);
