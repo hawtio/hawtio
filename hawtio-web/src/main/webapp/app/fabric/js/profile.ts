@@ -350,6 +350,14 @@ module Fabric {
 
     $scope.copyProfile = () => {
       $scope.copyProfileDialog = false;
+
+      if ($scope.profileId.has('-') && !$scope.newProfileName.has('-')) {
+        var parts = $scope.profileId.split('-');
+        parts.pop();
+        parts.push($scope.newProfileName);
+        $scope.newProfileName = parts.join('-');
+      }
+
       notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
 
       copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
@@ -360,7 +368,7 @@ module Fabric {
         notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
         Core.$apply($scope);
       });
-    }
+    };
     
     function render(response) {
       if (!angular.isDefined($scope.row)) {
