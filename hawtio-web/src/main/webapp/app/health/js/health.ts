@@ -91,6 +91,47 @@ module Health {
       }, true);
 
 
+      $scope.getTitleClass = (display) => {
+        if (!display) {
+          return "warning";
+        }
+        if (!display.values || display.values.length === 0) {
+          return "ok";
+        }
+        var answer = "ok";
+        display.values.forEach((value) => {
+          if (answer !== "warning" && value.level && value.level.toLowerCase() !== 'info') {
+            answer = "warning";
+          }
+        });
+
+        return answer;
+      };
+
+
+      $scope.getHumanName = (name) => {
+        if (name.startsWith("org.apache.activemq")) {
+          var answer = name;
+          var nameParts = name.split(',');
+          nameParts.forEach((part) => {
+            if (part.startsWith('brokerName')) {
+              var parts = part.split('=');
+              if (parts[1]) {
+                answer = "Broker: " + parts[1];
+              }
+            }
+          });
+          return answer;
+        }
+        if (name.startsWith("io.fabric8:service")) {
+          return "Fabric8";
+        }
+
+        return name;
+
+      };
+
+
       $scope.getMBeans = () => {
         var healthMap = getHealthMBeans(workspace);
         log.debug("HealthMap: ", healthMap);
