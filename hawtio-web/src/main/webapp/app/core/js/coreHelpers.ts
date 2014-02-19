@@ -40,17 +40,16 @@ function lineCount(value): number {
 function url(path: string): string {
   if (path) {
     if (path.startsWith && path.startsWith("/")) {
-      if (_urlPrefix === null) {
+      if (!_urlPrefix) {
         _urlPrefix = window.location.pathname || "";
-        if (_urlPrefix) {
-          var idx = _urlPrefix.lastIndexOf("/");
-          if (idx >= 0) {
-            _urlPrefix = _urlPrefix.substring(0, idx);
-          }
+        var idx = _urlPrefix.lastIndexOf("/");
+        if (idx >= 0) {
+          _urlPrefix = _urlPrefix.substring(0, idx);
         }
-        console.log("URI prefix is " + _urlPrefix);
       }
-      return _urlPrefix + path;
+      if (_urlPrefix) {
+        return _urlPrefix + path;
+      }
     }
   }
   return path;
