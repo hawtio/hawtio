@@ -197,7 +197,7 @@ module DataTable {
           return true;
         }
         var rowJson = angular.toJson(row);
-        return rowJson.has(filter);
+        return rowJson.toLowerCase().has(filter.toLowerCase());
       };
 
       $scope.isSelected = (row) => {
