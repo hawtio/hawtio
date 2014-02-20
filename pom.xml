@@ -58,8 +58,8 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <!-- versions -->
-    <perfectus-number>346</perfectus-number>
-    <perfectus-previous-number>344</perfectus-previous-number>
+    <perfectus-number>348</perfectus-number>
+    <perfectus-previous-number>346</perfectus-previous-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
