@@ -34,18 +34,20 @@
              hawtio-template-popover title="Feature Details">
             <span class="badge" ng-class="getStateStyle(feature)">{{feature.Name}} / {{feature.Version}}</span>
           </a>
-          <a class="toggle-action"
-             href=""
-             ng-show="installed(feature.Installed)"
-             ng-click="uninstall(feature)">
-            <i class="icon-power-off"></i>
-          </a>
-          <a class="toggle-action"
-             href=""
-             ng-hide="installed(feature.Installed)"
-             ng-click="install(feature)">
-            <i class="icon-play-circle"></i>
-          </a>
+          <span ng-hide="hasFabric">
+            <a class="toggle-action"
+               href=""
+               ng-show="installed(feature.Installed)"
+               ng-click="uninstall(feature)">
+              <i class="icon-power-off"></i>
+            </a>
+            <a class="toggle-action"
+               href=""
+               ng-hide="installed(feature.Installed)"
+               ng-click="install(feature)">
+              <i class="icon-play-circle"></i>
+            </a>
+          </span>
         </div>
       </div>
     </div>
@@ -81,18 +83,20 @@
             <a ng-href="#/osgi/feature/{{feature.Id}}?p=container">
               <span class="badge" ng-class="getStateStyle(feature)">{{feature.Name}} / {{feature.Version}}</span>
             </a >
-            <a class="toggle-action"
-               href=""
-               ng-show="installed(feature.Installed)"
-               ng-click="uninstall(feature)">
-              <i class="icon-power-off"></i>
-            </a>
-            <a class="toggle-action"
-               href=""
-               ng-hide="installed(feature.Installed)"
-               ng-click="install(feature)">
-              <i class="icon-play-circle"></i>
-            </a>
+            <span ng-hide="hasFabric">
+              <a class="toggle-action"
+                 href=""
+                 ng-show="installed(feature.Installed)"
+                 ng-click="uninstall(feature)">
+                <i class="icon-power-off"></i>
+              </a>
+              <a class="toggle-action"
+                 href=""
+                 ng-hide="installed(feature.Installed)"
+                 ng-click="install(feature)">
+                <i class="icon-play-circle"></i>
+              </a>
+            </span>
           </div>
         </div>
       </div>

@@ -121,6 +121,9 @@ module Karaf {
     };
 
     $scope.install = (feature) => {
+      if ($scope.hasFabric) {
+        return;
+      }
       //$('.popover').remove();
       notification('info', 'Installing feature ' + feature.Name);
       installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
@@ -137,6 +140,9 @@ module Karaf {
     };
 
     $scope.uninstall = (feature) => {
+      if ($scope.hasFabric) {
+        return;
+      }
       //$('.popover').remove();
       notification('info', 'Uninstalling feature ' + feature.Name);
       uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
@@ -183,11 +189,6 @@ module Karaf {
 
     $scope.installed = (installed) => {
       var answer = Core.parseBooleanValue(installed);
-
-      if ($scope.hasFabric) {
-        return !answer;
-      }
-
       return answer;
     };
 
