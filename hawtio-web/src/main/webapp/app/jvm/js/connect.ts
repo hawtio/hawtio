@@ -163,6 +163,8 @@ module JVM {
 
         var jsonCloned = Object.extended(json).clone(true);
 
+        log.debug("json: ", jsonCloned);
+
         // new connection created via the form, let's save it
         var connectionName = jsonCloned['connectionName'];
         if (Core.isBlank(connectionName)) {
@@ -223,7 +225,7 @@ module JVM {
       Core.$apply($scope);
 
       Core.connectToServer(localStorage, options);
-    }
+    };
 
     function init() {
       log.debug("Initializing")

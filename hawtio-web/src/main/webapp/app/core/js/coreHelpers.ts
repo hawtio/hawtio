@@ -1276,18 +1276,9 @@ module Core {
     var connectUrl = options.jolokiaUrl;
 
     var userDetails = {
-      username: null,
-      password: null
+      username: options['userName'],
+      password: options['password']
     };
-
-    if (options.userName) {
-      //full += "&_user=" + $scope.userName;
-      userDetails.username = options.userName;
-    }
-    if (options.password) {
-      //full += "&_pwd=" + $scope.password;
-      userDetails.password = options.password;
-    }
 
     // TODO we should replace this and just store the real, final connectUrl!
 
