@@ -130,14 +130,19 @@ module Wiki {
    * @for Wiki
    * @static
    */
-  export function createWizardTree() {
+  export function createWizardTree(workspace:Workspace) {
     var root = new Folder("New Documents");
-    addCreateWizardFolders(root, documentTemplates);
+    addCreateWizardFolders(workspace, root, documentTemplates);
     return root;
   }
 
-  export function addCreateWizardFolders(parent: Folder, templates: any[]) {
+  export function addCreateWizardFolders(workspace:Workspace, parent: Folder, templates: any[]) {
     angular.forEach(templates, (template) => {
+
+      if (template['fabricOnly'] && !Fabric.hasFabric(workspace)) {
+        return;
+      }
+
       var title = template.label || key;
       var node = new Folder(title);
       node.parent = parent;
@@ -166,7 +171,7 @@ module Wiki {
 
       var children = template.children;
       if (children) {
-        addCreateWizardFolders(node, children);
+        addCreateWizardFolders(workspace, node, children);
       }
     });
   }
