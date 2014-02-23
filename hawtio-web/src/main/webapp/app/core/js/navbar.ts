@@ -91,16 +91,19 @@ module Core {
       reloadPerspective();
     });
 
-    $scope.link = (nav) => {
+    // use includePerspective = false as default as that was the previous behavior
+    $scope.link = (nav, includePerspective = false) => {
       var href;
       if (angular.isString(nav)) {
         href = nav;
-      }else {
+      } else {
         href = nav.href();
       }
       var removeParams = ['tab', 'nid', 'chapter', 'pref', 'q'];
-      if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
-        removeParams.push("p");
+      if (!includePerspective) {
+        if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
+          removeParams.push("p");
+        }
       }
       return createHref($location, href, removeParams);
     };
