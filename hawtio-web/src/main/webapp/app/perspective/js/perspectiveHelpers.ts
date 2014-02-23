@@ -239,6 +239,8 @@ module Perspective {
    * @return {String}
    */
   export function choosePerspective($location, workspace: Workspace, jolokia, localStorage) {
+    var answer;
+
     var inFMC = Fabric.isFMCContainer(workspace);
     if (inFMC) {
       var url = $location.url();
@@ -254,10 +256,13 @@ module Perspective {
           url.startsWith("/health") ||
           (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||
           (url.startsWith("/wiki") && url.has("/editFeatures"))) {
-        return "fabric";
+        answer = "fabric";
       }
     }
-    return Perspective.defaultPerspective || "container";
+    answer = answer || Perspective.defaultPerspective || "container";
+
+    log.debug("Choose perspective url: " + $location.url() + ", in fabric: " + inFMC + " -> " + answer);
+    return answer;
   }
 
   /**

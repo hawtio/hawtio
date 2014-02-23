@@ -40,6 +40,10 @@ module Fabric {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ClusterServiceManager"});
   }
 
+  export function hasZooKeeper(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "ZooKeeper"});
+  }
+
   export function hasOpenShiftFabric(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "OpenShift"});
   }
@@ -75,7 +79,7 @@ module Fabric {
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse
     // which doesn't have the necessary mbeans for hawtio awesomeness
     return fabricCreated(workspace) &&
-        (hasClusterServiceManager(workspace) || hasClusterBootstrapManager(workspace));
+        (hasClusterServiceManager(workspace) || hasClusterBootstrapManager(workspace) || hasZooKeeper(workspace));
   }
 
   /**
