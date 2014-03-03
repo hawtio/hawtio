@@ -42,6 +42,7 @@ module Fabric {
     $scope.providers = Fabric.registeredProviders(jolokia);
     //console.log("providers: ", $scope.providers);
     $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
+    $scope.resolvers = [];
     $scope.schema = {};
 
     $scope.response = {};
@@ -122,6 +123,7 @@ module Fabric {
       if ($scope.selectedProvider) {
         Fabric.getSchema($scope.selectedProvider.id, $scope.selectedProvider.className, jolokia, (schema) => {
           $scope.schema = schema;
+          $scope.resolvers = Fabric.getResolvers($scope.selectedProvider.id);
           Core.$apply($scope);
         });
       }

@@ -1,5 +1,20 @@
 module Fabric {
 
+  /**
+   * Returns the resolvers for the given schema id (child, ssh, jclouds, openshift, docker)
+   */
+  export function getResolvers(id) {
+    var answer;
+    switch (id) {
+      case 'child': answer = []; break;
+      case 'ssh': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
+      case 'jclouds': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
+      case 'openshift': answer = ['publichostname']; break;
+      case 'docker': answer = []; break;
+    }
+    return answer;
+  }
+
   export function customizeSchema(id, schema) {
 
     // console.log("Schema: ", schema);
@@ -50,7 +65,8 @@ module Fabric {
     Core.pathSet(schema.properties, ['jmxPassword', 'input-attributes', "autofill"], "true");
     Core.pathSet(schema.properties, ['jmxPassword', 'tooltip'], 'The password for connecting to the container using JMX');
 
-    setResolverEnum(schema);
+    Core.pathSet(schema.properties, ['resolver', 'input-element'], "select");
+    Core.pathSet(schema.properties, ['resolver', 'input-attributes', "ng-options"], "r for r in resolvers");
 
     switch (id) {
       case 'child':
@@ -81,8 +97,6 @@ module Fabric {
       case 'ssh':
         delete schema.properties['jmxUser'];
         delete schema.properties['jmxPassword'];
-
-
         delete schema.properties['parent'];
 
         bulkSet(schema, ['host'], 'required', true);
@@ -97,8 +111,8 @@ module Fabric {
       case 'jclouds':
         delete schema.properties['jmxUser'];
         delete schema.properties['jmxPassword'];
-
         delete schema.properties['parent'];
+
         schema['tabs'] = {
           'Common': ['name', 'owner', 'credential', 'providerName', 'imageId', 'hardwareId', 'locationId', 'number', 'instanceType'],
           'Advanced': ['*']
@@ -108,11 +122,9 @@ module Fabric {
       case 'openshift':
         delete schema.properties['jmxUser'];
         delete schema.properties['jmxPassword'];
-
         delete schema.properties['parent'];
         delete schema.properties['manualIp'];
         delete schema.properties['preferredAddress'];
-        delete schema.properties['resolver'];
         delete schema.properties['ensembleServer'];
         delete schema.properties['proxyUri'];
         delete schema.properties['adminAccess'];
@@ -120,14 +132,10 @@ module Fabric {
         delete schema.properties['bindAddress'];
         delete schema.properties['hostNameContext'];
 
-
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
-        Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
 
         Core.pathSet(schema.properties, ['serverUrl', 'label'], 'OpenShift Broker');
         Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker host name of the cloud to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL: openshift.redhat.com');
-
-
         Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
         Core.pathSet(schema.properties, ['login', 'tooltip'], 'Your personal login to the OpenShift portal');
         Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
@@ -173,8 +181,6 @@ module Fabric {
         Core.pathSet(schema.properties, ['gearProfile', 'input-element'], "select");
         Core.pathSet(schema.properties, ['gearProfile', 'input-attributes', "ng-options"], "c for c in openShift.gearProfiles");
 
-
-
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
           'Common': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
@@ -182,11 +188,9 @@ module Fabric {
         };
         break;
 
-
       case 'docker':
         delete schema.properties['jmxUser'];
         delete schema.properties['jmxPassword'];
-
         delete schema.properties['parent'];
         delete schema.properties['manualIp'];
         delete schema.properties['preferredAddress'];
@@ -222,9 +226,4 @@ module Fabric {
     Core.pathSet(schema, ['properties', 'globalResolver', 'enum'], globalResolverEnum);
   }
 
-  function setResolverEnum(schema) {
-    var resolverEnum = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip'];
-    Core.pathSet(schema, ['properties', 'resolver', 'enum'], resolverEnum);
-  }
-  
 }
