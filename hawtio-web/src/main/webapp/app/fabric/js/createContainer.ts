@@ -1,8 +1,13 @@
 module Fabric {
 
-  export function CreateContainerController($scope, $element, $compile, $location, workspace, jolokia, localStorage) {
+  export function CreateContainerController($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails) {
 
     var log:Logging.Logger = Logger.get("Fabric");
+
+    if (!('fabric.userName' in localStorage)) {
+      localStorage['fabric.userName'] = userDetails.username;
+      localStorage['fabric.password'] = userDetails.password;
+    }
 
     $scope.versionsOp = 'versions()';
 

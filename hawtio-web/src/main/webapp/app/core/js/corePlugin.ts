@@ -184,7 +184,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
             answer = {
               username: '',
               password: ''
-            }
+            };
 
             Core.log.debug("No username set, checking if we have a session");
             // fetch the username if we've already got a session at the server
