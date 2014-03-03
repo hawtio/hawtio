@@ -2,7 +2,7 @@
  * @module Wiki
  */
 module Wiki {
-  export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository) {
+  export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) {
     $scope.addDialog = new Core.Dialog();
     $scope.propertiesDialog = new Core.Dialog();
     $scope.modified = false;
@@ -11,6 +11,8 @@ module Wiki {
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
 
     $scope.forms = {};
+
+    $scope.nodeTemplate = $interpolate($templateCache.get("nodeTemplate"));
 
     $scope.$watch("camelContextTree", () => {
       var tree = $scope.camelContextTree;
@@ -452,56 +454,51 @@ module Wiki {
 
         angular.forEach(states, (node) => {
           var id = getNodeId(node);
-
           var div = containerElement.find('#' + id);
 
           if (!div[0]) {
-
-            div = $("<div class='component window' id='" + id
-                    + "' title='" + node.tooltip + "'" +
-              //+ " style='" + style + "'" +
-                    "><img class='nodeIcon' title='Click and drag to create a connection' src='" + node.imageUrl + "'>" +
-                    "<span class='nodeText'>" + node.label + "</span></div>");
-
+            div = $($scope.nodeTemplate({
+              id: id,
+              node: node
+            }));
             div.appendTo(containerElement);
-
-            // Make the node a jsplumb source
-            jsPlumb.makeSource(div, {
-              filter: "img.nodeIcon",
-              anchor: "Continuous",
-              connector: connectorStyle,
-              connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
-              maxConnections: -1
-            });
-
-            // and also a jsplumb target
-            jsPlumb.makeTarget(div, {
-              dropOptions: { hoverClass: "dragHover" },
-              anchor: "Continuous"
-            });
-
-            jsPlumb.draggable(div, {
-              containment: '.camel-canvas'
-            });
-
-            // add event handlers to this node
-            div.click(function () {
-              var newFlag = !div.hasClass("selected");
-              containerElement.find('div.component').toggleClass("selected", false);
-              div.toggleClass("selected", newFlag);
-              var id = div.attr("id");
-              updateSelection(newFlag ? id : null);
-              Core.$apply($scope);
-            });
-
-            div.dblclick(function () {
-              var id = div.attr("id");
-              updateSelection(id);
-              //$scope.propertiesDialog.open();
-              Core.$apply($scope);
-            });
-
           }
+
+          // Make the node a jsplumb source
+          jsPlumb.makeSource(div, {
+            filter: "img.nodeIcon",
+            anchor: "Continuous",
+            connector: connectorStyle,
+            connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
+            maxConnections: -1
+          });
+
+          // and also a jsplumb target
+          jsPlumb.makeTarget(div, {
+            dropOptions: { hoverClass: "dragHover" },
+            anchor: "Continuous"
+          });
+
+          jsPlumb.draggable(div, {
+            containment: '.camel-canvas'
+          });
+
+          // add event handlers to this node
+          div.click(function () {
+            var newFlag = !div.hasClass("selected");
+            containerElement.find('div.component').toggleClass("selected", false);
+            div.toggleClass("selected", newFlag);
+            var id = div.attr("id");
+            updateSelection(newFlag ? id : null);
+            Core.$apply($scope);
+          });
+
+          div.dblclick(function () {
+            var id = div.attr("id");
+            updateSelection(id);
+            //$scope.propertiesDialog.open();
+            Core.$apply($scope);
+          });
 
           var height = div.height();
           var width = div.width();

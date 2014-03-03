@@ -7,7 +7,6 @@
       background-color: white;
       color: black;
       font-family: helvetica;
-      padding: 6px;
     }
 
     .window {
@@ -26,9 +25,29 @@
       border-radius: 4px;
     }
 
+    .window-inner {
+      position: relative;
+    }
+
     .window:hover {
       border-color: #5d94a6;
       background: #ffffa0;
+    }
+
+    .window-inner {
+      padding: 6px;
+    }
+
+    .window-inner > * {
+      vertical-align: middle;
+    }
+
+    .window-inner > span {
+      max-width: 15em;
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .window.selected {
@@ -75,6 +94,22 @@
 
   <div class="wiki-fixed" ng-controller="Wiki.CamelCanvasController">
     <ng-include src="'app/wiki/html/camelNavBar.html'"></ng-include>
+
+    <script type="text/ng-template"
+            id="nodeTemplate">
+      <div class="component window"
+           id="{{id}}"
+           title="{{node.tooltip}}">
+        <div class="window-inner">
+          <img class="nodeIcon"
+               title="Click and drag to create a connection"
+               src="{{node.imageUrl}}">
+          <span class="nodeText"
+                title="{{node.label}}">{{node.label}}</span>
+        </div>
+      </div>
+    </script>
+
 
     <div class="row-fluid">
       <div class="span12">
