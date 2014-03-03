@@ -27,6 +27,7 @@
 
     .window-inner {
       position: relative;
+      border-radius: 2px;
     }
 
     .window:hover {
@@ -36,6 +37,34 @@
 
     .window-inner {
       padding: 6px;
+    }
+
+    .window-inner.from {
+      background: peachpuff;
+    }
+
+    .window-inner.choice {
+      background: lightblue;
+    }
+
+    .window-inner.when {
+      background: lightgreen;
+    }
+
+    .window-inner.otherwise {
+      background: lightpink;
+    }
+
+    .window-inner.to {
+      background: lightsteelblue;
+    }
+
+    .window-inner.log {
+      background: lightcyan;
+    }
+
+    .window-inner.setBody {
+      background: #d3d3d3;
     }
 
     .window-inner > * {
@@ -100,7 +129,7 @@
       <div class="component window"
            id="{{id}}"
            title="{{node.tooltip}}">
-        <div class="window-inner">
+        <div class="window-inner {{node.type}}">
           <img class="nodeIcon"
                title="Click and drag to create a connection"
                src="{{node.imageUrl}}">

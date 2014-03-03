@@ -453,6 +453,7 @@ module Wiki {
         });
 
         angular.forEach(states, (node) => {
+          log.debug("node: ", node);
           var id = getNodeId(node);
           var div = containerElement.find('#' + id);
 
