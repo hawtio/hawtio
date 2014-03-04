@@ -455,16 +455,23 @@ li.attr-column {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#f0f0f0', GradientType=0);
 }
-.widget-title .row-fluid .pull-right > i {
+
+.widget-title > .row-fluid > .pull-right > i {
   cursor: pointer;
   opacity: .25;
 }
-.widget-title .row-fluid .pull-right > i:hover {
+
+.widget-title > .row-fluid > .pull-right > i:hover {
   transition: opacity 0.25s ease-in-out;
   -moz-transition: opacity 0.25s ease-in-out;
   -webkit-transition: opacity 0.25s ease-in-out;
   opacity: 1;
 }
+
+.widget-title > div > div .ep {
+  top: -1px;
+}
+
 
 .widget-body {
   position: absolute;
@@ -474,25 +481,25 @@ li.attr-column {
   right: 0;
 }
 
-.height-controls a {
+.height-controls > a {
   float: left;
   display: block;
   color: #bfbfbf;
   opacity: .1;
   text-decoration: none;
 }
-.width-controls a {
+.width-controls > a {
   float: left;
   display: block;
   color: #bfbfbf;
   opacity: .1;
   text-decoration: none;
 }
-.width-controls a:hover {
+.width-controls > a:hover {
   opacity: .9;
   text-decoration: none;
 }
-.height-controls a:hover {
+.height-controls > a:hover {
   opacity: .9;
   text-decoration: none;
 }
@@ -519,6 +526,12 @@ li.attr-column {
 
 editable-property {
   position: relative;
+}
+
+@-moz-document url-prefix() {
+  editable-property {
+    position: static;
+  }
 }
 
 .ep[ng-show=editing] {
@@ -2605,17 +2618,17 @@ a.dashboard-link:hover {
   min-width: 592px;
 }
 
-.widget-title .row-fluid {
+.widget-title > .row-fluid {
   position: relative;
 }
 
-.widget-title .row-fluid .pull-left {
+.widget-title > .row-fluid > .pull-left {
   position: absolute;
   right: 16px;
   left: 0;
 }
 
-.widget-title .row-fluid .pull-left editable-property div {
+.widget-title > .row-fluid > .pull-left > .ep > div {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2719,10 +2732,6 @@ ol.zebra-list > li:nth-child(even):before {
 
 .widget-body div div .wiki-fixed {
   margin: 3px;
-}
-
-.widget-title div div editable-property .ep {
-  top: -1px;
 }
 
 .loading {

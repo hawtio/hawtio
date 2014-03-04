@@ -64,6 +64,7 @@ module UI {
         };
 
         scope.stopEdit = function () {
+          $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.propertyName]);
           scope.editing = false;
         };
 
