@@ -220,11 +220,15 @@ module Core {
 
     // Append rectangles to the nodes. We do this before laying out the text
     // because we want the text above the rectangle.
-    var rects = nodes.append("rect").
+    var rects = nodes.append("rect")
       // rounded corners
-            attr("rx", "5").attr("ry", "5").
+        .attr("rx", "4")
+        .attr("ry", "4")
       // lets add shadow
-            attr("filter", "url(#drop-shadow)");
+        .attr("filter", "url(#drop-shadow)")
+        .attr("class", function(d) {
+          return d.type;
+        });
 
 
     var images = nodes.append("image")

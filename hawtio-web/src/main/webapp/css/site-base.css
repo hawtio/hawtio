@@ -3915,7 +3915,11 @@ span.hawtio-dropdown .dropdown-menu {
   font-family: helvetica;
 }
 
-.window {
+.window,
+.node > rect {
+  stroke-width: 2px;
+  stroke: #346789;
+  fill: url(#rect-gradient);
   border: 2px solid #346789;
   z-index: 20;
   position: absolute;
@@ -3945,32 +3949,64 @@ span.hawtio-dropdown .dropdown-menu {
   padding: 6px;
 }
 
-.window-inner.from {
+.window-inner.from,
+.node > .from {
   background: lightsteelblue;
+  fill: lightsteelblue;
 }
 
-.window-inner.choice {
+.window-inner.choice,
+.node > .choice {
   background: lightblue;
+  fill: lightblue;
 }
 
-.window-inner.when {
+.window-inner.when,
+.node > .when {
   background: lightgreen;
+  fill: lightgreen;
 }
 
-.window-inner.otherwise {
+.window-inner.otherwise,
+.node > .otherwise {
   background: lightgreen;
+  fill: lightgreen;
 }
 
-.window-inner.to {
+.window-inner.to,
+.node > .to {
   background: lightsteelblue;
+  fill: lightsteelblue;
 }
 
-.window-inner.log {
+.window-inner.log,
+.node > .log {
   background: lightcyan;
+  fill: lightcyan;
 }
 
-.window-inner.setBody {
+.window-inner.setBody,
+.node > .setBody {
   background: #d3d3d3;
+  fill: #d3d3d3;
+}
+
+.window-inner.onException,
+.node > .onException {
+  background: lightpink;
+  fill: lightpink;
+}
+
+.window-inner.delay,
+.node > .delay {
+  background: lightgrey;
+  fill: lightgrey;
+}
+
+.window-inner.bean,
+.node > .bean {
+  background: mediumaquamarine;
+  fill: mediumaquamarine;
 }
 
 .window-inner > * {
