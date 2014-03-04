@@ -126,7 +126,9 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                 downloadOrUpdateIndices();
             }
         } catch (IOException e) {
-            LOG.error("Failed to update the maven repository indices: " + e, e);
+            LOG.info("Failed to fetch the maven repository indices due to: " + e);
+            LOG.info("Some or all maven repository data may not be available for searching...");
+            //LOG.error("Failed to update the maven repository indices: " + e, e);
         }
         try {
             super.init();
