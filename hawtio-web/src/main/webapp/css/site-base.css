@@ -3906,3 +3906,123 @@ span.hawtio-dropdown .dropdown-menu {
   overflow-y: auto;
   max-height: 260px;
 }
+
+.component {
+  opacity: 0.8;
+  filter: alpha(opacity = 80);
+  background-color: white;
+  color: black;
+  font-family: helvetica;
+}
+
+.window {
+  border: 2px solid #346789;
+  z-index: 20;
+  position: absolute;
+  font-size: 0.8em;
+  filter: alpha(opacity = 80);
+  cursor: move;
+
+  box-shadow: 2px 2px 19px #e0e0e0;
+  -o-box-shadow: 2px 2px 19px #e0e0e0;
+  -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.window-inner {
+  position: relative;
+  border-radius: 2px;
+}
+
+.window:hover {
+  border-color: #5d94a6;
+  background: #ffffa0;
+}
+
+.window-inner {
+  padding: 6px;
+}
+
+.window-inner.from {
+  background: lightsteelblue;
+}
+
+.window-inner.choice {
+  background: lightblue;
+}
+
+.window-inner.when {
+  background: lightgreen;
+}
+
+.window-inner.otherwise {
+  background: lightgreen;
+}
+
+.window-inner.to {
+  background: lightsteelblue;
+}
+
+.window-inner.log {
+  background: lightcyan;
+}
+
+.window-inner.setBody {
+  background: #d3d3d3;
+}
+
+.window-inner > * {
+  vertical-align: middle;
+}
+
+.window-inner > span {
+  max-width: 15em;
+  display: inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.window.selected {
+  background-color: #f0f0a0;
+}
+
+img.nodeIcon {
+  width: 24px !important;
+  height: 24px !important;
+  cursor: crosshair;
+  margin-right: 10px;
+}
+
+img.nodeIcon:hover {
+  opacity: 0.6;
+  box-shadow: 2px 2px 19px #a0a0a0;
+  background-color: #a0a0a0;
+}
+
+.nodeText {
+
+}
+
+.nodeText:hover {
+
+}
+
+.l1 {
+  font-size: 13px;
+}
+
+._jsPlumb_connector {
+  z-index: 4;
+}
+
+._jsPlumb_overlay {
+  z-index: 6;
+}
+
+.hl {
+  border: 3px solid red;
+}
+
