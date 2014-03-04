@@ -3940,72 +3940,67 @@ span.hawtio-dropdown .dropdown-menu {
   border-radius: 2px;
 }
 
-.window:hover {
-  border-color: #5d94a6;
-  background: #ffffa0;
-}
-
 .window-inner {
   padding: 6px;
 }
 
 .window-inner.from,
 .node > .from {
-  background: lightsteelblue;
+  background-color: lightsteelblue;
   fill: lightsteelblue;
 }
 
 .window-inner.choice,
 .node > .choice {
-  background: lightblue;
+  background-color: lightblue;
   fill: lightblue;
 }
 
 .window-inner.when,
 .node > .when {
-  background: lightgreen;
+  background-color: lightgreen;
   fill: lightgreen;
 }
 
 .window-inner.otherwise,
 .node > .otherwise {
-  background: lightgreen;
+  background-color: lightgreen;
   fill: lightgreen;
 }
 
 .window-inner.to,
 .node > .to {
-  background: lightsteelblue;
+  background-color: lightsteelblue;
   fill: lightsteelblue;
 }
 
 .window-inner.log,
 .node > .log {
-  background: lightcyan;
+  background-color: lightcyan;
   fill: lightcyan;
 }
 
 .window-inner.setBody,
 .node > .setBody {
-  background: #d3d3d3;
+  background-color: #d3d3d3;
   fill: #d3d3d3;
 }
 
 .window-inner.onException,
 .node > .onException {
-  background: lightpink;
+  background-color: lightpink;
   fill: lightpink;
 }
 
 .window-inner.delay,
 .node > .delay {
-  background: lightgrey;
+  background-color: lightgrey;
   fill: lightgrey;
 }
 
 .window-inner.bean,
 .node > .bean {
-  background: mediumaquamarine;
+  background-color: mediumaquamarine;
   fill: mediumaquamarine;
 }
 
@@ -4021,8 +4016,21 @@ span.hawtio-dropdown .dropdown-menu {
   overflow: hidden;
 }
 
+.window:hover {
+  border-color: #5d94a6;
+  background-color: #ffffa0;
+}
+
+.window:hover > .window-inner {
+  background: inherit;
+}
+
 .window.selected {
   background-color: #f0f0a0;
+}
+
+.window.selected > .window-inner {
+  background: inherit;
 }
 
 img.nodeIcon {
