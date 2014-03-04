@@ -542,6 +542,9 @@ module Core {
         unregister(jolokia, scope);
       });
     }
+
+    var handle = null;
+
     if (angular.isArray(arguments)) {
       if (arguments.length >= 1) {
         // TODO can't get this to compile in typescript :)
@@ -551,17 +554,20 @@ module Core {
         //var args = [callback];
         //args.push(arguments);
         var registerFn = jolokia.register;
-        var handle = registerFn.apply(jolokia, args);
+        handle = registerFn.apply(jolokia, args);
         scope.$jhandle.push(handle);
         jolokia.request(arguments, callback);
       }
     } else {
-      var handle = jolokia.register(callback, arguments);
+      handle = jolokia.register(callback, arguments);
       scope.$jhandle.push(handle);
       jolokia.request(arguments, callback);
     }
     return () => {
-        Core.unregister(jolokia, scope);
+      if (handle !== null) {
+        scope.$jhandle.remove(handle);
+        jolokia.unregister(handle);
+      }
     };
   }
 

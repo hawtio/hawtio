@@ -42,21 +42,22 @@ module Health {
         }
         $scope.mbeanStatus = {};
         newValue.forEach((mbean) => {
-          Core.register(jolokia, $scope, {
+          var unregFunc = Core.register(jolokia, $scope, {
             type: 'exec', mbean: mbean,
             operation: "healthList()"
           }, {
             success: $scope.render,
             error: (response) => {
-              log.error("Failed to invoke healthList() on mbean: " + mbean + " due to: ", response.error);
-              log.info("Stack trace: ", response.stacktrace.split("\n"));
+              log.info("Failed to invoke healthList() on mbean: " + mbean + " due to: ", response.error);
+              log.debug("Stack trace: ", response.stacktrace.split("\n"));
+              unregFunc();
             }
           });
 
           var error = (response) => {
             if (!response.error.has("AttributeNotFoundException")) {
-              log.error("Failed to read CurrentStatus on mbean: " + mbean + " due to: ", response.error);
-              log.info("Stack trace: ", response.stacktrace.split("\n"));
+              log.info("Failed to read CurrentStatus on mbean: " + mbean + " due to: ", response.error);
+              log.debug("Stack trace: ", response.stacktrace.split("\n"));
             }
           };
 
