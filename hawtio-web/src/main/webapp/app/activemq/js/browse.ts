@@ -173,8 +173,30 @@ module ActiveMQ {
       }
       angular.forEach($scope.messages, (message) => {
         message.headerHtml = createHeaderHtml(message);
+        message.bodyText = createBodyText(message);
       });
       Core.$apply($scope);
+    }
+
+    /*
+     * For some reason using ng-repeat in the modal dialog doesn't work so lets
+     * just create the HTML in code :)
+     */
+    function createBodyText(message) {
+      if (message.Text) {
+        message.textMode = "text";
+        return message.Text;
+      } else if (message.BodyPreview) {
+        message.textMode = "bytes";
+        var arr = [];
+        message.BodyPreview.forEach(b => arr.push(String.fromCharCode(b)));
+        var data = arr.join("");
+        var body = message.BodyPreview.length + " bytes:\n" + message.BodyPreview + "\n\ntext:\n" + data;
+        return body;
+      } else {
+        message.textMode = "unsupported";
+        return "Unsupported message body type which cannot be displayed by hawtio";
+      }
     }
 
     /*

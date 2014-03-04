@@ -115,6 +115,19 @@
       <log message="The message contains ${body}" loggingLevel="DEBUG"/>
       <to uri="activemq:timer.events"/>
     </route>
+
+    <route id="bytesToAMQ">
+      <from uri="timer:foo?period=5000"/>
+      <setBody><constant>Hello World</constant></setBody>
+      <delay><constant>500</constant></delay>
+      <setBody><constant>A Delayed Hello World</constant></setBody>
+      <setHeader headerName="myHeader">
+        <constant>This is a new header value</constant>
+      </setHeader>
+      <convertBodyTo type="byte[]"/>
+      <to uri="activemq:timer.bytes?jmsMessageType=Bytes"/>
+    </route>
+
   </camelContext>
 
   <camelContext id="onExceptionContext" xmlns="http://camel.apache.org/schema/spring">
