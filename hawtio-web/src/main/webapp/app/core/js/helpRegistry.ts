@@ -15,7 +15,7 @@ module Core {
       jboss: 'JBoss',
       jclouds: 'jclouds',
       jmx: 'JMX',
-      jvm: 'JVM',
+      jvm: 'Connect',
       log: 'Logs',
       openejb: 'OpenEJB'
     };
