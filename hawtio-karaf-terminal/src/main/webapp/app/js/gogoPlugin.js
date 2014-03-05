@@ -11,7 +11,7 @@ var Gogo = (function() {
         when('/gogo', {
             templateUrl: 'hawtio-karaf-terminal/app/html/gogo.html'
           });
-    }).directive('gogoTerminal', function(log) {
+    }).directive('gogoTerminal', function(log, userDetails) {
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -50,7 +50,9 @@ var Gogo = (function() {
             'min-height': cssHeight
           });
 
-          gogo.Terminal(element.get(0), width, height);
+          var authHeader = Core.getBasicAuthHeader(userDetails.username, userDetails.password);
+
+          gogo.Terminal(element.get(0), width, height, authHeader);
 
           scope.$on("$destroy", function(e) {
             document.onkeypress = null;

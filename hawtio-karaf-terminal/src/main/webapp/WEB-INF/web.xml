@@ -8,6 +8,44 @@
   <description>hawtio</description>
   <display-name>hawtio Karaf terminal plugin</display-name>
 
+  <env-entry>
+    <description>Enable/disable hawtio's authentication filter, value is really a boolean</description>
+    <env-entry-name>hawtio/authenticationEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Authorized user role, empty string disables authorization</description>
+    <env-entry-name>hawtio/role</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>JAAS classname that would contain the role principal, empty string disables authorization</description>
+    <env-entry-name>hawtio/rolePrincipalClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>JAAS realm used to authenticate users</description>
+    <env-entry-name>hawtio/realm</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>*</env-entry-value>
+  </env-entry>
+
+  <filter>
+    <filter-name>AuthenticationFilter</filter-name>
+    <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/term/*</url-pattern>
+  </filter-mapping>
+
+
   <servlet>
     <servlet-name>TerminalServlet</servlet-name>
     <servlet-class>io.hawt.web.plugin.karaf.terminal.TerminalServlet</servlet-class>
@@ -17,6 +55,10 @@
     <servlet-name>TerminalServlet</servlet-name>
     <url-pattern>/term/*</url-pattern>
   </servlet-mapping>
+
+  <listener>
+    <listener-class>io.hawt.web.plugin.karaf.terminal.KarafTerminalContextListener</listener-class>
+  </listener>
 
 </web-app>
 

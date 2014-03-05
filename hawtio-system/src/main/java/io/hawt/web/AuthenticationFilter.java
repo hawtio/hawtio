@@ -105,9 +105,7 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
-        boolean doAuthenticate = path.startsWith("/auth") ||
-                path.startsWith("/jolokia") ||
-                path.startsWith("/upload");
+        boolean doAuthenticate = true;
 
         if (doAuthenticate) {
             LOG.debug("Doing authentication and authorization for path {}", path);
@@ -129,7 +127,7 @@ public class AuthenticationFilter implements Filter {
                     break;
             }
         } else {
-            LOG.debug("No authentication needed for path {}", path);
+            LOG.warn("No authentication needed for path {}", path);
             chain.doFilter(request, response);
         }
     }
