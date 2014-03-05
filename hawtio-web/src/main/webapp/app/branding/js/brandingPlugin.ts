@@ -69,14 +69,20 @@ module Branding {
     if (Branding.enabled) {
       Branding.profile = response.profile;
       // pull in branding stylesheet
-      var link = $("<link>");
-      $("head").append(link);
+      if ('createStyleSheet' in document) {
+        // IE9
+        document.createStyleSheet('css/site-branding.css');
+      } else {
+        // Everyone else
+        var link = $("<link>");
+        $("head").append(link);
 
-      link.attr({
-        rel: 'stylesheet',
-        type: 'text/css',
-        href: 'css/site-branding.css'
-      });
+        link.attr({
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: 'css/site-branding.css'
+        });
+      }
     }
 
   });
