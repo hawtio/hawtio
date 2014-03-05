@@ -105,30 +105,23 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
-        boolean doAuthenticate = true;
-
-        if (doAuthenticate) {
-            LOG.debug("Doing authentication and authorization for path {}", path);
-            switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
-                    configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
-                public void execute(Subject subject) throws Exception {
-                    executeAs(request, response, chain, subject);
-                }
-            })) {
-                case AUTHORIZED:
-                    // request was executed using the authenticated subject, nothing more to do
-                    break;
-                case NOT_AUTHORIZED:
-                    Helpers.doForbidden((HttpServletResponse) response);
-                    break;
-                case NO_CREDENTIALS:
-                    //doAuthPrompt((HttpServletResponse)response);
-                    Helpers.doForbidden((HttpServletResponse) response);
-                    break;
+        LOG.debug("Doing authentication and authorization for path {}", path);
+        switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
+                configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
+            public void execute(Subject subject) throws Exception {
+                executeAs(request, response, chain, subject);
             }
-        } else {
-            LOG.warn("No authentication needed for path {}", path);
-            chain.doFilter(request, response);
+        })) {
+            case AUTHORIZED:
+                // request was executed using the authenticated subject, nothing more to do
+                break;
+            case NOT_AUTHORIZED:
+                Helpers.doForbidden((HttpServletResponse) response);
+                break;
+            case NO_CREDENTIALS:
+                //doAuthPrompt((HttpServletResponse)response);
+                Helpers.doForbidden((HttpServletResponse) response);
+                break;
         }
     }
 
