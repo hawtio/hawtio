@@ -121,7 +121,6 @@
     <jolokia-version>1.1.5</jolokia-version>
     <junit-version>4.11</junit-version>
     <karaf-version>2.3.0.${perfectus-build}</karaf-version>
-    <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
