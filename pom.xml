@@ -121,7 +121,6 @@
     <jolokia-version>1.1.5</jolokia-version>
     <junit-version>4.11</junit-version>
     <karaf-version>2.3.0.${perfectus-build}</karaf-version>
-    <kotlin-version>0.4.68</kotlin-version>
     <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
@@ -205,14 +204,6 @@
         </releases>
     </repository>
 -->
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>jetbrains-release</id>
-      <name>jetbrains-release</name>
-      <url>http://repository.jetbrains.com/releases</url>
-    </repository>
 
     <!-- for blueprint-web-version snapshots -->
     <repository>
@@ -262,14 +253,6 @@
       <releases>
         <enabled>true</enabled>
       </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>jetbrains-repo</id>
-      <name>jetbrains-repo</name>
-      <url>http://repository.jetbrains.com/repo</url>
     </pluginRepository>
   </pluginRepositories>
 
