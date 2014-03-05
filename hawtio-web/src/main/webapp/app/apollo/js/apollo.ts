@@ -22,7 +22,8 @@ module Apollo {
         error = default_error_handler;
       }
       var username = "admin"
-      var password = "password"  
+      var password = "password"
+
       var ajax_options = {
         method: type,
         url: $scope.apollo.url+"/api/json"+path,
@@ -30,7 +31,7 @@ module Apollo {
           AuthPrompt:'false' ,
           Accept: "application/json",
           ContentType: "application/json",
-          Authorization: "Basic " + btoa(username + ':' + password),
+          Authorization: Core.getBasicAuthHeader(username, password)
         },
         cache:false,
         data:null,
