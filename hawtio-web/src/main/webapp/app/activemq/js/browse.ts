@@ -1,5 +1,5 @@
 module ActiveMQ {
-  export function BrowseQueueController($scope, workspace:Workspace, jolokia) {
+  export function BrowseQueueController($scope, workspace:Workspace, jolokia, localStorage) {
 
     $scope.searchText = '';
 
@@ -184,14 +184,53 @@ module ActiveMQ {
      */
     function createBodyText(message) {
       if (message.Text) {
-        message.textMode = "text";
-        return message.Text;
+        var body = message.Text;
+        var lenTxt = "" + body.length;
+        message.textMode = "text (" + lenTxt + " chars)";
+        return body;
       } else if (message.BodyPreview) {
-        message.textMode = "bytes";
-        var arr = [];
-        message.BodyPreview.forEach(b => arr.push(String.fromCharCode(b)));
-        var data = arr.join("");
-        var body = message.BodyPreview.length + " bytes:\n" + message.BodyPreview + "\n\ntext:\n" + data;
+        var code = Core.parseIntValue(localStorage["activemqBrowseBytesMessages"] || "1", "browse bytes messages");
+        var body;
+
+        message.textMode = "bytes (turned off)";
+        if (code != 99) {
+          var bytesArr = [];
+          var textArr = [];
+          message.BodyPreview.forEach(b => {
+            if (code === 1 || code === 2) {
+              // text
+              textArr.push(String.fromCharCode(b));
+            }
+            if (code === 1 || code === 4) {
+              // hex and must be 2 digit so they space out evenly
+              var s = b.toString(16);
+              if (s.length === 1) {
+                s = "0" + s;
+              }
+              bytesArr.push(s);
+            } else {
+              // just show as is without spacing out, as that is usually more used for hex than decimal
+              var s = b.toString(10);
+              bytesArr.push(s);
+            }
+          });
+
+          var bytesData = bytesArr.join(" ");
+          var textData = textArr.join("");
+
+          if (code === 1 || code === 2) {
+            // bytes and text
+            var len = message.BodyPreview.length;
+            var lenTxt = "" + textArr.length;
+            body = "bytes:\n" + bytesData + "\n\ntext:\n" + textData;
+            message.textMode = "bytes (" + len + " bytes) and text (" + lenTxt + " chars)";
+          } else {
+            // bytes only
+            var len = message.BodyPreview.length;
+            body = bytesData;
+            message.textMode = "bytes (" + len + " bytes)";
+          }
+        }
         return body;
       } else {
         message.textMode = "unsupported";

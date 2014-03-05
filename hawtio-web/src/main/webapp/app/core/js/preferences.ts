@@ -184,7 +184,8 @@ module Core {
       fabricEnableMaps: true,
       camelIgnoreIdForLabel: false,
       camelMaximumLabelWidth: Camel.defaultMaximumLabelWidth,
-      camelMaximumTraceOrDebugBodyLength: Camel.defaultCamelMaximumTraceOrDebugBodyLength
+      camelMaximumTraceOrDebugBodyLength: Camel.defaultCamelMaximumTraceOrDebugBodyLength,
+      activemqBrowseBytesMessages: 1
     };
 
     var converters = {
@@ -196,7 +197,8 @@ module Core {
       fabricEnableMaps: parseBooleanValue,
       camelIgnoreIdForLabel: parseBooleanValue,
       camelMaximumLabelWidth: parseInt,
-      camelMaximumTraceOrDebugBodyLength: parseInt
+      camelMaximumTraceOrDebugBodyLength: parseInt,
+      activemqBrowseBytesMessages: parseInt
     };
 
     $scope.$watch('updateRate', () => {
@@ -218,7 +220,7 @@ module Core {
       localStorage['showWelcomePage'] = $scope.showWelcomePage;
     });
 
-    var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword",
+    var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "activemqBrowseBytesMessages",
       "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
