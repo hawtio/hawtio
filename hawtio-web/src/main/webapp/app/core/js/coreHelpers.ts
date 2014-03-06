@@ -642,6 +642,9 @@ module Core {
           Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
           Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         }
+      } else {
+        Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
+        Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
       }
     }
   }

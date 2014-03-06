@@ -342,7 +342,20 @@ module Fabric {
         jolokia.execute(managerMBean, 'createContainers(java.util.Map)', angular.toJson(json), {
           method: "post",
           success: (response) => {
+            log.debug("Response from creating container(s): ", response);
             var error = false;
+            if ('<not available>' in response) {
+              var message = response['<not available>'];
+              if (message.toLowerCase().has('exception')) {
+                error = true;
+                var cont = "container";
+                if (json.number) {
+                  cont = Core.maybePlural(json.number, "container");
+                }
+                notification('error', "Creating " + cont  + " failed: " + message);
+              }
+            }
+
             angular.forEach(response.value, function(value, key) {
               error = true;
               notification('error', "Creating container " + key + " failed: " + value);

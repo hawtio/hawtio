@@ -392,7 +392,7 @@ module Fabric {
       Core.register(jolokia, $scope, [
         {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs, $scope.profileFields]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
-      ], onSuccess($scope.dispatch));
+      ], onSuccess($scope.dispatch, { silent: true }));
 
     }
 
