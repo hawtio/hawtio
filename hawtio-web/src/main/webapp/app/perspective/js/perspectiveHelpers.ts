@@ -261,7 +261,8 @@ module Perspective {
     }
     answer = answer || Perspective.defaultPerspective || "container";
 
-    log.debug("Choose perspective url: " + $location.url() + ", in fabric: " + inFMC + " -> " + answer);
+    // noisy!
+    // log.debug("Choose perspective url: " + $location.url() + ", in fabric: " + inFMC + " -> " + answer);
     return answer;
   }
 
