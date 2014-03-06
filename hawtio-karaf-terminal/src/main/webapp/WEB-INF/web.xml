@@ -16,7 +16,28 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/term/*</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/auth/*</url-pattern>
+  </filter-mapping>
 
+  <servlet>
+    <servlet-name>login</servlet-name>
+    <servlet-class>io.hawt.web.LoginTokenServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>login</servlet-name>
+    <url-pattern>/auth/login/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>logout</servlet-name>
+    <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>TerminalServlet</servlet-name>

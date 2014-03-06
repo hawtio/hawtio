@@ -16,6 +16,34 @@ var Gogo = (function() {
         restrict: 'A',
         link: function(scope, element, attrs) {
 
+          scope.$on("$destroy", function(e) {
+            scope.destroyed = true;
+            document.onkeypress = null;
+            document.onkeydown = null;
+            if (!('term' in scope)) {
+              return;
+            }
+            var url = "hawtio-karaf-terminal/auth/logout/";
+            delete scope.term;
+            $.ajax(url, {
+              type: "POST",
+              success: function (response) {
+                log.debug("logged out of terminal");
+                Core.$apply(scope);
+              },
+              error: function (xhr, textStatus, error) {
+                log.info("Failed to log out of terminal: ", error);
+              },
+              beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', authHeader);
+              }
+            })
+          });
+
+          if (scope.destroyed) {
+            return;
+          }
+
           var width = 120;
           var height = 39;
 
@@ -52,11 +80,32 @@ var Gogo = (function() {
 
           var authHeader = Core.getBasicAuthHeader(userDetails.username, userDetails.password);
 
-          gogo.Terminal(element.get(0), width, height, authHeader);
+          var url = "hawtio-karaf-terminal/auth/login/";
 
-          scope.$on("$destroy", function(e) {
-            document.onkeypress = null;
-            document.onkeydown = null;
+          $.ajax(url, {
+            type: "POST",
+            success: function (response) {
+              if (scope.destroyed) {
+                log.debug("Scope's been destroyed since we made our request, let's not create a terminal instance");
+                return;
+              }
+              log.debug("got back response: ", response);
+              if ('term' in scope) {
+                log.debug("Previous terminal created, let's clean it up");
+                document.onkeypress = null;
+                document.onkeydown = null;
+                delete scope.term;
+              }
+              scope.term = gogo.Terminal(element.get(0), width, height, response['token']);
+              Core.$apply(scope);
+
+            },
+            error: function (xhr, textStatus, error) {
+              log.warn("Failed to log into terminal: ", error);
+            },
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('Authorization', authHeader);
+            }
           });
 
         }

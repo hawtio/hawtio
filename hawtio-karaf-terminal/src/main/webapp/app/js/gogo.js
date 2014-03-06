@@ -6,7 +6,7 @@
 
 gogo = { };
 
-gogo.Terminal_ctor = function(div, width, height, authHeader) {
+gogo.Terminal_ctor = function(div, width, height, token) {
 
    var query0 = "w=" + width + "&h=" + height;
    var query1 = query0 + "&k=";
@@ -47,7 +47,7 @@ gogo.Terminal_ctor = function(div, width, height, authHeader) {
                force = 0;
            }
            r.open("POST", "hawtio-karaf-terminal/term", true);
-           r.setRequestHeader('Authorization', authHeader);
+           r.setRequestHeader('LoginToken', token);
            r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
            r.onreadystatechange = function () {
                if (r.readyState == 4) {
@@ -224,7 +224,7 @@ gogo.Terminal_ctor = function(div, width, height, authHeader) {
 
 }
 
-gogo.Terminal = function(div, width, height, authHeader) {
-   return new this.Terminal_ctor(div, width, height, authHeader);
+gogo.Terminal = function(div, width, height, token) {
+   return new this.Terminal_ctor(div, width, height, token);
 }
 
