@@ -1,14 +1,20 @@
 package io.hawt.jmx;
 
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerDelegate;
+import javax.management.Notification;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.*;
-import java.lang.management.ManagementFactory;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A simple mbean to watch the JMX tree so its easy for clients to know when they should refresh their JMX trees (which typically isn't a cheap operation).
@@ -71,7 +77,11 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
 
     public String getVersion() {
         if (version == null) {
-            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-web");
+            try {
+                version = Objects.getVersion(JmxTreeWatcher.class, "io.hawt", "hawtio-web");
+            } catch (Exception e) {
+                // ignore
+            }
             if (version == null) {
                 version = "";
             }
