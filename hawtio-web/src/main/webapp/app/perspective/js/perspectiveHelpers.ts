@@ -95,11 +95,15 @@ module Perspective {
    * @return {Array}
    */
   export function topLevelTabsForPerspectiveId(workspace, perspective) {
+    // lets sort using content which is the title in the navbar button, which is what the end user sees
+    // if we sort on id, then they may be re-ordered, such as karaf.terminal
+    var sortedTopLevelTabs = workspace.topLevelTabs.sortBy(f => f.content);
     var data = perspective ? Perspective.metadata[perspective] : null;
     var metaData = data;
     var answer = [];
+
     if (!data) {
-      answer = workspace.topLevelTabs;
+      answer = sortedTopLevelTabs;
     } else {
       // lets iterate through the available tabs in the perspective
       var topLevelTabs = data.topLevelTabs;
@@ -131,8 +135,7 @@ module Perspective {
 
       // if the meta-data only had excludes, then it means all the top level tabs, excluding these
       if (!topLevelTabs.includes) {
-        // lets exclude the excluded tabs
-        answer = workspace.topLevelTabs;
+        answer = sortedTopLevelTabs;
       } else {
         // if the meta-data had includes, then its only these
         answer = includes;
