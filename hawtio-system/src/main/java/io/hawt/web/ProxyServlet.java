@@ -82,7 +82,7 @@ public class ProxyServlet extends HttpServlet {
     /**
      * Initialize the <code>ProxyServlet</code>
      *
-     * @param servletConfig The Servlet configuration passed in by the servlet conatiner
+     * @param servletConfig The Servlet configuration passed in by the servlet container
      */
     public void init(ServletConfig servletConfig) {
 

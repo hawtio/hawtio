@@ -4,10 +4,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-
-/**
- */
 public class ProxyDetailsTest {
+
     @Test
     public void testPathInfoWithUserPasswordPort() throws Exception {
         ProxyDetails details = new ProxyDetails("/admin:admin@localhost/8181/jolokia/");
@@ -31,7 +29,6 @@ public class ProxyDetailsTest {
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getStringProxyURL());
     }
-
 
     @Test
     public void testPathInfoWithDefaultPort() throws Exception {

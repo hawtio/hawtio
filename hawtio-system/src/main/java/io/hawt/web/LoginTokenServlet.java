@@ -9,10 +9,6 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * @author Stan Lewis
- */
 public class LoginTokenServlet extends LoginServlet {
 
     private static final long serialVersionUID = 1L;
@@ -25,7 +21,7 @@ public class LoginTokenServlet extends LoginServlet {
         String token = (String) session.getAttribute(LOGIN_TOKEN);
 
         if ( token == null) {
-            byte[] seed = (subject.toString() + new Long(System.currentTimeMillis()).toString()).getBytes();
+            byte[] seed = (subject.toString() + Long.toString(System.currentTimeMillis())).getBytes();
             SecureRandom random = new SecureRandom(seed);
             byte[] tokenBytes = new byte[128];
             random.nextBytes(tokenBytes);

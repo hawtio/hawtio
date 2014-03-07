@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- */
 public class JmxTreeWatcherTest {
     JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
 
@@ -37,7 +35,6 @@ public class JmxTreeWatcherTest {
 
         long value3 = treeWatcher.getCounter();
         assertCounterGreater(value2, value3);
-
     }
 
     private void assertCounterGreater(long value1, long value2) {
