@@ -16,15 +16,17 @@ module Osgi {
         $scope.edited = (name, displayName, res) => {
             $scope.editDialog.close();
 
-            var mbean = getSelectionFrameworkMBean(workspace);
-            if (mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({
-                        type: 'write', mbean: mbean, attribute: name, value: res
-                    },{
-                        error: function(response) { editWritten("error", response.error) },
-                        success: function(response) { editWritten("success", displayName + " changed to " + res) }
-                    });
+            if (angular.isNumber(res)) {
+              var mbean = getSelectionFrameworkMBean(workspace);
+              if (mbean) {
+                  var jolokia = workspace.jolokia;
+                  jolokia.request({
+                          type: 'write', mbean: mbean, attribute: name, value: res
+                      },{
+                          error: function(response) { editWritten("error", response.error) },
+                          success: function(response) { editWritten("success", displayName + " changed to " + res) }
+                      });
+              }
             }
         }
 
