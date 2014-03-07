@@ -73,7 +73,7 @@ module Jmx {
     },
     {
       type: "donut",
-      title: "Loaded Clases",
+      title: "Loaded Classes",
       mbean: "java.lang:type=ClassLoading",
       total: "TotalLoadedClassCount",
       terms: "LoadedClassCount,UnloadedClassCount",
