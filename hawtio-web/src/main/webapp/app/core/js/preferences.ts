@@ -265,6 +265,17 @@ module Core {
       }
     };
 
+    $scope.doClearConnectSettings = () => {
+      var doReset = () => {
+        delete localStorage[JVM.connectControllerKey];
+        delete localStorage[JVM.connectionSettingsKey];
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      };
+      doReset();
+    };
+
     $scope.$watch('perspectiveId', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
