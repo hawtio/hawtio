@@ -18,7 +18,7 @@ module Dashboard {
       "widgets": [
         {
           "id": "w1",
-          "title": "",
+          "title": "Operating System",
           "row": 1,
           "col": 1,
           "size_x": 3,
