@@ -98,18 +98,25 @@
       </dl>
 
       <dl>
-        <dt class="alert alert-danger">Danger Zone</dt>
+        <dt class="alert alert-danger">Clear Saved Connections</dt>
         <dd>
           <div class="control-group">
-            <label class="control-label">I want to clear my connection settings and I understand this can't be undone...</label>
-            <div class="controls">
-              <input type="checkbox" ng-model="canClearSettings">
+            <label class="control-label">I want to clear my saved connection settings (cannot be undone)</label>
+          </div>
+
+          <button class="btn btn-danger"
+                  ng-click="showConfirmDialog = true"
+                  title="Clear all saved connection settings">Clear Saved Connection Settings</button>
+
+          <div hawtio-confirm-dialog="showConfirmDialog"
+               ok-button-text="Clear" on-ok="clearSettings()"
+               cancel-button-text="Cancel"
+               title="Confirm">
+            <div class="dialog-body">
+              <p>Are you sure you want to clear all saved connection settings?</p>
+              <p>This cannot be undone.</p>
             </div>
           </div>
-          <button class="btn btn-danger"
-                  ng-disabled="!canClearSettings"
-                  ng-click="clearSettings()"
-                  title="Clear all stored connection settings">Wipe Connection Settings</button>
         </dd>
       </dl>
 
