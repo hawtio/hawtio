@@ -315,7 +315,16 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     }
 
     protected List<CommitInfo> doHistory(Git git, String branch, String objectId, String pathOrBlobPath, int limit) {
+        List<CommitInfo> results = new ArrayList<CommitInfo>();
         Repository r = git.getRepository();
+
+        try {
+            String head = getHEAD();
+        } catch (Exception e) {
+            LOG.error("Cannot find HEAD of this git repository! " + e, e);
+            return results;
+        }
+
         String path = trimLeadingSlash(pathOrBlobPath);
 
         CommitFinder finder = new CommitFinder(r);
@@ -344,7 +353,6 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
             }
         }
         List<RevCommit> commits = filter.getCommits();
-        List<CommitInfo> results = new ArrayList<CommitInfo>();
         for (RevCommit entry : commits) {
             CommitInfo commitInfo = createCommitInfo(entry);
             results.add(commitInfo);

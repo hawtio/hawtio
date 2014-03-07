@@ -272,6 +272,20 @@
     </dependency>
 
     <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gitective</groupId>
+      <artifactId>gitective-core</artifactId>
+      <version>${gitective-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
       <groupId>net.alchim31</groupId>
       <artifactId>livereload-jvm</artifactId>
       <version>0.2.0</version>
