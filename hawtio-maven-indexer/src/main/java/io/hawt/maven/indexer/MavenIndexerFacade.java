@@ -54,6 +54,9 @@ import java.util.TreeSet;
 public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFacadeMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(MavenIndexerFacade.class);
 
+    // cap at 10 thousand
+    private static final int SEARCH_LIMIT = 10000;
+
     private PlexusContainer plexusContainer;
     private Indexer indexer;
     private IndexUpdater indexUpdater;
@@ -344,10 +347,15 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     public List<ArtifactDTO> searchGrouped(Query query, GAGrouping grouping) throws IOException {
         List<ArtifactDTO> answer = new ArrayList<ArtifactDTO>();
         GroupedSearchResponse response = indexer.searchGrouped(new GroupedSearchRequest(query, grouping, mergedContext));
+
+        int index = 0;
         for (Map.Entry<String, ArtifactInfoGroup> entry : response.getResults().entrySet()) {
             ArtifactInfo ai = entry.getValue().getArtifactInfos().iterator().next();
             ArtifactDTO dto = createArtifactDTO(ai);
             answer.add(dto);
+            if (++index > SEARCH_LIMIT) {
+                break;
+            }
         }
         return answer;
     }
@@ -355,9 +363,14 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     public List<ArtifactDTO> searchFlat(BooleanQuery q) throws IOException {
         List<ArtifactDTO> answer = new ArrayList<ArtifactDTO>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(q, mergedContext));
+
+        int index = 0;
         for (ArtifactInfo ai : response.getResults()) {
             ArtifactDTO dto = createArtifactDTO(ai);
             answer.add(dto);
+            if (++index > SEARCH_LIMIT) {
+                break;
+            }
         }
         return answer;
     }
@@ -367,20 +380,29 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         BooleanQuery bq = createQuery(endWithStarIfNotBlank(groupId), null, null, packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
+
+        int index = 0;
         for (ArtifactInfo ai : response.getResults()) {
             set.add(ai.groupId);
+            if (++index > SEARCH_LIMIT) {
+                break;
+            }
         }
         return new ArrayList<String>(set);
     }
-
 
     @Override
     public List<String> artifactIdComplete(String groupId, String artifactId, String packaging, String classifier) throws IOException {
         BooleanQuery bq = createQuery(groupId, endWithStarIfNotBlank(artifactId), null, packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
+
+        int index = 0;
         for (ArtifactInfo ai : response.getResults()) {
             set.add(ai.artifactId);
+            if (++index > SEARCH_LIMIT) {
+                break;
+            }
         }
         return new ArrayList<String>(set);
     }
@@ -389,9 +411,14 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     public List<String> versionComplete(String groupId, String artifactId, String version, String packaging, String classifier) throws IOException {
         BooleanQuery bq = createQuery(groupId, artifactId, endWithStarIfNotBlank(version), packaging, classifier, null);
         Set<String> set = new TreeSet<String>();
+
+        int index = 0;
         FlatSearchResponse response = indexer.searchFlat(new FlatSearchRequest(bq, mergedContext));
         for (ArtifactInfo ai : response.getResults()) {
             set.add(ai.version);
+            if (++index > SEARCH_LIMIT) {
+                break;
+            }
         }
         return new ArrayList<String>(set);
     }

@@ -101,7 +101,9 @@ module Maven {
       }
     };
 
-    var RESPONSE_LIMIT = 50;
+    // cap ui table at one thousand
+    var RESPONSE_LIMIT = 1000;
+    var SERVER_RESPONSE_LIMIT = (10 * RESPONSE_LIMIT) + 1;
 
     function render(response) {
       log.debug("Search done, preparing result.");
@@ -111,7 +113,12 @@ module Maven {
       // the browser until we start using a widget
       // that supports pagination
       if (response.length > RESPONSE_LIMIT) {
-        $scope.tooManyResponses = "This search returned " + response.length + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+        var serverLimit = response.length === SERVER_RESPONSE_LIMIT;
+        if (serverLimit) {
+          $scope.tooManyResponses = "This search returned more than " + (SERVER_RESPONSE_LIMIT - 1) + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+        } else {
+          $scope.tooManyResponses = "This search returned " + response.length + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+        }
       } else {
         $scope.tooManyResponses = "";
       }
