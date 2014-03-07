@@ -50,7 +50,12 @@
   </servlet-mapping>
 
   <listener>
-    <listener-class>io.hawt.web.plugin.karaf.terminal.KarafTerminalContextListener</listener-class>
+    <description>Session Listener</description>
+    <listener-class>io.hawt.web.plugin.karaf.terminal.TerminalSessionListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>io.hawt.web.plugin.karaf.terminal.TerminalContextListener</listener-class>
   </listener>
 
 </web-app>

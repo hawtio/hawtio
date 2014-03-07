@@ -52,6 +52,7 @@ public class TerminalServlet extends HttpServlet {
 
         String sessionToken = (String) session.getAttribute(LoginTokenServlet.LOGIN_TOKEN);
         if (!token.equals(sessionToken)) {
+            session.invalidate();
             Helpers.doForbidden(response);
             return;
         }
@@ -142,6 +143,10 @@ public class TerminalServlet extends HttpServlet {
 
         public boolean isClosed() {
             return closed;
+        }
+
+        public void close() {
+          console.close(true);
         }
 
         public String handle(String str, boolean forceDump) throws IOException {

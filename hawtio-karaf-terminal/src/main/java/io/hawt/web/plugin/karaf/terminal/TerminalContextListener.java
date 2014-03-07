@@ -8,7 +8,7 @@ import javax.servlet.ServletContextListener;
 /**
  * @author Stan Lewis
  */
-public class KarafTerminalContextListener implements ServletContextListener {
+public class TerminalContextListener implements ServletContextListener {
 
   private ConfigManager configManager = new ConfigManager();
 
