@@ -66,7 +66,7 @@
     <aether-version>1.13.1</aether-version>
     <apollo-version>99-trunk-SNAPSHOT</apollo-version>
     <scala-version>2.10.0</scala-version>
-    <atmosphere-version>1.0.0.beta5</atmosphere-version>
+    <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
     <camel-version>2.12.0.${perfectus-build}</camel-version>
@@ -81,10 +81,6 @@
     <!-- fabric test version points to a previous release version to break cycle with fabric -->
     <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
     <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
-    <!--
-    <fabric-version>99-master-SNAPSHOT</fabric-version>
-    -->
-    <fmc-version>${fabric-version}</fmc-version>
     <felix.gogo.version>0.10.0</felix.gogo.version>
     <gitective-version>0.9.9</gitective-version>
 
