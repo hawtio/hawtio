@@ -132,7 +132,7 @@ module UI {
           // lets make sure we don't have a modal-backdrop hanging around!
           var backdrop = $("div.modal-backdrop");
           if (backdrop && backdrop.length) {
-            Logger.get("ConfirmDialog").info("Removing the backdrop div! " + backdrop);
+            Logger.get("ConfirmDialog").debug("Removing the backdrop div! " + backdrop);
             backdrop.remove();
           }
         }, 200);
