@@ -156,7 +156,7 @@ module Jmx {
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
         }
-        // just to be safe, then delete not needed part of the scema
+        // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaView) {
           delete $scope.attributeSchemaView.properties.attrValueEdit;
         }
@@ -183,7 +183,7 @@ module Jmx {
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
         }
-        // just to be safe, then delete not needed part of the scema
+        // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaEdit) {
           delete $scope.attributeSchemaEdit.properties.attrValueView;
         }
@@ -500,7 +500,9 @@ module Jmx {
                     return unwrapObjectName(v);
                   });
                 }
-                var data = {key: key, name: humanizeValue(key), value: safeNull(value)};
+                // the value must be string as the sorting/filtering of the table relies on that
+                var type = lookupAttributeType(key);
+                var data = {key: key, name: humanizeValue(key), value: safeNullAsString(value, type)};
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -590,6 +592,16 @@ module Jmx {
           data.type = info.type;
         }
       }
+    }
+
+    function lookupAttributeType(key) {
+      if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
+        var info = $scope.attributesInfoCache.attr[key];
+        if (angular.isDefined(info)) {
+          return info.type;
+        }
+      }
+      return null;
     }
 
     function includePropertyValue(key:string, value) {
