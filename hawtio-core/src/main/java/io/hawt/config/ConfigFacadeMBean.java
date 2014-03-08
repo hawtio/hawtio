@@ -13,4 +13,9 @@ public interface ConfigFacadeMBean {
      * Returns the hawtio version
      */
     String getVersion();
+
+    /**
+     * Whether hawtio has been configured to work in offline mode.
+     */
+    boolean isOffline();
 }
