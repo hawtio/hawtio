@@ -16,6 +16,7 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Monitoring Camel Application](http://bushorn.com/monitoring-camel-application/) by [Gnanaguru](http://bushorn.com/author/gnanagurus/)
 * [Hawtio, la console web polyvalente](http://blog.zenika.com/index.php?post/2014/01/07/HawtIO-la-console-web-polyvalente) by Gérald Quintana (in French) with a great overview of hawtio (note: Google can translate the page into readable english)
 * [Hawtio, écrire un plugin](http://blog.zenika.com/index.php?post/2014/01/14/HawtIO-ecrire-un-plugin) by Gérald Quintana (in French) the second part on writing a plugin (note: Google can translate the page into readable english)
+* [Hawtio authentication with LDAP](http://jcordes73.blogspot.de/2014/03/hawtio-authentication-with-ldap-on.html) by Jochen Cordes with a blog series how to use LDAP authentication with hawtio running on Tomcat 7, JBoss Fuse, and JBoss EAP.
 
 
 ## Developer articles
