@@ -296,19 +296,13 @@ module Camel {
           var routeMBean = getSelectionRouteMBean(workspace, $scope.selectedRouteId);
           console.log("Selected route is " + $scope.selectedRouteId)
 
-          var camelVersion = getCamelVersion(workspace, jolokia);
-          if (camelVersion) {
-            console.log("Camel version " + camelVersion)
-            camelVersion += "camel-";
-            var numbers = Core.parseVersionNumbers(camelVersion);
-            if (Core.compareVersionNumberArrays(numbers, [2, 11]) >= 0) {
-              // this is Camel 2.11 or better so we dont need to calculate data manually
-              console.log("Camel 2.11 or better detected")
-              $scope.calcManually = false
-            } else {
-              console.log("Camel 2.10 or older detected")
-              $scope.calcManually = true
-            }
+          if (Camel.isCamelVersionEQGT(2, 11, workspace, jolokia)) {
+            // this is Camel 2.11 or better so we dont need to calculate data manually
+            console.log("Camel 2.11 or better detected")
+            $scope.calcManually = false
+          } else {
+            console.log("Camel 2.10 or older detected")
+            $scope.calcManually = true
           }
 
           initIdToIcon();

@@ -24,6 +24,7 @@ module Camel {
                     when('/camel/route/diagram/:contextId/:routeId', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
                     when('/camel/fabricDiagram', {templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false}).
+                    when('/camel/typeConverter', {templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false}).
                     when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
                     when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
                     when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
@@ -192,7 +193,7 @@ module Camel {
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-picture"></i> Diagram',
-              title: "View the entire JVMs camel flows",
+              title: "View the entire JVMs Camel flows",
               isValid: (workspace: Workspace) =>  workspace.isTopTabActive("camel") && !workspace.isRoute(),
               href: () => "#/camel/fabricDiagram"
             });
@@ -207,6 +208,12 @@ module Camel {
               title: "View the pattern properties",
               isValid: (workspace: Workspace) => getSelectedRouteNode(workspace),
               href: () => "#/camel/properties"
+            });
+            workspace.subLevelTabs.push({
+              content: '<i class="icon-list"></i> Type Converters',
+              title: "List all the type converters registered in the context",
+              isValid: (workspace: Workspace) => workspace.isTopTabActive("camel") && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia),
+              href: () => "#/camel/typeConverter"
             });
             workspace.subLevelTabs.push({
               content: '<i class="icon-envelope"></i> Browse',

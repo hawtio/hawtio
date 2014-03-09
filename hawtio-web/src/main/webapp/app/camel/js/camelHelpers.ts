@@ -757,6 +757,27 @@ module Camel {
     return null;
   }
 
+  export function getSelectionCamelTypeConverter(workspace) {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "services");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title.startsWith("DefaultTypeConverter"));
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // TODO should be a service
   export function getContextId(workspace:Workspace) {
     var selection = workspace.selection;
@@ -1317,6 +1338,27 @@ module Camel {
       }
       return null;
     }).attr("class", "node selected");
+  }
+
+  /**
+   * Is the currently selected Camel version equal or greater than
+   *
+   * @param major   major version as number
+   * @param minor   minor version as number
+   */
+  export function isCamelVersionEQGT(major, minor, workspace, jolokia) {
+    var camelVersion = getCamelVersion(workspace, jolokia);
+    if (camelVersion) {
+      console.log("Camel version " + camelVersion)
+      camelVersion += "camel-";
+      var numbers = Core.parseVersionNumbers(camelVersion);
+      if (Core.compareVersionNumberArrays(numbers, [major, minor]) >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 
 }
