@@ -165,7 +165,7 @@ The following table contains the various configuration settings for the various 
 <th>System Property</th><th>Description</th>
 </tr>
 <tr>
-<td>hawtio.offline</td><td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as [Maven](http://hawt.io/plugins/maven/) and [git](http://hawt.io/plugins/git/).</td>
+<td>hawtio.offline</td><td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
 </tr>
 <tr>
 <td>hawtio.config.dir</td><td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!</td>
