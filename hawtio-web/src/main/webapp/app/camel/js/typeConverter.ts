@@ -3,6 +3,9 @@ module Camel {
   export function TypeConverterController($scope, $location, workspace:Workspace, jolokia) {
 
     $scope.data = [];
+    $scope.selectedMBean = null;
+
+    $scope.mbeanAttributes = {};
 
     var columnDefs:any[] = [
       {
@@ -33,7 +36,17 @@ module Camel {
       }
     };
 
-    function render(response) {
+    function onAttributes(response) {
+      var obj = response.value;
+      if (obj) {
+        $scope.mbeanAttributes = obj;
+
+        // ensure web page is updated
+        Core.$apply($scope);
+      }
+    }
+
+    function onConverters(response) {
       var obj = response.value;
       if (obj) {
 
@@ -47,29 +60,49 @@ module Camel {
         arr = arr.sortBy("from");
         $scope.data = arr;
 
+        // okay we have the data then set the selected mbean which allows UI to display data
+        $scope.selectedMBean = response.request.mbean;
+
         // ensure web page is updated
         Core.$apply($scope);
       }
     }
 
-    $scope.$on('jmxTreeUpdated', reloadFunction);
-    $scope.$watch('workspace.tree', reloadFunction);
-
-    function reloadFunction() {
-      // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-      // so lets reload, asynchronously just in case
-      setTimeout(loadData, 50);
+    $scope.renderIcon = (state) => {
+      return Camel.iconClass(state);
     }
 
-    function loadData() {
-      console.log("Loading TypeConverter data...");
-      var mbean = getSelectionCamelTypeConverter(workspace)
-      if (mbean) {
-        var query = {type: 'exec', mbean: mbean, operation: 'listTypeConverters'};
-        jolokia.request(query, onSuccess(render));
+    $scope.disableStatistics = () => {
+      if ($scope.selectedMBean) {
+        jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", false);
       }
     }
 
+    $scope.enableStatistics = () => {
+      if ($scope.selectedMBean) {
+        jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", true);
+      }
+    }
+
+    function loadConverters() {
+      console.log("Loading TypeConverter data...");
+      var mbean = getSelectionCamelTypeConverter(workspace);
+      if (mbean) {
+        // grab attributes in real time
+        var query = {type: "read", mbean: mbean,
+          attribute: ["AttemptCounter", "FailedCounter", "HitCounter", "MissCounter", "NumberOfTypeConverters", "StatisticsEnabled"]};
+
+        jolokia.request(query, onSuccess(onAttributes));
+
+        scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(onAttributes, query));
+
+        // and list of converters
+        jolokia.request({type: 'exec', mbean: mbean, operation: 'listTypeConverters'}, onSuccess(onConverters));
+      }
+    }
+
+    // load converters
+    loadConverters();
   }
 
 }
