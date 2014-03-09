@@ -84,6 +84,12 @@ module Camel {
       }
     }
 
+    $scope.resetStatistics = () => {
+      if ($scope.selectedMBean) {
+        jolokia.request({type: 'exec', mbean: $scope.selectedMBean, operation: 'resetTypeConversionCounters'}, onSuccess(null, {silent: true}));
+      }
+    }
+
     function loadConverters() {
       console.log("Loading TypeConverter data...");
       var mbean = getSelectionCamelTypeConverter(workspace);

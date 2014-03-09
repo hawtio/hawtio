@@ -5,7 +5,6 @@
     .dl-horizontal dt {
       width: 260px;
     }
-
     .dl-horizontal dd {
       margin-left: 280px;
     }
@@ -20,6 +19,9 @@
           <fieldset>
             <div class="controls control-group inline-block controls-row">
               <div class="btn-group">
+                <button
+                    class="btn" ng-click="resetStatistics()" title="Reset Statistics">
+                  <i class="icon-refresh"></i></button>
                 <button
                     ng-disabled="mbeanAttributes.StatisticsEnabled"
                     class="btn" ng-click="enableStatistics()" title="Enable Statistics">
