@@ -49,7 +49,7 @@ module Camel {
 
         var contextFilterText = $scope.contextFilterText;
         $scope.lastContextFilterText = contextFilterText;
-        log.info("Reloading the tree for filter: " + contextFilterText);
+        log.debug("Reloading the tree for filter: " + contextFilterText);
         var folder = tree.get(domainName);
         if (folder) {
           angular.forEach(folder.children, (value, key) => {
