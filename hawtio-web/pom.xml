@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.2.3</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -415,7 +415,7 @@
                 <echo>Copying stuff to src/test/unit</echo>
                 <copy todir="src/test/unit">
                   <fileset dir="${webapp-outdir}">
-                    <include name="**"/>
+                    <include name="**" />
                   </fileset>
                 </copy>
 
@@ -428,7 +428,7 @@
             <phase>generate-sources</phase>
             <configuration>
               <target>
-                <mkdir dir="${basedir}/target/classes"/>
+                <mkdir dir="${basedir}/target/classes" />
 
                 <!-- copy the markdown docs into the site plugin  -->
                 <echo>Writing version to index.html</echo>
@@ -459,7 +459,7 @@
                 <echo>Copying base directory docs</echo>
                 <copy todir="${webapp-outdir}/app/core/doc">
                   <fileset dir="${basedir}/../">
-                    <include name="*.md"/>
+                    <include name="*.md" />
                   </fileset>
                 </copy>
 
@@ -473,20 +473,20 @@
                   </filterchain>
 -->
                   <fileset dir="${basedir}/src/main/webapp">
-                    <include name="**"/>
-                    <exclude name="**/*.ts"/>
-                    <exclude name="index.html"/>
-                    <exclude name="manifest.json"/>
+                    <include name="**" />
+                    <exclude name="**/*.ts" />
+                    <exclude name="index.html" />
+                    <exclude name="manifest.json" />
                   </fileset>
                 </copy>
 
                 <!-- update the manifest version -->
                 <copy todir="${webapp-outdir}">
                   <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
-                      <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;"/>
+                      <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
                     </filterset>
                   <fileset dir="${basedir}/src/main/webapp">
-                    <include name="manifest.json"/>
+                    <include name="manifest.json" />
                   </fileset>
                 </copy>
 
