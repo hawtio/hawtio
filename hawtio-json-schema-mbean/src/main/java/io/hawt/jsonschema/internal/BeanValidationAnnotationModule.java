@@ -2,9 +2,6 @@ package io.hawt.jsonschema.internal;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-/**
- * @author Stan Lewis
- */
 public class BeanValidationAnnotationModule extends SimpleModule {
 
     private static final long serialVersionUID = 1L;

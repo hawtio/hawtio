@@ -5,9 +5,6 @@ import io.hawt.jsonschema.test.objects.ObjectWithTransientModifiers;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @author Stan Lewis
- */
 public class SchemaLookupTest {
 
     @Test

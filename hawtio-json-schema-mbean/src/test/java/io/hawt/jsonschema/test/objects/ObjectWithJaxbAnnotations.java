@@ -1,9 +1,5 @@
 package io.hawt.jsonschema.test.objects;
 
-/**
- * @author Stan Lewis
- */
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;

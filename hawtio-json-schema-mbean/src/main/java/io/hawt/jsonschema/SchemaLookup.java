@@ -12,9 +12,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Stan Lewis
- */
 public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(SchemaLookup.class);
 
@@ -98,13 +95,13 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     }
 
     public String getSchemaForClass(Class<?> clazz) {
-        LOG.info("Looking up schema for " + clazz.getCanonicalName());
+        LOG.debug("Looking up schema for {}", clazz.getCanonicalName());
         String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
             return writer.writeValueAsString(mapper.generateJsonSchema(clazz));
         } catch (Exception e) {
-            LOG.warn("Failed to generate JSON schema for class {}", name, e);
+            LOG.warn("Failed to generate JSON schema for class " + name, e);
             throw new RuntimeException(e);
         }
     }

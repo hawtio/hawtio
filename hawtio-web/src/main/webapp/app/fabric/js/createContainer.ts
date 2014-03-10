@@ -81,13 +81,13 @@ module Fabric {
         var login = Core.pathGet(entity, ["login"]);
         var password = Core.pathGet(entity, ["password"]);
 
-        log.info("Invoking login to server " + serverUrl + " user " + login);
+        log.debug("Invoking login to server " + serverUrl + " user " + login);
         $scope.openShift.loginFailed = false;
         if (serverUrl && login && password) {
           $scope.openShift.domains = [];
           Fabric.getOpenShiftDomains(workspace, jolokia, serverUrl, login, password, (results) => {
             $scope.openShift.domains = results;
-            log.info("found openshift domains: " + results);
+            log.debug("found openshift domains: " + results);
             // lets default the value if there's only 1
             if (results.length === 1) {
               $scope.entity.domain = results[0];
@@ -96,7 +96,7 @@ module Fabric {
 
             Fabric.getOpenShiftGearProfiles(workspace, jolokia, serverUrl, login, password, (results) => {
               $scope.openShift.gearProfiles = results;
-              log.info("found openshift gears: " + $scope.openShift.gearProfiles);
+              log.debug("found openshift gears: " + $scope.openShift.gearProfiles);
 
               // now lets store the current settings so they can be defaulted next time without a login
               savePropertiesInLocalStorage();
@@ -153,14 +153,14 @@ module Fabric {
           var localValue = localStorage[value];
           if (localValue) {
             $scope.entity[key] = localValue;
-            log.info("Defaulted entity " + key + " to " + localValue + " from localStorage");
+            log.debug("Defaulted entity " + key + " to " + localValue + " from localStorage");
           }
         });
 
         if (providerId === "openshift") {
           var loginDataText = localStorage[$scope.openShift.loginDataKey];
           if (loginDataText) {
-            log.info("Loaded openshift login details: " + loginDataText);
+            log.debug("Loaded openshift login details: " + loginDataText);
             var loginData = Wiki.parseJson(loginDataText);
             if (loginData) {
               angular.forEach(["domains", "gearProfiles"], (key) => {

@@ -14,9 +14,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
-/**
- * @author Stan Lewis
- */
 public class BeanValidationAnnotationIntrospector extends AnnotationIntrospector {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanValidationAnnotationIntrospector.class);
 
