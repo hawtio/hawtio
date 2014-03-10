@@ -1,5 +1,19 @@
 ### Change Log
 
+#### 1.2.3
+
+* Upgraded to TypeScript 0.9.5 which is faster
+* [threads](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads) plugin to monitor JVM thread usage and status.
+* Moved java code from hawtio-web into hawtio-system
+* Clicking a line in the log plugin now shows a detail dialog with much more details.
+* ActiveMQ plugin can now browse byte messages.
+* Improved look and feel in the Camel route diagram.
+* Breadcrumb navigation in Camel plugin to make it easier and faster to switch between CamelContext and routes in the selected view.
+* Added Type Converter sub tab (requires Camel 2.13 onwards).
+* Better support folder older Internet Explorer browsers.
+* 
+* Fixes [these 175 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=9&state=closed)
+
 #### 1.2.2
 
 * Added welcome page to aid first time users, and being able to easily dismiss the welcome page on startup.
@@ -74,12 +88,3 @@
 
 #### In Progress (1.3)
 
-* Upgraded to TypeScript 0.9.5 which is faster
-* [threads](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads) plugin to monitor JVM thread usage and status.
-* Moved java code from hawtio-web into hawtio-system
-* Clicking a line in the log plugin now shows a detail dialog with much more details.
-* ActiveMQ plugin can now browse byte messages.
-* Improved look and feel in the Camel route diagram.
-* Breadcrumb navigation in Camel plugin to make it easier and faster to switch between CamelContext and routes in the selected view.
-* Added Type Converter sub tab (requires Camel 2.13 onwards).
-* Better support folder older Internet Explorer browsers.
