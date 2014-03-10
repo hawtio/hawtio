@@ -1,5 +1,5 @@
 /**
- * @module Jvm
+ * @module JVM
  */
 module JVM {
 

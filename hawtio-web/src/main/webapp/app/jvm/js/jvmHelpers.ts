@@ -1,5 +1,5 @@
 /**
- * @module Jvm
+ * @module JVM
  */
 module JVM {
 
@@ -7,6 +7,14 @@ module JVM {
 
   export var connectControllerKey = "jvmConnectSettings";
   export var connectionSettingsKey = "jvmConnect";
+
+  export var logoPath = rootPath + '/img/';
+
+  export var logoRegistry = {
+    'jetty': logoPath + 'jetty-logo-80x22.png',
+    'tomcat': logoPath + 'tomcat-logo.gif',
+    'generic': logoPath + 'java-logo.svg'
+  };
 
   /**
    * Adds common properties and functions to the scope
@@ -34,6 +42,12 @@ module JVM {
 
     $scope.breadcrumbs = [
       {
+        content: '<i class="icon-signin"></i> Discovery',
+        title: "Discover",
+        isValid: (workspace:Workspace) => hasDiscoveryMBean(workspace),
+        href: "#/jvm/discover"
+      },
+      {
         content: '<i class=" icon-signin"></i> Remote',
         title: "Connect to a remote JVM running Jolokia",
         isValid: (workspace:Workspace) => true,
@@ -51,4 +65,9 @@ module JVM {
   export function hasLocalMBean(workspace) {
     return workspace.treeContainsDomainAndProperties('hawtio', {type: 'JVMList'});
   }
+
+  export function hasDiscoveryMBean(workspace) {
+    return workspace.treeContainsDomainAndProperties('jolokia', {type: 'Discovery'});
+  }
+
 }

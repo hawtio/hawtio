@@ -1,21 +1,24 @@
 /**
- * @module Jvm
- * @main Jvm
+ * @module JVM
+ * @main JVM
  */
-module Jvm {
+module JVM {
 
-  var pluginName = 'jvm';
+  export var rootPath = 'app/jvm';
+  export var templatePath = rootPath + '/html/';
+  export var pluginName = 'jvm';
 
   angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/jvm/connect', {templateUrl: 'app/jvm/html/connect.html'}).
-                    when('/jvm/local', {templateUrl: 'app/jvm/html/local.html'});
+                    when('/jvm/discover', {templateUrl: templatePath + 'discover.html'}).
+                    when('/jvm/connect', {templateUrl: templatePath + 'connect.html'}).
+                    when('/jvm/local', {templateUrl: templatePath + 'local.html'});
           }).
           constant('mbeanName', 'hawtio:type=JVMList').
           run(($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
-            viewRegistry[pluginName] = layoutFull;
+            viewRegistry[pluginName] = templatePath + 'layoutConnect.html';
             helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
 
             workspace.topLevelTabs.push({
@@ -23,7 +26,13 @@ module Jvm {
               content: "Connect",
               title: "Connect to other JVMs",
               isValid: (workspace) => true,
-              href: () => '#/jvm/connect',
+              href: () => {
+                if (JVM.hasDiscoveryMBean(workspace)) {
+                  return '#/jvm/discover';
+                } else {
+                  return '#/jvm/connect';
+                }
+              },
               isActive: (workspace:Workspace) => workspace.isLinkActive("jvm")
             });
           });
