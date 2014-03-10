@@ -10,8 +10,9 @@
 * Improved look and feel in the Camel route diagram.
 * Breadcrumb navigation in Camel plugin to make it easier and faster to switch between CamelContext and routes in the selected view.
 * Added Type Converter sub tab (requires Camel 2.13 onwards).
-* Better support folder older Internet Explorer browsers.
-* 
+* Better support for older Internet Explorer browsers.
+* Lots of polishing to work much better as the console for [fabric8](http://fabric8.io/)
+
 * Fixes [these 175 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=9&state=closed)
 
 #### 1.2.2

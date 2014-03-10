@@ -23,6 +23,10 @@ Now go to the [OSS Nonatype Nexus](https://oss.sonatype.org/index.html#stagingRe
 
 Now update the new dev version in [SpecRunner.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/specs/SpecRunner.html#L88) so the new dev build doens't barf
 
+Update the *.md files to point to the new version (being careful not to break various configuration documents and the changes.md which list specific versions).
+
+Update the extension.xml file to point to the new version.
+
 Now drink a beer! Then another! There, thats better now isn't it!
 
 
