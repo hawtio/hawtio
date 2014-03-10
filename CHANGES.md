@@ -2,6 +2,7 @@
 
 #### 1.2.3
 
+* new [hawtio Chrome Extension](http://hawt.io/getstarted/index.html) for easier connection to remote JVMs from your browser without having to run a hawtio server or connect through a web proxy
 * Upgraded to TypeScript 0.9.5 which is faster
 * [threads](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads) plugin to monitor JVM thread usage and status.
 * Moved java code from hawtio-web into hawtio-system
