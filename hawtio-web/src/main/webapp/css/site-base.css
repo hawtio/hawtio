@@ -4095,20 +4095,31 @@ img.nodeIcon:hover {
   margin-right: 10px;
 }
 
-.discovery > li > div:last-child {
+.discovery > li > div:last-child,
+.discovery > li > .lock {
   position: absolute;
-  width: 64px;
-  height: 64px;
+  width: 32px;
+  height: 32px;
   margin: auto;
   top: 0;
   bottom: 0;
   right: 10px;
 }
 
-.discovery > li > div:last-child > i {
+.discovery > li > .lock {
+  right: 42px;
+}
+
+.discovery > li > div:last-child > i,
+.discovery > li > .lock > i {
   color: lightgreen;
-  font-size: 64px;
+  font-size: 32px;
   cursor: pointer;
+}
+
+.discovery > li > .lock > i {
+  color: lightgrey;
+  cursor: inherit;
 }
 
 .discovery > li > div:first-child > img {
