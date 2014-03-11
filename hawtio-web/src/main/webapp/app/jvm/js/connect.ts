@@ -202,16 +202,6 @@ module JVM {
       var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
       var host = $scope.currentConfig['host'] || 'localhost';
 
-      // lets trim any http:// prefix or / postfix
-      var idx = host.indexOf("://");
-      if (idx >= 0) {
-        host = host.substring(idx + 3);
-      }
-      idx = host.indexOf("/");
-      if (idx >= 0) {
-        host = host.substring(0, idx);
-      }
-
       log.info("using scheme: " + $scope.currentConfig['scheme'] + " and host name: " + host +
         " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
       options.scheme = $scope.currentConfig['scheme'];

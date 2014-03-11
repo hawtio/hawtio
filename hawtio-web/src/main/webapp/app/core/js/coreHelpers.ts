@@ -1262,6 +1262,56 @@ module Core {
     return "Basic " + authInfo;
   }
 
+  var httpRegex = new RegExp('^(https?):\/\/(([^:/?#]*)(?::([0-9]+))?)');
+
+
+  /**
+   * Breaks a URL up into a nice object
+   * @method parseUrl
+   * @for Core
+   * @static
+   * @param url
+   * @returns object
+   */
+  export function parseUrl(url:string):any {
+    if (Core.isBlank(url)) {
+      return null;
+    }
+
+    var matches = url.match(httpRegex);
+
+    if (matches === null) {
+      return null;
+    }
+
+    //log.debug("matches: ", matches);
+
+    var scheme = matches[1];
+    var host = matches[3];
+    var port = matches[4];
+
+    var parts:string[] = null;
+    if (!Core.isBlank(port)) {
+      parts = url.split(port);
+    } else {
+      parts = url.split(host);
+    }
+
+    var path = parts[1];
+    if (path && path.startsWith('/')) {
+      path = path.slice(1, path.length);
+    }
+
+    //log.debug("parts: ", parts);
+
+    return {
+      scheme: scheme,
+      host: host,
+      port: port,
+      path: path
+    }
+  }
+
   export class ConnectToServerOptions {
     public scheme:string = "http";
     public host:string;

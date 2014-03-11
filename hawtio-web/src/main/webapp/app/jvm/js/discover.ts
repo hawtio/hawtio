@@ -3,7 +3,7 @@
  */
 module JVM {
 
-  export function DiscoveryController($scope, $window, $location, workspace, jolokia, $element) {
+  export function DiscoveryController($scope, localStorage, jolokia, localStorage) {
 
 
     $scope.$watch('agents', (newValue, oldValue) => {
@@ -16,10 +16,31 @@ module JVM {
       $($event.currentTarget).parents('.popover').prev().popover('hide');
     };
 
+    function doConnect(agent) {
+      if (!agent.url) {
+        notification('warning', 'No URL available to connect to agent');
+        return;
+      }
+      var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+
+      var urlObject = Core.parseUrl(agent.url);
+      angular.extend(options, urlObject);
+      options.userName = agent.username;
+      options.password = agent.password;
+
+      Core.connectToServer(localStorage, options);
+    };
+
+    $scope.connectWithCredentials = ($event, agent) => {
+      $scope.closePopover($event);
+      doConnect(agent);
+    };
+
     $scope.gotoServer = ($event, agent) => {
-      log.debug("agent: ", agent);
       if (agent.secured) {
         $($event.currentTarget).popover('show');
+      } else {
+        doConnect(agent);
       }
     };
 
@@ -60,20 +81,29 @@ module JVM {
       if (!response.value) {
         return;
       }
-      var responseJson = angular.toJson(response.value.sortBy((agent) => agent['agent_id']));
+      var responseJson = angular.toJson(response.value.sortBy((agent) => agent['agent_id']), true);
       if ($scope.responseJson !== responseJson) {
         $scope.responseJson = responseJson;
-        log.debug("response: ", response);
         $scope.agents = response.value;
         Core.$apply($scope);
       }
     }
 
-    Core.register(jolokia, $scope, {
-      type: 'exec', mbean: 'jolokia:type=Discovery',
-      operation: 'lookupAgentsWithTimeout',
-      arguments: ['1000']
-    }, onSuccess(render));
+    var updateRate = localStorage['updateRate'];
+    if (updateRate > 0) {
+      Core.register(jolokia, $scope, {
+        type: 'exec', mbean: 'jolokia:type=Discovery',
+        operation: 'lookupAgentsWithTimeout',
+        arguments: [updateRate]
+      }, onSuccess(render));
+    } else {
+      Core.register(jolokia, $scope, {
+        type: 'exec', mbean: 'jolokia:type=Discovery',
+        operation: 'lookupAgents',
+        arguments: []
+      }, onSuccess(render));
+    }
+
 
   }
 

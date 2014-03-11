@@ -4137,6 +4137,6 @@ img.nodeIcon:hover {
   white-space: nowrap;
 }
 
-.auth-form > input {
+.auth-form > form > input {
   margin-bottom: 0;
 }

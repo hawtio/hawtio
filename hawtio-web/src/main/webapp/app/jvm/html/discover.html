@@ -7,14 +7,35 @@
 
       <script type="text/ng-template" id="authPrompt">
         <div class="auth-form">
-          <input type="text" class="input-small" placeholder="Username...">
-          <input type="password" class="input-small" placeholder="Password...">
-          <button class="btn btn-success"><i class="icon-share"></i> Connect</button>
-          <button class="btn" ng-click="closePopover($event)"><i class="icon-remove"></i></button>
+          <form name="authForm">
+            <input type="text"
+                   class="input-small"
+                   placeholder="Username..."
+                   ng-model="agent.username"
+                   required>
+            <input type="password"
+                   class="input-small"
+                   placeholder="Password..."
+                   ng-model="agent.password"
+                   required>
+            <button ng-disabled="!authForm.$valid"
+                    ng-click="connectWithCredentials($event, agent)"
+                    class="btn btn-success">
+              <i class="icon-share"></i> Connect
+            </button>
+            <button class="btn" ng-click="closePopover($event)"><i class="icon-remove"></i></button>
+          </form>
         </div>
       </script>
 
-      <ul class="discovery zebra-list">
+      <div ng-hide="agents">
+        <p></p>
+        <div class="alert alert-info">
+          <i class="icon-spinner icon-spin"></i> Please wait, discovering agents...
+        </div>
+      </div>
+
+      <ul ng-show="agents" class="discovery zebra-list">
         <li ng-repeat="agent in agents track by $index" ng-show="filterMatches(agent)">
 
           <div class="inline-block">
