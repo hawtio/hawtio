@@ -4110,7 +4110,12 @@ img.nodeIcon:hover {
   right: 42px;
 }
 
-.discovery > li > div:last-child > i,
+.discovery > li > div:last-child > div.connect-button {
+  width: 32px;
+  height: 32px;
+}
+
+.discovery > li > div:last-child > div > i,
 .discovery > li > .lock > i {
   color: lightgreen;
   font-size: 32px;
@@ -4126,4 +4131,12 @@ img.nodeIcon:hover {
   vertical-align: middle;
   width: 64px;
   max-height: 64px;
+}
+
+.auth-form {
+  white-space: nowrap;
+}
+
+.auth-form > input {
+  margin-bottom: 0;
 }

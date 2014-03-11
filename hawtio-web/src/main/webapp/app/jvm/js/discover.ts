@@ -3,7 +3,7 @@
  */
 module JVM {
 
-  export function DiscoveryController($scope, $window, $location, workspace, jolokia) {
+  export function DiscoveryController($scope, $window, $location, workspace, jolokia, $element) {
 
 
     $scope.$watch('agents', (newValue, oldValue) => {
@@ -11,6 +11,21 @@ module JVM {
         $scope.selectedAgent = $scope.agents.find((a) => a['selected']);
       }
     }, true);
+
+    $scope.closePopover = ($event) => {
+      $($event.currentTarget).parents('.popover').prev().popover('hide');
+    };
+
+    $scope.gotoServer = ($event, agent) => {
+      log.debug("agent: ", agent);
+      if (agent.secured) {
+        $($event.currentTarget).popover('show');
+      }
+    };
+
+    $scope.getElementId = (agent) => {
+      return agent.agent_id.dasherize().replace(/\./g, "-");
+    };
 
     $scope.getLogo = (agent) => {
       if (agent.server_product) {
@@ -25,20 +40,6 @@ module JVM {
       } else {
         return angular.toJson(agent).toLowerCase().has($scope.filter.toLowerCase());
       }
-    };
-
-    $scope.selectAgent = (agent) => {
-      $scope.agents.forEach((agent) => {
-        agent['selected'] = false;
-      });
-      agent['selected'] = true;
-    };
-
-    $scope.isSelected = (agent) => {
-      if (agent.selected) {
-        return "blue";
-      }
-      return "";
     };
 
     $scope.getAgentIdClass = (agent) => {

@@ -1,8 +1,18 @@
 <div ng-controller="JVM.DiscoveryController">
+
   <div class="row-fluid">
 
     <div class="span6 offset3">
       <input class="search-query span12" type="text" ng-model="filter" placeholder="Filter...">
+
+      <script type="text/ng-template" id="authPrompt">
+        <div class="auth-form">
+          <input type="text" class="input-small" placeholder="Username...">
+          <input type="password" class="input-small" placeholder="Password...">
+          <button class="btn btn-success"><i class="icon-share"></i> Connect</button>
+          <button class="btn" ng-click="closePopover($event)"><i class="icon-remove"></i></button>
+        </div>
+      </script>
 
       <ul class="discovery zebra-list">
         <li ng-repeat="agent in agents track by $index" ng-show="filterMatches(agent)">
@@ -29,7 +39,15 @@
           </div>
 
           <div class="inline-block">
-            <i class="icon-play-circle"></i>
+            <div class="connect-button"
+                 ng-click="gotoServer($event, agent)"
+                 hawtio-template-popover
+                 content="authPrompt"
+                 trigger="manual"
+                 placement="auto"
+                 data-title="Please enter your username and password">
+              <i ng-show="agent.url" class="icon-play-circle" ></i>
+            </div>
           </div>
 
         </li>

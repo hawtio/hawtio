@@ -17,7 +17,11 @@ module UI {
         var placement = UI.getIfSet('placement', $attr, 'auto');
         var delay = UI.getIfSet('delay', $attr, '100');
         var container = UI.getIfSet('container', $attr, 'body');
-        var selector = UI.getIfSet('container', $attr, 'false');
+        var selector = UI.getIfSet('selector', $attr, 'false');
+
+        if (container === 'false') {
+          container = false;
+        }
 
         if (selector === 'false') {
           selector = false;
@@ -30,14 +34,14 @@ module UI {
         }
 
         $element.on('$destroy', () => {
-          (<any>$element).popover('hide');
+          (<any>$element).popover('destroy');
         });
 
         (<any>$element).popover({
           title: title,
           trigger: trigger,
           html: html,
-          content: $compile(template)($scope),
+          content: () => $compile(template)($scope),
           delay: delay,
           container: container,
           selector: selector,
