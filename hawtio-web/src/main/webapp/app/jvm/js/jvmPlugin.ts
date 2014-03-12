@@ -27,11 +27,7 @@ module JVM {
               title: "Connect to other JVMs",
               isValid: (workspace) => true,
               href: () => {
-                if (JVM.hasDiscoveryMBean(workspace)) {
-                  return '#/jvm/discover';
-                } else {
-                  return '#/jvm/connect';
-                }
+                return '#/jvm/connect';
               },
               isActive: (workspace:Workspace) => workspace.isLinkActive("jvm")
             });
