@@ -11,12 +11,12 @@ var numberTypeNames = {
   'long': true,
   'float': true,
   'double': true,
-  'java.lang.Byte': true,
-  'java.lang.Short': true,
-  'java.lang.Integer': true,
-  'java.lang.Long': true,
-  'java.lang.Float': true,
-  'java.lang.Double': true
+  'java.lang.byte': true,
+  'java.lang.short': true,
+  'java.lang.integer': true,
+  'java.lang.long': true,
+  'java.lang.float': true,
+  'java.lang.double': true
 };
 
 /**
