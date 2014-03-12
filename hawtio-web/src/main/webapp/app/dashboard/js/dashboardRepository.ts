@@ -388,6 +388,12 @@ module Dashboard {
           }
         };
 
+        if (files.length === 0) {
+          dashboards.push(this.createDashboard({}));
+          fn(dashboards);
+          return;
+        }
+
         // we now have all the files we need; lets read all their contents
         angular.forEach(files, (file, idx) => {
           var path = file.path;
