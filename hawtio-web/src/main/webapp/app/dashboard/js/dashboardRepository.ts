@@ -219,6 +219,9 @@ module Dashboard {
 
     private loadDashboards() {
       var answer = angular.fromJson(localStorage['userDashboards']);
+      if (answer.length === 0) {
+        answer.push(this.createDashboard({}));
+      }
       log.debug("returning dashboards: ", answer);
       return answer;
     }
