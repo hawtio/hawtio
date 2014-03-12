@@ -5,6 +5,7 @@ module JVM {
 
   export function DiscoveryController($scope, localStorage, jolokia, localStorage) {
 
+    $scope.discovering = true;
 
     $scope.$watch('agents', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -83,7 +84,11 @@ module JVM {
       }
       var responseJson = angular.toJson(response.value.sortBy((agent) => agent['agent_id']), true);
       if ($scope.responseJson !== responseJson) {
+        if ($scope.discovering) {
+          $scope.discovering = false;
+        }
         $scope.responseJson = responseJson;
+        log.debug("agents: ", $scope.agents);
         $scope.agents = response.value;
         Core.$apply($scope);
       }
