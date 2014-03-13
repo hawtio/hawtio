@@ -27,8 +27,6 @@ module UI {
         return UI.Editor($parse);
       }).directive('hawtioColorPicker', function() {
         return new UI.ColorPicker()
-      }).directive('hawtioFileUpload', () => {
-        return new UI.FileUpload();
       }).directive('expandable', () => {
         return new UI.Expandable();
       }).directive('gridster', () => {

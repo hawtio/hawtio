@@ -84,7 +84,10 @@
                 <echo>Copying plugins</echo>
                 <copy todir="${tmp-output-app}">
                   <fileset dir="${app-base}">
-                    <include name="core/**"/>
+                    <include name="baseHelpers.ts"/>
+                    <include name="core/js/dialog.ts"/>
+                    <include name="core/js/tables.ts"/>
+                    <include name="core/js/CodeEditor.ts"/>
                     <include name="ui/**" />
                     <include name="tree/**" />
                     <include name="forms/**" />

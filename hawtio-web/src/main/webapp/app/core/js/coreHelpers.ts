@@ -55,24 +55,6 @@ function url(path: string): string {
   return path;
 }
 
-function humanizeValue(value:any):string {
-  if (value) {
-    var text = value.toString();
-    try {
-      text = text.underscore();
-    } catch (e) {
-      // ignore
-    }
-    try {
-      text = text.humanize();
-    } catch (e) {
-      // ignore
-    }
-    return trimQuotes(text);
-  }
-  return value;
-}
-
 function safeNull(value:any):string {
   if (typeof value === 'boolean') {
     return value;
@@ -117,18 +99,6 @@ function safeNullAsString(value:any, type:string):string {
   } else {
     return "";
   }
-}
-
-function trimQuotes(text:string) {
-  if (text) {
-    while (text.endsWith('"') || text.endsWith("'")) {
-      text = text.substring(0, text.length - 1);
-    }
-    while (text.startsWith('"') || text.startsWith("'")) {
-      text = text.substring(1, text.length);
-    }
-  }
-  return text;
 }
 
 /**
@@ -270,45 +240,8 @@ function showLogPanel() {
   localStorage['showLog'] = 'true';
   log.css({'bottom': '50%'});
   body.css({
-      'overflow-y': 'hidden'
-      });
-}
-
-
-/**
- * Displays an alert message which is typically the result of some asynchronous operation
- *
- * @method notification
- * @static
- * @param type which is usually "success" or "error" and matches css alert-* css styles
- * @param message the text to display
- *
- */
-
-function notification (type:string, message:string, options:any = null) {
-  var w:any = window;
-
-  if (options === null) {
-    options = {};
-  }
-
-  if (type === 'error' || type === 'warning') {
-    if (!angular.isDefined(options.onclick)) {
-      options.onclick = showLogPanel;
-    }
-  }
-
-  w.toastr[type](message, '', options);
-}
-
-/**
- * Clears all the pending notifications
- * @method clearNotifications
- * @static
- */
-function clearNotifications() {
-  var w:any = window;
-  w.toastr.clear();
+    'overflow-y': 'hidden'
+  });
 }
 
 /**
@@ -334,19 +267,6 @@ function logLevelClass(level:string) {
     }
   }
   return "";
-}
-
-if (!Object.keys) {
-  Object.keys = function(obj) {
-    var keys = [],
-        k;
-    for (k in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, k)) {
-        keys.push(k);
-      }
-    }
-    return keys;
-  };
 }
 
 /**
@@ -432,23 +352,6 @@ module Core {
       });
     }
 
-  }
-
-
-  /**
-   * Returns true if the string is either null or empty
-   *
-   * @method isBlank
-   * @for Core
-   * @static
-   * @param {String} str
-   * @return {Boolean}
-   */
-  export function isBlank(str:string) {
-    if (!str) {
-      return true;
-    }
-    return str.isBlank();
   }
 
   export var log:Logging.Logger = Logger.get("Core");
@@ -559,7 +462,7 @@ module Core {
    * @method register
    * @for Core
    * @static
-   * @return a zero argument function for unregistering  this registration
+   * @return {Function} a zero argument function for unregistering  this registration
    * @param {*} jolokia
    * @param {*} scope
    * @param {Object} arguments
@@ -720,60 +623,6 @@ module Core {
     return node && node.nodeType === 3;
   }
 
-
-  /**
-   * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
-   * @method $applyNowOrLater
-   * @for Core
-   * @static
-   * @param {*} $scope
-   */
-  export function $applyNowOrLater($scope) {
-    if ($scope.$$phase || $scope.$root.$$phase) {
-      setTimeout(() => {
-        Core.$apply($scope);
-      }, 50);
-    } else {
-      $scope.$apply();
-    }
-  }
-
-  /**
-   * Performs a $scope.$apply() after the given timeout period
-   * @method $applyLater
-   * @for Core
-   * @static
-   * @param {*} $scope
-   * @param {Integer} timeout
-   */
-  export function $applyLater($scope, timeout = 50) {
-    setTimeout(() => {
-      Core.$apply($scope);
-    }, timeout);
-  }
-
-
-  /**
-   * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
-   * @method $apply
-   * @for Core
-   * @static
-   * @param {*} $scope
-   */
-  export function $apply($scope) {
-    var phase = $scope.$$phase || $scope.$root.$$phase;
-    if (!phase) {
-      $scope.$apply();
-    }
-  }
-
-  export function $digest($scope) {
-    var phase = $scope.$$phase || $scope.$root.$$phase;
-    if (!phase) {
-      $scope.$digest();
-    }
-  }
-
   /**
    * Returns the lowercase file extension of the given file name or returns the empty
    * string if the file does not have an extension
@@ -795,157 +644,11 @@ module Core {
     return extension;
   }
 
-  export function parseIntValue(value, description: string) {
-    if (angular.isString(value)) {
-      try {
-        return parseInt(value);
-      } catch (e) {
-        console.log("Failed to parse " + description + " with text '" + value + "'");
-      }
-    }
-    return null;
-  }
-
-  export function parseFloatValue(value, description: string) {
-    if (angular.isString(value)) {
-      try {
-        return parseFloat(value);
-      } catch (e) {
-        console.log("Failed to parse " + description + " with text '" + value + "'");
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Look up a list of child element names or lazily create them.
-   *
-   * Useful for example to get the <tbody> <tr> element from a <table> lazily creating one
-   * if not present.
-   *
-   * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
-   * @method getOrCreateElements
-   * @for Core
-   * @static
-   * @param {Object} domElement
-   * @param {Array} arrayOfElementNames
-   * @return {Object}
-   */
-  export function getOrCreateElements(domElement, arrayOfElementNames:string[]) {
-    var element = domElement;
-    angular.forEach(arrayOfElementNames, name => {
-      if (element) {
-        var children = $(element).children(name);
-        if (!children || !children.length) {
-          $("<" + name + "></" + name + ">").appendTo(element);
-          children = $(element).children(name);
-        }
-        element = children;
-      }
-    });
-    return element;
-  }
-
   export function getUUID() {
     var d = new Date();
     var ms = (d.getTime() * 1000) + d.getUTCMilliseconds();
     var random = Math.floor((1 + Math.random()) * 0x10000);
     return ms.toString(16) + random.toString(16);
-  }
-
-  /**
-   * Navigates the given set of paths in turn on the source object
-   * and returns the last most value of the path or null if it could not be found.
-   * @method pathGet
-   * @for Core
-   * @static
-   * @param {Object} object the start object to start navigating from
-   * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
-   * @return {*} the last step on the path which is updated
-   */
-  export function pathGet(object, paths) {
-    var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
-    var value = object;
-    angular.forEach(pathArray, (name) => {
-      if (value) {
-        try {
-          value = value[name];
-        } catch (e) {
-          // ignore errors
-          return null;
-        }
-      } else {
-        return null;
-      }
-    });
-    return value;
-  }
-
-  /**
-   * Navigates the given set of paths in turn on the source object
-   * and updates the last path value to the given newValue
-   * @method pathSet
-   * @for Core
-   * @static
-   * @param {Object} object the start object to start navigating from
-   * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
-   * @param {Object} newValue the value to update
-   * @return {*} the last step on the path which is updated
-   */
-  export function pathSet(object, paths, newValue) {
-    var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
-    var value = object;
-    var lastIndex = pathArray.length - 1;
-    angular.forEach(pathArray, (name, idx) => {
-      var next = value[name];
-      if (idx >= lastIndex || !angular.isObject(next)) {
-        next = (idx < lastIndex) ? {} : newValue;
-        value[name] = next;
-      }
-      value = next;
-    });
-    return value;
-  }
-
-  var _escapeHtmlChars = {
-    "#": "&#35;",
-    "'": "&#39;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;"
-  };
-
-  export function unescapeHtml(str) {
-    angular.forEach(_escapeHtmlChars, (value, key) => {
-      var regex = new RegExp(value, "g");
-      str = str.replace(regex, key);
-    });
-    str = str.replace(/&gt;/g, ">");
-    return str;
-  }
-
-  export function escapeHtml(str) {
-    if (angular.isString(str)) {
-      var newStr = "";
-      for (var i = 0; i < str.length; i++) {
-        var ch = str.charAt(i);
-        var ch = _escapeHtmlChars[ch] || ch;
-        newStr += ch;
-/*
-        var nextCode = str.charCodeAt(i);
-        if (nextCode > 0 && nextCode < 48) {
-          newStr += "&#" + nextCode + ";";
-        }
-        else {
-          newStr += ch;
-        }
-*/
-      }
-      return newStr;
-    }
-    else {
-      return str;
-    }
   }
 
   var _versionRegex = /[^\d]*(\d+)\.(\d+)(\.(\d+))?.*/
@@ -1042,18 +745,6 @@ module Core {
       }
     }
     return 0;
-  }
-
-  /**
-   * If the value is not an array then wrap it in one
-   * @method asArray
-   * @for Core
-   * @static
-   * @param {any} value
-   * @return {Array}
-   */
-  export function asArray(value) {
-    return angular.isArray(value) ? value : [value];
   }
 
   /**

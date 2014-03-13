@@ -30,6 +30,8 @@ module Core {
    */
   export var pluginName = 'hawtioCore';
 
+  export var templatePath = 'app/core/html/';
+
 }
 
 
@@ -98,20 +100,20 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           });
 
           $routeProvider.
-                  when('/login', {templateUrl: 'app/core/html/login.html'}).
-                  when('/welcome', {templateUrl: 'app/core/html/welcome.html'}).
-                  when('/preferences', {templateUrl: 'app/core/html/preferences.html'}).
-                  when('/about', {templateUrl: 'app/core/html/about.html'}).
+                  when('/login', {templateUrl: Core.templatePath + 'login.html'}).
+                  when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
+                  when('/preferences', {templateUrl: Core.templatePath + 'preferences.html'}).
+                  when('/about', {templateUrl: Core.templatePath + 'about.html'}).
                   when('/help', {
                     redirectTo: '/help/index'
                   }).
-                  when('/help/:topic/', {templateUrl: 'app/core/html/help.html'}).
-                  when('/help/:topic/:subtopic', {templateUrl: 'app/core/html/help.html'}).
+                  when('/help/:topic/', {templateUrl: Core.templatePath + 'help.html'}).
+                  when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'}).
 
                   otherwise({redirectTo: '/perspective/defaultPage'});
         }).
-        constant('layoutTree', 'app/core/html/layoutTree.html').
-        constant('layoutFull', 'app/core/html/layoutFull.html').
+        constant('layoutTree', Core.templatePath + 'layoutTree.html').
+        constant('layoutFull', Core.templatePath + 'layoutFull.html').
         service('localStorage',function () {
           // TODO Create correct implementation of windowLocalStorage
           var storage:WindowLocalStorage = window.localStorage || <any> (function () {
@@ -571,7 +573,10 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
             }
           };
 
-        });
+        }).directive('hawtioFileUpload', () => {
+  return new Core.FileUpload();
+        })
+  ;
 
 // for chrome packaged apps lets enable chrome-extension pages
 if (hawtioCoreModule && Core.isChromeApp()) {

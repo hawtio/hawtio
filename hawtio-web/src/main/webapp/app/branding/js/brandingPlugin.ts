@@ -1,49 +1,4 @@
 /**
- * @module Core
- */
-module Core {
-
-  /**
-   * Ensure whatever value is passed in is converted to a boolean
-   *
-   * In the branding module for now as it's needed before bootstrap
-   *
-   * @method parseBooleanValue
-   * @for Core
-   * @param {any} value
-   * @return {Boolean}
-   */
-  export function parseBooleanValue(value):boolean {
-    if (!angular.isDefined(value)) {
-      return false;
-    }
-
-    if (value.constructor === Boolean) {
-      return <boolean>value;
-    }
-
-    if (angular.isString(value)) {
-      switch(value.toLowerCase()) {
-        case "true":
-        case "1":
-        case "yes":
-          return true;
-        default:
-          return false;
-      }
-    }
-
-    if (angular.isNumber(value)) {
-      return value !== 0;
-    }
-
-    throw new Error("Can't convert value " + value + " to boolean");
-
-  }
-
-}
-
-/**
  * The Red Hat hawtio theme
  *
  * @module Branding

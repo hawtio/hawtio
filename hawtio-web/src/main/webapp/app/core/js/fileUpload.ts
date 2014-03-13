@@ -1,7 +1,7 @@
 /**
- * @module UI
+ * @module Core
  */
-module UI {
+module Core {
 
   export var fileUploadMBean = "hawtio:type=UploadManager";
 
@@ -10,7 +10,7 @@ module UI {
     public restrict = 'A';
     public replace = true;
 
-    public templateUrl = UI.templatePath + "fileUpload.html";
+    public templateUrl = Core.templatePath + "fileUpload.html";
 
     public scope = {
       files: '=hawtioFileUpload',
@@ -25,8 +25,8 @@ module UI {
       $scope.response = '';
       $scope.percentComplete = 0;
 
-      observe($scope, $attrs, 'target', '');
-      observe($scope, $attrs, 'showFiles', true);
+      UI.observe($scope, $attrs, 'target', '');
+      UI.observe($scope, $attrs, 'showFiles', true);
 
 
       $scope.update = (response) => {
