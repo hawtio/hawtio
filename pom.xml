@@ -60,8 +60,8 @@
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
     <!-- versions -->
-    <perfectus-number>362</perfectus-number>
-    <perfectus-previous-number>361</perfectus-previous-number>
+    <perfectus-number>365</perfectus-number>
+    <perfectus-previous-number>355</perfectus-previous-number>
     <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
