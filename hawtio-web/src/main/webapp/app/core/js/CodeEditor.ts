@@ -66,11 +66,10 @@ module CodeEditor {
    * @for CodeEditor
    * @static
    * @param $scope
-   * @param workspace
    * @param localStorage
    * @param $templateCache
    */
-  export function PreferencesController($scope, workspace:Workspace, localStorage, $templateCache) {
+  export function PreferencesController($scope, localStorage, $templateCache) {
     $scope.exampleText = $templateCache.get("exampleText");
     $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
     $scope.javascript = "javascript";
