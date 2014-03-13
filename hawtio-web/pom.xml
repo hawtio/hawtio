@@ -13,13 +13,9 @@
   <description>hawtio :: hawtio-web</description>
 
   <properties>
-    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
-    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
-    <schema-outdir>${webapp-outdir}/lib</schema-outdir>
-    <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
     <watch>false</watch>
   </properties>
 

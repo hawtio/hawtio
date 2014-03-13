@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>io.hawt</groupId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.hawt</groupId>
+  <artifactId>hawtio-directives</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: hawtio-directives</description>
+
+  <properties>
+    <hawtio-web-module>${project.basedir}/../hawtio-web</hawtio-web-module>
+    <hawtio-web-src>${hawtio-web-module}/src</hawtio-web-src>
+    <hawtio-web-dts>${hawtio-web-src}/main/d.ts</hawtio-web-dts>
+    <webapp-base>${hawtio-web-src}/main/webapp</webapp-base>
+    <app-base>${webapp-base}/app</app-base>
+    <tmp-output>${project.basedir}/target/classes</tmp-output>
+    <tmp-output-app>${tmp-output}/app</tmp-output-app>
+    <tmp-output-lib>${tmp-output}/lib</tmp-output-lib>
+    <tmp-output-css>${tmp-output}/css</tmp-output-css>
+    <watch>false</watch>
+    <plugins>core,ui,tree,forms,forcegraph,datatable</plugins>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>io.hawt</groupId>
+        <artifactId>typescript-maven-plugin</artifactId>
+        <version>0.0.1</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>tsc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>${tmp-output-app}</sourceDirectory>
+          <libraryDirectory>${hawtio-web-dts}</libraryDirectory>
+          <noStandardLib>false</noStandardLib>
+          <useTsc>true</useTsc>
+          <targetVersion>ES5</targetVersion>
+          <targetFile>${appjs-outfile}</targetFile>
+          <watch>${watch}</watch>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+
+                <echo>Copying plugins</echo>
+                <copy todir="${tmp-output-app}">
+                  <fileset dir="${app-base}">
+                    <include name="core/**"/>
+                    <include name="ui/**" />
+                    <include name="tree/**" />
+                    <include name="forms/**" />
+                    <include name="forcegraph/**" />
+                    <include name="datatable/**" />
+                  </fileset>
+                </copy>
+
+                <echo>Copying CSS files</echo>
+                <copy todir="${tmp-output-css}">
+                  <fileset dir="${webapp-base}/css">
+                    <include name="**"/>
+                  </fileset>
+                </copy>
+
+                <echo>Copying lib files</echo>
+                <copy todir="${tmp-output-lib}">
+                  <fileset dir="${webapp-base}/lib">
+                    <include name="**"/>
+                    <exclude name="debug/*"/>
+                  </fileset>
+                </copy>
+
+                <echo>Copying static non-ts resources to exploded war directory</echo>
+                <copy todir="${webapp-outdir}">
+                  <fileset dir="${tmp-output}">
+                    <include name="**" />
+                    <exclude name="**/*.ts" />
+                  </fileset>
+                </copy>
+
+                <copy todir="${webapp-outdir}">
+                  <fileset dir="${basedir}/src/main/webapp">
+                    <include name="**"/>
+                  </fileset>
+                </copy>
+
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${context}</Webapp-Context>
+            <Web-ContextPath>${context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <!-- fix jgit, and slf4j imports -->
+            <Import-Package>
+              org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
+              org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
+              org.apache.commons.logging;resolution:=optional,
+              org.slf4j;resolution:=optional,
+              !org.slf4j.impl,
+              !org.apache.avalon*,
+              !org.apache.log*,
+
+              !com.jcraft.jzlib,
+              !keypairgen,
+              !signature,
+              !userauth,
+              !com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
+              !org.apache.commons.io*,
+              *
+            </Import-Package>
+            <Private-Package>
+              javaewah
+            </Private-Package>
+
+            <Bundle-ClassPath>.</Bundle-ClassPath>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>hawtio osgi</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war-plugin-version}</version>
+        <configuration>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
+          <packagingExcludes>
+            **/classes/OSGI-INF/**,
+            **/*.ts,
+            */debug/**
+          </packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+
+</project>
