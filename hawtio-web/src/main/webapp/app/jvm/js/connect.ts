@@ -180,7 +180,9 @@ module JVM {
           //we're updating an existing connection...
           delete $scope.connectionConfigs[$scope.settings.lastConnection];
           // clean up any similarly named regex
-          regexs = regexs.exclude(hasFunc);
+          if (regexs) {
+            regexs = regexs.exclude(hasFunc);
+          }
         }
 
         $scope.connectionConfigs[connectionName] = jsonCloned;
