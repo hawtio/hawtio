@@ -3,7 +3,7 @@
  */
 module JVM {
 
-  export function DiscoveryController($scope, localStorage, jolokia, localStorage) {
+  export function DiscoveryController($scope, localStorage, jolokia) {
 
     $scope.discovering = true;
 
