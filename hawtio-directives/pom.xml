@@ -85,8 +85,11 @@
                   <fileset dir="${app-base}">
                     <include name="baseHelpers.ts"/>
                     <include name="ui/**" />
+                    <!--
+                    TODO - these pull in hawtio core still
                     <include name="tree/**" />
                     <include name="forms/**" />
+                    -->
                     <include name="forcegraph/**" />
                     <include name="datatable/**" />
                   </fileset>
