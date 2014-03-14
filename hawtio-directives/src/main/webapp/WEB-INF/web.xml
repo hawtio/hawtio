@@ -8,6 +8,10 @@
   <description>hawtio directives</description>
   <display-name>hawtio directives</display-name>
 
+  <listener>
+    <listener-class>io.hawt.web.directives.ContextListener</listener-class>
+  </listener>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
