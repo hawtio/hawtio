@@ -9,8 +9,8 @@ module Wiki {
     Dozer.schemaConfigure();
 
     $scope.schema = {};
-    $scope.addDialog = new Core.Dialog();
-    $scope.propertiesDialog = new Core.Dialog();
+    $scope.addDialog = new UI.Dialog();
+    $scope.propertiesDialog = new UI.Dialog();
     $scope.deleteDialog = false;
     $scope.unmappedFieldsHasValid = false;
     $scope.modified = false;

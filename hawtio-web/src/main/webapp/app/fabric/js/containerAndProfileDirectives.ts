@@ -28,7 +28,7 @@ module Fabric {
 
       // for editing container requirements
       $scope.editRequirements = {
-        dialog:  new Core.Dialog(),
+        dialog:  new UI.Dialog(),
 
         excludeProfiles: [],
         selectedProfiles: [],
@@ -36,7 +36,7 @@ module Fabric {
         excludeDependentProfiles: [],
         selectedDependentProfiles: [],
 
-        addDependentProfileDialog:  new Core.Dialog(),
+        addDependentProfileDialog:  new UI.Dialog(),
         versionId: null,
         addProfileSelectShow: false,
 

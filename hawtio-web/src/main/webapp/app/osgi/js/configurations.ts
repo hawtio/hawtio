@@ -44,7 +44,7 @@ module Osgi {
       }
     };
 
-    $scope.addPidDialog = new Core.Dialog();
+    $scope.addPidDialog = new UI.Dialog();
 
     initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, () => {
       $scope.$watch('workspace.selection', function () {

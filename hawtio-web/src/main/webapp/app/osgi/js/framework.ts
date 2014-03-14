@@ -3,7 +3,7 @@
  */
 module Osgi {
     export function FrameworkController($scope, $dialog, workspace:Workspace) {
-        $scope.editDialog = new Core.Dialog();
+        $scope.editDialog = new UI.Dialog();
 
         updateContents();
 

@@ -189,8 +189,8 @@ module UI {
       property: "This is editable (hover to edit)"
     };
 
-    $scope.showDeleteOne = new Core.Dialog();
-    $scope.showDeleteTwo = new Core.Dialog();
+    $scope.showDeleteOne = new UI.Dialog();
+    $scope.showDeleteTwo = new UI.Dialog();
 
     $scope.fileUploadEx1 = '<div hawtio-file-upload="files" target="test1"></div>';
     $scope.fileUploadEx2 = '<div hawtio-file-upload="files" target="test2" show-files="false"></div>';

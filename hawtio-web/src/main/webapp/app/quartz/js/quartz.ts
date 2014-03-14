@@ -10,7 +10,7 @@ module Quartz {
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
     var misfireTemplate = '<div class="ngCellText" title="{{row.entity.misfireInstruction}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
 
-    $scope.valueDetails = new Core.Dialog();
+    $scope.valueDetails = new UI.Dialog();
 
     $scope.selectedScheduler = null;
     $scope.selectedSchedulerMBean = null;

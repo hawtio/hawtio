@@ -86,7 +86,7 @@ module Camel {
     $scope.messages = [];
     $scope.mode = 'text';
 
-    $scope.messageDialog = new Core.Dialog();
+    $scope.messageDialog = new UI.Dialog();
 
     $scope.gridOptions = Camel.createBrowseGridOptions();
     $scope.gridOptions.selectWithCheckboxOnly = false;

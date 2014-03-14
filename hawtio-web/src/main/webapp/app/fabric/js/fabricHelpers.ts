@@ -255,7 +255,7 @@ module Fabric {
 
     // for connection dialog
     $scope.connect = {
-      dialog: new Core.Dialog(),
+      dialog: new UI.Dialog(),
       saveCredentials: false,
       userName: null,
       password: null,
@@ -305,7 +305,7 @@ module Fabric {
     };
 
     $scope.confirmDeleteDialog = {
-      dialog: new Core.Dialog(),
+      dialog: new UI.Dialog(),
       onOk: () => {
         $scope.confirmDeleteDialog.dialog.close();
         if (angular.isDefined($scope.containerId)) {
@@ -335,7 +335,7 @@ module Fabric {
     };
 
     $scope.createVersionDialog = {
-      dialog: new Core.Dialog(),
+      dialog: new UI.Dialog(),
       newVersionName: "",
 
       open: () => {

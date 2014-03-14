@@ -55,7 +55,7 @@ module Core {
     $scope.hosts = [];
     $scope.newHost = {};
 
-    $scope.addRegexDialog = new Core.Dialog();
+    $scope.addRegexDialog = new UI.Dialog();
     $scope.forms = {};
 
     $scope.perspectiveId;

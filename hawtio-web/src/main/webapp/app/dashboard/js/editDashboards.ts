@@ -8,7 +8,7 @@ module Dashboard {
     $scope.hash = workspace.hash();
     $scope.selectedItems = [];
     $scope.repository = dashboardRepository;
-    $scope.duplicateDashboards = new Core.Dialog();
+    $scope.duplicateDashboards = new UI.Dialog();
     $scope.selectedProfilesDialog = [];
     $scope._dashboards = [];
 

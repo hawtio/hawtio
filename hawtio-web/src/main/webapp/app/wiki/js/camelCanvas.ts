@@ -3,8 +3,8 @@
  */
 module Wiki {
   export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) {
-    $scope.addDialog = new Core.Dialog();
-    $scope.propertiesDialog = new Core.Dialog();
+    $scope.addDialog = new UI.Dialog();
+    $scope.propertiesDialog = new UI.Dialog();
     $scope.modified = false;
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);

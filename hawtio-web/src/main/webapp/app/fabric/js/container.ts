@@ -50,9 +50,9 @@ module Fabric {
     $scope.selectedProfilesDialog = [];
     $scope.selectedProfilesString = '';
 
-    $scope.addProfileDialog = new Core.Dialog();
-    $scope.deleteProfileDialog = new Core.Dialog();
-    $scope.deleteContainerDialog = new Core.Dialog();
+    $scope.addProfileDialog = new UI.Dialog();
+    $scope.deleteProfileDialog = new UI.Dialog();
+    $scope.deleteContainerDialog = new UI.Dialog();
 
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (newValue !== oldValue) {

@@ -52,9 +52,9 @@ module Fabric {
     $scope.filterActiveVersion = false;
     $scope.filterActiveProfile = false;
 
-    $scope.deleteVersionDialog = new Core.Dialog();
-    $scope.deleteProfileDialog = new Core.Dialog();
-    $scope.createProfileDialog = new Core.Dialog();
+    $scope.deleteVersionDialog = new UI.Dialog();
+    $scope.deleteProfileDialog = new UI.Dialog();
+    $scope.createProfileDialog = new UI.Dialog();
 
     $scope.ensembleContainerIds = [];
     $scope.profileSelectedAll = false;

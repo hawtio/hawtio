@@ -7,9 +7,9 @@ module ActiveMQ {
 
       $scope.tempData = [];
 
-      $scope.createSubscriberDialog = new Core.Dialog();
-      $scope.deleteSubscriberDialog = new Core.Dialog();
-      $scope.showSubscriberDialog = new Core.Dialog();
+      $scope.createSubscriberDialog = new UI.Dialog();
+      $scope.deleteSubscriberDialog = new UI.Dialog();
+      $scope.showSubscriberDialog = new UI.Dialog();
 
       $scope.topicName = '';
       $scope.clientId = '';

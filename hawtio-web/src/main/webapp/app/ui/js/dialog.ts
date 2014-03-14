@@ -1,7 +1,7 @@
 /**
- * @module Core
+ * @module UI
  */
-module Core {
+module UI {
 
   /**
    * Simple helper class for creating <a href="http://angular-ui.github.io/bootstrap/#/modal">angular ui bootstrap modal dialogs</a>

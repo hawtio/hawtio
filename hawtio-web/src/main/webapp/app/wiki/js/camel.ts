@@ -45,7 +45,7 @@ module Wiki {
     var routeModel = _apacheCamelModel.definitions.route;
     routeModel["_id"] = "route";
 
-    $scope.addDialog = new Core.Dialog();
+    $scope.addDialog = new UI.Dialog();
 
     // TODO doesn't seem that angular-ui uses these?
     $scope.addDialog.options["dialogClass"] = "modal-large";

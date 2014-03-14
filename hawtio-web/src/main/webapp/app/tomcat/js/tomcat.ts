@@ -4,7 +4,7 @@ module Tomcat {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
 
-        $scope.uninstallDialog = new Core.Dialog()
+        $scope.uninstallDialog = new UI.Dialog()
 
         $scope.webapps = [];
         $scope.selected = [];

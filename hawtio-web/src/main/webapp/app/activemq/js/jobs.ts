@@ -4,7 +4,7 @@ module ActiveMQ {
     $scope.refresh = loadTable;
 
     $scope.jobs = [];
-    $scope.deleteJobsDialog = new Core.Dialog();
+    $scope.deleteJobsDialog = new UI.Dialog();
 
     $scope.gridOptions = {
       selectedItems: [],

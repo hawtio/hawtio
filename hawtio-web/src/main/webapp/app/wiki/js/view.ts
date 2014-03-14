@@ -37,9 +37,9 @@ module Wiki {
     $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true: false;
 
     $scope.operationCounter = 1;
-    $scope.addDialog = new Core.Dialog();
-    $scope.renameDialog = new Core.Dialog();
-    $scope.moveDialog = new Core.Dialog();
+    $scope.addDialog = new UI.Dialog();
+    $scope.renameDialog = new UI.Dialog();
+    $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = false;
     $scope.isFile = false;
     $scope.createDocumentTree = Wiki.createWizardTree(workspace);

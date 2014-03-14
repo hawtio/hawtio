@@ -3,9 +3,9 @@
  */
 module Osgi {
   export function PidController($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) {
-    $scope.deletePropDialog = new Core.Dialog();
-    $scope.deletePidDialog = new Core.Dialog();
-    $scope.addPropertyDialog = new Core.Dialog();
+    $scope.deletePropDialog = new UI.Dialog();
+    $scope.deletePidDialog = new UI.Dialog();
+    $scope.addPropertyDialog = new UI.Dialog();
     $scope.factoryPid = $routeParams.factoryPid;
     $scope.pid = $routeParams.pid || $scope.factoryPid;
 

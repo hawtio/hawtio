@@ -3,7 +3,7 @@ module Camel {
   export function BrowseEndpointController($scope, $routeParams, workspace:Workspace, jolokia) {
     $scope.workspace = workspace;
 
-    $scope.forwardDialog = new Core.Dialog();
+    $scope.forwardDialog = new UI.Dialog();
 
     $scope.showMessageDetails = false;
     $scope.mode = 'text';

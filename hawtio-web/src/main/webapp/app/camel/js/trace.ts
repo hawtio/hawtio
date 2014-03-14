@@ -10,7 +10,7 @@ module Camel {
     $scope.tableView = null;
     $scope.mode = 'text';
 
-    $scope.messageDialog = new Core.Dialog();
+    $scope.messageDialog = new UI.Dialog();
 
     $scope.gridOptions = Camel.createBrowseGridOptions();
     $scope.gridOptions.selectWithCheckboxOnly = false;
