@@ -279,9 +279,7 @@ module DataTable {
               updateLater(); // kick off the UI update process.
             }
           }
-  ).run(function(helpRegistry) {
-        helpRegistry.addDevDoc(pluginName, 'app/datatable/doc/developer.md');
-      });
+  );
 
   hawtioPluginLoader.addModule(pluginName);
 }

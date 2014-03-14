@@ -469,8 +469,9 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
           helpRegistry.addDevDoc('Core', 'app/core/doc/coreDeveloper.md');
-          helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
-          helpRegistry.addDevDoc("ui2", 'app/ui/doc/developerPage2.md');
+          helpRegistry.addDevDoc('ui1', 'app/ui/doc/developerPage1.md');
+          helpRegistry.addDevDoc('ui2', 'app/ui/doc/developerPage2.md');
+          helpRegistry.addDevDoc('datatable', 'app/datatable/doc/developer.md');
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
