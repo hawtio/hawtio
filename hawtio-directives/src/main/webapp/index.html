@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>hawtio</title>
+    <title>hawtio-directives</title>
     <link rel="stylesheet" href="css/bootstrap.css?v=@VERSION@" type="text/css"/>
     <link rel="stylesheet" href="css/bootstrap-responsive.css?v=@VERSION@" type="text/css"/>
     <link rel="stylesheet" href="css/font-awesome.css?v=@VERSION@" type="text/css"/>
@@ -42,8 +42,25 @@
   </head>
   <body>
 
+    <div ng-controller="App.ViewController">
 
-    <div ng-include="'app/ui/html/test1.html'"></div>
+      <div hawtio-toc-display
+           get-contents="getContents(filename, cb)">
+        <ul>
+          <li>
+            <a href="app/ui/html/test1.html" chapter-id="test_1">UI Test 1</a>
+          </li>
+          <li>
+            <a href="app/ui/html/test2.html" chapter-id="test_2">UI Test 2</a>
+          </li>
+        </ul>
+
+
+      </div>
+
+    </div>
+
+
 
     <!--
       Configure logging first thing...

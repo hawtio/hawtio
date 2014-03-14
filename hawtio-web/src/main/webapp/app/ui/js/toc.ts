@@ -187,9 +187,9 @@ module UI {
                   }
                   var panelBody = $('<div class="panel-body" id="' + chapterId + '">' + chapter['text'] + '</div>');
                   if (panelHeader) {
-                    panel.append(panelHeader).append(panelBody);
+                    panel.append(panelHeader).append($compile(panelBody)($scope));
                   } else {
-                    panel.append(panelBody);
+                    panel.append($compile(panelBody)($scope));
                   }
                   panel.hide().appendTo(div).fadeIn(1000);
 
