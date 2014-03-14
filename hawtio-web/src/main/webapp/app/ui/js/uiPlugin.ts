@@ -10,13 +10,23 @@ module UI {
 
   export var templatePath = 'app/ui/html/';
 
-  angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui', 'ui.bootstrap']).
+  angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']).
       config( ($routeProvider) => {
         $routeProvider.
             when('/ui/test', {templateUrl: templatePath + 'test.html'})
-      }).
-      factory('UI', () => {
+      }).factory('UI', () => {
         return UI;
+      }).factory('marked',function () {
+        marked.setOptions({
+          gfm: true,
+          tables: true,
+          breaks: false,
+          pedantic: true,
+          sanitize: false,
+          smartLists: true,
+          langPrefix: 'language-'
+        });
+        return marked;
       }).directive('hawtioConfirmDialog', function() {
         return new UI.ConfirmDialog();
       }).directive('hawtioSlideout', function() {
@@ -59,10 +69,6 @@ module UI {
         return UI.hawtioDropDown($templateCache);
       }).directive('hawtioBreadcrumbs', () => {
         return UI.hawtioBreadcrumbs();
-      }).run(function (helpRegistry) {
-
-        helpRegistry.addDevDoc("ui1", 'app/ui/doc/developerPage1.md');
-        helpRegistry.addDevDoc("ui2", 'app/ui/doc/developerPage2.md');
       });
 
   hawtioPluginLoader.addModule(pluginName);

@@ -5,7 +5,7 @@
 module Site {
   var pluginName = 'site';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).
+  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore', 'hawtio-ui']).
     config(($routeProvider) => {
       $routeProvider.
         when('/site', {templateUrl: 'app/site/html/index.html'}).
