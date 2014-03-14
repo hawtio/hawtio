@@ -34,6 +34,13 @@
   <dependencies>
 
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>net.alchim31</groupId>
       <artifactId>livereload-jvm</artifactId>
       <version>0.2.0</version>
@@ -101,6 +108,21 @@
                 <copy todir="${tmp-output-css}">
                   <fileset dir="${webapp-base}/css">
                     <include name="**"/>
+                  </fileset>
+                </copy>
+
+                <echo>Copying font files</echo>
+                <copy todir="${tmp-output}/font">
+                  <fileset dir="${webapp-base}/font">
+                    <include name="**"/>
+                  </fileset>
+                </copy>
+
+                <echo>Copying image files</echo>
+                <copy todir="${tmp-output}/img">
+                  <fileset dir="${webapp-base}/img">
+                    <include name="**"/>
+                    <exclude name="branding/*"/>
                   </fileset>
                 </copy>
 
