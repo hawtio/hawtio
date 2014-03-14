@@ -120,7 +120,6 @@
             <Embed-Transitive>true</Embed-Transitive>
             <Bundle-ClassPath>.</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
-            <Bundle-Blueprint>OSGI-INF/blueprint/osgi.xml</Bundle-Blueprint>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Import-Package>${fuse.osgi.import}</Import-Package>
             <Export-Package>${fuse.osgi.export}</Export-Package>

@@ -1,12 +1,13 @@
 package io.hawt.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.management.ManagementFactory;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helpful base class for MBeans
@@ -15,6 +16,7 @@ public abstract class MBeanSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(MBeanSupport.class);
 
     private ObjectName objectName;
+    private ObjectInstance objectInstance;
     private MBeanServer mBeanServer;
     private boolean registered;
 
@@ -29,7 +31,7 @@ public abstract class MBeanSupport {
         }
         if (!registered && !mBeanServer.isRegistered(objectName)) {
             try {
-                mBeanServer.registerMBean(this, objectName);
+                objectInstance = mBeanServer.registerMBean(this, objectName);
             } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
                 LOG.warn("This mbean is already registered " + objectName + ". There must be multiple deployment units with this mbean inside.");
@@ -45,10 +47,18 @@ public abstract class MBeanSupport {
     public void destroy() throws Exception {
         if (registered && objectName != null && mBeanServer != null) {
             registered = false;
-            mBeanServer.unregisterMBean(objectName);
+            try {
+                // favor object name from object instance as some containers may use special naming
+                if (objectInstance != null && objectInstance.getObjectName() != null) {
+                    mBeanServer.unregisterMBean(objectInstance.getObjectName());
+                } else {
+                    mBeanServer.unregisterMBean(objectName);
+                }
+            } catch (Exception e) {
+                LOG.debug("Error unregistering mbean " + objectName + ". This exception is ignored.", e);
+            }
         }
     }
-
 
     public MBeanServer getMBeanServer() {
         return mBeanServer;
