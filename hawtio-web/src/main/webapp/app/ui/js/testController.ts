@@ -3,7 +3,7 @@
  */
 module UI {
 
-    export function UITestController2($scope, workspace, $templateCache) {
+    export function UITestController2($scope, $templateCache) {
 
       $scope.fileUploadExMode = 'text/html';
 
@@ -143,7 +143,7 @@ module UI {
     }
 
 
-    export function UITestController1($scope, workspace, $templateCache) {
+    export function UITestController1($scope, $templateCache) {
 
 
     $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
