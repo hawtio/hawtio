@@ -1,10 +1,7 @@
 /**
  * @module DataTable
- * @main DataTable
  */
 module DataTable {
-
-  export var log:Logging.Logger = Logger.get("DataTable");
 
   export class SimpleDataTable {
     public restrict = 'A';

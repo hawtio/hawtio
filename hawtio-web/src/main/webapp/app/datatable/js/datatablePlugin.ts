@@ -3,15 +3,17 @@
  * @main DataTable
  */
 module DataTable {
-  var pluginName = 'datatable';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+  var pluginName = 'datatable';
+  export var log:Logging.Logger = Logger.get("DataTable");
+
+  angular.module(pluginName, ['bootstrap', 'ngResource']).
     config( ($routeProvider) => {
       $routeProvider.
           when('/datatable/test', {templateUrl: 'app/datatable/html/test.html'})
     }).
           directive('hawtioSimpleTable', ($compile) => new DataTable.SimpleDataTable($compile)).
-          directive('hawtioDatatable', function (workspace, $timeout, $filter, $compile) {
+          directive('hawtioDatatable', function ($templateCache, $compile, $timeout, $filter) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var gridOptions = null;
@@ -165,7 +167,7 @@ module DataTable {
                       }
                       columns.push(convertToDataTableColumn(columnDef));
                     });
-                    widget = new TableWidget(scope, workspace, columns, widgetOptions);
+                    widget = new TableWidget(scope, $templateCache, $compile, columns, widgetOptions);
                     widget.tableElement = tableElement;
 
                     var sortInfo = gridOptions.sortInfo;

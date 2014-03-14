@@ -3,18 +3,22 @@
  */
 module Osgi {
 
-    export function PackagesController($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) {
+    export function PackagesController($scope,
+                                       $filter:ng.IFilterService,
+                                       workspace:Workspace,
+                                       $templateCache:ng.ITemplateCacheService,
+                                       $compile:ng.IAttributes) {
         var dateFilter = $filter('date');
 
-        $scope.widget = new TableWidget($scope, workspace, [
-          <TableColumnConfig> {
+        $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
+          <DataTable.TableColumnConfig> {
                 "mDataProp": null,
                 "sClass": "control center",
                 "sDefaultContent": '<i class="icon-plus"></i>'
             },
-          <TableColumnConfig> { "mDataProp": "Name" },
-          <TableColumnConfig> { "mDataProp": "VersionLink" },
-          <TableColumnConfig> { "mDataProp": "RemovalPending" }
+          <DataTable.TableColumnConfig> { "mDataProp": "Name" },
+          <DataTable.TableColumnConfig> { "mDataProp": "VersionLink" },
+          <DataTable.TableColumnConfig> { "mDataProp": "RemovalPending" }
 
         ], {
             rowDetailTemplateId: 'packageBundlesTemplate',

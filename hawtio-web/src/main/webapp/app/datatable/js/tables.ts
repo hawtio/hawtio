@@ -1,7 +1,7 @@
 /**
- * @module Core
+ * @module DataTable
  */
-module Core {
+module DataTable {
 
   /**
    * @class TableWidget
@@ -28,7 +28,11 @@ module Core {
     // the jQuery DataTable widget
     public dataTable = null;
 
-    constructor(public scope, public workspace:Workspace, public dataTableColumns:TableColumnConfig[], public config:TableWidgetConfig = {}) {
+    constructor(public scope,
+                public $templateCache,
+                public $compile,
+                public dataTableColumns:TableColumnConfig[],
+                public config:TableWidgetConfig = {}) {
       // TODO is there an easier way of turning an array into a hash to true so it acts as a hash?
       angular.forEach(config.ignoreColumns, (name) => {
         this.ignoreColumnHash[name] = true;
@@ -39,7 +43,7 @@ module Core {
 
       var templateId = config.rowDetailTemplateId;
       if (templateId) {
-        this.detailTemplate = workspace.$templateCache.get(templateId);
+        this.detailTemplate = this.$templateCache.get(templateId);
       }
     }
 
@@ -287,13 +291,13 @@ module Core {
       if (!template) {
         var templateId = this.config.rowDetailTemplateId;
         if (templateId) {
-          this.detailTemplate = this.workspace.$templateCache.get(templateId);
+          this.detailTemplate = this.$templateCache.get(templateId);
           template = this.detailTemplate;
         }
       }
       if (template) {
         div.html(template);
-        this.workspace.$compile(div.contents())(scope);
+        this.$compile(div.contents())(scope);
       }
     }
   }
@@ -316,8 +320,3 @@ module Core {
     multiSelect?:Boolean;
   }
 }
-
-// TODO refactor other code to use Core.TableWidget
-class TableWidget extends Core.TableWidget {};
-interface TableColumnConfig extends Core.TableColumnConfig {};
-interface TableWidgetConfig extends Core.TableWidgetConfig {};

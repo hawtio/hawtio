@@ -3,18 +3,23 @@
  */
 module Osgi {
 
-    export function ServiceController($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) {
+    export function ServiceController($scope,
+                                      $filter:ng.IFilterService,
+                                      workspace:Workspace,
+                                      $templateCache:ng.ITemplateCacheService,
+                                      $compile:ng.IAttributes) {
+
         var dateFilter = $filter('date');
 
-        $scope.widget = new TableWidget($scope, workspace, [
-          <TableColumnConfig> {
+        $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
+          <DataTable.TableColumnConfig> {
                 "mDataProp": null,
                 "sClass": "control center",
                 "sDefaultContent": '<i class="icon-plus"></i>'
             },
-          <TableColumnConfig> { "mDataProp": "Identifier" },
-          <TableColumnConfig> { "mDataProp": "BundleIdentifier" },
-          <TableColumnConfig> { "mDataProp": "objectClass" }
+          <DataTable.TableColumnConfig> { "mDataProp": "Identifier" },
+          <DataTable.TableColumnConfig> { "mDataProp": "BundleIdentifier" },
+          <DataTable.TableColumnConfig> { "mDataProp": "objectClass" }
         ], {
             rowDetailTemplateId: 'osgiServiceTemplate',
             disableAddColumns: true
