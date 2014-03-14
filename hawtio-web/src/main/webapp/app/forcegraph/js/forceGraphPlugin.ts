@@ -6,13 +6,10 @@
 module ForceGraph {
     var pluginName = 'forceGraph';
 
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
+    angular.module(pluginName, ['bootstrap', 'ngResource']).
 
         directive('hawtioForceGraph', function () {
             return new ForceGraph.ForceGraphDirective();
-        })
-        .run((helpRegistry) => {
-          helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
         });
 
     hawtioPluginLoader.addModule(pluginName);

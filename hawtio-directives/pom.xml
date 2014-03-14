@@ -27,15 +27,17 @@
     <tmp-output-css>${tmp-output}/css</tmp-output-css>
     <watch>false</watch>
     <appjs-outfile>${webapp-outdir}/app/hawtio-directives.js</appjs-outfile>
+    <jetty-port>8081</jetty-port>
+    <context>/hawtio-directives</context>
   </properties>
 
   <dependencies>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
-      <scope>provided</scope>
+      <groupId>net.alchim31</groupId>
+      <artifactId>livereload-jvm</artifactId>
+      <version>0.2.0</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -185,6 +187,53 @@
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>${jetty-plugin-groupId}</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>${context}</contextPath>
+            <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+              <resourcesAsCSV>src/main/webapp,${webapp-outdir}</resourcesAsCSV>
+            </baseResource>
+          </webAppConfig>
+          <scanIntervalSeconds>0</scanIntervalSeconds>
+          <useTestScope>true</useTestScope>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${jettyPort}</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <systemProperties>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>net_alchim31_livereload.Main</mainClass>
+          <classpathScope>test</classpathScope>
+          <arguments>
+            <argument>-d</argument>
+            <argument>${basedir}/src/main/webapp</argument>
+          </arguments>
+          <systemProperties>
+          </systemProperties>
         </configuration>
       </plugin>
 

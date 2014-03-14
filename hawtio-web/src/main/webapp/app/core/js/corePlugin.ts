@@ -472,6 +472,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addDevDoc('ui1', 'app/ui/doc/developerPage1.md');
           helpRegistry.addDevDoc('ui2', 'app/ui/doc/developerPage2.md');
           helpRegistry.addDevDoc('datatable', 'app/datatable/doc/developer.md');
+          helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
