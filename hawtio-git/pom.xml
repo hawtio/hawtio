@@ -144,7 +144,7 @@
             <Import-Package>${fuse.osgi.import}</Import-Package>
 
             <!-- TODO note we're embedding hawtio-core in here as its not yet a bundle and is often included in the war -->
-            <Embed-Dependency>*;inline=true;artifactId=hawtio-core|gitective-core|jsch|jzlib|JavaEWAH|org.eclipse.jgit*</Embed-Dependency>
+            <Embed-Dependency>*;inline=true;artifactId=hawtio-core|hawtio-util|gitective-core|jsch|jzlib|JavaEWAH|org.eclipse.jgit*</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
 
             <Bundle-Name>${project.description}</Bundle-Name>
