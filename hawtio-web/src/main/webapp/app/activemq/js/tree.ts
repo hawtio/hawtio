@@ -1,6 +1,6 @@
 module ActiveMQ {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -44,6 +44,37 @@ module ActiveMQ {
             children = answer;
           }
         }
+
+        // filter out advisory topics
+        children.forEach(broker => {
+          var grandChildren = broker.children;
+          if (grandChildren) {
+            var idx = grandChildren.findIndex(n => n.title === "Topic");
+            if (idx > 0) {
+              var old = grandChildren[idx];
+
+              // we need to store all topics the first time on the workspace
+              // so we have access to them later if the user changes the filter in the preference
+              var key = "ActiveMQ-allTopics-" + broker.title;
+              var allTopics = workspace.mapData[key];
+              if (angular.isUndefined(allTopics)) {
+                var allTopics = old.children.clone();
+                workspace.mapData[key] = allTopics;
+              }
+
+              var filter = Core.parseBooleanValue(localStorage["activemqFilterAdvisoryTopics"]);
+              if (filter) {
+                if (old && old.children) {
+                  var filteredTopics = old.children.filter(c => !c.title.startsWith("ActiveMQ.Advisory"));
+                  old.children = filteredTopics;
+                }
+              } else if (allTopics) {
+                old.children = allTopics;
+              }
+            }
+          }
+        });
+
         var treeElement = $("#activemqtree");
         Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
 /*
