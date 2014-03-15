@@ -229,7 +229,7 @@ module Core {
       }
       localStorage['activemqFilterAdvisoryTopics'] = $scope.activemqFilterAdvisoryTopics;
 
-      // TODO: trigger JMX tree updated event
+      // need to trigger JMX tree updated event so the ActiveMQ plugin tree can be updated whether advisory topics should be in the tree or not
       var rootScope = workspace.$rootScope;
       if (rootScope) {
         rootScope.$broadcast('jmxTreeUpdated');
