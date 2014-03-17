@@ -43,6 +43,11 @@
           <li ng-repeat="(name, value) in support track by $index">
             <span class="monitor-indicator {{getMonitorClass(name, value)}}" ng-click="maybeToggleMonitor(name, value)">{{getMonitorName(name)}}</span>
           </li>
+          <li>
+            <a ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard">
+              <i class="icon-share"></i>
+            </a>
+          </li>
         </ul>
       </div>
 

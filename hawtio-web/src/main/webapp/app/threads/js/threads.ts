@@ -23,6 +23,18 @@ module Threads {
       expanded: false
     };
 
+    $scope.addToDashboardLink = () => {
+      var href = "#/threads";
+      var size = angular.toJson({
+        size_x: 8,
+        size_y: 2
+      });
+      var title = "Threads";
+      return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) +
+        "&title=" + encodeURIComponent(title) +
+        "&size=" + encodeURIComponent(size);
+    };
+
     $scope.$watch('searchFilter', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.threadGridOptions.filterOptions.filterText = newValue;
