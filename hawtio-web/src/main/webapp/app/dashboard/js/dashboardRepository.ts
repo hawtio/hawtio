@@ -384,6 +384,14 @@ module Dashboard {
         var maybeCallback = () => {
           toRead = toRead - 1;
           if (toRead === 0) {
+
+            // sort dash boards by title, so they dont appear in random order
+            dashboards = dashboards.sort((d1, d2) => {
+              var title1 = d1.title;
+              var title2 = d2.title;
+              return title1.localeCompare(title2);
+            });
+
             fn(dashboards);
           }
         };
@@ -415,6 +423,7 @@ module Dashboard {
             });
           }
         });
+
       });
     }
 
