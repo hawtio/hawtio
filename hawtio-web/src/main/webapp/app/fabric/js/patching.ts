@@ -32,13 +32,14 @@ module Fabric {
 
       var files = $scope.files.map((file) => { return file.absolutePath; });
 
-      applyPatches(jolokia, files, $scope.targetVersion.id, $scope.newVersionName, $scope.proxyUser, $scope.proxyPassword,
+      applyPatches(jolokia, files, $scope.targetVersion, $scope.newVersionName, $scope.proxyUser, $scope.proxyPassword,
           () => {
         notification('success', "Successfully applied " + message);
         $location.url("/fabric/view");
         Core.$apply($scope);
       }, (response) => {
-        notification('error', "Failed to apply " + message + " due to " + response.error);
+        log.error("Failed to apply ", message, " due to ", response.error);
+        log.info("Stack trace: ", response.stacktrace);
         Core.$apply($scope);
       });
 
