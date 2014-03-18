@@ -35,6 +35,13 @@ module Threads {
         "&size=" + encodeURIComponent(size);
     };
 
+    $scope.isInDashboardClass = () => {
+      if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
+        return "threads-dashboard";
+      }
+      return "threads logbar";
+    };
+
     $scope.$watch('searchFilter', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.threadGridOptions.filterOptions.filterText = newValue;

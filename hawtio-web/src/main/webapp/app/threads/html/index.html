@@ -19,7 +19,7 @@
     </div>
   </script>
 
-  <div class="threads logbar">
+  <div ng-class="isInDashboardClass()">
     <div class="logbar-container">
 
       <div class="state-panel inline-block">
@@ -43,7 +43,7 @@
           <li ng-repeat="(name, value) in support track by $index">
             <span class="monitor-indicator {{getMonitorClass(name, value)}}" ng-click="maybeToggleMonitor(name, value)">{{getMonitorName(name)}}</span>
           </li>
-          <li>
+          <li ng-hide="inDashboard">
             <a ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard">
               <i class="icon-share"></i>
             </a>
