@@ -43,8 +43,7 @@ module Wiki {
     $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = false;
     $scope.isFile = false;
-    $scope.createDocumentTree = Wiki.createWizardTree(workspace);
-    $scope.securityProviderInfo = Wiki.securityProviderInfo;
+    $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
 
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
     $scope.fileExists = {
@@ -353,10 +352,10 @@ module Wiki {
 
         var generateDialog = $scope.generateDialog
         $scope.formSchema = template.generated.schema
-        $scope.formData = template.generated.form || {};
+        $scope.formData = template.generated.form(workspace, $scope);
         $scope.generate = function() {
-          generateDialog.close();
           template.generated.generate(workspace, $scope.formData, (contents)=>{
+            generateDialog.close();
             wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
               console.log("Created file " + name);
               Wiki.onComplete(status);
@@ -364,7 +363,8 @@ module Wiki {
               updateView();
             });
           }, (error)=>{
-            window.alert(error);
+            generateDialog.close();
+            notification('error', error);
           });
         };
         generateDialog.open();

@@ -27,11 +27,6 @@ module Wiki {
    */
   export var hideExtentions = [".profile"];
 
-  export var securityProviderInfo = {
-    supportedKeyStoreTypes:["JKS"],
-    supportedKeyAlgorithms:["RSA"]
-  };
-
   /**
    * The wizard tree for creating new content in the wiki
    * @property documentTemplates
@@ -73,11 +68,11 @@ module Wiki {
       exemplar: 'keystore.jks',
       generated: {
         mbean: ['hawtio', { type: 'KeystoreService' }],
-        init: function(workspace) {
+        init: function(workspace, $scope) {
           var mbean = 'hawtio:type=KeystoreService';
-          var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "securityProviderInfo" }, {
-            success: (data)=>{
-              Wiki.securityProviderInfo = data;
+          var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
+            success: (response)=>{
+              $scope.securityProviderInfo = response.value;
             },
             error: (response) => {
               console.log('Could not find the supported security algorithms: ', response.error);
@@ -95,23 +90,21 @@ module Wiki {
             }, {
               method:'POST',
               success:function(response) {
-                if( response.status == 200 ) {
-                  success(response.value)
-                } else {
-                  error(response.error)
-                }                
+                success(response.value)
               },
               error:function(response){
-                error(JSON.stringify(response))
+                error(response.error)
               }
             });
         },
-        form: { 
-          storeType: Wiki.securityProviderInfo.supportedKeyStoreTypes[0],
-          createPrivateKey: false,
-          keyLength: 4096,
-          keyAlgorithm: Wiki.securityProviderInfo.supportedKeyAlgorithms[0],
-          keyValidity: 365
+        form: function(workspace, $scope){ 
+          return { 
+            storeType: $scope.securityProviderInfo.supportedKeyStoreTypes[0],
+            createPrivateKey: false,
+            keyLength: 4096,
+            keyAlgorithm: $scope.securityProviderInfo.supportedKeyAlgorithms[0],
+            keyValidity: 365
+          }
         },
         schema: {
            "description": "Keystore Settings",
@@ -119,7 +112,8 @@ module Wiki {
            "properties": { 
              "storePassword": {
                "description": "Keystore password.",
-               "type": "password"
+               "type": "password",
+               'input-attributes': { "required":  "",  "ng-minlength":6 }
              },
              "storeType": {
                "description": "The type of store to create",
@@ -231,13 +225,14 @@ module Wiki {
    * @for Wiki
    * @static
    */
-  export function createWizardTree(workspace:Workspace) {
+  export function createWizardTree(workspace:Workspace, $scope) {
     var root = new Folder("New Documents");
-    addCreateWizardFolders(workspace, root, documentTemplates);
+    addCreateWizardFolders(workspace, $scope, root, documentTemplates);
     return root;
   }
 
-  export function addCreateWizardFolders(workspace:Workspace, parent: Folder, templates: any[]) {
+
+  export function addCreateWizardFolders(workspace:Workspace, $scope, parent: Folder, templates: any[]) {
     angular.forEach(templates, (template) => {
 
       if (template['fabricOnly'] && !Fabric.hasFabric(workspace)) {
@@ -251,9 +246,9 @@ module Wiki {
             return;
           }
         }
-        if ( template.init ) {
-          template.init(workspace);
-          template.init = null
+        if ( template.generated.init ) {
+          template.generated.init(workspace, $scope);
+          template.generated.init = null
         }
       }
 
@@ -285,7 +280,7 @@ module Wiki {
 
       var children = template.children;
       if (children) {
-        addCreateWizardFolders(workspace, node, children);
+        addCreateWizardFolders(workspace, $scope, node, children);
       }
     });
   }
