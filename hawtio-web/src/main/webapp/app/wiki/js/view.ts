@@ -38,6 +38,7 @@ module Wiki {
 
     $scope.operationCounter = 1;
     $scope.addDialog = new UI.Dialog();
+    $scope.generateDialog = new UI.Dialog();
     $scope.renameDialog = new UI.Dialog();
     $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = false;
@@ -344,6 +345,28 @@ module Wiki {
           name = '';
         }
         Fabric.doCreateVersion($scope, jolokia, $location, name);
+
+      } else if (template.generated) {
+
+        $scope.addDialog.close();
+
+        var generateDialog = $scope.generateDialog
+        $scope.formSchema = template.generated.schema
+        $scope.formData = template.generated.form || {};
+        $scope.generate = function() {
+          generateDialog.close();
+          template.generated.generate(workspace, $scope.formData, (contents)=>{
+            wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
+              console.log("Created file " + name);
+              Wiki.onComplete(status);
+              $scope.generateDialog.close();
+              updateView();
+            });
+          }, (error)=>{
+            window.alert(error);
+          });
+        };
+        generateDialog.open();
 
       } else {
         notification("success", "Creating new document " + name);

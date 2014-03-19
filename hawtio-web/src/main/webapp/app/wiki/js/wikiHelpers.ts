@@ -143,6 +143,19 @@ module Wiki {
         return;
       }
 
+      if ( template.generated ) {
+        if( template.generated.mbean ) {
+          var exists = workspace.treeContainsDomainAndProperties.apply(workspace, template.generated.mbean) ;
+          if( !exists ) {
+            return;
+          }
+        }
+        if ( template.init ) {
+          template.init(workspace);
+          template.init = null
+        }
+      }
+
       var title = template.label || key;
       var node = new Folder(title);
       node.parent = parent;
