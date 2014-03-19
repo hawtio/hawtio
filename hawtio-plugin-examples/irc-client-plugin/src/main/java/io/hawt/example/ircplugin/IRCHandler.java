@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.security.AccessControlContext;
 import java.security.AccessController;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IRCHandler implements IRCHandlerMBean {
 
   private static final Logger LOG = LoggerFactory.getLogger(IRCHandler.class);
-
 
   Map<Subject, IRCConnectionHandler> connections;
   private MBeanServer mBeanServer;
@@ -85,7 +85,32 @@ public class IRCHandler implements IRCHandlerMBean {
       throw new RuntimeException("Failed to create connection, please ensure both a host and nickname are specified");
     }
 
+    System.out.println("Created connection: " + connection);
+
     connections.put(subject, connection);
+  }
+
+  @Override
+  public List<Object> fetch() {
+    Subject subject = getSubject();
+    IRCConnectionHandler connection = connections.get(subject);
+    if (connection == null) {
+      throw new RuntimeException("No connection");
+    }
+
+    System.out.println("Using connection : " + connection);
+
+    return connection.fetch();
+  }
+
+  @Override
+  public void send(String command) {
+    Subject subject = getSubject();
+    IRCConnectionHandler connection = connections.get(subject);
+    if (connection == null) {
+      throw new RuntimeException("No connection");
+    }
+    connection.send(command);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package io.hawt.example.ircplugin;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,6 +13,10 @@ public interface IRCHandlerMBean {
    * @param settings
    */
   void connect(Map<String, Object> settings);
+
+  List<Object> fetch();
+
+  void send(String command);
 
   boolean connected();
 
