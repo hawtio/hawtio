@@ -1,10 +1,11 @@
 package io.hawt.example.ircplugin;
 
-import org.schwering.irc.lib.IRCConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -188,71 +189,71 @@ public class IRCHandler implements IRCHandlerMBean {
 
   @Override
   public void list(String channels) {
-
+    getConnection().list(channels);
   }
 
   @Override
   public void names() {
-
+    getConnection().names();
   }
 
   @Override
   public void names(String channels) {
-
+    getConnection().names(channels);
   }
 
   @Override
   public void nick(String nick) {
-
+    getConnection().nick(nick);
   }
 
   @Override
   public void notice(String target, String message) {
-
+    getConnection().notice(target, message);
   }
 
   @Override
   public void part(String channel) {
-
+    getConnection().part(channel);
   }
 
   @Override
   public void part(String channel, String message) {
-
+    getConnection().part(channel, message);
   }
 
   @Override
   public void topic(String channel) {
-
+    getConnection().topic(channel);
   }
 
   @Override
   public void changeTopic(String channel, String topic) {
-
+    getConnection().changeTopic(channel, topic);
   }
 
   @Override
   public void getUserHost(String nicknames) {
-
+    getConnection().getUserHost(nicknames);
   }
 
   @Override
   public void who(String nick) {
-
+    getConnection().who(nick);
   }
 
   @Override
   public void whowas(String nick) {
-
+    getConnection().whowas(nick);
   }
 
   @Override
   public void whois(String nick) {
-
+    getConnection().whois(nick);
   }
 
   @Override
   public void message(String target, String message) {
-
+    getConnection().message(target, message);
   }
 }

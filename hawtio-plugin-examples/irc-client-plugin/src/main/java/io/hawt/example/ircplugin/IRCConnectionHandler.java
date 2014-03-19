@@ -114,9 +114,9 @@ public class IRCConnectionHandler extends IRCEventAdapter {
     return answer;
   }
 
-  protected Map<Object, Object> getMap(Object ... args) {
+  protected Map<Object, Object> getMap(Object... args) {
     Map<Object, Object> answer = new HashMap<Object, Object>();
-    if ( args.length % 2 != 0) {
+    if (args.length % 2 != 0) {
       answer.put("invalid-args", args);
       return answer;
     }
@@ -270,5 +270,61 @@ public class IRCConnectionHandler extends IRCEventAdapter {
 
   public void list() {
     connection.doList();
+  }
+
+  public void list(String channels) {
+    connection.doList(channels);
+  }
+
+  public void names() {
+    connection.doNames();
+  }
+
+  public void names(String channels) {
+    connection.doNames(channels);
+  }
+
+  public void nick(String nick) {
+    connection.doNick(nick);
+  }
+
+  public void notice(String target, String message) {
+    connection.doNotice(target, message);
+  }
+
+  public void part(String channel) {
+    connection.doPart(channel);
+  }
+
+  public void part(String channel, String message) {
+    connection.doPart(channel, message);
+  }
+
+  public void topic(String channel) {
+    connection.doTopic(channel);
+  }
+
+  public void changeTopic(String channel, String topic) {
+    connection.doTopic(channel, topic);
+  }
+
+  public void getUserHost(String nicknames) {
+    connection.doUserhost(nicknames);
+  }
+
+  public void message(String target, String message) {
+    connection.doPrivmsg(target, message);
+  }
+
+  public void whois(String nick) {
+    connection.doWhois(nick);
+  }
+
+  public void whowas(String nick) {
+    connection.doWhowas(nick);
+  }
+
+  public void who(String nick) {
+    connection.doWho(nick);
   }
 }
