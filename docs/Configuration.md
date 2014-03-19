@@ -61,6 +61,17 @@ By default the security in hawtio uses these system properties when running in A
       Principal fully qualified classname(s). Multiple classes can be separated by comma.
     </td>
   </tr>
+  <tr>
+    <td>
+      hawtio.noCredentials401
+    </td>
+    <td>
+      false
+    </td>
+    <td>
+      Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
+    </td>
+  </tr>
 </table>
 
 Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).
@@ -102,7 +113,6 @@ By default the security in hawtio uses these system properties when running in a
       hawtio.role
     </td>
     <td>
-      
     </td>
     <td>
       The user role required to be able to login to the console
@@ -113,10 +123,19 @@ By default the security in hawtio uses these system properties when running in a
       hawtio.rolePrincipalClasses
     </td>
     <td>
-      
     </td>
     <td>
       Principal fully qualified classname(s). Multiple classes can be separated by comma.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.noCredentials401
+    </td>
+    <td>
+    </td>
+    <td>
+       Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
     </td>
   </tr>
 </table>
