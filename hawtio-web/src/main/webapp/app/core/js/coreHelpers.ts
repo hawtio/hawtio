@@ -1,4 +1,3 @@
-
 // TODO Get these functions and variables out of the global namespace
 var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
 
@@ -78,9 +77,11 @@ function safeNullAsString(value:any, type:string):string {
   } else if (typeof value === 'string') {
     // its a string
     return "" + value;
-  } else if (angular.isArray(value)) {
-    // join array with new line, and do not sort as the order in the array may matter
-    return value.join("\n");
+  } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;') {
+    // composite data or composite data array, we just display as json
+    // use json representation
+    var data = angular.toJson(value, true);
+    return data;
   } else if (type === 'javax.management.openmbean.TabularData') {
     // tabular data is a key/value structure so loop each field and convert to array we can
     // turn into a String
@@ -93,6 +94,9 @@ function safeNullAsString(value:any, type:string):string {
     // sort array so the values is listed nicely
     arr = arr.sortBy(row => row.toString());
     return arr.join("\n");
+  } else if (angular.isArray(value)) {
+    // join array with new line, and do not sort as the order in the array may matter
+    return value.join("\n");
   } else if (value) {
     // force as string
     return "" + value;
