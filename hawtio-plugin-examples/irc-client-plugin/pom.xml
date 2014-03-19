@@ -23,6 +23,7 @@
 
     <fuse.osgi.import>
       javax.servlet,
+      javax.security.auth,
       *;resolution:=optional
     </fuse.osgi.import>
     <!--
