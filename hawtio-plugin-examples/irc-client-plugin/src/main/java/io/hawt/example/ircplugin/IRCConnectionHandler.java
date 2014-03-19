@@ -243,4 +243,32 @@ public class IRCConnectionHandler extends IRCEventAdapter {
     Map message = getMap("type", "ping", "ping", ping);
     putMessage(message);
   }
+
+  public void back() {
+    connection.doAway();
+  }
+
+  public void away(String message) {
+    connection.doAway(message);
+  }
+
+  public void join(String channel) {
+    connection.doJoin(channel);
+  }
+
+  public void join(String channel, String key) {
+    connection.doJoin(channel, key);
+  }
+
+  public void kick(String channel, String nick) {
+    connection.doKick(channel, nick);
+  }
+
+  public void kick(String channel, String nick, String message) {
+    connection.doKick(channel, nick, message);
+  }
+
+  public void list() {
+    connection.doList();
+  }
 }

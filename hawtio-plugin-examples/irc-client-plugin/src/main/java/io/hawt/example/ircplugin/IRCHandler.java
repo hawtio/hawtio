@@ -92,25 +92,12 @@ public class IRCHandler implements IRCHandlerMBean {
 
   @Override
   public List<Object> fetch() {
-    Subject subject = getSubject();
-    IRCConnectionHandler connection = connections.get(subject);
-    if (connection == null) {
-      throw new RuntimeException("No connection");
-    }
-
-    System.out.println("Using connection : " + connection);
-
-    return connection.fetch();
+    return getConnection().fetch();
   }
 
   @Override
   public void send(String command) {
-    Subject subject = getSubject();
-    IRCConnectionHandler connection = connections.get(subject);
-    if (connection == null) {
-      throw new RuntimeException("No connection");
-    }
-    connection.send(command);
+    getConnection().send(command);
   }
 
   @Override
@@ -126,7 +113,6 @@ public class IRCHandler implements IRCHandlerMBean {
   @Override
   public void disconnect() {
     Subject subject = getSubject();
-
     IRCConnectionHandler connection = connections.remove(subject);
     if (connection != null) {
       connection.destroy();
@@ -139,9 +125,16 @@ public class IRCHandler implements IRCHandlerMBean {
     if (subject == null) {
       throw new RuntimeException("Subject is not available, user would not be able to be associated with a connection");
     }
-
-
     return subject;
+  }
+
+  protected IRCConnectionHandler getConnection() {
+    Subject subject = getSubject();
+    IRCConnectionHandler answer = connections.get(subject);
+    if (answer == null) {
+      throw new RuntimeException("No connection");
+    }
+    return answer;
   }
 
   protected ObjectName getObjectName() throws Exception {
@@ -153,9 +146,113 @@ public class IRCHandler implements IRCHandlerMBean {
       IRCConnectionHandler connection = connections.get(subject);
       if (connection != null) {
         connection.destroy();
-        connection = null;
       }
     }
     connections.clear();
+  }
+
+  @Override
+  public void back() {
+    getConnection().back();
+  }
+
+  @Override
+  public void away(String message) {
+    getConnection().away(message);
+  }
+
+  @Override
+  public void join(String channel) {
+    getConnection().join(channel);
+  }
+
+  @Override
+  public void join(String channel, String key) {
+    getConnection().join(channel, key);
+  }
+
+  @Override
+  public void kick(String channel, String nick) {
+    getConnection().kick(channel, nick);
+  }
+
+  @Override
+  public void kick(String channel, String nick, String message) {
+    getConnection().kick(channel, nick, message);
+  }
+
+  @Override
+  public void list() {
+    getConnection().list();
+  }
+
+  @Override
+  public void list(String channels) {
+
+  }
+
+  @Override
+  public void names() {
+
+  }
+
+  @Override
+  public void names(String channels) {
+
+  }
+
+  @Override
+  public void nick(String nick) {
+
+  }
+
+  @Override
+  public void notice(String target, String message) {
+
+  }
+
+  @Override
+  public void part(String channel) {
+
+  }
+
+  @Override
+  public void part(String channel, String message) {
+
+  }
+
+  @Override
+  public void topic(String channel) {
+
+  }
+
+  @Override
+  public void changeTopic(String channel, String topic) {
+
+  }
+
+  @Override
+  public void getUserHost(String nicknames) {
+
+  }
+
+  @Override
+  public void who(String nick) {
+
+  }
+
+  @Override
+  public void whowas(String nick) {
+
+  }
+
+  @Override
+  public void whois(String nick) {
+
+  }
+
+  @Override
+  public void message(String target, String message) {
+
   }
 }
