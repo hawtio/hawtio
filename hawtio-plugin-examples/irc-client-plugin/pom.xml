@@ -76,6 +76,13 @@
 
     <plugins>
 
+      <!-- We use maven-antrun-plugin to build up a list of
+           javascript files for our plugin mbean, this means
+           it needs to run before the maven-resources-plugin
+           copies and filters the web.xml, since for this
+           example we use contextParam settings to configure
+           our plugin mbean -->
+
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>${maven-antrun-plugin-version}</version>
