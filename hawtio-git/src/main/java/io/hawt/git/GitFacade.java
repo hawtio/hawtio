@@ -20,6 +20,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,8 +341,17 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
+    @Override
+    public CommitInfo writeBase64(String branch, String path, String commitMessage, String authorName, String authorEmail, String contentsBase64) {
+        return write(branch, path, commitMessage, authorName, authorEmail, Base64.decode(contentsBase64));
+    }
+
     public CommitInfo write(final String branch, final String path, final String commitMessage,
                       final String authorName, final String authorEmail, final String contents) {
+        return write(branch, path, commitMessage, authorName, authorEmail, contents.getBytes());
+    }
+
+    private CommitInfo write(final String branch, final String path, final String commitMessage, String authorName, String authorEmail, final byte[] data) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
             @Override
@@ -352,7 +362,7 @@ public class GitFacade extends GitFacadeSupport {
             public CommitInfo call() throws Exception {
                 checkoutBranch(git, branch);
                 File rootDir = getRootGitDirectory();
-                return doWrite(git, rootDir, branch, path, contents, personIdent, commitMessage);
+                return doWrite(git, rootDir, branch, path, data, personIdent, commitMessage);
             }
         });
     }

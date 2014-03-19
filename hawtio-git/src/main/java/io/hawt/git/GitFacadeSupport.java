@@ -255,7 +255,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     protected Void doRevert(Git git, File rootDir, String branch, String objectId, String blobPath, String commitMessage, PersonIdent personIdent) throws Exception {
         String contents = doGetContent(git, objectId, blobPath);
         if (contents != null) {
-            doWrite(git, rootDir, branch, blobPath, contents, personIdent, commitMessage);
+            doWrite(git, rootDir, branch, blobPath, contents.getBytes(), personIdent, commitMessage);
         }
         return null;
     }
@@ -513,7 +513,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         return buffer.toString();
     }
 
-    protected CommitInfo doWrite(Git git, File rootDir, String branch, String path, String contents, PersonIdent personIdent, String commitMessage) throws Exception {
+    protected CommitInfo doWrite(Git git, File rootDir, String branch, String path, byte[] contents, PersonIdent personIdent, String commitMessage) throws Exception {
         File file = getFile(rootDir, path);
         file.getParentFile().mkdirs();
 

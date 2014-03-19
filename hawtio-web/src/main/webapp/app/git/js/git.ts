@@ -51,6 +51,16 @@ module Git {
     write(branch:string, path:string, commitMessage:string, contents:string, fn);
 
     /**
+     * Write the content of a file
+     * @method write
+     * @param {String} branch
+     * @param {String} commitMessage
+     * @param {String} contents
+     * @param {Function} fn
+     */
+    writeBase64(branch:string, path:string, commitMessage:string, contents:string, fn);
+
+    /**
      * Creates a new directory of the given name
      * @method createDirectory
      * @param {String} branch
@@ -197,8 +207,13 @@ module Git {
     public write(branch:string, path:string, commitMessage:string, contents:string, fn) {
       var authorName = this.getUserName();
       var authorEmail = this.getUserEmail();
-
       return this.jolokia.execute(this.mbean, "write", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+    }
+
+    public writeBase64(branch:string, path:string, commitMessage:string, contents:string, fn) {
+      var authorName = this.getUserName();
+      var authorEmail = this.getUserEmail();
+      return this.jolokia.execute(this.mbean, "writeBase64", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
     }
 
     public createDirectory(branch:string, path:string, commitMessage:string, fn) {
