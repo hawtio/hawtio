@@ -27,6 +27,11 @@ module Wiki {
    */
   export var hideExtentions = [".profile"];
 
+  export var securityProviderInfo = {
+    supportedKeyStoreTypes:["JKS"],
+    supportedKeyAlgorithms:["RSA"]
+  };
+
   /**
    * The wizard tree for creating new content in the wiki
    * @property documentTemplates
@@ -61,6 +66,102 @@ module Wiki {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
       exemplar: "properties-file.properties"
+    },
+    {
+      label: "Key Store File",
+      tooltip: "Creates a keystore (database) of cryptographic keys, X.509 certificate chains, and trusted certificates.",
+      exemplar: 'keystore.jks',
+      generated: {
+        mbean: ['hawtio', { type: 'KeystoreService' }],
+        init: function(workspace) {
+          var mbean = 'hawtio:type=KeystoreService';
+          var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "securityProviderInfo" }, {
+            success: (data)=>{
+              Wiki.securityProviderInfo = data;
+            },
+            error: (response) => {
+              console.log('Could not find the supported security algorithms: ', response.error);
+            }
+          });
+        },
+        generate: function(workspace, form, success, error) {
+          var encodedForm = JSON.stringify(form)
+          var mbean = 'hawtio:type=KeystoreService';
+          var response = workspace.jolokia.request( {
+              type: 'exec', 
+              mbean: mbean,
+              operation: 'createKeyStoreViaJSON(java.lang.String)',
+              arguments: [encodedForm]
+            }, {
+              method:'POST',
+              success:function(response) {
+                if( response.status == 200 ) {
+                  success(response.value)
+                } else {
+                  error(response.error)
+                }                
+              },
+              error:function(response){
+                error(JSON.stringify(response))
+              }
+            });
+        },
+        form: { 
+          storeType: Wiki.securityProviderInfo.supportedKeyStoreTypes[0],
+          createPrivateKey: false,
+          keyLength: 4096,
+          keyAlgorithm: Wiki.securityProviderInfo.supportedKeyAlgorithms[0],
+          keyValidity: 365
+        },
+        schema: {
+           "description": "Keystore Settings",
+           "type": "java.lang.String",
+           "properties": { 
+             "storePassword": {
+               "description": "Keystore password.",
+               "type": "password"
+             },
+             "storeType": {
+               "description": "The type of store to create",
+               "type": "java.lang.String",
+               'input-element': "select",
+               'input-attributes': { "ng-options":  "v for v in securityProviderInfo.supportedKeyStoreTypes" }
+             },
+             "createPrivateKey": {
+               "description": "Should we generate a self-signed private key?",
+               "type": "boolean"
+             },
+             "keyCommonName": {
+               "description": "The common name of the key, typically set to the hostname of the server",
+               "type": "java.lang.String",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyLength": {
+               "description": "The length of the cryptographic key",
+               "type": "Long",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyAlgorithm": {
+               "description": "The key algorithm",
+               "type": "java.lang.String",
+               'input-element': "select",
+               'input-attributes': { "ng-options":  "v for v in securityProviderInfo.supportedKeyAlgorithms" },
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyValidity": {
+               "description": "The number of days the key will be valid for",
+               "type": "Long",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyPassword": {
+               "description": "Password to the private key",
+               "type": "password",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             }
+           }
+        }
+
+      }
     },
     {
       label: "Markdown Document",

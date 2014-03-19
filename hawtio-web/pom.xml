@@ -84,6 +84,13 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
+      <artifactId>hawtio-keystore-mbean</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
       <artifactId>hawtio-aether</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

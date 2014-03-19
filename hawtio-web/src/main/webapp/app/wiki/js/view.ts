@@ -44,6 +44,7 @@ module Wiki {
     $scope.deleteDialog = false;
     $scope.isFile = false;
     $scope.createDocumentTree = Wiki.createWizardTree(workspace);
+    $scope.securityProviderInfo = Wiki.securityProviderInfo;
 
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
     $scope.fileExists = {

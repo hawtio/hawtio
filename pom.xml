@@ -269,6 +269,7 @@
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-keystore-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
