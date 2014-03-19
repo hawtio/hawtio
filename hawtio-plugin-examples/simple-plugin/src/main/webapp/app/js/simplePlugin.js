@@ -1,4 +1,3 @@
-
 // create our angular module and tell angular what route(s) it will handle
 var simplePlugin = angular.module('simple_plugin', ['hawtioCore'])
   .config(function($routeProvider) {
@@ -17,6 +16,7 @@ simplePlugin.run(function(workspace, viewRegistry, layoutFull) {
 
     // Set up top-level link to our plugin
     workspace.topLevelTabs.push({
+      id: "simple",
       content: "Simple",
       title: "Simple plugin loaded dynamically",
       isValid: function() { return true; },
