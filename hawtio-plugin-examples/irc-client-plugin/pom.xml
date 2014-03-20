@@ -99,6 +99,9 @@
               <target>
                 <echo>Building plugin javascript file list</echo>
                 <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
+                  <!-- Ensure that ircPlugin.js is included first
+                       as it's our entrypoint -->
+                  <include name="plugin/js/ircPlugin.js"/>
                   <include name="**/*.js"/>
                 </fileset>
                 <pathconvert pathsep=","

@@ -1,1 +1,21 @@
-<p>TODO - chat page</p>
+<div class="row-fluid" ng-controller="IRC.ChatController">
+
+  <div class="span2">
+    <ul class="zebra-list">
+      <li ng-repeat="(channel, obj) in channels track by $index" ng-click="selectChannel(channel)">
+        {{channel}}
+      </li>
+    </ul>
+  </div>
+  <div class="span8">
+    <ul class="zebra-list">
+      <li ng-repeat="message in selectedChannelObject.messages track by $index">
+        {{message}}
+      </li>
+    </ul>
+  </div>
+  <div class="span2">
+
+  </div>
+
+</div>

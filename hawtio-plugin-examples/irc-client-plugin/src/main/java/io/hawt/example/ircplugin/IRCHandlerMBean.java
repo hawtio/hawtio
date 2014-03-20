@@ -16,13 +16,14 @@ public interface IRCHandlerMBean {
    *   "ports": "6667,6668",
    *   "password": "mypass",
    *   "username": "myuser",
-   *   "realname": "my name"
+   *   "realname": "my name",
+   *   "useSSL": false
    * }
    * only "host" and "nickname" are required.
    *
    * @param settings
    */
-  void connect(Map<String, Object> settings);
+  void connect(Map<String, String> settings);
 
   /**
    * Fetch any available messages from the server that the mbean has

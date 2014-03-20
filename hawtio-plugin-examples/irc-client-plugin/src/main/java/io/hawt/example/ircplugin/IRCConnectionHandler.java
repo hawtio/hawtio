@@ -26,14 +26,14 @@ public class IRCConnectionHandler extends IRCEventAdapter {
   private IRCConnection connection;
   LinkedBlockingQueue<Object> messageQueue;
 
-  public static IRCConnectionHandler create(boolean useSSL, Map<String, Object> settings) throws IOException {
+  public static IRCConnectionHandler create(boolean useSSL, Map<String, String> settings) throws IOException {
 
-    String host = (String) settings.get("host");
-    String pass = (String) settings.get("password");
-    String nick = (String) settings.get("nickname");
-    String username = (String) settings.get("username");
-    String realname = (String) settings.get("realname");
-    String portsString = (String) settings.get("ports");
+    String host = settings.get("host");
+    String pass = settings.get("password");
+    String nick = settings.get("nickname");
+    String username = settings.get("username");
+    String realname = settings.get("realname");
+    String portsString = settings.get("ports");
 
     List<Integer> portsList = new ArrayList<Integer>();
 

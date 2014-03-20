@@ -62,7 +62,7 @@ public class IRCHandler implements IRCHandlerMBean {
   }
 
   @Override
-  public void connect(Map<String, Object> settings) {
+  public void connect(Map<String, String> settings) {
 
     Subject subject = getSubject();
 
@@ -71,7 +71,7 @@ public class IRCHandler implements IRCHandlerMBean {
       connection.destroy();
     }
 
-    Boolean useSSL = (Boolean)settings.get("useSSL");
+    Boolean useSSL = Boolean.valueOf(settings.get("useSSL"));
     if (useSSL == null) {
       useSSL = Boolean.FALSE;
     }

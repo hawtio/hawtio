@@ -32,12 +32,44 @@ var IRC = (function(IRC) {
   IRC.templatePath = "../irc-plugin/plugin/html/";
 
   /**
+   * @property jmxDomain
+   * @type {string}
+   *
+   * The JMX domain this plugin mostly works with
+   */
+  IRC.jmxDomain = "hawtio"
+
+  /**
+   * @property mbeanType
+   * @type {string}
+   *
+   * The mbean type this plugin will work with
+   */
+  IRC.mbeanType = "IRCHandler";
+
+  /**
+   * @property mbean
+   * @type {string}
+   *
+   * The mbean's full object name
+   */
+  IRC.mbean = IRC.jmxDomain + ":type=" + IRC.mbeanType;
+
+  /**
+   * @property SETTINGS_KEY
+   * @type {string}
+   *
+   * The key used to fetch our settings from local storage
+   */
+  IRC.SETTINGS_KEY = 'IRCSettings';
+
+  /**
    * @property module
    * @type {object}
    *
    * This plugin's angularjs module instance
    */
-  IRC.module = angular.module(IRC.pluginName, ['hawtioCore', 'hawtio-ui']);
+  IRC.module = angular.module(IRC.pluginName, ['hawtioCore', 'hawtio-ui', 'hawtio-forms']);
 
   // set up the routing for this plugin
   IRC.module.config(function($routeProvider) {
@@ -52,7 +84,7 @@ var IRC = (function(IRC) {
 
   // one-time initialization happens in the run function
   // of our module
-  IRC.module.run(function(workspace, viewRegistry) {
+  IRC.module.run(function(workspace, viewRegistry, localStorage, IRCService) {
     // let folks know we're actually running
     IRC.log.info("plugin running");
 
@@ -65,10 +97,16 @@ var IRC = (function(IRC) {
       id: "irc",
       content: "IRC",
       title: "example IRC client",
-      isValid: function() { return true; },
+      isValid: function(workspace) { return workspace.treeContainsDomainAndProperties(IRC.jmxDomain, { 'type': IRC.mbeanType }); },
       href: function() { return "#/irc/chat"; },
       isActive: function() { return workspace.isLinkActive("irc"); }
     });
+
+    var settings = angular.fromJson(localStorage[IRC.SETTINGS_KEY]);
+    if (settings && settings.autostart) {
+      IRC.log.debug("Settings.autostart set, starting IRC connection");
+      IRCService.connect(settings);
+    }
 
   });
 
