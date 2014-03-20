@@ -13,7 +13,17 @@ var IRC = (function(IRC) {
           messages: []
         }
       },
-
+      /**
+       * @property options
+       * Holds a reference to the connection options when
+       * a connection is started
+       */
+      options: undefined,
+      /**
+       * @property handle
+       * Stores the jolokia handle after we've connected for
+       * fetching updates from the backend
+       */
       handle: undefined,
 
       isConnected: function() {
@@ -78,6 +88,37 @@ var IRC = (function(IRC) {
       registered: function(line) {
         IRC.log.debug("Connected to IRC server");
         Core.notification('info', "Connected to IRC Server");
+
+
+        IRC.log.debug("Channel configuration: ", self.options.channels)
+        if ( self.options.channels) {
+          var channels = self.options.channels.split(',');
+          channels.forEach(function(channel) {
+            var trimmed = channel.trim();
+            if (!trimmed.startsWith("#")) {
+              trimmed = "#" + trimmed;
+            }
+            jolokia.request({
+              type: 'exec',
+              mbean: IRC.mbean,
+              operation: "join(java.lang.String)",
+              arguments: [trimmed]
+            }, {
+              success: function(response) {
+                IRC.log.debug("Joined channel: ", trimmed);
+                self.channels[trimmed] = {
+                  messages: []
+                };
+                Core.$apply($rootScope);
+              },
+              error: function(response) {
+                log.info('Failed to join channel ', trimmed, ' error: ', response.error);
+                Core.$apply($rootScope);
+              }
+            });
+          });
+        }
+
       },
       disconnected: function(line) {
         IRC.log.debug("Disconnected from IRC server");
@@ -104,6 +145,7 @@ var IRC = (function(IRC) {
       },
 
       connect: function(options) {
+        self.options = options;
         IRC.log.debug("Connecting to IRC service: ", options.host);
         jolokia.request({
           type: 'exec',
@@ -138,7 +180,7 @@ var IRC = (function(IRC) {
           }
         });
       }
-    }
+    };
 
     return self;
   });

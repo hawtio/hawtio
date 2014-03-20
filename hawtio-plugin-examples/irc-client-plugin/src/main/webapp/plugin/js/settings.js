@@ -27,7 +27,8 @@ var IRC = (function (IRC) {
         },
         ports: {
           description: 'IRC Port',
-          'type': 'Integer'
+          'type': 'Integer',
+          tooltip: 'Comma separated list of ports to connect to, by default 6667 for non-SSL and 6697 for SSL connections are used'
         },
         username: {
           description: 'IRC User Name',
@@ -47,7 +48,13 @@ var IRC = (function (IRC) {
         },
         autostart: {
           description: 'Connect at startup',
-          'type': 'boolean'
+          'type': 'boolean',
+          tooltip: 'Whether or not the IRC connection should be started as soon as you log into hawtio'
+        },
+        channels: {
+          description: 'Channels',
+          'type': 'java.lang.String',
+          tooltip: 'Comma separated list of channels to connect to when the IRC connection is started'
         }
       }
     };
