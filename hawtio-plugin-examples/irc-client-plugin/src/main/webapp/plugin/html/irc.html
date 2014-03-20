@@ -10,7 +10,7 @@
   <div class="span8">
     <ul class="zebra-list">
       <li ng-repeat="message in selectedChannelObject.messages track by $index">
-        {{message}}
+        {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
       </li>
     </ul>
   </div>
