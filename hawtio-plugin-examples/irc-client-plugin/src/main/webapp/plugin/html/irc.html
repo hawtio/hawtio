@@ -4,8 +4,10 @@
     <div class="channel-window">
       <div class="channel-window-inner">
         <ul class="zebra-list">
-          <li ng-repeat="(channel, obj) in channels track by $index" ng-click="selectChannel(channel)">
-            {{channel}}
+          <li ng-repeat="(channel, obj) in channels | orderBy:sortChannel">
+            <div ng-click="selectChannel(channel)" ng-class="isSelected(channel)">
+              {{channel}}
+            </div>
           </li>
         </ul>
       </div>
@@ -15,26 +17,52 @@
     </div>
   </div>
   <div class="span8">
+    <div class="topic-window">
+      {{selectedChannelObject.topic.topic}}
+    </div>
     <div class="chat-window">
       <div class="chat-window-inner">
         <ul class="zebra-list">
           <li ng-repeat="message in selectedChannelObject.messages track by $index">
-            {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
+            <div ng-switch="message.type">
+              <div ng-switch-when="reply">
+                {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
+              </div>
+              <div ng-switch-when="notice">
+                {{message.timestamp | date : 'mediumTime'}} &lt;{{message.user.nick}}&gt; {{message.message}}
+              </div>
+              <div ng-switch-when="privmsg">
+                {{message.timestamp | date : 'mediumTime'}} &lt;{{message.user.nick}}&gt; {{message.message}}
+              </div>
+              <div ng-switch-when="join">
+                {{message.timestamp | date : 'mediumTime'}} {{message.user.nick}} has joined {{message.chan}}
+              </div>
+              <div ng-switch-when="part">
+                {{message.timestamp | date : 'mediumTime'}} {{message.user.nick}} has left {{message.chan}} <span ng-show="message.message"> - {{message.message}}</span>
+              </div>
+              <div ng-switch-default>
+                {{message.timestamp | date : 'mediumTime'}} {{message}}
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </div>
     <div class="input-widget">
-      <input type="text" class="input input-xsmall">
-      <input type="text" class="input input-xxlarge">
-      <button class="btn btn-success">Send</button>
+      <form name="inputForm" ng-submit="sendMessage()">
+        <input type="text" class="input input-xxlarge" ng-model="newMessage">
+        <input type="submit" class="btn btn-success" ng-disabled="!newMessage" value="Send">
+      </form>
     </div>
   </div>
   <div class="span2">
     <div class="nickname-window">
       <div class="nickname-window-inner">
-
-
+        <ul class="zebra-list">
+          <li ng-repeat="nick in selectedChannelObject.names | orderBy:sortNick">
+            {{nick}}
+          </li>
+        </ul>
       </div>
     </div>
 

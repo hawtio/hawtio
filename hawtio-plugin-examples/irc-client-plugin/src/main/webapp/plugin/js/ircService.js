@@ -3,13 +3,15 @@
  */
 var IRC = (function(IRC) {
 
+  IRC.SERVER = 'Server Messages';
+
   // The IRC service handles the connection to
   // the server in the background
   IRC.module.factory("IRCService", function(jolokia, $rootScope) {
     var self = {
 
       channels: {
-        server: {
+        'Server Messages': {
           messages: []
         }
       },
@@ -57,12 +59,37 @@ var IRC = (function(IRC) {
       },
       part: function(line) {
         IRC.log.debug("part - chan: ", line.chan, " user: ", line.user, " message: ", line.message);
+        var channel = self.channels[line.chan];
+        if (channel) {
+          channel.messages.push(line);
+          if (channel.names) {
+            channel.names.remove(function(nick) {
+              if (nick.startsWith("@") || nick.startsWith("+")) {
+                var trimmed = nick.last(nick.length - 1);
+                return trimmed === line.user.nick;
+              } else {
+                return nick === line.user.nick;
+              }
+            });
+          }
+        } else {
+          self.channels[IRC.SERVER].messages.push(line);
+        }
       },
       invite: function(line) {
         IRC.log.debug("invie - chan: ", line.chan, " user: ", line.user, " passiveNick: ", line.passiveNick);
       },
       join: function(line) {
         IRC.log.debug("join - chan: ", line.chan, " user: ", line.user);
+        var channel = self.channels[line.chan];
+        if (channel) {
+          channel.messages.push(line);
+          if (!channel.names) {
+            channel.names = [line.user.nick];
+          } else {
+            channel.names = channel.names.union([line.user.nick]);
+          }
+        }
       },
       kick: function(line) {
         IRC.log.debug("kick - chan: ", line.chan, " user: ", line.user, " passiveNick: ", line.passiveNick, " message: ", line.message);
@@ -79,56 +106,101 @@ var IRC = (function(IRC) {
       },
       privmsg: function(line) {
         IRC.log.debug("privmsg - target: ", line.target, " user: ", line.user, " message: ", line.message);
+        var channel = undefined;
 
+        if (line.target.startsWith("#") || line.fromSelf) {
+          if (!(line.target in self.channels)) {
+            self.channels[target] = {
+              messages: []
+            }
+          }
+          channel = self.channels[line.target];
+        } else {
+          if (!(line.user.nick in self.channels)) {
+            self.channels[line.user.nick] = {
+              messages: []
+            }
+          }
+          channel = self.channels[line.user.nick];
+        }
+        channel.messages.push(line);
       },
       quit: function(line) {
         IRC.log.debug("quit - user: ", line.user, " message: ", line.message);
       },
       reply: function(line) {
         IRC.log.debug("reply, num: ", line.num, " value: ", line.value, " message: ", line.message);
-        self.channels.server.messages.push(line);
+        line.value = line.value.replace(self.options.nickname, "").trim();
+        self.channels[IRC.SERVER].messages.push(line);
+        switch (line.num) {
+          case 332:
+            self.topic({
+              chan: line.value,
+              user: undefined,
+              topic: line.message
+            });
+            break;
+          case 331:
+            self.topic({
+              chan: line.value,
+              user: undefined,
+              topic: ''
+            });
+            break;
+          case 353:
+            var channel = line.value.last(line.value.length - 1).trim();
+            var names = line.message.split(' ');
+            Core.pathSet(self.channels, [channel, 'names'], names);
+            break;
+          default:
+            break;
+        }
       },
       topic: function(line) {
         IRC.log.debug("topic - chan: ", line.chan, " user: ", line.user, " topic: ", line.topic);
+        Core.pathSet(self.channels, [line.chan, 'topic'], {
+          topic: line.topic,
+          setBy: line.user
+        });
       },
       unknown: function(line) {
         IRC.log.debug("unknown - prefix: ", line.prefix, " command: ", line.command, " middle: ", line.middle, " trailing: ", line.trailing);
       },
+
+      joinChannel: function (channel) {
+        var trimmed = channel.trim();
+        if (!trimmed.startsWith("#")) {
+          trimmed = "#" + trimmed;
+        }
+        jolokia.request({
+          type: 'exec',
+          mbean: IRC.mbean,
+          operation: "join(java.lang.String)",
+          arguments: [trimmed]
+        }, {
+          method: 'POST',
+          success: function (response) {
+            IRC.log.debug("Joined channel: ", trimmed);
+            Core.pathSet(self.channels, [trimmed, 'messages'], []);
+            Core.$apply($rootScope);
+          },
+          error: function (response) {
+            log.info('Failed to join channel ', trimmed, ' error: ', response.error);
+            Core.$apply($rootScope);
+          }
+        });
+
+      },
       registered: function(line) {
         IRC.log.debug("Connected to IRC server");
         Core.notification('info', "Connected to IRC Server");
-
-
         IRC.log.debug("Channel configuration: ", self.options.channels)
         if ( self.options.channels) {
           var channels = self.options.channels.split(',');
           channels.forEach(function(channel) {
-            var trimmed = channel.trim();
-            if (!trimmed.startsWith("#")) {
-              trimmed = "#" + trimmed;
-            }
-            jolokia.request({
-              type: 'exec',
-              mbean: IRC.mbean,
-              operation: "join(java.lang.String)",
-              arguments: [trimmed]
-            }, {
-              method: 'POST',
-              success: function(response) {
-                IRC.log.debug("Joined channel: ", trimmed);
-                self.channels[trimmed] = {
-                  messages: []
-                };
-                Core.$apply($rootScope);
-              },
-              error: function(response) {
-                log.info('Failed to join channel ', trimmed, ' error: ', response.error);
-                Core.$apply($rootScope);
-              }
-            });
+            self.joinChannel(channel);
           });
         }
-
       },
       disconnected: function(line) {
         IRC.log.debug("Disconnected from IRC server");
