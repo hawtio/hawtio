@@ -589,7 +589,7 @@ module Core {
   }
 
   /**
-   * Logs any stack traces as debug level logging
+   * Logs any failed operation and stack traces
    */
   export function logJolokiaStackTrace(response) {
     var stacktrace = response.stacktrace;
