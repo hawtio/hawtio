@@ -533,6 +533,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to delete " + name + " due to " + response.error);
+      Core.defaultJolokiaErrorHandler(response);
       Core.$apply($scope);
     });
   }
@@ -544,6 +545,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to start " + name + " due to " + response.error);
+      Core.defaultJolokiaErrorHandler(response);
       Core.$apply($scope);
     });
   }
@@ -555,6 +557,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to stop " + name + " due to " + response.error);
+      Core.defaultJolokiaErrorHandler(response);
       Core.$apply($scope);
     });
   }
