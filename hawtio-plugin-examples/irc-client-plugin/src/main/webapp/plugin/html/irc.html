@@ -1,11 +1,11 @@
-<div class="row-fluid" ng-controller="IRC.ChatController">
+<div class="chat-display row-fluid gridStyle" ng-controller="IRC.ChatController">
 
   <div class="span2">
     <div class="channel-window">
       <div class="channel-window-inner">
         <ul class="zebra-list">
           <li ng-repeat="(channel, obj) in channels | orderBy:sortChannel">
-            <div ng-click="selectChannel(channel)" ng-class="isSelected(channel)">
+            <div ng-click="selectChannel(channel)" ng-class="isSelectedChannel(channel)">
               {{channel}}
             </div>
           </li>
@@ -17,10 +17,10 @@
     </div>
   </div>
   <div class="span8">
-    <div class="topic-window">
+    <div ng-show="selectedChannelObject.topic" class="topic-window">
       {{selectedChannelObject.topic.topic}}
     </div>
-    <div class="chat-window">
+    <div class="chat-window" scroll-glue>
       <div class="chat-window-inner">
         <ul class="zebra-list">
           <li ng-repeat="message in selectedChannelObject.messages track by $index">

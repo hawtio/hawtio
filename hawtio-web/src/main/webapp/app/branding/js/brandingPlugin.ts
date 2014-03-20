@@ -24,20 +24,7 @@ module Branding {
     if (Branding.enabled) {
       Branding.profile = response.profile;
       // pull in branding stylesheet
-      if ('createStyleSheet' in document) {
-        // IE9
-        document.createStyleSheet('css/site-branding.css');
-      } else {
-        // Everyone else
-        var link = $("<link>");
-        $("head").append(link);
-
-        link.attr({
-          rel: 'stylesheet',
-          type: 'text/css',
-          href: 'css/site-branding.css'
-        });
-      }
+      Core.addCSS('css/site-branding.css');
     }
 
   });

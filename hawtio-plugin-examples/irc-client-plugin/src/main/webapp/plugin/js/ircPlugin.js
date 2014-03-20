@@ -69,7 +69,7 @@ var IRC = (function(IRC) {
    *
    * This plugin's angularjs module instance
    */
-  IRC.module = angular.module(IRC.pluginName, ['hawtioCore', 'hawtio-ui', 'hawtio-forms']);
+  IRC.module = angular.module(IRC.pluginName, ['hawtioCore', 'hawtio-ui', 'hawtio-forms', 'luegg.directives']);
 
   // set up the routing for this plugin
   IRC.module.config(function($routeProvider) {
@@ -84,9 +84,11 @@ var IRC = (function(IRC) {
 
   // one-time initialization happens in the run function
   // of our module
-  IRC.module.run(function(workspace, viewRegistry, localStorage, IRCService) {
+  IRC.module.run(function(workspace, viewRegistry, localStorage, IRCService, $rootElement) {
     // let folks know we're actually running
     IRC.log.info("plugin running");
+
+    Core.addCSS('../irc-plugin/plugin/css/plugin.css');
 
     // tell hawtio that we have our own custom layout for
     // our view
@@ -116,3 +118,6 @@ var IRC = (function(IRC) {
 // Very important!  Add our module to hawtioPluginLoader so it
 // bootstraps our module
 hawtioPluginLoader.addModule(IRC.pluginName);
+
+// have to add this third-party directive too
+hawtioPluginLoader.addModule('luegg.directives');
