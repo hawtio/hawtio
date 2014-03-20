@@ -16,6 +16,10 @@ var IRC = (function(IRC) {
 
       handle: undefined,
 
+      isConnected: function() {
+        return self.handle !== undefined
+      },
+
       error: function(line) {
 
       },
@@ -78,6 +82,8 @@ var IRC = (function(IRC) {
       disconnected: function(line) {
         IRC.log.debug("Disconnected from IRC server");
         Core.notification('info', "Disconnected from IRC Server");
+        jolokia.unregister(self.handle);
+        self.handle = undefined;
       },
       ping: function(line) {
 
@@ -116,6 +122,8 @@ var IRC = (function(IRC) {
               error: function(response) {
                 IRC.log.info("Error fetching: ", response.error);
                 IRC.log.debug("stack trace: ", response.stacktrace);
+                jolokia.unregister(self.handle);
+                self.handle = undefined;
               }
             }, {
               type: 'exec',
@@ -130,10 +138,6 @@ var IRC = (function(IRC) {
           }
         });
       }
-
-
-
-
     }
 
     return self;

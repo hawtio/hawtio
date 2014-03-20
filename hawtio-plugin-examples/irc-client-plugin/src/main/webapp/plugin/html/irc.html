@@ -1,20 +1,39 @@
 <div class="row-fluid" ng-controller="IRC.ChatController">
 
   <div class="span2">
-    <ul class="zebra-list">
-      <li ng-repeat="(channel, obj) in channels track by $index" ng-click="selectChannel(channel)">
-        {{channel}}
-      </li>
-    </ul>
+    <div class="channel-window">
+      <div class="channel-window-inner">
+        <ul class="zebra-list">
+          <li ng-repeat="(channel, obj) in channels track by $index" ng-click="selectChannel(channel)">
+            {{channel}}
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
   <div class="span8">
-    <ul class="zebra-list">
-      <li ng-repeat="message in selectedChannelObject.messages track by $index">
-        {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
-      </li>
-    </ul>
+    <div class="chat-window">
+      <div class="chat-window-inner">
+        <ul class="zebra-list">
+          <li ng-repeat="message in selectedChannelObject.messages track by $index">
+            {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="input-widget">
+      <input type="text" class="input input-xsmall">
+      <input type="text" class="input input-xxlarge">
+      <button class="btn btn-success">Send</button>
+    </div>
   </div>
   <div class="span2">
+    <div class="nickname-window">
+      <div class="nickname-window-inner">
+
+
+      </div>
+    </div>
 
   </div>
 

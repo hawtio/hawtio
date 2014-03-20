@@ -13,16 +13,16 @@ var IRC = (function (IRC) {
    */
   IRC.breadcrumbs = [
     {
-      content: '<i class=" icon-cogs"></i> Settings',
-      title: "Set up your IRC connection",
-      isValid: function (workspace) { return true; },
-      href: "#/irc/settings"
-    },
-    {
       content: '<i class="icon-list-ul"></i> Chat',
       title: "Connect to IRC",
-      isValid: function (workspace) { return true; },
+      isValid: function (IRCService) { return IRCService.isConnected(); },
       href: "#/irc/chat"
+    },
+    {
+      content: '<i class=" icon-cogs"></i> Settings',
+      title: "Set up your IRC connection",
+      isValid: function (IRCService) { return true; },
+      href: "#/irc/settings"
     }
   ];
 
@@ -35,12 +35,16 @@ var IRC = (function (IRC) {
    * The controller for this plugin's navigation bar
    *
    */
-  IRC.NavBarController = function($scope, workspace) {
+  IRC.NavBarController = function($scope, IRCService, $location) {
+
+    if ($location.path().startsWith("/irc/chat") && !IRCService.isConnected()) {
+      $location.path("/irc/settings");
+    }
 
     $scope.breadcrumbs = IRC.breadcrumbs;
 
     $scope.isValid = function(link) {
-      return link.isValid(workspace);
+      return link.isValid(IRCService);
     };
 
   };
