@@ -17,10 +17,10 @@
     </div>
   </div>
   <div class="span8">
-    <div ng-show="selectedChannelObject.topic" class="topic-window">
+    <div ng-hide="hasTopic()" class="topic-window">
       {{selectedChannelObject.topic.topic}}
     </div>
-    <div class="chat-window" scroll-glue>
+    <div class="chat-window" ng-class="hasTopic()" scroll-glue>
       <div class="chat-window-inner">
         <ul class="zebra-list">
           <li ng-repeat="message in selectedChannelObject.messages track by $index">
@@ -50,7 +50,11 @@
     </div>
     <div class="input-widget">
       <form name="inputForm" ng-submit="sendMessage()">
-        <input type="text" class="input input-xxlarge" ng-model="newMessage">
+        <div>
+          <input type="text" class="entry-widget"
+                 typeahead="nick for nick in getNames() | filter:$viewValue"
+                 ng-model="newMessage">
+        </div>
         <input type="submit" class="btn btn-success" ng-disabled="!newMessage" value="Send">
       </form>
     </div>

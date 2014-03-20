@@ -10,7 +10,7 @@ var IRC = (function(IRC) {
    *
    * Controller for the chat interface
    */
-  IRC.ChatController = function($scope, IRCService, localStorage, jolokia) {
+  IRC.ChatController = function($element, $scope, IRCService, localStorage, jolokia) {
 
     $scope.newMessage = '';
 
@@ -19,7 +19,7 @@ var IRC = (function(IRC) {
     $scope.channels = IRCService.channels;
 
     if (!$scope.selectedChannel || !($scope.selectedChannel in $scope.channels)) {
-      $scope.selectedChannel = 'server';
+      $scope.selectedChannel = IRC.SERVER;
     }
 
     $scope.selectedChannelObject = $scope.channels[$scope.selectedChannel];
@@ -33,6 +33,29 @@ var IRC = (function(IRC) {
       } else {
         return "3 - " + nick;
       }
+    };
+
+    $scope.getNames = function() {
+      if (!$scope.selectedChannelObject) {
+        return [];
+      }
+      var answer = $scope.selectedChannelObject.names.map(function(name) {
+        if (name.startsWith("@") || name.startsWith("+")) {
+          return name.last(name.length - 1);
+        }
+        return name;
+      });
+      return answer;
+    };
+
+    $scope.hasTopic = function() {
+      if (!$scope.selectedChannelObject) {
+        return "";
+      }
+      if (!$scope.selectedChannelObject.topic || Core.isBlank($scope.selectedChannelObject.topic.topic)) {
+        return "no-topic";
+      }
+      return "";
     };
 
     $scope.sortChannel = function(channel) {
@@ -102,6 +125,7 @@ var IRC = (function(IRC) {
       if (newValue !== oldValue) {
         localStorage['IRCSelectedChannel'] = $scope.selectedChannel;
         $scope.selectedChannelObject = $scope.channels[$scope.selectedChannel];
+        $element.find('.entry-widget').focus();
       }
     })
 
