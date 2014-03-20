@@ -31,7 +31,11 @@ var IRC = (function(IRC) {
       },
 
       error: function(line) {
-
+        if (line.num) {
+          IRC.log.debug("error - num: ", line.num, " message: ", line.message);
+        } else {
+          IRC.log.debug("error - message: ", line.message);
+        }
       },
       notice: function(line) {
         IRC.log.debug("notice, target: ", line.target, " user: ", line.user, " message: ", line.message);
@@ -52,38 +56,43 @@ var IRC = (function(IRC) {
 
       },
       part: function(line) {
-
+        IRC.log.debug("part - chan: ", line.chan, " user: ", line.user, " message: ", line.message);
       },
       invite: function(line) {
-
+        IRC.log.debug("invie - chan: ", line.chan, " user: ", line.user, " passiveNick: ", line.passiveNick);
       },
       join: function(line) {
-
+        IRC.log.debug("join - chan: ", line.chan, " user: ", line.user);
       },
       kick: function(line) {
-
+        IRC.log.debug("kick - chan: ", line.chan, " user: ", line.user, " passiveNick: ", line.passiveNick, " message: ", line.message);
       },
       mode: function(line) {
-
+        if (line.modeParser) {
+          IRC.log.debug("mode - chan: ", line.chan, " user: ", line.user, " modeParser: ", line.modeParser);
+        } else {
+          IRC.log.debug("mode - chan: ", line.chan, " user: ", line.user, " mode: ", line.mode);
+        }
       },
       nick: function(line) {
-
+        IRC.log.debug("nick - user: ", line.user, " newNick: ", line.newNick);
       },
       privmsg: function(line) {
+        IRC.log.debug("privmsg - target: ", line.target, " user: ", line.user, " message: ", line.message);
 
       },
       quit: function(line) {
-
+        IRC.log.debug("quit - user: ", line.user, " message: ", line.message);
       },
       reply: function(line) {
         IRC.log.debug("reply, num: ", line.num, " value: ", line.value, " message: ", line.message);
         self.channels.server.messages.push(line);
       },
       topic: function(line) {
-
+        IRC.log.debug("topic - chan: ", line.chan, " user: ", line.user, " topic: ", line.topic);
       },
       unknown: function(line) {
-
+        IRC.log.debug("unknown - prefix: ", line.prefix, " command: ", line.command, " middle: ", line.middle, " trailing: ", line.trailing);
       },
       registered: function(line) {
         IRC.log.debug("Connected to IRC server");
@@ -104,6 +113,7 @@ var IRC = (function(IRC) {
               operation: "join(java.lang.String)",
               arguments: [trimmed]
             }, {
+              method: 'POST',
               success: function(response) {
                 IRC.log.debug("Joined channel: ", trimmed);
                 self.channels[trimmed] = {
@@ -158,6 +168,7 @@ var IRC = (function(IRC) {
             IRC.log.debug("Got response: ", response);
             IRC.log.debug("Connected, registering callback");
             self.handle = jolokia.register({
+              method: 'POST',
               success: function(response) {
                 self.dispatch(response);
               },
