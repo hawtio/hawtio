@@ -588,6 +588,18 @@ module Core {
     }
   }
 
+  /**
+   * Logs any stack traces as debug level logging
+   */
+  export function logJolokiaStackTrace(response) {
+    var stacktrace = response.stacktrace;
+    if (stacktrace) {
+      var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+      Core.log.info("Operation ", operation, " failed due to: ", response['error']);
+      Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+    }
+  }
+
 
   /**
    * Converts the given XML node to a string representation of the XML
