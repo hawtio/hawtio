@@ -13,13 +13,13 @@ var IRC = (function (IRC) {
    */
   IRC.breadcrumbs = [
     {
-      content: '<i class="icon-list-ul"></i> Chat',
+      content: '<i class="icon-comments"></i> Chat',
       title: "Connect to IRC",
       isValid: function (IRCService) { return IRCService.isConnected(); },
       href: "#/irc/chat"
     },
     {
-      content: '<i class=" icon-cogs"></i> Settings',
+      content: '<i class="icon-cogs"></i> Settings',
       title: "Set up your IRC connection",
       isValid: function (IRCService) { return true; },
       href: "#/irc/settings"

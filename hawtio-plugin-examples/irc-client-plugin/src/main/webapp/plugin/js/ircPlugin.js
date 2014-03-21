@@ -84,7 +84,7 @@ var IRC = (function(IRC) {
 
   // one-time initialization happens in the run function
   // of our module
-  IRC.module.run(function(workspace, viewRegistry, localStorage, IRCService, $rootElement) {
+  IRC.module.run(function(workspace, viewRegistry, localStorage, IRCService, $rootScope) {
     // let folks know we're actually running
     IRC.log.info("plugin running");
 
@@ -107,6 +107,10 @@ var IRC = (function(IRC) {
     var settings = angular.fromJson(localStorage[IRC.SETTINGS_KEY]);
     if (settings && settings.autostart) {
       IRC.log.debug("Settings.autostart set, starting IRC connection");
+      IRCService.addConnectAction(function() {
+        Core.notification('info', "Connected to IRC Server");
+        Core.$apply($rootScope);
+      });
       IRCService.connect(settings);
     }
 

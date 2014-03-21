@@ -24,6 +24,14 @@
   position: static;
 }
 
+.channel-window-inner > ul > li {
+  cursor: pointer;
+}
+
+.nickname-window-inner > ul > li {
+  cursor: pointer;
+}
+
 .channel-window {
   bottom: 40px;
 }
@@ -101,7 +109,7 @@
 }
 
 .selected-channel {
-  background: #92ccff;
+  background: #92ccff !important;
 }
 
 

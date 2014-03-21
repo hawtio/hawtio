@@ -10,7 +10,11 @@ var IRC = (function (IRC) {
    *
    * Controller that handles the IRC settings page
    */
-  IRC.SettingsController = function($scope, IRCService, localStorage) {
+  IRC.SettingsController = function($scope, IRCService, localStorage, $location) {
+
+    $scope.connecting = false;
+
+    $scope.forms = {};
 
     $scope.formEntity = angular.fromJson(localStorage[IRC.SETTINGS_KEY]) || {};
     $scope.formConfig = {
@@ -65,7 +69,26 @@ var IRC = (function (IRC) {
       }
     }, true);
 
+    $scope.buttonText = function() {
+      if (IRCService.isConnected()) {
+        return "Reconnect";
+      } else {
+        return "Connect";
+      }
+    };
 
+    $scope.connect = function() {
+      if ($scope.forms.settings.$valid) {
+        $scope.connecting = true;
+        IRCService.addConnectAction(function() {
+          $scope.connecting = false;
+          if ($location.path().startsWith("/irc/settings")){
+            $location.path("/irc/chat");
+          }
+        });
+        IRCService.connect($scope.formEntity);
+      }
+    };
 
   };
 

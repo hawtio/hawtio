@@ -1,7 +1,15 @@
 <div class="row-fluid" ng-controller="IRC.SettingsController">
   <div class="span4"></div>
-  <div class="span4">
-    <div simple-form data="formConfig" entity="formEntity"></div>
+  <div class="span4" ng-hide="connecting">
+    <div simple-form name="settings" data="formConfig" entity="formEntity"></div>
+    <p></p>
+    <div>
+      <button class="btn btn-primary pull-right" ng-disabled="!forms.settings.$valid" ng-click="connect()">{{buttonText()}}</button>
+    </div>
+  </div>
+  <div class="span4 centered" ng-show="connecting">
+    <i class="icon-spin icon-spinner icon-4x"></i>
+    <p>Please wait, connecting...</p>
   </div>
   <div class="span4"></div>
 </div>

@@ -10,6 +10,33 @@ var IRC = (function(IRC) {
   IRC.module.factory("IRCService", function(jolokia, $rootScope) {
     var self = {
 
+      connectActions: [],
+      disconnectActions: [],
+
+      addConnectAction: function(action) {
+        if (angular.isFunction(action)) {
+          self.connectActions.push(action);
+        }
+      },
+      addDisconnectAction: function(action) {
+        if (angular.isFunction(action)) {
+          self.disconnectActions.push(action);
+        }
+      },
+
+      executeConnectActions: function() {
+        self.connectActions.forEach(function(action) {
+          action.apply();
+        });
+        self.connectActions = [];
+      },
+      executeDisconnectActions: function() {
+        self.disconnectActions.forEach(function(action) {
+          action.apply();
+        });
+        self.disconnectActions = [];
+      },
+
       channels: {
         'Server Messages': {
           messages: []
@@ -167,10 +194,53 @@ var IRC = (function(IRC) {
         IRC.log.debug("unknown - prefix: ", line.prefix, " command: ", line.command, " middle: ", line.middle, " trailing: ", line.trailing);
       },
 
-      joinChannel: function (channel) {
+      partChannel: function (channel, onPart) {
         var trimmed = channel.trim();
+
         if (!trimmed.startsWith("#")) {
-          trimmed = "#" + trimmed;
+          // private chat
+          delete self.channels[trimmed];
+          if (onPart && angular.isFunction(onPart)) {
+            onPart.apply();
+          }
+          return;
+        }
+        jolokia.request({
+          type: 'exec',
+          mbean: IRC.mbean,
+          operation: "part(java.lang.String)",
+          arguments: [trimmed]
+        }, {
+          method: 'POST',
+          success: function (response) {
+            IRC.log.debug("Parted channel: ", trimmed);
+            delete self.channels[trimmed];
+            if (onPart && angular.isFunction(onPart)) {
+              onPart.apply();
+            }
+            Core.$apply($rootScope);
+          },
+          error: function (response) {
+            log.info('Failed to part channel ', trimmed, ' error: ', response.error);
+            Core.$apply($rootScope);
+          }
+        });
+
+      },
+
+      joinChannel: function (channel, onJoin) {
+        var trimmed = channel.trim();
+
+        if (!trimmed.startsWith("#")) {
+          // this is a private chat
+          if (trimmed.startsWith("@") || trimmed.startsWith("+")) {
+            trimmed = trimmed.last(trimmed.length - 1);
+          }
+          Core.pathSet(self.channels, [trimmed, 'messages'], []);
+          if (onJoin && angular.isFunction(onJoin)) {
+            onJoin.apply();
+          }
+          return;
         }
         jolokia.request({
           type: 'exec',
@@ -182,6 +252,9 @@ var IRC = (function(IRC) {
           success: function (response) {
             IRC.log.debug("Joined channel: ", trimmed);
             Core.pathSet(self.channels, [trimmed, 'messages'], []);
+            if (onJoin && angular.isFunction(onJoin)) {
+              onJoin.apply();
+            }
             Core.$apply($rootScope);
           },
           error: function (response) {
@@ -193,7 +266,6 @@ var IRC = (function(IRC) {
       },
       registered: function(line) {
         IRC.log.debug("Connected to IRC server");
-        Core.notification('info', "Connected to IRC Server");
         IRC.log.debug("Channel configuration: ", self.options.channels)
         if ( self.options.channels) {
           var channels = self.options.channels.split(' ');
@@ -201,13 +273,15 @@ var IRC = (function(IRC) {
             self.joinChannel(channel);
           });
         }
+        self.executeConnectActions();
       },
       disconnected: function(line) {
         IRC.log.debug("Disconnected from IRC server");
-        Core.notification('info', "Disconnected from IRC Server");
         jolokia.unregister(self.handle);
         self.handle = undefined;
+        self.executeDisconnectActions();
       },
+
       ping: function(line) {
 
       },
@@ -224,6 +298,26 @@ var IRC = (function(IRC) {
           });
           Core.$apply($rootScope);
         }
+      },
+
+      disconnect: function() {
+        jolokia.request({
+          type: 'exec',
+          mbean: IRC.mbean,
+          operation: 'disconnect',
+          arguments: []
+        }, {
+          method: 'POST',
+          success: function(response) {
+            IRC.log.debug("disconnected from IRC server");
+            Core.$apply($rootScope);
+          },
+          error: function(response) {
+            IRC.log.info("Error disconnecting: ", response.error);
+            IRC.log.debug("stack trace: ", response.stacktrace);
+            Core.$apply($rootScope);
+          }
+        });
       },
 
       connect: function(options) {
@@ -249,6 +343,8 @@ var IRC = (function(IRC) {
                 IRC.log.debug("stack trace: ", response.stacktrace);
                 jolokia.unregister(self.handle);
                 self.handle = undefined;
+                self.executeDisconnectActions();
+                Core.$apply($rootScope);
               }
             }, {
               type: 'exec',
@@ -256,6 +352,7 @@ var IRC = (function(IRC) {
               operation: 'fetch',
               arguments: []
             });
+            self.executeConnectActions();
           },
           error: function(response) {
             IRC.log.warn("Failed to connect to server: ", response.error);

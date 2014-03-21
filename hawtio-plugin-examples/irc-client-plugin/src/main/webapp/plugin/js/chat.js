@@ -10,7 +10,9 @@ var IRC = (function(IRC) {
    *
    * Controller for the chat interface
    */
-  IRC.ChatController = function($element, $scope, IRCService, localStorage, jolokia) {
+  IRC.ChatController = function($element, $scope, IRCService, localStorage, jolokia, $location) {
+
+    $scope.showNewChannelDialog = new UI.Dialog();
 
     $scope.newMessage = '';
 
@@ -24,6 +26,33 @@ var IRC = (function(IRC) {
 
     $scope.selectedChannelObject = $scope.channels[$scope.selectedChannel];
 
+    $scope.showChannelPrompt = function() {
+      $scope.showNewChannelDialog.open();
+    };
+
+    $scope.newChannel = function(target) {
+      if (!Core.isBlank(target)) {
+        $scope.showNewChannelDialog.close();
+        IRCService.joinChannel(target, function() {
+          $scope.selectedChannel = target;
+        });
+      }
+    };
+
+    $scope.partChannel = function(target) {
+      IRCService.partChannel(target, function() {
+        if ($scope.selectedChannel === target) {
+          $scope.selectedChannel = IRC.SERVER;
+        }
+      });
+    };
+
+    $scope.openQuery = function(target) {
+      IRCService.joinChannel(target, function() {
+        $scope.selectedChannel = target;
+      });
+    };
+
     $scope.sortNick = function(nick) {
       //IRC.log.debug("nick: ", nick);
       if (nick.startsWith("@")) {
@@ -35,8 +64,18 @@ var IRC = (function(IRC) {
       }
     };
 
+    $scope.disconnect = function() {
+      IRCService.addDisconnectAction(function() {
+        if ($location.path().startsWith("/irc/chat")) {
+          $location.path("/irc/settings");
+          Core.$apply($scope);
+        }
+      });
+      IRCService.disconnect();
+    };
+
     $scope.getNames = function() {
-      if (!$scope.selectedChannelObject) {
+      if (!$scope.selectedChannelObject || !$scope.selectedChannelObject.names) {
         return [];
       }
       var answer = $scope.selectedChannelObject.names.map(function(name) {
@@ -74,7 +113,6 @@ var IRC = (function(IRC) {
     };
 
     $scope.isSelectedChannel = function(channel) {
-      IRC.log.debug("is selected: ", channel);
       if (channel === $scope.selectedChannel) {
         return "selected-channel";
       }
