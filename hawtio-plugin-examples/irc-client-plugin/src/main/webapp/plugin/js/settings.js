@@ -54,7 +54,7 @@ var IRC = (function (IRC) {
         channels: {
           description: 'Channels',
           'type': 'java.lang.String',
-          tooltip: 'Comma separated list of channels to connect to when the IRC connection is started'
+          tooltip: 'Space separated list of channels to connect to when the IRC connection is started'
         }
       }
     };

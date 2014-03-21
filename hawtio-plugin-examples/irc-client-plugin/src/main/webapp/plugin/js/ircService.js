@@ -196,7 +196,7 @@ var IRC = (function(IRC) {
         Core.notification('info', "Connected to IRC Server");
         IRC.log.debug("Channel configuration: ", self.options.channels)
         if ( self.options.channels) {
-          var channels = self.options.channels.split(',');
+          var channels = self.options.channels.split(' ');
           channels.forEach(function(channel) {
             self.joinChannel(channel);
           });
