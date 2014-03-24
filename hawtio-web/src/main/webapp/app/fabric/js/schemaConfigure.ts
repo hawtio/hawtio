@@ -9,7 +9,7 @@ module Fabric {
       case 'child': answer = []; break;
       case 'ssh': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
       case 'jclouds': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
-      case 'openshift': answer = ['publichostname']; break;
+      case 'openshift': answer = []; break;
       case 'docker': answer = []; break;
     }
     return answer;
@@ -131,9 +131,12 @@ module Fabric {
         delete schema.properties['path'];
         delete schema.properties['bindAddress'];
         delete schema.properties['hostNameContext'];
+        delete schema.properties['resolver'];
 
         schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
 
+        // openshift must select publichostname as the resolver
+        Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
         Core.pathSet(schema.properties, ['serverUrl', 'label'], 'OpenShift Broker');
         Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker host name of the cloud to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL: openshift.redhat.com');
         Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
