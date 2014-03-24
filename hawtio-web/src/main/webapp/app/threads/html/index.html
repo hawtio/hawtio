@@ -29,7 +29,7 @@
               ng-class="selectedFilterClass('NONE')">
             <span class="clickable no-fade total">Total:</span> {{unfilteredThreads.length}}
           </li>
-          <li ng-repeat="(state, total) in totals"
+          <li ng-repeat="(state, total) in totals track by $index"
               ng-click="filterOn(state)"
               title="Filter by {{state}}"
               ng-class="selectedFilterClass(state)">

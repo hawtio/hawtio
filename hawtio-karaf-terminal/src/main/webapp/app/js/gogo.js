@@ -46,7 +46,7 @@ gogo.Terminal_ctor = function(div, width, height, token) {
                query = query + "&f=1";
                force = 0;
            }
-           r.open("POST", "hawtio-karaf-terminal/term", true);
+           r.open("POST", "/hawtio-karaf-terminal/term", true);
            r.setRequestHeader('LoginToken', token);
            r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
            r.onreadystatechange = function () {
@@ -222,9 +222,9 @@ gogo.Terminal_ctor = function(div, width, height, token) {
 
    init();
 
-}
+};
 
 gogo.Terminal = function(div, width, height, token) {
    return new this.Terminal_ctor(div, width, height, token);
-}
+};
 

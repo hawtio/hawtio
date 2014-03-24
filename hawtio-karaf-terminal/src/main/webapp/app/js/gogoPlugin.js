@@ -1,7 +1,10 @@
 
-var Gogo = (function() {
+var Gogo = (function(Gogo) {
   // create our angular module and tell angular what route(s) it will handle
   var pluginName = "gogo";
+
+  Gogo.context = "/hawtio-karaf-terminal";
+  Gogo.templateUrl = Gogo.context + "/app/html/";
 
   var simplePlugin = angular.module(pluginName, ['hawtioCore'])
     .factory('log', function() {
@@ -9,7 +12,7 @@ var Gogo = (function() {
     }).config(function($routeProvider) {
       $routeProvider.
         when('/gogo', {
-            templateUrl: 'hawtio-karaf-terminal/app/html/gogo.html'
+            templateUrl: Gogo.templateUrl + 'gogo.html'
           });
     }).directive('gogoTerminal', function(log, userDetails) {
       return {
@@ -23,7 +26,7 @@ var Gogo = (function() {
             if (!('term' in scope)) {
               return;
             }
-            var url = "hawtio-karaf-terminal/auth/logout/";
+            var url = Gogo.context + "/auth/logout/";
             delete scope.term;
             $.ajax(url, {
               type: "POST",
@@ -80,7 +83,7 @@ var Gogo = (function() {
 
           var authHeader = Core.getBasicAuthHeader(userDetails.username, userDetails.password);
 
-          var url = "hawtio-karaf-terminal/auth/login/";
+          var url = Gogo.context + "/auth/login/";
 
           $.ajax(url, {
             type: "POST",
@@ -116,7 +119,7 @@ var Gogo = (function() {
       // to get the JMX tree or provide a URL to a custom layout
       viewRegistry[pluginName] = layoutFull;
 
-      helpRegistry.addUserDoc('Terminal', 'hawtio-karaf-terminal/app/doc/help.md');
+      helpRegistry.addUserDoc('Terminal', Gogo.context + '/app/doc/help.md');
 
       // Set up top-level link to our plugin
       workspace.topLevelTabs.push({
@@ -134,7 +137,7 @@ var Gogo = (function() {
       link.attr({
         rel: 'stylesheet',
         type: 'text/css',
-        href: 'hawtio-karaf-terminal/css/gogo.css'
+        href: Gogo.context + '/css/gogo.css'
       });
 
     });
@@ -154,5 +157,5 @@ var Gogo = (function() {
     }
   };
 
-
-})();
+  return Gogo;
+})(Gogo || {});

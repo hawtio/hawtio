@@ -16,7 +16,7 @@
 
   <properties>
     <!-- filtered plugin properties -->
-    <plugin-context>/hawtio/hawtio-karaf-terminal</plugin-context>
+    <plugin-context>/hawtio-karaf-terminal</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
     <plugin-scripts>app/js/gogoPlugin.js,app/js/gogo.js</plugin-scripts>
