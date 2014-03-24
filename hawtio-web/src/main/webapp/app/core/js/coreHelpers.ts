@@ -1,6 +1,4 @@
 // TODO Get these functions and variables out of the global namespace
-var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
-
 var _urlPrefix: string = null;
 
 var numberTypeNames = {

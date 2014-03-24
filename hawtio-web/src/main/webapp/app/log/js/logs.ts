@@ -32,6 +32,8 @@ module Log {
       expanded: false
     };
 
+    var logQueryMBean = Log.findLogQueryMBean(workspace);
+
     $scope.init = () => {
       $scope.searchText = $routeParams['s'];
 
@@ -387,7 +389,10 @@ module Log {
               }
             });
 
-    scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
+
+    if (logQueryMBean) {
+      scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
+    }
   }
 
 }

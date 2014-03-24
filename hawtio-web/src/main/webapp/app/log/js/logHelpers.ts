@@ -17,6 +17,24 @@ module Log {
     }
   }
 
+  export function treeContainsLogQueryMBean(workspace) {
+    return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'}) ||
+      workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+  }
+
+  export function isSelectionLogQueryMBean(workspace) {
+    return workspace.hasDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'}) ||
+      workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+  }
+
+  export function findLogQueryMBean(workspace) {
+    var node = workspace.findMBeanWithProperties('io.fabric8.insight', {type: 'LogQuery'});
+    if (!node) {
+      node = workspace.findMBeanWithProperties('org.fusesource.insight', {type: 'LogQuery'});
+    }
+    return node ? node.objectName : null;
+  }
+
   export function logSourceHrefEntity(log) {
     var fileName = Log.removeQuestion(log.fileName);
     var className = Log.removeQuestion(log.className);
