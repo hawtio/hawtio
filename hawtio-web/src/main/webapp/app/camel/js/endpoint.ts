@@ -65,7 +65,7 @@ module Camel {
     function deleteSuccess() {
       // lets set the selection to the parent
       if (workspace.selection) {
-        var parent = workspace.selection.parent;
+        var parent = Core.pathGet(workspace, ["selection", "parent"]);
         if (parent) {
           $scope.workspace.updateSelectionNode(parent);
         }

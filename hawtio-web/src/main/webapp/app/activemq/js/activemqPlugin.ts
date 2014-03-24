@@ -225,7 +225,7 @@ module ActiveMQ {
 
   export function isBroker(workspace:Workspace) {
     if (workspace.selectionHasDomainAndType(jmxDomain, 'Broker')) {
-      var parent = workspace.selection.parent;
+      var parent = Core.pathGet(workspace, ["selection", "parent"]);
       return !(parent && parent.ancestorHasType('Broker'));
     }
     return false;
