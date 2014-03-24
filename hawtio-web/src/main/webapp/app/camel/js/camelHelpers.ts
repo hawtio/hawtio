@@ -250,6 +250,21 @@ module Camel {
   }
 
   /**
+   * Escapes the given URI text so it can be used in a JMX name
+   */
+  export function escapeEndpointUriNameForJmx(uri) {
+    if (angular.isString(uri)) {
+      var answer = uri.replace("?", "\\?");
+      // lets ensure that we have a "//" after each ":"
+      answer = answer.replace(/\:(\/[^\/])/, "://$1");
+      answer = answer.replace(/\:([^\/])/, "://$1");
+      return answer;
+    } else {
+      return uri;
+    }
+  }
+
+  /**
    * Returns the mbean for the currently selected camel context and the name of the currently
    * selected endpoint for JMX operations on a context that require an endpoint name.
    * @method
