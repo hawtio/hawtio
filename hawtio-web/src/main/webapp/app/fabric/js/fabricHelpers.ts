@@ -751,7 +751,7 @@ module Fabric {
             src: "icon-puzzle-piece"
           });
         }
-        if (domain === "org.fusesource.insight") {
+        if (domain === "org.fusesource.insight" || domain === "io.fabric8.insight") {
           answer.push({
             title: "Fabric8 Insight",
             type: "icon",
