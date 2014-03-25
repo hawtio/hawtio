@@ -60,7 +60,7 @@
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
     <!-- versions -->
-    <perfectus-number>372</perfectus-number>
+    <perfectus-number>374</perfectus-number>
     <perfectus-previous-number>355</perfectus-previous-number>
     <perfectus-build>610${perfectus-number}</perfectus-build>
     <activemq-version>5.9.0.redhat-${perfectus-build}</activemq-version>
