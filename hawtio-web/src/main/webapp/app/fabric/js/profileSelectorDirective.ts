@@ -196,6 +196,7 @@ module Fabric {
 
 
       $scope.init = () => {
+        log.debug("Initializing profile selector, version: ", $scope.versionId);
         $scope.responseJson = null;
         Core.unregister(jolokia, $scope);
         if( $scope.versionId !== '' ) {
@@ -208,14 +209,23 @@ module Fabric {
               mbean: managerMBean,
               operation: 'getProfiles(java.lang.String, java.util.List)',
               arguments: [$scope.versionId, ['id', 'hidden']]
-            }, onSuccess($scope.render));
+            }, onSuccess($scope.render, {
+              error: (response) => {
+                // TODO somewhere this directive is kinda getting leaked, need to track down
+                log.debug("Error fetching profiles: ", response.error, " unregistering poller");
+                Core.unregister(jolokia, $scope);
+              }
+            }));
           }
         }
       };
 
 
       $scope.$watch('versionId', (newValue, oldValue) => {
+        log.debug("versionId, newValue: ", newValue, " oldValue: ", oldValue);
         if ($scope.versionId && $scope.versionId !== '') {
+          log.debug("Unregistering old poller");
+          Core.unregister(jolokia, $scope);
           jolokia.request({
             type: 'exec',
             mbean: Fabric.managerMBean,
@@ -227,14 +237,12 @@ module Fabric {
               if (response.value.some((version) => {
                 return version.id === newValue;
               })) {
+                log.debug("registering new poller");
                 $scope.init();
-              } else {
-                Core.unregister(jolokia, $scope);
+                Core.$apply($scope);
               }
-              Core.$apply($scope);
             },
             error: (response) => {
-              Core.unregister(jolokia, $scope);
               Core.$apply($scope);
             }
           });

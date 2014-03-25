@@ -217,7 +217,7 @@ module Fabric {
                 return answer;
               },
               href: () => {
-                return "#/wiki/branch/" + Fabric.activeVersion($location) + "/view/fabric/profiles";
+                return "#/wiki/branch/" + Fabric.getActiveVersion($location) + "/view/fabric/profiles";
               },
               isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
             });

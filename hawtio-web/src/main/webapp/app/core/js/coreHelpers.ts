@@ -471,6 +471,11 @@ module Core {
    * @param {Function} callback
    */
   export function register(jolokia, scope, arguments: any, callback) {
+    if (scope && !Core.isBlank(scope.name)) {
+      Core.log.debug("Calling register from scope: ", scope.name);
+    } else {
+      Core.log.debug("Calling register from anonymous scope");
+    }
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
       scope.$jhandle = [];
     }
@@ -548,13 +553,13 @@ module Core {
     }
 
     export function unregister(jolokia, scope) {
-    if (angular.isDefined(scope.$jhandle)) {
-      scope.$jhandle.forEach(function (handle) {
-        jolokia.unregister(handle);
-      });
-      delete scope.$jhandle;
+      if (angular.isDefined(scope.$jhandle)) {
+        scope.$jhandle.forEach(function (handle) {
+          jolokia.unregister(handle);
+        });
+        delete scope.$jhandle;
+      }
     }
-  }
 
   /**
    * The default error handler which logs errors either using debug or log level logging based on the silent setting

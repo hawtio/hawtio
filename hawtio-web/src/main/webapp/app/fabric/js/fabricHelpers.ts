@@ -634,7 +634,7 @@ module Fabric {
   }
 
   // TODO cache the current active version? Then clear the cached value if we delete it
-  export function activeVersion($location) {
+  export function getActiveVersion($location) {
     return $location.search()['cv'] || "1.0";
   }
 

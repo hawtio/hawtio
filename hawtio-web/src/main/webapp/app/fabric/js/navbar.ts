@@ -18,7 +18,7 @@ module Fabric {
     };
 
     function reloadVersion() {
-      $scope.activeVersion = Fabric.activeVersion($location);
+      $scope.activeVersion = Fabric.getActiveVersion($location);
     }
 
     function reloadData() {
