@@ -184,14 +184,14 @@
         <label class="control-label" for="moveFolder">Folder</label>
 
         <div class="controls">
-          <input type="text" id="moveFolder" ng-model="moveFolder"
+          <input type="text" id="moveFolder" ng-model="move.moveFolder"
                  typeahead="title for title in folderNames($viewValue) | filter:$viewValue" typeahead-editable='true'>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <input class="btn btn-primary" type="submit"
-             ng-disabled="!moveFolder"
+             ng-disabled="!move.moveFolder"
              value="Move">
       <button class="btn btn-warning cancel" type="button" ng-click="moveDialog.close()">Cancel</button>
     </div>

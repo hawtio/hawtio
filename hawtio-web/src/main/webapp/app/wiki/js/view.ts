@@ -34,6 +34,9 @@ module Wiki {
     $scope.rename = {
       newFileName: ""
     };
+    $scope.move = {
+      moveFolder: ""
+    }
     $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
 
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
@@ -478,7 +481,7 @@ module Wiki {
 
     $scope.openMoveDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
-        $scope.moveFolder = $scope.pageId;
+        $scope.move.moveFolder = $scope.pageId;
         $scope.moveDialog.open();
         $timeout(() => {
           $('#moveFolder').focus();
@@ -491,7 +494,7 @@ module Wiki {
     $scope.moveAndCloseDialog = () => {
       var files = $scope.gridOptions.selectedItems;
       var fileCount = files.length;
-      var moveFolder = $scope.moveFolder;
+      var moveFolder = $scope.move.moveFolder;
       var oldFolder = $scope.pageId;
       if (moveFolder && fileCount && moveFolder !== oldFolder) {
         console.log("Moving " + fileCount + " file(s) to " + moveFolder);
