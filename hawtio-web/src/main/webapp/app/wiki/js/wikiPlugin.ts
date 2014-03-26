@@ -203,6 +203,16 @@ module Wiki {
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
             });
 
+            // add empty regexs to templates that don't define
+            // them so ng-pattern doesn't barf
+            Wiki.documentTemplates.forEach((template) => {
+              log.debug("Checking template: ", template);
+              if (!template['regex']) {
+                log.debug("Setting regex");
+                template.regex = /(?:)/;
+              }
+            });
+
           });
 
   hawtioPluginLoader.addModule(pluginName);

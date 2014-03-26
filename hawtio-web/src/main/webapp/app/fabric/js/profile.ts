@@ -91,7 +91,7 @@ module Fabric {
           name: "New Container"
         });
       }
-
+      /*
       var createVersionDialog = $scope.createVersionDialog;
       if (createVersionDialog) {
         actions.push({
@@ -103,6 +103,7 @@ module Fabric {
           name: "New Version"
         });
       }
+      */
     }
 
     $scope.$watch('activeTab', (newValue, oldValue) => {
