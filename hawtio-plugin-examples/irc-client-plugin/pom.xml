@@ -105,6 +105,7 @@
                   <include name="**/*.js"/>
                 </fileset>
                 <pathconvert pathsep=","
+                             dirsep="/"
                              property="plugin-scripts"
                              refid="javascript-files">
                   <map from="${basedir}/src/main/webapp/" to=""/>
