@@ -26,6 +26,10 @@ module Core {
       reloadPerspective();
     });
 
+    $scope.$watch('workspace.topLevelTabs', function () {
+      reloadPerspective();
+    });
+
     //$scope.subLevelTabs = () => workspace.subLevelTabs;
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
@@ -167,7 +171,9 @@ module Core {
 
       console.log("reloading perspectives for " + currentId);
 
-      if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+      var topLevelTabCount = (workspace.topLevelTabs || []).length;
+      if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives) || topLevelTabCount !== $scope.topLevelTabCount) {
+        $scope.topLevelTabCount = topLevelTabCount;
         $scope.perspectiveId = currentId;
         $scope.perspectives = perspectives;
         $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
