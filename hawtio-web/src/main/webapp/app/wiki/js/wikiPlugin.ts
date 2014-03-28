@@ -205,7 +205,7 @@ module Wiki {
 
             // add empty regexs to templates that don't define
             // them so ng-pattern doesn't barf
-            Wiki.documentTemplates.forEach((template) => {
+            Wiki.documentTemplates.forEach((template: any) => {
               log.debug("Checking template: ", template);
               if (!template['regex']) {
                 log.debug("Setting regex");
