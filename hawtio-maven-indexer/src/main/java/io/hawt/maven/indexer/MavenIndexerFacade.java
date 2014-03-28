@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A facade over the Maven indexer code so its easy to query repositories
@@ -74,6 +75,7 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private Map<String, IndexingContext> indexContexts = new HashMap<String, IndexingContext>();
     private FileLocker fileLock;
     private String lockFileName = "hawtio.lock";
+    private final AtomicBoolean indexing = new AtomicBoolean();
 
     public MavenIndexerFacade()  {
     }
@@ -99,6 +101,8 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
 
         // now lets create all the indexers
         try {
+            indexing.set(true);
+
             for (String repository : repositories) {
                 if (StringUtils.isNotBlank(repository)) {
                     String url = repository;
@@ -128,10 +132,13 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
             if (updateIndexOnStartup) {
                 downloadOrUpdateIndices();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.info("Failed to fetch the maven repository indices due to: " + e.getMessage());
             LOG.info("Some or all maven repository data may not be available for searching...");
+        } finally {
+            indexing.set(false);
         }
+
         try {
             super.init();
         } catch (Exception e) {
@@ -187,6 +194,12 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     }
 
     public void destroy() throws Exception {
+        if (indexing.get()) {
+            LOG.warn("Destroying MavenIndexer while indexing is still in progress, this could lead to errors ... ");
+        } else {
+            LOG.debug("Destroying MavenIndexer ... ");
+        }
+
         if (fileLock != null) {
             fileLock.destroy();
         }
