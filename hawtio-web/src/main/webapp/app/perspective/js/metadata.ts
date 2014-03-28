@@ -22,6 +22,9 @@ module Perspective {
             href: "#/fabric"
           },
           {
+            href: "#/docker"
+          },
+          {
             href: "#/wiki/branch/"
           },
           {
