@@ -51,6 +51,16 @@ module Core {
       }
     ];
 
+    $scope.sectionLink = (section) => {
+     var topic = section.topic || "";
+      var subTopic = section.subTopic || "";
+      var link = Core.pathGet(helpRegistry.topics, [topic, subTopic]);
+      if (!link) {
+        link = "#/help/" + topic + "/" + subTopic;
+      }
+      return link;
+    };
+
     // lets select the active tab
     var activeBreadcrumb = $scope.breadcrumbs.find(b => b.topic === $scope.topic && b.subTopic === $scope.subTopic);
     if (activeBreadcrumb) activeBreadcrumb.active = true;
