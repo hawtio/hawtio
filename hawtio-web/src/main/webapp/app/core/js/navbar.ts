@@ -23,14 +23,10 @@ module Core {
 
     $scope.$on('jmxTreeUpdated', function () {
       reloadPerspective();
-      // make sure to update the UI as the top level tabs changed
-      Core.$apply($scope);
     });
 
     $scope.$watch('workspace.topLevelTabs', function () {
       reloadPerspective();
-      // make sure to update the UI as the top level tabs changed
-      Core.$apply($scope);
     });
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
@@ -172,14 +168,24 @@ module Core {
 
       console.log("Reloading current perspective: " + currentId);
 
-      $scope.perspectiveId = currentId;
-      $scope.perspectives = perspectives;
-      $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
-        return p['id'] === currentId;
-      });
-      $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
-    }
+      // any tabs changed
+      var newTopLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
+      var diff = newTopLevelTabs.subtract($scope.topLevelTabs);
 
+      if (diff && diff.length > 0) {
+        $scope.topLevelTabs = newTopLevelTabs;
+
+        $scope.perspectiveId = currentId;
+        $scope.perspectives = perspectives;
+        $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
+          return p['id'] === currentId;
+        });
+
+        console.log("Refreshing top level tabs for current perspective: " + currentId);
+        // make sure to update the UI as the top level tabs changed
+        Core.$apply($scope);
+      }
+    }
   }
 
 }
