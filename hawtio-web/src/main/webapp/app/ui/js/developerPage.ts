@@ -3,10 +3,10 @@
  */
 module UI {
 
-  export function DeveloperController($scope, $http) {
+  export function DeveloperPageController($scope, $http) {
+
     $scope.getContents = function(filename, cb) {
       var fullUrl = "app/ui/html/test/" + filename;
-      log.info("Finding file: " + fullUrl);
       $http({method: 'GET', url: fullUrl})
           .success(function(data, status, headers, config) {
             cb(data);
@@ -16,5 +16,4 @@ module UI {
           });
     };
   }
-
 }
