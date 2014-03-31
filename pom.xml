@@ -56,7 +56,7 @@
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <schema-outdir>${webapp-outdir}/lib</schema-outdir>
+    <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
     <!-- versions -->
