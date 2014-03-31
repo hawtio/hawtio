@@ -12,6 +12,8 @@ module Dozer {
    */
   export var jmxDomain = 'net.sourceforge.dozer';
 
+  export var introspectorMBean = "hawtio:type=Introspector";
+
   /**
    * Don't try and load properties for these types
    * @property excludedPackages
@@ -152,9 +154,10 @@ module Dozer {
     }
   }
 
-
   export function getIntrospectorMBean(workspace: Workspace) {
-    return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
+    // lets hard code this so its easy to use in any JVM
+    return introspectorMBean;
+    // return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
   }
 
   export function loadModelFromTree(rootTreeNode, oldModel: Mappings): Mappings {
