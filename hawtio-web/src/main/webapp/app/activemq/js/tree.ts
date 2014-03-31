@@ -16,10 +16,6 @@ module ActiveMQ {
       reloadTree();
     });
 
-    function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"), true);
-    }
-
     function reloadTree() {
       console.log("workspace tree has changed, lets reload the activemq tree");
 
@@ -77,26 +73,24 @@ module ActiveMQ {
 
         var treeElement = $("#activemqtree");
         Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
-/*
-
-        // lets select the first node if we have no selection
-        var key = $location.search()['nid'];
-        var node = children[0];
-        if (!key && node) {
-          key = node['key'];
-          if (key) {
-            var q = $location.search();
-            q['nid'] = key;
-            $location.search(q);
-          }
-        }
-        if (!key) {
-          updateSelectionFromURL();
-        }
-*/
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateSelectionFromURL, 50);
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateSelectionFromURL, 50);
       }
     }
+
+    function updateSelectionFromURL() {
+      Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#activemqtree"), (first) => {
+        // use function to auto select the queue folder on the 1st broker
+        var queues = first.getChildren()[0];
+        if (queues && queues.data.title === 'Queue') {
+          first = queues;
+          first.expand(true);
+          return first;
+        }
+        return null;
+      }, true);
+    }
+
   }
+
 }
