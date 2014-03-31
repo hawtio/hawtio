@@ -42,23 +42,65 @@
   </head>
   <body>
 
-    <div ng-controller="App.ViewController">
+  <div id="main-body" ng-controller="App.ViewController">
+    <!--  navbar-inverse -->
+    <div id="main-nav" class="navbar navbar-fixed-top">
 
-      <div hawtio-toc-display
-           get-contents="getContents(filename, cb)">
-        <ul>
-          <li>
-            <a href="app/ui/html/test1.html" chapter-id="test_1">UI Test 1</a>
-          </li>
-          <li>
-            <a href="app/ui/html/test2.html" chapter-id="test_2">UI Test 2</a>
-          </li>
-        </ul>
+      <div class="navbar-inner main-nav-upper">
 
+        <div class="container">
+          <div class="pull-left">
+            <a ng-href="http://hawt.io/"
+               title="Go to home"
+               class="brand"
+               data-placement="bottom">
+              <img src="img/logo-16px.png"/>
+              <strong>hawtio</strong>
+            </a>
+          </div>
+        </div>
 
       </div>
 
+      <div class="navbar-inner main-nav-lower">
+        <div class="container">
+          <ul class="nav">
+            <li>
+              <a href="http://hawt.io/" title="Hawtio">Home</a>
+            </li>
+            <li ng-class="{active : true}">
+              <a href="index.html" title="Hawtio Directives">Directives</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+
+    <div id="main" class="container-fluid">
+
+      <div class="row-fluid">
+        <div class="tocify">
+          <div hawtio-toc-display
+               get-contents="getContents(filename, cb)">
+            <ul>
+              <li>
+                <a href="app/ui/html/test1.html" chapter-id="intro">Hawtio Directives</a>
+              </li>
+              <li>
+                <a href="app/ui/html/test1.html" chapter-id="test_1">Examples 1</a>
+              </li>
+              <li>
+                <a href="app/ui/html/test2.html" chapter-id="test_2">Examples 2</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="toc-content" id="toc-content"></div>
+      </div>
+
+    </div>
+  </div>
+
 
 
 

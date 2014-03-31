@@ -27,7 +27,7 @@
     <tmp-output-css>${tmp-output}/css</tmp-output-css>
     <watch>false</watch>
     <appjs-outfile>${webapp-outdir}/app/hawtio-directives.js</appjs-outfile>
-    <jetty-port>8081</jetty-port>
+    <jettyPort>8020</jettyPort>
     <context>/hawtio-directives</context>
   </properties>
 
