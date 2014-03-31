@@ -28,24 +28,18 @@ var App;
 
 // now we can just add controllers
 App.ViewController = function($scope, log, $http) {
-  log.debug("In view controller");
-
-  $scope.links = {
-    'test1.html': 'app/ui/html/test1.html',
-    'test2.html': 'app/ui/html/test2.html'
+    $scope.getContents = function(filename, cb) {
+      var fullUrl = "app/ui/html/test/" + filename;
+      log.info("Finding file: " + fullUrl);
+      $http({method: 'GET', url: fullUrl})
+          .success(function(data, status, headers, config) {
+            cb(data);
+          })
+          .error(function(data, status, headers, config) {
+            cb("Failed to fetch " + filename + ": " + data);
+          });
+    };
   };
-
-  $scope.getContents = function(filename, cb) {
-    $http({method: 'GET', url: $scope.links[filename]})
-        .success(function(data, status, headers, config) {
-          cb(data);
-        })
-        .error(function(data, status, headers, config) {
-          cb("Failed to fetch " + filename + ": " + data);
-        });
-  };
-};
-
 
 // bootstrap app via plugin loader
 $(function () {

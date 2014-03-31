@@ -77,27 +77,7 @@
     </div>
 
     <div id="main" class="container-fluid">
-
-      <div class="row-fluid">
-        <div class="tocify">
-          <div hawtio-toc-display
-               get-contents="getContents(filename, cb)">
-            <ul>
-              <li>
-                <a href="app/ui/html/test1.html" chapter-id="intro">Hawtio Directives</a>
-              </li>
-              <li>
-                <a href="app/ui/html/test1.html" chapter-id="test_1">Examples 1</a>
-              </li>
-              <li>
-                <a href="app/ui/html/test2.html" chapter-id="test_2">Examples 2</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="toc-content" id="toc-content"></div>
-      </div>
-
+      <ng-include src="'app/ui/html/developerPage.html'"></ng-include>
     </div>
   </div>
 
