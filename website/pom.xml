@@ -136,6 +136,14 @@
                     </copy>
                   </sequential>
                 </ac:for>
+
+                <!-- copy the directives site -->
+                <mkdir dir="${project.build.directory}/sitegen/directives"/>
+                <copy todir="${project.build.directory}/sitegen/directives">
+                  <fileset dir="${basedir}/../hawtio-directives/target/hawtio-directives-${project.version}">
+                    <include name="**/*.*"/>
+                  </fileset>
+                </copy>
               </target>
             </configuration>
             <goals>
