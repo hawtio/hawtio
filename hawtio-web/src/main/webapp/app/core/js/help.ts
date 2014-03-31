@@ -55,10 +55,11 @@ module Core {
      var topic = section.topic || "";
       var subTopic = section.subTopic || "";
       var link = Core.pathGet(helpRegistry.topics, [topic, subTopic]);
-      if (!link) {
-        link = "#/help/" + topic + "/" + subTopic;
-      }
-      return link;
+      if (link && link.indexOf("#") >= 0) {
+        return link;
+      } else {
+        return "#/help/" + topic + "/" + subTopic;
+      }  
     };
 
     // lets select the active tab
