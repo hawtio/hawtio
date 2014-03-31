@@ -786,7 +786,7 @@
     <profile>
       <id>watch</id>
       <properties>
-        <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
+        <appjs-outfile>${basedir}/src/main/webapp/app/plugin.js</appjs-outfile>
         <watch>true</watch>
       </properties>
     </profile>

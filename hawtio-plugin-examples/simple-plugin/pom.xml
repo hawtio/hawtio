@@ -15,12 +15,12 @@
 
   <properties>
     <!-- filtered plugin properties -->
-    <plugin-context>/hawtio/simple-plugin</plugin-context>
+    <plugin-context>/simple-plugin</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
-    <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
+      javax.servlet,
       *;resolution:=optional
     </fuse.osgi.import>
     <!--
@@ -38,6 +38,20 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -52,6 +66,60 @@
     </resources>
 
     <plugins>
+
+      <!-- We use maven-antrun-plugin to build up a list of
+           javascript files for our plugin mbean, this means
+           it needs to run before the maven-resources-plugin
+           copies and filters the web.xml, since for this
+           example we use contextParam settings to configure
+           our plugin mbean -->
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Building plugin javascript file list</echo>
+                <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
+                  <include name="**/*.js"/>
+                </fileset>
+                <pathconvert pathsep=","
+                             dirsep="/"
+                             property="plugin-scripts"
+                             refid="javascript-files">
+                  <map from="${basedir}/src/main/webapp/" to=""/>
+                </pathconvert>
+                <echo>Files: ${plugin-scripts}</echo>
+
+              </target>
+              <exportAntProperties>true</exportAntProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
 
       <plugin>
         <groupId>org.apache.felix</groupId>
