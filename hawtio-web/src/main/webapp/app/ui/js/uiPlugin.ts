@@ -89,10 +89,7 @@ module UI {
           }
         );
       };
-    }]).
-    run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) => {
-      viewRegistry['ui'] = layoutFull;
-    });
+    }]);
 
   hawtioPluginLoader.addModule(pluginName);
 

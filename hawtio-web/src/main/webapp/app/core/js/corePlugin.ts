@@ -466,6 +466,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           viewRegistry['preferences'] = layoutFull;
           viewRegistry['about'] = layoutFull;
           viewRegistry['login'] = layoutFull;
+          viewRegistry['ui'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
           helpRegistry.addUserDoc('preference', 'app/core/doc/preference.md');
@@ -476,6 +477,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addDevDoc('UI', '#/ui/developerPage');
           helpRegistry.addDevDoc('datatable', 'app/datatable/doc/developer.md');
           helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
+
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
