@@ -56,6 +56,7 @@ module Wiki {
     if ($scope.profileId) {
       Fabric.profileJolokia(jolokia, $scope.profileId, $scope.versionId, (containerJolokia) => {
         $scope.containerJolokia = containerJolokia;
+        $scope.missingContainer = !containerJolokia ? true : false;
       });
     }
 
@@ -106,7 +107,7 @@ module Wiki {
 
     $scope.fetchProperties = (className, target, anchor) => {
       var introspectorMBean = Dozer.getIntrospectorMBean(workspace);
-      if (introspectorMBean) {
+      if (introspectorMBean && !$scope.missingContainer) {
         var aJolokia: any = $scope.containerJolokia || jolokia;
         aJolokia.request({
           type: 'exec',
@@ -149,8 +150,6 @@ module Wiki {
             Core.$apply($scope);
           }
         });
-      } else {
-        log.warn("No dozer introspector mbean found!");
       }
     };
 
