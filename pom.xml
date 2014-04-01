@@ -581,6 +581,9 @@
 
     <profile>
       <id>release</id>
+      <properties>
+        <schema-outdir>${basedir}/target/${webapp-dir}/lib</schema-outdir>
+      </properties>
       <!--
       TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
 
