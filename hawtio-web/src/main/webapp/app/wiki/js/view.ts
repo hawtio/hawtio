@@ -239,6 +239,7 @@ module Wiki {
 
     $scope.onCreateDocumentSelect = (node) => {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+      $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
       checkFileExists(getNewDocumentPath());
     };
 
