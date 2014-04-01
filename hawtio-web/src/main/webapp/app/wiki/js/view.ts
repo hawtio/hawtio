@@ -703,10 +703,10 @@ module Wiki {
     function getNewDocumentPath() {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
-        console.log("No template selected");
+        console.log("No template selected.");
         return null;
       }
-      var exemplar = template.exemplar;
+      var exemplar = template.exemplar || "";
       var name = $scope.newDocumentName || exemplar;
 
       if (name.indexOf('.') < 0) {
