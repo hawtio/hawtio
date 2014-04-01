@@ -164,7 +164,7 @@ module Camel {
           if (append || !nested || !nested.length) {
             var doc = routeXmlNode.ownerDocument || document;
             routeXmlNode.appendChild(doc.createTextNode("\n" + childIndent));
-            element = doc.createElement(key);
+            element = doc.createElementNS(routeXmlNode.namespaceURI, key);
             if (textContent) {
               element.appendChild(doc.createTextNode(textContent));
             }
