@@ -603,7 +603,7 @@
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>test-compile</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>generate-json-schema</goal>
             </goals>
