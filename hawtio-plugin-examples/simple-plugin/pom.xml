@@ -3,7 +3,7 @@
   <parent>
 	  <groupId>io.hawt</groupId>
 	  <artifactId>hawtio-plugin-examples</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3.0</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -110,16 +110,13 @@
                 <!-- javascript-files will contain all of the javascript in
                   our project -->
                 <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
-                  <include name="**/*.js"/>
+                  <include name="**/*.js" />
                 </fileset>
                 <!-- we need to strip out the top level path which is
                    our source directory and be sure to change the directory
                    separators to forward slashes -->
-                <pathconvert pathsep=","
-                             dirsep="/"
-                             property="plugin-scripts"
-                             refid="javascript-files">
-                  <map from="${basedir}/src/main/webapp/" to=""/>
+                <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
+                  <map from="${basedir}/src/main/webapp/" to="" />
                 </pathconvert>
                 <echo>Files: ${plugin-scripts}</echo>
 
