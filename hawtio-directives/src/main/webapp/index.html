@@ -68,8 +68,11 @@
             <li>
               <a href="http://hawt.io/" title="Hawtio">Home</a>
             </li>
-            <li ng-class="{active : true}">
-              <a href="index.html" title="Hawtio Directives">Directives</a>
+            <li ng-class="{active : viewPartial === directivesPage}">
+              <a ng-click="viewPartial = directivesPage" title="Hawtio Directives">Directives</a>
+            </li>
+            <li ng-class="{active : viewPartial === overviewPage}">
+              <a ng-click="viewPartial = overviewPage" title="Overview of how to use the Hawtio Directives">Overview</a>
             </li>
           </ul>
         </div>
@@ -77,7 +80,7 @@
     </div>
 
     <div id="main" class="container-fluid">
-      <ng-include src="'app/ui/html/developerPage.html'"></ng-include>
+      <ng-include src="viewPartial"></ng-include>
     </div>
   </div>
 
