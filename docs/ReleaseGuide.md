@@ -21,7 +21,10 @@ when the release is done:
 
 Now go to the [OSS Nonatype Nexus](https://oss.sonatype.org/index.html#stagingRepositories) and Close then Release the staging repo
 
-Now update the new dev version in [SpecRunner.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/specs/SpecRunner.html#L88) so the new dev build doens't barf
+Now update the new dev version the following files so the new dev build doens't barf
+
+  * [SpecRunner.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/specs/SpecRunner.html#L88)
+  * website/pom.xml
 
 Update the *.md files to point to the new version (being careful not to break various configuration documents and the changes.md which list specific versions).
 
