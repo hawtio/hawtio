@@ -53,7 +53,7 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>io.hawt.plugin.App</mainClass>
+              <mainClass>io.hawt.app.App</mainClass>
             </manifest>
           </archive>
         </configuration>
