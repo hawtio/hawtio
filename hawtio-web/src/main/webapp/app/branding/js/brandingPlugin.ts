@@ -45,12 +45,14 @@ module Branding {
     branding.profile = Branding.profile;
     branding.isAMQ = false;
 
-    Branding.mqProfiles.forEach((profile) => {
-      if (!branding.isAMQ && branding.profile.has(profile)) {
-        branding.isAMQ = true;
-        branding.appLogo = 'img/branding/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
-      }
-    });
+    if (branding.profile) {
+      Branding.mqProfiles.forEach((profile) => {
+        if (!branding.isAMQ && branding.profile.has(profile)) {
+          branding.isAMQ = true;
+          branding.appLogo = 'img/branding/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
+        }
+      });
+    }
 
     log.debug("Branding: ", branding);
   }
