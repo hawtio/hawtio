@@ -4141,6 +4141,7 @@ img.nodeIcon:hover {
   margin-bottom: 0;
 }
 
-.slideout-body .btn-group {
+.slideout-body .btn-group,
+.btn-group[hawtio-pager] {
   line-height: normal;
 }
