@@ -4145,3 +4145,37 @@ img.nodeIcon:hover {
 .btn-group[hawtio-pager] {
   line-height: normal;
 }
+
+@media print {
+  #main-nav,
+  #log-panel {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  .wiki-grid {
+    display: none;
+  }
+
+  .wiki-fixed {
+    margin-top: 0 !important;
+  }
+
+  .wiki-fixed > .row-fluid > .span3 {
+    display: none;
+  }
+
+  .wiki-fixed > .row-fluid > .span9 {
+    width: 100%;
+  }
+
+  .instance-name {
+    display: none !important;
+  }
+
+  .logbar-container > .nav {
+    display: none !important;
+    height: 0 !important;
+  }
+
+}
