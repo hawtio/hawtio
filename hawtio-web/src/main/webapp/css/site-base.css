@@ -4140,3 +4140,7 @@ img.nodeIcon:hover {
 .auth-form > form > input {
   margin-bottom: 0;
 }
+
+.slideout-body .btn-group {
+  line-height: normal;
+}
