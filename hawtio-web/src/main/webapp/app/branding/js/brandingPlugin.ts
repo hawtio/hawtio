@@ -11,10 +11,12 @@ module Branding {
   export var log:Logging.Logger = Logger.get("Branding");
 
   // just in case we'll check for all of these...
-  export var mqProfiles = ["mq", "a-mq", "a-mq-openshift", "mq-replicated"];
+  export var mqProfiles = ["mq-amq", "mq-default", "mq", "a-mq", "a-mq-openshift", "mq-replicated"];
 
   $.ajaxSetup({async:true});
   $.get('/hawtio/branding', (response) => {
+
+    log.debug("Got response: ", response);
 
     Branding.enabled = Core.parseBooleanValue(response.enable);
 
@@ -41,10 +43,16 @@ module Branding {
     branding.loginBg = 'img/branding/login-screen-background.jpg';
     branding.fullscreenLogin = true;
     branding.profile = Branding.profile;
+    branding.isAMQ = false;
 
-    if (Branding.mqProfiles.any(branding.profile)) {
-      branding.appLogo = 'img/branding/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
-    }
+    Branding.mqProfiles.forEach((profile) => {
+      if (!branding.isAMQ && branding.profile.has(profile)) {
+        branding.isAMQ = true;
+        branding.appLogo = 'img/branding/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
+      }
+    });
+
+    log.debug("Branding: ", branding);
   }
 
   angular.module(pluginName, ['hawtioCore']).
