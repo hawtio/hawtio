@@ -11,12 +11,7 @@ module Camel {
       updateRoutes();
     });
 
-    var options = {
-      mode: {
-        name: 'xml'
-      }
-    };
-    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+    $scope.mode = 'xml';
 
     function getSource(routeXmlNode) {
       function removeCrappyHeaders(idx, e) {
