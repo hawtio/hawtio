@@ -146,8 +146,8 @@ module Fabric {
         Core.pathSet(schema.properties, ['password', 'tooltip'], 'Your personal password on the OpenShift portal');
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
 
-        // openshift only allows a-z and numbers
-        Core.pathSet(schema.properties, ['name', 'input-attributes', 'ng-pattern'], "/^[a-zA-Z0-9]*$/");
+        // openshift only allows lowercase a-z and numbers
+        Core.pathSet(schema.properties, ['name', 'input-attributes', 'ng-pattern'], "/^[a-z0-9]*$/");
 
         // add an extra property to make it easy to login
 /*
