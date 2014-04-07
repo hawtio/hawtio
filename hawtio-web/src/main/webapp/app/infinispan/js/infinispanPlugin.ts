@@ -34,7 +34,7 @@ module Infinispan {
 
 
             // register default attribute views
-            var nameTemplate = '<div class="ngCellText" title="Infinispan Cache">{{row.entity | infinispanCacheName}}</div>';
+            var nameTemplate = '<div class="ngCellText" title="Infinispan cache">{{row.entity | infinispanCacheName}}</div>';
 
             var attributes = workspace.attributeColumnDefs;
             attributes[jmxDomain + "/Caches/folder"] = [

@@ -32,7 +32,7 @@ module Core {
           copyToClipboard();
         } else {
           clearLogs();
-          notification('info', "Cleared logging console");
+          notification('info', "Cleared logging console23");
         }
         Core.$apply($scope);
       });
