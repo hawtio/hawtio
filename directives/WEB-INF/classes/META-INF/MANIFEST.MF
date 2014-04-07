@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1396743794379
+Bnd-LastModified: 1396829801974
 Build-Jdk: 1.7.0_09
 Built-By: root
 Bundle-ClassPath: .
