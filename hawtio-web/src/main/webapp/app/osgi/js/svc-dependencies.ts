@@ -65,7 +65,7 @@ module Osgi {
             var routeParams = angular.toJson($routeParams);
 
             var href="#/osgi/dependencies";
-            var title="OSGi Dependencies";
+            var title="OSGi dependencies";
 
             var size = angular.toJson({
                 size_x: 2,
