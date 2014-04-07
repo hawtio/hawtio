@@ -22,6 +22,9 @@ module Perspective {
             href: "#/fabric"
           },
           {
+            href: "#/docker"
+          },
+          {
             href: "#/wiki/branch/"
           },
           {
@@ -95,6 +98,12 @@ module Perspective {
           {
             id: "health",
             // we only want to exclude health if we are running in fabric (as they are in another perspective)
+            // (must use "id" attribute for the plugin, an not href, when using onCondition)
+            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+          },
+          {
+            id: "wiki",
+            // we only want to exclude wiki if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           }

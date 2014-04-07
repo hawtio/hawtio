@@ -13,21 +13,21 @@ module Log {
 
             viewRegistry['log'] = layoutFull;
             helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
-              return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+              return treeContainsLogQueryMBean(workspace);
             });
 
             workspace.topLevelTabs.push({
               id: "logs",
               content: "Logs",
               title: "View and search the logs of this container",
-              isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
+              isValid: (workspace:Workspace) => treeContainsLogQueryMBean(workspace),
               href: () => "#/logs"
             });
 
             workspace.subLevelTabs.push({
               content: '<i class="icon-list-alt"></i> Log',
               title: "View the logs in this process",
-              isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'}),
+              isValid: (workspace:Workspace) => isSelectionLogQueryMBean(workspace),
               href: () => "#/logs"
             });
           }).

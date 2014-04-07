@@ -5,6 +5,7 @@ import javax.security.auth.login.Configuration;
 public class AuthenticationConfiguration {
 
     private boolean enabled;
+    private boolean noCredentials401;
     private String realm;
     private String role;
     private String rolePrincipalClasses;
@@ -16,6 +17,14 @@ public class AuthenticationConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isNoCredentials401() {
+        return noCredentials401;
+    }
+
+    public void setNoCredentials401(boolean noCredentials401) {
+        this.noCredentials401 = noCredentials401;
     }
 
     public String getRealm() {
@@ -54,6 +63,7 @@ public class AuthenticationConfiguration {
     public String toString() {
         return "AuthenticationConfiguration[" +
                 "enabled=" + enabled +
+                ", noCredentials401=" + noCredentials401 +
                 ", realm='" + realm + '\'' +
                 ", role='" + role + '\'' +
                 ", rolePrincipalClasses='" + rolePrincipalClasses + '\'' +

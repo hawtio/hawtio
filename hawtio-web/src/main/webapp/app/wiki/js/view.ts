@@ -11,19 +11,7 @@ module Wiki {
     }, 100);
   }
 
-  export function ViewController($scope,
-                                 $location,
-                                 $routeParams,
-                                 $route,
-                                 $http,
-                                 $timeout,
-                                 workspace:Workspace,
-                                 marked,
-                                 fileExtensionTypeRegistry,
-                                 wikiRepository:GitWikiRepository,
-                                 $compile,
-                                 $templateCache,
-                                 jolokia) {
+  export function ViewController($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) {
 
     var log:Logging.Logger = Logger.get("Wiki");
 
@@ -34,15 +22,22 @@ module Wiki {
     $scope.versionId = $scope.branch;
 
     $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
-    $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true: false;
+    $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
 
     $scope.operationCounter = 1;
     $scope.addDialog = new UI.Dialog();
+    $scope.generateDialog = new UI.Dialog();
     $scope.renameDialog = new UI.Dialog();
     $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = false;
     $scope.isFile = false;
-    $scope.createDocumentTree = Wiki.createWizardTree(workspace);
+    $scope.rename = {
+      newFileName: ""
+    };
+    $scope.move = {
+      moveFolder: ""
+    }
+    $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
 
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
     $scope.fileExists = {
@@ -83,19 +78,19 @@ module Wiki {
     });
 
     /*
-    if (!$scope.nameOnly) {
-      $scope.gridOptions.columnDefs.push({
-        field: 'lastModified',
-        displayName: 'Modified',
-        cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
-      });
-      $scope.gridOptions.columnDefs.push({
-        field: 'length',
-        displayName: 'Size',
-        cellFilter: "number"
-      });
-    }
-    */
+     if (!$scope.nameOnly) {
+     $scope.gridOptions.columnDefs.push({
+     field: 'lastModified',
+     displayName: 'Modified',
+     cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
+     });
+     $scope.gridOptions.columnDefs.push({
+     field: 'length',
+     displayName: 'Size',
+     cellFilter: "number"
+     });
+     }
+     */
 
     $scope.createDashboardLink = () => {
       var href = '/wiki/branch/:branch/view/*page';
@@ -106,9 +101,9 @@ module Wiki {
         size_y: 2
       });
       var answer = "#/dashboard/add?tab=dashboard" +
-          "&href=" + encodeURIComponent(href) +
-          "&size=" + encodeURIComponent(size) +
-          "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
+        "&href=" + encodeURIComponent(href) +
+        "&size=" + encodeURIComponent(size) +
+        "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
       if (title) {
         answer += "&title=" + encodeURIComponent(title);
       }
@@ -116,7 +111,7 @@ module Wiki {
     };
 
     $scope.displayClass = () => {
-      if (!$scope.children || $scope.children.length ===0) {
+      if (!$scope.children || $scope.children.length === 0) {
         return "";
       }
       return "span9";
@@ -244,6 +239,7 @@ module Wiki {
 
     $scope.onCreateDocumentSelect = (node) => {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+      $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
       checkFileExists(getNewDocumentPath());
     };
 
@@ -345,6 +341,29 @@ module Wiki {
         }
         Fabric.doCreateVersion($scope, jolokia, $location, name);
 
+      } else if (template.generated) {
+
+        $scope.addDialog.close();
+
+        var generateDialog = $scope.generateDialog
+        $scope.formSchema = template.generated.schema
+        $scope.formData = template.generated.form(workspace, $scope);
+        $scope.generate = function () {
+          template.generated.generate(workspace, $scope.formData, (contents)=> {
+            generateDialog.close();
+            wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
+              console.log("Created file " + name);
+              Wiki.onComplete(status);
+              $scope.generateDialog.close();
+              updateView();
+            });
+          }, (error)=> {
+            generateDialog.close();
+            notification('error', error);
+          });
+        };
+        generateDialog.open();
+
       } else {
         notification("success", "Creating new document " + name);
 
@@ -413,7 +432,7 @@ module Wiki {
       $scope.deleteDialog = false;
     };
 
-    $scope.$watch("newFileName", () => {
+    $scope.$watch("rename.newFileName", () => {
       // ignore errors if the file is the same as the rename file!
       var path = getRenameFilePath();
       if ($scope.originalRenameFilePath === path) {
@@ -430,7 +449,7 @@ module Wiki {
         name = selected.name;
       }
       if (name) {
-        $scope.newFileName = name;
+        $scope.rename.newFileName = name;
         $scope.originalRenameFilePath = getRenameFilePath();
         $scope.renameDialog.open();
         $timeout(() => {
@@ -463,7 +482,7 @@ module Wiki {
 
     $scope.openMoveDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
-        $scope.moveFolder = $scope.pageId;
+        $scope.move.moveFolder = $scope.pageId;
         $scope.moveDialog.open();
         $timeout(() => {
           $('#moveFolder').focus();
@@ -476,7 +495,7 @@ module Wiki {
     $scope.moveAndCloseDialog = () => {
       var files = $scope.gridOptions.selectedItems;
       var fileCount = files.length;
-      var moveFolder = $scope.moveFolder;
+      var moveFolder = $scope.move.moveFolder;
       var oldFolder = $scope.pageId;
       if (moveFolder && fileCount && moveFolder !== oldFolder) {
         console.log("Moving " + fileCount + " file(s) to " + moveFolder);
@@ -525,7 +544,7 @@ module Wiki {
     function viewContents(pageName, contents) {
       $scope.sourceView = null;
 
-      var format: string = null;
+      var format:string = null;
       if (isDiffView()) {
         format = "diff";
       } else {
@@ -587,15 +606,29 @@ module Wiki {
 
       if (details.directory) {
 
-        var directories = details.children.filter((dir) => { return dir.directory && !dir.name.has(".profile")});
-        var profiles = details.children.filter((dir) => { return dir.directory && dir.name.has(".profile")});
-        var files = details.children.filter((file) => { return !file.directory; });
+        var directories = details.children.filter((dir) => {
+          return dir.directory && !dir.name.has(".profile")
+        });
+        var profiles = details.children.filter((dir) => {
+          return dir.directory && dir.name.has(".profile")
+        });
+        var files = details.children.filter((file) => {
+          return !file.directory;
+        });
 
-        directories = directories.sortBy((dir) => { return dir.name; });
-        profiles = profiles.sortBy((dir) => { return dir.name; });
+        directories = directories.sortBy((dir) => {
+          return dir.name;
+        });
+        profiles = profiles.sortBy((dir) => {
+          return dir.name;
+        });
 
-        files = files.sortBy((file) => { return file.name; })
-                     .sortBy((file) => { return file.name.split('.').last(); });
+        files = files.sortBy((file) => {
+          return file.name;
+        })
+          .sortBy((file) => {
+            return file.name.split('.').last();
+          });
 
 
         $scope.children = (<any>Array).create(directories, profiles, files);
@@ -670,10 +703,10 @@ module Wiki {
     function getNewDocumentPath() {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
-        console.log("No template selected");
+        console.log("No template selected.");
         return null;
       }
-      var exemplar = template.exemplar;
+      var exemplar = template.exemplar || "";
       var name = $scope.newDocumentName || exemplar;
 
       if (name.indexOf('.') < 0) {
@@ -706,7 +739,8 @@ module Wiki {
     }
 
     function getRenameFilePath() {
-      return ($scope.pageId && $scope.newFileName) ? $scope.pageId + "/" + $scope.newFileName : null;
+      var newFileName = $scope.rename.newFileName;
+      return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
     }
   }
 }

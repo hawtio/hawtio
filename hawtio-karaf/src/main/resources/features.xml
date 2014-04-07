@@ -60,6 +60,12 @@
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
   </feature>
 
+  <feature name="hawtio-irc-example" version="${project.version}" resolver="(obr)">
+    <details>An example IRC client plugin for hawtio</details>
+    <feature>war</feature>
+    <bundle>mvn:io.hawt/irc-client-plugin/${project.version}/war</bundle>
+  </feature>
+
   <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
     <details>A terminal plugin for hawtio when installed in Karaf</details>
     <bundle>mvn:jline/jline/${jline.version}</bundle>

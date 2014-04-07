@@ -21,12 +21,13 @@ module Core {
       return workspace.topLevelTabs;
     };
 
-
     $scope.$on('jmxTreeUpdated', function () {
       reloadPerspective();
     });
 
-    //$scope.subLevelTabs = () => workspace.subLevelTabs;
+    $scope.$watch('workspace.topLevelTabs', function () {
+      reloadPerspective();
+    });
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
@@ -165,19 +166,26 @@ module Core {
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
       var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
 
-      console.log("reloading perspectives for " + currentId);
+      console.log("Reloading current perspective: " + currentId);
 
-      if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+      // any tabs changed
+      var newTopLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
+      var diff = newTopLevelTabs.subtract($scope.topLevelTabs);
+
+      if (diff && diff.length > 0) {
+        $scope.topLevelTabs = newTopLevelTabs;
+
         $scope.perspectiveId = currentId;
         $scope.perspectives = perspectives;
         $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
           return p['id'] === currentId;
         });
-        console.log("Current perspective ID: " + currentId);
-        $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
+
+        console.log("Refreshing top level tabs for current perspective: " + currentId);
+        // make sure to update the UI as the top level tabs changed
+        Core.$apply($scope);
       }
     }
-
-    //reloadPerspective();
   }
+
 }

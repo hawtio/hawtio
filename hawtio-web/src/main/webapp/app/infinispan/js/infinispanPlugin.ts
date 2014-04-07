@@ -4,7 +4,7 @@
  */
 module Infinispan {
   var pluginName = 'infinispan';
-  export var jmxDomain = 'Infinispan';
+  export var jmxDomain = 'org.infinispan';
 
   var toolBar = "app/infinispan/html/attributeToolBar.html";
 

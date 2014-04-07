@@ -13,7 +13,7 @@
       xmlns="urn:infinispan:config:5.0">
 
    <global>
-      <globalJmxStatistics enabled="true" jmxDomain="Infinispan" />
+      <globalJmxStatistics enabled="true"/>
    </global>
 
    <default>

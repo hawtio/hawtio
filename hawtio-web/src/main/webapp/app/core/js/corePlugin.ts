@@ -182,6 +182,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               type: "GET",
               success: (response) => {
                 Core.log.debug("Got user response: ", response);
+                /*
                 // We'll only touch these if they're not set
                 if (response !== '' && response !== null) {
                   answer.username = response;
@@ -189,6 +190,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
                     answer['loginDetails'] = {};
                   }
                 }
+                */
               },
               error: (xhr, textStatus, error) => {
                 Core.log.debug("Failed to get session username: ", error);
@@ -269,9 +271,11 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               $.ajax(loginUrl, {
                 type: "POST",
                 success: (response) => {
-                  Core.log.debug("Response from silent login: ", response);
-                  if (angular.isDefined(response['credentials'] || angular.isDefined(response['principals']))) {
-                    userDetails.loginDetails = response;
+                  if (response['credentials'] || response['principals']) {
+                    userDetails.loginDetails = {
+                      'credentials': response['credentials'],
+                      'principals': response['principals']
+                    };
                   } else {
                     var doc = Core.pathGet(response, ['children', 0, 'innerHTML']);
                       // hmm, maybe we got an XML document, let's log it just in case...
@@ -462,6 +466,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           viewRegistry['preferences'] = layoutFull;
           viewRegistry['about'] = layoutFull;
           viewRegistry['login'] = layoutFull;
+          viewRegistry['ui'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
           helpRegistry.addUserDoc('preference', 'app/core/doc/preference.md');
@@ -469,10 +474,10 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
           helpRegistry.addDevDoc('Core', 'app/core/doc/coreDeveloper.md');
-          helpRegistry.addDevDoc('ui1', 'app/ui/doc/developerPage1.md');
-          helpRegistry.addDevDoc('ui2', 'app/ui/doc/developerPage2.md');
+          helpRegistry.addDevDoc('UI', '#/ui/developerPage');
           helpRegistry.addDevDoc('datatable', 'app/datatable/doc/developer.md');
           helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
+
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 

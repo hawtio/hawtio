@@ -533,6 +533,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to delete " + name + " due to " + response.error);
+      Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
   }
@@ -544,6 +545,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to start " + name + " due to " + response.error);
+      Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
   }
@@ -555,6 +557,7 @@ module Fabric {
       Core.$apply($scope);
     }, (response) => {
       notification('error', "Failed to stop " + name + " due to " + response.error);
+      Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
   }
@@ -631,7 +634,7 @@ module Fabric {
   }
 
   // TODO cache the current active version? Then clear the cached value if we delete it
-  export function activeVersion($location) {
+  export function getActiveVersion($location) {
     return $location.search()['cv'] || "1.0";
   }
 
@@ -748,7 +751,7 @@ module Fabric {
             src: "icon-puzzle-piece"
           });
         }
-        if (domain === "org.fusesource.insight") {
+        if (domain === "org.fusesource.insight" || domain === "io.fabric8.insight") {
           answer.push({
             title: "Fabric8 Insight",
             type: "icon",

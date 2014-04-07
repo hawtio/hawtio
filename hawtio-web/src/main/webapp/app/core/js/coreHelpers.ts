@@ -1,7 +1,4 @@
-
 // TODO Get these functions and variables out of the global namespace
-var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
-
 var _urlPrefix: string = null;
 
 var numberTypeNames = {
@@ -78,9 +75,11 @@ function safeNullAsString(value:any, type:string):string {
   } else if (typeof value === 'string') {
     // its a string
     return "" + value;
-  } else if (angular.isArray(value)) {
-    // join array with new line, and do not sort as the order in the array may matter
-    return value.join("\n");
+  } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;') {
+    // composite data or composite data array, we just display as json
+    // use json representation
+    var data = angular.toJson(value, true);
+    return data;
   } else if (type === 'javax.management.openmbean.TabularData') {
     // tabular data is a key/value structure so loop each field and convert to array we can
     // turn into a String
@@ -93,6 +92,9 @@ function safeNullAsString(value:any, type:string):string {
     // sort array so the values is listed nicely
     arr = arr.sortBy(row => row.toString());
     return arr.join("\n");
+  } else if (angular.isArray(value)) {
+    // join array with new line, and do not sort as the order in the array may matter
+    return value.join("\n");
   } else if (value) {
     // force as string
     return "" + value;
@@ -469,6 +471,11 @@ module Core {
    * @param {Function} callback
    */
   export function register(jolokia, scope, arguments: any, callback) {
+    if (scope && !Core.isBlank(scope.name)) {
+      Core.log.debug("Calling register from scope: ", scope.name);
+    } else {
+      Core.log.debug("Calling register from anonymous scope");
+    }
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
       scope.$jhandle = [];
     }
@@ -546,13 +553,13 @@ module Core {
     }
 
     export function unregister(jolokia, scope) {
-    if (angular.isDefined(scope.$jhandle)) {
-      scope.$jhandle.forEach(function (handle) {
-        jolokia.unregister(handle);
-      });
-      delete scope.$jhandle;
+      if (angular.isDefined(scope.$jhandle)) {
+        scope.$jhandle.forEach(function (handle) {
+          jolokia.unregister(handle);
+        });
+        delete scope.$jhandle;
+      }
     }
-  }
 
   /**
    * The default error handler which logs errors either using debug or log level logging based on the silent setting
@@ -581,6 +588,18 @@ module Core {
         Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
         Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
       }
+    }
+  }
+
+  /**
+   * Logs any failed operation and stack traces
+   */
+  export function logJolokiaStackTrace(response) {
+    var stacktrace = response.stacktrace;
+    if (stacktrace) {
+      var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+      Core.log.info("Operation ", operation, " failed due to: ", response['error']);
+      Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
     }
   }
 

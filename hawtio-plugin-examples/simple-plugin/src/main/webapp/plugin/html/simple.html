@@ -1,0 +1,23 @@
+<div class="simple-controller" ng-controller="Simple.SimpleController">
+
+  <div class="row-fluid">
+    <div class="span6 offset3">
+      <h2><h3 class="help-header centered">Welcome to <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}}</h3>
+      </h2>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span6 offset3">
+      <div class="centered">
+        <h2>{{hello}}</h2>
+        <h2 class="cpu-display alert alert-info">CPU Load: {{cpuLoad | number:3}}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span6 offset3">
+      <p class="centered">
+      This is an example of a very simple hawtio plugin that's discovered via JMX using jolokia.</p>
+    </div>
+  </div>
+</div>

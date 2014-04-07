@@ -51,6 +51,7 @@ module Core {
     $scope.url = localStorage['url'];
     $scope.autoRefresh = localStorage['autoRefresh'] === "true";
     $scope.showWelcomePage = localStorage['showWelcomePage'] === "true";
+    $scope.activemqFilterAdvisoryTopics = localStorage['activemqFilterAdvisoryTopics'] === "true";
 
     $scope.hosts = [];
     $scope.newHost = {};
@@ -185,7 +186,8 @@ module Core {
       camelIgnoreIdForLabel: false,
       camelMaximumLabelWidth: Camel.defaultMaximumLabelWidth,
       camelMaximumTraceOrDebugBodyLength: Camel.defaultCamelMaximumTraceOrDebugBodyLength,
-      activemqBrowseBytesMessages: 1
+      activemqBrowseBytesMessages: 1,
+      activemqFilterAdvisoryTopics: false
     };
 
     var converters = {
@@ -198,7 +200,8 @@ module Core {
       camelIgnoreIdForLabel: parseBooleanValue,
       camelMaximumLabelWidth: parseInt,
       camelMaximumTraceOrDebugBodyLength: parseInt,
-      activemqBrowseBytesMessages: parseInt
+      activemqBrowseBytesMessages: parseInt,
+      activemqFilterAdvisoryTopics: parseBooleanValue
     };
 
     $scope.$watch('updateRate', () => {
@@ -220,7 +223,20 @@ module Core {
       localStorage['showWelcomePage'] = $scope.showWelcomePage;
     });
 
-    var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "activemqBrowseBytesMessages",
+    $scope.$watch('activemqFilterAdvisoryTopics', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+      localStorage['activemqFilterAdvisoryTopics'] = $scope.activemqFilterAdvisoryTopics;
+
+      // need to trigger JMX tree updated event so the ActiveMQ plugin tree can be updated whether advisory topics should be in the tree or not
+      var rootScope = workspace.$rootScope;
+      if (rootScope) {
+        rootScope.$broadcast('jmxTreeUpdated');
+      }
+    });
+
+    var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "activemqBrowseBytesMessages", "activemqFilterAdvisoryTopics",
       "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 

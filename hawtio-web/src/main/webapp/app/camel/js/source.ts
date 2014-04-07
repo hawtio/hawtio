@@ -11,12 +11,7 @@ module Camel {
       updateRoutes();
     });
 
-    var options = {
-      mode: {
-        name: 'xml'
-      }
-    };
-    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+    $scope.mode = 'xml';
 
     function getSource(routeXmlNode) {
       function removeCrappyHeaders(idx, e) {
@@ -52,7 +47,7 @@ module Camel {
         if (!$scope.mbean) {
           // maybe the parent is the camel context folder (when we have selected the routes folder),
           // then grab the object name from parent
-          var parent = workspace.selection.parent;
+          var parent: any = Core.pathGet(workspace, ["selection", "parent"]);
           if (parent && parent.title === "context") {
             $scope.mbean = parent.children[0].objectName;
           }

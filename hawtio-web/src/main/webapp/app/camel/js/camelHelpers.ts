@@ -164,7 +164,7 @@ module Camel {
           if (append || !nested || !nested.length) {
             var doc = routeXmlNode.ownerDocument || document;
             routeXmlNode.appendChild(doc.createTextNode("\n" + childIndent));
-            element = doc.createElement(key);
+            element = doc.createElementNS(routeXmlNode.namespaceURI, key);
             if (textContent) {
               element.appendChild(doc.createTextNode(textContent));
             }
@@ -246,6 +246,21 @@ module Camel {
       return uri;
     } else {
       return null;
+    }
+  }
+
+  /**
+   * Escapes the given URI text so it can be used in a JMX name
+   */
+  export function escapeEndpointUriNameForJmx(uri) {
+    if (angular.isString(uri)) {
+      var answer = uri.replace("?", "\\?");
+      // lets ensure that we have a "//" after each ":"
+      answer = answer.replace(/\:(\/[^\/])/, "://$1");
+      answer = answer.replace(/\:([^\/])/, "://$1");
+      return answer;
+    } else {
+      return uri;
     }
   }
 

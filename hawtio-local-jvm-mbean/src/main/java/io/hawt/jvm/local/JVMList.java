@@ -18,9 +18,6 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.util.*;
 
-/**
- * @author Stan Lewis
- */
 public class JVMList implements JVMListMBean {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JVMList.class);
@@ -61,9 +58,9 @@ public class JVMList implements JVMListMBean {
             try {
               // let's just hit any errors we're going to hit before even creating the mbean
               listLocalJVMs();
-            } catch (NoClassDefFoundError e) {
+            } catch (LinkageError e) {
               // Some JVM's don't support com.sun.tools.attach.VirtualMachine
-              LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e);
+              LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e.getMessage());
               return; 
             }
 
@@ -111,8 +108,8 @@ public class JVMList implements JVMListMBean {
                 rc.add(dto);
             }
         } catch (Exception e) {
-            LOG.warn("Failed to get local JVM processes due to:", e);
-            throw new RuntimeException("Failed to get local JVM processes due to " + e);
+            LOG.warn("Failed to get local JVM processes due to: ", e.getMessage());
+            throw new RuntimeException("Failed to get local JVM processes due to: " + e.getMessage(), e);
         }
         return rc;
     }

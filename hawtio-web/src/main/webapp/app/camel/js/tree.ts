@@ -122,23 +122,6 @@ module Camel {
 
         var treeElement = $("#cameltree");
         Jmx.enableTree($scope, $location, workspace, treeElement, [rootFolder], true);
-        /*
-
-         // lets select the first node if we have no selection
-         var key = $location.search()['nid'];
-         var node = children[0];
-         if (!key && node) {
-         key = node['key'];
-         if (key) {
-         var q = $location.search();
-         q['nid'] = key;
-         $location.search(q);
-         }
-         }
-         if (!key) {
-         updateSelectionFromURL();
-         }
-         */
         // lets do this asynchronously to avoid Error: $digest already in progress
         setTimeout(() => {
           updateSelectionFromURL()

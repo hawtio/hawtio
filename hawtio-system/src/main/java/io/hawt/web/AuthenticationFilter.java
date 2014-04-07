@@ -30,6 +30,7 @@ public class AuthenticationFilter implements Filter {
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     // JVM system properties
+    public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio.noCredentials401";
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio.authenticationEnabled";
     public static final String HAWTIO_REALM = "hawtio.realm";
     public static final String HAWTIO_ROLE = "hawtio.role";
@@ -50,11 +51,15 @@ public class AuthenticationFilter implements Filter {
             configuration.setRole(config.get("role", "admin"));
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", ""));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
+            configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
         }
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_AUTHENTICATION_ENABLED) != null) {
             configuration.setEnabled(Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED));
+        }
+        if (System.getProperty(HAWTIO_NO_CREDENTIALS_401) != null) {
+            configuration.setNoCredentials401(Boolean.getBoolean(HAWTIO_NO_CREDENTIALS_401));
         }
         if (System.getProperty(HAWTIO_REALM) != null) {
             configuration.setRealm(System.getProperty(HAWTIO_REALM));
@@ -119,8 +124,13 @@ public class AuthenticationFilter implements Filter {
                 Helpers.doForbidden((HttpServletResponse) response);
                 break;
             case NO_CREDENTIALS:
-                //doAuthPrompt((HttpServletResponse)response);
-                Helpers.doForbidden((HttpServletResponse) response);
+                if (configuration.isNoCredentials401()) {
+                    // return auth prompt 401
+                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse)response);
+                } else {
+                    // return forbidden 403 so the browser login does not popup
+                    Helpers.doForbidden((HttpServletResponse) response);
+                }
                 break;
         }
     }

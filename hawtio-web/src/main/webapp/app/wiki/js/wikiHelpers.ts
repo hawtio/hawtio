@@ -51,16 +51,112 @@ module Wiki {
     },
     {
       label: "Fabric8 Version",
-      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name",
+      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
       version: true,
       addClass: "icon-code-fork green",
-      exemplar: "MyVersion",
-      fabricOnly: true
+      exemplar: "1.1.MyVersion",
+      fabricOnly: true,
+      regex: /[1-9][0-9]*(\\.[0-9]+)*/
     },
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
       exemplar: "properties-file.properties"
+    },
+    {
+      label: "Key Store File",
+      tooltip: "Creates a keystore (database) of cryptographic keys, X.509 certificate chains, and trusted certificates.",
+      exemplar: 'keystore.jks',
+      generated: {
+        mbean: ['hawtio', { type: 'KeystoreService' }],
+        init: function(workspace, $scope) {
+          var mbean = 'hawtio:type=KeystoreService';
+          var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
+            success: (response)=>{
+              $scope.securityProviderInfo = response.value;
+            },
+            error: (response) => {
+              console.log('Could not find the supported security algorithms: ', response.error);
+            }
+          });
+        },
+        generate: function(workspace, form, success, error) {
+          var encodedForm = JSON.stringify(form)
+          var mbean = 'hawtio:type=KeystoreService';
+          var response = workspace.jolokia.request( {
+              type: 'exec', 
+              mbean: mbean,
+              operation: 'createKeyStoreViaJSON(java.lang.String)',
+              arguments: [encodedForm]
+            }, {
+              method:'POST',
+              success:function(response) {
+                success(response.value)
+              },
+              error:function(response){
+                error(response.error)
+              }
+            });
+        },
+        form: function(workspace, $scope){ 
+          return { 
+            storeType: $scope.securityProviderInfo.supportedKeyStoreTypes[0],
+            createPrivateKey: false,
+            keyLength: 4096,
+            keyAlgorithm: $scope.securityProviderInfo.supportedKeyAlgorithms[0],
+            keyValidity: 365
+          }
+        },
+        schema: {
+           "description": "Keystore Settings",
+           "type": "java.lang.String",
+           "properties": { 
+             "storePassword": {
+               "description": "Keystore password.",
+               "type": "password",
+               'input-attributes': { "required":  "",  "ng-minlength":6 }
+             },
+             "storeType": {
+               "description": "The type of store to create",
+               "type": "java.lang.String",
+               'input-element': "select",
+               'input-attributes': { "ng-options":  "v for v in securityProviderInfo.supportedKeyStoreTypes" }
+             },
+             "createPrivateKey": {
+               "description": "Should we generate a self-signed private key?",
+               "type": "boolean"
+             },
+             "keyCommonName": {
+               "description": "The common name of the key, typically set to the hostname of the server",
+               "type": "java.lang.String",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyLength": {
+               "description": "The length of the cryptographic key",
+               "type": "Long",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyAlgorithm": {
+               "description": "The key algorithm",
+               "type": "java.lang.String",
+               'input-element': "select",
+               'input-attributes': { "ng-options":  "v for v in securityProviderInfo.supportedKeyAlgorithms" },
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyValidity": {
+               "description": "The number of days the key will be valid for",
+               "type": "Long",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             },
+             "keyPassword": {
+               "description": "Password to the private key",
+               "type": "password",
+               'control-group-attributes': { 'ng-show': "formData.createPrivateKey" }
+             }
+           }
+        }
+
+      }
     },
     {
       label: "Markdown Document",
@@ -130,17 +226,31 @@ module Wiki {
    * @for Wiki
    * @static
    */
-  export function createWizardTree(workspace:Workspace) {
+  export function createWizardTree(workspace:Workspace, $scope) {
     var root = new Folder("New Documents");
-    addCreateWizardFolders(workspace, root, documentTemplates);
+    addCreateWizardFolders(workspace, $scope, root, documentTemplates);
     return root;
   }
 
-  export function addCreateWizardFolders(workspace:Workspace, parent: Folder, templates: any[]) {
+
+  export function addCreateWizardFolders(workspace:Workspace, $scope, parent: Folder, templates: any[]) {
     angular.forEach(templates, (template) => {
 
       if (template['fabricOnly'] && !Fabric.hasFabric(workspace)) {
         return;
+      }
+
+      if ( template.generated ) {
+        if( template.generated.mbean ) {
+          var exists = workspace.treeContainsDomainAndProperties.apply(workspace, template.generated.mbean) ;
+          if( !exists ) {
+            return;
+          }
+        }
+        if ( template.generated.init ) {
+          template.generated.init(workspace, $scope);
+          template.generated.init = null
+        }
       }
 
       var title = template.label || key;
@@ -171,7 +281,7 @@ module Wiki {
 
       var children = template.children;
       if (children) {
-        addCreateWizardFolders(workspace, node, children);
+        addCreateWizardFolders(workspace, $scope, node, children);
       }
     });
   }

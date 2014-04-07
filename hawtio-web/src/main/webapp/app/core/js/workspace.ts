@@ -33,6 +33,8 @@ module Core {
     public treeWatchRegisterHandle = null;
     public treeWatcherCounter = null;
     public treeElement = null;
+    // mapData allows to store arbitrary data on the workspace
+    public mapData = {};
 
     constructor(public jolokia,
                 public jolokiaStatus,

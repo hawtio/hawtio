@@ -16,6 +16,28 @@ module Core {
     };
   }
 
+  /**
+   * Adds the specified CSS file to the document's head, handy
+   * for external plugins that might bring along their own CSS
+   * @param path
+   */
+  export function addCSS(path) {
+    if ('createStyleSheet' in document) {
+      // IE9
+      document.createStyleSheet(path);
+    } else {
+      // Everyone else
+      var link = $("<link>");
+      $("head").append(link);
+
+      link.attr({
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: path
+      });
+    }
+  }
+
 
   /**
    * If the value is not an array then wrap it in one

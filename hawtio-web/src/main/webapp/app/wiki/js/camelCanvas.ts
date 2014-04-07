@@ -86,15 +86,15 @@ module Wiki {
     };
 
     /* TODO
-    $scope.resetForms = () => {
+     $scope.resetForms = () => {
 
-    }
-    */
+     }
+     */
 
     /*
      * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
      */
-    function createEndpointURI(endpointScheme: string, slashesText: string, endpointPath: string, endpointParameters: any) {
+    function createEndpointURI(endpointScheme:string, slashesText:string, endpointPath:string, endpointParameters:any) {
       console.log("scheme " + endpointScheme + " path " + endpointPath + " parameters " + endpointParameters);
       // now lets create the new URI from the path and parameters
       // TODO should we use JMX for this?
@@ -113,19 +113,20 @@ module Wiki {
       if (uri) {
         $scope.nodeData.uri = uri;
       }
+
+      var key = null;
       var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
-        var nodeName = Camel.getFolderCamelNodeId(selectedFolder);
-        if (nodeName) {
-          var nodeSettings = Camel.getCamelSchema(nodeName);
-          if (nodeSettings) {
-            // update the title and tooltip etc
-            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, selectedFolder["routeXmlNode"], nodeSettings);
-            // TODO update the div directly rather than a full layout?
-          }
-        }
-        // TODO not sure we need this to be honest
-        selectedFolder["camelNodeData"] = $scope.nodeData;
+        key = selectedFolder.key;
+
+        // lets delete the current selected node's div so its updated with the new template values
+        var elements = $element.find(".canvas").find("[id='" + key + "']").first().remove();
+      }
+
+      treeModified();
+
+      if (key) {
+        updateSelection(key)
       }
 
       if ($scope.isFormDirty()) {
@@ -136,7 +137,6 @@ module Wiki {
       }
 
       Core.$apply($scope);
-      treeModified();
     };
 
     $scope.save = () => {
@@ -318,7 +318,7 @@ module Wiki {
     }
 
     function getSelectedOrRouteFolder() {
-      return $scope.selectedFolder ||  getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
+      return $scope.selectedFolder || getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
     }
 
     function getContainerElement() {
@@ -330,26 +330,25 @@ module Wiki {
 
     // context menu (right click) on any component.
     /* TODO disabling this for now just so I can look at elements easily in the dev tools
-    jsPlumb.bind("contextmenu", function (component, originalEvent) {
-      alert("context menu on component " + component.id);
-      originalEvent.preventDefault();
-      return false;
-    });
-    */
-
+     jsPlumb.bind("contextmenu", function (component, originalEvent) {
+     alert("context menu on component " + component.id);
+     originalEvent.preventDefault();
+     return false;
+     });
+     */
 
 
     /*
-    function clearCanvasLayout(jsPlumb, containerElement) {
-      try {
-        containerElement.empty();
-        jsPlumb.reset();
-      } catch (e) {
-        // ignore errors
-      }
-      return jsPlumb;
-    }
-    */
+     function clearCanvasLayout(jsPlumb, containerElement) {
+     try {
+     containerElement.empty();
+     jsPlumb.reset();
+     } catch (e) {
+     // ignore errors
+     }
+     return jsPlumb;
+     }
+     */
 
     // configure canvas layout and styles
     var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
@@ -386,7 +385,7 @@ module Wiki {
       alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
     });
 
-    jsPlumb.bind('connection', function(info, evt) {
+    jsPlumb.bind('connection', function (info, evt) {
       if (jsPlumb.isSuspendDrawing()) {
         return;
       }
@@ -399,7 +398,7 @@ module Wiki {
       treeModified();
     });
 
-    jsPlumb.bind('connectionDetached', function(info, evt) {
+    jsPlumb.bind('connectionDetached', function (info, evt) {
       if (jsPlumb.isSuspendDrawing()) {
         return;
       }
@@ -445,7 +444,7 @@ module Wiki {
         containerElement.find('div.component').each((i, el) => {
           log.debug("Checking: ", el, " ", i);
           if (!states.any((node) => {
-            return el.id === getNodeId(node);  
+            return el.id === getNodeId(node);
           })) {
             log.debug("Removing element: ", el.id);
             jsPlumb.remove(el);
@@ -517,13 +516,13 @@ module Wiki {
 
         // Create the layout and get the buildGraph
         dagre.layout()
-                .nodeSep(100)
-                .edgeSep(edgeSep)
-                .rankSep(75)
-                .nodes(states)
-                .edges(transitions)
-                .debugLevel(1)
-                .run();
+          .nodeSep(100)
+          .edgeSep(edgeSep)
+          .rankSep(75)
+          .nodes(states)
+          .edges(transitions)
+          .debugLevel(1)
+          .run();
 
         angular.forEach(states, (node) => {
 
@@ -569,7 +568,6 @@ module Wiki {
         jsPlumb.setSuspendEvents(false);
 
       });
-
 
 
       return states;
@@ -676,8 +674,8 @@ module Wiki {
           if (!answer) {
             var id = getFolderIdAttribute(route);
             if (routeId === id) {
-                answer = route;
-              }
+              answer = route;
+            }
           }
         });
       }

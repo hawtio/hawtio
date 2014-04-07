@@ -11,7 +11,7 @@
   <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
   <name>project</name>
   <description>hawtio :: project</description>
   <url>http://hawt.io/</url>
@@ -56,14 +56,14 @@
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <schema-outdir>${webapp-outdir}/lib</schema-outdir>
+    <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
     <!-- versions -->
-    <perfectus-number>365</perfectus-number>
+    <perfectus-number>378</perfectus-number>
     <perfectus-previous-number>355</perfectus-previous-number>
-    <perfectus-build>redhat-610${perfectus-number}</perfectus-build>
-    <activemq-version>5.9.0.${perfectus-build}</activemq-version>
+    <perfectus-build>610${perfectus-number}</perfectus-build>
+    <activemq-version>5.9.0.redhat-${perfectus-build}</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
     <apollo-version>99-trunk-SNAPSHOT</apollo-version>
@@ -71,12 +71,12 @@
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <camel-version>2.12.0.${perfectus-build}</camel-version>
+    <camel-version>2.13.0</camel-version>
     <commons-codec-version>1.6</commons-codec-version>
     <commons-fileupload-version>1.3.1</commons-fileupload-version>
     <commons-httpclient-version>3.1</commons-httpclient-version>
     <commons-io-version>2.2</commons-io-version>
-    <cxf-version>2.7.0.${perfectus-build}</cxf-version>
+    <cxf-version>2.7.0.redhat-${perfectus-build}</cxf-version>
     <dozer-version>5.4.0</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
@@ -118,9 +118,10 @@
     <jline.version>2.11</jline.version>
     <jolokia-version>1.2.0</jolokia-version>
     <junit-version>4.11</junit-version>
-    <karaf-version>2.3.0.${perfectus-build}</karaf-version>
+    <karaf-version>2.3.0.redhat-${perfectus-build}</karaf-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
+    <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <maven-plugin-version>3.2</maven-plugin-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
@@ -268,6 +269,7 @@
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-keystore-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
@@ -508,7 +510,7 @@
     <profile>
       <id>camelSnapshot</id>
       <properties>
-        <camel-version>2.13-SNAPSHOT</camel-version>
+        <camel-version>2.14-SNAPSHOT</camel-version>
       </properties>
       <repositories>
       </repositories>
@@ -518,9 +520,9 @@
     <profile>
       <id>snapshot</id>
       <properties>
-        <activemq-version>5.9-SNAPSHOT</activemq-version>
+        <activemq-version>5.10-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
-        <camel-version>2.13-SNAPSHOT</camel-version>
+        <camel-version>2.14-SNAPSHOT</camel-version>
         <fabric-version>99-master-SNAPSHOT</fabric-version>
       </properties>
 
@@ -579,6 +581,9 @@
 
     <profile>
       <id>release</id>
+      <properties>
+        <schema-outdir>${basedir}/target/${webapp-dir}/lib</schema-outdir>
+      </properties>
       <!--
       TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
 
@@ -633,5 +638,27 @@
         <module>hawtio-crx</module>
       </modules>
     </profile>
+
+    <profile>
+      <id>deploy</id>
+      <build>
+        <defaultGoal>deploy</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 </project>

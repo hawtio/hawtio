@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>project</artifactId>
     <groupId>io.hawt</groupId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +25,7 @@
     <tmp-output-css>${tmp-output}/css</tmp-output-css>
     <watch>false</watch>
     <appjs-outfile>${webapp-outdir}/app/hawtio-directives.js</appjs-outfile>
-    <jetty-port>8081</jetty-port>
+    <jettyPort>8020</jettyPort>
     <context>/hawtio-directives</context>
   </properties>
 
@@ -92,7 +90,7 @@
                 <echo>Copying plugins</echo>
                 <copy todir="${tmp-output-app}">
                   <fileset dir="${app-base}">
-                    <include name="baseHelpers.ts"/>
+                    <include name="baseHelpers.ts" />
                     <include name="ui/**" />
                     <!--
                     TODO - these pull in hawtio core still
@@ -107,30 +105,30 @@
                 <echo>Copying CSS files</echo>
                 <copy todir="${tmp-output-css}">
                   <fileset dir="${webapp-base}/css">
-                    <include name="**"/>
+                    <include name="**" />
                   </fileset>
                 </copy>
 
                 <echo>Copying font files</echo>
                 <copy todir="${tmp-output}/font">
                   <fileset dir="${webapp-base}/font">
-                    <include name="**"/>
+                    <include name="**" />
                   </fileset>
                 </copy>
 
                 <echo>Copying image files</echo>
                 <copy todir="${tmp-output}/img">
                   <fileset dir="${webapp-base}/img">
-                    <include name="**"/>
-                    <exclude name="branding/*"/>
+                    <include name="**" />
+                    <exclude name="branding/*" />
                   </fileset>
                 </copy>
 
                 <echo>Copying lib files</echo>
                 <copy todir="${tmp-output-lib}">
                   <fileset dir="${webapp-base}/lib">
-                    <include name="**"/>
-                    <exclude name="debug/*"/>
+                    <include name="**" />
+                    <exclude name="debug/*" />
                   </fileset>
                 </copy>
 
@@ -144,7 +142,7 @@
 
                 <copy todir="${webapp-outdir}">
                   <fileset dir="${basedir}/src/main/webapp">
-                    <include name="**"/>
+                    <include name="**" />
                   </fileset>
                 </copy>
 
@@ -181,7 +179,7 @@
             <Embed-Transitive>true</Embed-Transitive>
 
             <Import-Package>*</Import-Package>
-            <Private-Package></Private-Package>
+            <Private-Package />
             <Export-Package>*</Export-Package>
 
             <Bundle-ClassPath>.</Bundle-ClassPath>
@@ -210,6 +208,29 @@
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/${project.artifactId}-${project.version}/app/hawtio-directives.js</file>
+                  <type>js</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>

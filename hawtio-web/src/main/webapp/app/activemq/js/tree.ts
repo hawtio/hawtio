@@ -1,6 +1,6 @@
 module ActiveMQ {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -15,10 +15,6 @@ module ActiveMQ {
     $scope.$on('jmxTreeUpdated', function () {
       reloadTree();
     });
-
-    function updateSelectionFromURL() {
-      Jmx.updateTreeSelectionFromURL($location, $("#activemqtree"), true);
-    }
 
     function reloadTree() {
       console.log("workspace tree has changed, lets reload the activemq tree");
@@ -44,28 +40,57 @@ module ActiveMQ {
             children = answer;
           }
         }
+
+        // filter out advisory topics
+        children.forEach(broker => {
+          var grandChildren = broker.children;
+          if (grandChildren) {
+            var idx = grandChildren.findIndex(n => n.title === "Topic");
+            if (idx > 0) {
+              var old = grandChildren[idx];
+
+              // we need to store all topics the first time on the workspace
+              // so we have access to them later if the user changes the filter in the preference
+              var key = "ActiveMQ-allTopics-" + broker.title;
+              var allTopics = workspace.mapData[key];
+              if (angular.isUndefined(allTopics)) {
+                var allTopics = old.children.clone();
+                workspace.mapData[key] = allTopics;
+              }
+
+              var filter = Core.parseBooleanValue(localStorage["activemqFilterAdvisoryTopics"]);
+              if (filter) {
+                if (old && old.children) {
+                  var filteredTopics = old.children.filter(c => !c.title.startsWith("ActiveMQ.Advisory"));
+                  old.children = filteredTopics;
+                }
+              } else if (allTopics) {
+                old.children = allTopics;
+              }
+            }
+          }
+        });
+
         var treeElement = $("#activemqtree");
         Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
-/*
-
-        // lets select the first node if we have no selection
-        var key = $location.search()['nid'];
-        var node = children[0];
-        if (!key && node) {
-          key = node['key'];
-          if (key) {
-            var q = $location.search();
-            q['nid'] = key;
-            $location.search(q);
-          }
-        }
-        if (!key) {
-          updateSelectionFromURL();
-        }
-*/
-      // lets do this asynchronously to avoid Error: $digest already in progress
-      setTimeout(updateSelectionFromURL, 50);
+        // lets do this asynchronously to avoid Error: $digest already in progress
+        setTimeout(updateSelectionFromURL, 50);
       }
     }
+
+    function updateSelectionFromURL() {
+      Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#activemqtree"), (first) => {
+        // use function to auto select the queue folder on the 1st broker
+        var queues = first.getChildren()[0];
+        if (queues && queues.data.title === 'Queue') {
+          first = queues;
+          first.expand(true);
+          return first;
+        }
+        return null;
+      }, true);
+    }
+
   }
+
 }

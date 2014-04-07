@@ -56,6 +56,9 @@ public class BrandingServlet extends HttpServlet {
 
         // we'll look for this as a system property for now...
         profile = System.getProperty("profile");
+        if (profile == null) {
+          profile = System.getProperty("profiles");
+        }
 
         if (forceBranding) {
             LOG.debug("Branding enabled via forceBranding");

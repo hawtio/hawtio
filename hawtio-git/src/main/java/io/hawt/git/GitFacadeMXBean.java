@@ -25,6 +25,8 @@ public interface GitFacadeMXBean {
     CommitInfo write(String branch, String path, String commitMessage,
                      String authorName, String authorEmail, String contents);
 
+    CommitInfo writeBase64(String branch, String path, String commitMessage,
+                     String authorName, String authorEmail, String contentsBase64);
     /**
      * Creates a new file if it doesn't already exist
      *

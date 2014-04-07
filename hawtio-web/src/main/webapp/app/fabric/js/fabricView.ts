@@ -70,6 +70,7 @@ module Fabric {
 
     };
 
+    /*
     $scope.$watch('createProfileDialog', function() {
       if ($scope.createProfileDialog) {
         $scope.triggerResize();
@@ -81,6 +82,7 @@ module Fabric {
         $scope.triggerResize();
       }
     });
+    */
 
     // holders for dialog data
     $scope.newProfileName = '';
@@ -96,7 +98,7 @@ module Fabric {
 
 
     $scope.$watch('activeVersion', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
+      if (newValue !== oldValue && $scope.activeVersion && $scope.activeVersion.id !== $scope.activeVersionId) {
         $scope.activeVersionId = $scope.activeVersion.id;
       }
     });
@@ -161,14 +163,24 @@ module Fabric {
     // delete version dialog action
     $scope.deleteVersion = () => {
       var id = $scope.activeVersionId;
-      deleteVersion(jolokia, id, function() {
-        notification('success', "Deleted version " + id);
-        $scope.activeVersionId = '';
+
+      jolokia.request({
+        type: 'read',
+        mbean: Fabric.managerMBean,
+        attribute: 'DefaultVersion'
+      }, onSuccess((response) => {
+        $scope.activeVersionId = response.value;
         Core.$apply($scope);
-      }, function(response) {
-        notification('error', "Failed to delete version " + id + " due to " + response.error);
-        Core.$apply($scope);
-      });
+        setTimeout(() => {
+          deleteVersion(jolokia, id, () => {
+            notification('success', "Deleted version " + id);
+            Core.$apply($scope);
+          }, (response) => {
+            notification('error', "Failed to delete version " + id + " due to " + response.error);
+            Core.$apply($scope);
+          });
+        }, 100);
+      }));
     };
 
     $scope.deleteSelectedProfiles = () => {
@@ -184,7 +196,7 @@ module Fabric {
 
     $scope.patchVersion = (versionId) => {
       $location.url('/fabric/patching').search({versionId: versionId});
-    }
+    };
 
 
     $scope.migrateVersion = (targetName, sourceName) => {
