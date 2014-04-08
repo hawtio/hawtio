@@ -65,7 +65,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
         if (Strings.isBlank(configDir)) {
             // lets default to the users home directory
             String home = System.getProperty("user.home", "~");
-            configDir = home + "/.hawtio";
+            configDir = home + System.getProperty("hawtio.dirname", "/.hawtio");
         }
         return configDir;
     }
