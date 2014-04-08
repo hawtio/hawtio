@@ -550,7 +550,9 @@ module Core {
           // would be nice to eagerly remove the tree node too?
           var idx = parent.children.indexOf(selection);
           if (idx < 0) {
-            idx = parent.children.findIndex({key: selection.key});
+            idx = parent.children.findIndex(n =>
+              n.key === selection.key
+            );
           }
           if (idx >= 0) {
             parent.children.splice(idx, 1);
