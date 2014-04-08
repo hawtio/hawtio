@@ -90,7 +90,7 @@ public class Main {
         webapp.setExtraClasspath(options.getExtraClassPath());
 
         // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
-        String homeDir = System.getProperty("user.home", ".") + "/.hawtio";
+        String homeDir = System.getProperty("user.home", ".") + System.getProperty("hawtio.dirname", "/.hawtio");
         String tempDirPath = homeDir + "/tmp";
         File tempDir = new File(tempDirPath);
         tempDir.mkdirs();
