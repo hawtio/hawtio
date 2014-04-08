@@ -113,7 +113,7 @@ module UI {
 
       $attrs.$observe('okButtonText', function(value) {
         if (!angular.isDefined(value)) {
-          $scope.okButtonText = "Ok";
+          $scope.okButtonText = "OK";
         }
       });
       $attrs.$observe('cancelButtonText', function(value) {
