@@ -218,12 +218,14 @@
       </div>
     </form>
 
-    <form class="form-horizontal">
+    <form name="editorTabForm" class="form-horizontal">
       <div class="control-group">
         <label class="control-label" for="tabSIze">Tab size</label>
 
         <div class="controls">
-          <input type="text" id="tabSize" name="tabSize" ng-model="preferences.tabSize"/>
+          <input type="number" id="tabSize" name="tabSize" ng-model="preferences.tabSize" ng-required="ng-required" min="1" max="10"/>
+          <span class="help-block"
+              ng-hide="editorTabForm.tabSize.$valid">Please specify correct size (1-10).</span>
         </div>
       </div>
     </form>
@@ -426,17 +428,18 @@
 </div>
 </div>
 
+<!-- please do not change the tabs into spaces in the following script! -->
 <script type="text/ng-template" id="exampleText">
-  var foo = "World!";
+var foo = "World!";
 
-  var myObject = {
-  message: "Hello",
-  getMessage: function() {
-  return message + " ";
-  }
-  };
+var myObject = {
+	message: "Hello",
+	getMessage: function() {
+		return message + " ";
+	}
+};
 
-  window.alert(myObject.getMessage() + foo);
+window.alert(myObject.getMessage() + foo);
 </script>
 
 <script type="text/ng-template" id="codeMirrorExTemplate">
