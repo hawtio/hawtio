@@ -30,7 +30,7 @@ module Core {
           }
         }
         return answer;
-      }).exclude(excludes).exclude('');
+      }).exclude(<any> excludes).exclude('');
     }
   }
 
