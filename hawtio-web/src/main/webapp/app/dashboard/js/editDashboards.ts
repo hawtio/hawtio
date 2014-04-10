@@ -288,7 +288,8 @@ module Dashboard {
       var newDash = dashboardRepository.createDashboard({title: title});
 
       dashboardRepository.putDashboards([newDash], "Created new dashboard: " + title, (dashboards) => {
-        $scope.selectedItems.push(newDash);
+        // let's just be safe and ensure there's no selections
+        $scope.selectedItems.splice(0);
         dashboardLoaded(null, dashboards);
       });
 
@@ -305,7 +306,7 @@ module Dashboard {
       });
 
       // let's just be safe and ensure there's no selections
-      $scope.selectedItems = [];
+      $scope.selectedItems.splice(0);
 
       commitMessage = commitMessage + newDashboards.map((d) => { return d.title }).join(',');
       dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
@@ -316,7 +317,8 @@ module Dashboard {
     $scope.delete = () => {
       if ($scope.hasSelection()) {
         dashboardRepository.deleteDashboards($scope.selectedItems, (dashboards) => {
-          $scope.selectedItems = [];
+          // let's just be safe and ensure there's no selections
+          $scope.selectedItems.splice(0);
           dashboardLoaded(null, dashboards);
         });
       }
