@@ -356,6 +356,13 @@ module Fabric {
               }
             }
 
+            // check for error if a container already exists with that name
+            var text = response[json.name];
+            if (text && text.toLowerCase().has('already exists')) {
+              error = true;
+              notification('error', "Creating container " + json.name + " failed as a container with that name already exists.");
+            }
+
             angular.forEach(response.value, function(value, key) {
               error = true;
               notification('error', "Creating container " + key + " failed: " + value);
