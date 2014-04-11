@@ -87,6 +87,7 @@ module ActiveMQ {
       if (mbean && selection && jolokia && entries) {
         var domain = selection.domain;
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
+        name = name.unescapeHTML();
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
         if (isQueue) {
@@ -106,6 +107,7 @@ module ActiveMQ {
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
+        name = name.unescapeHTML();
         var operation = "purge()";
         $scope.message = "Purged queue " + name;
         jolokia.execute(mbean, operation, onSuccess(operationSuccess));

@@ -3,9 +3,39 @@
  * @main Tree
  */
 module Tree {
-  var pluginName = 'tree';
+
+  export var pluginName = 'tree';
+  export var log:Logging.Logger = Logger.get("Tree");
+
+  /**
+   * @function sanitize
+   * @param tree
+   *
+   * Use to HTML escape all entries in a tree before passing it
+   * over to the dynatree plugin to avoid cross site scripting
+   * issues.
+   *
+   */
+  export function sanitize(tree) {
+    if (!tree) {
+      return;
+    }
+    if (angular.isArray(tree)) {
+      tree.forEach((folder) => {
+        Tree.sanitize(folder);
+      });
+    }
+    var title = tree['title'];
+    if (title) {
+      tree['title'] = title.unescapeHTML(true).escapeHTML();
+    }
+    if (tree.children) {
+      Tree.sanitize(tree.children);
+    }
+  }
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).
-          directive('hawtioTree',function (workspace, $timeout, $location, $filter, $compile) {
+          directive('hawtioTree',function (workspace, $timeout, $location) {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var tree = null;
@@ -58,6 +88,9 @@ module Tree {
 
               function onWidgetDataChange(value) {
                 tree = value;
+                if (tree) {
+                  Tree.sanitize(tree);
+                }
                 if (tree && !widget) {
                   // lets find a child table element
                   // or lets add one if there's not one already

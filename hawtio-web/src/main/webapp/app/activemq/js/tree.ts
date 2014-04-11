@@ -17,7 +17,7 @@ module ActiveMQ {
     });
 
     function reloadTree() {
-      console.log("workspace tree has changed, lets reload the activemq tree");
+      log.debug("workspace tree has changed, lets reload the activemq tree");
 
       var children = [];
       var tree = workspace.tree;
@@ -45,6 +45,7 @@ module ActiveMQ {
         children.forEach(broker => {
           var grandChildren = broker.children;
           if (grandChildren) {
+            Tree.sanitize(grandChildren);
             var idx = grandChildren.findIndex(n => n.title === "Topic");
             if (idx > 0) {
               var old = grandChildren[idx];
