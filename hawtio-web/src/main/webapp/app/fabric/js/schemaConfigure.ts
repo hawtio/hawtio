@@ -76,6 +76,8 @@ module Fabric {
         delete schema.properties['ensembleServer'];
         delete schema.properties['proxyUri'];
         delete schema.properties['adminAccess'];
+        delete schema.properties['minimumPort'];
+        delete schema.properties['maximumPort'];
         schema.properties['jmxPassword']['type'] = 'password';
         schema.properties['saveJmxCredentials'] = {
           'type': 'boolean'
