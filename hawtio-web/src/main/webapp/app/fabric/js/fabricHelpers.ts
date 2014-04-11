@@ -380,6 +380,8 @@ module Fabric {
       });
     };
 
+    var verbose = workspace.localStorage['fabricVerboseNotifications'];
+    $scope.fabricVerboseNotifications = verbose && verbose !== "false";
   }
 
 
@@ -539,7 +541,9 @@ module Fabric {
   }
 
   export function doStartContainer($scope, jolokia, name) {
-    notification('info', "Starting " + name);
+    if ($scope.fabricVerboseNotifications) {
+      notification('info', "Starting " + name);
+    }
     startContainer(jolokia, name, () => {
       notification('success', "Started " + name);
       Core.$apply($scope);
@@ -551,7 +555,9 @@ module Fabric {
   }
 
   export function doStopContainer($scope, jolokia, name) {
-    notification('info', "Stopping " + name);
+    if ($scope.fabricVerboseNotifications) {
+      notification('info', "Stopping " + name);
+    }
     stopContainer(jolokia, name, () => {
       notification('success', "Stopped " + name);
       Core.$apply($scope);
