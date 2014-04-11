@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.3.1
+
+* Quick bugfix release
+* Fixes [these 13 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=5&page=1&state=closed)
+
 #### 1.3.0
 
 * [Hawtio Directives](http://hawt.io/directives/index.html) is now released as a separate JS file so its easy to consume in other angularjs based projects.
