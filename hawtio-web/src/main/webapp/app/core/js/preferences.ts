@@ -183,6 +183,7 @@ module Core {
       logAutoScroll: true,
       fabricAlwaysPrompt: false,
       fabricEnableMaps: true,
+      fabricVerboseNotifications: false,
       camelIgnoreIdForLabel: false,
       camelMaximumLabelWidth: Camel.defaultMaximumLabelWidth,
       camelMaximumTraceOrDebugBodyLength: Camel.defaultCamelMaximumTraceOrDebugBodyLength,
@@ -197,6 +198,7 @@ module Core {
       logAutoScroll: parseBooleanValue,
       fabricAlwaysPrompt: parseBooleanValue,
       fabricEnableMaps: parseBooleanValue,
+      fabricVerboseNotifications: parseBooleanValue,
       camelIgnoreIdForLabel: parseBooleanValue,
       camelMaximumLabelWidth: parseInt,
       camelMaximumTraceOrDebugBodyLength: parseInt,
@@ -237,7 +239,7 @@ module Core {
     });
 
     var names = ["showWelcomePage", "gitUserName", "gitUserEmail", "activemqUserName", "activemqPassword", "activemqBrowseBytesMessages", "activemqFilterAdvisoryTopics",
-      "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt", "fabricEnableMaps", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
+      "logCacheSize", "logSortAsc", "logAutoScroll", "fabricAlwaysPrompt", "fabricEnableMaps", "fabricVerboseNotifications", "camelIgnoreIdForLabel", "camelMaximumLabelWidth",
       "camelMaximumTraceOrDebugBodyLength"];
 
     angular.forEach(names, (name) => {
