@@ -84,6 +84,17 @@
 
 <p>Here's how to <a href="https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse">disable security</a> if you wish to remove the need to login to hawtio.</p>
 
+<h4 id = "How_do_I_enable_hawtio_inside_my_Java_Application___Spring_Boot___DropWizard___Micro_Service">How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service</h4>
+
+<p>The easiest thing to do is add jolokia as a java agent via a java agent command line:
+```
+java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
+```</p>
+
+<p>Then by default you can connect on http;//localhost:8778/jolokia to access the jolokia REST API.</p>
+
+<p>Now you can use hawtio (e.g. the Google Chrome Extension or the stand alone hawtio application) to connect to it - and it then minimises the effect of hawtio/jolokia on your app (e.g. you don't need to mess about with whats inside your application or even change the classpath)</p>
+
 <h4 id = "How_do_I_connect_to_my_remote_JVM_">How do I connect to my remote JVM?</h4>
 
 <p>All thats required for hawtio to connect to any remote JVM is that a <a href="http://jolokia.org/agent.html">jolokia agent</a> can be added to it. This can be done in various ways.</p>
