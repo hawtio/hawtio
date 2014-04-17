@@ -45,6 +45,9 @@ module Fabric {
           var editRequirementsEntity = {
             profileRequirements: []
           };
+          // initially the requirements stored in ZK look like this:
+          // > zk:get /fabric/configs/io.fabric8.requirements.json
+          // {"profileRequirements":[],"version":"1.0"}
           if ($scope.requirements) {
             angular.copy($scope.requirements, editRequirementsEntity);
           }
@@ -57,6 +60,8 @@ module Fabric {
                   profile: profile.id
                 };
                 profile.requirements = currentRequirements;
+              }
+              if (!profileRequirements.find((p) => { return p.profile === currentRequirements.profile })) {
                 profileRequirements.push(currentRequirements);
               }
             });
@@ -91,7 +96,7 @@ module Fabric {
             var id = profile.id;
             if (id && requirement) {
               if (!requirement.dependentProfiles) requirement.dependentProfiles = [];
-              if (!requirement.dependentProfiles.find(id)) {
+              if (!requirement.dependentProfiles.find((el) => { return el === id })) {
                 requirement.dependentProfiles.push(id);
               }
             }
@@ -163,7 +168,8 @@ module Fabric {
         }
       });
 
-
+      // invoked regularly by Jolokia after detecting new response from requirements()
+      // from object io.fabric:type=Fabric
       $scope.updateActiveContainers = () => {
         var activeProfiles = $scope.activeProfiles;
         $scope.activeProfiles = $scope.currentActiveProfiles();
@@ -180,6 +186,8 @@ module Fabric {
         });
       };
 
+      // invoked regularly by Jolokia wth the result of containers(List, List)
+      // from object io.fabric:type=Fabric
       $scope.updateContainers = (newContainers) => {
 
         var response = angular.toJson(newContainers);
@@ -267,7 +275,7 @@ module Fabric {
             var id = profileRequirement.profile;
             var min = profileRequirement.minimumInstances;
             if (id) {
-              var profile = answer.find(p => p.id);
+              var profile = answer.find((p) => (p.id === id));
 
               function requireStyle() {
                 var count:any = 0;
