@@ -80,7 +80,6 @@
             </resource>
         </resources>
 
-
         <plugins>
 
             <!-- We use maven-antrun-plugin to build up a list of
