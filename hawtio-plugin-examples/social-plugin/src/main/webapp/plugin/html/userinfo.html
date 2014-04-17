@@ -1,0 +1,68 @@
+<div clas="row-fluid gridStyle" ng-controller='SOCIAL.FormController'>
+    <div class="row-fluid">
+        <div class="span12">
+            <div>
+                <form name="inputForm" ng-submit="searchUser()" ng-mouseenter="hover(isReply)">
+                    <div>
+                        User Name </br>(example : @cmoulliard) : <input type="text" class="entry-widget"
+                                                                        ng-model="username">
+                    </div>
+                    <p class="span4 centered">
+                        <input type="submit" class="btn btn-success" ng-disabled="!username" value="Search information">
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="span12" ng-show="isReply">
+            <table class="table table-striped table-bordered">
+                <tbody>
+                <tr>
+                    <td>ID :</td>
+                    <td><span ng-bind="id"></span></td>
+                </tr>
+                <tr>
+                    <td>Name :</td>
+                    <td><span ng-bind="name"></span></td>
+                </tr>
+                <tr>
+                    <td>Screen Name :</td>
+                    <td><span ng-bind="screenName"></span></td>
+                </tr>
+                <tr>
+                    <td>Location :</td>
+                    <td><span ng-bind="location"></span></td>
+                </tr>
+                <tr>
+                    <td>Description :</td>
+                    <td><span ng-bind="description"></span></td>
+                </tr>
+                <tr>
+                    <td>Followers :</td>
+                    <td><span ng-bind="followersCount"></span></td>
+                </tr>
+                <tr>
+                    <td>Friends :</td>
+                    <td><span ng-bind="friendsCount"></span></td>
+                </tr>
+                <tr>
+                    <td>Favourited :</td>
+                    <td><span ng-bind="favouritesCount"></span></td>
+                </tr>
+                <tr>
+                    <td>Time Zone :</td>
+                    <td><span ng-bind="timeZone"></span></td>
+                </tr>
+                <tr>
+                    <td>Language :</td>
+                    <td><span ng-bind="lang"></span></td>
+                </tr>
+                <tr>
+                    <td>Created At :</td>
+                    <td><span ng-bind="createdAt"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
