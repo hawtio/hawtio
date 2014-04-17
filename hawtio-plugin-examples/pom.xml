@@ -18,7 +18,7 @@
     <module>simple-plugin</module>
     <module>custom-perspective</module>
     <module>irc-client-plugin</module>
-      <module>social-plugin</module>
+    <module>social-plugin</module>
   </modules>
 
 </project>
