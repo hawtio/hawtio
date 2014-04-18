@@ -32,6 +32,30 @@
         <param-value>${plugin-scripts}</param-value>
     </context-param>
 
+    <context-param>
+        <description>Access Token</description>
+        <param-name>access-token</param-name>
+        <param-value>${ACCESS_TOKEN}</param-value>
+    </context-param>
+
+    <context-param>
+        <description>Access Token Secret</description>
+        <param-name>access-token-secret</param-name>
+        <param-value>${ACCESS_TOKEN_SECRET}</param-value>
+    </context-param>
+
+    <context-param>
+        <description>Consumer Key</description>
+        <param-name>consumer-key</param-name>
+        <param-value>${CONSUMER_KEY}</param-value>
+    </context-param>
+
+    <context-param>
+        <description>Consumer Secret</description>
+        <param-name>consumer-secret</param-name>
+        <param-value>${CONSUMER_SECRET}</param-value>
+    </context-param>
+
     <listener>
         <listener-class>io.hawt.example.socialplugin.PluginContextListener</listener-class>
     </listener>

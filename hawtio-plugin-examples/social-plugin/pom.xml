@@ -19,7 +19,6 @@
         <!-- filtered plugin properties -->
         <plugin-name>${project.artifactId}</plugin-name>
         <plugin-context>/social</plugin-context>
-<!--        <plugin-scripts>plugin/js/socialPlugin.js,plugin/js/navbar.js</plugin-scripts>-->
         <plugin-domain />
 
         <fuse.osgi.import>
@@ -30,6 +29,12 @@
 
         <twitter4j.version>3.0.5</twitter4j.version>
         <gson.version>2.2.4</gson.version>
+
+        <!-- Camel Tweet Acccount - To be changed with your own OAuth credentials-->
+        <CONSUMER_KEY>NMqaca1bzXsOcZhP2XlwA</CONSUMER_KEY>
+        <CONSUMER_SECRET>VxNQiRLwwKVD0K9mmfxlTTbVdgRpriORypnUbHhxeQw</CONSUMER_SECRET>
+        <ACCESS_TOKEN>26693234-W0YjxL9cMJrC0VZZ4xdgFMymxIQ10LeL1K8YlbBY</ACCESS_TOKEN>
+        <ACCESS_TOKEN_SECRET>BZD51BgzbOdFstWZYsqB5p5dbuuDV12vrOdatzhY4E</ACCESS_TOKEN_SECRET>
     </properties>
 
     <dependencies>

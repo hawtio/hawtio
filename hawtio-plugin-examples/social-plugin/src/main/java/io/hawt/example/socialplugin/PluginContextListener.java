@@ -15,10 +15,11 @@ public class PluginContextListener implements ServletContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginContextListener.class);
 
-    private static final String CONSUMER_KEY = "rtPIDQIqbGsEK1TEQA5g";
-    private static final String CONSUMER_SECRET = "HyoWW3B4wJHesm0tvf4IVI9C9aRHX40TuyEz8qrk";
-    private static final String ACCESS_TOKEN = "DoreB85PQt3bCDMpQQYUsBTzRprjOAAulD2RmG0IP";
-    private static final String ACCESS_TOKEN_SECRET = "VNjI9IrPNA2XHEnlGF37QZAzOuRzHY3esg0B8jWGs";
+    private String CONSUMER_KEY;
+    private String CONSUMER_SECRET;
+    private String ACCESS_TOKEN;
+    private String ACCESS_TOKEN_SECRET;
+    private ServletContext context;
 
     HawtioPlugin plugin = null;
     SocialMedia socialMedia;
@@ -28,7 +29,7 @@ public class PluginContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-        ServletContext context = servletContextEvent.getServletContext();
+        context = servletContextEvent.getServletContext();
 
         plugin = new HawtioPlugin();
         plugin.setContext((String) context.getInitParameter("plugin-context"));
@@ -44,10 +45,10 @@ public class PluginContextListener implements ServletContextListener {
 
     public void initMbean() {
         tf = new TwitterFactory();
-        tf.setAccessToken(ACCESS_TOKEN);
-        tf.setAccessTokenSecret(ACCESS_TOKEN_SECRET);
-        tf.setConsumerKey(CONSUMER_KEY);
-        tf.setConsumerSecret(CONSUMER_SECRET);
+        tf.setAccessToken(context.getInitParameter("access-token"));
+        tf.setAccessTokenSecret(context.getInitParameter("access-token-secret"));
+        tf.setConsumerKey(context.getInitParameter("consumer-key"));
+        tf.setConsumerSecret(context.getInitParameter("consumer-secret"));
 
         ts = new TwitterService();
         ts.setTwitterFactory(tf);

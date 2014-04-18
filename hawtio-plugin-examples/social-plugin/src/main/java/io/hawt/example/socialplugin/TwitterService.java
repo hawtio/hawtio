@@ -37,7 +37,6 @@ public class TwitterService {
 
                 //tweets.add(builder.toString());
                 tweets.add(message);
-
             }
         } while ((query = result.nextQuery()) != null);
 
