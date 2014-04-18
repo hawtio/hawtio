@@ -13,14 +13,14 @@ var SOCIAL = (function (SOCIAL) {
      */
     SOCIAL.breadcrumbs = [
         {
-            content: '<i class="icon-comments"></i> User',
-            title: "Search info about a User",
+            content: '<i class="icon-user"></i> User',
+            title: "Search info about a Twitter User",
             isValid: function () { return true; },
             href: "#/social/user"
         },
         {
-            content: '<i class="icon-cogs"></i> Tweets',
-            title: "Search Tweets",
+            content: '<i class="icon-search"></i> Tweets',
+            title: "Search Tweets based on keywords",
             isValid: function () { return true; },
             href: "#/social/tweets"
         }
