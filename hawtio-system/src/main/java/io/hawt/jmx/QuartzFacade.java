@@ -61,15 +61,22 @@ public class QuartzFacade implements QuartzFacadeMBean {
             throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
         }
 
-        // get existing job map
-        CompositeData data = (CompositeData) mBeanServer.invoke(on, "getJobDetail", new Object[]{triggerName, groupName}, new String[]{"java.lang.String", "java.lang.String"});
+        // get existing trigger map
+        CompositeData data = (CompositeData) mBeanServer.invoke(on, "getTrigger", new Object[]{triggerName, groupName}, new String[]{"java.lang.String", "java.lang.String"});
         if (data == null) {
-            throw new IllegalArgumentException("Cannot find job details for group: " + groupName + " name: " + triggerName);
+            throw new IllegalArgumentException("Cannot find trigger details for group: " + groupName + " name: " + triggerName);
+        }
+        // trigger references job - let's get its data
+        String jobName = (String) data.get("jobName");
+        String jobGroupName = (String) data.get("jobGroup");
+        CompositeData jobData = (CompositeData) mBeanServer.invoke(on, "getJobDetail", new Object[]{jobName, jobGroupName}, new String[]{"java.lang.String", "java.lang.String"});
+        if (jobData == null) {
+            throw new IllegalArgumentException("Cannot find job details for group: " + jobGroupName + " name: " + jobName);
         }
 
         Map jobParams = new HashMap();
         Map jobDataMap = new HashMap();
-        initJobParams(jobParams, jobDataMap, triggerName, groupName, data);
+        initJobParams(jobParams, jobDataMap, jobName, jobGroupName, jobData);
 
         // also ensure the job data map is up to date with the simple trigger changes
         Map triggerParams = new HashMap();
@@ -80,8 +87,8 @@ public class QuartzFacade implements QuartzFacadeMBean {
         jobDataMap.put("CamelQuartzTriggerSimpleRepeatInterval", repeatInterval);
         triggerParams.put("name", triggerName);
         triggerParams.put("group", groupName);
-        triggerParams.put("jobName", triggerName);
-        triggerParams.put("jobGroup", groupName);
+        triggerParams.put("jobName", jobName);
+        triggerParams.put("jobGroup", jobGroupName);
         triggerParams.put("misfireInstruction", misfireInstruction);
 
         // update trigger
@@ -101,15 +108,22 @@ public class QuartzFacade implements QuartzFacadeMBean {
             throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
         }
 
-        // get existing job map
-        CompositeData data = (CompositeData) mBeanServer.invoke(on, "getJobDetail", new Object[]{triggerName, groupName}, new String[]{"java.lang.String", "java.lang.String"});
+        // get existing trigger map
+        CompositeData data = (CompositeData) mBeanServer.invoke(on, "getTrigger", new Object[]{triggerName, groupName}, new String[]{"java.lang.String", "java.lang.String"});
         if (data == null) {
-            throw new IllegalArgumentException("Cannot find job details for group: " + groupName + " name: " + triggerName);
+            throw new IllegalArgumentException("Cannot find trigger details for group: " + groupName + " name: " + triggerName);
+        }
+        // trigger references job - let's get its data
+        String jobName = (String) data.get("jobName");
+        String jobGroupName = (String) data.get("jobGroup");
+        CompositeData jobData = (CompositeData) mBeanServer.invoke(on, "getJobDetail", new Object[]{jobName, jobGroupName}, new String[]{"java.lang.String", "java.lang.String"});
+        if (jobData == null) {
+            throw new IllegalArgumentException("Cannot find job details for group: " + jobGroupName + " name: " + jobName);
         }
 
         Map jobParams = new HashMap();
         Map jobDataMap = new HashMap();
-        initJobParams(jobParams, jobDataMap, triggerName, groupName, data);
+        initJobParams(jobParams, jobDataMap, jobName, jobGroupName, jobData);
 
         Map triggerParams = new HashMap();
         jobDataMap.put("CamelQuartzTriggerType", "cron");
@@ -122,8 +136,8 @@ public class QuartzFacade implements QuartzFacadeMBean {
         }
         triggerParams.put("name", triggerName);
         triggerParams.put("group", groupName);
-        triggerParams.put("jobName", triggerName);
-        triggerParams.put("jobGroup", groupName);
+        triggerParams.put("jobName", jobName);
+        triggerParams.put("jobGroup", jobGroupName);
         triggerParams.put("misfireInstruction", misfireInstruction);
 
         // update trigger
