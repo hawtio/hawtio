@@ -31,7 +31,7 @@ var SOCIAL = (function (SOCIAL) {
         SOCIAL.log.debug("Current metadata: ", window['Perspective']['metadata']);
         SOCIAL.log.debug("Top level tabs:");
 
-        workspace.topLevelTabs.forEach(function(tab) {
+        workspace.topLevelTabs.forEach(function (tab) {
             SOCIAL.log.debug("Tab content:", tab['content'], " id: ", tab['id'], " href: ", tab.href());
         });
 
@@ -45,6 +45,9 @@ var SOCIAL = (function (SOCIAL) {
             business: {
                 label: "Business",
                 lastPage: "#/social",
+                isValid: function (workspace) {
+                    return true;
+                },
                 topLevelTabs: {
                     includes: [
                         { href: "#/social"}
@@ -54,23 +57,26 @@ var SOCIAL = (function (SOCIAL) {
             container: {
                 label: "Container",
                 lastPage: "#/help",
+                isValid: function (workspace) {
+                    return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
+                },
                 topLevelTabs: {
                     excludes: [
                         { href: "#/social" },
                         { href: "#/eshead" },
                         { href: "#/kibanalogs" },
                         { href: "#/kibanacamel" }
-/*                        { href: "#/jvm" },
-                        { href: "#/camel" },
-                        { href: "#/activemq" },
-                        { href: "#/eshead" },
-                        { href: "#/fabric" },
-                        { href: "#/insight" },
-                        { href: "#/camin" },
-                        { href: "#/kibanalogs" },
-                        { href: "#/kibanacamel" },
-                        { href: "#/health" },
-                        { href: "#/wiki" }*/
+                        /*                        { href: "#/jvm" },
+                         { href: "#/camel" },
+                         { href: "#/activemq" },
+                         { href: "#/eshead" },
+                         { href: "#/fabric" },
+                         { href: "#/insight" },
+                         { href: "#/camin" },
+                         { href: "#/kibanalogs" },
+                         { href: "#/kibanacamel" },
+                         { href: "#/health" },
+                         { href: "#/wiki" }*/
                     ]
                 }
             }
@@ -141,7 +147,7 @@ var SOCIAL = (function (SOCIAL) {
         $scope.lang = '';
         $scope.createdAt = '';
 
-/*        $scope.expectedLen = 0;*/
+        /*        $scope.expectedLen = 0;*/
 
         $scope.tweetsGrid = {
             data: 'tweets',
@@ -274,8 +280,8 @@ var SOCIAL = (function (SOCIAL) {
 
         $scope.req = [
             {type: 'read',
-             mbean: SOCIAL.mbean,
-             attribute: SOCIAL.attribute
+                mbean: SOCIAL.mbean,
+                attribute: SOCIAL.attribute
             }
         ];
 
