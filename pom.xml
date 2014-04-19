@@ -49,6 +49,7 @@
   </prerequisites>
 
   <properties>
+    <additionalparam>-Xdoclint:none</additionalparam>
     <jettyPort>8080</jettyPort>
     <context>/hawtio</context>
     <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
