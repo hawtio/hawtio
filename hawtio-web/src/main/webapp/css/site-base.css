@@ -1991,6 +1991,11 @@ div#main div ul.nav li a.nav-primary.active {
 .nav-success .caret,
 .nav-inverse .caret,
 */
+
+.caret {
+  width: 9px;
+}
+
 div#main div ul.nav li a.nav-primary .caret {
   border-top-color: #ffffff;
   border-bottom-color: #ffffff;
@@ -3764,8 +3769,34 @@ th > .indicator:before {
 }
 
 .dropdown-menu {
-  margin-top: -1px;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
   top: 100%;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  min-width: 100%;
+}
+
+.main-nav-upper .dropdown-menu {
+  border-top: none;
+  margin-top: -1;
+  border-radius: 0;
+}
+
+.main-nav-lower .dropdown-menu {
+  border-top: none;
+}
+
+.dropdown-menu > li > a {
+  cursor: pointer;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.dropdown-menu > li:hover > a {
+  text-shadow:0px 0px 1px white;
 }
 
 .dropdown-menu:before {

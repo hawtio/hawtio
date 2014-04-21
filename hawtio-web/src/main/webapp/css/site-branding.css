@@ -70,8 +70,8 @@ a:hover {
   border-top: 3px solid #CC0000;
   background: #393F45 !important;
   border-bottom: none;
-  height: 25px !important;
-  min-height: 25px !important;
+  height: 24px !important;
+  min-height: 24px !important;
   box-shadow: none;
 }
 
@@ -159,6 +159,8 @@ a:hover {
   background: inherit;
   background-color: inherit;
   background-image: inherit;
+  background-image: linear-gradient(to bottom, #474d52, #3f4349 100%);
+  border-top: 1px solid #565b60;
 }
 
 .main-nav-lower > .container > ul > .dropdown.overflow {
@@ -203,19 +205,18 @@ a:hover {
 
 
 #main-nav > .navbar-inner .nav > li > a {
+  margin-top: -1px;
   border-top: 1px solid #53565B;
   color: #ffffff;
   text-shadow: none;
-  height: 32px;
-  padding-bottom: 0px;
-  padding-left: 20px;
-  padding-right: 20px;
+  height: 31px;
+  padding-bottom: 0;
 }
 
-#main-nav .navbar-inner .nav li a:hover {
+#main-nav > .navbar-inner .nav > li:hover > a {
   color: #ffffff;
   border-top: 1px solid #949699;
-  text-shadow: none;
+  text-shadow: 1px 0 0 white;
   background-color: inherit;
   background-image: linear-gradient(to bottom, #5c6165, #4b5053 100%);
 }
@@ -230,11 +231,26 @@ a:hover {
   font-weight: bold;
 }
 
-#main-nav .navbar-inner.main-nav-upper .nav li a {
+#main-nav .navbar-inner.main-nav-upper .nav {
+
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav > li {
   height: 24px;
+  border-left: 1px solid #585b5e;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav > li > a {
+  position: relative;
+  top: 1px;
   padding-top: 1px;
   border-radius: 0;
   border: none;
+  max-height: 24px;
+}
+
+#main-nav .navbar-inner.main-nav-upper .nav > li:hover a {
+
 }
 
 #main-nav .navbar-inner.main-nav-upper .nav li a i:before {
@@ -271,7 +287,7 @@ a:hover {
   height: 22px;
 }
 
-#main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li a:hover {
+#main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li:hover a {
   border: none;
 }
 
@@ -287,14 +303,9 @@ a:hover {
   display: none;
 }
 
-#main-nav .navbar-inner.main-nav-upper .nav li a:hover {
-  border-radius: 0;
-  border: none;
-}
-
 #main.container-fluid {
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 #main.container-fluid div .nav {
@@ -618,6 +629,38 @@ div#main div ul.nav li a.nav-primary {
   border-radius: 0;
 }
 
+.perspective-selector {
+  border-right: 1px solid #65696e;
+  background-color: inherit;
+}
+
+.perspective-selector:hover > a {
+  border-top: 1px solid #65696e;
+}
+
+.perspective-selector > a {
+  border-top: 1px solid #64696d !important;
+  background-image: linear-gradient(to bottom, #585d62 0%, #4e5257 100%);
+}
+
+#main-nav .dropdown-toggle > .caret:before {
+  color: white;
+}
+
+#main-nav li.dropdown.open > a.dropdown-toggle {
+  border-bottom: 1px solid #585b60;
+}
+
+#main-nav .dropdown.open,
+li.dropdown.open > a.dropdown-toggle {
+  color: white;
+  border-bottom: none;
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #72757a 0%, #64686C 100%);
+  text-shadow: 1px 0 0 white;
+
+}
+
 .dropdown-menu {
   border: 1px solid #b6b6b6;
   border-top: 0;
@@ -682,21 +725,19 @@ div#main div ul.nav li a.nav-primary {
 
 .dropdown-menu > li:hover > a {
   color: #ffffff !important;
-  text-shadow: none !important;
-  font-weight: bold;
+  text-shadow: 0px 0px 1px white;
 }
 
 .dropdown-menu > li {
   padding-left: 10px !important;
   padding-right: 10px !important;
   line-height: 24px !important;
-  border-top: 1px solid;
-  border-color: white;
+  border-top: none;
   max-height: 24px;
 }
 
 li.dropdown.open > a.dropdown-toggle {
-  color: #2289ba !important;
+  color: #2289ba;
   border-bottom: 1px solid #2289ba;
 }
 
