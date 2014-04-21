@@ -34,6 +34,10 @@ module Core {
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
     $scope.switchPerspective = (perspective) => {
+      if (perspective.onSelect && angular.isFunction(perspective.onSelect)) {
+        perspective.onSelect.apply();
+        return;
+      }
       var searchPerspectiveId = $location.search()[Perspective.perspectiveSearchId];
       if (perspective && ($scope.currentPerspective !== perspective ||  perspective.id !== searchPerspectiveId)) {
         Logger.debug("Changed the perspective to " + JSON.stringify(perspective) + " from search id " + searchPerspectiveId);
@@ -123,7 +127,7 @@ module Core {
         var size = {
           size_x: 4,
           size_y: 3
-        }
+        };
 
         answer += "&size=" + encodeURIComponent(angular.toJson(size));
       }

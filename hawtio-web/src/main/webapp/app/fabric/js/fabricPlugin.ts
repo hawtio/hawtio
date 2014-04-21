@@ -180,9 +180,38 @@ module Fabric {
         }
     }).
 
-          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, layoutFull) => {
+          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, $rootScope) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+
+            pageTitle.addTitleElement(() => {
+              return Fabric.currentContainerId;
+            });
+
+            if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
+              jolokia.request({
+                type: 'read', mbean: Fabric.managerMBean, attribute: 'CurrentContainerName'
+              }, onSuccess((response) => {
+                Fabric.currentContainerId = response.value;
+                if ('container' in Perspective.metadata) {
+                  Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);
+                }
+                Core.$apply($rootScope);
+              }));
+
+            }
+
+            /*
+            if (!Fabric.isFMCContainer(workspace)) {
+              Perspective.metadata.dummyFabric = {
+                label: "Fabric",
+                isValid: (workspace) => true,
+                onSelect: () => { }
+              };
+            }
+            */
+
+            /*
 
             pageTitle.addTitleElement( ():string => {
               if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
@@ -194,6 +223,7 @@ module Fabric {
               }
               return Fabric.currentContainerId;
             });
+            */
 
             workspace.topLevelTabs.push( {
               id: "fabric.runtime",
