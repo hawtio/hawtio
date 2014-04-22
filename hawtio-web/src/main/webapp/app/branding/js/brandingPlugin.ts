@@ -13,22 +13,19 @@ module Branding {
   // just in case we'll check for all of these...
   export var mqProfiles = ["mq-amq", "mq-default", "mq", "a-mq", "a-mq-openshift", "mq-replicated"];
 
-  $.ajaxSetup({async:true});
-  $.get('/hawtio/branding', (response) => {
-
-    log.debug("Got response: ", response);
-
-    Branding.enabled = Core.parseBooleanValue(response.enable);
-
-    // Branding.enabled = false;
-    // Branding.enabled = true;
-
-    if (Branding.enabled) {
-      Branding.profile = response.profile;
-      // pull in branding stylesheet
-      Core.addCSS('css/site-branding.css');
-    }
-
+  hawtioPluginLoader.registerPreBootstrapTask((task) => {
+    $.get('/hawtio/branding', (response) => {
+      log.debug("Got response: ", response);
+      Branding.enabled = Core.parseBooleanValue(response.enable);
+      // Branding.enabled = false;
+      // Branding.enabled = true;
+      if (Branding.enabled) {
+        Branding.profile = response.profile;
+        // pull in branding stylesheet
+        Core.addCSS('css/site-branding.css');
+      }
+      task();
+    });
   });
 
   export var pluginName = 'hawtio-branding';

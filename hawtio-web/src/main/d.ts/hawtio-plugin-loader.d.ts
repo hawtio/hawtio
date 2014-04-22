@@ -5,7 +5,7 @@ declare module Hawtio {
     parseQueryString():any;
     parseQueryString(text: string):any;
     getCredentials(text: string):any;
-
+    registerPreBootstrapTask(task:(next:() => void) => void);
     addModule(module:String);
     addUrl(url:String);
 
