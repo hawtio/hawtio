@@ -54,7 +54,7 @@
 
   </feature>
 
-  <feature name="hawtio-plugin-example" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-simple-plugin" version="${project.version}" resolver="(obr)">
     <details>A simple example plugin for hawtio</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
@@ -72,4 +72,8 @@
     <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
   </feature>
 
+  <feature name="hawtio-redhat-branding" version="${project.version}" resolver="(obr)">
+    <details>The Red Hat branding and theme for hawtio</details>
+    <bundle>mvn:io.hawt/hawtio-redhat-branding/${project.version}/war</bundle>
+  </feature>
 </features>
