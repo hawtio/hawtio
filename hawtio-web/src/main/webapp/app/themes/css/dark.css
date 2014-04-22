@@ -6,14 +6,14 @@
 
 .navbar .nav > li > a,
 div#main div ul.nav li a {
-  color: #eee;
+  color: #aaaaaa;
   text-shadow: none;
 }
 
 .navbar-inner {
-  border: 1px solid #888;
+  border: 1px solid #555555;
   background-color: #444;
-  background-image: linear-gradient(to bottom, #676666, #454444, #343333);
+  background-image: linear-gradient(to bottom, #676565, #454242, #343131);
   background-repeat: repeat-x;
 }
 
@@ -30,13 +30,55 @@ div#main div ul.nav {
   color: #eee;
 }
 
+div#main div ul.nav li.active a {
+  background: #333232;
+  text-shadow: none;
+}
+
+div#main div ul.nav li a:hover {
+  background: #403e3e;
+  text-shadow: none;
+  color: #888888;
+}
+
 .navbar .nav > li {
   background: inherit;
 }
 
-body {
-  color: #eee;
-  background: #444;
+.navbar .nav > .active > a, 
+.navbar .nav > .active > a:hover, 
+.navbar .nav > .active > a:focus {
+  background: #434242;
+  color: #dddddd;
 }
+
+.navbar .nav > li > a:focus, .navbar .nav > li > a:hover {
+  color: #dddddd;
+}
+
+body {
+  color: #cccccc;
+  background: #444343;
+}
+
+.section-header {
+  background: inherit;
+  background-image: linear-gradient(to bottom, #676565, #454242, #343131);
+  border-color: #555555;
+}
+
+.box {
+  background: inherit;
+  border-bottom-color: #555555;
+}
+
+a {
+  color: #888888;
+}
+
+a:hover {
+  color: #dddddd;
+}
+
 
 
