@@ -26,7 +26,6 @@ module Log {
     }
 
     $scope.logs = [];
-    $scope.branding = Branding.enabled;
     $scope.showRowDetails = false;
     $scope.showRaw = {
       expanded: false
