@@ -397,7 +397,7 @@ div[ng-controller='Core.LoginController']:after {
   position: absolute;
   top: 50px;
   right: 64px;
-  content: url('../img/branding/login-screen-logo.png');
+  content: url('../img/login-screen-logo.png');
 }
 
 
@@ -457,7 +457,7 @@ div[ng-controller='Core.LoginController']:after {
   height: 26px;
   border: 1px #b6b6b6 solid;
   border-radius: 2px;
-  background: url("../img/branding/input-background.png") repeat-x top left;
+  background: url("../img/input-background.png") repeat-x top left;
 }
 
 .login-wrapper form fieldset input[type="text"]:hover,

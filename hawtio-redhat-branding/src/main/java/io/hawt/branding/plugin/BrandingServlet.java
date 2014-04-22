@@ -1,4 +1,4 @@
-package io.hawt.web;
+package io.hawt.branding.plugin;
 
 import io.hawt.system.ConfigManager;
 import org.jolokia.converter.Converters;

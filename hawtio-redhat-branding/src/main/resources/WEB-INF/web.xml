@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	      version="2.4">
+
+  <description>hawtio Red Hat branding plugin</description>
+  <display-name>hawt.io branding plugin</display-name>
+
+  <env-entry>
+    <description>Enable the Red Hat branding by default, value is really a boolean</description>
+    <env-entry-name>hawtio/forceBranding</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Properties to check when figuring out what branding to use, comma separated values</description>
+    <env-entry-name>hawtio/propertiesToCheck</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>karaf.version</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>The strings that will enable branding, comma separated values</description>
+    <env-entry-name>hawtio/wantedStrings</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>redhat,fuse</env-entry-value>
+  </env-entry>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-context</param-name>
+    <param-value>${plugin-context}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-name</param-name>
+    <param-value>${project.artifactId}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-domain</param-name>
+    <param-value>${plugin-domain}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-scripts</param-name>
+    <param-value>${plugin-scripts}</param-value>
+  </context-param>
+
+  <servlet>
+    <servlet-name>branding</servlet-name>
+    <servlet-class>io.hawt.branding.plugin.BrandingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>branding</servlet-name>
+    <url-pattern>/enabled/*</url-pattern>
+  </servlet-mapping>
+
+
+
+  <listener>
+    <listener-class>io.hawt.branding.plugin.PluginContextListener</listener-class>
+  </listener>
+
+
+</web-app>
+

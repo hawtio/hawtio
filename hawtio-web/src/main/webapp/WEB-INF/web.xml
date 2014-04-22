@@ -44,27 +44,6 @@
   </env-entry>
 
   <env-entry>
-    <description>Enable the Red Hat branding by default, value is really a boolean</description>
-    <env-entry-name>hawtio/forceBranding</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>false</env-entry-value>
-  </env-entry>
-
-  <env-entry>
-    <description>Properties to check when figuring out what branding to use, comma separated values</description>
-    <env-entry-name>hawtio/propertiesToCheck</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>karaf.version</env-entry-value>
-  </env-entry>
-
-  <env-entry>
-    <description>The strings that will enable branding, comma separated values</description>
-    <env-entry-name>hawtio/wantedStrings</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>redhat,fuse</env-entry-value>
-  </env-entry>
-
-  <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -204,15 +183,6 @@
   <servlet-mapping>
     <servlet-name>plugin</servlet-name>
     <url-pattern>/plugin/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>branding</servlet-name>
-    <servlet-class>io.hawt.web.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>branding</servlet-name>
-    <url-pattern>/branding/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

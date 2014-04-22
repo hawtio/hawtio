@@ -5,17 +5,17 @@
 module Themes {
 
   export var definitions = {
-    'default': {
+    'Default': {
       label: 'Default',
       file: 'css/theme.css'
     },
-    'dark': {
+    'Dark': {
       label: 'Dark',
       file: 'app/themes/css/dark.css'
     }
   };
 
-  export var current = 'default';
+  export var current = 'Default';
 
   export function getAvailable() {
     return Object.extended(Themes.definitions).keys();
@@ -23,7 +23,7 @@ module Themes {
 
   export function setTheme(name) {
     if (!(name in Themes.definitions)) {
-      name = 'default';
+      name = 'Default';
       log.info("unknown theme name, using default theme");
     }
     var theme = Core.pathGet(Themes.definitions, [name]);
@@ -37,7 +37,7 @@ module Themes {
     cssEl.prop("disabled", true);
     if (!theme || !theme['file'] || !theme['label']) {
       log.info("invalid theme, setting theme to Default");
-      cssEl.attr({href: definitions.default['file']});
+      cssEl.attr({href: definitions['Default']['file']});
     } else {
       log.debug("Setting theme to ", theme['label']);
       cssEl.attr({href: theme['file']});
@@ -47,9 +47,11 @@ module Themes {
 
   export var pluginName = "themes";
   export var log:Logging.Logger = Logger.get("Themes");
-  export var _module = angular.module(pluginName, []);
+  export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.run(() => {
+  _module.run((localStorage) => {
+    var themeName = localStorage['theme'];
+    Themes.setTheme(themeName);
     log.debug("Loaded");
   });
 
@@ -58,12 +60,6 @@ module Themes {
     if (!('theme' in localStorage)) {
       localStorage['theme'] = Themes.current;
     }
-    task();
-  });
-
-  hawtioPluginLoader.registerPreBootstrapTask((task) => {
-    var themeName = Core.getLocalStorage()['theme'];
-    Themes.setTheme(themeName);
     task();
   });
 
