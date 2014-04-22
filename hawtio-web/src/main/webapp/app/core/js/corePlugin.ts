@@ -115,11 +115,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         constant('layoutTree', Core.templatePath + 'layoutTree.html').
         constant('layoutFull', Core.templatePath + 'layoutFull.html').
         service('localStorage',function () {
-          // TODO Create correct implementation of windowLocalStorage
-          var storage:WindowLocalStorage = window.localStorage || <any> (function () {
-            return {};
-          })();
-          return storage;
+          return Core.getLocalStorage();
         }).
 
         factory('pageTitle', function () {

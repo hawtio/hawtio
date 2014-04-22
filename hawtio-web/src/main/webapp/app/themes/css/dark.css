@@ -1,0 +1,42 @@
+
+.navbar .brand {
+  color: #eee;
+  text-shadow: none;
+}
+
+.navbar .nav > li > a,
+div#main div ul.nav li a {
+  color: #eee;
+  text-shadow: none;
+}
+
+.navbar-inner {
+  border: 1px solid #888;
+  background-color: #444;
+  background-image: linear-gradient(to bottom, #676666, #454444, #343333);
+  background-repeat: repeat-x;
+}
+
+.navbar-inner.main-nav-upper {
+  background-color: #343333;
+  background-image: none;
+}
+
+
+div#main div ul.nav {
+  border: inherit;
+  background-color: inherit;
+  background-image: inherit;
+  color: #eee;
+}
+
+.navbar .nav > li {
+  background: inherit;
+}
+
+body {
+  color: #eee;
+  background: #444;
+}
+
+

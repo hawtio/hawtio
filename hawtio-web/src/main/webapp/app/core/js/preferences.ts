@@ -18,6 +18,15 @@ module Core {
       return answer;
     }
 
+    $scope.currentTheme = Themes.current;
+    $scope.availableThemes = Themes.getAvailable();
+
+    $scope.$watch('currentTheme', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        Themes.setTheme(newValue);
+      };
+    });
+
     $scope.branding = branding;
 
     if (!angular.isDefined(localStorage['logLevel'])) {

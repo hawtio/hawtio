@@ -35,14 +35,11 @@
     <link rel='stylesheet' media='screen and (min-width: 980px)' href='css/site-wide.css?v=@VERSION@' type='text/css'/>
     <link rel='stylesheet' media='screen and (max-width: 979px)' href='css/site-narrow.css?v=@VERSION@' type='text/css'/>
     -->
+    <link id="theme" rel="stylesheet" href="" type="text/css">
 
     <link rel="stylesheet" href="css/vendor.css?v=@VERSION@" type="text/css">
 
     <link rel='icon' type='image/ico' href='favicon.ico'/>
-
-    <!--[if lt IE 9]>
-    <script type="text/javascript" src="lib/html5shiv.js?v=@VERSION@"></script>
-    <![endif]-->
 
     <script type="text/ng-template" id="logClipboardTemplate">
 <!--
@@ -227,6 +224,7 @@ div.log-stack-trace p:nth-child(odd) {
         <div ng-include src="viewPartial"></div>
       </div>
 
+      <!--
       <div class='instance-name clearfix ng-cloak' ng-show="loggedIn()">
         <i ng-show="collapse === ''" class="clickable icon-caret-right" title="Hide" ng-click="collapse = 'instance-name-collapse'"></i>
         <i ng-show="collapse === 'instance-name-collapse'" class="clickable icon-caret-left" title="Show" ng-click="collapse = ''"></i>
@@ -237,6 +235,7 @@ div.log-stack-trace p:nth-child(odd) {
           </ul>
         </div>
       </div>
+      -->
 
       <div class="ng-cloak">
         <div modal="confirmLogout">
@@ -283,6 +282,10 @@ div.log-stack-trace p:nth-child(odd) {
       </div>
     </div>
 
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js?v=@VERSION@"></script>
+    <![endif]-->
+
     <!--
       Configure logging first thing...
     -->
@@ -295,19 +298,6 @@ div.log-stack-trace p:nth-child(odd) {
 
     <!-- Now load and set up the plugin loader -->
     <script type="text/javascript" src="lib/hawtio-plugin-loader.js?v=@VERSION@"></script>
-
-<!--
-    <script type="text/javascript">
-      hawtioPluginLoader.setLoaderCallback({
-        scriptLoaderCallback: function (self, total, remaining) {
-          Logger.get("Core").debug("Total scripts: ", total, " Remaining: ", remaining);
-        },
-        urlLoaderCallback: function (self, total, remaining) {
-          Logger.get("Core").debug("Total URLs: ", total, " Remaining: ", remaining);
-        }
-      });
-    </script>
--->
 
     <!-- charts and jolokia for jmx -->
     <script type="text/javascript" src="lib/d3.v3.min.js?v=@VERSION@"></script>
@@ -390,7 +380,6 @@ div.log-stack-trace p:nth-child(odd) {
     <script type="text/javascript" src="lib/codemirror/mode/clike/clike.js?v=@VERSION@"></script>
     <script type="text/javascript" src="lib/codemirror/mode/yaml/yaml.js?v=@VERSION@"></script>
 
-
     <!-- AngularUI -->
     <script type="text/javascript" src="lib/angular-ui.js?v=@VERSION@"></script>
     <script type="text/javascript" src="lib/ui-bootstrap-0.4.0.min.js?v=@VERSION@"></script>
@@ -416,7 +405,8 @@ div.log-stack-trace p:nth-child(odd) {
 
     <!-- prefix free - handles browser css prefixes -->
     <!--[if !IE]> -->
-    <script type="text/javascript" src="lib/prefixfree.min.js?v=@VERSION@"></script>
+    <!--
+    <script type="text/javascript" src="lib/prefixfree.min.js?v=@VERSION@"></script> -->
     <!-- <![endif]-->
     <!-- angular drag/drop directives -->
     <script type="text/javascript" src="lib/angular-dragdrop.min.js?v=@VERSION@"></script>
@@ -426,7 +416,6 @@ div.log-stack-trace p:nth-child(odd) {
 
     <!-- zeroclipboard -->
     <script type="text/javascript" src="lib/ZeroClipboard.min.js?v=@VERSION@"></script>
-
 
     <!-- And finally the main app -->
     <script type="text/javascript" src="app/app.js?v=@VERSION@"></script>

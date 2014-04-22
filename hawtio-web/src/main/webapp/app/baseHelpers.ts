@@ -38,6 +38,19 @@ module Core {
     }
   }
 
+  var dummyStorage = {};
+
+  /**
+   * Wrapper to get the window local storage object
+   * @returns {WindowLocalStorage}
+   */
+  export function getLocalStorage() {
+    // TODO Create correct implementation of windowLocalStorage
+    var storage:WindowLocalStorage = window.localStorage || <any> (function () {
+      return dummyStorage;
+    })();
+    return storage;
+  }
 
   /**
    * If the value is not an array then wrap it in one
