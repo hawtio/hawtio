@@ -7,6 +7,13 @@ a:focus {
 .navbar .brand {
   font-size: 18px;
 }
+
+.brand > img {
+  vertical-align: top;
+  height: 11px;
+  width: auto;
+}
+
 .property-name {
   white-space: nowrap;
 }
