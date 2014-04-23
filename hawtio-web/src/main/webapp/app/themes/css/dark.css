@@ -23,6 +23,27 @@ div#main div ul.nav li a {
   background-image: none;
 }
 
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs {
+  border-radius: 0;
+}
+
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs > li > a {
+  border-radius: 0;
+}
+
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs li a {
+  background: inherit;
+}
+
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs *,
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs li:hover,
+.navbar-inner.main-nav-upper > .container > .pull-right > .nav.nav-tabs li a:hover,
+.dropdown-menu li > a {
+  border: none;
+  border-radius: 0;
+  color: #999999;
+}
+
 .navbar-inner.main-nav-lower {
   border-top: none;
   border-bottom: 1px solid #222222;
@@ -41,6 +62,7 @@ div#main div ul.nav li a {
   background-color: #434242;
   background-image: linear-gradient(to bottom, #454242, #343131);
   background-repeat: repeat-x;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
 .nav.nav-tabs li.active a {
@@ -99,13 +121,15 @@ body {
 .section-header {
   background: inherit;
   background-image: linear-gradient(to bottom, #454242, #343131);
-  border: 1px solid #555555;
+  border: 1px solid #444;
   border-radius: 4px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
 .box {
-  background: inherit;
-  border-bottom-color: #555555;
+  padding-top: 15px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 15px;
 }
 
 a {
@@ -132,11 +156,16 @@ a:hover {
   background: #454545
 }
 
+.ngTopPanel {
+  border-bottom: 1px solid #454545;
+}
+
 .widget-body {
   border: 1px solid #444444;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   border-top: none;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
 .widget-title {
@@ -152,6 +181,7 @@ a:hover {
   border-bottom-right-radius: 4px;
   border: 1px solid #353535;
   border-top: none;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
 .logbar > .wiki.logbar-container > .nav.nav-tabs {
@@ -221,6 +251,7 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   background: #292929;
   border-radius: 4px;
   border: 1px solid #333333;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
 .well {
@@ -248,6 +279,8 @@ ul.dynatree-container a:focus, span.dynatree-focused a:link {
   background: #292929;
   border-radius: 4px;
   border: 1px solid #333333;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+
 }
 
 .log-table > li:nth-child(odd) > div > div:not(.stack-line) {
@@ -341,3 +374,151 @@ legend {
   color: #aaaaaa;
   background-color: #333333;
 }
+
+div.hawtio-form-tabs ul.nav-tabs {
+  padding-bottom: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+div.hawtio-form-tabs ul.nav-tabs:not(.connected) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+div.hawtio-form-tabs div.tab-content {
+  border: 1px solid #444444;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+td.adding {
+  background-color: #226699 !important;
+}
+
+td.deleting {
+  background-color: #994444 !important;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle,
+.navbar .nav li.dropdown.active > .dropdown-toggle,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+  background-color: #444444;
+  color: #999999;
+}
+
+.dropdown.open {
+  background-color: #333333 !important;
+  border-bottom: 1px solid #333333 !important;
+}
+
+.dropdown.open > .dropdown-menu {
+  margin-top: 1px;
+  background-color: #333333 !important;
+  border: 1px solid #555555 !important;
+  border-top: none !important;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
+}
+
+.dropdown.open > .dropdown-menu > li:hover,
+.dropdown-menu li > a:hover,
+.dropdown-menu li > a:focus,
+.dropdown-submenu:hover > a {
+  background-color: #555555;
+  background: #555555;
+  color: #bbbbbb;
+}
+
+.bundle-item-details {
+  background: white;
+}
+
+.bundle-item > a {
+  border-radius: 4px;
+  border: 1px solid #444444;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  background: #444444;
+  background-image: linear-gradient(to bottom, #373535 0%, #2f2b2b 34%, #222222 76%);
+}
+
+.bundle-item.in-selected-repository > a {
+  background: #ddeeff;
+  background-image: linear-gradient(to bottom, #354f35 0%, #2b402b 34%, #223222 76%);
+}
+
+.bundle-item > a:hover {
+  text-decoration: none;
+}
+
+.bundle-item a span {
+  background: inherit;
+  border-radius: 4px;
+  border: 0px;
+  color: #aaaaaa;
+  text-shadow: none;
+}
+
+.bundle-item a span.badge::before {
+  border-radius: 3px;
+  background: #737373;
+}
+
+.bundle-item a span.badge-success::before {
+  background: #1cd11d;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(34, 203, 1, 0.49);
+}
+
+.bundle-item a span.badge-inverse::before {
+  background: #737373;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5);
+}
+
+.bundle-item a span.badge-important::before {
+  background: #ee0002;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(195, 6, 0, 0.47);
+}
+
+.bundle-item a span.badge-info::before {
+  background: #3a87ad;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(45, 105, 135, 0.47);
+}
+
+.bundle-item a span.badge-warning::before {
+  background: #f89406;
+  box-shadow: inset 0px 1px 0px 0px rgba(250, 250, 250, 0.5), 0px 0px 4px 1px rgba(198, 118, 5, 0.47);
+}
+
+.bundle-item a.toggle-action {
+  border-radius: 0;
+  border: none;
+  opacity: 0.2;
+  color: inherit;
+  box-shadow: none;
+}
+
+.bundle-item a.toggle-action .icon-power-off {
+  color: orange;
+}
+
+.bundle-item a.toggle-action .icon-play-circle {
+  color: green;
+}
+
+#tree-ctrl {
+  border: 1px solid #444444;
+  text-align: center;
+  background-image: linear-gradient(to bottom, #454242, #343131);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
+}
+
+#tree-ctrl > li > a:hover {
+  background-color: inherit;
+}
+
+.axis text {
+  fill: #888888;
+}
+

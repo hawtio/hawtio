@@ -1374,25 +1374,34 @@ h4 > .contained {
   top: 0;
 }
 
-.box .box-left {
+.box > .box-left {
   display: inline-block;
   position: absolute;
   left: 11px;
-  bottom: 14%;
+  vertical-align: middle;
+  top: 50%;
+  margin-top: -22px;
+  height: 30px;
 }
 
-.box .box-right {
+.box > .box-right {
   display: inline-block;
   position: absolute;
   right: 11px;
-  bottom: 14%;
+  vertical-align: middle;
+  top: 50%;
+  margin-top: -15px;
+  height: 30px;
 }
 
-.box .box-middle {
+.box > .box-middle {
   display: inline-block;
   position: absolute;
   right: 60px;
-  bottom: 14%;
+  vertical-align: middle;
+  top: 50%;
+  margin-top: -15px;
+  height: 30px;
 }
 
 .box-middle ul.inline li {
@@ -1794,6 +1803,11 @@ div#main div ul.nav li a.nav-primary .caret {
 .main-nav-upper .container {
   width: auto;
   line-height: 11px;
+}
+
+.main-nav-upper .icon-desktop:before {
+  position:relative;
+  top: 1px;
 }
 
 .main-nav-lower .container:before {
@@ -2868,12 +2882,12 @@ i.expandable-indicator.folder {
 
 /* Makes the font smaller for all subheader elements. */
 .tocify-subheader li {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 /* Further indents second level subheader elements. */
 .tocify-subheader .tocify-subheader {
-    text-indent: 30px;
+  text-indent: 30px;
 }
 
 /* Further indents third level subheader elements. You can continue this pattern if you have more nested elements. */
