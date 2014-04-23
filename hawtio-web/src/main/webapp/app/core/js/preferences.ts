@@ -23,8 +23,8 @@ module Core {
 
     $scope.$watch('currentTheme', (newValue, oldValue) => {
       if (newValue !== oldValue) {
-        Themes.setTheme(newValue);
-      };
+        Themes.setTheme(newValue, branding);
+      }
     });
 
     $scope.branding = branding;

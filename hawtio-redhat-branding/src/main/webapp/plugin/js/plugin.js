@@ -23,9 +23,13 @@ var Branding = (function (Branding) {
         Branding.profile = response.profile;
         Themes.definitions['Red Hat'] = {
           label: 'Red Hat',
-          file: Branding.context + '/plugin/css/site-branding.css'
+          file: Branding.context + '/plugin/css/site-branding.css',
+          loginBg: Branding.context + '/plugin/img/login-screen-background.jpg'
         };
-        Themes.current = 'Red Hat';
+        var localStorage = Core.getLocalStorage();
+        if (!('theme' in localStorage)) {
+          localStorage['theme'] = 'Red Hat';
+        }
       }
       task();
     });
@@ -40,7 +44,7 @@ var Branding = (function (Branding) {
     Branding.log.info("enabled branding");
     branding.appName = 'Management Console';
     branding.appLogo = Branding.context + '/plugin/img/RHJB_Fuse_UXlogotype_0513LL_white.svg';
-    branding.loginBg = Branding.context + '/plugin/img/login-screen-background.jpg';
+
     branding.fullscreenLogin = true;
     branding.profile = Branding.profile;
     branding.isAMQ = false;
