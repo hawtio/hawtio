@@ -44,6 +44,7 @@ var Branding = (function (Branding) {
     branding.fullscreenLogin = true;
     branding.profile = Branding.profile;
     branding.isAMQ = false;
+    branding.enabled = true;
 
     if (branding.profile) {
       Branding.mqProfiles.forEach(function (profile) {

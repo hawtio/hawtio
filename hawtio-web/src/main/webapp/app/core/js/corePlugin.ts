@@ -158,7 +158,8 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
             appName: 'hawtio',
             appLogo: 'img/logo-16px.png',
             loginBg: 'img/fire.jpg',
-            fullscreenLogin: false
+            fullscreenLogin: false,
+            enabled: false
           }
 
         }).

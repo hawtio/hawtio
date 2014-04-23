@@ -17,7 +17,7 @@ module Core {
         if (angular.isDefined(data)) {
           $scope.html = marked(data);
           $scope.branding = branding;
-          $scope.customBranding = Branding.enabled;
+          $scope.customBranding = branding.enabled;
           try {
             $scope.hawtioVersion = jolokia.request({
               type: "read",
