@@ -19,8 +19,13 @@ div#main div ul.nav li a {
 }
 
 .navbar-inner.main-nav-upper {
-  background-color: #353030;
+  background-color: #1f1f1f;
   background-image: none;
+}
+
+.navbar-inner.main-nav-lower {
+  border-top: none;
+  border-bottom: 1px solid #222222;
 }
 
 .main-nav-upper > .container > .pull-right > .nav.nav-tabs {
@@ -65,12 +70,18 @@ div#main div ul.nav li a {
   color: #888888;
 }
 
+#main .logbar[ng-controller='Wiki.NavBarController'] .wiki.logbar-container .nav.nav-tabs, #main .logbar-wiki .wiki.logbar-container .nav.nav-tabs {
+  border: none;
+  box-shadow: none;
+  background: inherit;
+}
+
 .navbar .nav > li {
   background: inherit;
 }
 
-.navbar .nav > .active > a, 
-.navbar .nav > .active > a:hover, 
+.navbar .nav > .active > a,
+.navbar .nav > .active > a:hover,
 .navbar .nav > .active > a:focus {
   background: #434242;
   color: #dddddd;
@@ -82,7 +93,7 @@ div#main div ul.nav li a {
 
 body {
   color: #cccccc;
-  background: #3e3b3b;
+  background: #2e2d2e;
 }
 
 .section-header {
@@ -113,6 +124,14 @@ a:hover {
   background: #353535;
 }
 
+.ngRow.selected {
+  background: #555555;
+}
+
+.ngVerticalBarVisible {
+  background: #454545
+}
+
 .widget-body {
   border: 1px solid #444444;
   border-bottom-left-radius: 4px;
@@ -128,34 +147,180 @@ a:hover {
 }
 
 .logbar {
-  background: #434242;
+  background: #202020;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-  border: 1px solid #444444;
+  border: 1px solid #353535;
+  border-top: none;
 }
 
 .logbar > .wiki.logbar-container > .nav.nav-tabs {
   background-image: none;
 }
 
-textarea, input[type="text"], 
-input[type="password"], 
-input[type="datetime"], 
-input[type="datetime-local"], 
-input[type="date"], 
-input[type="month"], 
-input[type="time"], 
-input[type="week"], 
-input[type="number"], 
-input[type="email"], 
-input[type="url"], 
-input[type="search"], 
-input[type="tel"], 
-input[type="color"], 
+textarea, input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
 .uneditable-input,
 select {
-  background-color: #333333;
-  background: #333333;
-  border-color: #555555;
+  background-color: #282828;
+  background: #282828;
+  border-color: #333333;
   color: #888888;
+  box-shadow: 0 0 20px #191919 inset;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #202020;
+  background: #202020;
+  color: #888888;
+  border-color: #333333;
+}
+
+ul.dynatree-container a {
+  border: none;
+  color: #888888;
+  border-radius: 4px;
+}
+
+ul.dynatree-container a:hover {
+  background: #888888;
+  color: #333333;
+  border-radius: 4px;
+}
+
+span.dynatree-active a {
+  background: #999999;
+  color: #333333;
+  border-radius: 4px;
+}
+
+ul.dynatree-container a:focus, span.dynatree-focused a:link {
+  background: #888888;
+  color: #333333;
+  border-radius: 4px;
+}
+
+.slideout {
+  background: #292929;
+  border-radius: 4px;
+  border: 1px solid #333333;
+}
+
+.well {
+  background: #222222;
+  border: 1px solid #333;
+}
+
+.table-striped tbody tr:nth-child(even) td, .table-striped tbody tr:nth-child(even) th {
+  background: #323232;
+}
+
+.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background: #353535;
+}
+
+.table th {
+  color: #999999;
+}
+
+.table th, .table td {
+  border-top: 1px solid #292929;
+}
+
+.log-info-panel {
+  background: #292929;
+  border-radius: 4px;
+  border: 1px solid #333333;
+}
+
+.log-table > li:nth-child(odd) > div > div:not(.stack-line) {
+  background-color: #222222;
+  border-top: 1px solid #292929;
+}
+
+.log-table > li:nth-child(even) > div > div:not(.stack-line) {
+  background-color: #242424;
+  border-top: 1px solid #292929;
+}
+
+.log-table > li > div > div:nth-child(2) {
+  border-right: 1px solid #333333;
+}
+
+.log-table > li > div > div:nth-child(3) {
+  border-right: 1px solid #333333;
+}
+
+.log-table > li > div > div:nth-child(4) {
+  border-right: 1px solid #333333;
+}
+
+.monitor-indicator {
+  border-radius: 8px;
+  color: #222222;
+}
+
+.monitor-indicator.true {
+  background-color: #22cc22;
+}
+
+legend {
+  color: #666666;
+  border-bottom: 1px solid #333333;
+}
+
+.btn {
+  color: #aaaaaa;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  background-color: inherit;
+  background-image: linear-gradient(to bottom, #646464, #333333);
+  background-repeat: repeat-x;
+
+  border-color: #666666 #666666 #333333;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+
+  border: 1px solid #333333;
+  border-bottom-color: #222222;
+  border-radius: 0;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,.2), 0 1px 2px rgba(0,0,0,.05);
+}
+
+.btn-success {
+  color: #dddddd;
+  background-image: linear-gradient(to bottom, #64aa64, #336633);
+}
+
+.btn-danger {
+  color: #dddddd;
+  background-image: linear-gradient(to bottom, #aa6464, #663333);
+}
+
+.btn-primary {
+  color: #dddddd;
+  background-image: linear-gradient(to bottom, #6464aa, #333366);
+}
+
+.btn.disabled,
+.btn[disabled] {
+  color: #aaaaaa;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  background-color: #393939;
+  border: 1px solid #555555;
 }
