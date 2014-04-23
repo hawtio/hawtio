@@ -309,7 +309,7 @@ var SOCIAL = (function (SOCIAL) {
         Core.register(jolokia, $scope, $scope.req, onSuccess(render));
     }
 
-    SOCIAL.MapController = function ($scope, $templateCache, jolokia) {
+    SOCIAL.MapController = function ($scope, $templateCache) {
 
         if (!$scope.myMap) {
             $scope.model = {
@@ -330,13 +330,6 @@ var SOCIAL = (function (SOCIAL) {
                 zoom: 15,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
-
-            Core.register(jolokia, $scope, {
-                type: 'exec',
-                mbean: SOCIAL.mbean,
-                operation: 'userInfo',
-                arguments: [$scope.username]
-            }, onSuccess(render));
         }
 
         SOCIAL.startMap = $scope.start();
@@ -376,7 +369,7 @@ var SOCIAL = (function (SOCIAL) {
         // only assign template to scope so we only draw map when we are ready
         $scope.template = $templateCache.get("pageTemplate");
 
-        Core.$apply($scope);
+        // Core.$apply($scope);
     };
     return SOCIAL;
 }(SOCIAL || { }));
