@@ -118,9 +118,11 @@ module Fabric {
       Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
 
       Core.pathSet(schema.properties, ['replicas', 'control-group-attributes', "ng-show"], isReplicated);
-      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "placeholder"], "3");
+      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "value"], "{{3}}");
+      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "min"], "1");
       Core.pathSet(schema.properties, ['minimumInstances', 'control-group-attributes', "ng-hide"], isReplicated);
-      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
+      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "value"], "{{" + isStandalone + " ? 1 : 2}}");
+      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "min"], "1");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
       Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
