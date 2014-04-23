@@ -522,3 +522,14 @@ td.deleting {
   fill: #888888;
 }
 
+#log-panel #close {
+  background-image: linear-gradient(to bottom, #454242, #343131);
+  border: 1px solid #555555;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+#log-panel-statements {
+  background: #141414;
+}
+
