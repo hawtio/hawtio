@@ -17,8 +17,9 @@ var SOCIAL = (function (SOCIAL) {
     SOCIAL.mbeanType = "SocialMedia";
     SOCIAL.attribute = "PublishData";
     SOCIAL.mbean = SOCIAL.jmxDomain + ":type=" + SOCIAL.mbeanType;
+    SOCIAL.startMap = function() {};
 
-    SOCIAL.module = angular.module(SOCIAL.pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui', 'hawtio-forms'])
+    SOCIAL.module = angular.module(SOCIAL.pluginName, ['ui', 'bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui', 'hawtio-forms'])
         .config(function ($routeProvider) {
             $routeProvider.
                 when('/social/chart', { templateUrl: SOCIAL.templatePath + 'areachart.html' }).
@@ -308,6 +309,75 @@ var SOCIAL = (function (SOCIAL) {
         Core.register(jolokia, $scope, $scope.req, onSuccess(render));
     }
 
+    SOCIAL.MapController = function ($scope, $templateCache, jolokia) {
+
+        if (!$scope.myMap) {
+            $scope.model = {
+                myMap: undefined
+            };
+        }
+
+        if (!$scope.myMarkers) {
+            $scope.myMarkers = [];
+        }
+
+        $scope.address = "Florennes, BE";
+
+        $scope.start = function() {
+            // must have initial map options
+            $scope.mapOptions = {
+                center: new google.maps.LatLng(35.784, -78.670),
+                zoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            Core.register(jolokia, $scope, {
+                type: 'exec',
+                mbean: SOCIAL.mbean,
+                operation: 'userInfo',
+                arguments: [$scope.username]
+            }, onSuccess(render));
+        }
+
+        SOCIAL.startMap = $scope.start();
+
+        $('body').append('<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false&async=2&callback=SOCIAL.startMap"></script>');
+
+
+        $scope.codeAddress = function () {
+            var address = $scope.address;
+            geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({ 'address': address}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                    var latlng = new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+                    var mapOptions = {
+                        zoom: 15,
+                        center: latlng,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    }
+                    $scope.myMap = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+
+                    // Add it after rendering of the map otherwise, don't appear
+                    var marker = new google.maps.Marker({
+                        map: $scope.myMap,
+                        position: results[0].geometry.location
+                    });
+                    $scope.myMarkers.push(marker);
+
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        };
+
+        // only assign template to scope so we only draw map when we are ready
+        $scope.template = $templateCache.get("pageTemplate");
+
+        Core.$apply($scope);
+    };
     return SOCIAL;
 }(SOCIAL || { }));
 

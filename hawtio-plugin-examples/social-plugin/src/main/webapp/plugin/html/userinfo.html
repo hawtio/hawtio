@@ -1,3 +1,10 @@
+<script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=onGoogleReady"></script>
+<script>
+    function onGoogleReady() {
+        angular.bootstrap(document.getElementById("map"), ['SOCIAL']);
+    }
+</script>
 <div clas="row-fluid gridStyle" ng-controller='SOCIAL.FormController'>
     <div class="row-fluid">
         <div class="span12">
@@ -63,6 +70,32 @@
                 </tr>
                 </tbody>
             </table>
+
+
+            <div id="map" ng-controller="SOCIAL.MapController">
+                <input type="textbox" ng-model="address">
+                <input type="button" value="Geocode" ng-click="codeAddress()">
+
+                <script type="text/ng-template" id="pageTemplate">
+
+                    <div ng-repeat="marker in myMarkers"></div>
+
+                    <div class="map"
+                         id="map_canvas"
+                         ui-map="myMap"
+                         ui-options="mapOptions">
+                    </div>
+
+                    <style type="text/css">
+                        .map {
+                            height: 500px;
+                            width: 100%;
+                        }
+                    </style>
+
+                </script>
+            </div>
         </div>
     </div>
+</div>
 </div>
