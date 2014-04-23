@@ -180,7 +180,14 @@ module Fabric {
         }
     }).
 
-          run(($location: ng.ILocationService, workspace: Workspace, jolokia, viewRegistry, pageTitle:Core.PageTitle, helpRegistry, $rootScope) => {
+          run(($location: ng.ILocationService,
+               workspace: Workspace,
+               jolokia,
+               viewRegistry,
+               pageTitle:Core.PageTitle,
+               helpRegistry,
+               $rootScope,
+               postLoginTasks) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
@@ -188,42 +195,19 @@ module Fabric {
               return Fabric.currentContainerId;
             });
 
-            if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
-              jolokia.request({
-                type: 'read', mbean: Fabric.managerMBean, attribute: 'CurrentContainerName'
-              }, onSuccess((response) => {
-                Fabric.currentContainerId = response.value;
-                if ('container' in Perspective.metadata) {
-                  Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);
-                }
-                Core.$apply($rootScope);
-              }));
-
-            }
-
-            /*
-            if (!Fabric.isFMCContainer(workspace)) {
-              Perspective.metadata.dummyFabric = {
-                label: "Fabric",
-                isValid: (workspace) => true,
-                onSelect: () => { }
-              };
-            }
-            */
-
-            /*
-
-            pageTitle.addTitleElement( ():string => {
+            postLoginTasks['fabricFetchContainerName'] = () => {
               if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
-                try {
-                  Fabric.currentContainerId = jolokia.getAttribute(Fabric.managerMBean, 'CurrentContainerName', {timeout: 1});
-                } catch (e) {
-                  // ignore
-                }
+                jolokia.request({
+                  type: 'read', mbean: Fabric.managerMBean, attribute: 'CurrentContainerName'
+                }, onSuccess((response) => {
+                  Fabric.currentContainerId = response.value;
+                  if ('container' in Perspective.metadata) {
+                    Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);
+                  }
+                  Core.$apply($rootScope);
+                }));
               }
-              return Fabric.currentContainerId;
-            });
-            */
+            };
 
             workspace.topLevelTabs.push( {
               id: "fabric.runtime",

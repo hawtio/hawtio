@@ -32,6 +32,8 @@ module Core {
 
   export var templatePath = 'app/core/html/';
 
+  export var postLoginTasks = {};
+
 }
 
 
@@ -129,6 +131,10 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
 
         factory('lastLocation', function () {
           return {};
+        }).
+
+        factory('postLoginTasks', function() {
+          return Core.postLoginTasks;
         }).
 
         factory('helpRegistry', function($rootScope) {
@@ -280,6 +286,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
                         Core.log.debug("Response is a document (ignoring this): ", doc);
                       }
                   }
+                  Core.executePostLoginTasks();
                 },
                 error: (xhr, textStatus, error) => {
                   // silently ignore, we could be using the proxy
