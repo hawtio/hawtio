@@ -4,6 +4,7 @@
   text-shadow: none;
 }
 
+
 .navbar .nav > li > a,
 div#main div ul.nav li a {
   color: #aaaaaa;
@@ -11,31 +12,54 @@ div#main div ul.nav li a {
 }
 
 .navbar-inner {
-  border: 1px solid #555555;
-  background-color: #444;
+  border: 1px solid #444444;
+  background-color: #353030;
   background-image: linear-gradient(to bottom, #676565, #454242, #343131);
   background-repeat: repeat-x;
 }
 
 .navbar-inner.main-nav-upper {
-  background-color: #343333;
+  background-color: #353030;
   background-image: none;
 }
 
-
-div#main div ul.nav {
-  border: inherit;
-  background-color: inherit;
-  background-image: inherit;
-  color: #eee;
+.main-nav-upper > .container > .pull-right > .nav.nav-tabs {
+  background: inherit;
+  border: none;
 }
 
-div#main div ul.nav li.active a {
+.nav.nav-tabs {
+  border: inherit;
+  color: #aaaaaa;
+  border-radius: 0 0 4px 4px;
+  border: 1px solid #444444;
+  background-color: #434242;
+  background-image: linear-gradient(to bottom, #454242, #343131);
+  background-repeat: repeat-x;
+}
+
+.nav.nav-tabs li.active a {
+  border: 1px solid #444444;
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.125) inset;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.nav.nav-tabs li:hover a {
+  border: 1px solid #444444;
+  border-radius: 4px;
+}
+
+.nav.nav-tabs:not(.connected) {
+  border-radius: 4px;
+}
+
+.nav.nav-tabs li.active a {
   background: #333232;
   text-shadow: none;
 }
 
-div#main div ul.nav li a:hover {
+.nav.nav-tabs li a:hover {
   background: #403e3e;
   text-shadow: none;
   color: #888888;
@@ -58,13 +82,14 @@ div#main div ul.nav li a:hover {
 
 body {
   color: #cccccc;
-  background: #444343;
+  background: #3e3b3b;
 }
 
 .section-header {
   background: inherit;
-  background-image: linear-gradient(to bottom, #676565, #454242, #343131);
-  border-color: #555555;
+  background-image: linear-gradient(to bottom, #454242, #343131);
+  border: 1px solid #555555;
+  border-radius: 4px;
 }
 
 .box {
@@ -80,5 +105,57 @@ a:hover {
   color: #dddddd;
 }
 
+.ngRow.even {
+  background: #303030;
+}
 
+.ngRow.odd {
+  background: #353535;
+}
 
+.widget-body {
+  border: 1px solid #444444;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top: none;
+}
+
+.widget-title {
+  border: 1px solid #444444;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: none;
+}
+
+.logbar {
+  background: #434242;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 1px solid #444444;
+}
+
+.logbar > .wiki.logbar-container > .nav.nav-tabs {
+  background-image: none;
+}
+
+textarea, input[type="text"], 
+input[type="password"], 
+input[type="datetime"], 
+input[type="datetime-local"], 
+input[type="date"], 
+input[type="month"], 
+input[type="time"], 
+input[type="week"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="color"], 
+.uneditable-input,
+select {
+  background-color: #333333;
+  background: #333333;
+  border-color: #555555;
+  color: #888888;
+}
