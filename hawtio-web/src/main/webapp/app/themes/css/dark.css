@@ -307,14 +307,26 @@ legend {
   background-image: linear-gradient(to bottom, #64aa64, #336633);
 }
 
+.btn.btn-success:hover {
+  background-color: #336633;
+}
+
 .btn-danger {
   color: #dddddd;
   background-image: linear-gradient(to bottom, #aa6464, #663333);
 }
 
+.btn.btn-danger:hover {
+  background-color: #663333;
+}
+
 .btn-primary {
   color: #dddddd;
   background-image: linear-gradient(to bottom, #6464aa, #333366);
+}
+
+.btn.btn-primary:hover {
+  background-color: #333366;
 }
 
 .btn.disabled,
@@ -323,4 +335,9 @@ legend {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
   background-color: #393939;
   border: 1px solid #555555;
+}
+
+.btn:hover {
+  color: #aaaaaa;
+  background-color: #333333;
 }
