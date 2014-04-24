@@ -185,7 +185,7 @@ div.log-stack-trace p:nth-child(odd) {
 
               <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
 
-                <li ng-show="loggedIn()"
+                <li ng-show="loggedIn() && perspectives.length > 1"
                     class="dropdown perspective-selector">
                   <a href="#" class="dropdown-toggle">
                     <span ng-bind-html-unsafe="perspectiveDetails.perspective.label || 'Perspective'"></span>
@@ -200,6 +200,14 @@ div.log-stack-trace p:nth-child(odd) {
                     </li>
                   </ul>
                 </li>
+
+              <!--
+                <li ng-show="loggedIn()">
+                  <a href="">
+                    <div hawtio-drop-down="menu"></div>
+                  </a>
+                </li>
+              -->
 
                 <li ng-repeat="nav in topLevelTabs track by $index" 
                     ng-class="{active : isActive(nav)}" 
