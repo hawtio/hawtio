@@ -166,9 +166,24 @@
   </div>
 
   <!-- dialogs -->
-  <!--
-  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
-  -->
+  <div modal="createVersionDialog.dialog.show">
+    <form name="createVersion" class="form-horizontal no-bottom-margin" ng-submit="createVersionDialog.onOk()">
+      <div class="modal-header"><h4>Create new Version</h4></div>
+      <div class="modal-body">
+        <label>Version name: </label>
+        <input name="id" class="input-xlarge" type="text" ng-model="createVersionDialog.newVersionName"
+               ng-pattern="/^[1-9][0-9]*(\.[0-9]+)*$/">
+        <span class="help-block"
+              ng-hide="createVersion.id.$invalid">Leave blank to use the next available version number.</span>
+        <span class="help-block"
+              ng-show="createVersion.id.$error.pattern">Version must contain numbers separated by dots.</span>
+      </div>
+      <div class="modal-footer">
+        <input class="btn btn-success" ng-disabled="!createVersion.$valid" type="submit" value="Create">
+        <input class="btn btn-primary" ng-click="createVersionDialog.dialog.close()" value="Cancel">
+      </div>
+    </form>
+  </div>
 
   <div hawtio-confirm-dialog="deleteVersionDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="deleteVersion()">
     <div class="dialog-body">
@@ -198,5 +213,4 @@
     </form>
   </div>
 
-  <div ng-include="'app/fabric/html/changeVersionDialog.html'"></div>
 </div>

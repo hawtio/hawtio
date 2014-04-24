@@ -93,6 +93,14 @@ module Fabric {
    */
   export function initScope($scope, $location, jolokia, workspace) {
 
+    // Let's avoid re-defining everything if the $scope
+    // has already been initialized here
+    if ($scope.fabricInitialized) {
+      return;
+    } else {
+      $scope.fabricInitialized = true;
+    }
+
     $scope.gotoProfile = (versionId:string, profileId:string) => {
       Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, versionId, profileId);
     };
@@ -339,6 +347,7 @@ module Fabric {
       newVersionName: "",
 
       open: () => {
+        log.debug("Opening version dialog, $scope: ", $scope);
         $scope.createVersionDialog.newVersionName = "";
         $scope.createVersionDialog.dialog.open();
       },
