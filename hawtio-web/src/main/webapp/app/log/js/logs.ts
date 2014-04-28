@@ -171,6 +171,13 @@ module Log {
       return Log.hasLogSourceHref(row);
     };
 
+    $scope.hasLogSourceLineHref = (row) => {
+      if (!row) {
+        return false;
+      }
+      return Log.hasLogSourceLineHref(row);
+    };
+
     $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
 
     $scope.formatException = (line) => {

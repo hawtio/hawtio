@@ -67,6 +67,11 @@ module Log {
     return angular.isDefined(mavenCoords) && mavenCoords !== "";
   }
 
+  export function hasLogSourceLineHref(log) {
+    var line = log["lineNumber"];
+    return angular.isDefined(line) && line !== "" && line !== "?";
+  }
+
   export function removeQuestion(text: string): string {
     return (!text || text === "?") ? null : text;
   }
