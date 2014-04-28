@@ -104,7 +104,6 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           $routeProvider.
                   when('/login', {templateUrl: Core.templatePath + 'login.html'}).
                   when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
-                  when('/preferences', {templateUrl: Core.templatePath + 'preferences.html'}).
                   when('/about', {templateUrl: Core.templatePath + 'about.html'}).
                   when('/help', {
                     redirectTo: '/help/index'
