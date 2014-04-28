@@ -25,7 +25,7 @@ var SOCIAL = (function (SOCIAL) {
             $routeProvider.
                 when('/social/chart', { templateUrl: SOCIAL.templatePath + 'areachart.html' }).
                 when('/social/tweets', { templateUrl: SOCIAL.templatePath + 'searchtweets.html' }).
-                when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo2.html' });
+                when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo.html' });
         });
 
     SOCIAL.module.run(function (workspace, viewRegistry, helpRegistry) {
@@ -44,8 +44,8 @@ var SOCIAL = (function (SOCIAL) {
          * to match a URL via regex string.
          */
         window['Perspective']['metadata'] = {
-            business: {
-                label: "Business",
+            example: {
+                label: "Example",
                 lastPage: "#/social",
                 isValid: function (workspace) {
                     return true;
