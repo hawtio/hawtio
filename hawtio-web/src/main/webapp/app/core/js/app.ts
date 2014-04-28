@@ -92,6 +92,8 @@ module Core {
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
 
+    $scope.showPrefs = false;
+
     $scope.branding = branding;
 
     $scope.hasMBeans = () => workspace.hasMBeans();
@@ -132,6 +134,14 @@ module Core {
         }
       }
     });
+
+    $scope.showPreferences = () => {
+      $scope.showPrefs = true;
+    };
+
+    $scope.closePreferences = () => {
+      $scope.showPrefs = false;
+    };
 
     $scope.confirmConnectionFailed = () => {
       // I guess we should close the window now?

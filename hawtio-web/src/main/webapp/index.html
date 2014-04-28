@@ -139,7 +139,9 @@ div.log-stack-trace p:nth-child(odd) {
                   </a>
                   <ul class="dropdown-menu right">
                     <li>
-                      <a ng-href="{{link('#/preferences', true)}}" title="Edit your preferences" data-placement="bottom">
+                      <a href="" ng-click="showPreferences()" 
+                         title="Edit your preferences" 
+                         data-placement="bottom">
                         <i class="icon-cogs fixme"></i> Preferences
                       </a>
                     </li>
@@ -224,6 +226,13 @@ div.log-stack-trace p:nth-child(odd) {
             <!--
             </div>
             -->
+          </div>
+        </div>
+      </div>
+
+      <div hawtio-slideout="showPrefs" title="{{branding.appName}} Preferences">
+        <div class="dialog-body">
+          <div ng-include="'app/core/html/preferences.html'">
           </div>
         </div>
       </div>
