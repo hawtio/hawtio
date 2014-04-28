@@ -54,7 +54,7 @@
 
   </feature>
 
-  <feature name="hawtio-simple-plugin" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-simple-example" version="${project.version}" resolver="(obr)">
     <details>A simple example plugin for hawtio</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
@@ -64,6 +64,12 @@
     <details>An example IRC client plugin for hawtio</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/irc-client-plugin/${project.version}/war</bundle>
+  </feature>
+
+  <feature name="hawtio-social-example">
+    <details>hawtio social twitter plugin example</details>
+    <feature>war</feature>
+    <bundle>mvn:io.hawt/social-plugin/${project.version}/war</bundle>
   </feature>
 
   <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
