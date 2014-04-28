@@ -34,12 +34,21 @@ var SOCIAL = (function (SOCIAL) {
      * The controller for this plugin's navigation bar
      *
      */
-    SOCIAL.NavBarController = function ($scope) {
+    SOCIAL.NavBarController = function ($scope, workspace) {
 
         $scope.breadcrumbs = SOCIAL.breadcrumbs;
+        $scope.hash = workspace.hash();
+
+        $scope.$on('$routeChangeSuccess', function () {
+            $scope.hash = workspace.hash();
+        });
 
         $scope.isValid = function(link) {
             return true;
+        };
+
+        $scope.isActive = function (href) {
+          return workspace.isLinkActive(href);
         };
     };
 

@@ -5,7 +5,7 @@
  * The main entrypoint for the Social module
  *
  */
-var SOCIAL = (function (SOCIAL) {
+ var SOCIAL = (function (SOCIAL) {
 
     SOCIAL.pluginName = "SOCIAL";
     SOCIAL.log = Logger.get(SOCIAL.pluginName);
@@ -21,69 +21,14 @@ var SOCIAL = (function (SOCIAL) {
     };
 
     SOCIAL.module = angular.module(SOCIAL.pluginName, ['ui', 'bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui', 'hawtio-forms'])
-        .config(function ($routeProvider) {
-            $routeProvider.
-                when('/social/chart', { templateUrl: SOCIAL.templatePath + 'areachart.html' }).
-                when('/social/tweets', { templateUrl: SOCIAL.templatePath + 'searchtweets.html' }).
-                when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo.html' });
-        });
+    .config(function ($routeProvider) {
+        $routeProvider.
+        when('/social/chart', { templateUrl: SOCIAL.templatePath + 'areachart.html' }).
+        when('/social/tweets', { templateUrl: SOCIAL.templatePath + 'searchtweets.html' }).
+        when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo.html' });
+    });
 
     SOCIAL.module.run(function (workspace, viewRegistry, helpRegistry) {
-
-        SOCIAL.log.debug("Current metadata: ", window['Perspective']['metadata']);
-        SOCIAL.log.debug("Top level tabs:");
-
-        workspace.topLevelTabs.forEach(function (tab) {
-            SOCIAL.log.debug("Tab content:", tab['content'], " id: ", tab['id'], " href: ", tab.href());
-        });
-
-        /**
-         * By default tabs are pulled from the "container" perspective, here
-         * we can define includes or excludes to customize the available tabs
-         * in hawtio.  Use "href" to match from the start of a URL and "rhref"
-         * to match a URL via regex string.
-         */
-        window['Perspective']['metadata'] = {
-            example: {
-                label: "Example",
-                lastPage: "#/social",
-                isValid: function (workspace) {
-                    return true;
-                },
-                topLevelTabs: {
-                    includes: [
-                        { href: "#/social"}
-                    ]
-                }
-            },
-            container: {
-                label: "Container",
-                lastPage: "#/help",
-                isValid: function (workspace) {
-                    return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
-                },
-                topLevelTabs: {
-                    excludes: [
-                        { href: "#/social" },
-                        { href: "#/eshead" },
-                        { href: "#/kibanalogs" },
-                        { href: "#/kibanacamel" }
-                        /*                        { href: "#/jvm" },
-                         { href: "#/camel" },
-                         { href: "#/activemq" },
-                         { href: "#/eshead" },
-                         { href: "#/fabric" },
-                         { href: "#/insight" },
-                         { href: "#/camin" },
-                         { href: "#/kibanalogs" },
-                         { href: "#/kibanacamel" },
-                         { href: "#/health" },
-                         { href: "#/wiki" }*/
-                    ]
-                }
-            }
-        };
-
 
         // tell the app to use the full layout, also could use layoutTree
         // to get the JMX tree or provide a URL to a custom layout
@@ -107,11 +52,31 @@ var SOCIAL = (function (SOCIAL) {
             }
         });
 
-    });
+        /**
+         * By default tabs are pulled from the "container" perspective, here
+         * we can define includes or excludes to customize the available tabs
+         * in hawtio.  Use "href" to match from the start of a URL and "rhref"
+         * to match a URL via regex string.
+         */
+         Core.pathSet(Perspective, ['metadata', 'example'], {
+                label: "Example",
+                lastPage: "#/social/user",
+                isValid: function (workspace) {
+                    return true;
+                },
+                topLevelTabs: {
+                    includes: [{
+                        href: "#/social"
+                    }]
+                }
+            });
 
-    SOCIAL.SocialController = function ($scope, jolokia) {
-        $scope.message = "Data collected from Social Camel Component";
-        $scope.likes = "0"
+
+     });
+
+SOCIAL.SocialController = function ($scope, jolokia) {
+    $scope.message = "Data collected from Social Camel Component";
+    $scope.likes = "0"
 
         // register a watch with jolokia on this mbean to
         // get updated metrics
@@ -156,12 +121,12 @@ var SOCIAL = (function (SOCIAL) {
             enableRowClickSelection: false,
             showSelectionCheckbox: false,
             columnDefs: [
-                {
-                    field: 'tweet',
-                    displayName: 'Tweet',
-                    resizable: true,
-                    width: 1500
-                }
+            {
+                field: 'tweet',
+                displayName: 'Tweet',
+                resizable: true,
+                width: 1500
+            }
             ]
         }
 
@@ -175,7 +140,7 @@ var SOCIAL = (function (SOCIAL) {
             if (Core.isBlank($scope.username)) {
                 return;
             }
-            SOCIAL.log.warn("User searched : " + $scope.username);
+            SOCIAL.log.debug("User searched : " + $scope.username);
 
             jolokia.request({
                 type: 'exec',
@@ -189,20 +154,20 @@ var SOCIAL = (function (SOCIAL) {
                      $scope.response = JSON.stringify(response);
                      */
 
-                    $scope.isReply = true;
+                     $scope.isReply = true;
 
-                    value = JSON.parse(response['value']);
-                    $scope.id = value['id'];
-                    $scope.name = value['name'];
-                    $scope.screenName = value['screenName'];
-                    $scope.location = value['location'];
-                    $scope.description = value['description'];
-                    $scope.followersCount = value['followersCount'];
-                    $scope.friendsCount = value['friendsCount'];
-                    $scope.favouritesCount = value['favouritesCount'];
-                    $scope.timeZone = value['timeZone'];
-                    $scope.lang = value['lang'];
-                    $scope.createdAt = value['createdAt'];
+                     value = JSON.parse(response['value']);
+                     $scope.id = value['id'];
+                     $scope.name = value['name'];
+                     $scope.screenName = value['screenName'];
+                     $scope.location = value['location'];
+                     $scope.description = value['description'];
+                     $scope.followersCount = value['followersCount'];
+                     $scope.friendsCount = value['friendsCount'];
+                     $scope.favouritesCount = value['favouritesCount'];
+                     $scope.timeZone = value['timeZone'];
+                     $scope.lang = value['lang'];
+                     $scope.createdAt = value['createdAt'];
 
                     // Reset Username field
                     $scope.username = '';
@@ -216,32 +181,32 @@ var SOCIAL = (function (SOCIAL) {
                 }
 
             })
-        };
+};
 
 
-        $scope.searchTweets = function () {
-            if (Core.isBlank($scope.keywords)) {
-                return;
+$scope.searchTweets = function () {
+    if (Core.isBlank($scope.keywords)) {
+        return;
+    }
+    SOCIAL.log.debug("Search for : " + $scope.keywords);
+
+    jolokia.request({
+        type: 'exec',
+        mbean: SOCIAL.mbean,
+        operation: 'searchTweets',
+        arguments: [$scope.keywords]
+    }, {
+        method: 'POST',
+        success: function (response) {
+            /* TextArea = Response */
+            list = response.value;
+            result = "";
+            for (var record in list) {
+                result += list[record] + String.fromCharCode(13);
             }
-            SOCIAL.log.warn("Search for : " + $scope.keywords);
+            $scope.response = result;
 
-            jolokia.request({
-                type: 'exec',
-                mbean: SOCIAL.mbean,
-                operation: 'searchTweets',
-                arguments: [$scope.keywords]
-            }, {
-                method: 'POST',
-                success: function (response) {
-                    /* TextArea = Response */
-                    list = response.value;
-                    result = "";
-                    for (var record in list) {
-                        result += list[record] + String.fromCharCode(13);
-                    }
-                    $scope.response = result;
-
-                    /* Simple Table */
+            /* Simple Table */
                     //$scope.tweets = response.value;
                     $scope.tweets = response.value.map(function (val) {
                         return { tweet: val };
@@ -261,54 +226,54 @@ var SOCIAL = (function (SOCIAL) {
                 }
 
             })
-        };
+};
 
+};
+
+SOCIAL.AreaChartController = function ($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
+
+    $scope.width = 1280;
+    $scope.height = 300;
+    $scope.delay = 0;
+    $scope.duration = 0;
+    $scope.label = "Nber of Likes"
+
+    $scope.template = "";
+    $scope.entries = [];
+
+    $scope.data = {
+        entries: $scope.entries
     };
 
-    SOCIAL.AreaChartController = function ($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
+    $scope.req = [
+    {type: 'read',
+    mbean: SOCIAL.mbean,
+    attribute: SOCIAL.attribute
+}
+];
 
-        $scope.width = 1280;
-        $scope.height = 300;
-        $scope.delay = 0;
-        $scope.duration = 0;
-        $scope.label = "Nber of Likes"
+function render(response) {
+    $scope.entries.push({
+        time: response.timestamp,
+        count: response.value
+    });
 
-        $scope.template = "";
-        $scope.entries = [];
+    $scope.entries = $scope.entries.last(15);
 
-        $scope.data = {
-            entries: $scope.entries
-        };
-
-        $scope.req = [
-            {type: 'read',
-                mbean: SOCIAL.mbean,
-                attribute: SOCIAL.attribute
-            }
-        ];
-
-        function render(response) {
-            $scope.entries.push({
-                time: response.timestamp,
-                count: response.value
-            });
-
-            $scope.entries = $scope.entries.last(15);
-
-            if ($scope.template === "") {
-                $scope.template = $templateCache.get("areaChart");
-            }
-
-            $scope.data = {
-                _type: "date_histogram",
-                entries: $scope.entries
-            };
-
-            Core.$apply($scope);
-        }
-
-        Core.register(jolokia, $scope, $scope.req, onSuccess(render));
+    if ($scope.template === "") {
+        $scope.template = $templateCache.get("areaChart");
     }
+
+    $scope.data = {
+        _type: "date_histogram",
+        entries: $scope.entries
+    };
+
+    Core.$apply($scope);
+}
+
+Core.register(jolokia, $scope, $scope.req, onSuccess(render));
+}
 
 /*    SOCIAL.MapController = function ($scope, $timeout) {
 
