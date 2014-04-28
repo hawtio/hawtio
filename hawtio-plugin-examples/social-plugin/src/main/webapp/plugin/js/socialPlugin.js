@@ -59,17 +59,17 @@
          * to match a URL via regex string.
          */
          Core.pathSet(Perspective, ['metadata', 'example'], {
-                label: "Example",
-                lastPage: "#/social/user",
-                isValid: function (workspace) {
-                    return true;
-                },
-                topLevelTabs: {
-                    includes: [{
-                        href: "#/social"
-                    }]
-                }
-            });
+            label: "Example",
+            lastPage: "#/social/user",
+            isValid: function (workspace) {
+                return true;
+            },
+            topLevelTabs: {
+                includes: [{
+                    href: "#/social"
+                }]
+            }
+        });
 
 
      });
