@@ -66,21 +66,24 @@
         </div>
     </div>
 </div>
+<!--
 <div id="map" ng-controller="SOCIAL.MapController">
     <input type="textbox" ng-model="address">
     <input type="button" value="Geocode" ng-click="codeAddress()">
 
-    <!-- this is the map -->
+    &lt;!&ndash; this is the map &ndash;&gt;
     <div compile="template"></div>
 
     <script type="text/ng-template" id="pageTemplate">
 
         <div ng-repeat="marker in myMarkers"></div>
 
-        <div class="map"
-             id="map_canvas"
-             ui-map="myMap"
-             ui-options="mapOptions">
+        <div ng-show="isShow">
+            <div class="map"
+                 id="map_canvas"
+                 ui-map="myMap"
+                 ui-options="mapOptions">
+            </div>
         </div>
 
         <style type="text/css">
@@ -89,7 +92,5 @@
                 width: 100%;
             }
         </style>
-
     </script>
-</div>
-</div>
+</div>-->

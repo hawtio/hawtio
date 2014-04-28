@@ -17,14 +17,15 @@ var SOCIAL = (function (SOCIAL) {
     SOCIAL.mbeanType = "SocialMedia";
     SOCIAL.attribute = "PublishData";
     SOCIAL.mbean = SOCIAL.jmxDomain + ":type=" + SOCIAL.mbeanType;
-    SOCIAL.startMap = function() {};
+    SOCIAL.startMap = function() {
+    };
 
     SOCIAL.module = angular.module(SOCIAL.pluginName, ['ui', 'bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui', 'hawtio-forms'])
         .config(function ($routeProvider) {
             $routeProvider.
                 when('/social/chart', { templateUrl: SOCIAL.templatePath + 'areachart.html' }).
                 when('/social/tweets', { templateUrl: SOCIAL.templatePath + 'searchtweets.html' }).
-                when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo.html' });
+                when('/social/user', { templateUrl: SOCIAL.templatePath + 'userinfo2.html' });
         });
 
     SOCIAL.module.run(function (workspace, viewRegistry, helpRegistry) {
@@ -309,7 +310,9 @@ var SOCIAL = (function (SOCIAL) {
         Core.register(jolokia, $scope, $scope.req, onSuccess(render));
     }
 
-    SOCIAL.MapController = function ($scope, $templateCache) {
+/*    SOCIAL.MapController = function ($scope, $timeout) {
+
+        //$('body').append('<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=onGoogleReady"></script><script>function onGoogleReady(){angular.bootstrap(document.getElementById("map"),["SOCIAL"]);}</script>');
 
         if (!$scope.myMap) {
             $scope.model = {
@@ -321,21 +324,47 @@ var SOCIAL = (function (SOCIAL) {
             $scope.myMarkers = [];
         }
 
+        var mapInitFlag = false;
+        $scope.showMap = function(){
+            $scope.isShow = !$scope.isShow;
+            if(!mapInitFlag)
+            {
+                $timeout(function(){
+                    google.maps.event.trigger($scope.myMap,'resize');
+                    mapInitFlag=true;
+                    console.log('adjust map');
+                });
+            }
+        };
+
         $scope.address = "Florennes, BE";
 
-        $scope.start = function() {
+*//*        $scope.start = function() {
+
+            debugger;
+
             // must have initial map options
             $scope.mapOptions = {
                 center: new google.maps.LatLng(35.784, -78.670),
                 zoom: 15,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
+
+            $scope.isShow = !$scope.isShow;
         }
 
-        SOCIAL.startMap = $scope.start();
+        SOCIAL.startMap = $scope.start;*//*
 
-        $('body').append('<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false&async=2&callback=SOCIAL.startMap"></script>');
+        *//*
+        $('body').append('<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=SOCIAL.startMap"></script>');
+        *//*
 
+        // must have initial map options
+        $scope.mapOptions = {
+            center: new google.maps.LatLng(35.784, -78.670),
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
 
         $scope.codeAddress = function () {
             var address = $scope.address;
@@ -366,11 +395,10 @@ var SOCIAL = (function (SOCIAL) {
             });
         };
 
-        // only assign template to scope so we only draw map when we are ready
-        $scope.template = $templateCache.get("pageTemplate");
+*//*        // only assign template to scope so we only draw map when we are ready
+        $scope.template = $templateCache.get("pageTemplate");*//*
 
-        // Core.$apply($scope);
-    };
+    };*/
     return SOCIAL;
 }(SOCIAL || { }));
 
