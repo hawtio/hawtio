@@ -8,6 +8,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -324,13 +325,27 @@ public class ProxyServlet extends HttpServlet {
             httpServletResponse.setHeader(header.getName(), header.getValue());
         }
 
-        // Send the content to the client
-        InputStream inputStreamProxyResponse = httpMethodProxyRequest.getResponseBodyAsStream();
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStreamProxyResponse);
-        OutputStream outputStreamClientResponse = httpServletResponse.getOutputStream();
-        int intNextByte;
-        while ((intNextByte = bufferedInputStream.read()) != -1) {
-            outputStreamClientResponse.write(intNextByte);
+        // check if we got data, that is either the Content-Length > 0
+        // or the response code != 204
+        int code = httpMethodProxyRequest.getStatusCode();
+        boolean noData = code == HttpStatus.SC_NO_CONTENT;
+        if (!noData) {
+            String length = httpServletRequest.getHeader(STRING_CONTENT_LENGTH_HEADER_NAME);
+            if (length != null && "0".equals(length.trim())) {
+                noData = true;
+            }
+        }
+        LOG.trace("Response has data? {}", !noData);
+
+        if (!noData) {
+            // Send the content to the client
+            InputStream inputStreamProxyResponse = httpMethodProxyRequest.getResponseBodyAsStream();
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStreamProxyResponse);
+            OutputStream outputStreamClientResponse = httpServletResponse.getOutputStream();
+            int intNextByte;
+            while ((intNextByte = bufferedInputStream.read()) != -1) {
+                outputStreamClientResponse.write(intNextByte);
+            }
         }
     }
 
