@@ -93,8 +93,20 @@ module Core {
     $scope.connectFailure = {};
 
     $scope.showPrefs = false;
+    setTimeout(() => {
+      if ('showPrefs' in localStorage) {
+        $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
+        Core.$apply($scope);
+      }
+    }, 500);
 
     $scope.branding = branding;
+
+    $scope.$watch('showPrefs', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        localStorage['showPrefs'] = newValue;
+      }
+    });
 
     $scope.hasMBeans = () => workspace.hasMBeans();
 

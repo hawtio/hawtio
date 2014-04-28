@@ -55,9 +55,10 @@ module Themes {
   export var log:Logging.Logger = Logger.get("Themes");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.run((localStorage, branding) => {
+  _module.run((localStorage, branding, preferencesRegistry) => {
     var themeName = localStorage['theme'];
     Themes.setTheme(themeName, branding);
+    preferencesRegistry.addTab("Theme", "app/themes/html/preferences.html");
     log.debug("Loaded");
   });
 

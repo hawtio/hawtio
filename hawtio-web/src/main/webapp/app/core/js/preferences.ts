@@ -3,31 +3,11 @@
  */
 module Core {
 
-  export function PreferencesController($scope, $location, jolokia, workspace, localStorage, userDetails, jolokiaUrl, branding) {
+  export function PreferencesController($scope, $location, jolokia, workspace, localStorage, userDetails, jolokiaUrl, branding, preferencesRegistry) {
 
     var log:Logging.Logger = Logger.get("Preference");
 
-    /**
-     * Parsers the given value as JSON if it is define
-     */
-    function parsePreferencesJson(value, key) {
-      var answer = null;
-      if (angular.isDefined(value)) {
-        answer = Core.parseJsonText(value, "localStorage for " + key);
-      }
-      return answer;
-    }
-
-    $scope.currentTheme = Themes.current;
-    $scope.availableThemes = Themes.getAvailable();
-
-    $scope.$watch('currentTheme', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        Themes.setTheme(newValue, branding);
-      }
-    });
-
-    $scope.branding = branding;
+    $scope.registry = preferencesRegistry;
 
     if (!angular.isDefined(localStorage['logLevel'])) {
       localStorage['logLevel'] = '{"value": 2, "name": "INFO"}';
@@ -56,65 +36,14 @@ module Core {
       }
     });
 
-    $scope.updateRate = localStorage['updateRate'];
     $scope.url = localStorage['url'];
     $scope.autoRefresh = localStorage['autoRefresh'] === "true";
-    $scope.showWelcomePage = localStorage['showWelcomePage'] === "true";
     $scope.activemqFilterAdvisoryTopics = localStorage['activemqFilterAdvisoryTopics'] === "true";
 
-    $scope.hosts = [];
-    $scope.newHost = {};
-
-    $scope.addRegexDialog = new UI.Dialog();
-    $scope.forms = {};
 
     $scope.perspectiveId;
     $scope.perspectives = [];
 
-    // used by add dialog in preference.html
-    $scope.hostSchema = {
-      properties: {
-        'name': {
-          description: 'Indicator name',
-          type: 'string',
-          required: true
-        },
-        'regex': {
-          description: 'Indicator regex',
-          type: 'string',
-          required: true
-        }
-      }
-    };
-
-    $scope.delete = (index) => {
-      $scope.hosts.removeAt(index);
-    };
-
-    $scope.moveUp = (index) => {
-      var tmp = $scope.hosts[index];
-      $scope.hosts[index] = $scope.hosts[index - 1];
-      $scope.hosts[index - 1] = tmp
-    };
-
-    $scope.moveDown = (index) => {
-      var tmp = $scope.hosts[index];
-      $scope.hosts[index] = $scope.hosts[index + 1];
-      $scope.hosts[index + 1] = tmp
-    };
-
-    $scope.onOk = (json, form) => {
-      $scope.addRegexDialog.close();
-      $scope.newHost['color'] = UI.colors.sample();
-      if (!angular.isArray($scope.hosts)) {
-        $scope.hosts = [Object.clone($scope.newHost)];
-      } else {
-        $scope.hosts.push(Object.clone($scope.newHost));
-      }
-
-      $scope.newHost = {};
-      Core.$apply($scope);
-    };
 
     $scope.plugins = [];
     $scope.pluginDirty = false;
@@ -173,18 +102,6 @@ module Core {
       }, 10);
     }
 
-    $scope.$watch('hosts', (oldValue, newValue) => {
-      if (!Object.equal(oldValue, newValue)) {
-        if (angular.isDefined($scope.hosts)) {
-          localStorage['regexs'] = angular.toJson($scope.hosts);
-        } else {
-          delete localStorage['regexs'];
-        }
-      } else {
-        $scope.hosts = parsePreferencesJson(localStorage['regexs'], "hosts") || {};
-      }
-    }, true);
-
     var defaults = {
       showWelcomePage: true,
       logCacheSize: 1000,
@@ -215,23 +132,11 @@ module Core {
       activemqFilterAdvisoryTopics: parseBooleanValue
     };
 
-    $scope.$watch('updateRate', () => {
-      localStorage['updateRate'] = $scope.updateRate;
-      $scope.$emit('UpdateRate', $scope.updateRate);
-    });
-
     $scope.$watch('autoRefresh', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
       }
       localStorage['autoRefresh'] = $scope.autoRefresh;
-    });
-
-    $scope.$watch('showWelcomePage', (newValue, oldValue) => {
-      if (newValue === oldValue) {
-        return;
-      }
-      localStorage['showWelcomePage'] = $scope.showWelcomePage;
     });
 
     $scope.$watch('activemqFilterAdvisoryTopics', (newValue, oldValue) => {

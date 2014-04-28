@@ -140,6 +140,10 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           return new Core.HelpRegistry($rootScope);
         }).
 
+        factory('preferencesRegistry', () => {
+          return new Core.PreferencesRegistry();
+        }).
+
         factory('jolokiaUrl', function() {
           return jolokiaUrl;
         }).
@@ -401,7 +405,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         }]).
 
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr, userDetails) => {
+        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr, userDetails, preferencesRegistry) => {
 
           $.support.cors = true;
 
@@ -480,6 +484,8 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addDevDoc('UI', '#/ui/developerPage');
           helpRegistry.addDevDoc('datatable', 'app/datatable/doc/developer.md');
           helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
+
+          preferencesRegistry.addTab("Core", "app/core/html/corePreferences.html");
 
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
