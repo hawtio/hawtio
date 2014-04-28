@@ -8,7 +8,7 @@
         <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable" title="Not selected" ng-click="container.selected = true"></i>
         <i ng-show="container.selected && showSelect" class="icon-circle clickable" title="Status of the container" ng-click="container.selected = false"></i>
 
-        <i class="clickable" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
+        <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
 
         <div ng-click="container.selected = !container.selected">
           <span class="contained c-wide" title="{{container.id}} / {{container.versionId}}">
