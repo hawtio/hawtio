@@ -190,11 +190,11 @@
               </td>
               <td>
                 <input name="minimumInstances" type="number" ng-model="requirement.minimumInstances" ng-required="false"
-                       class="input-small">
+                       class="input-small" min="0">
               </td>
               <td>
                 <input name="maximumInstances" type="number" ng-model="requirement.maximumInstances" ng-required="false"
-                       class="input-small">
+                       class="input-small" min="0">
               </td>
               <td>
                 <div ng-repeat="dependentProfile in requirement.dependentProfiles">

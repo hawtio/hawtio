@@ -312,6 +312,13 @@ div#main div ul.nav li a {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
+div#main div ul.nav li div.separator {
+    padding: 2px 12px;
+    line-height: 20px;
+    color: #777777;
+    float: left;
+}
+
 div#main div ul.nav li a:hover {
   border: 1px;
   border-radius: 2px;
