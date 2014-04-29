@@ -4,7 +4,7 @@
 
     <div class="control-group">
       <div class="controls">
-        <input type="number" ng-model="camelMaximumTraceOrDebugBodyLength">
+        <input type="number" ng-model="camelMaximumTraceOrDebugBodyLength" min="0">
         <span class="help-block">The maximum length of the body before its clipped when using the tracer and debugger</span>
       </div>
     </div>
@@ -12,7 +12,7 @@
 
     <div class="control-group">
       <div class="controls">
-        <input type="number" ng-model="camelMaximumLabelWidth">
+        <input type="number" ng-model="camelMaximumLabelWidth" min="0">
         <span class="help-block">The maximum length of a label in Camel diagrams before it is clipped</span>
       </div>
     </div>
