@@ -232,7 +232,7 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getGitURL(row.jolokiaUrl)}}">
+                         value="{{getGitURL(row.jolokiaUrl) | maskPassword}}">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
@@ -246,7 +246,7 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getSshURL(row.sshUrl)}}">
+                         value="{{getSshURL(row.sshUrl) | maskPassword}}">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getSshURL(row.sshUrl)}}"
@@ -260,7 +260,7 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getJmxURL(row.jmxUrl)}}">
+                         value="{{getJmxURL(row.jmxUrl) | maskPassword}}">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getJmxURL(row.jmxUrl)}}"
@@ -274,7 +274,7 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{row.jolokiaUrl}}">
+                         value="{{row.jolokiaUrl | maskPassword}}">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{row.jolokiaUrl}}"

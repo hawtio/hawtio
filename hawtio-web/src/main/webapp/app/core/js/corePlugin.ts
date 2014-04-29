@@ -361,6 +361,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         filter("valueToHtml", () => Core.valueToHtml).
         filter('humanize', () => humanizeValue).
         filter('humanizeMs', () => Core.humanizeMilliseconds).
+        filter('maskPassword', () => Core.maskPassword).
 
         // autofill directive handles autofill input fields generating proper events in anguarjs
         // see: http://stackoverflow.com/questions/14965968/angularjs-browser-autofill-workaround-by-using-a-directive/16800988#16800988

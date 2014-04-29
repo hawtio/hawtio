@@ -1430,4 +1430,16 @@ module Core {
     localStorage['regexs'] = angular.toJson(regexs);
   }
 
+  export function maskPassword(value) {
+    if (value) {
+      var text = value.toString();
+      // we use the same patterns as in Apache Camel in its
+      // org.apache.camel.util.URISupport.sanitizeUri
+      var userInfoPattern = "(.*://.*:)(.*)(@)";
+      value = value.replace(new RegExp(userInfoPattern, 'i'), "$1xxxxxx$3");
+    }
+
+    return value;
+  }
+
 }
