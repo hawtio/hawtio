@@ -285,6 +285,7 @@
     <module>hawtio-karaf</module>
     <module>sample</module>
     <module>hawtio-karaf-terminal</module>
+    <module>hawtio-karaf-git</module>
     <module>hawtio-directives</module>
     <module>hawtio-redhat-branding</module>
     <!--
