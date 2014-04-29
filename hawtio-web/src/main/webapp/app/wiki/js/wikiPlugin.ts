@@ -187,12 +187,14 @@ module Wiki {
               }
             };
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry) => {
 
             viewRegistry['wiki'] = layoutFull;
             helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
               return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
             });
+
+            preferencesRegistry.addTab("Git", 'app/wiki/html/gitPreferences.html');
 
             workspace.topLevelTabs.push({
               id: "wiki",

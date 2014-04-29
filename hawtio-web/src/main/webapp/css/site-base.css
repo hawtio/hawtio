@@ -1070,7 +1070,7 @@ li.stacktrace {
 
 .slideout > .slideout-content > .slideout-body {
   margin: 5px;
-  height: 100%;
+  height: 100%;  
 }
 
 .slideout.right {
@@ -3744,4 +3744,53 @@ img.nodeIcon:hover {
 
 }
 
+.prefs {
+  height: 100%;
+  margin: 0;
+}
 
+.prefs > div {
+  height: 100%;
+  margin: 0;
+}
+
+.slideout-body .prefs {
+  overflow: hidden;
+  margin: 0;
+}
+
+.slideout-body .prefs .tabbable {
+  position: relative;
+  height: 100%;
+  margin: 0;
+}
+
+.pref-slideout > div > div > div {
+  height: 100%;
+  margin: 0;
+}
+
+.pref-slideout .slideout-body {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: none !important;
+  margin: 0 !important;
+}
+
+.slideout-body .prefs .nav.nav-tabs {
+  position: absolute;
+  margin: 0;
+}
+
+.slideout-body .prefs .tab-content {
+  position: absolute;
+  overflow: auto;
+  top: 55px;
+  left: 0;
+  right: 7px;
+  bottom: 0;
+  margin: 0;
+}

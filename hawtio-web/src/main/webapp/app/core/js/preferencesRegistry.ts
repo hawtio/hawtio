@@ -11,8 +11,14 @@
 
     }
 
-    public addTab(name:string, template:string) {
-      this.tabs[name] = template;
+    public addTab(name:string, template:string, isValid: () => boolean = undefined) {
+      if (!isValid) {
+        isValid = () => { return true; };
+      }
+      this.tabs[name] = {
+        template: template,
+        isValid: isValid
+      };
     }
 
     public getTab(name:string) {
@@ -20,8 +26,14 @@
     }
 
     public getTabs():any {
-      return this.tabs;
+      var answer = {};
+      angular.forEach(this.tabs, (value, key) => {
+        if (value.isValid()) {
+          answer[key] = value;
+        }
+      });
+      return answer;
     }
-  }
+  };
 }
 

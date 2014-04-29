@@ -486,6 +486,12 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           helpRegistry.addDevDoc('Force Graph', 'app/forcegraph/doc/developer.md');
 
           preferencesRegistry.addTab("Core", "app/core/html/corePreferences.html");
+          preferencesRegistry.addTab("Plugins",
+            "app/core/html/pluginPreferences.html");
+          preferencesRegistry.addTab("Console Logging",
+            "app/core/html/loggingPreferences.html");
+          preferencesRegistry.addTab("Editor", "app/ui/html/editorPreferences.html");
+          preferencesRegistry.addTab("Reset", "app/core/html/resetPreferences.html");
 
 
           //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());

@@ -4,6 +4,9 @@
   text-shadow: none;
 }
 
+.nav-tabs > li {
+  margin-bottom: 1px;
+}
 
 .navbar .nav > li > a,
 div#main div ul.nav li a {

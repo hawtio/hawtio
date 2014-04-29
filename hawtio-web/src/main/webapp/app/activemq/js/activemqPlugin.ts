@@ -18,11 +18,15 @@ module ActiveMQ {
             when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'}).
             when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'})
   }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry) => {
 
             viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
             helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties("org.apache.activemq");
+            });
+
+            preferencesRegistry.addTab("ActiveMQ", "app/activemq/html/preferences.html", () => {
+                return workspace.treeContainsDomainAndProperties("org.apache.activemq");              
             });
 
             workspace.addTreePostProcessor(postProcessTree);

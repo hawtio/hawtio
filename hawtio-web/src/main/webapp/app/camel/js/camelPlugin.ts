@@ -41,7 +41,7 @@ module Camel {
           }).
 
           filter('camelIconClass', () => iconClass).
-          run((workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry) => {
+          run((workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
 
             viewRegistry['camel/endpoint/'] = layoutFull;
             viewRegistry['camel/route/'] = layoutFull;
@@ -50,6 +50,9 @@ module Camel {
 
             helpRegistry.addUserDoc('camel', 'app/camel/doc/help.md', () => {
               return workspace.treeContainsDomainAndProperties(jmxDomain);
+            });
+            preferencesRegistry.addTab('Camel', 'app/camel/html/preferences.html', () => {
+              return workspace.treeContainsDomainAndProperties(jmxDomain); 
             });
 
             Jmx.addAttributeToolBar(pluginName, jmxDomain, (selection: NodeSelection) => {

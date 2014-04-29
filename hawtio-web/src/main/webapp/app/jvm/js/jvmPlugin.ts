@@ -16,10 +16,12 @@ module JVM {
                     when('/jvm/local', {templateUrl: templatePath + 'local.html'});
           }).
           constant('mbeanName', 'hawtio:type=JVMList').
-          run(($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
+          run(($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
 
             viewRegistry[pluginName] = templatePath + 'layoutConnect.html';
             helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
+
+            preferencesRegistry.addTab("Connect", 'app/jvm/html/reset.html');
 
             workspace.topLevelTabs.push({
               id: "connect",

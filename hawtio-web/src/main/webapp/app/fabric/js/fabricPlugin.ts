@@ -187,7 +187,8 @@ module Fabric {
                pageTitle:Core.PageTitle,
                helpRegistry,
                $rootScope,
-               postLoginTasks) => {
+               postLoginTasks,
+               preferencesRegistry) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
@@ -208,6 +209,10 @@ module Fabric {
                 }));
               }
             };
+
+            preferencesRegistry.addTab("Fabric", "app/fabric/html/preferences.html", () => {
+              return Fabric.isFMCContainer(workspace);
+            });
 
             workspace.topLevelTabs.push( {
               id: "fabric.runtime",

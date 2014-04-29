@@ -17,9 +17,18 @@ module Core {
         'converter': parseBooleanValue,
       },
       'regexs': {
-        'value': [],
-        'converter': (value) => { return angular.fromJson(value); },
-        'formatter': (value) => { return angular.toJson(value); },
+        'value': "",
+        'converter': (value) => {
+          if (angular.isArray(value)) {
+            return value;
+          } else if (Core.isBlank(value)) {
+            return [];
+          }
+          return angular.fromJson(value);   
+        },
+        'formatter': (value) => { 
+          return angular.toJson(value); 
+        },
         'compareAsObject': true
       }
     });
