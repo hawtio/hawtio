@@ -239,7 +239,18 @@ module Core {
       $scope.maybeRedirect();
     }, true);
 
-    $scope.$on('$routeChangeStart', function() {
+    $scope.$on('hawtioOpenPrefs', () => {
+      $scope.showPrefs = true;
+    });
+
+    $scope.$on('hawtioClosePrefs', () => {
+      $scope.showPrefs = false;
+    });
+
+    $scope.$on('$routeChangeStart', (event, args) => {
+      if ( (!args.params || !args.params.pref) && $scope.showPrefs) {
+        $scope.showPrefs = false;
+      }
       $scope.maybeRedirect();
     });
 

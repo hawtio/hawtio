@@ -3774,23 +3774,38 @@ img.nodeIcon:hover {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  left: 0px;
   right: 0;
   overflow: none !important;
   margin: 0 !important;
 }
 
 .slideout-body .prefs .nav.nav-tabs {
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  width: 130px;
   position: absolute;
   margin: 0;
+  overflow-y: auto;
+}
+
+.slideout-body .prefs .nav.nav-tabs:after,
+.slideout-body .prefs .nav.nav-tabs:before {
+  display: none;
+}
+
+.slideout-body .prefs .nav.nav-tabs li {
+  display: block;
+  float: none;
 }
 
 .slideout-body .prefs .tab-content {
   position: absolute;
   overflow: auto;
-  top: 55px;
-  left: 0;
-  right: 7px;
-  bottom: 0;
+  top: 5px;
+  left: 140px;
+  right: 15px;
+  bottom: 5px;
   margin: 0;
 }

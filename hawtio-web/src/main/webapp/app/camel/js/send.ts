@@ -18,10 +18,19 @@ module Camel {
     // only reload the page if certain search parameters change
     Core.reloadWhenParametersChange($route, $scope, $location);
 
+    $scope.checkCredentials = () => {
+      $scope.noCredentials = (Core.isBlank(localStorage['activemqUserName']) || Core.isBlank(localStorage['activemqPassword']));
+    }
+
     if ($location.path().has('activemq')) {
-      if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
-        $scope.noCredentials = true;
-      }
+      $scope.localStorage = localStorage;
+      $scope.$watch('localStorage.activemqUserName', $scope.checkCredentials);
+      $scope.$watch('localStorage.activemqPassword', $scope.checkCredentials);
+    }
+
+    $scope.openPrefs = () => {
+      $location.search('pref', 'ActiveMQ');
+      $scope.$emit("hawtioOpenPrefs");
     }
 
     var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";

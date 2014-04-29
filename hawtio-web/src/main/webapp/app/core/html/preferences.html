@@ -2,13 +2,11 @@
      class="prefs">
   <div class="row-fluid">
     <div class="tabbable" ng-model="pref">
-      <div ng-repeat="(name, panel) in registry.getTabs() track by $index" 
+      <div ng-repeat="(name, panel) in panels" 
            value="{{name}}" 
            class="tab-pane" 
-           title="{{name}}" 
+           title="{{name}}"
            ng-include="panel.template"></div>
      </div>
   </div>
 </div>
-
-<script type="text/javascript" src="lib/cssHelperNav.js"></script>
