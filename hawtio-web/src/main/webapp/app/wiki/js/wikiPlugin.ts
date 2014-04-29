@@ -187,7 +187,7 @@ module Wiki {
               }
             };
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry) => {
+          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry, wikiRepository) => {
 
             viewRegistry['wiki'] = layoutFull;
             helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
@@ -195,14 +195,19 @@ module Wiki {
             });
 
             preferencesRegistry.addTab("Git", 'app/wiki/html/gitPreferences.html');
-
-            workspace.topLevelTabs.push({
+            var tab = {
               id: "wiki",
               content: "Wiki",
               title: "View and edit wiki pages",
               isValid: (workspace:Workspace) => Wiki.isWikiEnabled(workspace, jolokia, localStorage),
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
+            }
+            workspace.topLevelTabs.push(tab);
+            wikiRepository.getRepositoryLabel(function(label){
+              tab.content=label
+            }, function (response) {
+              console.log(response)
             });
 
             // add empty regexs to templates that don't define

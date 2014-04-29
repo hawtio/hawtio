@@ -7,6 +7,7 @@ module Wiki {
    * @class WikiRepository
    */
   export interface WikiRepository {
+    getRepositoryLabel(fn, error);
     putPage(branch:string, path:string, contents:string, commitMessage:string, fn): void;
     putPageBase64(branch:string, path:string, contents:string, commitMessage:string, fn): void;
 
@@ -20,6 +21,10 @@ module Wiki {
     public directoryPrefix = "";
 
     constructor(public factoryMethod:() => Git.GitRepository) {
+    }
+
+    public getRepositoryLabel(fn, error) {
+      this.git().getRepositoryLabel(fn, error);
     }
 
     public exists(branch:string, path:string, fn) {

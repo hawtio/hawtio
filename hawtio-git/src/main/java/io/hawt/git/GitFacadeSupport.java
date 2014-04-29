@@ -72,6 +72,15 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacadeSupport.class);
 
     private int shortCommitIdLength = 6;
+    private String repositoryLabel = "Wiki";
+
+    public void setRepositoryLabel(String repositoryLabel) {
+        this.repositoryLabel = repositoryLabel;
+    }
+
+    public String getRepositoryLabel() {
+        return repositoryLabel;
+    }
 
     protected String doDiff(Git git, String objectId, String baseObjectId, String pathOrBlobPath) {
         Repository r = git.getRepository();

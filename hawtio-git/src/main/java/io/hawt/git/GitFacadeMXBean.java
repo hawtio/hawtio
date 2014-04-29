@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface GitFacadeMXBean {
 
+   String getRepositoryLabel();
+
     /**
      * Checks if the file exists and if so what its file metadata is
      *

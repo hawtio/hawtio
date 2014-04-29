@@ -12,6 +12,14 @@ module Git {
   export interface GitRepository {
 
     /**
+     * Returns repository label
+     * @method getRepositoryLabel
+     * @param {Function} fn
+     * @param {Function} error
+     */
+    getRepositoryLabel(fn, error);
+
+    /**
      * Returns the file metadata if the file or directory exists or null if it does not exist
      * @method exists
      * @param {String} branch
@@ -194,6 +202,12 @@ module Git {
    */
   export class JolokiaGit implements GitRepository {
     constructor(public mbean:string, public jolokia, public localStorage, public userDetails, public branch = "master") {
+    }
+
+    public getRepositoryLabel(fn, error) {
+      return this.jolokia.request({type: "read", mbean: this.mbean, attribute: ["RepositoryLabel"]}, onSuccess(function(result){
+        fn(result.value.RepositoryLabel);
+      }, {error: error}));
     }
 
     public exists(branch:string, path:string, fn) {
