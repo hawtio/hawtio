@@ -1032,7 +1032,7 @@ li.stacktrace {
 /* slideout directive stuff */
 .slideout {
   position: fixed;
-  z-index: 40;
+  z-index: 100;
   width: 75%;
 }
 
@@ -3368,6 +3368,25 @@ th > .indicator:before {
   cursor: pointer;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.dropdown.perspective-selector > .dropdown-menu {
+  min-width: 160px;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div {
+  display: block;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div > p {
+  font-size: smaller;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-bottom: 0;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div > ul {
+  margin-top: 0;
 }
 
 .dropdown-menu > li:hover > a {

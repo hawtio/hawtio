@@ -206,6 +206,7 @@ module JVM {
 
       log.info("using scheme: " + $scope.currentConfig['scheme'] + " and host name: " + host +
         " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
+      options.name = $scope.currentConfig['connectionName'];
       options.scheme = $scope.currentConfig['scheme'];
       options.host = host;
       options.port = $scope.currentConfig['port'];

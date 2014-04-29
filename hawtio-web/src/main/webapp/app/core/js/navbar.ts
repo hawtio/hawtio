@@ -9,6 +9,24 @@ module Core {
     $scope.topLevelTabs = [];
     $scope.subLevelTabs = workspace.subLevelTabs;
     $scope.currentPerspective = null;
+    $scope.localStorage = localStorage;
+    $scope.recentConnections = [];
+
+    $scope.$watch('localStorage.recentConnections', (newValue, oldValue) => {
+      $scope.recentConnections = Core.getRecentConnections(localStorage);
+      log.debug("recent containers: ", $scope.recentConnections);
+    });
+
+    $scope.openConnection = (connection) => {
+      window.open(connection.url);
+    };
+
+    $scope.goHome = () => {
+      window.open(".");
+    };
+
+    $scope.clearConnections = Core.clearConnections;
+
     $scope.perspectiveDetails = {
       perspective: null
     };

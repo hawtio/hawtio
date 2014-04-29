@@ -1043,6 +1043,7 @@ module Core {
     public userName:string;
     public password:string;
     public view:string;
+    public name:string;
   }
 
   export function getDocHeight() {
@@ -1084,15 +1085,42 @@ module Core {
     return connectUrl;
   }
 
+  export function getRecentConnections(localStorage) {
+    if (Core.isBlank(localStorage['recentConnections'])) {
+      Core.clearConnections();
+    }
+    return angular.fromJson(localStorage['recentConnections']);    
+  }
+
+  export function addRecentConnection(localStorage, name, url) {
+    var recent = getRecentConnections(localStorage);
+    recent = recent.add({
+      'name': name,
+      'url': url  
+    }).unique((c) => { return c.name; }).first(5);
+    localStorage['recentConnections'] = angular.toJson(recent);
+  }
+
+  export function removeRecentConnection(localStorage, name) {
+    var recent = getRecentConnections(localStorage);
+    recent = recent.exclude((conn) => { return conn.name === name; });
+    localStorage['recentConnections'] = angular.toJson(recent);
+  }
+
+  export function clearConnections() {
+    localStorage['recentConnections'] = '[]';
+  }
+
   export function connectToServer(localStorage, options:ConnectToServerOptions) {
+
+    log.debug("Connect to server, options: ", options);
+
     var connectUrl = options.jolokiaUrl;
 
     var userDetails = {
       username: options['userName'],
       password: options['password']
     };
-
-    // TODO we should replace this and just store the real, final connectUrl!
 
     var json = angular.toJson(userDetails);
     if (connectUrl) {
@@ -1154,6 +1182,7 @@ module Core {
     }
     if (full) {
       log.info("Full URL is: " + full);
+      Core.addRecentConnection(localStorage, options.name, full);
       window.open(full);
     }
 

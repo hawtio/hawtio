@@ -1410,6 +1410,7 @@ a:hover {
 
 }
 
+/*
 .prefs > .row-fluid > .tabbable > .nav.nav-tabs {
   margin-top: 0 !important;
   border-radius: 0 !important;
@@ -1418,6 +1419,7 @@ a:hover {
   min-height: 31px !important;
   border-bottom: 1px solid #cecdcd !important;
 }
+*/
 
 .prefs > .row-fluid > .tabbable > .nav.nav-tabs > li {
   margin-bottom: 0px;
@@ -1437,6 +1439,7 @@ a:hover {
 }
 
 .prefs > .row-fluid > .tabbable > .nav.nav-tabs > li.active a {
+  border: none;
   border-bottom: 1px solid #2289ba !important;
 }
 
@@ -2268,4 +2271,7 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   border-top: none;
 }
 
+.dropdown.perspective-selector .dropdown-menu > div > p {
+  color: #333333;
+}
 

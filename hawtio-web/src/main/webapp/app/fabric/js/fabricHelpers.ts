@@ -998,6 +998,7 @@ module Fabric {
    * @param {ConnectToServerOptions} options
    */
   export function connect(localStorage, row, userName = "", password = "", useProxy = true, options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions()) {
+    options.name = row.id;
     options.jolokiaUrl = row.jolokiaUrl;
     options.userName = userName;
     options.password = password;

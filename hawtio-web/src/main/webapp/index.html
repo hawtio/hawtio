@@ -187,12 +187,43 @@ div.log-stack-trace p:nth-child(odd) {
 
               <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
 
-                <li ng-show="loggedIn() && perspectives.length > 1"
+                <li ng-show="loggedIn() && (perspectives.length > 1 || recentConnections.length)"
                     class="dropdown perspective-selector">
                   <a href="#" class="dropdown-toggle">
                     <span ng-bind-html-unsafe="perspectiveDetails.perspective.label || 'Perspective'"></span>
                     <span ng-show="perspectives.length > 1" class="caret"></span>
                   </a>
+                  <div class="dropdown-menu">
+                    <div ng-show="perspectives.length > 1">
+                      <p>Perspectives</p>
+                      <ul class="unstyled">
+                        <li ng-repeat="perspective in perspectives track by $index">
+                          <a href=""
+                             ng-click="switchPerspective(perspective)"
+                             ng-hide="perspectiveDetails.perspective.id === perspective.id"
+                             data-placement="bottom">
+                            {{perspective.label}}</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div ng-show="recentConnections.length">
+                      <p>Recent Connections</p>
+                      <ul class="unstyled">
+                        <li>
+                          <a href=""
+                             ng-click="goHome()">Console</a>
+                       </li>
+                        <li ng-repeat="connection in recentConnections track by $index">
+                          <a href=""
+                             ng-click="openConnection(connection)">{{connection.name}}</a>
+                        </li>
+                        <li>
+                          <a href=""
+                             ng-click="clearConnections()">Clear Recent</a>
+                        </li>
+                    </div>
+                  </div>
+                  <!--
                   <ul class="dropdown-menu">
                     <li ng-repeat="perspective in perspectives track by $index">
                       <a ng-click="switchPerspective(perspective)"
@@ -200,7 +231,9 @@ div.log-stack-trace p:nth-child(odd) {
                          data-placement="bottom">
                         {{perspective.label}}</a>
                     </li>
+
                   </ul>
+                -->
                 </li>
 
               <!--
