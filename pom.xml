@@ -288,6 +288,7 @@
     <module>hawtio-karaf-git</module>
     <module>hawtio-directives</module>
     <module>hawtio-redhat-branding</module>
+    <module>hawtio-fabric8-branding</module>
     <!--
     <module>hawtio-api-docs</module>
     -->

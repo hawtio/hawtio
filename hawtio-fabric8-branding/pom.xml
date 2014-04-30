@@ -9,9 +9,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>hawtio-redhat-branding</artifactId>
-  <description>hawtio :: Red Hat Branding</description>
-
+  <artifactId>hawtio-fabric8-branding</artifactId>
+  <description>hawtio :: fabric8 Branding</description>
   <!-- hawtio plugins are almost always war files -->
   <packaging>war</packaging>
 
@@ -20,7 +19,7 @@
       as we build that dynamically using maven-antrun-plugin below. -->
     <!-- plugin-context is what context this plugin will handle requests on
       in the application server -->
-    <plugin-context>/branding</plugin-context>
+    <plugin-context>/fabric8-branding</plugin-context>
 
     <!-- plugin-name is the name of our plugin, affects the name used for
       the plugin's mbean -->
@@ -46,12 +45,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-plugin-mbean</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-system</artifactId>
       <version>${project.version}</version>
     </dependency>
 
