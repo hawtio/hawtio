@@ -471,6 +471,7 @@ module Wiki {
           console.log("About to rename file " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
             notification("success", "Renamed file to  " + newName);
+            $scope.gridOptions.selectedItems.splice(0, 1);
             $scope.renameDialog.close();
             Core.$apply($scope);
             updateView();
