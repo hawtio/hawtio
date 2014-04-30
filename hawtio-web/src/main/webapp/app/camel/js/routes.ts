@@ -175,9 +175,8 @@ module Camel {
             var href = Core.createHref($location, url);
             // change path to the jmx attributes page so we can see the processor mbean
             log.info("Changing to path: " + href);
-            setTimeout(() => {
-              $location.url(href);
-            }, 50);
+            $location.url(href);
+            Core.$apply($scope);
           }
         }
       });
