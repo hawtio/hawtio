@@ -43,7 +43,7 @@ module Fabric {
 
     function matchesFilter(text) {
       var filter = $scope.searchFilter;
-      return !filter || (text && text.has(filter));
+      return !filter || (text && text.toLowerCase().has(filter.toLowerCase()));
     }
 
     $scope.groupMatchesFilter = (group) => {
