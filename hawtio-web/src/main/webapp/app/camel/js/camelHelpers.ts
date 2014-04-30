@@ -1274,6 +1274,35 @@ module Camel {
     return answer;
   }
 
+  /**
+   * Returns an object for the given processor from the Camel tree
+   * @method
+   */
+  export function camelProcessorMBeansById(workspace:Workspace) {
+    var answer = {};
+    var tree = workspace.tree;
+    if (tree) {
+      var camelTree = tree.navigate(Camel.jmxDomain);
+      if (camelTree) {
+        angular.forEach(camelTree.children, (contextsFolder) => {
+          var processorsFolder = contextsFolder.navigate("processors");
+          if (processorsFolder && processorsFolder.children && processorsFolder.children.length) {
+            angular.forEach(processorsFolder.children, (processorFolder) => {
+              var id = processorFolder.title;
+              if (id) {
+                var processorValues = {
+                  folder: processorsFolder,
+                  key: processorFolder.key
+                };
+                answer[id] = processorValues;
+              }
+            });
+          }
+        });
+      }
+    }
+    return answer;
+  }
 
   /**
    * Returns true if we should ignore ID values for labels in camel diagrams
