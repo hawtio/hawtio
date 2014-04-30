@@ -29,7 +29,7 @@ module Wiki {
     $scope.generateDialog = new UI.Dialog();
     $scope.renameDialog = new UI.Dialog();
     $scope.moveDialog = new UI.Dialog();
-    $scope.deleteDialog = false;
+    $scope.deleteDialog = new UI.Dialog();
     $scope.isFile = false;
     $scope.rename = {
       newFileName: ""
@@ -406,7 +406,7 @@ module Wiki {
     $scope.openDeleteDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
         $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
-        $scope.deleteDialog = true;
+        $scope.deleteDialog.open();
       } else {
         console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
@@ -429,7 +429,7 @@ module Wiki {
           }
         });
       });
-      $scope.deleteDialog = false;
+      $scope.deleteDialog.close();
     };
 
     $scope.$watch("rename.newFileName", () => {
