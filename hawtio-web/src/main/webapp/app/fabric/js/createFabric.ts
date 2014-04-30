@@ -53,7 +53,7 @@ module Fabric {
           }
         });
         notification('info', "Creating fabric, please wait...");
-        $location.url("/logs");
+        $location.url("/openlogs");
         Core.$apply($scope);
       }, 30);
 

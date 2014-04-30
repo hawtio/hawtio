@@ -302,7 +302,7 @@ module Fabric {
       $scope.connect.userName = Core.username || localStorage['fabric.userName'];
       $scope.connect.password = Core.password || localStorage['fabric.password'];
       $scope.connect.container = container;
-      $scope.connect.view = view || "/logs";
+      $scope.connect.view = view || "/openlogs";
 
       var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
       if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {

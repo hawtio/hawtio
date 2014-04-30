@@ -4,12 +4,26 @@
  */
 module Log {
   var pluginName = 'log';
+
+  var hasMBean = false;
+
   angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).
           config(($routeProvider) => {
             $routeProvider.
-                    when('/logs', {templateUrl: 'app/log/html/logs.html', reloadOnSearch: false})
+              when('/logs', {templateUrl: 'app/log/html/logs.html', reloadOnSearch: false}).
+              when('/openlogs', {redirectTo: () => {
+                // use a redirect, as the log plugin may not be valid, if we connect to a JVM which does not have the log mbean
+                // in the JMX tree, and if that happens, we need to redirect to home, so another tab is selected
+                if (hasMBean) {
+                  return '/logs'
+                } else {
+                  return '/home'
+                }
+              }, reloadOnSearch: false})
           }).
           run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
+
+            hasMBean = treeContainsLogQueryMBean(workspace);
 
             viewRegistry['log'] = layoutFull;
             helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
