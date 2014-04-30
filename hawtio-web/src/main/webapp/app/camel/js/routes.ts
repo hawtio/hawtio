@@ -153,7 +153,10 @@ module Camel {
         Core.$apply($scope);
       });
 
-      gNodes.dblclick(function() {
+      // TODO: https://github.com/hawtio/hawtio/issues/1261
+      // we need some kind of right-click menu on d3
+      // disabled code below as its work in progress
+/*      gNodes.dblclick(function() {
         //var allStats = $(doc).find("processorStat");
         var cid = this.getAttribute("data-cid");
         log.info("You double clicked " + cid);
@@ -179,7 +182,7 @@ module Camel {
             Core.$apply($scope);
           }
         }
-      });
+      });*/
 
       if ($scope.mbean) {
         Core.register(jolokia, $scope, {
