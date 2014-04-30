@@ -274,12 +274,12 @@ table.table thead .sorting_desc:after {
 */
 
 div#main div ul.nav {
-  border-radius: 0 0 4px 4px;
-  border: 1px solid #86afce;
+  border-radius: 0;
+  border: none
   border-top: none
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
   background: #c0ebf7;
-  background: linear-gradient(to bottom,  #c0ebf7 0%,#b3d4e0 20%,#86afce 100%);
+  background: linear-gradient(to bottom, #86afce 96%,#4b6989 100%);
 }
 
 .navbar .btn-navbar span {
@@ -288,30 +288,43 @@ div#main div ul.nav {
 }
 
 div#main div ul.nav li.active a {
-  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.25) inset, 0 4px 90px rgba(200, 230, 255, 0.5) inset;
-  text-shadow: 0 1px 0 #FFFFFF;
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.25) inset, 
+              0 4px 90px rgba(200, 230, 255, 0.7) inset, 
+              1px 1px 1px rgba(70, 70, 70, 0.3) inset, 
+              -1px -1px 1px rgba(70, 70, 70, 0.25) inset;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 1px 0 #ffffff;
 }
 
 div#main div ul.nav li.active a:hover {
-  text-shadow: 0 1px 0 #FFFFFF;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 1px 0 #ffffff;
 }
 
 div#main div ul.nav li a {
   margin-right: 5px;
-  border: 1px solid #86afce;
-  border-radius: 5px;
+  border: none;
+  border-radius: 0;
   background: inherit;
   color: #222222;
   text-shadow: 0px 1px 0px rgba(255,255,255, 0.4);
-}
+  /* box-shadow: -1px -1px 1px rgba(100, 100, 100, 0.1) inset, 1px 1px 1px rgba(200, 200, 200, 0.1) inset
+ */}
 
 .hawtio-form-tabs ul.nav li a {
   border: none !important;
+  box-shadow: none !important;
 }
 
-#tree-ctrl.nav > li > a {
-  border: none !important;
-  text-align: center;
+#tree-container > div {
+  margin-left: 20px;
+}
+
+#tree-ctrl.nav > li {
+  display: none;
+}
+
+#tree-ctrl.nav {
+  height: 0;
+  margin-bottom: 50px;
 }
 
 div#main div ul.nav li div.separator {
@@ -337,18 +350,24 @@ div#main div ul.nav li a:hover {
 }
 
 #main div div div .nav.nav-tabs:not(.connected) {
-  border-radius: 4px;
-  border: 1px solid #86afce;
+  border-radius: 0;
+  border: 0;
+  margin-top: -1px;
+  padding-top: 1px;
 }
 
 .logbar {
+  width: 100%;
+  left: 0;
+  right: 0;
   top: 75px;
   border-radius: 0 0 4px 4px;
-  border: 1px solid #86afce;
-  border-top: none
+  border: none;
+  border-top: none;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
   background: #c0ebf7;
-  background: linear-gradient(to bottom,  #c0ebf7 0%,#b3d4e0 20%,#86afce 100%);
+  background: linear-gradient(to bottom, #86afce 96%,#4b6989 100%);
+  padding: 0px;
 }
 
 .ui-resizable-se {
@@ -626,12 +645,8 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 }
 
 .section-header {
-  border: 1px solid #86afce;
-  border-radius: 4px;
-  background-color: #86afce;
-  background: linear-gradient(to bottom,  #c0ebf7 0%,#b3d4e0 1%,#86afce 96%,#4b6989 100%); /* W3C */
-  background-repeat: repeat-x;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e4e4f4;
+  background: inherit;
 }
 
 .section-controls > a,
@@ -1426,4 +1441,22 @@ body {
 
 .nav-tabs > li > a:hover {
   border: 1px solid transparent;
+}
+
+.container-fluid:before, .container-fluid:after {
+  display: none;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+.controller-section {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.logbar > .logbar-container {
+  margin-left: 20px;
+  margin-right: 20px;
 }

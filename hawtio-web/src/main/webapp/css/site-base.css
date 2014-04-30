@@ -144,6 +144,7 @@ body div div ul.nav {
   display: block;
   padding-left: 5px;
   padding-right: 5px;
+  /* padding: 5px; */
 }
 
 ul.dynatree-container {
@@ -1307,7 +1308,7 @@ h4 > .contained {
 
 .dropdown-toggle > .contained,
 .breadcrumb-link > .contained {
-  top: 3px;
+  top: 2px;
   line-height: 15px;
 }
 
