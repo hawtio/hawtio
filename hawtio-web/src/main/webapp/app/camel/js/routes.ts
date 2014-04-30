@@ -170,11 +170,14 @@ module Camel {
           if (processor) {
             var key = processor.key;
             // change url to jmx attributes so we can see the jmx stats for the selected processor
-            var url = "/jmx/attributes?nid=" + key;
-            var href = Core.createHref($location, url, ['nid']);
+            $location.search("nid", key);
+            var url = "/jmx/attributes";
+            var href = Core.createHref($location, url);
             // change path to the jmx attributes page so we can see the processor mbean
             log.info("Changing to path: " + href);
-            $location.path(href);
+            setTimeout(() => {
+              $location.url(href);
+            }, 50);
           }
         }
       });
