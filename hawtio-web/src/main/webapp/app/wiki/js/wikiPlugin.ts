@@ -203,11 +203,12 @@ module Wiki {
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
             }
-            workspace.topLevelTabs.push(tab);
+
             wikiRepository.getRepositoryLabel(function(label){
               tab.content=label
+              workspace.topLevelTabs.push(tab);
             }, function (response) {
-              console.log(response)
+              workspace.topLevelTabs.push(tab);
             });
 
             // add empty regexs to templates that don't define
