@@ -187,7 +187,16 @@ module Wiki {
               }
             };
           }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry, wikiRepository) => {
+          run(($location:ng.ILocationService,
+               workspace:Workspace,
+               viewRegistry,
+               jolokia,
+               localStorage,
+               layoutFull,
+               helpRegistry,
+               preferencesRegistry,
+               wikiRepository,
+               postLoginTasks) => {
 
             viewRegistry['wiki'] = layoutFull;
             helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
@@ -202,14 +211,16 @@ module Wiki {
               isValid: (workspace:Workspace) => Wiki.isWikiEnabled(workspace, jolokia, localStorage),
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
-            }
+            };
 
-            wikiRepository.getRepositoryLabel(function(label){
-              tab.content=label
-              workspace.topLevelTabs.push(tab);
-            }, function (response) {
-              workspace.topLevelTabs.push(tab);
-            });
+            postLoginTasks['wikiGetRepositoryLabel'] = () => {
+              wikiRepository.getRepositoryLabel((label) => {
+                tab.content=label;
+                workspace.topLevelTabs.push(tab);
+              }, (response) => {
+                workspace.topLevelTabs.push(tab);
+              });
+            };
 
             // add empty regexs to templates that don't define
             // them so ng-pattern doesn't barf
