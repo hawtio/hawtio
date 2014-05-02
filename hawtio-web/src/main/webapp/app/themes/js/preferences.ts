@@ -7,7 +7,7 @@ module Themes {
     $scope.availableThemes = Themes.getAvailable();
 
     Core.initPreferenceScope($scope, localStorage, {
-      'currentTheme': {
+      'theme': {
         'value': Themes.current,
         'override': (newValue, oldValue) => {
           if (newValue !== oldValue) {
