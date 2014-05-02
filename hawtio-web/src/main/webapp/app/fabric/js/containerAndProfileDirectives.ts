@@ -133,15 +133,15 @@ module Fabric {
       };
 
       $scope.getFilteredName = (item) => {
-        return item.versionId + " / " + item.id;
+        return (item.versionId + " / " + item.id).toLowerCase();
       };
 
       $scope.filterContainer = (container) => {
         var filterText = $scope.containerIdFilter;
-        if (filterText && !$scope.getFilteredName(container).has(filterText)) {
+        if (filterText && !$scope.getFilteredName(container).has(filterText.toLowerCase())) {
           var profileIds = container.profileIds;
           if (profileIds) {
-            return profileIds.any(id => id.indexOf(filterText) >= 0);
+            return profileIds.any(id => id.toLowerCase().has(filterText.toLowerCase()));
           }
           return false;
         }
