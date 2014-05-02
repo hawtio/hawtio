@@ -276,8 +276,8 @@ table.table thead .sorting_desc:after {
 div#main div ul.nav {
   border-radius: 0;
   border: none
-  border-top: none
-  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
+border-top: none
+box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
   background: #c0ebf7;
   background: linear-gradient(to bottom, #86afce 96%,#4b6989 100%);
 }
@@ -288,10 +288,10 @@ div#main div ul.nav {
 }
 
 div#main div ul.nav li.active a {
-  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.25) inset, 
-              0 4px 90px rgba(200, 230, 255, 0.7) inset, 
-              1px 1px 1px rgba(70, 70, 70, 0.3) inset, 
-              -1px -1px 1px rgba(70, 70, 70, 0.25) inset;
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.25) inset,
+  0 4px 90px rgba(200, 230, 255, 0.7) inset,
+  1px 1px 1px rgba(70, 70, 70, 0.3) inset,
+  -1px -1px 1px rgba(70, 70, 70, 0.25) inset;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 1px 0 #ffffff;
 }
 
@@ -328,10 +328,10 @@ div#main div ul.nav li a {
 }
 
 div#main div ul.nav li div.separator {
-    padding: 2px 12px;
-    line-height: 20px;
-    color: #777777;
-    float: left;
+  padding: 2px 12px;
+  line-height: 20px;
+  color: #777777;
+  float: left;
 }
 
 div#main div ul.nav li a:hover {
@@ -405,6 +405,7 @@ div#main div ul.nav li a:hover {
   border-radius: 0;
   box-shadow: none;
   background: inherit;
+  padding: 0;
 }
 
 .help-display img:not(.no-shadow) {
@@ -1457,6 +1458,7 @@ body {
 }
 
 .logbar > .logbar-container {
-  margin-left: 20px;
-  margin-right: 20px;
+  /* margin-left: 20px; */
+  /* margin-right: 20px; */
 }
+
