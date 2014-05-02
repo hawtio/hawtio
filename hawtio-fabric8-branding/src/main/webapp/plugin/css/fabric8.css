@@ -275,9 +275,9 @@ table.table thead .sorting_desc:after {
 
 div#main div ul.nav {
   border-radius: 0;
-  border: none
-border-top: none
-box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
+  border: none;
+  border-top: none;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
   background: #c0ebf7;
   background: linear-gradient(to bottom, #86afce 96%,#4b6989 100%);
 }
@@ -682,13 +682,13 @@ td.adding {
 }
 
 .login-wrapper {
-  background-color: rgba(255, 168, 27, 0.3);
-  box-shadow: rgba(255, 168, 27, 0.2) 0 0 30px 10px;
+  /* background-color: rgba(255, 168, 27, 0.3); */
+  /* box-shadow: rgba(255, 168, 27, 0.2) 0 0 30px 10px; */
 }
 
 .login-wrapper form {
   background-color: rgba(255, 255, 255, 0.2);
-  box-shadow: inset rgba(255, 168, 27, 0.2) 0 0 30px 10px;
+  /* box-shadow: inset rgba(255, 168, 27, 0.2) 0 0 30px 10px; */
 }
 
 .login-form form fieldset .control-group label {
@@ -1462,3 +1462,37 @@ body {
   /* margin-right: 20px; */
 }
 
+textarea, input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input,
+select {
+  background-color: #f8fbff;
+  background: #F2F7FF;
+  border-color: #A7CEEA;
+  color: #333333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.09) inset;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #f8fbff;
+  background: #f8fbff;
+  color: #888888;
+  border-color: #333333;
+}
