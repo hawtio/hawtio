@@ -759,11 +759,11 @@ module Fabric {
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
 
       container.jmxDomains.forEach((domain) => {
-        if (domain === "org.apache.cxf") {
+        if (domain === "io.fabric8") {
           answer.push({
-            title: "Apache CXF",
-            type: "icon",
-            src: "icon-puzzle-piece"
+            title: "Fabric8",
+            type: "img",
+            src: "app/fabric/img/fabric.png"
           });
         }
         if (domain === "org.fusesource.insight" || domain === "io.fabric8.insight") {
@@ -771,6 +771,13 @@ module Fabric {
             title: "Fabric8 Insight",
             type: "icon",
             src: "icon-eye-open"
+          });
+        }
+        if (domain === "hawtio") {
+          answer.push({
+            title: "hawtio",
+            type: "img",
+            src: "app/fabric/img/hawtio.png"
           });
         }
         if (domain === "org.apache.activemq") {
@@ -787,18 +794,11 @@ module Fabric {
             src: "app/fabric/img/camel.png"
           });
         }
-        if (domain === "io.fabric8") {
+        if (domain === "org.apache.cxf") {
           answer.push({
-            title: "Fabric8",
-            type: "img",
-            src: "app/fabric/img/fabric.png"
-          });
-        }
-        if (domain === "hawtio") {
-          answer.push({
-            title: "hawtio",
-            type: "img",
-            src: "app/fabric/img/hawtio.png"
+            title: "Apache CXF",
+            type: "icon",
+            src: "icon-puzzle-piece"
           });
         }
         if (domain === "org.apache.karaf") {
@@ -813,6 +813,20 @@ module Fabric {
             title: "Apache Zookeeper",
             type: "icon",
             src: "icon-group"
+          })
+        }
+        if (domain === "org.eclipse.jetty.server") {
+          answer.push({
+            title: "Jetty",
+            type: "icon",
+            src: "app/fabric/img/jetty.ico"
+          })
+        }
+        if (domain === "Catalina" || domain === "Tomcat") {
+          answer.push({
+            title: "Apache Tomcat",
+            type: "icon",
+            src: "app/fabric/img/tomcat.gif"
           })
         }
       });
