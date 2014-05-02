@@ -756,6 +756,7 @@ module Fabric {
   
   export function getServiceList(container) {
     var answer = [];
+    var javaContainer = true;
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
 
       container.jmxDomains.forEach((domain) => {
@@ -802,6 +803,7 @@ module Fabric {
           });
         }
         if (domain === "org.apache.karaf") {
+          javaContainer = false;
           answer.push({
             title: "Apache Karaf",
             type: "icon",
@@ -816,20 +818,31 @@ module Fabric {
           })
         }
         if (domain === "org.eclipse.jetty.server") {
+          javaContainer = false;
           answer.push({
             title: "Jetty",
-            type: "icon",
+            type: "img",
             src: "app/fabric/img/jetty.ico"
           })
         }
         if (domain === "Catalina" || domain === "Tomcat") {
+          javaContainer = false;
           answer.push({
             title: "Apache Tomcat",
-            type: "icon",
+            type: "img",
             src: "app/fabric/img/tomcat.gif"
           })
         }
       });
+
+      // add a generic java icon for standalone java apps
+      if (javaContainer) {
+        answer.push({
+          title: "Java",
+          type: "img",
+          src: "app/fabric/img/java.gif"
+        })
+      }
     }
     return answer;
   }
