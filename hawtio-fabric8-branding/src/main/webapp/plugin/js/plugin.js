@@ -25,6 +25,9 @@ var fabric8Branding = (function (self) {
   });
 
   self.enablefabric8 = function(branding) {
+    if (branding.exclusiveSet) {
+      return;
+    }
     self.log.info("enabled fabric8 branding");
     branding.appName = 'fabric8 console';
     branding.appLogo = self.context + '/plugin/img/logo.svg';

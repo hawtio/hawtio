@@ -4,27 +4,27 @@
  * @module Branding
  * @main Branding
  */
-var Branding = (function (Branding) {
-  Branding.enabled = null;
-  Branding.profile = null;
-  Branding.log = Logger.get("Branding");
+var RHBranding = (function (self) {
+  self.enabled = null;
+  self.profile = null;
+  self.log = Logger.get("Branding");
 
-  Branding.context = '/branding';
+  self.context = '/branding';
 
   // just in case we'll check for all of these...
-  Branding.mqProfiles = ["mq-amq", "mq-default", "mq", "a-mq", "a-mq-openshift", "mq-replicated"];
+  self.mqProfiles = ["mq-amq", "mq-default", "mq", "a-mq", "a-mq-openshift", "mq-replicated"];
 
   hawtioPluginLoader.registerPreBootstrapTask(function (task) {
     $.get('/branding/enabled/', function (response) {
-      Branding.log.debug("Got response: ", response);
-      Branding.enabled = Core.parseBooleanValue(response.enable);
+      self.log.debug("Got response: ", response);
+      self.enabled = Core.parseBooleanValue(response.enable);
 
-      if (Branding.enabled) {
-        Branding.profile = response.profile;
+      if (self.enabled) {
+        self.profile = response.profile;
         Themes.definitions['Red Hat'] = {
           label: 'Red Hat',
-          file: Branding.context + '/plugin/css/site-branding.css',
-          loginBg: Branding.context + '/plugin/img/login-screen-background.jpg'
+          file: self.context + '/plugin/css/site-branding.css',
+          loginBg: self.context + '/plugin/img/login-screen-background.jpg'
         };
         var localStorage = Core.getLocalStorage();
         if (!('theme' in localStorage)) {
@@ -35,55 +35,54 @@ var Branding = (function (Branding) {
     });
   });
 
-  Branding.pluginName = 'hawtio-branding';
+  self.pluginName = 'hawtio-redhat-branding';
 
-  Branding.propertiesToCheck = ['karaf.version'];
-  Branding.wantedStrings = ['redhat', 'fuse'];
+  self.propertiesToCheck = ['karaf.version'];
+  self.wantedStrings = ['redhat', 'fuse'];
 
-  function enableBranding(branding) {
-    Branding.log.info("enabled branding");
+  self.enableBranding = function enableBranding(branding) {
+    self.log.info("enabled branding");
+    branding.exclusiveSet = true;
     branding.appName = 'Management Console';
-    branding.appLogo = Branding.context + '/plugin/img/RHJB_Fuse_UXlogotype_0513LL_white.svg';
+    branding.appLogo = self.context + '/plugin/img/RHJB_Fuse_UXlogotype_0513LL_white.svg';
 
     branding.fullscreenLogin = true;
-    branding.profile = Branding.profile;
+    branding.profile = self.profile;
     branding.isAMQ = false;
     branding.enabled = true;
 
     if (branding.profile) {
-      Branding.mqProfiles.forEach(function (profile) {
+      self.mqProfiles.forEach(function (profile) {
         if (!branding.isAMQ && branding.profile.has(profile)) {
           branding.isAMQ = true;
-          branding.appLogo = Branding.context + '/plugin/img/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
+          branding.appLogo = self.context + '/plugin/img/RH_JBoss_AMQ_logotype_interface_LL_white.svg';
         }
       });
     }
-
-    Branding.log.debug("Branding: ", branding);
   }
-  Branding.enableBranding = enableBranding;
+  ;
 
-  angular.module(Branding.pluginName, ['hawtioCore']).run(function (helpRegistry, branding, $rootScope) {
-    helpRegistry.addDevDoc("branding", Branding.context + '/plugin/doc/developer.md');
+  angular.module(self.pluginName, ['hawtioCore']).run(function (helpRegistry, branding, $rootScope) {
+    helpRegistry.addDevDoc("branding", self.context + '/plugin/doc/developer.md');
 
-    if (Branding.enabled !== null) {
-      Branding.log.debug("Branding.enabled set: ", Branding.enabled);
-      if (Branding.enabled) {
-        enableBranding(branding);
+    if (self.enabled !== null) {
+      self.log.debug("Branding.enabled set: ", self.enabled);
+      if (self.enabled) {
+        self.enableBranding(branding);
       }
     } else {
       setTimeout(function () {
-        Branding.log.debug("Branding.enabled not yet set: ", Branding.enabled);
-        if (Branding.enabled) {
-          enableBranding(branding);
+        self.log.debug("Branding.enabled not yet set: ", self.enabled);
+        if (self.enabled) {
+          self.enableBranding(branding);
           Core.$apply($rootScope);
         }
       }, 500);
     }
   });
 
-  hawtioPluginLoader.addModule(Branding.pluginName);
-  return Branding;
+  hawtioPluginLoader.addModule(self.pluginName);
+  return self;
 
-})(Branding || {});
+})(RHBranding || {});
 
