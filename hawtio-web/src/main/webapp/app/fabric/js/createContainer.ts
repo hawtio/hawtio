@@ -338,8 +338,12 @@ module Fabric {
         json['profiles'] = $scope.selectedProfiles.map((p) => { return p.id; });
       }
 
+      var createJson = angular.toJson(json);
+
+      log.debug("createContainers json:\n" + createJson);
+
       setTimeout(() => {
-        jolokia.execute(managerMBean, 'createContainers(java.util.Map)', angular.toJson(json), {
+        jolokia.execute(managerMBean, 'createContainers(java.util.Map)', createJson, {
           method: "post",
           success: (response) => {
             log.debug("Response from creating container(s): ", response);

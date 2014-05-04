@@ -32,6 +32,8 @@ module Fabric {
     delete schema.properties['autoImportEnabled'];
     delete schema.properties['importPath'];
     delete schema.properties['users'];
+    // we cannot pass in system properties (you can use jvmOpt instead)
+    delete schema.properties['systemProperties'];
 
     ['zooKeeperServerInitLimit',
       'zooKeeperServerTickTime',
@@ -189,7 +191,7 @@ module Fabric {
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
           'Common': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
-          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
         };
         break;
 
@@ -209,7 +211,7 @@ module Fabric {
 
         schema['tabs'] = {
           'Common': ['name', 'number'],
-          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
         };
         break;
 
