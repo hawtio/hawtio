@@ -281,7 +281,9 @@ module Fabric {
 
     $scope.filterActiveProfile = (profile) => {
 
-      if (!$scope.getFilteredName(profile).has($scope.activeProfileIdFilter)) {
+      var filterText = $scope.activeProfileIdFilter;
+      var filterName = $scope.getFilteredName(profile);
+      if (!Core.matchFilterIgnoreCase(filterName, filterText)) {
         return false;
       }
 
