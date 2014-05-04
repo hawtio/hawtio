@@ -252,13 +252,15 @@ module Fabric {
     }
 
     $scope.getFilteredName = (item) => {
-      return (item.versionId + " / " + item.id).toLowerCase();
+      return (item.versionId + " / " + item.id);
     }
 
     $scope.filterContainer = (container) => {
 
       if ($scope.containerIdFilter) {
-        if (!$scope.getFilteredName(container).has($scope.containerIdFilter.toLowerCase())) {
+        var filterName = $scope.getFilteredName(container);
+        var filterText = $scope.containerIdFilter;
+        if (!Core.matchFilterIgnoreCase(filterName, filterText)) {
           return false;
         }
       }
@@ -266,9 +268,8 @@ module Fabric {
       if ($scope.selectedActiveProfiles.length > 0) {
 
         if ($scope.selectedActiveProfiles.none( (ap) => {
-          //console.log("Checking ap: ", ap, " container: ", container);
-          return ap.versionId === container.versionId && 
-            container.profileIds.some(ap.id);
+          return ap.versionId === container.versionId &&
+            profileIds.any(id => Core.matchFilterIgnoreCase(id, ap.id));
         })) {
           return false;
         }

@@ -133,15 +133,18 @@ module Fabric {
       };
 
       $scope.getFilteredName = (item) => {
-        return (item.versionId + " / " + item.id).toLowerCase();
+        return item.versionId + " / " + item.id;
       };
 
       $scope.filterContainer = (container) => {
         var filterText = $scope.containerIdFilter;
-        if (filterText && !$scope.getFilteredName(container).has(filterText.toLowerCase())) {
+        var filterName = $scope.getFilteredName(container);
+
+        if (!Core.matchFilterIgnoreCase(filterName, filterText)) {
+          // we did not match the container name, then try to see if we match any of its profiles
           var profileIds = container.profileIds;
           if (profileIds) {
-            return profileIds.any(id => id.toLowerCase().has(filterText.toLowerCase()));
+            return profileIds.any(id => Core.matchFilterIgnoreCase(id, filterText));
           }
           return false;
         }
@@ -453,11 +456,16 @@ module Fabric {
       };
 
       $scope.profileMatchesFilter = (profile) => {
-        return profile.id.has($scope.searchFilter) || !profile.containers.filter((id) => { return id.has($scope.searchFilter); }).isEmpty();
+        var filterText = $scope.searchFilter;
+
+        return Core.matchFilterIgnoreCase(profile.id, filterText) ||
+          !profile.containers.filter(id => Core.matchFilterIgnoreCase(id, filterText)).isEmpty();
       };
 
       $scope.containerMatchesFilter = (container) => {
-        return container.id.has($scope.searchFilter) || !container.profileIds.filter((id) => {return id.has($scope.searchFilter);}).isEmpty();
+        var filterText = $scope.searchFilter;
+        return Core.matchFilterIgnoreCase(container.id, filterText) ||
+          !container.profileIds.filter(id => Core.matchFilterIgnoreCase(id, filterText)).isEmpty;
       };
 
       $scope.updateRequirements = (requirements) => {

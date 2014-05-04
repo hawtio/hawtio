@@ -1471,4 +1471,30 @@ module Core {
     return value;
   }
 
+  /**
+   * Match the given filter against the text, ignoring any case.
+   * <p/>
+   * This operation will regard as a match if either filter or text is null/undefined.
+   * As its used for filtering out, unmatched.
+   * <p/>
+   *
+   * @param text   the text
+   * @param filter the filter
+   * @return true if matched, false if not.
+   */
+  export function matchFilterIgnoreCase(text, filter) {
+    if (angular.isUndefined(text) || angular.isUndefined(filter)) {
+      return true;
+    }
+
+    text = text.toString().trim().toLowerCase();
+    filter = filter.toString().trim().toLowerCase();
+
+    if (text.length === 0 || filter.length === 0) {
+      return true;
+    }
+
+    return text.indexOf(filter) > -1;
+  }
+
 }

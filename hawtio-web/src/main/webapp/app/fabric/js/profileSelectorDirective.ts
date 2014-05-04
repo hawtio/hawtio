@@ -34,11 +34,14 @@ module Fabric {
       $scope.tree = [];
 
       $scope.showProfile = (profile) => {
-        return $scope.filterText.isBlank() || profile.id.has($scope.filterText);
+        return Core.matchFilterIgnoreCase(profile.id, $scope.filterText);
       };
 
       $scope.showBranch = (branch) => {
-        return $scope.filterText.isBlank() || branch.profiles.some((profile) => { return profile.id.has($scope.filterText) });
+        return $scope.filterText.isBlank() ||
+               branch.profiles.some((profile) => {
+                 return Core.matchFilterIgnoreCase(profile.id, $scope.filterText)
+               });
       };
 
       $scope.goto = (profile) => {
