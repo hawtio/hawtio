@@ -125,6 +125,12 @@ module UI {
           }
         });
 
+        $scope.$watch(() => { return $element.is(':visible'); }, (newValue, oldValue) => {
+          if (newValue !== oldValue && $scope.codeMirror) {
+              $scope.codeMirror.refresh();
+          }
+        });
+
         $scope.$watch('text', function() {
           if (!$scope.codeMirror) {
 
