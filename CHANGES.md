@@ -1,5 +1,14 @@
 ### Change Log
 
+#### 1.4.0
+* Theme support with two available themes, Default and Dark
+* Better pluggable branding support
+* Refactored preferences page into a slide out preferences panel, made preference tabs pluggable
+* Relocated perspective switcher and incorporated it into the main navigation bar
+* Perspective switcher now also maintains a list of 5 recently used connections automatically
+* Fixes [these 18 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=11&state=closed)
+
+
 #### 1.3.1
 
 * Quick bugfix release
