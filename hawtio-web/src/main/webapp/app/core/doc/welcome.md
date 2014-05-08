@@ -1,4 +1,4 @@
-<h3 class="help-header centered">Welcome to <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}}</h3>
+<h3 class="help-header centered">Welcome to <span ng-include="'app/core/html/branding.html'"></span></h3>
 
 <b>{{branding.appName}}</b> is a lightweight and <a href="http://hawt.io/plugins/index.html">modular</a> HTML5 web console with <a href="http://hawt.io/plugins/index.html">lots of plugins</a> for managing your Java stuff
 

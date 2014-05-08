@@ -105,9 +105,8 @@ div.log-stack-trace p:nth-child(odd) {
               <a ng-href="#"
                  title="Go to home"
                  class="brand"
-                 data-placement="bottom">
-                <img ng-show="branding.appLogo" ng-src="{{branding.appLogo}}"/>
-                <strong ng-bind-html-unsafe="branding.appName"></strong>
+                 data-placement="bottom"
+                 ng-include="'app/core/html/branding.html'">
               </a>
             </div>
 

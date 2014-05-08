@@ -163,13 +163,22 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         }).
 
         factory('branding', function() {
-          return {
+          var branding = {
             appName: 'hawtio',
-            appLogo: 'img/logo-16px.png',
+            appLogo: 'img/hawtio_logo.svg',
             loginBg: 'img/fire.jpg',
+            logoOnly: true,
             fullscreenLogin: false,
-            enabled: false
+            enabled: false,
+            logoClass: () => {
+              if (branding.logoOnly) {
+                return "without-text";
+              } else {
+                return "with-text";
+              }
+            }
           }
+          return branding;
 
         }).
 

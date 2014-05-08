@@ -1,4 +1,4 @@
-<h3 class="about-header">About <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}} </h3>
+<h3 class="about-header">About <span ng-include="'app/core/html/branding.html'"></span></h3>
 
 <div ng-show="!customBranding">
   <p/>

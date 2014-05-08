@@ -778,7 +778,7 @@ module Fabric {
           answer.push({
             title: "hawtio",
             type: "img",
-            src: "app/fabric/img/hawtio.png"
+            src: "app/img/hawtio_icon.svg"
           });
         }
         if (domain === "org.apache.activemq") {

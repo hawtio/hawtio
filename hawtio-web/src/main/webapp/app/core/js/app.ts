@@ -93,6 +93,15 @@ module Core {
     $scope.connectFailure = {};
 
     $scope.showPrefs = false;
+
+    $scope.logoClass = () => {
+      if (branding.logoOnly) {
+        return "without-text";
+      } else {
+        return "with-text";
+      }
+    };
+
     setTimeout(() => {
       if ('showPrefs' in localStorage) {
         $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);

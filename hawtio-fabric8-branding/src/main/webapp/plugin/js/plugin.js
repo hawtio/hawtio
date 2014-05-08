@@ -31,7 +31,7 @@ var fabric8Branding = (function (self) {
     self.log.info("enabled fabric8 branding");
     branding.appName = 'fabric8 console';
     branding.appLogo = self.context + '/plugin/img/logo.png';
-
+    branding.logoOnly = false;
     branding.fullscreenLogin = true;
     branding.enabled = true;
   };

@@ -49,6 +49,7 @@ var RHBranding = (function (self) {
     branding.fullscreenLogin = true;
     branding.profile = self.profile;
     branding.isAMQ = false;
+    branding.logoOnly = false;
     branding.enabled = true;
 
     if (branding.profile) {

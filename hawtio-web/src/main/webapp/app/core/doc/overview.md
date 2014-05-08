@@ -1,4 +1,4 @@
-<h3 class="help-header">Welcome to <img class='no-shadow' ng-src='{{branding.appLogo}}'>{{branding.appName}} Help</h3>
+<h3 class="help-header">Welcome to <span ng-include="'app/core/html/branding.html'"></span> Help</h3>
 
 ##### Plugin Help #####
 Click the Help icon (<i class='icon-question-sign'></i>) in the main navigation bar to access [{{branding.appName}}](http://hawt.io "{{branding.appName}}")'s help system. Browse the available help topics for plugin-specific documentation using the help navigation bar on the left.
