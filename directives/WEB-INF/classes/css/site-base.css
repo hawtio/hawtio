@@ -9,7 +9,6 @@ a:focus {
 }
 
 .brand > img {
-  vertical-align: top;
   height: 11px;
   width: auto;
 }
@@ -1844,7 +1843,6 @@ div#main div ul.nav li a.nav-primary .caret {
   font-size: 13px;
   margin-left: 0px;
   padding: 0px;
-  padding-top: 7px;
   font-weight: normal;
   margin-left: 20px;
 }
@@ -3828,4 +3826,18 @@ img.nodeIcon:hover {
   right: 15px;
   bottom: 5px;
   margin: 0;
+}
+
+.help-header .without-text,
+.about-header .without-text {
+  position: relative;
+  top: -4px;
+  vertical-align: middle;    
+  height: 48px;
+    
+}
+
+.brand > .without-text {
+  height: 24px;
+  margin-top: 3px;
 }
