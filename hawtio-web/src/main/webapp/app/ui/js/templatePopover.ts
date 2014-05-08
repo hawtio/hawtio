@@ -41,7 +41,11 @@ module UI {
           title: title,
           trigger: trigger,
           html: html,
-          content: () => $compile(template)($scope),
+          content: () => {
+            var res = $compile(template)($scope);
+            Core.$digest($scope);
+            return  res;
+          },
           delay: delay,
           container: container,
           selector: selector,

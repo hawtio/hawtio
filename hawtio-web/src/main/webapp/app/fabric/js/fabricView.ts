@@ -269,7 +269,7 @@ module Fabric {
 
         if ($scope.selectedActiveProfiles.none( (ap) => {
           return ap.versionId === container.versionId &&
-            profileIds.any(id => Core.matchFilterIgnoreCase(id, ap.id));
+            container.profileIds.any(id => Core.matchFilterIgnoreCase(id, ap.id));
         })) {
           return false;
         }
