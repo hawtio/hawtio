@@ -133,6 +133,17 @@ body {
   border-bottom: 1px solid #444;
 }
 
+.box .clickable:not(.icon-circle-blank):not(.icon-circle) {
+  border-radius: 4px;
+  border: 1px solid #454545;
+}
+
+.box .clickable:not(.icon-circle-blank):not(.icon-circle):hover {
+  background: #222;
+  color: #888;
+}
+
+
 .box.selected {
   color: #202020;
   background-color: #353535;
