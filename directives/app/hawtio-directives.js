@@ -1439,7 +1439,9 @@ var UI;
                     trigger: trigger,
                     html: html,
                     content: function () {
-                        return $compile(template)($scope);
+                        var res = $compile(template)($scope);
+                        Core.$digest($scope);
+                        return res;
                     },
                     delay: delay,
                     container: container,
