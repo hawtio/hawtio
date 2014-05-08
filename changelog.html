@@ -57,12 +57,17 @@
 
 <h4 id = "1_4_0">1.4.0</h4>
 
-<p>* Theme support with two available themes, Default and Dark
-* Better pluggable branding support
-* Refactored preferences page into a slide out preferences panel, made preference tabs pluggable
-* Relocated perspective switcher and incorporated it into the main navigation bar
-* Perspective switcher now also maintains a list of 5 recently used connections automatically
-* Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=11&amp;state=closed">these 18 issues and enhancements</a></p>
+<ul>
+<li>Theme support with two available themes, Default and Dark</li>
+<li>Better pluggable branding support</li>
+<li>Refactored preferences page into a slide out preferences panel, made preference tabs pluggable</li>
+<li>Relocated perspective switcher and incorporated it into the main navigation bar</li>
+<li>Perspective switcher now also maintains a list of 5 recently used connections automatically</li>
+<li>Added <a href="http://fabric8.io/">fabric8</a> branding plugin</li>
+<li>Fixed some minor bugs and issues in the fabric plugin.</li>
+<li>Upgraded to <a href="http://jolokia.org/">Jolokia</a> 1.2.1</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=11&amp;state=closed">these 18 issues and enhancements</a></li>
+</ul>
 
 <h4 id = "1_3_1">1.3.1</h4>
 
@@ -78,8 +83,8 @@
 <li>Separate <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples/irc-client-plugin">IRC plugin example</a> to show how to develop external plugins for hawtio</li>
 <li>Upgraded to <a href="http://jolokia.org/">Jolokia</a> 1.2 so that hawtio can discover other Jolokia processes via multicast</li>
 <li>ActiveMQ plugin now defaults to <a href="https://github.com/hawtio/hawtio/issues/1175">showing all the real time attributes for queues</a> to avoid folks having to find the Queues folder.</li>
-<li><p>Updated to support the new package name of <a href="http://fabric8.io/">fabric8 mbeans</a></p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=10&amp;state=closed">these 51 issues and enhancements</a></p></li>
+<li>Updated to support the new package name of <a href="http://fabric8.io/">fabric8 mbeans</a></li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=10&amp;state=closed">these 51 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_2_3">1.2.3</h4>
@@ -95,8 +100,8 @@
 <li>Breadcrumb navigation in Camel plugin to make it easier and faster to switch between CamelContext and routes in the selected view.</li>
 <li>Added Type Converter sub tab (requires Camel 2.13 onwards).</li>
 <li>Better support for older Internet Explorer browsers.</li>
-<li><p>Lots of polishing to work much better as the console for <a href="http://fabric8.io/">fabric8</a></p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=9&amp;state=closed">these 175 issues and enhancements</a></p></li>
+<li>Lots of polishing to work much better as the console for <a href="http://fabric8.io/">fabric8</a></li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=9&amp;state=closed">these 175 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_2_2">1.2.2</h4>
@@ -108,8 +113,8 @@
 <li>Added <a href="http://hawt.io/plugins/quartz/">quartz</a> plugin to manage quartz schedulers.</li>
 <li>Allow to configure the HTTP session timeout used by hawtio. hawtio now uses the default timeout of the web container, instead of hardcoded value of 900 seconds.</li>
 <li>The <a href="http://hawt.io/plugins/jmx/">JMX</a> plugin can now edit JMX attributes.</li>
-<li><p>the <a href="http://hawt.io/plugins/osgi/">osgi</a> plugin now supports OSGi Config Admin and uses OSGi MetaType metadata for generating nicer forms (if the io.fabric8/fabric-core bundle is deployed which implements an MBean for introspecting the OSGi MetaType).</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=8&amp;state=closed">these 75 issues and enhancements</a></p></li>
+<li>the <a href="http://hawt.io/plugins/osgi/">osgi</a> plugin now supports OSGi Config Admin and uses OSGi MetaType metadata for generating nicer forms (if the io.fabric8/fabric-core bundle is deployed which implements an MBean for introspecting the OSGi MetaType).</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=8&amp;state=closed">these 75 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_2_1">1.2.1</h4>
@@ -123,8 +128,8 @@
 <li><a href="http://hawt.io/plugins/ide/">IDE</a> for generating links to open files in your IDE; currently IDEA the only one supported so far ;)</li>
 <li>Site plugin for using hawtio to view and host your project website</li>
 </ul></li>
-<li><p>Improved the camel editor with a new properties panel on the right</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=3&amp;state=closed">these 51 issues and enhancements</a></p></li>
+<li>Improved the camel editor with a new properties panel on the right</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=3&amp;state=closed">these 51 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_2_0">1.2.0</h4>
@@ -160,15 +165,14 @@
 <li>New login page</li>
 <li>Redesigned help pages</li>
 </ul></li>
-<li><p>Tons more stuff we probably forgot to list here but is mentioned in <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=closed">the issues</a> :)</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=closed">these 407 issues and enhancements</a></p></li>
+<li>Tons more stuff we probably forgot to list here but is mentioned in <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=closed">the issues</a> :)</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=4&amp;state=closed">these 407 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_1">1.1</h4>
 
 <ul>
-<li><p>Added the following new plugins:</p>
-
+<li>Added the following new plugins:
 <ul>
 <li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md">forms</a> a developer plugin for automatically creating tables and forms from json-schema models</li>
 <li><a href="http://hawt.io/plugins/infinispan/">infinispan</a> for viewing metrics for your Infinispan caches or using the CLI to query or update them</li>
@@ -176,9 +180,9 @@
 <li><a href="http://hawt.io/plugins/maven/">maven</a> to let you search maven repositories, find versions, view source or javadoc</li>
 <li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/tree/doc/developer.md">tree</a> a developer plugin to make it easier to work with trees</li>
 </ul></li>
-<li><p>Added a new real time Camel profile view and the first version of a web based wiki based camel editor along with improvements to the diagram rendering</p></li>
-<li><p>Added more flexible documentation system so that plugins are now self documenting for users and developers</p></li>
-<li><p>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=2&amp;state=closed">these 80 issues and enhancements</a></p></li>
+<li>Added a new real time Camel profile view and the first version of a web based wiki based camel editor along with improvements to the diagram rendering</li>
+<li>Added more flexible documentation system so that plugins are now self documenting for users and developers</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=2&amp;state=closed">these 80 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_0">1.0</h4>
@@ -188,7 +192,7 @@
 <li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=1&amp;state=closed">these 74 issues and enhancements</a></li>
 </ul>
 
-<h4 id = "In_Progress__1_4_">In Progress (1.4)</h4>
+<h4 id = "In_Progress__1_4_1_">In Progress (1.4.1)</h4>
 
 <p></div>
   </div></p>
