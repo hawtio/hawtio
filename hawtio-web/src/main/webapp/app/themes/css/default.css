@@ -616,6 +616,7 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 .box.selected {
   color: #0066cc;
   text-shadow: rgba(0, 51, 102, 0.3) 0 -1px 0, #b3d9ff 0 2px 1px, #99ddff 0 0 5px, rgba(0, 127, 255, 0.6) 0 0 20px;
+  background-color: #f0f0ff;
 }
 
 .box.selected .box-right i {

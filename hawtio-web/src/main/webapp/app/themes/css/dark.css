@@ -130,10 +130,14 @@ body {
 }
 
 .box {
-  padding-top: 15px;
   border-bottom: 1px solid #444;
-  padding-bottom: 15px;
 }
+
+.box.selected {
+  color: #202020;
+  background-color: #353535;
+}
+
 
 a {
   color: #888888;

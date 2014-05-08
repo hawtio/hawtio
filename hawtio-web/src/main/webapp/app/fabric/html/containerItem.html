@@ -1,0 +1,58 @@
+<!-- start box -->
+<div class="box" 
+     ng-class="getSelectedClass(container)" 
+     ng-click="container.selected = !container.selected">
+  <div class="box-left">
+    <div class="container-controls" >
+      <div>
+        <i ng-show="!container.selected && showSelect" 
+           class="icon-circle-blank clickable" 
+           title="Not selected"></i>
+        <i ng-show="container.selected && showSelect" 
+           class="icon-circle clickable" 
+           title="Status of the container"></i>
+      </div>
+      <div class="container-status">
+        <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
+      </div>
+      <div>
+        <span class="contained c-wide" 
+          title="{{container.id}} / {{container.versionId}}">
+          <a ng-click="showContainer(container)"><strong>{{container.id}}</strong></a>
+        </span>
+      </div>
+      <div>
+        <span class="badge badge-info">
+          {{container.versionId}}
+        </span>
+      </div>
+      <div>
+        <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
+      </div>
+      <div>
+        <i class="icon-signin clickable"
+        ng-show="canConnect(container)"
+        title="Open a new window and connect to this container"
+        ng-click="doConnect(container)"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="box-middle">
+    <!-- empty -->
+  </div>
+
+  <div class="box-right">
+    <ul class="service-list">
+      <li>
+        <i class="icon-cloud" title="Ensemble member" ng-click="showContainer(container)" ng-show="isEnsembleContainer(container.id)"></i>
+      </li>
+      <li ng-repeat="service in container.services" ng-switch="service.type">
+        <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
+        <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
+      </li>
+    </ul>
+  </div>
+
+</div>
+<!-- end box -->

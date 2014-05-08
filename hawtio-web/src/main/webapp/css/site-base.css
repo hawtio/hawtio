@@ -1257,18 +1257,6 @@ li.stacktrace {
   height: 91%;
 }
 
-.box {
-  cursor: pointer;
-  height: 20px;
-  line-height: 2em;
-  overflow: hidden;
-  padding: 10px;
-  position: relative;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease 0s;
-  white-space: nowrap;
-}
-
 .container-section {
   height: 90%;
   overflow-x: hidden;
@@ -1332,12 +1320,64 @@ h4 > .contained {
   top: 8px;
 }
 
-.box > .box-left > div {
-  top: 8px;
-  left: 0;
+.box {
+  cursor: pointer;
+  height: 50px;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
   position: relative;
-  display: inline;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease 0s;
+  white-space: nowrap;
 }
+
+.box > .box-left,
+.box > .box-right,
+.box > .box-middle {
+  display: inline-block;
+  position: absolute;
+  vertical-align: middle;
+  top: 0;
+  bottom: 0;
+  vertical-align: middle;
+  padding-top: 10px;
+}
+
+.box > .box-left {
+  left: 11px;
+}
+
+.box > .box-right {
+  right: 11px;
+}
+
+.box > .box-middle {
+  right: 60px;
+}
+
+.box > .box-left > div,
+.box > .box-right > div,
+.box > .box-middle > div {
+
+}
+
+.box > .box-left > div > div,
+.box > .box-right > div > div,
+.box > .box-middle > div > div {
+  vertical-align: middle;
+  display: inline-block;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+
+.box > .box-left > div > div *,
+.box > .box-right > div > div *,
+.box > .box-middle > div > div * {
+  vertical-align: middle;
+}
+
 
 .box > .box-left > .profile-select {
   display: inline-block;
@@ -1372,36 +1412,6 @@ h4 > .contained {
 
 .box .active-profile [class^='icon-circle'] {
   top: 0;
-}
-
-.box > .box-left {
-  display: inline-block;
-  position: absolute;
-  left: 11px;
-  vertical-align: middle;
-  top: 50%;
-  margin-top: -22px;
-  height: 30px;
-}
-
-.box > .box-right {
-  display: inline-block;
-  position: absolute;
-  right: 11px;
-  vertical-align: middle;
-  top: 50%;
-  margin-top: -15px;
-  height: 30px;
-}
-
-.box > .box-middle {
-  display: inline-block;
-  position: absolute;
-  right: 60px;
-  vertical-align: middle;
-  top: 50%;
-  margin-top: -15px;
-  height: 30px;
 }
 
 .box-middle ul.inline li {
@@ -1556,7 +1566,7 @@ td.adding {
 }
 
 .child-container {
-  margin-left: 2em;
+  margin-left: 1em;
   transition: none;
 }
 
@@ -3840,4 +3850,25 @@ img.nodeIcon:hover {
 .brand > .without-text {
   height: 24px;
   margin-top: 3px;
+}
+
+.service-list > li {
+  list-style-type: none;
+  display: inline-block;
+  margin-left: 3px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+
+.container-status > i:before {
+  font-size: 28px;
+}
+
+.service-list i,
+.service-list i:before,
+.service-list img {
+  height: 24px;
+  width: 24px;
+  font-size: 23px;
+  vertical-align: middle;
 }
