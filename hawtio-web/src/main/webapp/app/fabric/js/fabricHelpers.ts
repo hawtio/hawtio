@@ -753,47 +753,26 @@ module Fabric {
   export function startContainer(jolokia, id, success, error) {
     doAction('startContainer(java.lang.String)', jolokia, [id], success, error);
   }
-  
-  
+
   export function getServiceList(container) {
     var answer = [];
     var javaContainer = true;
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
-
       answer = Fabric.serviceIconRegistry.getIcons(container.jmxDomains);
-
-      container.jmxDomains.forEach((domain) => {
-        if (domain === "org.apache.karaf") {
-          javaContainer = false;
-        }
-        if (domain === "org.eclipse.jetty.server") {
-          javaContainer = false;
-        }
-        if (domain === "Catalina" || domain === "Tomcat") {
-          javaContainer = false;
-        }
-      });
-
-      // add a generic java icon for standalone java apps
-      if (javaContainer) {
-        answer.push({
-          title: "Java",
-          type: "img",
-          src: "app/fabric/img/java.gif"
-        })
-      }
     }
     return answer;
   }
 
   export function getTypeIcon(container) {
-    var answer = Fabric.containerIconRegistry.getIcon(container.type);
+    var type = container.type;
+    // use the type in the metadata if it's there...
+    if (container.metadata && container.metadata.containerType) {
+      type = container.metadata.containerType;
+    }
+    var answer = Fabric.containerIconRegistry.getIcon(type);
+    log.debug("Icon for ", container, " : ", answer);
     if (!answer) {
-      return {
-        title: "Java",
-        type: "img",
-        src: "app/fabric/img/java.gif"
-      };
+      return Fabric.javaIcon;
     } else {
       return answer;
     }

@@ -4,11 +4,9 @@ module Fabric {
     title: string;
     type: string;
     src: string;
-  }
-
+  };
 
   export class IconRegistry {
-
     private icons = {};
 
     public addIcons(icon:Icon, domain:string, ... domains:string[]) {
@@ -37,9 +35,18 @@ module Fabric {
     }
 
     public getIcon(thing:string) {
+      log.debug("Returning icon for: ", thing);
       return this.icons[thing];
     }
+
   }
+
+  // Common icons that functions could return directly
+  export var javaIcon:Icon = {
+    title: "Java",
+    type: "img",
+    src: "app/fabric/img/java.svg"
+  };
 
   // Service Icon Registry, maps icons to JMX domains
   export var serviceIconRegistry = new IconRegistry();
@@ -113,6 +120,9 @@ module Fabric {
     type: "icon",
     src: "icon-beaker"
   }, "karaf");
+
+  // TODO - placeholder for Java containers
+  containerIconRegistry.addIcons(javaIcon, "java");
 
 
 }

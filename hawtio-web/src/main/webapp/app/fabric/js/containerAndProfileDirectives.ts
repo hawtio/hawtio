@@ -10,7 +10,7 @@ module Fabric {
 
     public controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
 
-      $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains', 'type'];
+      $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains', "type", "metadata"];
       $scope.profileFields = ["id", "hidden"];
       $scope.containersOp = 'containers(java.util.List, java.util.List)';
       $scope.ensembleContainerIdListOp = 'EnsembleContainers';

@@ -66,7 +66,7 @@ module Jmx {
         $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
 
         Core.$apply($scope);
-      }
+      };
 
 
       $scope.execute = () => {
@@ -98,7 +98,6 @@ module Jmx {
             $scope.operationResult = error;
             var stacktrace = response.stacktrace;
             if (stacktrace) {
-              //console.log(stacktrace);
               $scope.operationResult = stacktrace;
             }
             Core.$apply($scope);
@@ -144,7 +143,6 @@ module Jmx {
       };
 
       $scope.doFilter = (item) => {
-        log.debug("item: ", item);
         if (Core.isBlank($scope.methodFilter)) {
           return true;
         }
