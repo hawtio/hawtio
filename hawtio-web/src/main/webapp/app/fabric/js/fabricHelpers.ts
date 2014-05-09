@@ -224,11 +224,9 @@ module Fabric {
     };
 
     $scope.createChildContainer = (container) => {
-      $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
-    };
-
-
-    $scope.createChildContainer = (container) => {
+      if (!container.root || !container.alive) {
+        return;
+      }
       $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
     };
 
@@ -298,6 +296,9 @@ module Fabric {
     };
 
     $scope.doConnect = (container, view) => {
+      if (!$scope.canConnect(container)) {
+        return;
+      }
       // TODO at least obfusicate this
       $scope.connect.userName = Core.username || localStorage['fabric.userName'];
       $scope.connect.password = Core.password || localStorage['fabric.password'];
@@ -759,79 +760,17 @@ module Fabric {
     var javaContainer = true;
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
 
+      answer = Fabric.serviceIconRegistry.getIcons(container.jmxDomains);
+
       container.jmxDomains.forEach((domain) => {
-        if (domain === "io.fabric8") {
-          answer.push({
-            title: "Fabric8",
-            type: "img",
-            src: "app/fabric/img/fabric.png"
-          });
-        }
-        if (domain === "org.fusesource.insight" || domain === "io.fabric8.insight") {
-          answer.push({
-            title: "Fabric8 Insight",
-            type: "icon",
-            src: "icon-eye-open"
-          });
-        }
-        if (domain === "hawtio") {
-          answer.push({
-            title: "hawtio",
-            type: "img",
-            src: "img/hawtio_icon.svg"
-          });
-        }
-        if (domain === "org.apache.activemq") {
-          answer.push({
-            title: "Apache ActiveMQ",
-            type: "img",
-            src: "app/fabric/img/message_broker.png"
-          });
-        }
-        if (domain === "org.apache.camel") {
-          answer.push({
-            title: "Apache Camel",
-            type: "img",
-            src: "app/fabric/img/camel.png"
-          });
-        }
-        if (domain === "org.apache.cxf") {
-          answer.push({
-            title: "Apache CXF",
-            type: "icon",
-            src: "icon-puzzle-piece"
-          });
-        }
         if (domain === "org.apache.karaf") {
           javaContainer = false;
-          answer.push({
-            title: "Apache Karaf",
-            type: "icon",
-            src: "icon-beaker"
-          })
-        }
-        if (domain === "org.apache.zookeeper") {
-          answer.push({
-            title: "Apache Zookeeper",
-            type: "icon",
-            src: "icon-group"
-          })
         }
         if (domain === "org.eclipse.jetty.server") {
           javaContainer = false;
-          answer.push({
-            title: "Jetty",
-            type: "img",
-            src: "app/fabric/img/jetty.ico"
-          })
         }
         if (domain === "Catalina" || domain === "Tomcat") {
           javaContainer = false;
-          answer.push({
-            title: "Apache Tomcat",
-            type: "img",
-            src: "app/fabric/img/tomcat.gif"
-          })
         }
       });
 
@@ -845,6 +784,19 @@ module Fabric {
       }
     }
     return answer;
+  }
+
+  export function getTypeIcon(container) {
+    var answer = Fabric.containerIconRegistry.getIcon(container.type);
+    if (!answer) {
+      return {
+        title: "Java",
+        type: "img",
+        src: "app/fabric/img/java.gif"
+      };
+    } else {
+      return answer;
+    }
   }
 
   /**

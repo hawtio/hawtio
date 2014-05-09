@@ -224,6 +224,7 @@ module Fabric {
 
           newContainers.each((container) => {
             container.services = getServiceList(container);
+            container.icon = Fabric.getTypeIcon(container);
             var c = $scope.containers.find((c) => { return c.id === container.id; });
             if (c) {
               container['selected'] = c.selected;

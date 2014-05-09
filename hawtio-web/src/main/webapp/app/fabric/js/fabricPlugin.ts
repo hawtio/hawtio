@@ -179,6 +179,12 @@ module Fabric {
           }
         }
     }).
+    factory('serviceIconRegistry', () => {
+        return Fabric.serviceIconRegistry;
+    }).
+    factory('containerIconRegistry', () => {
+        return Fabric.containerIconRegistry;
+    }).
 
           run(($location: ng.ILocationService,
                workspace: Workspace,
