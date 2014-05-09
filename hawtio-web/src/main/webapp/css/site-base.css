@@ -3859,8 +3859,12 @@ img.nodeIcon:hover {
   vertical-align: middle;
 }
 
-.container-status > i:before {
+.container-status > i:before,
+.container-type i:before,
+.container-type img {
   font-size: 28px;
+  height: 28px;
+  /* width: 28px; */
 }
 
 .service-list i,
