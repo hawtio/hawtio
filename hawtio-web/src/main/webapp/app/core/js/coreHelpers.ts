@@ -296,16 +296,7 @@ module Core {
   }
 
   export function executePostLoginTasks() {
-    angular.forEach(Core.postLoginTasks, (value:() => void, key) => {
-      if (angular.isFunction(value)) {
-        log.debug("Executing task : ", key);
-        try {
-          value();
-        } catch (error) {
-          log.debug("Failed to execute task: ", key, " error: ", error);
-        }
-      }
-    });
+    Core.postLoginTasks.execute();
   }
 
   /**

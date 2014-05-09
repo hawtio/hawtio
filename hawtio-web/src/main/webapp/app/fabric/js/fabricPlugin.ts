@@ -196,7 +196,7 @@ module Fabric {
               return Fabric.currentContainerId;
             });
 
-            postLoginTasks['fabricFetchContainerName'] = () => {
+            postLoginTasks.addTask('fabricFetchContainerName', () => {
               if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
                 jolokia.request({
                   type: 'read', mbean: Fabric.managerMBean, attribute: 'CurrentContainerName'
@@ -208,7 +208,7 @@ module Fabric {
                   Core.$apply($rootScope);
                 }));
               }
-            };
+            });
 
             preferencesRegistry.addTab("Fabric", "app/fabric/html/preferences.html", () => {
               return Fabric.isFMCContainer(workspace);

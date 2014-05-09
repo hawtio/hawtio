@@ -32,8 +32,6 @@ module Core {
 
   export var templatePath = 'app/core/html/';
 
-  export var postLoginTasks = {};
-
 }
 
 
@@ -302,6 +300,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
                 },
                 error: (xhr, textStatus, error) => {
                   // silently ignore, we could be using the proxy
+                  Core.executePostLoginTasks();
                 }
               });
 

@@ -20,7 +20,7 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding) {
+  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
     jolokia.stop();
 
     $scope.entity = {
