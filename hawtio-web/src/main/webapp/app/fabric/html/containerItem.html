@@ -26,17 +26,17 @@
       <div class="container-status">
         <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
       </div>
-      <div>
-        <span>type: {{container.type}}</span>
-      </div>
-      <div>
-        <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
+      <div class="container-type" title="Container type">
+        <span>{{container.type}}</span>
       </div>
       <div>
         <i class="icon-signin clickable"
         ng-show="canConnect(container)"
         title="Open a new window and connect to this container"
         ng-click="doConnect(container)"></i>
+      </div>
+      <div>
+        <i class="icon-plus clickable" ng-show="container.root && container.alive" title="Create a new child container" ng-click="createChildContainer(container)"></i>
       </div>
     </div>
   </div>
