@@ -1376,9 +1376,9 @@ h4 > .contained {
 }
 
 
-.box > .box-left > div > div *,
-.box > .box-right > div > div *,
-.box > .box-middle > div > div * {
+.box > .box-left > div > div .contained,
+.box > .box-right > div > div .contained,
+.box > .box-middle > div > div .contained {
   vertical-align: middle;
 }
 
@@ -1567,11 +1567,6 @@ td.adding {
   top: 0px;
   min-height: 30px;
   width: 160px;
-}
-
-.child-container {
-  margin-left: 1em;
-  transition: none;
 }
 
 .login-wrapper {
@@ -3864,8 +3859,12 @@ img.nodeIcon:hover {
   vertical-align: middle;
 }
 
-.container-status > i:before {
+.container-status > i:before,
+.container-type i:before,
+.container-type img {
   font-size: 28px;
+  height: 28px;
+  /* width: 28px; */
 }
 
 .service-list i,
