@@ -102,13 +102,13 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Jetty",
     type: "img",
-    src: "app/fabric/img/jetty.ico"
+    src: "app/fabric/img/jetty.svg"
   }, "org.eclipse.jetty.server");
 
   serviceIconRegistry.addIcons({
     title: "Apache Tomcat",
     type: "img",
-    src: "app/fabric/img/tomcat.gif"
+    src: "app/fabric/img/tomcat.svg"
   }, "Catalina", "Tomcat");
 
 
