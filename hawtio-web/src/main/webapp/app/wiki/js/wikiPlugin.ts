@@ -7,6 +7,7 @@ module Wiki {
   var pluginName = 'wiki';
 
   export var templatePath = 'app/wiki/html/';
+  export var tab:any = null;
 
   angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']).
           config(($routeProvider) => {
@@ -196,7 +197,8 @@ module Wiki {
                helpRegistry,
                preferencesRegistry,
                wikiRepository,
-               postLoginTasks) => {
+               postLoginTasks,
+               $rootScope) => {
 
             viewRegistry['wiki'] = layoutFull;
             helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
@@ -204,7 +206,8 @@ module Wiki {
             });
 
             preferencesRegistry.addTab("Git", 'app/wiki/html/gitPreferences.html');
-            var tab = {
+
+            tab = {
               id: "wiki",
               content: "Wiki",
               title: "View and edit wiki pages",
@@ -212,15 +215,16 @@ module Wiki {
               href: () => "#/wiki/view",
               isActive: (workspace:Workspace) => workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures")
             };
+            workspace.topLevelTabs.push(tab);
 
-            postLoginTasks['wikiGetRepositoryLabel'] = () => {
+            postLoginTasks.addTask('wikiGetRepositoryLabel', () => {
               wikiRepository.getRepositoryLabel((label) => {
-                tab.content=label;
-                workspace.topLevelTabs.push(tab);
+                tab.content = label;
+                Core.$apply($rootScope)
               }, (response) => {
-                workspace.topLevelTabs.push(tab);
+                // silently ignore
               });
-            };
+            });
 
             // add empty regexs to templates that don't define
             // them so ng-pattern doesn't barf
