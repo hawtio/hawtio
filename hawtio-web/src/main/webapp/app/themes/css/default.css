@@ -1,13 +1,16 @@
 #log-panel {
-  background: white;
+  background: inherit;
+  background-color: none;
   border: 1px solid #d4d4d4;
-  opacity: 0.8;
   transition: bottom 1s ease-in-out;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 #log-panel #log-panel-statements {
-  background: black;
+  background: #252525;
 }
 
 #log-panel-statements li pre {
@@ -37,9 +40,12 @@
 }
 
 #log-panel #close {
-  background: inherit;
-  border-top: 1px solid #d4d4d4;
+  background: #131313;
+  border-top: 1px solid #222222;
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.1) inset;
+  color: #eeeeee;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 #log-panel #copy {
