@@ -688,16 +688,15 @@ td.adding {
 }
 
 .login-wrapper form {
-  background-color: rgba(255, 255, 255, 0.2);
-  /* box-shadow: inset rgba(255, 168, 27, 0.2) 0 0 30px 10px; */
+  background-color: rgba(240, 245, 255, 0.8);
 }
 
 .login-form form fieldset .control-group label {
-  color: white;
+  color: #333;
 }
 
 .login-logo {
-  color: white;
+  color: #333;
 }
 
 /** highlight required fields which have no focus */
@@ -777,8 +776,7 @@ div#main div ul.nav li a.nav-primary .caret {
 }
 
 .main-nav-upper {
-  background-image: none;
-  background-color: white;
+  background: #f8fbff;
 }
 
 .main-nav-upper .nav li a {
@@ -1340,7 +1338,7 @@ a {
 }
 
 #main-nav > .main-nav-upper {
-  background: #333a44; /* Old browsers */
+  background: #f8fbff; /* Old browsers */
 }
 
 #main-nav > .main-nav-lower {
@@ -1383,7 +1381,8 @@ a {
 }
 
 .navbar .brand, .navbar .pull-right .nav > li > a {
-  color: #eeeeee;
+  color: #333;
+  font-weight: normal;
   text-shadow: none;
 }
 

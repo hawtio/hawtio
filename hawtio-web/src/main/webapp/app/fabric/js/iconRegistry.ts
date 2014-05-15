@@ -54,7 +54,7 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Fabric8",
     type: "img",
-    src: "app/fabric/img/fabric.png"
+    src: "app/fabric/img/fabric8_icon.svg"
   }, "io.fabric8", "org.fusesource.fabric");
 
   serviceIconRegistry.addIcons({

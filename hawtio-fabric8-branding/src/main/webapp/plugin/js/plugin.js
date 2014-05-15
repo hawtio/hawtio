@@ -30,10 +30,12 @@ var fabric8Branding = (function (self) {
     }
     self.log.info("enabled fabric8 branding");
     branding.appName = 'fabric8 console';
-    branding.appLogo = self.context + '/plugin/img/logo.png';
+    branding.appLogo = self.context + '/plugin/img/fabric8_icon.svg';
     branding.logoOnly = false;
     branding.fullscreenLogin = true;
     branding.enabled = true;
+    $('#favicon').remove();
+    $('head').append('<link id="favicon" rel="icon" type="image/ico" href="' + self.context + 'plugin/img/favicon.ico">');
   };
 
   self.module = angular.module(self.pluginName, ['hawtioCore']);
