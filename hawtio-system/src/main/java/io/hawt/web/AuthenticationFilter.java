@@ -46,10 +46,17 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         ConfigManager config = (ConfigManager) filterConfig.getServletContext().getAttribute("ConfigManager");
+
+        String defaultRolePrincipalClasses = "";
+
+        if (System.getProperty("karaf.name") != null) {
+            defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal";
+        }
+
         if (config != null) {
             configuration.setRealm(config.get("realm", "karaf"));
             configuration.setRole(config.get("role", "admin"));
-            configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", ""));
+            configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
             configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
         }
