@@ -113,27 +113,27 @@ public class ProxyDetails {
             }
 
             if (Strings.isNotBlank(portText)) {
-                port = Integer.parseInt(portText);
-                hostAndPort = host + ":" + port;
+                // portText may be a port unless its default
+                try {
+                    port = Integer.parseInt(portText);
+                    hostAndPort = host + ":" + port;
+                } catch (NumberFormatException e) {
+                    port = 80;
+                    // we do not have a port, so path is the portText
+                    path = "/" + portText + path;
+                    hostAndPort = host;
+                }
             } else {
                 hostAndPort = host;
             }
         }
+
         stringProxyURL = "http://" + hostAndPort + path;
 
+        // we do not support query parameters
 
-        try {
-            // Handle the query string
-/*
-            if (httpServletRequest.getQueryString() != null) {
-                stringProxyURL += "?" + URIUtil.encodeQuery(httpServletRequest.getQueryString());
-            }
-*/
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Proxying to " + stringProxyURL + " as user: " + userName);
-            }
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Proxying to " + stringProxyURL + " as user: " + userName);
         }
     }
 
