@@ -10,6 +10,9 @@ module Fabric {
       $scope.operation = 'getContainer(java.lang.String)';
     }
 
+    $scope.mavenRepoUploadUri = "upload";
+    $scope.mavenRepoDownloadUri = "download";
+
     $scope.username = userDetails.username;
     $scope.password = userDetails.password;
 
@@ -206,15 +209,29 @@ module Fabric {
 
     if (angular.isDefined($scope.containerId)) {
       Core.register(jolokia, $scope, {
+        type: 'read', mbean: managerMBean,
+        attribute: ["MavenRepoURI", "MavenRepoUploadURI"],
+      }, onSuccess(mavenUris));
+
+      Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
         operation: $scope.operation,
         arguments: $scope.getArguments()
       }, onSuccess(render));
+
     }
 
     $scope.formatStackTrace = (exception) => {
       return Log.formatStackTrace(exception);
     };
+
+    function mavenUris(response) {
+      var obj = response.value;
+      if (obj) {
+        $scope.mavenRepoUploadUri = obj.MavenRepoUploadURI;
+        $scope.mavenRepoDownloadUri = obj.MavenRepoURI;
+      }
+    }
 
     function render(response) {
       if (!angular.isDefined($scope.responseJson)) {

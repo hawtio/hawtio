@@ -96,6 +96,16 @@
           <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
         </div>
 
+        <!-- the dl need to be wider so we can see the labels -->
+        <style>
+          .dl-horizontal dt {
+            width: 180px;
+          }
+          .dl-horizontal dd {
+            margin-left: 200px;
+          }
+        </style>
+
         <div class="span5 offset1 container-settings">
           <div class="tabbable hawtio-form-tabs" ng-model="tab">
 
@@ -220,19 +230,19 @@
                 <dt>Maximum Port:</dt>
                 <dd>
                   <editable-property ng-model="row" property="maximumPort" on-save="updateContainerProperty('maximumPort', row)"></editable-property>
-
                 </dd>
               </dl>
             </div>
 
             <div class="tab-pane" title="URLs">
-              <p>This is a list of URLs for various services running in the container.  Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
+              <p>This is a list of URLs for various services running in the container or accessible to the container. Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
               <dl class="dl-horizontal">
                 <dt>Git:</dt>
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getGitURL(row.jolokiaUrl) | maskPassword}}">
+                         value="{{getGitURL(row.jolokiaUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
@@ -246,7 +256,8 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getSshURL(row.sshUrl) | maskPassword}}">
+                         value="{{getSshURL(row.sshUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getSshURL(row.sshUrl)}}"
@@ -260,7 +271,8 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getJmxURL(row.jmxUrl) | maskPassword}}">
+                         value="{{getJmxURL(row.jmxUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getJmxURL(row.jmxUrl)}}"
@@ -274,10 +286,41 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{row.jolokiaUrl | maskPassword}}">
+                         value="{{row.jolokiaUrl | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{row.jolokiaUrl}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="mavenRepoUploadUri">
+                <dt>Maven Proxy Upload:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{mavenRepoUploadUri | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{mavenRepoUploadUri}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal"  ng-show="mavenRepoDownloadUri">
+                <dt>Maven Proxy Download:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{mavenRepoDownloadUri | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{mavenRepoDownloadUri}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
