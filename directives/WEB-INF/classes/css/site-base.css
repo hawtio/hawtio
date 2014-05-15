@@ -1612,6 +1612,10 @@ td.adding {
   top: 9px;
 }
 
+.login-logo > img {
+  height: 30px;
+}
+
 /** highlight required fields which have no focus */
 input.ng-invalid,
 textarea.ng-invalid,
@@ -3843,13 +3847,26 @@ img.nodeIcon:hover {
   top: -4px;
   vertical-align: middle;    
   height: 48px;
-    
+}
+
+.help-header .with-text,
+.about-header .with-text {
+  position: relative;
+  top: -4px;
+  vertical-align: middle;
+  height: 48px;
 }
 
 .brand > .without-text {
   height: 24px;
   margin-top: 3px;
 }
+
+.brand > .with-text {
+  height: 24px;
+  margin-top: 3px;
+}
+
 
 .service-list > li {
   list-style-type: none;
