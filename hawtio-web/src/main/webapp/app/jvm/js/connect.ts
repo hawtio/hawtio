@@ -53,24 +53,24 @@ module JVM {
       properties: {
         connectionName: {
           type: 'java.lang.String',
-          description: 'Name for this connection',
+          tooltip: 'Name for this connection',
           'input-attributes': {
             'placeholder': 'Unnamed...'
           }
         },
         scheme: {
           type: 'java.lang.String',
-          description: 'HTTP or HTTPS',
+          tooltip: 'HTTP or HTTPS',
           required: true
         },
         host: {
           type: 'java.lang.String',
-          description: 'Target host to connect to',
+          tooltip: 'Target host to connect to',
           required: true
         },
         port: {
           type: 'java.lang.Integer',
-          description: 'The HTTP port used to connect to the server',
+          tooltip: 'The HTTP port used to connect to the server',
           'input-attributes': {
             'min': '0'
           },
@@ -78,19 +78,19 @@ module JVM {
         },
         path: {
           type: 'java.lang.String',
-          description: "The URL path used to connect to Jolokia on the remote server"
+          tooltip: "The URL path used to connect to Jolokia on the remote server"
         },
         userName: {
           type: 'java.lang.String',
-          description: "The user name to be used when connecting to Jolokia"
+          tooltip: "The user name to be used when connecting to Jolokia"
         },
         password: {
           type: 'password',
-          description: 'The password to be used when connecting to Jolokia'
+          tooltip: 'The password to be used when connecting to Jolokia'
         },
         useProxy: {
           type: 'java.lang.Boolean',
-          description: 'Whether or not we should use a proxy to connect to the remote Server',
+          tooltip: 'Whether or not we should use a proxy. See more information in the panel to the left.',
           'control-attributes': {
             'ng-hide': 'chromeApp'
           }

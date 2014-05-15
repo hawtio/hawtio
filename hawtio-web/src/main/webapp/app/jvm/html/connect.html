@@ -22,6 +22,12 @@
           agent).
         </p>
 
+        <p>
+          <strong>Use Proxy</strong>:
+          hawtio is running in your browser; usually due to CORS; you cannot open a different host or port from your browser (due to browse security restrictions); so we have to use a proxy servlet inside the hawtio web app to proxy all requests for a different jolokia server - so we can communicate with a different jolokia agent.
+          If you use the hawtio Chrome Extension this isn’t required; since Chrome Extensions are allowed to connect to any host/port.
+        </p>
+
         <p ng-show="hasLocalMBean()">
           Use the <strong><a href="#/jvm/local">Local Tab</a></strong> to connect to processes locally on this machine (which will install a jolokia agent automatically if required).
         </p>
