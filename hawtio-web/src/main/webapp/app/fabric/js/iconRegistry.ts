@@ -114,7 +114,8 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
-    src: "app/fabric/img/cassandra.svg"
+    src: "app/fabric/img/cassandra.svg",
+    "class": "girthy"
   }, "org.apache.cassandra.db", "org.apache.cassandra.metrics", "org.apache.cassandra.net", "org.apache.cassandra.request");
 
 
@@ -130,7 +131,8 @@ module Fabric {
   containerIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
-    src: "app/fabric/img/cassandra.svg"
+    src: "app/fabric/img/cassandra.svg",
+    "class": "girthy"
   }, "Cassandra");
 
   containerIconRegistry.addIcons({

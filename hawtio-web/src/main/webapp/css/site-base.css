@@ -3876,19 +3876,35 @@ img.nodeIcon:hover {
   vertical-align: middle;
 }
 
+.container-type {
+  width: 28px;
+}
+
 .container-status > i:before,
 .container-type i:before,
 .container-type img {
+  vertical-align: middle;
   font-size: 28px;
   height: 28px;
-  /* width: 28px; */
+  width: auto;
+  line-height: 28px;
+}
+
+.container-type img.girthy {
+  height: auto;
+  width: 28px;
 }
 
 .service-list i,
 .service-list i:before,
 .service-list img {
   height: 24px;
-  width: 24px;
-  font-size: 23px;
+  width: auto;
+  font-size: 24px;
   vertical-align: middle;
+}
+
+.service-list img.girthy {
+  height: auto;
+  width: 24px;
 }
