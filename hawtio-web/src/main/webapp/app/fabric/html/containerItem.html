@@ -8,7 +8,7 @@
         <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
       </div>
       <div class="container-type" title="Container type">
-        <span ng-include="'app/fabric/html/icon.html'" ng-init="icon=container.icon"></span>
+        <hawtio-icon config="container.icon"/>
       </div>
       <div>
         <a class="btn btn-primary"
@@ -52,7 +52,8 @@
       <li>
         <i class="icon-cloud" title="Ensemble member" ng-click="showContainer(container)" ng-show="isEnsembleContainer(container.id)"></i>
       </li>
-      <li ng-repeat="icon in container.services" ng-include="'app/fabric/html/icon.html'">
+      <li ng-repeat="icon in container.services">
+        <hawtio-icon config="icon"/>
       </li>
     </ul>
   </div>
