@@ -17,7 +17,7 @@ module Fabric {
             when('/fabric/map', {templateUrl: templatePath + 'map.html'}).
             when('/fabric/clusters/*page', {templateUrl: templatePath + 'clusters.html'}).
             when('/fabric/containers', {templateUrl: templatePath + 'containers.html', reloadOnSearch: false}).
-            when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html'}).
+            when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html', reloadOnSearch: false}).
             when('/fabric/assignProfile', {templateUrl: templatePath + 'assignProfile.html'}).
             when('/fabric/activeProfiles', {templateUrl: templatePath + 'activeProfiles.html'}).
             //when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).

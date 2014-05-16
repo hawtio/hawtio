@@ -1,6 +1,6 @@
 module Fabric {
 
-  export function ContainerController($scope, $routeParams, $location, localStorage, jolokia, workspace, userDetails) {
+  export function ContainerController($scope, $routeParams, $location, jolokia, workspace, userDetails) {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
