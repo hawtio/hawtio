@@ -111,6 +111,12 @@ module Fabric {
     src: "app/fabric/img/tomcat.svg"
   }, "Catalina", "Tomcat");
 
+  serviceIconRegistry.addIcons({
+    title: "Apache Cassandra",
+    type: "img",
+    src: "app/fabric/img/cassandra.svg"
+  }, "org.apache.cassandra.db", "org.apache.cassandra.metrics", "org.apache.cassandra.net", "org.apache.cassandra.request");
+
 
   // Container Icon Registry, maps icons to container types
   export var containerIconRegistry = new IconRegistry();
