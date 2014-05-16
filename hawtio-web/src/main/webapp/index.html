@@ -189,7 +189,7 @@ div.log-stack-trace p:nth-child(odd) {
                 <li ng-show="loggedIn() && (perspectives.length > 1 || recentConnections.length)"
                     class="dropdown perspective-selector">
                   <a href="#" class="dropdown-toggle">
-                    <i ng-show="perspectiveDetails.perspective.icon" ng-class="perspectiveDetails.perspective.icon"></i>
+                    <hawtio-icon config="perspectiveDetails.perspective.icon"></hawtio-icon>
                     <span ng-bind="perspectiveDetails.perspective.label || 'Perspective'"></span>
                     <span ng-show="perspectives.length > 1" class="caret"></span>
                   </a>
@@ -202,7 +202,7 @@ div.log-stack-trace p:nth-child(odd) {
                              ng-click="switchPerspective(perspective)"
                              ng-hide="perspectiveDetails.perspective.id === perspective.id"
                              data-placement="bottom">
-                            <i ng-show="perspective.icon" ng-class="perspective.icon"></i>
+                            <hawtio-icon config="perspective.icon"></hawtio-icon>
                             {{perspective.label}}</a>
                         </li>
                       </ul>

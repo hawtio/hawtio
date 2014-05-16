@@ -8,6 +8,7 @@ module Fabric {
   export var activeMQTemplatePath = 'app/activemq/html/';
 
   export var currentContainerId = '';
+  export var currentContainer = {};
 
 
   angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']).config(($routeProvider) => {
@@ -205,11 +206,20 @@ module Fabric {
             postLoginTasks.addTask('fabricFetchContainerName', () => {
               if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
                 jolokia.request({
-                  type: 'read', mbean: Fabric.managerMBean, attribute: 'CurrentContainerName'
+                  type: 'exec',
+                  mbean: Fabric.managerMBean,
+                  operation: 'currentContainer()',
+                  arguments: []
                 }, onSuccess((response) => {
-                  Fabric.currentContainerId = response.value;
+                  if (!response.value) {
+                    return;
+                  }
+                  Fabric.currentContainer = response.value;
+
+                  Fabric.currentContainerId = currentContainer['id'];
                   if ('container' in Perspective.metadata) {
                     Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);
+                    Core.pathSet(Perspective.metadata, ['container', 'icon'], Fabric.getTypeIcon(currentContainer));
                   }
                   Core.$apply($rootScope);
                 }));

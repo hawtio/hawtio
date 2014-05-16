@@ -3384,6 +3384,8 @@ th > .indicator:before {
 
 .dropdown.perspective-selector > .dropdown-menu {
   min-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown.perspective-selector .dropdown-menu > div {
@@ -3895,7 +3897,6 @@ img.nodeIcon:hover {
   width: 28px;
 }
 
-.service-list i,
 .service-list i:before,
 .service-list img {
   height: 24px;
@@ -3907,4 +3908,17 @@ img.nodeIcon:hover {
 .service-list img.girthy {
   height: auto;
   width: 24px;
+}
+
+.perspective-selector i:before,
+.perspective-selector img {
+  width: auto;
+  height: 16px;
+  font-size: 16px;
+  vertical-align: top;
+  line-height: 16px;
+}
+
+.perspective-selector i:before {
+  vertical-align: middle;
 }

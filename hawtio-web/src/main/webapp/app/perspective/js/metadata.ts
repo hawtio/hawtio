@@ -13,7 +13,11 @@ module Perspective {
    */
   export var metadata = {
     fabric: {
-      icon: "icon-umbrella",
+      icon: {
+        title: "Fabric8",
+        type: "img",
+        src: "app/fabric/img/fabric8_icon.svg"
+      },
       label: "Fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       lastPage: "#/fabric/containers",
@@ -44,7 +48,11 @@ module Perspective {
       }
     },
     insight: {
-      icon: "icon-eye-open",
+      icon: {
+        title: "Fabric8 Insight",
+        type: "icon",
+        src: "icon-eye-open"
+      },
       label: "Insight",
       isValid: (workspace) => Insight.hasInsight(workspace),
       topLevelTabs: {
@@ -68,7 +76,11 @@ module Perspective {
       }
     },
     container: {
-      icon: 'icon-beer',
+      icon: {
+        title: "Java",
+        type: "img",
+        src: "app/fabric/img/java.svg"
+      },
       label: "Container",
       lastPage: "#/logs",
       isValid: (workspace) => workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length,
