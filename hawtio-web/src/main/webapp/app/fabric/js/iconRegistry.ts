@@ -127,6 +127,18 @@ module Fabric {
     src: "icon-beaker"
   }, "karaf");
 
+  containerIconRegistry.addIcons({
+    title: "Apache Cassandra",
+    type: "img",
+    src: "app/fabric/img/cassandra.svg"
+  }, "Cassandra");
+
+  containerIconRegistry.addIcons({
+    title: "Apache Tomcat",
+    type: "img",
+    src: "app/fabric/img/tomcat.svg"
+  }, "Tomcat");
+
   // TODO - placeholder for Java containers
   containerIconRegistry.addIcons(javaIcon, "java");
 
