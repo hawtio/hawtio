@@ -1174,6 +1174,8 @@ var UI;
         return UI.hawtioDropDown($templateCache);
     }).directive('hawtioBreadcrumbs', function () {
         return UI.hawtioBreadcrumbs();
+    }).directive('hawtioIcon', function () {
+        return UI.hawtioIcon();
     }).directive('compile', [
         '$compile', function ($compile) {
             return function (scope, element, attrs) {
@@ -1195,6 +1197,58 @@ var UI;
         }]);
 
     hawtioPluginLoader.addModule(UI.pluginName);
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+var UI;
+(function (UI) {
+    /**
+    * Test controller for the icon help page
+    * @param $scope
+    * @param $templateCache
+    * @constructor
+    */
+    function IconTestController($scope, $templateCache) {
+        $scope.exampleHtml = $templateCache.get('example-html');
+        $scope.exampleConfigJson = $templateCache.get('example-config-json');
+
+        $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
+            $scope.icons = angular.fromJson($scope.exampleConfigJson);
+            UI.log.debug("Icons: ", $scope.icons);
+        });
+    }
+    UI.IconTestController = IconTestController;
+
+    /**
+    * The hawtio-icon directive
+    * @returns {{}}
+    */
+    function hawtioIcon() {
+        UI.log.debug("Creating icon directive");
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: UI.templatePath + 'icon.html',
+            scope: {
+                icon: '=config'
+            },
+            link: function ($scope, $element, $attrs) {
+                if (!$scope.icon) {
+                    return;
+                }
+                if (!('type' in $scope.icon) && !Core.isBlank($scope.icon.src)) {
+                    if ($scope.icon.src.startsWith("icon-")) {
+                        $scope.icon.type = "icon";
+                    } else {
+                        $scope.icon.type = "img";
+                    }
+                }
+                UI.log.debug("Created icon: ", $scope.icon);
+            }
+        };
+    }
+    UI.hawtioIcon = hawtioIcon;
 })(UI || (UI = {}));
 /**
 * @module UI

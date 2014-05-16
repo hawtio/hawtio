@@ -13,7 +13,7 @@ module UI {
   angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']).
     config(($routeProvider) => {
       $routeProvider.
-        when('/ui/developerPage', {templateUrl: templatePath + 'developerPage.html', reloadOnSearch: false})
+        when('/ui/developerPage', {templateUrl: templatePath + 'developerPage.html', reloadOnSearch: false});
     }).factory('UI', () => {
       return UI;
     }).factory('marked', function () {
@@ -69,6 +69,8 @@ module UI {
       return UI.hawtioDropDown($templateCache);
     }).directive('hawtioBreadcrumbs', () => {
       return UI.hawtioBreadcrumbs();
+    }).directive('hawtioIcon', () => {
+        return UI.hawtioIcon();
     }).directive('compile', ['$compile', ($compile) => {
       return (scope, element, attrs) => {
         scope.$watch(
