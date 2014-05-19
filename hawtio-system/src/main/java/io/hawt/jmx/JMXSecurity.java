@@ -57,6 +57,6 @@ public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "hawtio:type=security,area=jmx";
+        return "hawtio:type=security,area=jmx,name=HawtioDummyJMXSecurity";
     }
 }
