@@ -330,6 +330,7 @@ module Core {
           userDetails.loginDetails = null;
           userDetails.rememberMe = false;
           localStorage[jolokiaUrl] = angular.toJson(userDetails);
+          Core.postLoginTasks.reset();
           if (successCB && angular.isFunction(successCB)) {
             successCB();
           }

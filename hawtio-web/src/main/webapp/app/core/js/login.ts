@@ -78,7 +78,7 @@ module Core {
 
             jolokia.start();
             workspace.loadTree();
-            Core.executePostLoginTasks();
+            postLoginTasks.executePostLoginTasks();
             Core.$apply($scope);
           },
           error: (xhr, textStatus, error) => {

@@ -204,7 +204,7 @@ module Core {
 
     $scope.showLogout = () => {
       return $scope.loggedIn() && angular.isDefined(userDetails.loginDetails);
-    }
+    };
 
     $scope.logout = () => {
       $scope.confirmLogout = true;
@@ -219,9 +219,8 @@ module Core {
     };
 
     $scope.doLogout = () => {
-
       $scope.confirmLogout = false;
-      logout(jolokiaUrl, userDetails, localStorage, $scope);
+      Core.logout(jolokiaUrl, userDetails, localStorage, $scope);
     };
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
