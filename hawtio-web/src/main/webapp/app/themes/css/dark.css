@@ -568,3 +568,11 @@ td.deleting {
   background: #222222;
   border-top: 1px solid #444444;
 }
+
+.can-invoke > .dynatree-icon:before {
+  color: green !important;
+}
+
+.cant-invoke > .dynatree-icon:before {
+  color: red !important;
+}

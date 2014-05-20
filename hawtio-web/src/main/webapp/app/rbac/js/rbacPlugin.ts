@@ -47,7 +47,9 @@ module RBAC {
 
   _module.run((jolokia,
                rbacTasks,
-               preLogoutTasks:Core.Tasks) => {
+               preLogoutTasks:Core.Tasks,
+               workspace:Core.Workspace,
+               $rootScope) => {
 
     preLogoutTasks.addTask("resetRBAC", () => {
       log.debug("Resetting RBAC tasks");
@@ -56,6 +58,47 @@ module RBAC {
 
     rbacTasks.addTask("init", () => {
       log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());
+    });
+
+    // add info to the JMX tree if we have access to invoke on mbeans
+    // or not
+    rbacTasks.addTask("JMXTreePostProcess", () => {
+      workspace.addTreePostProcessor((tree) => {
+        var mbeans = {};
+        flattenMBeanTree(mbeans, tree);
+        var requests = [];
+        angular.forEach(mbeans, (value, key) => {
+          if (!('canInvoke' in value)) {
+            requests.push({
+              type: 'exec',
+              mbean: rbacTasks.getACLMBean(),
+              operation: 'canInvoke(java.lang.String)',
+              arguments: [key]
+            });
+          }
+        });
+        var numResponses:number = 0;
+        jolokia.request(requests, onSuccess((response) => {
+          var mbean = response.request.arguments[0];
+          if (mbean) {
+            mbeans[mbean]['canInvoke'] = response.value;
+            var addClass:string = "cant-invoke";
+            if (response.value) {
+              addClass = "can-invoke";
+            }
+            if (Core.isBlank(mbeans[mbean]['addClass'])) {
+              mbeans[mbean]['addClass'] = addClass;
+            } else {
+              mbeans[mbean]['addClass'] = mbeans[mbean]['addClass'] + " " + addClass;
+            }
+          }
+          numResponses = numResponses + 1;
+          if (numResponses >= requests.length) {
+            workspace.redrawTree();
+            Core.$apply($rootScope);
+          }
+        }));
+      });
     });
 
   });

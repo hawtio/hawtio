@@ -2281,3 +2281,10 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   color: #333333;
 }
 
+.can-invoke > .dynatree-icon:before {
+  color: green !important;
+}
+
+.cant-invoke > .dynatree-icon:before {
+  color: red !important;
+}

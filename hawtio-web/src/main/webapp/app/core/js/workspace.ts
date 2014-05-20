@@ -102,7 +102,7 @@ module Core {
      * @method addTreePostProcessor
      * @param {Function} processor
      */
-    public addTreePostProcessor(processor) {
+    public addTreePostProcessor(processor:(tree:any) => void) {
       this.treePostProcessors.push(processor);
 
       var tree = this.tree;
@@ -137,16 +137,6 @@ module Core {
             mbean: "hawtio:type=TreeWatcher",
             attribute: "Counter"
           });
-        } else {
-          // lets keep using the existing register handle
-
-          /* we don't need to unregister lets keep using it
-          if (this.treeWatchRegisterHandle !== null) {
-            this.jolokia.unregister(this.treeWatchRegisterHandle);
-            this.treeWatchRegisterHandle = null;
-            this.treeWatcherCounter = null;
-          }
-          */
         }
       }
     }

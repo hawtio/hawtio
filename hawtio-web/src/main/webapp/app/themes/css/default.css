@@ -1336,4 +1336,10 @@ img.nodeIcon:hover {
   color: lightgrey;
 }
 
+.can-invoke > .dynatree-icon:before {
+  color: green !important;
+}
 
+.cant-invoke > .dynatree-icon:before {
+  color: red !important;
+}

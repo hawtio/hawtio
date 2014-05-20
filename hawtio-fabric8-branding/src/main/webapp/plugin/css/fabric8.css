@@ -1498,3 +1498,11 @@ textarea[readonly] {
   color: #888888;
   border-color: #333333;
 }
+
+.can-invoke > .dynatree-icon:before {
+  color: green !important;
+}
+
+.cant-invoke > .dynatree-icon:before {
+  color: red !important;
+}
