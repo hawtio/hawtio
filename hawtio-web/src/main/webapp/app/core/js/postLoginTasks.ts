@@ -1,11 +1,17 @@
 module Core {
 
-  export class PostLoginTasks {
+  export interface PostLoginTasks {
+    addTask: (name:string, task:() => void) => void;
+    execute: () => void;
+    reset: () => void;
+  }
+
+  export class PostLoginTasksImpl implements PostLoginTasks {
 
     private tasks:any = {};
     private tasksExecuted = false;
 
-    private addTask(name, task) {
+    public addTask(name:string, task:() => void):void {
       this.tasks[name] = task;
       if (this.tasksExecuted) {
         this.executeTask(name, task);
@@ -38,6 +44,6 @@ module Core {
     }
   }
 
-  export var postLoginTasks = new Core.PostLoginTasks();
+  export var postLoginTasks:PostLoginTasks = new Core.PostLoginTasksImpl();
 
 }

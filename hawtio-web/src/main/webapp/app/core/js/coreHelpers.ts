@@ -296,6 +296,7 @@ module Core {
   }
 
   export function executePostLoginTasks() {
+    log.debug("Executing post login tasks");
     Core.postLoginTasks.execute();
   }
 

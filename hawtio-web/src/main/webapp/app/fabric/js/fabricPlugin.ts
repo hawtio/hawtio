@@ -194,7 +194,7 @@ module Fabric {
                pageTitle:Core.PageTitle,
                helpRegistry,
                $rootScope,
-               postLoginTasks,
+               postLoginTasks:Core.PostLoginTasks,
                preferencesRegistry) => {
 
             viewRegistry['fabric'] = templatePath + 'layoutFabric.html';

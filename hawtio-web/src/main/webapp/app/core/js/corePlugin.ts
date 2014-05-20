@@ -151,6 +151,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
             xhr: null
           };
         }).
+
         factory('jolokiaParams', function(jolokiaUrl) {
           return {
             url: jolokiaUrl,
@@ -175,7 +176,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
                 return "with-text";
               }
             }
-          }
+          };
           return branding;
 
         }).
@@ -195,6 +196,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               type: "GET",
               success: (response) => {
                 Core.log.debug("Got user response: ", response);
+                Core.executePostLoginTasks();
                 /*
                 // We'll only touch these if they're not set
                 if (response !== '' && response !== null) {
@@ -207,6 +209,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               },
               error: (xhr, textStatus, error) => {
                 Core.log.debug("Failed to get session username: ", error);
+                Core.executePostLoginTasks();
                 // silently ignore, we could be using the proxy
               }
             });
