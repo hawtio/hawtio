@@ -300,6 +300,12 @@ module Core {
     Core.postLoginTasks.execute();
   }
 
+  export function executePreLogoutTasks(onComplete: () => void) {
+    log.debug("Executing pre logout tasks");
+    Core.preLogoutTasks.onComplete(onComplete);
+    Core.preLogoutTasks.execute();
+  }
+
   /**
    * log out the current user
    * @for Core
@@ -323,39 +329,43 @@ module Core {
     if (jolokiaUrl) {
       var url = jolokiaUrl.replace("jolokia", "auth/logout/");
 
-      $.ajax(url, {
-        type: "POST",
-        success: () => {
-          userDetails.username = null;
-          userDetails.password = null;
-          userDetails.loginDetails = null;
-          userDetails.rememberMe = false;
-          localStorage[jolokiaUrl] = angular.toJson(userDetails);
-          Core.postLoginTasks.reset();
-          if (successCB && angular.isFunction(successCB)) {
-            successCB();
+      Core.executePreLogoutTasks(() => {
+        $.ajax(url, {
+          type: "POST",
+          success: () => {
+            userDetails.username = null;
+            userDetails.password = null;
+            userDetails.loginDetails = null;
+            userDetails.rememberMe = false;
+            localStorage[jolokiaUrl] = angular.toJson(userDetails);
+            if (successCB && angular.isFunction(successCB)) {
+              successCB();
+            }
+            Core.$apply($scope);
+          },
+          error: (xhr, textStatus, error) => {
+            // TODO, more feedback
+            switch (xhr.status) {
+              case 401:
+                log.error('Failed to log out, ', error);
+                break;
+              case 403:
+                log.error('Failed to log out, ', error);
+                break;
+              default:
+                log.error('Failed to log out, ', error);
+                break;
+            }
+            if (errorCB && angular.isFunction(errorCB)) {
+              errorCB();
+            }
+            Core.$apply($scope);
           }
-          Core.$apply($scope);
-        },
-        error: (xhr, textStatus, error) => {
-          // TODO, more feedback
-          switch (xhr.status) {
-            case 401:
-              log.error('Failed to log out, ', error);
-              break;
-            case 403:
-              log.error('Failed to log out, ', error);
-              break;
-            default:
-              log.error('Failed to log out, ', error);
-              break;
-          }
-          if (errorCB && angular.isFunction(errorCB)) {
-            errorCB();
-          }
-          Core.$apply($scope);
-        }
+        });
+
       });
+
+
     }
 
   }

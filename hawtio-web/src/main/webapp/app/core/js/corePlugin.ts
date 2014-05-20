@@ -134,6 +134,10 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           return Core.postLoginTasks;
         }).
 
+        factory('preLogoutTasks', () => {
+          return Core.preLogoutTasks;
+        }).
+
         factory('helpRegistry', function($rootScope) {
           return new Core.HelpRegistry($rootScope);
         }).
@@ -417,7 +421,29 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         }]).
 
 
-        run(($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle:Core.PageTitle, branding, toastr, userDetails, preferencesRegistry) => {
+        run(($rootScope,
+             $routeParams,
+             jolokia,
+             workspace,
+             localStorage,
+             viewRegistry,
+             layoutFull,
+             helpRegistry,
+             pageTitle:Core.PageTitle,
+             branding,
+             toastr,
+             userDetails,
+             preferencesRegistry,
+             postLoginTasks:Core.Tasks,
+             preLogoutTasks:Core.Tasks) => {
+
+          postLoginTasks.addTask("ResetPreLogoutTasks", () => {
+            preLogoutTasks.reset();
+          });
+
+          preLogoutTasks.addTask("ResetPostLoginTasks", () => {
+            postLoginTasks.reset();
+          });
 
           $.support.cors = true;
 

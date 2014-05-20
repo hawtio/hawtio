@@ -1,11 +1,11 @@
 module RBAC {
 
-  export interface RBACTasks extends Core.PostLoginTasks {
+  export interface RBACTasks extends Core.Tasks {
     initialize: (mbean:string) => void;
     getACLMBean: () => string;
   }
 
-  export class RBACTasksImpl extends Core.PostLoginTasksImpl implements RBACTasks {
+  export class RBACTasksImpl extends Core.TasksImpl implements RBACTasks {
 
     private ACLMBean:string = null;
 

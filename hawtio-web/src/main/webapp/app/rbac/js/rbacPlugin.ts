@@ -8,7 +8,7 @@ module RBAC {
   export var log:Logging.Logger = Logger.get("RBAC");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.factory('rbacTasks', (postLoginTasks:Core.PostLoginTasks, jolokia) => {
+  _module.factory('rbacTasks', (postLoginTasks:Core.Tasks, jolokia) => {
     postLoginTasks.addTask("FetchJMXSecurityMBeans", () => {
       jolokia.request({
         type: 'search',
@@ -45,7 +45,14 @@ module RBAC {
     return RBAC.rbacTasks;
   });
 
-  _module.run((jolokia, rbacTasks) => {
+  _module.run((jolokia,
+               rbacTasks,
+               preLogoutTasks:Core.Tasks) => {
+
+    preLogoutTasks.addTask("resetRBAC", () => {
+      log.debug("Resetting RBAC tasks");
+      rbacTasks.reset();
+    });
 
     rbacTasks.addTask("init", () => {
       log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());

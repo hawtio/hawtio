@@ -1,15 +1,17 @@
 module Core {
 
-  export interface PostLoginTasks {
+  export interface Tasks {
     addTask: (name:string, task:() => void) => void;
     execute: () => void;
     reset: () => void;
+    onComplete: (cb:() => void) => void;
   }
 
-  export class PostLoginTasksImpl implements PostLoginTasks {
+  export class TasksImpl implements Tasks {
 
     private tasks:any = {};
     private tasksExecuted = false;
+    private _onComplete: () => void = null;
 
     public addTask(name:string, task:() => void):void {
       this.tasks[name] = task;
@@ -29,6 +31,10 @@ module Core {
       }
     }
 
+    public onComplete(cb: () => void) {
+      this._onComplete = cb;
+    }
+
     public execute() {
       if (this.tasksExecuted) {
         return;
@@ -37,6 +43,9 @@ module Core {
         this.executeTask(name, task);
       });
       this.tasksExecuted = true;
+      if (angular.isFunction(this._onComplete)) {
+        this._onComplete();
+      }
     }
 
     public reset() {
@@ -44,6 +53,7 @@ module Core {
     }
   }
 
-  export var postLoginTasks:PostLoginTasks = new Core.PostLoginTasksImpl();
+  export var postLoginTasks:Tasks = new Core.TasksImpl();
+  export var preLogoutTasks:Tasks = new Core.TasksImpl();
 
 }
