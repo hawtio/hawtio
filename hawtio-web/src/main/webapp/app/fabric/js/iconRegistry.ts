@@ -141,6 +141,19 @@ module Fabric {
     src: "app/fabric/img/tomcat.svg"
   }, "Tomcat");
 
+  // TODO could use a TomEE specific icon really
+  containerIconRegistry.addIcons({
+    title: "Apache TomEE",
+    type: "img",
+    src: "app/fabric/img/tomcat.svg"
+  }, "TomEE");
+
+  containerIconRegistry.addIcons({
+    title: "Jetty",
+    type: "img",
+    src: "app/fabric/img/jetty.svg"
+  }, "Jetty");
+
   // TODO - placeholder for Java containers
   containerIconRegistry.addIcons(javaIcon, "java");
 
