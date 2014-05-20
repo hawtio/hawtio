@@ -30,10 +30,10 @@ public class ContextFormatterServlet extends HttpServlet {
         }
 
         if(contextType.equals("jobExecution")){
-            url= server+"jobs/executions/"+jobExecutionId+"/context.json";
+            url= server+"jobs/executions/"+jobExecutionId+"/execution-context.json";
             paramString="jobExecutionContext";
         }else if(contextType.equals("stepExecution")){
-            url= server+"jobs/executions/"+jobExecutionId+"/steps/"+stepExecutionId+"/context.json";
+            url= server+"jobs/executions/"+jobExecutionId+"/steps/"+stepExecutionId+"/execution-context.json";
             paramString="stepExecutionContext";
         }
         HttpClient client = new HttpClient();
