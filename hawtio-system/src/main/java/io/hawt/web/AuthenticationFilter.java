@@ -50,7 +50,7 @@ public class AuthenticationFilter implements Filter {
         String defaultRolePrincipalClasses = "";
 
         if (System.getProperty("karaf.name") != null) {
-            defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal";
+            defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal,org.apache.karaf.jaas.boot.principal.GroupPrincipal";
         }
 
         if (config != null) {

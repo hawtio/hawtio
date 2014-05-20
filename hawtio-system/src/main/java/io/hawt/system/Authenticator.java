@@ -115,32 +115,46 @@ public class Authenticator {
 
             loginContext.login();
 
-            if (role != null && role.length() > 0 && rolePrincipalClasses != null && rolePrincipalClasses.length() > 0) {
+            if (role == null || role.equals("")) {
+                LOG.debug("Skipping role check, no role configured");
+                return subject;
+            }
 
-                String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
-                boolean found = false;
-                for (String clazz : rolePrincipalClazzes) {
-                    String name = role;
-                    int idx = role.indexOf(':');
-                    if (idx > 0) {
-                        clazz = role.substring(0, idx);
-                        name = role.substring(idx + 1);
+            if (role.equals("*")) {
+                LOG.debug("Skipping role check, all roles allowed");
+                return subject;
+            }
+
+            if (rolePrincipalClasses == null || rolePrincipalClasses.equals("")) {
+                LOG.debug("Skipping role check, no rolePrincipalClasses configured");
+                return subject;
+            }
+
+            String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
+            boolean found = false;
+            for (String clazz : rolePrincipalClazzes) {
+                LOG.debug("Looking for rolePrincipalClass: {}", clazz);
+                for (Principal p : subject.getPrincipals()) {
+                    LOG.debug("Checking principal, classname: {} toString: {}", p.getClass().getName(), p);
+                    if (!p.getClass().getName().equals(clazz.trim())) {
+                        LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.trim());
+                        continue;
                     }
-                    for (Principal p : subject.getPrincipals()) {
-                        if (p.getClass().getName().equals(clazz.trim())
-                                && p.getName().equals(name)) {
-                            found = true;
-                            break;
-                        }
+                    if (!p.getName().equals(role)) {
+                        LOG.debug("role {} doesn't match {}, continuing", p.getName(), role);
+                        continue;
                     }
-                    if (found) {
-                        break;
-                    }
+                    LOG.debug("Matched role and role principal class");
+                    found = true;
+                    break;
                 }
-                if (!found) {
-                    LOG.debug("User does not have the required role " + role);
-                    return null;
+                if (found) {
+                    break;
                 }
+            }
+            if (!found) {
+                LOG.debug("User " + username + " does not have the required role " + role);
+                return null;
             }
 
             return subject;
