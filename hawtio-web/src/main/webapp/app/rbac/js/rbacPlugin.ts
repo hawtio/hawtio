@@ -45,6 +45,10 @@ module RBAC {
     return RBAC.rbacTasks;
   });
 
+  _module.factory('rbacACLMBean', (rbacTasks) => {
+    return rbacTasks.getACLMBean();
+  });
+
   _module.run((jolokia,
                rbacTasks,
                preLogoutTasks:Core.Tasks,
