@@ -82,7 +82,7 @@ module Osgi {
                 type: "service",
                 used: false,
 //                image: {
-//                    url: "/hawtio/app/osgi/img/service.png",
+//                    url: "/hawtio/img/icons/osgi/service.png",
 //                    width: 32,
 //                    height:32
 //                },
@@ -117,7 +117,7 @@ module Osgi {
                 used: false,
                 navUrl: "#/osgi/bundle/" + bundle.Identifier,
 //                image: {
-//                    url: "/hawtio/app/osgi/img/bundle.png",
+//                    url: "/hawtio/img/icons/osgi/bundle.png",
 //                    width: 32,
 //                    height:32
 //                },

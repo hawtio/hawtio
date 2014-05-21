@@ -16,7 +16,7 @@ module Perspective {
       icon: {
         title: "Fabric8",
         type: "img",
-        src: "app/fabric/img/fabric8_icon.svg"
+        src: "img/icons/fabric8_icon.svg"
       },
       label: "Fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
@@ -79,7 +79,7 @@ module Perspective {
       icon: {
         title: "Java",
         type: "img",
-        src: "app/fabric/img/java.svg"
+        src: "img/icons/java.svg"
       },
       label: "Container",
       lastPage: "#/logs",

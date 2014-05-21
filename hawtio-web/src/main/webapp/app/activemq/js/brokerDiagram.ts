@@ -220,7 +220,7 @@ module ActiveMQ {
         var brokerProperty: any = null;
         if (brokerName) {
           var brokerHtml = '<a target="broker" ng-click="connectToBroker()">' +
-            '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
+            '<img title="Apache ActiveMQ" src="img/icons/messagebroker.svg"> ' + brokerName +
             '</a>';
           if (version && profile) {
             var brokerLink = Fabric.brokerConfigLink(workspace, jolokia, localStorage, version, profile, brokerName);
@@ -272,7 +272,7 @@ module ActiveMQ {
      */
     function createDestinationLink(destinationName, destinationType = "queue") {
       return $compile('<a target="destination" title="' + destinationName + '" ng-click="connectToDestination()">' +
-                                  //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
+                                  //'<img title="View destination" src="img/icons/activemq/' + destinationType + '.png"> ' +
                                   destinationName +
                                   '</a>')($scope);
     }
@@ -333,7 +333,7 @@ module ActiveMQ {
             /*
              navUrl: ,
              image: {
-             url: "/hawtio/app/osgi/img/bundle.png",
+             url: "/hawtio/img/icons/osgi/bundle.png",
              width: 32,
              height:32
              },

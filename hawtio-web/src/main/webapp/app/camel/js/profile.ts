@@ -266,7 +266,7 @@ module Camel {
               index : 0
             };
             entry.index = -1;
-            entry.img = "<img src='app/camel/img/camel_route.png'>";
+            entry.img = "<img src='img/icons/camel/camel_route.png'>";
             $scope.icons[$scope.selectedRouteId] = entry;
 
             // then each processor id and icons

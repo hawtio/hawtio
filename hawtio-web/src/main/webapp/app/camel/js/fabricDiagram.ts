@@ -210,7 +210,7 @@ module Camel {
      */
     function createDestinationLink(destinationName, destinationType = "queue") {
       return $compile('<a target="destination" title="' + destinationName + '" ng-click="connectToEndpoint()">' +
-        //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
+        //'<img title="View destination" src="img/icons/activemq/' + destinationType + '.png"> ' +
         destinationName +
         '</a>')($scope);
     }

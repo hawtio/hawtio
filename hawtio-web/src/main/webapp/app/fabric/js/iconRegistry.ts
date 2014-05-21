@@ -45,7 +45,7 @@ module Fabric {
   export var javaIcon:Icon = {
     title: "Java",
     type: "img",
-    src: "app/fabric/img/java.svg"
+    src: "img/icons/java.svg"
   };
 
   // Service Icon Registry, maps icons to JMX domains
@@ -54,7 +54,7 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Fabric8",
     type: "img",
-    src: "app/fabric/img/fabric8_icon.svg"
+    src: "img/icons/fabric8_icon.svg"
   }, "io.fabric8", "org.fusesource.fabric");
 
   serviceIconRegistry.addIcons({
@@ -72,13 +72,13 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Apache ActiveMQ",
     type: "img",
-    src: "app/fabric/img/message_broker.png"
+    src: "img/icons/messagebroker.svg"
   }, "org.apache.activemq");
 
   serviceIconRegistry.addIcons({
     title: "Apache Camel",
     type: "img",
-    src: "app/fabric/img/camel.png"
+    src: "img/icons/camel.svg"
   }, "org.apache.camel");
 
   serviceIconRegistry.addIcons({
@@ -102,19 +102,19 @@ module Fabric {
   serviceIconRegistry.addIcons({
     title: "Jetty",
     type: "img",
-    src: "app/fabric/img/jetty.svg"
+    src: "img/icons/jetty.svg"
   }, "org.eclipse.jetty.server");
 
   serviceIconRegistry.addIcons({
     title: "Apache Tomcat",
     type: "img",
-    src: "app/fabric/img/tomcat.svg"
+    src: "img/icons/tomcat.svg"
   }, "Catalina", "Tomcat");
 
   serviceIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
-    src: "app/fabric/img/cassandra.svg",
+    src: "img/icons/cassandra.svg",
     "class": "girthy"
   }, "org.apache.cassandra.db", "org.apache.cassandra.metrics", "org.apache.cassandra.net", "org.apache.cassandra.request");
 
@@ -131,27 +131,27 @@ module Fabric {
   containerIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
-    src: "app/fabric/img/cassandra.svg",
+    src: "img/icons/cassandra.svg",
     "class": "girthy"
   }, "Cassandra");
 
   containerIconRegistry.addIcons({
     title: "Apache Tomcat",
     type: "img",
-    src: "app/fabric/img/tomcat.svg"
+    src: "img/icons/tomcat.svg"
   }, "Tomcat");
 
   // TODO could use a TomEE specific icon really
   containerIconRegistry.addIcons({
     title: "Apache TomEE",
     type: "img",
-    src: "app/fabric/img/tomcat.svg"
+    src: "img/icons/tomcat.svg"
   }, "TomEE");
 
   containerIconRegistry.addIcons({
     title: "Jetty",
     type: "img",
-    src: "app/fabric/img/jetty.svg"
+    src: "img/icons/jetty.svg"
   }, "Jetty");
 
   // TODO - placeholder for Java containers

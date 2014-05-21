@@ -38,7 +38,7 @@ module Wiki {
       label: "Folder",
       tooltip: "Create a new folder to contain documents",
       folder: true,
-      icon: "/app/wiki/img/folder.gif",
+      icon: "/img/icons/wiki/folder.gif",
       exemplar: "New Folder"
     },
     {
@@ -180,19 +180,19 @@ module Wiki {
         {
           label: "Camel XML document",
           tooltip: "A vanilla Camel XML document for integration flows",
-          icon: "/app/camel/img/camel.png",
+          icon: "/img/icons/camel.svg",
           exemplar: "camel.xml"
         },
         {
           label: "Camel OSGi Blueprint XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using OSGi Blueprint",
-          icon: "/app/camel/img/camel.png",
+          icon: "/img/icons/camel.svg",
           exemplar: "camel-blueprint.xml"
         },
         {
           label: "Camel Spring XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using the Spring framework",
-          icon: "/app/camel/img/camel.png",
+          icon: "/img/icons/camel.svg",
           exemplar: "camel-spring.xml"
         }
       ]
@@ -468,11 +468,11 @@ module Wiki {
     // TODO could we use different icons for markdown v xml v html
     if (xmlNamespaces && xmlNamespaces.length) {
       if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
-        icon = "/app/camel/img/camel.png";
+        icon = "img/icons/camel.svg";
       } else if (xmlNamespaces.any((ns) => Wiki.dozerNamespaces.any(ns))) {
-        icon = "/app/dozer/img/dozer.gif";
+        icon = "img/icons/dozer/dozer.gif";
       } else if (xmlNamespaces.any((ns) => Wiki.activemqNamespaces.any(ns))) {
-        icon = "/app/activemq/img/message_broker.png";
+        icon = "img/icons/messagebroker.svg";
       } else {
         console.log("file " + name + " has namespaces " + xmlNamespaces);
       }

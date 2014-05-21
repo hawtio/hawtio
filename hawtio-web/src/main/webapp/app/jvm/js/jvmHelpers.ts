@@ -8,7 +8,7 @@ module JVM {
   export var connectControllerKey = "jvmConnectSettings";
   export var connectionSettingsKey = "jvmConnect";
 
-  export var logoPath = rootPath + '/img/';
+  export var logoPath = 'img/icons/jvm/';
 
   export var logoRegistry = {
     'jetty': logoPath + 'jetty-logo-80x22.png',
