@@ -78,26 +78,31 @@ module RBAC {
           }
         });
         var numResponses:number = 0;
-        jolokia.request(requests, onSuccess((response) => {
-          var mbean = response.request.arguments[0];
-          if (mbean) {
-            mbeans[mbean]['canInvoke'] = response.value;
-            var addClass:string = "cant-invoke";
-            if (response.value) {
-              addClass = "can-invoke";
-            }
-            if (Core.isBlank(mbeans[mbean]['addClass'])) {
-              mbeans[mbean]['addClass'] = addClass;
-            } else {
-              mbeans[mbean]['addClass'] = mbeans[mbean]['addClass'] + " " + addClass;
-            }
-          }
+        var maybeRedraw = () => {
           numResponses = numResponses + 1;
           if (numResponses >= requests.length) {
             workspace.redrawTree();
             Core.$apply($rootScope);
           }
-        }));
+        };
+        jolokia.request(requests, onSuccess((response) => {
+          var mbean = response.request.arguments[0];
+          if (mbean) {
+            mbeans[mbean]['canInvoke'] = response.value;
+            var toAdd:string = "cant-invoke";
+            if (response.value) {
+              toAdd = "can-invoke";
+            }
+            mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
+            mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
+            maybeRedraw();
+          }
+        }), {
+          error: (response) => {
+            // silently ignore, but still track if we need to redraw
+            maybeRedraw();
+          }
+        });
       });
     });
 
