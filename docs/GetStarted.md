@@ -44,7 +44,8 @@ hawtio supports other options which you can get listed by running from command l
 
 ## Using a Servlet Engine or Application Server
 
-If you are running Tomcat 5/6/7, Jetty 7/8 or JBoss (7.1.1.Final) you could just deploy a WAR:
+If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
+(JBoss AS or Wildfly users see other containers section further below)
 
 <table class="buttonTable">
   <tr>
@@ -77,9 +78,10 @@ Please check [the configuration guide](http://hawt.io/configuration/index.html) 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
  <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.1/hawtio-default-offline-1.4.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
-If you don't see a Tomcat / Jetty / JBoss tab for your container you may need to enable JMX.
+If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.
 
-## Using Fuse, Apache Karaf or Apache Servicemix
+
+## Using Fuse, Fabric8, Apache Karaf or Apache Servicemix
 
 If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse), then hawtio is installed out of the box
 
@@ -122,19 +124,13 @@ If you're still struggling getting your HTTP proxy to work with Fuse, try jump o
 
 The following section gives details of other containers
 
-### Enable JMX on Jetty 8.x
+### If you use JBoss AS or Wildfly
 
-If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in **jetty-distribution/start.ini** (you may have to uncomment it to enable JMX).
+You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.1/hawtio-no-slf4j-1.4.1.war">Download hawtio-no-slf4j.war</a>.
 
-    etc/jetty-jmx.xml
+See more details [here](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html).
 
-### If you use JBoss AS 6.x
-
-If you use JBoss AS 7.x or later or use EAP 6.x or later the above should just work.
-
-However for JBoss AS 6.x or earlier there is [an issue with using newer versions of slf4j](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html) so you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.1/hawtio-no-slf4j-1.4.1.war">Download hawtio-no-slf4j.war</a>.
-
-To disable security [configure the system properties](http://www.mastertheboss.com/jboss-configuration/how-to-inject-system-properties-into-jboss) by adding the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out):
+If you experience problems with security, you would need to disable security in hawtio by [configure the system properties](http://www.mastertheboss.com/jboss-configuration/how-to-inject-system-properties-into-jboss) by adding the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out):
 
     <mbean code="org.jboss.varia.property.SystemPropertiesService"
      name="jboss:type=Service,name=SystemProperties">
@@ -143,6 +139,13 @@ To disable security [configure the system properties](http://www.mastertheboss.c
             hawtio.authenticationEnabled=false
       </attribute>
     </mbean>
+
+
+### Enable JMX on Jetty 8.x
+
+If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in **jetty-distribution/start.ini** (you may have to uncomment it to enable JMX).
+
+    etc/jetty-jmx.xml
 
 
 ## Using hawtio inside a stand alone Java application
