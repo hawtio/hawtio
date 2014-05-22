@@ -3922,3 +3922,22 @@ img.nodeIcon:hover {
 .perspective-selector i:before {
   vertical-align: middle;
 }
+
+.operation-row {
+  position: relative;
+  height: 30px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.operation-row > * {
+  display: inline-block;
+  height: 100%;
+  line-height: 30px;
+}
+
+.operation-actions {
+  position: absolute;
+  right: 0;
+  top: 4px;
+}

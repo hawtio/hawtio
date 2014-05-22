@@ -4,12 +4,33 @@
 module Jmx {
 
   // IOperationControllerScope
-  export function OperationController($scope, workspace:Workspace, jolokia, $document) {
+  export function OperationController($scope,
+                                      workspace:Workspace,
+                                      jolokia,
+                                      $timeout) {
+    $scope.item = $scope.selectedOperation;
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
     $scope.operationResult = '';
     $scope.executeIcon = "icon-ok";
     $scope.mode = "text";
+    $scope.entity = {};
+    $scope.formConfig = {
+      properties: {},
+      description: $scope.objectName + "::" + $scope.item.name
+    };
+
+    $scope.item.args.forEach((arg) => {
+      $scope.formConfig.properties[arg.name] = {
+        type: arg.type,
+        tooltip: arg.desc,
+        help: "Type: " + arg.type
+      }
+    });
+
+    $timeout(() => {
+      $("html, body").animate({ scrollTop: 0 }, "medium");
+    }, 250);
 
     var sanitize = (args) => {
       if (args) {
@@ -42,12 +63,11 @@ module Jmx {
 
 
     $scope.reset = () => {
-      if ($scope.item.args) {
-        $scope.item.args.forEach( function (arg) {
-          arg.value = "";
-        });
-      }
-      $scope.ok();
+      $scope.entity = {};
+    };
+
+    $scope.close = () => {
+      $scope.$parent.showInvoke = false;
     };
 
 
@@ -66,6 +86,17 @@ module Jmx {
       $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
 
       Core.$apply($scope);
+    };
+
+    $scope.onSubmit = (json, form) => {
+      log.debug("onSubmit: json:", json, " form: ", form);
+      log.debug("$scope.item.args: ", $scope.item.args);
+      angular.forEach(json, (value, key) => {
+        $scope.item.args.find((arg) => {
+          return arg['name'] === key;
+        }).value = value;
+      });
+      $scope.execute();
     };
 
 
@@ -116,15 +147,42 @@ module Jmx {
   export function OperationsController($scope,
                                        workspace:Workspace,
                                        jolokia,
-                                       rbacACLMBean) {
+                                       rbacACLMBean,
+                                       $templateCache) {
 
     $scope.operations = {};
     $scope.objectName = '';
     $scope.methodFilter = '';
     $scope.workspace = workspace;
+    $scope.selectedOperation = null;
+    $scope.showInvoke = false;
+    $scope.template = "";
+
+    $scope.invokeOp = (operation) => {
+      $scope.selectedOperation = operation;
+      $scope.showInvoke = true;
+    };
+
+    $scope.getJson = (operation) => {
+      return angular.toJson(operation, true);
+    };
+
+    $scope.cancel = () => {
+      $scope.selectedOperation = null;
+      $scope.showInvoke = false;
+    };
+
+    $scope.$watch('showInvoke', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue) {
+          $scope.template = $templateCache.get("operationTemplate");
+        } else {
+          $scope.template = "";
+        }
+      }
+    });
 
     var fetch = Core.throttled(() => {
-      log.debug("fetching mbean info for: ", workspace.selection);
       var node = workspace.selection;
       if (!node) {
         return;
@@ -234,7 +292,7 @@ module Jmx {
         }
       });
       $scope.operations = sanitize(answer);
-      if (Core.isBlank(rbacACLMBean)) {
+      if (Core.isBlank(rbacACLMBean) || $scope.isOperationsEmpty()) {
         Core.$apply($scope);
         return;
       } else {

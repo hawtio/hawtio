@@ -199,10 +199,10 @@ module Forms {
       rc.attr('title', arg.description);
     }
 
-    log.debug("getControlGroup, config:", config, " arg: ", arg, " id: ", id);
+    // log.debug("getControlGroup, config:", config, " arg: ", arg, " id: ", id);
     if (config['properties'] && config['properties'][id]) {
       var elementConfig = config['properties'][id];
-      log.debug("elementConfig: ", elementConfig);
+      // log.debug("elementConfig: ", elementConfig);
       if (elementConfig && 'control-attributes' in elementConfig) {
         angular.forEach(elementConfig['control-attributes'], (value, key) => {
           rc.attr(key, value);
@@ -222,11 +222,12 @@ module Forms {
   }
 
   export function getHelpSpan(config, arg, id) {
-    var rc:any = '';
-    if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
-      $('<span class="help-block">Type: ' + arg.type + '</span>');
+    var help = Core.pathGet(config.data, ['properties', id, 'help']);
+    if (!Core.isBlank(help)) {
+      return $('<span class="help-block">' + help + '</span>');
+    } else {
+      return $('<span class="help-block"></span>');
     }
-    return rc;
   }
 
 
