@@ -13,10 +13,33 @@ module UI {
         position: '@',
         width: '@'
       },
-      controller: ($scope, $element, $attrs, $transclude, $document) => {
+      controller: ($scope, $element, $attrs, $transclude, $document, $timeout) => {
+
+        $scope.moving = false;
+
         $transclude((clone) => {
           $element.find(".pane-content").append(clone);
         });
+
+        $scope.setWidth = (width) => {
+          if (width < 6) {
+            return;
+          }
+          $element.width(width);
+          $element.parent().css($scope.padding, $element.width() + "px");
+        };
+
+        $scope.toggle = () => {
+          if ($scope.moving) {
+            return;
+          }
+          if ($element.width() > 6) {
+            $scope.width = $element.width();
+            $scope.setWidth(6);
+          } else {
+            $scope.setWidth($scope.width);
+          }
+        };
 
         $scope.startMoving = ($event) => {
           $event.stopPropagation();
@@ -24,6 +47,9 @@ module UI {
           $event.stopImmediatePropagation();
 
           $document.on("mouseup.hawtio-pane", ($event) => {
+            $timeout(() => {
+              $scope.moving = false;
+            }, 250);
             $event.stopPropagation();
             $event.preventDefault();
             $event.stopImmediatePropagation();
@@ -32,11 +58,11 @@ module UI {
           });
 
           $document.on("mousemove.hawtio-pane", ($event) => {
+            $scope.moving = true;
             $event.stopPropagation();
             $event.preventDefault();
             $event.stopImmediatePropagation();
-            $element.width($event.pageX);
-            $element.parent().css($scope.padding, $element.width() + "px");
+            $scope.setWidth($event.pageX + 2);
             Core.$apply($scope);
           });
         }
