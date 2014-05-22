@@ -1,3 +1,8 @@
+/**
+ * @module RBAC
+ */
+
+/// <reference path="../../core/js/postLoginTasks.ts"/>
 module RBAC {
 
   export interface RBACTasks extends Core.Tasks {
