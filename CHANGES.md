@@ -1,5 +1,9 @@
 ### Change Log
 
+#### 1.4.1
+
+* Quick bugfix release
+
 #### 1.4.0
 
 * Theme support with two available themes, Default and Dark
@@ -105,4 +109,4 @@
 * First main release of hawtio with [lots of hawt plugins](http://hawt.io/plugins/index.html).
 * Fixes [these 74 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=1&state=closed)
 
-#### In Progress (1.4.1)
+#### In Progress
