@@ -159,6 +159,9 @@ module Jmx {
     $scope.template = "";
 
     $scope.invokeOp = (operation) => {
+      if (!$scope.canInvoke(operation)) {
+        return;
+      }
       $scope.selectedOperation = operation;
       $scope.showInvoke = true;
     };

@@ -86,9 +86,11 @@
         ng-repeat="operation in operations"
         ng-show="doFilter(operation)"
         ng-click="invokeOp(operation)"
+        ng-class="getClass(operation)"
         title="Click to invoke {{operation.name}}"
         data-placement="bottom">
-      <i class="icon-cog" ng-class="getClass(operation)"></i>
+      <i class="icon-cog"
+         ng-class="getClass(operation)"></i>
       <span>{{operation.name}}</span>
       <span class="operation-actions">
         <button class="btn"
