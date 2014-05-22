@@ -3927,7 +3927,14 @@ img.nodeIcon:hover {
   position: relative;
   height: 30px;
   vertical-align: middle;
+}
+
+.operation-row.can-invoke {
   cursor: pointer;
+}
+
+.operation-row.cant-invoke {
+  cursor: not-allowed;
 }
 
 .operation-row > * {
@@ -3938,7 +3945,7 @@ img.nodeIcon:hover {
 
 .operation-actions {
   position: absolute;
-  right: 0;
+  right: 6px;
   top: 4px;
 }
 
