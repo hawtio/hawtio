@@ -3941,3 +3941,7 @@ img.nodeIcon:hover {
   right: 0;
   top: 4px;
 }
+
+.help-block:empty {
+  margin-top: 10px;
+}
