@@ -70,7 +70,9 @@ module UI {
     }).directive('hawtioBreadcrumbs', () => {
       return UI.hawtioBreadcrumbs();
     }).directive('hawtioIcon', () => {
-        return UI.hawtioIcon();
+      return UI.hawtioIcon();
+    }).directive('hawtioPane', () => {
+      return UI.hawtioPane();
     }).directive('compile', ['$compile', ($compile) => {
       return (scope, element, attrs) => {
         scope.$watch(

@@ -1176,6 +1176,8 @@ var UI;
         return UI.hawtioBreadcrumbs();
     }).directive('hawtioIcon', function () {
         return UI.hawtioIcon();
+    }).directive('hawtioPane', function () {
+        return UI.hawtioPane();
     }).directive('compile', [
         '$compile', function ($compile) {
             return function (scope, element, attrs) {
@@ -1249,6 +1251,97 @@ var UI;
         };
     }
     UI.hawtioIcon = hawtioIcon;
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+var UI;
+(function (UI) {
+    function hawtioPane() {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            templateUrl: UI.templatePath + 'pane.html',
+            scope: {
+                position: '@',
+                width: '@'
+            },
+            controller: function ($scope, $element, $attrs, $transclude, $document, $timeout) {
+                $scope.moving = false;
+
+                $transclude(function (clone) {
+                    $element.find(".pane-content").append(clone);
+                });
+
+                $scope.setWidth = function (width) {
+                    if (width < 6) {
+                        return;
+                    }
+                    $element.width(width);
+                    $element.parent().css($scope.padding, $element.width() + "px");
+                };
+
+                $scope.toggle = function () {
+                    if ($scope.moving) {
+                        return;
+                    }
+                    if ($element.width() > 6) {
+                        $scope.width = $element.width();
+                        $scope.setWidth(6);
+                    } else {
+                        $scope.setWidth($scope.width);
+                    }
+                };
+
+                $scope.startMoving = function ($event) {
+                    $event.stopPropagation();
+                    $event.preventDefault();
+                    $event.stopImmediatePropagation();
+
+                    $document.on("mouseup.hawtio-pane", function ($event) {
+                        $timeout(function () {
+                            $scope.moving = false;
+                        }, 250);
+                        $event.stopPropagation();
+                        $event.preventDefault();
+                        $event.stopImmediatePropagation();
+                        $document.off(".hawtio-pane");
+                        Core.$apply($scope);
+                    });
+
+                    $document.on("mousemove.hawtio-pane", function ($event) {
+                        $scope.moving = true;
+                        $event.stopPropagation();
+                        $event.preventDefault();
+                        $event.stopImmediatePropagation();
+                        $scope.setWidth($event.pageX + 2);
+                        Core.$apply($scope);
+                    });
+                };
+            },
+            link: function ($scope, $element, $attr) {
+                var parent = $element.parent();
+
+                var position = "left";
+                if ($scope.position) {
+                    position = $scope.position;
+                }
+                $element.addClass(position);
+                var width = $element.width();
+
+                var padding = "padding-" + position;
+                $scope.padding = padding;
+                var original = parent.css(padding);
+                parent.css(padding, width + "px");
+
+                $scope.$on('$destroy', function () {
+                    parent.css(padding, original);
+                });
+            }
+        };
+    }
+    UI.hawtioPane = hawtioPane;
 })(UI || (UI = {}));
 /**
 * @module UI

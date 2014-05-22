@@ -3952,3 +3952,74 @@ img.nodeIcon:hover {
 .help-block:empty {
   margin-top: 10px;
 }
+
+ul.dynatree-container {
+  overflow: visible;
+}
+
+.pane {
+  position: fixed;
+  bottom: 0;
+  top: 70px;
+  height: auto;
+  width: 300px;
+}
+
+.pane > .pane-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.pane-viewport {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+
+.pane-content {
+  width: auto;
+  height: auto;
+}
+
+.pane-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  cursor: ew-resize;
+  height: 100%;
+}
+
+.pane-content {
+  float: none;
+  position: static;
+}
+
+.pane.left {
+  left: 0;
+}
+
+.pane.left .pane-viewport {
+  right: 5px
+}
+
+.pane.left .pane-bar {
+  right: 0;
+}
+
+.pane.right {
+  right: 0;
+}
+
+.pane.right .pane-viewport {
+  right: 5px;
+}
+
+.pane.right .pane-bar {
+  left: 0;
+}
+
