@@ -1,18 +1,12 @@
-<div class="row-fluid">
-  <div id="tree-container" class="span3" ng-controller="Jmx.MBeansController">
-    <ul id="tree-ctrl" class="nav">
-      <li>
-        <a data-target="#jmxtree">
-          <span>JMX Tree</span>
-        </a>
-      </li>
-    </ul>
+<hawtio-pane position="left" width="300">
+  <div id="tree-container"
+       ng-controller="Jmx.MBeansController">
     <div id="jmxtree"></div>
   </div>
-  <div class="span9">
-    <ng-include src="'app/jmx/html/subLevelTabs.html'"></ng-include>
-    <div id="properties" ng-view></div>
-  </div>
+</hawtio-pane>
+<div class="row-fluid">
+  <ng-include src="'app/jmx/html/subLevelTabs.html'"></ng-include>
+  <div id="properties" ng-view></div>
 </div>
 
 

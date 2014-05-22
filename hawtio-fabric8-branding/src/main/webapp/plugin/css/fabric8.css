@@ -1508,3 +1508,13 @@ textarea[readonly] {
 .icon-cog.cant-invoke {
   color: red !important;
 }
+
+.pane-bar {
+  border-left: 1px solid #d4d4d4;
+  border-right: 1px solid #d4d4d4;
+  background: white;
+}
+
+.pane {
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
+}

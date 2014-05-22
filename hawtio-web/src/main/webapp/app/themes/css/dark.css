@@ -578,3 +578,13 @@ td.deleting {
 .icon-cog.cant-invoke {
   color: red !important;
 }
+
+.pane-bar {
+  border-left: 1px solid #444444;
+  border-right: 1px solid #444444;
+  background: #222222;
+}
+
+.pane {
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+}
