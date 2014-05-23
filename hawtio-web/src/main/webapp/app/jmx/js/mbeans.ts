@@ -3,7 +3,20 @@
  */
 
 module Jmx {
+
+  export function TreeHeaderController($scope) {
+    $scope.expandAll = () => {
+      Tree.expandAll("#jmxtree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#jmxtree");
+    };
+  }
+
   export function MBeansController($scope, $location: ng.ILocationService, workspace: Workspace) {
+
+    $scope.num = 1;
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress

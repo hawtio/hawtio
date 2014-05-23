@@ -1518,3 +1518,8 @@ textarea[readonly] {
 .pane {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
 }
+
+.pane-header-wrapper {
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+}
+

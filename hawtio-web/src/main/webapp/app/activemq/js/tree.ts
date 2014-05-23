@@ -1,5 +1,15 @@
 module ActiveMQ {
 
+  export function TreeHeaderController($scope) {
+    $scope.expandAll = () => {
+      Tree.expandAll("#activemqtree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#activemqtree");
+    };
+  }
+
   export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {

@@ -7,6 +7,20 @@ module Tree {
   export var pluginName = 'tree';
   export var log:Logging.Logger = Logger.get("Tree");
 
+  export function expandAll(el) {
+    treeAction(el, true);
+  }
+
+  export function contractAll(el) {
+    treeAction(el, false);
+  }
+
+  function treeAction(el, expand) {
+    (<any>$(el).dynatree("getRoot")).visit(function(node){
+      node.expand(expand);
+    });
+  }
+
   /**
    * @function sanitize
    * @param tree

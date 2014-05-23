@@ -1,6 +1,29 @@
 module Camel {
 
-  export function TreeController($scope, $location:ng.ILocationService, $timeout, workspace:Workspace) {
+  export function TreeHeaderController($scope, $location) {
+
+    $scope.contextFilterText = '';
+
+    $scope.$watch('contextFilterText', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.$emit("camel-contextFilterText", newValue);
+      }
+    });
+
+    $scope.expandAll = () => {
+      Tree.expandAll("#cameltree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#cameltree");
+    };
+  }
+
+  export function TreeController($scope,
+                                 $location:ng.ILocationService,
+                                 $timeout,
+                                 workspace:Workspace,
+                                 $rootScope) {
     $scope.contextFilterText = $location.search()["cq"];
     $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
 
@@ -25,6 +48,10 @@ module Camel {
       if ($scope.contextFilterText != $scope.lastContextFilterText) {
         $timeout(reloadOnContextFilterThrottled, 250);
       }
+    });
+
+    $rootScope.$on('camel-contextFilterText', (event, value) => {
+      $scope.contextFilterText = value;
     });
 
     $scope.$on('jmxTreeUpdated', function () {

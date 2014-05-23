@@ -588,3 +588,7 @@ td.deleting {
 .pane {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
 }
+
+.pane-header-wrapper {
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+}
