@@ -268,6 +268,14 @@ module Health {
         return 'HealthID: <strong>' + value['healthId'] + '</strong>';
       };
 
+
+      $scope.isPercentage = (key) => {
+        if( key !== undefined && key.toUpperCase().indexOf("PERCENT") > 0 ){
+           return true;
+        }
+        return false;
+      };
+
       /*
        * Default the values that are missing in the returned JSON
        */
