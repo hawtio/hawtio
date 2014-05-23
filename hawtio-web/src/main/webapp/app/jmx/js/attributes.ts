@@ -4,10 +4,16 @@
 module Jmx {
 
   export var propertiesColumnDefs = [
-    {field: 'name', displayName: 'Property', width: "27%",
+    {
+      field: 'name',
+      displayName: 'Property',
+      width: "27%",
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
         'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
-    {field: 'value', displayName: 'Value', width: "70%",
+    {
+      field: 'value',
+      displayName: 'Value',
+      width: "70%",
       cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
@@ -19,9 +25,15 @@ module Jmx {
     }
   ];
 
-  export function AttributesController($scope, $element, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
+  export function AttributesController($scope,
+                                       $element,
+                                       $location,
+                                       workspace:Workspace,
+                                       jolokia,
+                                       jmxWidgets,
+                                       jmxWidgetTypes,
+                                       $templateCache) {
     $scope.searchText = '';
-    $scope.columnDefs = [];
     $scope.selectedItems = [];
 
     $scope.lastKey = null;
@@ -29,6 +41,18 @@ module Jmx {
 
     $scope.entity = {};
     $scope.attributeSchema = {};
+    $scope.gridData = [];
+    $scope.attributes = ""
+
+    $scope.$watch('gridData.length', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue > 0) {
+          $scope.attributes = $templateCache.get('gridTemplate');
+        } else {
+          $scope.attributes = "";
+        }
+      }
+    });
 
     var attributeSchemaBasic = {
       properties: {
@@ -54,6 +78,7 @@ module Jmx {
     };
 
     $scope.gridOptions = {
+      scope: $scope,
       selectedItems: $scope.selectedItems,
       showFilter: false,
       canSelectRows: false,
@@ -68,7 +93,7 @@ module Jmx {
       // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
       //sortInfo: { field: 'name', direction: 'asc'},
       data: 'gridData',
-      columnDefs: 'columnDefs'
+      columnDefs: propertiesColumnDefs
     };
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -96,7 +121,6 @@ module Jmx {
     });
 
     $scope.hasWidget = (row) => {
-      console.log("Row: ", row);
       return true;
     };
 
@@ -360,11 +384,11 @@ module Jmx {
       if (mbean) {
         request = { type: 'read', mbean: mbean };
         if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = propertiesColumnDefs;
+          $scope.gridOptions.columnDefs = propertiesColumnDefs;
         }
       } else if (node) {
         if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = [];
+          $scope.gridOptions.columnDefs = [];
         }
         // lets query each child's details
         var children = node.children;
@@ -399,7 +423,7 @@ module Jmx {
         Core.register(jolokia, $scope, request, callback);
       } else if (node) {
         if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = foldersColumnDefs;
+          $scope.gridOptions.columnDefs = foldersColumnDefs;
         }
         $scope.gridData = node.children;
       }
@@ -412,7 +436,7 @@ module Jmx {
       var data = response.value;
       var mbeanIndex = $scope.mbeanIndex;
       var mbean = response.request['mbean'];
-      log.debug("mbean: ", mbean);
+
       if (mbean) {
         // lets store the mbean in the row for later
         data["_id"] = mbean;
@@ -431,7 +455,7 @@ module Jmx {
             $scope.selectedIndices = $scope.selectedItems.map((item) => $scope.gridData.indexOf(item));
             $scope.gridData = [];
 
-            if (!$scope.columnDefs.length) {
+            if (!$scope.gridOptions.columnDefs.length) {
               // lets update the column definitions based on any configured defaults
               var key = workspace.selectionConfigKey();
               var defaultDefs = workspace.attributeColumnDefs[key] || [];
@@ -472,7 +496,7 @@ module Jmx {
                 defaultDefs.push(e);
               })
 
-              $scope.columnDefs = defaultDefs;
+              $scope.gridOptions.columnDefs = defaultDefs;
             }
           }
           // assume 1 row of data per mbean
@@ -492,7 +516,7 @@ module Jmx {
           console.log("No mbean name in request " + JSON.stringify(response.request));
         }
       } else {
-        $scope.columnDefs = propertiesColumnDefs;
+        $scope.gridOptions.columnDefs = propertiesColumnDefs;
         var showAllAttributes = true;
         if (angular.isObject(data)) {
           var properties = [];

@@ -1,7 +1,15 @@
+<script type="text/ng-template" id="gridTemplate">
+  <table id="attributesGrid"
+         class="table table-striped"
+         hawtio-simple-table="gridOptions">
+  </table>
+</script>
+
 <div ng-controller="Jmx.AttributesController">
   <div ng-include src="toolBarTemplate()"></div>
 
-  <div id="attributesGrid" class="gridStyle" ng-grid="gridOptions">
+  <div class="attributes-wrapper gridStyle">
+    <div compile="attributes"></div>
   </div>
 
   <!-- modal dialog to show/edit the attribute -->
