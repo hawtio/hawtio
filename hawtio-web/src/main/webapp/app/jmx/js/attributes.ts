@@ -9,19 +9,19 @@ module Jmx {
       displayName: 'Property',
       width: "27%",
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
-        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
+        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>'},
     {
       field: 'value',
       displayName: 'Value',
       width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
   export var foldersColumnDefs = [
     {
       displayName: 'Name',
-      cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
+      cellTemplate: '<div class="ngCellText"><a href="{{row.entity.folderHref(row)}}"><i class="{{row.entity.folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
     }
   ];
 
@@ -117,7 +117,13 @@ module Jmx {
         Core.unregister(jolokia, $scope);
         return;
       }
-      updateTableContents();
+      setTimeout(() => {
+        $scope.gridData = [];
+        Core.$apply($scope);
+        setTimeout(() => {
+          updateTableContents();
+        }, 10);
+      }, 10);
     });
 
     $scope.hasWidget = (row) => {
@@ -248,10 +254,14 @@ module Jmx {
         return '';
       }
 
+      row.addChartToDashboard = (type) => {
+        $scope.addChartToDashboard(row, type);
+      }
+
       var rc = [];
       potentialCandidates.forEach((widget) => {
         var widgetType = Jmx.getWidgetType(widget);
-        rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"addChartToDashboard(row.entity, '" + widgetType['type'] + "')\"></i>");
+        rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"row.entity.addChartToDashboard('" + widgetType['type'] + "')\"></i>");
 
       });
       return rc.join() + "&nbsp;";
@@ -426,10 +436,12 @@ module Jmx {
           $scope.gridOptions.columnDefs = foldersColumnDefs;
         }
         $scope.gridData = node.children;
+        addHandlerFunctions($scope.gridData);
       }
       if (node) {
         $scope.lastKey = node.key;
       }
+      Core.$apply($scope);
     }
 
     function render(response) {
@@ -560,9 +572,27 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        // log.debug("gridData: ", $scope.gridData);
+        addHandlerFunctions($scope.gridData);
         Core.$apply($scope);
       }
+    }
+
+    function addHandlerFunctions(data) {
+      data.forEach((item) => {
+        item['inDashboard'] = $scope.inDashboard;
+        item['getDashboardWidgets'] = () => {
+          return $scope.getDashboardWidgets(item);
+        };
+        item['onViewAttribute'] = () => {
+          $scope.onViewAttribute(item);
+        };
+        item['folderIconClass'] = (row) => {
+          return $scope.folderIconClass(row);            
+        };
+        item['folderHref'] = (row) => {
+          return $scope.folderHref(row);
+        };
+      });
     }
 
     function unwrapObjectName(value) {
