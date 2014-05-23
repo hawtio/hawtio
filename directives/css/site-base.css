@@ -948,8 +948,9 @@ div.hawtio-form-tabs div.tab-content {
 }
 
 .hawtio-form fieldset legend {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   border-bottom: none;
+  font-size: 15px;
 }
 
 .spacer {
@@ -4023,3 +4024,52 @@ ul.dynatree-container {
   left: 0;
 }
 
+.tree-header {
+  position: relative;
+  height: 22px;
+}
+
+.tree-header > .left,
+.tree-header > .right {
+  position: absolute;
+  top: 3px;
+  bottom: 6px;
+  vertical-align: middle;
+  line-height: 10px;
+}
+
+.tree-header > .left {
+  left: 0;
+}
+
+.tree-header > .right {
+  right: 10px;
+}
+
+.camel.tree-header {
+  height: 42px;
+}
+
+.camel.tree-header > .left {
+  right: 94px;
+}
+
+.camel.tree-header > .left,
+.camel.tree-header > .right {
+  top: 6px;
+  line-height: 30px;
+}
+
+
+.camel.tree-header > .left > .section-filter {
+  width: 100%;
+}
+
+.camel.tree-header > .left > .section-filter > .search-query {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.camel.tree-header > .left > .section-filter > .icon-remove {
+  right: -16px;
+}

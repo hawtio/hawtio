@@ -1265,13 +1265,26 @@ var UI;
             templateUrl: UI.templatePath + 'pane.html',
             scope: {
                 position: '@',
-                width: '@'
+                width: '@',
+                header: '@'
             },
-            controller: function ($scope, $element, $attrs, $transclude, $document, $timeout) {
+            controller: function ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) {
                 $scope.moving = false;
 
                 $transclude(function (clone) {
                     $element.find(".pane-content").append(clone);
+
+                    if (Core.isBlank($scope.header)) {
+                        return;
+                    }
+
+                    var headerTemplate = $templateCache.get($scope.header);
+
+                    var wrapper = $element.find(".pane-header-wrapper");
+                    wrapper.html($compile(headerTemplate)($scope));
+                    $timeout(function () {
+                        $element.find(".pane-viewport").css("top", wrapper.height());
+                    }, 500);
                 });
 
                 $scope.setWidth = function (width) {
