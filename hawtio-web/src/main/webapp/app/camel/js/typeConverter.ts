@@ -31,6 +31,7 @@ module Camel {
       canSelectRows: false,
       enableSorting: true,
       columnDefs: columnDefs,
+      selectedItems: [],
       filterOptions: {
         filterText: ''
       }
