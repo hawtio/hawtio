@@ -4073,3 +4073,8 @@ ul.dynatree-container {
 .camel.tree-header > .left > .section-filter > .icon-remove {
   right: -16px;
 }
+
+.attributes-wrapper {
+  width: 100%;
+  overflow: auto;
+}
