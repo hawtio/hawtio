@@ -51,7 +51,6 @@ small table tbody tr td.property-name {
 }
 
 #log-panel-statements li {
-  font-family: monospace;
   margin-left: 3px;
   margin-right: 3px;
   transition: background .25s ease-in-out;
@@ -60,10 +59,6 @@ small table tbody tr td.property-name {
 #log-panel-statements li pre {
   border-radius: 0;
   font-size: 11px;
-}
-
-#log-panel-statements li pre span {
-  font-family: monospace;
 }
 
 #log-panel-statements li:hover {
@@ -111,12 +106,7 @@ small table tbody tr td.property-name {
   opacity: 1;
 }
 
-div.log-stack-trace {
-  font-family: monospace;
-}
-
 div.log-stack-trace p {
-  font-family: monospace;
   line-height: 14px;
   margin-bottom: 2px;
 }
@@ -1703,25 +1693,17 @@ input[type="checkbox"].ng-invalid {
   line-height: 12px;
 }
 
-.log-stack-trace > dd > ul > li > .stack-line * {
-  font-family: monospace;
-}
-
 .log-stack-trace > dd > ul > li > div.stack-line > a {
   font-weight: bold;
 }
 
 pre.stack-line {
-  font-family: monospace;
   padding: 0;
   margin: 0;
   line-height: 14px;
-  font-size: 12px;
 }
 
 div.stack-line {
-  font-family: monospace;
-  font-size: 12px;
   white-space: pre-wrap;
   word-break: break-all;
   word-wrap: break-word;
@@ -2509,7 +2491,6 @@ ol.zebra-list > li:before {
   display: inline-block;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-family: monospace;
   font-size: 12px;
   min-height: 28px;
   overflow-x: hidden;
@@ -2927,7 +2908,6 @@ fs-donut svg g text.value {
 
 fs-donut svg g text.units {
   font-size: 20px;
-  font-family: monospace;
 }
 
 .health-displays {
@@ -3529,7 +3509,6 @@ span.hawtio-dropdown .dropdown-menu {
 .component {
   opacity: 0.8;
   filter: alpha(opacity = 80);
-  font-family: helvetica;
 }
 
 .window,
