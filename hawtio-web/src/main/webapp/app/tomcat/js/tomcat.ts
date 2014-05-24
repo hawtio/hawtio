@@ -3,8 +3,11 @@ module Tomcat {
     export function TomcatController($scope, $location, workspace:Workspace, jolokia) {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
+          '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
+          '</div>';
 
-        $scope.uninstallDialog = new UI.Dialog()
+      $scope.uninstallDialog = new UI.Dialog()
 
         $scope.webapps = [];
         $scope.selected = [];
@@ -25,6 +28,14 @@ module Tomcat {
                 cellFilter: null,
                 width: "*",
                 resizable: true
+            },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
             },
             {
                 field: 'startTime',
@@ -53,6 +64,14 @@ module Tomcat {
                 resizable: true
             },
             {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            },
+            {
                 field: 'startTime',
                 displayName: 'Start Time',
                 cellFilter: null,
@@ -79,11 +98,19 @@ module Tomcat {
                 resizable: true
             },
             {
-                field: 'displayName',
-                displayName: 'Display Name',
-                cellFilter: null,
-                width: "*",
-                resizable: true
+              field: 'displayName',
+              displayName: 'Display Name',
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
             },
             {
                 field: 'startTime',
@@ -116,6 +143,11 @@ module Tomcat {
             if (obj) {
               obj.mbean = response.request.mbean;
               var mbean = obj.mbean;
+
+              // compute the url for the webapp, and we want to use http as scheme
+              var hostname = Core.extractTargetUrl($location, "http");
+              obj.url = hostname + obj['path'];
+
               if (mbean) {
 
                 // format the start time as readable date format

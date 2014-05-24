@@ -1191,6 +1191,26 @@ module Core {
 
   }
 
+  /**
+   * Extracts the url of the target, eg usually http://localhost:port, but if we use fabric to proxy to another host,
+   * then we return the url that we proxied too (eg the real target)
+   *
+   * @param {ng.ILocationService} $location
+   * @param {String} scheme to force use a specific scheme, otherwise the scheme from location is used
+   */
+  export function extractTargetUrl($location, scheme = null) {
+    if (angular.isUndefined(scheme)) {
+      scheme = $location.scheme();
+    }
+    var url = scheme + "://" + $location.host();
+    var port = $location.port();
+    if (port != 80) {
+      url += ":" + port;
+    }
+    // TODO: check if we are using the fabric proxy servlet
+    return url;
+  }
+
 
   /**
    * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup

@@ -5,7 +5,12 @@ module Jetty {
 
   export function JettyController($scope, $location, workspace:Workspace, jolokia) {
 
-    var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
+    var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' +
+        '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' +
+      '</div>';
+    var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
+        '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
+      '</div>';
 
     $scope.uninstallDialog = new UI.Dialog()
 
@@ -36,6 +41,14 @@ module Jetty {
         width: "*",
         resizable: true
       },
+      {
+        field: 'url',
+        displayName: 'Url',
+        cellTemplate: urlTemplate,
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      }
     ];
 
     $scope.gridOptions = {
@@ -150,6 +163,11 @@ module Jetty {
             // lets leave the state as it is if it is defined
             obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped"
           }
+
+          // compute the url for the webapp, and we want to use http as scheme
+          var hostname = Core.extractTargetUrl($location, "http");
+          obj.url = hostname + obj['contextPath'];
+
           var mbean = obj.mbean;
           if (mbean) {
             var idx = $scope.mbeanIndex[mbean];

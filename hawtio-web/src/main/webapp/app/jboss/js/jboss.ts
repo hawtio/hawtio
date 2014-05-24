@@ -2,8 +2,11 @@ module JBoss {
     export function JBossController($scope, $location:ng.ILocationService, jolokia) {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
+        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
+          '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
+          '</div>';
 
-        $scope.uninstallDialog = new UI.Dialog()
+      $scope.uninstallDialog = new UI.Dialog()
 
         $scope.webapps = [];
         $scope.selected = [];
@@ -32,6 +35,14 @@ module JBoss {
                 width: "*",
                 resizable: true
             },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            }
         ];
 
         $scope.gridOptions = {
@@ -55,6 +66,11 @@ module JBoss {
               if (obj) {
                 obj.mbean = response.request.mbean;
                 var mbean = obj.mbean;
+
+                // compute the url for the webapp, and we want to use http as scheme
+                var hostname = Core.extractTargetUrl($location, "http");
+                obj.url = hostname + obj['contextPath'];
+
                 if (mbean) {
                   obj.name = JBoss.cleanWebAppName(obj.name);
                   obj.contextPath = JBoss.cleanContextPath(obj.name);
