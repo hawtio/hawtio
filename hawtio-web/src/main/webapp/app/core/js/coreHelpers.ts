@@ -1202,12 +1202,38 @@ module Core {
     if (angular.isUndefined(scheme)) {
       scheme = $location.scheme();
     }
-    var url = scheme + "://" + $location.host();
+
+    // http://localhost:8181/hawtio/index.html?url=%2Fhawtio%2Fproxy%2F192.168.1.5%2F9006%2Fjolokia#/tomcat/applications
+    // is it a proxy
+
+    var host = $location.host();
     var port = $location.port();
+
+    var qUrl = $location.search()["url"];
+    if (qUrl) {
+      var value = decodeURIComponent(qUrl);
+      if (value) {
+        var idx = value.indexOf("/proxy/");
+        // after proxy we have host and optional port (if port is not 80)
+        if (idx > 0) {
+          value = value.substr(idx + 7);
+          var data = value.split("/");
+          if (data.length >= 1) {
+            host = data[0];
+          }
+          if (data.length >= 2) {
+            if (angular.isNumber(data[1])) {
+              port = data[1];
+            }
+          }
+        }
+      }
+    }
+
+    var url = scheme + "://" + host;
     if (port != 80) {
       url += ":" + port;
     }
-    // TODO: check if we are using the fabric proxy servlet
     return url;
   }
 
