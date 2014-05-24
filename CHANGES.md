@@ -2,6 +2,7 @@
 
 #### 1.4.1
 
+* Using new hawtio logo
 * Quick bugfix release
 
 #### 1.4.0
