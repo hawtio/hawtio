@@ -1,0 +1,205 @@
+
+
+@import url("../fonts/Effects-Eighty/stylesheet.css");
+
+*,
+body,
+input,
+button,
+select,
+textarea,
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+  font-family: EffectsEighty;
+  font-size: large;
+  background: #000;
+  color: #0f0;
+  border-radius: 0;
+}
+
+.navbar .nav > li > a {
+  text-shadow: none;
+}
+
+input[disabled], 
+select[disabled], 
+textarea[disabled], 
+input[readonly], 
+select[readonly], 
+textarea[readonly] {
+  background: #000;
+}
+
+.alert {
+  border-radius: 0;
+  background: #000
+}
+
+.alert-info {
+  border-color: #00f;
+}
+
+.nav-tabs > li > a {
+  border-radius: 0;
+}
+
+.navbar .nav > li > a:focus, 
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a {
+  background: inherit;
+  color: #fff;
+
+}
+
+.navbar .nav > .active > a,
+.navbar .nav > .active > a:hover,
+.navbar .nav > .active > a:focus,
+.nav-tabs > .active > a, 
+.nav-tabs > .active > a:hover {
+  background-image: none;
+  background-color: #0f0;
+  color: #000;
+  border: none;
+  box-shadow: none;
+}
+
+.navbar-fixed-top .navbar-inner, 
+.navbar-static-top .navbar-inner {
+  box-shadow: none;
+  border-bottom: 1px solid #0f0;
+  box-shadow: none;
+}
+
+.main-nav-upper .nav-tabs li a {
+  border-bottom: 1px solid #0f0;
+  box-shadow: none;
+};
+
+.nav-tabs > li > a:hover,
+.nav > li > a:hover {
+  background-color: #000 !important;
+  border-color: #000;
+  box-shadow: none;
+}
+
+.table-header {
+  color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+textarea, 
+input[type="text"], 
+input[type="password"], 
+input[type="datetime"], 
+input[type="datetime-local"], 
+input[type="date"], 
+input[type="month"], 
+input[type="time"], 
+input[type="week"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="color"], 
+.uneditable-input {
+  border: 1px solid #0f0;
+}
+
+.navbar-inner {
+  background-image: none;
+  box-shadow: none;
+  background-color: #000;
+}
+
+.btn {
+  background: #0f0;
+  color: #000;
+  background-image: none;
+  border-radius: 0;
+  border: none;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 2px solid #0f0;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.btn:hover {
+  color: #000;
+  background: #fff;
+  border: 2px solid #fff;
+}
+
+.btn.btn-primary {
+  background: #00f;
+  border: 2px solid #00f;
+}
+
+.btn.btn-danger {
+  background: #f00;
+  border: 2px solid #f00;
+}
+
+.btn.btn-success {
+  background: #0ff;
+  border: 2px solid #0ff;
+}
+
+.btn.btn-warning {
+  background: #ff0;
+  border: 2px solid #ff0;
+}
+
+.btn * {
+  color: inherit;
+  background: inherit;
+}
+
+.btn.disabled, 
+.btn[disabled],
+.btn.disabled:hover, 
+.btn[disabled]:hover {
+  background: #000;
+  color: #090;
+  text-shadow: none;
+  border: 2px solid #0f0;
+}
+
+ul.dynatree-container a,
+ul.dynatree-container a:hover,
+span.dynatree-active a,
+ul.dynatree-container a:focus, span.dynatree-focused a:link {
+  background: #000;
+  color: #f00;
+  border-radius: 0;
+  border: none;
+}
+
+ul.dynatree-container a:hover, 
+span.dynatree-active a, 
+ul.dynatree-container a:focus, 
+span.dynatree-focused a:link {
+  background: #00f;
+  color: #000;
+}
+
+.table-striped tbody tr:nth-child(2n+1) td, 
+.table-striped tbody tr:nth-child(2n+1) th {
+  background: #000;
+}
+
+.table th,
+.table td {
+  border-color: #00f;
+}
+
+.modal,
+.modal-header,
+.modal-body,
+.modal-footer {
+  box-shadow: none;
+  border-radius: 0;
+  border: 1px solid #0f0;
+  background: #000;
+}
+

@@ -14,6 +14,11 @@ module Themes {
       label: 'Dark',
       file: 'app/themes/css/dark.css',
       loginBg: 'app/themes/img/default/fire.jpg'
+    },
+    '3270': {
+      label: 'Dark',
+      file: 'app/themes/css/3270.css',
+      loginBg: 'app/themes/img/default/fire.jpg'
     }
   };
 

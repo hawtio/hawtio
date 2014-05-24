@@ -3408,7 +3408,7 @@ span.hawtio-dropdown {
 }
 
 span.hawtio-dropdown .dropdown-menu {
-  width: 200px;
+  width: auto;
 }
 
 .btn .hawtio-dropdown > .caret {
