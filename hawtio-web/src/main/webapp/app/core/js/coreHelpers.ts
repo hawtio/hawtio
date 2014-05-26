@@ -1203,13 +1203,18 @@ module Core {
       scheme = $location.scheme();
     }
 
-    // http://localhost:8181/hawtio/index.html?url=%2Fhawtio%2Fproxy%2F192.168.1.5%2F9006%2Fjolokia#/tomcat/applications
-    // is it a proxy
-
     var host = $location.host();
     var port = $location.port();
 
-    var qUrl = $location.search()["url"];
+    //  $location.search()['url']; does not work for some strange reason
+    // var qUrl = $location.search()['url'];
+
+    var qUrl = $location.absUrl();
+    var idx = qUrl.indexOf("url=");
+    if (idx > 0) {
+      qUrl = qUrl.substr(idx + 4);
+    }
+
     if (qUrl) {
       var value = decodeURIComponent(qUrl);
       if (value) {
@@ -1222,8 +1227,9 @@ module Core {
             host = data[0];
           }
           if (data.length >= 2) {
-            if (angular.isNumber(data[1])) {
-              port = data[1];
+            var qPort = Core.parseIntValue(data[1], "port number");
+            if (qPort) {
+              port = qPort;
             }
           }
         }
