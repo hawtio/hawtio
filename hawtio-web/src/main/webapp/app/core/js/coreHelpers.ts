@@ -1197,14 +1197,14 @@ module Core {
    *
    * @param {ng.ILocationService} $location
    * @param {String} scheme to force use a specific scheme, otherwise the scheme from location is used
+   * @param {Number} port to force use a specific port number, otherwise the port from location is used
    */
-  export function extractTargetUrl($location, scheme = null) {
+  export function extractTargetUrl($location, scheme, port) {
     if (angular.isUndefined(scheme)) {
       scheme = $location.scheme();
     }
 
     var host = $location.host();
-    var port = $location.port();
 
     //  $location.search()['url']; does not work for some strange reason
     // var qUrl = $location.search()['url'];
@@ -1218,7 +1218,7 @@ module Core {
     if (qUrl) {
       var value = decodeURIComponent(qUrl);
       if (value) {
-        var idx = value.indexOf("/proxy/");
+        idx = value.indexOf("/proxy/");
         // after proxy we have host and optional port (if port is not 80)
         if (idx > 0) {
           value = value.substr(idx + 7);
@@ -1226,7 +1226,7 @@ module Core {
           if (data.length >= 1) {
             host = data[0];
           }
-          if (data.length >= 2) {
+          if (angular.isUndefined(port) && data.length >= 2) {
             var qPort = Core.parseIntValue(data[1], "port number");
             if (qPort) {
               port = qPort;
@@ -1234,6 +1234,10 @@ module Core {
           }
         }
       }
+    }
+
+    if (angular.isUndefined(port)) {
+      port = $location.port();
     }
 
     var url = scheme + "://" + host;

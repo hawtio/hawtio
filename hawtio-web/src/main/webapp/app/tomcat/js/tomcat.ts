@@ -9,6 +9,9 @@ module Tomcat {
 
       $scope.uninstallDialog = new UI.Dialog()
 
+        $scope.httpPort = 8080;
+        $scope.httpScheme = "http";
+
         $scope.webapps = [];
         $scope.selected = [];
 
@@ -131,6 +134,25 @@ module Tomcat {
             }
         };
 
+/*        function extractHttpPort(response) {
+          var obj = response;
+          if (obj) {
+            angular.forEach(obj, function (key, value) {
+              var mbean = key;
+              jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]}, onSuccess(onHttpPort));
+            });
+          }
+        }
+
+        function onHttpPort(response) {
+          // we only need the HTTP protocol
+          var obj = response.value;
+          if (obj && obj.protocol && obj.protocol.toString().startsWith("HTTP")) {
+            $scope.httpPort = obj.port;
+            $scope.httpScheme = obj.scheme;
+          }
+        }
+*/
         function render(response) {
           response = Tomcat.filerTomcatOrCatalina(response);
 
@@ -145,7 +167,7 @@ module Tomcat {
               var mbean = obj.mbean;
 
               // compute the url for the webapp, and we want to use http as scheme
-              var hostname = Core.extractTargetUrl($location, "http");
+              var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
               obj.url = hostname + obj['path'];
 
               if (mbean) {
@@ -244,6 +266,22 @@ module Tomcat {
 
         function loadData() {
           console.log("Loading tomcat webapp data...");
+          // must load connectors first, before showing applications, so we do this call synchronously
+          var connectors = jolokia.search("Catalina:type=Connector,*");
+          if (connectors) {
+            var found = false;
+            angular.forEach(connectors, function (key, value) {
+              var mbean = key;
+              if (!found) {
+                var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]});
+                if (data && data.value && data.value.protocol && data.value.protocol.toString().startsWith("HTTP")) {
+                  found = true;
+                  $scope.httpPort = data.value.port;
+                  $scope.httpScheme = data.value.scheme;
+                }
+              }
+            });
+          }
           jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
         }
 
