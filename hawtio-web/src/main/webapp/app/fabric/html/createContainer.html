@@ -41,8 +41,8 @@
         No profiles selected
       </p>
       <ol class="zebra-list" ng-show="selectedProfiles.length > 0">
-        <li class="pointer" ng-repeat="profile in selectedProfiles" ng-click="deselect(profile)">
-          <strong class="green">{{profile.id}}</strong>
+        <li ng-repeat="profile in selectedProfiles">
+            <strong class="green">{{profile.id}}</strong> [<i class="red clickable icon-remove" title="Remove profile" ng-click="deselect(profile)"></i>]
         </li>
       </ol>
     </div>
