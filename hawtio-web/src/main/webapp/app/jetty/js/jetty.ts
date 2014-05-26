@@ -165,7 +165,8 @@ module Jetty {
           }
 
           // compute the url for the webapp, and we want to use http as scheme
-          var hostname = Core.extractTargetUrl($location, "http");
+          // TODO: fix me
+          var hostname = Core.extractTargetUrl($location, "http", 8080);
           obj.url = hostname + obj['contextPath'];
 
           var mbean = obj.mbean;
