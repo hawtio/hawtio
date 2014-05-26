@@ -122,10 +122,6 @@ var _apacheCamelModel = {
         "id": {
           "type": "string"
         },
-        "description": {
-          "type": "string",
-          "formTemplate": "<textarea class='input-xxlarge' rows='8'></textarea>"
-        },
         "inheritErrorHandler": {
           "type": "java.lang.Boolean"
         }
