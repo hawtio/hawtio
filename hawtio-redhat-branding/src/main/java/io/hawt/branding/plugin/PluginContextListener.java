@@ -1,6 +1,5 @@
 package io.hawt.branding.plugin;
 
-import io.hawt.system.ConfigManager;
 import io.hawt.web.plugin.HawtioPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,6 @@ public class PluginContextListener implements ServletContextListener {
   private static final Logger LOG = LoggerFactory.getLogger(PluginContextListener.class);
 
   HawtioPlugin plugin = null;
-  private ConfigManager configManager = new ConfigManager();
-
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -32,13 +29,10 @@ public class PluginContextListener implements ServletContextListener {
     plugin.setDomain(null);
 
     try {
-      configManager.init();
       plugin.init();
     } catch (Exception e) {
       throw createServletException(e);
     }
-
-    servletContextEvent.getServletContext().setAttribute("ConfigManager", configManager);
 
     LOG.info("Initialized {} plugin", plugin.getName());
   }
@@ -47,7 +41,6 @@ public class PluginContextListener implements ServletContextListener {
   public void contextDestroyed(ServletContextEvent servletContextEvent) {
     try {
       plugin.destroy();
-      configManager.destroy();
     } catch (Exception e) {
       throw createServletException(e);
     }

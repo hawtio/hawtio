@@ -18,7 +18,7 @@
       as we build that dynamically using maven-antrun-plugin below. -->
     <!-- plugin-context is what context this plugin will handle requests on
       in the application server -->
-    <plugin-context>/branding</plugin-context>
+    <plugin-context>/redhat-branding</plugin-context>
 
     <!-- plugin-name is the name of our plugin, affects the name used for
       the plugin's mbean -->
@@ -44,12 +44,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-plugin-mbean</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-system</artifactId>
       <version>${project.version}</version>
     </dependency>
 
