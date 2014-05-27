@@ -6,8 +6,10 @@
       <form name="login" class="form-horizontal no-bottom-margin" ng-submit="doLogin()">
         <fieldset>
           <div class="login-logo">
-            <img ng-src="{{branding.appLogo}}" ng-show="branding.appLogo">
-            <span ng-show="branding.appName">{{branding.appName}}</span>
+            <img ng-src="{{branding.appLogo}}" 
+                 ng-show="branding.appLogo"
+                 ng-class="branding.logoClass()">
+            <span ng-show="branding.appName && !branding.logoOnly">{{branding.appName}}</span>
           </div>
           <div class="control-group">
             <label class="control-label" for="username">Username </label>
