@@ -16,6 +16,11 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   border-radius: 0;
 }
 
+.nav-tabs > li > a,
+.nav-tabs > li > a:hover { 
+  border: 1px solid transparent;
+}
+
 .navbar .nav > li > a {
   text-shadow: none;
 }
@@ -69,14 +74,51 @@ textarea[readonly] {
   box-shadow: none;
 }
 
-.main-nav-upper .nav-tabs li a {
+.main-nav-upper > .nav-tabs li a {
   border-bottom: 1px solid #0f0;
   box-shadow: none;
-};
+}
+
+.dropdown-menu {
+  border: 1px solid #0f0;
+  background-color: #000;
+  box-shadow: none;
+  padding: 0;
+  background-clip: normal;
+}
+
+.dropdown-menu > li:hover > a,
+.dropdown-menu li > a:hover, 
+.dropdown-menu li > a:focus, 
+.dropdown-submenu:hover > a {
+  background-color: #0f0;
+  text-shadow: none;
+  color: #000;
+  background-image: none;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle, 
+.navbar .nav li.dropdown.active > .dropdown-toggle, 
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+  background-color: inherit;
+  color: #fff;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div > p {
+  color: #000;
+  background-color: #fff;
+}
+
+.nav-tabs .dropdown-menu {
+  border-radius: 0;
+}
+
+.dropdown-menu li > a {
+  color: #0f0;
+}
 
 .nav-tabs > li > a:hover,
 .nav > li > a:hover {
-  background-color: #000 !important;
   border-color: #000;
   box-shadow: none;
 }
