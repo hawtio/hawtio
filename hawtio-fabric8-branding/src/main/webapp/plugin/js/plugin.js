@@ -11,7 +11,6 @@ var fabric8Branding = (function (self) {
   self.pluginName = 'hawtio-fabric8-branding';
 
   hawtioPluginLoader.registerPreBootstrapTask(function (task) {
-    self.log.debug("Adding fabric8 theme");
     Themes.definitions['fabric8'] = {
       label: 'fabric8',
       file: self.context + 'plugin/css/fabric8.css',
@@ -21,27 +20,27 @@ var fabric8Branding = (function (self) {
     if (!('theme' in localStorage)) {
       localStorage['theme'] = 'fabric8';
     }
+    Themes.brandings['fabric8'] = {
+      label: 'fabric8',
+      setFunc: function(branding) {
+        branding.appName = 'fabric8 console';
+        branding.appLogo = self.context + '/plugin/img/fabric8_icon.svg';
+        branding.logoOnly = false;
+        branding.fullscreenLogin = true;
+        branding.css = self.context + 'plugin/css/branding.css';
+        branding.favicon = self.context + 'plugin/img/favicon.ico';
+        return branding;
+      }
+    }
+    if (!('branding' in localStorage)) {
+      localStorage['branding'] = 'fabric8';
+    }
     task();
   });
 
-  self.enablefabric8 = function(branding) {
-    if (branding.exclusiveSet) {
-      return;
-    }
-    self.log.info("enabled fabric8 branding");
-    branding.appName = 'fabric8 console';
-    branding.appLogo = self.context + '/plugin/img/fabric8_icon.svg';
-    branding.logoOnly = false;
-    branding.fullscreenLogin = true;
-    branding.enabled = true;
-    $('#favicon').remove();
-    $('head').append('<link id="favicon" rel="icon" type="image/ico" href="' + self.context + 'plugin/img/favicon.ico">');
-  };
-
   self.module = angular.module(self.pluginName, ['hawtioCore']);
-
   self.module.run(function (branding) {
-    self.enablefabric8(branding);
+    self.log.debug("theme loaded");
   });
 
   hawtioPluginLoader.addModule(self.pluginName);
