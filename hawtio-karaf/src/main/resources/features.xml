@@ -88,10 +88,16 @@
     <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
   </feature>
 
-  <feature name="hawtio-redhat-branding" version="${project.version}" resolver="(obr)">
-    <details>The Red Hat branding and theme for hawtio</details>
+  <feature name="hawtio-redhat-fuse-branding" version="${project.version}" resolver="(obr)">
+    <details>The Red Hat JBoss Fuse branding and theme for hawtio</details>
     <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-redhat-branding/${project.version}/war</bundle>
+    <bundle>mvn:io.hawt/hawtio-redhat-fuse-branding/${project.version}/war</bundle>
+  </feature>
+
+  <feature name="hawtio-redhat-amq-branding" version="${project.version}" resolver="(obr)">
+    <details>The Red Hat JBoss A-MQ branding and theme for hawtio</details>
+    <feature>war</feature>
+    <bundle>mvn:io.hawt/hawtio-redhat-amq-branding/${project.version}/war</bundle>
   </feature>
 
   <feature name="hawtio-fabric8-branding" version="${project.version}" resolver="(obr)">

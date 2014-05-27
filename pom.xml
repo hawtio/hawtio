@@ -282,13 +282,14 @@
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-examples</module>
-    <module>hawtio-karaf</module>
     <module>sample</module>
     <module>hawtio-karaf-terminal</module>
     <module>hawtio-karaf-git</module>
     <module>hawtio-directives</module>
-    <module>hawtio-redhat-branding</module>
+    <module>hawtio-redhat-fuse-branding</module>
+    <module>hawtio-redhat-amq-branding</module>
     <module>hawtio-fabric8-branding</module>
+    <module>hawtio-karaf</module>
     <!--
     <module>hawtio-api-docs</module>
     -->
