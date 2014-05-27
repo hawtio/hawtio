@@ -274,7 +274,7 @@ module Tomcat {
               var mbean = key;
               if (!found) {
                 var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]});
-                if (data && data.value && data.value.protocol && data.value.protocol.toString().startsWith("HTTP")) {
+                if (data && data.value && data.value.protocol && data.value.protocol.toString().toLowerCase().startsWith("http")) {
                   found = true;
                   $scope.httpPort = data.value.port;
                   $scope.httpScheme = data.value.scheme;

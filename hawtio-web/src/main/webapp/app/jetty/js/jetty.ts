@@ -160,7 +160,7 @@ module Jetty {
           var mbean = key;
           if (!found) {
             var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "protocols"]});
-            if (data && data.value && data.value.protocols && data.value.protocols.toString().startsWith("HTTP")) {
+            if (data && data.value && data.value.protocols && data.value.protocols.toString().toLowerCase().startsWith("http")) {
               found = true;
               $scope.httpPort = data.value.port;
               $scope.httpScheme = "http";

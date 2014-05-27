@@ -8,6 +8,9 @@ module JBoss {
 
       $scope.uninstallDialog = new UI.Dialog()
 
+        $scope.httpPort;
+        $scope.httpScheme = "http";
+
         $scope.webapps = [];
         $scope.selected = [];
 
@@ -67,14 +70,14 @@ module JBoss {
                 obj.mbean = response.request.mbean;
                 var mbean = obj.mbean;
 
-                // compute the url for the webapp, and we want to use http as scheme
-                // TODO: fix me
-                var hostname = Core.extractTargetUrl($location, "http", 8080);
-                obj.url = hostname + obj['contextPath'];
-
                 if (mbean) {
                   obj.name = JBoss.cleanWebAppName(obj.name);
                   obj.contextPath = JBoss.cleanContextPath(obj.name);
+
+                  // compute the url for the webapp, and we want to use http as scheme
+                  var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
+                  obj.url = hostname + obj['contextPath'];
+
                   var idx = $scope.mbeanIndex[mbean];
                   if (angular.isDefined(idx)) {
                     $scope.webapps[mbean] = obj;
@@ -155,6 +158,22 @@ module JBoss {
 
         function loadData() {
             console.log("Loading JBoss webapp data...");
+            // must load connectors first, before showing applications, so we do this call synchronously
+            var connectors = jolokia.search("jboss.as:socket-binding-group=standard-sockets,*");
+            if (connectors) {
+              var found = false;
+              angular.forEach(connectors, function (key, value) {
+                var mbean = key;
+                if (!found) {
+                  var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "name"]});
+                  if (data && data.value && data.value.name && data.value.name.toString().toLowerCase() === 'http') {
+                    found = true;
+                    $scope.httpPort = data.value.port;
+                    $scope.httpScheme = "http";
+                  }
+                }
+              });
+            }
             jolokia.search("jboss.as:deployment=*", onSuccess(render));
         }
 
