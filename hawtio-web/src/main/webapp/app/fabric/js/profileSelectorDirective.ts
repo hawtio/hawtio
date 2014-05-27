@@ -138,6 +138,10 @@ module Fabric {
       }, true);
 
 
+      $scope.abstract = () => {
+        return $scope.profiles.filter((profile) => { return profile['abstract']; });
+      };
+
       $scope.selected = () => {
         return $scope.profiles.filter((profile) => { return profile['selected']; });
       };
@@ -211,7 +215,7 @@ module Fabric {
               type: 'exec',
               mbean: managerMBean,
               operation: 'getProfiles(java.lang.String, java.util.List)',
-              arguments: [$scope.versionId, ['id', 'hidden']]
+              arguments: [$scope.versionId, ['id', 'hidden', 'abstract']]
             }, onSuccess($scope.render, {
               error: (response) => {
                 // TODO somewhere this directive is kinda getting leaked, need to track down
