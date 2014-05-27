@@ -44,7 +44,9 @@ module Log {
         // The default logging level to show, empty string => show all
         logLevelQuery: $routeParams['l'],
         // The default value of the exact match logging filter
-        logLevelExactMatch: Core.parseBooleanValue($routeParams['e'])
+        logLevelExactMatch: Core.parseBooleanValue($routeParams['e']),
+        // The default value of the search only in message field filter
+        messageOnly: Core.parseBooleanValue($routeParams['o'])
       };
 
       if (!angular.isDefined($scope.filter.logLevelQuery)) {
@@ -52,6 +54,9 @@ module Log {
       }
       if (!angular.isDefined($scope.filter.logLevelExactMatch)) {
         $scope.filter.logLevelExactMatch = false;
+      }
+      if (!angular.isDefined($scope.filter.messageOnly)) {
+        $scope.filter.messageOnly = false;
       }
     };
 
@@ -72,6 +77,12 @@ module Log {
     $scope.$watch('filter.logLevelExactMatch', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $location.search('e', newValue);
+      }
+    });
+
+    $scope.$watch('filter.messageOnly', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $location.search('o', newValue);
       }
     });
 
@@ -213,6 +224,10 @@ module Log {
       if ($scope.searchText !== "") {
         title = title + " Filter: " + $scope.searchText;
       }
+      if ($scope.filter.messageOnly) {
+        title = title + " Message Only";
+      }
+
       return "#/dashboard/add?tab=dashboard" +
           "&href=" + encodeURIComponent(href) +
           "&routeParams=" + encodeURIComponent(routeParams) +
@@ -236,6 +251,7 @@ module Log {
     };
 
     $scope.filterLogMessage = (log) => {
+      var messageOnly = $scope.filter.messageOnly;
 
       if ($scope.filter.logLevelQuery !== "") {
         var logLevelExactMatch = $scope.filter.logLevelExactMatch;
@@ -259,6 +275,9 @@ module Log {
       }
       if ($scope.searchText.startsWith("m=")) {
         return log.message.has($scope.searchText.last($scope.searchText.length - 2));
+      }
+      if (messageOnly) {
+        return log.message.has($scope.searchText);
       }
       return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
     };

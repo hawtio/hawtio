@@ -20,7 +20,12 @@
           &nbsp;
           <label>Exact:
             <input type="checkbox" ng-model="filter.logLevelExactMatch"
-                   title="Only match exact logging levels rather than using ranges">
+                   title="Only match exact logging levels rather than using ranges"/>
+          </label>
+          &nbsp;
+          <label>Message Only:
+            <input type="checkbox" ng-model="filter.messageOnly"
+                   title="Only search inside the message field"/>
           </label>
         </form>
       </div>
@@ -63,7 +68,7 @@
             <a ng-href="{{logSourceHref(log)}}" ng-switch-when="true">{{log.logger}}</a>
             <span ng-switch-default>{{log.logger}}</span>
           </div>
-          <div class="title">{{log.message}}</div>
+          <div class="title" ng-bind-html-unsafe="log.message | highlight:searchText:caseSensitive"></div>
           <!--
           <div class="expandable-body well">
             {{log.message}}
