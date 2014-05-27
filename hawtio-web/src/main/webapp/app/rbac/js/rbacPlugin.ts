@@ -101,12 +101,12 @@ module RBAC {
             mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
             maybeRedraw();
           }
-        }), {
+        }, {
           error: (response) => {
             // silently ignore, but still track if we need to redraw
             maybeRedraw();
           }
-        });
+        }));
       });
     });
 
