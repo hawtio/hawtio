@@ -3375,8 +3375,8 @@ th > .indicator:before {
 
 .dropdown.perspective-selector .dropdown-menu > div > p {
   font-size: smaller;
-  margin-left: 3px;
-  margin-right: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
   margin-bottom: 0;
 }
 
