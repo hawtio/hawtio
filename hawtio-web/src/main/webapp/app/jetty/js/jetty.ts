@@ -14,6 +14,9 @@ module Jetty {
 
     $scope.uninstallDialog = new UI.Dialog()
 
+    $scope.httpPort;
+    $scope.httpScheme = "http";
+
     $scope.webapps = [];
     $scope.selected = [];
 
@@ -144,6 +147,27 @@ module Jetty {
 
     function loadData() {
       console.log("Loading Jetty webapp data...");
+      // must load connectors first, before showing applications, so we do this call synchronously
+      // jetty 7/8
+      var connectors = jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*");
+      if (!connectors) {
+        // jetty 9
+        connectors = jolokia.search("org.eclipse.jetty.server:type=serverconnector,*");
+      }
+      if (connectors) {
+        var found = false;
+        angular.forEach(connectors, function (key, value) {
+          var mbean = key;
+          if (!found) {
+            var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "protocols"]});
+            if (data && data.value && data.value.protocols && data.value.protocols.toString().startsWith("HTTP")) {
+              found = true;
+              $scope.httpPort = data.value.port;
+              $scope.httpScheme = "http";
+            }
+          }
+        });
+      }
       // support embedded jetty which may use morbay mbean names
       jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
       jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
@@ -165,8 +189,7 @@ module Jetty {
           }
 
           // compute the url for the webapp, and we want to use http as scheme
-          // TODO: fix me
-          var hostname = Core.extractTargetUrl($location, "http", 8080);
+          var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
           obj.url = hostname + obj['contextPath'];
 
           var mbean = obj.mbean;

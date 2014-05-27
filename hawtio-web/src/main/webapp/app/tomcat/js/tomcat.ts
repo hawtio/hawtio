@@ -9,7 +9,7 @@ module Tomcat {
 
       $scope.uninstallDialog = new UI.Dialog()
 
-        $scope.httpPort = 8080;
+        $scope.httpPort;
         $scope.httpScheme = "http";
 
         $scope.webapps = [];

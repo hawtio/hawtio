@@ -1209,13 +1209,12 @@ module Core {
     //  $location.search()['url']; does not work for some strange reason
     // var qUrl = $location.search()['url'];
 
+    // if its a proxy request using hawtio-proxy servlet, then the url parameter
+    // has the actual host/port
     var qUrl = $location.absUrl();
     var idx = qUrl.indexOf("url=");
     if (idx > 0) {
       qUrl = qUrl.substr(idx + 4);
-    }
-
-    if (qUrl) {
       var value = decodeURIComponent(qUrl);
       if (value) {
         idx = value.indexOf("/proxy/");
