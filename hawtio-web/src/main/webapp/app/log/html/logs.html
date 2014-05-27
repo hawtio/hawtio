@@ -132,11 +132,27 @@
 
         <div class="row-fluid">
           <dl class="log-message">
-            <dt>Message:</dt>
+            <dt>
+              <span>Message:</span>
+              <button class="btn"
+                      zero-clipboard
+                      data-clipboard-text="{{selectedRow.message}}"
+                      title="Click to copy this message to the clipboard">
+                <i class="icon-copy"></i>
+              </button>
+            </dt>
             <dd><div hawtio-editor="selectedRow.message" read-only="true"></div></dd>
           </dl>
           <dl class="log-stack-trace" ng-hide="!selectedRow.exception">
-            <dt>Stack Trace:</dt>
+            <dt>
+              <span>Stack Trace:</span>
+              <button class="btn"
+                      zero-clipboard
+                      data-clipboard-text="{{selectedRow.exception}}"
+                      title="Click to copy this stacktrace to the clipboard">
+                <i class="icon-copy"></i>
+              </button>
+            </dt>
             <dd ng-bind-html-unsafe="formatStackTrace(selectedRow.exception)"></dd>
           </dl>
         </div>
