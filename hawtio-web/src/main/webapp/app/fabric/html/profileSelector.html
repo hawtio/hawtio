@@ -31,8 +31,8 @@
                   </div>
                   <div class="inline-block profile-selector-name" ng-class="getSelectedClass(profile)">
                     <span class="contained c-max" ng-hide="!profile.abstract">
-                      <span ng-show="noLinks"><i class="icon-book green"></i> {{profile.name}} (abstract)</span>
-                      <a ng-hide="noLinks" href="" ng-click="goto(profile)" title="Details for {{profile.id}}"><i class="icon-book green"></i> {{profile.name}} (abstract)</a>
+                      <span ng-show="noLinks" title="The profile is abstract and not selectable"><i class="icon-book green"></i> {{profile.name}}</span>
+                      <a ng-hide="noLinks" href="" ng-click="goto(profile)" title="Details for {{profile.id}}"><i class="icon-book green"></i> {{profile.name}}</a>
                     </span>
                   </div>
                 </div>

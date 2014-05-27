@@ -159,6 +159,9 @@ module Fabric {
 
 
       $scope.getSelectedClass = (profile) => {
+        if (profile.abstract) {
+          return "abstract";
+        }
         if (profile.selected) {
           return "selected";
         }

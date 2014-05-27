@@ -1050,6 +1050,10 @@ ol.zebra-list > li:nth-child(even):before {
   color: #333333;
 }
 
+.profile-selector-name.abstract {
+  color: #888888;
+}
+
 .file-name {
   color: #333333;
 }
