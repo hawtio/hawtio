@@ -505,6 +505,18 @@ td.deleting {
   color: #bbbbbb;
 }
 
+.navbar .nav > li > .dropdown-menu:before,
+.navbar .nav > li > .dropdown-menu:after {
+  display: none;
+  border: none;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div > p {
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+  background-image: linear-gradient(to bottom, #333, #222);
+}
+
 .bundle-item-details {
   background: white;
 }

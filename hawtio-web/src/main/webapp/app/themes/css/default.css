@@ -1417,3 +1417,15 @@ img.nodeIcon:hover {
 .pane-header-wrapper {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
 }
+
+.navbar .nav > li > .dropdown-menu:before,
+.navbar .nav > li > .dropdown-menu:after {
+  display: none;
+  border: none;
+}
+
+.dropdown.perspective-selector .dropdown-menu > div > p {
+  border-top: 1px solid #d4d4d4;
+  border-bottom: 1px solid #d4d4d4;
+  background-image: linear-gradient(to bottom, #fff, #e5e5e5);
+}
