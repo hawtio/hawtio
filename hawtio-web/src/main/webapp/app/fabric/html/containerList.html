@@ -1,8 +1,10 @@
 <div>
 
-  <div ng-repeat="container in containers" 
-       ng-show="filterContainer(container)" 
-       ng-include="'app/fabric/html/containerItem.html'">
+  <div ng-repeat="container in containers | orderBy:'location' | hawtioGroupBy:'location'" 
+       ng-show="filterContainer(container)">
+       <div class="container-group-header"
+            ng-show="container.newGroup && container.location">{{container.location}}</div>
+       <div ng-include="'app/fabric/html/containerItem.html'"></div>
   </div>
 
   <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>

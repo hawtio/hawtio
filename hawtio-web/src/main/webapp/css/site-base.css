@@ -4059,3 +4059,12 @@ ul.dynatree-container {
 .widget-title {
   border-bottom: 1px solid #00f;
 }
+
+.container-group-header {
+  vertical-align: middle;
+  line-height: 18px;
+  font-weight: bold;
+  padding: 4px;
+  margin-top: 10px;
+}
+

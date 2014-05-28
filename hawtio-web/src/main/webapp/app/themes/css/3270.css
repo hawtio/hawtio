@@ -295,6 +295,10 @@ span.dynatree-focused a:link {
   border-bottom: 1px solid #0f0;
 }
 
+.container-group-header {
+  border-bottom: 1px solid #0f0;
+}
+
 .box {
   border: 1px solid transparent;
   border-bottom: 1px solid #00f;

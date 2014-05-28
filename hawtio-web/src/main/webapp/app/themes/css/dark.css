@@ -186,8 +186,16 @@ body {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.25);
 }
 
-.box {
+.container-group-header {
   border-bottom: 1px solid #444;
+}
+
+.box {
+  border-top: 1px solid #444;
+}
+
+.container-group-header:not([style]) + div > .box {
+  border-top: 1px solid transparent;
 }
 
 .box .clickable:not(.icon-circle-blank):not(.icon-circle) {
