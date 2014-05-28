@@ -1178,6 +1178,8 @@ var UI;
         return UI.hawtioIcon();
     }).directive('hawtioPane', function () {
         return UI.hawtioPane();
+    }).filter('hawtioGroupBy', function () {
+        return UI.groupBy();
     }).directive('compile', [
         '$compile', function ($compile) {
             return function (scope, element, attrs) {
@@ -2468,6 +2470,35 @@ var CodeEditor;
     }
     CodeEditor.createEditorSettings = createEditorSettings;
 })(CodeEditor || (CodeEditor = {}));
+var UI;
+(function (UI) {
+    function groupBy() {
+        return function (list, group) {
+            if (list.length === 0) {
+                return list;
+            }
+
+            if (Core.isBlank(group)) {
+                return list;
+            }
+
+            var newGroup = 'newGroup';
+
+            var currentGroup = list.first()[group];
+            list.first()[newGroup] = true;
+
+            list.forEach(function (item) {
+                if (item[group] !== currentGroup) {
+                    item[newGroup] = true;
+                    currentGroup = item[group];
+                }
+            });
+
+            return list;
+        };
+    }
+    UI.groupBy = groupBy;
+})(UI || (UI = {}));
 /**
 * @module UI
 */
