@@ -194,7 +194,7 @@ public class Authenticator {
                 } else if (callback instanceof PasswordCallback) {
                     ((PasswordCallback) callback).setPassword(password.toCharArray());
                 } else {
-                    LOG.warn("Unsupported callback class [" + callback.getClass().getName() + "]");
+                    LOG.debug("Unknown callback class [" + callback.getClass().getName() + "]");
                 }
             }
         }
