@@ -34,7 +34,6 @@ module Core {
 
 }
 
-
 // Add any other known possible jolokia URLs here
 var jolokiaUrls:string[] = [
   url("jolokia"),    // instance configured by hawtio-web war file
@@ -599,6 +598,12 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
   return new Core.FileUpload();
         })
   ;
+
+String.prototype.unescapeHTML = function() {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = this;
+    return txt.value;
+};
 
 // for chrome packaged apps lets enable chrome-extension pages
 if (hawtioCoreModule && Core.isChromeApp()) {
