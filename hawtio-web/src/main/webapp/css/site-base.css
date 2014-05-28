@@ -4047,3 +4047,17 @@ ul.dynatree-container {
   width: 100%;
   overflow: auto;
 }
+
+.separator {
+  padding-top: 4px;
+  display: inline-block;
+}
+
+.grid-block,
+.health-display {
+  border: 1px solid #00f;
+}
+
+.widget-title {
+  border-bottom: 1px solid #00f;
+}

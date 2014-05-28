@@ -8,7 +8,22 @@ input,
 button,
 select,
 textarea,
-textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+textarea, 
+input[type="text"], 
+input[type="password"], 
+input[type="datetime"], 
+input[type="datetime-local"], 
+input[type="date"], 
+input[type="month"], 
+input[type="time"], 
+input[type="week"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="color"], 
+.uneditable-input {
   font-family: EffectsEighty;
   font-size: large;
   background: #000;
@@ -47,36 +62,60 @@ textarea[readonly] {
   border-radius: 0;
 }
 
+.main-nav-lower > .container > .nav {
+  border-top: 1px solid #0f0;
+}
+
+
 .navbar .nav > li > a:focus, 
 .navbar .nav > li > a:hover,
 .navbar .nav > li > a {
   background: inherit;
   color: #fff;
+  border-top: none;
 
 }
 
 .navbar .nav > .active > a,
 .navbar .nav > .active > a:hover,
 .navbar .nav > .active > a:focus,
+.nav-tabs > .active > a > *, 
 .nav-tabs > .active > a, 
-.nav-tabs > .active > a:hover {
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:hover > *,
+.nav-tabs > li > a:hover,
+.nav > li > a:hover {
+  box-shadow: none;
   background-image: none;
   background-color: #0f0;
   color: #000;
-  border: none;
+  border-color: transparent;
+  /*
+  border: 1px solid transparent;
+  */
   box-shadow: none;
+}
+
+.nav-tabs .open .dropdown-toggle, 
+.nav-pills .open .dropdown-toggle, 
+.nav > li.dropdown.open.active > a:hover {
+  border-color: transparent;
 }
 
 .navbar-fixed-top .navbar-inner, 
 .navbar-static-top .navbar-inner {
   box-shadow: none;
-  border-bottom: 1px solid #0f0;
+  border-bottom: none;
   box-shadow: none;
 }
 
 .main-nav-upper > .nav-tabs li a {
   border-bottom: 1px solid #0f0;
   box-shadow: none;
+}
+
+.main-nav-lower  .nav {
+  border-bottom: 1px solid #0f0;
 }
 
 .dropdown-menu {
@@ -89,6 +128,7 @@ textarea[readonly] {
 
 .dropdown-menu > li:hover > a,
 .dropdown-menu li > a:hover, 
+.dropdown-menu li > a:hover *,
 .dropdown-menu li > a:focus, 
 .dropdown-submenu:hover > a {
   background-color: #0f0;
@@ -115,12 +155,6 @@ textarea[readonly] {
 
 .dropdown-menu li > a {
   color: #0f0;
-}
-
-.nav-tabs > li > a:hover,
-.nav > li > a:hover {
-  border-color: #000;
-  box-shadow: none;
 }
 
 .table-header {
@@ -159,11 +193,11 @@ input[type="color"],
   background-image: none;
   border-radius: 0;
   border: none;
-  padding-left: 4px;
-  padding-right: 4px;
+  padding: 3px;
   border: 2px solid #0f0;
   text-shadow: none;
   box-shadow: none;
+  font-size: normal;
 }
 
 .btn:hover {
@@ -244,4 +278,110 @@ span.dynatree-focused a:link {
   border: 1px solid #0f0;
   background: #000;
 }
+
+.ngCell {
+  background-color: #000;
+}
+
+.wiki-file-list-up {
+  color: #ff0;
+}
+
+.slideout {
+  border: 1px solid #0f0;
+}
+
+.slideout-title {
+  border-bottom: 1px solid #0f0;
+}
+
+.box {
+  border: 1px solid transparent;
+  border-bottom: 1px solid #00f;
+}
+
+.box.selected {
+  border: 1px solid #ff0;
+}
+
+.hero-unit {
+  background-color: inherit;
+  border-radius: 0;
+  border: 1px solid #fff;
+}
+
+.clickable, .clickable:before { 
+  background: none;
+  background-color: transparent;
+}
+
+.popover {
+  border-radius: 0;
+  border: 1px solid #0f0;
+  border-color: #0f0;
+  box-shadow: none;
+}
+
+.popover-title {
+  border-radius: 0;
+  background: #000;
+  color: #0f0;
+  border-color: #0f0;
+  box-shadow: none;
+}
+
+.badge {
+  border-radius: 0;
+  color: #fff;
+  background-color: #000;
+  border: 1px solid #fff;
+  font-size: inherit;
+}
+
+.badge-success {
+  border-color: #0f0;
+}
+
+.badge-inverse {
+  border-color: #aaa;
+}
+
+.badge-warning {
+  border-color: #ff0;
+}
+
+.badge-info {
+  border-color: #00f;
+}
+
+.btn-group > .btn:first-child,
+.btn-group > .btn:last-child, 
+.input-append .add-on:last-child, 
+.input-append .btn:last-child {
+  border-radius: 0;
+}
+
+.monitor-indicator {
+  box-shadow: none;
+  color: #000;
+}
+
+.log-info-panel {
+  border: 1px solid #0f0;
+}
+
+.log-table > li > div,
+.log-table > li > div > div {
+  background: inherit;
+}
+
+.log-table > li > div > div {
+  border-top: 1px solid #009;
+}
+
+.log-table > li > div > div:nth-child(3) {
+  border-right: 1px solid #fff;
+  border-left: 1px solid #fff;
+}
+
 
