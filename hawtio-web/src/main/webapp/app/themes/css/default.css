@@ -678,28 +678,14 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 }
 
 .box.selected {
-  color: #0066cc;
-  text-shadow: rgba(0, 51, 102, 0.3) 0 -1px 0, #b3d9ff 0 2px 1px, #99ddff 0 0 5px, rgba(0, 127, 255, 0.6) 0 0 20px;
+  color: normal;
   background-color: #f0f0ff;
+  text-shadow: none;
 }
 
 .box.selected .box-right i {
   text-shadow: none;
 }
-
-.box > .box-left > div {
-  border-radius: 4px;
-}
-
-.box .clickable:not(.icon-circle-blank):not(.icon-circle) {
-  border-radius: 4px;
-  border: 1px solid #d4d4d4;
-}
-
-.box .clickable:not(.icon-circle-blank):not(.icon-circle):hover {
-  background: #f0f0ff;
-}
-
 
 .section-header {
   background-color: #FAFAFA;

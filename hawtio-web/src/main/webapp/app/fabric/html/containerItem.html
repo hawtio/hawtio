@@ -10,15 +10,7 @@
       <div class="container-type" title="Container type">
         <hawtio-icon config="container.icon"/>
       </div>
-      <div>
-        <a class="btn btn-primary"
-           href=""
-           ng-disabled="!canConnect(container)"
-           ng-click="doConnect(container)"
-           title="Open a new window and connect to this container">
-          <i class="icon-signin"></i>
-        </a>
-      </div>
+      <!--
       <div>
         <a class="btn btn-success"
            href=""
@@ -28,6 +20,7 @@
           <i class="icon-plus"></i>
         </a>
       </div>
+      -->
       <div>
         <span class="badge badge-info">
           {{container.versionId}}
@@ -36,8 +29,17 @@
       <div>
         <span class="contained c-wide"
               title="{{container.id}} / {{container.versionId}}">
-          <a ng-click="showContainer(container)"><strong>{{container.id}}</strong></a>
+          <a ng-click="showContainer(container)">{{container.id}}</a>
         </span>
+        <span>
+          <a class="clickable"
+             href=""
+             ng-show="canConnect(container)"
+             ng-click="doConnect(container)"
+             title="Open a new window and connect to this container">
+            <i class="icon-signin"></i>
+          </a>
+        <span>
       </div>
 
     </div>
@@ -48,7 +50,7 @@
   </div>
 
   <div class="box-right">
-    <ul class="service-list">
+    <ul class="service-list inline-block">
       <li>
         <i class="icon-cloud" title="Ensemble member" ng-click="showContainer(container)" ng-show="isEnsembleContainer(container.id)"></i>
       </li>
