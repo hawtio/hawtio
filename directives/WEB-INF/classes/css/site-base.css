@@ -1321,10 +1321,8 @@ h4 > .contained {
   text-overflow: ellipsis;
   transition: all 0.2s ease 0s;
   white-space: nowrap;
-}
-
-.box .clickable {
-  padding: 6px;
+  line-height: 22px;
+  vertical-align: middle;
 }
 
 .box > .box-left,
@@ -1335,7 +1333,6 @@ h4 > .contained {
   vertical-align: middle;
   top: 0;
   bottom: 0;
-  vertical-align: middle;
   padding-top: 10px;
 }
 
@@ -1368,6 +1365,7 @@ h4 > .contained {
 
 
 .box > .box-left > div > div .contained,
+.box > .box-left > div > div > span,
 .box > .box-right > div > div .contained,
 .box > .box-middle > div > div .contained {
   vertical-align: middle;
@@ -3849,35 +3847,35 @@ img.nodeIcon:hover {
 }
 
 .container-type {
-  width: 28px;
+  width: 16px;
 }
 
 .container-status > i:before,
 .container-type i:before,
 .container-type img {
   vertical-align: middle;
-  font-size: 28px;
-  height: 28px;
+  font-size: 16px;
+  height: 16px;
   width: auto;
-  line-height: 28px;
+  line-height: 16px;
 }
 
 .container-type img.girthy {
   height: auto;
-  width: 28px;
+  width: 16px;
 }
 
 .service-list i:before,
 .service-list img {
-  height: 24px;
+  height: 16px;
   width: auto;
-  font-size: 24px;
+  font-size: 16px;
   vertical-align: middle;
 }
 
 .service-list img.girthy {
   height: auto;
-  width: 24px;
+  width: 16px;
 }
 
 .perspective-selector i:before,
