@@ -12,7 +12,10 @@ module Fabric {
     $scope.profiles = [];
     $scope.parentProfiles = [];
     $scope.entity = {
-      group: $scope.defaultGroup
+      // default options
+      group: $scope.defaultGroup,
+      ssl: true
+
     };
     $scope.otherEntity = {
       networkConnectAll: false
@@ -112,8 +115,6 @@ module Fabric {
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead-editable'], 'false');
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'placeholder'], 'mq-client-base');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "default");
-
-
 
       Core.pathSet(schema.properties, ['data', 'input-attributes', "placeholder"], "${karaf.base}/data/{{entity.brokerName || 'brokerName'}}");
       Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
