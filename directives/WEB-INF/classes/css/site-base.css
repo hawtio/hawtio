@@ -1574,7 +1574,7 @@ td.adding {
 
 .login-wrapper form {
   margin-bottom: 0px;
-  padding-top: 52px;
+  padding-top: 67px;
   padding-bottom: 7px;
   padding-right: 40px;
   padding-left: 40px;
@@ -1798,7 +1798,8 @@ div#main div ul.nav li a.nav-primary .caret {
 
 .main-nav-upper .container {
   width: auto;
-  line-height: 11px;
+  line-height: 23px;
+  vertical-align: auto;
 }
 
 .main-nav-upper .icon-desktop:before {
@@ -3838,17 +3839,6 @@ img.nodeIcon:hover {
   vertical-align: middle;
   height: 48px;
 }
-
-.brand > .without-text {
-  height: 24px;
-  margin-top: 3px;
-}
-
-.brand > .with-text {
-  height: 24px;
-  margin-top: 3px;
-}
-
 
 .service-list > li {
   list-style-type: none;
