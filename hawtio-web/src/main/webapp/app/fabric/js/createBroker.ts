@@ -110,6 +110,7 @@ module Fabric {
       Core.pathSet(schema.properties, ['clientParentProfile', 'tooltip'], 'The parent profile used by the client profile.');
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead'], 'p.id for p in parentProfiles | filter:$viewValue');
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead-editable'], 'false');
+      Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'placeholder'], 'mq-client-base');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "default");
 
 
