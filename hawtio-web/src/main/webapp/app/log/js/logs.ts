@@ -19,6 +19,7 @@ module Log {
     if (angular.isString(value)) {
       $scope.sortAsc = "true" === value;
     }
+    $scope.sortField = 'timestamp';
     $scope.autoScroll = true;
     var value = localStorage["logAutoScroll"];
     if (angular.isString(value)) {
