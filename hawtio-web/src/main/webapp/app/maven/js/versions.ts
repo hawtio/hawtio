@@ -22,7 +22,7 @@ module Maven {
 
     var columnDefs:any[] = [
       {
-        field: 'versionNumber',
+        field: 'version',
         displayName: columnTitle,
         cellTemplate: '<div class="ngCellText"><a href="#/maven/artifact/{{row.entity.groupId}}/{{row.entity.artifactId}}/{{row.entity.version}}">{{row.entity.version}}</a></div>',
       }
