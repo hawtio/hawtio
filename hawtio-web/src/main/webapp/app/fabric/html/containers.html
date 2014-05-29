@@ -1,5 +1,24 @@
 <div ng-controller="Fabric.ContainersController">
 
+  <div modal="newLocationDialog.dialog.show">
+    <div class="modal-header">
+      <span>Assign new location</span>
+    </div>
+    <div class="modal-body">
+      <p>Please enter a new location to assign to these containers</p>
+      <div class="control-group">
+        <label class="control-label">Location: </label>
+        <div class="controls">
+          <input name="location" ng-model="newLocationName" type="text" class="input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="newLocationDialog.onOk()">Assign</button>
+      <button class="btn" ng-click="newLocationDialog.close()">Cancel</button>
+    </div>
+  </div>
+
   <div class="row-fluid">
     <div class="span12 page-padded container-list-main">
 
@@ -13,10 +32,13 @@
         <div class="section-title"></div>
 
         <div class="section-controls">
+          <span class="inline-block"
+                ng-show="selectedContainers.length != 0">
+                <div hawtio-drop-down="locationMenu"></div>
+          </span>
           <a ng-hide="inDashboard" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i>
           </a>
-
           <a ng-click="createContainer()" title="Create new containers">
             <i class="icon-plus"></i> Create
           </a>

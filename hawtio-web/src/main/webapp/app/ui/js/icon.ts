@@ -15,7 +15,7 @@ module UI {
 
     $scope.$watch('exampleConfigJson', (newValue, oldValue) => {
       $scope.icons = angular.fromJson($scope.exampleConfigJson);
-      log.debug("Icons: ", $scope.icons);
+      //log.debug("Icons: ", $scope.icons);
     });
   }
 
@@ -43,7 +43,7 @@ module UI {
             $scope.icon.type = "img";
           }
         }
-        log.debug("Created icon: ", $scope.icon);
+        //log.debug("Created icon: ", $scope.icon);
       }
     };
   }
