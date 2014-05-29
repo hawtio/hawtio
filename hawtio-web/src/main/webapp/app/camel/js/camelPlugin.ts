@@ -74,8 +74,9 @@ module Camel {
 
 
             // register default attribute views
-            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | camelIconClass}}"></i></div>';
-            var stateColumn = {field: 'State', displayName: 'State',
+            var stateField = 'State';
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(\'' + stateField + '\') | camelIconClass}}"></i></div>';
+            var stateColumn = {field: stateField, displayName: stateField,
               cellTemplate: stateTemplate,
               width: 56,
               minWidth: 56,
