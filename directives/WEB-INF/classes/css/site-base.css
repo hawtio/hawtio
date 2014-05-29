@@ -2507,7 +2507,7 @@ ol.zebra-list > li:before {
 }
 
 .log-table > .table-row.selected:before {
-  z-index: 60;
+  z-index: 39;
   position: absolute;
   top: 6px;
   font-family: FontAwesome;
