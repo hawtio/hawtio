@@ -1219,7 +1219,7 @@ var UI;
 
         $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
             $scope.icons = angular.fromJson($scope.exampleConfigJson);
-            UI.log.debug("Icons: ", $scope.icons);
+            //log.debug("Icons: ", $scope.icons);
         });
     }
     UI.IconTestController = IconTestController;
@@ -1248,7 +1248,7 @@ var UI;
                         $scope.icon.type = "img";
                     }
                 }
-                UI.log.debug("Created icon: ", $scope.icon);
+                //log.debug("Created icon: ", $scope.icon);
             }
         };
     }
