@@ -120,48 +120,50 @@ public class Main {
             }
             server.addBean(mbeanContainer);
 
-            // lets initialise blueprint
             List<URL> resourcePaths = new ArrayList<URL>();
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Enumeration<URL> resources = classLoader.getResources("OSGI-INF/blueprint/blueprint.xml");
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                String text = url.toString();
-                if (text.contains("karaf")) {
-                    LOG.info("Ignoring karaf based blueprint file " + text);
-                } else if (text.contains("hawtio-system")) {
-                    LOG.info("Ignoring hawtio-system");
-                } else {
-                    resourcePaths.add(url);
-                }
+
+            if (Boolean.valueOf(System.getProperty("loadApps", "true"))) {
+
+              // lets initialise blueprint
+              ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+              Enumeration<URL> resources = classLoader.getResources("OSGI-INF/blueprint/blueprint.xml");
+              while (resources.hasMoreElements()) {
+                  URL url = resources.nextElement();
+                  String text = url.toString();
+                  if (text.contains("karaf")) {
+                      LOG.info("Ignoring karaf based blueprint file " + text);
+                  } else if (text.contains("hawtio-system")) {
+                      LOG.info("Ignoring hawtio-system");
+                  } else {
+                      resourcePaths.add(url);
+                  }
+              }
+              LOG.info("Loading Blueprint contexts " + resourcePaths);
+
+              Map<String, String> properties = new HashMap<String, String>();
+              BlueprintContainerImpl container = new BlueprintContainerImpl(classLoader, resourcePaths, properties, true);
+
+
+              if (args.length == 0 || !args[0].equals("nospring")) {
+                  // now lets startup a spring application context
+                  LOG.info("starting spring application context");
+                  ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+                  Object activemq = appContext.getBean("activemq");
+                  LOG.info("created activemq: " + activemq);
+                  appContext.start();
+
+                  LOG.warn("Don't run with scissors!");
+                  LOG.error("Someone somewhere is not using Fuse! :)", new CamelException("My exception message"));
+
+                  // now lets force an exception with a stack trace from camel...
+                  try {
+                      CamelContextHelper.getMandatoryEndpoint(null, null);
+                  } catch (Throwable e) {
+                      LOG.error("Expected exception for testing: " + e, e);
+                  }
+              }
             }
-            LOG.info("Loading Blueprint contexts " + resourcePaths);
 
-            Map<String, String> properties = new HashMap<String, String>();
-            BlueprintContainerImpl container = new BlueprintContainerImpl(classLoader, resourcePaths, properties, true);
-
-
-            if (args.length == 0 || !args[0].equals("nospring")) {
-                // now lets startup a spring application context
-                LOG.info("starting spring application context");
-                ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-                Object activemq = appContext.getBean("activemq");
-                LOG.info("created activemq: " + activemq);
-                appContext.start();
-
-                LOG.warn("Don't run with scissors!");
-                LOG.error("Someone somewhere is not using Fuse! :)", new CamelException("My exception message"));
-
-                // now lets force an exception with a stack trace from camel...
-                try {
-                    CamelContextHelper.getMandatoryEndpoint(null, null);
-                } catch (Throwable e) {
-                    LOG.error("Expected exception for testing: " + e, e);
-                }
-            }
-
-
-            // lets connect to fabric
             println("");
             println("");
             println("OPEN: http://localhost:" + port + contextPath + " using web app source path: " + resourcePaths);
