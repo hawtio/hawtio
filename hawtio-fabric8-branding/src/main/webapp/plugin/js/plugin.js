@@ -14,7 +14,7 @@ var fabric8Branding = (function (self) {
     Themes.definitions['fabric8'] = {
       label: 'fabric8',
       file: self.context + 'plugin/css/fabric8.css',
-      loginBg: self.context + 'plugin/img/fabric8-login.svg'
+      loginBg: self.context + 'plugin/img/fabric8-login.jpg'
     };
     var localStorage = Core.getLocalStorage();
     if (!('theme' in localStorage)) {

@@ -4,21 +4,23 @@
  */
 module Themes {
 
+  export var defaultLoginBg = 'app/themes/img/default/hawtio-nologo.jpg';
+
   export var definitions = {
     'Default': {
       label: 'Default',
       file: 'app/themes/css/default.css',
-      loginBg: 'app/themes/img/default/fire.jpg'
+      loginBg: defaultLoginBg
     },
     'Dark': {
       label: 'Dark',
       file: 'app/themes/css/dark.css',
-      loginBg: 'app/themes/img/default/fire.jpg'
+      loginBg: defaultLoginBg
     },
     '3270': {
       label: 'Dark',
       file: 'app/themes/css/3270.css',
-      loginBg: 'app/themes/img/default/fire.jpg'
+      loginBg: defaultLoginBg
     }
   };
 
