@@ -79,10 +79,11 @@ module Jmx {
 
     $scope.gridOptions = {
       scope: $scope,
-      selectedItems: $scope.selectedItems,
+      selectedItems: [],
       showFilter: false,
       canSelectRows: false,
-      enableRowSelection: true,
+      enableRowSelection: false,
+      enableRowClickSelection: true,
       keepLastSelected: false,
       multiSelect: true,
       showColumnMenu: true,
@@ -95,6 +96,13 @@ module Jmx {
       data: 'gridData',
       columnDefs: propertiesColumnDefs
     };
+
+    $scope.$watch('gridOptions.selectedItems', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        log.debug("Selected items: ", newValue);
+        $scope.selectedItems = newValue;
+      }
+    }, true);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -156,6 +164,9 @@ module Jmx {
     };
 
     $scope.onViewAttribute = (row) => {
+      if (!row.summary) {
+        return;
+      }
       // create entity and populate it with data from the selected row
       $scope.entity = {};
       $scope.entity["key"] = row.key;
@@ -335,6 +346,9 @@ module Jmx {
     };
 
     $scope.folderHref = (row) => {
+      if (!row.getProperty) {
+        return "";
+      }
       var key = row.getProperty("key");
       if (key) {
         return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
@@ -353,6 +367,9 @@ module Jmx {
        return classes;
        }
        */
+      if (!row.getProperty) {
+        return "";
+      }
       return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
     };
 
@@ -513,6 +530,7 @@ module Jmx {
           }
           // assume 1 row of data per mbean
           $scope.gridData[idx] = data;
+          addHandlerFunctions($scope.gridData);
 
           var count = $scope.mbeanCount;
           if (!count || idx + 1 >= count) {
