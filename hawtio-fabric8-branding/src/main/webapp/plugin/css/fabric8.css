@@ -335,7 +335,6 @@ div#main div ul.nav {
   border-radius: 0;
   border: none;
   border-top: none;
-  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
   background: #c0ebf7;
   background: linear-gradient(to bottom, #86afce 96%,#4b6989 100%);
 }
@@ -699,10 +698,11 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-top: 1px solid transparent;
 }
 
-.box.selected {
-  color: #0066cc;
-  text-shadow: rgba(0, 51, 102, 0.3) 0 -1px 0, #b3d9ff 0 2px 1px, #99ddff 0 0 5px, rgba(0, 127, 255, 0.6) 0 0 20px;
-  background: #c0ebf7;  
+.box.selected,
+.box.selected a,
+.box.selected i {
+  color: #333333;
+  background: #A3C7D9;  
 }
 
 .box.selected .box-right i {
@@ -723,17 +723,8 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   color: #4d5258;
 }
 
-.section-controls > a:hover,
-.section-controls > span:hover {
-  text-shadow: rgba(0, 0, 0, 0.6) 0 0 20px;
-}
-
 .section-controls > a.nav-danger {
   color: IndianRed !important;
-}
-
-.section-controls > a.nav-danger:hover {
-  text-shadow: rgba(205, 92, 92, 0.6) 0 0 20px !important;
 }
 
 td.deleting {
@@ -1409,14 +1400,12 @@ a {
 }
 
 #main-nav > .main-nav-upper {
-  background: #f8fbff; /* Old browsers */
+  background: #A3C7D9;
+  border-bottom: 1px solid #8E9093; 
 }
 
 #main-nav > .main-nav-lower {
   border-bottom: 1px solid #4e4e4e;
-
-  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.5);
-
   background: #c0ebf7; /* Old browsers */
   background: -moz-linear-gradient(top,  #c0ebf7 0%, #b3d4e0 1%, #86afce 96%, #4b6989 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c0ebf7), color-stop(1%,#b3d4e0), color-stop(96%,#86afce), color-stop(100%,#4b6989)); /* Chrome,Safari4+ */
