@@ -375,7 +375,7 @@ module Log {
           if ($scope.autoScroll) {
             setTimeout(() => {
               var pos = 0;
-              if ($scope.sortAsc) {
+              if (!$scope.sortAsc) {
                 pos = $document.height() - window.height();
               }else{
                 pos = window.height() - $document.height();
