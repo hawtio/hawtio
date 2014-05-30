@@ -1169,11 +1169,16 @@ li.stacktrace {
 
 .clickable {
   cursor: pointer;
-  height: 100%;
-  width: 1em;
   opacity: 0.6;
   transition: opacity .5s;
   text-decoration: none;
+}
+
+.clickable,
+.clickable:before {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
 }
 
 .clickable.no-fade {
@@ -1814,9 +1819,11 @@ div#main div ul.nav li a.nav-primary .caret {
 }
 
 .main-nav-lower .container {
-  padding-left: 5px;
-  padding-right: 5px;
   width: 100%;
+}
+
+.overflow > .dropdown-toggle:not(.open) + .dropdown-menu {
+  border: none;
 }
 
 .main-nav-lower .container ul.nav {
@@ -3992,7 +3999,7 @@ ul.dynatree-container {
 
 .tree-header {
   position: relative;
-  height: 22px;
+  height: 26px;
 }
 
 .tree-header > .left,

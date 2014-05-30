@@ -31,6 +31,15 @@ input[type="color"],
   border-radius: 0;
 }
 
+.main-nav-upper .nav.nav-tabs > li > a {
+  color: #0f0;
+}
+
+.main-nav-upper .nav.nav-tabs > li > a:hover {
+  color: #000;
+  background: #0f0;
+}
+
 .nav-tabs > li > a,
 .nav-tabs > li > a:hover { 
   border: 1px solid transparent;
@@ -62,21 +71,27 @@ textarea[readonly] {
   border-radius: 0;
 }
 
-.main-nav-lower > .container > .nav {
-  border-top: 1px solid #0f0;
+.navbar .nav > li > a {
+  background: #000;
+  color: #fff;
+  border: none;
+}
+
+.navbar .nav > li > a:focus
+.navbar .nav > li > a:hover, {
+  background: #0f0;
+  color: #000;
+  border: none;
 }
 
 
-.navbar .nav > li > a:focus, 
-.navbar .nav > li > a:hover,
 .navbar .nav > li > a {
-  background: inherit;
-  color: #fff;
-  border-top: none;
-
+  border: none;
 }
 
 .navbar .nav > .active > a,
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a:focus,
 .navbar .nav > .active > a:hover,
 .navbar .nav > .active > a:focus,
 .nav-tabs > .active > a > *, 
@@ -89,11 +104,48 @@ textarea[readonly] {
   background-image: none;
   background-color: #0f0;
   color: #000;
-  border-color: transparent;
-  /*
-  border: 1px solid transparent;
-  */
+  border-color: #0f0;
+  border: none;
   box-shadow: none;
+}
+
+span {
+  background: inherit;
+  color: inherit;    
+}
+
+.main-nav-lower > .container > .nav {
+  border-bottom: 1px solid #0f0;
+  border-top: 1px solid #0f0;
+}
+
+.pane-bar {
+  background: #0f0;    
+}
+
+.tree-header {
+  background: #000;
+  color: #0f0;
+  border-bottom: 1px solid #0f0;    
+}
+
+.contained,
+[class^="icon-"]:before, 
+[class*=" icon-"]:before,
+[class^="icon-"], 
+[class*=" icon-"],
+.tree-header > *,
+.clickable, 
+.clickable:before {
+  background: inherit;
+  color: inherit;
+}
+
+.nav-tabs .open .dropdown-toggle, 
+.nav-pills .open .dropdown-toggle, 
+.nav > li.dropdown.open.active > a:hover {
+  background: #0f0;
+  color: #000;
 }
 
 .nav-tabs .open .dropdown-toggle, 
@@ -112,10 +164,6 @@ textarea[readonly] {
 .main-nav-upper > .nav-tabs li a {
   border-bottom: 1px solid #0f0;
   box-shadow: none;
-}
-
-.main-nav-lower  .nav {
-  border-bottom: 1px solid #0f0;
 }
 
 .dropdown-menu {
@@ -137,11 +185,12 @@ textarea[readonly] {
   background-image: none;
 }
 
+.hawtio-dropdown.dropdown.open,
 .navbar .nav li.dropdown.open > .dropdown-toggle, 
 .navbar .nav li.dropdown.active > .dropdown-toggle, 
 .navbar .nav li.dropdown.open.active > .dropdown-toggle {
-  background-color: inherit;
-  color: #fff;
+  background-color: #0f0;
+  color: #000;
 }
 
 .dropdown.perspective-selector .dropdown-menu > div > p {
@@ -162,7 +211,10 @@ textarea[readonly] {
   border-bottom: 1px solid #fff;
 }
 
-textarea, 
+textarea {
+  border: 1px solid #0f0;        
+}
+
 input[type="text"], 
 input[type="password"], 
 input[type="datetime"], 
@@ -176,10 +228,28 @@ input[type="email"],
 input[type="url"], 
 input[type="search"], 
 input[type="tel"], 
-input[type="color"], 
+input[type="color"],
+select,
 .uneditable-input {
-  border: 1px solid #0f0;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #0f0;
 }
+
+input.ng-invalid, 
+textarea.ng-invalid, 
+select.ng-invalid {
+  border: 1px solid #ff0;
+  box-shadow: none;
+    
+}
+
+input:focus:required:invalid:focus, 
+textarea:focus:required:invalid:focus, 
+select:focus:required:invalid:focus {
+  box-shadow: none;
+  border: 1px solid #ff0;
+}
+
 
 .navbar-inner {
   background-image: none;
@@ -312,11 +382,6 @@ span.dynatree-focused a:link {
   background-color: inherit;
   border-radius: 0;
   border: 1px solid #fff;
-}
-
-.clickable, .clickable:before { 
-  background: none;
-  background-color: transparent;
 }
 
 .popover {
