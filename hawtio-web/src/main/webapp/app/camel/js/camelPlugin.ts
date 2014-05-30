@@ -81,7 +81,9 @@ module Camel {
               width: 56,
               minWidth: 56,
               maxWidth: 56,
-              resizable: false
+              resizable: false,
+              defaultSort: false
+              // we do not want to default sort the state column
             };
 
             var attributes = workspace.attributeColumnDefs;
