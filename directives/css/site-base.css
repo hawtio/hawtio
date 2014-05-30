@@ -3343,7 +3343,6 @@ th > .indicator:before {
   left: 0;
   right: 0;
   border-radius: 0;
-  min-width: 100%;
 }
 
 .main-nav-upper .dropdown-menu {
