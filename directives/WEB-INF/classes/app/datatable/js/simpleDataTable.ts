@@ -47,8 +47,17 @@ module DataTable {
         }
 
         if (!('sortInfo' in config)) {
+          // an optional defaultSort can be used to indicate a column
+          // should not automatic be the default sort
+          var ds = config.columnDefs.first()['defaultSort'];
+          var sortField;
+          if (angular.isUndefined(ds) || ds === true) {
+            sortField = config.columnDefs.first()['field'];
+          } else {
+            sortField = config.columnDefs.slice(1).first()['field']
+          }
           config['sortInfo'] = {
-            sortBy: config.columnDefs.first()['field'],
+            sortBy: sortField,
             ascending: true
           }
         }
