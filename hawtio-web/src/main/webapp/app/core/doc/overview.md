@@ -13,7 +13,7 @@ Available sub-topics for each plugin can be selected via the secondary navigatio
 The [Preferences](#/preferences) is accessible by clicking the user icon (<i class='icon-user'></i>) in the main navigation bar,
 and then clicking the Preferences icon (<i class='icon-cogs'></i>), as shown below:
 
-![Preference](app/core/doc/img/help-preference.png "Preference")
+![Preferences](app/core/doc/img/help-preferences.png "Preferences")
 
 ##### Logging Console #####
 The logging console is accessible by clicking the icon (<i class='icon-desktop'></i>) in the main navigation bar.

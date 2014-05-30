@@ -50,7 +50,7 @@ module Core {
       Core.$apply($scope);
     };
 
-    // used by add dialog in preference.html
+    // used by add dialog in preferences.html
     $scope.hostSchema = {
       properties: {
         'name': {

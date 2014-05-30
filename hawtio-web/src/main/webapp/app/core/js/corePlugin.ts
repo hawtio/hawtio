@@ -506,7 +506,7 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
           viewRegistry['ui'] = layoutFull;
 
           helpRegistry.addUserDoc('index', 'app/core/doc/overview.md');
-          helpRegistry.addUserDoc('preference', 'app/core/doc/preference.md');
+          helpRegistry.addUserDoc('preferences', 'app/core/doc/preferences.md');
           helpRegistry.addSubTopic('index', 'faq', 'app/core/doc/FAQ.md');
           helpRegistry.addSubTopic('index', 'changes', 'app/core/doc/CHANGES.md');
           helpRegistry.addSubTopic('index', 'developer', 'app/core/doc/developer.md');
