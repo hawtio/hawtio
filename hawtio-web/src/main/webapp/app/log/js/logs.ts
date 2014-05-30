@@ -11,6 +11,7 @@ module Log {
     level: string;
     logger: string;
     message: string;
+    sortSeq: number;
   }
 
   export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document, $templateCache) {
@@ -19,6 +20,7 @@ module Log {
     if (angular.isString(value)) {
       $scope.sortAsc = "true" === value;
     }
+    $scope.sortField = 'sortSeq';
     $scope.autoScroll = true;
     var value = localStorage["logAutoScroll"];
     if (angular.isString(value)) {
@@ -88,6 +90,7 @@ module Log {
 
     $scope.init();
 
+    $scope.sortCounter = 0;
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
 
@@ -297,15 +300,9 @@ module Log {
 
 
     var updateValues = function (response) {
-      var scrollToTopOrBottom = false;
 
       if (!$scope.inDashboard) {
         var window = $($window);
-
-        if ($scope.logs.length === 0) {
-          // initial page load, let's scroll to the bottom
-          scrollToTopOrBottom = true;
-        }
 
         if ($scope.sortAsc) {
           var pos = window.scrollTop() + window.height();
@@ -313,10 +310,6 @@ module Log {
         } else {
           var pos = window.scrollTop() + window.height();
           var threshold = 100;
-        }
-        if ( pos > threshold ) {
-          // page is scrolled near the bottom
-          scrollToTopOrBottom = true;
         }
       }
 
@@ -340,6 +333,7 @@ module Log {
         var counter = 0;
         logs.forEach((log:ILog) => {
           if (log) {
+            log.sortSeq = $scope.sortCounter++;
             // TODO Why do we compare 'item.seq === log.message' ?
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
@@ -378,11 +372,13 @@ module Log {
           }
         }
         if (counter) {
-          if ($scope.autoScroll && scrollToTopOrBottom) {
+          if ($scope.autoScroll) {
             setTimeout(() => {
               var pos = 0;
               if ($scope.sortAsc) {
                 pos = $document.height() - window.height();
+              }else{
+                pos = window.height() - $document.height();
               }
               log.debug("Scrolling to position: " + pos)
               $document.scrollTop(pos);

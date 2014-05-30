@@ -50,14 +50,14 @@
       <li class="table-head">
         <div>
           <div></div>
-          <div><span><i ng-class="sortIcon"></i> Timestamp</span></div>
+          <div><a href="" ng-click="sortField ='sortSeq'; sortAsc = !sortAsc"><i ng-class="sortIcon()"></i> Timestamp</a></div>
           <div>Level</div>
           <div>Logger</div>
           <div>Message</div>
         </div>
       </li>
-      <li class="table-row" ng-repeat="log in logs" ng-show="filterLogMessage(log)" ng-class="selectedClass($index)">
-        <div ng-click="selectRow($index)">
+      <li class="table-row" ng-repeat="log in logs | orderBy:sortField:sortAsc" ng-show="filterLogMessage(log)" ng-class="selectedClass($index)">
+        <div ng-click="selectRow($index)">sort
           <div class="title">
             <i class="expandable-indicator"></i>
           </div>
