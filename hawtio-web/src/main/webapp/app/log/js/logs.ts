@@ -28,6 +28,7 @@ module Log {
     }
 
     $scope.logs = [];
+    $scope.reverseIndex = {};
     $scope.showRowDetails = false;
     $scope.showRaw = {
       expanded: false
@@ -88,6 +89,10 @@ module Log {
       }
     });
 
+    $scope.$watch('sortAsc', (newValue) => {
+      localStorage['logSortAsc'] = newValue;
+    });
+
     $scope.init();
 
     $scope.sortCounter = 0;
@@ -105,25 +110,20 @@ module Log {
     });
 
     $scope.selectedClass = ($index) => {
-      if ($index === $scope.selectedRowIndex) {
+      if ($index === $scope.selectedRowSortSeq) {
         return 'selected';
       }
       return '';
     };
 
-    $scope.$watch('selectedRowIndex', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        if (newValue < 0 || newValue > $scope.logs.length) {
-          $scope.selectedRow = null;
-          $scope.showRowDetails = false;
-          return;
-        }
-        Log.log.debug("New index: ", newValue);
-        $scope.selectedRow = $scope.logs[newValue];
-        if (!$scope.showRowDetails) {
-          $scope.showRowDetails = true;
-        }
-      }
+    $scope.$watch('selectedRowSortSeq', (newValue, oldValue) => {
+        $scope.selectedRow = $scope.reverseIndex[newValue];
+
+          if($scope.selectedRow) {
+              if (!$scope.showRowDetails) {
+                  $scope.showRowDetails = true;
+              }
+          }
     });
 
     $scope.hasOSGiProps = (row) => {
@@ -138,14 +138,23 @@ module Log {
       return answer;
     };
 
-    $scope.selectRow = ($index) => {
+    $scope.selectRow = ($index, $sortSeq) => {
       // in case the user clicks a row, closes the slideout and clicks
       // the row again
-      if ($scope.selectedRowIndex == $index) {
-        $scope.showRowDetails = true;
-        return;
-      }
+
       $scope.selectedRowIndex = $index;
+
+      if(typeof $sortSeq == "undefined"){
+          $scope.selectedRowSortSeq = $scope.logs[$index].sortSeq;
+      } else {
+          log.info("Selecting sortSeq: " + $sortSeq);
+          if ($scope.selectedRowSortSeq == $sortSeq) {
+              $scope.showRowDetails = true;
+              return;
+          }
+          $scope.selectedRowSortSeq = $sortSeq;
+      }
+
     };
 
     $scope.getSelectedRowJson = () => {
@@ -245,14 +254,6 @@ module Log {
       return "";
     };
 
-    $scope.sortIcon = () => {
-      if ($scope.sortAsc) {
-        return "icon-arrow-down";
-      } else {
-        return "icon-arrow-up";
-      }
-    };
-
     $scope.filterLogMessage = (log) => {
       var messageOnly = $scope.filter.messageOnly;
 
@@ -300,7 +301,6 @@ module Log {
 
 
     var updateValues = function (response) {
-
       if (!$scope.inDashboard) {
         var window = $($window);
 
@@ -346,6 +346,7 @@ module Log {
               } else {
                 $scope.logs.unshift(log);
               }
+              $scope.reverseIndex[log.sortSeq] = log;
             }
           }
         });
@@ -358,16 +359,14 @@ module Log {
             if (!$scope.sortAsc) {
               pos = size - count;
             }
-
             $scope.logs.splice(pos, count);
-
-            if ($scope.showRowDetails) {
-              if ($scope.sortAsc) {
-                $scope.selectedRowIndex -= count;
-              } else {
-                $scope.selectedRowIndex += count;
-              }
+            var newReverseIndex = {};
+            var initialIndex = logs[logs.length -1].sortSeq;
+            for(var i = 0 ; i < 2 * maxSize ; i++){
+                var oldIndex = initialIndex - i;
+                newReverseIndex[oldIndex] = $scope.reverseIndex[oldIndex];
             }
+            $scope.reverseIndex = newReverseIndex;
 
           }
         }
@@ -375,7 +374,7 @@ module Log {
           if ($scope.autoScroll) {
             setTimeout(() => {
               var pos = 0;
-              if (!$scope.sortAsc) {
+              if ($scope.sortAsc) {
                 pos = $document.height() - window.height();
               }else{
                 pos = window.height() - $document.height();
