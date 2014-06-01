@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-	  <groupId>io.hawt</groupId>
-	  <artifactId>hawtio-plugin-examples</artifactId>
+    <groupId>io.hawt</groupId>
+    <artifactId>hawtio-plugin-examples</artifactId>
     <version>1.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -17,16 +18,14 @@
     <!-- filtered plugin properties -->
     <plugin-context>/hawtio/custom-perspective</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
-    <plugin-domain />
+    <plugin-domain/>
     <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
-      javax.servlet.*,
-      org.slf4j;resolution:=optional,
-      !org.slf4j.impl,
+      javax.servlet,
       *;resolution:=optional
     </fuse.osgi.import>
-    <fuse.osgi.export />
+    <fuse.osgi.export/>
   </properties>
 
   <dependencies>
@@ -37,6 +36,7 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- servlet API is provided by the container -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -44,11 +44,16 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
     </dependency>
 
   </dependencies>
@@ -87,16 +92,14 @@
 
             <Export-Package>${fuse.osgi.export}</Export-Package>
             <Import-Package>${fuse.osgi.import}</Import-Package>
-            <!--
             <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
             <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
-            -->
 
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
 
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Title>HawtIO Custom Perspective Plugin</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
           </instructions>
         </configuration>
@@ -120,6 +123,9 @@
               <includes>
                 <include>**/*.*</include>
               </includes>
+              <excludes>
+                <exclude>log4j.properties</exclude>
+              </excludes>
             </resource>
           </webResources>
         </configuration>
@@ -127,4 +133,5 @@
 
     </plugins>
   </build>
+
 </project>

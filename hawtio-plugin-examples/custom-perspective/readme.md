@@ -61,12 +61,14 @@ But you could also add additional perspectives:
 
 The "lastPage" attribute is how the perspective plugin keeps track of the last tab the user was on when switching perspectives, so effectively this will be the default/starting tab of that perspective.
 
+## Apache Karaf/ServiceMix/JBoss Fuse/fabric8 installation
+
 The plugin does still define an Import-Package so it can be deployed into Apache Karaf by dropping it into the "deploy" directory or doing something like:
 
-```
-osgi:install -s mvn:io.hawt/custom-perspective/1.3-SNAPSHOT/war
-```
+    osgi:install -s mvn:io.hawt/custom-perspective/1.5-SNAPSHOT/war
 
-For other app servers you may need to add whatever app server specific configuration is necessary to get the plugin's context root to be /hawtio/custom-perspective, otherwise you'll need to edit PluginContextListener.java to specify the context the plugin is at and rebuild so that hawtio can find the plugin's javascript file.
+(substitute 1.5-SNAPSHOT with the version of choice)
+
+For other app servers you may need to add whatever app server specific configuration is necessary to get the plugin's context root to be `/hawtio/custom-perspective`, otherwise you'll need to edit `PluginContextListener.java` to specify the context the plugin is at and rebuild so that hawtio can find the plugin's javascript file.
 
 

@@ -28,7 +28,7 @@ Copy the irc-client-plugin war file as the following name
 
 to the deploy directory of Apache Tomcat os similar Java web container.
 
-## Karaf/JBoss Fuse installation
+## Apache Karaf/ServiceMix/JBoss Fuse/fabric8 installation
 
 From the CLI type:
 
