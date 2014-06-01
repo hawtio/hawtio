@@ -19,7 +19,7 @@
     <module>custom-perspective</module>
     <module>irc-client-plugin</module>
     <module>social-plugin</module>
-    <module>groovy-console-plugin</module>
+    <module>groovy-shell-plugin</module>
   </modules>
 
 </project>

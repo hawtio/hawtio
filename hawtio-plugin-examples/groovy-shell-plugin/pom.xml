@@ -8,9 +8,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>groovy-console-plugin</artifactId>
+  <artifactId>groovy-shell-plugin</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: hawtio Groovy Console plugin example</description>
+  <description>hawtio :: hawtio Groovy Shell plugin example</description>
 
   <!-- hawtio plugins are almost always war files -->
   <packaging>war</packaging>
@@ -20,7 +20,7 @@
       as we build that dynamically using maven-antrun-plugin below. -->
     <!-- plugin-context is what context this plugin will handle requests on
       in the application server -->
-    <plugin-context>/groovy-console-plugin</plugin-context>
+    <plugin-context>/groovy-shell-plugin</plugin-context>
 
     <!-- plugin-name is the name of our plugin, affects the name used for
       the plugin's mbean -->

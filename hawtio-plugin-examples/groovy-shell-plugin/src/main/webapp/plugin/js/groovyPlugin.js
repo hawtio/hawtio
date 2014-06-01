@@ -1,11 +1,11 @@
 /**
- * @module GroovyConsole
- * @mail GroovyConsole
+ * @module GroovyShell
+ * @mail GroovyShell
  *
- * The main entry point for the GroovyConsole module
+ * The main entry point for the GroovyShell module
  *
  */
-var GroovyConsole = (function(GroovyConsole) {
+var GroovyShell = (function(GroovyShell) {
 
   /**
    * @property pluginName
@@ -13,7 +13,7 @@ var GroovyConsole = (function(GroovyConsole) {
    *
    * The name of this plugin
    */
-  GroovyConsole.pluginName = 'groovy_console_plugin';
+  GroovyShell.pluginName = 'groovy_shell_plugin';
 
   /**
    * @property log
@@ -21,7 +21,7 @@ var GroovyConsole = (function(GroovyConsole) {
    *
    * This plugin's logger instance
    */
-  GroovyConsole.log = Logger.get('GroovyConsole');
+  GroovyShell.log = Logger.get('GroovyShell');
 
   /**
    * @property contextPath
@@ -30,7 +30,7 @@ var GroovyConsole = (function(GroovyConsole) {
    * The top level path of this plugin on the server
    *
    */
-  GroovyConsole.contextPath = "/groovy-console-plugin/";
+  GroovyShell.contextPath = "/groovy-shell-plugin/";
 
   /**
    * @property templatePath
@@ -38,13 +38,13 @@ var GroovyConsole = (function(GroovyConsole) {
    *
    * The path to this plugin's partials
    */
-  GroovyConsole.templatePath = GroovyConsole.contextPath + "plugin/html/";
+  GroovyShell.templatePath = GroovyShell.contextPath + "plugin/html/";
 
 
   /**
    * The mbean for the groovy console
    */
-  GroovyConsole.mbean = "hawtio:type=GroovyConsole";
+  GroovyShell.mbean = "hawtio:type=GroovyShell";
 
   /**
    * @property module
@@ -55,7 +55,7 @@ var GroovyConsole = (function(GroovyConsole) {
    * workspace, viewRegistry and layoutFull used by the
    * run function
    */
-  GroovyConsole.module = angular.module('groovy_console_plugin', ['hawtioCore'])
+  GroovyShell.module = angular.module('groovy_shell_plugin', ['hawtioCore'])
       .config(function($routeProvider) {
 
         /**
@@ -65,8 +65,8 @@ var GroovyConsole = (function(GroovyConsole) {
          * routeProvider has been configured with.
          */
         $routeProvider.
-            when('/groovy_console_plugin', {
-              templateUrl: GroovyConsole.templatePath + 'console.html'
+            when('/groovy_shell_plugin', {
+              templateUrl: GroovyShell.templatePath + 'console.html'
             });
       });
 
@@ -83,15 +83,15 @@ var GroovyConsole = (function(GroovyConsole) {
    *     plugin.  This is just a matter of adding to the workspace's
    *     topLevelTabs array.
    */
-  GroovyConsole.module.run(function(workspace, viewRegistry, layoutFull) {
+  GroovyShell.module.run(function(workspace, viewRegistry, layoutFull) {
 
-    GroovyConsole.log.info(GroovyConsole.pluginName, " loaded");
+    GroovyShell.log.info(GroovyShell.pluginName, " loaded");
 
-    Core.addCSS(GroovyConsole.contextPath + "plugin/css/groovy.css");
+    Core.addCSS(GroovyShell.contextPath + "plugin/css/groovy.css");
 
     // tell the app to use the full layout, also could use layoutTree
     // to get the JMX tree or provide a URL to a custom layout
-    viewRegistry["groovy_console_plugin"] = layoutFull;
+    viewRegistry["groovy_shell_plugin"] = layoutFull;
 
     /* Set up top-level link to our plugin.  Requires an object
        with the following attributes:
@@ -116,12 +116,12 @@ var GroovyConsole = (function(GroovyConsole) {
                     route.
      */
     workspace.topLevelTabs.push({
-      id: "groovy-console",
-      content: "Groovy Console",
-      title: "GroovyConsole plugin loaded dynamically",
+      id: "groovy-shell",
+      content: "Groovy Shell",
+      title: "GroovyShell plugin loaded dynamically",
       isValid: function(workspace) { return true; },
-      href: function() { return "#/groovy_console_plugin"; },
-      isActive: function(workspace) { return workspace.isLinkActive("groovy_console_plugin"); }
+      href: function() { return "#/groovy_shell_plugin"; },
+      isActive: function(workspace) { return workspace.isLinkActive("groovy_shell_plugin"); }
     });
 
   });
@@ -134,17 +134,17 @@ var GroovyConsole = (function(GroovyConsole) {
    * The controller for console.html, only requires the jolokia
    * service from hawtioCore
    */
-  GroovyConsole.GroovyController = function($scope, jolokia) {
+  GroovyShell.GroovyController = function($scope, jolokia) {
 
     $scope.groovyinput = null;
 
     $scope.evalMe = function() {
-      GroovyConsole.log.info(GroovyConsole.pluginName, " evaluate(" + $scope.groovyinput + ")");
+      GroovyShell.log.info(GroovyShell.pluginName, " evaluate(" + $scope.groovyinput + ")");
       if ($scope.groovyinput) {
         // call mbean
         jolokia.request({
           type: 'exec',
-          mbean: GroovyConsole.mbean,
+          mbean: GroovyShell.mbean,
           operation: 'evaluate',
           arguments: [$scope.groovyinput]
         }, onSuccess(render, {error: renderError}));
@@ -153,24 +153,24 @@ var GroovyConsole = (function(GroovyConsole) {
 
     // update display with groovy result
     function render(response) {
-      GroovyConsole.log.info(GroovyConsole.pluginName, " --> " + response.value);
+      GroovyShell.log.info(GroovyShell.pluginName, " --> " + response.value);
       $scope.output = response.value;
       $scope.error = null;
       Core.$apply($scope);
     }
 
     function renderError(response) {
-      GroovyConsole.log.info(GroovyConsole.pluginName, " error " + response);
+      GroovyShell.log.info(GroovyShell.pluginName, " error " + response);
       $scope.output = null;
       $scope.error = response;
       Core.$apply($scope);
     }
   };
 
-  return GroovyConsole;
+  return GroovyShell;
 
-})(GroovyConsole || {});
+})(GroovyShell || {});
 
 // tell the hawtio plugin loader about our plugin so it can be
 // bootstrapped with the rest of angular
-hawtioPluginLoader.addModule(GroovyConsole.pluginName);
+hawtioPluginLoader.addModule(GroovyShell.pluginName);
