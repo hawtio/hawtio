@@ -79,11 +79,12 @@ var GroovyShell = (function(GroovyShell) {
    * 3.  We configure the viewRegistry service from hawtio for our
    *     route; in this case we use a pre-defined layout that uses
    *     the full viewing area
-   * 4.  We configure our top-level tab and provide a link to our
+   * 4.  We add our help to the help registry
+   * 5.  We configure our top-level tab and provide a link to our
    *     plugin.  This is just a matter of adding to the workspace's
    *     topLevelTabs array.
    */
-  GroovyShell.module.run(function(workspace, viewRegistry, layoutFull) {
+  GroovyShell.module.run(function(workspace, viewRegistry, helpRegistry, layoutFull) {
 
     GroovyShell.log.info(GroovyShell.pluginName, " loaded");
 
@@ -93,28 +94,31 @@ var GroovyShell = (function(GroovyShell) {
     // to get the JMX tree or provide a URL to a custom layout
     viewRegistry["groovy_shell_plugin"] = layoutFull;
 
-    /* Set up top-level link to our plugin.  Requires an object
-       with the following attributes:
+    // add the plugin help to the help registry
+    helpRegistry.addUserDoc('Groovy-Shell', GroovyShell.contextPath + '/plugin/doc/help.md');
 
-         id - the ID of this plugin, used by the perspective plugin
-              and by the preferences page
-         content - The text or HTML that should be shown in the tab
-         title - This will be the tab's tooltip
-         isValid - A function that returns whether or not this
-                   plugin has functionality that can be used for
-                   the current JVM.  The workspace object is passed
-                   in by hawtio's navbar controller which lets
-                   you inspect the JMX tree, however you can do
-                   any checking necessary and return a boolean
-         href - a function that returns a link, normally you'd
-                return a hash link like #/foo/bar but you can
-                also return a full URL to some other site
-         isActive - Called by hawtio's navbar to see if the current
-                    $location.url() matches up with this plugin.
-                    Here we use a helper from workspace that
-                    checks if $location.url() starts with our
-                    route.
-     */
+  /* Set up top-level link to our plugin.  Requires an object
+     with the following attributes:
+
+       id - the ID of this plugin, used by the perspective plugin
+            and by the preferences page
+       content - The text or HTML that should be shown in the tab
+       title - This will be the tab's tooltip
+       isValid - A function that returns whether or not this
+                 plugin has functionality that can be used for
+                 the current JVM.  The workspace object is passed
+                 in by hawtio's navbar controller which lets
+                 you inspect the JMX tree, however you can do
+                 any checking necessary and return a boolean
+       href - a function that returns a link, normally you'd
+              return a hash link like #/foo/bar but you can
+              also return a full URL to some other site
+       isActive - Called by hawtio's navbar to see if the current
+                  $location.url() matches up with this plugin.
+                  Here we use a helper from workspace that
+                  checks if $location.url() starts with our
+                  route.
+   */
     workspace.topLevelTabs.push({
       id: "groovy-shell",
       content: "Groovy Shell",
