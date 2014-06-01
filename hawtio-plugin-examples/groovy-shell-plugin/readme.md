@@ -14,4 +14,4 @@ From the CLI type:
 
     install -s mvn:io.hawt/groovy-shell-plugin/1.5-SNAPSHOT/war
 
-(substribute 1.5-SNAPSHOT with the version of choice)
+(substitute 1.5-SNAPSHOT with the version of choice)

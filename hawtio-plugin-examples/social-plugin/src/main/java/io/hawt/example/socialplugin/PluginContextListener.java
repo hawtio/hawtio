@@ -8,9 +8,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-/**
- * @author Charles Moulliard
- */
 public class PluginContextListener implements ServletContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginContextListener.class);
