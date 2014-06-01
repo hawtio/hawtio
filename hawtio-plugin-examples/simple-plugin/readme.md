@@ -11,3 +11,19 @@ The important bits are:
 **src/main/webapp/plugin/css/simple.css** - This CSS file doesn't have much but changes the layout of the plugin's page.  It's dynamically loaded in the simple-plugin's run() function at bootstrap.
 
 **src/main/webapp/plugin/html/simple.html** - This plugin's HTML template that is used to render the page in hawtio.  This page shows a couple variables in the page controller's scope that are set on the fly when the HTML is rendered.  Fairly standard angularjs stuff as well.
+
+## Apache Tomcat installation
+
+Copy the simple-plugin war file as the following name
+
+    simple-plugin.war
+
+to the deploy directory of Apache Tomcat os similar Java web container.
+
+## Karaf/JBoss Fuse installation
+
+From the CLI type:
+
+    install -s mvn:io.hawt/simple-plugin/1.5-SNAPSHOT/war
+
+(substitute 1.5-SNAPSHOT with the version of choice)
