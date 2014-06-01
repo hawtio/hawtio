@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-	  <groupId>io.hawt</groupId>
-	  <artifactId>hawtio-plugin-examples</artifactId>
+    <groupId>io.hawt</groupId>
+    <artifactId>hawtio-plugin-examples</artifactId>
     <version>1.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -28,7 +29,7 @@
 
     <!-- plugin-domain is currently unused, we just define it to an empty
       string -->
-    <plugin-domain />
+    <plugin-domain/>
 
     <!-- this lets this plugin deploy nicely into karaf, these get used
       for the ImportPackage directive for maven-bundle-plugin -->
@@ -55,8 +56,7 @@
       <version>2.3.2</version>
     </dependency>
 
-
-    <!-- servlet API and logging is provided by the container -->
+    <!-- servlet API is provided by the container -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -64,11 +64,16 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
     </dependency>
 
   </dependencies>
@@ -84,7 +89,7 @@
         <includes>
           <include>**/*.xml</include>
         </includes>
-     </resource>
+      </resource>
     </resources>
 
     <plugins>
@@ -117,15 +122,18 @@
                 <!-- javascript-files will contain all of the javascript in
                   our project -->
                 <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
-                  <include name="**/*.js" />
+                  <include name="**/*.js"/>
                 </fileset>
                 <!-- we need to strip out the top level path which is
                    our source directory and be sure to change the directory
                    separators to forward slashes -->
                 <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
-                  <map from="${basedir}/src/main/webapp/" to="" />
+                  <map from="${basedir}/src/main/webapp/" to=""/>
                 </pathconvert>
                 <echo>Files: ${plugin-scripts}</echo>
+
+                <echo>Copying log4j.properties</echo>
+                <copy file="src/main/resources/log4j.properties" todir="target/classes"/>
 
               </target>
               <!-- this exports plugin-scripts to the maven build, without
@@ -195,7 +203,7 @@
 
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Title>HawtIO Groovy Shell Plugin</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
           </instructions>
         </configuration>
@@ -223,6 +231,9 @@
               <includes>
                 <include>**/*.*</include>
               </includes>
+              <excludes>
+                <exclude>log4j.properties</exclude>
+              </excludes>
             </resource>
           </webResources>
         </configuration>
@@ -230,4 +241,5 @@
 
     </plugins>
   </build>
+
 </project>

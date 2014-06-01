@@ -42,7 +42,7 @@ var GroovyShell = (function(GroovyShell) {
 
 
   /**
-   * The mbean for the groovy console
+   * The mbean for the groovy shell
    */
   GroovyShell.mbean = "hawtio:type=GroovyShell";
 
@@ -66,7 +66,7 @@ var GroovyShell = (function(GroovyShell) {
          */
         $routeProvider.
             when('/groovy_shell_plugin', {
-              templateUrl: GroovyShell.templatePath + 'console.html'
+              templateUrl: GroovyShell.templatePath + 'shell.html'
             });
       });
 
@@ -131,7 +131,7 @@ var GroovyShell = (function(GroovyShell) {
    * @param $scope
    * @param jolokia
    *
-   * The controller for console.html, only requires the jolokia
+   * The controller for shell.html, only requires the jolokia
    * service from hawtioCore
    */
   GroovyShell.GroovyController = function($scope, jolokia) {

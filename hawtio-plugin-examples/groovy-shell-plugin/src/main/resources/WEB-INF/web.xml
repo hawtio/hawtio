@@ -5,8 +5,8 @@
 	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	      version="2.4">
 
-  <description>hawtio Groovy Console plugin</description>
-  <display-name>hawt.io groovy-console plugin</display-name>
+  <description>hawtio Groovy Shell plugin</description>
+  <display-name>hawt.io groovy-shell plugin</display-name>
 
   <context-param>
     <description>Plugin's path on the server</description>
@@ -33,7 +33,7 @@
   </context-param>
 
   <listener>
-    <listener-class>io.hawt.example.groovyconsole.PluginContextListener</listener-class>
+    <listener-class>io.hawt.example.groovyshell.PluginContextListener</listener-class>
   </listener>
 
 

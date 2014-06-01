@@ -2,7 +2,11 @@
 
 ## Apache Tomcat installation
 
-Copy the groovy-shell-plugin war file to the deploy directory of Apache Tomcat os similar Java web container.
+Copy the groovy-shell-plugin war file as the following name
+
+    groovy-shell-plugin.war
+
+to the deploy directory of Apache Tomcat os similar Java web container.
 
 ## Karaf/JBoss Fuse installation
 

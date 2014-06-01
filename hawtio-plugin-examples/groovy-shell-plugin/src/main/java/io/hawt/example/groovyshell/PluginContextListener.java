@@ -1,4 +1,4 @@
-package io.hawt.example.groovyconsole;
+package io.hawt.example.groovyshell;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -13,7 +13,7 @@ public class PluginContextListener implements ServletContextListener {
     private static final Logger LOG = LoggerFactory.getLogger(PluginContextListener.class);
 
     HawtioPlugin plugin = null;
-    GroovyConsole console = null;
+    GroovyShell shell = null;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -26,15 +26,15 @@ public class PluginContextListener implements ServletContextListener {
         plugin.setDomain(null);
         plugin.init();
 
-        console = new GroovyConsole();
-        console.init();
+        shell = new GroovyShell();
+        shell.init();
 
         LOG.info("Initialized {} plugin", plugin.getName());
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        console.destroy();
+        shell.destroy();
         plugin.destroy();
         LOG.info("Destroyed {} plugin", plugin.getName());
     }
