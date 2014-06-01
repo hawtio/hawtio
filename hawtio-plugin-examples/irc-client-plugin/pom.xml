@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>hawtio-plugin-examples</artifactId>
     <groupId>io.hawt</groupId>
@@ -16,27 +17,16 @@
     <!-- filtered plugin properties -->
     <plugin-context>/irc-plugin</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
-    <plugin-domain />
+    <plugin-domain/>
 
     <fuse.osgi.import>
       javax.servlet,
       javax.security.auth,
       *;resolution:=optional
     </fuse.osgi.import>
-    <!--
-    <fuse.osgi.export>
-      io.hawt.web.plugin
-    </fuse.osgi.export>
-    -->
   </properties>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.schwering</groupId>
-      <artifactId>irclib</artifactId>
-      <version>1.10</version>
-    </dependency>
 
     <dependency>
       <groupId>io.hawt</groupId>
@@ -45,17 +35,29 @@
     </dependency>
 
     <dependency>
+      <groupId>org.schwering</groupId>
+      <artifactId>irclib</artifactId>
+      <version>1.10</version>
+    </dependency>
+
+    <!-- servlet API is provided by the container -->
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>${servlet-api-version}</version>
       <scope>provided</scope>
     </dependency>
 
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
     </dependency>
 
   </dependencies>
@@ -98,13 +100,15 @@
                 <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
                   <!-- Ensure that ircPlugin.js is included first
                        as it's our entrypoint -->
-                  <include name="plugin/js/ircPlugin.js" />
-                  <include name="**/*.js" />
+                  <include name="plugin/js/ircPlugin.js"/>
+                  <include name="**/*.js"/>
                 </fileset>
                 <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
-                  <map from="${basedir}/src/main/webapp/" to="" />
+                  <map from="${basedir}/src/main/webapp/" to=""/>
                 </pathconvert>
                 <echo>Files: ${plugin-scripts}</echo>
+                <echo>Copying log4j.properties</echo>
+                <copy file="src/main/resources/log4j.properties" todir="target/classes"/>
               </target>
               <exportAntProperties>true</exportAntProperties>
             </configuration>
@@ -187,6 +191,9 @@
               <includes>
                 <include>**/*.*</include>
               </includes>
+              <excludes>
+                <exclude>log4j.properties</exclude>
+              </excludes>
             </resource>
           </webResources>
         </configuration>
