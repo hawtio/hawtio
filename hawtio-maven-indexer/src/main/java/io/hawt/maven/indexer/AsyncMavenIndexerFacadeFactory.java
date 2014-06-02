@@ -58,7 +58,7 @@ public class AsyncMavenIndexerFacadeFactory {
             }
         };
         timer.schedule(task, 3000);
-        LOG.debug("Started the async timer to create the MavenIndexerFacade after the application starts up");
+        LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
         if (repositories != null) {
             LOG.debug("Using remote repositories: " + Arrays.asList(repositories));
         }
