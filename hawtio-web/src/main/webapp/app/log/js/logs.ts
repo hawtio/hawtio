@@ -11,7 +11,6 @@ module Log {
     level: string;
     logger: string;
     message: string;
-    sortSeq: number;
   }
 
   export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document, $templateCache) {
@@ -20,7 +19,6 @@ module Log {
     if (angular.isString(value)) {
       $scope.sortAsc = "true" === value;
     }
-    $scope.sortField = 'sortSeq';
     $scope.autoScroll = true;
     var value = localStorage["logAutoScroll"];
     if (angular.isString(value)) {
@@ -28,7 +26,6 @@ module Log {
     }
 
     $scope.logs = [];
-    $scope.reverseIndex = {};
     $scope.showRowDetails = false;
     $scope.showRaw = {
       expanded: false
@@ -89,13 +86,8 @@ module Log {
       }
     });
 
-    $scope.$watch('sortAsc', (newValue) => {
-      localStorage['logSortAsc'] = newValue;
-    });
-
     $scope.init();
 
-    $scope.sortCounter = 0;
     $scope.toTime = 0;
     $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
 
@@ -110,20 +102,25 @@ module Log {
     });
 
     $scope.selectedClass = ($index) => {
-      if ($index === $scope.selectedRowSortSeq) {
+      if ($index === $scope.selectedRowIndex) {
         return 'selected';
       }
       return '';
     };
 
-    $scope.$watch('selectedRowSortSeq', (newValue, oldValue) => {
-        $scope.selectedRow = $scope.reverseIndex[newValue];
-
-          if($scope.selectedRow) {
-              if (!$scope.showRowDetails) {
-                  $scope.showRowDetails = true;
-              }
-          }
+    $scope.$watch('selectedRowIndex', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue < 0 || newValue > $scope.logs.length) {
+          $scope.selectedRow = null;
+          $scope.showRowDetails = false;
+          return;
+        }
+        Log.log.debug("New index: ", newValue);
+        $scope.selectedRow = $scope.logs[newValue];
+        if (!$scope.showRowDetails) {
+          $scope.showRowDetails = true;
+        }
+      }
     });
 
     $scope.hasOSGiProps = (row) => {
@@ -138,23 +135,14 @@ module Log {
       return answer;
     };
 
-    $scope.selectRow = ($index, $sortSeq) => {
+    $scope.selectRow = ($index) => {
       // in case the user clicks a row, closes the slideout and clicks
       // the row again
-
-      $scope.selectedRowIndex = $index;
-
-      if(typeof $sortSeq == "undefined"){
-          $scope.selectedRowSortSeq = $scope.logs[$index].sortSeq;
-      } else {
-          log.info("Selecting sortSeq: " + $sortSeq);
-          if ($scope.selectedRowSortSeq == $sortSeq) {
-              $scope.showRowDetails = true;
-              return;
-          }
-          $scope.selectedRowSortSeq = $sortSeq;
+      if ($scope.selectedRowIndex == $index) {
+        $scope.showRowDetails = true;
+        return;
       }
-
+      $scope.selectedRowIndex = $index;
     };
 
     $scope.getSelectedRowJson = () => {
@@ -254,6 +242,14 @@ module Log {
       return "";
     };
 
+    $scope.sortIcon = () => {
+      if ($scope.sortAsc) {
+        return "icon-arrow-down";
+      } else {
+        return "icon-arrow-up";
+      }
+    };
+
     $scope.filterLogMessage = (log) => {
       var messageOnly = $scope.filter.messageOnly;
 
@@ -301,8 +297,15 @@ module Log {
 
 
     var updateValues = function (response) {
+      var scrollToTopOrBottom = false;
+
       if (!$scope.inDashboard) {
         var window = $($window);
+
+        if ($scope.logs.length === 0) {
+          // initial page load, let's scroll to the bottom
+          scrollToTopOrBottom = true;
+        }
 
         if ($scope.sortAsc) {
           var pos = window.scrollTop() + window.height();
@@ -310,6 +313,10 @@ module Log {
         } else {
           var pos = window.scrollTop() + window.height();
           var threshold = 100;
+        }
+        if ( pos > threshold ) {
+          // page is scrolled near the bottom
+          scrollToTopOrBottom = true;
         }
       }
 
@@ -333,7 +340,6 @@ module Log {
         var counter = 0;
         logs.forEach((log:ILog) => {
           if (log) {
-            log.sortSeq = $scope.sortCounter++;
             // TODO Why do we compare 'item.seq === log.message' ?
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
@@ -346,7 +352,6 @@ module Log {
               } else {
                 $scope.logs.unshift(log);
               }
-              $scope.reverseIndex[log.sortSeq] = log;
             }
           }
         });
@@ -359,25 +364,25 @@ module Log {
             if (!$scope.sortAsc) {
               pos = size - count;
             }
+
             $scope.logs.splice(pos, count);
-            var newReverseIndex = {};
-            var initialIndex = logs[logs.length -1].sortSeq;
-            for(var i = 0 ; i < 2 * maxSize ; i++){
-                var oldIndex = initialIndex - i;
-                newReverseIndex[oldIndex] = $scope.reverseIndex[oldIndex];
+
+            if ($scope.showRowDetails) {
+              if ($scope.sortAsc) {
+                $scope.selectedRowIndex -= count;
+              } else {
+                $scope.selectedRowIndex += count;
+              }
             }
-            $scope.reverseIndex = newReverseIndex;
 
           }
         }
         if (counter) {
-          if ($scope.autoScroll) {
+          if ($scope.autoScroll && scrollToTopOrBottom) {
             setTimeout(() => {
               var pos = 0;
               if ($scope.sortAsc) {
                 pos = $document.height() - window.height();
-              }else{
-                pos = window.height() - $document.height();
               }
               log.debug("Scrolling to position: " + pos)
               $document.scrollTop(pos);
