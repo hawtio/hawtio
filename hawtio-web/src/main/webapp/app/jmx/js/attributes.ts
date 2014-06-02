@@ -83,7 +83,7 @@ module Jmx {
       showFilter: false,
       canSelectRows: false,
       enableRowSelection: false,
-      enableRowClickSelection: true,
+      enableRowClickSelection: false,
       keepLastSelected: false,
       multiSelect: true,
       showColumnMenu: true,
@@ -412,10 +412,12 @@ module Jmx {
         request = { type: 'read', mbean: mbean };
         if (node.key !== $scope.lastKey) {
           $scope.gridOptions.columnDefs = propertiesColumnDefs;
+          $scope.gridOptions.enableRowClickSelection = false;
         }
       } else if (node) {
         if (node.key !== $scope.lastKey) {
           $scope.gridOptions.columnDefs = [];
+          $scope.gridOptions.enableRowClickSelection = true;
         }
         // lets query each child's details
         var children = node.children;
@@ -451,6 +453,7 @@ module Jmx {
       } else if (node) {
         if (node.key !== $scope.lastKey) {
           $scope.gridOptions.columnDefs = foldersColumnDefs;
+          $scope.gridOptions.enableRowClickSelection = true;
         }
         $scope.gridData = node.children;
         addHandlerFunctions($scope.gridData);
@@ -526,6 +529,7 @@ module Jmx {
               })
 
               $scope.gridOptions.columnDefs = defaultDefs;
+              $scope.gridOptions.enableRowClickSelection = true;
             }
           }
           // assume 1 row of data per mbean
@@ -547,6 +551,7 @@ module Jmx {
         }
       } else {
         $scope.gridOptions.columnDefs = propertiesColumnDefs;
+        $scope.gridOptions.enableRowClickSelection = false;
         var showAllAttributes = true;
         if (angular.isObject(data)) {
           var properties = [];
