@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>hawtio-plugin-examples</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.2</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -18,14 +17,14 @@
     <!-- filtered plugin properties -->
     <plugin-context>/hawtio/custom-perspective</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
-    <plugin-domain/>
+    <plugin-domain />
     <plugin-scripts>app/js/simplePlugin.js</plugin-scripts>
 
     <fuse.osgi.import>
       javax.servlet,
       *;resolution:=optional
     </fuse.osgi.import>
-    <fuse.osgi.export/>
+    <fuse.osgi.export />
   </properties>
 
   <dependencies>

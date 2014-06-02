@@ -3,7 +3,7 @@
   <parent>
     <artifactId>project</artifactId>
     <groupId>io.hawt</groupId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -124,7 +124,7 @@
                 <echo>Files: ${plugin-scripts}</echo>
 
                 <echo>Copying log4j.properties</echo>
-                <copy file="src/main/resources/log4j.properties" todir="target/classes"/>
+                <copy file="src/main/resources/log4j.properties" todir="target/classes" />
               </target>
               <!-- this exports plugin-scripts to the maven build, without
                 this line ${plugin-scripts} in the web.xml file won't be
