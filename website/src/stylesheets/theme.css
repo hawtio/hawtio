@@ -1,0 +1,11 @@
+
+.footer {
+  border-top: 1px solid #d4d4d4;
+  display: block;
+  -webkit-box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
+  background-color: #BF7655;
+  color: #4d4d4d;
+}
+
