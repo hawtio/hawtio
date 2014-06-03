@@ -27,7 +27,8 @@
 		<!--
     <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
     -->
-    <link href="/stylesheets/screen.css" rel="stylesheet" />
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+    <link href="/stylesheets/bootstram-theme.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <!--[if lt IE 9]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
@@ -35,38 +36,53 @@
     <link href="/favicon.ico" rel="shortcut icon" />
   </head>
   <body class="home">
-    <header class="navbar navbar-fixed-top" id="banner" role="banner">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+    <!-- start header -->
+    <div class="navbar navbar-default" role="navigation">
+      <!-- start inner container --> 
+      <div class="container-fluid">
+        <!-- start logo -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav-collapse">
+            <span class="sr-only">Toggle Navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img src="/images/logo-100px.png" />
           </a>
-          <div class="g-plusone-slot">
-            <div class="g-plusone" data-annotation="none"></div>
-          </div>
-          <div class="logo-box">
-            <a class="brand" href="/">
-              <img src="/images/logo-100px.png" />
-            </a>
-          </div>
-          <nav class="nav-collapse" role="navigation">
-            <ul class="nav">
-              <li><a href="/faq/index.html">FAQ</a></li>
-              <li><a href="/getstarted/index.html">Get Started</a></li>
-              <li><a href="/community/index.html">Community</a></li>
-              <li><a href="/plugins/index.html">Plugins</a></li>
-              <li><a href="/developers/index.html">Developers</a></li>
-							<li><a href="https://github.com/hawtio/hawtio">github</a></li>
-							<!--
-              <li><a href="/blog/">Blog</a></li>
-							-->
-            </ul>
-          </nav>
         </div>
+        <!-- end logo -->
+
+        <!--
+        <div class="g-plusone-slot">
+          <div class="g-plusone" data-annotation="none"></div>
+        </div>
+        -->
+        <!--
+        <div class="logo-box">
+          <a class="brand" href="/">
+            <img src="/images/logo-100px.png" />
+          </a>
+        </div>
+        -->
+        <!-- start links -->
+        <div id="main-nav-collapse" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/faq/index.html">FAQ</a></li>
+            <li><a href="/getstarted/index.html">Get Started</a></li>
+            <li><a href="/community/index.html">Community</a></li>
+            <li><a href="/plugins/index.html">Plugins</a></li>
+            <li><a href="/developers/index.html">Developers</a></li>
+            <li><a href="https://github.com/hawtio/hawtio">github</a></li>
+          </ul>
+        </div>
+        <!-- end links -->
+
       </div>
-    </header>
+      <!-- end inner container --> 
+    </div>
+    <!-- end header -->
     <div id="main">
 		  ${unescape(body)}
     </div>
@@ -174,7 +190,7 @@
         activateToTopControl();
       });
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.2/bootstrap.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
     <script src="/javascripts/prettify.js"></script>
     <script src="/javascripts/site.js"></script>
     <script>
