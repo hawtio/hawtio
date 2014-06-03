@@ -30,6 +30,10 @@ Update the *.md files to point to the new version (being careful not to break va
 
 Update the extension.xml file to point to the new version.
 
+Now, go into github issues and create a new milestone (if not already created) for the release number that you just released.  Close this milestone.  Now go through each open milestonee and move all closed issues to your new milestone.  Also move issues that are closed but have no milestone to the new milestone.  This will ensure that all fixed issues in the last development period will be correctly associated with the release that the fix was introduced in.
+
+Update the changelog with links to your milestone which will list all the fixes/enhancements that made it into the release.  Also mention any major changes in the changelog.
+
 Now drink a beer! Then another! There, thats better now isn't it!
 
 
