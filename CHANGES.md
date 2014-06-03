@@ -1,5 +1,12 @@
 ### Change Log
 
+#### 1.4.2
+* New pane used for JMX/Camel/ActiveMQ tabs that allows resizing or hiding the JMX tree
+* New terminal theme
+* Restyled container list page in Fabric8 runtime view
+* Switch from ng-grid to hawtio-simple-table for JMX attributes view
+* Fixes [these 84 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=13&state=closed)
+
 #### 1.4.1
 
 * Using new hawtio logo
