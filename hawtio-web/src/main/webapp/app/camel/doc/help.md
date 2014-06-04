@@ -50,7 +50,7 @@ By selecting a route in the Camel Tree
 
 ![Route Diagram](app/camel/doc/img/route-diagram.png "Route Diagram")
 
-If you however the mouse over the nodes in the diagram, a tool tip is presented with additional details.
+If you hover the mouse over the nodes in the diagram, a tool tip is presented with additional details.
 
 ##### Source #####
 
