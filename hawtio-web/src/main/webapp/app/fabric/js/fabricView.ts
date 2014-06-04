@@ -58,6 +58,7 @@ module Fabric {
 
     $scope.ensembleContainerIds = [];
     $scope.profileSelectedAll = false;
+    $scope.profileNoneSelected = true;
 
     $scope.targetContainer = {};
 
