@@ -170,15 +170,11 @@ module Fabric {
 
 
       $scope.$watch('selectedAll', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          if ($scope.indeterminate) {
-            $scope.selectNone();
+        if (!$scope.indeterminate && newValue !== oldValue) {
+          if (newValue) {
+            $scope.selectAll();
           } else {
-            if (newValue) {
-              $scope.selectAll();
-            } else {
-              $scope.selectNone();
-            }
+            $scope.selectNone();
           }
         }
       });
