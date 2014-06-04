@@ -109,34 +109,37 @@ module Fabric {
     directive('fabricContainerLink', ($location, jolokia, workspace) => {
       return {
         restrict: 'A',
+        scope: { containerModel: '@fabricContainerLink' },
         link: ($scope, $element, $attrs) => {
-          var modelName = $attrs['fabricContainerLink'];
-          var containerId = modelName;
-          var container = null;
-          if (modelName && !modelName.isBlank()) {
-            // lets check if the value is a model object containing the container details
-            var modelValue = Core.pathGet($scope, modelName);
-            if (angular.isObject(modelValue)) {
-              var id = modelValue["container"] || modelValue["containerId"] || modelValue["id"];
-              if (id && modelValue["provisionResult"]) {
-                container = modelValue;
-                containerId = id;
+          $scope.$watch("containerModel", function (nv) {
+            var modelName = $scope.containerModel;
+            var containerId = modelName;
+            var container = null;
+            if (modelName && !modelName.isBlank()) {
+              // lets check if the value is a model object containing the container details
+              var modelValue = Core.pathGet($scope, modelName);
+              if (angular.isObject(modelValue)) {
+                var id = modelValue["container"] || modelValue["containerId"] || modelValue["id"];
+                if (id && modelValue["provisionResult"]) {
+                  container = modelValue;
+                  containerId = id;
+                }
               }
+              if (!container) {
+                var fields = ["alive", "provisionResult", "versionId", "jmxDomains"];
+                container = Fabric.getContainerFields(jolokia, containerId, fields);
+              }
+
+              var link = "#/fabric/container/" + containerId;
+              var title = Fabric.statusTitle(container) || "container " + containerId;
+              var icon = Fabric.statusIcon(container) || "";
+
+              var html = "<a href='" + link + "' title='" + title + "'><i class='" + icon + "'></i> " + containerId + "</a>";
+              $element.html(html);
+            } else {
+              $element.html(" ");
             }
-            if (!container) {
-              var fields = ["alive", "provisionResult", "versionId", "jmxDomains"];
-              container = Fabric.getContainerFields(jolokia, containerId, fields);
-            }
-
-            var link = "#/fabric/container/" + containerId;
-            var title = Fabric.statusTitle(container) || "container " + containerId;
-            var icon = Fabric.statusIcon(container) || "";
-
-            var html = "<a href='" + link + "' title='" + title + "'><i class='" + icon + "'></i> " + containerId + "</a>";
-            $element.html(html);
-
-            Core.$apply($scope);
-          }
+          });
         }
       }
     }).
