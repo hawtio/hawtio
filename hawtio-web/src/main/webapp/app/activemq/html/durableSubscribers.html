@@ -8,6 +8,10 @@
                         title="Create durable subscriber">
                     <i class="icon-plus"></i> Create
                 </button>
+                <button class="btn" ng-click="deleteSubscriberDialog.open()"
+                        title="Destroy durable subscriber" ng-disabled="gridOptions.selectedItems.length != 1">
+                    <i class="icon-exclamation"></i> Destroy
+                </button>
                 <button class="btn" ng-click="refresh()"
                         title="Refreshes the list of subscribers">
                     <i class="icon-refresh"></i>
