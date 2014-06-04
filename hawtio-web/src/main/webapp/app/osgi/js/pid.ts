@@ -331,6 +331,9 @@ module Osgi {
               }
             }
           }
+
+          //comply with Forms.safeIdentifier in 'forms/js/formHelpers.ts'
+          key = key.replace(/-/g, "_");
           entity[key] = attrValue;
         }
       });
