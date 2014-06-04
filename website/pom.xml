@@ -274,6 +274,45 @@
           <scanIntervalSeconds>0</scanIntervalSeconds>
         </configuration>
       </plugin>
+
+      <!-- livereload -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>net.alchim31</groupId>
+            <artifactId>livereload-jvm</artifactId>
+            <version>0.2.0</version>
+            <type>jar</type>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <includeProjectDependencies>false</includeProjectDependencies>
+          <includePluginDependencies>true</includePluginDependencies>
+          <executableDependency>
+            <groupId>net.alchim31</groupId>
+            <artifactId>livereload-jvm</artifactId>
+          </executableDependency>
+          <mainClass>net_alchim31_livereload.Main</mainClass>
+          <classpathScope>test</classpathScope>
+          <arguments>
+            <argument>-d</argument>
+            <argument>${basedir}/src</argument>
+          </arguments>
+          <systemProperties>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
     </plugins>
 
 
