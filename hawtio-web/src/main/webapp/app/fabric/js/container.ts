@@ -170,7 +170,7 @@ module Fabric {
 
     $scope.getArguments = () => {
       if ($scope.inDashboard) {
-        return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer']];
+        return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer', 'debugPort']];
       }
       return [$scope.containerId];
     };

@@ -236,6 +236,21 @@
 
             <div class="tab-pane" title="URLs">
               <p>This is a list of URLs for various services running in the container or accessible to the container. Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
+              <dl class="dl-horizontal" ng-show="row.debugPort" title="The port used to remotely debug this container in your IDE">
+                <dt>Debug:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.debugPort}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.debugPort}}"
+                          title="Click to copy this port to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
               <dl class="dl-horizontal">
                 <dt>Git:</dt>
                 <dd>
