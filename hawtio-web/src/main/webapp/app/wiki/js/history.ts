@@ -79,6 +79,7 @@ module Wiki {
             updateView();
           });
         }
+        $scope.selectedItems.splice(0, $scope.selectedItems.length);
       }
     };
 
