@@ -137,6 +137,13 @@ public class ProxyDetails {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ProxyDetails{" +
+                userName + "@" + hostAndPort + "/" + stringProxyURL
+                + "}";
+    }
+
     /**
      * Returns the lowest index of the given list of values
      */
