@@ -92,7 +92,12 @@ module Log {
     $scope.init();
 
     $scope.toTime = 0;
-    $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "logResultsSince", arguments: [$scope.toTime], ignoreErrors: true};
+    $scope.logFilter = {
+      afterTimestamp: $scope.toTime,
+      count: $scope.logBatchSize
+    };
+    $scope.logFilterJson = JSON.stringify($scope.logFilter);
+    $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "jsonQueryLogResults", arguments: [$scope.logFilterJson], ignoreErrors: true};
 
 
     $scope.logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
@@ -324,7 +329,7 @@ module Log {
       }
 
       var logs = response.events;
-      //log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.queryJSON.arguments);
+      //log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
 
       var toTime = response.toTimestamp;
       if (toTime && angular.isNumber(toTime)) {
@@ -333,7 +338,10 @@ module Log {
           console.log("ignoring dodgy value of toTime: " + toTime);
         } else {
           $scope.toTime = toTime;
-          $scope.queryJSON.arguments = [toTime];
+          $scope.logFilter.afterTimestamp = $scope.toTime;
+          $scope.logFilterJson = JSON.stringify($scope.logFilter);
+          $scope.queryJSON.arguments = [$scope.logFilterJson];
+          // log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
         }
       }
       if (logs) {
