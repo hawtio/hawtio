@@ -13,17 +13,20 @@ module Log {
     message: string;
   }
 
-  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, $window, $document, $templateCache) {
+  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) {
     $scope.sortAsc = true;
     var value = localStorage["logSortAsc"];
     if (angular.isString(value)) {
       $scope.sortAsc = "true" === value;
     }
     $scope.autoScroll = true;
-    var value = localStorage["logAutoScroll"];
+    value = localStorage["logAutoScroll"];
     if (angular.isString(value)) {
       $scope.autoScroll = "true" === value;
     }
+
+    value = localStorage["logBatchSize"];
+    $scope.logBatchSize = angular.isNumber(value) ? value : 20;
 
     $scope.logs = [];
     $scope.showRowDetails = false;
@@ -321,6 +324,8 @@ module Log {
       }
 
       var logs = response.events;
+      //log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.queryJSON.arguments);
+
       var toTime = response.toTimestamp;
       if (toTime && angular.isNumber(toTime)) {
         if (toTime < 0) {
@@ -384,7 +389,7 @@ module Log {
               if ($scope.sortAsc) {
                 pos = $document.height() - window.height();
               }
-              log.debug("Scrolling to position: " + pos)
+              log.debug("Scrolling to position: " + pos);
               $document.scrollTop(pos);
             }, 20);
           }
@@ -393,9 +398,6 @@ module Log {
       }
     };
 
-
-    var jolokia = workspace.jolokia;
-    jolokia.execute(logQueryMBean, "allLogResults", onSuccess(updateValues));
 
     // listen for updates adding the since
     var asyncUpdateValues = function (response) {
@@ -407,17 +409,23 @@ module Log {
       }
     };
 
-    var callback = onSuccess(asyncUpdateValues,
+    var callbackOptions = onSuccess(asyncUpdateValues,
             {
               error: (response) => {
                 asyncUpdateValues(response);
-              }
+              },
+              silent: true
             });
 
-
     if (logQueryMBean) {
-      scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(callback, $scope.queryJSON));
+      var firstCallback = function (results) {
+        updateValues(results);
+
+        // now lets register to perform incremental updates
+        Core.register(jolokia, $scope, $scope.queryJSON, callbackOptions);
+      };
+
+      jolokia.execute(logQueryMBean, "getLogResults(int)", $scope.logBatchSize, onSuccess(firstCallback));
     }
   }
-
 }
