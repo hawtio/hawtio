@@ -91,6 +91,12 @@ module Wiki {
       var baseObjectId = defaultValue;
       if ($scope.selectedItems.length > 1) {
         baseObjectId = $scope.selectedItems[1].name ||defaultValue;
+        // make the objectId (the one that will start with b/ path) always newer than baseObjectId
+        if ($scope.selectedItems[0].date < $scope.selectedItems[1].date) {
+          var _ = baseObjectId;
+          baseObjectId = objectId;
+          objectId = _;
+        }
       }
       var link = startLink($scope.branch) + "/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
       var path = Core.trimLeading(link, "#");
