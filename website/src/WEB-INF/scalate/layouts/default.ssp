@@ -25,7 +25,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
     <link href="/stylesheets/normalize.css" rel="stylesheet">
-    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/theme.css" rel="stylesheet">
     <link href="//static.jboss.org/css/tabzilla.css" media="screen" rel="stylesheet">
     <script src="//static.jboss.org/theme/js/libs/jquery/jquery-1.9.1.min.js"></script>
