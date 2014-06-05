@@ -27,7 +27,13 @@
     <link href="/stylesheets/normalize.css" rel="stylesheet">
     <link href="/stylesheets/bootstrap.css" rel="stylesheet">
     <link href="/stylesheets/theme.css" rel="stylesheet">
+    <link href="//static.jboss.org/css/tabzilla.css" media="screen" rel="stylesheet">
+    <script src="//static.jboss.org/theme/js/libs/jquery/jquery-1.9.1.min.js"></script>
+    <script src="//static.jboss.org/js/_jbossorg-tabzilla.js"></script>
+
+    <!--
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    -->
     <!--[if lt IE 9]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
     <![endif]-->
@@ -36,14 +42,41 @@
 
   <body class="home">
 
+    <!-- begin dropup -->
+    <div class="dropup visible-md visible-lg visible-sm">
+      <!--
+      <div id="ajbossproject">A JBoss Project</div> 
+      -->
+      <a class="tabnav-closed" href="#" id="tab">Red Hat</a>
+      <script>
+    window.addEventListener('load', function() {
+        renderTabzilla("hawtio", "hawtio")
+        }, false);
+      </script>
+    </div>
+    <!-- end dropup -->
+
     <!-- begin top banner -->
-    <div class="container visible-md visible-lg visible-sm hidden-print">
+    <div class="top-banner visible-md visible-lg visible-sm">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <a class="top-banner-logo" href="/">
+              <img src="/images/hawtio_logo.svg" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--
+    <div class="container visible-md visible-lg visible-sm">
       <div class="row">
         <div class="col-md-12 top-banner">
           <a href="/"></a>
         </div>
       </div>
     </div>
+    -->
     <!-- end top banner -->
 
     <!-- begin header -->
@@ -63,38 +96,19 @@
             <a class="navbar-brand visible-xs" href="/">
               <img src="/images/logo-100px.png" />
             </a>
+            <hr class="visible-xs">
           </div>
           <!-- end logo/toggle -->
 
-
           <!-- begin navbar -->
           <div id="main-nav-collapse" class="collapse navbar-collapse">
-            <!--
-            <ul class="nav navbar-nav">
-              <li><a href="/getstarted/index.html">Get Started</a></li>
-            </ul>
-            -->
-
             <ul class="nav navbar-nav navbar-right">
               <li><a href="/getstarted/index.html" title="find out how to get started using hawtio to manage your java stuff">Get Started Now!</a></li>
               <li><a href="/docs/index.html">Documentation</a></li>
               <li><a href="/community/index.html">Community</a></li>
-              <!--
-              <li><a href="/faq/index.html">FAQ</a></li>
-              <li><a href="/plugins/index.html">Plugins</a></li>
-              <li><a href="/developers/index.html">Developers</a></li>
-              -->
               <li><a href="/articles/index.html" title="view the demos of using hawtio with Apache ActiveMQ, Apache Camel and JBoss Fuse">Demos</a></li>
               <li><a href="https://github.com/hawtio/hawtio">github</a></li>
-              <!--
-              <li>
-                <div class="g-plusone-slot">
-                  <div class="g-plusone" data-annotation="none"></div>
-                </div>
-              </li>
-              -->
             </ul>
-
           </div>
           <!-- end navbar -->
         </div>
@@ -112,21 +126,14 @@
 
     <!-- begin footer -->
     <div class="footer">
-
       <!-- begin footer container -->
       <div class="container">
         <!-- begin footer row -->
         <div class="row">
-
           <!-- begin project info -->
           <div class="project col-md-4">
             <p>
               <img class="logo-big" src="/images/logo-450px.png">
-            </p>
-            <p class="bottom">
-              <a id="redhat-logo" href="http://www.redhat.com"><img src="http://static.jboss.org/theme/images/common/redhat_logo.png"></a>
-              &#169;
-              Copyright 2012-2014 Red Hat, Inc.
             </p>
             <p>
               <i class="icon-fire"></i>
@@ -164,6 +171,7 @@
             </ul>
           </div>
           <!-- end footer-nav -->
+
           <!-- begin footer-nav -->
           <div class="footer-nav col-md-2">
             <h4>Get Involved</h4>
@@ -196,7 +204,6 @@
 
           <!-- begin sponsor -->
           <div class="sponser col-md-4">
-
             <!-- begin follow-us -->
             <div class="follow-us">
               <h4>Stay Informed</h4>
@@ -233,7 +240,7 @@
         <!-- begin top link row -->
         <div class="row">
           <div class="col-md-12">
-            <p class="text-center">
+            <p class="link-top text-center">
               <a class="visible-desktop" href="#" id="toTop">Top</a>
             </p>
           </div>
@@ -242,6 +249,16 @@
 
       </div>
       <!-- end footer container -->
+
+      <div class="container" id="companyfooter">
+        <div class="redhatlogo" style="text-align:center;">
+          <div id="logospacer"></div>
+            <a href="http://www.redhat.com/">
+            <img src="http://static.jboss.org/theme/images/common/redhat_logo.png">
+          </a>
+        </div>
+      </div>
+
     </div>
     <!-- end footer -->
 

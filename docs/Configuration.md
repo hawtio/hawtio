@@ -1,6 +1,4 @@
-## hawtio configuration
-
-### Configuring Security
+## Configuring Security
 
 hawtio enables security out of the box depending on the container it is running within. Basically there is two types of containers:
 
@@ -11,12 +9,15 @@ hawtio enables security out of the box depending on the container it is running 
 
 By default the security in hawtio uses these system properties when running in Apache Karaf containers (Karaf, ServiceMix, JBoss Fuse) which you can override:
 
-<table class="buttonTable">
+<table class="buttonTable table table-striped">
+  <thead>
   <tr>
     <th>Name</th>
     <th>Default</th>
     <th>Description</th>
   </tr>
+  </thead>
+  <tbody>
   <tr>
     <td>
       hawtio.authenticationEnabled
@@ -72,6 +73,7 @@ By default the security in hawtio uses these system properties when running in A
       Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
     </td>
   </tr>
+  </tbody>
 </table>
 
 Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).
@@ -80,12 +82,15 @@ Changing these values is often application server specific. Usually the easiest 
 
 By default the security in hawtio uses these system properties when running in any other container which you can override:
 
-<table class="buttonTable">
+<table class="buttonTable table table-striped">
+  <thead>
   <tr>
     <th>Name</th>
     <th>Default</th>
     <th>Description</th>
   </tr>
+  </thead>
+  <tbody>
   <tr>
     <td>
       hawtio.authenticationEnabled
@@ -138,6 +143,7 @@ By default the security in hawtio uses these system properties when running in a
        Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
     </td>
   </tr>
+  </tbody>
 </table>
 
 
@@ -152,7 +158,7 @@ Or adjust the web.xml file and configure the &lt;env-entry&gt; element, accordin
 
 ##### Configuring security in Apache Tomcat
 
-From **hawt 1.2.2** onwards we made it much easier to use Apache Tomcat's userdata file (conf/tomcat-users.xml) for security.
+From **hawt 1.2.2** onwards we made it much easier to use Apache Tomcats userdata file (conf/tomcat-users.xml) for security.
 All you have to do is to set the following **CATALINA_OPTS** environment variable:
 
     export CATALINA_OPTS=-Dhawtio.authenticationEnabled=true
@@ -175,41 +181,54 @@ Now the user must be in the manager role to be able to login, which we can setup
     <user username="scott" password="tiger" roles="tomcat,manager"/>
 
 
-### Configuration Properties
+## Configuration Properties
 
 The following table contains the various configuration settings for the various hawtio plugins.
 
-<table class="table">
-<tr>
-<th>System Property</th><th>Description</th>
-</tr>
-<tr>
-<td>hawtio.offline</td><td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
-</tr>
-<tr> 
-<td>hawtio.dirname</td><td>The directory name for the hawtio home. Is by default <tt>/.hawtio</tt>. This complete home directory for hawtio is the <tt>hawtio.config.dir</tt><tt>hawtio.dirname</tt>, so remember to have leading / in this option. The out of the box options translates as the: <tt>user.home/.hawtio</tt> directory.</td>
-</tr>
-<tr> 
-<td>hawtio.config.dir</td><td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!. See also the hawtio.dirname option.</td>
-</tr>
-<tr>
-<td>hawtio.config.repo</td><td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
-</tr>
-<tr>
-<td>hawtio.config.cloneOnStartup</td><td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
-</tr>
-<tr>
-<td>hawtio.config.pullOnStartup</td><td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
-</tr>
-<tr>
-<td>hawtio.maven.index.dir</td><td>The directory where the maven indexer will use to store its cache and index files</td>
-</tr>
-<tr>
-<td>hawtio.sessionTimeout</td><td><strong>hawtio 1.2.2</strong> The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
-</tr>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>System Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>hawtio.offline</td>
+      <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
+    </tr>
+    <tr> 
+      <td>hawtio.dirname</td>
+      <td>The directory name for the hawtio home. Is by default <tt>/.hawtio</tt>. This complete home directory for hawtio is the <tt>hawtio.config.dir</tt><tt>hawtio.dirname</tt>, so remember to have leading / in this option. The out of the box options translates as the: <tt>user.home/.hawtio</tt> directory.</td>
+    </tr>
+    <tr> 
+      <td>hawtio.config.dir</td>
+      <td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!. See also the hawtio.dirname option.</td>
+    </tr>
+    <tr>
+      <td>hawtio.config.repo</td>
+      <td>The URL of the remote git repository used to clone for the dashboard and wiki configuration. This defaults to <b>git@github.com:hawtio/hawtio-config.git</b> but if you forked the hawtio-config repository then you would use your own user name; e.g. <b>git@github.com:myUserName/hawtio-config.git</b></td>
+    </tr>
+    <tr>
+      <td>hawtio.config.cloneOnStartup</td>
+      <td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
+    </tr>
+    <tr>
+      <td>hawtio.config.pullOnStartup</td>
+      <td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
+    </tr>
+    <tr>
+      <td>hawtio.maven.index.dir</td>
+      <td>The directory where the maven indexer will use to store its cache and index files</td>
+    </tr>
+    <tr>
+      <td>hawtio.sessionTimeout</td>
+      <td><strong>hawtio 1.2.2</strong> The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
+    </tr>
+  </tbody>
 </table>
 
-#### Web Application configuration
+## Web Application configuration
 
 If you are using a web container, the easiest way to change the web app configuration values is:
 

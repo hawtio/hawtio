@@ -4,25 +4,46 @@
 body {
   font-family: 'Source Sans Pro';
   font-size: 16px;
-  background: #aaa;
+  background: #fff;
   color: #333;
 }
 
-.row {
-  background: #fff;
+
+h1, h2, h3 {
+  font-family: "Marvel", "Trebuchet MS", Arial, sans-serif;
+}
+
+h2, h3 {
+  margin-top: 2em;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+h4 {
+  margin-top: 1.5em;
+  font-weight: bold;
+}
+
+h2:first-child {
+  margin-top: 0;
+}
+
+.jumbotron {
+  background: none;
 }
 
 .jumbotron > .row {
-  background: inherit;
+  background: none;
 }
 
-.jumbotron > .carousel {
+.jumbotron .carousel {
   height: 7em;
 }
 
 .carousel-caption {
+  font-family: 'Source Sans Pro';
   color: #333;
   font-weight: bold;
+  text-shadow: none;
 }
 
 /* not sure yet where this is coming from */
@@ -33,17 +54,15 @@ body {
 .top-banner {
   height: 110px;
   background-image: url(../images/banner.png);
+  background-position: right;
 }
 
-.top-banner > a {
+.top-banner-logo {
   display: block;
-  width: 100%;
-  height: 100%;
-
 }
 
-.logo-big {
-  width: 100%;
+.top-banner-logo > img {
+  height: 110px;
 }
 
 .carousel-control.right {
@@ -65,16 +84,16 @@ body {
   margin-left: 0;
 }
 
-.footer > .container > .row:1st-child {
-  border-top: 1px solid #d4d4d4;
-  /*
-  -webkit-box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
-  box-shadow: inset 0 12px 20px -10px rgba(0, 0, 0, 0.5);
-  background-color: #BF7655;
-  color: #4d4d4d;
-  */
+.link-top {
+  margin-bottom: 2em;
 }
+
+.footer {
+  margin-top: 2em;
+  background: #ddd;
+  padding-bottom: 2em;
+}
+
 
 /*
 .navbar-brand {
