@@ -243,6 +243,8 @@ module Fabric {
         $scope.row = response.value;
         $scope.container = $scope.row;
         if ($scope.row) {
+          var row = $scope.row;
+          row.debugHost = row.publicIp || row.localHostname || row.localIp || row.ip || row.manualIp;
           if (angular.isDefined($scope.row.provisionException) && angular.isString($scope.row.provisionException)) {
             $scope.row.provisionExceptionArray = $scope.row.provisionException.lines();
           }

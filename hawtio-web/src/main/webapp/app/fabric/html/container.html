@@ -237,7 +237,7 @@
             <div class="tab-pane" title="URLs">
               <p>This is a list of URLs for various services running in the container or accessible to the container. Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
               <dl class="dl-horizontal" ng-show="row.debugPort" title="The port used to remotely debug this container in your IDE">
-                <dt>Debug:</dt>
+                <dt>Debug Port:</dt>
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
@@ -247,6 +247,21 @@
                           zero-clipboard
                           data-clipboard-text="{{row.debugPort}}"
                           title="Click to copy this port to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="row.debugPort && row.debugHost" title="The host used to remotely debug this container in your IDE">
+                <dt>Debug Host:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.debugHost}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.debugHost}}"
+                          title="Click to copy this host to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
                 </dd>
@@ -266,7 +281,7 @@
                   </button>
                 </dd>
               </dl>
-              <dl class="dl-horizontal">
+              <dl class="dl-horizontal" ng-show="getSshURL(row.sshUrl)">
                 <dt>SSH:</dt>
                 <dd>
                   <input class="no-bottom-margin"
@@ -281,7 +296,7 @@
                   </button>
                 </dd>
               </dl>
-              <dl class="dl-horizontal">
+              <dl class="dl-horizontal" ng-show="getJmxURL(row.jmxUrl)">
                 <dt>JMX:</dt>
                 <dd>
                   <input class="no-bottom-margin"
