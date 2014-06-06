@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>chrome-extension</artifactId>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Chrome Extension</description>
+
+  <properties>
+    <build.dir>${basedir}/target</build.dir>
+    <zip.file>${build.dir}/extension.zip</zip.file>
+  </properties>
+
+  <build>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>crx</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Creating zip to ${build.dir}</echo>
+                <mkdir dir="${build.dir}"/>
+
+                <echo>Creating ${zip.file}</echo>
+                <zip destfile="${zip.file}">
+                   <zipfileset dir="src/main/resources" includes="*.json"/>
+                   <zipfileset dir="src/main/images" includes="*"/>
+                 </zip>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

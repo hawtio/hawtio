@@ -6,16 +6,10 @@
 
   "version": "1.4.4",
 
-  "update_url": "http://hawt.io/chrome/extension.xml",
-
   "icons": {
-    "16": "http://hawt.io/images/logo-16px.png",
-    "128": "http://hawt.io/images/logo-128px.png"
+    "16": "logo-16px.png",
+    "128": "logo-128px.png"
   },
-
-  "permissions": [
-    "http://*/"
-  ],
 
   "app": {
     "launch": {
