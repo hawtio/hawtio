@@ -4,7 +4,7 @@ The out of the box defaults try to do the right thing for most folks but if you 
 
 ## Using the Chrome Extension
 
-<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.3.1/hawtio-crx-1.3.1.crx">Download the hawtio Chrome Extension version 1.3.1</a>
+<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.4/hawtio-crx-1.4.4.crx">Download the hawtio Chrome Extension version 1.4.4</a>
 
 * Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b>
 
