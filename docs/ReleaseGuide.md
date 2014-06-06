@@ -28,7 +28,7 @@ Now update the new dev version the following files so the new dev build doens't 
 
 Update the *.md files to point to the new version (being careful not to break various configuration documents and the changes.md which list specific versions).
 
-Update the extension.xml file to point to the new version.
+Update the **website/src/chrome/extension.xml** file to point to the new version.
 
 Now, go into github issues and create a new milestone (if not already created) for the release number that you just released.  Close this milestone.  Now go through each open milestonee and move all closed issues to your new milestone.  Also move issues that are closed but have no milestone to the new milestone.  This will ensure that all fixed issues in the last development period will be correctly associated with the release that the fix was introduced in.
 
