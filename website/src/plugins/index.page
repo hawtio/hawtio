@@ -5,8 +5,8 @@ title: hawtio plugins
     <div class="row">
       <div class="col-md-12">
       <h1>Plugins</h1>
-${unescape(loadText(new FileInputStream("../docs/Plugins.md")))}
-      </div>
-    </div>
+  ${unescape(loadText(new FileInputStream("../docs/Plugins.md")))}
   </div>
+    </div>
+      </div>
 
