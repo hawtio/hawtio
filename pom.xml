@@ -11,7 +11,7 @@
   <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.4.3</version>
   <name>project</name>
   <description>hawtio :: project</description>
   <url>http://hawt.io/</url>
