@@ -5,69 +5,117 @@
     <title>get your hawtio running!</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="A HTML5 web console for managing Java services with support for JMX, OSGi, Apache ActiveMQ, Apache Camel and Fuse Fabric. Open source, modular and extensible" name="description" />
-		<!--
-    <link href="/blog/atom.xml" rel="alternate" title="hawtio blog Atom feed" type="application/atom+xml" />
-    -->
-    <link href="/stylesheets/screen.css" rel="stylesheet" />
+    <link href="/stylesheets/normalize.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/theme.css" rel="stylesheet">
+    <link href="//static.jboss.org/css/tabzilla.css" media="screen" rel="stylesheet">
+    <script src="//static.jboss.org/theme/js/libs/jquery/jquery-1.9.1.min.js"></script>
+    <script src="//static.jboss.org/js/_jbossorg-tabzilla.js"></script>
+
+    <!--
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    -->
     <!--[if lt IE 9]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
     <![endif]-->
     <link href="/favicon.ico" rel="shortcut icon" />
   </head>
+
   <body class="home">
-    <header class="navbar navbar-fixed-top" id="banner" role="banner">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <div class="g-plusone-slot">
-            <div class="g-plusone" data-annotation="none"></div>
-          </div>
-          <div class="logo-box">
-            <a class="brand" href="/">
-              <img src="/images/logo-100px.png" />
+
+    <!-- begin dropup -->
+    <div class="dropup visible-md visible-lg visible-sm">
+      <!--
+      <div id="ajbossproject">A JBoss Project</div> 
+      -->
+      <a class="tabnav-closed" href="#" id="tab">Red Hat</a>
+      <script>
+    window.addEventListener('load', function() {
+        renderTabzilla("hawtio", "hawtio")
+        }, false);
+      </script>
+    </div>
+    <!-- end dropup -->
+
+    <!-- begin top banner -->
+    <div class="top-banner visible-md visible-lg visible-sm">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <a class="top-banner-logo" href="/">
+              <img src="/images/hawtio_logo.svg" />
             </a>
           </div>
-          <nav class="nav-collapse" role="navigation">
-            <ul class="nav">
-              <li><a href="/faq/index.html">FAQ</a></li>
-              <li><a href="/getstarted/index.html">Get Started</a></li>
-              <li><a href="/community/index.html">Community</a></li>
-              <li><a href="/plugins/index.html">Plugins</a></li>
-              <li><a href="/developers/index.html">Developers</a></li>
-							<li><a href="https://github.com/hawtio/hawtio">github</a></li>
-							<!--
-              <li><a href="/blog/">Blog</a></li>
-							-->
-            </ul>
-          </nav>
         </div>
       </div>
-    </header>
-    <div id="main">
-		  <p><div id="content-header">
-    <div class="container">
-      <h1>Get Started</h1>
     </div>
-  </div>
-  <div class="container">
-    <div id="content"></p>
+    <!--
+    <div class="container visible-md visible-lg visible-sm">
+      <div class="row">
+        <div class="col-md-12 top-banner">
+          <a href="/"></a>
+        </div>
+      </div>
+    </div>
+    -->
+    <!-- end top banner -->
 
-<p>You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn" href="http://hawt.io/changelog.html">change log</a></p>
+    <!-- begin header -->
+    <div class="top-bar navbar navbar-default" role="navigation">
+      <!-- begin inner container --> 
+      <div class="container">
+        <!-- begin inner row -->
+        <div class="row">
+          <!-- begin logo/toggle -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav-collapse">
+              <span class="sr-only">Toggle Navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand visible-xs" href="/">
+              <img src="/images/logo-100px.png" />
+            </a>
+            <hr class="visible-xs">
+          </div>
+          <!-- end logo/toggle -->
 
-<p>The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn" href="http://hawt.io/configuration/index.html">configuration guide</a></p>
+          <!-- begin navbar -->
+          <div id="main-nav-collapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/getstarted/index.html" title="find out how to get started using hawtio to manage your java stuff">Get Started Now!</a></li>
+              <li><a href="/docs/index.html">Documentation</a></li>
+              <li><a href="/community/index.html">Community</a></li>
+              <li><a href="/articles/index.html" title="view the demos of using hawtio with Apache ActiveMQ, Apache Camel and JBoss Fuse">Demos</a></li>
+              <li><a href="https://github.com/hawtio/hawtio">github</a></li>
+            </ul>
+          </div>
+          <!-- end navbar -->
+        </div>
+        <!-- end inner row -->
+      </div>
+      <!-- end inner container --> 
+    </div>
+    <!-- end header -->
+
+    <!-- begin page display -->
+    <div id="main">
+		  <p><div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Get Started</h1>
+You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn btn-default" href="http://hawt.io/changelog.html">change log</a></p>
+
+<p>The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawt.io/configuration/index.html">configuration guide</a></p>
 
 <h2 id = "Using_the_Chrome_Extension">Using the Chrome Extension</h2>
 
-<p><a class="btn btn-large  btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.3.1/hawtio-crx-1.3.1.crx">Download the hawtio Chrome Extension version 1.3.1</a></p>
+<p><a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.3.1/hawtio-crx-1.3.1.crx">Download the hawtio Chrome Extension version 1.3.1</a></p>
 
 <ul>
 <li><p>Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b></p></li>
-<li><p>now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-large" href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu &rarr; Extensions</b></p></li>
+<li><p>now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-default btn-large" href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu &rarr; Extensions</b></p></li>
 <li><p>now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu &rarr; Extensions</b> and it should install the hawtio extension for Chrome.</p></li>
 <li><p>now to open a <a href="http://hawt.io/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there&hellip;.</p></li>
 <li><p>you should see a <a href="http://hawt.io/">hawtio icon</a> in the apps page. If not <a href="http://hawt.io/community/index.html">let us know!</a>.</p></li>
@@ -80,57 +128,57 @@
 
 <p>You can startup hawtio on your machine using the hawtio-app executable jar.</p>
 
-<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.1/hawtio-app-1.4.1.jar">Download the executable hawtio-app-1.4.1.jar</a></p>
+<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.2/hawtio-app-1.4.2.jar">Download the executable hawtio-app-1.4.2.jar</a></p>
 
 <p>Once you have downloaded it, just run this from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.1.jar</code></pre>
+<pre><code>java -jar hawtio-app-1.4.2.jar</code></pre>
 
 <p>And the console should show you which URL to open to view hawtio; which by default is <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a></p>
 
 <p>You can specify the port number to use, for example to use port 8090 run from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.1.jar --port 8090</code></pre>
+<pre><code>java -jar hawtio-app-1.4.2.jar --port 8090</code></pre>
 
 <p>hawtio supports other options which you can get listed by running from command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.1.jar --help</code></pre>
+<pre><code>java -jar hawtio-app-1.4.2.jar --help</code></pre>
 
 <h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
 
 <p>If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
 (JBoss AS or Wildfly users see other containers section further below)</p>
 
-<table class="buttonTable">
-  <tr>
-    <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.1/hawtio-default-1.4.1.war">Download hawtio-default.war</a>
-    </td>
-    <td>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.1/sample-1.4.1.war">Download sample.war</a>
-    </td>
-  </tr>
-  <tr>
-    <td>
+<div class="row">
+  <div class="col-md-6 span6 text-center">
+    <p>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.2/hawtio-default-1.4.2.war">Download hawtio-default.war</a>
+    </p>
+    <p>
       a bare hawtio web application with minimal dependencies
-    </td>
-    <td>
+    </p>
+  </div>
+  <div class="col-md-6 span6 text-center">
+    <p>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.2/sample-1.4.2.war">Download sample.war</a>
+    </p>
+    <p>
       a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
       <a href="http://camel.apache.org/">Apache Camel</a> to play with which is even <i>hawter</i>
-    </td>
-  </tr>
-</table>
+    </p>
+  </div>
+</div>
 
 <p>Copy the WAR file to your deploy directory in your container.</p>
 
 <p>If you rename the downloaded file to <em>hawtio.war</em> then drop it into your deploy directory then open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> and you should have your hawtio console to play with.</p>
 
-<p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.4.1/">http://localhost:8080/hawtio-default-1.4.1/</a> or <a href="http://localhost:8080/sample-1.4.1/">http://localhost:8080/sample-1.4.1/</a>  depending on the file name you downloaded.</p>
+<p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.4.2/">http://localhost:8080/hawtio-default-1.4.2/</a> or <a href="http://localhost:8080/sample-1.4.2/">http://localhost:8080/sample-1.4.2/</a>  depending on the file name you downloaded.</p>
 
 <p>Please check <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things; in particular security.</p>
 
 <p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.1/hawtio-default-offline-1.4.1.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
+ <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.2/hawtio-default-offline-1.4.2.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
 
 <p>If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.</p>
 
@@ -140,19 +188,19 @@
 
 <p>Otherwise if you are using 6.0 or earlier of <a href="http://www.jboss.org/products/fuse">Fuse</a> or a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a> or <a href="http://servicemix.apache.org/">Apache ServiceMix</a> then try the following:</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.1/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.2/xml/features
 features:install hawtio</code></pre>
 
 <p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:</p>
 
-<pre><code>features:chooseurl hawtio 1.4.1
+<pre><code>features:chooseurl hawtio 1.4.2
 features:install hawtio</code></pre>
 
 <p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>. The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.</p>
 
 <p><strong>NOTE</strong> if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.1/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.2/xml/features
 features:install hawtio-core</code></pre>
 
 <h3 id = "If_you_use_a_HTTP_proxy">If you use a HTTP proxy</h3>
@@ -179,7 +227,7 @@ features:install hawtio-core</code></pre>
 
 <h3 id = "If_you_use_JBoss_AS_or_Wildfly">If you use JBoss AS or Wildfly</h3>
 
-<p>You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.1/hawtio-no-slf4j-1.4.1.war">Download hawtio-no-slf4j.war</a>.</p>
+<p>You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.2/hawtio-no-slf4j-1.4.2.war">Download hawtio-no-slf4j.war</a>.</p>
 
 <p>See more details <a href="http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html">here</a>.</p>
 
@@ -249,108 +297,156 @@ download it from the <a href="https://repository.jboss.org/nexus/content/reposit
 <li><a href="http://hawt.io/articles/index.html">Articles and Demos</a></li>
 <li><a href="http://hawt.io/faq/index.html">FAQ</a></li>
 <li><a href="http://hawt.io/contributing/index.html">How to contribute</a></li>
-<li><a href="http://hawt.io/community/index.html">Join the hawtio community</a></li>
-</ul>
+<li><p><a href="http://hawt.io/community/index.html">Join the hawtio community</a></p>
 
-<p></div>
-  </div></p>
+<p>  </div>
+</div>
+</div></p></li>
+</ul>
     </div>
-    <footer>
+    <!-- end page display -->
+
+    <!-- begin footer -->
+    <div class="footer">
+      <!-- begin footer container -->
       <div class="container">
-        <div class="project">
-          <img src="/images/logo-450px.png" />
-          <p class="bottom">
-            <a id="redhat-logo" href="http://www.redhat.com"><img src="http://static.jboss.org/theme/images/common/redhat_logo.png"></a>
-            &#169;
-            Copyright 2012-2014 Red Hat, Inc.
-            <br>
-            <i class="icon-fire"></i>
-            Mixed with <a href="http://twitter.github.com/bootstrap">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
-            <br />
-            <i class="icon-share-alt"></i>
-            Website and docs licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
-            <br />
-            Code released under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License, v2.0</a>.
-          </p>
-        </div>
-        <div class="footer-nav">
-          <h4>Learn</h4>
-          <ul>
-            <li>
-              <a href="/index.html">Get Started</a>
-            </li>
-            <li>
-							<a href="articles/index.html">Articles and Demos</a>
-            </li>
-            <li>
-							<a href="faq/index.html">FAQ</a>
-            </li>
-            <li>
-              <a href="/developers/index.html">Developers</a>
-            </li>
-            <li>
-              <a href="/building/index.html">Building</a>
-            </li>
-          </ul>
-        </div>
-        <div class="footer-nav">
-          <h4>Get Involved</h4>
-          <ul>
-						<!--
-            <li>
-              <a href="http://community.jboss.org/en/hawtio?view=discussions">Forums</a>
-            </li>
-						-->
-            <li>
-							<a href="/contributing/index.html">Contributing</a>
-            </li>
-            <li>
-							<a href="/community/index.html">Community</a>
-            </li>
-            <li>
-              <a href="https://github.com/hawtio/hawtio/issues?state=open">Issue Tracker</a>
-            </li>
-            <li>
-              <a href="https://github.com/hawtio/hawtio">Source Code</a>
-            </li>
-						<!--
-            <li>
-              <a href="/community/contributors">Contributors</a>
-            </li>
-						-->
-          </ul>
-        </div>
-        <div class="sponser">
-          <div class="follow-us">
-            <h4>Stay Informed</h4>
+        <!-- begin footer row -->
+        <div class="row">
+          <!-- begin project info -->
+          <div class="project col-md-4">
+            <p>
+              <img class="logo-big" src="/images/logo-450px.png">
+            </p>
+            <p>
+              <i class="icon-fire"></i>
+              Mixed with <a href="http://getbootstrap.com/">Bootstrap</a>. Baked by <a href="http://scalate.fusesource.org">Scalate</a>.
+            </p>
+              <i class="icon-share-alt"></i>
+            <p>
+              Website and docs licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+            </p>
+            <p>
+              Code released under <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License, v2.0</a>.
+            </p>
+          </div>
+          <!-- end project info -->
+
+          <!-- begin footer-nav -->
+          <div class="footer-nav col-md-2">
+            <h4>Learn</h4>
             <ul>
-							<!--
               <li>
-                <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
-              </li>
-							-->
-              <li>
-                <a href="https://twitter.com/#!/search/%23hawtio"><img alt="Twitter" src="/images/social/twitter-16.png" title="Browse the #hawtio hashtag on Twitter" /></a>
-              </li>
-							<!--
-              <li>
-                <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
+                <a href="/index.html">Get Started</a>
               </li>
               <li>
-                <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
+                <a href="articles/index.html">Articles and Demos</a>
               </li>
-							-->
+              <li>
+                <a href="faq/index.html">FAQ</a>
+              </li>
+              <li>
+                <a href="/developers/index.html">Developers</a>
+              </li>
+              <li>
+                <a href="/building/index.html">Building</a>
+              </li>
             </ul>
           </div>
-          <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
-          <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
-          <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
-          <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
+          <!-- end footer-nav -->
+
+          <!-- begin footer-nav -->
+          <div class="footer-nav col-md-2">
+            <h4>Get Involved</h4>
+            <ul>
+              <!--
+              <li>
+                <a href="http://community.jboss.org/en/hawtio?view=discussions">Forums</a>
+              </li>
+              -->
+              <li>
+                <a href="/contributing/index.html">Contributing</a>
+              </li>
+              <li>
+                <a href="/community/index.html">Community</a>
+              </li>
+              <li>
+                <a href="https://github.com/hawtio/hawtio/issues?state=open">Issue Tracker</a>
+              </li>
+              <li>
+                <a href="https://github.com/hawtio/hawtio">Source Code</a>
+              </li>
+              <!--
+              <li>
+                <a href="/community/contributors">Contributors</a>
+              </li>
+              -->
+            </ul>
+          </div>
+          <!-- end footer-nav -->
+
+          <!-- begin sponsor -->
+          <div class="sponser col-md-4">
+            <!-- begin follow-us -->
+            <div class="follow-us">
+              <h4>Stay Informed</h4>
+              <ul>
+                <!--
+                <li>
+                  <a href="https://plus.google.com/100660127586085393031"><img alt="Google+" src="/images/social/googleplus-16.png" title="Follow hawtio on Google+" /></a>
+                </li>
+                -->
+                <li>
+                  <a href="https://twitter.com/#!/search/%23hawtio"><img alt="Twitter" src="/images/social/twitter-16.png" title="Browse the #hawtio hashtag on Twitter" /></a>
+                </li>
+                <!--
+                <li>
+                  <a href="http://www.linkedin.com/groups?gid=3120340"><img alt="LinkedIn" src="/images/social/linkedin-16.png" title="Join the hawtio group on LinkedIn" /></a>
+                </li>
+                <li>
+                  <a href="http://vimeo.com/channels/hawtio"><img alt="Vimeo" src="/images/social/vimeo-16.png" title="Follow the hawtio channel on Vimeo" /></a>
+                </li>
+                -->
+              </ul>
+            </div>
+            <!-- end follow-us -->
+
+            <p>This website is open source! If you want to improve it, <a href="http://github.com/hawtio/hawtio">fork the project</a>, hack on it, then send a pull request. You can also view the <a href="http://www.seethestats.com/site/hawtio">visitor stats</a>.</p>
+            <p class="image"><a href="http://jboss.org"><img src="/images/jboss_redhat_branding.png" class="branding" title="Red Hat, Inc." alt="Red Hat, Inc." /></a></p>
+            <p>hawtio is a <a href="http://jboss.org">JBoss Community</a> project and development is sponsored by Red Hat, Inc.</p>
+            <p class="bottom"><a href="http://www.redhat.com/legal/legal_statement.html">Terms of Use</a> | <a href="http://www.redhat.com/legal/privacy_statement.html">Privacy Policy</a></p>
+          </div>
+        <!-- end sponsor -->
         </div>
-        <a class="visible-desktop" href="#" id="toTop">Top</a>
+        <!-- end footer row -->
+
+        <!-- begin top link row -->
+        <div class="row">
+          <div class="col-md-12">
+            <p class="link-top text-center">
+              <a class="visible-desktop" href="#" id="toTop">Top</a>
+            </p>
+          </div>
+        </div>
+        <!-- end top link row -->
+
       </div>
-    </footer>
-    <script>
+      <!-- end footer container -->
+
+      <div class="container" id="companyfooter">
+        <div class="redhatlogo" style="text-align:center;">
+          <div id="logospacer"></div>
+            <a href="http://www.redhat.com/">
+            <img src="http://static.jboss.org/theme/images/common/redhat_logo.png">
+          </a>
+        </div>
+      </div>
+
+    </div>
+    <!-- end footer -->
+
+
+    <!-- begin scripts -->
+    <script type="text/javascript">
       $(function() {
         $('html').addClass('ready');
         prettify();
@@ -359,10 +455,14 @@ download it from the <a href="https://repository.jboss.org/nexus/content/reposit
         activateToTopControl();
       });
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.2/bootstrap.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <!--
     <script src="/javascripts/prettify.js"></script>
+    -->
+    <!--
     <script src="/javascripts/site.js"></script>
-    <script>
+    -->
+    <script type="text/javascript">
       (function() {
         var po = document.createElement('script'); po.async = true; po.src = 'https://apis.google.com/js/plusone.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
@@ -379,5 +479,6 @@ download it from the <a href="https://repository.jboss.org/nexus/content/reposit
 		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
 		</script>
+    <!-- end scripts -->
   </body>
 </html>
