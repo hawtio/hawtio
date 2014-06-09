@@ -2336,6 +2336,7 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
 
 .pane {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
+  background: #fff;
 }
 
 .pane-header-wrapper {

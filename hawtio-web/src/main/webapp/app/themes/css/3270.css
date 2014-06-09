@@ -123,6 +123,10 @@ span {
   background: #0f0;    
 }
 
+.pane {
+  background: #000;
+}
+
 .tree-header {
   background: #000;
   color: #0f0;
