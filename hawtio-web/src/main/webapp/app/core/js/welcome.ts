@@ -27,7 +27,7 @@ module Core {
         success: function (data, textStatus, jqXHR) {
           $scope.html = "Unable to download welcome.md";
           if (angular.isDefined(data)) {
-            branding.onWelcomePage($scope, data);
+            $scope.html = branding.onWelcomePage(data);
           }
           Core.$apply($scope);
         },

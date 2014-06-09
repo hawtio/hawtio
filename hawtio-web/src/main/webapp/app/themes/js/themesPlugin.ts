@@ -35,9 +35,9 @@ module Themes {
         branding.fullscreenLogin = false;
         branding.favicon = 'favicon.ico';
         branding.welcomePageUrl = 'app/core/doc/welcome.md';
-        branding.onWelcomePage = ($scope, data) => {
-            $scope.html = marked(data);
-          }
+        branding.onWelcomePage = (data) => {
+            return marked(data);
+        };
         return branding;
       }
     },
