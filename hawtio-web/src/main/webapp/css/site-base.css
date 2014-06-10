@@ -327,8 +327,30 @@ ol.inline > li {
   display: inline;
 }
 
-.inline-block {
+.inline-block,
+.list-row-select,
+.list-row-contents,
+.list-row-contents > .ngCellText {
   display: inline-block;
+}
+
+.list-row {
+  height: 30px;
+}
+
+.list-row .ngCellText {
+  padding: 0;
+  vertical-align: middle;
+}
+
+.list-row-select,
+.list-row-contents {
+  height: 100%;
+  vertical-align: middle;
+}
+
+.list-row-select > input {
+  vertical-align: middle;
 }
 
 .no-bottom-margin {
