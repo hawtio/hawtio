@@ -1,5 +1,13 @@
 @import url(http://fonts.googleapis.com/css?family=Marvel:400,700);
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+#ajbossproject {
+  font-family: 'Open Sans';
+  font-size: smaller;
+  font-weight: bold;
+  line-height: 20px;
+}
 
 body {
   font-family: 'Source Sans Pro';
@@ -8,9 +16,8 @@ body {
   color: #333;
 }
 
-
 h1, h2, h3 {
-  font-family: "Marvel", "Trebuchet MS", Arial, sans-serif;
+  font-family: "Marvel";
 }
 
 h2, h3 {
