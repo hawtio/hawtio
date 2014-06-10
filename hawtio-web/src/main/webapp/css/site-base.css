@@ -336,6 +336,7 @@ ol.inline > li {
 
 .list-row {
   height: 30px;
+  white-space: nowrap;
 }
 
 .list-row .ngCellText {
