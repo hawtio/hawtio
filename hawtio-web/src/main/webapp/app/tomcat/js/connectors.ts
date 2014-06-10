@@ -164,10 +164,10 @@ module Tomcat {
       setTimeout(loadData, 50);
     }
 
-        function loadData() {
-          console.log("Loading tomcat connector data...");
-          jolokia.search("Catalina:type=Connector,*", onSuccess(render));
-        }
+      function loadData() {
+        console.log("Loading tomcat connector data...");
+        jolokia.search("*:type=Connector,*", onSuccess(render));
+      }
 
     }
 }

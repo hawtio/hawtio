@@ -267,17 +267,23 @@ module Tomcat {
         function loadData() {
           console.log("Loading tomcat webapp data...");
           // must load connectors first, before showing applications, so we do this call synchronously
-          var connectors = jolokia.search("Catalina:type=Connector,*");
+          var connectors = jolokia.search("*:type=Connector,*");
           if (connectors) {
             var found = false;
             angular.forEach(connectors, function (key, value) {
               var mbean = key;
               if (!found) {
                 var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]});
-                if (data && data.value && data.value.protocol && data.value.protocol.toString().toLowerCase().startsWith("http")) {
-                  found = true;
-                  $scope.httpPort = data.value.port;
-                  $scope.httpScheme = data.value.scheme;
+                if (data && data.value) {
+                  function isHttp(value) {
+                    return value && value.toString().startsWith("http");
+                  }
+
+                  if (isHttp(data.value.protocol) || isHttp(data.value.scheme)) {
+                    found = true;
+                    $scope.httpPort = data.value.port;
+                    $scope.httpScheme = data.value.scheme;
+                  }
                 }
               }
             });
