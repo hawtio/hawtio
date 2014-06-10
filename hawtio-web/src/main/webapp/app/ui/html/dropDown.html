@@ -2,7 +2,7 @@
 
   <script type="text/ng-template" id="withsubmenus.html">
     <span class="hawtio-dropdown dropdown" ng-class="open(config)" ng-click="action(config, $event)">
-      <i ng-class="icon(config)"></i>&nbsp;{{config.title}}
+      <i ng-class="icon(config)"></i>&nbsp;<span ng-bind="config.title"></span>
       <span ng-show="config.items" ng-hide="config.submenu" class="caret"></span>
       <span ng-show="config.items && config.submenu" class="submenu-caret"></span>
 
@@ -15,13 +15,13 @@
 
   <script type="text/ng-template" id="withoutsubmenus.html">
     <span class="hawtio-dropdown dropdown" ng-class="open(config)" ng-click="action(config, $event)">
-      <i ng-class="icon(config)"></i>&nbsp;{{config.title}}
+      <i ng-class="icon(config)"></i>&nbsp;<span ng-bind="config.title"></span>
       <span ng-show="config.items && config.items.length > 0" class="caret"></span>
 
       <ul ng-hide="config.action" ng-show="config.items" class="dropdown-menu" ng-class="submenu(config)">
         <li ng-repeat="item in config.items track by $index">
           <span class="menu-item" ng-click="action(item, $event)">
-            <i ng-class="icon(item)"></i>&nbsp;{{item.title}}
+            <i ng-class="icon(item)"></i>&nbsp;<span ng-bind="item.title"></span>
             <span ng-show="item.items" class="submenu-caret"></span>
           </span>
         </li>

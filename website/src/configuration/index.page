@@ -5,8 +5,8 @@ title: configure your hawtio
     <div class="row">
       <div class="col-md-12">
       <h1>Configuration</h1>
-${unescape(loadText(new FileInputStream("../docs/Configuration.md")))}
-      </div>
-    </div>
+  ${unescape(loadText(new FileInputStream("../docs/Configuration.md")))}
   </div>
+    </div>
+      </div>
 

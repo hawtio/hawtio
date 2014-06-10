@@ -6,7 +6,7 @@ title: hawtio FAQ
       <div class="col-md-12">
       <h1>FAQ</h1>
 ${unescape(loadText(new FileInputStream("../FAQ.md")))}
-      </div>
-    </div>
   </div>
+    </div>
+      </div>
 

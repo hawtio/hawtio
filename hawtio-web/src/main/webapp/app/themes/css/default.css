@@ -1398,6 +1398,7 @@ img.nodeIcon:hover {
 }
 
 .pane {
+  background: #fff;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
 }
 

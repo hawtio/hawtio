@@ -27,6 +27,19 @@ h2:first-child {
   margin-top: 0;
 }
 
+ul > li {
+  list-style-type: circle;
+  margin-bottom: 0.5em;
+}
+
+.footer ul > li {
+  margin-bottom: auto;
+}
+
+.section h2:first-child {
+  margin-top: 2em;
+}
+
 .jumbotron {
   background: none;
 }

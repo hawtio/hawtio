@@ -663,6 +663,7 @@ td.deleting {
 }
 
 .pane {
+  background: #222222;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
 }
 

@@ -34,6 +34,10 @@ module Themes {
         branding.logoOnly = true;
         branding.fullscreenLogin = false;
         branding.favicon = 'favicon.ico';
+        branding.welcomePageUrl = 'app/core/doc/welcome.md';
+        branding.onWelcomePage = (data) => {
+            return marked(data);
+        };
         return branding;
       }
     },
@@ -42,6 +46,7 @@ module Themes {
       setFunc: (branding) => {
         branding.appName = 'Example';
         branding.logoOnly = false;
+        branding.welcomePageUrl = 'app/themes/doc/welcome_example.md'; 
         return branding;
       }
     }
