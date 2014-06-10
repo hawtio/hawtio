@@ -51,6 +51,9 @@ module Fabric {
     Core.pathSet(schema, ['properties','version', 'type'], 'hidden');
 
     Core.pathSet(schema.properties, ['name', 'label'], 'Container Name');
+    Core.pathSet(schema.properties, ['name', 'container-name-available'], 'true');
+
+
     Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
 
     Core.pathSet(schema.properties, ['number', 'label'], 'Number of containers');
