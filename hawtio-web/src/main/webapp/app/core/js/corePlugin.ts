@@ -4,6 +4,11 @@
  * @module Core
  * @main Core
  */
+
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="workspace.ts"/>
+/// <reference path="coreHelpers.ts"/>
+
 module Core {
 
   /**
@@ -32,65 +37,51 @@ module Core {
 
   export var templatePath = 'app/core/html/';
 
-}
 
-// Add any other known possible jolokia URLs here
-var jolokiaUrls:string[] = [
-  url("jolokia"),    // instance configured by hawtio-web war file
-  "/jolokia"         // instance that's already installed in a karaf container for example
-];
+  // Add any other known possible jolokia URLs here
+  var jolokiaUrls:string[] = [
+    url("jolokia"),    // instance configured by hawtio-web war file
+    "/jolokia"         // instance that's already installed in a karaf container for example
+  ];
 
-var jolokiaUrl = getJolokiaUrl();
-console.log("jolokiaUrl " + jolokiaUrl);
+  export var jolokiaUrl = getJolokiaUrl();
+  console.log("jolokiaUrl " + jolokiaUrl);
 
-function getJolokiaUrl() {
-  var query = hawtioPluginLoader.parseQueryString();
-  var localMode = query['localMode'];
-  if (localMode) {
-    console.log("local mode so not using jolokia URL");
-    jolokiaUrls = [];
-    return null;
+  function getJolokiaUrl() {
+    var query = hawtioPluginLoader.parseQueryString();
+    var localMode = query['localMode'];
+    if (localMode) {
+      console.log("local mode so not using jolokia URL");
+      jolokiaUrls = [];
+      return null;
+    }
+    var uri = query['url'];
+    if (angular.isArray(uri)) {
+      uri = uri[0];
+    }
+    return uri ? decodeURIComponent(uri) : null;
   }
-  var uri = query['url'];
-  if (angular.isArray(uri)) {
-    uri = uri[0];
-  }
-  return uri ? decodeURIComponent(uri) : null;
-}
 
-if (!jolokiaUrl) {
-  jolokiaUrl = <string>jolokiaUrls.find(function (url) {
-    var jqxhr = $.ajax(url, {
-      async: false,
-      username: 'public',
-      password: 'biscuit'
+  if (!jolokiaUrl) {
+    jolokiaUrl = <string>jolokiaUrls.find(function (url) {
+      var jqxhr = $.ajax(url, {
+        async: false,
+        username: 'public',
+        password: 'biscuit'
+      });
+      return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
     });
-    return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
-  });
-}
+  }
 
-// bootstrap plugin loader
-hawtioPluginLoader.addUrl(url("/plugin"));
+  // bootstrap plugin loader
+  hawtioPluginLoader.addUrl(url("/plugin"));
 
-if (jolokiaUrl) {
-  // TODO replace with a jolokia call so we use authentication headers
-  //hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
-}
+  if (jolokiaUrl) {
+    // TODO replace with a jolokia call so we use authentication headers
+    //hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
+  }
 
-/*
-interface IMyAppScope extends ng.IRootScopeService, ng.IScope {
-  lineCount: (value:any) => number;
-  params: ng.IRouteParamsService;
-  is: (type:any, value:any) => boolean;
-  empty: (value:any) => boolean;
-  log: (variable:string) => void;
-  alert: (text:string) => void;
-}
-*/
-
-hawtioPluginLoader.addModule(Core.pluginName);
-
-var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
+  export var _module = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
         config(($routeProvider, $dialogProvider) => {
 
           $dialogProvider.options({
@@ -112,39 +103,6 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         }).
         constant('layoutTree', Core.templatePath + 'layoutTree.html').
         constant('layoutFull', Core.templatePath + 'layoutFull.html').
-        service('localStorage',function () {
-          return Core.getLocalStorage();
-        }).
-
-        factory('pageTitle', function () {
-          var answer = new Core.PageTitle();
-          return answer;
-        }).
-
-        factory('viewRegistry',function () {
-          return {};
-        }).
-
-        factory('lastLocation', function () {
-          return {};
-        }).
-
-        factory('postLoginTasks', function() {
-          return Core.postLoginTasks;
-        }).
-
-        factory('preLogoutTasks', () => {
-          return Core.preLogoutTasks;
-        }).
-
-        factory('helpRegistry', function($rootScope) {
-          return new Core.HelpRegistry($rootScope);
-        }).
-
-        factory('preferencesRegistry', () => {
-          return new Core.PreferencesRegistry();
-        }).
-
         factory('jolokiaUrl', function() {
           return jolokiaUrl;
         }).
@@ -324,8 +282,9 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
             jolokia.stop();
             return jolokia;
           } else {
-            // empty jolokia that returns nothing
-            return {
+
+            var answer = {
+              running: false,
               request: () => null,
               register: () => null,
               list: () => null,
@@ -334,31 +293,21 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
               execute: () => null,
 
               start: () => {
-                this.running = true;
+                answer.running = true;
                 return null;
               },
               stop: () => {
-                this.running = false;
+                answer.running = false;
                 return null;
               },
-              isRunning: () => this.running,
+              isRunning: () => answer.running,
               jobs: () => []
+
             };
+
+            // empty jolokia that returns nothing
+            return answer;          
           }
-        }).
-        factory('toastr', () => {
-          var win: any = window;
-          var answer: any = win.toastr;
-          if (!answer) {
-            // lets avoid any NPEs
-            answer = {};
-            win.toaster = answer;
-          }
-          return answer;
-        }).
-        factory('xml2json', ($window) => {
-          var jquery:any = $;
-          return jquery.xml2json;
         }).
         factory('workspace',($location:ng.ILocationService, jmxTreeLazyLoadRegistry, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope, userDetails) => {
           var answer = new Workspace(jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
@@ -600,6 +549,8 @@ var hawtioCoreModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource
         })
   ;
 
+}; // end module Core
+
 String.prototype.unescapeHTML = function() {
     var txt = document.createElement("textarea");
     txt.innerHTML = this;
@@ -607,8 +558,8 @@ String.prototype.unescapeHTML = function() {
 };
 
 // for chrome packaged apps lets enable chrome-extension pages
-if (hawtioCoreModule && Core.isChromeApp()) {
-  hawtioCoreModule.config([
+if (Core._module && Core.isChromeApp()) {
+  Core._module.config([
     '$compileProvider',
     function ($compileProvider) {
       //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
@@ -618,6 +569,7 @@ if (hawtioCoreModule && Core.isChromeApp()) {
   ]);
 }
 
+hawtioPluginLoader.addModule(Core.pluginName);
 
 // enable bootstrap tooltips
 $(function () {
@@ -634,8 +586,8 @@ var adjustHeight = function () {
   $("#main").css("min-height", "" + containerHeight + "px");
 };
 
-$(function () {
-  hawtioPluginLoader.loadPlugins(function () {
+$(() => {
+  hawtioPluginLoader.loadPlugins(() => {
     var doc = $(document);
     angular.bootstrap(doc, hawtioPluginLoader.getModules());
     $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");

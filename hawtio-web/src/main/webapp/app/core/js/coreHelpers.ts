@@ -1,3 +1,6 @@
+
+/// <reference path="../../baseHelpers.ts"/>
+
 // TODO Get these functions and variables out of the global namespace
 var _urlPrefix: string = null;
 
