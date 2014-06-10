@@ -835,6 +835,10 @@ table.dataTable tbody tr td {
   margin-top: 40px;
 }
 
+.wiki-fixed .pane {
+  top: 105px;
+}
+
 .help-sidebar li {
   padding-left: 2px;
   padding-right: 2px;

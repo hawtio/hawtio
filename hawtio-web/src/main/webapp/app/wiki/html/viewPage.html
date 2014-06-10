@@ -34,12 +34,13 @@
 
   <div class="wiki-fixed form-horizontal">
 
-    <div class="row-fluid">
-      <div class="span3" ng-hide="!children">
-        <div class="wiki-grid" hawtio-list="gridOptions"></div>
-      </div>
+    <hawtio-pane position="left" width="300">
+      <div class="wiki-grid" hawtio-list="gridOptions"></div>
+    </hawtio-pane>
 
-      <div ng-class="displayClass()">
+    <div class="row-fluid">
+
+      <div ng-class="span12">
         <div ng-hide="!showProfileHeader">
           <div class="row-fluid">
             <div class="span12">

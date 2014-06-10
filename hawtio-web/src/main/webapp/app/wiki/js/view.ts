@@ -11,7 +11,19 @@ module Wiki {
     }, 100);
   }
 
-  export function ViewController($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) {
+  export function ViewController($scope, 
+                                 $location, 
+                                 $routeParams, 
+                                 $route, 
+                                 $http, 
+                                 $timeout, 
+                                 workspace:Workspace, 
+                                 marked, 
+                                 fileExtensionTypeRegistry, 
+                                 wikiRepository:GitWikiRepository, 
+                                 $compile, 
+                                 $templateCache, 
+                                 jolokia) {
 
     var log:Logging.Logger = Logger.get("Wiki");
 
@@ -20,6 +32,8 @@ module Wiki {
     $scope.fabricTopLevel = "fabric/profiles/";
 
     $scope.versionId = $scope.branch;
+
+    $scope.paneTemplate = '';
 
     $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
     $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
@@ -642,6 +656,7 @@ module Wiki {
 
       $scope.isFile = false;
       if ($scope.children) {
+        $scope.$broadcast('pane.open');
         // if we have a readme then lets render it...
         var item = $scope.children.find((info) => {
           var name = (info.name || "").toLowerCase();
@@ -656,6 +671,7 @@ module Wiki {
           });
         }
       } else {
+        $scope.$broadcast('pane.close');
         var pageName = $scope.pageId;
         viewContents(pageName, contents);
         $scope.isFile = true;
