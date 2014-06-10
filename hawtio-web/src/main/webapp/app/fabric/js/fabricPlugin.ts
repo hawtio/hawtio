@@ -169,19 +169,39 @@ module Fabric {
     directive('fabricVersionLink', (workspace, jolokia, localStorage) => {
         return {
             restrict: 'A',
-            link: ($scope, $element, $attrs) => {
-            var versionLink = $attrs['fabricVersionLink'];
+              link: ($scope, $element, $attrs) => {
+                  var versionLink = $attrs['fabricVersionLink'];
 
-            if (versionLink && !versionLink.isBlank() && Fabric.fabricCreated(workspace)) {
-              var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
-              var versionId = container['versionId'] || "1.0";
-              if (versionId && !versionId.isBlank()) {
-                var url = "#/wiki/branch/" + versionId + "/" + Core.trimLeading(versionLink, "/");
-                $element.attr('href', url);
+                  if (versionLink && !versionLink.isBlank() && Fabric.fabricCreated(workspace)) {
+                      var container = Fabric.getCurrentContainer(jolokia, ['versionId']);
+                      var versionId = container['versionId'] || "1.0";
+                      if (versionId && !versionId.isBlank()) {
+                          var url = "#/wiki/branch/" + versionId + "/" + Core.trimLeading(versionLink, "/");
+                          $element.attr('href', url);
+                      }
+                  }
               }
-            }
-          }
-        }
+         }
+      }).
+    directive('containerNameAvailable', (workspace, jolokia, localStorage) => {
+        return {
+              restrict: 'A',
+              require: 'ngModel',
+              link: ($scope, $element, $attrs, $ctrl) => {
+                  $ctrl.$parsers.unshift(function(viewValue) {
+                      var found = $scope.child.rootContainers.indexOf(viewValue);
+                      if (found !== -1) {
+                          // it is invalid, return undefined (no model update)
+                          $ctrl.$setValidity('taken', false);
+                          return undefined;
+                      } else {
+                          // it is valid
+                          $ctrl.$setValidity('taken', true);
+                          return viewValue;
+                      }
+                  });
+              }
+         }
     }).
     factory('serviceIconRegistry', () => {
         return Fabric.serviceIconRegistry;
