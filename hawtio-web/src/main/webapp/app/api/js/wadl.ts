@@ -1,9 +1,10 @@
 /**
  * @module API
  */
+/// <reference path="apiPlugin.ts"/>
 module API {
 
-  export function WadlViewController($scope, $location, $http, jolokia) {
+  _module.controller("API.WadlViewController", ["$scope", "$location", "$http", "jolokia", ($scope, $location, $http, jolokia) => {
 
     API.initScope($scope, $location, jolokia);
 
@@ -210,5 +211,5 @@ module API {
       //log.info("API docs: " + JSON.stringify($scope.apidocs, null, "  "));
       Core.$apply($scope);
     }
-  }
+  }]);
 }

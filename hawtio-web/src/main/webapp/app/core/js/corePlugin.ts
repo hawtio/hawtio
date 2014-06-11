@@ -68,7 +68,22 @@ module Core {
   _module.filter('humanizeMs', () => Core.humanizeMilliseconds);
   _module.filter('maskPassword', () => Core.maskPassword);
 
-  _module.run(($rootScope,
+  _module.run(["$rootScope", 
+               "$routeParams", 
+               "jolokia", 
+               "workspace", 
+               "localStorage", 
+               "viewRegistry", 
+               "layoutFull", 
+               "helpRegistry", 
+               "pageTitle", 
+               "branding", 
+               "toastr", 
+               "userDetails", 
+               "preferencesRegistry", 
+               "postLoginTasks", 
+               "preLogoutTasks", 
+               ($rootScope,
                $routeParams,
                jolokia,
                workspace,
@@ -212,7 +227,7 @@ module Core {
         $(window).trigger('resize');
       });
     }, 500);
-  }); // end _module.run
+  }]); // end _module.run
 }; // end module Core
 
 // bootstrap plugin loader
