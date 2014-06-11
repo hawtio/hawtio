@@ -146,8 +146,9 @@ module Core {
         fileInput.change(onFileChange);
       }
     };
-  }
+  } // end class FileUpload
 
+  // now add this directive to the module
   _module.directive('hawtioFileUpload', () => {
     return new Core.FileUpload();
   });

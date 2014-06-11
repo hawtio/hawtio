@@ -1,8 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
+  // TODO - these need to go in favor of having them in userDetails
   export var username: string = null;
   export var password: string = null;
 
@@ -20,7 +22,7 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  export function LoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
+  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "postLoginTasks", ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
     jolokia.stop();
 
     $scope.entity = {
@@ -107,5 +109,5 @@ module Core {
         }
       }
     }
-  }
+  }]);
 }

@@ -1,12 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
-  export function WelcomeController($scope, 
-                                    $location, 
-                                    branding, 
-                                    localStorage) {
+  _module.controller("Core.WelcomeController", ["$scope", "$location", "branding", "localStorage", ($scope, $location, branding, localStorage) => {
     $scope.branding = branding;
 
     var log:Logging.Logger = Logger.get("Welcome");
@@ -37,8 +35,5 @@ module Core {
         }
       });
     });
-
-
-  }
-
+  }]);
 }

@@ -1,9 +1,11 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
+/// <reference path="preferenceHelpers.ts"/>
 module Core {
 
-  export function CorePreferences($scope, localStorage) {
+  _module.controller("Core.CorePreferences", ["$scope", "localStorage", ($scope, localStorage) => {
 
     Core.initPreferenceScope($scope, localStorage, {
       'updateRate': {
@@ -82,6 +84,6 @@ module Core {
       $scope.regexs[index + 1] = tmp
     };
 
-  }
+  }]);
 
 }

@@ -1,8 +1,11 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
+/// <reference path="preferenceHelpers.ts"/>
 module Core {
-  export function LoggingPreferences($scope) {
+
+  _module.controller("Core.LoggingPreferences", ["$scope", ($scope) => {
     Core.initPreferenceScope($scope, localStorage, {
       'logBuffer': {
         'value': 100,
@@ -20,6 +23,5 @@ module Core {
         }
       }
     });
-
-  }
+  }]);
 }

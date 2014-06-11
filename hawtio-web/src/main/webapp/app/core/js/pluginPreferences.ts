@@ -1,9 +1,11 @@
 /**
  * module Core
  */
-
+/// <reference path="corePlugin.ts"/>
+/// <reference path="preferenceHelpers.ts"/>
 module Core {
-	export function PluginPreferences($scope, localStorage, $location, workspace, jolokia) {
+
+	_module.controller("Core.PluginPreferences", ["$scope", "localStorage", "$location", "workspace", "jolokia", ($scope, localStorage, $location, workspace, jolokia) => {
 
 		Core.initPreferenceScope($scope, localStorage, {
 			'autoRefresh': {
@@ -110,5 +112,5 @@ module Core {
     // and force update the ui
     Core.$apply($scope);
 
-	};
+	}]);
 }

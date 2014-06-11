@@ -1,9 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
-  export function AboutController($scope, $location, jolokia, branding, localStorage) {
+  _module.controller("Core.AboutController", ["$scope", "$location", "jolokia", "branding", "localStorage", ($scope, $location, jolokia, branding, localStorage) => {
 
     var log:Logging.Logger = Logger.get("About");
 
@@ -40,6 +41,6 @@ module Core {
         Core.$apply($scope);
       }
     })
-  }
+  }]);
 
 }

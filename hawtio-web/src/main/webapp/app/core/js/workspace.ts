@@ -1,6 +1,8 @@
 /**
  * @module Core
  */
+
+/// <reference path="corePlugin.ts"/>
 module Core {
   /**
    * @class MenuItem
@@ -12,6 +14,39 @@ module Core {
     isActive?: (Workspace) => boolean;
     href: () => any;
   }
+
+  // these have to match up, so a little easier to grok formatted like this
+  _module.factory('workspace',["$location", 
+                               "jmxTreeLazyLoadRegistry", 
+                               "$compile", 
+                               "$templateCache", 
+                               "localStorage", 
+                               "jolokia", 
+                               "jolokiaStatus", 
+                               "$rootScope", 
+                               "userDetails", 
+                               ($location:ng.ILocationService, 
+                                jmxTreeLazyLoadRegistry, 
+                                $compile:ng.ICompileService, 
+                                $templateCache:ng.ITemplateCacheService, 
+                                localStorage:WindowLocalStorage, 
+                                jolokia, 
+                                jolokiaStatus,
+                                $rootScope, 
+                                userDetails) => {
+
+    var answer = new Workspace(jolokia, 
+                               jolokiaStatus, 
+                               jmxTreeLazyLoadRegistry, 
+                               $location, 
+                               $compile, 
+                               $templateCache, 
+                               localStorage, 
+                               $rootScope, 
+                               userDetails);
+    answer.loadTree();
+    return answer;
+  }]);
 
   /**
    * @class Workspace
@@ -869,6 +904,7 @@ module Core {
       return this.hasDomainAndProperties('osgi.compendium');
     }
   }
+
 
 }
 

@@ -1,12 +1,13 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
   // NOTE - $route is brought in here to ensure the factory for that service
   // has been called, otherwise the ng-include directive doesn't show the partial
   // after a refresh until you click a top-level link.
-  export function ViewController($scope, $route, $location:ng.ILocationService, layoutTree, layoutFull, viewRegistry) {
+  _module.controller("Core.ViewController", ["$scope", "$route", "$location", "layoutTree", "layoutFull", "viewRegistry", ($scope, $route, $location:ng.ILocationService, layoutTree, layoutFull, viewRegistry) => {
 
     findViewPartial();
 
@@ -27,7 +28,7 @@ module Core {
                 answer = value;
               }
             } catch (e) {
-              console.log("Invalid RegExp " + text + " for viewRegistry value: " + value);
+              log.debug("Invalid RegExp " + text + " for viewRegistry value: " + value);
             }
           } else {
             if (path.startsWith(key)) {
@@ -36,7 +37,7 @@ module Core {
           }
         }
       });
-      //console.log("Searching for: " + path + " returning: ", answer);
+      //log.debug("Searching for: " + path + " returning: ", answer);
       return answer;
     }
 
@@ -62,8 +63,8 @@ module Core {
       }
       $scope.viewPartial = answer;
 
-      console.log("Using view partial: " + answer);
+      log.debug("Using view partial: " + answer);
       return answer;
     }
-  }
+  }]);
 }

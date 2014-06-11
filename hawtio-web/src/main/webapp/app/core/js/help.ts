@@ -1,8 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
-  export function HelpController($scope, $routeParams, marked, helpRegistry, branding) {
+
+  _module.controller("Core.HelpController", ["$scope", "$routeParams", "marked", "helpRegistry", "branding", ($scope, $routeParams, marked, helpRegistry, branding) => {
 
     $scope.branding = branding;
     $scope.topics = helpRegistry.getTopics();
@@ -110,5 +112,5 @@ module Core {
         }
       })
     }
-  }
+  }]);
 }

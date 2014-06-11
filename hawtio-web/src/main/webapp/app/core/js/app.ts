@@ -1,6 +1,7 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
   /**
@@ -14,7 +15,7 @@ module Core {
    * @param {*} $element
    * @param {*} $templateCache
    */
-  export function ConsoleController($scope, $element, $templateCache) {
+  _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
 
     $scope.setHandler = (clip) => {
 
@@ -52,8 +53,7 @@ module Core {
         $element.find('#log-panel-statements').children().remove();
       }
     };
-
-  }
+  }]);
 
   /**
    * Outermost controller attached to almost the root of the document, handles
@@ -75,7 +75,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export function AppController($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
+  _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) => {
     if (!userDetails) {
       userDetails = {};
     }
@@ -285,6 +285,6 @@ module Core {
     function defaultPage() {
       return Perspective.defaultPage($location, workspace, jolokia, localStorage);
     }
-  }
+  }]);
 
 }

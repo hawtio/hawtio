@@ -1,6 +1,7 @@
 /**
  * @module Core
  */
+/// <reference path="coreHelpers.ts"/>
 module Core {
 
    /**

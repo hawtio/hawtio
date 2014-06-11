@@ -1,8 +1,9 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
  module Core {
-  export function ResetPreferences($scope, userDetails, jolokiaUrl, localStorage) {
+  _module.controller("Core.ResetPreferences", ["$scope", "userDetails", "jolokiaUrl", "localStorage", ($scope, userDetails, jolokiaUrl, localStorage) => {
     $scope.doReset = () => {
 
       log.info("Resetting");
@@ -19,6 +20,5 @@
         logout(jolokiaUrl, userDetails, localStorage, $scope, doReset);
       }
     };
-
-  }
+  }]);
  }

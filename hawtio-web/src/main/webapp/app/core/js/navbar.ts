@@ -1,9 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {
+  _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) => {
 
     $scope.hash = workspace.hash();
     $scope.topLevelTabs = [];
@@ -208,6 +209,6 @@ module Core {
         Core.$apply($scope);
       }
     }
-  }
+  }]);
 
 }
