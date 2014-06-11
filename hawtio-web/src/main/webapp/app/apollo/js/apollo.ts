@@ -1,5 +1,6 @@
+/// <referencePath="apolloPlugin.ts"/>
 module Apollo {
-  export function ApolloController($scope, $http, $location, localStorage, workspace:Workspace) {
+  _module.controller("Apollo.ApolloController", ["$scope", "$http", "$location", "localStorage", "workspace", ($scope, $http, $location, localStorage, workspace:Workspace) => {
     var jolokia = workspace.jolokia;
     $scope.broker = {}
     $scope.online = true
@@ -87,5 +88,5 @@ module Apollo {
     $scope.$watch('online', ()=>{
       // alert("online: "+$scope.online)
     });
-  }
+  }]);
 }
