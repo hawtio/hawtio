@@ -3,6 +3,15 @@
 */
 var Core;
 (function (Core) {
+    // use a better implementation of unescapeHTML
+    String.prototype.unescapeHTML = function () {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = this;
+        return txt.value;
+    };
+
+    // add object.keys if we don't have it, used
+    // in a few places
     if (!Object.keys) {
         Object.keys = function (obj) {
             var keys = [], k;
@@ -14,6 +23,68 @@ var Core;
             return keys;
         };
     }
+
+    // Add any other known possible jolokia URLs here
+    var jolokiaUrls = [
+        url("jolokia"),
+        "/jolokia"
+    ];
+
+    function getJolokiaUrl() {
+        var query = hawtioPluginLoader.parseQueryString();
+        var localMode = query['localMode'];
+        if (localMode) {
+            console.log("local mode so not using jolokia URL");
+            jolokiaUrls = [];
+            return null;
+        }
+        var uri = query['url'];
+        if (angular.isArray(uri)) {
+            uri = uri[0];
+        }
+        var answer = uri ? decodeURIComponent(uri) : null;
+        if (!answer) {
+            answer = jolokiaUrls.find(function (url) {
+                var jqxhr = $.ajax(url, {
+                    async: false,
+                    username: 'public',
+                    password: 'biscuit'
+                });
+                return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
+            });
+        }
+        return answer;
+    }
+    Core.getJolokiaUrl = getJolokiaUrl;
+
+    /**
+    * Ensure our main app container takes up at least the viewport
+    * height
+    */
+    function adjustHeight() {
+        var windowHeight = $(window).height();
+        var headerHeight = $("#main-nav").height();
+        var containerHeight = windowHeight - headerHeight;
+        $("#main").css("min-height", "" + containerHeight + "px");
+    }
+    Core.adjustHeight = adjustHeight;
+    ;
+
+    /**
+    * Returns true if we are running inside a Chrome app or extension
+    */
+    function isChromeApp() {
+        var answer = false;
+        try  {
+            answer = (chrome && chrome.app && chrome.extension) ? true : false;
+        } catch (e) {
+            answer = false;
+        }
+
+        //log.info("isChromeApp is: " + answer);
+        return answer;
+    }
+    Core.isChromeApp = isChromeApp;
 
     /**
     * Adds the specified CSS file to the document's head, handy
