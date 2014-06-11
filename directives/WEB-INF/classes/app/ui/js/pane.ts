@@ -43,15 +43,27 @@ module UI {
           $element.parent().css($scope.padding, $element.width() + "px");
         };
 
+
+        $scope.open = () => {
+          $scope.setWidth($scope.width);
+        }
+
+        $scope.close = () => {
+          $scope.width = $element.width();
+          $scope.setWidth(6);
+        }
+
+        $scope.$on('pane.close', $scope.close);
+        $scope.$on('pane.open', $scope.open);
+
         $scope.toggle = () => {
           if ($scope.moving) {
             return;
           }
           if ($element.width() > 6) {
-            $scope.width = $element.width();
-            $scope.setWidth(6);
+            $scope.close();
           } else {
-            $scope.setWidth($scope.width);
+            $scope.open();
           }
         };
 

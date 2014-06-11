@@ -73,6 +73,8 @@ module UI {
       return UI.hawtioIcon();
     }).directive('hawtioPane', () => {
       return UI.hawtioPane();
+    }).directive('hawtioList', ($templateCache, $compile) => {
+      return UI.hawtioList($templateCache, $compile);
     }).filter('hawtioGroupBy', () => {
       return UI.groupBy();
     }).directive('compile', ['$compile', ($compile) => {

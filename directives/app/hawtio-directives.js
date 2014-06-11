@@ -3287,15 +3287,26 @@ var UI;
                     $element.parent().css($scope.padding, $element.width() + "px");
                 };
 
+                $scope.open = function () {
+                    $scope.setWidth($scope.width);
+                };
+
+                $scope.close = function () {
+                    $scope.width = $element.width();
+                    $scope.setWidth(6);
+                };
+
+                $scope.$on('pane.close', $scope.close);
+                $scope.$on('pane.open', $scope.open);
+
                 $scope.toggle = function () {
                     if ($scope.moving) {
                         return;
                     }
                     if ($element.width() > 6) {
-                        $scope.width = $element.width();
-                        $scope.setWidth(6);
+                        $scope.close();
                     } else {
-                        $scope.setWidth($scope.width);
+                        $scope.open();
                     }
                 };
 
@@ -4007,6 +4018,114 @@ var CodeEditor;
 */
 var UI;
 (function (UI) {
+    function findParentWith($scope, attribute) {
+        if (attribute in $scope) {
+            return $scope;
+        }
+        if (!$scope.$parent) {
+            return null;
+        }
+
+        // let's go up the scope tree
+        return findParentWith($scope.$parent, attribute);
+    }
+    UI.findParentWith = findParentWith;
+
+    function hawtioList($templateCache, $compile) {
+        return {
+            restrict: '',
+            replace: true,
+            templateUrl: UI.templatePath + 'list.html',
+            scope: {
+                'config': '=hawtioList'
+            },
+            link: function ($scope, $element, $attr) {
+                $scope.rows = [];
+                $scope.name = "hawtioListScope";
+
+                if (!$scope.config.selectedItems) {
+                    $scope.config.selectedItems = [];
+                }
+
+                $scope.$watch('rows', function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        $scope.config.selectedItems.length = 0;
+                        var selected = $scope.rows.findAll(function (row) {
+                            return row.selected;
+                        });
+                        selected.forEach(function (row) {
+                            $scope.config.selectedItems.push(row.entity);
+                        });
+                    }
+                }, true);
+
+                $scope.cellTemplate = $templateCache.get('cellTemplate.html');
+                $scope.rowTemplate = $templateCache.get('rowTemplate.html');
+
+                var columnDefs = $scope.config['columnDefs'];
+                if (columnDefs && columnDefs.length > 0) {
+                    var def = columnDefs.first();
+                    if (def['cellTemplate']) {
+                        $scope.cellTemplate = def['cellTemplate'];
+                    }
+                }
+
+                var configName = $attr['hawtioList'];
+                var dataName = $scope.config['data'];
+
+                if (Core.isBlank(configName) || Core.isBlank(dataName)) {
+                    return;
+                }
+
+                $scope.listRoot = function () {
+                    return $element.find('.list-root');
+                };
+
+                $scope.getContents = function (row) {
+                    //first make our row
+                    var innerScope = $scope.$new();
+                    innerScope.row = row;
+                    var rowEl = $compile($scope.rowTemplate)(innerScope);
+
+                    //now compile the cell but use the parent scope
+                    var innerParentScope = $scope.parentScope.$new();
+                    innerParentScope.row = row;
+                    var cellEl = $compile($scope.cellTemplate)(innerParentScope);
+                    $(rowEl).find('.list-row-contents').append(cellEl);
+                    return rowEl;
+                };
+
+                $scope.setRows = function (data) {
+                    $scope.rows = [];
+                    var list = $scope.listRoot();
+                    list.empty();
+                    if (data) {
+                        data.forEach(function (row) {
+                            var newRow = {
+                                entity: row
+                            };
+                            list.append($scope.getContents(newRow));
+                            $scope.rows.push(newRow);
+                        });
+                    }
+                };
+
+                // find the parent scope that has our configuration
+                var parentScope = findParentWith($scope, configName);
+                if (parentScope) {
+                    $scope.parentScope = parentScope;
+                    parentScope.$watch(dataName, $scope.setRows, true);
+                }
+            }
+        };
+    }
+    UI.hawtioList = hawtioList;
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+var UI;
+(function (UI) {
     var SlideOut = (function () {
         function SlideOut() {
             this.restrict = 'A';
@@ -4305,6 +4424,8 @@ var UI;
         return UI.hawtioIcon();
     }).directive('hawtioPane', function () {
         return UI.hawtioPane();
+    }).directive('hawtioList', function ($templateCache, $compile) {
+        return UI.hawtioList($templateCache, $compile);
     }).filter('hawtioGroupBy', function () {
         return UI.groupBy();
     }).directive('compile', [
