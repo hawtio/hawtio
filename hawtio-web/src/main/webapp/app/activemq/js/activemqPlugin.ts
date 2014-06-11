@@ -2,10 +2,14 @@
  * @module ActiveMQ
  * @main ActiveMQ
  */
+/// <reference path="activemqHelpers.ts"/>
 module ActiveMQ {
-  var pluginName = 'activemq';
 
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']).config(($routeProvider) => {
+  export var pluginName = 'activemq';
+
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']);
+    
+  _module.config(($routeProvider) => {
     $routeProvider.
             when('/activemq/browseQueue', {templateUrl: 'app/activemq/html/browseQueue.html'}).
             when('/activemq/diagram', {templateUrl: 'app/activemq/html/brokerDiagram.html', reloadOnSearch: false}).
@@ -17,8 +21,9 @@ module ActiveMQ {
             when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
             when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'}).
             when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'})
-  }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry) => {
+  });
+
+  _module.run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry) => {
 
             viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
             helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', () => {

@@ -1,5 +1,6 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function JobSchedulerController($scope, workspace:Workspace, jolokia) {
+  _module.controller("ActiveMQ.JobSchedulerController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
     $scope.refresh = loadTable;
 
@@ -117,6 +118,5 @@ module ActiveMQ {
       notification("success", $scope.message);
       setTimeout(loadTable, 50);
     }
-
-  }
+  }]);
 }

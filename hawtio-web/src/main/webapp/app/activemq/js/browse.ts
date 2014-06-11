@@ -1,5 +1,6 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function BrowseQueueController($scope, workspace:Workspace, jolokia, localStorage) {
+  _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
 
     $scope.searchText = '';
 
@@ -353,5 +354,5 @@ module ActiveMQ {
         operationSuccess();
         workspace.loadTree();
     }
-  }
+  }]);
 }

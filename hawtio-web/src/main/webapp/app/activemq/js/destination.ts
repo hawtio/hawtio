@@ -1,5 +1,6 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function DestinationController($scope, workspace:Workspace, jolokia) {
+  _module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
     $scope.message = "";
     $scope.queueType = 'true';
@@ -121,5 +122,5 @@ module ActiveMQ {
       }
       return null;
     }
-  }
+  }]);
 }

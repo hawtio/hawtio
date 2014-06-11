@@ -1,8 +1,9 @@
 /**
  * @module ActiveMQ
  */
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function PreferencesController($scope, localStorage, userDetails, $rootScope) {
+  _module.controller("ActiveMQ.PreferencesController", ["$scope", "localStorage", "userDetails", "$rootScope", ($scope, localStorage, userDetails, $rootScope) => {
 
     Core.initPreferenceScope($scope, localStorage, {
         'activemqUserName': {
@@ -25,5 +26,5 @@ module ActiveMQ {
         }
       });
 
-  }
+  }]);
 }

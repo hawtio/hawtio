@@ -1,6 +1,7 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
 
-  export function BrokerDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
+  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -785,5 +786,5 @@ module ActiveMQ {
       properties.isQueue = !typeName.startsWith("t");
       properties['destType'] = typeName;
     }
-  }
+  }]);
 }

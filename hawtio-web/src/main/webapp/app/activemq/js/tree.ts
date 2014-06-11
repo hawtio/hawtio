@@ -1,6 +1,7 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
 
-  export function TreeHeaderController($scope) {
+  _module.controller("ActiveMQ.TreeHeaderController", ["$scope", ($scope) => {
     $scope.expandAll = () => {
       Tree.expandAll("#activemqtree");
     };
@@ -8,9 +9,9 @@ module ActiveMQ {
     $scope.contractAll = () => {
       Tree.contractAll("#activemqtree");
     };
-  }
+  }]);
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) {
+  _module.controller("ActiveMQ.TreeController", ["$scope", "$location", "workspace", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -101,7 +102,5 @@ module ActiveMQ {
         return null;
       }, true);
     }
-
-  }
-
+  }]);
 }
