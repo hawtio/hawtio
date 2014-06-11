@@ -1,6 +1,8 @@
 /**
  * @module Core
  */
+
+/// <reference path="corePlugin.ts"/>
 module Core {
 
   export var fileUploadMBean = "hawtio:type=UploadManager";
@@ -143,10 +145,12 @@ module Core {
       } else {
         fileInput.change(onFileChange);
       }
-
-
     };
-
-
   }
+
+  _module.directive('hawtioFileUpload', () => {
+    return new Core.FileUpload();
+  });
+
+
 }

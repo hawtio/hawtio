@@ -12,21 +12,6 @@
 module Core {
 
   /**
-   * Returns true if we are running inside a Chrome app or extension
-   */
-  export function isChromeApp() {
-    var answer = false;
-    try {
-      answer = (chrome && chrome.app && chrome.extension) ? true : false;
-    } catch (e) {
-      answer = false;
-    }
-    //log.info("isChromeApp is: " + answer);
-    return answer;
-  }
-
-
-  /**
    * Name of plugin registered to hawtio's plugin loader and Angularjs module name
    *
    * @property pluginName
@@ -35,52 +20,27 @@ module Core {
    */
   export var pluginName = 'hawtioCore';
 
+  /**
+   * Path to template files for this plugin
+   *
+   * @property pluginName
+   * @for Core
+   * @type String
+   */
   export var templatePath = 'app/core/html/';
 
 
-  // Add any other known possible jolokia URLs here
-  var jolokiaUrls:string[] = [
-    url("jolokia"),    // instance configured by hawtio-web war file
-    "/jolokia"         // instance that's already installed in a karaf container for example
-  ];
-
+  /**
+   * URL we've detected to find jolokia at we figure this out
+   * at script loading time
+   */
+  // TODO - maybe we can make discovering this async before we call hawtioPluginLoader.loadPlugins() to avoid the blocking HTTP requests it makes currently
   export var jolokiaUrl = getJolokiaUrl();
-  console.log("jolokiaUrl " + jolokiaUrl);
+  log.debug("jolokiaUrl " + jolokiaUrl);
 
-  function getJolokiaUrl() {
-    var query = hawtioPluginLoader.parseQueryString();
-    var localMode = query['localMode'];
-    if (localMode) {
-      console.log("local mode so not using jolokia URL");
-      jolokiaUrls = [];
-      return null;
-    }
-    var uri = query['url'];
-    if (angular.isArray(uri)) {
-      uri = uri[0];
-    }
-    return uri ? decodeURIComponent(uri) : null;
-  }
-
-  if (!jolokiaUrl) {
-    jolokiaUrl = <string>jolokiaUrls.find(function (url) {
-      var jqxhr = $.ajax(url, {
-        async: false,
-        username: 'public',
-        password: 'biscuit'
-      });
-      return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
-    });
-  }
-
-  // bootstrap plugin loader
-  hawtioPluginLoader.addUrl(url("/plugin"));
-
-  if (jolokiaUrl) {
-    // TODO replace with a jolokia call so we use authentication headers
-    //hawtioPluginLoader.addUrl("jolokia:" + jolokiaUrl + ":hawtio:type=plugin,name=*");
-  }
-
+  /**
+   * The main hawtio core App module
+   */
   export var _module = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']).
         config(($routeProvider, $dialogProvider) => {
 
@@ -543,57 +503,58 @@ module Core {
               });
             }
           };
-
-        }).directive('hawtioFileUpload', () => {
-  return new Core.FileUpload();
-        })
-  ;
+        });
 
 }; // end module Core
 
-String.prototype.unescapeHTML = function() {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = this;
-    return txt.value;
-};
+// bootstrap plugin loader
+hawtioPluginLoader.addUrl(url("/plugin"));
 
-// for chrome packaged apps lets enable chrome-extension pages
-if (Core._module && Core.isChromeApp()) {
-  Core._module.config([
-    '$compileProvider',
-    function ($compileProvider) {
-      //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-      // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
-    }
-  ]);
-}
-
+// add our module
 hawtioPluginLoader.addModule(Core.pluginName);
 
-// enable bootstrap tooltips
-$(function () {
+// register some tasks to run before bootstrap
+
+// add bootstrap style tooltips
+hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   $("a[title]").tooltip({
     selector: '',
     delay: { show: 1000, hide: 100 }
   });
+  nextTask();
 });
 
-var adjustHeight = function () {
-  var windowHeight = $(window).height();
-  var headerHeight = $("#main-nav").height();
-  var containerHeight = windowHeight - headerHeight;
-  $("#main").css("min-height", "" + containerHeight + "px");
-};
+// Keep the page main container at least the height of the
+// viewport
+hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
+  Core.adjustHeight();
+  $(window).resize(Core.adjustHeight);
+  nextTask();
+});
 
+// for chrome packaged apps lets enable chrome-extension pages
+hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
+  if (Core._module && Core.isChromeApp()) {
+    Core._module.config([
+      '$compileProvider',
+      function ($compileProvider) {
+        //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+        $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+        // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+      }
+    ]);
+  }
+  nextTask();
+});
+
+
+// bootstrap the whole app here
 $(() => {
   hawtioPluginLoader.loadPlugins(() => {
     var doc = $(document);
     angular.bootstrap(doc, hawtioPluginLoader.getModules());
     $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");
     $(document.documentElement).attr('ng-app', 'hawtioCore');
-    adjustHeight();
-    $(window).resize(adjustHeight);
   });
 });
 
