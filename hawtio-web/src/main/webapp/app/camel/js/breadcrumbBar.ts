@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function BreadcrumbBarController($scope, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Camel.BreadcrumbBarController", ["$Scope, $routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
     $scope.contextId = $routeParams["contextId"];
     $scope.endpointPath = $routeParams["endpointPath"];
@@ -192,5 +193,5 @@ module Camel {
     function tidyJmxName(jmxName) {
       return jmxName ? trimQuotes(jmxName) : jmxName;
     }
-  }
+  }]);
 }

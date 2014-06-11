@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function DebugRouteController($scope, $element, workspace:Workspace, jolokia) {
+  _module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", ($scope, $element, workspace:Workspace, jolokia) => {
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
@@ -351,5 +352,5 @@ module Camel {
         jolokia.execute(mbean, method, onSuccess(breakpointsChanged));
       }
     }
-  }
+  }]);
 }

@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function AttributesToolBarController($scope, workspace:Workspace, jolokia) {
+  _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
     $scope.deleteDialog = false
 
@@ -42,5 +43,5 @@ module Camel {
       var selected = $scope.selectedItems || [];
       return selected.length && selected.every((s) => isState(s, state));
     };
-  }
+  }]);
 }
