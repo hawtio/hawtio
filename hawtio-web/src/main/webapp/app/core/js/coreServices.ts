@@ -75,14 +75,25 @@ module Core {
     };
   });
 
+  export var DEFAULT_MAX_DEPTH = 5;
+  export var DEFAULT_MAX_COLLECTION_SIZE = 500;
+
   // jolokia settings, probably could be a constant
-  _module.factory('jolokiaParams', ["jolokiaUrl", (jolokiaUrl) => {
-    return {
-      url: jolokiaUrl,
+  _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
+    var answer = {
       canonicalNaming: false,
       ignoreErrors: true,
-      mimeType: 'application/json'
+      mimeType: 'application/json',
+      maxDepth: DEFAULT_MAX_DEPTH,
+      maxCollectionSize: DEFAULT_MAX_COLLECTION_SIZE
     };
+    if ('jolokiaParams' in localStorage) {
+      answer = angular.fromJson(localStorage['jolokiaParams']);
+    } else {
+      localStorage['jolokiaParams'] = angular.toJson(answer);
+    }
+    answer['url'] = jolokiaUrl;
+    return answer;
   }]);
 
   // branding service, controls app name and logo

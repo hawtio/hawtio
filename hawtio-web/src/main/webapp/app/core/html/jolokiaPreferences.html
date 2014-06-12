@@ -1,0 +1,30 @@
+<div ng-controller="Core.JolokiaPreferences">
+  <form class="form-horizontal">
+
+    <div class="control-group">
+      <label class="control-label" for="maxDepth">Max Depth</label>
+
+      <div class="controls">
+        <input type="number" id="maxDepth" ng-model="maxDepth" min="0">
+        <span class="help-block">The number of levels jolokia will marshal an object to json on the server side before returning</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="maxCollectionSize">Max Collection Size</label>
+
+      <div class="controls">
+        <input type="number" id="maxCollectionSize" ng-model="maxCollectionSize" min="0">
+        <span class="help-block">The maximum number of elements in an array that jolokia will marshal in a response</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <button class="btn btn-primary" ng-click="reboot()">Apply</button>
+        <span class="help-block">Restart hawtio with the new values in effect</span>
+      </div>
+    </div>
+
+  </form>
+</div>
