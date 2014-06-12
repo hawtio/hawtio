@@ -1,7 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function ActiveProfileController($scope, jolokia) {
-
+  _module.controller("Fabric.ActiveProfileController", ["$scope", "jolokia", ($scope, jolokia) => {
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/activeProfiles"
       var title = "Active Profiles"
@@ -9,14 +8,10 @@ module Fabric {
         size_y: 1,
         size_x: 5
       });
-
       return "#/dashboard/add?tab=dashboard" +
           "&href=" + encodeURIComponent(href) +
           "&size=" + encodeURIComponent(size) +
           "&title=" + encodeURIComponent(title);
     }
-
-
-  }
-
+  }]);
 }

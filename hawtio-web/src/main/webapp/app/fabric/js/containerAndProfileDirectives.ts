@@ -1,3 +1,4 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
   export class ContainerList {
@@ -8,7 +9,7 @@ module Fabric {
 
     public scope = false;
 
-    public controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
+    public controller = ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", ($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) => {
 
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains', "type", "metadata", "location"];
       $scope.profileFields = ["id", "hidden"];
@@ -405,8 +406,8 @@ module Fabric {
         {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs, $scope.profileFields]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
       ], onSuccess($scope.dispatch, { silent: true }));
+    }];
 
-    }
 
     public link = ($scope, $element, $attrs) => {
       $scope.showSelect = Core.parseBooleanValue(UI.getIfSet('showSelect', $attrs, 'true'));
@@ -422,14 +423,13 @@ module Fabric {
         $scope.withoutProfile = $scope.$eval(withoutProfile);
       }
 
+      /*
       log.debug("atVersion: ", $scope.atVersion);
       log.debug("withoutProfile: ", $scope.withoutProfile);
 
       log.debug("container list attributes: ", $attrs);
-
-
+      */
     };
-
   }
 
 
@@ -437,9 +437,10 @@ module Fabric {
 
     public templateUrl = Fabric.templatePath + "activeProfileList.html";
 
-    public controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
+    public controller2 = ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", ($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) => {
 
-      super.controller($scope, $element, $attrs, jolokia, $location, workspace, $templateCache);
+      // TODO - maybe it'd be better to refactor these into normal looking directives
+      this.controller.last()($scope, $element, $attrs, jolokia, $location, workspace, $templateCache);
 
       $scope.searchFilter = '';
 
@@ -498,6 +499,6 @@ module Fabric {
       }
 
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.managerMBean, operation: "requirements()"}, onSuccess(onRequirements));
-    }
+    }];
   }
 }

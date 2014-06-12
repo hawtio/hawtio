@@ -1,6 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function AssignProfileController($scope, jolokia, $location, $routeParams, workspace) {
+  _module.controller("Fabric.AssignProfileController", ["$scope", "jolokia", "$location", "$routeParams", "workspace", ($scope, jolokia, $location, $routeParams, workspace) => {
 
     $scope.profileId = $routeParams['pid'];
     $scope.versionId = $routeParams['vid'];
@@ -32,12 +32,6 @@ module Fabric {
       });
     };
 
-    $scope.$on('$routeChangeSuccess', () => {
-      log.debug("RouteParams: ", $routeParams);
-      log.debug("Scope: ", $scope);
-
-    });
-
     $scope.$watch('containers', (newValue, oldValue) => {
       if (newValue !== oldValue && newValue) {
         $scope.selected = newValue.filter((c) => { return c['selected']});
@@ -67,7 +61,5 @@ module Fabric {
         Core.$apply($scope);
       }, 30);
     }
-
-  }
-
+  }]);
 }

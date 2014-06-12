@@ -1,6 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function ClusterController($scope, $location, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Fabric.ClusterController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", ($scope, $location, $routeParams, workspace:Workspace, jolokia) => {
 
     $scope.path = $routeParams["page"] || "/";
     if (!$scope.path.startsWith("/")) {
@@ -98,5 +98,5 @@ module Fabric {
         }
       });
     }
-  }
+  }]);
 }

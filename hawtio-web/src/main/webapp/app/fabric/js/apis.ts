@@ -1,6 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function FabricApisController($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
+  _module.controller("Fabric.FabricApisController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
 
     $scope.path = "apis";
 
@@ -174,5 +174,5 @@ module Fabric {
       Core.$apply($scope);
       Core.defaultJolokiaErrorHandler(response);
     }
-  }
+  }]);
 }
