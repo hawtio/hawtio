@@ -5,7 +5,7 @@
   "short_name": "hawt.io",
   "description": "Don't cha wish your console was hawt like me?",
 
-  "version": "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}",
+  "version": "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${timestamp}",
 
   "icons": {
     "16": "logo-16px.png",
