@@ -2,9 +2,10 @@
   "manifest_version": 2,
 
   "name": "hawtio",
+  "short_name": "hawt.io",
   "description": "Don't cha wish your console was hawt like me?",
 
-  "version": "1.4.4",
+  "version": "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}",
 
   "icons": {
     "16": "logo-16px.png",
