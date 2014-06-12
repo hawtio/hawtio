@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function MigrateContainersController($scope, jolokia, $location) {
+  _module.controller("Fabric.MigrateContainersController", ["$scope", "jolokia", "$location", ($scope, jolokia, $location) => {
 
     $scope.versions = [];
     $scope.containers = [];
@@ -91,5 +92,5 @@ module Fabric {
       {type: 'exec', mbean: managerMBean, operation: 'versions()'},
       {type: 'exec', mbean: managerMBean, operation: 'containerIds()'}
     ], onSuccess($scope.render));
-  }
+  }]);
 }

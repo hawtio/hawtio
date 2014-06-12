@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function PIDController($scope, $routeParams, jolokia, $location) {
+  _module.controller("Fabric.PIDController", ["$scope", "$routeParams", "jolokia", "$location", ($scope, $routeParams, jolokia, $location) => {
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
     $scope.fname = $routeParams.fname;
@@ -64,6 +65,5 @@ module Fabric {
         Core.$apply($scope);
       }
     }
-      
-  }
+  }]);
 }

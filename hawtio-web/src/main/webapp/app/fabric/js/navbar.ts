@@ -1,5 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-  export function NavBarController($scope, $location, jolokia, workspace:Workspace, localStorage) {
+  _module.controller("Fabric.NavBarController", ["$scope", "$location", "jolokia", "workspace", "localStorage", ($scope, $location, jolokia, workspace:Workspace, localStorage) => {
 
     $scope.activeVersion = "1.0";
 
@@ -41,5 +42,5 @@ module Fabric {
       $scope.droolsHref = url;
       Core.$apply($scope);
     }
-  }
+  }]);
 }

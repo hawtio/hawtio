@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function CreateContainerController($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails) {
+  _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails) => {
 
     var log:Logging.Logger = Logger.get("Fabric");
 
@@ -387,7 +388,5 @@ module Fabric {
       //notification('info', "Requesting that new container(s) be created");
       $location.url('/fabric/containers');
     }
-
-  }
-
+  }]);
 }

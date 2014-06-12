@@ -1,5 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-  export function PatchingController($scope, jolokia, localStorage, $location) {
+  _module.controller("Fabric.PatchingController", ["$scope", "jolokia", "localStorage", "$location", ($scope, jolokia, localStorage, $location) => {
 
     $scope.files = [];
     $scope.targetVersion = $location.search()['versionId'];
@@ -42,9 +43,6 @@ module Fabric {
         log.info("Stack trace: ", response.stacktrace);
         Core.$apply($scope);
       });
-
-
     }
-
-  }
+  }]);
 }

@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function FeatureEditController($scope, $routeParams, $location, jolokia, xml2json, workspace:Core.Workspace) {
+  _module.controller("Fabric.FeatureEditController", ["$scope", "$routeParams", "$location", "jolokia", "xml2json", "workspace", ($scope, $routeParams, $location, jolokia, xml2json, workspace:Core.Workspace) => {
 
 
     Fabric.initScope($scope, $location, jolokia, workspace);
@@ -172,9 +173,5 @@ module Fabric {
       type: 'exec', mbean: managerMBean, operation: $scope.getProfileFeaturesOp,
         arguments: [$scope.versionId, $scope.profileId]
       }], onSuccess($scope.dispatch));
-
-
-  }
-
-
+  }]);
 }

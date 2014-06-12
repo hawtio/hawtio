@@ -1,8 +1,9 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
   export var startMaps = () => {};
 
-  export function MapController($scope, $templateCache, jolokia) {
+  _module.controller("Fabric.MapController", ["$scope", "$templateCache", "jolokia", ($scope, $templateCache, jolokia) => {
     $scope.myMarkers = [];
     $scope.containers = {};
     $scope.template = "";
@@ -125,5 +126,5 @@ module Fabric {
         Core.$apply($scope);
       }
     }
-  }
+  }]);
 }

@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function FabricViewController($scope, $location, jolokia, localStorage, workspace) {
+  _module.controller("Fabric.FabricViewController", ["$scope", "$location", "jolokia", "localStorage", "workspace", ($scope, $location, jolokia, localStorage, workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -436,5 +437,5 @@ module Fabric {
       }
     };
 
-  }
+  }]);
 }

@@ -1,8 +1,9 @@
 /**
  * @module Fabric
  */
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-  export function PreferencesController($scope, localStorage) {
+  _module.controller("Fabric.PreferencesController", ["$scope", "localStorage", ($scope, localStorage) => {
     Core.initPreferenceScope($scope, localStorage, {
       'fabricAlwaysPrompt': {
         'value': false,
@@ -17,5 +18,5 @@ module Fabric {
         'converter': Core.parseBooleanValue
       }
     });
-  }
+  }]);
 }

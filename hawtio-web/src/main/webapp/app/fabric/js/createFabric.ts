@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function CreateFabricController($scope, jolokia, $location, workspace:Workspace, branding) {
+  _module.controller("Fabric.CreateFabricController", ["$scope", "jolokia", "$location", "workspace", "branding", ($scope, jolokia, $location, workspace:Workspace, branding) => {
 
     $scope.$on('$routeChangeSuccess', () => {
       if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
@@ -59,6 +60,6 @@ module Fabric {
 
     }
 
-  }
+  }]);
 
 }
