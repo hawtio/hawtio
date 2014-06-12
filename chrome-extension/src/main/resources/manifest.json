@@ -16,5 +16,6 @@
     "launch": {
       "local_path": "index.html"
     }
-  }
+  },
+  "offline_enabled":true
 }
