@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-    export function ProfileRouteController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         $scope.data = [];
         $scope.calcManually = true;
@@ -317,5 +318,5 @@ module Camel {
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateProfileMessages, query));
        }
 
-    }
+    }]);
 }

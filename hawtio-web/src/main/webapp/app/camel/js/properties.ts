@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function PropertiesController($scope, workspace:Workspace) {
+  _module.controller("Camel.PropertiesController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
 
@@ -30,7 +31,7 @@ module Camel {
         }
       }
     }
-  }
+  }]);
 }
 
 

@@ -1,8 +1,9 @@
 /**
  * @module Camel
  */
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function PreferencesController($scope, localStorage) {
+  _module.controller("Camel.PreferencesController", ["$scope", "localStorage", ($scope, localStorage) => {
     Core.initPreferenceScope($scope, localStorage, {
       'camelIgnoreIdForLabel': {
         'value': false,
@@ -17,6 +18,5 @@ module Camel {
         'converter': parseInt
       }
     });
-
-  }
+  }]);
 }

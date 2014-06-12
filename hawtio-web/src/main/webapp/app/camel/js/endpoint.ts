@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function EndpointController($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) {
+  _module.controller("Camel.EndpointController", ["$scope", "$location", "localStorage", "workspace", "jolokia", ($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) => {
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
 
     $scope.workspace = workspace;
@@ -74,5 +75,5 @@ module Camel {
       Core.$apply($scope);
       notification("success", $scope.message);
     }
-  }
+  }]);
 }

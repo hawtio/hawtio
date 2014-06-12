@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function TraceRouteController($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) {
+  _module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", ($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) => {
 
     var log:Logging.Logger = Logger.get("CamelTracer");
 
@@ -181,6 +182,6 @@ module Camel {
     log.info("Re-activating tracer with " + tracerStatus.messages.length + " existing messages");
     $scope.messages = tracerStatus.messages;
     $scope.tracing = tracerStatus.jhandle != null;
-  }
+  }]);
 
 }

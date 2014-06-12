@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function RouteController($scope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) {
+  _module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", ($scope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.routes = [];
@@ -268,9 +269,7 @@ module Camel {
         }
       }
     }
-
-  }
-
+  }]);
 }
 
 

@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function TypeConverterController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     $scope.data = [];
     $scope.selectedMBean = null;
@@ -110,6 +111,6 @@ module Camel {
 
     // load converters
     loadConverters();
-  }
+  }]);
 
 }

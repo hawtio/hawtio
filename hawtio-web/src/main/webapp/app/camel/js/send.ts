@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function SendMessageController($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
+  _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) => {
     var log:Logging.Logger = Logger.get("Camel");
 
     log.info("Loaded page!");
@@ -234,5 +235,5 @@ module Camel {
       $scope.selectedFiles = {};
       Core.$apply($scope);
     }
-  }
+  }]);
 }

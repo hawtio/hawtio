@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function FabricDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
+  _module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -616,5 +617,5 @@ module Camel {
       properties.isQueue = !typeName.startsWith("t");
       properties['destType'] = typeName;
     }
-  }
+  }]);
 }

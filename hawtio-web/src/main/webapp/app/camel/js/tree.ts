@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function TreeHeaderController($scope, $location) {
+  _module.controller("Camel.TreeHeaderController", ["$scope", "$location", ($scope, $location) => {
 
     $scope.contextFilterText = '';
 
@@ -17,13 +18,13 @@ module Camel {
     $scope.contractAll = () => {
       Tree.contractAll("#cameltree");
     };
-  }
+  }]);
 
-  export function TreeController($scope,
+  _module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", ($scope,
                                  $location:ng.ILocationService,
                                  $timeout,
                                  workspace:Workspace,
-                                 $rootScope) {
+                                 $rootScope) => {
     $scope.contextFilterText = $location.search()["cq"];
     $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
 
@@ -179,6 +180,6 @@ module Camel {
       }, true);
       $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
     }
-  }
+  }]);
 
 }

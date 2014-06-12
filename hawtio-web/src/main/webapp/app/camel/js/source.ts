@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function SourceController($scope, workspace:Workspace) {
+  _module.controller("Camel.SourceController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -101,7 +102,7 @@ module Camel {
         }
       }
     };
-  }
+  }]);
 }
 
 
