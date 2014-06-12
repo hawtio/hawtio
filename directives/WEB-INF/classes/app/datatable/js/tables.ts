@@ -6,7 +6,6 @@ module DataTable {
   /**
    * @class TableWidget
    */
-  // TODO would make sense to move this to UI
   export class TableWidget {
     private ignoreColumnHash = {};
     private flattenColumnHash = {};
