@@ -1,6 +1,7 @@
+/// <reference path="camelInsightPlugin.ts"/>
 module Camin {
 
-    export function Controller($scope, jolokia, localStorage, $routeParams) {
+    _module.controller("Camin.Controller", ["$scope", "jolokia", "localStorage", "$routeParams", ($scope, jolokia, localStorage, $routeParams) => {
 
         $scope.query = "";
         $scope.result = "";
@@ -533,5 +534,5 @@ module Camin {
             $scope.onQueryChange();
         }
 
-    }
+    }]);
 }

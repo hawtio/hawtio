@@ -1,13 +1,14 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
 
   export class GridsterDirective {
     public restrict = 'A';
     public replace = true;
 
-    public controller = ($scope, $element, $attrs, $location, $routeParams, $injector, $route,
+    public controller = ["$scope", "$element", "$attrs", "$location", "$routeParams", "$injector", "$route", "$templateCache", "workspace", "dashboardRepository", "$compile", ($scope, $element, $attrs, $location, $routeParams, $injector, $route,
                          $templateCache,
                          workspace:Workspace,
                          dashboardRepository: DashboardRepository,
@@ -337,7 +338,7 @@ module Dashboard {
         return $element.gridster().data('gridster');
       }
 
-    };
+    }];
 
   }
 

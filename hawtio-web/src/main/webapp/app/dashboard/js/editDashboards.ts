@@ -1,9 +1,10 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) {
+  _module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) => {
 
     $scope.hash = workspace.hash();
     $scope.selectedItems = [];
@@ -370,13 +371,5 @@ module Dashboard {
     }
 
     updateData();
-
-    /*
-     // TODO for case where we navigate to the add view
-     // for some reason the route update event isn't enough...
-     // and we need to do this async to avoid the size calculation being wrong
-     // bit of a hack - would love to remove! :)
-     setTimeout(updateData, 100);
-   */
-  }
+  }]);
 }

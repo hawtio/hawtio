@@ -1,8 +1,9 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
-  export function ImportController($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) {
+  _module.controller("Dashboard.ImportController", ["$scope", "$location", "$routeParams", "workspace", "dashboardRepository", ($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) => {
     $scope.placeholder = "Paste the JSON here for the dashboard configuration to import...";
     $scope.source = $scope.placeholder;
 
@@ -40,5 +41,5 @@ module Dashboard {
         $location.path("/dashboard/edit");
       }
     }
-  }
+  }]);
 }
