@@ -26,7 +26,7 @@
       <excludes>
         <exclude>WEB-INF/**</exclude>
         <exclude>META-INF/**</exclude>
-
+        <exclude>manifest.json</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>  
     </fileSet>
