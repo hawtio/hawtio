@@ -13,6 +13,8 @@
   <properties>
     <build.dir>${basedir}/target</build.dir>
     <zip.file>${build.dir}/extension.zip</zip.file>
+   <timestamp>${maven.build.timestamp}</timestamp>
+   <maven.build.timestamp.format>yyDDD</maven.build.timestamp.format>
   </properties>
   <dependencies>
     <dependency>
