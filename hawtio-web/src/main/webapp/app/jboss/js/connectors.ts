@@ -1,6 +1,7 @@
+/// <reference path="jbossPlugin.ts"/>
 module JBoss {
 
-    export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("JBoss.ConnectorsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
 
@@ -94,5 +95,5 @@ module JBoss {
           jolokia.search("jboss.as:socket-binding-group=standard-sockets,*", onSuccess(render));
         }
 
-    }
+    }]);
 }

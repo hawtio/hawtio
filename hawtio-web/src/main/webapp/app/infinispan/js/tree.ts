@@ -1,6 +1,7 @@
+/// <reference path="infinispanPlugin.ts"/>
 module Infinispan {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  _module.controller("Infinispan.TreeController", ["$scope", "$location", "workspace", ($scope, $location:ng.ILocationService, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -62,5 +63,5 @@ module Infinispan {
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#infinispantree"), true);
     }
-  }
+  }]);
 }

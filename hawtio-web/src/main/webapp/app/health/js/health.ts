@@ -1,9 +1,10 @@
 /**
  * @module Health
  */
+/// <reference path="healthPlugin.ts"/>
 module Health {
 
-    export function HealthController($scope, jolokia, workspace:Workspace, $templateCache) {
+    _module.controller("Health.HealthController", ["$scope", "jolokia", "workspace", "$templateCache", ($scope, jolokia, workspace:Workspace, $templateCache) => {
 
       $scope.levelSorting = {
         'ERROR': 0,
@@ -312,8 +313,5 @@ module Health {
           message: object.title + " is OK"
         };
       }
-
-    }
-
-
+    }]);
 }

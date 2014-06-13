@@ -1,6 +1,7 @@
+/// <reference path="infinispanPlugin.ts"/>
 module Infinispan {
 
-  export function QueryController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Infinispan.QueryController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
     var interpreter = new CLI(workspace, jolokia);
     $scope.logs = [];
     $scope.filteredLogs = [];
@@ -86,5 +87,5 @@ module Infinispan {
         interpreter.setCacheName(cacheName);
       }
     }
-  }
+  }]);
 }

@@ -1,9 +1,10 @@
 /**
  * @module Insight
  */
+/// <reference path="insightPlugin.ts"/>
 module Insight {
 
-  export function AllController($scope, jolokia, localStorage, workspace) {
+  _module.controller("Insight.AllController", ["$scope", "jolokia", "localStorage", "workspace", ($scope, jolokia, localStorage, workspace) => {
 
     $scope.result = null;
     $scope.containers = [];
@@ -153,18 +154,6 @@ module Insight {
       createCharts($scope, chartsDef, "#charts", jolokia);
     }
 
-  }
+  }]);
 
-  function getChildren(node, type, field, hasHost) {
-    var children = [ ];
-    for (var p in node["properties"]) {
-      var obj = node["properties"][p];
-      if (obj["type"] === 'long' || obj["type"] === 'double') {
-        children.push({ title: p, field: field + p, type: type, hasHost: hasHost });
-      } else if (obj["properties"]) {
-        children.push({ title: p, isFolder: true, children: getChildren(obj, type, field + p + ".", hasHost) });
-      }
-    }
-    return children;
-  }
 }

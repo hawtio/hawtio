@@ -1,9 +1,10 @@
 /**
  * @module Insight
  */
+/// <reference path="insightPlugin.ts"/>
 module Insight {
 
-    export function JVMsController($scope, jolokia, localStorage) {
+    _module.controller("JVMsController", ["$scope", "jolokia", "localStorage", ($scope, jolokia, localStorage) => {
 
         $scope.time_options = ['1m','5m','15m','1h','6h','12h'];
         $scope.timespan = '1m';
@@ -72,6 +73,6 @@ module Insight {
             });
             createCharts($scope, chartsDef, mainDiv, jolokia);
         }
-    }
+    }]);
 
 }

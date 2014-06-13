@@ -1,5 +1,6 @@
+/// <reference path="jbossPlugin.ts"/>
 module JBoss {
-    export function JBossController($scope, $location:ng.ILocationService, jolokia) {
+    _module.controller("JBoss.JBossController", ["$scope", "$location", "jolokia", ($scope, $location:ng.ILocationService, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
         var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
@@ -204,5 +205,5 @@ module JBoss {
             }
         }
 
-    }
+    }]);
 }
