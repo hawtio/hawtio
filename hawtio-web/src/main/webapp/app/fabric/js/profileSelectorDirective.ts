@@ -1,3 +1,4 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
   export class ProfileSelector {
@@ -20,7 +21,7 @@ module Fabric {
       includedProfiles: '='
     };
 
-    public controller = ($scope, $element, $attrs, workspace, jolokia, localStorage, $location) => {
+    public controller = ["$scope", "$element", "$attrs", "workspace", "jolokia", "localStorage", "$location", ($scope, $element, $attrs, workspace, jolokia, localStorage, $location) => {
       $scope.profiles = [];
       $scope.responseJson = '';
       $scope.filterText = '';
@@ -255,7 +256,7 @@ module Fabric {
         }
       });
 
-    };
+    }];
 
 
     public link = ($scope, $element, $attrs) => {
@@ -312,8 +313,6 @@ module Fabric {
           }
         }
       }, true);
-
-
     };
   }
 }

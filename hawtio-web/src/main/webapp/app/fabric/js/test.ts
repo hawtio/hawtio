@@ -1,7 +1,8 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
 
-  export function TestController($scope, jolokia, $q, workspace, $templateCache) {
+  _module.controller("Fabric.TestController", ["$scope", "jolokia", "$q", "workspace", "$templateCache", ($scope, jolokia, $q, workspace, $templateCache) => {
 
     $scope.mavenMBean = Maven.getMavenIndexerMBean(workspace);
 
@@ -69,12 +70,5 @@ module Fabric {
     $scope.doCompletionFabric = (something) => {
       return Fabric.completeUri($q, $scope, workspace, jolokia, something);
     }
-
-
-
-
-
-  }
-
-
+  }]);
 }

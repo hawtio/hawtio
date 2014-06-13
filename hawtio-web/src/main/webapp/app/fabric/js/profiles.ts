@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
   
-  export function ProfilesController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+  _module.controller("Fabric.ProfilesController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) => {
     Fabric.initScope($scope, $location, jolokia, workspace);
 
     $scope.defaultVersion = Fabric.getDefaultVersion(jolokia);
@@ -295,5 +296,5 @@ module Fabric {
         }
       }
     }
-  }
+  }]);
 }
