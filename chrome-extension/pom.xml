@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>chrome-extension</artifactId>
@@ -57,6 +57,30 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- lets make absolutely sure the old manifest isn't used ;) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>crx</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Removing the old manifest just to be sure!</echo>
+                <echo>old manifest: ${project.build.directory}/${artifactId}-${project.version}/manifest.json</echo>
+                <delete failonerror="true" verbose="true" file="${project.build.directory}/${artifactId}-${project.version}/manifest.json" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.4</version>
