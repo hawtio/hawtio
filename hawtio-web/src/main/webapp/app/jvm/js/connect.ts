@@ -10,7 +10,7 @@ module JVM {
 
     var hasMBeans = workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
 
-    $scope.disableProxy = !hasMBeans || Core.isdisableProxy();
+    $scope.disableProxy = !hasMBeans || Core.isChromeApp();
     $scope.useProxy = $scope.disableProxy ? false : true;
 
     $scope.settings = {
