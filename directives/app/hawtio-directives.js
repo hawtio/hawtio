@@ -611,12 +611,15 @@ var ForceGraph;
 (function (ForceGraph) {
     var pluginName = 'forceGraph';
 
-    angular.module(pluginName, ['bootstrap', 'ngResource']).directive('hawtioForceGraph', function () {
+    ForceGraph._module = angular.module(pluginName, ['bootstrap', 'ngResource']);
+
+    ForceGraph._module.directive('hawtioForceGraph', function () {
         return new ForceGraph.ForceGraphDirective();
     });
 
     hawtioPluginLoader.addModule(pluginName);
 })(ForceGraph || (ForceGraph = {}));
+///<reference path="forceGraphPlugin.ts"/>
 var ForceGraph;
 (function (ForceGraph) {
     var log = Logger.get("ForceGraph");
@@ -817,7 +820,6 @@ var ForceGraph;
         return ForceGraphDirective;
     })();
     ForceGraph.ForceGraphDirective = ForceGraphDirective;
-    ;
 })(ForceGraph || (ForceGraph = {}));
 /**
 * @module DataTable

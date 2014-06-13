@@ -1,3 +1,4 @@
+///<reference path="forceGraphPlugin.ts"/>
 module ForceGraph {
 
   var log:Logging.Logger = Logger.get("ForceGraph");
@@ -269,9 +270,6 @@ module ForceGraph {
 
         }
       }
-
     };
-
   }
-  ;
 }
