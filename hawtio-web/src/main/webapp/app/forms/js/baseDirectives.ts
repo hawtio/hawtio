@@ -1,6 +1,7 @@
 /**
  * @module Forms
  */
+///<reference path="formHelpers.ts"/>
 module Forms {
 
     /**

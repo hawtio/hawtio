@@ -1,21 +1,13 @@
 /**
  * @module Forms
  */
+///<reference path="formHelpers.ts"/>
 module Forms {
 
   /**
    * Create a DOM widget tree for the given set of form configuration data.
    *
    * This will include either the standard AngularJS widgets or custom widgets
-   * @method createWidget
-   * @param {String} propTypeName
-   * @param {any} property
-   * @param {any} schema
-   * @param {any} config
-   * @param {String} id
-   * @param {Boolean ignorePrefixInLabel
-   * @param {String} configScoepName
-   * @param {Boolean} wrapInGroup
    */
   export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true) {
     var input = null;

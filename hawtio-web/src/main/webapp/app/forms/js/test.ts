@@ -1,6 +1,7 @@
+///<reference path="formHelpers.ts"/>
 module Forms {
 
-  export function FormTestController($scope, workspace) {
+  _module.controller("Forms.FormTestController", ["$scope", "workspace", ($scope, workspace) => {
 
     $scope.editing = false;
 
@@ -153,6 +154,6 @@ module Forms {
 
       ]
     };
-  }
+  }]);
 
 }

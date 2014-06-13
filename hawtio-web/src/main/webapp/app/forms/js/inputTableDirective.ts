@@ -1,3 +1,4 @@
+///<reference path="formHelpers.ts"/>
 module Forms {
 
   export class InputTableConfig {

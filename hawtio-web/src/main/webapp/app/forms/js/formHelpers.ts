@@ -3,8 +3,6 @@
  */
 module Forms {
 
-  export var log:Logging.Logger = Logger.get("Forms");
-
   /**
    * Default any values in the schema on the entity if they are not already present
    * @method defaultValues
