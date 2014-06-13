@@ -120,7 +120,7 @@
                 <artifactItem>
                   <groupId>io.hawt</groupId>
                   <artifactId>hawtio-web</artifactId>
-                  <version>${project.version}</version>
+                  <version>${hawtio-release-version}</version>
                   <type>war</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/sitegen/app</outputDirectory>
