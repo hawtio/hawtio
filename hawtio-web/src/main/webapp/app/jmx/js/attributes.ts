@@ -1,6 +1,7 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
   export var propertiesColumnDefs = [
@@ -25,14 +26,14 @@ module Jmx {
     }
   ];
 
-  export function AttributesController($scope,
+  _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", ($scope,
                                        $element,
                                        $location,
                                        workspace:Workspace,
                                        jolokia,
                                        jmxWidgets,
                                        jmxWidgetTypes,
-                                       $templateCache) {
+                                       $templateCache) => {
     $scope.searchText = '';
     $scope.selectedItems = [];
 
@@ -716,6 +717,6 @@ module Jmx {
       return "string";
     }
 
-  }
+  }]);
 
 }

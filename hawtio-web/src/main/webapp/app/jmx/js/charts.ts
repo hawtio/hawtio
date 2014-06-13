@@ -1,8 +1,9 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
-  export function ChartController($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) {
+  _module.controller("Jmx.ChartController", ["$scope", "$element", "$location", "workspace", "localStorage", "jolokiaUrl", "jolokiaParams", ($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) => {
 
 
     $scope.metrics = [];
@@ -260,5 +261,5 @@ module Jmx {
 
     };
 
-  }
+  }]);
 }

@@ -1,9 +1,10 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
-  export function AreaChartController($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
+  _module.controller("Jmx.AreaChartController", ["$scope", "$routeParams", "jolokia", "$templateCache", "localStorage", "$element", ($scope, $routeParams, jolokia, $templateCache, localStorage, $element) => {
 
     $scope.mbean = $routeParams['mbean'];
     $scope.attribute = $routeParams['attribute'];
@@ -51,6 +52,6 @@ module Jmx {
 
 
 
-  }
+  }]);
 
 }

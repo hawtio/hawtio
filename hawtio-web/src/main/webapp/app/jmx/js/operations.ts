@@ -1,13 +1,14 @@
 /**
 * @module Jmx
 */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
   // IOperationControllerScope
-  export function OperationController($scope,
+  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", ($scope,
                                       workspace:Workspace,
                                       jolokia,
-                                      $timeout) {
+                                      $timeout) => {
     $scope.item = $scope.selectedOperation;
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
@@ -141,14 +142,14 @@ module Jmx {
      };
 
 
-  }
+  }]);
 
 
-  export function OperationsController($scope,
+  _module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", ($scope,
                                        workspace:Workspace,
                                        jolokia,
                                        rbacACLMBean,
-                                       $templateCache) {
+                                       $templateCache) => {
 
     $scope.operations = {};
     $scope.objectName = '';
@@ -303,5 +304,5 @@ module Jmx {
       }
     }
 
-  }
+  }]);
 }

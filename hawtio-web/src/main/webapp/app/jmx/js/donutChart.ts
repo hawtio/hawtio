@@ -1,9 +1,10 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
-  export function DonutChartController($scope, $routeParams, jolokia, $templateCache) {
+  _module.controller("Jmx.DonutChartController", ["$scope", "$routeParams", "jolokia", "$templateCache", ($scope, $routeParams, jolokia, $templateCache) => {
 
     /*
     console.log("routeParams: ", $routeParams);
@@ -140,6 +141,6 @@ module Jmx {
     };
 
     Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
-  }
+  }]);
 
 }

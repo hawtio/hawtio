@@ -1,8 +1,9 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
-  export function ChartEditController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Jmx.ChartEditController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
     $scope.selectedAttributes = [];
     $scope.selectedMBeans = [];
     $scope.metrics = {};
@@ -145,5 +146,5 @@ module Jmx {
         });
       }
     }
-  }
+  }]);
 }

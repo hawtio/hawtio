@@ -1,10 +1,10 @@
 /**
  * @module Jmx
  */
-
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
-  export function TreeHeaderController($scope) {
+  _module.controller("Jmx.TreeHeaderController", ["$scope", ($scope) => {
     $scope.expandAll = () => {
       Tree.expandAll("#jmxtree");
     };
@@ -12,9 +12,9 @@ module Jmx {
     $scope.contractAll = () => {
       Tree.contractAll("#jmxtree");
     };
-  }
+  }]);
 
-  export function MBeansController($scope, $location: ng.ILocationService, workspace: Workspace) {
+  _module.controller("Jmx.MBeansController", ["$scope", "$location", "workspace", ($scope, $location: ng.ILocationService, workspace: Workspace) => {
 
     $scope.num = 1;
 
@@ -43,5 +43,5 @@ module Jmx {
     $scope.$on('jmxTreeUpdated', $scope.populateTree);
 
     $scope.populateTree();
-  }
+  }]);
 }
