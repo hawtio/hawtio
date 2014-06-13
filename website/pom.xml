@@ -16,6 +16,10 @@
 
   <properties>
     <jettyPort>8000</jettyPort>
+
+    <!-- lets use the latest greatest! :) -->
+    <hawtio-release-version>${project.version}</hawtio-release-version>
+
     <scala-version>2.9.0</scala-version>
 <!--
     TODO lets not use 2.10 scala yet as it seems the 1.6.1 distro of scalate borks the scalate plugin

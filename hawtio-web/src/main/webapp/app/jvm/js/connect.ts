@@ -8,8 +8,10 @@ module JVM {
 
     $scope.forms = {};
 
-    $scope.chromeApp = Core.isChromeApp();
-    $scope.useProxy = $scope.chromeApp ? false : true;
+    var hasMBeans = workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
+
+    $scope.disableProxy = !hasMBeans || Core.isdisableProxy();
+    $scope.useProxy = $scope.disableProxy ? false : true;
 
     $scope.settings = {
       last: 1,
@@ -92,7 +94,7 @@ module JVM {
           type: 'java.lang.Boolean',
           tooltip: 'Whether or not we should use a proxy. See more information in the panel to the left.',
           'control-attributes': {
-            'ng-hide': 'chromeApp'
+            'ng-hide': 'disableProxy'
           }
         }
       },
@@ -109,7 +111,7 @@ module JVM {
         password: ''
       };
 
-      if ($scope.chromeApp) {
+      if ($scope.disableProxy) {
         answer['useProxy'] = false;
       } else {
         answer['useProxy'] = true;
