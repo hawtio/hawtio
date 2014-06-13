@@ -1,9 +1,10 @@
 /**
  * @module JVM
  */
+/// <reference path="./jvmPlugin.ts"/>
 module JVM {
 
-  export function DiscoveryController($scope, localStorage, jolokia) {
+  _module.controller("JVM.DiscoveryController", ["$scope", "localStorage", "jolokia", ($scope, localStorage, jolokia) => {
 
     $scope.discovering = true;
 
@@ -110,6 +111,6 @@ module JVM {
     }
 
 
-  }
+  }]);
 
 }

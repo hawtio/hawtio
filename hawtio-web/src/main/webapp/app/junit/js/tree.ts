@@ -1,6 +1,7 @@
+/// <reference path="./junitPlugin.ts"/>
 module JUnit {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia, inProgressStatus) {
+  _module.controller("JUnit.TreeController", ["$scope", "$location", "workspace", "jolokia", "inProgressStatus", ($scope, $location:ng.ILocationService, workspace:Workspace, jolokia, inProgressStatus) => {
 
     var log:Logging.Logger = Logger.get("JUnit");
 
@@ -241,5 +242,5 @@ module JUnit {
       }
     }
 
-  }
+  }]);
 }

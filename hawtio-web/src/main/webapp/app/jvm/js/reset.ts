@@ -1,9 +1,9 @@
 /**
  * @module JVM
  */
-
+/// <reference path="./jvmPlugin.ts"/>
  module JVM {
-  export function ResetController($scope, localStorage) {
+  _module.controller("JVM.ResetController", ["$scope", "localStorage", ($scope, localStorage) => {
     $scope.doClearConnectSettings = () => {
       var doReset = () => {
         delete localStorage[JVM.connectControllerKey];
@@ -15,5 +15,5 @@
       doReset();
     };
 
-  }
+  }]);
  }

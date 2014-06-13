@@ -1,8 +1,9 @@
 /**
  * @module JVM
  */
+/// <reference path="./jvmPlugin.ts"/>
 module JVM {
-  export function ConnectController($scope, $location, localStorage, workspace) {
+  _module.controller("JVM.ConnectController", ["$scope", "$location", "localStorage", "workspace", ($scope, $location, localStorage, workspace) => {
 
     JVM.configureScope($scope, $location, workspace);
 
@@ -229,5 +230,5 @@ module JVM {
     }
 
     init();
-  }
+  }]);
 }

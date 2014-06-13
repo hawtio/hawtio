@@ -1,9 +1,10 @@
 /**
  * @module JVM
  */
+/// <reference path="./jvmPlugin.ts"/>
 module JVM {
 
-  export function JVMsController($scope, $window, $location, workspace, jolokia, mbeanName) {
+  _module.controller("JVM.JVMsController", ["$scope", "$window", "$location", "workspace", "jolokia", "mbeanName", ($scope, $window, $location, workspace, jolokia, mbeanName) => {
 
     JVM.configureScope($scope, $location, workspace);
     $scope.data = [];
@@ -64,7 +65,7 @@ module JVM {
     }
 
     $scope.fetch();
-  }
+  }]);
 
 
 }
