@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function BlobstoreNavigationController($scope, $routeParams, workspace:Workspace) {
+    _module.controller("Jclouds.BlobstoreNavigationController", ["$scope", "$routeParams", "workspace", ($scope, $routeParams, workspace:Workspace) => {
         $scope.blobstoreId = $routeParams.blobstoreId;
 
         $scope.isActive = (nav) => {
@@ -16,5 +17,5 @@ module Jclouds {
             return workspace.isLinkActive(nav.href());
         };
 
-    }
+    }]);
 }

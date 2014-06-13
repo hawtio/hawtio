@@ -1,6 +1,7 @@
 /**
  * @module Jclouds
  */
+/// <reference path="./jcloudsPlugin.ts"/>
 module Jclouds {
 
   /**
@@ -13,7 +14,7 @@ module Jclouds {
    * @param {Workspace} workspace
    * @param {ng.IRouteParamsService} $routeParams
    */
-    export function ProviderController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.ProviderController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.providerId = $routeParams.providerId;
 
         updateTableContents();
@@ -35,5 +36,5 @@ module Jclouds {
                 );
             }
         }
-   }
+   }]);
 }

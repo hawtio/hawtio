@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="./jcloudsPlugin.ts"/>
 module Jclouds {
-    export function ApiListController($scope, $location, workspace, jolokia) {
+    _module.controller("Jclouds.ApiListController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.result = {};
         $scope.apis = [];
@@ -47,7 +48,7 @@ module Jclouds {
             self.evalFilter = function () {
                 var byType = self.grid.sortedData;
                 if (self.scope.type !== "") {
-                    byType = self.grid.sortedData.findAll(function (item) {
+                    bType = self.grid.sortedData.findAll(function (item) {
                         return item["type"] === self.scope.type
                     });
                 }
@@ -106,5 +107,5 @@ module Jclouds {
                 Core.$apply($scope);
             }
         }
-    }
+    }]);
 }
