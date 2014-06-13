@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.4.4
+* the Chrome Extension build worked, so we've a shiny new Chrome Extension!
+* various fixes for the new [fabric8](http://fabric8.io/) release
+* Fixes [these 14 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=14&state=closed)
+
 #### 1.4.2
 * New pane used for JMX/Camel/ActiveMQ tabs that allows resizing or hiding the JMX tree
 * New terminal theme

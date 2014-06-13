@@ -1,3 +1,4 @@
+
 ## Configuring Security
 
 hawtio enables security out of the box depending on the container it is running within. Basically there is two types of containers:

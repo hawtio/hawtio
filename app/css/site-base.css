@@ -327,8 +327,31 @@ ol.inline > li {
   display: inline;
 }
 
-.inline-block {
+.inline-block,
+.list-row-select,
+.list-row-contents,
+.list-row-contents > .ngCellText {
   display: inline-block;
+}
+
+.list-row {
+  height: 30px;
+  white-space: nowrap;
+}
+
+.list-row .ngCellText {
+  padding: 0;
+  vertical-align: middle;
+}
+
+.list-row-select,
+.list-row-contents {
+  height: 100%;
+  vertical-align: middle;
+}
+
+.list-row-select > input {
+  vertical-align: middle;
 }
 
 .no-bottom-margin {
@@ -811,6 +834,10 @@ table.dataTable tbody tr td {
 
 .wiki-fixed {
   margin-top: 40px;
+}
+
+.wiki-fixed .pane {
+  top: 105px;
 }
 
 .help-sidebar li {

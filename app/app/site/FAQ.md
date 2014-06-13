@@ -61,7 +61,7 @@ Assuming you have jolokia working in your JVM, then you can use the **Remote** t
 
 After trying the above if you have problems connecting to your JVM, please [let us know](http://hawt.io/community/index.html) by [raising an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll try to help.
 
-#### How do I install a plugin?
+#### How do I install a plugin?
 
 Each hawtio distro has these [browser based plugins](http://hawt.io/plugins/index.html) inside already; plus hawtio can discover any other external plugins deployed in the same JVM too.
 
