@@ -103,6 +103,39 @@
         </executions>
       </plugin>
 
+      <!-- unpack the web app -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.hawt</groupId>
+                  <artifactId>hawtio-web</artifactId>
+                  <version>${project.version}</version>
+                  <type>war</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/sitegen/app</outputDirectory>
+                  <excludes>WEB-INF/**, META-INF/**</excludes>
+                </artifactItem>
+              </artifactItems>
+              <excludes>WEB-INF/**, META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/sitegen/app</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- lets copy any images for the plugins -->
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
